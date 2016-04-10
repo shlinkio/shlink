@@ -2,6 +2,8 @@
 use Zend\Expressive\Application;
 use Zend\ServiceManager\ServiceManager;
 
+chdir(dirname(__DIR__));
+
 require __DIR__ . '/../vendor/autoload.php';
 
 // Build container
