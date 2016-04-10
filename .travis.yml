@@ -1,0 +1,28 @@
+sudo: false
+
+language: php
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 5.5
+    - php: 5.6
+      env:
+        - EXECUTE_CS_CHECK=true
+    - php: 7
+    - php: hhvm
+  allow_failures:
+    - php: hhvm
+
+before_install:
+  - composer self-update
+
+install:
+  - travis_retry composer install --no-interaction --ignore-platform-reqs --prefer-source --no-scripts
+
+script:
+  - composer test
+  - if [[ $EXECUTE_CS_CHECK == 'true' ]]; then composer cs ; fi
+
+notifications:
+  email: true

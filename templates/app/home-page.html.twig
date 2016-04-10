@@ -1,0 +1,113 @@
+{% extends '@layout/default.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h1>Welcome to <span class="zf-green">zend-expressive</span></h1>
+        <p>
+            Congratulations! You have successfully installed the
+            <a href="https://github.com/zendframework/zend-expressive-skeleton" target="_blank">zend-expressive skeleton application</a>.
+            This skeleton can serve as a simple starting point for you to begin building your application.
+        </p>
+        <p>
+            Expressive builds on zend-stratigility to provide a minimalist PSR-7 middleware framework for PHP.
+        </p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h2>
+                <a href="https://zendframework.github.io/zend-expressive/getting-started/features/" target="_blank">
+                    <i class="fa fa-refresh"></i> Agile &amp; Lean
+                </a>
+            </h2>
+            <p>
+                Expressive is fast, small and perfect for rapid application development, prototyping and api's. You decide how you
+                extend it and choose the best packages from major framework or standalone projects.
+            </p>
+        </div>
+
+        <div class="col-md-4">
+            <h2>
+                <a href="https://github.com/zendframework/zend-diactoros" target="_blank">
+                    <i class="fa fa-exchange"></i> HTTP Messages
+                </a>
+            </h2>
+            <p>
+                HTTP messages are the foundation of web development. Web browsers and HTTP clients such as cURL create
+                HTTP request messages that are sent to a web server, which provides an HTTP response message.
+                Server-side code receives an HTTP request message, and returns an HTTP response message.
+            </p>
+        </div>
+
+        <div class="col-md-4">
+            <h2>
+                <a href="https://github.com/zendframework/zend-stratigility" target="_blank">
+                    <i class="fa fa-dot-circle-o"></i> Middleware
+                </a>
+            </h2>
+            <p>
+                Middleware is code that exists between the request and response, and which can take the incoming
+                request, perform actions based on it, and either complete the response or pass delegation on to the
+                next middleware in the queue. Your application is easily extended with custom middleware created by
+                yourself or <a href="https://packagist.org/search/?q=middleware" target="_blank">others</a>.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h2>
+                <a href="https://zendframework.github.io/zend-expressive/features/container/intro/" target="_blank">
+                    <i class="fa fa-cube"></i> Containers
+                </a>
+            </h2>
+            <p>
+                Expressive promotes and advocates the usage of Dependency Injection/Inversion of Control containers
+                when writing your applications. Expressive supports multiple containers which typehints against
+                <a href="https://github.com/container-interop/container-interop" target="_blank">container-interop</a>.
+            </p>
+        </div>
+
+        <div class="col-md-4">
+            <h2>
+                <a href="https://zendframework.github.io/zend-expressive/features/router/intro/" target="_blank">
+                    <i class="fa fa-plane"></i> Routers
+                </a>
+            </h2>
+            <p>
+                One fundamental feature of zend-expressive is that it provides mechanisms for implementing dynamic
+                routing, a feature required in most modern web applications. Expressive ships with multiple adapters.
+            </p>
+            {% if routerName is defined %}
+                <p>
+                    <a href="{{ routerDocs }}" target="_blank">
+                        Get started with {{ routerName }}.
+                    </a>
+                </p>
+            {% endif %}
+        </div>
+
+        <div class="col-md-4">
+            <h2>
+                <a href="https://zendframework.github.io/zend-expressive/features/template/twig/" target="_blank">
+                    <i class="fa fa-files-o"></i> Templating
+                </a>
+            </h2>
+            <p>
+                By default, no middleware in Expressive is templated. We do not even provide a default templating
+                engine, as the choice of templating engine is often very specific to the project and/or organization.
+                However, Expressive does provide abstraction for templating, which allows you to write middleware that
+                is engine-agnostic.
+            </p>
+            {% if templateName is defined %}
+                <p>
+                    <a href="{{ templateDocs }}" target="_blank">
+                        Get started with {{ templateName }}.
+                    </a>
+                </p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
