@@ -1,9 +1,0 @@
-<?php
-
-return [
-
-    'twig' => [
-        'cache_dir' => false,
-    ],
-
-];

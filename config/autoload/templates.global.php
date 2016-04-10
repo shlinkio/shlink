@@ -3,7 +3,9 @@
 return [
 
     'templates' => [
-        'extension' => 'html.twig',
+        'paths' => [
+            'templates'
+        ],
     ],
 
     'twig' => [

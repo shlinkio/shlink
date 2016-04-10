@@ -28,13 +28,11 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/App/",
             "Acelaya\\UrlShortener\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "AppTest\\": "tests/AppTest/",
             "AcelayaTest\\UrlShortener\\": "tests"
         }
     },
