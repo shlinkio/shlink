@@ -1,0 +1,14 @@
+#!/usr/bin/env php
+<?php
+use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Uri;
+use Zend\Expressive\Application;
+
+/** @var Application $app */
+$app = include __DIR__ . '/../config/app.php';
+
+$command = count($_SERVER['argv']) > 1 ? $_SERVER['argv'][1] : '';
+$request = ServerRequestFactory::fromGlobals()
+                                ->withMethod('CLI')
+                                ->withUri(new Uri(sprintf('/%s', $command)));
+$app->run($request);

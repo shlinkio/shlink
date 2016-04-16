@@ -14,12 +14,12 @@ return [
         ],
         [
             'name' => 'cli',
-            'path' => 'command-name',
+            'path' => '/command-name',
             'middleware' => function ($req, $resp) {
                 $resp->getBody()->write('Hello world from cli');
                 return $resp;
             },
-            'allowed_methods' => ['GET'],
+            'allowed_methods' => ['CLI'],
         ],
     ],
     
