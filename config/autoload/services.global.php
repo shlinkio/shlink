@@ -1,16 +1,22 @@
 <?php
+use Acelaya\UrlShortener\Factory\EntityManagerFactory;
+use Acelaya\UrlShortener\Service\UrlShortener;
+use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
+use Doctrine\ORM\EntityManager;
 use Zend\Expressive\Application;
 use Zend\Expressive\Container;
 use Zend\Expressive\Helper;
 use Zend\Expressive\Router;
 use Zend\Expressive\Template;
+use Zend\Expressive\Twig;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
 
     'services' => [
         'invokables' => [
-            Helper\ServerUrlHelper::class => Helper\ServerUrlHelper::class,
-            Router\RouterInterface::class => Router\AuraRouter::class,
+            Helper\ServerUrlHelper::class,
+            Router\AuraRouter::class,
         ],
         'factories' => [
             Application::class => Container\ApplicationFactory::class,
@@ -19,11 +25,22 @@ return [
             Helper\UrlHelper::class => Helper\UrlHelperFactory::class,
             Helper\ServerUrlMiddleware::class => Helper\ServerUrlMiddlewareFactory::class,
             Helper\UrlHelperMiddleware::class => Helper\UrlHelperMiddlewareFactory::class,
+            Helper\ServerUrlHelper::class => InvokableFactory::class,
+            Router\RouterInterface::class => InvokableFactory::class,
 
             // View
             'Zend\Expressive\FinalHandler' => Container\TemplatedErrorHandlerFactory::class,
-            Template\TemplateRendererInterface::class => Zend\Expressive\Twig\TwigRendererFactory::class,
+            Template\TemplateRendererInterface::class => Twig\TwigRendererFactory::class,
+
+            // Services
+            EntityManager::class => EntityManagerFactory::class,
+            GuzzleHttp\Client::class => InvokableFactory::class,
+            UrlShortener::class => AnnotatedFactory::class,
         ],
+        'aliases' => [
+            'em' => EntityManager::class,
+            'httpClient' => GuzzleHttp\Client::class,
+        ]
     ],
 
 ];

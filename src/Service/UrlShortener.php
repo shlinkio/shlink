@@ -5,6 +5,7 @@ use Acelaya\UrlShortener\Entity\ShortUrl;
 use Acelaya\UrlShortener\Exception\InvalidShortCodeException;
 use Acelaya\UrlShortener\Exception\InvalidUrlException;
 use Acelaya\UrlShortener\Exception\RuntimeException;
+use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use GuzzleHttp\ClientInterface;
@@ -28,6 +29,14 @@ class UrlShortener implements UrlShortenerInterface
      */
     private $chars;
 
+    /**
+     * UrlShortener constructor.
+     * @param ClientInterface $httpClient
+     * @param EntityManagerInterface $em
+     * @param string $chars
+     *
+     * @Inject({"httpClient", "em"})
+     */
     public function __construct(
         ClientInterface $httpClient,
         EntityManagerInterface $em,

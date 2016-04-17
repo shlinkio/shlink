@@ -19,7 +19,8 @@
         "zendframework/zend-servicemanager": "^3.0",
         "zendframework/zend-expressive-twigrenderer": "^1.0",
         "doctrine/orm": "^2.5",
-        "guzzlehttp/guzzle": "^6.2"
+        "guzzlehttp/guzzle": "^6.2",
+        "acelaya/zsm-annotated-services": "^0.2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",

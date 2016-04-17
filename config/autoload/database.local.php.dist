@@ -1,0 +1,15 @@
+<?php
+return [
+
+    'database' => [
+        'driver' => 'pdo_mysql',
+        'user' => '',
+        'password' => '',
+        'dbname' => '',
+        'charset' => 'utf-8',
+        'driverOptions' => [
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+        ],
+    ]
+
+];
