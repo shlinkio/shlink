@@ -18,7 +18,8 @@
         "zendframework/zend-expressive-aurarouter": "^1.0",
         "zendframework/zend-servicemanager": "^3.0",
         "zendframework/zend-expressive-twigrenderer": "^1.0",
-        "doctrine/orm": "^2.5"
+        "doctrine/orm": "^2.5",
+        "guzzlehttp/guzzle": "^6.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",

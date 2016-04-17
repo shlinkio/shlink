@@ -41,7 +41,9 @@ class ShortUrl extends AbstractEntity
      */
     public function __construct()
     {
+        $this->dateCreated = new \DateTime();
         $this->visits = new ArrayCollection();
+        $this->shortCode = '';
     }
 
     /**
@@ -58,7 +60,7 @@ class ShortUrl extends AbstractEntity
      */
     public function setOriginalUrl($originalUrl)
     {
-        $this->originalUrl = $originalUrl;
+        $this->originalUrl = (string) $originalUrl;
         return $this;
     }
 
