@@ -1,16 +1,15 @@
 <?php
-
 return [
 
     'routes' => [
         [
-            'name' => 'home',
-            'path' => '/',
+            'name' => 'cli',
+            'path' => '/command-name',
             'middleware' => function ($req, $resp) {
-                
+
             },
-            'allowed_methods' => ['GET'],
+            'allowed_methods' => ['CLI'],
         ],
     ],
-    
+
 ];
