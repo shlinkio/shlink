@@ -3,7 +3,7 @@ use Zend\Expressive\Container\ApplicationFactory;
 use Zend\Expressive\Helper;
 
 return [
-    
+
     'middleware_pipeline' => [
         'always' => [
             'middleware' => [
