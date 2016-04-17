@@ -2,6 +2,7 @@
 namespace Acelaya\UrlShortener\Service;
 
 use Acelaya\UrlShortener\Entity\ShortUrl;
+use Acelaya\UrlShortener\Exception\InvalidShortCodeException;
 use Acelaya\UrlShortener\Exception\InvalidUrlException;
 use Acelaya\UrlShortener\Exception\RuntimeException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,7 +13,7 @@ use Psr\Http\Message\UriInterface;
 
 class UrlShortener implements UrlShortenerInterface
 {
-    const DEFAULT_CHARS = '123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
+    const DEFAULT_CHARS = 'rYHxLkXfsptbNZzKDG4hy85WFT7BRgMVdC9jvwQPnc6S32Jqm';
 
     /**
      * @var ClientInterface
@@ -38,6 +39,8 @@ class UrlShortener implements UrlShortenerInterface
     }
 
     /**
+     * Creates and persists a unique shortcode generated for provided url
+     *
      * @param UriInterface $url
      * @return string
      * @throws InvalidUrlException
@@ -106,26 +109,37 @@ class UrlShortener implements UrlShortenerInterface
      */
     protected function convertAutoincrementIdToShortCode($id)
     {
-        $id = intval($id);
+        $id = intval($id) + 200000; // Increment the Id so that the generated shortcode is not too short
         $length = strlen($this->chars);
         $code = '';
 
-        while ($id > $length - 1) {
+        while ($id > 0) {
             // Determine the value of the next higher character in the short code and prepend it
-            $code = $this->chars[fmod($id, $length)] . $code;
+            $code = $this->chars[intval(fmod($id, $length))] . $code;
             $id = floor($id / $length);
         }
 
-        return $this->chars[$id] . $code;
+        return $this->chars[intval($id)] . $code;
     }
 
     /**
+     * Tries to find the mapped URL for provided short code. Returns null if not found
+     *
      * @param string $shortCode
-     * @return string
+     * @return string|null
+     * @throws InvalidShortCodeException
      */
     public function shortCodeToUrl($shortCode)
     {
         // Validate short code format
-        
+        if (! preg_match('|[' . $this->chars . "]+|", $shortCode)) {
+            throw InvalidShortCodeException::fromShortCode($shortCode, $this->chars);
+        }
+
+        /** @var ShortUrl $shortUrl */
+        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
+            'shortCode' => $shortCode,
+        ]);
+        return isset($shortUrl) ? $shortUrl->getOriginalUrl() : null;
     }
 }
