@@ -85,7 +85,7 @@ class GenerateShortcodeMiddleware implements MiddlewareInterface
         } catch (\Exception $e) {
             $response->getBody()->write($e);
         } finally {
-            return is_callable($out) ? $out($request, $response) : $response;
+            return $response;
         }
     }
 }
