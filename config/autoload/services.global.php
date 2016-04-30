@@ -2,7 +2,7 @@
 use Acelaya\UrlShortener\Factory\CacheFactory;
 use Acelaya\UrlShortener\Factory\EntityManagerFactory;
 use Acelaya\UrlShortener\Middleware;
-use Acelaya\UrlShortener\Service\UrlShortener;
+use Acelaya\UrlShortener\Service;
 use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManager;
@@ -34,7 +34,8 @@ return [
             // Services
             EntityManager::class => EntityManagerFactory::class,
             GuzzleHttp\Client::class => InvokableFactory::class,
-            UrlShortener::class => AnnotatedFactory::class,
+            Service\UrlShortener::class => AnnotatedFactory::class,
+            Service\VisitsTracker::class => AnnotatedFactory::class,
             Cache::class => CacheFactory::class,
 
             // Middleware

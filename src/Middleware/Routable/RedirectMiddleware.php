@@ -3,6 +3,8 @@ namespace Acelaya\UrlShortener\Middleware\Routable;
 
 use Acelaya\UrlShortener\Service\UrlShortener;
 use Acelaya\UrlShortener\Service\UrlShortenerInterface;
+use Acelaya\UrlShortener\Service\VisitsTracker;
+use Acelaya\UrlShortener\Service\VisitsTrackerInterface;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -15,16 +17,22 @@ class RedirectMiddleware implements MiddlewareInterface
      * @var UrlShortenerInterface
      */
     private $urlShortener;
+    /**
+     * @var VisitsTracker|VisitsTrackerInterface
+     */
+    private $visitTracker;
 
     /**
      * RedirectMiddleware constructor.
      * @param UrlShortenerInterface|UrlShortener $urlShortener
+     * @param VisitsTrackerInterface|VisitsTracker $visitTracker
      *
-     * @Inject({UrlShortener::class})
+     * @Inject({UrlShortener::class, VisitsTracker::class})
      */
-    public function __construct(UrlShortenerInterface $urlShortener)
+    public function __construct(UrlShortenerInterface $urlShortener, VisitsTrackerInterface $visitTracker)
     {
         $this->urlShortener = $urlShortener;
+        $this->visitTracker = $visitTracker;
     }
 
     /**
@@ -55,7 +63,7 @@ class RedirectMiddleware implements MiddlewareInterface
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
         $shortCode = $request->getAttribute('shortCode', '');
-        
+
         try {
             $longUrl = $this->urlShortener->shortCodeToUrl($shortCode);
 
@@ -65,8 +73,12 @@ class RedirectMiddleware implements MiddlewareInterface
                 return $out($request, $response);
             }
 
-            // Return a redirect response to the long URL
-            return new RedirectResponse($longUrl, 301);
+            // Track visit to this shortcode
+            $this->visitTracker->track($shortCode);
+
+            // Return a redirect response to the long URL.
+            // Use a temporary redirect to make sure browsers aleways hit the server for analytics purposes
+            return new RedirectResponse($longUrl);
         } catch (\Exception $e) {
             // In case of error, dispatch 404 error
             return $out($request, $response);

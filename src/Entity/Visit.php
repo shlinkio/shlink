@@ -15,7 +15,7 @@ class Visit extends AbstractEntity
 {
     /**
      * @var string
-     * @ORM\Column(type="string", length=256)
+     * @ORM\Column(type="string", length=256, nullable=true)
      */
     protected $referer;
     /**
@@ -25,25 +25,25 @@ class Visit extends AbstractEntity
     protected $date;
     /**
      * @var string
-     * @ORM\Column(type="string", length=256)
+     * @ORM\Column(type="string", length=256, name="remote_addr", nullable=true)
      */
-    protected $country;
+    protected $remoteAddr;
     /**
      * @var string
-     * @ORM\Column(type="string", length=256)
+     * @ORM\Column(type="string", length=256, name="user_agent", nullable=true)
      */
-    protected $platform;
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=256)
-     */
-    protected $browser;
+    protected $userAgent;
     /**
      * @var ShortUrl
      * @ORM\ManyToOne(targetEntity=ShortUrl::class)
      * @ORM\JoinColumn(name="short_url_id", referencedColumnName="id")
      */
     protected $shortUrl;
+
+    public function __construct()
+    {
+        $this->date = new \DateTime();
+    }
 
     /**
      * @return string
@@ -82,60 +82,6 @@ class Visit extends AbstractEntity
     }
 
     /**
-     * @return string
-     */
-    public function getCountry()
-    {
-        return $this->country;
-    }
-
-    /**
-     * @param string $country
-     * @return $this
-     */
-    public function setCountry($country)
-    {
-        $this->country = $country;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPlatform()
-    {
-        return $this->platform;
-    }
-
-    /**
-     * @param string $platform
-     * @return $this
-     */
-    public function setPlatform($platform)
-    {
-        $this->platform = $platform;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBrowser()
-    {
-        return $this->browser;
-    }
-
-    /**
-     * @param string $browser
-     * @return $this
-     */
-    public function setBrowser($browser)
-    {
-        $this->browser = $browser;
-        return $this;
-    }
-
-    /**
      * @return ShortUrl
      */
     public function getShortUrl()
@@ -150,6 +96,42 @@ class Visit extends AbstractEntity
     public function setShortUrl($shortUrl)
     {
         $this->shortUrl = $shortUrl;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRemoteAddr()
+    {
+        return $this->remoteAddr;
+    }
+
+    /**
+     * @param string $remoteAddr
+     * @return $this
+     */
+    public function setRemoteAddr($remoteAddr)
+    {
+        $this->remoteAddr = $remoteAddr;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserAgent()
+    {
+        return $this->userAgent;
+    }
+
+    /**
+     * @param string $userAgent
+     * @return $this
+     */
+    public function setUserAgent($userAgent)
+    {
+        $this->userAgent = $userAgent;
         return $this;
     }
 }
