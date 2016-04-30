@@ -39,6 +39,7 @@ return [
 
             // Middleware
             Middleware\CliRoutable\GenerateShortcodeMiddleware::class => AnnotatedFactory::class,
+            Middleware\CliParamsMiddleware::class => Middleware\Factory\CliParamsMiddlewareFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,
