@@ -1,6 +1,7 @@
 <?php
 use Acelaya\UrlShortener\Factory\CacheFactory;
 use Acelaya\UrlShortener\Factory\EntityManagerFactory;
+use Acelaya\UrlShortener\Middleware;
 use Acelaya\UrlShortener\Service\UrlShortener;
 use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
 use Doctrine\Common\Cache\Cache;
@@ -19,12 +20,11 @@ return [
         'factories' => [
             Application::class => Container\ApplicationFactory::class,
 
-            // Routes
+            // Url helpers
             Helper\UrlHelper::class => Helper\UrlHelperFactory::class,
             Helper\ServerUrlMiddleware::class => Helper\ServerUrlMiddlewareFactory::class,
             Helper\UrlHelperMiddleware::class => Helper\UrlHelperMiddlewareFactory::class,
             Helper\ServerUrlHelper::class => InvokableFactory::class,
-            Router\RouterInterface::class => InvokableFactory::class,
             Router\AuraRouter::class => InvokableFactory::class,
 
             // View
@@ -36,10 +36,14 @@ return [
             GuzzleHttp\Client::class => InvokableFactory::class,
             UrlShortener::class => AnnotatedFactory::class,
             Cache::class => CacheFactory::class,
+
+            // Middleware
+            Middleware\CliRoutable\GenerateShortcodeMiddleware::class => AnnotatedFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,
             'httpClient' => GuzzleHttp\Client::class,
+            Router\RouterInterface::class => Router\AuraRouter::class,
         ]
     ],
 

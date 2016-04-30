@@ -3,14 +3,12 @@
 return [
 
     'routes' => [
-        [
-            'name' => 'home',
-            'path' => '/',
-            'middleware' => function ($req, $resp) {
-
-            },
-            'allowed_methods' => ['GET'],
-        ],
+//        [
+//            'name' => 'home',
+//            'path' => '/',
+//            'middleware' => '',
+//            'allowed_methods' => ['GET'],
+//        ],
     ],
 
 ];

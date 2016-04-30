@@ -29,6 +29,4 @@ if (is_file($cachedConfigFile)) {
     }
 }
 
-// Return an ArrayObject so we can inject the config as a service in Aura.Di
-// and still use array checks like ``is_array``.
-return new ArrayObject($config, ArrayObject::ARRAY_AS_PROPS);
+return $config;

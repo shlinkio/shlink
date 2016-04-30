@@ -1,13 +1,13 @@
 <?php
+use Acelaya\UrlShortener\Middleware\CliRoutable;
+
 return [
 
     'routes' => [
         [
-            'name' => 'cli',
-            'path' => '/command-name',
-            'middleware' => function ($req, $resp) {
-
-            },
+            'name' => 'cli-generate-shortcode',
+            'path' => '/generate-shortcode',
+            'middleware' => CliRoutable\GenerateShortcodeMiddleware::class,
             'allowed_methods' => ['CLI'],
         ],
     ],

@@ -27,7 +27,7 @@ class ShortUrl extends AbstractEntity
     protected $shortCode;
     /**
      * @var \DateTime
-     * @ORM\Column(name="date_created", )
+     * @ORM\Column(name="date_created", type="datetime")
      */
     protected $dateCreated;
     /**
