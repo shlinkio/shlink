@@ -1,14 +1,15 @@
 <?php
+use Acelaya\UrlShortener\Middleware\Routable;
 
 return [
 
     'routes' => [
-//        [
-//            'name' => 'home',
-//            'path' => '/',
-//            'middleware' => '',
-//            'allowed_methods' => ['GET'],
-//        ],
+        [
+            'name' => 'long-url-redirect',
+            'path' => '/{shortCode}',
+            'middleware' => Routable\RedirectMiddleware::class,
+            'allowed_methods' => ['GET'],
+        ],
     ],
 
 ];

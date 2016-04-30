@@ -25,7 +25,7 @@ return [
             Helper\ServerUrlMiddleware::class => Helper\ServerUrlMiddlewareFactory::class,
             Helper\UrlHelperMiddleware::class => Helper\UrlHelperMiddlewareFactory::class,
             Helper\ServerUrlHelper::class => InvokableFactory::class,
-            Router\AuraRouter::class => InvokableFactory::class,
+            Router\FastRouteRouter::class => InvokableFactory::class,
 
             // View
             'Zend\Expressive\FinalHandler' => Container\TemplatedErrorHandlerFactory::class,
@@ -39,12 +39,13 @@ return [
 
             // Middleware
             Middleware\CliRoutable\GenerateShortcodeMiddleware::class => AnnotatedFactory::class,
+            Middleware\Routable\RedirectMiddleware::class => AnnotatedFactory::class,
             Middleware\CliParamsMiddleware::class => Middleware\Factory\CliParamsMiddlewareFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,
             'httpClient' => GuzzleHttp\Client::class,
-            Router\RouterInterface::class => Router\AuraRouter::class,
+            Router\RouterInterface::class => Router\FastRouteRouter::class,
         ]
     ],
 
