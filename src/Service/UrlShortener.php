@@ -14,7 +14,7 @@ use Psr\Http\Message\UriInterface;
 
 class UrlShortener implements UrlShortenerInterface
 {
-    const DEFAULT_CHARS = 'rYHxLkXfsptbNZzKDG4hy85WFT7BRgMVdC9jvwQPnc6S32Jqm';
+    const DEFAULT_CHARS = '123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
 
     /**
      * @var ClientInterface
@@ -35,7 +35,7 @@ class UrlShortener implements UrlShortenerInterface
      * @param EntityManagerInterface $em
      * @param string $chars
      *
-     * @Inject({"httpClient", "em"})
+     * @Inject({"httpClient", "em", "config.url_shortener.shortcode_chars"})
      */
     public function __construct(
         ClientInterface $httpClient,

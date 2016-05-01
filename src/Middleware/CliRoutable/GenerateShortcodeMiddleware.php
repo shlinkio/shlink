@@ -19,20 +19,20 @@ class GenerateShortcodeMiddleware implements MiddlewareInterface
     /**
      * @var array
      */
-    private $config;
+    private $domainConfig;
 
     /**
      * GenerateShortcodeMiddleware constructor.
      *
      * @param UrlShortenerInterface|UrlShortener $urlShortener
-     * @param array $config
+     * @param array $domainConfig
      *
-     * @Inject({UrlShortener::class, "config.url-shortener"})
+     * @Inject({UrlShortener::class, "config.url_shortener.domain"})
      */
-    public function __construct(UrlShortenerInterface $urlShortener, array $config)
+    public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig)
     {
         $this->urlShortener = $urlShortener;
-        $this->config = $config;
+        $this->domainConfig = $domainConfig;
     }
 
     /**
@@ -72,8 +72,8 @@ class GenerateShortcodeMiddleware implements MiddlewareInterface
 
             $shortcode = $this->urlShortener->urlToShortCode(new Uri($longUrl));
             $shortUrl = (new Uri())->withPath($shortcode)
-                                   ->withScheme($this->config['schema'])
-                                   ->withHost($this->config['hostname']);
+                                   ->withScheme($this->domainConfig['schema'])
+                                   ->withHost($this->domainConfig['hostname']);
 
             $response->getBody()->write(
                 sprintf('Processed URL "%s".%sGenerated short URL "%s"', $longUrl, PHP_EOL, $shortUrl) . PHP_EOL
