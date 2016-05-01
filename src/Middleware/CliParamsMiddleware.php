@@ -12,10 +12,15 @@ class CliParamsMiddleware implements MiddlewareInterface
      * @var array
      */
     private $argv;
+    /**
+     * @var
+     */
+    private $currentSapi;
 
-    public function __construct(array $argv)
+    public function __construct(array $argv, $currentSapi)
     {
         $this->argv = $argv;
+        $this->currentSapi = $currentSapi;
     }
 
     /**
@@ -46,7 +51,7 @@ class CliParamsMiddleware implements MiddlewareInterface
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
         // When not in CLI, just call next middleware
-        if (php_sapi_name() !== 'cli') {
+        if ($this->currentSapi !== 'cli') {
             return $out($request, $response);
         }
 

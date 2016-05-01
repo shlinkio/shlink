@@ -24,6 +24,9 @@ class CliParamsMiddlewareFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new CliParamsMiddleware(isset($_SERVER['argv']) ? $_SERVER['argv'] : []);
+        return new CliParamsMiddleware(
+            isset($_SERVER['argv']) ? $_SERVER['argv'] : [],
+            php_sapi_name()
+        );
     }
 }
