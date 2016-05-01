@@ -42,7 +42,7 @@ class VisitsTracker implements VisitsTrackerInterface
         $visit = new Visit();
         $visit->setShortUrl($shortUrl)
               ->setUserAgent($this->getArrayValue($visitorData, 'HTTP_USER_AGENT'))
-              ->setReferer($this->getArrayValue($visitorData, 'REFERER'))
+              ->setReferer($this->getArrayValue($visitorData, 'HTTP_REFERER'))
               ->setRemoteAddr($this->getArrayValue($visitorData, 'REMOTE_ADDR'));
         $this->em->persist($visit);
         $this->em->flush();
