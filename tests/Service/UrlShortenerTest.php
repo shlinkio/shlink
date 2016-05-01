@@ -59,9 +59,9 @@ class UrlShortenerTest extends TestCase
      */
     public function urlIsProperlyShortened()
     {
-        // 10 -> rY9zc
+        // 10 -> 12C1c
         $shortCode = $this->urlShortener->urlToShortCode(new Uri('http://foobar.com/12345/hello?foo=bar'));
-        $this->assertEquals('rY9zc', $shortCode);
+        $this->assertEquals('12C1c', $shortCode);
     }
 
     /**
@@ -112,16 +112,16 @@ class UrlShortenerTest extends TestCase
      */
     public function shortCodeIsProperlyParsed()
     {
-        // rY9zc -> 10
+        // 12C1c -> 10
         $shortUrl = new ShortUrl();
-        $shortUrl->setShortCode('rY9zc')
+        $shortUrl->setShortCode('12C1c')
                  ->setOriginalUrl('expected_url');
 
         $repo = $this->prophesize(ObjectRepository::class);
-        $repo->findOneBy(['shortCode' => 'rY9zc'])->willReturn($shortUrl);
+        $repo->findOneBy(['shortCode' => '12C1c'])->willReturn($shortUrl);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $url = $this->urlShortener->shortCodeToUrl('rY9zc');
+        $url = $this->urlShortener->shortCodeToUrl('12C1c');
         $this->assertEquals($shortUrl->getOriginalUrl(), $url);
     }
 
