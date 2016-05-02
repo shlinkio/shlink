@@ -1,28 +1,26 @@
-sudo: false
-
 language: php
 
-matrix:
-  fast_finish: true
-  include:
-    - php: 5.5
-    - php: 5.6
-      env:
-        - EXECUTE_CS_CHECK=true
-    - php: 7
-    - php: hhvm
-  allow_failures:
-    - php: hhvm
+branches:
+  only:
+    - master
+    - develop
 
-before_install:
+php:
+  - 5.5
+  - 5.6
+  - 7
+  - hhvm
+
+before_script:
   - composer self-update
-
-install:
-  - travis_retry composer install --no-interaction --ignore-platform-reqs --prefer-source --no-scripts
+  - composer install --no-interaction
 
 script:
-  - composer test
-  - if [[ $EXECUTE_CS_CHECK == 'true' ]]; then composer cs ; fi
+  - mkdir build
+  - composer check
 
-notifications:
-  email: true
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml
+
+sudo: false

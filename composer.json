@@ -14,18 +14,21 @@
         "php": "^5.5 || ^7.0",
         "zendframework/zend-expressive": "^1.0",
         "zendframework/zend-expressive-helpers": "^2.0",
-        "zendframework/zend-stdlib": "^2.7",
-        "zendframework/zend-expressive-aurarouter": "^1.0",
-        "zendframework/zend-servicemanager": "^3.0",
+        "zendframework/zend-expressive-fastroute": "^1.1",
         "zendframework/zend-expressive-twigrenderer": "^1.0",
-        "acelaya/expressive-slim-router": "^2.0"
+        "zendframework/zend-stdlib": "^2.7",
+        "zendframework/zend-servicemanager": "^3.0",
+        "doctrine/orm": "^2.5",
+        "guzzlehttp/guzzle": "^6.2",
+        "acelaya/zsm-annotated-services": "^0.2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",
         "squizlabs/php_codesniffer": "^2.3",
         "roave/security-advisories": "dev-master",
         "filp/whoops": "^2.0",
-        "symfony/var-dumper": "^3.0"
+        "symfony/var-dumper": "^3.0",
+        "vlucas/phpdotenv": "^2.2"
     },
     "autoload": {
         "psr-4": {
@@ -45,7 +48,7 @@
         "cs": "phpcs",
         "cs-fix": "phpcbf",
         "serve": "php -S 0.0.0.0:8000 -t public/",
-        "test": "phpunit",
-        "pretty-test": "phpunit -c tests/phpunit.xml --coverage-html build/coverage"
+        "test": "phpunit --coverage-clover build/clover.xml",
+        "pretty-test": "phpunit --coverage-html build/coverage"
     }
 }

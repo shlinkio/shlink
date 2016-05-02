@@ -1,6 +1,9 @@
 <?php
+use Interop\Container\ContainerInterface;
 use Zend\Expressive\Application;
 
+/** @var ContainerInterface $container */
+$container = include __DIR__ . '/../config/container.php';
 /** @var Application $app */
-$app = include __DIR__ . '/../config/app.php';
+$app = $container->get(Application::class);
 $app->run();

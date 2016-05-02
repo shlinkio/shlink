@@ -1,26 +1,15 @@
 <?php
+use Acelaya\UrlShortener\Middleware\Routable;
 
 return [
 
     'routes' => [
         [
-            'name' => 'home',
-            'path' => '/',
-            'middleware' => function ($req, $resp) {
-                $resp->getBody()->write('Hello world');
-                return $resp;
-            },
+            'name' => 'long-url-redirect',
+            'path' => '/{shortCode}',
+            'middleware' => Routable\RedirectMiddleware::class,
             'allowed_methods' => ['GET'],
         ],
-        [
-            'name' => 'cli',
-            'path' => '/command-name',
-            'middleware' => function ($req, $resp) {
-                $resp->getBody()->write('Hello world from cli');
-                return $resp;
-            },
-            'allowed_methods' => ['CLI'],
-        ],
     ],
-    
+
 ];
