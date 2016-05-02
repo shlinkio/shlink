@@ -77,7 +77,7 @@ class RedirectMiddleware implements MiddlewareInterface
             $this->visitTracker->track($shortCode);
 
             // Return a redirect response to the long URL.
-            // Use a temporary redirect to make sure browsers aleways hit the server for analytics purposes
+            // Use a temporary redirect to make sure browsers always hit the server for analytics purposes
             return new RedirectResponse($longUrl);
         } catch (\Exception $e) {
             // In case of error, dispatch 404 error
