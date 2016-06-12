@@ -44,6 +44,8 @@ return [
 
             // Middleware
             Middleware\Routable\RedirectMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\CreateShortcodeMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\ResolveUrlMiddleware::class => AnnotatedFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,

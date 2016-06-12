@@ -1,7 +1,7 @@
 <?php
 namespace Acelaya\UrlShortener\Middleware\Rest;
 
-use Acelaya\UrlShortener\Exception\InvalidUrlException;
+use Acelaya\UrlShortener\Exception\InvalidShortCodeException;
 use Acelaya\UrlShortener\Service\UrlShortener;
 use Acelaya\UrlShortener\Service\UrlShortenerInterface;
 use Acelaya\UrlShortener\Util\RestUtils;
@@ -9,32 +9,24 @@ use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\Uri;
 use Zend\Stratigility\MiddlewareInterface;
 
-class CreateShortcodeMiddleware implements MiddlewareInterface
+class ResolveUrlMiddleware implements MiddlewareInterface
 {
     /**
-     * @var UrlShortener|UrlShortenerInterface
+     * @var UrlShortenerInterface
      */
     private $urlShortener;
-    /**
-     * @var array
-     */
-    private $domainConfig;
 
     /**
-     * GenerateShortcodeMiddleware constructor.
-     *
+     * ResolveUrlMiddleware constructor.
      * @param UrlShortenerInterface|UrlShortener $urlShortener
-     * @param array $domainConfig
      *
-     * @Inject({UrlShortener::class, "config.url_shortener.domain"})
+     * @Inject({UrlShortener::class})
      */
-    public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig)
+    public function __construct(UrlShortenerInterface $urlShortener)
     {
         $this->urlShortener = $urlShortener;
-        $this->domainConfig = $domainConfig;
     }
 
     /**
@@ -64,29 +56,24 @@ class CreateShortcodeMiddleware implements MiddlewareInterface
      */
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
-        $postData = $request->getParsedBody();
-        if (! isset($postData['longUrl'])) {
-            return new JsonResponse([
-                'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' => 'A URL was not provided',
-            ], 400);
-        }
-        $longUrl = $postData['longUrl'];
+        $shortCode = $request->getAttribute('shortCode');
 
         try {
-            $shortcode = $this->urlShortener->urlToShortCode(new Uri($longUrl));
-            $shortUrl = (new Uri())->withPath($shortcode)
-                                   ->withScheme($this->domainConfig['schema'])
-                                   ->withHost($this->domainConfig['hostname']);
+            $longUrl = $this->urlShortener->shortCodeToUrl($shortCode);
+            if (! isset($longUrl)) {
+                return new JsonResponse([
+                    'error' => RestUtils::INVALID_ARGUMENT_ERROR,
+                    'message' => sprintf('No URL found for shortcode "%s"', $shortCode),
+                ], 400);
+            }
 
             return new JsonResponse([
                 'longUrl' => $longUrl,
-                'shortUrl' => $shortUrl->__toString(),
             ]);
-        } catch (InvalidUrlException $e) {
+        } catch (InvalidShortCodeException $e) {
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf('Provided URL "%s" is invalid. Try with a different one.', $longUrl),
+                'message' => sprintf('Provided short code "%s" has an invalid format', $shortCode),
             ], 400);
         } catch (\Exception $e) {
             return new JsonResponse([

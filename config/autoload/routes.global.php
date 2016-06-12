@@ -19,6 +19,12 @@ return [
             'middleware' => Rest\CreateShortcodeMiddleware::class,
             'allowed_methods' => ['POST'],
         ],
+        [
+            'name' => 'rest-resolve-url',
+            'path' => '/rest/short-code/{shortCode}',
+            'middleware' => Rest\ResolveUrlMiddleware::class,
+            'allowed_methods' => ['GET'],
+        ],
     ],
 
 ];
