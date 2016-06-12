@@ -46,11 +46,13 @@ return [
             Middleware\Routable\RedirectMiddleware::class => AnnotatedFactory::class,
             Middleware\Rest\CreateShortcodeMiddleware::class => AnnotatedFactory::class,
             Middleware\Rest\ResolveUrlMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\GetVisitsMiddleware::class => AnnotatedFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,
             'httpClient' => GuzzleHttp\Client::class,
             Router\RouterInterface::class => Router\FastRouteRouter::class,
+            AnnotatedFactory::CACHE_SERVICE => Cache::class,
         ]
     ],
 

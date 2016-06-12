@@ -15,14 +15,20 @@ return [
         // Rest
         [
             'name' => 'rest-create-shortcode',
-            'path' => '/rest/short-code',
+            'path' => '/rest/short-codes',
             'middleware' => Rest\CreateShortcodeMiddleware::class,
             'allowed_methods' => ['POST'],
         ],
         [
             'name' => 'rest-resolve-url',
-            'path' => '/rest/short-code/{shortCode}',
+            'path' => '/rest/short-codes/{shortCode}',
             'middleware' => Rest\ResolveUrlMiddleware::class,
+            'allowed_methods' => ['GET'],
+        ],
+        [
+            'name' => 'rest-get-visits',
+            'path' => '/rest/visits/{shortCode}',
+            'middleware' => Rest\GetVisitsMiddleware::class,
             'allowed_methods' => ['GET'],
         ],
     ],
