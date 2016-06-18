@@ -26,6 +26,12 @@ return [
             'allowed_methods' => ['GET'],
         ],
         [
+            'name' => 'rest-list-shortened-url',
+            'path' => '/rest/short-codes',
+            'middleware' => Rest\ListShortcodesMiddleware::class,
+            'allowed_methods' => ['GET'],
+        ],
+        [
             'name' => 'rest-get-visits',
             'path' => '/rest/visits/{shortCode}',
             'middleware' => Rest\GetVisitsMiddleware::class,

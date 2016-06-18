@@ -37,6 +37,7 @@ return [
             GuzzleHttp\Client::class => InvokableFactory::class,
             Service\UrlShortener::class => AnnotatedFactory::class,
             Service\VisitsTracker::class => AnnotatedFactory::class,
+            Service\ShortUrlService::class => AnnotatedFactory::class,
             Cache::class => CacheFactory::class,
 
             // Cli commands
@@ -47,6 +48,7 @@ return [
             Middleware\Rest\CreateShortcodeMiddleware::class => AnnotatedFactory::class,
             Middleware\Rest\ResolveUrlMiddleware::class => AnnotatedFactory::class,
             Middleware\Rest\GetVisitsMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\ListShortcodesMiddleware::class => AnnotatedFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,

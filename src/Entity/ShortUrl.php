@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="short_urls")
  */
-class ShortUrl extends AbstractEntity
+class ShortUrl extends AbstractEntity implements \JsonSerializable
 {
     /**
      * @var string
@@ -116,5 +116,22 @@ class ShortUrl extends AbstractEntity
     {
         $this->visits = $visits;
         return $this;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'shortCode' => $this->shortCode,
+            'originalUrl' => $this->originalUrl,
+            'dateCreated' => isset($this->dateCreated) ? $this->dateCreated->format(\DateTime::ISO8601) : null,
+            'visitsCount' => count($this->visits),
+        ];
     }
 }
