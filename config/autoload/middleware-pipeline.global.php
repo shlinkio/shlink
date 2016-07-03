@@ -1,5 +1,4 @@
 <?php
-use Acelaya\UrlShortener\Middleware\CliParamsMiddleware;
 use Zend\Expressive\Container\ApplicationFactory;
 use Zend\Expressive\Helper;
 
@@ -16,7 +15,6 @@ return [
         'routing' => [
             'middleware' => [
                 ApplicationFactory::ROUTING_MIDDLEWARE,
-                CliParamsMiddleware::class,
                 Helper\UrlHelperMiddleware::class,
                 ApplicationFactory::DISPATCH_MIDDLEWARE,
             ],
