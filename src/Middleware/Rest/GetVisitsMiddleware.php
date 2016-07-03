@@ -57,7 +57,7 @@ class GetVisitsMiddleware implements MiddlewareInterface
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
         $shortCode = $request->getAttribute('shortCode');
-        
+
         try {
             $visits = $this->visitsTracker->info($shortCode);
 

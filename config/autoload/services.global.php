@@ -49,6 +49,7 @@ return [
             Middleware\Rest\ResolveUrlMiddleware::class => AnnotatedFactory::class,
             Middleware\Rest\GetVisitsMiddleware::class => AnnotatedFactory::class,
             Middleware\Rest\ListShortcodesMiddleware::class => AnnotatedFactory::class,
+            Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,
