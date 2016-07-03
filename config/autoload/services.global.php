@@ -1,4 +1,5 @@
 <?php
+use Acelaya\UrlShortener\CliCommands;
 use Acelaya\UrlShortener\Factory\CacheFactory;
 use Acelaya\UrlShortener\Factory\EntityManagerFactory;
 use Acelaya\UrlShortener\Middleware;
@@ -37,6 +38,9 @@ return [
             Service\UrlShortener::class => AnnotatedFactory::class,
             Service\VisitsTracker::class => AnnotatedFactory::class,
             Cache::class => CacheFactory::class,
+
+            // Cli commands
+            CliCommands\GenerateShortcodeCommand::class => AnnotatedFactory::class,
 
             // Middleware
             Middleware\CliRoutable\GenerateShortcodeMiddleware::class => AnnotatedFactory::class,
