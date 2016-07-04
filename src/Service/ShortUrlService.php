@@ -4,6 +4,7 @@ namespace Acelaya\UrlShortener\Service;
 use Acelaya\UrlShortener\Entity\ShortUrl;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
+use Zend\Paginator\Paginator;
 
 class ShortUrlService implements ShortUrlServiceInterface
 {
@@ -24,7 +25,7 @@ class ShortUrlService implements ShortUrlServiceInterface
     }
 
     /**
-     * @return ShortUrl[]
+     * @return Paginator|ShortUrl[]
      */
     public function listShortUrls()
     {

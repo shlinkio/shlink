@@ -2,6 +2,7 @@
 namespace Acelaya\UrlShortener\Service;
 
 use Acelaya\UrlShortener\Entity\Visit;
+use Zend\Paginator\Paginator;
 
 interface VisitsTrackerInterface
 {
@@ -17,7 +18,7 @@ interface VisitsTrackerInterface
      * Returns the visits on certain shortcode
      *
      * @param $shortCode
-     * @return Visit[]
+     * @return Paginator|Visit[]
      */
     public function info($shortCode);
 }

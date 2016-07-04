@@ -7,6 +7,7 @@ use Acelaya\UrlShortener\Exception\InvalidArgumentException;
 use Acelaya\UrlShortener\Exception\InvalidShortCodeException;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
+use Zend\Paginator\Paginator;
 
 class VisitsTracker implements VisitsTrackerInterface
 {
@@ -65,7 +66,7 @@ class VisitsTracker implements VisitsTrackerInterface
      * Returns the visits on certain shortcode
      *
      * @param $shortCode
-     * @return Visit[]
+     * @return Paginator|Visit[]
      */
     public function info($shortCode)
     {

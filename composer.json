@@ -18,6 +18,7 @@
         "zendframework/zend-expressive-twigrenderer": "^1.0",
         "zendframework/zend-stdlib": "^2.7",
         "zendframework/zend-servicemanager": "^3.0",
+        "zendframework/zend-paginator": "^2.6",
         "doctrine/orm": "^2.5",
         "guzzlehttp/guzzle": "^6.2",
         "acelaya/zsm-annotated-services": "^0.2.0",
