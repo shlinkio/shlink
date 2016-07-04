@@ -1,6 +1,7 @@
 <?php
 namespace Acelaya\UrlShortener\Entity;
 
+use Acelaya\UrlShortener\Util\StringUtilsTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,6 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class RestToken extends AbstractEntity
 {
+    use StringUtilsTrait;
+
     /**
      * The default interval is 20 minutes
      */
@@ -32,6 +35,7 @@ class RestToken extends AbstractEntity
     public function __construct()
     {
         $this->updateExpiration();
+        $this->setRandomTokenKey();
     }
 
     /**
@@ -85,5 +89,14 @@ class RestToken extends AbstractEntity
     public function updateExpiration()
     {
         return $this->setExpirationDate((new \DateTime())->add(new \DateInterval(self::DEFAULT_INTERVAL)));
+    }
+
+    /**
+     * Sets a random unique token key for this RestToken
+     * @return RestToken
+     */
+    public function setRandomTokenKey()
+    {
+        return $this->setToken($this->generateV4Uuid());
     }
 }

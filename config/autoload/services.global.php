@@ -38,6 +38,7 @@ return [
             Service\UrlShortener::class => AnnotatedFactory::class,
             Service\VisitsTracker::class => AnnotatedFactory::class,
             Service\ShortUrlService::class => AnnotatedFactory::class,
+            Service\RestTokenService::class => AnnotatedFactory::class,
             Cache::class => CacheFactory::class,
 
             // Cli commands
@@ -45,6 +46,7 @@ return [
 
             // Middleware
             Middleware\Routable\RedirectMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\AuthenticateMiddleware::class => AnnotatedFactory::class,
             Middleware\Rest\CreateShortcodeMiddleware::class => AnnotatedFactory::class,
             Middleware\Rest\ResolveUrlMiddleware::class => AnnotatedFactory::class,
             Middleware\Rest\GetVisitsMiddleware::class => AnnotatedFactory::class,
