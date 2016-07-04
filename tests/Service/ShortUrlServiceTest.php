@@ -2,10 +2,11 @@
 namespace AcelayaTest\UrlShortener\Service;
 
 use Acelaya\UrlShortener\Entity\ShortUrl;
+use Acelaya\UrlShortener\Repository\ShortUrlRepository;
 use Acelaya\UrlShortener\Service\ShortUrlService;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use PHPUnit_Framework_TestCase as TestCase;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class ShortUrlServiceTest extends TestCase
@@ -30,16 +31,19 @@ class ShortUrlServiceTest extends TestCase
      */
     public function listedUrlsAreReturnedFromEntityManager()
     {
-        $repo = $this->prophesize(EntityRepository::class);
-        $repo->findAll()->willReturn([
+        $list = [
             new ShortUrl(),
             new ShortUrl(),
             new ShortUrl(),
             new ShortUrl(),
-        ])->shouldBeCalledTimes(1);
+        ];
+
+        $repo = $this->prophesize(ShortUrlRepository::class);
+        $repo->findList(Argument::cetera())->willReturn($list)->shouldBeCalledTimes(1);
+        $repo->countList(Argument::cetera())->willReturn(count($list))->shouldBeCalledTimes(1);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $list = $this->service->listShortUrls();
-        $this->assertCount(4, $list);
+        $this->assertEquals(4, $list->getCurrentItemCount());
     }
 }
