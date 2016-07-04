@@ -1,6 +1,7 @@
 <?php
 namespace Acelaya\UrlShortener\Middleware\Rest;
 
+use Acelaya\UrlShortener\Paginator\Util\PaginatorSerializerTrait;
 use Acelaya\UrlShortener\Service\ShortUrlService;
 use Acelaya\UrlShortener\Service\ShortUrlServiceInterface;
 use Acelaya\UrlShortener\Util\RestUtils;
@@ -13,6 +14,8 @@ use Zend\Stratigility\MiddlewareInterface;
 
 class ListShortcodesMiddleware implements MiddlewareInterface
 {
+    use PaginatorSerializerTrait;
+
     /**
      * @var ShortUrlServiceInterface
      */
@@ -57,17 +60,9 @@ class ListShortcodesMiddleware implements MiddlewareInterface
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
         try {
-            $shortUrls = $this->shortUrlService->listShortUrls();
-
-            return new JsonResponse([
-                'shortUrls' => [
-                    'data' => ArrayUtils::iteratorToArray($shortUrls->getCurrentItems()),
-                    'pagination' => [
-                        'currentPage' => $shortUrls->getCurrentPageNumber(),
-                        'pagesCount' => $shortUrls->count(),
-                    ],
-                ]
-            ]);
+            $query = $request->getQueryParams();
+            $shortUrls = $this->shortUrlService->listShortUrls(isset($query['page']) ? $query['page'] : 1);
+            return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls)]);
         } catch (\Exception $e) {
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
