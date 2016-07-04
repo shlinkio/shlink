@@ -8,6 +8,7 @@ use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\Stdlib\ArrayUtils;
 use Zend\Stratigility\MiddlewareInterface;
 
 class ListShortcodesMiddleware implements MiddlewareInterface
@@ -60,8 +61,11 @@ class ListShortcodesMiddleware implements MiddlewareInterface
 
             return new JsonResponse([
                 'shortUrls' => [
-                    'data' => $shortUrls,
-//                    'pagination' => [],
+                    'data' => ArrayUtils::iteratorToArray($shortUrls->getCurrentItems()),
+                    'pagination' => [
+                        'currentPage' => $shortUrls->getCurrentPageNumber(),
+                        'pagesCount' => $shortUrls->count(),
+                    ],
                 ]
             ]);
         } catch (\Exception $e) {

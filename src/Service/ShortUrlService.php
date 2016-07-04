@@ -2,6 +2,8 @@
 namespace Acelaya\UrlShortener\Service;
 
 use Acelaya\UrlShortener\Entity\ShortUrl;
+use Acelaya\UrlShortener\Paginator\Adapter\PaginableRepositoryAdapter;
+use Acelaya\UrlShortener\Repository\ShortUrlRepository;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
 use Zend\Paginator\Paginator;
@@ -25,10 +27,17 @@ class ShortUrlService implements ShortUrlServiceInterface
     }
 
     /**
+     * @param int $page
      * @return Paginator|ShortUrl[]
      */
-    public function listShortUrls()
+    public function listShortUrls($page = 1)
     {
-        return $this->em->getRepository(ShortUrl::class)->findAll();
+        /** @var ShortUrlRepository $repo */
+        $repo = $this->em->getRepository(ShortUrl::class);
+        $paginator = new Paginator(new PaginableRepositoryAdapter($repo));
+        $paginator->setItemCountPerPage(PaginableRepositoryAdapter::ITEMS_PER_PAGE)
+                  ->setCurrentPageNumber($page);
+
+        return $paginator;
     }
 }

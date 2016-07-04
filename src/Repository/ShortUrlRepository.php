@@ -3,6 +3,7 @@ namespace Acelaya\UrlShortener\Repository;
 
 use Acelaya\UrlShortener\Entity\ShortUrl;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryInterface
 {
@@ -38,5 +39,24 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Counts the number of elements in a list using provided filtering data
+     *
+     * @param null $searchTerm
+     * @return int
+     */
+    public function countList($searchTerm = null)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('COUNT(s)')
+           ->from(ShortUrl::class, 's');
+
+        if (isset($searchTerm)) {
+            // TODO
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 }

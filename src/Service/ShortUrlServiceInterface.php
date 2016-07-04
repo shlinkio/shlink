@@ -7,7 +7,8 @@ use Zend\Paginator\Paginator;
 interface ShortUrlServiceInterface
 {
     /**
-     * @return Paginator|ShortUrl[]
+     * @param int $page
+     * @return ShortUrl[]|Paginator
      */
-    public function listShortUrls();
+    public function listShortUrls($page = 1);
 }

@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author
  * @link
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Acelaya\UrlShortener\Repository\ShortUrlRepository")
  * @ORM\Table(name="short_urls")
  */
 class ShortUrl extends AbstractEntity implements \JsonSerializable
