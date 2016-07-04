@@ -52,6 +52,7 @@ return [
             Middleware\Rest\GetVisitsMiddleware::class => AnnotatedFactory::class,
             Middleware\Rest\ListShortcodesMiddleware::class => AnnotatedFactory::class,
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
+            Middleware\CheckAuthenticationMiddleware::class => AnnotatedFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,

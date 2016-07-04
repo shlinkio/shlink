@@ -84,4 +84,15 @@ class RestTokenService implements RestTokenServiceInterface
         // If credentials are not correct, throw exception
         throw AuthenticationException::fromCredentials($providedUsername, $providedPassword);
     }
+
+    /**
+     * Updates the expiration of provided token, extending its life
+     *
+     * @param RestToken $token
+     */
+    public function updateExpiration(RestToken $token)
+    {
+        $token->updateExpiration();
+        $this->em->flush();
+    }
 }

@@ -23,6 +23,7 @@ return [
         'rest' => [
             'path' => '/rest',
             'middleware' => [
+                Middleware\CheckAuthenticationMiddleware::class,
                 Middleware\CrossDomainMiddleware::class,
             ],
             'priority' => 5,

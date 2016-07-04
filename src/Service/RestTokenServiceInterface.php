@@ -22,4 +22,11 @@ interface RestTokenServiceInterface
      * @throws AuthenticationException
      */
     public function createToken($username, $password);
+
+    /**
+     * Updates the expiration of provided token, extending its life
+     *
+     * @param RestToken $token
+     */
+    public function updateExpiration(RestToken $token);
 }
