@@ -1,28 +1,12 @@
 <?php
-namespace Acelaya\UrlShortener\Middleware;
+namespace Acelaya\UrlShortener\Middleware\Rest;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Zend\Expressive\Router\RouteResult;
 use Zend\Stratigility\MiddlewareInterface;
 
-class CliParamsMiddleware implements MiddlewareInterface
+abstract class AbstractRestMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var array
-     */
-    private $argv;
-    /**
-     * @var
-     */
-    private $currentSapi;
-
-    public function __construct(array $argv, $currentSapi)
-    {
-        $this->argv = $argv;
-        $this->currentSapi = $currentSapi;
-    }
-
     /**
      * Process an incoming request and/or response.
      *
@@ -50,22 +34,18 @@ class CliParamsMiddleware implements MiddlewareInterface
      */
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
-        // When not in CLI, just call next middleware
-        if ($this->currentSapi !== 'cli') {
-            return $out($request, $response);
+        if (strtolower($request->getMethod()) === 'options') {
+            return $response;
         }
 
-        /** @var RouteResult $routeResult */
-        $routeResult = $request->getAttribute(RouteResult::class);
-        if (! $routeResult->isSuccess()) {
-            return $out($request, $response);
-        }
-
-        // Inject ARGV params as request attributes
-        if ($routeResult->getMatchedRouteName() === 'cli-generate-shortcode') {
-            $request = $request->withAttribute('longUrl', isset($this->argv[2]) ? $this->argv[2] : null);
-        }
-
-        return $out($request, $response);
+        return $this->dispatch($request, $response, $out);
     }
+
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @param callable|null $out
+     * @return null|Response
+     */
+    abstract protected function dispatch(Request $request, Response $response, callable $out = null);
 }

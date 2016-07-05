@@ -37,6 +37,8 @@ return [
             GuzzleHttp\Client::class => InvokableFactory::class,
             Service\UrlShortener::class => AnnotatedFactory::class,
             Service\VisitsTracker::class => AnnotatedFactory::class,
+            Service\ShortUrlService::class => AnnotatedFactory::class,
+            Service\RestTokenService::class => AnnotatedFactory::class,
             Cache::class => CacheFactory::class,
 
             // Cli commands
@@ -44,11 +46,19 @@ return [
 
             // Middleware
             Middleware\Routable\RedirectMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\AuthenticateMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\CreateShortcodeMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\ResolveUrlMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\GetVisitsMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\ListShortcodesMiddleware::class => AnnotatedFactory::class,
+            Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
+            Middleware\CheckAuthenticationMiddleware::class => AnnotatedFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,
             'httpClient' => GuzzleHttp\Client::class,
             Router\RouterInterface::class => Router\FastRouteRouter::class,
+            AnnotatedFactory::CACHE_SERVICE => Cache::class,
         ]
     ],
 

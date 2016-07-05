@@ -3,8 +3,11 @@ namespace Acelaya\UrlShortener\Service;
 
 use Acelaya\UrlShortener\Entity\ShortUrl;
 use Acelaya\UrlShortener\Entity\Visit;
+use Acelaya\UrlShortener\Exception\InvalidArgumentException;
+use Acelaya\UrlShortener\Exception\InvalidShortCodeException;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
+use Zend\Paginator\Paginator;
 
 class VisitsTracker implements VisitsTrackerInterface
 {
@@ -57,5 +60,28 @@ class VisitsTracker implements VisitsTrackerInterface
     protected function getArrayValue(array $array, $key, $default = null)
     {
         return isset($array[$key]) ? $array[$key] : $default;
+    }
+
+    /**
+     * Returns the visits on certain shortcode
+     *
+     * @param $shortCode
+     * @return Paginator|Visit[]
+     */
+    public function info($shortCode)
+    {
+        /** @var ShortUrl $shortUrl */
+        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
+            'shortCode' => $shortCode,
+        ]);
+        if (! isset($shortUrl)) {
+            throw new InvalidArgumentException(sprintf('Short code "%s" not found', $shortCode));
+        }
+
+        return $this->em->getRepository(Visit::class)->findBy([
+            'shortUrl' => $shortUrl,
+        ], [
+            'date' => 'DESC'
+        ]);
     }
 }
