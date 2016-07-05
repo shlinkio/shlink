@@ -43,6 +43,7 @@ return [
 
             // Cli commands
             CliCommands\GenerateShortcodeCommand::class => AnnotatedFactory::class,
+            CliCommands\ResolveUrlCommand::class => AnnotatedFactory::class,
 
             // Middleware
             Middleware\Routable\RedirectMiddleware::class => AnnotatedFactory::class,

@@ -41,7 +41,7 @@ class GenerateShortcodeCommand extends Command
 
     public function configure()
     {
-        $this->setName('generate-shortcode')
+        $this->setName('shortcode:generate')
              ->setDescription('Generates a shortcode for provided URL and returns the short URL')
              ->addArgument('longUrl', InputArgument::REQUIRED, 'The long URL to parse');
     }
