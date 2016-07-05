@@ -1,5 +1,5 @@
 <?php
-namespace Acelaya\UrlShortener\CliCommands;
+namespace Acelaya\UrlShortener\CLI\Command;
 
 use Acelaya\UrlShortener\Exception\InvalidShortCodeException;
 use Acelaya\UrlShortener\Service\UrlShortener;

@@ -1,5 +1,5 @@
 <?php
-use Acelaya\UrlShortener\CliCommands;
+use Acelaya\UrlShortener\CLI;
 use Acelaya\UrlShortener\Factory\CacheFactory;
 use Acelaya\UrlShortener\Factory\EntityManagerFactory;
 use Acelaya\UrlShortener\Middleware;
@@ -7,7 +7,8 @@ use Acelaya\UrlShortener\Service;
 use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManager;
-use Zend\Expressive\Application;
+use Symfony\Component\Console;
+use Zend\Expressive;
 use Zend\Expressive\Container;
 use Zend\Expressive\Helper;
 use Zend\Expressive\Router;
@@ -19,7 +20,8 @@ return [
 
     'services' => [
         'factories' => [
-            Application::class => Container\ApplicationFactory::class,
+            Expressive\Application::class => Container\ApplicationFactory::class,
+            Console\Application::class => CLI\Factory\ApplicationFactory::class,
 
             // Url helpers
             Helper\UrlHelper::class => Helper\UrlHelperFactory::class,
@@ -42,8 +44,8 @@ return [
             Cache::class => CacheFactory::class,
 
             // Cli commands
-            CliCommands\GenerateShortcodeCommand::class => AnnotatedFactory::class,
-            CliCommands\ResolveUrlCommand::class => AnnotatedFactory::class,
+            CLI\Command\GenerateShortcodeCommand::class => AnnotatedFactory::class,
+            CLI\Command\ResolveUrlCommand::class => AnnotatedFactory::class,
 
             // Middleware
             Middleware\Routable\RedirectMiddleware::class => AnnotatedFactory::class,

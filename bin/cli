@@ -1,16 +1,10 @@
 #!/usr/bin/env php
 <?php
-use Acelaya\UrlShortener\CliCommands\GenerateShortcodeCommand;
-use Acelaya\UrlShortener\CliCommands\ResolveUrlCommand;
 use Interop\Container\ContainerInterface;
 use Symfony\Component\Console\Application as CliApp;
 
 /** @var ContainerInterface $container */
 $container = include __DIR__ . '/../config/container.php';
 
-$app = new CliApp();
-$app->addCommands([
-    $container->get(GenerateShortcodeCommand::class),
-    $container->get(ResolveUrlCommand::class),
-]);
+$app = $container->get(CliApp::class);
 $app->run();
