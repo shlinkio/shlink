@@ -74,14 +74,15 @@ class CreateShortcodeMiddleware implements MiddlewareInterface
         $longUrl = $postData['longUrl'];
 
         try {
-            $shortcode = $this->urlShortener->urlToShortCode(new Uri($longUrl));
-            $shortUrl = (new Uri())->withPath($shortcode)
+            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl));
+            $shortUrl = (new Uri())->withPath($shortCode)
                                    ->withScheme($this->domainConfig['schema'])
                                    ->withHost($this->domainConfig['hostname']);
 
             return new JsonResponse([
                 'longUrl' => $longUrl,
                 'shortUrl' => $shortUrl->__toString(),
+                'shortCode' => $shortCode,
             ]);
         } catch (InvalidUrlException $e) {
             return new JsonResponse([

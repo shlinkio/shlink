@@ -17,7 +17,7 @@ return [
             'name' => 'rest-authenticate',
             'path' => '/rest/authenticate',
             'middleware' => Rest\AuthenticateMiddleware::class,
-            'allowed_methods' => ['POST'],
+            'allowed_methods' => ['POST', 'OPTIONS'],
         ],
         [
             'name' => 'rest-create-shortcode',

@@ -56,6 +56,10 @@ class AuthenticateMiddleware implements MiddlewareInterface
      */
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
+        if (strtolower($request->getMethod()) === 'options') {
+            return $response;
+        }
+
         $authData = $request->getParsedBody();
         if (! isset($authData['username'], $authData['password'])) {
             return new JsonResponse([
