@@ -23,13 +23,13 @@ return [
             'name' => 'rest-create-shortcode',
             'path' => '/rest/short-codes',
             'middleware' => Rest\CreateShortcodeMiddleware::class,
-            'allowed_methods' => ['POST'],
+            'allowed_methods' => ['POST', 'OPTIONS'],
         ],
         [
             'name' => 'rest-resolve-url',
             'path' => '/rest/short-codes/{shortCode}',
             'middleware' => Rest\ResolveUrlMiddleware::class,
-            'allowed_methods' => ['GET'],
+            'allowed_methods' => ['GET', 'OPTIONS'],
         ],
         [
             'name' => 'rest-list-shortened-url',
@@ -41,7 +41,7 @@ return [
             'name' => 'rest-get-visits',
             'path' => '/rest/visits/{shortCode}',
             'middleware' => Rest\GetVisitsMiddleware::class,
-            'allowed_methods' => ['GET'],
+            'allowed_methods' => ['GET', 'OPTIONS'],
         ],
     ],
 
