@@ -73,8 +73,6 @@ class ResolveUrlCommand extends Command
             $output->writeln(
                 sprintf('<error>Provided short code "%s" has an invalid format.</error>', $shortCode)
             );
-        } catch (\Exception $e) {
-            $output->writeln('<error>' . $e . '</error>');
         }
     }
 }

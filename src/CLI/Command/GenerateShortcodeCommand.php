@@ -88,8 +88,6 @@ class GenerateShortcodeCommand extends Command
             $output->writeln(
                 sprintf('<error>Provided URL "%s" is invalid. Try with a different one.</error>', $longUrl)
             );
-        } catch (\Exception $e) {
-            $output->writeln('<error>' . $e . '</error>');
         }
     }
 }
