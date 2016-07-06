@@ -1,5 +1,5 @@
 <?php
-namespace Acelaya\UrlShortener\CliCommands;
+namespace Acelaya\UrlShortener\CLI\Command;
 
 use Acelaya\UrlShortener\Exception\InvalidUrlException;
 use Acelaya\UrlShortener\Service\UrlShortener;
@@ -41,7 +41,7 @@ class GenerateShortcodeCommand extends Command
 
     public function configure()
     {
-        $this->setName('generate-shortcode')
+        $this->setName('shortcode:generate')
              ->setDescription('Generates a shortcode for provided URL and returns the short URL')
              ->addArgument('longUrl', InputArgument::REQUIRED, 'The long URL to parse');
     }
@@ -88,8 +88,6 @@ class GenerateShortcodeCommand extends Command
             $output->writeln(
                 sprintf('<error>Provided URL "%s" is invalid. Try with a different one.</error>', $longUrl)
             );
-        } catch (\Exception $e) {
-            $output->writeln('<error>' . $e . '</error>');
         }
     }
 }
