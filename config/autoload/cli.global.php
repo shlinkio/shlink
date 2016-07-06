@@ -7,6 +7,7 @@ return [
         'commands' => [
             Command\GenerateShortcodeCommand::class,
             Command\ResolveUrlCommand::class,
+            Command\ListShortcodesCommand::class,
         ]
     ],
 
