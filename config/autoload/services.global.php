@@ -1,4 +1,5 @@
 <?php
+use Acelaya\UrlShortener\CLI;
 use Acelaya\UrlShortener\Factory\CacheFactory;
 use Acelaya\UrlShortener\Factory\EntityManagerFactory;
 use Acelaya\UrlShortener\Middleware;
@@ -6,7 +7,8 @@ use Acelaya\UrlShortener\Service;
 use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManager;
-use Zend\Expressive\Application;
+use Symfony\Component\Console;
+use Zend\Expressive;
 use Zend\Expressive\Container;
 use Zend\Expressive\Helper;
 use Zend\Expressive\Router;
@@ -18,7 +20,8 @@ return [
 
     'services' => [
         'factories' => [
-            Application::class => Container\ApplicationFactory::class,
+            Expressive\Application::class => Container\ApplicationFactory::class,
+            Console\Application::class => CLI\Factory\ApplicationFactory::class,
 
             // Url helpers
             Helper\UrlHelper::class => Helper\UrlHelperFactory::class,
@@ -36,17 +39,31 @@ return [
             GuzzleHttp\Client::class => InvokableFactory::class,
             Service\UrlShortener::class => AnnotatedFactory::class,
             Service\VisitsTracker::class => AnnotatedFactory::class,
+            Service\ShortUrlService::class => AnnotatedFactory::class,
+            Service\RestTokenService::class => AnnotatedFactory::class,
             Cache::class => CacheFactory::class,
 
+            // Cli commands
+            CLI\Command\GenerateShortcodeCommand::class => AnnotatedFactory::class,
+            CLI\Command\ResolveUrlCommand::class => AnnotatedFactory::class,
+            CLI\Command\ListShortcodesCommand::class => AnnotatedFactory::class,
+            CLI\Command\GetVisitsCommand::class => AnnotatedFactory::class,
+
             // Middleware
-            Middleware\CliRoutable\GenerateShortcodeMiddleware::class => AnnotatedFactory::class,
             Middleware\Routable\RedirectMiddleware::class => AnnotatedFactory::class,
-            Middleware\CliParamsMiddleware::class => Middleware\Factory\CliParamsMiddlewareFactory::class,
+            Middleware\Rest\AuthenticateMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\CreateShortcodeMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\ResolveUrlMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\GetVisitsMiddleware::class => AnnotatedFactory::class,
+            Middleware\Rest\ListShortcodesMiddleware::class => AnnotatedFactory::class,
+            Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
+            Middleware\CheckAuthenticationMiddleware::class => AnnotatedFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,
             'httpClient' => GuzzleHttp\Client::class,
             Router\RouterInterface::class => Router\FastRouteRouter::class,
+            AnnotatedFactory::CACHE_SERVICE => Cache::class,
         ]
     ],
 

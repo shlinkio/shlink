@@ -1,17 +1,10 @@
 #!/usr/bin/env php
 <?php
 use Interop\Container\ContainerInterface;
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\Uri;
-use Zend\Expressive\Application;
+use Symfony\Component\Console\Application as CliApp;
 
 /** @var ContainerInterface $container */
 $container = include __DIR__ . '/../config/container.php';
-/** @var Application $app */
-$app = $container->get(Application::class);
 
-$command = count($_SERVER['argv']) > 1 ? $_SERVER['argv'][1] : '';
-$request = ServerRequestFactory::fromGlobals()
-                                ->withMethod('CLI')
-                                ->withUri(new Uri(sprintf('/%s', $command)));
-$app->run($request);
+$app = $container->get(CliApp::class);
+$app->run();

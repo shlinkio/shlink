@@ -1,5 +1,5 @@
 <?php
-use Acelaya\UrlShortener\Middleware\CliParamsMiddleware;
+use Acelaya\UrlShortener\Middleware;
 use Zend\Expressive\Container\ApplicationFactory;
 use Zend\Expressive\Helper;
 
@@ -16,7 +16,21 @@ return [
         'routing' => [
             'middleware' => [
                 ApplicationFactory::ROUTING_MIDDLEWARE,
-                CliParamsMiddleware::class,
+            ],
+            'priority' => 10,
+        ],
+
+        'rest' => [
+            'path' => '/rest',
+            'middleware' => [
+                Middleware\CheckAuthenticationMiddleware::class,
+                Middleware\CrossDomainMiddleware::class,
+            ],
+            'priority' => 5,
+        ],
+
+        'post-routing' => [
+            'middleware' => [
                 Helper\UrlHelperMiddleware::class,
                 ApplicationFactory::DISPATCH_MIDDLEWARE,
             ],

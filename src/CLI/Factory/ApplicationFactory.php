@@ -1,14 +1,14 @@
 <?php
-namespace Acelaya\UrlShortener\Middleware\Factory;
+namespace Acelaya\UrlShortener\CLI\Factory;
 
-use Acelaya\UrlShortener\Middleware\CliParamsMiddleware;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
+use Symfony\Component\Console\Application as CliApp;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class CliParamsMiddlewareFactory implements FactoryInterface
+class ApplicationFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -24,9 +24,18 @@ class CliParamsMiddlewareFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new CliParamsMiddleware(
-            isset($_SERVER['argv']) ? $_SERVER['argv'] : [],
-            php_sapi_name()
-        );
+        $config = $container->get('config')['cli'];
+        $app = new CliApp();
+
+        $commands = isset($config['commands']) ? $config['commands'] : [];
+        foreach ($commands as $command) {
+            if (! $container->has($command)) {
+                continue;
+            }
+
+            $app->add($container->get($command));
+        }
+
+        return $app;
     }
 }
