@@ -2,19 +2,22 @@
 namespace Acelaya\UrlShortener\CLI\Command;
 
 use Acelaya\UrlShortener\Paginator\Adapter\PaginableRepositoryAdapter;
+use Acelaya\UrlShortener\Paginator\Util\PaginatorUtilsTrait;
 use Acelaya\UrlShortener\Service\ShortUrlService;
 use Acelaya\UrlShortener\Service\ShortUrlServiceInterface;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class ListShortcodesCommand extends Command
 {
+    use PaginatorUtilsTrait;
+
     /**
      * @var ShortUrlServiceInterface
      */
@@ -36,9 +39,10 @@ class ListShortcodesCommand extends Command
     {
         $this->setName('shortcode:list')
              ->setDescription('List all short URLs')
-             ->addArgument(
+             ->addOption(
                  'page',
-                 InputArgument::OPTIONAL,
+                 'p',
+                 InputOption::VALUE_OPTIONAL,
                  sprintf('The first page to list (%s items per page)', PaginableRepositoryAdapter::ITEMS_PER_PAGE),
                  1
              );
@@ -46,7 +50,7 @@ class ListShortcodesCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $page = intval($input->getArgument('page'));
+        $page = intval($input->getOption('page'));
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
@@ -66,7 +70,15 @@ class ListShortcodesCommand extends Command
             }
             $table->render();
 
-            $question = new ConfirmationQuestion('<question>Continue with next page? (y/N)</question> ', false);
-        } while ($helper->ask($input, $output, $question));
+            if ($this->isLastPage($result)) {
+                $continue = false;
+                $output->writeln('<info>You have reached last page</info>');
+            } else {
+                $continue = $helper->ask($input, $output, new ConfirmationQuestion(
+                    sprintf('<question>Continue with page <bg=cyan;options=bold>%s</>? (y/N)</question> ', $page),
+                    false
+                ));
+            }
+        } while ($continue);
     }
 }

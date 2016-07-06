@@ -4,7 +4,7 @@ namespace Acelaya\UrlShortener\Paginator\Util;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\ArrayUtils;
 
-trait PaginatorSerializerTrait
+trait PaginatorUtilsTrait
 {
     protected function serializePaginator(Paginator $paginator)
     {
@@ -15,5 +15,16 @@ trait PaginatorSerializerTrait
                 'pagesCount' => $paginator->count(),
             ],
         ];
+    }
+
+    /**
+     * Checks if provided paginator is in last page
+     *
+     * @param Paginator $paginator
+     * @return bool
+     */
+    protected function isLastPage(Paginator $paginator)
+    {
+        return $paginator->getCurrentPageNumber() >= $paginator->count();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 namespace Acelaya\UrlShortener\Middleware\Rest;
 
-use Acelaya\UrlShortener\Paginator\Util\PaginatorSerializerTrait;
+use Acelaya\UrlShortener\Paginator\Util\PaginatorUtilsTrait;
 use Acelaya\UrlShortener\Service\ShortUrlService;
 use Acelaya\UrlShortener\Service\ShortUrlServiceInterface;
 use Acelaya\UrlShortener\Util\RestUtils;
@@ -13,7 +13,7 @@ use Zend\Stdlib\ArrayUtils;
 
 class ListShortcodesMiddleware extends AbstractRestMiddleware
 {
-    use PaginatorSerializerTrait;
+    use PaginatorUtilsTrait;
 
     /**
      * @var ShortUrlServiceInterface
