@@ -1,5 +1,4 @@
 <?php
-use Acelaya\UrlShortener\Middleware;
 use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManager;
