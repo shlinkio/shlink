@@ -16,8 +16,7 @@
     </rule>
 
     <!-- Paths to check -->
-    <file>src</file>
-    <file>tests</file>
+    <file>module</file>
     <file>config</file>
     <file>public/index.php</file>
 </ruleset>

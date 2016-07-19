@@ -1,5 +1,5 @@
 <?php
-use Acelaya\UrlShortener\CLI\Command;
+use Shlinkio\Shlink\CLI\Command;
 
 return [
 

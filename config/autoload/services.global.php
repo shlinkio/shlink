@@ -1,5 +1,5 @@
 <?php
-use Acelaya\UrlShortener\CLI;
+use Shlinkio\Shlink\CLI;
 use Acelaya\UrlShortener\Factory\CacheFactory;
 use Acelaya\UrlShortener\Factory\EntityManagerFactory;
 use Acelaya\UrlShortener\Middleware;

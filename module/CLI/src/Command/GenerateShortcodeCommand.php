@@ -1,5 +1,5 @@
 <?php
-namespace Acelaya\UrlShortener\CLI\Command;
+namespace Shlinkio\Shlink\CLI\Command;
 
 use Acelaya\UrlShortener\Exception\InvalidUrlException;
 use Acelaya\UrlShortener\Service\UrlShortener;

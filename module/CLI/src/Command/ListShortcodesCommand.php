@@ -1,5 +1,5 @@
 <?php
-namespace Acelaya\UrlShortener\CLI\Command;
+namespace Shlinkio\Shlink\CLI\Command;
 
 use Acelaya\UrlShortener\Paginator\Adapter\PaginableRepositoryAdapter;
 use Acelaya\UrlShortener\Paginator\Util\PaginatorUtilsTrait;

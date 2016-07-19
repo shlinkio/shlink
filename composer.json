@@ -2,6 +2,7 @@
     "name": "shlinkio/shlink",
     "type": "project",
     "homepage": "http://shlink.io",
+    "description": "A PHP-based URL shortener application with analytics and management",
     "license": "MIT",
     "authors": [
         {
@@ -36,12 +37,18 @@
     },
     "autoload": {
         "psr-4": {
-            "Acelaya\\UrlShortener\\": "src"
+            "Acelaya\\UrlShortener\\": "src",
+            "Shlinkio\\Shlink\\CLI\\": "module/CLI/src",
+            "Shlinkio\\Shlink\\Rest\\": "module/Rest/src",
+            "Shlinkio\\Shlink\\Core\\": "module/Core/src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "AcelayaTest\\UrlShortener\\": "tests"
+            "AcelayaTest\\UrlShortener\\": "tests",
+            "ShlinkioTest\\Shlink\\CLI\\": "module/CLI/test",
+            "ShlinkioTest\\Shlink\\Rest\\": "module/Rest/test",
+            "ShlinkioTest\\Shlink\\Core\\": "module/Core/test"
         }
     },
     "scripts": {

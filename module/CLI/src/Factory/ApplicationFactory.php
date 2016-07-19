@@ -1,5 +1,5 @@
 <?php
-namespace Acelaya\UrlShortener\CLI\Factory;
+namespace Shlinkio\Shlink\CLI\Factory;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;

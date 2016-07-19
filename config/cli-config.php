@@ -4,7 +4,7 @@ use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Interop\Container\ContainerInterface;
 
 /** @var ContainerInterface $container */
-$container = include __DIR__ . '/config/container.php';
+$container = include __DIR__ . '/container.php';
 /** @var EntityManager $em */
 $em = $container->get(EntityManager::class);
 
