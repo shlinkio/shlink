@@ -16,7 +16,10 @@
 
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src</directory>
+            <directory suffix=".php">./module/Common/src</directory>
+            <directory suffix=".php">./module/Core/src</directory>
+            <directory suffix=".php">./module/Rest/src</directory>
+            <directory suffix=".php">./module/CLI/src</directory>
         </whitelist>
     </filter>
 </phpunit>

@@ -15,14 +15,10 @@ use Zend\Expressive\ConfigManager\ZendConfigProvider;
  * Obviously, if you use closures in your config you can't cache it.
  */
 
-return call_user_func(function () {
-    $configManager = new ConfigManager([
-        Common\ConfigProvider::class,
-        Core\ConfigProvider::class,
-        CLI\ConfigProvider::class,
-        Rest\ConfigProvider::class,
-        new ZendConfigProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
-    ], 'data/cache/app_config.php');
-
-    return $configManager->getMergedConfig();
-});
+return (new ConfigManager([
+    Common\ConfigProvider::class,
+    Core\ConfigProvider::class,
+    CLI\ConfigProvider::class,
+    Rest\ConfigProvider::class,
+    new ZendConfigProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
+], 'data/cache/app_config.php'))->getMergedConfig();
