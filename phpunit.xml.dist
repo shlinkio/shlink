@@ -6,6 +6,9 @@
         <testsuite name="Core">
             <directory>./module/Core/test</directory>
         </testsuite>
+        <testsuite name="Rest">
+            <directory>./module/Rest/test</directory>
+        </testsuite>
     </testsuites>
 
     <filter>
