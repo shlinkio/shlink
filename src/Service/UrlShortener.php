@@ -44,7 +44,7 @@ class UrlShortener implements UrlShortenerInterface
     ) {
         $this->httpClient = $httpClient;
         $this->em = $em;
-        $this->chars = $chars;
+        $this->chars = empty($chars) ? self::DEFAULT_CHARS : $chars;
     }
 
     /**
