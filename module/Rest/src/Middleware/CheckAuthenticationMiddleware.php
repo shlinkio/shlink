@@ -63,7 +63,7 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface
         /** @var RouteResult $routeResult */
         $routeResult = $request->getAttribute(RouteResult::class);
         if ((isset($routeResult) && $routeResult->getMatchedRouteName() === 'rest-authenticate')
-            || strtolower($request->getMethod()) === 'options'
+            || $request->getMethod() === 'OPTIONS'
         ) {
             return $out($request, $response);
         }

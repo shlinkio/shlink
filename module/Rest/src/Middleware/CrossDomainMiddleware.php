@@ -36,17 +36,26 @@ class CrossDomainMiddleware implements MiddlewareInterface
     {
         /** @var Response $response */
         $response = $out($request, $response);
-
-        if (strtolower($request->getMethod()) === 'options') {
-            $response = $response->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-                                 ->withHeader('Access-Control-Max-Age', '1000')
-                                 ->withHeader(
-                                     // Allow all requested headers
-                                     'Access-Control-Allow-Headers',
-                                     $request->getHeaderLine('Access-Control-Request-Headers')
-                                 );
+        if (! $request->hasHeader('Origin')) {
+            return $response;
         }
 
-        return $response->withHeader('Access-Control-Allow-Origin', '*');
+        // Add Allow-Origin header
+        $response = $response->withHeader('Access-Control-Allow-Origin', '*');
+        if ($request->getMethod() !== 'OPTIONS') {
+            return $response;
+        }
+
+        // Add OPTIONS-specific headers
+        $headers = [
+            'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS', // TODO Should be based on path
+            'Access-Control-Max-Age' => '1000',
+            'Access-Control-Allow-Headers' => $request->getHeaderLine('Access-Control-Request-Headers'),
+        ];
+        foreach ($headers as $key => $value) {
+            $response = $response->withHeader($key, $value);
+        }
+
+        return $response;
     }
 }

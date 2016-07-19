@@ -34,7 +34,7 @@ abstract class AbstractRestMiddleware implements MiddlewareInterface
      */
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
-        if (strtolower($request->getMethod()) === 'options') {
+        if ($request->getMethod() === 'OPTIONS') {
             return $response;
         }
 

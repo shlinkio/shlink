@@ -21,15 +21,37 @@ class CrossDomainMiddlewareTest extends TestCase
     /**
      * @test
      */
-    public function anyRequestIncludesTheAllowAccessHeader()
+    public function nonCrossDomainRequestsAreNotAffected()
     {
+        $originalResponse = new Response();
         $response = $this->middleware->__invoke(
             ServerRequestFactory::fromGlobals(),
-            new Response(),
+            $originalResponse,
             function ($req, $resp) {
                 return $resp;
             }
         );
+        $this->assertSame($originalResponse, $response);
+
+        $headers = $response->getHeaders();
+        $this->assertArrayNotHasKey('Access-Control-Allow-Origin', $headers);
+        $this->assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
+    }
+
+    /**
+     * @test
+     */
+    public function anyRequestIncludesTheAllowAccessHeader()
+    {
+        $originalResponse = new Response();
+        $response = $this->middleware->__invoke(
+            ServerRequestFactory::fromGlobals()->withHeader('Origin', 'local'),
+            $originalResponse,
+            function ($req, $resp) {
+                return $resp;
+            }
+        );
+        $this->assertNotSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
         $this->assertArrayHasKey('Access-Control-Allow-Origin', $headers);
@@ -41,11 +63,13 @@ class CrossDomainMiddlewareTest extends TestCase
      */
     public function optionsRequestIncludesMoreHeaders()
     {
-        $request = ServerRequestFactory::fromGlobals(['REQUEST_METHOD' => 'OPTIONS']);
+        $originalResponse = new Response();
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_METHOD' => 'OPTIONS'])->withHeader('Origin', 'local');
 
-        $response = $this->middleware->__invoke($request, new Response(), function ($req, $resp) {
+        $response = $this->middleware->__invoke($request, $originalResponse, function ($req, $resp) {
             return $resp;
         });
+        $this->assertNotSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
         $this->assertArrayHasKey('Access-Control-Allow-Origin', $headers);
