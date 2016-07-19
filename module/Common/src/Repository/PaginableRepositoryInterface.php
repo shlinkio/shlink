@@ -1,5 +1,5 @@
 <?php
-namespace Acelaya\UrlShortener\Repository;
+namespace Shlinkio\Shlink\Common\Repository;
 
 interface PaginableRepositoryInterface
 {

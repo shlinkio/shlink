@@ -1,8 +1,8 @@
 <?php
 namespace Acelaya\UrlShortener\Entity;
 
-use Acelaya\UrlShortener\Util\StringUtilsTrait;
 use Doctrine\ORM\Mapping as ORM;
+use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 
 /**
  * Class RestToken

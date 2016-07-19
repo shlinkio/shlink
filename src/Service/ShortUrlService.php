@@ -2,10 +2,10 @@
 namespace Acelaya\UrlShortener\Service;
 
 use Acelaya\UrlShortener\Entity\ShortUrl;
-use Acelaya\UrlShortener\Paginator\Adapter\PaginableRepositoryAdapter;
 use Acelaya\UrlShortener\Repository\ShortUrlRepository;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
+use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Zend\Paginator\Paginator;
 
 class ShortUrlService implements ShortUrlServiceInterface

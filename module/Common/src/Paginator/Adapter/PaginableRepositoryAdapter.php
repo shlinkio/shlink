@@ -1,7 +1,7 @@
 <?php
-namespace Acelaya\UrlShortener\Paginator\Adapter;
+namespace Shlinkio\Shlink\Common\Paginator\Adapter;
 
-use Acelaya\UrlShortener\Repository\PaginableRepositoryInterface;
+use Shlinkio\Shlink\Common\Repository\PaginableRepositoryInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
 class PaginableRepositoryAdapter implements AdapterInterface

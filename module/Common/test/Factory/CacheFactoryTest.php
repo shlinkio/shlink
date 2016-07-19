@@ -1,10 +1,10 @@
 <?php
-namespace AcelayaTest\UrlShortener\Factory;
+namespace ShlinkioTest\Shlink\Common\Factory;
 
-use Acelaya\UrlShortener\Factory\CacheFactory;
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase as TestCase;
+use Shlinkio\Shlink\Common\Factory\CacheFactory;
 use Zend\ServiceManager\ServiceManager;
 
 class CacheFactoryTest extends TestCase

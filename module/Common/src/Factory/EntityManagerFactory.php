@@ -1,5 +1,5 @@
 <?php
-namespace Acelaya\UrlShortener\Factory;
+namespace Shlinkio\Shlink\Common\Factory;
 
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;

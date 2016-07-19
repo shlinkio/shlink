@@ -1,5 +1,5 @@
 <?php
-namespace Acelaya\UrlShortener\Paginator\Util;
+namespace Shlinkio\Shlink\Common\Paginator\Util;
 
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\ArrayUtils;

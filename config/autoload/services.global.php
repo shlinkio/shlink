@@ -1,11 +1,7 @@
 <?php
-use Acelaya\UrlShortener\Factory\CacheFactory;
-use Acelaya\UrlShortener\Factory\EntityManagerFactory;
 use Acelaya\UrlShortener\Middleware;
 use Acelaya\UrlShortener\Service;
 use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
-use Doctrine\Common\Cache\Cache;
-use Doctrine\ORM\EntityManager;
 use Zend\Expressive;
 use Zend\Expressive\Container;
 use Zend\Expressive\Helper;
@@ -32,21 +28,15 @@ return [
             Template\TemplateRendererInterface::class => Twig\TwigRendererFactory::class,
 
             // Services
-            EntityManager::class => EntityManagerFactory::class,
-            GuzzleHttp\Client::class => InvokableFactory::class,
             Service\UrlShortener::class => AnnotatedFactory::class,
             Service\VisitsTracker::class => AnnotatedFactory::class,
             Service\ShortUrlService::class => AnnotatedFactory::class,
-            Cache::class => CacheFactory::class,
 
             // Middleware
             Middleware\Routable\RedirectMiddleware::class => AnnotatedFactory::class,
         ],
         'aliases' => [
-            'em' => EntityManager::class,
-            'httpClient' => GuzzleHttp\Client::class,
             Router\RouterInterface::class => Router\FastRouteRouter::class,
-            AnnotatedFactory::CACHE_SERVICE => Cache::class,
         ],
     ],
 
