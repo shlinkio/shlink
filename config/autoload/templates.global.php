@@ -2,12 +2,6 @@
 
 return [
 
-    'templates' => [
-        'paths' => [
-            'templates'
-        ],
-    ],
-
     'twig' => [
         'cache_dir'  => 'data/cache/twig',
         'extensions' => [
