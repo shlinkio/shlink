@@ -1,13 +1,13 @@
 <?php
-namespace Acelaya\UrlShortener\Middleware;
+namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Acelaya\UrlShortener\Exception\InvalidArgumentException;
-use Acelaya\UrlShortener\Service\RestTokenService;
-use Acelaya\UrlShortener\Service\RestTokenServiceInterface;
-use Acelaya\UrlShortener\Util\RestUtils;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Shlinkio\Shlink\Rest\Service\RestTokenService;
+use Shlinkio\Shlink\Rest\Service\RestTokenServiceInterface;
+use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouteResult;
 use Zend\Stratigility\MiddlewareInterface;

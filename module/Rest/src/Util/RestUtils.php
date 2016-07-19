@@ -1,5 +1,5 @@
 <?php
-namespace Acelaya\UrlShortener\Util;
+namespace Shlinkio\Shlink\Rest\Util;
 
 use Acelaya\UrlShortener\Exception;
 

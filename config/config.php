@@ -1,5 +1,6 @@
 <?php
 use Shlinkio\Shlink\CLI;
+use Shlinkio\Shlink\Rest;
 use Zend\Expressive\ConfigManager\ConfigManager;
 use Zend\Expressive\ConfigManager\ZendConfigProvider;
 
@@ -14,7 +15,8 @@ use Zend\Expressive\ConfigManager\ZendConfigProvider;
 
 return call_user_func(function () {
     $configManager = new ConfigManager([
-        CLI\Config\ConfigProvider::class,
+        CLI\ConfigProvider::class,
+        Rest\ConfigProvider::class,
         new ZendConfigProvider('config/autoload/{{,*.}global,{,*.}local}.php')
     ], 'data/cache/app_config.php');
 

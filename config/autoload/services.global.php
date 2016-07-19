@@ -51,13 +51,6 @@ return [
 
             // Middleware
             Middleware\Routable\RedirectMiddleware::class => AnnotatedFactory::class,
-            Middleware\Rest\AuthenticateMiddleware::class => AnnotatedFactory::class,
-            Middleware\Rest\CreateShortcodeMiddleware::class => AnnotatedFactory::class,
-            Middleware\Rest\ResolveUrlMiddleware::class => AnnotatedFactory::class,
-            Middleware\Rest\GetVisitsMiddleware::class => AnnotatedFactory::class,
-            Middleware\Rest\ListShortcodesMiddleware::class => AnnotatedFactory::class,
-            Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
-            Middleware\CheckAuthenticationMiddleware::class => AnnotatedFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,

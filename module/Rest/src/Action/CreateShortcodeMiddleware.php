@@ -1,13 +1,13 @@
 <?php
-namespace Acelaya\UrlShortener\Middleware\Rest;
+namespace Shlinkio\Shlink\Rest\Action;
 
 use Acelaya\UrlShortener\Exception\InvalidUrlException;
 use Acelaya\UrlShortener\Service\UrlShortener;
 use Acelaya\UrlShortener\Service\UrlShortenerInterface;
-use Acelaya\UrlShortener\Util\RestUtils;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Uri;
 

@@ -1,13 +1,13 @@
 <?php
-namespace Acelaya\UrlShortener\Middleware\Rest;
+namespace Shlinkio\Shlink\Rest\Action;
 
 use Acelaya\UrlShortener\Exception\InvalidArgumentException;
 use Acelaya\UrlShortener\Service\VisitsTracker;
 use Acelaya\UrlShortener\Service\VisitsTrackerInterface;
-use Acelaya\UrlShortener\Util\RestUtils;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 
 class GetVisitsMiddleware extends AbstractRestMiddleware

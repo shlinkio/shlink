@@ -1,5 +1,5 @@
 <?php
-namespace Acelaya\UrlShortener\Service;
+namespace Shlinkio\Shlink\Rest\Service;
 
 use Acelaya\UrlShortener\Entity\RestToken;
 use Acelaya\UrlShortener\Exception\AuthenticationException;

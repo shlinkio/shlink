@@ -1,5 +1,4 @@
 <?php
-use Acelaya\UrlShortener\Middleware;
 use Zend\Expressive\Container\ApplicationFactory;
 use Zend\Expressive\Helper;
 
@@ -18,15 +17,6 @@ return [
                 ApplicationFactory::ROUTING_MIDDLEWARE,
             ],
             'priority' => 10,
-        ],
-
-        'rest' => [
-            'path' => '/rest',
-            'middleware' => [
-                Middleware\CheckAuthenticationMiddleware::class,
-                Middleware\CrossDomainMiddleware::class,
-            ],
-            'priority' => 5,
         ],
 
         'post-routing' => [
