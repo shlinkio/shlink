@@ -9,6 +9,9 @@
         <testsuite name="Rest">
             <directory>./module/Rest/test</directory>
         </testsuite>
+        <testsuite name="CLI">
+            <directory>./module/CLI/test</directory>
+        </testsuite>
     </testsuites>
 
     <filter>
