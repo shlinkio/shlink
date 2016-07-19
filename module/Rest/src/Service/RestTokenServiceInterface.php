@@ -2,8 +2,8 @@
 namespace Shlinkio\Shlink\Rest\Service;
 
 use Acelaya\UrlShortener\Entity\RestToken;
-use Acelaya\UrlShortener\Exception\AuthenticationException;
 use Acelaya\UrlShortener\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 
 interface RestTokenServiceInterface
 {

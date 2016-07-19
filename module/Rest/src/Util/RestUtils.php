@@ -1,7 +1,8 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Util;
 
-use Acelaya\UrlShortener\Exception;
+use Acelaya\UrlShortener\Exception as Core;
+use Shlinkio\Shlink\Rest\Exception as Rest;
 
 class RestUtils
 {
@@ -12,16 +13,16 @@ class RestUtils
     const INVALID_AUTH_TOKEN_ERROR = 'INVALID_AUTH_TOKEN_ERROR';
     const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
 
-    public static function getRestErrorCodeFromException(Exception\ExceptionInterface $e)
+    public static function getRestErrorCodeFromException(Core\ExceptionInterface $e)
     {
         switch (true) {
-            case $e instanceof Exception\InvalidShortCodeException:
+            case $e instanceof Core\InvalidShortCodeException:
                 return self::INVALID_SHORTCODE_ERROR;
-            case $e instanceof Exception\InvalidUrlException:
+            case $e instanceof Core\InvalidUrlException:
                 return self::INVALID_URL_ERROR;
-            case $e instanceof Exception\InvalidArgumentException:
+            case $e instanceof Core\InvalidArgumentException:
                 return self::INVALID_ARGUMENT_ERROR;
-            case $e instanceof Exception\AuthenticationException:
+            case $e instanceof Rest\AuthenticationException:
                 return self::INVALID_CREDENTIALS_ERROR;
             default:
                 return self::UNKNOWN_ERROR;

@@ -2,10 +2,10 @@
 namespace Shlinkio\Shlink\Rest\Service;
 
 use Acelaya\UrlShortener\Entity\RestToken;
-use Acelaya\UrlShortener\Exception\AuthenticationException;
 use Acelaya\UrlShortener\Exception\InvalidArgumentException;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
+use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 
 class RestTokenService implements RestTokenServiceInterface
 {

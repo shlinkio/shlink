@@ -1,10 +1,10 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Acelaya\UrlShortener\Exception\AuthenticationException;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 use Shlinkio\Shlink\Rest\Service\RestTokenService;
 use Shlinkio\Shlink\Rest\Service\RestTokenServiceInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
