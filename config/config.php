@@ -17,11 +17,11 @@ use Zend\Expressive\ConfigManager\ZendConfigProvider;
 
 return call_user_func(function () {
     $configManager = new ConfigManager([
-        new ZendConfigProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
         Common\ConfigProvider::class,
         Core\ConfigProvider::class,
         CLI\ConfigProvider::class,
         Rest\ConfigProvider::class,
+        new ZendConfigProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
     ], 'data/cache/app_config.php');
 
     return $configManager->getMergedConfig();
