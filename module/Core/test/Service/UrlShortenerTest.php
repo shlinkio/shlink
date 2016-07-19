@@ -65,7 +65,7 @@ class UrlShortenerTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Acelaya\UrlShortener\Exception\RuntimeException
+     * @expectedException \Shlinkio\Shlink\Core\Exception\RuntimeException
      */
     public function exceptionIsThrownWhenOrmThrowsException()
     {
@@ -81,7 +81,7 @@ class UrlShortenerTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Acelaya\UrlShortener\Exception\InvalidUrlException
+     * @expectedException \Shlinkio\Shlink\Core\Exception\InvalidUrlException
      */
     public function exceptionIsThrownWhenUrlDoesNotExist()
     {
@@ -126,7 +126,7 @@ class UrlShortenerTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Acelaya\UrlShortener\Exception\InvalidShortCodeException
+     * @expectedException \Shlinkio\Shlink\Core\Exception\InvalidShortCodeException
      */
     public function invalidCharSetThrowsException()
     {

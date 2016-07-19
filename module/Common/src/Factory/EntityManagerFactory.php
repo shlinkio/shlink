@@ -33,7 +33,7 @@ class EntityManagerFactory implements FactoryInterface
         $dbConfig = isset($globalConfig['database']) ? $globalConfig['database'] : [];
 
         return EntityManager::create($dbConfig, Setup::createAnnotationMetadataConfiguration(
-            ['src/Entity'],
+            ['module/Core/src/Entity'],
             $isDevMode,
             'data/proxies',
             $cache,
