@@ -1,9 +1,9 @@
 <?php
 namespace Shlinkio\Shlink\CLI\Command;
 
-use Acelaya\UrlShortener\Service\VisitsTracker;
-use Acelaya\UrlShortener\Service\VisitsTrackerInterface;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
+use Shlinkio\Shlink\Core\Service\VisitsTracker;
+use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\Table;

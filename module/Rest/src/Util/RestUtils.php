@@ -1,7 +1,7 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Util;
 
-use Acelaya\UrlShortener\Exception as Core;
+use Shlinkio\Shlink\Core\Exception as Core;
 use Shlinkio\Shlink\Rest\Exception as Rest;
 
 class RestUtils

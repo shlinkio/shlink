@@ -1,10 +1,10 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Middleware;
 
-use Acelaya\UrlShortener\Exception\InvalidArgumentException;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Service\RestTokenService;
 use Shlinkio\Shlink\Rest\Service\RestTokenServiceInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;

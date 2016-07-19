@@ -1,16 +1,15 @@
 <?php
 namespace Shlinkio\Shlink\CLI\Command;
 
-use Acelaya\UrlShortener\Exception\InvalidUrlException;
-use Acelaya\UrlShortener\Service\UrlShortener;
-use Acelaya\UrlShortener\Service\UrlShortenerInterface;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
+use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
+use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Zend\Diactoros\Uri;
 

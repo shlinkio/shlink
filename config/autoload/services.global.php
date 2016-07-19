@@ -1,7 +1,4 @@
 <?php
-use Acelaya\UrlShortener\Middleware;
-use Acelaya\UrlShortener\Service;
-use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
 use Zend\Expressive;
 use Zend\Expressive\Container;
 use Zend\Expressive\Helper;
@@ -26,14 +23,6 @@ return [
             // View
             'Zend\Expressive\FinalHandler' => Container\TemplatedErrorHandlerFactory::class,
             Template\TemplateRendererInterface::class => Twig\TwigRendererFactory::class,
-
-            // Services
-            Service\UrlShortener::class => AnnotatedFactory::class,
-            Service\VisitsTracker::class => AnnotatedFactory::class,
-            Service\ShortUrlService::class => AnnotatedFactory::class,
-
-            // Middleware
-            Middleware\Routable\RedirectMiddleware::class => AnnotatedFactory::class,
         ],
         'aliases' => [
             Router\RouterInterface::class => Router\FastRouteRouter::class,

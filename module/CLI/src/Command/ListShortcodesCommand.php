@@ -1,11 +1,11 @@
 <?php
 namespace Shlinkio\Shlink\CLI\Command;
 
-use Acelaya\UrlShortener\Service\ShortUrlService;
-use Acelaya\UrlShortener\Service\ShortUrlServiceInterface;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
+use Shlinkio\Shlink\Core\Service\ShortUrlService;
+use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\Table;

@@ -1,12 +1,12 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Acelaya\UrlShortener\Service\ShortUrlService;
-use Acelaya\UrlShortener\Service\ShortUrlServiceInterface;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
+use Shlinkio\Shlink\Core\Service\ShortUrlService;
+use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 
