@@ -1,7 +1,8 @@
 {
-    "name": "acelaya/url-shortener",
+    "name": "shlinkio/shlink",
     "type": "project",
-    "homepage": "https://github.com/acelaya/url-shortener",
+    "homepage": "http://shlink.io",
+    "description": "A PHP-based URL shortener application with analytics and management",
     "license": "MIT",
     "authors": [
         {
@@ -19,6 +20,8 @@
         "zendframework/zend-stdlib": "^2.7",
         "zendframework/zend-servicemanager": "^3.0",
         "zendframework/zend-paginator": "^2.6",
+        "zendframework/zend-config": "^2.6",
+        "mtymek/expressive-config-manager": "^0.4",
         "doctrine/orm": "^2.5",
         "guzzlehttp/guzzle": "^6.2",
         "acelaya/zsm-annotated-services": "^0.2.0",
@@ -34,12 +37,18 @@
     },
     "autoload": {
         "psr-4": {
-            "Acelaya\\UrlShortener\\": "src"
+            "Shlinkio\\Shlink\\CLI\\": "module/CLI/src",
+            "Shlinkio\\Shlink\\Rest\\": "module/Rest/src",
+            "Shlinkio\\Shlink\\Core\\": "module/Core/src",
+            "Shlinkio\\Shlink\\Common\\": "module/Common/src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "AcelayaTest\\UrlShortener\\": "tests"
+            "ShlinkioTest\\Shlink\\CLI\\": "module/CLI/test",
+            "ShlinkioTest\\Shlink\\Rest\\": "module/Rest/test",
+            "ShlinkioTest\\Shlink\\Core\\": "module/Core/test",
+            "ShlinkioTest\\Shlink\\Common\\": "module/Common/test"
         }
     },
     "scripts": {

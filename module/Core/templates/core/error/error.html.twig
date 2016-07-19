@@ -1,0 +1,20 @@
+{% extends 'core/layout/default.html.twig' %}
+
+{% block title %}{{ status }} {{ reason }}{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        p {margin-bottom: 20px;}
+        body {text-align: center;}
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1>Oops!</h1>
+    <hr>
+    <p>We encountered a {{ status }} {{ reason }} error.</p>
+    {% if status == 404 %}
+        <p>This short URL doesn't seem to be valid.</p>
+        <p>Make sure you included all the characters, with no extra punctuation.</p>
+    {% endif %}
+{% endblock %}

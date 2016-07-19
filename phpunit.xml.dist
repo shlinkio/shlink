@@ -1,7 +1,16 @@
 <phpunit bootstrap="./vendor/autoload.php" colors="true">
     <testsuites>
-        <testsuite name="AcelayaTest">
-            <directory>./tests</directory>
+        <testsuite name="Common">
+            <directory>./module/Common/test</directory>
+        </testsuite>
+        <testsuite name="Core">
+            <directory>./module/Core/test</directory>
+        </testsuite>
+        <testsuite name="Rest">
+            <directory>./module/Rest/test</directory>
+        </testsuite>
+        <testsuite name="CLI">
+            <directory>./module/CLI/test</directory>
         </testsuite>
     </testsuites>
 

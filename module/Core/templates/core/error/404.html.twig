@@ -1,0 +1,17 @@
+{% extends 'core/layout/default.html.twig' %}
+
+{% block title %}URL Not Found{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        p {margin-bottom: 20px;}
+        body {text-align: center;}
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1>Oops!</h1>
+    <hr>
+    <p>This short URL doesn't seem to be valid.</p>
+    <p>Make sure you included all the characters, with no extra punctuation.</p>
+{% endblock %}

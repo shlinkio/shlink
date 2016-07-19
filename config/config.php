@@ -1,6 +1,10 @@
 <?php
-use Zend\Stdlib\ArrayUtils;
-use Zend\Stdlib\Glob;
+use Shlinkio\Shlink\CLI;
+use Shlinkio\Shlink\Common;
+use Shlinkio\Shlink\Core;
+use Shlinkio\Shlink\Rest;
+use Zend\Expressive\ConfigManager\ConfigManager;
+use Zend\Expressive\ConfigManager\ZendConfigProvider;
 
 /**
  * Configuration files are loaded in a specific order. First ``global.php``, then ``*.global.php``.
@@ -11,22 +15,14 @@ use Zend\Stdlib\Glob;
  * Obviously, if you use closures in your config you can't cache it.
  */
 
-$cachedConfigFile = 'data/cache/app_config.php';
+return call_user_func(function () {
+    $configManager = new ConfigManager([
+        new ZendConfigProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
+        Common\ConfigProvider::class,
+        Core\ConfigProvider::class,
+        CLI\ConfigProvider::class,
+        Rest\ConfigProvider::class,
+    ], 'data/cache/app_config.php');
 
-$config = [];
-if (is_file($cachedConfigFile)) {
-    // Try to load the cached config
-    $config = include $cachedConfigFile;
-} else {
-    // Load configuration from autoload path
-    foreach (Glob::glob('config/autoload/{{,*.}global,{,*.}local}.php', Glob::GLOB_BRACE) as $file) {
-        $config = ArrayUtils::merge($config, include $file);
-    }
-
-    // Cache config if enabled
-    if (isset($config['config_cache_enabled']) && $config['config_cache_enabled'] === true) {
-        file_put_contents($cachedConfigFile, '<?php return ' . var_export($config, true) . ';');
-    }
-}
-
-return $config;
+    return $configManager->getMergedConfig();
+});
