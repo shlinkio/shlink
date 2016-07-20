@@ -40,6 +40,12 @@ class Visit extends AbstractEntity implements \JsonSerializable
      * @ORM\JoinColumn(name="short_url_id", referencedColumnName="id")
      */
     protected $shortUrl;
+    /**
+     * @var VisitLocation
+     * @ORM\ManyToOne(targetEntity=VisitLocation::class)
+     * @ORM\JoinColumn(name="visit_location_id", referencedColumnName="id", nullable=true)
+     */
+    protected $visitLocation;
 
     public function __construct()
     {
@@ -137,6 +143,24 @@ class Visit extends AbstractEntity implements \JsonSerializable
     }
 
     /**
+     * @return VisitLocation
+     */
+    public function getVisitLocation()
+    {
+        return $this->visitLocation;
+    }
+
+    /**
+     * @param VisitLocation $visitLocation
+     * @return $this
+     */
+    public function setVisitLocation($visitLocation)
+    {
+        $this->visitLocation = $visitLocation;
+        return $this;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
@@ -150,6 +174,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
             'date' => isset($this->date) ? $this->date->format(\DateTime::ISO8601) : null,
             'remoteAddr' => $this->remoteAddr,
             'userAgent' => $this->userAgent,
+            'visitLocation' => $this->visitLocation,
         ];
     }
 }
