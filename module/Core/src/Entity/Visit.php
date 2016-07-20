@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
  * @author
  * @link
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Shlinkio\Shlink\Core\Repository\VisitRepository")
  * @ORM\Table(name="visits")
  */
 class Visit extends AbstractEntity implements \JsonSerializable
@@ -42,7 +42,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
     protected $shortUrl;
     /**
      * @var VisitLocation
-     * @ORM\ManyToOne(targetEntity=VisitLocation::class)
+     * @ORM\ManyToOne(targetEntity=VisitLocation::class, cascade={"persist"})
      * @ORM\JoinColumn(name="visit_location_id", referencedColumnName="id", nullable=true)
      */
     protected $visitLocation;

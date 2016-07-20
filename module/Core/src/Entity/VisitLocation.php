@@ -17,42 +17,37 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
 {
     /**
      * @var string
-     * @ORM\Column()
+     * @ORM\Column(nullable=true)
      */
     protected $countryCode;
     /**
      * @var string
-     * @ORM\Column()
+     * @ORM\Column(nullable=true)
      */
     protected $countryName;
     /**
      * @var string
-     * @ORM\Column()
+     * @ORM\Column(nullable=true)
      */
     protected $regionName;
     /**
      * @var string
-     * @ORM\Column()
+     * @ORM\Column(nullable=true)
      */
     protected $cityName;
     /**
      * @var string
-     * @ORM\Column()
+     * @ORM\Column(nullable=true)
      */
     protected $latitude;
     /**
      * @var string
-     * @ORM\Column()
+     * @ORM\Column(nullable=true)
      */
     protected $longitude;
     /**
      * @var string
-     * @ORM\Column()
-     */
-    protected $areaCode;
-    /**
-     * @var string
-     * @ORM\Column()
+     * @ORM\Column(nullable=true)
      */
     protected $timezone;
 
@@ -167,24 +162,6 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
     /**
      * @return string
      */
-    public function getAreaCode()
-    {
-        return $this->areaCode;
-    }
-
-    /**
-     * @param string $areaCode
-     * @return $this
-     */
-    public function setAreaCode($areaCode)
-    {
-        $this->areaCode = $areaCode;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getTimezone()
     {
         return $this->timezone;
@@ -208,17 +185,17 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
      */
     public function exchangeArray(array $array)
     {
-        if (array_key_exists('countryCode', $array)) {
-            $this->setCountryCode($array['countryCode']);
+        if (array_key_exists('country_code', $array)) {
+            $this->setCountryCode($array['country_code']);
         }
-        if (array_key_exists('countryName', $array)) {
-            $this->setCountryName($array['countryName']);
+        if (array_key_exists('country_name', $array)) {
+            $this->setCountryName($array['country_name']);
         }
-        if (array_key_exists('regionName', $array)) {
-            $this->setRegionName($array['regionName']);
+        if (array_key_exists('region_name', $array)) {
+            $this->setRegionName($array['region_name']);
         }
-        if (array_key_exists('cityName', $array)) {
-            $this->setCityName($array['cityName']);
+        if (array_key_exists('city', $array)) {
+            $this->setCityName($array['city']);
         }
         if (array_key_exists('latitude', $array)) {
             $this->setLatitude($array['latitude']);
@@ -226,11 +203,8 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
         if (array_key_exists('longitude', $array)) {
             $this->setLongitude($array['longitude']);
         }
-        if (array_key_exists('areaCode', $array)) {
-            $this->setAreaCode($array['areaCode']);
-        }
-        if (array_key_exists('timezone', $array)) {
-            $this->setTimezone($array['timezone']);
+        if (array_key_exists('time_zone', $array)) {
+            $this->setTimezone($array['time_zone']);
         }
     }
 
@@ -248,7 +222,6 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
             'cityName' => $this->cityName,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
-            'areaCode' => $this->areaCode,
             'timezone' => $this->timezone,
         ];
     }
