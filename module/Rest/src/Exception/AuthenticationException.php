@@ -1,7 +1,7 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Exception;
 
-use Shlinkio\Shlink\Core\Exception\ExceptionInterface;
+use Shlinkio\Shlink\Common\Exception\ExceptionInterface;
 
 class AuthenticationException extends \RuntimeException implements ExceptionInterface
 {

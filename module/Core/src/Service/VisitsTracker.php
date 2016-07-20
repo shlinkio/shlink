@@ -3,9 +3,9 @@ namespace Shlinkio\Shlink\Core\Service;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
+use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
-use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Zend\Paginator\Paginator;
 
 class VisitsTracker implements VisitsTrackerInterface

@@ -3,8 +3,8 @@ namespace Shlinkio\Shlink\Rest\Service;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
+use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Entity\RestToken;
-use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 
 class RestTokenService implements RestTokenServiceInterface

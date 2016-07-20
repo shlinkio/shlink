@@ -1,8 +1,8 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Service;
 
+use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Entity\RestToken;
-use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 
 interface RestTokenServiceInterface

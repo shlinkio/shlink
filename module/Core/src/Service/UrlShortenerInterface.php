@@ -2,9 +2,9 @@
 namespace Shlinkio\Shlink\Core\Service;
 
 use Psr\Http\Message\UriInterface;
+use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
-use Shlinkio\Shlink\Core\Exception\RuntimeException;
 
 interface UrlShortenerInterface
 {

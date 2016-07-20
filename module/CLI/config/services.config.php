@@ -13,6 +13,7 @@ return [
             CLI\Command\ResolveUrlCommand::class => AnnotatedFactory::class,
             CLI\Command\ListShortcodesCommand::class => AnnotatedFactory::class,
             CLI\Command\GetVisitsCommand::class => AnnotatedFactory::class,
+            CLI\Command\ProcessVisitsCommand::class => AnnotatedFactory::class,
         ],
     ],
 

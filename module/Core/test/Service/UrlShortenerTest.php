@@ -65,7 +65,7 @@ class UrlShortenerTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Shlinkio\Shlink\Core\Exception\RuntimeException
+     * @expectedException \Shlinkio\Shlink\Common\Exception\RuntimeException
      */
     public function exceptionIsThrownWhenOrmThrowsException()
     {

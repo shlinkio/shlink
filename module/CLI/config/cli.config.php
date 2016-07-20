@@ -9,6 +9,7 @@ return [
             Command\ResolveUrlCommand::class,
             Command\ListShortcodesCommand::class,
             Command\GetVisitsCommand::class,
+            Command\ProcessVisitsCommand::class,
         ]
     ],
 

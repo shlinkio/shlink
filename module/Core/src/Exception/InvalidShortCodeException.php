@@ -1,6 +1,8 @@
 <?php
 namespace Shlinkio\Shlink\Core\Exception;
 
+use Shlinkio\Shlink\Common\Exception\RuntimeException;
+
 class InvalidShortCodeException extends RuntimeException
 {
     public static function fromShortCode($shortCode, $charSet, \Exception $previous = null)

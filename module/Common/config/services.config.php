@@ -4,6 +4,7 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManager;
 use Shlinkio\Shlink\Common\Factory\CacheFactory;
 use Shlinkio\Shlink\Common\Factory\EntityManagerFactory;
+use Shlinkio\Shlink\Common\Service\IpLocationResolver;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
@@ -13,6 +14,7 @@ return [
             EntityManager::class => EntityManagerFactory::class,
             GuzzleHttp\Client::class => InvokableFactory::class,
             Cache::class => CacheFactory::class,
+            IpLocationResolver::class => AnnotatedFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,
