@@ -1,5 +1,5 @@
 <?php
-namespace Shlinkio\Shlink\Core\Exception;
+namespace Shlinkio\Shlink\Common\Exception;
 
 class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
 {

@@ -1,6 +1,7 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Util;
 
+use Shlinkio\Shlink\Common\Exception as Common;
 use Shlinkio\Shlink\Core\Exception as Core;
 use Shlinkio\Shlink\Rest\Exception as Rest;
 
@@ -13,7 +14,7 @@ class RestUtils
     const INVALID_AUTH_TOKEN_ERROR = 'INVALID_AUTH_TOKEN_ERROR';
     const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
 
-    public static function getRestErrorCodeFromException(Core\ExceptionInterface $e)
+    public static function getRestErrorCodeFromException(Common\ExceptionInterface $e)
     {
         switch (true) {
             case $e instanceof Core\InvalidShortCodeException:
