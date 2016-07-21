@@ -30,7 +30,7 @@ return [
         ],
         [
             'name' => 'rest-get-visits',
-            'path' => '/rest/visits/{shortCode}',
+            'path' => '/rest/short-codes/{shortCode}/visits',
             'middleware' => Action\GetVisitsMiddleware::class,
             'allowed_methods' => ['GET', 'OPTIONS'],
         ],
