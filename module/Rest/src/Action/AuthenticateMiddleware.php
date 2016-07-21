@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Rest\Service\RestTokenService;
 use Shlinkio\Shlink\Rest\Service\RestTokenServiceInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\I18n\Translator\TranslatorInterface;
 
 class AuthenticateMiddleware extends AbstractRestMiddleware
 {
@@ -16,16 +17,22 @@ class AuthenticateMiddleware extends AbstractRestMiddleware
      * @var RestTokenServiceInterface
      */
     private $restTokenService;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * AuthenticateMiddleware constructor.
      * @param RestTokenServiceInterface|RestTokenService $restTokenService
+     * @param TranslatorInterface $translator
      *
-     * @Inject({RestTokenService::class})
+     * @Inject({RestTokenService::class, "translator"})
      */
-    public function __construct(RestTokenServiceInterface $restTokenService)
+    public function __construct(RestTokenServiceInterface $restTokenService, TranslatorInterface $translator)
     {
         $this->restTokenService = $restTokenService;
+        $this->translator = $translator;
     }
 
     /**
@@ -40,7 +47,7 @@ class AuthenticateMiddleware extends AbstractRestMiddleware
         if (! isset($authData['username'], $authData['password'])) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' => 'You have to provide both "username" and "password"'
+                'message' => $this->translator->translate('You have to provide both "username" and "password"'),
             ], 400);
         }
 
@@ -50,7 +57,7 @@ class AuthenticateMiddleware extends AbstractRestMiddleware
         } catch (AuthenticationException $e) {
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => 'Invalid username and/or password',
+                'message' => $this->translator->translate('Invalid username and/or password'),
             ], 401);
         }
     }

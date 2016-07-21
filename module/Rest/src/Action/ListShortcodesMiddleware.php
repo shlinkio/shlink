@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\I18n\Translator\TranslatorInterface;
 
 class ListShortcodesMiddleware extends AbstractRestMiddleware
 {
@@ -18,16 +19,22 @@ class ListShortcodesMiddleware extends AbstractRestMiddleware
      * @var ShortUrlServiceInterface
      */
     private $shortUrlService;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * ListShortcodesMiddleware constructor.
      * @param ShortUrlServiceInterface|ShortUrlService $shortUrlService
+     * @param TranslatorInterface $translator
      *
-     * @Inject({ShortUrlService::class})
+     * @Inject({ShortUrlService::class, "translator"})
      */
-    public function __construct(ShortUrlServiceInterface $shortUrlService)
+    public function __construct(ShortUrlServiceInterface $shortUrlService, TranslatorInterface $translator)
     {
         $this->shortUrlService = $shortUrlService;
+        $this->translator = $translator;
     }
 
     /**
@@ -45,7 +52,7 @@ class ListShortcodesMiddleware extends AbstractRestMiddleware
         } catch (\Exception $e) {
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
-                'message' => 'Unexpected error occured',
+                'message' => $this->translator->translate('Unexpected error occurred'),
             ], 500);
         }
     }

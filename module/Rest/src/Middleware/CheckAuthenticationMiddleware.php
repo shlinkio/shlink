@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Rest\Service\RestTokenServiceInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouteResult;
+use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Stratigility\MiddlewareInterface;
 
 class CheckAuthenticationMiddleware implements MiddlewareInterface
@@ -20,16 +21,22 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface
      * @var RestTokenServiceInterface
      */
     private $restTokenService;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * CheckAuthenticationMiddleware constructor.
      * @param RestTokenServiceInterface|RestTokenService $restTokenService
+     * @param TranslatorInterface $translator
      *
-     * @Inject({RestTokenService::class})
+     * @Inject({RestTokenService::class, "translator"})
      */
-    public function __construct(RestTokenServiceInterface $restTokenService)
+    public function __construct(RestTokenServiceInterface $restTokenService, TranslatorInterface $translator)
     {
         $this->restTokenService = $restTokenService;
+        $this->translator = $translator;
     }
 
     /**
@@ -93,8 +100,10 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface
         return new JsonResponse([
             'error' => RestUtils::INVALID_AUTH_TOKEN_ERROR,
             'message' => sprintf(
-                'Missing or invalid auth token provided. Perform a new authentication request and send provided token '
-                . 'on every new request on the "%s" header',
+                $this->translator->translate(
+                    'Missing or invalid auth token provided. Perform a new authentication request and send provided '
+                    . 'token on every new request on the "%s" header'
+                ),
                 self::AUTH_TOKEN_HEADER
             ),
         ], 401);
