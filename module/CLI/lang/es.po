@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2016-07-21 15:48+0200\n"
-"PO-Revision-Date: 2016-07-21 15:49+0200\n"
+"POT-Creation-Date: 2016-07-21 15:54+0200\n"
+"PO-Revision-Date: 2016-07-21 15:56+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -112,3 +112,24 @@ msgstr "Dirección localizada en \"%s\""
 
 msgid "Finished processing all IPs"
 msgstr "Finalizado el procesado de todas las IPs"
+
+msgid "Returns the long URL behind a short code"
+msgstr "Devuelve la URL larga detrás de un código corto"
+
+msgid "The short code to parse"
+msgstr "El código corto a convertir"
+
+msgid "A short code was not provided. Which short code do you want to parse?:"
+msgstr ""
+"No se proporcionó un código corto. ¿Qué código corto quieres convertir?"
+
+#, php-format
+msgid "No URL found for short code \"%s\""
+msgstr "No se ha encontrado ninguna URL para el código corto \"%s\""
+
+msgid "Long URL:"
+msgstr "URL larga:"
+
+#, php-format
+msgid "Provided short code \"%s\" has an invalid format."
+msgstr "El código corto proporcionado \"%s\" tiene un formato inválido."
