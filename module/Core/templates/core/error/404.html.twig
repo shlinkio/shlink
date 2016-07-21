@@ -1,6 +1,6 @@
 {% extends 'core/layout/default.html.twig' %}
 
-{% block title %}URL Not Found{% endblock %}
+{% block title %}{{ translate('URL Not Found') }}{% endblock %}
 
 {% block stylesheets %}
     <style>
@@ -10,8 +10,8 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Oops!</h1>
+    <h1>{{ translate('Oops!') }}</h1>
     <hr>
-    <p>This short URL doesn't seem to be valid.</p>
-    <p>Make sure you included all the characters, with no extra punctuation.</p>
+    <p>{{ translate('This short URL doesn\'t seem to be valid.') }}</p>
+    <p>{{ translate('Make sure you included all the characters, with no extra punctuation.') }}</p>
 {% endblock %}
