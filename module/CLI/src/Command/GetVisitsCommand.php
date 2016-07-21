@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Zend\I18n\Translator\TranslatorInterface;
 
 class GetVisitsCommand extends Command
 {
@@ -20,35 +21,47 @@ class GetVisitsCommand extends Command
      * @var VisitsTrackerInterface
      */
     private $visitsTracker;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * GetVisitsCommand constructor.
      * @param VisitsTrackerInterface|VisitsTracker $visitsTracker
+     * @param TranslatorInterface $translator
      *
-     * @Inject({VisitsTracker::class})
+     * @Inject({VisitsTracker::class, "translator"})
      */
-    public function __construct(VisitsTrackerInterface $visitsTracker)
+    public function __construct(VisitsTrackerInterface $visitsTracker, TranslatorInterface $translator)
     {
-        parent::__construct(null);
         $this->visitsTracker = $visitsTracker;
+        $this->translator = $translator;
+        parent::__construct(null);
     }
 
     public function configure()
     {
         $this->setName('shortcode:visits')
-            ->setDescription('Returns the detailed visits information for provided short code')
-            ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code which visits we want to get')
+            ->setDescription(
+                $this->translator->translate('Returns the detailed visits information for provided short code')
+            )
+            ->addArgument(
+                'shortCode',
+                InputArgument::REQUIRED,
+                $this->translator->translate('The short code which visits we want to get')
+            )
             ->addOption(
                 'startDate',
                 's',
                 InputOption::VALUE_OPTIONAL,
-                'Allows to filter visits, returning only those older than start date'
+                $this->translator->translate('Allows to filter visits, returning only those older than start date')
             )
             ->addOption(
                 'endDate',
                 'e',
                 InputOption::VALUE_OPTIONAL,
-                'Allows to filter visits, returning only those newer than end date'
+                $this->translator->translate('Allows to filter visits, returning only those newer than end date')
             );
     }
 
@@ -61,9 +74,10 @@ class GetVisitsCommand extends Command
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
-        $question = new Question(
-            '<question>A short code was not provided. Which short code do you want to use?:</question> '
-        );
+        $question = new Question(sprintf(
+            '<question>%s</question> ',
+            $this->translator->translate('A short code was not provided. Which short code do you want to use?:')
+        ));
 
         $shortCode = $helper->ask($input, $output, $question);
         if (! empty($shortCode)) {
@@ -80,10 +94,10 @@ class GetVisitsCommand extends Command
         $visits = $this->visitsTracker->info($shortCode, new DateRange($startDate, $endDate));
         $table = new Table($output);
         $table->setHeaders([
-            'Referer',
-            'Date',
-            'Remote Address',
-            'User agent',
+            $this->translator->translate('Referer'),
+            $this->translator->translate('Date'),
+            $this->translator->translate('Remote Address'),
+            $this->translator->translate('User agent'),
         ]);
 
         foreach ($visits as $row) {

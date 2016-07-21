@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2016-07-21 15:05+0200\n"
-"PO-Revision-Date: 2016-07-21 15:08+0200\n"
+"POT-Creation-Date: 2016-07-21 15:28+0200\n"
+"PO-Revision-Date: 2016-07-21 15:32+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -38,3 +38,30 @@ msgstr "URL generada:"
 #, php-format
 msgid "Provided URL \"%s\" is invalid. Try with a different one."
 msgstr "La URL proporcionada \"%s\" e inválida. Prueba con una diferente."
+
+msgid "Returns the detailed visits information for provided short code"
+msgstr "Devuelve la información detallada de visitas para el código corto proporcionado"
+
+msgid "The short code which visits we want to get"
+msgstr "El código corto del cual queremos obtener las visitas"
+
+msgid "Allows to filter visits, returning only those older than start date"
+msgstr "Permite filtrar las visitas, devolviendo sólo aquellas más antiguas que startDate"
+
+msgid "Allows to filter visits, returning only those newer than end date"
+msgstr "Permite filtrar las visitas, devolviendo sólo aquellas más nuevas que endDate"
+
+msgid "A short code was not provided. Which short code do you want to use?:"
+msgstr "No se prporcionó un código corto. ¿Qué código corto deseas usar?"
+
+msgid "Referer"
+msgstr "Origen"
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Remote Address"
+msgstr "Dirección remota"
+
+msgid "User agent"
+msgstr "Agente de usuario"
