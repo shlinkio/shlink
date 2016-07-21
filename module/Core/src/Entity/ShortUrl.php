@@ -23,7 +23,14 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
     protected $originalUrl;
     /**
      * @var string
-     * @ORM\Column(name="short_code", type="string", nullable=false, length=10, unique=true)
+     * @ORM\Column(
+     *     name="short_code",
+     *     type="string",
+     *     nullable=false,
+     *     length=10,
+     *     unique=true,
+     *     options={"collation": "utf8_bin"}
+     * )
      */
     protected $shortCode;
     /**
