@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2016-07-21 15:40+0200\n"
-"PO-Revision-Date: 2016-07-21 15:41+0200\n"
+"POT-Creation-Date: 2016-07-21 15:48+0200\n"
+"PO-Revision-Date: 2016-07-21 15:49+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -96,3 +96,19 @@ msgstr "Has alcanzado la última página"
 
 msgid "Continue with page"
 msgstr "Continuar con la página"
+
+msgid "Processes visits where location is not set yet"
+msgstr "Procesa las visitas donde la localización no ha sido establecida aún"
+
+msgid "Processing IP"
+msgstr "Procesando IP"
+
+msgid "Ignored localhost address"
+msgstr "Ignorada IP de localhost"
+
+#, php-format
+msgid "Address located at \"%s\""
+msgstr "Dirección localizada en \"%s\""
+
+msgid "Finished processing all IPs"
+msgstr "Finalizado el procesado de todas las IPs"
