@@ -222,7 +222,7 @@ Posible errors:
 
 **REQUEST**
 
-* `GET` -> `/rest/visits/{shortCode}`
+* `GET` -> `/rest/short-codes/{shortCode}/visits`
 * Route params:
     * shortCode: `string` -> The shortCode from which we eant to get the visits.
 * Query params:
