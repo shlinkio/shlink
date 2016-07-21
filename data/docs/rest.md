@@ -225,6 +225,9 @@ Posible errors:
 * `GET` -> `/rest/visits/{shortCode}`
 * Route params:
     * shortCode: `string` -> The shortCode from which we eant to get the visits.
+* Query params:
+    * startDate: `string` -> If provided, only visits older that this date will be returned
+    * endDate: `string` -> If provided, only visits newer that this date will be returned
 * Headers:
     * X-Auth-Token: `string` -> The token provided in the authentication request
     

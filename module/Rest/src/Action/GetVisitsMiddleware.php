@@ -5,6 +5,7 @@ use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
@@ -37,14 +38,15 @@ class GetVisitsMiddleware extends AbstractRestMiddleware
     public function dispatch(Request $request, Response $response, callable $out = null)
     {
         $shortCode = $request->getAttribute('shortCode');
+        $startDate = $this->getDateQueryParam($request, 'startDate');
+        $endDate = $this->getDateQueryParam($request, 'endDate');
 
         try {
-            $visits = $this->visitsTracker->info($shortCode);
+            $visits = $this->visitsTracker->info($shortCode, new DateRange($startDate, $endDate));
 
             return new JsonResponse([
                 'visits' => [
                     'data' => $visits,
-//                    'pagination' => [],
                 ]
             ]);
         } catch (InvalidArgumentException $e) {
@@ -58,5 +60,20 @@ class GetVisitsMiddleware extends AbstractRestMiddleware
                 'message' => 'Unexpected error occured',
             ], 500);
         }
+    }
+
+    /**
+     * @param Request $request
+     * @param $key
+     * @return \DateTime|null
+     */
+    protected function getDateQueryParam(Request $request, $key)
+    {
+        $query = $request->getQueryParams();
+        if (! isset($query[$key]) || empty($query[$key])) {
+            return null;
+        }
+
+        return new \DateTime($query[$key]);
     }
 }
