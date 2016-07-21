@@ -21,10 +21,11 @@
         "zendframework/zend-servicemanager": "^3.0",
         "zendframework/zend-paginator": "^2.6",
         "zendframework/zend-config": "^2.6",
+        "zendframework/zend-i18n": "^2.7",
         "mtymek/expressive-config-manager": "^0.4",
+        "acelaya/zsm-annotated-services": "^0.2.0",
         "doctrine/orm": "^2.5",
         "guzzlehttp/guzzle": "^6.2",
-        "acelaya/zsm-annotated-services": "^0.2.0",
         "symfony/console": "^3.0"
     },
     "require-dev": {
