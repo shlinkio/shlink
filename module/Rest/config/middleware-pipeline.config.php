@@ -8,6 +8,7 @@ return [
             'path' => '/rest',
             'middleware' => [
                 Middleware\CheckAuthenticationMiddleware::class,
+                Middleware\LocaleMiddleware::class,
                 Middleware\CrossDomainMiddleware::class,
             ],
             'priority' => 5,
