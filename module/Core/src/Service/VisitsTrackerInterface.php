@@ -1,8 +1,8 @@
 <?php
 namespace Shlinkio\Shlink\Core\Service;
 
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
-use Zend\Paginator\Paginator;
 
 interface VisitsTrackerInterface
 {
@@ -15,10 +15,11 @@ interface VisitsTrackerInterface
     public function track($shortCode, array $visitorData = null);
 
     /**
-     * Returns the visits on certain shortcode
+     * Returns the visits on certain short code
      *
      * @param $shortCode
-     * @return Paginator|Visit[]
+     * @param DateRange $dateRange
+     * @return Visit[]
      */
-    public function info($shortCode);
+    public function info($shortCode, DateRange $dateRange = null);
 }

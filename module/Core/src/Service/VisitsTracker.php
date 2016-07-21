@@ -4,9 +4,10 @@ namespace Shlinkio\Shlink\Core\Service;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
-use Zend\Paginator\Paginator;
+use Shlinkio\Shlink\Core\Repository\VisitRepository;
 
 class VisitsTracker implements VisitsTrackerInterface
 {
@@ -62,12 +63,13 @@ class VisitsTracker implements VisitsTrackerInterface
     }
 
     /**
-     * Returns the visits on certain shortcode
+     * Returns the visits on certain short code
      *
      * @param $shortCode
-     * @return Paginator|Visit[]
+     * @param DateRange $dateRange
+     * @return Visit[]
      */
-    public function info($shortCode)
+    public function info($shortCode, DateRange $dateRange = null)
     {
         /** @var ShortUrl $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
@@ -77,10 +79,8 @@ class VisitsTracker implements VisitsTrackerInterface
             throw new InvalidArgumentException(sprintf('Short code "%s" not found', $shortCode));
         }
 
-        return $this->em->getRepository(Visit::class)->findBy([
-            'shortUrl' => $shortUrl,
-        ], [
-            'date' => 'DESC'
-        ]);
+        /** @var VisitRepository $repo */
+        $repo = $this->em->getRepository(Visit::class);
+        return $repo->findVisitsByShortUrl($shortUrl, $dateRange);
     }
 }

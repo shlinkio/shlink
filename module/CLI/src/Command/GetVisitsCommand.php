@@ -70,7 +70,11 @@ class GetVisitsCommand extends Command
         ]);
 
         foreach ($visits as $row) {
-            $table->addRow(array_values($row->jsonSerialize()));
+            $rowData = $row->jsonSerialize();
+            // Unset location info
+            unset($rowData['visitLocation']);
+
+            $table->addRow(array_values($rowData));
         }
         $table->render();
     }
