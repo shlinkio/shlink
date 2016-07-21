@@ -1,5 +1,5 @@
 <?php
-namespace Shlinkio\Shlink\Rest\Middleware;
+namespace Shlinkio\Shlink\Common\Middleware;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;

@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use Shlinkio\Shlink\Common\Factory\CacheFactory;
 use Shlinkio\Shlink\Common\Factory\EntityManagerFactory;
 use Shlinkio\Shlink\Common\Factory\TranslatorFactory;
+use Shlinkio\Shlink\Common\Middleware\LocaleMiddleware;
 use Shlinkio\Shlink\Common\Service\IpLocationResolver;
 use Shlinkio\Shlink\Common\Twig\Extension\TranslatorExtension;
 use Zend\I18n\Translator\Translator;
@@ -20,6 +21,7 @@ return [
             IpLocationResolver::class => AnnotatedFactory::class,
             Translator::class => TranslatorFactory::class,
             TranslatorExtension::class => AnnotatedFactory::class,
+            LocaleMiddleware::class => AnnotatedFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,
