@@ -65,7 +65,7 @@ class GetVisitsCommand extends Command
         $table->setHeaders([
             'Referer',
             'Date',
-            'Temote Address',
+            'Remote Address',
             'User agent',
         ]);
 
