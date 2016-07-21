@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Zend\I18n\Translator\TranslatorInterface;
 
 class ListShortcodesCommand extends Command
 {
@@ -22,28 +23,37 @@ class ListShortcodesCommand extends Command
      * @var ShortUrlServiceInterface
      */
     private $shortUrlService;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * ListShortcodesCommand constructor.
      * @param ShortUrlServiceInterface|ShortUrlService $shortUrlService
+     * @param TranslatorInterface $translator
      *
-     * @Inject({ShortUrlService::class})
+     * @Inject({ShortUrlService::class, "translator"})
      */
-    public function __construct(ShortUrlServiceInterface $shortUrlService)
+    public function __construct(ShortUrlServiceInterface $shortUrlService, TranslatorInterface $translator)
     {
-        parent::__construct(null);
         $this->shortUrlService = $shortUrlService;
+        $this->translator = $translator;
+        parent::__construct(null);
     }
 
     public function configure()
     {
         $this->setName('shortcode:list')
-             ->setDescription('List all short URLs')
+             ->setDescription($this->translator->translate('List all short URLs'))
              ->addOption(
                  'page',
                  'p',
                  InputOption::VALUE_OPTIONAL,
-                 sprintf('The first page to list (%s items per page)', PaginableRepositoryAdapter::ITEMS_PER_PAGE),
+                 sprintf(
+                     $this->translator->translate('The first page to list (%s items per page)'),
+                     PaginableRepositoryAdapter::ITEMS_PER_PAGE
+                 ),
                  1
              );
     }
@@ -59,10 +69,10 @@ class ListShortcodesCommand extends Command
             $page++;
             $table = new Table($output);
             $table->setHeaders([
-                'Short code',
-                'Original URL',
-                'Date created',
-                'Visits count',
+                $this->translator->translate('Short code'),
+                $this->translator->translate('Original URL'),
+                $this->translator->translate('Date created'),
+                $this->translator->translate('Visits count'),
             ]);
 
             foreach ($result as $row) {
@@ -72,10 +82,14 @@ class ListShortcodesCommand extends Command
 
             if ($this->isLastPage($result)) {
                 $continue = false;
-                $output->writeln('<info>You have reached last page</info>');
+                $output->writeln(
+                    sprintf('<info>%s</info>', $this->translator->translate('You have reached last page'))
+                );
             } else {
                 $continue = $helper->ask($input, $output, new ConfirmationQuestion(
-                    sprintf('<question>Continue with page <bg=cyan;options=bold>%s</>? (y/N)</question> ', $page),
+                    sprintf('<question>' . $this->translator->translate(
+                        'Continue with page'
+                    ) . ' <bg=cyan;options=bold>%s</>? (y/N)</question> ', $page),
                     false
                 ));
             }

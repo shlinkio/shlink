@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2016-07-21 15:28+0200\n"
-"PO-Revision-Date: 2016-07-21 15:32+0200\n"
+"POT-Creation-Date: 2016-07-21 15:40+0200\n"
+"PO-Revision-Date: 2016-07-21 15:41+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -18,7 +18,8 @@ msgstr ""
 "X-Poedit-SearchPath-1: config\n"
 
 msgid "Generates a shortcode for provided URL and returns the short URL"
-msgstr "Genera un código corto para la URL proporcionada y devuelve la URL acortada"
+msgstr ""
+"Genera un código corto para la URL proporcionada y devuelve la URL acortada"
 
 msgid "The long URL to parse"
 msgstr "La URL larga a procesar"
@@ -40,16 +41,21 @@ msgid "Provided URL \"%s\" is invalid. Try with a different one."
 msgstr "La URL proporcionada \"%s\" e inválida. Prueba con una diferente."
 
 msgid "Returns the detailed visits information for provided short code"
-msgstr "Devuelve la información detallada de visitas para el código corto proporcionado"
+msgstr ""
+"Devuelve la información detallada de visitas para el código corto "
+"proporcionado"
 
 msgid "The short code which visits we want to get"
 msgstr "El código corto del cual queremos obtener las visitas"
 
 msgid "Allows to filter visits, returning only those older than start date"
-msgstr "Permite filtrar las visitas, devolviendo sólo aquellas más antiguas que startDate"
+msgstr ""
+"Permite filtrar las visitas, devolviendo sólo aquellas más antiguas que "
+"startDate"
 
 msgid "Allows to filter visits, returning only those newer than end date"
-msgstr "Permite filtrar las visitas, devolviendo sólo aquellas más nuevas que endDate"
+msgstr ""
+"Permite filtrar las visitas, devolviendo sólo aquellas más nuevas que endDate"
 
 msgid "A short code was not provided. Which short code do you want to use?:"
 msgstr "No se prporcionó un código corto. ¿Qué código corto deseas usar?"
@@ -65,3 +71,28 @@ msgstr "Dirección remota"
 
 msgid "User agent"
 msgstr "Agente de usuario"
+
+msgid "List all short URLs"
+msgstr "Listar todas las URLs cortas"
+
+#, php-format
+msgid "The first page to list (%s items per page)"
+msgstr "La primera página a listar (%s elementos por página)"
+
+msgid "Short code"
+msgstr "Código corto"
+
+msgid "Original URL"
+msgstr "URL original"
+
+msgid "Date created"
+msgstr "Fecha de creación"
+
+msgid "Visits count"
+msgstr "Número de visitas"
+
+msgid "You have reached last page"
+msgstr "Has alcanzado la última página"
+
+msgid "Continue with page"
+msgstr "Continuar con la página"
