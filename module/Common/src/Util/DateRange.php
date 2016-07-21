@@ -33,4 +33,12 @@ class DateRange
     {
         return $this->endDate;
     }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return is_null($this->startDate) && is_null($this->endDate);
+    }
 }

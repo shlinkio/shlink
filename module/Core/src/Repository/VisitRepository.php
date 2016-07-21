@@ -29,7 +29,7 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         $shortUrl = $shortUrl instanceof ShortUrl
             ? $shortUrl
             : $this->getEntityManager()->find(ShortUrl::class, $shortUrl);
-        if (! isset($dateRange)) {
+        if (! isset($dateRange) || $dateRange->isEmpty()) {
             $startDate = $shortUrl->getDateCreated();
             $endDate = clone $startDate;
             $endDate->add(new \DateInterval('P2D'));
