@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Uri;
+use Zend\I18n\Translator\TranslatorInterface;
 
 class CreateShortcodeMiddleware extends AbstractRestMiddleware
 {
@@ -21,18 +22,27 @@ class CreateShortcodeMiddleware extends AbstractRestMiddleware
      * @var array
      */
     private $domainConfig;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * GenerateShortcodeMiddleware constructor.
      *
      * @param UrlShortenerInterface|UrlShortener $urlShortener
+     * @param TranslatorInterface $translator
      * @param array $domainConfig
      *
-     * @Inject({UrlShortener::class, "config.url_shortener.domain"})
+     * @Inject({UrlShortener::class, "translator", "config.url_shortener.domain"})
      */
-    public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig)
-    {
+    public function __construct(
+        UrlShortenerInterface $urlShortener,
+        TranslatorInterface $translator,
+        array $domainConfig
+    ) {
         $this->urlShortener = $urlShortener;
+        $this->translator = $translator;
         $this->domainConfig = $domainConfig;
     }
 
@@ -48,7 +58,7 @@ class CreateShortcodeMiddleware extends AbstractRestMiddleware
         if (! isset($postData['longUrl'])) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' => 'A URL was not provided',
+                'message' => $this->translator->translate('A URL was not provided'),
             ], 400);
         }
         $longUrl = $postData['longUrl'];
@@ -67,12 +77,15 @@ class CreateShortcodeMiddleware extends AbstractRestMiddleware
         } catch (InvalidUrlException $e) {
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf('Provided URL "%s" is invalid. Try with a different one.', $longUrl),
+                'message' => sprintf(
+                    $this->translator->translate('Provided URL "%s" is invalid. Try with a different one.'),
+                    $longUrl
+                ),
             ], 400);
         } catch (\Exception $e) {
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
-                'message' => 'Unexpected error occured',
+                'message' => $this->translator->translate('Unexpected error occurred'),
             ], 500);
         }
     }

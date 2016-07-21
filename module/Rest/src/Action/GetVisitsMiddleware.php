@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\I18n\Translator\TranslatorInterface;
 
 class GetVisitsMiddleware extends AbstractRestMiddleware
 {
@@ -17,16 +18,22 @@ class GetVisitsMiddleware extends AbstractRestMiddleware
      * @var VisitsTrackerInterface
      */
     private $visitsTracker;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * GetVisitsMiddleware constructor.
      * @param VisitsTrackerInterface|VisitsTracker $visitsTracker
+     * @param TranslatorInterface $translator
      *
-     * @Inject({VisitsTracker::class})
+     * @Inject({VisitsTracker::class, "translator"})
      */
-    public function __construct(VisitsTrackerInterface $visitsTracker)
+    public function __construct(VisitsTrackerInterface $visitsTracker, TranslatorInterface $translator)
     {
         $this->visitsTracker = $visitsTracker;
+        $this->translator = $translator;
     }
 
     /**
@@ -52,12 +59,12 @@ class GetVisitsMiddleware extends AbstractRestMiddleware
         } catch (InvalidArgumentException $e) {
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf('Provided short code "%s" is invalid', $shortCode),
+                'message' => sprintf($this->translator->translate('Provided short code "%s" is invalid'), $shortCode),
             ], 400);
         } catch (\Exception $e) {
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
-                'message' => 'Unexpected error occured',
+                'message' => $this->translator->translate('Unexpected error occurred'),
             ], 500);
         }
     }

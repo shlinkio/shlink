@@ -1,0 +1,135 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Shlink 1.0\n"
+"POT-Creation-Date: 2016-07-21 15:54+0200\n"
+"PO-Revision-Date: 2016-07-21 15:56+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: translate;translatePlural\n"
+"X-Poedit-SearchPath-0: src\n"
+"X-Poedit-SearchPath-1: config\n"
+
+msgid "Generates a shortcode for provided URL and returns the short URL"
+msgstr ""
+"Genera un código corto para la URL proporcionada y devuelve la URL acortada"
+
+msgid "The long URL to parse"
+msgstr "La URL larga a procesar"
+
+msgid "A long URL was not provided. Which URL do you want to shorten?:"
+msgstr "No se ha proporcionado una URL larga. ¿Qué URL deseas acortar?"
+
+msgid "A URL was not provided!"
+msgstr "¡No se ha proporcionado una URL!"
+
+msgid "Processed URL:"
+msgstr "URL procesada:"
+
+msgid "Generated URL:"
+msgstr "URL generada:"
+
+#, php-format
+msgid "Provided URL \"%s\" is invalid. Try with a different one."
+msgstr "La URL proporcionada \"%s\" e inválida. Prueba con una diferente."
+
+msgid "Returns the detailed visits information for provided short code"
+msgstr ""
+"Devuelve la información detallada de visitas para el código corto "
+"proporcionado"
+
+msgid "The short code which visits we want to get"
+msgstr "El código corto del cual queremos obtener las visitas"
+
+msgid "Allows to filter visits, returning only those older than start date"
+msgstr ""
+"Permite filtrar las visitas, devolviendo sólo aquellas más antiguas que "
+"startDate"
+
+msgid "Allows to filter visits, returning only those newer than end date"
+msgstr ""
+"Permite filtrar las visitas, devolviendo sólo aquellas más nuevas que endDate"
+
+msgid "A short code was not provided. Which short code do you want to use?:"
+msgstr "No se prporcionó un código corto. ¿Qué código corto deseas usar?"
+
+msgid "Referer"
+msgstr "Origen"
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Remote Address"
+msgstr "Dirección remota"
+
+msgid "User agent"
+msgstr "Agente de usuario"
+
+msgid "List all short URLs"
+msgstr "Listar todas las URLs cortas"
+
+#, php-format
+msgid "The first page to list (%s items per page)"
+msgstr "La primera página a listar (%s elementos por página)"
+
+msgid "Short code"
+msgstr "Código corto"
+
+msgid "Original URL"
+msgstr "URL original"
+
+msgid "Date created"
+msgstr "Fecha de creación"
+
+msgid "Visits count"
+msgstr "Número de visitas"
+
+msgid "You have reached last page"
+msgstr "Has alcanzado la última página"
+
+msgid "Continue with page"
+msgstr "Continuar con la página"
+
+msgid "Processes visits where location is not set yet"
+msgstr "Procesa las visitas donde la localización no ha sido establecida aún"
+
+msgid "Processing IP"
+msgstr "Procesando IP"
+
+msgid "Ignored localhost address"
+msgstr "Ignorada IP de localhost"
+
+#, php-format
+msgid "Address located at \"%s\""
+msgstr "Dirección localizada en \"%s\""
+
+msgid "Finished processing all IPs"
+msgstr "Finalizado el procesado de todas las IPs"
+
+msgid "Returns the long URL behind a short code"
+msgstr "Devuelve la URL larga detrás de un código corto"
+
+msgid "The short code to parse"
+msgstr "El código corto a convertir"
+
+msgid "A short code was not provided. Which short code do you want to parse?:"
+msgstr ""
+"No se proporcionó un código corto. ¿Qué código corto quieres convertir?"
+
+#, php-format
+msgid "No URL found for short code \"%s\""
+msgstr "No se ha encontrado ninguna URL para el código corto \"%s\""
+
+msgid "Long URL:"
+msgstr "URL larga:"
+
+#, php-format
+msgid "Provided short code \"%s\" has an invalid format."
+msgstr "El código corto proporcionado \"%s\" tiene un formato inválido."

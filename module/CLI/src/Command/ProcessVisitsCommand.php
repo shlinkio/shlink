@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\Service\VisitServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Zend\I18n\Translator\TranslatorInterface;
 
 class ProcessVisitsCommand extends Command
 {
@@ -24,25 +25,36 @@ class ProcessVisitsCommand extends Command
      * @var IpLocationResolverInterface
      */
     private $ipLocationResolver;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * ProcessVisitsCommand constructor.
      * @param VisitServiceInterface|VisitService $visitService
      * @param IpLocationResolverInterface|IpLocationResolver $ipLocationResolver
+     * @param TranslatorInterface $translator
      *
-     * @Inject({VisitService::class, IpLocationResolver::class})
+     * @Inject({VisitService::class, IpLocationResolver::class, "translator"})
      */
-    public function __construct(VisitServiceInterface $visitService, IpLocationResolverInterface $ipLocationResolver)
-    {
-        parent::__construct(null);
+    public function __construct(
+        VisitServiceInterface $visitService,
+        IpLocationResolverInterface $ipLocationResolver,
+        TranslatorInterface $translator
+    ) {
         $this->visitService = $visitService;
         $this->ipLocationResolver = $ipLocationResolver;
+        $this->translator = $translator;
+        parent::__construct(null);
     }
 
     public function configure()
     {
         $this->setName('visit:process')
-             ->setDescription('Processes visits where location is not set already');
+             ->setDescription(
+                 $this->translator->translate('Processes visits where location is not set yet')
+             );
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
@@ -51,9 +63,11 @@ class ProcessVisitsCommand extends Command
 
         foreach ($visits as $visit) {
             $ipAddr = $visit->getRemoteAddr();
-            $output->write(sprintf('Processing IP <info>%s</info>', $ipAddr));
+            $output->write(sprintf('%s <info>%s</info>', $this->translator->translate('Processing IP'), $ipAddr));
             if ($ipAddr === self::LOCALHOST) {
-                $output->writeln(' (<comment>Ignored localhost address</comment>)');
+                $output->writeln(
+                    sprintf(' (<comment>%s</comment>)', $this->translator->translate('Ignored localhost address'))
+                );
                 continue;
             }
 
@@ -63,12 +77,15 @@ class ProcessVisitsCommand extends Command
                 $location->exchangeArray($result);
                 $visit->setVisitLocation($location);
                 $this->visitService->saveVisit($visit);
-                $output->writeln(sprintf(' (Address located at "%s")', $location->getCityName()));
+                $output->writeln(sprintf(
+                    ' (' . $this->translator->translate('Address located at "%s"') . ')',
+                    $location->getCityName()
+                ));
             } catch (WrongIpException $e) {
                 continue;
             }
         }
 
-        $output->writeln('Finished processing all IPs');
+        $output->writeln($this->translator->translate('Finished processing all IPs'));
     }
 }

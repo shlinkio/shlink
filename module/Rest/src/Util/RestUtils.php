@@ -21,7 +21,7 @@ class RestUtils
                 return self::INVALID_SHORTCODE_ERROR;
             case $e instanceof Core\InvalidUrlException:
                 return self::INVALID_URL_ERROR;
-            case $e instanceof Core\InvalidArgumentException:
+            case $e instanceof Common\InvalidArgumentException:
                 return self::INVALID_ARGUMENT_ERROR;
             case $e instanceof Rest\AuthenticationException:
                 return self::INVALID_CREDENTIALS_ERROR;

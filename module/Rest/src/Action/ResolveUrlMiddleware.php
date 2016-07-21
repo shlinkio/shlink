@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\I18n\Translator\TranslatorInterface;
 
 class ResolveUrlMiddleware extends AbstractRestMiddleware
 {
@@ -16,16 +17,22 @@ class ResolveUrlMiddleware extends AbstractRestMiddleware
      * @var UrlShortenerInterface
      */
     private $urlShortener;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * ResolveUrlMiddleware constructor.
      * @param UrlShortenerInterface|UrlShortener $urlShortener
+     * @param TranslatorInterface $translator
      *
-     * @Inject({UrlShortener::class})
+     * @Inject({UrlShortener::class, "translator"})
      */
-    public function __construct(UrlShortenerInterface $urlShortener)
+    public function __construct(UrlShortenerInterface $urlShortener, TranslatorInterface $translator)
     {
         $this->urlShortener = $urlShortener;
+        $this->translator = $translator;
     }
 
     /**
@@ -43,7 +50,7 @@ class ResolveUrlMiddleware extends AbstractRestMiddleware
             if (! isset($longUrl)) {
                 return new JsonResponse([
                     'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                    'message' => sprintf('No URL found for shortcode "%s"', $shortCode),
+                    'message' => sprintf($this->translator->translate('No URL found for shortcode "%s"'), $shortCode),
                 ], 400);
             }
 
@@ -53,12 +60,15 @@ class ResolveUrlMiddleware extends AbstractRestMiddleware
         } catch (InvalidShortCodeException $e) {
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf('Provided short code "%s" has an invalid format', $shortCode),
+                'message' => sprintf(
+                    $this->translator->translate('Provided short code "%s" has an invalid format'),
+                    $shortCode
+                ),
             ], 400);
         } catch (\Exception $e) {
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
-                'message' => 'Unexpected error occured',
+                'message' => $this->translator->translate('Unexpected error occurred'),
             ], 500);
         }
     }

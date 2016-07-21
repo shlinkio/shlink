@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Zend\Diactoros\Uri;
+use Zend\I18n\Translator\TranslatorInterface;
 
 class GenerateShortcodeCommand extends Command
 {
@@ -23,26 +24,37 @@ class GenerateShortcodeCommand extends Command
      * @var array
      */
     private $domainConfig;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * GenerateShortcodeCommand constructor.
      * @param UrlShortenerInterface|UrlShortener $urlShortener
+     * @param TranslatorInterface $translator
      * @param array $domainConfig
      *
-     * @Inject({UrlShortener::class, "config.url_shortener.domain"})
+     * @Inject({UrlShortener::class, "translator", "config.url_shortener.domain"})
      */
-    public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig)
-    {
-        parent::__construct(null);
+    public function __construct(
+        UrlShortenerInterface $urlShortener,
+        TranslatorInterface $translator,
+        array $domainConfig
+    ) {
         $this->urlShortener = $urlShortener;
+        $this->translator = $translator;
         $this->domainConfig = $domainConfig;
+        parent::__construct(null);
     }
 
     public function configure()
     {
         $this->setName('shortcode:generate')
-             ->setDescription('Generates a shortcode for provided URL and returns the short URL')
-             ->addArgument('longUrl', InputArgument::REQUIRED, 'The long URL to parse');
+             ->setDescription(
+                 $this->translator->translate('Generates a shortcode for provided URL and returns the short URL')
+             )
+             ->addArgument('longUrl', InputArgument::REQUIRED, $this->translator->translate('The long URL to parse'));
     }
 
     public function interact(InputInterface $input, OutputInterface $output)
@@ -54,9 +66,10 @@ class GenerateShortcodeCommand extends Command
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
-        $question = new Question(
-            '<question>A long URL was not provided. Which URL do you want to shorten?:</question> '
-        );
+        $question = new Question(sprintf(
+            '<question>%s</question> ',
+            $this->translator->translate('A long URL was not provided. Which URL do you want to shorten?:')
+        ));
 
         $longUrl = $helper->ask($input, $output, $question);
         if (! empty($longUrl)) {
@@ -70,7 +83,7 @@ class GenerateShortcodeCommand extends Command
 
         try {
             if (! isset($longUrl)) {
-                $output->writeln('<error>A URL was not provided!</error>');
+                $output->writeln(sprintf('<error>%s</error>', $this->translator->translate('A URL was not provided!')));
                 return;
             }
 
@@ -80,13 +93,16 @@ class GenerateShortcodeCommand extends Command
                 ->withHost($this->domainConfig['hostname']);
 
             $output->writeln([
-                sprintf('Processed URL <info>%s</info>', $longUrl),
-                sprintf('Generated URL <info>%s</info>', $shortUrl),
+                sprintf('%s <info>%s</info>', $this->translator->translate('Processed URL:'), $longUrl),
+                sprintf('%s <info>%s</info>', $this->translator->translate('Generated URL:'), $shortUrl),
             ]);
         } catch (InvalidUrlException $e) {
-            $output->writeln(
-                sprintf('<error>Provided URL "%s" is invalid. Try with a different one.</error>', $longUrl)
-            );
+            $output->writeln(sprintf(
+                '<error>' . $this->translator->translate(
+                    'Provided URL "%s" is invalid. Try with a different one.'
+                ) . '</error>',
+                $longUrl
+            ));
         }
     }
 }

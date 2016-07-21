@@ -15,6 +15,12 @@ Statuses:
 
 [TODO]
 
+## Language
+
+In order to set the application language, you have to pass it by using the Accept-Language header.
+
+If not provided or provided language is not supported, english (en_US) will be used.
+
 ## Endpoints
 
 #### Authenticate

@@ -21,8 +21,8 @@ class RestTokenService implements RestTokenServiceInterface
     /**
      * ShortUrlService constructor.
      * @param EntityManagerInterface $em
-     *
      * @param array $restConfig
+     *
      * @Inject({"em", "config.rest"})
      */
     public function __construct(EntityManagerInterface $em, array $restConfig)
