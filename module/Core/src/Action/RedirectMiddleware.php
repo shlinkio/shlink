@@ -67,8 +67,8 @@ class RedirectMiddleware implements MiddlewareInterface
         try {
             $longUrl = $this->urlShortener->shortCodeToUrl($shortCode);
 
-            // If provided shortCode does not belong to a valid long URL, dispatch next middleware, which is 404
-            // middleware
+            // If provided shortCode does not belong to a valid long URL, dispatch next middleware, which will trigger
+            // a not-found error
             if (! isset($longUrl)) {
                 return $out($request, $response);
             }

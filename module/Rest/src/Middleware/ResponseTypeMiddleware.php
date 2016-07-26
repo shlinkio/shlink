@@ -1,15 +1,16 @@
 <?php
-namespace Shlinkio\Shlink\Rest\Middleware\Error;
+namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\Expressive\Router\RouteResult;
 use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Stratigility\ErrorMiddlewareInterface;
+use Zend\Stratigility\MiddlewareInterface;
 
-class ResponseTypeMiddleware implements ErrorMiddlewareInterface
+class ResponseTypeMiddleware implements MiddlewareInterface
 {
     /**
      * @var TranslatorInterface
@@ -35,31 +36,37 @@ class ResponseTypeMiddleware implements ErrorMiddlewareInterface
      * delegate to `$out`.
      *
      * @see MiddlewareInterface
-     * @param mixed $error
      * @param Request $request
      * @param Response $response
      * @param null|callable $out
      * @return null|Response
      */
-    public function __invoke($error, Request $request, Response $response, callable $out = null)
+    public function __invoke(Request $request, Response $response, callable $out = null)
     {
         $accept = $request->getHeader('Accept');
         if (! empty(array_intersect(['application/json', 'text/json', 'application/x-json'], $accept))) {
-            $status = $this->determineStatus($response);
+            $status = $this->determineStatus($request, $response);
             $errorData = $this->determineErrorCode($request, $status);
 
             return new JsonResponse($errorData, $status);
         }
 
-        return $out($request, $response, $error);
+        return $out($request, $response);
     }
 
     /**
+     * @param Request $request
      * @param Response $response
      * @return int
      */
-    protected function determineStatus(Response $response)
+    protected function determineStatus(Request $request, Response $response)
     {
+        /** @var RouteResult $routeResult */
+        $routeResult = $request->getAttribute(RouteResult::class);
+        if ($routeResult->isFailure()) {
+            return 404;
+        }
+
         $status = $response->getStatusCode();
         return $status >= 400 ? $status : 500;
     }

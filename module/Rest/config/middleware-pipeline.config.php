@@ -13,13 +13,12 @@ return [
             'priority' => 5,
         ],
 
-        'rest-error' => [
+        'rest-not-found' => [
             'path' => '/rest',
             'middleware' => [
-                Middleware\Error\ResponseTypeMiddleware::class,
+                Middleware\NotFoundMiddleware::class,
             ],
-            'error'    => true,
-            'priority' => -10000,
+            'priority' => -1,
         ],
     ],
 ];
