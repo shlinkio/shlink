@@ -12,5 +12,14 @@ return [
             ],
             'priority' => 5,
         ],
+
+        'rest-error' => [
+            'path' => '/rest',
+            'middleware' => [
+                Middleware\Error\ResponseTypeMiddleware::class,
+            ],
+            'error'    => true,
+            'priority' => -10000,
+        ],
     ],
 ];

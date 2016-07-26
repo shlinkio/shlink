@@ -19,6 +19,8 @@ return [
 
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
             Middleware\CheckAuthenticationMiddleware::class => AnnotatedFactory::class,
+
+            Middleware\Error\ResponseTypeMiddleware::class => AnnotatedFactory::class,
         ],
     ],
 
