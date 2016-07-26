@@ -45,15 +45,48 @@ class ResponseTypeMiddleware implements ErrorMiddlewareInterface
     {
         $accept = $request->getHeader('Accept');
         if (! empty(array_intersect(['application/json', 'text/json', 'application/x-json'], $accept))) {
-            $status = $response->getStatusCode();
-            $status = $status >= 400 ? $status : 500;
+            $status = $this->determineStatus($response);
+            $errorData = $this->determineErrorCode($request, $status);
 
-            return new JsonResponse([
-                'error' => RestUtils::UNKNOWN_ERROR,
-                'message' => $this->translator->translate('Unknown error'),
-            ], $status);
+            return new JsonResponse($errorData, $status);
         }
 
         return $out($request, $response, $error);
+    }
+
+    /**
+     * @param Response $response
+     * @return int
+     */
+    protected function determineStatus(Response $response)
+    {
+        $status = $response->getStatusCode();
+        return $status >= 400 ? $status : 500;
+    }
+
+    /**
+     * @param Request $request
+     * @param int $status
+     * @return string
+     */
+    protected function determineErrorCode(Request $request, $status)
+    {
+        $errorData = $request->getAttribute('errorData');
+        if (isset($errorData)) {
+            return $errorData;
+        }
+
+        switch ($status) {
+            case 404:
+                return [
+                    'error' => RestUtils::NOT_FOUND_ERROR,
+                    'message' => $this->translator->translate('Requested route does not exist'),
+                ];
+            default:
+                return [
+                    'error' => RestUtils::UNKNOWN_ERROR,
+                    'message' => $this->translator->translate('Unknown error occured'),
+                ];
+        }
     }
 }
