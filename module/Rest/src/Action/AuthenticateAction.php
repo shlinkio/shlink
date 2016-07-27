@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class AuthenticateMiddleware extends AbstractRestMiddleware
+class AuthenticateAction extends AbstractRestAction
 {
     /**
      * @var RestTokenServiceInterface
@@ -23,7 +23,7 @@ class AuthenticateMiddleware extends AbstractRestMiddleware
     private $translator;
 
     /**
-     * AuthenticateMiddleware constructor.
+     * AuthenticateAction constructor.
      * @param RestTokenServiceInterface|RestTokenService $restTokenService
      * @param TranslatorInterface $translator
      *

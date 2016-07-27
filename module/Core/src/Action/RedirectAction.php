@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Stratigility\MiddlewareInterface;
 
-class RedirectMiddleware implements MiddlewareInterface
+class RedirectAction implements MiddlewareInterface
 {
     /**
      * @var UrlShortenerInterface

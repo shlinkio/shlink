@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class ListShortcodesMiddleware extends AbstractRestMiddleware
+class ListShortcodesAction extends AbstractRestAction
 {
     use PaginatorUtilsTrait;
 
@@ -25,7 +25,7 @@ class ListShortcodesMiddleware extends AbstractRestMiddleware
     private $translator;
 
     /**
-     * ListShortcodesMiddleware constructor.
+     * ListShortcodesAction constructor.
      * @param ShortUrlServiceInterface|ShortUrlService $shortUrlService
      * @param TranslatorInterface $translator
      *

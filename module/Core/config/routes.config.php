@@ -1,5 +1,5 @@
 <?php
-use Shlinkio\Shlink\Core\Action\RedirectMiddleware;
+use Shlinkio\Shlink\Core\Action\RedirectAction;
 
 return [
 
@@ -7,7 +7,7 @@ return [
         [
             'name' => 'long-url-redirect',
             'path' => '/{shortCode}',
-            'middleware' => RedirectMiddleware::class,
+            'middleware' => RedirectAction::class,
             'allowed_methods' => ['GET'],
         ],
     ],

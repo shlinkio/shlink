@@ -11,11 +11,11 @@ return [
         'factories' => [
             Service\RestTokenService::class => AnnotatedFactory::class,
 
-            Action\AuthenticateMiddleware::class => AnnotatedFactory::class,
-            Action\CreateShortcodeMiddleware::class => AnnotatedFactory::class,
-            Action\ResolveUrlMiddleware::class => AnnotatedFactory::class,
-            Action\GetVisitsMiddleware::class => AnnotatedFactory::class,
-            Action\ListShortcodesMiddleware::class => AnnotatedFactory::class,
+            Action\AuthenticateAction::class => AnnotatedFactory::class,
+            Action\CreateShortcodeAction::class => AnnotatedFactory::class,
+            Action\ResolveUrlAction::class => AnnotatedFactory::class,
+            Action\GetVisitsAction::class => AnnotatedFactory::class,
+            Action\ListShortcodesAction::class => AnnotatedFactory::class,
 
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
             Middleware\CheckAuthenticationMiddleware::class => AnnotatedFactory::class,

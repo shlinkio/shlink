@@ -5,7 +5,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Stratigility\MiddlewareInterface;
 
-abstract class AbstractRestMiddleware implements MiddlewareInterface
+abstract class AbstractRestAction implements MiddlewareInterface
 {
     /**
      * Process an incoming request and/or response.

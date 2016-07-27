@@ -1,6 +1,6 @@
 <?php
 use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
-use Shlinkio\Shlink\Core\Action\RedirectMiddleware;
+use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Service;
 
 return [
@@ -14,7 +14,7 @@ return [
             Service\VisitService::class => AnnotatedFactory::class,
 
             // Middleware
-            RedirectMiddleware::class => AnnotatedFactory::class,
+            RedirectAction::class => AnnotatedFactory::class,
         ],
     ],
 

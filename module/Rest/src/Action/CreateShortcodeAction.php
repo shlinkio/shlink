@@ -4,35 +4,46 @@ namespace Shlinkio\Shlink\Rest\Action;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\Diactoros\Uri;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class ResolveUrlMiddleware extends AbstractRestMiddleware
+class CreateShortcodeAction extends AbstractRestAction
 {
     /**
-     * @var UrlShortenerInterface
+     * @var UrlShortener|UrlShortenerInterface
      */
     private $urlShortener;
+    /**
+     * @var array
+     */
+    private $domainConfig;
     /**
      * @var TranslatorInterface
      */
     private $translator;
 
     /**
-     * ResolveUrlMiddleware constructor.
+     * GenerateShortcodeMiddleware constructor.
+     *
      * @param UrlShortenerInterface|UrlShortener $urlShortener
      * @param TranslatorInterface $translator
+     * @param array $domainConfig
      *
-     * @Inject({UrlShortener::class, "translator"})
+     * @Inject({UrlShortener::class, "translator", "config.url_shortener.domain"})
      */
-    public function __construct(UrlShortenerInterface $urlShortener, TranslatorInterface $translator)
-    {
+    public function __construct(
+        UrlShortenerInterface $urlShortener,
+        TranslatorInterface $translator,
+        array $domainConfig
+    ) {
         $this->urlShortener = $urlShortener;
         $this->translator = $translator;
+        $this->domainConfig = $domainConfig;
     }
 
     /**
@@ -43,26 +54,32 @@ class ResolveUrlMiddleware extends AbstractRestMiddleware
      */
     public function dispatch(Request $request, Response $response, callable $out = null)
     {
-        $shortCode = $request->getAttribute('shortCode');
+        $postData = $request->getParsedBody();
+        if (! isset($postData['longUrl'])) {
+            return new JsonResponse([
+                'error' => RestUtils::INVALID_ARGUMENT_ERROR,
+                'message' => $this->translator->translate('A URL was not provided'),
+            ], 400);
+        }
+        $longUrl = $postData['longUrl'];
 
         try {
-            $longUrl = $this->urlShortener->shortCodeToUrl($shortCode);
-            if (! isset($longUrl)) {
-                return new JsonResponse([
-                    'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                    'message' => sprintf($this->translator->translate('No URL found for shortcode "%s"'), $shortCode),
-                ], 400);
-            }
+            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl));
+            $shortUrl = (new Uri())->withPath($shortCode)
+                                   ->withScheme($this->domainConfig['schema'])
+                                   ->withHost($this->domainConfig['hostname']);
 
             return new JsonResponse([
                 'longUrl' => $longUrl,
+                'shortUrl' => $shortUrl->__toString(),
+                'shortCode' => $shortCode,
             ]);
-        } catch (InvalidShortCodeException $e) {
+        } catch (InvalidUrlException $e) {
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => sprintf(
-                    $this->translator->translate('Provided short code "%s" has an invalid format'),
-                    $shortCode
+                    $this->translator->translate('Provided URL "%s" is invalid. Try with a different one.'),
+                    $longUrl
                 ),
             ], 400);
         } catch (\Exception $e) {

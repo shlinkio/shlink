@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class GetVisitsMiddleware extends AbstractRestMiddleware
+class GetVisitsAction extends AbstractRestAction
 {
     /**
      * @var VisitsTrackerInterface
@@ -24,7 +24,7 @@ class GetVisitsMiddleware extends AbstractRestMiddleware
     private $translator;
 
     /**
-     * GetVisitsMiddleware constructor.
+     * GetVisitsAction constructor.
      * @param VisitsTrackerInterface|VisitsTracker $visitsTracker
      * @param TranslatorInterface $translator
      *
