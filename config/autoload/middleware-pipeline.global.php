@@ -26,11 +26,5 @@ return [
             ],
             'priority' => 1,
         ],
-
-        'error' => [
-            'middleware' => [],
-            'error'    => true,
-            'priority' => -10000,
-        ],
     ],
 ];

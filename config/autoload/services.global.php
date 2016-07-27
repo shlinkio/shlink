@@ -1,4 +1,6 @@
 <?php
+use Shlinkio\Shlink\Common\Expressive\ContentBasedErrorHandlerFactory;
+use Shlinkio\Shlink\Rest\Expressive\JsonErrorHandler;
 use Zend\Expressive;
 use Zend\Expressive\Container;
 use Zend\Expressive\Helper;
@@ -21,7 +23,7 @@ return [
             Router\FastRouteRouter::class => InvokableFactory::class,
 
             // View
-            'Zend\Expressive\FinalHandler' => Container\TemplatedErrorHandlerFactory::class,
+            'Zend\Expressive\FinalHandler' => ContentBasedErrorHandlerFactory::class,
             Template\TemplateRendererInterface::class => Twig\TwigRendererFactory::class,
         ],
         'aliases' => [

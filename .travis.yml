@@ -11,6 +11,10 @@ php:
   - 7.1
   - hhvm
 
+matrix:
+  allow_failures:
+    - hhvm
+
 before_script:
   - composer self-update
   - composer install --no-interaction

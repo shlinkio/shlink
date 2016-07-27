@@ -19,6 +19,7 @@ return [
 
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
             Middleware\CheckAuthenticationMiddleware::class => AnnotatedFactory::class,
+            Middleware\NotFoundMiddleware::class => AnnotatedFactory::class,
         ],
     ],
 

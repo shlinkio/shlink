@@ -11,7 +11,8 @@ class RestUtils
     const INVALID_URL_ERROR = 'INVALID_URL';
     const INVALID_ARGUMENT_ERROR = 'INVALID_ARGUMENT';
     const INVALID_CREDENTIALS_ERROR = 'INVALID_CREDENTIALS';
-    const INVALID_AUTH_TOKEN_ERROR = 'INVALID_AUTH_TOKEN_ERROR';
+    const INVALID_AUTH_TOKEN_ERROR = 'INVALID_AUTH_TOKEN';
+    const NOT_FOUND_ERROR = 'NOT_FOUND';
     const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
 
     public static function getRestErrorCodeFromException(Common\ExceptionInterface $e)

@@ -23,7 +23,7 @@ return [
             'allowed_methods' => ['GET', 'OPTIONS'],
         ],
         [
-            'name' => 'rest-lActionist-shortened-url',
+            'name' => 'rest-list-shortened-url',
             'path' => '/rest/short-codes',
             'middleware' => Action\ListShortcodesMiddleware::class,
             'allowed_methods' => ['GET'],

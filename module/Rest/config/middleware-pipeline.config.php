@@ -12,5 +12,13 @@ return [
             ],
             'priority' => 5,
         ],
+
+        'rest-not-found' => [
+            'path' => '/rest',
+            'middleware' => [
+                Middleware\NotFoundMiddleware::class,
+            ],
+            'priority' => -1,
+        ],
     ],
 ];

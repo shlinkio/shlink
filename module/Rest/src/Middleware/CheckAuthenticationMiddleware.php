@@ -69,7 +69,9 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface
         // If current route is the authenticate route or an OPTIONS request, continue to the next middleware
         /** @var RouteResult $routeResult */
         $routeResult = $request->getAttribute(RouteResult::class);
-        if ((isset($routeResult) && $routeResult->getMatchedRouteName() === 'rest-authenticate')
+        if (! isset($routeResult)
+            || $routeResult->isFailure()
+            || $routeResult->getMatchedRouteName() === 'rest-authenticate'
             || $request->getMethod() === 'OPTIONS'
         ) {
             return $out($request, $response);
