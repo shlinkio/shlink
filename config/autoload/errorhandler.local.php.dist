@@ -1,13 +1,13 @@
 <?php
 
+use Shlinkio\Shlink\Common\Expressive\ContentBasedErrorHandler;
+use Zend\Expressive\Container\WhoopsErrorHandlerFactory;
+
 return [
     'services' => [
         'invokables' => [
             'Zend\Expressive\Whoops' => Whoops\Run::class,
             'Zend\Expressive\WhoopsPageHandler' => Whoops\Handler\PrettyPageHandler::class,
-        ],
-        'factories' => [
-            'Zend\Expressive\FinalHandler' => Zend\Expressive\Container\WhoopsErrorHandlerFactory::class,
         ],
     ],
 
@@ -16,6 +16,14 @@ return [
             'display'    => true,
             'show_trace' => true,
             'ajax_only'  => true,
+        ],
+    ],
+
+    'error_handler' => [
+        'plugins' => [
+            'factories' => [
+                ContentBasedErrorHandler::DEFAULT_CONTENT => WhoopsErrorHandlerFactory::class,
+            ],
         ],
     ],
 ];
