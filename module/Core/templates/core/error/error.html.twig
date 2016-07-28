@@ -14,8 +14,7 @@
     <hr>
     {% if status != 404 %}
         <p>{{ translate('We encountered a %s %s error.') | format(status, reason) }}</p>
-    {% endif %}
-    {% if status == 404 %}
+    {% else %}
         <p>{{ translate('This short URL doesn\'t seem to be valid.') }}</p>
         <p>{{ translate('Make sure you included all the characters, with no extra punctuation.') }}</p>
     {% endif %}
