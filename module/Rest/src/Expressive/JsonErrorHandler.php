@@ -1,10 +1,11 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Expressive;
 
-use Psr\Http\Message\RequestInterface as Request;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Shlinkio\Shlink\Common\Expressive\ErrorHandlerInterface;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\Expressive\Router\RouteResult;
 
 class JsonErrorHandler implements ErrorHandlerInterface
 {
@@ -18,9 +19,16 @@ class JsonErrorHandler implements ErrorHandlerInterface
      */
     public function __invoke(Request $request, Response $response, $err = null)
     {
-        $status = $response->getStatusCode();
-        $responsePhrase = $status < 400 ? 'Internal Server Error' : $response->getReasonPhrase();
-        $status = $status < 400 ? 500 : $status;
+        $hasRoute = $request->getAttribute(RouteResult::class) !== null;
+        $isNotFound = ! $hasRoute && ! isset($err);
+        if ($isNotFound) {
+            $responsePhrase = 'Not found';
+            $status = 404;
+        } else {
+            $status = $response->getStatusCode();
+            $responsePhrase = $status < 400 ? 'Internal Server Error' : $response->getReasonPhrase();
+            $status = $status < 400 ? 500 : $status;
+        }
 
         return new JsonResponse([
             'error' => $this->responsePhraseToCode($responsePhrase),

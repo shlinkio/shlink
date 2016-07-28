@@ -1,7 +1,7 @@
 <?php
 namespace Shlinkio\Shlink\Common\Expressive;
 
-use Psr\Http\Message\RequestInterface as Request;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
 interface ErrorHandlerInterface
