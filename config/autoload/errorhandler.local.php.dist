@@ -1,5 +1,4 @@
 <?php
-
 use Shlinkio\Shlink\Common\ErrorHandler\ContentBasedErrorHandler;
 use Zend\Expressive\Container\WhoopsErrorHandlerFactory;
 
