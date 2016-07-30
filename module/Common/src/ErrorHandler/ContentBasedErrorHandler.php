@@ -1,5 +1,5 @@
 <?php
-namespace Shlinkio\Shlink\Common\Expressive;
+namespace Shlinkio\Shlink\Common\ErrorHandler;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;

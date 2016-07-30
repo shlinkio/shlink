@@ -1,9 +1,9 @@
 <?php
-namespace Shlinkio\Shlink\Rest\Expressive;
+namespace Shlinkio\Shlink\Rest\ErrorHandler;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Shlinkio\Shlink\Common\Expressive\ErrorHandlerInterface;
+use Shlinkio\Shlink\Common\ErrorHandler\ErrorHandlerInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouteResult;
 

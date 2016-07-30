@@ -1,5 +1,5 @@
 <?php
-namespace Shlinkio\Shlink\Common\Expressive;
+namespace Shlinkio\Shlink\Common\ErrorHandler;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
