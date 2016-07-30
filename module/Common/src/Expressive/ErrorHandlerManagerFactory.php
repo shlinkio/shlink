@@ -7,7 +7,7 @@ use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class ContentBasedErrorHandlerFactory implements FactoryInterface
+class ErrorHandlerManagerFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -25,6 +25,6 @@ class ContentBasedErrorHandlerFactory implements FactoryInterface
     {
         $config = $container->get('config')['error_handler'];
         $plugins = isset($config['plugins']) ? $config['plugins'] : [];
-        return new ContentBasedErrorHandler($container, $plugins);
+        return new ErrorHandlerManager($container, $plugins);
     }
 }
