@@ -52,7 +52,7 @@ class GenerateShortcodeCommand extends Command
     {
         $this->setName('shortcode:generate')
              ->setDescription(
-                 $this->translator->translate('Generates a shortcode for provided URL and returns the short URL')
+                 $this->translator->translate('Generates a short code for provided URL and returns the short URL')
              )
              ->addArgument('longUrl', InputArgument::REQUIRED, $this->translator->translate('The long URL to parse'));
     }
@@ -87,8 +87,8 @@ class GenerateShortcodeCommand extends Command
                 return;
             }
 
-            $shortcode = $this->urlShortener->urlToShortCode(new Uri($longUrl));
-            $shortUrl = (new Uri())->withPath($shortcode)
+            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl));
+            $shortUrl = (new Uri())->withPath($shortCode)
                 ->withScheme($this->domainConfig['schema'])
                 ->withHost($this->domainConfig['hostname']);
 
