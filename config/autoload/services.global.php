@@ -1,6 +1,8 @@
 <?php
-use Shlinkio\Shlink\Common\Expressive\ContentBasedErrorHandlerFactory;
-use Shlinkio\Shlink\Rest\Expressive\JsonErrorHandler;
+use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
+use Shlinkio\Shlink\Common\Expressive\ContentBasedErrorHandler;
+use Shlinkio\Shlink\Common\Expressive\ErrorHandlerManager;
+use Shlinkio\Shlink\Common\Expressive\ErrorHandlerManagerFactory;
 use Zend\Expressive;
 use Zend\Expressive\Container;
 use Zend\Expressive\Helper;
@@ -23,11 +25,13 @@ return [
             Router\FastRouteRouter::class => InvokableFactory::class,
 
             // View
-            'Zend\Expressive\FinalHandler' => ContentBasedErrorHandlerFactory::class,
+            ContentBasedErrorHandler::class => AnnotatedFactory::class,
+            ErrorHandlerManager::class => ErrorHandlerManagerFactory::class,
             Template\TemplateRendererInterface::class => Twig\TwigRendererFactory::class,
         ],
         'aliases' => [
             Router\RouterInterface::class => Router\FastRouteRouter::class,
+            'Zend\Expressive\FinalHandler' => ContentBasedErrorHandler::class,
         ],
     ],
 

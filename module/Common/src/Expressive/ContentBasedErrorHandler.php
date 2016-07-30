@@ -1,27 +1,29 @@
 <?php
 namespace Shlinkio\Shlink\Common\Expressive;
 
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
-use Zend\ServiceManager\AbstractPluginManager;
-use Zend\ServiceManager\Exception\InvalidServiceException;
 
-class ContentBasedErrorHandler extends AbstractPluginManager implements ErrorHandlerInterface
+class ContentBasedErrorHandler implements ErrorHandlerInterface
 {
     const DEFAULT_CONTENT = 'text/html';
 
-    public function validate($instance)
-    {
-        if (is_callable($instance)) {
-            return;
-        }
+    /**
+     * @var ErrorHandlerManagerInterface
+     */
+    private $errorHandlerManager;
 
-        throw new InvalidServiceException(sprintf(
-            'Only callables are valid plugins for "%s". "%s" provided',
-            __CLASS__,
-            is_object($instance) ? get_class($instance) : gettype($instance)
-        ));
+    /**
+     * ContentBasedErrorHandler constructor.
+     * @param ErrorHandlerManagerInterface|ErrorHandlerManager $errorHandlerManager
+     *
+     * @Inject({ErrorHandlerManager::class})
+     */
+    public function __construct(ErrorHandlerManagerInterface $errorHandlerManager)
+    {
+        $this->errorHandlerManager = $errorHandlerManager;
     }
 
     /**
@@ -50,11 +52,11 @@ class ContentBasedErrorHandler extends AbstractPluginManager implements ErrorHan
         $accepts = $request->hasHeader('Accept') ? $request->getHeaderLine('Accept') : self::DEFAULT_CONTENT;
         $accepts = explode(',', $accepts);
         foreach ($accepts as $accept) {
-            if (! $this->has($accept)) {
+            if (! $this->errorHandlerManager->has($accept)) {
                 continue;
             }
 
-            return $this->get($accept);
+            return $this->errorHandlerManager->get($accept);
         }
 
         throw new InvalidArgumentException(sprintf(
