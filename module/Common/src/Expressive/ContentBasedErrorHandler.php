@@ -61,8 +61,8 @@ class ContentBasedErrorHandler implements ErrorHandlerInterface
         }
 
         // If it wasn't possible to find an error handler for accepted content type, use default one if registered
-        if ($this->has(self::DEFAULT_CONTENT)) {
-            return $this->get(self::DEFAULT_CONTENT);
+        if ($this->errorHandlerManager->has(self::DEFAULT_CONTENT)) {
+            return $this->errorHandlerManager->get(self::DEFAULT_CONTENT);
         }
 
         // It wasn't possible to find an error handler
