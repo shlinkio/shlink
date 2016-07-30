@@ -70,10 +70,10 @@ class RedirectAction implements MiddlewareInterface
             // If provided shortCode does not belong to a valid long URL, dispatch next middleware, which will trigger
             // a not-found error
             if (! isset($longUrl)) {
-                return $out($request, $response->withStatus(404), 'Not found');
+                return $this->notFoundResponse($request, $response, $out);
             }
 
-            // Track visit to this shortcode
+            // Track visit to this short code
             $this->visitTracker->track($shortCode);
 
             // Return a redirect response to the long URL.
@@ -81,7 +81,18 @@ class RedirectAction implements MiddlewareInterface
             return new RedirectResponse($longUrl);
         } catch (\Exception $e) {
             // In case of error, dispatch 404 error
-            return $out($request, $response);
+            return $this->notFoundResponse($request, $response, $out);
         }
+    }
+
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @param callable $out
+     * @return Response
+     */
+    protected function notFoundResponse(Request $request, Response $response, callable $out)
+    {
+        return $out($request, $response->withStatus(404), 'Not Found');
     }
 }
