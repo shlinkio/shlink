@@ -2,11 +2,11 @@
     "name": "shlinkio/shlink",
     "type": "project",
     "homepage": "http://shlink.io",
-    "description": "A PHP-based URL shortener application with analytics and management",
+    "description": "A self-hosted and PHP-based URL shortener application with CLI and REST interfaces",
     "license": "MIT",
     "authors": [
         {
-            "name": "Alejandro Celaya ALastrué",
+            "name": "Alejandro Celaya Alastrué",
             "homepage": "http://www.alejandrocelaya.com",
             "email": "alejandro@alejandrocelaya.com"
         }
@@ -14,7 +14,6 @@
     "require": {
         "php": "^5.6 || ^7.0",
         "zendframework/zend-expressive": "^1.0",
-        "zendframework/zend-expressive-helpers": "^2.0",
         "zendframework/zend-expressive-fastroute": "^1.1",
         "zendframework/zend-expressive-twigrenderer": "^1.0",
         "zendframework/zend-stdlib": "^2.7",
