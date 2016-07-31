@@ -14,7 +14,7 @@ use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
 
-    'services' => [
+    'dependencies' => [
         'factories' => [
             EntityManager::class => EntityManagerFactory::class,
             GuzzleHttp\Client::class => InvokableFactory::class,

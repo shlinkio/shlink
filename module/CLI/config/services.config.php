@@ -5,7 +5,7 @@ use Symfony\Component\Console;
 
 return [
 
-    'services' => [
+    'dependencies' => [
         'factories' => [
             Console\Application::class => CLI\Factory\ApplicationFactory::class,
 

@@ -7,7 +7,7 @@ use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
 
-    'services' => [
+    'dependencies' => [
         'factories' => [
             Service\RestTokenService::class => AnnotatedFactory::class,
 

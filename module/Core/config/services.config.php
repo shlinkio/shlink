@@ -5,7 +5,7 @@ use Shlinkio\Shlink\Core\Service;
 
 return [
 
-    'services' => [
+    'dependencies' => [
         'factories' => [
             // Services
             Service\UrlShortener::class => AnnotatedFactory::class,

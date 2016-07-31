@@ -10,7 +10,7 @@ use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
 
-    'services' => [
+    'dependencies' => [
         'factories' => [
             Expressive\Application::class => Container\ApplicationFactory::class,
 

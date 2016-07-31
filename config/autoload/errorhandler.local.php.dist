@@ -3,7 +3,7 @@ use Shlinkio\Shlink\Common\ErrorHandler\ContentBasedErrorHandler;
 use Zend\Expressive\Container\WhoopsErrorHandlerFactory;
 
 return [
-    'services' => [
+    'dependencies' => [
         'invokables' => [
             'Zend\Expressive\Whoops' => Whoops\Run::class,
             'Zend\Expressive\WhoopsPageHandler' => Whoops\Handler\PrettyPageHandler::class,

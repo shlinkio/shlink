@@ -25,7 +25,7 @@ class ConfigProviderTest extends TestCase
 
         $this->assertArrayHasKey('error_handler', $config);
         $this->assertArrayHasKey('middleware_pipeline', $config);
-        $this->assertArrayHasKey('services', $config);
+        $this->assertArrayHasKey('dependencies', $config);
         $this->assertArrayHasKey('twig', $config);
     }
 }
