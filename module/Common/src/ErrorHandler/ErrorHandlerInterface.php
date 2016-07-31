@@ -1,5 +1,5 @@
 <?php
-namespace Shlinkio\Shlink\Common\Expressive;
+namespace Shlinkio\Shlink\Common\ErrorHandler;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;

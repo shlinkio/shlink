@@ -1,5 +1,5 @@
 <?php
-use Shlinkio\Shlink\Common\Expressive\ContentBasedErrorHandler;
+use Shlinkio\Shlink\Common\ErrorHandler\ContentBasedErrorHandler;
 use Zend\Expressive\Container\TemplatedErrorHandlerFactory;
 use Zend\Stratigility\FinalHandler;
 

@@ -1,8 +1,5 @@
 <?php
-use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
-use Shlinkio\Shlink\Common\Expressive\ContentBasedErrorHandler;
-use Shlinkio\Shlink\Common\Expressive\ErrorHandlerManager;
-use Shlinkio\Shlink\Common\Expressive\ErrorHandlerManagerFactory;
+use Shlinkio\Shlink\Common\ErrorHandler\ContentBasedErrorHandler;
 use Zend\Expressive;
 use Zend\Expressive\Container;
 use Zend\Expressive\Helper;
@@ -25,8 +22,6 @@ return [
             Router\FastRouteRouter::class => InvokableFactory::class,
 
             // View
-            ContentBasedErrorHandler::class => AnnotatedFactory::class,
-            ErrorHandlerManager::class => ErrorHandlerManagerFactory::class,
             Template\TemplateRendererInterface::class => Twig\TwigRendererFactory::class,
         ],
         'aliases' => [

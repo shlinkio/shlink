@@ -1,5 +1,5 @@
 <?php
-use Shlinkio\Shlink\Rest\Expressive\JsonErrorHandler;
+use Shlinkio\Shlink\Rest\ErrorHandler\JsonErrorHandler;
 
 return [
 

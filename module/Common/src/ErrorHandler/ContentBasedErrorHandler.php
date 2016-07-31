@@ -1,5 +1,5 @@
 <?php
-namespace Shlinkio\Shlink\Common\Expressive;
+namespace Shlinkio\Shlink\Common\ErrorHandler;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -49,6 +49,7 @@ class ContentBasedErrorHandler implements ErrorHandlerInterface
      */
     protected function resolveErrorHandlerFromAcceptHeader(Request $request)
     {
+        // Try to find an error handler for one of the accepted content types
         $accepts = $request->hasHeader('Accept') ? $request->getHeaderLine('Accept') : self::DEFAULT_CONTENT;
         $accepts = explode(',', $accepts);
         foreach ($accepts as $accept) {
@@ -59,8 +60,17 @@ class ContentBasedErrorHandler implements ErrorHandlerInterface
             return $this->errorHandlerManager->get($accept);
         }
 
+        // If it wasn't possible to find an error handler for accepted content type, use default one if registered
+        if ($this->errorHandlerManager->has(self::DEFAULT_CONTENT)) {
+            return $this->errorHandlerManager->get(self::DEFAULT_CONTENT);
+        }
+
+        // It wasn't possible to find an error handler
         throw new InvalidArgumentException(sprintf(
-            'It wasn\'t possible to find an error handler for '
+            'It wasn\'t possible to find an error handler for ["%s"] content types. '
+            . 'Make sure you have registered at least the default "%s" content type',
+            implode('", "', $accepts),
+            self::DEFAULT_CONTENT
         ));
     }
 }

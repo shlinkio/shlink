@@ -25,7 +25,7 @@ class ApplicationFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = $container->get('config')['cli'];
-        $app = new CliApp();
+        $app = new CliApp('Shlink', '1.0.0');
 
         $commands = isset($config['commands']) ? $config['commands'] : [];
         foreach ($commands as $command) {
