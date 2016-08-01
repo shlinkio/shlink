@@ -13,11 +13,13 @@ Statuses:
 
 ## Authentication
 
-[TODO]
+Once you have called to the authentication endpoint for the first time (see below) yopu will get an authentication token.
+
+You will have to send that token in the `X-Auth-Token` header on any later request or you will get an authentication error.
 
 ## Language
 
-In order to set the application language, you have to pass it by using the Accept-Language header.
+In order to set the application language, you have to pass it by using the `Accept-Language` header.
 
 If not provided or provided language is not supported, english (en_US) will be used.
 
