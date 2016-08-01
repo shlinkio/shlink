@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2016-07-21 15:54+0200\n"
-"PO-Revision-Date: 2016-07-21 15:56+0200\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2016-08-01 21:21+0200\n"
+"PO-Revision-Date: 2016-08-01 21:22+0200\n"
+"Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,19 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: config\n"
 
-msgid "Generates a shortcode for provided URL and returns the short URL"
+#, php-format
+msgid ""
+"Generates a character set sample just by shuffling the default one, \"%s\". "
+"Then it can be set in the SHORTCODE_CHARS environment variable"
+msgstr ""
+"Genera un grupo de caracteres simplemente mexclando el grupo por defecto \"%s"
+"\". Después puede ser utilizado en la variable de entrono SHORTCODE_CHARS"
+
+msgid "Character set:"
+msgstr "Grupo de caracteres:"
+
+#, fuzzy
+msgid "Generates a short code for provided URL and returns the short URL"
 msgstr ""
 "Genera un código corto para la URL proporcionada y devuelve la URL acortada"
 
