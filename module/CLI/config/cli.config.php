@@ -10,6 +10,7 @@ return [
             Command\ListShortcodesCommand::class,
             Command\GetVisitsCommand::class,
             Command\ProcessVisitsCommand::class,
+            Command\Config\GenerateCharsetCommand::class,
         ]
     ],
 
