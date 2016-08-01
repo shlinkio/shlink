@@ -11,4 +11,5 @@ return [
             'priority' => 5,
         ],
     ],
+
 ];
