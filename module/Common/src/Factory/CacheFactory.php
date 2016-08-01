@@ -25,6 +25,6 @@ class CacheFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return getenv('APP_ENV') === 'pro' ? new ApcuCache() : new ArrayCache();
+        return env('APP_ENV', 'dev') === 'pro' ? new ApcuCache() : new ArrayCache();
     }
 }

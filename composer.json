@@ -41,7 +41,10 @@
             "Shlinkio\\Shlink\\Rest\\": "module/Rest/src",
             "Shlinkio\\Shlink\\Core\\": "module/Core/src",
             "Shlinkio\\Shlink\\Common\\": "module/Common/src"
-        }
+        },
+        "files": [
+            "module/Common/functions/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

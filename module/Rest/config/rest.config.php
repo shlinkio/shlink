@@ -2,8 +2,8 @@
 return [
 
     'rest' => [
-        'username' => getenv('REST_USER'),
-        'password' => getenv('REST_PASSWORD'),
+        'username' => env('REST_USER'),
+        'password' => env('REST_PASSWORD'),
     ],
 
 ];

@@ -2,7 +2,7 @@
 return [
 
     'translator' => [
-        'locale' => getenv('DEFAULT_LOCALE') ?: 'en',
+        'locale' => env('DEFAULT_LOCALE', 'en'),
     ],
 
 ];
