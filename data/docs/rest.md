@@ -13,7 +13,15 @@ Statuses:
 
 ## Authentication
 
-[TODO]
+Once you have called to the authentication endpoint for the first time (see below) yopu will get an authentication token.
+
+You will have to send that token in the `X-Auth-Token` header on any later request or you will get an authentication error.
+
+## Language
+
+In order to set the application language, you have to pass it by using the `Accept-Language` header.
+
+If not provided or provided language is not supported, english (en_US) will be used.
 
 ## Endpoints
 
@@ -222,9 +230,12 @@ Posible errors:
 
 **REQUEST**
 
-* `GET` -> `/rest/visits/{shortCode}`
+* `GET` -> `/rest/short-codes/{shortCode}/visits`
 * Route params:
     * shortCode: `string` -> The shortCode from which we eant to get the visits.
+* Query params:
+    * startDate: `string` -> If provided, only visits older that this date will be returned
+    * endDate: `string` -> If provided, only visits newer that this date will be returned
 * Headers:
     * X-Auth-Token: `string` -> The token provided in the authentication request
     

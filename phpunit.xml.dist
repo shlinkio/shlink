@@ -1,13 +1,29 @@
 <phpunit bootstrap="./vendor/autoload.php" colors="true">
     <testsuites>
-        <testsuite name="AcelayaTest">
-            <directory>./tests</directory>
+        <testsuite name="Common">
+            <directory>./module/Common/test</directory>
+        </testsuite>
+        <testsuite name="Core">
+            <directory>./module/Core/test</directory>
+        </testsuite>
+        <testsuite name="Rest">
+            <directory>./module/Rest/test</directory>
+        </testsuite>
+        <testsuite name="CLI">
+            <directory>./module/CLI/test</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src</directory>
+            <directory suffix=".php">./module/Common/src</directory>
+            <directory suffix=".php">./module/Core/src</directory>
+            <directory suffix=".php">./module/Rest/src</directory>
+            <directory suffix=".php">./module/CLI/src</directory>
+
+            <exclude>
+                <directory suffix=".php">./module/Core/src/Repository</directory>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
