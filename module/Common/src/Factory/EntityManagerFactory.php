@@ -30,12 +30,14 @@ class EntityManagerFactory implements FactoryInterface
         $globalConfig = $container->get('config');
         $isDevMode = isset($globalConfig['debug']) ? ((bool) $globalConfig['debug']) : false;
         $cache = $container->has(Cache::class) ? $container->get(Cache::class) : new ArrayCache();
-        $dbConfig = isset($globalConfig['database']) ? $globalConfig['database'] : [];
+        $emConfig = isset($globalConfig['entity_manager']) ? $globalConfig['entity_manager'] : [];
+        $connecitonConfig = isset($emConfig['connection']) ? $emConfig['connection'] : [];
+        $ormConfig = isset($emConfig['orm']) ? $emConfig['orm'] : [];
 
-        return EntityManager::create($dbConfig, Setup::createAnnotationMetadataConfiguration(
-            ['module/Core/src/Entity'],
+        return EntityManager::create($connecitonConfig, Setup::createAnnotationMetadataConfiguration(
+            isset($ormConfig['entities_paths']) ? $ormConfig['entities_paths'] : [],
             $isDevMode,
-            'data/proxies',
+            isset($ormConfig['proxies_dir']) ? $ormConfig['proxies_dir'] : null,
             $cache,
             false
         ));
