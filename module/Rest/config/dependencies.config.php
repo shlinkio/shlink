@@ -10,6 +10,7 @@ return [
     'dependencies' => [
         'factories' => [
             Service\RestTokenService::class => AnnotatedFactory::class,
+            Service\ApiKeyService::class => AnnotatedFactory::class,
 
             Action\AuthenticateAction::class => AnnotatedFactory::class,
             Action\CreateShortcodeAction::class => AnnotatedFactory::class,

@@ -17,6 +17,7 @@ return [
             Command\ProcessVisitsCommand::class => AnnotatedFactory::class,
             Command\ProcessVisitsCommand::class => AnnotatedFactory::class,
             Command\Config\GenerateCharsetCommand::class => AnnotatedFactory::class,
+            Command\Api\GenerateKeyCommand::class => AnnotatedFactory::class,
         ],
     ],
 

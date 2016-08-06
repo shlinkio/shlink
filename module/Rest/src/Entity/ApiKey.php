@@ -124,4 +124,14 @@ class ApiKey extends AbstractEntity
     {
         return $this->isEnabled() && ! $this->isExpired();
     }
+
+    /**
+     * The string repesentation of an API key is the key itself
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getKey();
+    }
 }

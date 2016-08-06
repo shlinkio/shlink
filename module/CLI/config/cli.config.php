@@ -11,6 +11,7 @@ return [
             Command\GetVisitsCommand::class,
             Command\ProcessVisitsCommand::class,
             Command\Config\GenerateCharsetCommand::class,
+            Command\Api\GenerateKeyCommand::class,
         ]
     ],
 
