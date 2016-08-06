@@ -139,4 +139,30 @@ class ApiKeyServiceTest extends TestCase
         $this->assertFalse($key->isEnabled());
         $this->assertSame($key, $returnedKey);
     }
+
+    /**
+     * @test
+     */
+    public function listFindsAllApiKeys()
+    {
+        $repo = $this->prophesize(EntityRepository::class);
+        $repo->findBy([])->willReturn([])
+                         ->shouldBeCalledTimes(1);
+        $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
+
+        $this->service->listKeys();
+    }
+
+    /**
+     * @test
+     */
+    public function listEnabledFindsOnlyEnabledApiKeys()
+    {
+        $repo = $this->prophesize(EntityRepository::class);
+        $repo->findBy(['enabled' => true])->willReturn([])
+                                          ->shouldBeCalledTimes(1);
+        $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
+
+        $this->service->listKeys(true);
+    }
 }

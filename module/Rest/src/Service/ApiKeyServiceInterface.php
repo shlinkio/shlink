@@ -28,4 +28,12 @@ interface ApiKeyServiceInterface
      * @return ApiKey
      */
     public function disable($key);
+
+    /**
+     * Lists all existing appi keys
+     *
+     * @param bool $enabledOnly Tells if only enabled keys should be returned
+     * @return ApiKey[]
+     */
+    public function listKeys($enabledOnly = false);
 }

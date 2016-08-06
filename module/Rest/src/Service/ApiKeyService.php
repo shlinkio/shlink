@@ -82,4 +82,16 @@ class ApiKeyService implements ApiKeyServiceInterface
         $this->em->flush();
         return $apiKey;
     }
+
+    /**
+     * Lists all existing appi keys
+     *
+     * @param bool $enabledOnly Tells if only enabled keys should be returned
+     * @return ApiKey[]
+     */
+    public function listKeys($enabledOnly = false)
+    {
+        $conditions = $enabledOnly ? ['enabled' => true] : [];
+        return $this->em->getRepository(ApiKey::class)->findBy($conditions);
+    }
 }
