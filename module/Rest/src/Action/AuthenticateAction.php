@@ -44,7 +44,7 @@ class AuthenticateAction extends AbstractRestAction
     public function dispatch(Request $request, Response $response, callable $out = null)
     {
         $authData = $request->getParsedBody();
-        if (! isset($authData['apiKey'], $authData['username'], $authData['password'])) {
+        if (! isset($authData['apiKey']) && ! isset($authData['username'], $authData['password'])) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
                 'message' => $this->translator->translate(
