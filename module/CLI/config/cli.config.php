@@ -13,6 +13,7 @@ return [
             Command\Config\GenerateCharsetCommand::class,
             Command\Api\GenerateKeyCommand::class,
             Command\Api\DisableKeyCommand::class,
+            Command\Api\ListKeysCommand::class,
         ]
     ],
 
