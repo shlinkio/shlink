@@ -84,7 +84,7 @@ class ApiKey extends AbstractEntity
             return false;
         }
 
-        return $this->expirationDate >= new \DateTime();
+        return $this->expirationDate < new \DateTime();
     }
 
     /**
@@ -103,6 +103,16 @@ class ApiKey extends AbstractEntity
     {
         $this->enabled = $enabled;
         return $this;
+    }
+
+    /**
+     * Disables this API key
+     *
+     * @return $this
+     */
+    public function disable()
+    {
+        return $this->setEnabled(false);
     }
 
     /**

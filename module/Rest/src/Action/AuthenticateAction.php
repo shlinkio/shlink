@@ -44,10 +44,12 @@ class AuthenticateAction extends AbstractRestAction
     public function dispatch(Request $request, Response $response, callable $out = null)
     {
         $authData = $request->getParsedBody();
-        if (! isset($authData['username'], $authData['password'])) {
+        if (! isset($authData['apiKey'], $authData['username'], $authData['password'])) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' => $this->translator->translate('You have to provide both "username" and "password"'),
+                'message' => $this->translator->translate(
+                    'You have to provide a valid API key under the "apiKey" param name.'
+                ),
             ], 400);
         }
 
