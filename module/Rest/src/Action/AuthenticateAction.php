@@ -2,6 +2,7 @@
 namespace Shlinkio\Shlink\Rest\Action;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
+use Firebase\JWT\JWT;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
