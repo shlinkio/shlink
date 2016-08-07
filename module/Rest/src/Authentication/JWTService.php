@@ -1,6 +1,7 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Authentication;
 
+use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Firebase\JWT\JWT;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -16,6 +17,8 @@ class JWTService implements JWTServiceInterface
     /**
      * JWTService constructor.
      * @param AppOptions $appOptions
+     *
+     * @Inject({AppOptions::class})
      */
     public function __construct(AppOptions $appOptions)
     {

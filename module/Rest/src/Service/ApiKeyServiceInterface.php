@@ -36,4 +36,12 @@ interface ApiKeyServiceInterface
      * @return ApiKey[]
      */
     public function listKeys($enabledOnly = false);
+
+    /**
+     * Tries to find one API key by its key string
+     *
+     * @param string $key
+     * @return ApiKey|null
+     */
+    public function getByKey($key);
 }

@@ -1,6 +1,7 @@
 <?php
 use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
 use Shlinkio\Shlink\Rest\Action;
+use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Middleware;
 use Shlinkio\Shlink\Rest\Service;
 use Zend\ServiceManager\Factory\InvokableFactory;
@@ -9,6 +10,7 @@ return [
 
     'dependencies' => [
         'factories' => [
+            JWTService::class => AnnotatedFactory::class,
             Service\RestTokenService::class => AnnotatedFactory::class,
             Service\ApiKeyService::class => AnnotatedFactory::class,
 

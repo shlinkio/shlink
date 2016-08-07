@@ -52,9 +52,7 @@ class ApiKeyService implements ApiKeyServiceInterface
     public function check($key)
     {
         /** @var ApiKey $apiKey */
-        $apiKey = $this->em->getRepository(ApiKey::class)->findOneBy([
-            'key' => $key,
-        ]);
+        $apiKey = $this->getByKey($key);
         if (! isset($apiKey)) {
             return false;
         }
@@ -71,9 +69,7 @@ class ApiKeyService implements ApiKeyServiceInterface
     public function disable($key)
     {
         /** @var ApiKey $apiKey */
-        $apiKey = $this->em->getRepository(ApiKey::class)->findOneBy([
-            'key' => $key,
-        ]);
+        $apiKey = $this->getByKey($key);
         if (! isset($apiKey)) {
             throw new InvalidArgumentException(sprintf('API key "%s" does not exist and can\'t be disabled', $key));
         }
@@ -93,5 +89,18 @@ class ApiKeyService implements ApiKeyServiceInterface
     {
         $conditions = $enabledOnly ? ['enabled' => true] : [];
         return $this->em->getRepository(ApiKey::class)->findBy($conditions);
+    }
+
+    /**
+     * Tries to find one API key by its key string
+     *
+     * @param string $key
+     * @return ApiKey|null
+     */
+    public function getByKey($key)
+    {
+        return $this->em->getRepository(ApiKey::class)->findOneBy([
+            'key' => $key,
+        ]);
     }
 }

@@ -4,6 +4,8 @@ namespace ShlinkioTest\Shlink\Rest\Action;
 use PHPUnit_Framework_TestCase as TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
+use Shlinkio\Shlink\Rest\Authentication\JWTService;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
@@ -19,11 +21,20 @@ class AuthenticateActionTest extends TestCase
      * @var ObjectProphecy
      */
     protected $apiKeyService;
+    /**
+     * @var ObjectProphecy
+     */
+    protected $jwtService;
 
     public function setUp()
     {
         $this->apiKeyService = $this->prophesize(ApiKeyService::class);
-        $this->action = new AuthenticateAction($this->apiKeyService->reveal(), Translator::factory([]));
+        $this->jwtService = $this->prophesize(JWTService::class);
+        $this->action = new AuthenticateAction(
+            $this->apiKeyService->reveal(),
+            $this->jwtService->reveal(),
+            Translator::factory([])
+        );
     }
 
     /**
@@ -40,8 +51,8 @@ class AuthenticateActionTest extends TestCase
      */
     public function properApiKeyReturnsTokenInResponse()
     {
-        $this->apiKeyService->check('foo')->willReturn(true)
-                                          ->shouldBeCalledTimes(1);
+        $this->apiKeyService->getByKey('foo')->willReturn((new ApiKey())->setId(5))
+                                             ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'apiKey' => 'foo',
@@ -58,8 +69,8 @@ class AuthenticateActionTest extends TestCase
      */
     public function invalidApiKeyReturnsErrorResponse()
     {
-        $this->apiKeyService->check('foo')->willReturn(false)
-                                          ->shouldBeCalledTimes(1);
+        $this->apiKeyService->getByKey('foo')->willReturn((new ApiKey())->setEnabled(false))
+                                             ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'apiKey' => 'foo',
