@@ -3,10 +3,8 @@ namespace ShlinkioTest\Shlink\Rest\Action;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Core\Entity\RestToken;
 use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
-use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
-use Shlinkio\Shlink\Rest\Service\RestTokenService;
+use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
@@ -20,12 +18,12 @@ class AuthenticateActionTest extends TestCase
     /**
      * @var ObjectProphecy
      */
-    protected $tokenService;
+    protected $apiKeyService;
 
     public function setUp()
     {
-        $this->tokenService = $this->prophesize(RestTokenService::class);
-        $this->action = new AuthenticateAction($this->tokenService->reveal(), Translator::factory([]));
+        $this->apiKeyService = $this->prophesize(ApiKeyService::class);
+        $this->action = new AuthenticateAction($this->apiKeyService->reveal(), Translator::factory([]));
     }
 
     /**
@@ -40,34 +38,31 @@ class AuthenticateActionTest extends TestCase
     /**
      * @test
      */
-    public function properCredentialsReturnTokenInResponse()
+    public function properApiKeyReturnsTokenInResponse()
     {
-        $this->tokenService->createToken('foo', 'bar')->willReturn(
-            (new RestToken())->setToken('abc-ABC')
-        )->shouldBeCalledTimes(1);
+        $this->apiKeyService->check('foo')->willReturn(true)
+                                          ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
-            'username' => 'foo',
-            'password' => 'bar',
+            'apiKey' => 'foo',
         ]);
         $response = $this->action->__invoke($request, new Response());
         $this->assertEquals(200, $response->getStatusCode());
 
         $response->getBody()->rewind();
-        $this->assertEquals(['token' => 'abc-ABC'], json_decode($response->getBody()->getContents(), true));
+        $this->assertTrue(strpos($response->getBody()->getContents(), '"token"') > 0);
     }
 
     /**
      * @test
      */
-    public function authenticationExceptionsReturnErrorResponse()
+    public function invalidApiKeyReturnsErrorResponse()
     {
-        $this->tokenService->createToken('foo', 'bar')->willThrow(new AuthenticationException())
-                                                      ->shouldBeCalledTimes(1);
+        $this->apiKeyService->check('foo')->willReturn(false)
+                                          ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
-            'username' => 'foo',
-            'password' => 'bar',
+            'apiKey' => 'foo',
         ]);
         $response = $this->action->__invoke($request, new Response());
         $this->assertEquals(401, $response->getStatusCode());

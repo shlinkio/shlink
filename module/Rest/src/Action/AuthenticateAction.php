@@ -4,9 +4,8 @@ namespace Shlinkio\Shlink\Rest\Action;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
-use Shlinkio\Shlink\Rest\Service\RestTokenService;
-use Shlinkio\Shlink\Rest\Service\RestTokenServiceInterface;
+use Shlinkio\Shlink\Rest\Service\ApiKeyService;
+use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
@@ -14,25 +13,25 @@ use Zend\I18n\Translator\TranslatorInterface;
 class AuthenticateAction extends AbstractRestAction
 {
     /**
-     * @var RestTokenServiceInterface
-     */
-    private $restTokenService;
-    /**
      * @var TranslatorInterface
      */
     private $translator;
+    /**
+     * @var ApiKeyService|ApiKeyServiceInterface
+     */
+    private $apiKeyService;
 
     /**
      * AuthenticateAction constructor.
-     * @param RestTokenServiceInterface|RestTokenService $restTokenService
+     * @param ApiKeyServiceInterface|ApiKeyService $apiKeyService
      * @param TranslatorInterface $translator
      *
-     * @Inject({RestTokenService::class, "translator"})
+     * @Inject({ApiKeyService::class, "translator"})
      */
-    public function __construct(RestTokenServiceInterface $restTokenService, TranslatorInterface $translator)
+    public function __construct(ApiKeyServiceInterface $apiKeyService, TranslatorInterface $translator)
     {
-        $this->restTokenService = $restTokenService;
         $this->translator = $translator;
+        $this->apiKeyService = $apiKeyService;
     }
 
     /**
@@ -44,7 +43,7 @@ class AuthenticateAction extends AbstractRestAction
     public function dispatch(Request $request, Response $response, callable $out = null)
     {
         $authData = $request->getParsedBody();
-        if (! isset($authData['apiKey']) && ! isset($authData['username'], $authData['password'])) {
+        if (! isset($authData['apiKey'])) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
                 'message' => $this->translator->translate(
@@ -53,14 +52,16 @@ class AuthenticateAction extends AbstractRestAction
             ], 400);
         }
 
-        try {
-            $token = $this->restTokenService->createToken($authData['username'], $authData['password']);
-            return new JsonResponse(['token' => $token->getToken()]);
-        } catch (AuthenticationException $e) {
+        // Authenticate using provided API key
+        if (! $this->apiKeyService->check($authData['apiKey'])) {
             return new JsonResponse([
-                'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => $this->translator->translate('Invalid username and/or password'),
+                'error' => RestUtils::INVALID_API_KEY_ERROR,
+                'message' => $this->translator->translate('Provided API key does not exist or is invalid.'),
             ], 401);
         }
+
+        // TODO Generate a JSON Web Token that will be used for authorization in next requests
+
+        return new JsonResponse(['token' => '']);
     }
 }
