@@ -11,7 +11,6 @@ return [
     'dependencies' => [
         'factories' => [
             JWTService::class => AnnotatedFactory::class,
-            Service\RestTokenService::class => AnnotatedFactory::class,
             Service\ApiKeyService::class => AnnotatedFactory::class,
 
             Action\AuthenticateAction::class => AnnotatedFactory::class,

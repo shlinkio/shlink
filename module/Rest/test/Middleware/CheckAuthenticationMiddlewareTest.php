@@ -3,7 +3,6 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Core\Entity\RestToken;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Middleware\CheckAuthenticationMiddleware;
 use Zend\Diactoros\Response;
@@ -148,7 +147,6 @@ class CheckAuthenticationMiddlewareTest extends TestCase
     public function provideCorrectTokenUpdatesExpirationAndFallbacksToNextMiddleware()
     {
         $authToken = 'ABC-abc';
-        $restToken = (new RestToken())->setExpirationDate((new \DateTime())->add(new \DateInterval('P1D')));
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
             RouteResult::fromRouteMatch('bar', 'foo', [])
