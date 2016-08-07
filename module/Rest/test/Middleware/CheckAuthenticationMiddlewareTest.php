@@ -4,8 +4,8 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 use PHPUnit_Framework_TestCase as TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\RestToken;
+use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Middleware\CheckAuthenticationMiddleware;
-use Shlinkio\Shlink\Rest\Service\RestTokenService;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Expressive\Router\RouteResult;
@@ -20,18 +20,18 @@ class CheckAuthenticationMiddlewareTest extends TestCase
     /**
      * @var ObjectProphecy
      */
-    protected $tokenService;
+    protected $jwtService;
 
     public function setUp()
     {
-        $this->tokenService = $this->prophesize(RestTokenService::class);
-        $this->middleware = new CheckAuthenticationMiddleware($this->tokenService->reveal(), Translator::factory([]));
+        $this->jwtService = $this->prophesize(JWTService::class);
+        $this->middleware = new CheckAuthenticationMiddleware($this->jwtService->reveal(), Translator::factory([]));
     }
 
     /**
      * @test
      */
-    public function someWhitelistedSituationsFallbackToNextMiddleware()
+    public function someWhiteListedSituationsFallbackToNextMiddleware()
     {
         $request = ServerRequestFactory::fromGlobals();
         $response = new Response();
@@ -95,16 +95,48 @@ class CheckAuthenticationMiddlewareTest extends TestCase
     /**
      * @test
      */
+    public function provideAnAuthorizationWithoutTypeReturnsError()
+    {
+        $authToken = 'ABC-abc';
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(
+            RouteResult::class,
+            RouteResult::fromRouteMatch('bar', 'foo', [])
+        )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, $authToken);
+
+        $response = $this->middleware->__invoke($request, new Response());
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertTrue(strpos($response->getBody()->getContents(), 'You need to provide the Bearer type') > 0);
+    }
+
+    /**
+     * @test
+     */
+    public function provideAnAuthorizationWithWrongTypeReturnsError()
+    {
+        $authToken = 'ABC-abc';
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(
+            RouteResult::class,
+            RouteResult::fromRouteMatch('bar', 'foo', [])
+        )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'Basic ' . $authToken);
+
+        $response = $this->middleware->__invoke($request, new Response());
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertTrue(
+            strpos($response->getBody()->getContents(), 'Provided authorization type Basic is not supported') > 0
+        );
+    }
+
+    /**
+     * @test
+     */
     public function provideAnExpiredTokenReturnsError()
     {
         $authToken = 'ABC-abc';
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
             RouteResult::fromRouteMatch('bar', 'foo', [])
-        )->withHeader(CheckAuthenticationMiddleware::AUTH_TOKEN_HEADER, $authToken);
-        $this->tokenService->getByToken($authToken)->willReturn(
-            (new RestToken())->setExpirationDate((new \DateTime())->sub(new \DateInterval('P1D')))
-        )->shouldBeCalledTimes(1);
+        )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'Bearer ' . $authToken);
+        $this->jwtService->verify($authToken)->willReturn(false)->shouldBeCalledTimes(1);
 
         $response = $this->middleware->__invoke($request, new Response());
         $this->assertEquals(401, $response->getStatusCode());
@@ -120,14 +152,15 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
             RouteResult::fromRouteMatch('bar', 'foo', [])
-        )->withHeader(CheckAuthenticationMiddleware::AUTH_TOKEN_HEADER, $authToken);
-        $this->tokenService->getByToken($authToken)->willReturn($restToken)->shouldBeCalledTimes(1);
-        $this->tokenService->updateExpiration($restToken)->shouldBeCalledTimes(1);
+        )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'bearer ' . $authToken);
+        $this->jwtService->verify($authToken)->willReturn(true)->shouldBeCalledTimes(1);
+        $this->jwtService->refresh($authToken)->willReturn($authToken)->shouldBeCalledTimes(1);
 
         $isCalled = false;
         $this->assertFalse($isCalled);
         $this->middleware->__invoke($request, new Response(), function ($req, $resp) use (&$isCalled) {
             $isCalled = true;
+            return $resp;
         });
         $this->assertTrue($isCalled);
     }
