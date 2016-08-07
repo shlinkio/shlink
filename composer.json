@@ -25,7 +25,8 @@
         "acelaya/zsm-annotated-services": "^0.2.0",
         "doctrine/orm": "^2.5",
         "guzzlehttp/guzzle": "^6.2",
-        "symfony/console": "^3.0"
+        "symfony/console": "^3.0",
+        "firebase/php-jwt": "^4.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0",
