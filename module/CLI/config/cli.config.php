@@ -5,10 +5,10 @@ return [
 
     'cli' => [
         'commands' => [
-            Command\GenerateShortcodeCommand::class,
-            Command\ResolveUrlCommand::class,
-            Command\ListShortcodesCommand::class,
-            Command\GetVisitsCommand::class,
+            Command\Shortcode\GenerateShortcodeCommand::class,
+            Command\Shortcode\ResolveUrlCommand::class,
+            Command\Shortcode\ListShortcodesCommand::class,
+            Command\Shortcode\GetVisitsCommand::class,
             Command\ProcessVisitsCommand::class,
             Command\Config\GenerateCharsetCommand::class,
             Command\Config\GenerateSecretCommand::class,
