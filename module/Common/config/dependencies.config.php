@@ -2,6 +2,7 @@
 use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManager;
+use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\ErrorHandler;
 use Shlinkio\Shlink\Common\Factory\CacheFactory;
@@ -38,6 +39,7 @@ return [
             'httpClient' => GuzzleHttp\Client::class,
             'translator' => Translator::class,
             'logger' => LoggerInterface::class,
+            Logger::class => LoggerInterface::class,
             AnnotatedFactory::CACHE_SERVICE => Cache::class,
         ],
     ],
