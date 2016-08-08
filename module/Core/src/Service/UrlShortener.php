@@ -99,7 +99,7 @@ class UrlShortener implements UrlShortenerInterface
                 $this->em->close();
             }
 
-            throw new RuntimeException('An error occured while persisting the short URL', -1, $e);
+            throw new RuntimeException('An error occurred while persisting the short URL', -1, $e);
         }
     }
 

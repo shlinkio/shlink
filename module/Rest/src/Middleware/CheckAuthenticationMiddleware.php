@@ -4,6 +4,8 @@ namespace Shlinkio\Shlink\Rest\Middleware;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Authentication\JWTServiceInterface;
 use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
@@ -25,18 +27,27 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface
      * @var JWTServiceInterface
      */
     private $jwtService;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * CheckAuthenticationMiddleware constructor.
      * @param JWTServiceInterface|JWTService $jwtService
      * @param TranslatorInterface $translator
+     * @param LoggerInterface $logger
      *
-     * @Inject({JWTService::class, "translator"})
+     * @Inject({JWTService::class, "translator", "Logger_Shlink"})
      */
-    public function __construct(JWTServiceInterface $jwtService, TranslatorInterface $translator)
-    {
+    public function __construct(
+        JWTServiceInterface $jwtService,
+        TranslatorInterface $translator,
+        LoggerInterface $logger = null
+    ) {
         $this->translator = $translator;
         $this->jwtService = $jwtService;
+        $this->logger = $logger ?: new NullLogger();
     }
 
     /**
@@ -118,6 +129,7 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface
             // Return the response with the updated token on it
             return $response->withHeader(self::AUTHORIZATION_HEADER, 'Bearer ' . $jwt);
         } catch (AuthenticationException $e) {
+            $this->logger->warning('Tried to access API with an invalid JWT.' . PHP_EOL . $e);
             return $this->createTokenErrorResponse();
         }
     }

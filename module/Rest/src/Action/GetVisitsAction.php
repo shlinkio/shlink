@@ -4,6 +4,7 @@ namespace Shlinkio\Shlink\Rest\Action;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
@@ -27,11 +28,16 @@ class GetVisitsAction extends AbstractRestAction
      * GetVisitsAction constructor.
      * @param VisitsTrackerInterface $visitsTracker
      * @param TranslatorInterface $translator
+     * @param LoggerInterface $logger
      *
-     * @Inject({VisitsTracker::class, "translator"})
+     * @Inject({VisitsTracker::class, "translator", "Logger_Shlink"})
      */
-    public function __construct(VisitsTrackerInterface $visitsTracker, TranslatorInterface $translator)
-    {
+    public function __construct(
+        VisitsTrackerInterface $visitsTracker,
+        TranslatorInterface $translator,
+        LoggerInterface $logger = null
+    ) {
+        parent::__construct($logger);
         $this->visitsTracker = $visitsTracker;
         $this->translator = $translator;
     }
@@ -57,14 +63,16 @@ class GetVisitsAction extends AbstractRestAction
                 ]
             ]);
         } catch (InvalidArgumentException $e) {
+            $this->logger->warning('Provided nonexistent shortcode'. PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => sprintf(
-                    $this->translator->translate('Provided short code "%s" does not exist'),
+                    $this->translator->translate('Provided short code %s does not exist'),
                     $shortCode
                 ),
             ], 404);
         } catch (\Exception $e) {
+            $this->logger->error('Unexpected error while parsing short code'. PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),
