@@ -14,7 +14,7 @@ return [
             Command\Shortcode\ResolveUrlCommand::class => AnnotatedFactory::class,
             Command\Shortcode\ListShortcodesCommand::class => AnnotatedFactory::class,
             Command\Shortcode\GetVisitsCommand::class => AnnotatedFactory::class,
-            Command\ProcessVisitsCommand::class => AnnotatedFactory::class,
+            Command\Visit\ProcessVisitsCommand::class => AnnotatedFactory::class,
             Command\Config\GenerateCharsetCommand::class => AnnotatedFactory::class,
             Command\Config\GenerateSecretCommand::class => AnnotatedFactory::class,
             Command\Api\GenerateKeyCommand::class => AnnotatedFactory::class,

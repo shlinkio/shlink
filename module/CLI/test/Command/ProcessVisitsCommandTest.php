@@ -4,7 +4,7 @@ namespace ShlinkioTest\Shlink\CLI\Command;
 use PHPUnit_Framework_TestCase as TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Command\ProcessVisitsCommand;
+use Shlinkio\Shlink\CLI\Command\Visit\ProcessVisitsCommand;
 use Shlinkio\Shlink\Common\Service\IpLocationResolver;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Service\VisitService;
