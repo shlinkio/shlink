@@ -50,8 +50,8 @@ class ResolveUrlAction extends AbstractRestAction
             if (! isset($longUrl)) {
                 return new JsonResponse([
                     'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                    'message' => sprintf($this->translator->translate('No URL found for shortcode "%s"'), $shortCode),
-                ], 400);
+                    'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
+                ], 404);
             }
 
             return new JsonResponse([

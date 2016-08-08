@@ -25,7 +25,7 @@ class GetVisitsAction extends AbstractRestAction
 
     /**
      * GetVisitsAction constructor.
-     * @param VisitsTrackerInterface|VisitsTracker $visitsTracker
+     * @param VisitsTrackerInterface $visitsTracker
      * @param TranslatorInterface $translator
      *
      * @Inject({VisitsTracker::class, "translator"})
@@ -59,8 +59,11 @@ class GetVisitsAction extends AbstractRestAction
         } catch (InvalidArgumentException $e) {
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf($this->translator->translate('Provided short code "%s" is invalid'), $shortCode),
-            ], 400);
+                'message' => sprintf(
+                    $this->translator->translate('Provided short code "%s" does not exist'),
+                    $shortCode
+                ),
+            ], 404);
         } catch (\Exception $e) {
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
