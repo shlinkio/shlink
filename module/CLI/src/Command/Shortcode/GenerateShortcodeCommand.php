@@ -1,5 +1,5 @@
 <?php
-namespace Shlinkio\Shlink\CLI\Command;
+namespace Shlinkio\Shlink\CLI\Command\Shortcode;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
@@ -31,7 +31,7 @@ class GenerateShortcodeCommand extends Command
 
     /**
      * GenerateShortcodeCommand constructor.
-     * @param UrlShortenerInterface|UrlShortener $urlShortener
+     * @param UrlShortenerInterface $urlShortener
      * @param TranslatorInterface $translator
      * @param array $domainConfig
      *

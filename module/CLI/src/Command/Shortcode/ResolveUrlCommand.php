@@ -1,5 +1,5 @@
 <?php
-namespace Shlinkio\Shlink\CLI\Command;
+namespace Shlinkio\Shlink\CLI\Command\Shortcode;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
@@ -26,7 +26,7 @@ class ResolveUrlCommand extends Command
 
     /**
      * ResolveUrlCommand constructor.
-     * @param UrlShortenerInterface|UrlShortener $urlShortener
+     * @param UrlShortenerInterface $urlShortener
      * @param TranslatorInterface $translator
      *
      * @Inject({UrlShortener::class, "translator"})
