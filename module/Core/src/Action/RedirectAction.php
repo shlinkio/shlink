@@ -18,14 +18,14 @@ class RedirectAction implements MiddlewareInterface
      */
     private $urlShortener;
     /**
-     * @var VisitsTracker|VisitsTrackerInterface
+     * @var VisitsTrackerInterface
      */
     private $visitTracker;
 
     /**
      * RedirectMiddleware constructor.
-     * @param UrlShortenerInterface|UrlShortener $urlShortener
-     * @param VisitsTrackerInterface|VisitsTracker $visitTracker
+     * @param UrlShortenerInterface $urlShortener
+     * @param VisitsTrackerInterface $visitTracker
      *
      * @Inject({UrlShortener::class, VisitsTracker::class})
      */
