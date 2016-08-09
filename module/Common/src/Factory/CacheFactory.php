@@ -59,6 +59,10 @@ class CacheFactory implements FactoryInterface
             case Cache\PhpFileCache::class:
                 return new $cacheConfig['adapter']($cacheConfig['options']['dir']);
             case Cache\MemcachedCache::class:
+                if (! class_exists(\Memcached::class)) {
+                    return new Cache\ArrayCache();
+                }
+
                 $memcached = new \Memcached();
                 $servers = isset($cacheConfig['options']['servers']) ? $cacheConfig['options']['servers'] : [];
 
