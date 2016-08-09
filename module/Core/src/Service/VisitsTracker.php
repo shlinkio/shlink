@@ -36,8 +36,6 @@ class VisitsTracker implements VisitsTrackerInterface
      */
     public function track($shortCode, ServerRequestInterface $request)
     {
-        $visitorData = $request->getServerParams();
-
         /** @var ShortUrl $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'shortCode' => $shortCode,
@@ -45,22 +43,27 @@ class VisitsTracker implements VisitsTrackerInterface
 
         $visit = new Visit();
         $visit->setShortUrl($shortUrl)
-              ->setUserAgent($this->getArrayValue($visitorData, 'HTTP_USER_AGENT'))
-              ->setReferer($this->getArrayValue($visitorData, 'HTTP_REFERER'))
-              ->setRemoteAddr($this->getArrayValue($visitorData, 'REMOTE_ADDR'));
+              ->setUserAgent($request->getHeaderLine('User-Agent'))
+              ->setReferer($request->getHeaderLine('Referer'))
+              ->setRemoteAddr($this->findOutRemoteAddr($request));
         $this->em->persist($visit);
         $this->em->flush();
     }
 
     /**
-     * @param array $array
-     * @param $key
-     * @param null $default
-     * @return mixed|null
+     * @param ServerRequestInterface $request
+     * @return string
      */
-    protected function getArrayValue(array $array, $key, $default = null)
+    protected function findOutRemoteAddr(ServerRequestInterface $request)
     {
-        return isset($array[$key]) ? $array[$key] : $default;
+        $forwardedFor = $request->getHeaderLine('X-Forwarded-For');
+        if (empty($forwardedFor)) {
+            $serverParams = $request->getServerParams();
+            return isset($serverParams['REMOTE_ADDR']) ? $serverParams['REMOTE_ADDR'] : null;
+        }
+
+        $ips = explode(',', $forwardedFor);
+        return $ips[0];
     }
 
     /**
