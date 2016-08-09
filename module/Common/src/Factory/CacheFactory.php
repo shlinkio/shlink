@@ -1,8 +1,7 @@
 <?php
 namespace Shlinkio\Shlink\Common\Factory;
 
-use Doctrine\Common\Cache\ApcuCache;
-use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
@@ -12,8 +11,11 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 class CacheFactory implements FactoryInterface
 {
     const VALID_CACHE_ADAPTERS = [
-        ApcuCache::class,
-        ArrayCache::class,
+        Cache\ApcuCache::class,
+        Cache\ArrayCache::class,
+        Cache\FilesystemCache::class,
+        Cache\PhpFileCache::class,
+        Cache\MemcachedCache::class,
     ];
 
     /**
@@ -36,10 +38,44 @@ class CacheFactory implements FactoryInterface
             && isset($config['cache']['adapter'])
             && in_array($config['cache']['adapter'], self::VALID_CACHE_ADAPTERS)
         ) {
-            return new $config['cache']['adapter']();
+            return $this->resolveCacheAdapter($config['cache']);
         }
 
         // If the adapter has not been set in config, create one based on environment
-        return env('APP_ENV', 'pro') === 'pro' ? new ApcuCache() : new ArrayCache();
+        return env('APP_ENV', 'pro') === 'pro' ? new Cache\ApcuCache() : new Cache\ArrayCache();
+    }
+
+    /**
+     * @param array $cacheConfig
+     * @return Cache\Cache
+     */
+    protected function resolveCacheAdapter(array $cacheConfig)
+    {
+        switch ($cacheConfig['adapter']) {
+            case Cache\ArrayCache::class:
+            case Cache\ApcuCache::class:
+                return new $cacheConfig['adapter']();
+            case Cache\FilesystemCache::class:
+            case Cache\PhpFileCache::class:
+                return new $cacheConfig['adapter']($cacheConfig['options']['dir']);
+            case Cache\MemcachedCache::class:
+                $memcached = new \Memcached();
+                $servers = isset($cacheConfig['options']['servers']) ? $cacheConfig['options']['servers'] : [];
+
+                foreach ($servers as $server) {
+                    if (! isset($server['host'])) {
+                        continue;
+                    }
+                    $port = isset($server['port']) ? intval($server['port']) : 11211;
+
+                    $memcached->addServer($server['host'], $port);
+                }
+
+                $cache = new Cache\MemcachedCache();
+                $cache->setMemcached($memcached);
+                return $cache;
+            default:
+                return new Cache\ArrayCache();
+        }
     }
 }
