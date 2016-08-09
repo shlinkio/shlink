@@ -97,7 +97,7 @@ class CacheFactoryTest extends TestCase
         /** @var MemcachedCache $instance */
         $instance = $this->factory->__invoke($this->createSM(MemcachedCache::class, ['servers' => $servers]), '');
         $this->assertInstanceOf(MemcachedCache::class, $instance);
-        $this->assertEquals($servers, $instance->getMemcached()->getServerList());
+        $this->assertEquals(count($servers), count($instance->getMemcached()->getServerList()));
     }
 
     private function createSM($cacheAdapter = null, array $options = [])
