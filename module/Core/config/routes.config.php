@@ -1,5 +1,6 @@
 <?php
 use Shlinkio\Shlink\Core\Action;
+use Shlinkio\Shlink\Core\Middleware;
 
 return [
 
@@ -13,7 +14,10 @@ return [
         [
             'name' => 'short-url-qr-code',
             'path' => '/qr/{shortCode}[/{size:[0-9]+}]',
-            'middleware' => Action\QrCodeAction::class,
+            'middleware' => [
+                Middleware\QrCodeCacheMiddleware::class,
+                Action\QrCodeAction::class,
+            ],
             'allowed_methods' => ['GET'],
         ],
     ],
