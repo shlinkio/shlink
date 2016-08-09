@@ -4,7 +4,7 @@ namespace ShlinkioTest\Shlink\CLI\Command;
 use PHPUnit_Framework_TestCase as TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Command\GetVisitsCommand;
+use Shlinkio\Shlink\CLI\Command\Shortcode\GetVisitsCommand;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;

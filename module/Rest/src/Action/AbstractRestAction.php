@@ -3,10 +3,22 @@ namespace Shlinkio\Shlink\Rest\Action;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Zend\Stratigility\MiddlewareInterface;
 
 abstract class AbstractRestAction implements MiddlewareInterface
 {
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    public function __construct(LoggerInterface $logger = null)
+    {
+        $this->logger = $logger ?: new NullLogger();
+    }
+
     /**
      * Process an incoming request and/or response.
      *

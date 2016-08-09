@@ -1,5 +1,5 @@
 <?php
-namespace Shlinkio\Shlink\CLI\Command;
+namespace Shlinkio\Shlink\CLI\Command\Shortcode;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
@@ -30,7 +30,7 @@ class ListShortcodesCommand extends Command
 
     /**
      * ListShortcodesCommand constructor.
-     * @param ShortUrlServiceInterface|ShortUrlService $shortUrlService
+     * @param ShortUrlServiceInterface $shortUrlService
      * @param TranslatorInterface $translator
      *
      * @Inject({ShortUrlService::class, "translator"})

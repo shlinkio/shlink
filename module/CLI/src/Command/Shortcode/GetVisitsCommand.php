@@ -1,5 +1,5 @@
 <?php
-namespace Shlinkio\Shlink\CLI\Command;
+namespace Shlinkio\Shlink\CLI\Command\Shortcode;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Shlinkio\Shlink\Common\Util\DateRange;
@@ -28,7 +28,7 @@ class GetVisitsCommand extends Command
 
     /**
      * GetVisitsCommand constructor.
-     * @param VisitsTrackerInterface|VisitsTracker $visitsTracker
+     * @param VisitsTrackerInterface $visitsTracker
      * @param TranslatorInterface $translator
      *
      * @Inject({VisitsTracker::class, "translator"})

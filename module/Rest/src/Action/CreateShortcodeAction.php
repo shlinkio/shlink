@@ -4,6 +4,7 @@ namespace Shlinkio\Shlink\Rest\Action;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
@@ -33,14 +34,17 @@ class CreateShortcodeAction extends AbstractRestAction
      * @param UrlShortenerInterface|UrlShortener $urlShortener
      * @param TranslatorInterface $translator
      * @param array $domainConfig
+     * @param LoggerInterface|null $logger
      *
-     * @Inject({UrlShortener::class, "translator", "config.url_shortener.domain"})
+     * @Inject({UrlShortener::class, "translator", "config.url_shortener.domain", "Logger_Shlink"})
      */
     public function __construct(
         UrlShortenerInterface $urlShortener,
         TranslatorInterface $translator,
-        array $domainConfig
+        array $domainConfig,
+        LoggerInterface $logger = null
     ) {
+        parent::__construct($logger);
         $this->urlShortener = $urlShortener;
         $this->translator = $translator;
         $this->domainConfig = $domainConfig;
@@ -75,14 +79,16 @@ class CreateShortcodeAction extends AbstractRestAction
                 'shortCode' => $shortCode,
             ]);
         } catch (InvalidUrlException $e) {
+            $this->logger->warning('Provided Invalid URL.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => sprintf(
-                    $this->translator->translate('Provided URL "%s" is invalid. Try with a different one.'),
+                    $this->translator->translate('Provided URL %s is invalid. Try with a different one.'),
                     $longUrl
                 ),
             ], 400);
         } catch (\Exception $e) {
+            $this->logger->error('Unexpected error creating shortcode.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),

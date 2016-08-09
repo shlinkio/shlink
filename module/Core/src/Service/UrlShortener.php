@@ -2,6 +2,7 @@
 namespace Shlinkio\Shlink\Core\Service;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
+use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use GuzzleHttp\ClientInterface;
@@ -28,23 +29,30 @@ class UrlShortener implements UrlShortenerInterface
      * @var string
      */
     private $chars;
+    /**
+     * @var Cache
+     */
+    private $cache;
 
     /**
      * UrlShortener constructor.
      * @param ClientInterface $httpClient
      * @param EntityManagerInterface $em
+     * @param Cache $cache
      * @param string $chars
      *
-     * @Inject({"httpClient", "em", "config.url_shortener.shortcode_chars"})
+     * @Inject({"httpClient", "em", Cache::class, "config.url_shortener.shortcode_chars"})
      */
     public function __construct(
         ClientInterface $httpClient,
         EntityManagerInterface $em,
+        Cache $cache,
         $chars = self::DEFAULT_CHARS
     ) {
         $this->httpClient = $httpClient;
         $this->em = $em;
         $this->chars = empty($chars) ? self::DEFAULT_CHARS : $chars;
+        $this->cache = $cache;
     }
 
     /**
@@ -91,7 +99,7 @@ class UrlShortener implements UrlShortenerInterface
                 $this->em->close();
             }
 
-            throw new RuntimeException('An error occured while persisting the short URL', -1, $e);
+            throw new RuntimeException('An error occurred while persisting the short URL', -1, $e);
         }
     }
 
@@ -140,6 +148,12 @@ class UrlShortener implements UrlShortenerInterface
      */
     public function shortCodeToUrl($shortCode)
     {
+        $cacheKey = sprintf('%s_longUrl', $shortCode);
+        // Check if the short code => URL map is already cached
+        if ($this->cache->contains($cacheKey)) {
+            return $this->cache->fetch($cacheKey);
+        }
+
         // Validate short code format
         if (! preg_match('|[' . $this->chars . "]+|", $shortCode)) {
             throw InvalidShortCodeException::fromShortCode($shortCode, $this->chars);
@@ -149,6 +163,13 @@ class UrlShortener implements UrlShortenerInterface
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'shortCode' => $shortCode,
         ]);
-        return isset($shortUrl) ? $shortUrl->getOriginalUrl() : null;
+        // Cache the shortcode
+        if (isset($shortUrl)) {
+            $url = $shortUrl->getOriginalUrl();
+            $this->cache->save($cacheKey, $url);
+            return $url;
+        }
+
+        return null;
     }
 }

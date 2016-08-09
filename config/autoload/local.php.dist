@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'debug' => true,
 
+    'debug' => true,
     'config_cache_enabled' => false,
+
 ];

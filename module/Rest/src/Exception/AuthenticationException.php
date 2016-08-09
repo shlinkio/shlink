@@ -9,4 +9,9 @@ class AuthenticationException extends \RuntimeException implements ExceptionInte
     {
         return new self(sprintf('Invalid credentials. Username -> "%s". Password -> "%s"', $username, $password));
     }
+
+    public static function expiredJWT(\Exception $prev = null)
+    {
+        return new self('The token has expired.', -1, $prev);
+    }
 }
