@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
+use Zend\Diactoros\ServerRequestFactory;
 
 class VisitsTrackerTest extends TestCase
 {
@@ -41,7 +42,30 @@ class VisitsTrackerTest extends TestCase
         $this->em->persist(Argument::any())->shouldBeCalledTimes(1);
         $this->em->flush()->shouldBeCalledTimes(1);
 
-        $this->visitsTracker->track($shortCode);
+        $this->visitsTracker->track($shortCode, ServerRequestFactory::fromGlobals());
+    }
+
+    /**
+     * @test
+     */
+    public function trackUsesForwardedForHeaderIfPresent()
+    {
+        $shortCode = '123ABC';
+        $test = $this;
+        $repo = $this->prophesize(EntityRepository::class);
+        $repo->findOneBy(['shortCode' => $shortCode])->willReturn(new ShortUrl());
+
+        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledTimes(1);
+        $this->em->persist(Argument::any())->will(function ($args) use ($test) {
+            /** @var Visit $visit */
+            $visit = $args[0];
+            $test->assertEquals('4.3.2.1', $visit->getRemoteAddr());
+        })->shouldBeCalledTimes(1);
+        $this->em->flush()->shouldBeCalledTimes(1);
+
+        $this->visitsTracker->track($shortCode, ServerRequestFactory::fromGlobals(
+            ['REMOTE_ADDR' => '1.2.3.4']
+        )->withHeader('X-Forwarded-For', '4.3.2.1,99.99.99.99'));
     }
 
     /**
