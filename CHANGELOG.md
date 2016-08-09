@@ -1,5 +1,28 @@
 ## CHANGELOG
 
+### 1.1.0
+
+**Features**
+
+* [46: Define a route that returns a QR code representing the shortened URL](https://github.com/acelaya/url-shortener/issues/46)
+
+**Enhancements:**
+
+* [32: Add support for other cache adapters by improving the Cache factory](https://github.com/acelaya/url-shortener/issues/32)
+* [14: https://github.com/shlinkio/shlink/issues/14](https://github.com/acelaya/url-shortener/issues/14)
+* [41: Cache the "short code" => "URL" map to prevent extra DB hits](https://github.com/acelaya/url-shortener/issues/41)
+* [13: Improve REST authentication](https://github.com/acelaya/url-shortener/issues/13)
+
+**Tasks**
+
+* [39: Change copyright from "Alejandro Celaya" to "Shlink" in error pages](https://github.com/acelaya/url-shortener/issues/39)
+* [42: Make REST endpoints that need to find something return a 404 when "something" is not found](https://github.com/acelaya/url-shortener/issues/42)
+* [35: Make CLI commands to use the same PHP namespace as the one used for the command name](https://github.com/acelaya/url-shortener/issues/35)
+
+**Bugs**
+
+* [40: Take into account the X-Forwarded-For header in order to get the visitor information, in case the server is behind a load balancer or proxy](https://github.com/acelaya/url-shortener/issues/40)
+
 ### 1.0.0
 
 **Enhancements:**
