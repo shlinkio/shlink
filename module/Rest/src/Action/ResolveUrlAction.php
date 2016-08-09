@@ -4,6 +4,7 @@ namespace Shlinkio\Shlink\Rest\Action;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
@@ -26,11 +27,16 @@ class ResolveUrlAction extends AbstractRestAction
      * ResolveUrlAction constructor.
      * @param UrlShortenerInterface|UrlShortener $urlShortener
      * @param TranslatorInterface $translator
+     * @param LoggerInterface $logger
      *
      * @Inject({UrlShortener::class, "translator"})
      */
-    public function __construct(UrlShortenerInterface $urlShortener, TranslatorInterface $translator)
-    {
+    public function __construct(
+        UrlShortenerInterface $urlShortener,
+        TranslatorInterface $translator,
+        LoggerInterface $logger = null
+    ) {
+        parent::__construct($logger);
         $this->urlShortener = $urlShortener;
         $this->translator = $translator;
     }
@@ -50,14 +56,15 @@ class ResolveUrlAction extends AbstractRestAction
             if (! isset($longUrl)) {
                 return new JsonResponse([
                     'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                    'message' => sprintf($this->translator->translate('No URL found for shortcode "%s"'), $shortCode),
-                ], 400);
+                    'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
+                ], 404);
             }
 
             return new JsonResponse([
                 'longUrl' => $longUrl,
             ]);
         } catch (InvalidShortCodeException $e) {
+            $this->logger->warning('Provided short code with invalid format.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => sprintf(
@@ -66,6 +73,7 @@ class ResolveUrlAction extends AbstractRestAction
                 ),
             ], 400);
         } catch (\Exception $e) {
+            $this->logger->error('Unexpected error while resolving the URL behind a short code.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),

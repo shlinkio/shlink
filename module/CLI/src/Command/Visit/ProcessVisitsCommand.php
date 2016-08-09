@@ -1,5 +1,5 @@
 <?php
-namespace Shlinkio\Shlink\CLI\Command;
+namespace Shlinkio\Shlink\CLI\Command\Visit;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
@@ -32,8 +32,8 @@ class ProcessVisitsCommand extends Command
 
     /**
      * ProcessVisitsCommand constructor.
-     * @param VisitServiceInterface|VisitService $visitService
-     * @param IpLocationResolverInterface|IpLocationResolver $ipLocationResolver
+     * @param VisitServiceInterface $visitService
+     * @param IpLocationResolverInterface $ipLocationResolver
      * @param TranslatorInterface $translator
      *
      * @Inject({VisitService::class, IpLocationResolver::class, "translator"})

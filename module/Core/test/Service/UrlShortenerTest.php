@@ -1,6 +1,8 @@
 <?php
 namespace ShlinkioTest\Shlink\Core\Service;
 
+use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,6 +31,10 @@ class UrlShortenerTest extends TestCase
      * @var ObjectProphecy
      */
     protected $httpClient;
+    /**
+     * @var Cache
+     */
+    protected $cache;
 
     public function setUp()
     {
@@ -50,7 +56,9 @@ class UrlShortenerTest extends TestCase
         $repo->findOneBy(Argument::any())->willReturn(null);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $this->urlShortener = new UrlShortener($this->httpClient->reveal(), $this->em->reveal());
+        $this->cache = new ArrayCache();
+
+        $this->urlShortener = new UrlShortener($this->httpClient->reveal(), $this->em->reveal(), $this->cache);
     }
 
     /**
@@ -112,16 +120,19 @@ class UrlShortenerTest extends TestCase
     public function shortCodeIsProperlyParsed()
     {
         // 12C1c -> 10
+        $shortCode = '12C1c';
         $shortUrl = new ShortUrl();
-        $shortUrl->setShortCode('12C1c')
+        $shortUrl->setShortCode($shortCode)
                  ->setOriginalUrl('expected_url');
 
         $repo = $this->prophesize(ObjectRepository::class);
-        $repo->findOneBy(['shortCode' => '12C1c'])->willReturn($shortUrl);
+        $repo->findOneBy(['shortCode' => $shortCode])->willReturn($shortUrl);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $url = $this->urlShortener->shortCodeToUrl('12C1c');
+        $this->assertFalse($this->cache->contains($shortCode . '_longUrl'));
+        $url = $this->urlShortener->shortCodeToUrl($shortCode);
         $this->assertEquals($shortUrl->getOriginalUrl(), $url);
+        $this->assertTrue($this->cache->contains($shortCode . '_longUrl'));
     }
 
     /**
@@ -131,5 +142,19 @@ class UrlShortenerTest extends TestCase
     public function invalidCharSetThrowsException()
     {
         $this->urlShortener->shortCodeToUrl('&/(');
+    }
+
+    /**
+     * @test
+     */
+    public function cachedShortCodeDoesNotHitDatabase()
+    {
+        $shortCode = '12C1c';
+        $expectedUrl = 'expected_url';
+        $this->cache->save($shortCode . '_longUrl', $expectedUrl);
+        $this->em->getRepository(ShortUrl::class)->willReturn(null)->shouldBeCalledTimes(0);
+
+        $url = $this->urlShortener->shortCodeToUrl($shortCode);
+        $this->assertEquals($expectedUrl, $url);
     }
 }

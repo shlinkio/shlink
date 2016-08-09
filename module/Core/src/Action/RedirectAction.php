@@ -4,6 +4,8 @@ namespace Shlinkio\Shlink\Core\Action;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
@@ -18,21 +20,30 @@ class RedirectAction implements MiddlewareInterface
      */
     private $urlShortener;
     /**
-     * @var VisitsTracker|VisitsTrackerInterface
+     * @var VisitsTrackerInterface
      */
     private $visitTracker;
+    /**
+     * @var null|LoggerInterface
+     */
+    private $logger;
 
     /**
      * RedirectMiddleware constructor.
-     * @param UrlShortenerInterface|UrlShortener $urlShortener
-     * @param VisitsTrackerInterface|VisitsTracker $visitTracker
+     * @param UrlShortenerInterface $urlShortener
+     * @param VisitsTrackerInterface $visitTracker
+     * @param LoggerInterface|null $logger
      *
-     * @Inject({UrlShortener::class, VisitsTracker::class})
+     * @Inject({UrlShortener::class, VisitsTracker::class, "Logger_Shlink"})
      */
-    public function __construct(UrlShortenerInterface $urlShortener, VisitsTrackerInterface $visitTracker)
-    {
+    public function __construct(
+        UrlShortenerInterface $urlShortener,
+        VisitsTrackerInterface $visitTracker,
+        LoggerInterface $logger = null
+    ) {
         $this->urlShortener = $urlShortener;
         $this->visitTracker = $visitTracker;
+        $this->logger = $logger ?: new NullLogger();
     }
 
     /**
@@ -74,13 +85,14 @@ class RedirectAction implements MiddlewareInterface
             }
 
             // Track visit to this short code
-            $this->visitTracker->track($shortCode);
+            $this->visitTracker->track($shortCode, $request);
 
             // Return a redirect response to the long URL.
             // Use a temporary redirect to make sure browsers always hit the server for analytics purposes
             return new RedirectResponse($longUrl);
         } catch (\Exception $e) {
             // In case of error, dispatch 404 error
+            $this->logger->error('Error redirecting to long URL.' . PHP_EOL . $e);
             return $this->notFoundResponse($request, $response, $out);
         }
     }

@@ -39,7 +39,7 @@ class ResolveUrlActionTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $response = $this->action->__invoke($request, new Response());
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(404, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::INVALID_ARGUMENT_ERROR) > 0);
     }
 

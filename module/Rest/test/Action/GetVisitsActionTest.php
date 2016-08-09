@@ -59,7 +59,7 @@ class GetVisitsActionTest extends TestCase
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
             new Response()
         );
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(404, $response->getStatusCode());
     }
 
     /**

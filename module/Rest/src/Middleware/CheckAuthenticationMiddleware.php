@@ -4,9 +4,11 @@ namespace Shlinkio\Shlink\Rest\Middleware;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
-use Shlinkio\Shlink\Rest\Service\RestTokenService;
-use Shlinkio\Shlink\Rest\Service\RestTokenServiceInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use Shlinkio\Shlink\Rest\Authentication\JWTService;
+use Shlinkio\Shlink\Rest\Authentication\JWTServiceInterface;
+use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouteResult;
@@ -15,28 +17,37 @@ use Zend\Stratigility\MiddlewareInterface;
 
 class CheckAuthenticationMiddleware implements MiddlewareInterface
 {
-    const AUTH_TOKEN_HEADER = 'X-Auth-Token';
+    const AUTHORIZATION_HEADER = 'Authorization';
 
-    /**
-     * @var RestTokenServiceInterface
-     */
-    private $restTokenService;
     /**
      * @var TranslatorInterface
      */
     private $translator;
+    /**
+     * @var JWTServiceInterface
+     */
+    private $jwtService;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * CheckAuthenticationMiddleware constructor.
-     * @param RestTokenServiceInterface|RestTokenService $restTokenService
+     * @param JWTServiceInterface|JWTService $jwtService
      * @param TranslatorInterface $translator
+     * @param LoggerInterface $logger
      *
-     * @Inject({RestTokenService::class, "translator"})
+     * @Inject({JWTService::class, "translator", "Logger_Shlink"})
      */
-    public function __construct(RestTokenServiceInterface $restTokenService, TranslatorInterface $translator)
-    {
-        $this->restTokenService = $restTokenService;
+    public function __construct(
+        JWTServiceInterface $jwtService,
+        TranslatorInterface $translator,
+        LoggerInterface $logger = null
+    ) {
         $this->translator = $translator;
+        $this->jwtService = $jwtService;
+        $this->logger = $logger ?: new NullLogger();
     }
 
     /**
@@ -78,21 +89,47 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface
         }
 
         // Check that the auth header was provided, and that it belongs to a non-expired token
-        if (! $request->hasHeader(self::AUTH_TOKEN_HEADER)) {
+        if (! $request->hasHeader(self::AUTHORIZATION_HEADER)) {
             return $this->createTokenErrorResponse();
         }
 
-        $authToken = $request->getHeaderLine(self::AUTH_TOKEN_HEADER);
+        // Get token making sure the an authorization type is provided
+        $authToken = $request->getHeaderLine(self::AUTHORIZATION_HEADER);
+        $authTokenParts = explode(' ', $authToken);
+        if (count($authTokenParts) === 1) {
+            return new JsonResponse([
+                'error' => RestUtils::INVALID_AUTHORIZATION_ERROR,
+                'message' => sprintf($this->translator->translate(
+                    'You need to provide the Bearer type in the %s header.'
+                ), self::AUTHORIZATION_HEADER),
+            ], 401);
+        }
+
+        // Make sure the authorization type is Bearer
+        list($authType, $jwt) = $authTokenParts;
+        if (strtolower($authType) !== 'bearer') {
+            return new JsonResponse([
+                'error' => RestUtils::INVALID_AUTHORIZATION_ERROR,
+                'message' => sprintf($this->translator->translate(
+                    'Provided authorization type %s is not supported. Use Bearer instead.'
+                ), $authType),
+            ], 401);
+        }
+
         try {
-            $restToken = $this->restTokenService->getByToken($authToken);
-            if ($restToken->isExpired()) {
+            if (! $this->jwtService->verify($jwt)) {
                 return $this->createTokenErrorResponse();
             }
 
             // Update the token expiration and continue to next middleware
-            $this->restTokenService->updateExpiration($restToken);
-            return $out($request, $response);
-        } catch (InvalidArgumentException $e) {
+            $jwt = $this->jwtService->refresh($jwt);
+            /** @var Response $response */
+            $response = $out($request, $response);
+
+            // Return the response with the updated token on it
+            return $response->withHeader(self::AUTHORIZATION_HEADER, 'Bearer ' . $jwt);
+        } catch (AuthenticationException $e) {
+            $this->logger->warning('Tried to access API with an invalid JWT.' . PHP_EOL . $e);
             return $this->createTokenErrorResponse();
         }
     }
@@ -106,7 +143,7 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface
                     'Missing or invalid auth token provided. Perform a new authentication request and send provided '
                     . 'token on every new request on the "%s" header'
                 ),
-                self::AUTH_TOKEN_HEADER
+                self::AUTHORIZATION_HEADER
             ),
         ], 401);
     }

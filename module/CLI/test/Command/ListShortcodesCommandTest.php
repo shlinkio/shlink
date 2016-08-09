@@ -4,7 +4,7 @@ namespace ShlinkioTest\Shlink\CLI\Command;
 use PHPUnit_Framework_TestCase as TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Command\ListShortcodesCommand;
+use Shlinkio\Shlink\CLI\Command\Shortcode\ListShortcodesCommand;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Symfony\Component\Console\Application;

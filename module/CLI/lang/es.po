@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2016-08-01 21:21+0200\n"
-"PO-Revision-Date: 2016-08-01 21:22+0200\n"
+"POT-Creation-Date: 2016-08-07 20:16+0200\n"
+"PO-Revision-Date: 2016-08-07 20:18+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -16,6 +16,46 @@ msgstr ""
 "X-Poedit-KeywordsList: translate;translatePlural\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: config\n"
+
+msgid "Disables an API key."
+msgstr "Desahbilita una clave de API."
+
+msgid "The API key to disable"
+msgstr "La clave de API a deshabilitar"
+
+#, php-format
+msgid "API key %s properly disabled"
+msgstr "Clave de API %s deshabilitada correctamente"
+
+#, php-format
+msgid "API key \"%s\" does not exist."
+msgstr "La clave de API \"%s\" no existe."
+
+msgid "Generates a new valid API key."
+msgstr "Genera una nueva clave de API válida."
+
+msgid "The date in which the API key should expire. Use any valid PHP format."
+msgstr ""
+"La fecha en la que la clave de API debe expirar. Utiliza cualquier valor "
+"válido en PHP."
+
+msgid "Generated API key"
+msgstr "Generada clave de API"
+
+msgid "Lists all the available API keys."
+msgstr "Lista todas las claves de API disponibles."
+
+msgid "Tells if only enabled API keys should be returned."
+msgstr "Define si sólo las claves de API habilitadas deben ser devueltas."
+
+msgid "Key"
+msgstr "Clave"
+
+msgid "Expiration date"
+msgstr "Fecha de caducidad"
+
+msgid "Is enabled"
+msgstr "Está habilitada"
 
 #, php-format
 msgid ""

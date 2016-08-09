@@ -26,8 +26,10 @@ class EntityManagerFactoryTest extends TestCase
         $sm = new ServiceManager(['services' => [
             'config' => [
                 'debug' => true,
-                'database' => [
-                    'driver' => 'pdo_sqlite',
+                'entity_manager' => [
+                    'connection' => [
+                        'driver' => 'pdo_sqlite',
+                    ],
                 ],
             ],
         ]]);

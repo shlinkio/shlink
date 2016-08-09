@@ -4,7 +4,7 @@ namespace ShlinkioTest\Shlink\CLI\Command;
 use PHPUnit_Framework_TestCase as TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Command\GenerateShortcodeCommand;
+use Shlinkio\Shlink\CLI\Command\Shortcode\GenerateShortcodeCommand;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;
