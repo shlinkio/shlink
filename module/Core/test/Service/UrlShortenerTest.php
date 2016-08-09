@@ -129,10 +129,10 @@ class UrlShortenerTest extends TestCase
         $repo->findOneBy(['shortCode' => $shortCode])->willReturn($shortUrl);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $this->assertFalse($this->cache->contains($shortCode));
+        $this->assertFalse($this->cache->contains($shortCode . '_longUrl'));
         $url = $this->urlShortener->shortCodeToUrl($shortCode);
         $this->assertEquals($shortUrl->getOriginalUrl(), $url);
-        $this->assertTrue($this->cache->contains($shortCode));
+        $this->assertTrue($this->cache->contains($shortCode . '_longUrl'));
     }
 
     /**
@@ -151,7 +151,7 @@ class UrlShortenerTest extends TestCase
     {
         $shortCode = '12C1c';
         $expectedUrl = 'expected_url';
-        $this->cache->save($shortCode, $expectedUrl);
+        $this->cache->save($shortCode . '_longUrl', $expectedUrl);
         $this->em->getRepository(ShortUrl::class)->willReturn(null)->shouldBeCalledTimes(0);
 
         $url = $this->urlShortener->shortCodeToUrl($shortCode);

@@ -148,9 +148,10 @@ class UrlShortener implements UrlShortenerInterface
      */
     public function shortCodeToUrl($shortCode)
     {
+        $cacheKey = sprintf('%s_longUrl', $shortCode);
         // Check if the short code => URL map is already cached
-        if ($this->cache->contains($shortCode)) {
-            return $this->cache->fetch($shortCode);
+        if ($this->cache->contains($cacheKey)) {
+            return $this->cache->fetch($cacheKey);
         }
 
         // Validate short code format
@@ -165,7 +166,7 @@ class UrlShortener implements UrlShortenerInterface
         // Cache the shortcode
         if (isset($shortUrl)) {
             $url = $shortUrl->getOriginalUrl();
-            $this->cache->save($shortCode, $url);
+            $this->cache->save($cacheKey, $url);
             return $url;
         }
 
