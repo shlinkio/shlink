@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
+use Zend\Diactoros\ServerRequestFactory;
 
 class VisitsTrackerTest extends TestCase
 {
@@ -41,7 +42,7 @@ class VisitsTrackerTest extends TestCase
         $this->em->persist(Argument::any())->shouldBeCalledTimes(1);
         $this->em->flush()->shouldBeCalledTimes(1);
 
-        $this->visitsTracker->track($shortCode);
+        $this->visitsTracker->track($shortCode, ServerRequestFactory::fromGlobals());
     }
 
     /**

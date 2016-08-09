@@ -3,6 +3,7 @@ namespace Shlinkio\Shlink\Core\Service;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -31,11 +32,11 @@ class VisitsTracker implements VisitsTrackerInterface
      * Tracks a new visit to provided short code, using an array of data to look up information
      *
      * @param string $shortCode
-     * @param array $visitorData Defaults to global $_SERVER
+     * @param ServerRequestInterface $request
      */
-    public function track($shortCode, array $visitorData = null)
+    public function track($shortCode, ServerRequestInterface $request)
     {
-        $visitorData = $visitorData ?: $_SERVER;
+        $visitorData = $request->getServerParams();
 
         /** @var ShortUrl $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([

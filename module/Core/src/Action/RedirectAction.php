@@ -85,7 +85,7 @@ class RedirectAction implements MiddlewareInterface
             }
 
             // Track visit to this short code
-            $this->visitTracker->track($shortCode);
+            $this->visitTracker->track($shortCode, $request);
 
             // Return a redirect response to the long URL.
             // Use a temporary redirect to make sure browsers always hit the server for analytics purposes

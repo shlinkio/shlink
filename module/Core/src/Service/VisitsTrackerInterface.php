@@ -1,6 +1,7 @@
 <?php
 namespace Shlinkio\Shlink\Core\Service;
 
+use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
 
@@ -10,9 +11,10 @@ interface VisitsTrackerInterface
      * Tracks a new visit to provided short code, using an array of data to look up information
      *
      * @param string $shortCode
-     * @param array $visitorData Defaults to global $_SERVER
+     * @param ServerRequestInterface $request
+     * @return
      */
-    public function track($shortCode, array $visitorData = null);
+    public function track($shortCode, ServerRequestInterface $request);
 
     /**
      * Returns the visits on certain short code
