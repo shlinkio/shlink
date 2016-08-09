@@ -1,5 +1,5 @@
 <?php
-use Shlinkio\Shlink\Core\Action\RedirectAction;
+use Shlinkio\Shlink\Core\Action;
 
 return [
 
@@ -7,7 +7,13 @@ return [
         [
             'name' => 'long-url-redirect',
             'path' => '/{shortCode}',
-            'middleware' => RedirectAction::class,
+            'middleware' => Action\RedirectAction::class,
+            'allowed_methods' => ['GET'],
+        ],
+        [
+            'name' => 'short-url-qr-code',
+            'path' => '/qr/{shortCode}[/{size:[0-9]+}]',
+            'middleware' => Action\QrCodeAction::class,
             'allowed_methods' => ['GET'],
         ],
     ],
