@@ -21,7 +21,6 @@ return [
             EntityManager::class => EntityManagerFactory::class,
             GuzzleHttp\Client::class => InvokableFactory::class,
             Cache::class => CacheFactory::class,
-            LoggerInterface::class => LoggerFactory::class,
             'Logger_Shlink' => LoggerFactory::class,
 
             Translator::class => TranslatorFactory::class,
@@ -35,8 +34,9 @@ return [
             'httpClient' => GuzzleHttp\Client::class,
             'translator' => Translator::class,
             'logger' => LoggerInterface::class,
-            Logger::class => LoggerInterface::class,
             AnnotatedFactory::CACHE_SERVICE => Cache::class,
+            Logger::class => 'Logger_Shlink',
+            LoggerInterface::class => 'Logger_Shlink',
         ],
     ],
 
