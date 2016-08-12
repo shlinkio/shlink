@@ -4,7 +4,6 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManager;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Common\ErrorHandler;
 use Shlinkio\Shlink\Common\Factory\CacheFactory;
 use Shlinkio\Shlink\Common\Factory\EntityManagerFactory;
 use Shlinkio\Shlink\Common\Factory\LoggerFactory;
@@ -30,9 +29,6 @@ return [
             LocaleMiddleware::class => AnnotatedFactory::class,
 
             IpLocationResolver::class => AnnotatedFactory::class,
-
-            ErrorHandler\ContentBasedErrorHandler::class => AnnotatedFactory::class,
-            ErrorHandler\ErrorHandlerManager::class => ErrorHandler\ErrorHandlerManagerFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,
