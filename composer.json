@@ -23,6 +23,7 @@
         "zendframework/zend-i18n": "^2.7",
         "mtymek/expressive-config-manager": "^0.4",
         "acelaya/zsm-annotated-services": "^0.2.0",
+        "acelaya/ze-content-based-error-handler": "^1.0",
         "doctrine/orm": "^2.5",
         "guzzlehttp/guzzle": "^6.2",
         "symfony/console": "^3.0",
