@@ -27,6 +27,7 @@
         "doctrine/orm": "^2.5",
         "guzzlehttp/guzzle": "^6.2",
         "symfony/console": "^3.0",
+        "symfony/process": "^3.0",
         "firebase/php-jwt": "^4.0",
         "monolog/monolog": "^1.21",
         "theorchard/monolog-cascade": "^0.4",

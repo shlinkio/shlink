@@ -4,6 +4,7 @@ namespace Shlinkio\Shlink\CLI\Command\Install;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,6 +36,10 @@ class InstallCommand extends Command
      */
     private $questionHelper;
     /**
+     * @var ProcessHelper
+     */
+    private $processHelper;
+    /**
      * @var WriterInterface
      */
     private $configWriter;
@@ -56,6 +61,7 @@ class InstallCommand extends Command
         $this->input = $input;
         $this->output = $output;
         $this->questionHelper = $this->getHelper('question');
+        $this->processHelper = $this->getHelper('process');
         $params = [];
 
         $output->writeln([
@@ -85,7 +91,17 @@ class InstallCommand extends Command
         // Generate config params files
         $config = $this->buildAppConfig($params);
         $this->configWriter->toFile('config/params/generated_config.php', $config, false);
-        $output->writeln('<info>Custom configuration properly generated!</info>');
+        $output->writeln(['<info>Custom configuration properly generated!</info>', '']);
+
+        // Generate database
+        $output->write('Initializing database...');
+        $this->processHelper->run($output, 'php vendor/bin/doctrine.php orm:schema-tool:create');
+        $output->writeln(' <info>Success!</info>');
+
+        // Generate proxies
+        $output->write('Generating proxies...');
+        $this->processHelper->run($output, 'php vendor/bin/doctrine.php orm:generate-proxies');
+        $output->writeln(' <info>Success!</info>');
     }
 
     protected function askDatabase()
