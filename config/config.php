@@ -1,5 +1,5 @@
 <?php
-use Acelaya\ExpressiveErrorHandler\ConfigProvider as ErrorHandlerProvider;
+use Acelaya\ExpressiveErrorHandler;
 use Shlinkio\Shlink\CLI;
 use Shlinkio\Shlink\Common;
 use Shlinkio\Shlink\Core;
@@ -16,7 +16,7 @@ use Zend\Expressive\ConfigManager;
  */
 
 return (new ConfigManager\ConfigManager([
-    ErrorHandlerProvider::class,
+    ExpressiveErrorHandler\ConfigProvider::class,
     Common\ConfigProvider::class,
     Core\ConfigProvider::class,
     CLI\ConfigProvider::class,
