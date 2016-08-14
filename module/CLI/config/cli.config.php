@@ -4,6 +4,7 @@ use Shlinkio\Shlink\CLI\Command;
 return [
 
     'cli' => [
+        'locale' => env('CLI_LOCALE', 'en'),
         'commands' => [
             Command\Shortcode\GenerateShortcodeCommand::class,
             Command\Shortcode\ResolveUrlCommand::class,
