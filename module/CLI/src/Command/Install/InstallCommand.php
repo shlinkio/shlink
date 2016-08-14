@@ -225,6 +225,9 @@ class InstallCommand extends Command
             'translator' => [
                 'locale' => $params['LANGUAGE']['DEFAULT'],
             ],
+            'cli' => [
+                'locale' => $params['LANGUAGE']['CLI'],
+            ],
             'url_shortener' => [
                 'domain' => [
                     'schema' => $params['URL_SHORTENER']['SCHEMA'],
