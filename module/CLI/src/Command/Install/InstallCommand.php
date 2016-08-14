@@ -36,6 +36,8 @@ class InstallCommand extends Command
         ]);
 
         $params['DB_NAME'] = $this->ask('Database name', 'shlink');
+        $params['DB_USER'] = $this->ask('Database username');
+        $params['DB_PASSWORD'] = $this->ask('Database password');
     }
 
     /**
@@ -51,9 +53,14 @@ class InstallCommand extends Command
         if (isset($default)) {
             $text .= ' (defaults to ' . $default . ')';
         }
-        return $questionHelper->ask($this->input, $this->output, new Question(
-            '    <question>' . $text . ':</question> ',
-            $default
-        ));
+        $value = '';
+        while (empty($value) && empty($default)) {
+            $value = $questionHelper->ask($this->input, $this->output, new Question(
+                '    <question>' . $text . ':</question> ',
+                $default
+            ));
+        }
+
+        return $value;
     }
 }
