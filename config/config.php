@@ -21,6 +21,5 @@ return (new ConfigManager\ConfigManager([
     Core\ConfigProvider::class,
     CLI\ConfigProvider::class,
     Rest\ConfigProvider::class,
-    new ConfigManager\ZendConfigProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
-    new ConfigManager\PhpFileProvider('config/params/generated_config.php'),
+    new ConfigManager\ZendConfigProvider('config/{autoload/{{,*.}global,{,*.}local},params/generated_config}.php'),
 ], 'data/cache/app_config.php'))->getMergedConfig();
