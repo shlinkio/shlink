@@ -60,7 +60,7 @@ class InstallCommand extends Command
 
         $output->writeln([
             '<info>Welcome to Shlink!!</info>',
-            'This will guide you through the installation process.',
+            'This process will guide you through the installation.',
         ]);
 
         // Check if a cached config file exists and drop it if so
@@ -84,7 +84,7 @@ class InstallCommand extends Command
 
         // Generate config params files
         $config = $this->buildAppConfig($params);
-        $this->configWriter->toFile(__DIR__ . '/../../../../../config/params/generated_config.php', $config, false);
+        $this->configWriter->toFile('config/params/generated_config.php', $config, false);
         $output->writeln('<info>Custom configuration properly generated!</info>');
     }
 
