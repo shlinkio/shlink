@@ -84,7 +84,7 @@ class InstallCommand extends Command
 
         // Generate config params files
         $config = $this->buildAppConfig($params);
-        $this->configWriter->toFile('config/params/generated_config.php', $config);
+        $this->configWriter->toFile(__DIR__ . '/../../../../../config/params/generated_config.php', $config, false);
         $output->writeln('<info>Custom configuration properly generated!</info>');
     }
 
