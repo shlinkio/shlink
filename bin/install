@@ -1,4 +1,4 @@
 #!/usr/bin/env php
 <?php
 
-include 'cli.php';
+include 'install.php';

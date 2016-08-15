@@ -1,5 +1,5 @@
 <?php
-namespace ShlinkioTest\Shlink\CLI\Command;
+namespace ShlinkioTest\Shlink\CLI\Command\Shortcode;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Prophecy\Argument;
