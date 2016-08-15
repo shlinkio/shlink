@@ -9,7 +9,7 @@ echo 'Copying project files...'
 rm -rf "${builtcontent}"
 mkdir "${builtcontent}"
 cp -R "${projectdir}"/* "${builtcontent}"
-cd ${builtcontent}
+cd "${builtcontent}"
 
 # Install dependencies
 rm -r vendor
@@ -26,9 +26,9 @@ rm LICENSE
 rm php*
 rm README.md
 rm -r build
-rm data/database.sqlite
-rm data/{cache,log,proxies}/{*,.gitignore}
-rm config/params/{*,.gitignore}
-rm config/autoload/{{,*.}local.php{,.dist},.gitignore}
+rm -f data/database.sqlite
+rm -f data/{cache,log,proxies}/{*,.gitignore}
+rm -f config/params/{*,.gitignore}
+rm -f config/autoload/{{,*.}local.php{,.dist},.gitignore}
 
 # Compressing file
