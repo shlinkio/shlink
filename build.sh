@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 builtcontent=$(readlink -f '../shlink_build_tmp')
 projectdir=$(pwd)
@@ -28,6 +29,6 @@ rm -r build
 rm data/database.sqlite
 rm data/{cache,log,proxies}/{*,.gitignore}
 rm config/params/{*,.gitignore}
-rm config/autoload/{*.local.php{,.dist},.gitignore}
+rm config/autoload/{{,*.}local.php{,.dist},.gitignore}
 
 # Compressing file
