@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
+if [ "$#" -ne 1 ]; then
+  echo "Usage:" >&2
+  echo "   $0 {version}" >&2
+  exit 1
+fi
+
+version=$1
 builtcontent=$(readlink -f '../shlink_build_tmp')
 projectdir=$(pwd)
 
@@ -32,3 +39,6 @@ rm -f config/params/{*,.gitignore}
 rm -f config/autoload/{{,*.}local.php{,.dist},.gitignore}
 
 # Compressing file
+rm -f "${projectdir}"/build/Shlink_${version}.dist.zip
+zip -r "${projectdir}"/build/Shlink_${version}.dist.zip "${builtcontent}"
+rm -rf "${builtcontent}"
