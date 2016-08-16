@@ -34,11 +34,11 @@ rm php*
 rm README.md
 rm -r build
 rm -f data/database.sqlite
-rm -f data/{cache,log,proxies}/{*,.gitignore}
-rm -f config/params/{*,.gitignore}
-rm -f config/autoload/{{,*.}local.php{,.dist},.gitignore}
+rm -rf data/{cache,log,proxies}/{*,.gitignore}
+rm -rf config/params/{*,.gitignore}
+rm -rf config/autoload/{{,*.}local.php{,.dist},.gitignore}
 
 # Compressing file
-rm -f "${projectdir}"/build/Shlink_${version}.dist.zip
-zip -r "${projectdir}"/build/Shlink_${version}.dist.zip "${builtcontent}"
+rm -f "${projectdir}"/build/shlink_${version}_dist.zip
+zip -r "${projectdir}"/build/shlink_${version}_dist.zip .
 rm -rf "${builtcontent}"
