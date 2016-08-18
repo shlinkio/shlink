@@ -78,10 +78,12 @@ class GeneratePreviewCommand extends Command
             $this->previewGenerator->generatePreview($url);
             $output->writeln($this->translator->translate(' <info>Success!</info>'));
         } catch (PreviewGenerationException $e) {
-            $output->writeln([
-                ' <error>' . $this->translator->translate('Error') . '</error>',
-                '<error>' . $e->__toString() . '</error>',
-            ]);
+            $messages = [' <error>' . $this->translator->translate('Error') . '</error>'];
+            if ($output->isVerbose()) {
+                $messages[] = '<error>' . $e->__toString() . '</error>';
+            }
+
+            $output->writeln($messages);
         }
     }
 }

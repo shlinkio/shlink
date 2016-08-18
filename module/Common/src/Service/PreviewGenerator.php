@@ -2,18 +2,14 @@
 namespace Shlinkio\Shlink\Common\Service;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
-use Doctrine\Common\Cache\Cache;
 use mikehaertl\wkhtmlto\Image;
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\Common\Image\ImageBuilder;
 use Shlinkio\Shlink\Common\Image\ImageBuilderInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 class PreviewGenerator implements PreviewGeneratorInterface
 {
-    /**
-     * @var Cache
-     */
-    private $cache;
     /**
      * @var string
      */
@@ -22,20 +18,24 @@ class PreviewGenerator implements PreviewGeneratorInterface
      * @var ImageBuilderInterface
      */
     private $imageBuilder;
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
 
     /**
      * PreviewGenerator constructor.
      * @param ImageBuilderInterface $imageBuilder
-     * @param Cache $cache
+     * @param Filesystem $filesystem
      * @param string $location
      *
-     * @Inject({ImageBuilder::class, Cache::class, "config.preview_generation.files_location"})
+     * @Inject({ImageBuilder::class, Filesystem::class, "config.preview_generation.files_location"})
      */
-    public function __construct(ImageBuilderInterface $imageBuilder, Cache $cache, $location)
+    public function __construct(ImageBuilderInterface $imageBuilder, Filesystem $filesystem, $location)
     {
-        $this->cache = $cache;
         $this->location = $location;
         $this->imageBuilder = $imageBuilder;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -50,22 +50,21 @@ class PreviewGenerator implements PreviewGeneratorInterface
         /** @var Image $image */
         $image = $this->imageBuilder->build(Image::class, ['url' => $url]);
 
+        // If the file already exists, return its path
         $cacheId = sprintf('preview_%s.%s', urlencode($url), $image->type);
-        if ($this->cache->contains($cacheId)) {
-            return $this->cache->fetch($cacheId);
+        $path = $this->location . '/' . $cacheId;
+        if ($this->filesystem->exists($path)) {
+            return $path;
         }
 
-        $path = $this->location . '/' . $cacheId;
+        // Save and check if an error occurred
         $image->saveAs($path);
-
-        // Check if an error occurred
         $error = $image->getError();
         if (! empty($error)) {
             throw PreviewGenerationException::fromImageError($error);
         }
 
         // Cache the path and return it
-        $this->cache->save($cacheId, $path);
         return $path;
     }
 }
