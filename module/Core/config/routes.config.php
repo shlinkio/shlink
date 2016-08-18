@@ -20,6 +20,12 @@ return [
             ],
             'allowed_methods' => ['GET'],
         ],
+        [
+            'name' => 'short-url-preview',
+            'path' => '/{shortCode}/preview',
+            'middleware' => Action\PreviewAction::class,
+            'allowed_methods' => ['GET'],
+        ],
     ],
 
 ];
