@@ -31,7 +31,8 @@
         "firebase/php-jwt": "^4.0",
         "monolog/monolog": "^1.21",
         "theorchard/monolog-cascade": "^0.4",
-        "endroid/qrcode": "^1.7"
+        "endroid/qrcode": "^1.7",
+        "mikehaertl/phpwkhtmltopdf": "^2.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0",
