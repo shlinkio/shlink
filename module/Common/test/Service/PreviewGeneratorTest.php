@@ -6,7 +6,9 @@ use mikehaertl\wkhtmlto\Image;
 use PHPUnit_Framework_TestCase as TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Common\Image\ImageBuilder;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
+use Zend\ServiceManager\ServiceManager;
 
 class PreviewGeneratorTest extends TestCase
 {
@@ -27,7 +29,13 @@ class PreviewGeneratorTest extends TestCase
     {
         $this->image = $this->prophesize(Image::class);
         $this->cache = new ArrayCache();
-        $this->generator = new PreviewGenerator($this->image->reveal(), $this->cache, 'dir');
+        $this->generator = new PreviewGenerator(new ImageBuilder(new ServiceManager(), [
+            'factories' => [
+                Image::class => function () {
+                    return $this->image->reveal();
+                },
+            ]
+        ]), $this->cache, 'dir');
     }
 
     /**
@@ -50,7 +58,6 @@ class PreviewGeneratorTest extends TestCase
         $cacheId = sprintf('preview_%s.png', urlencode($url));
         $expectedPath = 'dir/' . $cacheId;
 
-        $this->image->setPage($url)->shouldBeCalledTimes(1);
         $this->image->saveAs($expectedPath)->shouldBeCalledTimes(1);
         $this->image->getError()->willReturn('')->shouldBeCalledTimes(1);
 
@@ -69,7 +76,6 @@ class PreviewGeneratorTest extends TestCase
         $cacheId = sprintf('preview_%s.png', urlencode($url));
         $expectedPath = 'dir/' . $cacheId;
 
-        $this->image->setPage($url)->shouldBeCalledTimes(1);
         $this->image->saveAs($expectedPath)->shouldBeCalledTimes(1);
         $this->image->getError()->willReturn('Error!!')->shouldBeCalledTimes(1);
 

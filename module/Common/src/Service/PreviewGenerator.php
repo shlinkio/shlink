@@ -5,13 +5,11 @@ use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\Common\Cache\Cache;
 use mikehaertl\wkhtmlto\Image;
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
+use Shlinkio\Shlink\Common\Image\ImageBuilder;
+use Shlinkio\Shlink\Common\Image\ImageBuilderInterface;
 
 class PreviewGenerator implements PreviewGeneratorInterface
 {
-    /**
-     * @var Image
-     */
-    private $image;
     /**
      * @var Cache
      */
@@ -20,20 +18,24 @@ class PreviewGenerator implements PreviewGeneratorInterface
      * @var string
      */
     private $location;
+    /**
+     * @var ImageBuilderInterface
+     */
+    private $imageBuilder;
 
     /**
      * PreviewGenerator constructor.
-     * @param Image $image
+     * @param ImageBuilderInterface $imageBuilder
      * @param Cache $cache
      * @param string $location
      *
-     * @Inject({Image::class, Cache::class, "config.phpwkhtmltopdf.files_location"})
+     * @Inject({ImageBuilder::class, Cache::class, "config.preview_generation.files_location"})
      */
-    public function __construct(Image $image, Cache $cache, $location)
+    public function __construct(ImageBuilderInterface $imageBuilder, Cache $cache, $location)
     {
-        $this->image = $image;
         $this->cache = $cache;
         $this->location = $location;
+        $this->imageBuilder = $imageBuilder;
     }
 
     /**
@@ -45,17 +47,19 @@ class PreviewGenerator implements PreviewGeneratorInterface
      */
     public function generatePreview($url)
     {
-        $cacheId = sprintf('preview_%s.%s', urlencode($url), $this->image->type);
+        /** @var Image $image */
+        $image = $this->imageBuilder->build(Image::class, ['url' => $url]);
+
+        $cacheId = sprintf('preview_%s.%s', urlencode($url), $image->type);
         if ($this->cache->contains($cacheId)) {
             return $this->cache->fetch($cacheId);
         }
 
         $path = $this->location . '/' . $cacheId;
-        $this->image->setPage($url);
-        $this->image->saveAs($path);
+        $image->saveAs($path);
 
         // Check if an error occurred
-        $error = $this->image->getError();
+        $error = $image->getError();
         if (! empty($error)) {
             throw PreviewGenerationException::fromImageError($error);
         }

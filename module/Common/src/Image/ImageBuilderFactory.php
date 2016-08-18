@@ -8,7 +8,7 @@ use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class ImageFactory implements FactoryInterface
+class ImageBuilderFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -24,13 +24,8 @@ class ImageFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = $container->get('config')['phpwkhtmltopdf'];
-        $image = new Image(isset($config['images']) ? $config['images'] : null);
-
-        if (isset($options['url'])) {
-            $image->setPage($options['url']);
-        }
-
-        return $image;
+        return new ImageBuilder($container, ['factories' => [
+            Image::class => ImageFactory::class,
+        ]]);
     }
 }
