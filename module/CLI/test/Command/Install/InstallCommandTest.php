@@ -8,6 +8,7 @@ use Shlinkio\Shlink\CLI\Command\Install\InstallCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Process\Process;
 use Zend\Config\Writer\WriterInterface;
 
 class InstallCommandTest extends TestCase
@@ -23,10 +24,12 @@ class InstallCommandTest extends TestCase
 
     public function setUp()
     {
+        $processMock = $this->prophesize(Process::class);
+        $processMock->isSuccessful()->willReturn(true);
         $processHelper = $this->prophesize(ProcessHelper::class);
         $processHelper->getName()->willReturn('process');
         $processHelper->setHelperSet(Argument::any())->willReturn(null);
-        $processHelper->run(Argument::cetera())->willReturn(null);
+        $processHelper->run(Argument::cetera())->willReturn($processMock->reveal());
 
         $app = new Application();
         $helperSet = $app->getHelperSet();

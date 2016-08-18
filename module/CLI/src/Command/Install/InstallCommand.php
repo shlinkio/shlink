@@ -94,14 +94,33 @@ class InstallCommand extends Command
         $output->writeln(['<info>Custom configuration properly generated!</info>', '']);
 
         // Generate database
-        $output->write('Initializing database...');
-        $this->processHelper->run($output, 'php vendor/bin/doctrine.php orm:schema-tool:create');
-        $output->writeln(' <info>Success!</info>');
+        $output->writeln('Initializing database...');
+        $process = $this->processHelper->run($output, 'php vendor/bin/doctrine.php orm:schema-tool:create');
+        if ($process->isSuccessful()) {
+            $output->writeln('    <info>Success!</info>');
+        } else {
+            if ($output->isVerbose()) {
+                return;
+            }
+            $output->writeln(
+                '    <error>Error generating database.</error>  Run this command with -vvv to see specific error info.'
+            );
+            return;
+        }
 
         // Generate proxies
-        $output->write('Generating proxies...');
-        $this->processHelper->run($output, 'php vendor/bin/doctrine.php orm:generate-proxies');
-        $output->writeln(' <info>Success!</info>');
+        $output->writeln('Generating proxies...');
+        $process = $this->processHelper->run($output, 'php vendor/bin/doctrine.php orm:generate-proxies');
+        if ($process->isSuccessful()) {
+            $output->writeln('    <info>Success!</info>');
+        } else {
+            if ($output->isVerbose()) {
+                return;
+            }
+            $output->writeln(
+                '    <error>Error generating proxies.</error>  Run this command with -vvv to see specific error info.'
+            );
+        }
     }
 
     protected function askDatabase()

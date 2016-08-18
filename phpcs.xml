@@ -20,4 +20,5 @@
     <file>module</file>
     <file>config</file>
     <file>public/index.php</file>
+    <exclude-pattern>config/params/*</exclude-pattern>
 </ruleset>
