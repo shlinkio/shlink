@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2016-08-07 20:16+0200\n"
-"PO-Revision-Date: 2016-08-07 20:18+0200\n"
+"POT-Creation-Date: 2016-08-18 17:24+0200\n"
+"PO-Revision-Date: 2016-08-18 17:26+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -68,7 +68,35 @@ msgstr ""
 msgid "Character set:"
 msgstr "Grupo de caracteres:"
 
-#, fuzzy
+msgid ""
+"Generates a random secret string that can be used for JWT token encryption"
+msgstr ""
+"Genera una cadena de caracteres aleatoria que puede ser usada para cifrar "
+"tokens JWT"
+
+msgid "Secret key:"
+msgstr "Clave secreta:"
+
+msgid ""
+"Processes and generates the previews for every URL, improving performance "
+"for later web requests."
+msgstr ""
+"Procesa y genera las vistas previas para cada URL, mejorando el rendimiento "
+"para peticiones web posteriores."
+
+msgid "Finished processing all URLs"
+msgstr "Finalizado el procesado de todas las URLs"
+
+#, php-format
+msgid "Processing URL %s..."
+msgstr "Procesando URL %s..."
+
+msgid " <info>Success!</info>"
+msgstr "<info>¡Correcto!</info>"
+
+msgid "Error"
+msgstr "Error"
+
 msgid "Generates a short code for provided URL and returns the short URL"
 msgstr ""
 "Genera un código corto para la URL proporcionada y devuelve la URL acortada"
@@ -149,22 +177,6 @@ msgstr "Has alcanzado la última página"
 msgid "Continue with page"
 msgstr "Continuar con la página"
 
-msgid "Processes visits where location is not set yet"
-msgstr "Procesa las visitas donde la localización no ha sido establecida aún"
-
-msgid "Processing IP"
-msgstr "Procesando IP"
-
-msgid "Ignored localhost address"
-msgstr "Ignorada IP de localhost"
-
-#, php-format
-msgid "Address located at \"%s\""
-msgstr "Dirección localizada en \"%s\""
-
-msgid "Finished processing all IPs"
-msgstr "Finalizado el procesado de todas las IPs"
-
 msgid "Returns the long URL behind a short code"
 msgstr "Devuelve la URL larga detrás de un código corto"
 
@@ -185,3 +197,19 @@ msgstr "URL larga:"
 #, php-format
 msgid "Provided short code \"%s\" has an invalid format."
 msgstr "El código corto proporcionado \"%s\" tiene un formato inválido."
+
+msgid "Processes visits where location is not set yet"
+msgstr "Procesa las visitas donde la localización no ha sido establecida aún"
+
+msgid "Processing IP"
+msgstr "Procesando IP"
+
+msgid "Ignored localhost address"
+msgstr "Ignorada IP de localhost"
+
+#, php-format
+msgid "Address located at \"%s\""
+msgstr "Dirección localizada en \"%s\""
+
+msgid "Finished processing all IPs"
+msgstr "Finalizado el procesado de todas las IPs"
