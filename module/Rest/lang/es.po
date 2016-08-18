@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2016-08-07 20:19+0200\n"
-"PO-Revision-Date: 2016-08-07 20:21+0200\n"
+"POT-Creation-Date: 2016-08-18 17:27+0200\n"
+"PO-Revision-Date: 2016-08-18 17:27+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -29,21 +29,19 @@ msgid "A URL was not provided"
 msgstr "No se ha proporcionado una URL"
 
 #, php-format
-msgid "Provided URL \"%s\" is invalid. Try with a different one."
-msgstr ""
-"La URL \"%s\" proporcionada es inválida. Inténtalo de nuevo con una "
-"diferente."
+msgid "Provided URL %s is invalid. Try with a different one."
+msgstr "La URL proporcionada \"%s\" es inválida. Prueba con una diferente."
 
 msgid "Unexpected error occurred"
 msgstr "Ocurrió un error inesperado"
 
 #, php-format
-msgid "Provided short code \"%s\" is invalid"
-msgstr "El código corto \"%s\" proporcionado es inválido"
+msgid "Provided short code %s does not exist"
+msgstr "El código corto \"%s\" proporcionado no existe"
 
 #, php-format
-msgid "No URL found for shortcode \"%s\""
-msgstr "No se ha encontrado una URL para el código corto \"%s\""
+msgid "No URL found for short code \"%s\""
+msgstr "No se ha encontrado ninguna URL para el código corto \"%s\""
 
 #, php-format
 msgid "Provided short code \"%s\" has an invalid format"

@@ -20,6 +20,7 @@ return [
             // Middleware
             Action\RedirectAction::class => AnnotatedFactory::class,
             Action\QrCodeAction::class => AnnotatedFactory::class,
+            Action\PreviewAction::class => AnnotatedFactory::class,
             Middleware\QrCodeCacheMiddleware::class => AnnotatedFactory::class,
         ],
     ],

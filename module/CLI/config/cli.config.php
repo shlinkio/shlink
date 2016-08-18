@@ -10,6 +10,7 @@ return [
             Command\Shortcode\ResolveUrlCommand::class,
             Command\Shortcode\ListShortcodesCommand::class,
             Command\Shortcode\GetVisitsCommand::class,
+            Command\Shortcode\GeneratePreviewCommand::class,
             Command\Visit\ProcessVisitsCommand::class,
             Command\Config\GenerateCharsetCommand::class,
             Command\Config\GenerateSecretCommand::class,
