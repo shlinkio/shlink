@@ -40,9 +40,9 @@ class GeneratePreviewCommand extends Command
         PreviewGeneratorInterface $previewGenerator,
         TranslatorInterface $translator
     ) {
+        $this->shortUrlService = $shortUrlService;
         $this->previewGenerator = $previewGenerator;
         $this->translator = $translator;
-        $this->shortUrlService = $shortUrlService;
         parent::__construct(null);
     }
 
