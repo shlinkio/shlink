@@ -52,9 +52,27 @@ class PreviewGeneratorTest extends TestCase
 
         $this->image->setPage($url)->shouldBeCalledTimes(1);
         $this->image->saveAs($expectedPath)->shouldBeCalledTimes(1);
+        $this->image->getError()->willReturn('')->shouldBeCalledTimes(1);
 
         $this->assertFalse($this->cache->contains($cacheId));
         $this->assertEquals($expectedPath, $this->generator->generatePreview($url));
         $this->assertTrue($this->cache->contains($cacheId));
+    }
+
+    /**
+     * @test
+     * @expectedException \Shlinkio\Shlink\Common\Exception\PreviewGenerationException
+     */
+    public function errorWhileGeneratingPreviewThrowsException()
+    {
+        $url = 'http://foo.com';
+        $cacheId = sprintf('preview_%s.png', urlencode($url));
+        $expectedPath = 'dir/' . $cacheId;
+
+        $this->image->setPage($url)->shouldBeCalledTimes(1);
+        $this->image->saveAs($expectedPath)->shouldBeCalledTimes(1);
+        $this->image->getError()->willReturn('Error!!')->shouldBeCalledTimes(1);
+
+        $this->generator->generatePreview($url);
     }
 }

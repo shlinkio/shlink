@@ -2,9 +2,10 @@
 return [
 
     'phpwkhtmltopdf' => [
+        'files_location' => 'data/cache',
         'images' => [
             'binary' => 'bin/wkhtmltoimage',
-            'files_location' => 'data/cache/previews',
+            'type' => 'jpg',
         ],
     ],
 

@@ -4,6 +4,7 @@ namespace Shlinkio\Shlink\Core\Action;
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Common\Service\PreviewGeneratorInterface;
 use Shlinkio\Shlink\Common\Util\ResponseUtilsTrait;
@@ -77,6 +78,8 @@ class PreviewAction implements MiddlewareInterface
             return $this->generateImageResponse($imagePath);
         } catch (InvalidShortCodeException $e) {
             return $out($request, $response->withStatus(404), 'Not found');
+        } catch (PreviewGenerationException $e) {
+            return $out($request, $response->withStatus(500), 'Preview generation error');
         }
     }
 }
