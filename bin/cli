@@ -1,4 +1,11 @@
 #!/usr/bin/env php
 <?php
+use Interop\Container\ContainerInterface;
+use Symfony\Component\Console\Application as CliApp;
 
-include 'cli.php';
+/** @var ContainerInterface $container */
+$container = include __DIR__ . '/../config/container.php';
+
+/** @var CliApp $app */
+$app = $container->get(CliApp::class);
+$app->run();

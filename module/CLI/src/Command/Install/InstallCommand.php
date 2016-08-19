@@ -44,6 +44,11 @@ class InstallCommand extends Command
      */
     private $configWriter;
 
+    /**
+     * InstallCommand constructor.
+     * @param WriterInterface $configWriter
+     * @param callable|null $databaseCreationLogic
+     */
     public function __construct(WriterInterface $configWriter)
     {
         parent::__construct(null);
@@ -94,8 +99,7 @@ class InstallCommand extends Command
         $output->writeln(['<info>Custom configuration properly generated!</info>', '']);
 
         // Generate database
-        $output->writeln('Initializing database...');
-        if (! $this->runCommand('php vendor/bin/doctrine.php orm:schema-tool:create', 'Error generating database.')) {
+        if (! $this->createDatabase()) {
             return;
         }
 
@@ -271,6 +275,12 @@ class InstallCommand extends Command
         }
 
         return $config;
+    }
+
+    protected function createDatabase()
+    {
+        $this->output->writeln('Initializing database...');
+        return $this->runCommand('php vendor/bin/doctrine.php orm:schema-tool:create', 'Error generating database.');
     }
 
     /**
