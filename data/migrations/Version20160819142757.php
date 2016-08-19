@@ -25,7 +25,7 @@ class Version20160819142757 extends AbstractMigration
         if ($db === self::MYSQL) {
             $column->setPlatformOption('collation', 'utf8_bin');
         } elseif ($db === self::SQLITE) {
-            $column->setPlatformOption('collation', 'BINARY');
+            $column->setPlatformOption('collate', 'BINARY');
         }
     }
 

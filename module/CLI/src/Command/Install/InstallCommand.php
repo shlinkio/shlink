@@ -95,31 +95,20 @@ class InstallCommand extends Command
 
         // Generate database
         $output->writeln('Initializing database...');
-        $process = $this->processHelper->run($output, 'php vendor/bin/doctrine.php orm:schema-tool:create');
-        if ($process->isSuccessful()) {
-            $output->writeln('    <info>Success!</info>');
-        } else {
-            if ($output->isVerbose()) {
-                return;
-            }
-            $output->writeln(
-                '    <error>Error generating database.</error>  Run this command with -vvv to see specific error info.'
-            );
+        if (! $this->runCommand('php vendor/bin/doctrine.php orm:schema-tool:create', 'Error generating database.')) {
+            return;
+        }
+
+        // Run database migrations
+        $output->writeln('Updating database...');
+        if (! $this->runCommand('php vendor/bin/doctrine-migrations migrations:migrate', 'Error updating database.')) {
             return;
         }
 
         // Generate proxies
         $output->writeln('Generating proxies...');
-        $process = $this->processHelper->run($output, 'php vendor/bin/doctrine.php orm:generate-proxies');
-        if ($process->isSuccessful()) {
-            $output->writeln('    <info>Success!</info>');
-        } else {
-            if ($output->isVerbose()) {
-                return;
-            }
-            $output->writeln(
-                '    <error>Error generating proxies.</error>  Run this command with -vvv to see specific error info.'
-            );
+        if (! $this->runCommand('php vendor/bin/doctrine.php orm:generate-proxies', 'Error generating proxies.')) {
+            return;
         }
     }
 
@@ -282,5 +271,27 @@ class InstallCommand extends Command
         }
 
         return $config;
+    }
+
+    /**
+     * @param string $command
+     * @param string $errorMessage
+     * @return bool
+     */
+    protected function runCommand($command, $errorMessage)
+    {
+        $process = $this->processHelper->run($this->output, $command);
+        if ($process->isSuccessful()) {
+            $this->output->writeln('    <info>Success!</info>');
+            return true;
+        } else {
+            if ($this->output->isVerbose()) {
+                return false;
+            }
+            $this->output->writeln(
+                '    <error>' . $errorMessage . '</error>  Run this command with -vvv to see specific error info.'
+            );
+            return false;
+        }
     }
 }
