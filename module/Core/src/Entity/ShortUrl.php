@@ -28,8 +28,7 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
      *     type="string",
      *     nullable=false,
      *     length=10,
-     *     unique=true,
-     *     options={"collation": "utf8_bin"}
+     *     unique=true
      * )
      */
     protected $shortCode;
