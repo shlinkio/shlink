@@ -42,6 +42,16 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
      * @ORM\OneToMany(targetEntity=Visit::class, mappedBy="shortUrl", fetch="EXTRA_LAZY")
      */
     protected $visits;
+    /**
+     * @var Collection|Tag[]
+     * @ORM\ManyToMany(targetEntity=Tag::class, cascade={"persist"})
+     * @ORM\JoinTable(name="short_urls_in_tags", joinColumns={
+     *     @ORM\JoinColumn(name="short_url_id", referencedColumnName="id")
+     * }, inverseJoinColumns={
+     *     @ORM\JoinColumn(name="tag_id", referencedColumnName="id")
+     * })
+     */
+    protected $tags;
 
     /**
      * ShortUrl constructor.
@@ -51,6 +61,7 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
         $this->setDateCreated(new \DateTime());
         $this->setVisits(new ArrayCollection());
         $this->setShortCode('');
+        $this->tags = new ArrayCollection();
     }
 
     /**
@@ -126,6 +137,34 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
     }
 
     /**
+     * @return Collection|Tag[]
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param Collection|Tag[] $tags
+     * @return $this
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+        return $this;
+    }
+
+    /**
+     * @param Tag $tag
+     * @return $this
+     */
+    public function addTag(Tag $tag)
+    {
+        $this->tags->add($tag);
+        return $this;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
@@ -139,6 +178,7 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
             'originalUrl' => $this->originalUrl,
             'dateCreated' => isset($this->dateCreated) ? $this->dateCreated->format(\DateTime::ISO8601) : null,
             'visitsCount' => count($this->visits),
+            'tags' => $this->tags->toArray(),
         ];
     }
 }

@@ -5,7 +5,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Stratigility\MiddlewareInterface;
 
-class CrossDomainMiddleware implements MiddlewareInterface
+class BodyParserMiddleware implements MiddlewareInterface
 {
     /**
      * Process an incoming request and/or response.
@@ -34,27 +34,19 @@ class CrossDomainMiddleware implements MiddlewareInterface
      */
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
-        /** @var Response $response */
-        $response = $out($request, $response);
-        if (! $request->hasHeader('Origin')) {
-            return $response;
+        $method = $request->getMethod();
+        if (! in_array($method, ['PUT', 'PATCH'])) {
+            return $out($request, $response);
         }
 
-        // Add Allow-Origin header
-        $response = $response->withHeader('Access-Control-Allow-Origin', $request->getHeader('Origin'));
-        if ($request->getMethod() !== 'OPTIONS') {
-            return $response;
+        $contentType = $request->getHeaderLine('Content-type');
+        $rawBody = (string) $request->getBody();
+        if (in_array($contentType, ['application/json', 'text/json', 'application/x-json'])) {
+            return $out($request->withParsedBody(json_decode($rawBody, true)), $response);
         }
 
-        // Add OPTIONS-specific headers
-        foreach ([
-             'Access-Control-Allow-Methods' => 'GET,POST,PUT,DELETE,OPTIONS', // TODO Should be based on path
-             'Access-Control-Max-Age' => '1000',
-             'Access-Control-Allow-Headers' => $request->getHeaderLine('Access-Control-Request-Headers'),
-        ] as $key => $value) {
-            $response = $response->withHeader($key, $value);
-        }
-
-        return $response;
+        $parsedBody = [];
+        parse_str($rawBody, $parsedBody);
+        return $out($request->withParsedBody($parsedBody), $response);
     }
 }

@@ -7,6 +7,7 @@ return [
         'rest' => [
             'path' => '/rest',
             'middleware' => [
+                Middleware\BodyParserMiddleware::class,
                 Middleware\CheckAuthenticationMiddleware::class,
                 Middleware\CrossDomainMiddleware::class,
             ],

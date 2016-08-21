@@ -34,6 +34,12 @@ return [
             'middleware' => Action\GetVisitsAction::class,
             'allowed_methods' => ['GET', 'OPTIONS'],
         ],
+        [
+            'name' => 'rest-edit-tags',
+            'path' => '/rest/short-codes/{shortCode}/tags',
+            'middleware' => Action\EditTagsAction::class,
+            'allowed_methods' => ['PUT', 'OPTIONS'],
+        ],
     ],
 
 ];

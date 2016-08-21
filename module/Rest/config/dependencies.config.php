@@ -18,7 +18,9 @@ return [
             Action\ResolveUrlAction::class => AnnotatedFactory::class,
             Action\GetVisitsAction::class => AnnotatedFactory::class,
             Action\ListShortcodesAction::class => AnnotatedFactory::class,
+            Action\EditTagsAction::class => AnnotatedFactory::class,
 
+            Middleware\BodyParserMiddleware::class => AnnotatedFactory::class,
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
             Middleware\CheckAuthenticationMiddleware::class => AnnotatedFactory::class,
         ],

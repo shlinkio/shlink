@@ -16,7 +16,7 @@ use Zend\I18n\Translator\TranslatorInterface;
 class CreateShortcodeAction extends AbstractRestAction
 {
     /**
-     * @var UrlShortener|UrlShortenerInterface
+     * @var UrlShortenerInterface
      */
     private $urlShortener;
     /**
@@ -31,7 +31,7 @@ class CreateShortcodeAction extends AbstractRestAction
     /**
      * GenerateShortcodeMiddleware constructor.
      *
-     * @param UrlShortenerInterface|UrlShortener $urlShortener
+     * @param UrlShortenerInterface $urlShortener
      * @param TranslatorInterface $translator
      * @param array $domainConfig
      * @param LoggerInterface|null $logger
@@ -66,9 +66,10 @@ class CreateShortcodeAction extends AbstractRestAction
             ], 400);
         }
         $longUrl = $postData['longUrl'];
+        $tags = isset($postData['tags']) && is_array($postData['tags']) ? $postData['tags'] : [];
 
         try {
-            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl));
+            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl), $tags);
             $shortUrl = (new Uri())->withPath($shortCode)
                                    ->withScheme($this->domainConfig['schema'])
                                    ->withHost($this->domainConfig['hostname']);

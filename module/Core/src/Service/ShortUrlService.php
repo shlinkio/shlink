@@ -5,11 +5,15 @@ use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
+use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Zend\Paginator\Paginator;
 
 class ShortUrlService implements ShortUrlServiceInterface
 {
+    use TagManagerTrait;
+
     /**
      * @var EntityManagerInterface
      */
@@ -39,5 +43,27 @@ class ShortUrlService implements ShortUrlServiceInterface
                   ->setCurrentPageNumber($page);
 
         return $paginator;
+    }
+
+    /**
+     * @param string $shortCode
+     * @param string[] $tags
+     * @return ShortUrl
+     * @throws InvalidShortCodeException
+     */
+    public function setTagsByShortCode($shortCode, array $tags = [])
+    {
+        /** @var ShortUrl $shortUrl */
+        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
+            'shortCode' => $shortCode,
+        ]);
+        if (! isset($shortUrl)) {
+            throw InvalidShortCodeException::fromNotFoundShortCode($shortCode);
+        }
+
+        $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
+        $this->em->flush();
+
+        return $shortUrl;
     }
 }
