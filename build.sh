@@ -40,5 +40,5 @@ rm -rf config/autoload/{{,*.}local.php{,.dist},.gitignore}
 
 # Compressing file
 rm -f "${projectdir}"/build/shlink_${version}_dist.zip
-zip -r "${projectdir}"/build/shlink_${version}_dist.zip .
+zip -ry "${projectdir}"/build/shlink_${version}_dist.zip .
 rm -rf "${builtcontent}"
