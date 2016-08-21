@@ -39,8 +39,8 @@ class GenerateShortcodeCommandTest extends TestCase
      */
     public function properShortCodeIsCreatedIfLongUrlIsCorrect()
     {
-        $this->urlShortener->urlToShortCode(Argument::any())->willReturn('abc123')
-                                                            ->shouldBeCalledTimes(1);
+        $this->urlShortener->urlToShortCode(Argument::cetera())->willReturn('abc123')
+                                                               ->shouldBeCalledTimes(1);
 
         $this->commandTester->execute([
             'command' => 'shortcode:generate',
@@ -55,8 +55,8 @@ class GenerateShortcodeCommandTest extends TestCase
      */
     public function exceptionWhileParsingLongUrlOutputsError()
     {
-        $this->urlShortener->urlToShortCode(Argument::any())->willThrow(new InvalidUrlException())
-                                                            ->shouldBeCalledTimes(1);
+        $this->urlShortener->urlToShortCode(Argument::cetera())->willThrow(new InvalidUrlException())
+                                                               ->shouldBeCalledTimes(1);
 
         $this->commandTester->execute([
             'command' => 'shortcode:generate',

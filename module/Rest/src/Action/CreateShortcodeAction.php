@@ -16,7 +16,7 @@ use Zend\I18n\Translator\TranslatorInterface;
 class CreateShortcodeAction extends AbstractRestAction
 {
     /**
-     * @var UrlShortener|UrlShortenerInterface
+     * @var UrlShortenerInterface
      */
     private $urlShortener;
     /**
@@ -31,7 +31,7 @@ class CreateShortcodeAction extends AbstractRestAction
     /**
      * GenerateShortcodeMiddleware constructor.
      *
-     * @param UrlShortenerInterface|UrlShortener $urlShortener
+     * @param UrlShortenerInterface $urlShortener
      * @param TranslatorInterface $translator
      * @param array $domainConfig
      * @param LoggerInterface|null $logger

@@ -9,6 +9,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Zend\Diactoros\Uri;
@@ -54,7 +55,13 @@ class GenerateShortcodeCommand extends Command
              ->setDescription(
                  $this->translator->translate('Generates a short code for provided URL and returns the short URL')
              )
-             ->addArgument('longUrl', InputArgument::REQUIRED, $this->translator->translate('The long URL to parse'));
+             ->addArgument('longUrl', InputArgument::REQUIRED, $this->translator->translate('The long URL to parse'))
+             ->addOption(
+                 'tags',
+                 't',
+                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
+                 $this->translator->translate('Tags to apply to the new short URL')
+             );
     }
 
     public function interact(InputInterface $input, OutputInterface $output)
@@ -80,6 +87,13 @@ class GenerateShortcodeCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $longUrl = $input->getArgument('longUrl');
+        $tags = $input->getOption('tags');
+        $processedTags = [];
+        foreach ($tags as $key => $tag) {
+            $explodedTags = explode(',', $tag);
+            $processedTags = array_merge($processedTags, $explodedTags);
+        }
+        $tags = $processedTags;
 
         try {
             if (! isset($longUrl)) {
@@ -87,10 +101,10 @@ class GenerateShortcodeCommand extends Command
                 return;
             }
 
-            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl));
+            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl), $tags);
             $shortUrl = (new Uri())->withPath($shortCode)
-                ->withScheme($this->domainConfig['schema'])
-                ->withHost($this->domainConfig['hostname']);
+                                   ->withScheme($this->domainConfig['schema'])
+                                   ->withHost($this->domainConfig['hostname']);
 
             $output->writeln([
                 sprintf('%s <info>%s</info>', $this->translator->translate('Processed URL:'), $longUrl),
