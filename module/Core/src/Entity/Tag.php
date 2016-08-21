@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
  * @ORM\Entity()
  * @ORM\Table(name="tags")
  */
-class Tag extends AbstractEntity
+class Tag extends AbstractEntity implements \JsonSerializable
 {
     /**
      * @var string
@@ -36,5 +36,17 @@ class Tag extends AbstractEntity
     {
         $this->name = $name;
         return $this;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return $this->name;
     }
 }
