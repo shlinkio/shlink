@@ -42,6 +42,16 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
      * @ORM\OneToMany(targetEntity=Visit::class, mappedBy="shortUrl", fetch="EXTRA_LAZY")
      */
     protected $visits;
+    /**
+     * @var Collection|Tag[]
+     * @ORM\ManyToMany(targetEntity=Tag::class, cascade={"persist"})
+     * @ORM\JoinTable(name="short_urls_in_tags", joinColumns={
+     *     @ORM\JoinColumn(name="short_url_id", referencedColumnName="id")
+     * }, inverseJoinColumns={
+     *     @ORM\JoinColumn(name="tag_id", referencedColumnName="id")
+     * })
+     */
+    protected $tags;
 
     /**
      * ShortUrl constructor.
@@ -122,6 +132,34 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
     public function setVisits($visits)
     {
         $this->visits = $visits;
+        return $this;
+    }
+
+    /**
+     * @return Collection|Tag[]
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param Collection|Tag[] $tags
+     * @return $this
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+        return $this;
+    }
+
+    /**
+     * @param Tag $tag
+     * @return $this
+     */
+    public function addTag(Tag $tag)
+    {
+        $this->tags->add($tag);
         return $this;
     }
 
