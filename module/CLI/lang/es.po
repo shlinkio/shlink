@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2016-08-18 17:24+0200\n"
-"PO-Revision-Date: 2016-08-18 17:26+0200\n"
+"POT-Creation-Date: 2016-08-21 18:16+0200\n"
+"PO-Revision-Date: 2016-08-21 18:16+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -104,6 +104,9 @@ msgstr ""
 msgid "The long URL to parse"
 msgstr "La URL larga a procesar"
 
+msgid "Tags to apply to the new short URL"
+msgstr "Etiquetas a aplicar a la nueva URL acortada"
+
 msgid "A long URL was not provided. Which URL do you want to shorten?:"
 msgstr "No se ha proporcionado una URL larga. ¿Qué URL deseas acortar?"
 
@@ -159,6 +162,9 @@ msgstr "Listar todas las URLs cortas"
 msgid "The first page to list (%s items per page)"
 msgstr "La primera página a listar (%s elementos por página)"
 
+msgid "Whether to display the tags or not"
+msgstr "Si se desea mostrar las etiquetas o no"
+
 msgid "Short code"
 msgstr "Código corto"
 
@@ -170,6 +176,9 @@ msgstr "Fecha de creación"
 
 msgid "Visits count"
 msgstr "Número de visitas"
+
+msgid "Tags"
+msgstr "Etiquetas"
 
 msgid "You have reached last page"
 msgstr "Has alcanzado la última página"
