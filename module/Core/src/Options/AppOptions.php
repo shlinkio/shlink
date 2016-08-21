@@ -1,7 +1,6 @@
 <?php
 namespace Shlinkio\Shlink\Core\Options;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Zend\Stdlib\AbstractOptions;
 
@@ -25,8 +24,6 @@ class AppOptions extends AbstractOptions
     /**
      * AppOptions constructor.
      * @param array|null|\Traversable $options
-     *
-     * @Inject({"config.app_options"})
      */
     public function __construct($options = null)
     {

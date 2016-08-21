@@ -4,6 +4,7 @@ namespace Shlinkio\Shlink\Common\Factory;
 use Doctrine\Common\Cache;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
+use Shlinkio\Shlink\Core\Options\AppOptions;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
@@ -32,6 +33,19 @@ class CacheFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        $appOptions = $container->get(AppOptions::class);
+        $adapter = $this->getAdapter($container);
+        $adapter->setNamespace($appOptions->__toString());
+
+        return $adapter;
+    }
+
+    /**
+     * @param ContainerInterface $container
+     * @return Cache\CacheProvider
+     */
+    protected function getAdapter(ContainerInterface $container)
+    {
         // Try to get the adapter from config
         $config = $container->get('config');
         if (isset($config['cache'])
@@ -47,7 +61,7 @@ class CacheFactory implements FactoryInterface
 
     /**
      * @param array $cacheConfig
-     * @return Cache\Cache
+     * @return Cache\CacheProvider
      */
     protected function resolveCacheAdapter(array $cacheConfig)
     {

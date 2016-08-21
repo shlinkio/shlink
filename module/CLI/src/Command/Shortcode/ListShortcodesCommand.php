@@ -55,12 +55,20 @@ class ListShortcodesCommand extends Command
                      PaginableRepositoryAdapter::ITEMS_PER_PAGE
                  ),
                  1
+             )
+             ->addOption(
+                 'tags',
+                 't',
+                 InputOption::VALUE_NONE,
+                 $this->translator->translate('Whether to display the tags or not')
              );
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $page = intval($input->getOption('page'));
+        $showTags = $input->getOption('tags');
+
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
@@ -68,15 +76,31 @@ class ListShortcodesCommand extends Command
             $result = $this->shortUrlService->listShortUrls($page);
             $page++;
             $table = new Table($output);
-            $table->setHeaders([
+
+            $headers = [
                 $this->translator->translate('Short code'),
                 $this->translator->translate('Original URL'),
                 $this->translator->translate('Date created'),
                 $this->translator->translate('Visits count'),
-            ]);
+            ];
+            if ($showTags) {
+                $headers[] = $this->translator->translate('Tags');
+            }
+            $table->setHeaders($headers);
 
             foreach ($result as $row) {
-                $table->addRow(array_values($row->jsonSerialize()));
+                $shortUrl = $row->jsonSerialize();
+                if ($showTags) {
+                    $shortUrl['tags'] = [];
+                    foreach ($row->getTags() as $tag) {
+                        $shortUrl['tags'][] = $tag->getName();
+                    }
+                    $shortUrl['tags'] = implode(', ', $shortUrl['tags']);
+                } else {
+                    unset($shortUrl['tags']);
+                }
+
+                $table->addRow(array_values($shortUrl));
             }
             $table->render();
 

@@ -23,13 +23,18 @@
         "zendframework/zend-i18n": "^2.7",
         "mtymek/expressive-config-manager": "^0.4",
         "acelaya/zsm-annotated-services": "^0.2.0",
+        "acelaya/ze-content-based-error-handler": "^1.0",
         "doctrine/orm": "^2.5",
         "guzzlehttp/guzzle": "^6.2",
         "symfony/console": "^3.0",
+        "symfony/process": "^3.0",
+        "symfony/filesystem": "^3.0",
         "firebase/php-jwt": "^4.0",
         "monolog/monolog": "^1.21",
         "theorchard/monolog-cascade": "^0.4",
-        "endroid/qrcode": "^1.7"
+        "endroid/qrcode": "^1.7",
+        "mikehaertl/phpwkhtmltopdf": "^2.2",
+        "doctrine/migrations": "^1.4"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0",

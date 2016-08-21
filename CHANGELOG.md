@@ -1,5 +1,30 @@
 ## CHANGELOG
 
+### 1.2.0
+
+**Features**
+
+* [45: Allow to define tags on short codes, to improve filtering and classification](https://github.com/acelaya/url-shortener/issues/45)
+* [7: Add website previews while listing available URLs](https://github.com/acelaya/url-shortener/issues/7)
+
+**Enhancements:**
+
+* [57: Add database migrations system to improve updating between versions](https://github.com/acelaya/url-shortener/issues/57)
+* [31: Add support for other database management systems by improving the EntityManager factory](https://github.com/acelaya/url-shortener/issues/31)
+* [51: Generate build process to paquetize the app and ease distribution](https://github.com/acelaya/url-shortener/issues/51)
+* [38: Define installation script. It will request dynamic data on the fly so that there is no need to define env vars](https://github.com/acelaya/url-shortener/issues/38)
+
+**Tasks**
+
+* [55: Create update script which does not try to create a new database](https://github.com/acelaya/url-shortener/issues/55)
+* [54: Add cache namespace to prevent name collisions with other apps in the same environment](https://github.com/acelaya/url-shortener/issues/54)
+* [29: Use the acelaya/ze-content-based-error-handler package instead of custom error handler implementation](https://github.com/acelaya/url-shortener/issues/29)
+
+**Bugs**
+
+* [53: Fix entities database interoperability](https://github.com/acelaya/url-shortener/issues/53)
+* [52: Add missing htaccess file for apache environments](https://github.com/acelaya/url-shortener/issues/52)
+
 ### 1.1.0
 
 **Features**

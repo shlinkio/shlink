@@ -12,9 +12,12 @@ use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
+use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 
 class UrlShortener implements UrlShortenerInterface
 {
+    use TagManagerTrait;
+
     const DEFAULT_CHARS = '123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
 
     /**
@@ -59,15 +62,16 @@ class UrlShortener implements UrlShortenerInterface
      * Creates and persists a unique shortcode generated for provided url
      *
      * @param UriInterface $url
+     * @param string[] $tags
      * @return string
      * @throws InvalidUrlException
      * @throws RuntimeException
      */
-    public function urlToShortCode(UriInterface $url)
+    public function urlToShortCode(UriInterface $url, array $tags = [])
     {
         // If the url already exists in the database, just return its short code
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
-            'originalUrl' => $url
+            'originalUrl' => $url,
         ]);
         if (isset($shortUrl)) {
             return $shortUrl->getShortCode();
@@ -88,7 +92,8 @@ class UrlShortener implements UrlShortenerInterface
 
             // Generate the short code and persist it
             $shortCode = $this->convertAutoincrementIdToShortCode($shortUrl->getId());
-            $shortUrl->setShortCode($shortCode);
+            $shortUrl->setShortCode($shortCode)
+                     ->setTags($this->tagNamesToEntities($this->em, $tags));
             $this->em->flush();
 
             $this->em->commit();
@@ -156,7 +161,7 @@ class UrlShortener implements UrlShortenerInterface
 
         // Validate short code format
         if (! preg_match('|[' . $this->chars . "]+|", $shortCode)) {
-            throw InvalidShortCodeException::fromShortCode($shortCode, $this->chars);
+            throw InvalidShortCodeException::fromCharset($shortCode, $this->chars);
         }
 
         /** @var ShortUrl $shortUrl */

@@ -12,11 +12,12 @@ interface UrlShortenerInterface
      * Creates and persists a unique shortcode generated for provided url
      *
      * @param UriInterface $url
+     * @param string[] $tags
      * @return string
      * @throws InvalidUrlException
      * @throws RuntimeException
      */
-    public function urlToShortCode(UriInterface $url);
+    public function urlToShortCode(UriInterface $url, array $tags = []);
 
     /**
      * Tries to find the mapped URL for provided short code. Returns null if not found

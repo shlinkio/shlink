@@ -8,6 +8,7 @@ use Doctrine\Common\Cache\MemcachedCache;
 use Doctrine\Common\Cache\RedisCache;
 use PHPUnit_Framework_TestCase as TestCase;
 use Shlinkio\Shlink\Common\Factory\CacheFactory;
+use Shlinkio\Shlink\Core\Options\AppOptions;
 use Zend\ServiceManager\ServiceManager;
 
 class CacheFactoryTest extends TestCase
@@ -109,6 +110,7 @@ class CacheFactoryTest extends TestCase
                     'options' => $options,
                 ],
             ] : [],
+            AppOptions::class => new AppOptions(),
         ]]);
     }
 }

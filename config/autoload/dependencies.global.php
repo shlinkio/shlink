@@ -1,5 +1,4 @@
 <?php
-use Shlinkio\Shlink\Common\ErrorHandler\ContentBasedErrorHandler;
 use Zend\Expressive;
 use Zend\Expressive\Container;
 use Zend\Expressive\Router;
@@ -17,7 +16,6 @@ return [
         ],
         'aliases' => [
             Router\RouterInterface::class => Router\FastRouteRouter::class,
-            'Zend\Expressive\FinalHandler' => ContentBasedErrorHandler::class,
         ],
     ],
 

@@ -3,8 +3,10 @@ namespace ShlinkioTest\Shlink\CLI\Factory;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
+use Shlinkio\Shlink\Core\Options\AppOptions;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use Zend\I18n\Translator\Translator;
 use Zend\ServiceManager\ServiceManager;
 
 class ApplicationFactoryTest extends TestCase
@@ -53,8 +55,10 @@ class ApplicationFactoryTest extends TestCase
     {
         return new ServiceManager(['services' => [
             'config' => [
-                'cli' => $config,
+                'cli' => array_merge($config, ['locale' => 'en']),
             ],
+            AppOptions::class => new AppOptions(),
+            Translator::class => Translator::factory([]),
         ]]);
     }
 }
