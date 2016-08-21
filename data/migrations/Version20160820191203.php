@@ -16,6 +16,14 @@ class Version20160820191203 extends AbstractMigration
      */
     public function up(Schema $schema)
     {
+        // Check if the tables already exist
+        $tables = $schema->getTables();
+        foreach ($tables as $table) {
+            if ($table->getName() === 'tags') {
+                return;
+            }
+        }
+
         $this->createTagsTable($schema);
         $this->createShortUrlsInTagsTable($schema);
     }
