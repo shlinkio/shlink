@@ -161,7 +161,7 @@ class UrlShortener implements UrlShortenerInterface
 
         // Validate short code format
         if (! preg_match('|[' . $this->chars . "]+|", $shortCode)) {
-            throw InvalidShortCodeException::fromShortCode($shortCode, $this->chars);
+            throw InvalidShortCodeException::fromCharset($shortCode, $this->chars);
         }
 
         /** @var ShortUrl $shortUrl */
