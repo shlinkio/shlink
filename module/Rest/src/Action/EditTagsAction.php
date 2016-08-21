@@ -64,7 +64,10 @@ class EditTagsAction extends AbstractRestAction
             $shortUrl = $this->shortUrlService->setTagsByShortCode($shortCode, $tags);
             return new JsonResponse(['tags' => $shortUrl->getTags()->toArray()]);
         } catch (InvalidShortCodeException $e) {
-            return $out($request, $response->withStatus(404), 'Not found');
+            return new JsonResponse([
+                'error' => RestUtils::getRestErrorCodeFromException($e),
+                'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
+            ], 404);
         }
     }
 }
