@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### 1.2.1
+
+**Bugs**
+
+* [62: Fix cross-domain requests in REST API](https://github.com/acelaya/url-shortener/issues/62)
+
 ### 1.2.0
 
 **Features**
