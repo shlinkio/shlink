@@ -3,7 +3,9 @@ namespace Shlinkio\Shlink\CLI\Factory;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
+use Shlinkio\Shlink\Core\Options\AppOptions;
 use Symfony\Component\Console\Application as CliApp;
+use Zend\I18n\Translator\Translator;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
@@ -25,9 +27,12 @@ class ApplicationFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = $container->get('config')['cli'];
-        $app = new CliApp('Shlink', '1.0.0');
+        $appOptions = $container->get(AppOptions::class);
+        $translator = $container->get(Translator::class);
+        $translator->setLocale($config['locale']);
 
         $commands = isset($config['commands']) ? $config['commands'] : [];
+        $app = new CliApp($appOptions->getName(), $appOptions->getVersion());
         foreach ($commands as $command) {
             if (! $container->has($command)) {
                 continue;

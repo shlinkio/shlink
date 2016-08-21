@@ -2,16 +2,10 @@
 <?php
 use Interop\Container\ContainerInterface;
 use Symfony\Component\Console\Application as CliApp;
-use Symfony\Component\Console\Application;
-use Zend\I18n\Translator\Translator;
 
 /** @var ContainerInterface $container */
 $container = include __DIR__ . '/../config/container.php';
 
-/** @var Translator $translator */
-$translator = $container->get('translator');
-$translator->setLocale(env('CLI_LOCALE', 'en'));
-
-/** @var Application $app */
+/** @var CliApp $app */
 $app = $container->get(CliApp::class);
 $app->run();

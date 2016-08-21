@@ -3,3 +3,4 @@ build
 composer.lock
 vendor/
 .env
+data/database.sqlite

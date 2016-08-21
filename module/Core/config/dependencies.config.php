@@ -2,14 +2,14 @@
 use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
 use Shlinkio\Shlink\Core\Action;
 use Shlinkio\Shlink\Core\Middleware;
-use Shlinkio\Shlink\Core\Options\AppOptions;
+use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\Service;
 
 return [
 
     'dependencies' => [
         'factories' => [
-            AppOptions::class => AnnotatedFactory::class,
+            Options\AppOptions::class => Options\AppOptionsFactory::class,
 
             // Services
             Service\UrlShortener::class => AnnotatedFactory::class,
@@ -20,6 +20,7 @@ return [
             // Middleware
             Action\RedirectAction::class => AnnotatedFactory::class,
             Action\QrCodeAction::class => AnnotatedFactory::class,
+            Action\PreviewAction::class => AnnotatedFactory::class,
             Middleware\QrCodeCacheMiddleware::class => AnnotatedFactory::class,
         ],
     ],

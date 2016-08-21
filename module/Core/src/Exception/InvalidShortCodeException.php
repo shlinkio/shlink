@@ -5,7 +5,7 @@ use Shlinkio\Shlink\Common\Exception\RuntimeException;
 
 class InvalidShortCodeException extends RuntimeException
 {
-    public static function fromShortCode($shortCode, $charSet, \Exception $previous = null)
+    public static function fromCharset($shortCode, $charSet, \Exception $previous = null)
     {
         $code = isset($previous) ? $previous->getCode() : -1;
         return new static(
@@ -13,5 +13,10 @@ class InvalidShortCodeException extends RuntimeException
             $code,
             $previous
         );
+    }
+
+    public static function fromNotFoundShortCode($shortCode)
+    {
+        return new static(sprintf('Provided short code "%s" does not belong to a short URL', $shortCode));
     }
 }
