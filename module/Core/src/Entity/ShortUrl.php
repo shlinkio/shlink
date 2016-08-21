@@ -61,6 +61,7 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
         $this->setDateCreated(new \DateTime());
         $this->setVisits(new ArrayCollection());
         $this->setShortCode('');
+        $this->tags = new ArrayCollection();
     }
 
     /**
@@ -177,6 +178,7 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
             'originalUrl' => $this->originalUrl,
             'dateCreated' => isset($this->dateCreated) ? $this->dateCreated->format(\DateTime::ISO8601) : null,
             'visitsCount' => count($this->visits),
+            'tags' => $this->tags,
         ];
     }
 }

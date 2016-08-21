@@ -108,6 +108,23 @@ class ListShortcodesCommandTest extends TestCase
         ]);
     }
 
+    /**
+     * @test
+     */
+    public function ifTagsFlagIsProvidedTagsColumnIsIncluded()
+    {
+        $this->questionHelper->setInputStream($this->getInputStream('\n'));
+        $this->shortUrlService->listShortUrls(1)->willReturn(new Paginator(new ArrayAdapter()))
+                                                ->shouldBeCalledTimes(1);
+
+        $this->commandTester->execute([
+            'command' => 'shortcode:list',
+            '--tags' => true,
+        ]);
+        $output = $this->commandTester->getDisplay();
+        $this->assertTrue(strpos($output, 'Tags') > 0);
+    }
+
     protected function getInputStream($inputData)
     {
         $stream = fopen('php://memory', 'r+', false);
