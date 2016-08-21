@@ -66,9 +66,10 @@ class CreateShortcodeAction extends AbstractRestAction
             ], 400);
         }
         $longUrl = $postData['longUrl'];
+        $tags = isset($postData['tags']) && is_array($postData['tags']) ? $postData['tags'] : [];
 
         try {
-            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl));
+            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl), $tags);
             $shortUrl = (new Uri())->withPath($shortCode)
                                    ->withScheme($this->domainConfig['schema'])
                                    ->withHost($this->domainConfig['hostname']);
