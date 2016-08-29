@@ -1,0 +1,289 @@
+swagger: '2.0'
+info:
+  title: Shlink
+  description: Shlink, the self-hosted URL shortener
+  version: "1.2.0"
+
+schemes:
+  - https
+
+basePath: /rest
+produces:
+  - application/json
+
+paths:
+  /authenticate:
+    post:
+      description: Performs an authentication
+      parameters:
+        - name: apiKey
+          in: formData
+          description: The API key to authenticate with
+          required: true
+          type: string
+      responses:
+        200:
+          description: The authentication worked.
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: The authentication token that needs to be sent in the Authorization header
+        400:
+          description: An API key was not provided.
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: The API key is incorrect, is disabled or has expired.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Unexpected error.
+          schema:
+            $ref: '#/definitions/Error'
+  /short-codes:
+    get:
+      description: Returns the list of short codes
+      parameters:
+        - name: page
+          in: query
+          description: The page to be displayed. Defaults to 1
+          required: false
+          type: integer
+        - name: Authorization
+          in: header
+          description: The authorization token with Bearer type
+          required: true
+          type: string
+      responses:
+        200:
+          description: The list of short URLs
+          schema:
+            type: object
+            properties:
+              shortUrls:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/definitions/ShortUrl'
+                  pagination:
+                      $ref: '#/definitions/Pagination'
+        500:
+          description: Unexpected error.
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      description: Creates a new short code
+      parameters:
+        - name: longUrl
+          in: formData
+          description: The URL to parse
+          required: true
+          type: string
+        - name: tags
+          in: formData
+          description: The URL to parse
+          required: false
+          type: array
+          items: 
+            type: string
+        - name: Authorization
+          in: header
+          description: The authorization token with Bearer type
+          required: true
+          type: string
+      responses:
+        200:
+          description: The result of parsing the long URL
+          schema:
+            type: object
+            properties:
+              longUrl:
+                type: string
+                description: The original long URL that has been parsed
+              shortUrl:
+                type: string
+                description: The generated short URL
+              shortCode:
+                type: string
+                description: the short code that is being used in the short URL
+        400:
+          description: The long URL was not provided or is invalid.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Unexpected error.
+          schema:
+            $ref: '#/definitions/Error'
+  /short-codes/{shortCode}:
+    get:
+      description: Get the long URL behind a short code.
+      parameters:
+        - name: shortCode
+          in: path
+          type: string
+          description: The short code to resolve.
+          required: true
+        - name: Authorization
+          in: header
+          description: The authorization token with Bearer type
+          required: true
+          type: string
+      responses:
+        200:
+          description: The long URL behind a short code.
+          schema:
+            type: object
+            properties:
+              longUrl:
+                type: string
+                description: The original long URL behind the short code.
+        404:
+          description: No URL was found for provided short code.
+          schema:
+            $ref: '#/definitions/Error'
+        400:
+          description: Provided shortCode does not match the character set currently used by the app to generate short codes.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Unexpected error.
+          schema:
+            $ref: '#/definitions/Error'
+  /short-codes/{shortCode}/visits:
+    get:
+      description: Get the list of visits on provided short code.
+      parameters:
+        - name: shortCode
+          in: path
+          type: string
+          description: The shortCode from which we want to get the visits.
+          required: true
+        - name: Authorization
+          in: header
+          description: The authorization token with Bearer type
+          required: true
+          type: string
+      responses:
+        200:
+          description: List of visits.
+          schema:
+            type: object
+            properties:
+              visits:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/definitions/Visit'
+        404:
+          description: The short code does not belong to any short URL.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Unexpected error.
+          schema:
+            $ref: '#/definitions/Error'
+  /short-codes/{shortCode}/tags:
+    put:
+      description: Edit the tags on provided short code.
+      parameters:
+        - name: shortCode
+          in: path
+          type: string
+          description: The shortCode in which we want to edit tags.
+          required: true
+        - name: tags
+          in: formData
+          type: array
+          items:
+            type: string
+          description: The list of tags to set to the short URL.
+          required: true
+        - name: Authorization
+          in: header
+          description: The authorization token with Bearer type
+          required: true
+          type: string
+      responses:
+        200:
+          description: List of tags.
+          schema:
+            type: object
+            properties:
+              tags:
+                type: array
+                items:
+                  type: string
+        400:
+            description: The request body does not contain a "tags" param with array type.
+            schema:
+              $ref: '#/definitions/Error'
+        404:
+            description: No short URL was found for provided short code.
+            schema:
+              $ref: '#/definitions/Error'
+        500:
+            description: Unexpected error.
+            schema:
+              $ref: '#/definitions/Error'
+
+definitions:
+  ShortUrl:
+    type: object
+    properties:
+      shortCode:
+        type: string
+        description: The short code for this short URL.
+      originalUrl:
+        type: string
+        description: The original long URL.
+      dateCreated:
+        type: string
+        format: date-time
+        description: The date in which the short URL was created in ISO format.
+      visitsCount:
+        type: integer
+        description: The number of visits that this short URL has recieved.
+      tags:
+        type: array
+        items: 
+          type: string
+        description: A list of tags applied to this short URL
+        
+  Visit:
+    type: object
+    properties:
+      referer:
+        type: string
+      date:
+        type: string
+        format: date-time
+      remoteAddr:
+        type: string
+      userAgent:
+        type: string
+  
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+        description: A machine unique code
+      message:
+        type: string
+        description: A human-friendly error message
+  
+  Pagination:
+    type: object
+    properties:
+      currentPage:
+        type: integer
+        description: The number of current page being displayed.
+      pagesCount:
+        type: integer
+        description: The total number of pages that can be displayed.

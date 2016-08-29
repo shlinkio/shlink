@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouteResult;
 use Zend\I18n\Translator\TranslatorInterface;
+use Zend\Stdlib\ErrorHandler;
 use Zend\Stratigility\MiddlewareInterface;
 
 class CheckAuthenticationMiddleware implements MiddlewareInterface
@@ -117,9 +118,11 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface
         }
 
         try {
+            ErrorHandler::start();
             if (! $this->jwtService->verify($jwt)) {
                 return $this->createTokenErrorResponse();
             }
+            ErrorHandler::stop(true);
 
             // Update the token expiration and continue to next middleware
             $jwt = $this->jwtService->refresh($jwt);
@@ -131,6 +134,14 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface
         } catch (AuthenticationException $e) {
             $this->logger->warning('Tried to access API with an invalid JWT.' . PHP_EOL . $e);
             return $this->createTokenErrorResponse();
+        } catch (\Exception $e) {
+            $this->logger->warning('Unexpected error occurred.' . PHP_EOL . $e);
+            return $this->createTokenErrorResponse();
+        } catch (\Throwable $e) {
+            $this->logger->warning('Unexpected error occurred.' . PHP_EOL . $e);
+            return $this->createTokenErrorResponse();
+        } finally {
+            ErrorHandler::clean();
         }
     }
 
