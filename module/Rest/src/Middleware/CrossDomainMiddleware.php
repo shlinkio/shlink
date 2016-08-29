@@ -41,7 +41,8 @@ class CrossDomainMiddleware implements MiddlewareInterface
         }
 
         // Add Allow-Origin header
-        $response = $response->withHeader('Access-Control-Allow-Origin', $request->getHeader('Origin'));
+        $response = $response->withHeader('Access-Control-Allow-Origin', $request->getHeader('Origin'))
+                             ->withHeader('Access-Control-Expose-Headers', 'Authorization');
         if ($request->getMethod() !== 'OPTIONS') {
             return $response;
         }

@@ -66,7 +66,7 @@ class AuthenticateAction extends AbstractRestAction
 
         // Authenticate using provided API key
         $apiKey = $this->apiKeyService->getByKey($authData['apiKey']);
-        if (! $apiKey->isValid()) {
+        if (! isset($apiKey) || ! $apiKey->isValid()) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_API_KEY_ERROR,
                 'message' => $this->translator->translate('Provided API key does not exist or is invalid.'),
