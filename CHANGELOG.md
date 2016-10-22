@@ -1,5 +1,27 @@
 ## CHANGELOG
 
+### 1.3.0
+
+**Enhancements:**
+
+* [67: Allow to order the short codes list](https://github.com/acelaya/url-shortener/issues/67)
+* [60: Accept JSON requests in REST and use a body parser middleware to set the parsedBody](https://github.com/acelaya/url-shortener/issues/60)
+* [72: When listing API keys from CLI, display in yellow color enabled keys that have expired](https://github.com/acelaya/url-shortener/issues/72)
+* [58: Allow to filter short URLs by tag](https://github.com/acelaya/url-shortener/issues/58)
+* [69: Allow to filter short codes by text query](https://github.com/acelaya/url-shortener/issues/69)
+
+**Tasks**
+
+* [73: Tag endpoints in swagger file](https://github.com/acelaya/url-shortener/issues/73)
+* [71: Separate swagger docs into multiple files](https://github.com/acelaya/url-shortener/issues/71)
+* [63: Add path versioning to REST API routes](https://github.com/acelaya/url-shortener/issues/63)
+
+### 1.2.2
+
+**Bugs**
+
+* Fixed minor bugs on CORS requests
+
 ### 1.2.1
 
 **Bugs**

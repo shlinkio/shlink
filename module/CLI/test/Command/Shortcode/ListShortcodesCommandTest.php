@@ -46,8 +46,8 @@ class ListShortcodesCommandTest extends TestCase
     public function noInputCallsListJustOnce()
     {
         $this->questionHelper->setInputStream($this->getInputStream('\n'));
-        $this->shortUrlService->listShortUrls(1)->willReturn(new Paginator(new ArrayAdapter()))
-                                                ->shouldBeCalledTimes(1);
+        $this->shortUrlService->listShortUrls(1, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
+                                                                ->shouldBeCalledTimes(1);
 
         $this->commandTester->execute(['command' => 'shortcode:list']);
     }
@@ -66,7 +66,11 @@ class ListShortcodesCommandTest extends TestCase
 
         $questionHelper = $this->questionHelper;
         $that = $this;
-        $this->shortUrlService->listShortUrls(Argument::any())->will(function () use (&$data, $questionHelper, $that) {
+        $this->shortUrlService->listShortUrls(Argument::cetera())->will(function () use (
+            &$data,
+            $questionHelper,
+            $that
+        ) {
             $questionHelper->setInputStream($that->getInputStream('y'));
             return new Paginator(new ArrayAdapter(array_shift($data)));
         })->shouldBeCalledTimes(3);
@@ -86,8 +90,8 @@ class ListShortcodesCommandTest extends TestCase
         }
 
         $this->questionHelper->setInputStream($this->getInputStream('n'));
-        $this->shortUrlService->listShortUrls(Argument::any())->willReturn(new Paginator(new ArrayAdapter($data)))
-                                                              ->shouldBeCalledTimes(1);
+        $this->shortUrlService->listShortUrls(Argument::cetera())->willReturn(new Paginator(new ArrayAdapter($data)))
+                                                                 ->shouldBeCalledTimes(1);
 
         $this->commandTester->execute(['command' => 'shortcode:list']);
     }
@@ -99,8 +103,8 @@ class ListShortcodesCommandTest extends TestCase
     {
         $page = 5;
         $this->questionHelper->setInputStream($this->getInputStream('\n'));
-        $this->shortUrlService->listShortUrls($page)->willReturn(new Paginator(new ArrayAdapter()))
-                                                    ->shouldBeCalledTimes(1);
+        $this->shortUrlService->listShortUrls($page, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
+                                                                    ->shouldBeCalledTimes(1);
 
         $this->commandTester->execute([
             'command' => 'shortcode:list',
@@ -114,12 +118,12 @@ class ListShortcodesCommandTest extends TestCase
     public function ifTagsFlagIsProvidedTagsColumnIsIncluded()
     {
         $this->questionHelper->setInputStream($this->getInputStream('\n'));
-        $this->shortUrlService->listShortUrls(1)->willReturn(new Paginator(new ArrayAdapter()))
-                                                ->shouldBeCalledTimes(1);
+        $this->shortUrlService->listShortUrls(1, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
+                                                                ->shouldBeCalledTimes(1);
 
         $this->commandTester->execute([
             'command' => 'shortcode:list',
-            '--tags' => true,
+            '--showTags' => true,
         ]);
         $output = $this->commandTester->getDisplay();
         $this->assertTrue(strpos($output, 'Tags') > 0);

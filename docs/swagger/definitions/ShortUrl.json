@@ -1,0 +1,29 @@
+{
+    "type": "object",
+    "properties": {
+        "shortCode": {
+            "type": "string",
+            "description": "The short code for this short URL."
+        },
+        "originalUrl": {
+            "type": "string",
+            "description": "The original long URL."
+        },
+        "dateCreated": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date in which the short URL was created in ISO format."
+        },
+        "visitsCount": {
+            "type": "integer",
+            "description": "The number of visits that this short URL has recieved."
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "A list of tags applied to this short URL"
+        }
+    }
+}

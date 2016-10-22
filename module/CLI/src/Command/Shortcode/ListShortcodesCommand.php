@@ -57,8 +57,30 @@ class ListShortcodesCommand extends Command
                  1
              )
              ->addOption(
+                 'searchTerm',
+                 's',
+                 InputOption::VALUE_OPTIONAL,
+                 $this->translator->translate(
+                     'A query used to filter results by searching for it on the longUrl and shortCode fields'
+                 )
+             )
+             ->addOption(
                  'tags',
                  't',
+                 InputOption::VALUE_OPTIONAL,
+                 $this->translator->translate('A comma-separated list of tags to filter results')
+             )
+             ->addOption(
+                 'orderBy',
+                 'o',
+                 InputOption::VALUE_OPTIONAL,
+                 $this->translator->translate(
+                     'The field from which we want to order by. Pass ASC or DESC separated by a comma'
+                 )
+             )
+             ->addOption(
+                 'showTags',
+                 null,
                  InputOption::VALUE_NONE,
                  $this->translator->translate('Whether to display the tags or not')
              );
@@ -67,13 +89,17 @@ class ListShortcodesCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $page = intval($input->getOption('page'));
-        $showTags = $input->getOption('tags');
+        $searchTerm = $input->getOption('searchTerm');
+        $tags = $input->getOption('tags');
+        $tags = ! empty($tags) ? explode(',', $tags) : [];
+        $showTags = $input->getOption('showTags');
+        $orderBy = $input->getOption('orderBy');
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
         do {
-            $result = $this->shortUrlService->listShortUrls($page);
+            $result = $this->shortUrlService->listShortUrls($page, $searchTerm, $tags, $this->processOrderBy($input));
             $page++;
             $table = new Table($output);
 
@@ -118,5 +144,16 @@ class ListShortcodesCommand extends Command
                 ));
             }
         } while ($continue);
+    }
+
+    protected function processOrderBy(InputInterface $input)
+    {
+        $orderBy = $input->getOption('orderBy');
+        if (empty($orderBy)) {
+            return null;
+        }
+
+        $orderBy = explode(',', $orderBy);
+        return count($orderBy) === 1 ? $orderBy[0] : [$orderBy[0] => $orderBy[1]];
     }
 }
