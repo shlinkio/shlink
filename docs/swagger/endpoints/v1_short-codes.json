@@ -1,0 +1,138 @@
+{
+    "get": {
+        "description": "Returns the list of short codes",
+        "parameters": [
+            {
+                "name": "page",
+                "in": "query",
+                "description": "The page to be displayed. Defaults to 1",
+                "required": false,
+                "type": "integer"
+            },
+            {
+                "name": "searchTerm",
+                "in": "query",
+                "description": "A query used to filter results by searching for it on the longUrl and shortCode fields. (Since v1.3.0)",
+                "required": false,
+                "type": "string"
+            },
+            {
+                "name": "tags",
+                "in": "query",
+                "description": "A list of tags used to filter the resultset. Only short URLs tagged with at least one of the provided tags will be returned. (Since v1.3.0)",
+                "required": false,
+                "type": "array",
+                "schema": {
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            {
+                "name": "orderBy",
+                "in": "query",
+                "description": "The field from which you want to order the result. (Since v1.3.0)",
+                "enum": [
+                    "originalUrl",
+                    "shortCode",
+                    "dateCreated",
+                    "visits"
+                ],
+                "required": false,
+                "type": "string"
+            },
+            {
+                "$ref": "../parameters/Authorization.json"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The list of short URLs",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "shortUrls": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "../definitions/ShortUrl.json"
+                                    }
+                                },
+                                "pagination": {
+                                    "$ref": "../definitions/Pagination.json"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            }
+        }
+    },
+    "post": {
+        "description": "Creates a new short code",
+        "parameters": [
+            {
+                "name": "longUrl",
+                "in": "formData",
+                "description": "The URL to parse",
+                "required": true,
+                "type": "string"
+            },
+            {
+                "name": "tags",
+                "in": "formData",
+                "description": "The URL to parse",
+                "required": false,
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            {
+                "$ref": "../parameters/Authorization.json"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The result of parsing the long URL",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "longUrl": {
+                            "type": "string",
+                            "description": "The original long URL that has been parsed"
+                        },
+                        "shortUrl": {
+                            "type": "string",
+                            "description": "The generated short URL"
+                        },
+                        "shortCode": {
+                            "type": "string",
+                            "description": "the short code that is being used in the short URL"
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "The long URL was not provided or is invalid.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            }
+        }
+    }
+}

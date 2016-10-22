@@ -1,0 +1,7 @@
+{
+    "name": "Authorization",
+    "in": "header",
+    "description": "The authorization token with Bearer type",
+    "required": true,
+    "type": "string"
+}

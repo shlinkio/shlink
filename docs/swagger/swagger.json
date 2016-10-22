@@ -1,0 +1,33 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Shlink",
+        "description": "Shlink, the self-hosted URL shortener",
+        "version": "1.2.0"
+    },
+    "schemes": [
+        "https"
+    ],
+    "basePath": "/rest",
+    "produces": [
+        "application/json"
+    ],
+
+    "paths": {
+        "/v1/authenticate": {
+            "$ref": "endpoints/v1_authenticate.json"
+        },
+        "/v1/short-codes": {
+            "$ref": "endpoints/v1_short-codes.json"
+        },
+        "/v1/short-codes/{shortCode}": {
+            "$ref": "endpoints/v1_short-codes_{shortCode}.json"
+        },
+        "/v1/short-codes/{shortCode}/visits": {
+            "$ref": "endpoints/v1_short-codes_{shortCode}_visits.json"
+        },
+        "/v1/short-codes/{shortCode}/tags": {
+            "$ref": "endpoints/v1_short-codes_{shortCode}_tags.json"
+        }
+    }
+}

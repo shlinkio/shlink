@@ -1,0 +1,49 @@
+{
+    "get": {
+        "description": "Get the long URL behind a short code.",
+        "parameters": [
+            {
+                "name": "shortCode",
+                "in": "path",
+                "type": "string",
+                "description": "The short code to resolve.",
+                "required": true
+            },
+            {
+                "$ref": "../parameters/Authorization.json"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The long URL behind a short code.",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "longUrl": {
+                            "type": "string",
+                            "description": "The original long URL behind the short code."
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Provided shortCode does not match the character set currently used by the app to generate short codes.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            },
+            "404": {
+                "description": "No URL was found for provided short code.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            }
+        }
+    }
+}

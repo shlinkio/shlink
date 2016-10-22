@@ -4,3 +4,4 @@ composer.lock
 vendor/
 .env
 data/database.sqlite
+docs/swagger-ui

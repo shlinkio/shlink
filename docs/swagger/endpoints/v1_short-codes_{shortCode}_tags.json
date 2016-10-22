@@ -1,0 +1,61 @@
+{
+    "put": {
+        "description": "Edit the tags on provided short code.",
+        "parameters": [
+            {
+                "name": "shortCode",
+                "in": "path",
+                "type": "string",
+                "description": "The shortCode in which we want to edit tags.",
+                "required": true
+            },
+            {
+                "name": "tags",
+                "in": "formData",
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "description": "The list of tags to set to the short URL.",
+                "required": true
+            },
+            {
+                "$ref": "../parameters/Authorization.json"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "List of tags.",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "tags": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "The request body does not contain a \"tags\" param with array type.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            },
+            "404": {
+                "description": "No short URL was found for provided short code.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            }
+        }
+    }
+}

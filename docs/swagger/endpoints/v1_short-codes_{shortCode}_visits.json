@@ -1,0 +1,50 @@
+{
+    "get": {
+        "description": "Get the list of visits on provided short code.",
+        "parameters": [
+            {
+                "name": "shortCode",
+                "in": "path",
+                "type": "string",
+                "description": "The shortCode from which we want to get the visits.",
+                "required": true
+            },
+            {
+                "$ref": "../parameters/Authorization.json"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "List of visits.",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "visits": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "../definitions/Visit.json"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "The short code does not belong to any short URL.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            }
+        }
+    }
+}
