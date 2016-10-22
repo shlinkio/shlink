@@ -53,8 +53,8 @@ class ListShortcodesAction extends AbstractRestAction
     public function dispatch(Request $request, Response $response, callable $out = null)
     {
         try {
-            $query = $request->getQueryParams();
-            $shortUrls = $this->shortUrlService->listShortUrls(isset($query['page']) ? $query['page'] : 1);
+            $params = $this->queryToListParams($request->getQueryParams());
+            $shortUrls = $this->shortUrlService->listShortUrls(...$params);
             return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls)]);
         } catch (\Exception $e) {
             $this->logger->error('Unexpected error while listing short URLs.' . PHP_EOL . $e);
@@ -63,5 +63,17 @@ class ListShortcodesAction extends AbstractRestAction
                 'message' => $this->translator->translate('Unexpected error occurred'),
             ], 500);
         }
+    }
+
+    /**
+     * @param array $query
+     * @return string
+     */
+    public function queryToListParams(array $query)
+    {
+        return [
+            isset($query['page']) ? $query['page'] : 1,
+            isset($query['searchTerm']) ? $query['searchTerm'] : null,
+        ];
     }
 }

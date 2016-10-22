@@ -13,18 +13,18 @@ class PaginableRepositoryAdapter implements AdapterInterface
      */
     private $paginableRepository;
     /**
-     * @var null
+     * @var null|string
      */
     private $searchTerm;
     /**
-     * @var null
+     * @var null|array|string
      */
     private $orderBy;
 
-    public function __construct(PaginableRepositoryInterface $paginableRepository, $searchTerm = null, $orderBy = null)
+    public function __construct(PaginableRepositoryInterface $paginableRepository, $searchQuery = null, $orderBy = null)
     {
         $this->paginableRepository = $paginableRepository;
-        $this->searchTerm = $searchTerm;
+        $this->searchTerm = trim(strip_tags($searchQuery));
         $this->orderBy = $orderBy;
     }
 

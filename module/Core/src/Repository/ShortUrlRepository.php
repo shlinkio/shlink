@@ -2,6 +2,7 @@
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 
 class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryInterface
@@ -15,16 +16,14 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
      */
     public function findList($limit = null, $offset = null, $searchTerm = null, $orderBy = null)
     {
-        $qb = $this->createQueryBuilder('s');
+        $qb = $this->createListQueryBuilder($searchTerm);
+        $qb->select('s');
 
         if (isset($limit)) {
             $qb->setMaxResults($limit);
         }
         if (isset($offset)) {
             $qb->setFirstResult($offset);
-        }
-        if (isset($searchTerm)) {
-            // TODO
         }
         if (isset($orderBy)) {
             if (is_string($orderBy)) {
@@ -43,19 +42,39 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
     /**
      * Counts the number of elements in a list using provided filtering data
      *
-     * @param null $searchTerm
+     * @param null|string $searchTerm
      * @return int
      */
     public function countList($searchTerm = null)
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('COUNT(s)')
-           ->from(ShortUrl::class, 's');
-
-        if (isset($searchTerm)) {
-            // TODO
-        }
+        $qb = $this->createListQueryBuilder($searchTerm);
+        $qb->select('COUNT(s)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param null|string $searchTerm
+     * @return QueryBuilder
+     */
+    protected function createListQueryBuilder($searchTerm = null)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(ShortUrl::class, 's');
+
+        // Apply search term to every searchable field if not empty
+        if (! empty($searchTerm)) {
+            $conditions = [
+                $qb->expr()->like('s.originalUrl', ':searchPattern'),
+                $qb->expr()->like('s.shortCode', ':searchPattern'),
+            ];
+
+            // Unpack and apply search conditions
+            $qb->where($qb->expr()->orX(...$conditions));
+            $searchTerm = '%' . $searchTerm . '%';
+            $qb->setParameter('searchPattern', $searchTerm);
+        }
+
+        return $qb;
     }
 }

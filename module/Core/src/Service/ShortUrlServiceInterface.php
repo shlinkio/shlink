@@ -9,9 +9,10 @@ interface ShortUrlServiceInterface
 {
     /**
      * @param int $page
+     * @param string $searchQuery
      * @return ShortUrl[]|Paginator
      */
-    public function listShortUrls($page = 1);
+    public function listShortUrls($page = 1, $searchQuery = null);
 
     /**
      * @param string $shortCode
