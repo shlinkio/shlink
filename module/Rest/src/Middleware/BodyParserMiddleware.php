@@ -3,6 +3,7 @@ namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Zend\Stratigility\MiddlewareInterface;
 
 class BodyParserMiddleware implements MiddlewareInterface
@@ -35,18 +36,66 @@ class BodyParserMiddleware implements MiddlewareInterface
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
         $method = $request->getMethod();
-        if (! in_array($method, ['PUT', 'PATCH'])) {
+        $currentParams = $request->getParsedBody();
+
+        // In requests that do not allow body or if the body has already been parsed, continue to next middleware
+        if (in_array($method, ['GET', 'HEAD', 'OPTIONS']) || ! empty($currentParams)) {
             return $out($request, $response);
         }
 
-        $contentType = $request->getHeaderLine('Content-type');
-        $rawBody = (string) $request->getBody();
+        // If the accepted content is JSON, try to parse the body from JSON
+        $contentType = $this->getRequestContentType($request);
         if (in_array($contentType, ['application/json', 'text/json', 'application/x-json'])) {
-            return $out($request->withParsedBody(json_decode($rawBody, true)), $response);
+            return $out($this->parseFromJson($request), $response);
+        }
+
+        return $out($this->parseFromUrlEncoded($request), $response);
+    }
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    protected function getRequestContentType(Request $request)
+    {
+        $contentType = $request->getHeaderLine('Content-type');
+        $contentTypes = explode(';', $contentType);
+        return trim(array_shift($contentTypes));
+    }
+
+    /**
+     * @param Request $request
+     * @return Request
+     */
+    protected function parseFromJson(Request $request)
+    {
+        $rawBody = (string) $request->getBody();
+        if (empty($rawBody)) {
+            return $request;
+        }
+
+        $parsedJson = json_decode($rawBody, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new RuntimeException(sprintf('Error when parsing JSON request body: %s', json_last_error_msg()));
+        }
+
+        return $request->withParsedBody($parsedJson);
+    }
+
+    /**
+     * @param Request $request
+     * @return Request
+     */
+    protected function parseFromUrlEncoded(Request $request)
+    {
+        $rawBody = (string) $request->getBody();
+        if (empty($rawBody)) {
+            return $request;
         }
 
         $parsedBody = [];
         parse_str($rawBody, $parsedBody);
-        return $out($request->withParsedBody($parsedBody), $response);
+
+        return $request->withParsedBody($parsedBody);
     }
 }
