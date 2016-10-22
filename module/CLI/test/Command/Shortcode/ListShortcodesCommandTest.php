@@ -46,8 +46,8 @@ class ListShortcodesCommandTest extends TestCase
     public function noInputCallsListJustOnce()
     {
         $this->questionHelper->setInputStream($this->getInputStream('\n'));
-        $this->shortUrlService->listShortUrls(1, null)->willReturn(new Paginator(new ArrayAdapter()))
-                                                      ->shouldBeCalledTimes(1);
+        $this->shortUrlService->listShortUrls(1, null, [])->willReturn(new Paginator(new ArrayAdapter()))
+                                                          ->shouldBeCalledTimes(1);
 
         $this->commandTester->execute(['command' => 'shortcode:list']);
     }
@@ -103,8 +103,8 @@ class ListShortcodesCommandTest extends TestCase
     {
         $page = 5;
         $this->questionHelper->setInputStream($this->getInputStream('\n'));
-        $this->shortUrlService->listShortUrls($page, null)->willReturn(new Paginator(new ArrayAdapter()))
-                                                          ->shouldBeCalledTimes(1);
+        $this->shortUrlService->listShortUrls($page, null, [])->willReturn(new Paginator(new ArrayAdapter()))
+                                                              ->shouldBeCalledTimes(1);
 
         $this->commandTester->execute([
             'command' => 'shortcode:list',
@@ -118,12 +118,12 @@ class ListShortcodesCommandTest extends TestCase
     public function ifTagsFlagIsProvidedTagsColumnIsIncluded()
     {
         $this->questionHelper->setInputStream($this->getInputStream('\n'));
-        $this->shortUrlService->listShortUrls(1, null)->willReturn(new Paginator(new ArrayAdapter()))
-                                                      ->shouldBeCalledTimes(1);
+        $this->shortUrlService->listShortUrls(1, null, [])->willReturn(new Paginator(new ArrayAdapter()))
+                                                          ->shouldBeCalledTimes(1);
 
         $this->commandTester->execute([
             'command' => 'shortcode:list',
-            '--tags' => true,
+            '--showTags' => true,
         ]);
         $output = $this->commandTester->getDisplay();
         $this->assertTrue(strpos($output, 'Tags') > 0);

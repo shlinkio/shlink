@@ -74,9 +74,21 @@
                     {
                         "name": "searchTerm",
                         "in": "query",
-                        "description": "A query used to filter results by searching for it on the longUrl and shortCode fields. (From Shlink 1.3.0)",
+                        "description": "A query used to filter results by searching for it on the longUrl and shortCode fields. (Since v1.3.0)",
                         "required": false,
                         "type": "string"
+                    },
+                    {
+                        "name": "tags",
+                        "in": "query",
+                        "description": "A list of tags used to filter the resultset. Only short URLs tagged with at least one of the provided tags will be returned. (Since v1.3.0)",
+                        "required": false,
+                        "type": "array",
+                        "schema": {
+                            "items": {
+                                "type": "string"
+                            }
+                        }
                     },
                     {
                         "$ref": "#/parameters/Authorization"

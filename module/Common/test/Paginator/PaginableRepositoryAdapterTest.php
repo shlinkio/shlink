@@ -20,7 +20,7 @@ class PaginableRepositoryAdapterTest extends TestCase
     public function setUp()
     {
         $this->repo = $this->prophesize(PaginableRepositoryInterface::class);
-        $this->adapter = new PaginableRepositoryAdapter($this->repo->reveal(), 'search', 'order');
+        $this->adapter = new PaginableRepositoryAdapter($this->repo->reveal(), 'search', ['foo', 'bar'], 'order');
     }
 
     /**
@@ -28,7 +28,7 @@ class PaginableRepositoryAdapterTest extends TestCase
      */
     public function getItemsFallbacksToFindList()
     {
-        $this->repo->findList(10, 5, 'search', 'order')->shouldBeCalledTimes(1);
+        $this->repo->findList(10, 5, 'search', ['foo', 'bar'], 'order')->shouldBeCalledTimes(1);
         $this->adapter->getItems(5, 10);
     }
 
@@ -37,7 +37,7 @@ class PaginableRepositoryAdapterTest extends TestCase
      */
     public function countFallbacksToCountList()
     {
-        $this->repo->countList('search')->shouldBeCalledTimes(1);
+        $this->repo->countList('search', ['foo', 'bar'])->shouldBeCalledTimes(1);
         $this->adapter->count();
     }
 }

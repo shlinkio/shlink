@@ -74,6 +74,7 @@ class ListShortcodesAction extends AbstractRestAction
         return [
             isset($query['page']) ? $query['page'] : 1,
             isset($query['searchTerm']) ? $query['searchTerm'] : null,
+            isset($query['tags']) ? $query['tags'] : [],
         ];
     }
 }

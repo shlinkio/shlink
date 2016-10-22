@@ -11,12 +11,13 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
      * @param int|null $limit
      * @param int|null $offset
      * @param string|null $searchTerm
+     * @param array $tags
      * @param string|array|null $orderBy
-     * @return ShortUrl[]
+     * @return \Shlinkio\Shlink\Core\Entity\ShortUrl[]
      */
-    public function findList($limit = null, $offset = null, $searchTerm = null, $orderBy = null)
+    public function findList($limit = null, $offset = null, $searchTerm = null, array $tags = [], $orderBy = null)
     {
-        $qb = $this->createListQueryBuilder($searchTerm);
+        $qb = $this->createListQueryBuilder($searchTerm, $tags);
         $qb->select('s');
 
         if (isset($limit)) {
@@ -43,11 +44,12 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
      * Counts the number of elements in a list using provided filtering data
      *
      * @param null|string $searchTerm
+     * @param array $tags
      * @return int
      */
-    public function countList($searchTerm = null)
+    public function countList($searchTerm = null, array $tags = [])
     {
-        $qb = $this->createListQueryBuilder($searchTerm);
+        $qb = $this->createListQueryBuilder($searchTerm, $tags);
         $qb->select('COUNT(s)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
@@ -55,12 +57,14 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
 
     /**
      * @param null|string $searchTerm
+     * @param array $tags
      * @return QueryBuilder
      */
-    protected function createListQueryBuilder($searchTerm = null)
+    protected function createListQueryBuilder($searchTerm = null, array $tags = [])
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's');
+        $qb->where('1=1');
 
         // Apply search term to every searchable field if not empty
         if (! empty($searchTerm)) {
@@ -70,9 +74,15 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
             ];
 
             // Unpack and apply search conditions
-            $qb->where($qb->expr()->orX(...$conditions));
+            $qb->andWhere($qb->expr()->orX(...$conditions));
             $searchTerm = '%' . $searchTerm . '%';
             $qb->setParameter('searchPattern', $searchTerm);
+        }
+
+        // Filter by tags if provided
+        if (! empty($tags)) {
+            $qb->join('s.tags', 't')
+               ->andWhere($qb->expr()->in('t.name', $tags));
         }
 
         return $qb;
