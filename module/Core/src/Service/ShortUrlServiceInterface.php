@@ -11,9 +11,10 @@ interface ShortUrlServiceInterface
      * @param int $page
      * @param string $searchQuery
      * @param array $tags
+     * @param null $orderBy
      * @return ShortUrl[]|Paginator
      */
-    public function listShortUrls($page = 1, $searchQuery = null, array $tags = []);
+    public function listShortUrls($page = 1, $searchQuery = null, array $tags = [], $orderBy = null);
 
     /**
      * @param string $shortCode
