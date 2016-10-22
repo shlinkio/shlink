@@ -57,6 +57,14 @@ class ListShortcodesCommand extends Command
                  1
              )
              ->addOption(
+                 'searchTerm',
+                 's',
+                 InputOption::VALUE_OPTIONAL,
+                 $this->translator->translate(
+                     'A query used to filter results by searching for it on the longUrl and shortCode fields'
+                 )
+             )
+             ->addOption(
                  'tags',
                  't',
                  InputOption::VALUE_NONE,
@@ -67,13 +75,14 @@ class ListShortcodesCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $page = intval($input->getOption('page'));
+        $searchTerm = $input->getOption('searchTerm');
         $showTags = $input->getOption('tags');
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
         do {
-            $result = $this->shortUrlService->listShortUrls($page);
+            $result = $this->shortUrlService->listShortUrls($page, $searchTerm);
             $page++;
             $table = new Table($output);
 
