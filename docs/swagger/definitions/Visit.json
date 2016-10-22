@@ -1,0 +1,18 @@
+{
+    "type": "object",
+    "properties": {
+        "referer": {
+            "type": "string"
+        },
+        "date": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "remoteAddr": {
+            "type": "string"
+        },
+        "userAgent": {
+            "type": "string"
+        }
+    }
+}

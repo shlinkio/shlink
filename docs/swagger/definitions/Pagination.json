@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "properties": {
+        "currentPage": {
+            "type": "integer",
+            "description": "The number of current page being displayed."
+        },
+        "pagesCount": {
+            "type": "integer",
+            "description": "The total number of pages that can be displayed."
+        }
+    }
+}

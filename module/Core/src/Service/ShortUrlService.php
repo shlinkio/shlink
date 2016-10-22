@@ -32,13 +32,16 @@ class ShortUrlService implements ShortUrlServiceInterface
 
     /**
      * @param int $page
-     * @return Paginator|ShortUrl[]
+     * @param string $searchQuery
+     * @param array $tags
+     * @param null $orderBy
+     * @return ShortUrl[]|Paginator
      */
-    public function listShortUrls($page = 1)
+    public function listShortUrls($page = 1, $searchQuery = null, array $tags = [], $orderBy = null)
     {
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        $paginator = new Paginator(new PaginableRepositoryAdapter($repo));
+        $paginator = new Paginator(new PaginableRepositoryAdapter($repo, $searchQuery, $tags, $orderBy));
         $paginator->setItemCountPerPage(PaginableRepositoryAdapter::ITEMS_PER_PAGE)
                   ->setCurrentPageNumber($page);
 

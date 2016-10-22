@@ -4,6 +4,13 @@ use Shlinkio\Shlink\Rest\Middleware;
 return [
 
     'middleware_pipeline' => [
+        'pre-routing' => [
+            'middleware' => [
+                Middleware\PathVersionMiddleware::class,
+            ],
+            'priority' => 11,
+        ],
+
         'rest' => [
             'path' => '/rest',
             'middleware' => [

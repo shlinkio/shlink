@@ -13,19 +13,28 @@ class PaginableRepositoryAdapter implements AdapterInterface
      */
     private $paginableRepository;
     /**
-     * @var null
+     * @var null|string
      */
     private $searchTerm;
     /**
-     * @var null
+     * @var null|array|string
      */
     private $orderBy;
+    /**
+     * @var array
+     */
+    private $tags;
 
-    public function __construct(PaginableRepositoryInterface $paginableRepository, $searchTerm = null, $orderBy = null)
-    {
+    public function __construct(
+        PaginableRepositoryInterface $paginableRepository,
+        $searchTerm = null,
+        array $tags = [],
+        $orderBy = null
+    ) {
         $this->paginableRepository = $paginableRepository;
-        $this->searchTerm = $searchTerm;
+        $this->searchTerm = trim(strip_tags($searchTerm));
         $this->orderBy = $orderBy;
+        $this->tags = $tags;
     }
 
     /**
@@ -37,7 +46,13 @@ class PaginableRepositoryAdapter implements AdapterInterface
      */
     public function getItems($offset, $itemCountPerPage)
     {
-        return $this->paginableRepository->findList($itemCountPerPage, $offset, $this->searchTerm, $this->orderBy);
+        return $this->paginableRepository->findList(
+            $itemCountPerPage,
+            $offset,
+            $this->searchTerm,
+            $this->tags,
+            $this->orderBy
+        );
     }
 
     /**
@@ -51,6 +66,6 @@ class PaginableRepositoryAdapter implements AdapterInterface
      */
     public function count()
     {
-        return $this->paginableRepository->countList($this->searchTerm);
+        return $this->paginableRepository->countList($this->searchTerm, $this->tags);
     }
 }

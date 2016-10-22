@@ -73,12 +73,15 @@ class ListKeysCommand extends Command
             $key = $row->getKey();
             $expiration = $row->getExpirationDate();
             $rowData = [];
+            $formatMethod = ! $row->isEnabled()
+                ? 'getErrorString'
+                : ($row->isExpired() ? 'getWarningString' : 'getSuccessString');
 
             if ($enabledOnly) {
-                $rowData[] = $key;
+                $rowData[] = $this->{$formatMethod}($key);
             } else {
-                $rowData[] = $row->isEnabled() ? $this->getSuccessString($key) : $this->getErrorString($key);
-                $rowData[] = $row->isEnabled() ? $this->getSuccessString('+++') : $this->getErrorString('---');
+                $rowData[] = $this->{$formatMethod}($key);
+                $rowData[] = $this->{$formatMethod}($this->getEnabledSymbol($row));
             }
 
             $rowData[] = isset($expiration) ? $expiration->format(\DateTime::ISO8601) : '-';
@@ -104,5 +107,23 @@ class ListKeysCommand extends Command
     protected function getSuccessString($string)
     {
         return sprintf('<info>%s</info>', $string);
+    }
+
+    /**
+     * @param $string
+     * @return string
+     */
+    protected function getWarningString($string)
+    {
+        return sprintf('<comment>%s</comment>', $string);
+    }
+
+    /**
+     * @param ApiKey $apiKey
+     * @return string
+     */
+    protected function getEnabledSymbol(ApiKey $apiKey)
+    {
+        return ! $apiKey->isEnabled() || $apiKey->isExpired() ? '---' : '+++';
     }
 }

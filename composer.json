@@ -42,7 +42,8 @@
         "roave/security-advisories": "dev-master",
         "filp/whoops": "^2.0",
         "symfony/var-dumper": "^3.0",
-        "vlucas/phpdotenv": "^2.2"
+        "vlucas/phpdotenv": "^2.2",
+        "phly/changelog-generator": "^2.1"
     },
     "autoload": {
         "psr-4": {
