@@ -71,6 +71,14 @@ class ListShortcodesCommand extends Command
                  $this->translator->translate('A comma-separated list of tags to filter results')
              )
              ->addOption(
+                 'orderBy',
+                 'o',
+                 InputOption::VALUE_OPTIONAL,
+                 $this->translator->translate(
+                     'The field from which we want to order by. Pass ASC or DESC separated by a comma'
+                 )
+             )
+             ->addOption(
                  'showTags',
                  null,
                  InputOption::VALUE_NONE,
@@ -85,12 +93,13 @@ class ListShortcodesCommand extends Command
         $tags = $input->getOption('tags');
         $tags = ! empty($tags) ? explode(',', $tags) : [];
         $showTags = $input->getOption('showTags');
+        $orderBy = $input->getOption('orderBy');
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
         do {
-            $result = $this->shortUrlService->listShortUrls($page, $searchTerm, $tags);
+            $result = $this->shortUrlService->listShortUrls($page, $searchTerm, $tags, $this->processOrderBy($input));
             $page++;
             $table = new Table($output);
 
@@ -135,5 +144,16 @@ class ListShortcodesCommand extends Command
                 ));
             }
         } while ($continue);
+    }
+
+    protected function processOrderBy(InputInterface $input)
+    {
+        $orderBy = $input->getOption('orderBy');
+        if (empty($orderBy)) {
+            return null;
+        }
+
+        $orderBy = explode(',', $orderBy);
+        return count($orderBy) === 1 ? $orderBy[0] : [$orderBy[0] => $orderBy[1]];
     }
 }

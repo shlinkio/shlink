@@ -43,7 +43,11 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         $fieldName = is_array($orderBy) ? key($orderBy) : $orderBy;
         $order = is_array($orderBy) ? $orderBy[$fieldName] : 'ASC';
 
-        if ($fieldName === 'visits') {
+        if (in_array($fieldName, [
+            'visits',
+            'visitsCount',
+            'visitCount',
+        ])) {
             $qb->addSelect('COUNT(v) AS totalVisits')
                ->leftJoin('s.visits', 'v')
                ->groupBy('s')
