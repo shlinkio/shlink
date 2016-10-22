@@ -20,21 +20,46 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         $qb = $this->createListQueryBuilder($searchTerm, $tags);
         $qb->select('s');
 
+        // Set limit and offset
         if (isset($limit)) {
             $qb->setMaxResults($limit);
         }
         if (isset($offset)) {
             $qb->setFirstResult($offset);
         }
+
+        // In case the ordering has been specified, the query could be more complex. Process it
         if (isset($orderBy)) {
-            if (is_string($orderBy)) {
-                $qb->orderBy($orderBy);
-            } elseif (is_array($orderBy)) {
-                $key = key($orderBy);
-                $qb->orderBy($key, $orderBy[$key]);
-            }
-        } else {
-            $qb->orderBy('s.dateCreated');
+            return $this->processOrderByForList($qb, $orderBy);
+        }
+
+        // With no order by, order by date and just return the list of ShortUrls
+        $qb->orderBy('s.dateCreated');
+        return $qb->getQuery()->getResult();
+    }
+
+    protected function processOrderByForList(QueryBuilder $qb, $orderBy)
+    {
+        $fieldName = is_array($orderBy) ? key($orderBy) : $orderBy;
+        $order = is_array($orderBy) ? $orderBy[$fieldName] : 'ASC';
+
+        if (in_array($fieldName, [
+            'visits',
+            'visitsCount',
+            'visitCount',
+        ])) {
+            $qb->addSelect('COUNT(v) AS totalVisits')
+               ->leftJoin('s.visits', 'v')
+               ->groupBy('s')
+               ->orderBy('totalVisits', $order);
+
+            return array_column($qb->getQuery()->getResult(), 0);
+        } elseif (in_array($fieldName, [
+            'originalUrl',
+            'shortCode',
+            'dateCreated',
+        ])) {
+            $qb->orderBy('s.' . $fieldName, $order);
         }
 
         return $qb->getQuery()->getResult();

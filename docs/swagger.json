@@ -91,6 +91,19 @@
                         }
                     },
                     {
+                        "name": "orderBy",
+                        "in": "query",
+                        "description": "The field from which you want to order the result. (Since v1.3.0)",
+                        "enum": [
+                            "originalUrl",
+                            "shortCode",
+                            "dateCreated",
+                            "visits"
+                        ],
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
                         "$ref": "#/parameters/Authorization"
                     }
                 ],

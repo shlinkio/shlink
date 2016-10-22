@@ -34,8 +34,8 @@ class ListShortcodesActionTest extends TestCase
     public function properListReturnsSuccessResponse()
     {
         $page = 3;
-        $this->service->listShortUrls($page, null, [])->willReturn(new Paginator(new ArrayAdapter()))
-                                                      ->shouldBeCalledTimes(1);
+        $this->service->listShortUrls($page, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
+                                                            ->shouldBeCalledTimes(1);
 
         $response = $this->action->__invoke(
             ServerRequestFactory::fromGlobals()->withQueryParams([
@@ -52,8 +52,8 @@ class ListShortcodesActionTest extends TestCase
     public function anExceptionsReturnsErrorResponse()
     {
         $page = 3;
-        $this->service->listShortUrls($page, null, [])->willThrow(\Exception::class)
-                                                      ->shouldBeCalledTimes(1);
+        $this->service->listShortUrls($page, null, [], null)->willThrow(\Exception::class)
+                                                            ->shouldBeCalledTimes(1);
 
         $response = $this->action->__invoke(
             ServerRequestFactory::fromGlobals()->withQueryParams([
