@@ -72,6 +72,13 @@
                         "type": "integer"
                     },
                     {
+                        "name": "searchTerm",
+                        "in": "query",
+                        "description": "A query used to filter results by searching for it on the longUrl and shortCode fields",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
                         "$ref": "#/parameters/Authorization"
                     }
                 ],
