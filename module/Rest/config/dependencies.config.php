@@ -22,6 +22,7 @@ return [
 
             Middleware\BodyParserMiddleware::class => AnnotatedFactory::class,
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
+            Middleware\PathVersionMiddleware::class => InvokableFactory::class,
             Middleware\CheckAuthenticationMiddleware::class => AnnotatedFactory::class,
         ],
     ],

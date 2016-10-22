@@ -14,7 +14,7 @@
     ],
 
     "paths": {
-        "/authenticate": {
+        "/v1/authenticate": {
             "post": {
                 "description": "Performs an authentication",
                 "parameters": [
@@ -60,7 +60,7 @@
                 }
             }
         },
-        "/short-codes": {
+        "/v1/short-codes": {
             "get": {
                 "description": "Returns the list of short codes",
                 "parameters": [
@@ -185,7 +185,7 @@
                 }
             }
         },
-        "/short-codes/{shortCode}": {
+        "/v1/short-codes/{shortCode}": {
             "get": {
                 "description": "Get the long URL behind a short code.",
                 "parameters": [
@@ -234,7 +234,7 @@
                 }
             }
         },
-        "/short-codes/{shortCode}/visits": {
+        "/v1/short-codes/{shortCode}/visits": {
             "get": {
                 "description": "Get the list of visits on provided short code.",
                 "parameters": [
@@ -284,7 +284,7 @@
                 }
             }
         },
-        "/short-codes/{shortCode}/tags": {
+        "/v1/short-codes/{shortCode}/tags": {
             "put": {
                 "description": "Edit the tags on provided short code.",
                 "parameters": [
