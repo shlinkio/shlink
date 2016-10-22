@@ -1,5 +1,10 @@
 {
     "get": {
+        "tags": [
+            "ShortCodes",
+            "Visits"
+        ],
+        "summary": "List visits for short URL",
         "description": "Get the list of visits on provided short code.",
         "parameters": [
             {

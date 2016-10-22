@@ -1,5 +1,9 @@
 {
     "get": {
+        "tags": [
+            "ShortCodes"
+        ],
+        "summary": "List short URLs",
         "description": "Returns the list of short codes",
         "parameters": [
             {
@@ -77,6 +81,10 @@
         }
     },
     "post": {
+        "tags": [
+            "ShortCodes"
+        ],
+        "summary": "Create short URL",
         "description": "Creates a new short code",
         "parameters": [
             {

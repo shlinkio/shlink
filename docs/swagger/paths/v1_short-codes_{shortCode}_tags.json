@@ -1,5 +1,10 @@
 {
     "put": {
+        "tags": [
+            "ShortCodes",
+            "Tags"
+        ],
+        "summary": "Edit tags on short URL",
         "description": "Edit the tags on provided short code.",
         "parameters": [
             {

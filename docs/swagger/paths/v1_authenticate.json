@@ -1,5 +1,9 @@
 {
     "post": {
+        "tags": [
+            "Authentication"
+        ],
+        "summary": "Perform authentication",
         "description": "Performs an authentication",
         "parameters": [
             {

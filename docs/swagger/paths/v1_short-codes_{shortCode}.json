@@ -1,5 +1,9 @@
 {
     "get": {
+        "tags": [
+            "ShortCodes"
+        ],
+        "summary": "Parse short code",
         "description": "Get the long URL behind a short code.",
         "parameters": [
             {
