@@ -67,6 +67,12 @@ class ListShortcodesCommand extends Command
              ->addOption(
                  'tags',
                  't',
+                 InputOption::VALUE_OPTIONAL,
+                 $this->translator->translate('A comma-separated list of tags to filter results')
+             )
+             ->addOption(
+                 'showTags',
+                 null,
                  InputOption::VALUE_NONE,
                  $this->translator->translate('Whether to display the tags or not')
              );
@@ -76,13 +82,15 @@ class ListShortcodesCommand extends Command
     {
         $page = intval($input->getOption('page'));
         $searchTerm = $input->getOption('searchTerm');
-        $showTags = $input->getOption('tags');
+        $tags = $input->getOption('tags');
+        $tags = ! empty($tags) ? explode(',', $tags) : [];
+        $showTags = $input->getOption('showTags');
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
         do {
-            $result = $this->shortUrlService->listShortUrls($page, $searchTerm);
+            $result = $this->shortUrlService->listShortUrls($page, $searchTerm, $tags);
             $page++;
             $table = new Table($output);
 
