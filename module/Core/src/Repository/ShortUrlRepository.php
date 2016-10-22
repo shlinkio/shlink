@@ -11,10 +11,11 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
      * @param int|null $limit
      * @param int|null $offset
      * @param string|null $searchTerm
+     * @param array $tags
      * @param string|array|null $orderBy
-     * @return ShortUrl[]
+     * @return \Shlinkio\Shlink\Core\Entity\ShortUrl[]
      */
-    public function findList($limit = null, $offset = null, $searchTerm = null, $orderBy = null)
+    public function findList($limit = null, $offset = null, $searchTerm = null, array $tags = [], $orderBy = null)
     {
         $qb = $this->createListQueryBuilder($searchTerm);
         $qb->select('s');
@@ -43,9 +44,10 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
      * Counts the number of elements in a list using provided filtering data
      *
      * @param null|string $searchTerm
+     * @param array $tags
      * @return int
      */
-    public function countList($searchTerm = null)
+    public function countList($searchTerm = null, array $tags = [])
     {
         $qb = $this->createListQueryBuilder($searchTerm);
         $qb->select('COUNT(s)');
@@ -55,9 +57,10 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
 
     /**
      * @param null|string $searchTerm
+     * @param array $tags
      * @return QueryBuilder
      */
-    protected function createListQueryBuilder($searchTerm = null)
+    protected function createListQueryBuilder($searchTerm = null, array $tags = [])
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's');
