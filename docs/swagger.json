@@ -74,7 +74,7 @@
                     {
                         "name": "searchTerm",
                         "in": "query",
-                        "description": "A query used to filter results by searching for it on the longUrl and shortCode fields",
+                        "description": "A query used to filter results by searching for it on the longUrl and shortCode fields. (From Shlink 1.3.0)",
                         "required": false,
                         "type": "string"
                     },
