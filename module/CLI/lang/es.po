@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2016-08-21 18:16+0200\n"
-"PO-Revision-Date: 2016-08-21 18:16+0200\n"
+"POT-Creation-Date: 2016-10-22 13:14+0200\n"
+"PO-Revision-Date: 2016-10-22 13:15+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -161,6 +161,16 @@ msgstr "Listar todas las URLs cortas"
 #, php-format
 msgid "The first page to list (%s items per page)"
 msgstr "La primera página a listar (%s elementos por página)"
+
+msgid ""
+"A query used to filter results by searching for it on the longUrl and "
+"shortCode fields"
+msgstr ""
+"Una consulta usada para filtrar el resultado buscándola en los campos "
+"longUrl y shortCode"
+
+msgid "A comma-separated list of tags to filter results"
+msgstr "Una lista de etiquetas separadas por coma para filtrar el resultado"
 
 msgid "Whether to display the tags or not"
 msgstr "Si se desea mostrar las etiquetas o no"
