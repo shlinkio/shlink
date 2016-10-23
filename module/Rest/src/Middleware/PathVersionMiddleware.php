@@ -37,6 +37,11 @@ class PathVersionMiddleware implements MiddlewareInterface
         $uri = $request->getUri();
         $path = $uri->getPath();
 
+        // Exclude non-rest route
+        if (strpos($path, '/rest') !== 0) {
+            return $out($request, $response);
+        }
+
         // If the path does not begin with the version number, prepend v1 by default for retrocompatibility purposes
         if (strpos($path, '/rest/v') !== 0) {
             $parts = explode('/', $path);

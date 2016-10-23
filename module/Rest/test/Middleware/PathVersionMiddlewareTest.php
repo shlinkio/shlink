@@ -44,4 +44,16 @@ class PathVersionMiddlewareTest extends TestCase
             $this->assertEquals('/rest/v1/bar/baz', $req->getUri()->getPath());
         });
     }
+
+    /**
+     * @test
+     */
+    public function nonRestPathsAreNotProcessed()
+    {
+        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/non-rest'));
+        $test = $this;
+        $this->middleware->__invoke($request, new Response(), function ($req) use ($request, $test) {
+            $test->assertSame($request, $req);
+        });
+    }
 }
