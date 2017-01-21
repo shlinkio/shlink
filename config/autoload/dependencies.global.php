@@ -13,6 +13,7 @@ return [
             Expressive\Application::class => Container\ApplicationFactory::class,
             Router\FastRouteRouter::class => InvokableFactory::class,
             Template\TemplateRendererInterface::class => Twig\TwigRendererFactory::class,
+            \Twig_Environment::class => Twig\TwigEnvironmentFactory::class,
         ],
         'aliases' => [
             Router\RouterInterface::class => Router\FastRouteRouter::class,
