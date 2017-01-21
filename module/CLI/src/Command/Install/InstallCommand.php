@@ -272,6 +272,12 @@ class InstallCommand extends Command
             $config['entity_manager']['connection']['user'] = $params['DATABASE']['USER'];
             $config['entity_manager']['connection']['password'] = $params['DATABASE']['PASSWORD'];
             $config['entity_manager']['connection']['dbname'] = $params['DATABASE']['NAME'];
+
+            if ($params['DATABASE']['DRIVER'] === 'pdo_mysql') {
+                $config['entity_manager']['connection']['driverOptions'] = [
+                    \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+                ];
+            }
         }
 
         return $config;

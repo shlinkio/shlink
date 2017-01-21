@@ -35,6 +35,18 @@ RUN docker-php-ext-configure redis\
 # cleanup
 RUN rm /tmp/phpredis.tar.gz
 
+# Install memcached extension
+RUN apk add --no-cache --virtual cyrus-sasl-dev
+RUN apk add --no-cache --virtual libmemcached-dev
+ADD https://github.com/php-memcached-dev/php-memcached/archive/php7.tar.gz /tmp/memcached.tar.gz
+RUN mkdir -p /usr/src/php/ext/memcached\
+  && tar xf /tmp/memcached.tar.gz -C /usr/src/php/ext/memcached --strip-components=1
+# configure and install
+RUN docker-php-ext-configure memcached\
+  && docker-php-ext-install memcached
+# cleanup
+RUN rm /tmp/memcached.tar.gz
+
 # Install APCu extension
 ADD https://pecl.php.net/get/apcu-5.1.3.tgz /tmp/apcu.tar.gz
 RUN mkdir -p /usr/src/php/ext/apcu\
