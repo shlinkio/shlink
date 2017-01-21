@@ -53,6 +53,8 @@ class InstallCommandTest extends TestCase
 shlink_db
 alejandro
 1234
+
+
 0
 doma.in
 abc123BCA
@@ -81,6 +83,8 @@ CLI_INPUT
                     'dbname' => 'shlink_db',
                     'user' => 'alejandro',
                     'password' => '1234',
+                    'host' => 'localhost',
+                    'port' => '3306',
                     'driverOptions' =>  [
                         \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
                     ]

@@ -135,9 +135,16 @@ class InstallCommand extends Command
             $params['NAME'] = $this->ask('Database name', 'shlink');
             $params['USER'] = $this->ask('Database username');
             $params['PASSWORD'] = $this->ask('Database password');
+            $params['HOST'] = $this->ask('Database host', 'localhost');
+            $params['PORT'] = $this->ask('Database port', $this->getDefaultDbPort($params['DRIVER']));
         }
 
         return $params;
+    }
+
+    protected function getDefaultDbPort($driver)
+    {
+        return $driver === 'pdo_mysql' ? '3306' : '5432';
     }
 
     protected function askUrlShortener()
@@ -272,6 +279,8 @@ class InstallCommand extends Command
             $config['entity_manager']['connection']['user'] = $params['DATABASE']['USER'];
             $config['entity_manager']['connection']['password'] = $params['DATABASE']['PASSWORD'];
             $config['entity_manager']['connection']['dbname'] = $params['DATABASE']['NAME'];
+            $config['entity_manager']['connection']['host'] = $params['DATABASE']['HOST'];
+            $config['entity_manager']['connection']['port'] = $params['DATABASE']['PORT'];
 
             if ($params['DATABASE']['DRIVER'] === 'pdo_mysql') {
                 $config['entity_manager']['connection']['driverOptions'] = [
