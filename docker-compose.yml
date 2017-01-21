@@ -10,6 +10,7 @@ services:
             - "8000:80"
         volumes:
             - ./:/home/shlink/www
+            - ./docs:/home/shlink/www/public/docs
             - ./data/infra/vhost.conf:/etc/nginx/conf.d/shlink-vhost.conf
         links:
             - shlink_php
