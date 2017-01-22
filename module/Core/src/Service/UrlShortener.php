@@ -117,7 +117,9 @@ class UrlShortener implements UrlShortenerInterface
     protected function checkUrlExists(UriInterface $url)
     {
         try {
-            $this->httpClient->request('GET', $url);
+            $this->httpClient->request('GET', $url, ['allow_redirects' => [
+                'max' => 15,
+            ]]);
         } catch (GuzzleException $e) {
             throw InvalidUrlException::fromUrl($url, $e);
         }
