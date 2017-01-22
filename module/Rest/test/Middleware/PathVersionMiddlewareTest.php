@@ -25,7 +25,7 @@ class PathVersionMiddlewareTest extends TestCase
      */
     public function whenVersionIsProvidedRequestRemainsUnchanged()
     {
-        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/rest/v2/foo'));
+        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/v2/foo'));
         $test = $this;
         $this->middleware->__invoke($request, new Response(), function ($req) use ($request, $test) {
             $test->assertSame($request, $req);
@@ -37,23 +37,11 @@ class PathVersionMiddlewareTest extends TestCase
      */
     public function versionOneIsPrependedWhenNoVersionIsDefined()
     {
-        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/rest/bar/baz'));
+        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/bar/baz'));
         $test = $this;
         $this->middleware->__invoke($request, new Response(), function (Request $req) use ($request, $test) {
             $test->assertNotSame($request, $req);
-            $this->assertEquals('/rest/v1/bar/baz', $req->getUri()->getPath());
-        });
-    }
-
-    /**
-     * @test
-     */
-    public function nonRestPathsAreNotProcessed()
-    {
-        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/non-rest'));
-        $test = $this;
-        $this->middleware->__invoke($request, new Response(), function ($req) use ($request, $test) {
-            $test->assertSame($request, $req);
+            $this->assertEquals('/v1/bar/baz', $req->getUri()->getPath());
         });
     }
 }

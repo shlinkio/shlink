@@ -1,0 +1,14 @@
+<?php
+return [
+
+    'entity_manager' => [
+        'connection' => [
+            'driver' => 'pdo_mysql',
+            'host' => 'shlink_db',
+            'driverOptions' => [
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+            ],
+        ],
+    ],
+
+];

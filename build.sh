@@ -15,6 +15,7 @@ projectdir=$(pwd)
 echo 'Copying project files...'
 rm -rf "${builtcontent}"
 mkdir "${builtcontent}"
+sudo chmod -R 777 "${projectdir}"/data/infra/{database,nginx}
 cp -R "${projectdir}"/* "${builtcontent}"
 cd "${builtcontent}"
 
@@ -22,7 +23,7 @@ cd "${builtcontent}"
 rm -r vendor
 rm composer.lock
 composer self-update
-composer install --no-dev --optimize-autoloader
+composer install --no-dev --optimize-autoloader --no-progress --no-interaction
 
 # Delete development files
 echo 'Deleting dev files...'
@@ -34,6 +35,7 @@ rm php*
 rm README.md
 rm -r build
 rm -f data/database.sqlite
+rm -rf data/infra
 rm -rf data/{cache,log,proxies}/{*,.gitignore}
 rm -rf config/params/{*,.gitignore}
 rm -rf config/autoload/{{,*.}local.php{,.dist},.gitignore}
