@@ -5,6 +5,7 @@ return [
 
     'middleware_pipeline' => [
         'pre-routing' => [
+            'path' => '/rest',
             'middleware' => [
                 Middleware\PathVersionMiddleware::class,
             ],

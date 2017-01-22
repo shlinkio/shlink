@@ -21,15 +21,15 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         $qb->select('s');
 
         // Set limit and offset
-        if (isset($limit)) {
+        if ($limit !== null) {
             $qb->setMaxResults($limit);
         }
-        if (isset($offset)) {
+        if ($offset !== null) {
             $qb->setFirstResult($offset);
         }
 
         // In case the ordering has been specified, the query could be more complex. Process it
-        if (isset($orderBy)) {
+        if ($orderBy !== null) {
             return $this->processOrderByForList($qb, $orderBy);
         }
 
@@ -47,7 +47,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
             'visits',
             'visitsCount',
             'visitCount',
-        ])) {
+        ], true)) {
             $qb->addSelect('COUNT(v) AS totalVisits')
                ->leftJoin('s.visits', 'v')
                ->groupBy('s')
@@ -58,7 +58,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
             'originalUrl',
             'shortCode',
             'dateCreated',
-        ])) {
+        ], true)) {
             $qb->orderBy('s.' . $fieldName, $order);
         }
 
@@ -93,9 +93,12 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
 
         // Apply search term to every searchable field if not empty
         if (! empty($searchTerm)) {
+            $qb->join('s.tags', 't');
+
             $conditions = [
                 $qb->expr()->like('s.originalUrl', ':searchPattern'),
                 $qb->expr()->like('s.shortCode', ':searchPattern'),
+                $qb->expr()->like('t.name', ':searchPattern'),
             ];
 
             // Unpack and apply search conditions

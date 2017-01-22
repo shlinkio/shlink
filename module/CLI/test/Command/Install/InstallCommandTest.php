@@ -47,12 +47,14 @@ class InstallCommandTest extends TestCase
 
     protected function createInputStream()
     {
-        $stream = fopen('php://memory', 'r+', false);
-        fputs($stream, <<<CLI_INPUT
+        $stream = fopen('php://memory', 'rb+', false);
+        fwrite($stream, <<<CLI_INPUT
 
 shlink_db
 alejandro
 1234
+
+
 0
 doma.in
 abc123BCA
@@ -69,7 +71,7 @@ CLI_INPUT
     /**
      * @test
      */
-    public function testInputIsProperlyParsed()
+    public function inputIsProperlyParsed()
     {
         $this->configWriter->toFile(Argument::any(), [
             'app_options' => [
@@ -81,6 +83,11 @@ CLI_INPUT
                     'dbname' => 'shlink_db',
                     'user' => 'alejandro',
                     'password' => '1234',
+                    'host' => 'localhost',
+                    'port' => '3306',
+                    'driverOptions' =>  [
+                        \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+                    ]
                 ],
             ],
             'translator' => [

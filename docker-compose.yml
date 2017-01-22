@@ -1,0 +1,41 @@
+version: '2'
+
+services:
+    shlink_nginx:
+        container_name: shlink_nginx
+        build:
+            context: .
+            dockerfile: ./data/infra/nginx.Dockerfile
+        ports:
+            - "8000:80"
+        volumes:
+            - ./:/home/shlink/www
+            - ./docs:/home/shlink/www/public/docs
+            - ./data/infra/vhost.conf:/etc/nginx/conf.d/shlink-vhost.conf
+        links:
+            - shlink_php
+
+    shlink_php:
+        container_name: shlink_php
+        build:
+            context: .
+            dockerfile: ./data/infra/php.Dockerfile
+        volumes:
+            - ./:/home/shlink/www
+            - ./data/infra/php.ini:/usr/local/etc/php/php.ini
+        links:
+            - shlink_db
+
+    shlink_db:
+        container_name: shlink_db
+        build:
+            context: .
+            dockerfile: ./data/infra/db.Dockerfile
+        ports:
+            - "3307:3306"
+        volumes:
+            - ./:/home/shlink/www
+            - ./data/infra/database:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: shlink
