@@ -1,0 +1,12 @@
+<?php
+use Zend\Expressive\Router\FastRouteRouter;
+
+return [
+
+    'router' => [
+        'fastroute' => [
+            FastRouteRouter::CONFIG_CACHE_ENABLED => false,
+        ],
+    ],
+
+];
