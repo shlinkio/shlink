@@ -7,6 +7,7 @@ use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Middleware\CheckAuthenticationMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
+use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
 use Zend\I18n\Translator\Translator;
 
@@ -55,7 +56,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRouteMatch('rest-authenticate', 'foo', [])
+            RouteResult::fromRoute(new Route('foo', '', Route::HTTP_METHOD_ANY, 'rest-authenticate'), [])
         );
         $response = new Response();
         $isCalled = false;
@@ -67,7 +68,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRouteMatch('bar', 'foo', [])
+            RouteResult::fromRoute(new Route('bar', 'foo'), [])
         )->withMethod('OPTIONS');
         $response = new Response();
         $isCalled = false;
@@ -85,7 +86,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRouteMatch('bar', 'foo', [])
+            RouteResult::fromRoute(new Route('bar', 'foo'), [])
         );
         $response = $this->middleware->__invoke($request, new Response());
         $this->assertEquals(401, $response->getStatusCode());
@@ -99,7 +100,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $authToken = 'ABC-abc';
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRouteMatch('bar', 'foo', [])
+            RouteResult::fromRoute(new Route('bar', 'foo'), [])
         )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, $authToken);
 
         $response = $this->middleware->__invoke($request, new Response());
@@ -115,7 +116,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $authToken = 'ABC-abc';
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRouteMatch('bar', 'foo', [])
+            RouteResult::fromRoute(new Route('bar', 'foo'), [])
         )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'Basic ' . $authToken);
 
         $response = $this->middleware->__invoke($request, new Response());
@@ -133,7 +134,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $authToken = 'ABC-abc';
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRouteMatch('bar', 'foo', [])
+            RouteResult::fromRoute(new Route('bar', 'foo'), [])
         )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'Bearer ' . $authToken);
         $this->jwtService->verify($authToken)->willReturn(false)->shouldBeCalledTimes(1);
 
@@ -149,7 +150,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $authToken = 'ABC-abc';
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRouteMatch('bar', 'foo', [])
+            RouteResult::fromRoute(new Route('bar', 'foo'), [])
         )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'bearer ' . $authToken);
         $this->jwtService->verify($authToken)->willReturn(true)->shouldBeCalledTimes(1);
         $this->jwtService->refresh($authToken)->willReturn($authToken)->shouldBeCalledTimes(1);

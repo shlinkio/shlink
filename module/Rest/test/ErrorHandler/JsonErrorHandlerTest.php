@@ -5,7 +5,6 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Rest\ErrorHandler\JsonErrorHandler;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\Expressive\Router\RouteResult;
 
 class JsonErrorHandlerTest extends TestCase
 {
@@ -22,58 +21,24 @@ class JsonErrorHandlerTest extends TestCase
     /**
      * @test
      */
-    public function noMatchedRouteReturnsNotFoundResponse()
+    public function noErrorStatusReturnsInternalServerError()
     {
-        $response = $this->errorHandler->__invoke(ServerRequestFactory::fromGlobals(), new Response());
+        $response = $this->errorHandler->__invoke(null, ServerRequestFactory::fromGlobals(), new Response());
         $this->assertInstanceOf(Response\JsonResponse::class, $response);
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals(500, $response->getStatusCode());
     }
 
     /**
      * @test
      */
-    public function matchedRouteWithErrorReturnsMethodNotAllowedResponse()
+    public function errorStatusReturnsThatStatus()
     {
         $response = $this->errorHandler->__invoke(
+            null,
             ServerRequestFactory::fromGlobals(),
-            (new Response())->withStatus(405),
-            405
+            (new Response())->withStatus(405)
         );
         $this->assertInstanceOf(Response\JsonResponse::class, $response);
         $this->assertEquals(405, $response->getStatusCode());
-    }
-
-    /**
-     * @test
-     */
-    public function responseWithErrorKeepsStatus()
-    {
-        $response = $this->errorHandler->__invoke(
-            ServerRequestFactory::fromGlobals()->withAttribute(
-                RouteResult::class,
-                RouteResult::fromRouteMatch('foo', 'bar', [])
-            ),
-            (new Response())->withStatus(401),
-            401
-        );
-        $this->assertInstanceOf(Response\JsonResponse::class, $response);
-        $this->assertEquals(401, $response->getStatusCode());
-    }
-
-    /**
-     * @test
-     */
-    public function responseWithoutErrorReturnsStatus500()
-    {
-        $response = $this->errorHandler->__invoke(
-            ServerRequestFactory::fromGlobals()->withAttribute(
-                RouteResult::class,
-                RouteResult::fromRouteMatch('foo', 'bar', [])
-            ),
-            (new Response())->withStatus(200),
-            'Some error'
-        );
-        $this->assertInstanceOf(Response\JsonResponse::class, $response);
-        $this->assertEquals(500, $response->getStatusCode());
     }
 }
