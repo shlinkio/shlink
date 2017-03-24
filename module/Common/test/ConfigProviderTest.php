@@ -23,7 +23,6 @@ class ConfigProviderTest extends TestCase
     {
         $config = $this->configProvider->__invoke();
 
-        $this->assertArrayHasKey('middleware_pipeline', $config);
         $this->assertArrayHasKey('dependencies', $config);
         $this->assertArrayHasKey('twig', $config);
     }
