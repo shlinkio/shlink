@@ -78,8 +78,6 @@ class PreviewAction implements MiddlewareInterface
             return $this->generateImageResponse($imagePath);
         } catch (InvalidShortCodeException $e) {
             return $out($request, $response->withStatus(404), 'Not found');
-        } catch (PreviewGenerationException $e) {
-            return $out($request, $response->withStatus(500), 'Preview generation error');
         }
     }
 }

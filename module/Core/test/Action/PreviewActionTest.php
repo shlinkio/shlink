@@ -91,24 +91,4 @@ class PreviewActionTest extends TestCase
 
         $this->assertEquals(404, $resp->getStatusCode());
     }
-
-    /**
-     * @test
-     */
-    public function previewExceptionReturnsNotFound()
-    {
-        $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(PreviewGenerationException::class)
-                                                       ->shouldBeCalledTimes(1);
-
-        $resp = $this->action->__invoke(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            new Response(),
-            function ($req, $resp) {
-                return $resp;
-            }
-        );
-
-        $this->assertEquals(500, $resp->getStatusCode());
-    }
 }
