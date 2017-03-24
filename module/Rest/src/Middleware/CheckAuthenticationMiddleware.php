@@ -134,12 +134,6 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface
         } catch (AuthenticationException $e) {
             $this->logger->warning('Tried to access API with an invalid JWT.' . PHP_EOL . $e);
             return $this->createTokenErrorResponse();
-        } catch (\Exception $e) {
-            $this->logger->warning('Unexpected error occurred.' . PHP_EOL . $e);
-            return $this->createTokenErrorResponse();
-        } catch (\Throwable $e) {
-            $this->logger->warning('Unexpected error occurred.' . PHP_EOL . $e);
-            return $this->createTokenErrorResponse();
         } finally {
             ErrorHandler::clean();
         }
