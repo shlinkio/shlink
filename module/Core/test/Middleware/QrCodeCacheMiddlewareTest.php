@@ -3,7 +3,7 @@ namespace ShlinkioTest\Shlink\Core\Middleware;
 
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Middleware\QrCodeCacheMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;

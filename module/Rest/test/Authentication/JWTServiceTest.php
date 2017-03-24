@@ -2,7 +2,7 @@
 namespace ShlinkioTest\Shlink\Rest\Authentication;
 
 use Firebase\JWT\JWT;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;

@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Rest\Action;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;

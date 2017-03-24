@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Core\Entity;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\Tag;
 
 class TagTest extends TestCase

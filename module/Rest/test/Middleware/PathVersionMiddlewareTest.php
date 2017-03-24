@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Rest\Middleware\PathVersionMiddleware;
 use Zend\Diactoros\Response;

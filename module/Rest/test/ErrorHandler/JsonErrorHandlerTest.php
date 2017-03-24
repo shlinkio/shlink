@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Rest\ErrorHandler;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Rest\ErrorHandler\JsonErrorHandler;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;

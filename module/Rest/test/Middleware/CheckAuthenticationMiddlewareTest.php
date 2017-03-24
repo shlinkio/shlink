@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Middleware\CheckAuthenticationMiddleware;

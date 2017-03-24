@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Common;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\ConfigProvider;
 
 class ConfigProviderTest extends TestCase

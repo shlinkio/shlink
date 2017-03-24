@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Common\Middleware;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Middleware\LocaleMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
