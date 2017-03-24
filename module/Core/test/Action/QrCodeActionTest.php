@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Core\Action\QrCodeAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
-use Zend\Diactoros\Response;
+use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Expressive\Router\RouterInterface;
 
@@ -37,19 +37,18 @@ class QrCodeActionTest extends TestCase
     /**
      * @test
      */
-    public function aNonexistentShortCodeWillReturnNotFoundResponse()
+    public function aNotFoundShortCodeWillDelegateIntoNextMiddleware()
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(null)->shouldBeCalledTimes(1);
+        $delegate = TestUtils::createDelegateMock();
 
-        $resp = $this->action->__invoke(
+        $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            new Response(),
-            function ($req, $resp) {
-                return $resp;
-            }
+            $delegate->reveal()
         );
-        $this->assertEquals(404, $resp->getStatusCode());
+
+        $delegate->process(Argument::any())->shouldHaveBeenCalledTimes(1);
     }
 
     /**
@@ -60,15 +59,14 @@ class QrCodeActionTest extends TestCase
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
                                                        ->shouldBeCalledTimes(1);
+        $delegate = TestUtils::createDelegateMock();
 
-        $resp = $this->action->__invoke(
+        $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            new Response(),
-            function ($req, $resp) {
-                return $resp;
-            }
+            $delegate->reveal()
         );
-        $this->assertEquals(404, $resp->getStatusCode());
+
+        $delegate->process(Argument::any())->shouldHaveBeenCalledTimes(1);
     }
 
     /**
@@ -78,16 +76,15 @@ class QrCodeActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(new ShortUrl())->shouldBeCalledTimes(1);
+        $delegate = TestUtils::createDelegateMock();
 
-        $resp = $this->action->__invoke(
+        $resp = $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            new Response(),
-            function ($req, $resp) {
-                return $resp;
-            }
+            $delegate->reveal()
         );
 
         $this->assertInstanceOf(QrCodeResponse::class, $resp);
         $this->assertEquals(200, $resp->getStatusCode());
+        $delegate->process(Argument::any())->shouldHaveBeenCalledTimes(0);
     }
 }
