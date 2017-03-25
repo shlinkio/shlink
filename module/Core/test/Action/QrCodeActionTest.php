@@ -1,6 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Core\Action;
 
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -9,7 +10,6 @@ use Shlinkio\Shlink\Core\Action\QrCodeAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
-use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Expressive\Router\RouterInterface;
 
@@ -41,7 +41,7 @@ class QrCodeActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(null)->shouldBeCalledTimes(1);
-        $delegate = TestUtils::createDelegateMock();
+        $delegate = $this->prophesize(DelegateInterface::class);
 
         $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
@@ -59,7 +59,7 @@ class QrCodeActionTest extends TestCase
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
                                                        ->shouldBeCalledTimes(1);
-        $delegate = TestUtils::createDelegateMock();
+        $delegate = $this->prophesize(DelegateInterface::class);
 
         $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
@@ -76,7 +76,7 @@ class QrCodeActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(new ShortUrl())->shouldBeCalledTimes(1);
-        $delegate = TestUtils::createDelegateMock();
+        $delegate = $this->prophesize(DelegateInterface::class);
 
         $resp = $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),

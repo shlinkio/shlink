@@ -1,8 +1,11 @@
 <?php
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
+use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
@@ -26,16 +29,13 @@ class BodyParserMiddlewareTest extends TestCase
     public function requestsFromOtherMethodsJustFallbackToNextMiddleware()
     {
         $request = ServerRequestFactory::fromGlobals()->withMethod('GET');
-        $test = $this;
-        $this->middleware->__invoke($request, new Response(), function ($req, $resp) use ($test, $request) {
-            $test->assertSame($request, $req);
-        });
+        $delegate = $this->prophesize(DelegateInterface::class);
+        /** @var MethodProphecy $process */
+        $process = $delegate->process($request)->willReturn(new Response());
 
-        $request = $request->withMethod('POST');
-        $test = $this;
-        $this->middleware->__invoke($request, new Response(), function ($req, $resp) use ($test, $request) {
-            $test->assertSame($request, $req);
-        });
+        $this->middleware->process($request, $delegate->reveal());
+
+        $process->shouldHaveBeenCalledTimes(1);
     }
 
     /**
@@ -43,19 +43,31 @@ class BodyParserMiddlewareTest extends TestCase
      */
     public function jsonRequestsAreJsonDecoded()
     {
+        $test = $this;
         $body = new Stream('php://temp', 'wr');
         $body->write('{"foo": "bar", "bar": ["one", 5]}');
         $request = ServerRequestFactory::fromGlobals()->withMethod('PUT')
                                                       ->withBody($body)
                                                       ->withHeader('content-type', 'application/json');
-        $test = $this;
-        $this->middleware->__invoke($request, new Response(), function (Request $req, $resp) use ($test, $request) {
-            $test->assertNotSame($request, $req);
-            $test->assertEquals([
-                'foo' => 'bar',
-                'bar' => ['one', 5],
-            ], $req->getParsedBody());
-        });
+        $delegate = $this->prophesize(DelegateInterface::class);
+        /** @var MethodProphecy $process */
+        $process = $delegate->process(Argument::type(ServerRequestInterface::class))->will(
+            function (array $args) use ($test) {
+                /** @var ServerRequestInterface $req */
+                $req = array_shift($args);
+
+                $test->assertEquals([
+                    'foo' => 'bar',
+                    'bar' => ['one', 5],
+                ], $req->getParsedBody());
+
+                return new Response();
+            }
+        );
+
+        $this->middleware->process($request, $delegate->reveal());
+
+        $process->shouldHaveBeenCalledTimes(1);
     }
 
     /**
@@ -63,17 +75,29 @@ class BodyParserMiddlewareTest extends TestCase
      */
     public function regularRequestsAreUrlDecoded()
     {
+        $test = $this;
         $body = new Stream('php://temp', 'wr');
         $body->write('foo=bar&bar[]=one&bar[]=5');
         $request = ServerRequestFactory::fromGlobals()->withMethod('PUT')
                                                       ->withBody($body);
-        $test = $this;
-        $this->middleware->__invoke($request, new Response(), function (Request $req, $resp) use ($test, $request) {
-            $test->assertNotSame($request, $req);
-            $test->assertEquals([
-                'foo' => 'bar',
-                'bar' => ['one', 5],
-            ], $req->getParsedBody());
-        });
+        $delegate = $this->prophesize(DelegateInterface::class);
+        /** @var MethodProphecy $process */
+        $process = $delegate->process(Argument::type(ServerRequestInterface::class))->will(
+            function (array $args) use ($test) {
+                /** @var ServerRequestInterface $req */
+                $req = array_shift($args);
+
+                $test->assertEquals([
+                    'foo' => 'bar',
+                    'bar' => ['one', 5],
+                ], $req->getParsedBody());
+
+                return new Response();
+            }
+        );
+
+        $this->middleware->process($request, $delegate->reveal());
+
+        $process->shouldHaveBeenCalledTimes(1);
     }
 }

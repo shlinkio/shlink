@@ -1,6 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Core\Action;
 
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -57,7 +58,7 @@ class RedirectActionTest extends TestCase
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(null)
                            ->shouldBeCalledTimes(1);
-        $delegate = TestUtils::createDelegateMock();
+        $delegate = $this->prophesize(DelegateInterface::class);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $this->action->process($request, $delegate->reveal());
@@ -73,7 +74,7 @@ class RedirectActionTest extends TestCase
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(\Exception::class)
                                                        ->shouldBeCalledTimes(1);
-        $delegate = TestUtils::createDelegateMock();
+        $delegate = $this->prophesize(DelegateInterface::class);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $this->action->process($request, $delegate->reveal());

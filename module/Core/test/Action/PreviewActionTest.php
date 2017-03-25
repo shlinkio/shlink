@@ -1,16 +1,15 @@
 <?php
 namespace ShlinkioTest\Shlink\Core\Action;
 
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Action\PreviewAction;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
-use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 class PreviewActionTest extends TestCase
@@ -42,14 +41,13 @@ class PreviewActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(null)->shouldBeCalledTimes(1);
-        $delegate = TestUtils::createDelegateMock();
+        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate->process(Argument::cetera())->shouldBeCalledTimes(1);
 
         $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
             $delegate->reveal()
         );
-
-        $delegate->process(Argument::cetera())->shouldHaveBeenCalledTimes(1);
     }
 
     /**
@@ -75,12 +73,12 @@ class PreviewActionTest extends TestCase
     /**
      * @test
      */
-    public function invalidShortcodeExceptionFallsBackToNextMiddleware()
+    public function invalidShortCodeExceptionFallsBackToNextMiddleware()
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
                                                        ->shouldBeCalledTimes(1);
-        $delegate = TestUtils::createDelegateMock();
+        $delegate = $this->prophesize(DelegateInterface::class);
 
         $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),

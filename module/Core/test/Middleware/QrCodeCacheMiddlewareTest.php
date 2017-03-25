@@ -3,10 +3,10 @@ namespace ShlinkioTest\Shlink\Core\Middleware;
 
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Shlinkio\Shlink\Core\Middleware\QrCodeCacheMiddleware;
-use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Uri;
@@ -33,13 +33,14 @@ class QrCodeCacheMiddlewareTest extends TestCase
      */
     public function noCachedPathFallsBackToNextMiddleware()
     {
-        $delegate = TestUtils::createDelegateMock();
+        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate->process(Argument::any())->willReturn(new Response())->shouldBeCalledTimes(1);
+
         $this->middleware->process(ServerRequestFactory::fromGlobals()->withUri(
             new Uri('/foo/bar')
         ), $delegate->reveal());
 
         $this->assertTrue($this->cache->contains('/foo/bar'));
-        $delegate->process(Argument::any())->shouldHaveBeenCalledTimes(1);
     }
 
     /**
@@ -50,7 +51,7 @@ class QrCodeCacheMiddlewareTest extends TestCase
         $isCalled = false;
         $uri = (new Uri())->withPath('/foo');
         $this->cache->save('/foo', ['body' => 'the body', 'content-type' => 'image/png']);
-        $delegate = TestUtils::createDelegateMock();
+        $delegate = $this->prophesize(DelegateInterface::class);
 
         $resp = $this->middleware->process(
             ServerRequestFactory::fromGlobals()->withUri($uri),
