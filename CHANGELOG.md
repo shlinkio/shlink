@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### 1.4.0
+
+**Enhancements:**
+
+* [89: Update to expressive 2](https://github.com/shlinkio/shlink/issues/89)
+
 ### 1.3.1
 
 **Tasks**
