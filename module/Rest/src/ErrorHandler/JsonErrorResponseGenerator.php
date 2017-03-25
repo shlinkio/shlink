@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouteResult;
 
-class JsonErrorHandler implements ErrorResponseGeneratorInterface, StatusCodeInterface
+class JsonErrorResponseGenerator implements ErrorResponseGeneratorInterface, StatusCodeInterface
 {
     /**
      * Final handler for an application.

@@ -2,20 +2,20 @@
 namespace ShlinkioTest\Shlink\Rest\ErrorHandler;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Rest\ErrorHandler\JsonErrorHandler;
+use Shlinkio\Shlink\Rest\ErrorHandler\JsonErrorResponseGenerator;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
-class JsonErrorHandlerTest extends TestCase
+class JsonErrorResponseGeneratorTest extends TestCase
 {
     /**
-     * @var JsonErrorHandler
+     * @var JsonErrorResponseGenerator
      */
     protected $errorHandler;
 
     public function setUp()
     {
-        $this->errorHandler = new JsonErrorHandler();
+        $this->errorHandler = new JsonErrorResponseGenerator();
     }
 
     /**
