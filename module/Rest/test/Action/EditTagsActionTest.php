@@ -7,7 +7,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\EditTagsAction;
-use Zend\Diactoros\Response;
+use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 
@@ -33,9 +33,9 @@ class EditTagsActionTest extends TestCase
      */
     public function notProvidingTagsReturnsError()
     {
-        $response = $this->action->__invoke(
+        $response = $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123'),
-            new Response()
+            TestUtils::createDelegateMock()->reveal()
         );
         $this->assertEquals(400, $response->getStatusCode());
     }
@@ -49,10 +49,10 @@ class EditTagsActionTest extends TestCase
         $this->shortUrlService->setTagsByShortCode($shortCode, [])->willThrow(InvalidShortCodeException::class)
                                                                   ->shouldBeCalledTimes(1);
 
-        $response = $this->action->__invoke(
+        $response = $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123')
                                                ->withParsedBody(['tags' => []]),
-            new Response()
+            TestUtils::createDelegateMock()->reveal()
         );
         $this->assertEquals(404, $response->getStatusCode());
     }
@@ -66,10 +66,10 @@ class EditTagsActionTest extends TestCase
         $this->shortUrlService->setTagsByShortCode($shortCode, [])->willReturn(new ShortUrl())
                                                                   ->shouldBeCalledTimes(1);
 
-        $response = $this->action->__invoke(
+        $response = $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123')
                 ->withParsedBody(['tags' => []]),
-            new Response()
+            TestUtils::createDelegateMock()->reveal()
         );
         $this->assertEquals(200, $response->getStatusCode());
     }

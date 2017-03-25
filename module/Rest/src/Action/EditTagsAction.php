@@ -2,6 +2,7 @@
 namespace Shlinkio\Shlink\Rest\Action;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -43,11 +44,10 @@ class EditTagsAction extends AbstractRestAction
 
     /**
      * @param Request $request
-     * @param Response $response
-     * @param callable|null $out
+     * @param DelegateInterface $delegate
      * @return null|Response
      */
-    protected function dispatch(Request $request, Response $response, callable $out = null)
+    protected function dispatch(Request $request, DelegateInterface $delegate)
     {
         $shortCode = $request->getAttribute('shortCode');
         $bodyParams = $request->getParsedBody();
@@ -56,7 +56,7 @@ class EditTagsAction extends AbstractRestAction
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
                 'message' => $this->translator->translate('A list of tags was not provided'),
-            ], 400);
+            ], self::STATUS_BAD_REQUEST);
         }
         $tags = $bodyParams['tags'];
 
@@ -67,7 +67,7 @@ class EditTagsAction extends AbstractRestAction
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
-            ], 404);
+            ], self::STATUS_NOT_FOUND);
         }
     }
 }

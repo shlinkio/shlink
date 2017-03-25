@@ -2,6 +2,7 @@
 namespace Shlinkio\Shlink\Rest\Action;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -46,11 +47,10 @@ class ListShortcodesAction extends AbstractRestAction
 
     /**
      * @param Request $request
-     * @param Response $response
-     * @param callable|null $out
+     * @param DelegateInterface $delegate
      * @return null|Response
      */
-    public function dispatch(Request $request, Response $response, callable $out = null)
+    public function dispatch(Request $request, DelegateInterface $delegate)
     {
         try {
             $params = $this->queryToListParams($request->getQueryParams());
@@ -61,7 +61,7 @@ class ListShortcodesAction extends AbstractRestAction
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),
-            ], 500);
+            ], self::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -2,6 +2,7 @@
 namespace Shlinkio\Shlink\Rest\Action;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -43,11 +44,10 @@ class ResolveUrlAction extends AbstractRestAction
 
     /**
      * @param Request $request
-     * @param Response $response
-     * @param callable|null $out
+     * @param DelegateInterface $delegate
      * @return null|Response
      */
-    public function dispatch(Request $request, Response $response, callable $out = null)
+    public function dispatch(Request $request, DelegateInterface $delegate)
     {
         $shortCode = $request->getAttribute('shortCode');
 
@@ -57,7 +57,7 @@ class ResolveUrlAction extends AbstractRestAction
                 return new JsonResponse([
                     'error' => RestUtils::INVALID_ARGUMENT_ERROR,
                     'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
-                ], 404);
+                ], self::STATUS_NOT_FOUND);
             }
 
             return new JsonResponse([
@@ -71,13 +71,13 @@ class ResolveUrlAction extends AbstractRestAction
                     $this->translator->translate('Provided short code "%s" has an invalid format'),
                     $shortCode
                 ),
-            ], 400);
+            ], self::STATUS_BAD_REQUEST);
         } catch (\Exception $e) {
             $this->logger->error('Unexpected error while resolving the URL behind a short code.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),
-            ], 500);
+            ], self::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
 }
