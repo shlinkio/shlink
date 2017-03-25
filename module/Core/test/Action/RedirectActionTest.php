@@ -1,14 +1,14 @@
 <?php
 namespace ShlinkioTest\Shlink\Core\Action;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
+use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
@@ -42,7 +42,7 @@ class RedirectActionTest extends TestCase
                                                        ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
-        $response = $this->action->__invoke($request, new Response());
+        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
 
         $this->assertInstanceOf(Response\RedirectResponse::class, $response);
         $this->assertEquals(302, $response->getStatusCode());
@@ -53,52 +53,32 @@ class RedirectActionTest extends TestCase
     /**
      * @test
      */
-    public function nextErrorMiddlewareIsInvokedIfLongUrlIsNotFound()
+    public function nextMiddlewareIsInvokedIfLongUrlIsNotFound()
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(null)
                            ->shouldBeCalledTimes(1);
+        $delegate = $this->prophesize(DelegateInterface::class);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
-        $originalResponse = new Response();
-        $test = $this;
-        $this->action->__invoke($request, $originalResponse, function (
-            ServerRequestInterface $req,
-            ResponseInterface $resp,
-            $error
-        ) use (
-            $test,
-            $request
-        ) {
-            $test->assertSame($request, $req);
-            $test->assertEquals(404, $resp->getStatusCode());
-            $test->assertEquals('Not Found', $error);
-        });
+        $this->action->process($request, $delegate->reveal());
+
+        $delegate->process($request)->shouldHaveBeenCalledTimes(1);
     }
 
     /**
      * @test
      */
-    public function nextErrorMiddlewareIsInvokedIfAnExceptionIsThrown()
+    public function nextMiddlewareIsInvokedIfAnExceptionIsThrown()
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(\Exception::class)
                                                        ->shouldBeCalledTimes(1);
+        $delegate = $this->prophesize(DelegateInterface::class);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
-        $originalResponse = new Response();
-        $test = $this;
-        $this->action->__invoke($request, $originalResponse, function (
-            ServerRequestInterface $req,
-            ResponseInterface $resp,
-            $error
-        ) use (
-            $test,
-            $request
-        ) {
-            $test->assertSame($request, $req);
-            $test->assertEquals(404, $resp->getStatusCode());
-            $test->assertEquals('Not Found', $error);
-        });
+        $this->action->process($request, $delegate->reveal());
+
+        $delegate->process($request)->shouldHaveBeenCalledTimes(1);
     }
 }

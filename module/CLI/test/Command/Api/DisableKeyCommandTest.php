@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Api\DisableKeyCommand;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;

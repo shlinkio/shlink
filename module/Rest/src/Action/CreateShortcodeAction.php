@@ -2,6 +2,7 @@
 namespace Shlinkio\Shlink\Rest\Action;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -52,18 +53,17 @@ class CreateShortcodeAction extends AbstractRestAction
 
     /**
      * @param Request $request
-     * @param Response $response
-     * @param callable|null $out
+     * @param DelegateInterface $delegate
      * @return null|Response
      */
-    public function dispatch(Request $request, Response $response, callable $out = null)
+    public function dispatch(Request $request, DelegateInterface $delegate)
     {
         $postData = $request->getParsedBody();
         if (! isset($postData['longUrl'])) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
                 'message' => $this->translator->translate('A URL was not provided'),
-            ], 400);
+            ], self::STATUS_BAD_REQUEST);
         }
         $longUrl = $postData['longUrl'];
         $tags = isset($postData['tags']) && is_array($postData['tags']) ? $postData['tags'] : [];
@@ -87,13 +87,13 @@ class CreateShortcodeAction extends AbstractRestAction
                     $this->translator->translate('Provided URL %s is invalid. Try with a different one.'),
                     $longUrl
                 ),
-            ], 400);
+            ], self::STATUS_BAD_REQUEST);
         } catch (\Exception $e) {
             $this->logger->error('Unexpected error creating shortcode.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),
-            ], 500);
+            ], self::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
 }

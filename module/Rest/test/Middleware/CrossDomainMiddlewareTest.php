@@ -1,7 +1,10 @@
 <?php
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
@@ -12,10 +15,15 @@ class CrossDomainMiddlewareTest extends TestCase
      * @var CrossDomainMiddleware
      */
     protected $middleware;
+    /**
+     * @var ObjectProphecy
+     */
+    protected $delegate;
 
     public function setUp()
     {
         $this->middleware = new CrossDomainMiddleware();
+        $this->delegate = $this->prophesize(DelegateInterface::class);
     }
 
     /**
@@ -24,13 +32,9 @@ class CrossDomainMiddlewareTest extends TestCase
     public function nonCrossDomainRequestsAreNotAffected()
     {
         $originalResponse = new Response();
-        $response = $this->middleware->__invoke(
-            ServerRequestFactory::fromGlobals(),
-            $originalResponse,
-            function ($req, $resp) {
-                return $resp;
-            }
-        );
+        $this->delegate->process(Argument::any())->willReturn($originalResponse)->shouldbeCalledTimes(1);
+
+        $response = $this->middleware->process(ServerRequestFactory::fromGlobals(), $this->delegate->reveal());
         $this->assertSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
@@ -44,12 +48,11 @@ class CrossDomainMiddlewareTest extends TestCase
     public function anyRequestIncludesTheAllowAccessHeader()
     {
         $originalResponse = new Response();
-        $response = $this->middleware->__invoke(
+        $this->delegate->process(Argument::any())->willReturn($originalResponse)->shouldbeCalledTimes(1);
+
+        $response = $this->middleware->process(
             ServerRequestFactory::fromGlobals()->withHeader('Origin', 'local'),
-            $originalResponse,
-            function ($req, $resp) {
-                return $resp;
-            }
+            $this->delegate->reveal()
         );
         $this->assertNotSame($originalResponse, $response);
 
@@ -64,11 +67,10 @@ class CrossDomainMiddlewareTest extends TestCase
     public function optionsRequestIncludesMoreHeaders()
     {
         $originalResponse = new Response();
-        $request = ServerRequestFactory::fromGlobals(['REQUEST_METHOD' => 'OPTIONS'])->withHeader('Origin', 'local');
+        $request = ServerRequestFactory::fromGlobals()->withMethod('OPTIONS')->withHeader('Origin', 'local');
+        $this->delegate->process(Argument::any())->willReturn($originalResponse)->shouldbeCalledTimes(1);
 
-        $response = $this->middleware->__invoke($request, $originalResponse, function ($req, $resp) {
-            return $resp;
-        });
+        $response = $this->middleware->process($request, $this->delegate->reveal());
         $this->assertNotSame($originalResponse, $response);
 
         $headers = $response->getHeaders();

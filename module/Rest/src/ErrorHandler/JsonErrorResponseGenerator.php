@@ -1,34 +1,28 @@
 <?php
 namespace Shlinkio\Shlink\Rest\ErrorHandler;
 
-use Acelaya\ExpressiveErrorHandler\ErrorHandler\ErrorHandlerInterface;
+use Acelaya\ExpressiveErrorHandler\ErrorHandler\ErrorResponseGeneratorInterface;
+use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouteResult;
 
-class JsonErrorHandler implements ErrorHandlerInterface
+class JsonErrorResponseGenerator implements ErrorResponseGeneratorInterface, StatusCodeInterface
 {
     /**
      * Final handler for an application.
      *
+     * @param \Throwable|\Exception $e
      * @param Request $request
      * @param Response $response
-     * @param null|mixed $err
      * @return Response
      */
-    public function __invoke(Request $request, Response $response, $err = null)
+    public function __invoke($e, Request $request, Response $response)
     {
-        $hasRoute = $request->getAttribute(RouteResult::class) !== null;
-        $isNotFound = ! $hasRoute && ! isset($err);
-        if ($isNotFound) {
-            $responsePhrase = 'Not found';
-            $status = 404;
-        } else {
-            $status = $response->getStatusCode();
-            $responsePhrase = $status < 400 ? 'Internal Server Error' : $response->getReasonPhrase();
-            $status = $status < 400 ? 500 : $status;
-        }
+        $status = $response->getStatusCode();
+        $responsePhrase = $status < 400 ? 'Internal Server Error' : $response->getReasonPhrase();
+        $status = $status < 400 ? self::STATUS_INTERNAL_SERVER_ERROR : $status;
 
         return new JsonResponse([
             'error' => $this->responsePhraseToCode($responsePhrase),

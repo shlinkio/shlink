@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\CLI\Command\Shortcode;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Shortcode\ResolveUrlCommand;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;

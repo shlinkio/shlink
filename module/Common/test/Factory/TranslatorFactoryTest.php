@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Common\Factory;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Factory\TranslatorFactory;
 use Zend\I18n\Translator\Translator;
 use Zend\ServiceManager\ServiceManager;

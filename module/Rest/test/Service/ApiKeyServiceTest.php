@@ -3,7 +3,7 @@ namespace ShlinkioTest\Shlink\Rest\Service;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;

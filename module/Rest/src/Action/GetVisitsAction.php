@@ -2,6 +2,7 @@
 namespace Shlinkio\Shlink\Rest\Action;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -44,11 +45,10 @@ class GetVisitsAction extends AbstractRestAction
 
     /**
      * @param Request $request
-     * @param Response $response
-     * @param callable|null $out
+     * @param DelegateInterface $delegate
      * @return null|Response
      */
-    public function dispatch(Request $request, Response $response, callable $out = null)
+    public function dispatch(Request $request, DelegateInterface $delegate)
     {
         $shortCode = $request->getAttribute('shortCode');
         $startDate = $this->getDateQueryParam($request, 'startDate');
@@ -70,13 +70,13 @@ class GetVisitsAction extends AbstractRestAction
                     $this->translator->translate('Provided short code %s does not exist'),
                     $shortCode
                 ),
-            ], 404);
+            ], self::STATUS_NOT_FOUND);
         } catch (\Exception $e) {
             $this->logger->error('Unexpected error while parsing short code'. PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),
-            ], 500);
+            ], self::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
 

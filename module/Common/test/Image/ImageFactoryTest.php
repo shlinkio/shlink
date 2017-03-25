@@ -2,7 +2,7 @@
 namespace ShlinkioTest\Shlink\Common\Image;
 
 use mikehaertl\wkhtmlto\Image;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Image\ImageFactory;
 use Zend\ServiceManager\ServiceManager;
 

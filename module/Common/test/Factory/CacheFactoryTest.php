@@ -6,7 +6,7 @@ use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\FilesystemCache;
 use Doctrine\Common\Cache\MemcachedCache;
 use Doctrine\Common\Cache\RedisCache;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Factory\CacheFactory;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Zend\ServiceManager\ServiceManager;

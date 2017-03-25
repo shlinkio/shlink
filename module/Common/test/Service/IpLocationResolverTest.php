@@ -4,7 +4,7 @@ namespace ShlinkioTest\Shlink\Common\Service;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Psr7\Response;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Service\IpLocationResolver;
 

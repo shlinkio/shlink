@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\CLI\Command\Install;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Install\InstallCommand;

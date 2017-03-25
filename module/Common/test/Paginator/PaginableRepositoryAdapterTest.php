@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Common\Paginator;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Common\Repository\PaginableRepositoryInterface;
