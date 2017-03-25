@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Common\Image;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Image\ImageBuilder;
 use Shlinkio\Shlink\Common\Image\ImageBuilderFactory;
 use Zend\ServiceManager\ServiceManager;

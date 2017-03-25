@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Rest;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Rest\ConfigProvider;
 
 class ConfigProviderTest extends TestCase
@@ -24,7 +24,6 @@ class ConfigProviderTest extends TestCase
         $config = $this->configProvider->__invoke();
 
         $this->assertArrayHasKey('error_handler', $config);
-        $this->assertArrayHasKey('middleware_pipeline', $config);
         $this->assertArrayHasKey('routes', $config);
         $this->assertArrayHasKey('dependencies', $config);
         $this->assertArrayHasKey('translator', $config);

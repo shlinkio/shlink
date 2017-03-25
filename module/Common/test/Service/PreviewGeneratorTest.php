@@ -2,7 +2,7 @@
 namespace ShlinkioTest\Shlink\Common\Service;
 
 use mikehaertl\wkhtmlto\Image;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Image\ImageBuilder;

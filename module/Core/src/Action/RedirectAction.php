@@ -2,6 +2,8 @@
 namespace Shlinkio\Shlink\Core\Action;
 
 use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -11,7 +13,6 @@ use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Zend\Diactoros\Response\RedirectResponse;
-use Zend\Stratigility\MiddlewareInterface;
 
 class RedirectAction implements MiddlewareInterface
 {
@@ -47,31 +48,15 @@ class RedirectAction implements MiddlewareInterface
     }
 
     /**
-     * Process an incoming request and/or response.
-     *
-     * Accepts a server-side request and a response instance, and does
-     * something with them.
-     *
-     * If the response is not complete and/or further processing would not
-     * interfere with the work done in the middleware, or if the middleware
-     * wants to delegate to another process, it can use the `$out` callable
-     * if present.
-     *
-     * If the middleware does not return a value, execution of the current
-     * request is considered complete, and the response instance provided will
-     * be considered the response to return.
-     *
-     * Alternately, the middleware may return a response instance.
-     *
-     * Often, middleware will `return $out();`, with the assumption that a
-     * later middleware will return a response.
+     * Process an incoming server request and return a response, optionally delegating
+     * to the next middleware component to create the response.
      *
      * @param Request $request
-     * @param Response $response
-     * @param null|callable $out
-     * @return null|Response
+     * @param DelegateInterface $delegate
+     *
+     * @return Response
      */
-    public function __invoke(Request $request, Response $response, callable $out = null)
+    public function process(Request $request, DelegateInterface $delegate)
     {
         $shortCode = $request->getAttribute('shortCode', '');
 
@@ -80,8 +65,8 @@ class RedirectAction implements MiddlewareInterface
 
             // If provided shortCode does not belong to a valid long URL, dispatch next middleware, which will trigger
             // a not-found error
-            if (! isset($longUrl)) {
-                return $this->notFoundResponse($request, $response, $out);
+            if ($longUrl === null) {
+                return $delegate->process($request);
             }
 
             // Track visit to this short code
@@ -93,18 +78,7 @@ class RedirectAction implements MiddlewareInterface
         } catch (\Exception $e) {
             // In case of error, dispatch 404 error
             $this->logger->error('Error redirecting to long URL.' . PHP_EOL . $e);
-            return $this->notFoundResponse($request, $response, $out);
+            return $delegate->process($request);
         }
-    }
-
-    /**
-     * @param Request $request
-     * @param Response $response
-     * @param callable $out
-     * @return Response
-     */
-    protected function notFoundResponse(Request $request, Response $response, callable $out)
-    {
-        return $out($request, $response->withStatus(404), 'Not Found');
     }
 }

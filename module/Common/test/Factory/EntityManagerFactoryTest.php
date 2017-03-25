@@ -2,7 +2,7 @@
 namespace ShlinkioTest\Shlink\Common\Factory;
 
 use Doctrine\ORM\EntityManager;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Factory\EntityManagerFactory;
 use Zend\ServiceManager\ServiceManager;
 

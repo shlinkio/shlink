@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Core\Options;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Options\AppOptionsFactory;
 use Zend\ServiceManager\ServiceManager;

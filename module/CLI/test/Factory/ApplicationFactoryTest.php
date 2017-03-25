@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\CLI\Factory;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Symfony\Component\Console\Application;

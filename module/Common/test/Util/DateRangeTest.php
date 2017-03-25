@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Common\Util;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Util\DateRange;
 
 class DateRangeTest extends TestCase
