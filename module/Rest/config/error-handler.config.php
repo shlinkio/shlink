@@ -1,12 +1,12 @@
 <?php
-use Shlinkio\Shlink\Rest\ErrorHandler\JsonErrorHandler;
+use Shlinkio\Shlink\Rest\ErrorHandler\JsonErrorResponseGenerator;
 
 return [
 
     'error_handler' => [
         'plugins' => [
             'invokables' => [
-                'application/json' => JsonErrorHandler::class,
+                'application/json' => JsonErrorResponseGenerator::class,
             ],
             'aliases' => [
                 'application/x-json' => 'application/json',

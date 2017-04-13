@@ -1,14 +1,15 @@
 <?php
 namespace ShlinkioTest\Shlink\Core\Action;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Action\PreviewAction;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
-use Zend\Diactoros\Response;
+use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 
 class PreviewActionTest extends TestCase
@@ -36,20 +37,17 @@ class PreviewActionTest extends TestCase
     /**
      * @test
      */
-    public function invalidShortCodeFallbacksToNextMiddlewareWithStatusNotFound()
+    public function invalidShortCodeFallsBackToNextMiddleware()
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(null)->shouldBeCalledTimes(1);
+        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate->process(Argument::cetera())->shouldBeCalledTimes(1);
 
-        $resp = $this->action->__invoke(
+        $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            new Response(),
-            function ($req, $resp) {
-                return $resp;
-            }
+            $delegate->reveal()
         );
-
-        $this->assertEquals(404, $resp->getStatusCode());
     }
 
     /**
@@ -63,9 +61,9 @@ class PreviewActionTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($url)->shouldBeCalledTimes(1);
         $this->previewGenerator->generatePreview($url)->willReturn($path)->shouldBeCalledTimes(1);
 
-        $resp = $this->action->__invoke(
+        $resp = $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            new Response()
+            TestUtils::createDelegateMock()->reveal()
         );
 
         $this->assertEquals(filesize($path), $resp->getHeaderLine('Content-length'));
@@ -75,40 +73,18 @@ class PreviewActionTest extends TestCase
     /**
      * @test
      */
-    public function invalidShortcodeExceptionReturnsNotFound()
+    public function invalidShortCodeExceptionFallsBackToNextMiddleware()
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
                                                        ->shouldBeCalledTimes(1);
+        $delegate = $this->prophesize(DelegateInterface::class);
 
-        $resp = $this->action->__invoke(
+        $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            new Response(),
-            function ($req, $resp) {
-                return $resp;
-            }
+            $delegate->reveal()
         );
 
-        $this->assertEquals(404, $resp->getStatusCode());
-    }
-
-    /**
-     * @test
-     */
-    public function previewExceptionReturnsNotFound()
-    {
-        $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(PreviewGenerationException::class)
-                                                       ->shouldBeCalledTimes(1);
-
-        $resp = $this->action->__invoke(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            new Response(),
-            function ($req, $resp) {
-                return $resp;
-            }
-        );
-
-        $this->assertEquals(500, $resp->getStatusCode());
+        $delegate->process(Argument::any())->shouldHaveBeenCalledTimes(1);
     }
 }

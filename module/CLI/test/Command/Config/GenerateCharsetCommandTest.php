@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\CLI\Command\Config;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Config\GenerateCharsetCommand;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;

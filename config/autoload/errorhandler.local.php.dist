@@ -1,6 +1,5 @@
 <?php
-use Acelaya\ExpressiveErrorHandler\ErrorHandler\ContentBasedErrorHandler;
-use Zend\Expressive\Container\WhoopsErrorHandlerFactory;
+use Zend\Expressive\Container\WhoopsErrorResponseGeneratorFactory;
 
 return [
     'dependencies' => [
@@ -21,7 +20,7 @@ return [
     'error_handler' => [
         'plugins' => [
             'factories' => [
-                ContentBasedErrorHandler::DEFAULT_CONTENT => WhoopsErrorHandlerFactory::class,
+                'text/html' => WhoopsErrorResponseGeneratorFactory::class,
             ],
         ],
     ],

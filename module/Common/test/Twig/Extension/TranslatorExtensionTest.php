@@ -1,7 +1,7 @@
 <?php
 namespace ShlinkioTest\Shlink\Common\Twig\Extension;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Twig\Extension\TranslatorExtension;
