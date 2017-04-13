@@ -1,6 +1,8 @@
 <?php
+use Shlinkio\Shlink\Common\Factory\EmptyResponseImplicitOptionsMiddlewareFactory;
 use Zend\Expressive;
 use Zend\Expressive\Container;
+use Zend\Expressive\Middleware;
 use Zend\Expressive\Router;
 use Zend\Expressive\Template;
 use Zend\Expressive\Twig;
@@ -15,6 +17,7 @@ return [
             \Twig_Environment::class => Twig\TwigEnvironmentFactory::class,
             Router\RouterInterface::class => Router\FastRouteRouterFactory::class,
             ErrorHandler::class => Container\ErrorHandlerFactory::class,
+            Middleware\ImplicitOptionsMiddleware::class => EmptyResponseImplicitOptionsMiddlewareFactory::class,
         ],
     ],
 
