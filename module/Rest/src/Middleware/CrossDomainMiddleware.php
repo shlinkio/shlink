@@ -1,12 +1,13 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Middleware;
 
+use Fig\Http\Message\RequestMethodInterface;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class CrossDomainMiddleware implements MiddlewareInterface
+class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterface
 {
     /**
      * Process an incoming server request and return a response, optionally delegating
@@ -28,7 +29,7 @@ class CrossDomainMiddleware implements MiddlewareInterface
         // Add Allow-Origin header
         $response = $response->withHeader('Access-Control-Allow-Origin', $request->getHeader('Origin'))
                              ->withHeader('Access-Control-Expose-Headers', 'Authorization');
-        if ($request->getMethod() !== 'OPTIONS') {
+        if ($request->getMethod() !== self::METHOD_OPTIONS) {
             return $response;
         }
 
