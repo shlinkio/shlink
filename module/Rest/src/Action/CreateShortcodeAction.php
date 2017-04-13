@@ -56,7 +56,7 @@ class CreateShortcodeAction extends AbstractRestAction
      * @param DelegateInterface $delegate
      * @return null|Response
      */
-    public function dispatch(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, DelegateInterface $delegate)
     {
         $postData = $request->getParsedBody();
         if (! isset($postData['longUrl'])) {

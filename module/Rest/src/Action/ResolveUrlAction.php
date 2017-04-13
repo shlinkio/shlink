@@ -47,7 +47,7 @@ class ResolveUrlAction extends AbstractRestAction
      * @param DelegateInterface $delegate
      * @return null|Response
      */
-    public function dispatch(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, DelegateInterface $delegate)
     {
         $shortCode = $request->getAttribute('shortCode');
 
