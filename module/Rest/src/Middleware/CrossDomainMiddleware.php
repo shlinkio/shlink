@@ -36,8 +36,8 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
 
         // Add OPTIONS-specific headers
         foreach ([
-//            'Access-Control-Allow-Methods' => 'GET,POST,PUT,DELETE,OPTIONS', // TODO Should be based on path
-            'Access-Control-Allow-Methods' => $response->getHeaderLine('Allow'),
+            'Access-Control-Allow-Methods' => 'GET,POST,PUT,DELETE,OPTIONS', // TODO Should be dynamic
+//            'Access-Control-Allow-Methods' => $response->getHeaderLine('Allow'),
             'Access-Control-Max-Age' => '1000',
             'Access-Control-Allow-Headers' => $request->getHeaderLine('Access-Control-Request-Headers'),
         ] as $key => $value) {
