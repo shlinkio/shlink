@@ -8,19 +8,19 @@ return [
             'name' => 'rest-authenticate',
             'path' => '/rest/v{version:1}/authenticate',
             'middleware' => Action\AuthenticateAction::class,
-            'allowed_methods' => ['POST', 'OPTIONS'],
+            'allowed_methods' => ['POST'],
         ],
         [
             'name' => 'rest-create-shortcode',
             'path' => '/rest/v{version:1}/short-codes',
             'middleware' => Action\CreateShortcodeAction::class,
-            'allowed_methods' => ['POST', 'OPTIONS'],
+            'allowed_methods' => ['POST'],
         ],
         [
             'name' => 'rest-resolve-url',
             'path' => '/rest/v{version:1}/short-codes/{shortCode}',
             'middleware' => Action\ResolveUrlAction::class,
-            'allowed_methods' => ['GET', 'OPTIONS'],
+            'allowed_methods' => ['GET'],
         ],
         [
             'name' => 'rest-list-shortened-url',
@@ -32,13 +32,13 @@ return [
             'name' => 'rest-get-visits',
             'path' => '/rest/v{version:1}/short-codes/{shortCode}/visits',
             'middleware' => Action\GetVisitsAction::class,
-            'allowed_methods' => ['GET', 'OPTIONS'],
+            'allowed_methods' => ['GET'],
         ],
         [
             'name' => 'rest-edit-tags',
             'path' => '/rest/v{version:1}/short-codes/{shortCode}/tags',
             'middleware' => Action\EditTagsAction::class,
-            'allowed_methods' => ['PUT', 'OPTIONS'],
+            'allowed_methods' => ['PUT'],
         ],
     ],
 
