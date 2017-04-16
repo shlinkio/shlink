@@ -68,6 +68,28 @@
                             }
                         }
                     }
+                },
+                "examples": {
+                    "application/json": {
+                        "shortUrls": {
+                            "data": [
+                                {
+                                    "shortCode": "",
+                                    "originalUrl": "https://store.steampowered.com",
+                                    "dateCreated": "2016-08-21T20:34:16+02:00",
+                                    "visitsCount": 328,
+                                    "tags": [
+                                        "games",
+                                        "tech"
+                                    ]
+                                }
+                            ],
+                            "pagination": {
+                                "currentPage": 5,
+                                "pagesCount": 12
+                            }
+                        }
+                    }
                 }
             },
             "500": {

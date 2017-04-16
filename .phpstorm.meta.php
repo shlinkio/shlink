@@ -1,7 +1,7 @@
 <?php
 namespace PHPSTORM_META;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * PhpStorm Container Interop code completion
