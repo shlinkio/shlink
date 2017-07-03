@@ -1,9 +1,7 @@
 <?php
 namespace Shlinkio\Shlink\CLI\Command\Install;
 
-use Zend\Config\Writer\WriterInterface;
-
-class UpdateCommand extends InstallCommand
+class UpdateCommand extends AbstractInstallCommand
 {
     public function createDatabase()
     {
