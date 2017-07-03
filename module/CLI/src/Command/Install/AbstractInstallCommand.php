@@ -4,6 +4,7 @@ namespace Shlinkio\Shlink\CLI\Command\Install;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -48,10 +49,11 @@ abstract class AbstractInstallCommand extends Command
     /**
      * InstallCommand constructor.
      * @param WriterInterface $configWriter
+     * @throws LogicException
      */
     public function __construct(WriterInterface $configWriter)
     {
-        parent::__construct(null);
+        parent::__construct();
         $this->configWriter = $configWriter;
     }
 
@@ -226,7 +228,7 @@ abstract class AbstractInstallCommand extends Command
      */
     protected function ask($text, $default = null, $allowEmpty = false)
     {
-        if (isset($default)) {
+        if ($default !== null) {
             $text .= ' (defaults to ' . $default . ')';
         }
         do {
