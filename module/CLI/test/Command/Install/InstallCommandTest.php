@@ -104,6 +104,7 @@ CLI_INPUT
                 'shortcode_chars' => 'abc123BCA',
             ],
         ], false)->shouldBeCalledTimes(1);
+
         $this->commandTester->execute([
             'command' => 'shlink:install',
         ]);
