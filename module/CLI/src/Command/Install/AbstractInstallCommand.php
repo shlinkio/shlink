@@ -11,6 +11,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Zend\Config\Writer\WriterInterface;
 
@@ -24,6 +25,7 @@ abstract class AbstractInstallCommand extends Command
         'SQLite' => 'pdo_sqlite',
     ];
     const SUPPORTED_LANGUAGES = ['en', 'es'];
+    const GENERATED_CONFIG_PATH = 'config/params/generated_config.php';
 
     /**
      * @var InputInterface
@@ -86,7 +88,13 @@ abstract class AbstractInstallCommand extends Command
                     ' <error>Failed!</error> You will have to manually delete the data/cache/app_config.php file to get'
                     . ' new config applied.'
                 );
+                return;
             }
+        }
+
+        // If running update command, ask the user to import previous config
+        if ($this->isUpdate()) {
+            $this->importConfig();
         }
 
         // Ask for custom config params
@@ -97,7 +105,7 @@ abstract class AbstractInstallCommand extends Command
 
         // Generate config params files
         $config = $this->buildAppConfig($params);
-        $this->configWriter->toFile('config/params/generated_config.php', $config, false);
+        $this->configWriter->toFile(self::GENERATED_CONFIG_PATH, $config, false);
         $output->writeln(['<info>Custom configuration properly generated!</info>', '']);
 
         // If current command is not update, generate database
@@ -122,6 +130,35 @@ abstract class AbstractInstallCommand extends Command
         if (! $this->runCommand('php vendor/bin/doctrine.php orm:generate-proxies', 'Error generating proxies.')) {
             return;
         }
+    }
+
+    protected function importConfig()
+    {
+        // Ask the user if he/she wants to import an older configuration
+        $importConfig = $this->questionHelper->ask($this->input, $this->output, new ConfirmationQuestion(
+            '<question>Do you want to import previous configuration? (Y/n):</question> '
+        ));
+        if (! $importConfig) {
+            return;
+        }
+
+        // Ask the user for the older shlink path
+        $keepAsking = true;
+        do {
+            $installationPath = $this->ask('Previous shlink installation path from which to import config');
+            $configFile = $installationPath . '/' . self::GENERATED_CONFIG_PATH;
+            $configExists = file_exists($configFile);
+
+            if (! $configExists) {
+                $keepAsking = $this->questionHelper->ask($this->input, $this->output, new ConfirmationQuestion(
+                    'Provided path does not seem to be a valid shlink root path. '
+                    . '<question>Do you want to try another path? (Y/n):</question> '
+                ));
+            }
+        } while (! $configExists && $keepAsking);
+
+        // Read the config file
+        $previousConfig = include $configFile;
     }
 
     protected function askDatabase()
