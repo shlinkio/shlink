@@ -100,9 +100,15 @@ abstract class AbstractInstallCommand extends Command
         $this->configWriter->toFile('config/params/generated_config.php', $config, false);
         $output->writeln(['<info>Custom configuration properly generated!</info>', '']);
 
-        // Generate database
-        if (! $this->createDatabase()) {
-            return;
+        // If current command is not update, generate database
+        if (!  $this->isUpdate()) {
+            $this->output->writeln('Initializing database...');
+            if (! $this->runCommand(
+                'php vendor/bin/doctrine.php orm:schema-tool:create',
+                'Error generating database.'
+            )) {
+                return;
+            }
         }
 
         // Run database migrations
@@ -296,11 +302,6 @@ abstract class AbstractInstallCommand extends Command
     }
 
     /**
-     * @return bool
-     */
-    abstract protected function createDatabase();
-
-    /**
      * @param string $command
      * @param string $errorMessage
      * @return bool
@@ -322,4 +323,9 @@ abstract class AbstractInstallCommand extends Command
         );
         return false;
     }
+
+    /**
+     * @return bool
+     */
+    abstract protected function isUpdate();
 }
