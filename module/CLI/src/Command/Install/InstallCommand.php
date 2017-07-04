@@ -45,6 +45,10 @@ class InstallCommand extends Command
      */
     private $processHelper;
     /**
+     * @var string
+     */
+    private $importedInstallationPath;
+    /**
      * @var WriterInterface
      */
     private $configWriter;
@@ -154,8 +158,8 @@ class InstallCommand extends Command
         // Ask the user for the older shlink path
         $keepAsking = true;
         do {
-            $installationPath = $this->ask('Previous shlink installation path from which to import config');
-            $configFile = $installationPath . '/' . self::GENERATED_CONFIG_PATH;
+            $this->importedInstallationPath = $this->ask('Previous shlink installation path from which to import config');
+            $configFile = $this->importedInstallationPath . '/' . self::GENERATED_CONFIG_PATH;
             $configExists = file_exists($configFile);
 
             if (! $configExists) {
@@ -185,6 +189,14 @@ class InstallCommand extends Command
                 '<question>Do you want to keep imported database config? (Y/n):</question> '
             ));
             if ($keepConfig) {
+                // If the user selected to keep DB config and is configured to use sqlite, copy DB file
+                if ($config->getDatabase()['DRIVER'] === self::DATABASE_DRIVERS['SQLite']) {
+                    copy(
+                        $this->importedInstallationPath . '/' . CustomizableAppConfig::SQLITE_DB_PATH,
+                        CustomizableAppConfig::SQLITE_DB_PATH
+                    );
+                }
+
                 return;
             }
         }

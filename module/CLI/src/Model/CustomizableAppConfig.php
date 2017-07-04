@@ -5,6 +5,8 @@ use Zend\Stdlib\ArraySerializableInterface;
 
 final class CustomizableAppConfig implements ArraySerializableInterface
 {
+    const SQLITE_DB_PATH = 'data/database.sqlite';
+
     /**
      * @var array
      */
@@ -213,7 +215,7 @@ final class CustomizableAppConfig implements ArraySerializableInterface
 
         // Build dynamic database config based on selected driver
         if ($this->database['DRIVER'] === 'pdo_sqlite') {
-            $config['entity_manager']['connection']['path'] = 'data/database.sqlite';
+            $config['entity_manager']['connection']['path'] = self::SQLITE_DB_PATH;
         } else {
             $config['entity_manager']['connection']['user'] = $this->database['USER'];
             $config['entity_manager']['connection']['password'] = $this->database['PASSWORD'];
