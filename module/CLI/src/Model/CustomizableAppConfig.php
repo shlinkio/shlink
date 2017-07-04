@@ -134,7 +134,50 @@ final class CustomizableAppConfig implements ArraySerializableInterface
      */
     public function exchangeArray(array $array)
     {
+        if (isset($array['app_options'], $array['app_options']['secret_key'])) {
+            $this->setApp([
+                'SECRET' => $array['app_options']['secret_key'],
+            ]);
+        }
 
+        if (isset($array['entity_manager'], $array['entity_manager']['connection'])) {
+            $this->deserializeDatabase($array['entity_manager']['connection']);
+        }
+
+        if (isset($array['translator'], $array['translator']['locale'], $array['cli'], $array['cli']['locale'])) {
+            $this->setLanguage([
+                'DEFAULT' => $array['translator']['locale'],
+                'CLI' => $array['cli']['locale'],
+            ]);
+        }
+
+        if (isset($array['url_shortener'])) {
+            $urlShortener = $array['url_shortener'];
+            $this->setUrlShortener([
+                'SCHEMA' => $urlShortener['domain']['schema'],
+                'HOSTNAME' => $urlShortener['domain']['hostname'],
+                'CHARS' => $urlShortener['shortcode_chars'],
+            ]);
+        }
+    }
+
+    private function deserializeDatabase(array $conn)
+    {
+        if (! isset($conn['driver'])) {
+            return;
+        }
+        $driver = $conn['driver'];
+
+        $params = ['DRIVER' => $driver];
+        if ($driver !== 'pdo_sqlite') {
+            $params['USER'] = $conn['user'];
+            $params['PASSWORD'] = $conn['password'];
+            $params['NAME'] = $conn['dbname'];
+            $params['HOST'] = $conn['host'];
+            $params['PORT'] = $conn['port'];
+        }
+
+        $this->setDatabase($params);
     }
 
     /**
