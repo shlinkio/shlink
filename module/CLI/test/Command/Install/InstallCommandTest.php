@@ -8,6 +8,7 @@ use Shlinkio\Shlink\CLI\Command\Install\InstallCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Zend\Config\Writer\WriterInterface;
 
@@ -21,6 +22,10 @@ class InstallCommandTest extends TestCase
      * @var ObjectProphecy
      */
     protected $configWriter;
+    /**
+     * @var ObjectProphecy
+     */
+    protected $filesystem;
 
     public function setUp()
     {
@@ -31,13 +36,16 @@ class InstallCommandTest extends TestCase
         $processHelper->setHelperSet(Argument::any())->willReturn(null);
         $processHelper->run(Argument::cetera())->willReturn($processMock->reveal());
 
+        $this->filesystem = $this->prophesize(Filesystem::class);
+        $this->filesystem->exists(Argument::cetera())->willReturn(false);
+
         $app = new Application();
         $helperSet = $app->getHelperSet();
         $helperSet->set($processHelper->reveal());
         $app->setHelperSet($helperSet);
 
         $this->configWriter = $this->prophesize(WriterInterface::class);
-        $command = new InstallCommand($this->configWriter->reveal());
+        $command = new InstallCommand($this->configWriter->reveal(), $this->filesystem->reveal());
         $app->add($command);
 
         $questionHelper = $command->getHelper('question');

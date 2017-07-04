@@ -14,6 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
 use Zend\Config\Writer\WriterInterface;
 
 class InstallCommand extends Command
@@ -56,18 +58,24 @@ class InstallCommand extends Command
      * @var bool
      */
     private $isUpdate;
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
 
     /**
      * InstallCommand constructor.
      * @param WriterInterface $configWriter
+     * @param Filesystem $filesystem
      * @param bool $isUpdate
      * @throws LogicException
      */
-    public function __construct(WriterInterface $configWriter, $isUpdate = false)
+    public function __construct(WriterInterface $configWriter, Filesystem $filesystem, $isUpdate = false)
     {
         parent::__construct();
         $this->configWriter = $configWriter;
         $this->isUpdate = $isUpdate;
+        $this->filesystem = $filesystem;
     }
 
     public function configure()
@@ -89,15 +97,19 @@ class InstallCommand extends Command
         ]);
 
         // Check if a cached config file exists and drop it if so
-        if (file_exists('data/cache/app_config.php')) {
+        if ($this->filesystem->exists('data/cache/app_config.php')) {
             $output->write('Deleting old cached config...');
-            if (unlink('data/cache/app_config.php')) {
+            try {
+                $this->filesystem->remove('data/cache/app_config.php');
                 $output->writeln(' <info>Success</info>');
-            } else {
+            } catch (IOException $e) {
                 $output->writeln(
                     ' <error>Failed!</error> You will have to manually delete the data/cache/app_config.php file to get'
                     . ' new config applied.'
                 );
+                if ($output->isVerbose()) {
+                    $this->getApplication()->renderException($e, $output);
+                }
                 return;
             }
         }
@@ -158,9 +170,11 @@ class InstallCommand extends Command
         // Ask the user for the older shlink path
         $keepAsking = true;
         do {
-            $this->importedInstallationPath = $this->ask('Previous shlink installation path from which to import config');
+            $this->importedInstallationPath = $this->ask(
+                'Previous shlink installation path from which to import config'
+            );
             $configFile = $this->importedInstallationPath . '/' . self::GENERATED_CONFIG_PATH;
-            $configExists = file_exists($configFile);
+            $configExists = $this->filesystem->exists($configFile);
 
             if (! $configExists) {
                 $keepAsking = $this->questionHelper->ask($this->input, $this->output, new ConfirmationQuestion(
@@ -191,7 +205,7 @@ class InstallCommand extends Command
             if ($keepConfig) {
                 // If the user selected to keep DB config and is configured to use sqlite, copy DB file
                 if ($config->getDatabase()['DRIVER'] === self::DATABASE_DRIVERS['SQLite']) {
-                    copy(
+                    $this->filesystem->copy(
                         $this->importedInstallationPath . '/' . CustomizableAppConfig::SQLITE_DB_PATH,
                         CustomizableAppConfig::SQLITE_DB_PATH
                     );

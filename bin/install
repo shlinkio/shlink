@@ -2,6 +2,7 @@
 <?php
 use Shlinkio\Shlink\CLI\Command\Install\InstallCommand;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Filesystem\Filesystem;
 use Zend\Config\Writer\PhpArray;
 
 chdir(dirname(__DIR__));
@@ -9,7 +10,7 @@ chdir(dirname(__DIR__));
 require __DIR__ . '/../vendor/autoload.php';
 
 $app = new Application();
-$command = new InstallCommand(new PhpArray());
+$command = new InstallCommand(new PhpArray(), new Filesystem());
 $app->add($command);
 $app->setDefaultCommand($command->getName());
 $app->run();
