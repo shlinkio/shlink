@@ -1,9 +1,10 @@
 <?php
 namespace Shlinkio\Shlink\CLI\Command\Install;
 
+use Shlinkio\Shlink\CLI\Install\ConfigCustomizerPluginManagerInterface;
+use Shlinkio\Shlink\CLI\Install\Plugin;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Exception\RuntimeException;
@@ -11,7 +12,6 @@ use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -20,14 +20,6 @@ use Zend\Config\Writer\WriterInterface;
 
 class InstallCommand extends Command
 {
-    use StringUtilsTrait;
-
-    const DATABASE_DRIVERS = [
-        'MySQL' => 'pdo_mysql',
-        'PostgreSQL' => 'pdo_pgsql',
-        'SQLite' => 'pdo_sqlite',
-    ];
-    const SUPPORTED_LANGUAGES = ['en', 'es'];
     const GENERATED_CONFIG_PATH = 'config/params/generated_config.php';
 
     /**
@@ -47,21 +39,21 @@ class InstallCommand extends Command
      */
     private $processHelper;
     /**
-     * @var string
-     */
-    private $importedInstallationPath;
-    /**
      * @var WriterInterface
      */
     private $configWriter;
     /**
-     * @var bool
-     */
-    private $isUpdate;
-    /**
      * @var Filesystem
      */
     private $filesystem;
+    /**
+     * @var ConfigCustomizerPluginManagerInterface
+     */
+    private $configCustomizers;
+    /**
+     * @var bool
+     */
+    private $isUpdate;
 
     /**
      * InstallCommand constructor.
@@ -70,18 +62,24 @@ class InstallCommand extends Command
      * @param bool $isUpdate
      * @throws LogicException
      */
-    public function __construct(WriterInterface $configWriter, Filesystem $filesystem, $isUpdate = false)
-    {
+    public function __construct(
+        WriterInterface $configWriter,
+        Filesystem $filesystem,
+        ConfigCustomizerPluginManagerInterface $configCustomizers,
+        $isUpdate = false
+    ) {
         parent::__construct();
         $this->configWriter = $configWriter;
         $this->isUpdate = $isUpdate;
         $this->filesystem = $filesystem;
+        $this->configCustomizers = $configCustomizers;
     }
 
     public function configure()
     {
-        $this->setName('shlink:install')
-            ->setDescription('Installs Shlink');
+        $this
+            ->setName('shlink:install')
+            ->setDescription('Installs or updates Shlink');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
@@ -118,10 +116,16 @@ class InstallCommand extends Command
         $config = $this->isUpdate ? $this->importConfig() : new CustomizableAppConfig();
 
         // Ask for custom config params
-        $this->askDatabase($config);
-        $this->askUrlShortener($config);
-        $this->askLanguage($config);
-        $this->askApplication($config);
+        foreach ([
+            Plugin\DatabaseConfigCustomizerPlugin::class,
+            Plugin\UrlShortenerConfigCustomizerPlugin::class,
+            Plugin\LanguageConfigCustomizerPlugin::class,
+            Plugin\ApplicationConfigCustomizerPlugin::class,
+        ] as $pluginName) {
+            /** @var Plugin\ConfigCustomizerPluginInterface $configCustomizer */
+            $configCustomizer = $this->configCustomizers->get($pluginName);
+            $configCustomizer->process($input, $output, $config);
+        }
 
         // Generate config params files
         $this->configWriter->toFile(self::GENERATED_CONFIG_PATH, $config->getArrayCopy(), false);
@@ -170,10 +174,10 @@ class InstallCommand extends Command
         // Ask the user for the older shlink path
         $keepAsking = true;
         do {
-            $this->importedInstallationPath = $this->ask(
+            $config->setImportedInstallationPath($this->ask(
                 'Previous shlink installation path from which to import config'
-            );
-            $configFile = $this->importedInstallationPath . '/' . self::GENERATED_CONFIG_PATH;
+            ));
+            $configFile = $config->getImportedInstallationPath() . '/' . self::GENERATED_CONFIG_PATH;
             $configExists = $this->filesystem->exists($configFile);
 
             if (! $configExists) {
@@ -192,151 +196,6 @@ class InstallCommand extends Command
         // Read the config file
         $config->exchangeArray(include $configFile);
         return $config;
-    }
-
-    protected function askDatabase(CustomizableAppConfig $config)
-    {
-        $this->printTitle('DATABASE');
-
-        if ($config->hasDatabase()) {
-            $keepConfig = $this->questionHelper->ask($this->input, $this->output, new ConfirmationQuestion(
-                '<question>Do you want to keep imported database config? (Y/n):</question> '
-            ));
-            if ($keepConfig) {
-                // If the user selected to keep DB config and is configured to use sqlite, copy DB file
-                if ($config->getDatabase()['DRIVER'] === self::DATABASE_DRIVERS['SQLite']) {
-                    $this->filesystem->copy(
-                        $this->importedInstallationPath . '/' . CustomizableAppConfig::SQLITE_DB_PATH,
-                        CustomizableAppConfig::SQLITE_DB_PATH
-                    );
-                }
-
-                return;
-            }
-        }
-
-        // Select database type
-        $params = [];
-        $databases = array_keys(self::DATABASE_DRIVERS);
-        $dbType = $this->questionHelper->ask($this->input, $this->output, new ChoiceQuestion(
-            '<question>Select database type (defaults to ' . $databases[0] . '):</question>',
-            $databases,
-            0
-        ));
-        $params['DRIVER'] = self::DATABASE_DRIVERS[$dbType];
-
-        // Ask for connection params if database is not SQLite
-        if ($params['DRIVER'] !== self::DATABASE_DRIVERS['SQLite']) {
-            $params['NAME'] = $this->ask('Database name', 'shlink');
-            $params['USER'] = $this->ask('Database username');
-            $params['PASSWORD'] = $this->ask('Database password');
-            $params['HOST'] = $this->ask('Database host', 'localhost');
-            $params['PORT'] = $this->ask('Database port', $this->getDefaultDbPort($params['DRIVER']));
-        }
-
-        $config->setDatabase($params);
-    }
-
-    protected function getDefaultDbPort($driver)
-    {
-        return $driver === 'pdo_mysql' ? '3306' : '5432';
-    }
-
-    protected function askUrlShortener(CustomizableAppConfig $config)
-    {
-        $this->printTitle('URL SHORTENER');
-
-        if ($config->hasUrlShortener()) {
-            $keepConfig = $this->questionHelper->ask($this->input, $this->output, new ConfirmationQuestion(
-                '<question>Do you want to keep imported URL shortener config? (Y/n):</question> '
-            ));
-            if ($keepConfig) {
-                return;
-            }
-        }
-
-        // Ask for URL shortener params
-        $config->setUrlShortener([
-            'SCHEMA' => $this->questionHelper->ask($this->input, $this->output, new ChoiceQuestion(
-                '<question>Select schema for generated short URLs (defaults to http):</question>',
-                ['http', 'https'],
-                0
-            )),
-            'HOSTNAME' => $this->ask('Hostname for generated URLs'),
-            'CHARS' => $this->ask(
-                'Character set for generated short codes (leave empty to autogenerate one)',
-                null,
-                true
-            ) ?: str_shuffle(UrlShortener::DEFAULT_CHARS)
-        ]);
-    }
-
-    protected function askLanguage(CustomizableAppConfig $config)
-    {
-        $this->printTitle('LANGUAGE');
-
-        if ($config->hasLanguage()) {
-            $keepConfig = $this->questionHelper->ask($this->input, $this->output, new ConfirmationQuestion(
-                '<question>Do you want to keep imported language? (Y/n):</question> '
-            ));
-            if ($keepConfig) {
-                return;
-            }
-        }
-
-        $config->setLanguage([
-            'DEFAULT' => $this->questionHelper->ask($this->input, $this->output, new ChoiceQuestion(
-                '<question>Select default language for the application in general (defaults to '
-                . self::SUPPORTED_LANGUAGES[0] . '):</question>',
-                self::SUPPORTED_LANGUAGES,
-                0
-            )),
-            'CLI' => $this->questionHelper->ask($this->input, $this->output, new ChoiceQuestion(
-                '<question>Select default language for CLI executions (defaults to '
-                . self::SUPPORTED_LANGUAGES[0] . '):</question>',
-                self::SUPPORTED_LANGUAGES,
-                0
-            )),
-        ]);
-    }
-
-    protected function askApplication(CustomizableAppConfig $config)
-    {
-        $this->printTitle('APPLICATION');
-
-        if ($config->hasApp()) {
-            $keepConfig = $this->questionHelper->ask($this->input, $this->output, new ConfirmationQuestion(
-                '<question>Do you want to keep imported application config? (Y/n):</question> '
-            ));
-            if ($keepConfig) {
-                return;
-            }
-        }
-
-        $config->setApp([
-            'SECRET' => $this->ask(
-                'Define a secret string that will be used to sign API tokens (leave empty to autogenerate one)',
-                null,
-                true
-            ) ?: $this->generateRandomString(32),
-        ]);
-    }
-
-    /**
-     * @param string $text
-     */
-    protected function printTitle($text)
-    {
-        $text = trim($text);
-        $length = strlen($text) + 4;
-        $header = str_repeat('*', $length);
-
-        $this->output->writeln([
-            '',
-            '<info>' . $header . '</info>',
-            '<info>* ' . strtoupper($text) . ' *</info>',
-            '<info>' . $header . '</info>',
-        ]);
     }
 
     /**

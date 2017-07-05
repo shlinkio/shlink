@@ -23,6 +23,10 @@ final class CustomizableAppConfig implements ArraySerializableInterface
      * @var array
      */
     private $app;
+    /**
+     * @var string
+     */
+    private $importedInstallationPath;
 
     /**
      * @return array
@@ -126,6 +130,32 @@ final class CustomizableAppConfig implements ArraySerializableInterface
     public function hasApp()
     {
         return ! empty($this->app);
+    }
+
+    /**
+     * @return string
+     */
+    public function getImportedInstallationPath()
+    {
+        return $this->importedInstallationPath;
+    }
+
+    /**
+     * @param string $importedInstallationPath
+     * @return $this|self
+     */
+    public function setImportedInstallationPath($importedInstallationPath)
+    {
+        $this->importedInstallationPath = $importedInstallationPath;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasImportedInstallationPath()
+    {
+        return $this->importedInstallationPath !== null;
     }
 
     /**

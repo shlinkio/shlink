@@ -2,6 +2,9 @@
 <?php
 use Shlinkio\Shlink\CLI\Factory\InstallApplicationFactory;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Filesystem\Filesystem;
+use Zend\ServiceManager\Factory\InvokableFactory;
 use Zend\ServiceManager\ServiceManager;
 
 chdir(dirname(__DIR__));
@@ -10,5 +13,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $container = new ServiceManager(['factories' => [
     Application::class => InstallApplicationFactory::class,
+    Filesystem::class => InvokableFactory::class,
+    QuestionHelper::class => InvokableFactory::class,
 ]]);
 $container->build(Application::class)->run();
