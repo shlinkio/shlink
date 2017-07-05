@@ -2,6 +2,7 @@
 namespace PHPSTORM_META;
 
 use Psr\Container\ContainerInterface;
+use Zend\ServiceManager\ServiceManager;
 
 /**
  * PhpStorm Container Interop code completion
@@ -14,6 +15,9 @@ use Psr\Container\ContainerInterface;
  */
 $STATIC_METHOD_TYPES = [
     ContainerInterface::get('') => [
+        '' == '@',
+    ],
+    ServiceManager::build('') => [
         '' == '@',
     ],
 ];
