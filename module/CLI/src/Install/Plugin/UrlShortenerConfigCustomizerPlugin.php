@@ -24,13 +24,10 @@ class UrlShortenerConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
     {
         $this->printTitle($output, 'URL SHORTENER');
 
-        if ($appConfig->hasUrlShortener()) {
-            $keepConfig = $this->questionHelper->ask($input, $output, new ConfirmationQuestion(
-                '<question>Do you want to keep imported URL shortener config? (Y/n):</question> '
-            ));
-            if ($keepConfig) {
-                return;
-            }
+        if ($appConfig->hasUrlShortener() && $this->questionHelper->ask($input, $output, new ConfirmationQuestion(
+            '<question>Do you want to keep imported URL shortener config? (Y/n):</question> '
+        ))) {
+            return;
         }
 
         // Ask for URL shortener params

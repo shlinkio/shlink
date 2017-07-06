@@ -25,13 +25,10 @@ class LanguageConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
     {
         $this->printTitle($output, 'LANGUAGE');
 
-        if ($appConfig->hasLanguage()) {
-            $keepConfig = $this->questionHelper->ask($input, $output, new ConfirmationQuestion(
-                '<question>Do you want to keep imported language? (Y/n):</question> '
-            ));
-            if ($keepConfig) {
-                return;
-            }
+        if ($appConfig->hasLanguage() && $this->questionHelper->ask($input, $output, new ConfirmationQuestion(
+            '<question>Do you want to keep imported language? (Y/n):</question> '
+        ))) {
+            return;
         }
 
         $appConfig->setLanguage([

@@ -24,13 +24,10 @@ class ApplicationConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
     {
         $this->printTitle($output, 'APPLICATION');
 
-        if ($appConfig->hasApp()) {
-            $keepConfig = $this->questionHelper->ask($input, $output, new ConfirmationQuestion(
-                '<question>Do you want to keep imported application config? (Y/n):</question> '
-            ));
-            if ($keepConfig) {
-                return;
-            }
+        if ($appConfig->hasApp() && $this->questionHelper->ask($input, $output, new ConfirmationQuestion(
+            '<question>Do you want to keep imported application config? (Y/n):</question> '
+        ))) {
+            return;
         }
 
         $appConfig->setApp([
