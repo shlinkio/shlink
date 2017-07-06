@@ -4,7 +4,6 @@ namespace Shlinkio\Shlink\CLI\Command\Install;
 use Shlinkio\Shlink\CLI\Install\ConfigCustomizerPluginManagerInterface;
 use Shlinkio\Shlink\CLI\Install\Plugin;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
-use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Exception\RuntimeException;
