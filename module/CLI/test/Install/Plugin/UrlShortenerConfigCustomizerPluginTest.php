@@ -7,28 +7,28 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Install\Plugin\LanguageConfigCustomizerPlugin;
+use Shlinkio\Shlink\CLI\Install\Plugin\UrlShortenerConfigCustomizerPlugin;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class LanguageConfigCustomizerPluginTest extends TestCase
+class UrlShortenerConfigCustomizerPluginTest extends TestCase
 {
     /**
-     * @var LanguageConfigCustomizerPlugin
+     * @var UrlShortenerConfigCustomizerPlugin
      */
-    protected $plugin;
+    private $plugin;
     /**
      * @var ObjectProphecy
      */
-    protected $questionHelper;
+    private $questionHelper;
 
     public function setUp()
     {
         $this->questionHelper = $this->prophesize(QuestionHelper::class);
-        $this->plugin = new LanguageConfigCustomizerPlugin($this->questionHelper->reveal());
+        $this->plugin = new UrlShortenerConfigCustomizerPlugin($this->questionHelper->reveal());
     }
 
     /**
@@ -37,17 +37,18 @@ class LanguageConfigCustomizerPluginTest extends TestCase
     public function configIsRequestedToTheUser()
     {
         /** @var MethodProphecy $askSecret */
-        $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('en');
+        $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('something');
         $config = new CustomizableAppConfig();
 
         $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
 
-        $this->assertTrue($config->hasLanguage());
+        $this->assertTrue($config->hasUrlShortener());
         $this->assertEquals([
-            'DEFAULT' => 'en',
-            'CLI' => 'en',
-        ], $config->getLanguage());
-        $askSecret->shouldHaveBeenCalledTimes(2);
+            'SCHEMA' => 'something',
+            'HOSTNAME' => 'something',
+            'CHARS' => 'something',
+        ], $config->getUrlShortener());
+        $askSecret->shouldHaveBeenCalledTimes(3);
     }
 
     /**
@@ -58,21 +59,23 @@ class LanguageConfigCustomizerPluginTest extends TestCase
         /** @var MethodProphecy $ask */
         $ask = $this->questionHelper->ask(Argument::cetera())->will(function (array $args) {
             $last = array_pop($args);
-            return $last instanceof ConfirmationQuestion ? false : 'es';
+            return $last instanceof ConfirmationQuestion ? false : 'foo';
         });
         $config = new CustomizableAppConfig();
-        $config->setLanguage([
-            'DEFAULT' => 'en',
-            'CLI' => 'en',
+        $config->setUrlShortener([
+            'SCHEMA' => 'bar',
+            'HOSTNAME' => 'bar',
+            'CHARS' => 'bar',
         ]);
 
         $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
 
         $this->assertEquals([
-            'DEFAULT' => 'es',
-            'CLI' => 'es',
-        ], $config->getLanguage());
-        $ask->shouldHaveBeenCalledTimes(3);
+            'SCHEMA' => 'foo',
+            'HOSTNAME' => 'foo',
+            'CHARS' => 'foo',
+        ], $config->getUrlShortener());
+        $ask->shouldHaveBeenCalledTimes(4);
     }
 
     /**
@@ -84,17 +87,19 @@ class LanguageConfigCustomizerPluginTest extends TestCase
         $ask = $this->questionHelper->ask(Argument::cetera())->willReturn(true);
 
         $config = new CustomizableAppConfig();
-        $config->setLanguage([
-            'DEFAULT' => 'es',
-            'CLI' => 'es',
+        $config->setUrlShortener([
+            'SCHEMA' => 'foo',
+            'HOSTNAME' => 'foo',
+            'CHARS' => 'foo',
         ]);
 
         $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
 
         $this->assertEquals([
-            'DEFAULT' => 'es',
-            'CLI' => 'es',
-        ], $config->getLanguage());
+            'SCHEMA' => 'foo',
+            'HOSTNAME' => 'foo',
+            'CHARS' => 'foo',
+        ], $config->getUrlShortener());
         $ask->shouldHaveBeenCalledTimes(1);
     }
 }
