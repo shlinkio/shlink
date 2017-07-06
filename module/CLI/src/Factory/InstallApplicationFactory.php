@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Shlinkio\Shlink\CLI\Factory;
 
 use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;

@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Shlinkio\Shlink\CLI\Install\Plugin\Factory;
 
 use Interop\Container\ContainerInterface;

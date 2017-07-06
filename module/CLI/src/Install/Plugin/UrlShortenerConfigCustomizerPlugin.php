@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Shlinkio\Shlink\CLI\Install\Plugin;
 
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;

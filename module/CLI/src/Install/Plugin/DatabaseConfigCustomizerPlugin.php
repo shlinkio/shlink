@@ -50,26 +50,23 @@ class DatabaseConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
     {
         $this->printTitle($output, 'DATABASE');
 
-        if ($appConfig->hasDatabase()) {
-            $keepConfig = $this->questionHelper->ask($input, $output, new ConfirmationQuestion(
-                '<question>Do you want to keep imported database config? (Y/n):</question> '
-            ));
-            if ($keepConfig) {
-                // If the user selected to keep DB config and is configured to use sqlite, copy DB file
-                if ($appConfig->getDatabase()['DRIVER'] === self::DATABASE_DRIVERS['SQLite']) {
-                    try {
-                        $this->filesystem->copy(
-                            $appConfig->getImportedInstallationPath() . '/' . CustomizableAppConfig::SQLITE_DB_PATH,
-                            CustomizableAppConfig::SQLITE_DB_PATH
-                        );
-                    } catch (IOException $e) {
-                        $output->writeln('<error>It wasn\'t possible to import the SQLite database</error>');
-                        throw $e;
-                    }
+        if ($appConfig->hasDatabase() && $this->questionHelper->ask($input, $output, new ConfirmationQuestion(
+            '<question>Do you want to keep imported database config? (Y/n):</question> '
+        ))) {
+            // If the user selected to keep DB config and is configured to use sqlite, copy DB file
+            if ($appConfig->getDatabase()['DRIVER'] === self::DATABASE_DRIVERS['SQLite']) {
+                try {
+                    $this->filesystem->copy(
+                        $appConfig->getImportedInstallationPath() . '/' . CustomizableAppConfig::SQLITE_DB_PATH,
+                        CustomizableAppConfig::SQLITE_DB_PATH
+                    );
+                } catch (IOException $e) {
+                    $output->writeln('<error>It wasn\'t possible to import the SQLite database</error>');
+                    throw $e;
                 }
-
-                return;
             }
+
+            return;
         }
 
         // Select database type

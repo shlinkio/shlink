@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace ShlinkioTest\Shlink\CLI\Install\Plugin;
 
 use PHPUnit\Framework\TestCase;

@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace ShlinkioTest\Shlink\Common\Factory;
 
 use PHPUnit\Framework\TestCase;
