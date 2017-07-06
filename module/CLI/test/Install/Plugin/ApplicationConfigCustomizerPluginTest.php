@@ -78,7 +78,6 @@ class ApplicationConfigCustomizerPluginTest extends TestCase
         /** @var MethodProphecy $ask */
         $ask = $this->questionHelper->ask(Argument::cetera())->willReturn(true);
 
-
         $config = new CustomizableAppConfig();
         $config->setApp([
             'SECRET' => 'foo',
