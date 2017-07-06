@@ -158,7 +158,7 @@ class InstallCommand extends Command
      * @return CustomizableAppConfig
      * @throws RuntimeException
      */
-    protected function importConfig()
+    private function importConfig()
     {
         $config = new CustomizableAppConfig();
 
@@ -204,7 +204,7 @@ class InstallCommand extends Command
      * @return string
      * @throws RuntimeException
      */
-    protected function ask($text, $default = null, $allowEmpty = false)
+    private function ask($text, $default = null, $allowEmpty = false)
     {
         if ($default !== null) {
             $text .= ' (defaults to ' . $default . ')';
@@ -227,7 +227,7 @@ class InstallCommand extends Command
      * @param string $errorMessage
      * @return bool
      */
-    protected function runCommand($command, $errorMessage)
+    private function runCommand($command, $errorMessage)
     {
         $process = $this->processHelper->run($this->output, $command);
         if ($process->isSuccessful()) {

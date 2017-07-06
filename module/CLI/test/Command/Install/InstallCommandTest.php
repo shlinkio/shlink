@@ -3,6 +3,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\Install;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Install\InstallCommand;
 use Shlinkio\Shlink\CLI\Install\ConfigCustomizerPluginManagerInterface;
@@ -10,12 +11,17 @@ use Shlinkio\Shlink\CLI\Install\Plugin\ConfigCustomizerPluginInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Zend\Config\Writer\WriterInterface;
 
 class InstallCommandTest extends TestCase
 {
+    /**
+     * @var InstallCommand
+     */
+    protected $command;
     /**
      * @var CommandTester
      */
@@ -51,50 +57,83 @@ class InstallCommandTest extends TestCase
         $helperSet = $app->getHelperSet();
         $helperSet->set($processHelper->reveal());
         $app->setHelperSet($helperSet);
-        $command = new InstallCommand(
+        $this->command = new InstallCommand(
             $this->configWriter->reveal(),
             $this->filesystem->reveal(),
             $configCustomizers->reveal()
         );
-        $app->add($command);
+        $app->add($this->command);
 
-        $questionHelper = $command->getHelper('question');
-//        $questionHelper->setInputStream($this->createInputStream());
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = new CommandTester($this->command);
     }
-
-//    protected function createInputStream()
-//    {
-//        $stream = fopen('php://memory', 'rb+', false);
-//        fwrite($stream, <<<CLI_INPUT
-//
-//shlink_db
-//alejandro
-//1234
-//
-//
-//0
-//doma.in
-//abc123BCA
-//
-//1
-//my_secret
-//CLI_INPUT
-//        );
-//        rewind($stream);
-//
-//        return $stream;
-//    }
 
     /**
      * @test
      */
-    public function inputIsProperlyParsed()
+    public function generatedConfigIsProperlyPersisted()
     {
         $this->configWriter->toFile(Argument::any(), Argument::type('array'), false)->shouldBeCalledTimes(1);
+        $this->commandTester->execute([]);
+    }
 
-        $this->commandTester->execute([
-            'command' => 'shlink:install',
+    /**
+     * @test
+     */
+    public function cachedConfigIsDeletedIfExists()
+    {
+        /** @var MethodProphecy $appConfigExists */
+        $appConfigExists = $this->filesystem->exists('data/cache/app_config.php')->willReturn(true);
+        /** @var MethodProphecy $appConfigRemove */
+        $appConfigRemove = $this->filesystem->remove('data/cache/app_config.php')->willReturn(null);
+
+        $this->commandTester->execute([]);
+
+        $appConfigExists->shouldHaveBeenCalledTimes(1);
+        $appConfigRemove->shouldHaveBeenCalledTimes(1);
+    }
+
+    /**
+     * @test
+     */
+    public function exceptionWhileDeletingCachedConfigCancelsProcess()
+    {
+        /** @var MethodProphecy $appConfigExists */
+        $appConfigExists = $this->filesystem->exists('data/cache/app_config.php')->willReturn(true);
+        /** @var MethodProphecy $appConfigRemove */
+        $appConfigRemove = $this->filesystem->remove('data/cache/app_config.php')->willThrow(IOException::class);
+        /** @var MethodProphecy $configToFile */
+        $configToFile = $this->configWriter->toFile(Argument::cetera())->willReturn(true);
+
+        $this->commandTester->execute([]);
+
+        $appConfigExists->shouldHaveBeenCalledTimes(1);
+        $appConfigRemove->shouldHaveBeenCalledTimes(1);
+        $configToFile->shouldNotHaveBeenCalled();
+    }
+
+    /**
+     * @test
+     */
+    public function whenCommandIsUpdatePreviousConfigCanBeImported()
+    {
+        $ref = new \ReflectionObject($this->command);
+        $prop = $ref->getProperty('isUpdate');
+        $prop->setAccessible(true);
+        $prop->setValue($this->command, true);
+
+        /** @var MethodProphecy $importedConfigExists */
+        $importedConfigExists = $this->filesystem->exists(
+            __DIR__ . '/../../../test-resources/' . InstallCommand::GENERATED_CONFIG_PATH
+        )->willReturn(true);
+
+        $this->commandTester->setInputs([
+            '',
+            '/foo/bar/wrong_previous_shlink',
+            '',
+            __DIR__ . '/../../../test-resources',
         ]);
+        $this->commandTester->execute([]);
+
+        $importedConfigExists->shouldHaveBeenCalled();
     }
 }
