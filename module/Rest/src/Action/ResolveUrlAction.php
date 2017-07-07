@@ -46,6 +46,7 @@ class ResolveUrlAction extends AbstractRestAction
      * @param Request $request
      * @param DelegateInterface $delegate
      * @return null|Response
+     * @throws \InvalidArgumentException
      */
     public function process(Request $request, DelegateInterface $delegate)
     {
@@ -53,7 +54,7 @@ class ResolveUrlAction extends AbstractRestAction
 
         try {
             $longUrl = $this->urlShortener->shortCodeToUrl($shortCode);
-            if (! isset($longUrl)) {
+            if ($longUrl === null) {
                 return new JsonResponse([
                     'error' => RestUtils::INVALID_ARGUMENT_ERROR,
                     'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),

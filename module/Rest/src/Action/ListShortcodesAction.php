@@ -48,6 +48,7 @@ class ListShortcodesAction extends AbstractRestAction
      * @param Request $request
      * @param DelegateInterface $delegate
      * @return null|Response
+     * @throws \InvalidArgumentException
      */
     public function process(Request $request, DelegateInterface $delegate)
     {
@@ -66,7 +67,7 @@ class ListShortcodesAction extends AbstractRestAction
 
     /**
      * @param array $query
-     * @return string
+     * @return array
      */
     public function queryToListParams(array $query)
     {

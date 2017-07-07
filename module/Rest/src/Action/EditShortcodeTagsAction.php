@@ -46,6 +46,7 @@ class EditShortcodeTagsAction extends AbstractRestAction
      * @param Request $request
      * @param DelegateInterface $delegate
      * @return null|Response
+     * @throws \InvalidArgumentException
      */
     public function process(Request $request, DelegateInterface $delegate)
     {
