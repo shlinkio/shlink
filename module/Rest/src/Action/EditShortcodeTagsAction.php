@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class EditTagsAction extends AbstractRestAction
+class EditShortcodeTagsAction extends AbstractRestAction
 {
     /**
      * @var ShortUrlServiceInterface
@@ -25,7 +25,7 @@ class EditTagsAction extends AbstractRestAction
     private $translator;
 
     /**
-     * EditTagsAction constructor.
+     * EditShortcodeTagsAction constructor.
      * @param ShortUrlServiceInterface $shortUrlService
      * @param TranslatorInterface $translator
      * @param LoggerInterface|null $logger

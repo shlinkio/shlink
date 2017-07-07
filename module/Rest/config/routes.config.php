@@ -37,7 +37,7 @@ return [
         [
             'name' => 'rest-edit-tags',
             'path' => '/rest/v{version:1}/short-codes/{shortCode}/tags',
-            'middleware' => Action\EditTagsAction::class,
+            'middleware' => Action\EditShortcodeTagsAction::class,
             'allowed_methods' => ['PUT'],
         ],
     ],
