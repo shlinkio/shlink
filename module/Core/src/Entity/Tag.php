@@ -20,6 +20,11 @@ class Tag extends AbstractEntity implements \JsonSerializable
      */
     protected $name;
 
+    public function __construct($name = null)
+    {
+        $this->name = $name;
+    }
+
     /**
      * @return string
      */
