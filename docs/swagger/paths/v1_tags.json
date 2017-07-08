@@ -1,0 +1,53 @@
+{
+    "get": {
+        "tags": [
+            "Tags"
+        ],
+        "summary": "List existing tags",
+        "description": "Returns the list of all tags used in any short URL, ordered by name",
+        "parameters": [
+            {
+                "$ref": "../parameters/Authorization.json"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The list of tags",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "tags": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "shortUrls": {
+                            "data": [
+                                "games",
+                                "php",
+                                "shlink",
+                                "tech"
+                            ]
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            }
+        }
+    }
+}
