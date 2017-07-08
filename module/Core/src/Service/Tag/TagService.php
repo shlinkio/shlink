@@ -29,6 +29,6 @@ class TagService implements TagServiceInterface
      */
     public function listTags()
     {
-        return $this->em->getRepository(Tag::class)->findBy([], ['name' => 'DESC']);
+        return $this->em->getRepository(Tag::class)->findBy([], ['name' => 'ASC']);
     }
 }
