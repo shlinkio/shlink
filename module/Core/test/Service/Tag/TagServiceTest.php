@@ -7,6 +7,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Service\Tag\TagService;
 use PHPUnit\Framework\TestCase;
 
@@ -45,5 +46,46 @@ class TagServiceTest extends TestCase
         $this->assertEquals($expected, $result);
         $find->shouldHaveBeenCalled();
         $getRepo->shouldHaveBeenCalled();
+    }
+
+    /**
+     * @test
+     */
+    public function deleteTagsDelegatesOnRepository()
+    {
+        $repo = $this->prophesize(TagRepository::class);
+        /** @var MethodProphecy $delete */
+        $delete = $repo->deleteByName(['foo', 'bar'])->willReturn(4);
+        /** @var MethodProphecy $getRepo */
+        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+
+        $this->service->deleteTags(['foo', 'bar']);
+
+        $delete->shouldHaveBeenCalled();
+        $getRepo->shouldHaveBeenCalled();
+    }
+
+    /**
+     * @test
+     */
+    public function createTagsPersistsEntities()
+    {
+        $repo = $this->prophesize(TagRepository::class);
+        /** @var MethodProphecy $find */
+        $find = $repo->findOneBy(Argument::cetera())->willReturn(new Tag());
+        /** @var MethodProphecy $getRepo */
+        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+        /** @var MethodProphecy $persist */
+        $persist = $this->em->persist(Argument::type(Tag::class))->willReturn(null);
+        /** @var MethodProphecy $flush */
+        $flush = $this->em->flush()->willReturn(null);
+
+        $result = $this->service->createTags(['foo', 'bar']);
+
+        $this->assertCount(2, $result);
+        $find->shouldHaveBeenCalled();
+        $getRepo->shouldHaveBeenCalled();
+        $persist->shouldHaveBeenCalledTimes(2);
+        $flush->shouldHaveBeenCalled();
     }
 }
