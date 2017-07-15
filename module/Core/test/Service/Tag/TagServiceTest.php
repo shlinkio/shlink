@@ -7,6 +7,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Service\Tag\TagService;
 use PHPUnit\Framework\TestCase;
@@ -86,6 +87,48 @@ class TagServiceTest extends TestCase
         $find->shouldHaveBeenCalled();
         $getRepo->shouldHaveBeenCalled();
         $persist->shouldHaveBeenCalledTimes(2);
+        $flush->shouldHaveBeenCalled();
+    }
+
+    /**
+     * @test
+     */
+    public function renameInvalidTagThrowsException()
+    {
+        $repo = $this->prophesize(TagRepository::class);
+        /** @var MethodProphecy $find */
+        $find = $repo->findOneBy(Argument::cetera())->willReturn(null);
+        /** @var MethodProphecy $getRepo */
+        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+
+        $find->shouldBeCalled();
+        $getRepo->shouldBeCalled();
+        $this->expectException(EntityDoesNotExistException::class);
+
+        $this->service->renameTag('foo', 'bar');
+    }
+
+    /**
+     * @test
+     */
+    public function renameValidTagChangesItsName()
+    {
+        $expected = new Tag();
+
+        $repo = $this->prophesize(TagRepository::class);
+        /** @var MethodProphecy $find */
+        $find = $repo->findOneBy(Argument::cetera())->willReturn($expected);
+        /** @var MethodProphecy $getRepo */
+        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+        /** @var MethodProphecy $flush */
+        $flush = $this->em->flush($expected)->willReturn(null);
+
+        $tag = $this->service->renameTag('foo', 'bar');
+
+        $this->assertSame($expected, $tag);
+        $this->assertEquals('bar', $tag->getName());
+        $find->shouldHaveBeenCalled();
+        $getRepo->shouldHaveBeenCalled();
         $flush->shouldHaveBeenCalled();
     }
 }
