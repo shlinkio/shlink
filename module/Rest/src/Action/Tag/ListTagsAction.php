@@ -1,5 +1,5 @@
 <?php
-namespace Shlinkio\Shlink\Rest\Action;
+namespace Shlinkio\Shlink\Rest\Action\Tag;
 
 use Acelaya\ZsmAnnotatedServices\Annotation as DI;
 use Interop\Http\ServerMiddleware\DelegateInterface;
@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Service\Tag\TagService;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
+use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Zend\Diactoros\Response\JsonResponse;
 
 class ListTagsAction extends AbstractRestAction

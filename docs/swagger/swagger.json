@@ -37,7 +37,6 @@
             "$ref": "paths/v1_tags.json"
         },
 
-
         "/v1/short-codes/{shortCode}/visits": {
             "$ref": "paths/v1_short-codes_{shortCode}_visits.json"
         }

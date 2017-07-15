@@ -19,7 +19,7 @@ return [
             Action\GetVisitsAction::class => AnnotatedFactory::class,
             Action\ListShortcodesAction::class => AnnotatedFactory::class,
             Action\EditShortcodeTagsAction::class => AnnotatedFactory::class,
-            Action\ListTagsAction::class => AnnotatedFactory::class,
+            Action\Tag\ListTagsAction::class => AnnotatedFactory::class,
 
             Middleware\BodyParserMiddleware::class => AnnotatedFactory::class,
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
