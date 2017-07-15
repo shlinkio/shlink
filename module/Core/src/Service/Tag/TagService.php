@@ -5,6 +5,7 @@ use Acelaya\ZsmAnnotatedServices\Annotation as DI;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 
@@ -60,5 +61,26 @@ class TagService implements TagServiceInterface
         $this->em->flush();
 
         return $tags;
+    }
+
+    /**
+     * @param string $oldName
+     * @param string $newName
+     * @return Tag
+     * @throws EntityDoesNotExistException
+     */
+    public function renameTag($oldName, $newName)
+    {
+        $criteria = ['name' => $oldName];
+        /** @var Tag|null $tag */
+        $tag = $this->em->getRepository(Tag::class)->findOneBy($criteria);
+        if ($tag === null) {
+            throw EntityDoesNotExistException::createFromEntityAndConditions(Tag::class, $criteria);
+        }
+
+        $tag->setName($newName);
+        $this->em->flush($tag);
+
+        return $tag;
     }
 }

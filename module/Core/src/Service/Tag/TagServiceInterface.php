@@ -3,6 +3,7 @@ namespace Shlinkio\Shlink\Core\Service\Tag;
 
 use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 
 interface TagServiceInterface
 {
@@ -24,4 +25,12 @@ interface TagServiceInterface
      * @return Collection|Tag[]
      */
     public function createTags(array $tagNames);
+
+    /**
+     * @param string $oldName
+     * @param string $newName
+     * @return Tag
+     * @throws EntityDoesNotExistException
+     */
+    public function renameTag($oldName, $newName);
 }

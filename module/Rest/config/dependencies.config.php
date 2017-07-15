@@ -22,6 +22,7 @@ return [
             Action\Tag\ListTagsAction::class => AnnotatedFactory::class,
             Action\Tag\DeleteTagsAction::class => AnnotatedFactory::class,
             Action\Tag\CreateTagsAction::class => AnnotatedFactory::class,
+            Action\Tag\UpdateTagAction::class => AnnotatedFactory::class,
 
             Middleware\BodyParserMiddleware::class => AnnotatedFactory::class,
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,

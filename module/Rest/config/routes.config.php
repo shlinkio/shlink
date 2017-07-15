@@ -65,6 +65,12 @@ return [
             'middleware' => Action\Tag\CreateTagsAction::class,
             'allowed_methods' => [RequestMethod::METHOD_POST],
         ],
+        [
+            'name' => Action\Tag\UpdateTagAction::class,
+            'path' => '/rest/v{version:1}/tags',
+            'middleware' => Action\Tag\UpdateTagAction::class,
+            'allowed_methods' => [RequestMethod::METHOD_PUT],
+        ],
     ],
 
 ];
