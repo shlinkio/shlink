@@ -31,7 +31,65 @@
                 },
                 "examples": {
                     "application/json": {
-                        "shortUrls": {
+                        "tags": {
+                            "data": [
+                                "games",
+                                "php",
+                                "shlink",
+                                "tech"
+                            ]
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            }
+        }
+    },
+    "post": {
+        "tags": [
+            "Tags"
+        ],
+        "summary": "Create tags",
+        "description": "Provided a list of tags, creates all that do not yet exist",
+        "parameters": [
+            {
+                "$ref": "../parameters/Authorization.json"
+            },
+            {
+                "name": "tags[]",
+                "in": "formData",
+                "description": "The list of tag names to create",
+                "required": true,
+                "type": "array"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The list of tags",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "tags": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "tags": {
                             "data": [
                                 "games",
                                 "php",
