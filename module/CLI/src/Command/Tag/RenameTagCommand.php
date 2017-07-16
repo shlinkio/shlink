@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
 use Acelaya\ZsmAnnotatedServices\Annotation as DI;

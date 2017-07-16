@@ -1,10 +1,11 @@
 <?php
 use Shlinkio\Shlink\CLI\Command;
+use Shlinkio\Shlink\Common;
 
 return [
 
     'cli' => [
-        'locale' => env('CLI_LOCALE', 'en'),
+        'locale' => Common\env('CLI_LOCALE', 'en'),
         'commands' => [
             Command\Shortcode\GenerateShortcodeCommand::class,
             Command\Shortcode\ResolveUrlCommand::class,
