@@ -19,6 +19,7 @@ return [
             Command\Api\ListKeysCommand::class,
             Command\Tag\ListTagsCommand::class,
             Command\Tag\CreateTagCommand::class,
+            Command\Tag\RenameTagCommand::class,
         ]
     ],
 

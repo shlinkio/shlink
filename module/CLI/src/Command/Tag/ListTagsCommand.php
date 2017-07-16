@@ -41,7 +41,7 @@ class ListTagsCommand extends Command
     {
         $this
             ->setName('tag:list')
-            ->setDescription($this->translator->translate('Lists existing tags'));
+            ->setDescription($this->translator->translate('Lists existing tags.'));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

@@ -23,6 +23,7 @@ return [
             Command\Api\ListKeysCommand::class => AnnotatedFactory::class,
             Command\Tag\ListTagsCommand::class => AnnotatedFactory::class,
             Command\Tag\CreateTagCommand::class => AnnotatedFactory::class,
+            Command\Tag\RenameTagCommand::class => AnnotatedFactory::class,
         ],
     ],
 

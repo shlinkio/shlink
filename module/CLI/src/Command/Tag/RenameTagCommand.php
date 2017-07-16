@@ -1,17 +1,20 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
 use Acelaya\ZsmAnnotatedServices\Annotation as DI;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Service\Tag\TagService;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Zend\I18n\Translator\Translator;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class CreateTagCommand extends Command
+class RenameTagCommand extends Command
 {
     /**
      * @var TagServiceInterface
@@ -23,7 +26,7 @@ class CreateTagCommand extends Command
     private $translator;
 
     /**
-     * CreateTagCommand constructor.
+     * RenameTagCommand constructor.
      * @param TagServiceInterface $tagService
      * @param TranslatorInterface $translator
      *
@@ -39,31 +42,24 @@ class CreateTagCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('tag:create')
-            ->setDescription($this->translator->translate('Creates one or more tags.'))
-            ->addOption(
-                'name',
-                't',
-                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                $this->translator->translate('The name of the tags to create')
-            );
+            ->setName('tag:rename')
+            ->setDescription($this->translator->translate('Renames one existing tag.'))
+            ->addArgument('oldName', InputArgument::REQUIRED, $this->translator->translate('Current name of the tag.'))
+            ->addArgument('newName', InputArgument::REQUIRED, $this->translator->translate('New name of the tag.'));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $tagNames = $input->getOption('name');
-        if (empty($tagNames)) {
-            $output->writeln(sprintf(
-                '<comment>%s</comment>',
-                $this->translator->translate('You have to provide at least one tag name')
-            ));
-            return;
-        }
+        $oldName = $input->getArgument('oldName');
+        $newName = $input->getArgument('newName');
 
-        $this->tagService->createTags($tagNames);
-        $output->writeln($this->translator->translate('Created tags') . sprintf(': ["<info>%s</info>"]', implode(
-            '</info>", "<info>',
-            $tagNames
-        )));
+        try {
+            $this->tagService->renameTag($oldName, $newName);
+            $output->writeln(sprintf('<info>%s</info>', $this->translator->translate('Tag properly renamed.')));
+        } catch (EntityDoesNotExistException $e) {
+            $output->writeln('<error>' . sprintf($this->translator->translate(
+                'A tag with name "%s" was not found'
+            ), $oldName) . '</error>');
+        }
     }
 }
