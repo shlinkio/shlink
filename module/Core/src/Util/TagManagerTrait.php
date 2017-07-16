@@ -26,7 +26,7 @@ trait TagManagerTrait
     }
 
     /**
-     * Tag names are trimmed, lowercased and spaces are replaced by dashes
+     * Tag names are trimmed, lower cased and spaces are replaced by dashes
      *
      * @param string $tagName
      * @return string

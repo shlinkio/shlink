@@ -1,5 +1,23 @@
 ## CHANGELOG
 
+### 1.5.0
+
+**Enhancements:**
+
+* [95: Add tags CRUD to CLI](https://github.com/shlinkio/shlink/issues/95)
+* [59: Add tags CRUD to REST](https://github.com/shlinkio/shlink/issues/59)
+* [66: Allow to import certain information from older app directory when updating](https://github.com/shlinkio/shlink/issues/66)
+
+**Tasks**
+
+* [96: Add namespace to functions](https://github.com/shlinkio/shlink/issues/96)
+* [76: Add response examples to swagger docs](https://github.com/shlinkio/shlink/issues/76)
+* [93: Improve cross domain management by using the ImplicitOptionsMiddleware](https://github.com/shlinkio/shlink/issues/93)
+
+**Bugs**
+
+* [92: Fix formatted dates, using an ISO compliant format](https://github.com/shlinkio/shlink/issues/92)
+
 ### 1.4.0
 
 **Enhancements:**

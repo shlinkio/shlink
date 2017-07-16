@@ -54,8 +54,9 @@ class AuthenticateAction extends AbstractRestAction
      * @param Request $request
      * @param DelegateInterface $delegate
      * @return null|Response
+     * @throws \InvalidArgumentException
      */
-    public function dispatch(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, DelegateInterface $delegate)
     {
         $authData = $request->getParsedBody();
         if (! isset($authData['apiKey'])) {

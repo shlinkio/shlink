@@ -68,6 +68,44 @@
                             }
                         }
                     }
+                },
+                "examples": {
+                    "application/json": {
+                        "shortUrls": {
+                            "data": [
+                                {
+                                    "shortCode": "12C18",
+                                    "originalUrl": "https://store.steampowered.com",
+                                    "dateCreated": "2016-08-21T20:34:16+02:00",
+                                    "visitsCount": 328,
+                                    "tags": [
+                                        "games",
+                                        "tech"
+                                    ]
+                                },
+                                {
+                                    "shortCode": "12Kb3",
+                                    "originalUrl": "https://shlink.io",
+                                    "dateCreated": "2016-05-01T20:34:16+02:00",
+                                    "visitsCount": 1029,
+                                    "tags": [
+                                        "shlink"
+                                    ]
+                                },
+                                {
+                                    "shortCode": "123bA",
+                                    "originalUrl": "https://www.google.com",
+                                    "dateCreated": "2015-10-01T20:34:16+02:00",
+                                    "visitsCount": 25,
+                                    "tags": []
+                                }
+                            ],
+                            "pagination": {
+                                "currentPage": 5,
+                                "pagesCount": 12
+                            }
+                        }
+                    }
                 }
             },
             "500": {

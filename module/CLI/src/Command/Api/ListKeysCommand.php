@@ -84,7 +84,7 @@ class ListKeysCommand extends Command
                 $rowData[] = $this->{$formatMethod}($this->getEnabledSymbol($row));
             }
 
-            $rowData[] = isset($expiration) ? $expiration->format(\DateTime::ISO8601) : '-';
+            $rowData[] = isset($expiration) ? $expiration->format(\DateTime::ATOM) : '-';
             $table->addRow($rowData);
         }
 

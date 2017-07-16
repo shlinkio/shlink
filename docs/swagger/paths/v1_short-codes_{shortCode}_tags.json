@@ -41,6 +41,14 @@
                             }
                         }
                     }
+                },
+                "examples": {
+                    "application/json": {
+                        "tags": [
+                            "games",
+                            "tech"
+                        ]
+                    }
                 }
             },
             "400": {

@@ -5,6 +5,7 @@ use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Middleware\CheckAuthenticationMiddleware;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
@@ -56,7 +57,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('foo', '', Route::HTTP_METHOD_ANY, 'rest-authenticate'), [])
+            RouteResult::fromRoute(new Route('foo', '', Route::HTTP_METHOD_ANY, AuthenticateAction::class))
         );
         $delegate = $this->prophesize(DelegateInterface::class);
         /** @var MethodProphecy $process */

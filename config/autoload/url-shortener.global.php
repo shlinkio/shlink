@@ -1,14 +1,15 @@
 <?php
+use Shlinkio\Shlink\Common;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 
 return [
 
     'url_shortener' => [
         'domain' => [
-            'schema' => env('SHORTENED_URL_SCHEMA', 'http'),
-            'hostname' => env('SHORTENED_URL_HOSTNAME'),
+            'schema' => Common\env('SHORTENED_URL_SCHEMA', 'http'),
+            'hostname' => Common\env('SHORTENED_URL_HOSTNAME'),
         ],
-        'shortcode_chars' => env('SHORTCODE_CHARS', UrlShortener::DEFAULT_CHARS),
+        'shortcode_chars' => Common\env('SHORTCODE_CHARS', UrlShortener::DEFAULT_CHARS),
     ],
 
 ];

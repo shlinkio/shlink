@@ -1,8 +1,10 @@
 <?php
+use Shlinkio\Shlink\Common;
+
 return [
 
     'translator' => [
-        'locale' => env('DEFAULT_LOCALE', 'en'),
+        'locale' => Common\env('DEFAULT_LOCALE', 'en'),
     ],
 
 ];

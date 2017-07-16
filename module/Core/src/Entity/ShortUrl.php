@@ -176,7 +176,7 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
         return [
             'shortCode' => $this->shortCode,
             'originalUrl' => $this->originalUrl,
-            'dateCreated' => isset($this->dateCreated) ? $this->dateCreated->format(\DateTime::ISO8601) : null,
+            'dateCreated' => isset($this->dateCreated) ? $this->dateCreated->format(\DateTime::ATOM) : null,
             'visitsCount' => count($this->visits),
             'tags' => $this->tags->toArray(),
         ];

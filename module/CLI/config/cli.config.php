@@ -1,10 +1,11 @@
 <?php
 use Shlinkio\Shlink\CLI\Command;
+use Shlinkio\Shlink\Common;
 
 return [
 
     'cli' => [
-        'locale' => env('CLI_LOCALE', 'en'),
+        'locale' => Common\env('CLI_LOCALE', 'en'),
         'commands' => [
             Command\Shortcode\GenerateShortcodeCommand::class,
             Command\Shortcode\ResolveUrlCommand::class,
@@ -17,6 +18,10 @@ return [
             Command\Api\GenerateKeyCommand::class,
             Command\Api\DisableKeyCommand::class,
             Command\Api\ListKeysCommand::class,
+            Command\Tag\ListTagsCommand::class,
+            Command\Tag\CreateTagCommand::class,
+            Command\Tag\RenameTagCommand::class,
+            Command\Tag\DeleteTagsCommand::class,
         ]
     ],
 

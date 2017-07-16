@@ -28,6 +28,11 @@
                             "description": "The original long URL behind the short code."
                         }
                     }
+                },
+                "examples": {
+                    "application/json": {
+                        "longUrl": "https://shlink.io"
+                    }
                 }
             },
             "400": {

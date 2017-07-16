@@ -4,7 +4,7 @@ use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
 use Shlinkio\Shlink\Rest\Middleware\CheckAuthenticationMiddleware;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
 use Shlinkio\Shlink\Rest\Middleware\PathVersionMiddleware;
-use Zend\Expressive\Container\ApplicationFactory;
+use Zend\Expressive;
 use Zend\Stratigility\Middleware\ErrorHandler;
 
 return [
@@ -27,7 +27,7 @@ return [
 
         'routing' => [
             'middleware' => [
-                ApplicationFactory::ROUTING_MIDDLEWARE,
+                Expressive\Application::ROUTING_MIDDLEWARE,
             ],
             'priority' => 10,
         ],
@@ -36,6 +36,7 @@ return [
             'path' => '/rest',
             'middleware' => [
                 CrossDomainMiddleware::class,
+                Expressive\Middleware\ImplicitOptionsMiddleware::class,
                 BodyParserMiddleware::class,
                 CheckAuthenticationMiddleware::class,
             ],
@@ -44,7 +45,7 @@ return [
 
         'post-routing' => [
             'middleware' => [
-                ApplicationFactory::DISPATCH_MIDDLEWARE,
+                Expressive\Application::DISPATCH_MIDDLEWARE,
             ],
             'priority' => 1,
         ],

@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Authentication\JWTServiceInterface;
 use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
@@ -69,7 +70,7 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeIn
         $routeResult = $request->getAttribute(RouteResult::class);
         if (! isset($routeResult)
             || $routeResult->isFailure()
-            || $routeResult->getMatchedRouteName() === 'rest-authenticate'
+            || $routeResult->getMatchedRouteName() === AuthenticateAction::class
             || $request->getMethod() === 'OPTIONS'
         ) {
             return $delegate->process($request);

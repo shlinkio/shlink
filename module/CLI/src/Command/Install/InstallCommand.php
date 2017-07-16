@@ -1,27 +1,25 @@
 <?php
 namespace Shlinkio\Shlink\CLI\Command\Install;
 
-use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\CLI\Install\ConfigCustomizerPluginManagerInterface;
+use Shlinkio\Shlink\CLI\Install\Plugin;
+use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
 use Zend\Config\Writer\WriterInterface;
 
 class InstallCommand extends Command
 {
-    use StringUtilsTrait;
-
-    const DATABASE_DRIVERS = [
-        'MySQL' => 'pdo_mysql',
-        'PostgreSQL' => 'pdo_pgsql',
-        'SQLite' => 'pdo_sqlite',
-    ];
-    const SUPPORTED_LANGUAGES = ['en', 'es'];
+    const GENERATED_CONFIG_PATH = 'config/params/generated_config.php';
 
     /**
      * @var InputInterface
@@ -43,22 +41,44 @@ class InstallCommand extends Command
      * @var WriterInterface
      */
     private $configWriter;
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
+    /**
+     * @var ConfigCustomizerPluginManagerInterface
+     */
+    private $configCustomizers;
+    /**
+     * @var bool
+     */
+    private $isUpdate;
 
     /**
      * InstallCommand constructor.
      * @param WriterInterface $configWriter
-     * @param callable|null $databaseCreationLogic
+     * @param Filesystem $filesystem
+     * @param bool $isUpdate
+     * @throws LogicException
      */
-    public function __construct(WriterInterface $configWriter)
-    {
-        parent::__construct(null);
+    public function __construct(
+        WriterInterface $configWriter,
+        Filesystem $filesystem,
+        ConfigCustomizerPluginManagerInterface $configCustomizers,
+        $isUpdate = false
+    ) {
+        parent::__construct();
         $this->configWriter = $configWriter;
+        $this->isUpdate = $isUpdate;
+        $this->filesystem = $filesystem;
+        $this->configCustomizers = $configCustomizers;
     }
 
     public function configure()
     {
-        $this->setName('shlink:install')
-             ->setDescription('Installs Shlink');
+        $this
+            ->setName('shlink:install')
+            ->setDescription('Installs or updates Shlink');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
@@ -67,40 +87,58 @@ class InstallCommand extends Command
         $this->output = $output;
         $this->questionHelper = $this->getHelper('question');
         $this->processHelper = $this->getHelper('process');
-        $params = [];
 
         $output->writeln([
             '<info>Welcome to Shlink!!</info>',
-            'This process will guide you through the installation.',
+            'This will guide you through the installation process.',
         ]);
 
         // Check if a cached config file exists and drop it if so
-        if (file_exists('data/cache/app_config.php')) {
+        if ($this->filesystem->exists('data/cache/app_config.php')) {
             $output->write('Deleting old cached config...');
-            if (unlink('data/cache/app_config.php')) {
+            try {
+                $this->filesystem->remove('data/cache/app_config.php');
                 $output->writeln(' <info>Success</info>');
-            } else {
+            } catch (IOException $e) {
                 $output->writeln(
                     ' <error>Failed!</error> You will have to manually delete the data/cache/app_config.php file to get'
                     . ' new config applied.'
                 );
+                if ($output->isVerbose()) {
+                    $this->getApplication()->renderException($e, $output);
+                }
+                return;
             }
         }
 
+        // If running update command, ask the user to import previous config
+        $config = $this->isUpdate ? $this->importConfig() : new CustomizableAppConfig();
+
         // Ask for custom config params
-        $params['DATABASE'] = $this->askDatabase();
-        $params['URL_SHORTENER'] = $this->askUrlShortener();
-        $params['LANGUAGE'] = $this->askLanguage();
-        $params['APP'] = $this->askApplication();
+        foreach ([
+            Plugin\DatabaseConfigCustomizerPlugin::class,
+            Plugin\UrlShortenerConfigCustomizerPlugin::class,
+            Plugin\LanguageConfigCustomizerPlugin::class,
+            Plugin\ApplicationConfigCustomizerPlugin::class,
+        ] as $pluginName) {
+            /** @var Plugin\ConfigCustomizerPluginInterface $configCustomizer */
+            $configCustomizer = $this->configCustomizers->get($pluginName);
+            $configCustomizer->process($input, $output, $config);
+        }
 
         // Generate config params files
-        $config = $this->buildAppConfig($params);
-        $this->configWriter->toFile('config/params/generated_config.php', $config, false);
+        $this->configWriter->toFile(self::GENERATED_CONFIG_PATH, $config->getArrayCopy(), false);
         $output->writeln(['<info>Custom configuration properly generated!</info>', '']);
 
-        // Generate database
-        if (! $this->createDatabase()) {
-            return;
+        // If current command is not update, generate database
+        if (!  $this->isUpdate) {
+            $this->output->writeln('Initializing database...');
+            if (! $this->runCommand(
+                'php vendor/bin/doctrine.php orm:schema-tool:create',
+                'Error generating database.'
+            )) {
+                return;
+            }
         }
 
         // Run database migrations
@@ -116,105 +154,47 @@ class InstallCommand extends Command
         }
     }
 
-    protected function askDatabase()
+    /**
+     * @return CustomizableAppConfig
+     * @throws RuntimeException
+     */
+    private function importConfig()
     {
-        $params = [];
-        $this->printTitle('DATABASE');
+        $config = new CustomizableAppConfig();
 
-        // Select database type
-        $databases = array_keys(self::DATABASE_DRIVERS);
-        $dbType = $this->questionHelper->ask($this->input, $this->output, new ChoiceQuestion(
-            '<question>Select database type (defaults to ' . $databases[0] . '):</question>',
-            $databases,
-            0
+        // Ask the user if he/she wants to import an older configuration
+        $importConfig = $this->questionHelper->ask($this->input, $this->output, new ConfirmationQuestion(
+            '<question>Do you want to import previous configuration? (Y/n):</question> '
         ));
-        $params['DRIVER'] = self::DATABASE_DRIVERS[$dbType];
-
-        // Ask for connection params if database is not SQLite
-        if ($params['DRIVER'] !== self::DATABASE_DRIVERS['SQLite']) {
-            $params['NAME'] = $this->ask('Database name', 'shlink');
-            $params['USER'] = $this->ask('Database username');
-            $params['PASSWORD'] = $this->ask('Database password');
-            $params['HOST'] = $this->ask('Database host', 'localhost');
-            $params['PORT'] = $this->ask('Database port', $this->getDefaultDbPort($params['DRIVER']));
+        if (! $importConfig) {
+            return $config;
         }
 
-        return $params;
-    }
+        // Ask the user for the older shlink path
+        $keepAsking = true;
+        do {
+            $config->setImportedInstallationPath($this->ask(
+                'Previous shlink installation path from which to import config'
+            ));
+            $configFile = $config->getImportedInstallationPath() . '/' . self::GENERATED_CONFIG_PATH;
+            $configExists = $this->filesystem->exists($configFile);
 
-    protected function getDefaultDbPort($driver)
-    {
-        return $driver === 'pdo_mysql' ? '3306' : '5432';
-    }
+            if (! $configExists) {
+                $keepAsking = $this->questionHelper->ask($this->input, $this->output, new ConfirmationQuestion(
+                    'Provided path does not seem to be a valid shlink root path. '
+                    . '<question>Do you want to try another path? (Y/n):</question> '
+                ));
+            }
+        } while (! $configExists && $keepAsking);
 
-    protected function askUrlShortener()
-    {
-        $this->printTitle('URL SHORTENER');
+        // If after some retries the user has chosen not to test another path, return
+        if (! $configExists) {
+            return $config;
+        }
 
-        // Ask for URL shortener params
-        return [
-            'SCHEMA' => $this->questionHelper->ask($this->input, $this->output, new ChoiceQuestion(
-                '<question>Select schema for generated short URLs (defaults to http):</question>',
-                ['http', 'https'],
-                0
-            )),
-            'HOSTNAME' => $this->ask('Hostname for generated URLs'),
-            'CHARS' => $this->ask(
-                'Character set for generated short codes (leave empty to autogenerate one)',
-                null,
-                true
-            ) ?: str_shuffle(UrlShortener::DEFAULT_CHARS)
-        ];
-    }
-
-    protected function askLanguage()
-    {
-        $this->printTitle('LANGUAGE');
-
-        return [
-            'DEFAULT' => $this->questionHelper->ask($this->input, $this->output, new ChoiceQuestion(
-                '<question>Select default language for the application in general (defaults to '
-                . self::SUPPORTED_LANGUAGES[0] . '):</question>',
-                self::SUPPORTED_LANGUAGES,
-                0
-            )),
-            'CLI' => $this->questionHelper->ask($this->input, $this->output, new ChoiceQuestion(
-                '<question>Select default language for CLI executions (defaults to '
-                . self::SUPPORTED_LANGUAGES[0] . '):</question>',
-                self::SUPPORTED_LANGUAGES,
-                0
-            )),
-        ];
-    }
-
-    protected function askApplication()
-    {
-        $this->printTitle('APPLICATION');
-
-        return [
-            'SECRET' => $this->ask(
-                'Define a secret string that will be used to sign API tokens (leave empty to autogenerate one)',
-                null,
-                true
-            ) ?: $this->generateRandomString(32),
-        ];
-    }
-
-    /**
-     * @param string $text
-     */
-    protected function printTitle($text)
-    {
-        $text = trim($text);
-        $length = strlen($text) + 4;
-        $header = str_repeat('*', $length);
-
-        $this->output->writeln([
-            '',
-            '<info>' . $header . '</info>',
-            '<info>* ' . strtoupper($text) . ' *</info>',
-            '<info>' . $header . '</info>',
-        ]);
+        // Read the config file
+        $config->exchangeArray(include $configFile);
+        return $config;
     }
 
     /**
@@ -222,10 +202,11 @@ class InstallCommand extends Command
      * @param string|null $default
      * @param bool $allowEmpty
      * @return string
+     * @throws RuntimeException
      */
-    protected function ask($text, $default = null, $allowEmpty = false)
+    private function ask($text, $default = null, $allowEmpty = false)
     {
-        if (isset($default)) {
+        if ($default !== null) {
             $text .= ' (defaults to ' . $default . ')';
         }
         do {
@@ -236,66 +217,9 @@ class InstallCommand extends Command
             if (empty($value) && ! $allowEmpty) {
                 $this->output->writeln('<error>Value can\'t be empty</error>');
             }
-        } while (empty($value) && empty($default) && ! $allowEmpty);
+        } while (empty($value) && $default === null && ! $allowEmpty);
 
         return $value;
-    }
-
-    /**
-     * @param array $params
-     * @return array
-     */
-    protected function buildAppConfig(array $params)
-    {
-        // Build simple config
-        $config = [
-            'app_options' => [
-                'secret_key' => $params['APP']['SECRET'],
-            ],
-            'entity_manager' => [
-                'connection' => [
-                    'driver' => $params['DATABASE']['DRIVER'],
-                ],
-            ],
-            'translator' => [
-                'locale' => $params['LANGUAGE']['DEFAULT'],
-            ],
-            'cli' => [
-                'locale' => $params['LANGUAGE']['CLI'],
-            ],
-            'url_shortener' => [
-                'domain' => [
-                    'schema' => $params['URL_SHORTENER']['SCHEMA'],
-                    'hostname' => $params['URL_SHORTENER']['HOSTNAME'],
-                ],
-                'shortcode_chars' => $params['URL_SHORTENER']['CHARS'],
-            ],
-        ];
-
-        // Build dynamic database config
-        if ($params['DATABASE']['DRIVER'] === 'pdo_sqlite') {
-            $config['entity_manager']['connection']['path'] = 'data/database.sqlite';
-        } else {
-            $config['entity_manager']['connection']['user'] = $params['DATABASE']['USER'];
-            $config['entity_manager']['connection']['password'] = $params['DATABASE']['PASSWORD'];
-            $config['entity_manager']['connection']['dbname'] = $params['DATABASE']['NAME'];
-            $config['entity_manager']['connection']['host'] = $params['DATABASE']['HOST'];
-            $config['entity_manager']['connection']['port'] = $params['DATABASE']['PORT'];
-
-            if ($params['DATABASE']['DRIVER'] === 'pdo_mysql') {
-                $config['entity_manager']['connection']['driverOptions'] = [
-                    \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
-                ];
-            }
-        }
-
-        return $config;
-    }
-
-    protected function createDatabase()
-    {
-        $this->output->writeln('Initializing database...');
-        return $this->runCommand('php vendor/bin/doctrine.php orm:schema-tool:create', 'Error generating database.');
     }
 
     /**
@@ -303,20 +227,21 @@ class InstallCommand extends Command
      * @param string $errorMessage
      * @return bool
      */
-    protected function runCommand($command, $errorMessage)
+    private function runCommand($command, $errorMessage)
     {
         $process = $this->processHelper->run($this->output, $command);
         if ($process->isSuccessful()) {
             $this->output->writeln('    <info>Success!</info>');
             return true;
-        } else {
-            if ($this->output->isVerbose()) {
-                return false;
-            }
-            $this->output->writeln(
-                '    <error>' . $errorMessage . '</error>  Run this command with -vvv to see specific error info.'
-            );
+        }
+
+        if ($this->output->isVerbose()) {
             return false;
         }
+
+        $this->output->writeln(
+            '    <error>' . $errorMessage . '</error>  Run this command with -vvv to see specific error info.'
+        );
+        return false;
     }
 }

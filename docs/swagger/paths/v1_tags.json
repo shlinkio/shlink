@@ -1,0 +1,193 @@
+{
+    "get": {
+        "tags": [
+            "Tags"
+        ],
+        "summary": "List existing tags",
+        "description": "Returns the list of all tags used in any short URL, ordered by name",
+        "parameters": [
+            {
+                "$ref": "../parameters/Authorization.json"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The list of tags",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "tags": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "tags": {
+                            "data": [
+                                "games",
+                                "php",
+                                "shlink",
+                                "tech"
+                            ]
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            }
+        }
+    },
+
+    "post": {
+        "tags": [
+            "Tags"
+        ],
+        "summary": "Create tags",
+        "description": "Provided a list of tags, creates all that do not yet exist",
+        "parameters": [
+            {
+                "$ref": "../parameters/Authorization.json"
+            },
+            {
+                "name": "tags[]",
+                "in": "formData",
+                "description": "The list of tag names to create",
+                "required": true,
+                "type": "array"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The list of tags",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "tags": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "tags": {
+                            "data": [
+                                "games",
+                                "php",
+                                "shlink",
+                                "tech"
+                            ]
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            }
+        }
+    },
+
+    "put": {
+        "tags": [
+            "Tags"
+        ],
+        "summary": "Rename tag",
+        "description": "Renames one existing tag",
+        "parameters": [
+            {
+                "$ref": "../parameters/Authorization.json"
+            },
+            {
+                "name": "oldName",
+                "in": "formData",
+                "description": "Current name of the tag",
+                "required": true,
+                "type": "string"
+            },
+            {
+                "name": "newName",
+                "in": "formData",
+                "description": "New name of the tag",
+                "required": true,
+                "type": "string"
+            }
+        ],
+        "responses": {
+            "204": {
+                "description": "The tag has been properly renamed"
+            },
+            "400": {
+                "description": "You have not provided either the oldName or the newName params.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            },
+            "404": {
+                "description": "There's no tag found with the name provided in oldName param.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            }
+        }
+    },
+
+    "delete": {
+        "tags": [
+            "Tags"
+        ],
+        "summary": "Delete tags",
+        "description": "Deletes provided list of tags",
+        "parameters": [
+            {
+                "$ref": "../parameters/Authorization.json"
+            },
+            {
+                "name": "tags[]",
+                "in": "query",
+                "description": "The names of the tags to delete",
+                "required": true,
+                "type": "array"
+            }
+        ],
+        "responses": {
+            "204": {
+                "description": "Tags properly deleted"
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            }
+        }
+    }
+}
