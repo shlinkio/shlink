@@ -21,6 +21,7 @@ return [
             Command\Tag\ListTagsCommand::class,
             Command\Tag\CreateTagCommand::class,
             Command\Tag\RenameTagCommand::class,
+            Command\Tag\DeleteTagsCommand::class,
         ]
     ],
 
