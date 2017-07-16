@@ -19,7 +19,7 @@ class DatabaseConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
         'PostgreSQL' => 'pdo_pgsql',
         'SQLite' => 'pdo_sqlite',
     ];
-    
+
     /**
      * @var Filesystem
      */
