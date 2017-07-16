@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2017-07-15 12:15+0200\n"
-"PO-Revision-Date: 2017-07-15 12:16+0200\n"
+"POT-Creation-Date: 2017-07-16 09:35+0200\n"
+"PO-Revision-Date: 2017-07-16 09:39+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -223,12 +223,52 @@ msgstr "URL larga:"
 msgid "Provided short code \"%s\" has an invalid format."
 msgstr "El código corto proporcionado \"%s\" tiene un formato inválido."
 
+msgid "Creates one or more tags."
+msgstr "Crea una o más etiquetas."
+
+msgid "The name of the tags to create"
+msgstr "El nombre de las etiquetas a crear"
+
+msgid "You have to provide at least one tag name"
+msgstr "Debes proporcionar al menos un nombre de etiqueta"
+
+msgid "Created tags"
+msgstr "Etiquetas creadas"
+
+msgid "Deletes one or more tags."
+msgstr "Elimina una o más etiquetas."
+
+msgid "The name of the tags to delete"
+msgstr "El nombre de las etiquetas a eliminar"
+
+msgid "Deleted tags"
+msgstr "Etiquetas eliminadas"
+
+msgid "Lists existing tags."
+msgstr "Lista las etiquetas existentes."
+
 #, fuzzy
 msgid "Name"
 msgstr "Nombre"
 
 msgid "No tags yet"
-msgstr "Aún no hay tags"
+msgstr "Aún no hay etiquetas"
+
+msgid "Renames one existing tag."
+msgstr "Renombra una etiqueta existente."
+
+msgid "Current name of the tag."
+msgstr "Nombre actual de la etiqueta."
+
+msgid "New name of the tag."
+msgstr "Nuevo nombre de la etiqueta."
+
+msgid "Tag properly renamed."
+msgstr "Etiqueta correctamente renombrada."
+
+#, php-format
+msgid "A tag with name \"%s\" was not found"
+msgstr "Una etiqueta con nombre \"%s\" no ha sido encontrada"
 
 msgid "Processes visits where location is not set yet"
 msgstr "Procesa las visitas donde la localización no ha sido establecida aún"

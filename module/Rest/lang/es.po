@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2017-07-15 12:14+0200\n"
-"PO-Revision-Date: 2017-07-15 12:15+0200\n"
+"POT-Creation-Date: 2017-07-16 09:39+0200\n"
+"PO-Revision-Date: 2017-07-16 09:40+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -55,11 +55,11 @@ msgid ""
 "rename the tag"
 msgstr ""
 "Debes proporcionar tanto el parámetro 'oldName' como 'newName' para poder "
-"renombrar el tag correctamente"
+"renombrar la etiqueta correctamente"
 
 #, php-format
 msgid "It wasn't possible to find a tag with name '%s'"
-msgstr "No fue posible encontrar un tag con el nombre '%s'"
+msgstr "No fue posible encontrar una etiqueta con el nombre '%s'"
 
 #, php-format
 msgid "You need to provide the Bearer type in the %s header."
