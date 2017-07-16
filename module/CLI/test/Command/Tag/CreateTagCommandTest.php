@@ -55,12 +55,12 @@ class CreateTagCommandTest extends TestCase
     public function serviceIsInvokedOnSuccess()
     {
         $tagNames = ['foo', 'bar'];
-        $this->commandTester->execute([
-            '--name' => $tagNames,
-        ]);
         /** @var MethodProphecy $createTags */
         $createTags = $this->tagService->createTags($tagNames)->willReturn([]);
 
+        $this->commandTester->execute([
+            '--name' => $tagNames,
+        ]);
         $output = $this->commandTester->getDisplay();
 
         $this->assertContains(sprintf('Created tags: ["%s"]', implode('", "', $tagNames)), $output);
