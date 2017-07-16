@@ -18,6 +18,7 @@ return [
             Command\Api\DisableKeyCommand::class,
             Command\Api\ListKeysCommand::class,
             Command\Tag\ListTagsCommand::class,
+            Command\Tag\CreateTagCommand::class,
         ]
     ],
 

@@ -2,17 +2,16 @@
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
 use Acelaya\ZsmAnnotatedServices\Annotation as DI;
-use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Service\Tag\TagService;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Zend\I18n\Translator\Translator;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class ListTagsCommand extends Command
+class CreateTagCommand extends Command
 {
     /**
      * @var TagServiceInterface
@@ -24,7 +23,7 @@ class ListTagsCommand extends Command
     private $translator;
 
     /**
-     * ListTagsCommand constructor.
+     * CreateTagCommand constructor.
      * @param TagServiceInterface $tagService
      * @param TranslatorInterface $translator
      *
@@ -40,28 +39,31 @@ class ListTagsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('tag:list')
-            ->setDescription($this->translator->translate('Lists existing tags'));
+            ->setName('tag:create')
+            ->setDescription($this->translator->translate('Creates one or more tags'))
+            ->addOption(
+                'name',
+                't',
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                $this->translator->translate('The name of the tags to create')
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $table = new Table($output);
-        $table->setHeaders([$this->translator->translate('Name')])
-              ->setRows($this->getTagsRows());
-
-        $table->render();
-    }
-
-    private function getTagsRows()
-    {
-        $tags = $this->tagService->listTags();
-        if (empty($tags)) {
-            return [[$this->translator->translate('No tags yet')]];
+        $tagNames = $input->getOption('name');
+        if (empty($tagNames)) {
+            $output->writeln(sprintf(
+                '<comment>%s</comment>',
+                $this->translator->translate('You have to provide at least one tag name')
+            ));
+            return;
         }
 
-        return array_map(function (Tag $tag) {
-            return [$tag->getName()];
-        }, $tags);
+        $this->tagService->createTags($tagNames);
+        $output->writeln($this->translator->translate('Created tags') . sprintf(': ["<info>%s</info>"]', implode(
+            '</info>", "<info>',
+            $tagNames
+        )));
     }
 }

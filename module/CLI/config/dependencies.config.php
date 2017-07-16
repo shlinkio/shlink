@@ -22,6 +22,7 @@ return [
             Command\Api\DisableKeyCommand::class => AnnotatedFactory::class,
             Command\Api\ListKeysCommand::class => AnnotatedFactory::class,
             Command\Tag\ListTagsCommand::class => AnnotatedFactory::class,
+            Command\Tag\CreateTagCommand::class => AnnotatedFactory::class,
         ],
     ],
 
