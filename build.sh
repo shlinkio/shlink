@@ -8,7 +8,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 version=$1
-builtcontent=$(readlink -f '../shlink_build_tmp')
+builtcontent=$(readlink -f "../shlink_${version}_dist")
 projectdir=$(pwd)
 
 # Copy project content to temp dir
@@ -31,6 +31,8 @@ rm build.sh
 rm CHANGELOG.md
 rm composer.*
 rm LICENSE
+rm indocker
+rm docker-compose.yml
 rm php*
 rm README.md
 rm -r build
@@ -42,5 +44,5 @@ rm -rf config/autoload/{{,*.}local.php{,.dist},.gitignore}
 
 # Compressing file
 rm -f "${projectdir}"/build/shlink_${version}_dist.zip
-zip -ry "${projectdir}"/build/shlink_${version}_dist.zip .
+zip -ry "${projectdir}"/build/shlink_${version}_dist.zip "../shlink_${version}_dist"
 rm -rf "${builtcontent}"

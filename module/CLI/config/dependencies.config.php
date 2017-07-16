@@ -21,6 +21,10 @@ return [
             Command\Api\GenerateKeyCommand::class => AnnotatedFactory::class,
             Command\Api\DisableKeyCommand::class => AnnotatedFactory::class,
             Command\Api\ListKeysCommand::class => AnnotatedFactory::class,
+            Command\Tag\ListTagsCommand::class => AnnotatedFactory::class,
+            Command\Tag\CreateTagCommand::class => AnnotatedFactory::class,
+            Command\Tag\RenameTagCommand::class => AnnotatedFactory::class,
+            Command\Tag\DeleteTagsCommand::class => AnnotatedFactory::class,
         ],
     ],
 

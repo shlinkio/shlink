@@ -55,8 +55,9 @@ class CreateShortcodeAction extends AbstractRestAction
      * @param Request $request
      * @param DelegateInterface $delegate
      * @return null|Response
+     * @throws \InvalidArgumentException
      */
-    public function dispatch(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, DelegateInterface $delegate)
     {
         $postData = $request->getParsedBody();
         if (! isset($postData['longUrl'])) {

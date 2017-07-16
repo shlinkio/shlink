@@ -6,7 +6,6 @@ use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
@@ -49,8 +48,9 @@ class ListShortcodesAction extends AbstractRestAction
      * @param Request $request
      * @param DelegateInterface $delegate
      * @return null|Response
+     * @throws \InvalidArgumentException
      */
-    public function dispatch(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, DelegateInterface $delegate)
     {
         try {
             $params = $this->queryToListParams($request->getQueryParams());
@@ -67,7 +67,7 @@ class ListShortcodesAction extends AbstractRestAction
 
     /**
      * @param array $query
-     * @return string
+     * @return array
      */
     public function queryToListParams(array $query)
     {

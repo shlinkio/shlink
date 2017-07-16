@@ -4,6 +4,7 @@ namespace Shlinkio\Shlink\Common\Factory;
 use Doctrine\Common\Cache;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
+use Shlinkio\Shlink\Common;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
@@ -48,15 +49,14 @@ class CacheFactory implements FactoryInterface
     {
         // Try to get the adapter from config
         $config = $container->get('config');
-        if (isset($config['cache'])
-            && isset($config['cache']['adapter'])
+        if (isset($config['cache'], $config['cache']['adapter'])
             && in_array($config['cache']['adapter'], self::VALID_CACHE_ADAPTERS)
         ) {
             return $this->resolveCacheAdapter($config['cache']);
         }
 
         // If the adapter has not been set in config, create one based on environment
-        return env('APP_ENV', 'pro') === 'pro' ? new Cache\ApcuCache() : new Cache\ArrayCache();
+        return Common\env('APP_ENV', 'pro') === 'pro' ? new Cache\ApcuCache() : new Cache\ArrayCache();
     }
 
     /**
@@ -80,7 +80,7 @@ class CacheFactory implements FactoryInterface
                     if (! isset($server['host'])) {
                         continue;
                     }
-                    $port = isset($server['port']) ? intval($server['port']) : 11211;
+                    $port = isset($server['port']) ? (int) $server['port'] : 11211;
 
                     $memcached->addServer($server['host'], $port);
                 }

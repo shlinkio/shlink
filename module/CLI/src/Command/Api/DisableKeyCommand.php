@@ -32,7 +32,7 @@ class DisableKeyCommand extends Command
     {
         $this->apiKeyService = $apiKeyService;
         $this->translator = $translator;
-        parent::__construct(null);
+        parent::__construct();
     }
 
     public function configure()

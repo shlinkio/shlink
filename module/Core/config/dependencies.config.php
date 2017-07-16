@@ -16,6 +16,7 @@ return [
             Service\VisitsTracker::class => AnnotatedFactory::class,
             Service\ShortUrlService::class => AnnotatedFactory::class,
             Service\VisitService::class => AnnotatedFactory::class,
+            Service\Tag\TagService::class => AnnotatedFactory::class,
 
             // Middleware
             Action\RedirectAction::class => AnnotatedFactory::class,
