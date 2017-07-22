@@ -25,6 +25,8 @@
         "acelaya/zsm-annotated-services": "^1.0",
         "acelaya/ze-content-based-error-handler": "^2.0",
         "doctrine/orm": "^2.5",
+        "doctrine/collections": "^1.4 <1.5",
+        "doctrine/common": "^2.7 <2.8",
         "guzzlehttp/guzzle": "^6.2",
         "symfony/console": "^3.0",
         "symfony/process": "^3.0",

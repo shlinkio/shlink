@@ -1,10 +1,8 @@
 <?php
 namespace Shlinkio\Shlink\CLI\Command\Shortcode;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
-use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -28,13 +26,6 @@ class ListShortcodesCommand extends Command
      */
     private $translator;
 
-    /**
-     * ListShortcodesCommand constructor.
-     * @param ShortUrlServiceInterface $shortUrlService
-     * @param TranslatorInterface $translator
-     *
-     * @Inject({ShortUrlService::class, "translator"})
-     */
     public function __construct(ShortUrlServiceInterface $shortUrlService, TranslatorInterface $translator)
     {
         $this->shortUrlService = $shortUrlService;
@@ -88,12 +79,11 @@ class ListShortcodesCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $page = intval($input->getOption('page'));
+        $page = (int) $input->getOption('page');
         $searchTerm = $input->getOption('searchTerm');
         $tags = $input->getOption('tags');
         $tags = ! empty($tags) ? explode(',', $tags) : [];
         $showTags = $input->getOption('showTags');
-        $orderBy = $input->getOption('orderBy');
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
