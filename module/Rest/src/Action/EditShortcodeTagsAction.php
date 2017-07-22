@@ -1,13 +1,11 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
-use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
@@ -24,14 +22,6 @@ class EditShortcodeTagsAction extends AbstractRestAction
      */
     private $translator;
 
-    /**
-     * EditShortcodeTagsAction constructor.
-     * @param ShortUrlServiceInterface $shortUrlService
-     * @param TranslatorInterface $translator
-     * @param LoggerInterface|null $logger
-     *
-     * @Inject({ShortUrlService::class, "translator", "Logger_Shlink"})
-     */
     public function __construct(
         ShortUrlServiceInterface $shortUrlService,
         TranslatorInterface $translator,

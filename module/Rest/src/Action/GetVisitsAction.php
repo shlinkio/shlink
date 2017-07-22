@@ -1,14 +1,12 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
-use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
@@ -25,14 +23,6 @@ class GetVisitsAction extends AbstractRestAction
      */
     private $translator;
 
-    /**
-     * GetVisitsAction constructor.
-     * @param VisitsTrackerInterface $visitsTracker
-     * @param TranslatorInterface $translator
-     * @param LoggerInterface $logger
-     *
-     * @Inject({VisitsTracker::class, "translator", "Logger_Shlink"})
-     */
     public function __construct(
         VisitsTrackerInterface $visitsTracker,
         TranslatorInterface $translator,
