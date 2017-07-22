@@ -1,7 +1,6 @@
 <?php
 namespace Shlinkio\Shlink\CLI\Factory;
 
-use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Shlinkio\Shlink\CLI\Command\Install\InstallCommand;
@@ -12,6 +11,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Filesystem\Filesystem;
 use Zend\Config\Writer\PhpArray;
+use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
@@ -40,7 +40,7 @@ class InstallApplicationFactory implements FactoryInterface
             new PhpArray(),
             $container->get(Filesystem::class),
             new ConfigCustomizerPluginManager($container, ['factories' => [
-                Plugin\DatabaseConfigCustomizerPlugin::class => AnnotatedFactory::class,
+                Plugin\DatabaseConfigCustomizerPlugin::class => ConfigAbstractFactory::class,
                 Plugin\UrlShortenerConfigCustomizerPlugin::class => DefaultConfigCustomizerPluginFactory::class,
                 Plugin\LanguageConfigCustomizerPlugin::class => DefaultConfigCustomizerPluginFactory::class,
                 Plugin\ApplicationConfigCustomizerPlugin::class => DefaultConfigCustomizerPluginFactory::class,

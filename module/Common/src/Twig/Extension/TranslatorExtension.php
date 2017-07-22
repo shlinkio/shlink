@@ -1,7 +1,6 @@
 <?php
 namespace Shlinkio\Shlink\Common\Twig\Extension;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class TranslatorExtension extends \Twig_Extension implements TranslatorInterface
@@ -11,12 +10,6 @@ class TranslatorExtension extends \Twig_Extension implements TranslatorInterface
      */
     private $translator;
 
-    /**
-     * TranslatorExtension constructor.
-     * @param TranslatorInterface $translator
-     *
-     * @Inject({"translator"})
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
