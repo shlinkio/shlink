@@ -1,16 +1,13 @@
 <?php
 namespace Shlinkio\Shlink\Core\Action;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Common\Service\PreviewGeneratorInterface;
 use Shlinkio\Shlink\Common\Util\ResponseUtilsTrait;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 
 class PreviewAction implements MiddlewareInterface
@@ -26,13 +23,6 @@ class PreviewAction implements MiddlewareInterface
      */
     private $urlShortener;
 
-    /**
-     * PreviewAction constructor.
-     * @param PreviewGeneratorInterface $previewGenerator
-     * @param UrlShortenerInterface $urlShortener
-     *
-     * @Inject({PreviewGenerator::class, UrlShortener::class})
-     */
     public function __construct(PreviewGeneratorInterface $previewGenerator, UrlShortenerInterface $urlShortener)
     {
         $this->previewGenerator = $previewGenerator;
