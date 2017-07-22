@@ -1,13 +1,11 @@
 <?php
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
@@ -24,14 +22,6 @@ class ResolveUrlAction extends AbstractRestAction
      */
     private $translator;
 
-    /**
-     * ResolveUrlAction constructor.
-     * @param UrlShortenerInterface|UrlShortener $urlShortener
-     * @param TranslatorInterface $translator
-     * @param LoggerInterface $logger
-     *
-     * @Inject({UrlShortener::class, "translator"})
-     */
     public function __construct(
         UrlShortenerInterface $urlShortener,
         TranslatorInterface $translator,
