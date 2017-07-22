@@ -43,6 +43,9 @@ return [
             Logger::class => 'Logger_Shlink',
             LoggerInterface::class => 'Logger_Shlink',
         ],
+        'abstract_factories' => [
+            Factory\DottedAccessConfigAbstractFactory::class,
+        ],
     ],
 
 ];

@@ -1,15 +1,12 @@
 <?php
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
-use Acelaya\ZsmAnnotatedServices\Annotation as DI;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Service\Tag\TagService;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Zend\I18n\Translator\Translator;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class ListTagsCommand extends Command
@@ -23,13 +20,6 @@ class ListTagsCommand extends Command
      */
     private $translator;
 
-    /**
-     * ListTagsCommand constructor.
-     * @param TagServiceInterface $tagService
-     * @param TranslatorInterface $translator
-     *
-     * @DI\Inject({TagService::class, Translator::class})
-     */
     public function __construct(TagServiceInterface $tagService, TranslatorInterface $translator)
     {
         $this->tagService = $tagService;

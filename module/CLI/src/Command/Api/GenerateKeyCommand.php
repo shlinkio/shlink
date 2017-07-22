@@ -1,8 +1,6 @@
 <?php
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
-use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,18 +19,11 @@ class GenerateKeyCommand extends Command
      */
     private $translator;
 
-    /**
-     * GenerateKeyCommand constructor.
-     * @param ApiKeyServiceInterface|ApiKeyService $apiKeyService
-     * @param TranslatorInterface $translator
-     *
-     * @Inject({ApiKeyService::class, "translator"})
-     */
     public function __construct(ApiKeyServiceInterface $apiKeyService, TranslatorInterface $translator)
     {
         $this->apiKeyService = $apiKeyService;
         $this->translator = $translator;
-        parent::__construct(null);
+        parent::__construct();
     }
 
     public function configure()
