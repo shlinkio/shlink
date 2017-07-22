@@ -1,7 +1,6 @@
 <?php
 namespace Shlinkio\Shlink\Core\Service;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -37,15 +36,6 @@ class UrlShortener implements UrlShortenerInterface
      */
     private $cache;
 
-    /**
-     * UrlShortener constructor.
-     * @param ClientInterface $httpClient
-     * @param EntityManagerInterface $em
-     * @param Cache $cache
-     * @param string $chars
-     *
-     * @Inject({"httpClient", "em", Cache::class, "config.url_shortener.shortcode_chars"})
-     */
     public function __construct(
         ClientInterface $httpClient,
         EntityManagerInterface $em,
@@ -112,7 +102,7 @@ class UrlShortener implements UrlShortenerInterface
      * Tries to perform a GET request to provided url, returning true on success and false on failure
      *
      * @param UriInterface $url
-     * @return bool
+     * @return void
      */
     protected function checkUrlExists(UriInterface $url)
     {
@@ -133,17 +123,17 @@ class UrlShortener implements UrlShortenerInterface
      */
     protected function convertAutoincrementIdToShortCode($id)
     {
-        $id = intval($id) + 200000; // Increment the Id so that the generated shortcode is not too short
+        $id = ((int) $id) + 200000; // Increment the Id so that the generated shortcode is not too short
         $length = strlen($this->chars);
         $code = '';
 
         while ($id > 0) {
             // Determine the value of the next higher character in the short code and prepend it
-            $code = $this->chars[intval(fmod($id, $length))] . $code;
+            $code = $this->chars[(int) fmod($id, $length)] . $code;
             $id = floor($id / $length);
         }
 
-        return $this->chars[intval($id)] . $code;
+        return $this->chars[(int) $id] . $code;
     }
 
     /**

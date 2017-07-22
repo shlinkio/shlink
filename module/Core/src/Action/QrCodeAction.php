@@ -1,7 +1,6 @@
 <?php
 namespace Shlinkio\Shlink\Core\Action;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Endroid\QrCode\QrCode;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
@@ -11,7 +10,6 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Zend\Expressive\Router\RouterInterface;
 
@@ -30,14 +28,6 @@ class QrCodeAction implements MiddlewareInterface
      */
     private $logger;
 
-    /**
-     * QrCodeAction constructor.
-     * @param RouterInterface $router
-     * @param UrlShortenerInterface $urlShortener
-     * @param LoggerInterface $logger
-     *
-     * @Inject({RouterInterface::class, UrlShortener::class, "Logger_Shlink"})
-     */
     public function __construct(
         RouterInterface $router,
         UrlShortenerInterface $urlShortener,

@@ -1,7 +1,6 @@
 <?php
 namespace Shlinkio\Shlink\Core\Middleware;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\Common\Cache\Cache;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
@@ -16,12 +15,6 @@ class QrCodeCacheMiddleware implements MiddlewareInterface
      */
     private $cache;
 
-    /**
-     * QrCodeCacheMiddleware constructor.
-     * @param Cache $cache
-     *
-     * @Inject({Cache::class})
-     */
     public function __construct(Cache $cache)
     {
         $this->cache = $cache;

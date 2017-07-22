@@ -1,9 +1,13 @@
 <?php
-use Acelaya\ZsmAnnotatedServices\Factory\V3\AnnotatedFactory;
+
+use Doctrine\Common\Cache\Cache;
+use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Action;
 use Shlinkio\Shlink\Core\Middleware;
 use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\Service;
+use Zend\Expressive\Router\RouterInterface;
+use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 
 return [
 
@@ -12,18 +16,33 @@ return [
             Options\AppOptions::class => Options\AppOptionsFactory::class,
 
             // Services
-            Service\UrlShortener::class => AnnotatedFactory::class,
-            Service\VisitsTracker::class => AnnotatedFactory::class,
-            Service\ShortUrlService::class => AnnotatedFactory::class,
-            Service\VisitService::class => AnnotatedFactory::class,
-            Service\Tag\TagService::class => AnnotatedFactory::class,
+            Service\UrlShortener::class => ConfigAbstractFactory::class,
+            Service\VisitsTracker::class => ConfigAbstractFactory::class,
+            Service\ShortUrlService::class => ConfigAbstractFactory::class,
+            Service\VisitService::class => ConfigAbstractFactory::class,
+            Service\Tag\TagService::class => ConfigAbstractFactory::class,
 
             // Middleware
-            Action\RedirectAction::class => AnnotatedFactory::class,
-            Action\QrCodeAction::class => AnnotatedFactory::class,
-            Action\PreviewAction::class => AnnotatedFactory::class,
-            Middleware\QrCodeCacheMiddleware::class => AnnotatedFactory::class,
+            Action\RedirectAction::class => ConfigAbstractFactory::class,
+            Action\QrCodeAction::class => ConfigAbstractFactory::class,
+            Action\PreviewAction::class => ConfigAbstractFactory::class,
+            Middleware\QrCodeCacheMiddleware::class => ConfigAbstractFactory::class,
         ],
+    ],
+
+    ConfigAbstractFactory::class => [
+        // Services
+        Service\UrlShortener::class => ['httpClient', 'em', Cache::class, 'config.url_shortener.shortcode_chars'],
+        Service\VisitsTracker::class => ['em'],
+        Service\ShortUrlService::class => ['em'],
+        Service\VisitService::class => ['em'],
+        Service\Tag\TagService::class => ['em'],
+
+        // Middleware
+        Action\RedirectAction::class => [Service\UrlShortener::class, Service\VisitsTracker::class, 'Logger_Shlink'],
+        Action\QrCodeAction::class => [RouterInterface::class, Service\UrlShortener::class, 'Logger_Shlink'],
+        Action\PreviewAction::class => [PreviewGenerator::class, Service\UrlShortener::class],
+        Middleware\QrCodeCacheMiddleware::class => [Cache::class],
     ],
 
 ];

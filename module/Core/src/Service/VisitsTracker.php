@@ -1,7 +1,6 @@
 <?php
 namespace Shlinkio\Shlink\Core\Service;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
@@ -17,12 +16,6 @@ class VisitsTracker implements VisitsTrackerInterface
      */
     private $em;
 
-    /**
-     * VisitsTracker constructor.
-     * @param EntityManagerInterface $em
-     *
-     * @Inject({"em"})
-     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
