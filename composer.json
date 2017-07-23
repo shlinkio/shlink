@@ -28,6 +28,7 @@
         "doctrine/annotations": "^1.4 <1.5",
         "doctrine/collections": "^1.4 <1.5",
         "doctrine/common": "^2.7 <2.8",
+        "doctrine/cache": "^1.6 <1.7",
         "guzzlehttp/guzzle": "^6.2",
         "symfony/console": "^3.0",
         "symfony/process": "^3.0",
