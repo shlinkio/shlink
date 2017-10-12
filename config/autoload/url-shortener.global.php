@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 use Shlinkio\Shlink\Common;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 

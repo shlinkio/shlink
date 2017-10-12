@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\CLI\Command\Shortcode;
 
 use PHPUnit\Framework\TestCase;
@@ -27,7 +29,7 @@ class GenerateShortcodeCommandTest extends TestCase
         $this->urlShortener = $this->prophesize(UrlShortener::class);
         $command = new GenerateShortcodeCommand($this->urlShortener->reveal(), Translator::factory([]), [
             'schema' => 'http',
-            'hostname' => 'foo.com'
+            'hostname' => 'foo.com',
         ]);
         $app = new Application();
         $app->add($command);
@@ -44,7 +46,7 @@ class GenerateShortcodeCommandTest extends TestCase
 
         $this->commandTester->execute([
             'command' => 'shortcode:generate',
-            'longUrl' => 'http://domain.com/foo/bar'
+            'longUrl' => 'http://domain.com/foo/bar',
         ]);
         $output = $this->commandTester->getDisplay();
         $this->assertTrue(strpos($output, 'http://foo.com/abc123') > 0);
@@ -60,7 +62,7 @@ class GenerateShortcodeCommandTest extends TestCase
 
         $this->commandTester->execute([
             'command' => 'shortcode:generate',
-            'longUrl' => 'http://domain.com/invalid'
+            'longUrl' => 'http://domain.com/invalid',
         ]);
         $output = $this->commandTester->getDisplay();
         $this->assertTrue(

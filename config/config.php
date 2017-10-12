@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 use Acelaya\ExpressiveErrorHandler;
 use Shlinkio\Shlink\CLI;
 use Shlinkio\Shlink\Common;

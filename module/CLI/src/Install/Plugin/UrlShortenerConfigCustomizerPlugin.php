@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\CLI\Install\Plugin;
 
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
@@ -42,7 +44,7 @@ class UrlShortenerConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
                 'Character set for generated short codes (leave empty to autogenerate one)',
                 null,
                 true
-            ) ?: str_shuffle(UrlShortener::DEFAULT_CHARS)
+            ) ?: str_shuffle(UrlShortener::DEFAULT_CHARS),
         ]);
     }
 }

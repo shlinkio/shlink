@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\Util;
 
 use Shlinkio\Shlink\Common\Exception as Common;

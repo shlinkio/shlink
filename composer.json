@@ -46,6 +46,7 @@
     "require-dev": {
         "filp/whoops": "^2.0",
         "phpunit/phpunit": "^6.0",
+        "slevomat/coding-standard": "^4.0",
         "squizlabs/php_codesniffer": "^3.1",
         "symfony/var-dumper": "^3.0",
         "vlucas/phpdotenv": "^2.2",

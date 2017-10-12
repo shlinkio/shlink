@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\Common\Cache\Cache;
@@ -152,7 +154,7 @@ class UrlShortener implements UrlShortenerInterface
         }
 
         // Validate short code format
-        if (! preg_match('|[' . $this->chars . "]+|", $shortCode)) {
+        if (! preg_match('|[' . $this->chars . ']+|', $shortCode)) {
             throw InvalidShortCodeException::fromCharset($shortCode, $this->chars);
         }
 

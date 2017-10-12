@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Service\Tag;
 
 use Doctrine\Common\Collections\Collection;

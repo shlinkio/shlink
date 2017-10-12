@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Entity;
 
-use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Doctrine\ORM\Mapping as ORM;
+use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Zend\Stdlib\ArraySerializableInterface;
 
 /**

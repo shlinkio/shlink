@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\Action;
 
 use Interop\Http\ServerMiddleware\DelegateInterface;
@@ -51,10 +53,10 @@ class GetVisitsAction extends AbstractRestAction
             return new JsonResponse([
                 'visits' => [
                     'data' => $visits,
-                ]
+                ],
             ]);
         } catch (InvalidArgumentException $e) {
-            $this->logger->warning('Provided nonexistent shortcode'. PHP_EOL . $e);
+            $this->logger->warning('Provided nonexistent shortcode' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => sprintf(
@@ -63,7 +65,7 @@ class GetVisitsAction extends AbstractRestAction
                 ),
             ], self::STATUS_NOT_FOUND);
         } catch (\Exception $e) {
-            $this->logger->error('Unexpected error while parsing short code'. PHP_EOL . $e);
+            $this->logger->error('Unexpected error while parsing short code' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),

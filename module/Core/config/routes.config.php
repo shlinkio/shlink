@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 use Shlinkio\Shlink\Core\Action;
 use Shlinkio\Shlink\Core\Middleware;
 

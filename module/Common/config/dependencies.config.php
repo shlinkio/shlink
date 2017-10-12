@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManager;

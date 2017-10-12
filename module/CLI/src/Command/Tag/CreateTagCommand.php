@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;

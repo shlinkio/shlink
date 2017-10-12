@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\Common\Template\Extension;
 
 use League\Plates\Engine;

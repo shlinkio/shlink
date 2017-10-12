@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Shlinkio\Shlink\CLI\Command;
 use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
@@ -46,12 +47,12 @@ return [
         Command\Shortcode\GeneratePreviewCommand::class => [
             Service\ShortUrlService::class,
             PreviewGenerator::class,
-            'translator'
+            'translator',
         ],
         Command\Visit\ProcessVisitsCommand::class => [
             Service\VisitService::class,
             IpLocationResolver::class,
-            'translator'
+            'translator',
         ],
         Command\Config\GenerateCharsetCommand::class => ['translator'],
         Command\Config\GenerateSecretCommand::class => ['translator'],

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 use Dotenv\Dotenv;
 use Zend\ServiceManager\ServiceManager;
 

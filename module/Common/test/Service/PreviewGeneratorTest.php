@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\Common\Service;
 
 use mikehaertl\wkhtmlto\Image;
@@ -35,7 +37,7 @@ class PreviewGeneratorTest extends TestCase
                 Image::class => function () {
                     return $this->image->reveal();
                 },
-            ]
+            ],
         ]), $this->filesystem->reveal(), 'dir');
     }
 

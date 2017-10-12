@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
@@ -45,7 +46,7 @@ return [
             Service\UrlShortener::class,
             'translator',
             'config.url_shortener.domain',
-            'Logger_Shlink'
+            'Logger_Shlink',
         ],
         Action\ResolveUrlAction::class => [Service\UrlShortener::class, 'translator'],
         Action\GetVisitsAction::class => [Service\VisitsTracker::class, 'translator', 'Logger_Shlink'],

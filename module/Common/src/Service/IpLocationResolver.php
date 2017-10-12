@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Common\Service;
 
 use GuzzleHttp\Client;
@@ -27,7 +29,7 @@ class IpLocationResolver implements IpLocationResolverInterface
     {
         try {
             $response = $this->httpClient->get(sprintf(self::SERVICE_PATTERN, $ipAddress));
-            return json_decode($response->getBody(), true);
+            return json_decode((string) $response->getBody(), true);
         } catch (GuzzleException $e) {
             throw WrongIpException::fromIpAddress($ipAddress, $e);
         }
