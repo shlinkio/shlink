@@ -11,6 +11,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
@@ -142,10 +143,11 @@ class UrlShortener implements UrlShortenerInterface
      * Tries to find the mapped URL for provided short code. Returns null if not found
      *
      * @param string $shortCode
-     * @return string|null
+     * @return string
      * @throws InvalidShortCodeException
+     * @throws EntityDoesNotExistException
      */
-    public function shortCodeToUrl($shortCode)
+    public function shortCodeToUrl($shortCode): string
     {
         $cacheKey = sprintf('%s_longUrl', $shortCode);
         // Check if the short code => URL map is already cached
@@ -158,17 +160,16 @@ class UrlShortener implements UrlShortenerInterface
             throw InvalidShortCodeException::fromCharset($shortCode, $this->chars);
         }
 
-        /** @var ShortUrl $shortUrl */
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
-            'shortCode' => $shortCode,
-        ]);
-        // Cache the shortcode
-        if (isset($shortUrl)) {
-            $url = $shortUrl->getOriginalUrl();
-            $this->cache->save($cacheKey, $url);
-            return $url;
+        $criteria = ['shortCode' => $shortCode];
+        /** @var ShortUrl|null $shortUrl */
+        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy($criteria);
+        if ($shortUrl === null) {
+            throw EntityDoesNotExistException::createFromEntityAndConditions(ShortUrl::class, $criteria);
         }
 
-        return null;
+        // Cache the shortcode
+        $url = $shortUrl->getOriginalUrl();
+        $this->cache->save($cacheKey, $url);
+        return $url;
     }
 }

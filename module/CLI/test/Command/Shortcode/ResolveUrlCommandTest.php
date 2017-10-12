@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\Shortcode;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Shortcode\ResolveUrlCommand;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;
@@ -57,7 +58,7 @@ class ResolveUrlCommandTest extends TestCase
     public function incorrectShortCodeOutputsErrorMessage()
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(null)
+        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
                                                        ->shouldBeCalledTimes(1);
 
         $this->commandTester->execute([
@@ -65,7 +66,7 @@ class ResolveUrlCommandTest extends TestCase
             'shortCode' => $shortCode,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertEquals('No URL found for short code "' . $shortCode . '"' . PHP_EOL, $output);
+        $this->assertEquals('Provided short code "' . $shortCode . '" could not be found.' . PHP_EOL, $output);
     }
 
     /**

@@ -7,8 +7,10 @@ use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\Common\Service\PreviewGeneratorInterface;
 use Shlinkio\Shlink\Common\Util\ResponseUtilsTrait;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 
@@ -46,13 +48,13 @@ class PreviewAction implements MiddlewareInterface
 
         try {
             $url = $this->urlShortener->shortCodeToUrl($shortCode);
-            if (! isset($url)) {
-                return $delegate->process($request);
-            }
-
             $imagePath = $this->previewGenerator->generatePreview($url);
             return $this->generateImageResponse($imagePath);
         } catch (InvalidShortCodeException $e) {
+            return $delegate->process($request);
+        } catch (EntityDoesNotExistException $e) {
+            return $delegate->process($request);
+        } catch (PreviewGenerationException $e) {
             return $delegate->process($request);
         }
     }

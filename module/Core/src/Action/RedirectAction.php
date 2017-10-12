@@ -9,8 +9,11 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
+use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
+use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\RedirectResponse;
 
 class RedirectAction implements MiddlewareInterface
@@ -66,9 +69,9 @@ class RedirectAction implements MiddlewareInterface
             // Return a redirect response to the long URL.
             // Use a temporary redirect to make sure browsers always hit the server for analytics purposes
             return new RedirectResponse($longUrl);
-        } catch (\Exception $e) {
-            // In case of error, dispatch 404 error
-            $this->logger->error('Error redirecting to long URL.' . PHP_EOL . $e);
+        } catch (InvalidShortCodeException $e) {
+            return $delegate->process($request);
+        } catch (EntityDoesNotExistException $e) {
             return $delegate->process($request);
         }
     }

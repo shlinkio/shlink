@@ -10,6 +10,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Action\QrCodeAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Zend\Diactoros\ServerRequestFactory;
@@ -42,7 +43,8 @@ class QrCodeActionTest extends TestCase
     public function aNotFoundShortCodeWillDelegateIntoNextMiddleware()
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(null)->shouldBeCalledTimes(1);
+        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
+                                                       ->shouldBeCalledTimes(1);
         $delegate = $this->prophesize(DelegateInterface::class);
 
         $this->action->process(
@@ -77,7 +79,7 @@ class QrCodeActionTest extends TestCase
     public function aCorrectRequestReturnsTheQrCodeResponse()
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(new ShortUrl())->shouldBeCalledTimes(1);
+        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn('')->shouldBeCalledTimes(1);
         $delegate = $this->prophesize(DelegateInterface::class);
 
         $resp = $this->action->process(

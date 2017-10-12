@@ -7,6 +7,7 @@ use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
@@ -46,13 +47,6 @@ class ResolveUrlAction extends AbstractRestAction
 
         try {
             $longUrl = $this->urlShortener->shortCodeToUrl($shortCode);
-            if ($longUrl === null) {
-                return new JsonResponse([
-                    'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                    'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
-                ], self::STATUS_NOT_FOUND);
-            }
-
             return new JsonResponse([
                 'longUrl' => $longUrl,
             ]);
@@ -65,6 +59,12 @@ class ResolveUrlAction extends AbstractRestAction
                     $shortCode
                 ),
             ], self::STATUS_BAD_REQUEST);
+        } catch (EntityDoesNotExistException $e) {
+            $this->logger->warning('Provided short code couldn\'t be found.' . PHP_EOL . $e);
+            return new JsonResponse([
+                'error' => RestUtils::INVALID_ARGUMENT_ERROR,
+                'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
+            ], self::STATUS_NOT_FOUND);
         } catch (\Exception $e) {
             $this->logger->error('Unexpected error while resolving the URL behind a short code.' . PHP_EOL . $e);
             return new JsonResponse([
