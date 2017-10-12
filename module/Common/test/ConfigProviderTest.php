@@ -24,6 +24,6 @@ class ConfigProviderTest extends TestCase
         $config = $this->configProvider->__invoke();
 
         $this->assertArrayHasKey('dependencies', $config);
-        $this->assertArrayHasKey('templates', $config);
+        $this->assertArrayHasKey('plates', $config);
     }
 }
