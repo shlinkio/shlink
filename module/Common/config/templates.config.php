@@ -5,7 +5,7 @@ use Shlinkio\Shlink\Common\Template\Extension\TranslatorExtension;
 
 return [
 
-    'templates' => [
+    'plates' => [
         'extensions' => [
             TranslatorExtension::class,
         ],
