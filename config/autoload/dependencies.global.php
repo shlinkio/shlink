@@ -1,11 +1,15 @@
 <?php
+declare(strict_types=1);
+
 use Shlinkio\Shlink\Common\Factory\EmptyResponseImplicitOptionsMiddlewareFactory;
 use Zend\Expressive;
 use Zend\Expressive\Container;
 use Zend\Expressive\Middleware;
+use Zend\Expressive\Plates;
 use Zend\Expressive\Router;
 use Zend\Expressive\Template;
-use Zend\Expressive\Twig;
+use Zend\Expressive\Helper;
+use Zend\ServiceManager\Factory\InvokableFactory;
 use Zend\Stratigility\Middleware\ErrorHandler;
 
 return [
@@ -13,11 +17,13 @@ return [
     'dependencies' => [
         'factories' => [
             Expressive\Application::class => Container\ApplicationFactory::class,
-            Template\TemplateRendererInterface::class => Twig\TwigRendererFactory::class,
-            \Twig_Environment::class => Twig\TwigEnvironmentFactory::class,
+            Template\TemplateRendererInterface::class => Plates\PlatesRendererFactory::class,
             Router\RouterInterface::class => Router\FastRouteRouterFactory::class,
             ErrorHandler::class => Container\ErrorHandlerFactory::class,
             Middleware\ImplicitOptionsMiddleware::class => EmptyResponseImplicitOptionsMiddlewareFactory::class,
+
+            Helper\UrlHelper::class => Helper\UrlHelperFactory::class,
+            Helper\ServerUrlHelper::class => InvokableFactory::class,
         ],
     ],
 

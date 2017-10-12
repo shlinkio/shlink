@@ -4,8 +4,8 @@ return [
 
     'zend-expressive' => [
         'error_handler' => [
-            'template_404'   => 'core/error/404.html.twig',
-            'template_error' => 'core/error/error.html.twig',
+            'template_404'   => 'ShlinkCore::error/404',
+            'template_error' => 'ShlinkCore::error/error',
         ],
     ],
 

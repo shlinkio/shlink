@@ -2,8 +2,8 @@
 
 return [
 
-    'twig' => [
-        'cache_dir'  => 'data/cache/twig',
+    'templates' => [
+        'extension' => 'phtml',
         'extensions' => [
             // extension service names or instances
         ],

@@ -4,7 +4,7 @@ return [
 
     'templates' => [
         'paths' => [
-            'module/Core/templates',
+            'ShlinkCore' => __DIR__ . '/../templates',
         ],
     ],
 

@@ -1,9 +1,11 @@
 <?php
-use Shlinkio\Shlink\Common\Twig\Extension\TranslatorExtension;
+declare(strict_types=1);
+
+use Shlinkio\Shlink\Common\Template\Extension\TranslatorExtension;
 
 return [
 
-    'twig' => [
+    'templates' => [
         'extensions' => [
             TranslatorExtension::class,
         ],

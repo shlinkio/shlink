@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Common\Image;
 use Shlinkio\Shlink\Common\Image\ImageBuilder;
 use Shlinkio\Shlink\Common\Middleware\LocaleMiddleware;
 use Shlinkio\Shlink\Common\Service;
-use Shlinkio\Shlink\Common\Twig\Extension\TranslatorExtension;
+use Shlinkio\Shlink\Common\Template\Extension\TranslatorExtension;
 use Symfony\Component\Filesystem\Filesystem;
 use Zend\I18n\Translator\Translator;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
