@@ -35,7 +35,7 @@ class JsonErrorResponseGenerator implements ErrorResponseGeneratorInterface, Sta
      * @param string $responsePhrase
      * @return string
      */
-    protected function responsePhraseToCode($responsePhrase)
+    protected function responsePhraseToCode($responsePhrase): string
     {
         return strtoupper(str_replace(' ', '_', $responsePhrase));
     }
