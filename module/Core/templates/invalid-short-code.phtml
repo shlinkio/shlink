@@ -12,8 +12,8 @@
 <?php $this->end() ?>
 
 <?php $this->start('main') ?>
-    <h1>404</h1>
+    <h1><?= $this->translate('Oops!') ?></h1>
     <hr>
-    <h3><?= $this->translate('Page not found.') ?></h3>
-    <p><?= $this->translate('The page you requested could not be found.') ?></p>
+    <p><?= $this->translate('This short URL doesn\'t seem to be valid.') ?></p>
+    <p><?= $this->translate('Make sure you included all the characters, with no extra punctuation.') ?></p>
 <?php $this->end() ?>

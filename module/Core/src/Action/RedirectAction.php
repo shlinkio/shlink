@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Shlinkio\Shlink\Core\Action\Util\ErrorResponseBuilderTrait;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
@@ -17,6 +18,8 @@ use Zend\Diactoros\Response\RedirectResponse;
 
 class RedirectAction implements MiddlewareInterface
 {
+    use ErrorResponseBuilderTrait;
+
     /**
      * @var UrlShortenerInterface
      */
@@ -69,9 +72,9 @@ class RedirectAction implements MiddlewareInterface
             // Use a temporary redirect to make sure browsers always hit the server for analytics purposes
             return new RedirectResponse($longUrl);
         } catch (InvalidShortCodeException $e) {
-            return $delegate->process($request);
+            return $this->buildErrorResponse($request, $delegate);
         } catch (EntityDoesNotExistException $e) {
-            return $delegate->process($request);
+            return $this->buildErrorResponse($request, $delegate);
         }
     }
 }

@@ -6,12 +6,14 @@ namespace ShlinkioTest\Shlink\Core\Action;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Action\QrCodeAction;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Expressive\Router\RouterInterface;
 
@@ -45,13 +47,14 @@ class QrCodeActionTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
                                                        ->shouldBeCalledTimes(1);
         $delegate = $this->prophesize(DelegateInterface::class);
+        $process = $delegate->process(Argument::any())->willReturn(new Response());
 
         $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
             $delegate->reveal()
         );
 
-        $delegate->process(Argument::any())->shouldHaveBeenCalledTimes(1);
+        $process->shouldHaveBeenCalledTimes(1);
     }
 
     /**
@@ -63,13 +66,15 @@ class QrCodeActionTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
                                                        ->shouldBeCalledTimes(1);
         $delegate = $this->prophesize(DelegateInterface::class);
+        /** @var MethodProphecy $process */
+        $process = $delegate->process(Argument::any())->willReturn(new Response());
 
         $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
             $delegate->reveal()
         );
 
-        $delegate->process(Argument::any())->shouldHaveBeenCalledTimes(1);
+        $process->shouldHaveBeenCalledTimes(1);
     }
 
     /**

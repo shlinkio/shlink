@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Util;
 
+use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 use Zend\Stdlib\ArrayUtils;
 
 trait ResponseUtilsTrait
 {
-    protected function generateDownloadFileResponse($filePath)
+    protected function generateDownloadFileResponse(string $filePath): ResponseInterface
     {
         return $this->generateBinaryResponse($filePath, [
             'Content-Disposition' => 'attachment; filename=' . basename($filePath),
@@ -21,12 +22,12 @@ trait ResponseUtilsTrait
         ]);
     }
 
-    protected function generateImageResponse($imagePath)
+    protected function generateImageResponse(string $imagePath): ResponseInterface
     {
         return $this->generateBinaryResponse($imagePath);
     }
 
-    protected function generateBinaryResponse($path, $extraHeaders = [])
+    protected function generateBinaryResponse(string $path, array $extraHeaders = []): ResponseInterface
     {
         $body = new Stream($path);
         return new Response($body, 200, ArrayUtils::merge([

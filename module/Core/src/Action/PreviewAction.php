@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\Common\Service\PreviewGeneratorInterface;
 use Shlinkio\Shlink\Common\Util\ResponseUtilsTrait;
+use Shlinkio\Shlink\Core\Action\Util\ErrorResponseBuilderTrait;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
@@ -17,6 +18,7 @@ use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 class PreviewAction implements MiddlewareInterface
 {
     use ResponseUtilsTrait;
+    use ErrorResponseBuilderTrait;
 
     /**
      * @var PreviewGeneratorInterface
@@ -51,11 +53,11 @@ class PreviewAction implements MiddlewareInterface
             $imagePath = $this->previewGenerator->generatePreview($url);
             return $this->generateImageResponse($imagePath);
         } catch (InvalidShortCodeException $e) {
-            return $delegate->process($request);
+            return $this->buildErrorResponse($request, $delegate);
         } catch (EntityDoesNotExistException $e) {
-            return $delegate->process($request);
+            return $this->buildErrorResponse($request, $delegate);
         } catch (PreviewGenerationException $e) {
-            return $delegate->process($request);
+            return $this->buildErrorResponse($request, $delegate);
         }
     }
 }

@@ -12,6 +12,8 @@ use Zend\Expressive\Template\TemplateRendererInterface;
 
 class NotFoundDelegate implements DelegateInterface
 {
+    const NOT_FOUND_TEMPLATE = 'notFoundTemplate';
+
     /**
      * @var TemplateRendererInterface
      */
@@ -19,12 +21,12 @@ class NotFoundDelegate implements DelegateInterface
     /**
      * @var string
      */
-    private $template;
+    private $defaultTemplate;
 
-    public function __construct(TemplateRendererInterface $renderer, string $template = 'ShlinkCore::error/404')
+    public function __construct(TemplateRendererInterface $renderer, string $defaultTemplate = 'ShlinkCore::error/404')
     {
         $this->renderer = $renderer;
-        $this->template = $template;
+        $this->defaultTemplate = $defaultTemplate;
     }
 
     /**
@@ -49,6 +51,7 @@ class NotFoundDelegate implements DelegateInterface
             ], $status);
         }
 
-        return new Response\HtmlResponse($this->renderer->render($this->template, ['request' => $request]), $status);
+        $notFoundTemplate = $request->getAttribute(self::NOT_FOUND_TEMPLATE, $this->defaultTemplate);
+        return new Response\HtmlResponse($this->renderer->render($notFoundTemplate, ['request' => $request]), $status);
     }
 }

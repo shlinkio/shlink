@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Action;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
@@ -62,10 +63,12 @@ class RedirectActionTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
                                                        ->shouldBeCalledTimes(1);
         $delegate = $this->prophesize(DelegateInterface::class);
+        /** @var MethodProphecy $process */
+        $process = $delegate->process(Argument::any())->willReturn(new Response());
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $this->action->process($request, $delegate->reveal());
 
-        $delegate->process($request)->shouldHaveBeenCalledTimes(1);
+        $process->shouldHaveBeenCalledTimes(1);
     }
 }
