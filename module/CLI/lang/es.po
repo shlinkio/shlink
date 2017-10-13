@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2017-07-16 09:35+0200\n"
-"PO-Revision-Date: 2017-07-16 09:39+0200\n"
+"POT-Creation-Date: 2017-10-13 12:28+0200\n"
+"PO-Revision-Date: 2017-10-13 12:29+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -92,7 +92,7 @@ msgid "Processing URL %s..."
 msgstr "Procesando URL %s..."
 
 msgid " <info>Success!</info>"
-msgstr "<info>¡Correcto!</info>"
+msgstr " <info>¡Correcto!</info>"
 
 msgid "Error"
 msgstr "Error"
@@ -141,7 +141,7 @@ msgstr ""
 "Permite filtrar las visitas, devolviendo sólo aquellas más nuevas que endDate"
 
 msgid "A short code was not provided. Which short code do you want to use?:"
-msgstr "No se prporcionó un código corto. ¿Qué código corto deseas usar?"
+msgstr "No se prporcionó un código corto. ¿Qué código corto deseas usar?:"
 
 msgid "Referer"
 msgstr "Origen"
@@ -210,7 +210,7 @@ msgstr "El código corto a convertir"
 
 msgid "A short code was not provided. Which short code do you want to parse?:"
 msgstr ""
-"No se proporcionó un código corto. ¿Qué código corto quieres convertir?"
+"No se proporcionó un código corto. ¿Qué código corto quieres convertir?:"
 
 #, php-format
 msgid "No URL found for short code \"%s\""
@@ -222,6 +222,10 @@ msgstr "URL larga:"
 #, php-format
 msgid "Provided short code \"%s\" has an invalid format."
 msgstr "El código corto proporcionado \"%s\" tiene un formato inválido."
+
+#, php-format
+msgid "Provided short code \"%s\" could not be found."
+msgstr "El código corto proporcionado \"%s\" no ha podido ser encontrado."
 
 msgid "Creates one or more tags."
 msgstr "Crea una o más etiquetas."
