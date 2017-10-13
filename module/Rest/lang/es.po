@@ -79,15 +79,3 @@ msgstr ""
 "No se ha proporcionado token de autenticación o este es inválido. Realiza "
 "una nueva petición de autenticación y envía el token proporcionado en cada "
 "nueva petición en la cabecera \"%s\""
-
-#~ msgid "You have to provide both \"username\" and \"password\""
-#~ msgstr "Debes proporcionar tanto \"username\" como \"password\""
-
-#~ msgid "Invalid username and/or password"
-#~ msgstr "Usuario y/o contraseña no válidos"
-
-#~ msgid "Requested route does not exist."
-#~ msgstr "La ruta solicitada no existe."
-
-#~ msgid "RestToken not found for token \"%s\""
-#~ msgstr "No se ha encontrado un RestToken para el token \"%s\""
