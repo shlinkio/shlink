@@ -6,8 +6,10 @@ use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Action;
 use Shlinkio\Shlink\Core\Middleware;
 use Shlinkio\Shlink\Core\Options;
+use Shlinkio\Shlink\Core\Response\NotFoundDelegate;
 use Shlinkio\Shlink\Core\Service;
 use Zend\Expressive\Router\RouterInterface;
+use Zend\Expressive\Template\TemplateRendererInterface;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 
 return [
@@ -15,6 +17,7 @@ return [
     'dependencies' => [
         'factories' => [
             Options\AppOptions::class => Options\AppOptionsFactory::class,
+            NotFoundDelegate::class => ConfigAbstractFactory::class,
 
             // Services
             Service\UrlShortener::class => ConfigAbstractFactory::class,
@@ -29,9 +32,15 @@ return [
             Action\PreviewAction::class => ConfigAbstractFactory::class,
             Middleware\QrCodeCacheMiddleware::class => ConfigAbstractFactory::class,
         ],
+
+        'aliases' => [
+            'Zend\Expressive\Delegate\DefaultDelegate' => NotFoundDelegate::class,
+        ],
     ],
 
     ConfigAbstractFactory::class => [
+        NotFoundDelegate::class => [TemplateRendererInterface::class],
+
         // Services
         Service\UrlShortener::class => ['httpClient', 'em', Cache::class, 'config.url_shortener.shortcode_chars'],
         Service\VisitsTracker::class => ['em'],

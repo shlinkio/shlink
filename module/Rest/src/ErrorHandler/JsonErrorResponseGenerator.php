@@ -18,6 +18,7 @@ class JsonErrorResponseGenerator implements ErrorResponseGeneratorInterface, Sta
      * @param Request $request
      * @param Response $response
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function __invoke($e, Request $request, Response $response)
     {
@@ -31,11 +32,7 @@ class JsonErrorResponseGenerator implements ErrorResponseGeneratorInterface, Sta
         ], $status);
     }
 
-    /**
-     * @param string $responsePhrase
-     * @return string
-     */
-    protected function responsePhraseToCode($responsePhrase): string
+    protected function responsePhraseToCode(string $responsePhrase): string
     {
         return strtoupper(str_replace(' ', '_', $responsePhrase));
     }
