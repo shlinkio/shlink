@@ -46,17 +46,23 @@ class UrlShortener implements UrlShortenerInterface
      * @param ClientInterface $httpClient
      * @param EntityManagerInterface $em
      * @param Cache $cache
-     * @param string $chars
      * @param bool $isUrlExistsValidation
+     * @param string $chars
      *
-     * @Inject({"httpClient", "em", Cache::class, "config.url_shortener.shortcode_chars", "config.url_shortener.validate_url"})
+     * @Inject({
+     *     "httpClient",
+     *      "em",
+     *      Cache::class,
+     *      "config.url_shortener.validate_url",
+     *      "config.url_shortener.shortcode_chars"
+     * })
      */
     public function __construct(
         ClientInterface $httpClient,
         EntityManagerInterface $em,
         Cache $cache,
-        $chars = self::DEFAULT_CHARS,
-        $isUrlExistsValidation
+        $isUrlExistsValidation,
+        $chars = self::DEFAULT_CHARS
     ) {
         $this->httpClient = $httpClient;
         $this->em = $em;

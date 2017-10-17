@@ -67,11 +67,7 @@ class UrlShortenerTest extends TestCase
     public function setUrlShortener($isUrlValidationExists)
     {
         $this->urlShortener = new UrlShortener(
-            $this->httpClient->reveal(),
-            $this->em->reveal(),
-            $this->cache,
-            UrlShortener::DEFAULT_CHARS,
-            $isUrlValidationExists
+            $this->httpClient->reveal(), $this->em->reveal(), $this->cache, $isUrlValidationExists, UrlShortener::DEFAULT_CHARS
         );
     }
 
