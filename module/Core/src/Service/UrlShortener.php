@@ -39,14 +39,14 @@ class UrlShortener implements UrlShortenerInterface
     /**
      * @var bool
      */
-    private $isUrlExistsValidation;
+    private $urlValidationEnabled;
 
     /**
      * UrlShortener constructor.
      * @param ClientInterface $httpClient
      * @param EntityManagerInterface $em
      * @param Cache $cache
-     * @param bool $isUrlExistsValidation
+     * @param bool $urlValidationEnabled
      * @param string $chars
      *
      * @Inject({
@@ -61,14 +61,14 @@ class UrlShortener implements UrlShortenerInterface
         ClientInterface $httpClient,
         EntityManagerInterface $em,
         Cache $cache,
-        $isUrlExistsValidation,
+        $urlValidationEnabled,
         $chars = self::DEFAULT_CHARS
     ) {
         $this->httpClient = $httpClient;
         $this->em = $em;
         $this->chars = empty($chars) ? self::DEFAULT_CHARS : $chars;
         $this->cache = $cache;
-        $this->isUrlExistsValidation = $isUrlExistsValidation;
+        $this->urlValidationEnabled = $urlValidationEnabled;
     }
 
     /**
@@ -91,7 +91,7 @@ class UrlShortener implements UrlShortenerInterface
         }
 
         // Check if the validation of url is enabled in the config
-        if (true === $this->isUrlExistsValidation) {
+        if (true === $this->urlValidationEnabled) {
             // Check that the URL exists
             $this->checkUrlExists($url);
         }
