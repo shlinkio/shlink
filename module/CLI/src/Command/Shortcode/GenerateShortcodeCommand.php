@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Shortcode;
 
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
+use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -61,6 +62,9 @@ class GenerateShortcodeCommand extends Command
              ->addOption('validUntil', 'u', InputOption::VALUE_REQUIRED, $this->translator->translate(
                  'The date until which this short URL will be valid. '
                  . 'If someone tries to access it after this date, it will not be found.'
+             ))
+             ->addOption('customSlug', 'c', InputOption::VALUE_REQUIRED, $this->translator->translate(
+                 'If provided, this slug will be used instead of generating a short code'
              ));
     }
 
@@ -94,6 +98,7 @@ class GenerateShortcodeCommand extends Command
             $processedTags = array_merge($processedTags, $explodedTags);
         }
         $tags = $processedTags;
+        $customSlug = $input->getOption('customSlug');
 
         try {
             if (! isset($longUrl)) {
@@ -105,7 +110,8 @@ class GenerateShortcodeCommand extends Command
                 new Uri($longUrl),
                 $tags,
                 $this->getOptionalDate($input, 'validSince'),
-                $this->getOptionalDate($input, 'validUntil')
+                $this->getOptionalDate($input, 'validUntil'),
+                $customSlug
             );
             $shortUrl = (new Uri())->withPath($shortCode)
                                    ->withScheme($this->domainConfig['schema'])
@@ -121,6 +127,13 @@ class GenerateShortcodeCommand extends Command
                     'Provided URL "%s" is invalid. Try with a different one.'
                 ) . '</error>',
                 $longUrl
+            ));
+        } catch (NonUniqueSlugException $e) {
+            $output->writeln(sprintf(
+                '<error>' . $this->translator->translate(
+                    'Provided slug "%s" is already in use by another URL. Try with a different one.'
+                ) . '</error>',
+                $customSlug
             ));
         }
     }
