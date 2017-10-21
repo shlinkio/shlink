@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2017-10-13 12:28+0200\n"
-"PO-Revision-Date: 2017-10-13 12:29+0200\n"
+"POT-Creation-Date: 2017-10-21 20:17+0200\n"
+"PO-Revision-Date: 2017-10-21 20:19+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -107,6 +107,24 @@ msgstr "La URL larga a procesar"
 msgid "Tags to apply to the new short URL"
 msgstr "Etiquetas a aplicar a la nueva URL acortada"
 
+msgid ""
+"The date from which this short URL will be valid. If someone tries to access "
+"it before this date, it will not be found."
+msgstr ""
+"La fecha desde la cual será válida esta URL acortada. Si alguien intenta "
+"acceder a ella antes de esta fecha, no será encontrada."
+
+msgid ""
+"The date until which this short URL will be valid. If someone tries to "
+"access it after this date, it will not be found."
+msgstr ""
+"La fecha hasta la cual será válida está URL acortada. Si alguien intenta "
+"acceder a ella después de esta fecha, no será encontrada."
+
+msgid "If provided, this slug will be used instead of generating a short code"
+msgstr ""
+"Si se proporciona, este slug será usado en vez de generar un código corto"
+
 msgid "A long URL was not provided. Which URL do you want to shorten?:"
 msgstr "No se ha proporcionado una URL larga. ¿Qué URL deseas acortar?"
 
@@ -122,6 +140,14 @@ msgstr "URL generada:"
 #, php-format
 msgid "Provided URL \"%s\" is invalid. Try with a different one."
 msgstr "La URL proporcionada \"%s\" e inválida. Prueba con una diferente."
+
+#, php-format
+msgid ""
+"Provided slug \"%s\" is already in use by another URL. Try with a different "
+"one."
+msgstr ""
+"El slug proporcionado \"%s\" ya está siendo usado para otra URL. Prueba con "
+"uno diferente."
 
 msgid "Returns the detailed visits information for provided short code"
 msgstr ""
