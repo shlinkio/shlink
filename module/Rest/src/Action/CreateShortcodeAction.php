@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
+use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
@@ -57,12 +58,16 @@ class CreateShortcodeAction extends AbstractRestAction
             ], self::STATUS_BAD_REQUEST);
         }
         $longUrl = $postData['longUrl'];
-        $tags = (array) ($postData['tags'] ?? []);
-        $validSince = $this->getOptionalDate($postData, 'validSince');
-        $validUntil = $this->getOptionalDate($postData, 'validUntil');
+        $customSlug = $postData['customSlug'] ?? null;
 
         try {
-            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl), $tags, $validSince, $validUntil);
+            $shortCode = $this->urlShortener->urlToShortCode(
+                new Uri($longUrl),
+                (array) ($postData['tags'] ?? []),
+                $this->getOptionalDate($postData, 'validSince'),
+                $this->getOptionalDate($postData, 'validUntil'),
+                $customSlug
+            );
             $shortUrl = (new Uri())->withPath($shortCode)
                                    ->withScheme($this->domainConfig['schema'])
                                    ->withHost($this->domainConfig['hostname']);
@@ -81,7 +86,16 @@ class CreateShortcodeAction extends AbstractRestAction
                     $longUrl
                 ),
             ], self::STATUS_BAD_REQUEST);
-        } catch (\Exception $e) {
+        } catch (NonUniqueSlugException $e) {
+            $this->logger->warning('Provided non-unique slug.' . PHP_EOL . $e);
+            return new JsonResponse([
+                'error' => RestUtils::getRestErrorCodeFromException($e),
+                'message' => sprintf(
+                    $this->translator->translate('Provided slug %s is already in use. Try with a different one.'),
+                    $customSlug
+                ),
+            ], self::STATUS_BAD_REQUEST);
+        } catch (\Throwable $e) {
             $this->logger->error('Unexpected error creating shortcode.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,

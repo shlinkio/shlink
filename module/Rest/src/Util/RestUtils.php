@@ -12,6 +12,7 @@ class RestUtils
     const INVALID_SHORTCODE_ERROR = 'INVALID_SHORTCODE';
     const INVALID_URL_ERROR = 'INVALID_URL';
     const INVALID_ARGUMENT_ERROR = 'INVALID_ARGUMENT';
+    const INVALID_SLUG_ERROR = 'INVALID_SLUG';
     const INVALID_CREDENTIALS_ERROR = 'INVALID_CREDENTIALS';
     const INVALID_AUTH_TOKEN_ERROR = 'INVALID_AUTH_TOKEN';
     const INVALID_AUTHORIZATION_ERROR = 'INVALID_AUTHORIZATION';
@@ -26,6 +27,8 @@ class RestUtils
                 return self::INVALID_SHORTCODE_ERROR;
             case $e instanceof Core\InvalidUrlException:
                 return self::INVALID_URL_ERROR;
+            case $e instanceof Core\NonUniqueSlugException:
+                return self::INVALID_SLUG_ERROR;
             case $e instanceof Common\InvalidArgumentException:
                 return self::INVALID_ARGUMENT_ERROR;
             case $e instanceof Rest\AuthenticationException:

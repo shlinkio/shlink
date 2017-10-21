@@ -93,7 +93,6 @@ class UrlShortener implements UrlShortenerInterface
         $this->checkUrlExists($url);
         $customSlug = $this->processCustomSlug($customSlug);
 
-
         // Transactionally insert the short url, then generate the short code and finally update the short code
         try {
             $this->em->beginTransaction();
