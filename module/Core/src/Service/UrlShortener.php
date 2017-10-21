@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Service;
 
+use Cocur\Slugify\Slugify;
+use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -14,6 +16,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
+use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 
@@ -39,17 +42,23 @@ class UrlShortener implements UrlShortenerInterface
      * @var Cache
      */
     private $cache;
+    /**
+     * @var SlugifyInterface
+     */
+    private $slugger;
 
     public function __construct(
         ClientInterface $httpClient,
         EntityManagerInterface $em,
         Cache $cache,
-        $chars = self::DEFAULT_CHARS
+        $chars = self::DEFAULT_CHARS,
+        SlugifyInterface $slugger = null
     ) {
         $this->httpClient = $httpClient;
         $this->em = $em;
         $this->chars = empty($chars) ? self::DEFAULT_CHARS : $chars;
         $this->cache = $cache;
+        $this->slugger = $slugger ?: new Slugify();
     }
 
     /**
@@ -59,7 +68,9 @@ class UrlShortener implements UrlShortenerInterface
      * @param string[] $tags
      * @param \DateTime|null $validSince
      * @param \DateTime|null $validUntil
+     * @param string|null $customSlug
      * @return string
+     * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      * @throws RuntimeException
      */
@@ -67,7 +78,8 @@ class UrlShortener implements UrlShortenerInterface
         UriInterface $url,
         array $tags = [],
         \DateTime $validSince = null,
-        \DateTime $validUntil = null
+        \DateTime $validUntil = null,
+        string $customSlug = null
     ): string {
         // If the url already exists in the database, just return its short code
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
@@ -79,6 +91,8 @@ class UrlShortener implements UrlShortenerInterface
 
         // Check that the URL exists
         $this->checkUrlExists($url);
+        $customSlug = $this->processCustomSlug($customSlug);
+
 
         // Transactionally insert the short url, then generate the short code and finally update the short code
         try {
@@ -93,7 +107,7 @@ class UrlShortener implements UrlShortenerInterface
             $this->em->flush();
 
             // Generate the short code and persist it
-            $shortCode = $this->convertAutoincrementIdToShortCode($shortUrl->getId());
+            $shortCode = $customSlug ?? $this->convertAutoincrementIdToShortCode($shortUrl->getId());
             $shortUrl->setShortCode($shortCode)
                      ->setTags($this->tagNamesToEntities($this->em, $tags));
             $this->em->flush();
@@ -116,7 +130,7 @@ class UrlShortener implements UrlShortenerInterface
      * @param UriInterface $url
      * @return void
      */
-    protected function checkUrlExists(UriInterface $url)
+    private function checkUrlExists(UriInterface $url)
     {
         try {
             $this->httpClient->request('GET', $url, ['allow_redirects' => [
@@ -133,7 +147,7 @@ class UrlShortener implements UrlShortenerInterface
      * @param int $id
      * @return string
      */
-    protected function convertAutoincrementIdToShortCode($id)
+    private function convertAutoincrementIdToShortCode($id)
     {
         $id = ((int) $id) + 200000; // Increment the Id so that the generated shortcode is not too short
         $length = strlen($this->chars);
@@ -146,6 +160,22 @@ class UrlShortener implements UrlShortenerInterface
         }
 
         return $this->chars[(int) $id] . $code;
+    }
+
+    private function processCustomSlug($customSlug)
+    {
+        if ($customSlug === null) {
+            return null;
+        }
+
+        // If a custom slug was provided, check it is unique
+        $customSlug = $this->slugger->slugify($customSlug);
+        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy(['shortCode' => $customSlug]);
+        if ($shortUrl !== null) {
+            throw NonUniqueSlugException::fromSlug($customSlug);
+        }
+
+        return $customSlug;
     }
 
     /**

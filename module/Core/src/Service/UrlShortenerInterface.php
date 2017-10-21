@@ -8,6 +8,7 @@ use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
+use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 
 interface UrlShortenerInterface
 {
@@ -18,7 +19,9 @@ interface UrlShortenerInterface
      * @param string[] $tags
      * @param \DateTime|null $validSince
      * @param \DateTime|null $validUntil
+     * @param string|null $customSlug
      * @return string
+     * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      * @throws RuntimeException
      */
@@ -26,7 +29,8 @@ interface UrlShortenerInterface
         UriInterface $url,
         array $tags = [],
         \DateTime $validSince = null,
-        \DateTime $validUntil = null
+        \DateTime $validUntil = null,
+        string $customSlug = null
     ): string;
 
     /**

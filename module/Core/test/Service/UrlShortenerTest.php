@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Service;
 
+use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -14,8 +15,10 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Request;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Zend\Diactoros\Uri;
@@ -38,6 +41,10 @@ class UrlShortenerTest extends TestCase
      * @var Cache
      */
     protected $cache;
+    /**
+     * @var ObjectProphecy
+     */
+    protected $slugger;
 
     public function setUp()
     {
@@ -60,8 +67,15 @@ class UrlShortenerTest extends TestCase
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $this->cache = new ArrayCache();
+        $this->slugger = $this->prophesize(SlugifyInterface::class);
 
-        $this->urlShortener = new UrlShortener($this->httpClient->reveal(), $this->em->reveal(), $this->cache);
+        $this->urlShortener = new UrlShortener(
+            $this->httpClient->reveal(),
+            $this->em->reveal(),
+            $this->cache,
+            UrlShortener::DEFAULT_CHARS,
+            $this->slugger->reveal()
+        );
     }
 
     /**
@@ -115,6 +129,54 @@ class UrlShortenerTest extends TestCase
 
         $shortCode = $this->urlShortener->urlToShortCode(new Uri('http://foobar.com/12345/hello?foo=bar'));
         $this->assertEquals($shortUrl->getShortCode(), $shortCode);
+    }
+
+    /**
+     * @test
+     */
+    public function whenCustomSlugIsProvidedItIsUsed()
+    {
+        /** @var MethodProphecy $slugify */
+        $slugify = $this->slugger->slugify('custom-slug')->willReturnArgument();
+
+        $this->urlShortener->urlToShortCode(
+            new Uri('http://foobar.com/12345/hello?foo=bar'),
+            [],
+            null,
+            null,
+            'custom-slug'
+        );
+
+        $slugify->shouldHaveBeenCalledTimes(1);
+    }
+
+    /**
+     * @test
+     */
+    public function exceptionIsThrownWhenNonUniqueSlugIsProvided()
+    {
+        /** @var MethodProphecy $slugify */
+        $slugify = $this->slugger->slugify('custom-slug')->willReturnArgument();
+
+        $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
+        /** @var MethodProphecy $findBySlug */
+        $findBySlug = $repo->findOneBy(['shortCode' => 'custom-slug'])->willReturn(new ShortUrl());
+        $repo->findOneBy(Argument::cetera())->willReturn(null);
+        /** @var MethodProphecy $getRepo */
+        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
+
+        $slugify->shouldBeCalledTimes(1);
+        $findBySlug->shouldBeCalledTimes(1);
+        $getRepo->shouldBeCalled();
+        $this->expectException(NonUniqueSlugException::class);
+
+        $this->urlShortener->urlToShortCode(
+            new Uri('http://foobar.com/12345/hello?foo=bar'),
+            [],
+            null,
+            null,
+            'custom-slug'
+        );
     }
 
     /**
