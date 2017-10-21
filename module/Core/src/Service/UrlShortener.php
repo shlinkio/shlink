@@ -80,7 +80,7 @@ class UrlShortener implements UrlShortenerInterface
 
             // First, create the short URL with an empty short code
             $shortUrl = new ShortUrl();
-            $shortUrl->setOriginalUrl($url);
+            $shortUrl->setOriginalUrl((string) $url);
             $this->em->persist($shortUrl);
             $this->em->flush();
 

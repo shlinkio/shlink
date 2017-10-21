@@ -90,7 +90,7 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
      */
     public function setOriginalUrl(string $originalUrl)
     {
-        $this->originalUrl = (string) $originalUrl;
+        $this->originalUrl = $originalUrl;
         return $this;
     }
 
