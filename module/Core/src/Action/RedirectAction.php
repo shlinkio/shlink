@@ -7,8 +7,6 @@ use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Core\Action\Util\ErrorResponseBuilderTrait;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
@@ -28,19 +26,11 @@ class RedirectAction implements MiddlewareInterface
      * @var VisitsTrackerInterface
      */
     private $visitTracker;
-    /**
-     * @var null|LoggerInterface
-     */
-    private $logger;
 
-    public function __construct(
-        UrlShortenerInterface $urlShortener,
-        VisitsTrackerInterface $visitTracker,
-        LoggerInterface $logger = null
-    ) {
+    public function __construct(UrlShortenerInterface $urlShortener, VisitsTrackerInterface $visitTracker)
+    {
         $this->urlShortener = $urlShortener;
         $this->visitTracker = $visitTracker;
-        $this->logger = $logger ?: new NullLogger();
     }
 
     /**

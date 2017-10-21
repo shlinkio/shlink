@@ -60,13 +60,13 @@ class UrlShortener implements UrlShortenerInterface
      * @throws InvalidUrlException
      * @throws RuntimeException
      */
-    public function urlToShortCode(UriInterface $url, array $tags = [])
+    public function urlToShortCode(UriInterface $url, array $tags = []): string
     {
         // If the url already exists in the database, just return its short code
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'originalUrl' => $url,
         ]);
-        if (isset($shortUrl)) {
+        if ($shortUrl !== null) {
             return $shortUrl->getShortCode();
         }
 
@@ -147,7 +147,7 @@ class UrlShortener implements UrlShortenerInterface
      * @throws InvalidShortCodeException
      * @throws EntityDoesNotExistException
      */
-    public function shortCodeToUrl($shortCode): string
+    public function shortCodeToUrl(string $shortCode): string
     {
         $cacheKey = sprintf('%s_longUrl', $shortCode);
         // Check if the short code => URL map is already cached

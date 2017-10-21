@@ -20,7 +20,7 @@ interface UrlShortenerInterface
      * @throws InvalidUrlException
      * @throws RuntimeException
      */
-    public function urlToShortCode(UriInterface $url, array $tags = []);
+    public function urlToShortCode(UriInterface $url, array $tags = []): string;
 
     /**
      * Tries to find the mapped URL for provided short code. Returns null if not found
@@ -30,5 +30,5 @@ interface UrlShortenerInterface
      * @throws InvalidShortCodeException
      * @throws EntityDoesNotExistException
      */
-    public function shortCodeToUrl($shortCode): string;
+    public function shortCodeToUrl(string $shortCode): string;
 }
