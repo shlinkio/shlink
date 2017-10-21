@@ -74,7 +74,7 @@ class CreateShortcodeAction extends AbstractRestAction
 
             return new JsonResponse([
                 'longUrl' => $longUrl,
-                'shortUrl' => $shortUrl->__toString(),
+                'shortUrl' => (string) $shortUrl,
                 'shortCode' => $shortCode,
             ]);
         } catch (InvalidUrlException $e) {
