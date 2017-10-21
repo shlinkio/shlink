@@ -57,10 +57,12 @@ class CreateShortcodeAction extends AbstractRestAction
             ], self::STATUS_BAD_REQUEST);
         }
         $longUrl = $postData['longUrl'];
-        $tags = isset($postData['tags']) && is_array($postData['tags']) ? $postData['tags'] : [];
+        $tags = (array) ($postData['tags'] ?? []);
+        $validSince = $this->getOptionalDate($postData, 'validSince');
+        $validUntil = $this->getOptionalDate($postData, 'validUntil');
 
         try {
-            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl), $tags);
+            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl), $tags, $validSince, $validUntil);
             $shortUrl = (new Uri())->withPath($shortCode)
                                    ->withScheme($this->domainConfig['schema'])
                                    ->withHost($this->domainConfig['hostname']);
@@ -86,5 +88,10 @@ class CreateShortcodeAction extends AbstractRestAction
                 'message' => $this->translator->translate('Unexpected error occurred'),
             ], self::STATUS_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private function getOptionalDate(array $postData, string $fieldName)
+    {
+        return isset($postData[$fieldName]) ? new \DateTime($postData[$fieldName]) : null;
     }
 }

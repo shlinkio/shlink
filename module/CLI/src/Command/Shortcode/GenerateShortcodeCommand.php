@@ -51,9 +51,17 @@ class GenerateShortcodeCommand extends Command
              ->addOption(
                  'tags',
                  't',
-                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
+                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                  $this->translator->translate('Tags to apply to the new short URL')
-             );
+             )
+             ->addOption('validSince', 's', InputOption::VALUE_REQUIRED, $this->translator->translate(
+                 'The date from which this short URL will be valid. '
+                 . 'If someone tries to access it before this date, it will not be found.'
+             ))
+             ->addOption('validUntil', 'u', InputOption::VALUE_REQUIRED, $this->translator->translate(
+                 'The date until which this short URL will be valid. '
+                 . 'If someone tries to access it after this date, it will not be found.'
+             ));
     }
 
     public function interact(InputInterface $input, OutputInterface $output)
@@ -93,7 +101,12 @@ class GenerateShortcodeCommand extends Command
                 return;
             }
 
-            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl), $tags);
+            $shortCode = $this->urlShortener->urlToShortCode(
+                new Uri($longUrl),
+                $tags,
+                $this->getOptionalDate($input, 'validSince'),
+                $this->getOptionalDate($input, 'validUntil')
+            );
             $shortUrl = (new Uri())->withPath($shortCode)
                                    ->withScheme($this->domainConfig['schema'])
                                    ->withHost($this->domainConfig['hostname']);
@@ -110,5 +123,11 @@ class GenerateShortcodeCommand extends Command
                 $longUrl
             ));
         }
+    }
+
+    private function getOptionalDate(InputInterface $input, string $fieldName)
+    {
+        $since = $input->getOption($fieldName);
+        return $since !== null ? new \DateTime($since) : null;
     }
 }

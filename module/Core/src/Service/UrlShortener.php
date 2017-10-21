@@ -57,12 +57,18 @@ class UrlShortener implements UrlShortenerInterface
      *
      * @param UriInterface $url
      * @param string[] $tags
+     * @param \DateTime|null $validSince
+     * @param \DateTime|null $validUntil
      * @return string
      * @throws InvalidUrlException
      * @throws RuntimeException
      */
-    public function urlToShortCode(UriInterface $url, array $tags = []): string
-    {
+    public function urlToShortCode(
+        UriInterface $url,
+        array $tags = [],
+        \DateTime $validSince = null,
+        \DateTime $validUntil = null
+    ): string {
         // If the url already exists in the database, just return its short code
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'originalUrl' => $url,
@@ -80,7 +86,9 @@ class UrlShortener implements UrlShortenerInterface
 
             // First, create the short URL with an empty short code
             $shortUrl = new ShortUrl();
-            $shortUrl->setOriginalUrl((string) $url);
+            $shortUrl->setOriginalUrl((string) $url)
+                     ->setValidSince($validSince)
+                     ->setValidUntil($validUntil);
             $this->em->persist($shortUrl);
             $this->em->flush();
 

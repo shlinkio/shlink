@@ -16,11 +16,18 @@ interface UrlShortenerInterface
      *
      * @param UriInterface $url
      * @param string[] $tags
+     * @param \DateTime|null $validSince
+     * @param \DateTime|null $validUntil
      * @return string
      * @throws InvalidUrlException
      * @throws RuntimeException
      */
-    public function urlToShortCode(UriInterface $url, array $tags = []): string;
+    public function urlToShortCode(
+        UriInterface $url,
+        array $tags = [],
+        \DateTime $validSince = null,
+        \DateTime $validUntil = null
+    ): string;
 
     /**
      * Tries to find the mapped URL for provided short code. Returns null if not found

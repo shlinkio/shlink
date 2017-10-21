@@ -52,7 +52,7 @@ class CreateShortcodeActionTest extends TestCase
      */
     public function properShortcodeConversionReturnsData()
     {
-        $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'))
+        $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), null, null)
             ->willReturn('abc123')
             ->shouldBeCalledTimes(1);
 
@@ -69,7 +69,7 @@ class CreateShortcodeActionTest extends TestCase
      */
     public function anInvalidUrlReturnsError()
     {
-        $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'))
+        $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), null, null)
             ->willThrow(InvalidUrlException::class)
             ->shouldBeCalledTimes(1);
 
@@ -86,7 +86,7 @@ class CreateShortcodeActionTest extends TestCase
      */
     public function aGenericExceptionWillReturnError()
     {
-        $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'))
+        $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), null, null)
             ->willThrow(\Exception::class)
             ->shouldBeCalledTimes(1);
 
