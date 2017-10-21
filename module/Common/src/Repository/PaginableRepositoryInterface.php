@@ -15,14 +15,20 @@ interface PaginableRepositoryInterface
      * @param string|array|null $orderBy
      * @return array
      */
-    public function findList($limit = null, $offset = null, $searchTerm = null, array $tags = [], $orderBy = null);
+    public function findList(
+        int $limit = null,
+        int $offset = null,
+        string $searchTerm = null,
+        array $tags = [],
+        $orderBy = null
+    ): array;
 
     /**
      * Counts the number of elements in a list using provided filtering data
      *
-     * @param null $searchTerm
+     * @param string|null $searchTerm
      * @param array $tags
      * @return int
      */
-    public function countList($searchTerm = null, array $tags = []);
+    public function countList(string $searchTerm = null, array $tags = []): int;
 }

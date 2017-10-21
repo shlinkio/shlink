@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Zend\Diactoros\Uri;
 
@@ -127,8 +128,8 @@ class UrlShortenerTest extends TestCase
         $shortUrl->setShortCode($shortCode)
                  ->setOriginalUrl('expected_url');
 
-        $repo = $this->prophesize(ObjectRepository::class);
-        $repo->findOneBy(['shortCode' => $shortCode])->willReturn($shortUrl);
+        $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
+        $repo->findOneByShortCode($shortCode)->willReturn($shortUrl);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $this->assertFalse($this->cache->contains($shortCode . '_longUrl'));

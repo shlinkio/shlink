@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
+use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 
 class UrlShortener implements UrlShortenerInterface
@@ -160,11 +161,13 @@ class UrlShortener implements UrlShortenerInterface
             throw InvalidShortCodeException::fromCharset($shortCode, $this->chars);
         }
 
-        $criteria = ['shortCode' => $shortCode];
-        /** @var ShortUrl|null $shortUrl */
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy($criteria);
+        /** @var ShortUrlRepository $shortUrlRepo */
+        $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
+        $shortUrl = $shortUrlRepo->findOneByShortCode($shortCode);
         if ($shortUrl === null) {
-            throw EntityDoesNotExistException::createFromEntityAndConditions(ShortUrl::class, $criteria);
+            throw EntityDoesNotExistException::createFromEntityAndConditions(ShortUrl::class, [
+                'shortCode' => $shortCode,
+            ]);
         }
 
         // Cache the shortcode
