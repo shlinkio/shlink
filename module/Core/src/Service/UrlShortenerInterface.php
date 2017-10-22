@@ -20,6 +20,7 @@ interface UrlShortenerInterface
      * @param \DateTime|null $validSince
      * @param \DateTime|null $validUntil
      * @param string|null $customSlug
+     * @param int|null $maxVisits
      * @return string
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
@@ -30,7 +31,8 @@ interface UrlShortenerInterface
         array $tags = [],
         \DateTime $validSince = null,
         \DateTime $validUntil = null,
-        string $customSlug = null
+        string $customSlug = null,
+        int $maxVisits = null
     ): string;
 
     /**

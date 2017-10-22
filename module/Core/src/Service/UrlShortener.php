@@ -69,6 +69,7 @@ class UrlShortener implements UrlShortenerInterface
      * @param \DateTime|null $validSince
      * @param \DateTime|null $validUntil
      * @param string|null $customSlug
+     * @param int|null $maxVisits
      * @return string
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
@@ -79,7 +80,8 @@ class UrlShortener implements UrlShortenerInterface
         array $tags = [],
         \DateTime $validSince = null,
         \DateTime $validUntil = null,
-        string $customSlug = null
+        string $customSlug = null,
+        int $maxVisits = null
     ): string {
         // If the url already exists in the database, just return its short code
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
@@ -101,7 +103,8 @@ class UrlShortener implements UrlShortenerInterface
             $shortUrl = new ShortUrl();
             $shortUrl->setOriginalUrl((string) $url)
                      ->setValidSince($validSince)
-                     ->setValidUntil($validUntil);
+                     ->setValidUntil($validUntil)
+                     ->setMaxVisits($maxVisits);
             $this->em->persist($shortUrl);
             $this->em->flush();
 
@@ -146,7 +149,7 @@ class UrlShortener implements UrlShortenerInterface
      * @param int $id
      * @return string
      */
-    private function convertAutoincrementIdToShortCode($id)
+    private function convertAutoincrementIdToShortCode($id): string
     {
         $id = ((int) $id) + 200000; // Increment the Id so that the generated shortcode is not too short
         $length = strlen($this->chars);

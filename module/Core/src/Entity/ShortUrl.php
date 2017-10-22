@@ -224,7 +224,7 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
 
     public function maxVisitsReached(): bool
     {
-        return $this->maxVisits !== null && $this->maxVisits >= $this->getVisitsCount();
+        return $this->maxVisits !== null && $this->getVisitsCount() >= $this->maxVisits;
     }
 
     /**

@@ -65,6 +65,9 @@ class GenerateShortcodeCommand extends Command
              ))
              ->addOption('customSlug', 'c', InputOption::VALUE_REQUIRED, $this->translator->translate(
                  'If provided, this slug will be used instead of generating a short code'
+             ))
+             ->addOption('maxVisits', 'm', InputOption::VALUE_REQUIRED, $this->translator->translate(
+                 'This will limit the number of visits for this short URL.'
              ));
     }
 
@@ -99,6 +102,7 @@ class GenerateShortcodeCommand extends Command
         }
         $tags = $processedTags;
         $customSlug = $input->getOption('customSlug');
+        $maxVisits = $input->getOption('maxVisits');
 
         try {
             if (! isset($longUrl)) {
@@ -111,7 +115,8 @@ class GenerateShortcodeCommand extends Command
                 $tags,
                 $this->getOptionalDate($input, 'validSince'),
                 $this->getOptionalDate($input, 'validUntil'),
-                $customSlug
+                $customSlug,
+                $maxVisits !== null ? (int) $maxVisits : null
             );
             $shortUrl = (new Uri())->withPath($shortCode)
                                    ->withScheme($this->domainConfig['schema'])

@@ -145,6 +145,8 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
            ->setParameter('now', $now)
            ->setMaxResults(1);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        /** @var ShortUrl|null $result */
+        $result = $qb->getQuery()->getOneOrNullResult();
+        return $result === null || $result->maxVisitsReached() ? null : $result;
     }
 }

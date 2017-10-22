@@ -66,7 +66,8 @@ class CreateShortcodeAction extends AbstractRestAction
                 (array) ($postData['tags'] ?? []),
                 $this->getOptionalDate($postData, 'validSince'),
                 $this->getOptionalDate($postData, 'validUntil'),
-                $customSlug
+                $customSlug,
+                isset($postData['maxVisits']) ? (int) $postData['maxVisits'] : null
             );
             $shortUrl = (new Uri())->withPath($shortCode)
                                    ->withScheme($this->domainConfig['schema'])
