@@ -87,9 +87,14 @@ class CreateShortcodeActionTest extends TestCase
      */
     public function nonUniqueSlugReturnsError()
     {
-        $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), null, null, 'foo')
-            ->willThrow(NonUniqueSlugException::class)
-            ->shouldBeCalledTimes(1);
+        $this->urlShortener->urlToShortCode(
+            Argument::type(Uri::class),
+            Argument::type('array'),
+            null,
+            null,
+            'foo',
+            Argument::cetera()
+        )->willThrow(NonUniqueSlugException::class)->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
