@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
 
@@ -14,7 +15,6 @@ interface VisitsTrackerInterface
      *
      * @param string $shortCode
      * @param ServerRequestInterface $request
-     * @return
      */
     public function track($shortCode, ServerRequestInterface $request);
 
@@ -24,6 +24,7 @@ interface VisitsTrackerInterface
      * @param $shortCode
      * @param DateRange $dateRange
      * @return Visit[]
+     * @throws InvalidArgumentException
      */
-    public function info($shortCode, DateRange $dateRange = null);
+    public function info($shortCode, DateRange $dateRange = null): array;
 }

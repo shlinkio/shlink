@@ -64,6 +64,11 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
      * @ORM\Column(name="valid_until", type="datetime", nullable=true)
      */
     protected $validUntil;
+    /**
+     * @var integer
+     * @ORM\Column(name="max_visits", type="integer", nullable=true)
+     */
+    protected $maxVisits;
 
     /**
      * ShortUrl constructor.
@@ -194,6 +199,34 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
         return $this;
     }
 
+    public function getVisitsCount(): int
+    {
+        return count($this->visits);
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxVisits(): int
+    {
+        return $this->maxVisits;
+    }
+
+    /**
+     * @param int $maxVisits
+     * @return $this|self
+     */
+    public function setMaxVisits(int $maxVisits): self
+    {
+        $this->maxVisits = $maxVisits;
+        return $this;
+    }
+
+    public function maxVisitsReached(): bool
+    {
+        return $this->maxVisits !== null && $this->maxVisits >= $this->getVisitsCount();
+    }
+
     /**
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -206,8 +239,8 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
         return [
             'shortCode' => $this->shortCode,
             'originalUrl' => $this->originalUrl,
-            'dateCreated' => isset($this->dateCreated) ? $this->dateCreated->format(\DateTime::ATOM) : null,
-            'visitsCount' => count($this->visits),
+            'dateCreated' => $this->dateCreated !== null ? $this->dateCreated->format(\DateTime::ATOM) : null,
+            'visitsCount' => $this->getVisitsCount(),
             'tags' => $this->tags->toArray(),
         ];
     }

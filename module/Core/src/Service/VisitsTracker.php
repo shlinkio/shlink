@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Service;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
@@ -14,7 +15,7 @@ use Shlinkio\Shlink\Core\Repository\VisitRepository;
 class VisitsTracker implements VisitsTrackerInterface
 {
     /**
-     * @var EntityManagerInterface
+     * @var EntityManagerInterface|EntityManager
      */
     private $em;
 
@@ -41,24 +42,25 @@ class VisitsTracker implements VisitsTrackerInterface
               ->setUserAgent($request->getHeaderLine('User-Agent'))
               ->setReferer($request->getHeaderLine('Referer'))
               ->setRemoteAddr($this->findOutRemoteAddr($request));
+
         $this->em->persist($visit);
-        $this->em->flush();
+        $this->em->flush($visit);
     }
 
     /**
      * @param ServerRequestInterface $request
-     * @return string
+     * @return string|null
      */
-    protected function findOutRemoteAddr(ServerRequestInterface $request)
+    private function findOutRemoteAddr(ServerRequestInterface $request)
     {
         $forwardedFor = $request->getHeaderLine('X-Forwarded-For');
         if (empty($forwardedFor)) {
             $serverParams = $request->getServerParams();
-            return isset($serverParams['REMOTE_ADDR']) ? $serverParams['REMOTE_ADDR'] : null;
+            return $serverParams['REMOTE_ADDR'] ?? null;
         }
 
         $ips = explode(',', $forwardedFor);
-        return $ips[0];
+        return $ips[0] ?? null;
     }
 
     /**
@@ -67,14 +69,15 @@ class VisitsTracker implements VisitsTrackerInterface
      * @param $shortCode
      * @param DateRange $dateRange
      * @return Visit[]
+     * @throws InvalidArgumentException
      */
-    public function info($shortCode, DateRange $dateRange = null)
+    public function info($shortCode, DateRange $dateRange = null): array
     {
         /** @var ShortUrl $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'shortCode' => $shortCode,
         ]);
-        if (! isset($shortUrl)) {
+        if ($shortUrl === null) {
             throw new InvalidArgumentException(sprintf('Short code "%s" not found', $shortCode));
         }
 
