@@ -46,6 +46,7 @@
     },
     "require-dev": {
         "filp/whoops": "^2.0",
+        "phpunit/dbunit": "^3.0",
         "phpunit/phpunit": "^6.0",
         "slevomat/coding-standard": "^4.0",
         "squizlabs/php_codesniffer": "^3.1",
@@ -69,7 +70,10 @@
             "ShlinkioTest\\Shlink\\CLI\\": "module/CLI/test",
             "ShlinkioTest\\Shlink\\Rest\\": "module/Rest/test",
             "ShlinkioTest\\Shlink\\Core\\": "module/Core/test",
-            "ShlinkioTest\\Shlink\\Common\\": "module/Common/test"
+            "ShlinkioTest\\Shlink\\Common\\": [
+                "module/Common/test",
+                "module/Common/test-func"
+            ]
         }
     },
     "scripts": {
