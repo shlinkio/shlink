@@ -50,22 +50,14 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         $fieldName = is_array($orderBy) ? key($orderBy) : $orderBy;
         $order = is_array($orderBy) ? $orderBy[$fieldName] : 'ASC';
 
-        if (in_array($fieldName, [
-            'visits',
-            'visitsCount',
-            'visitCount',
-        ], true)) {
+        if (in_array($fieldName, ['visits', 'visitsCount', 'visitCount'], true)) {
             $qb->addSelect('COUNT(v) AS totalVisits')
                ->leftJoin('s.visits', 'v')
                ->groupBy('s')
                ->orderBy('totalVisits', $order);
 
             return array_column($qb->getQuery()->getResult(), 0);
-        } elseif (in_array($fieldName, [
-            'originalUrl',
-            'shortCode',
-            'dateCreated',
-        ], true)) {
+        } elseif (in_array($fieldName, ['originalUrl', 'shortCode', 'dateCreated'], true)) {
             $qb->orderBy('s.' . $fieldName, $order);
         }
 
