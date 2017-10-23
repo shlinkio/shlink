@@ -10,6 +10,7 @@
 
 **Enhancements:**
 
+* [27: Add repository functional tests with dbunit](https://github.com/shlinkio/shlink/issues/27)
 * [86: Drop support for PHP 5](https://github.com/shlinkio/shlink/issues/86)
 * [101: Make actions just capture very specific exceptions, and let the ErrorHandler catch any other exception](https://github.com/shlinkio/shlink/issues/101)
 * [104: Use different templates for requested-short-code-does-not-exist and route-could-not-be-match](https://github.com/shlinkio/shlink/issues/104)
