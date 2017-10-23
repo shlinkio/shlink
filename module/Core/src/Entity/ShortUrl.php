@@ -205,6 +205,17 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
     }
 
     /**
+     * @param Collection $visits
+     * @return ShortUrl
+     * @internal
+     */
+    public function setVisits(Collection $visits): self
+    {
+        $this->visits = $visits;
+        return $this;
+    }
+
+    /**
      * @return int|null
      */
     public function getMaxVisits()
