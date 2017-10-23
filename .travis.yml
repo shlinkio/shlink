@@ -13,7 +13,6 @@ php:
 before_install:
   - phpenv config-add data/infra/travis-php/memcached.ini
   - phpenv config-add data/infra/travis-php/apcu.ini
-  - phpenv config-add data/infra/travis-php/pdo_sqlite.ini
   - phpenv config-add data/infra/travis-php/sqlite.ini
 
 before_script:
