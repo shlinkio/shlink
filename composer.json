@@ -34,7 +34,7 @@
         "symfony/process": "^3.0",
         "theorchard/monolog-cascade": "^0.4",
         "zendframework/zend-config": "^3.0",
-        "zendframework/zend-config-aggregator": "^0.1",
+        "zendframework/zend-config-aggregator": "^1.0",
         "zendframework/zend-expressive": "^2.0",
         "zendframework/zend-expressive-fastroute": "^2.0",
         "zendframework/zend-expressive-helpers": "^4.2",
