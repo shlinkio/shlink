@@ -69,7 +69,10 @@
         "psr-4": {
             "ShlinkioTest\\Shlink\\CLI\\": "module/CLI/test",
             "ShlinkioTest\\Shlink\\Rest\\": "module/Rest/test",
-            "ShlinkioTest\\Shlink\\Core\\": "module/Core/test",
+            "ShlinkioTest\\Shlink\\Core\\": [
+                "module/Core/test",
+                "module/Core/test-func"
+            ],
             "ShlinkioTest\\Shlink\\Common\\": [
                 "module/Common/test",
                 "module/Common/test-func"
@@ -85,7 +88,8 @@
         "cs-fix": "phpcbf",
         "serve": "php -S 0.0.0.0:8000 -t public/",
         "test": "phpunit --coverage-clover build/clover.xml",
-        "pretty-test": "phpunit --coverage-html build/coverage"
+        "pretty-test": "phpunit --coverage-html build/coverage",
+        "func-test": "phpunit -c phpunit-func.xml"
     },
     "config": {
         "process-timeout": 0,
