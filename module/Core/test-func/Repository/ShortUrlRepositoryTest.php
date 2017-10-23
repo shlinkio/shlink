@@ -62,4 +62,21 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->assertNull($this->repo->findOneByShortCode($bar->getShortCode()));
         $this->assertNull($this->repo->findOneByShortCode($baz->getShortCode()));
     }
+
+    /**
+     * @test
+     */
+    public function countListReturnsProperNumberOfResults()
+    {
+        $count = 5;
+        for ($i = 0; $i < $count; $i++) {
+            $this->getEntityManager()->persist(
+                (new ShortUrl())->setOriginalUrl((string) $i)
+                                ->setShortCode((string) $i)
+            );
+        }
+        $this->getEntityManager()->flush();
+
+        $this->assertEquals($count, $this->repo->countList());
+    }
 }
