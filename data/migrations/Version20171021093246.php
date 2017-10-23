@@ -20,6 +20,10 @@ class Version20171021093246 extends AbstractMigration
     public function up(Schema $schema)
     {
         $shortUrls = $schema->getTable('short_urls');
+        if ($shortUrls->hasColumn('value_since')) {
+            return;
+        }
+
         $shortUrls->addColumn('valid_since', Type::DATETIME, [
             'notnull' => false,
         ]);
@@ -35,6 +39,10 @@ class Version20171021093246 extends AbstractMigration
     public function down(Schema $schema)
     {
         $shortUrls = $schema->getTable('short_urls');
+        if (! $shortUrls->hasColumn('value_since')) {
+            return;
+        }
+
         $shortUrls->dropColumn('valid_since');
         $shortUrls->dropColumn('valid_until');
     }

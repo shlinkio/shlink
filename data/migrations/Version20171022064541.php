@@ -20,6 +20,10 @@ class Version20171022064541 extends AbstractMigration
     public function up(Schema $schema)
     {
         $shortUrls = $schema->getTable('short_urls');
+        if ($shortUrls->hasColumn('max_visits')) {
+            return;
+        }
+
         $shortUrls->addColumn('max_visits', Type::INTEGER, [
             'unsigned' => true,
             'notnull' => false,
@@ -33,6 +37,10 @@ class Version20171022064541 extends AbstractMigration
     public function down(Schema $schema)
     {
         $shortUrls = $schema->getTable('short_urls');
+        if (! $shortUrls->hasColumn('max_visits')) {
+            return;
+        }
+
         $shortUrls->dropColumn('max_visits');
     }
 }
