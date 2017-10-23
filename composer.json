@@ -47,6 +47,7 @@
     "require-dev": {
         "filp/whoops": "^2.0",
         "phpunit/dbunit": "^3.0",
+        "phpunit/phpcov": "^4.0",
         "phpunit/phpunit": "^6.0",
         "slevomat/coding-standard": "^4.0",
         "squizlabs/php_codesniffer": "^3.1",
@@ -88,9 +89,9 @@
         "cs": "phpcs",
         "cs-fix": "phpcbf",
         "serve": "php -S 0.0.0.0:8000 -t public/",
-        "test": "phpunit --coverage-clover build/unit-clover.xml",
+        "test": "phpunit --coverage-php build/coverage-unit.cov",
         "pretty-test": "phpunit --coverage-html build/coverage",
-        "func-test": "phpunit -c phpunit-func.xml --coverage-clover build/func-clover.xml"
+        "func-test": "phpunit -c phpunit-func.xml --coverage-php build/coverage-func.cov"
     },
     "config": {
         "process-timeout": 0,

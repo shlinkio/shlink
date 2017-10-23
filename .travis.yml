@@ -23,7 +23,8 @@ script:
   - composer check
 
 after_script:
+  - vendor/bin/phpcov merge build --clover build/clover.xml
   - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover build/unit-clover.xml
+  - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml
 
 sudo: false
