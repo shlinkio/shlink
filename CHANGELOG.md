@@ -7,6 +7,7 @@
 * [44: Consider allowing to set custom slugs instead of generating a short code](https://github.com/shlinkio/shlink/issues/44)
 * [47: Allow to limit short codes availability by date range](https://github.com/shlinkio/shlink/issues/47)
 * [48: Allow to limit the number of visits to a short code](https://github.com/shlinkio/shlink/issues/48)
+* [105: Added option to enable/disable URL validation by response status code.](https://github.com/shlinkio/shlink/pull/105)
 
 **Enhancements:**
 
