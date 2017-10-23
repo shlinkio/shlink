@@ -91,7 +91,12 @@
         "serve": "php -S 0.0.0.0:8000 -t public/",
         "test": "phpunit --coverage-php build/coverage-unit.cov",
         "pretty-test": "phpunit --coverage-html build/coverage",
-        "func-test": "phpunit -c phpunit-func.xml --coverage-php build/coverage-func.cov"
+        "func-test": "phpunit -c phpunit-func.xml --coverage-php build/coverage-func.cov",
+        "complete-pretty-test": [
+            "@test",
+            "@func-test",
+            "phpcov merge build --html build/html"
+        ]
     },
     "config": {
         "process-timeout": 0,
