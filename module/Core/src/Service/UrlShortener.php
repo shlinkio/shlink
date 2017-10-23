@@ -36,26 +36,39 @@ class UrlShortener implements UrlShortenerInterface
      * @var Cache
      */
     private $cache;
+    /**
+     * @var bool
+     */
+    private $urlValidationEnabled;
 
     /**
      * UrlShortener constructor.
      * @param ClientInterface $httpClient
      * @param EntityManagerInterface $em
      * @param Cache $cache
+     * @param bool $urlValidationEnabled
      * @param string $chars
      *
-     * @Inject({"httpClient", "em", Cache::class, "config.url_shortener.shortcode_chars"})
+     * @Inject({
+     *     "httpClient",
+     *      "em",
+     *      Cache::class,
+     *      "config.url_shortener.validate_url",
+     *      "config.url_shortener.shortcode_chars"
+     * })
      */
     public function __construct(
         ClientInterface $httpClient,
         EntityManagerInterface $em,
         Cache $cache,
+        $urlValidationEnabled,
         $chars = self::DEFAULT_CHARS
     ) {
         $this->httpClient = $httpClient;
         $this->em = $em;
         $this->chars = empty($chars) ? self::DEFAULT_CHARS : $chars;
         $this->cache = $cache;
+        $this->urlValidationEnabled = $urlValidationEnabled;
     }
 
     /**
@@ -77,8 +90,11 @@ class UrlShortener implements UrlShortenerInterface
             return $shortUrl->getShortCode();
         }
 
-        // Check that the URL exists
-        $this->checkUrlExists($url);
+        // Check if the validation of url is enabled in the config
+        if (true === $this->urlValidationEnabled) {
+            // Check that the URL exists
+            $this->checkUrlExists($url);
+        }
 
         // Transactionally insert the short url, then generate the short code and finally update the short code
         try {

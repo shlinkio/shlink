@@ -58,7 +58,21 @@ class UrlShortenerTest extends TestCase
 
         $this->cache = new ArrayCache();
 
-        $this->urlShortener = new UrlShortener($this->httpClient->reveal(), $this->em->reveal(), $this->cache);
+        $this->setUrlShortener(false);
+    }
+
+    /**
+     * @param bool $urlValidationEnabled
+     */
+    public function setUrlShortener($urlValidationEnabled)
+    {
+        $this->urlShortener = new UrlShortener(
+            $this->httpClient->reveal(),
+            $this->em->reveal(),
+            $this->cache,
+            $urlValidationEnabled,
+            UrlShortener::DEFAULT_CHARS
+        );
     }
 
     /**
@@ -93,6 +107,8 @@ class UrlShortenerTest extends TestCase
      */
     public function exceptionIsThrownWhenUrlDoesNotExist()
     {
+        $this->setUrlShortener(true);
+
         $this->httpClient->request(Argument::cetera())->willThrow(
             new ClientException('', $this->prophesize(Request::class)->reveal())
         );

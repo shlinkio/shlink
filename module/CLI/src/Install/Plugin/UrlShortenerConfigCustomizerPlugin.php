@@ -42,7 +42,14 @@ class UrlShortenerConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
                 'Character set for generated short codes (leave empty to autogenerate one)',
                 null,
                 true
-            ) ?: str_shuffle(UrlShortener::DEFAULT_CHARS)
+            ) ?: str_shuffle(UrlShortener::DEFAULT_CHARS),
+            'VALIDATE_URL' => $this->questionHelper->ask(
+                $input,
+                $output,
+                new ConfirmationQuestion(
+                    '<question>Do you want to validate long urls by 200 HTTP status code on response (Y/n):</question>'
+                )
+            )
         ]);
     }
 }
