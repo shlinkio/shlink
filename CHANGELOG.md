@@ -1,5 +1,31 @@
 ## CHANGELOG
 
+### 1.6.0
+
+**Features**
+
+* [44: Consider allowing to set custom slugs instead of generating a short code](https://github.com/shlinkio/shlink/issues/44)
+* [47: Allow to limit short codes availability by date range](https://github.com/shlinkio/shlink/issues/47)
+* [48: Allow to limit the number of visits to a short code](https://github.com/shlinkio/shlink/issues/48)
+* [105: Added option to enable/disable URL validation by response status code.](https://github.com/shlinkio/shlink/pull/105)
+
+**Enhancements:**
+
+* [27: Add repository functional tests with dbunit](https://github.com/shlinkio/shlink/issues/27)
+* [86: Drop support for PHP 5](https://github.com/shlinkio/shlink/issues/86)
+* [101: Make actions just capture very specific exceptions, and let the ErrorHandler catch any other exception](https://github.com/shlinkio/shlink/issues/101)
+* [104: Use different templates for requested-short-code-does-not-exist and route-could-not-be-match](https://github.com/shlinkio/shlink/issues/104)
+
+**Tasks**
+
+* [99: Replace AnnotatedFactory by ConfigAbstractFactory](https://github.com/shlinkio/shlink/issues/99)
+* [100: Replace twig by plates](https://github.com/shlinkio/shlink/issues/100)
+* [102: Improve coding standards strictness](https://github.com/shlinkio/shlink/issues/102)
+
+**Bugs**
+
+* [103: Make NotFoundDelegate return proper content types based on accepted content](https://github.com/shlinkio/shlink/issues/103)
+
 ### 1.5.0
 
 **Enhancements:**

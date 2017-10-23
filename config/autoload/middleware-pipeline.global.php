@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 use Shlinkio\Shlink\Common\Middleware\LocaleMiddleware;
 use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
 use Shlinkio\Shlink\Rest\Middleware\CheckAuthenticationMiddleware;

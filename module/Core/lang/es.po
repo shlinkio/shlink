@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2016-08-21 18:17+0200\n"
-"PO-Revision-Date: 2016-08-21 18:17+0200\n"
+"POT-Creation-Date: 2017-10-13 12:29+0200\n"
+"PO-Revision-Date: 2017-10-13 12:30+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.0.1\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -18,18 +18,24 @@ msgstr ""
 "X-Poedit-SearchPath-1: config\n"
 "X-Poedit-SearchPath-2: src\n"
 
-msgid "Make sure you included all the characters, with no extra punctuation."
-msgstr "Asegúrate de haber incluído todos los caracteres, sin puntuación extra."
+msgid "URL Not Found"
+msgstr "URL no encontrada"
+
+msgid "Page not found."
+msgstr "Página no encontrada."
+
+msgid "The page you requested could not be found."
+msgstr "La página solicitada no ha podido ser encontrada."
 
 msgid "Oops!"
 msgstr "¡Vaya!"
 
-msgid "This short URL doesn't seem to be valid."
-msgstr "Esta URL acortada no parece ser válida."
-
-msgid "URL Not Found"
-msgstr "URL no encontrada"
-
 #, php-format
 msgid "We encountered a %s %s error."
 msgstr "Hemos encontrado un error %s %s."
+
+msgid "This short URL doesn't seem to be valid."
+msgstr "Esta URL acortada no parece ser válida."
+
+msgid "Make sure you included all the characters, with no extra punctuation."
+msgstr "Asegúrate de haber incluído todos los caracteres, sin puntuación extra."

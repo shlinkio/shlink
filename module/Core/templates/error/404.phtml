@@ -1,0 +1,19 @@
+<?php $this->layout('ShlinkCore::layout/default') ?>
+
+<?php $this->start('title') ?>
+    <?= $this->translate('URL Not Found') ?>
+<?php $this->end() ?>
+
+<?php $this->start('stylesheets') ?>
+    <style>
+        p {margin-bottom: 20px;}
+        body {text-align: center;}
+    </style>
+<?php $this->end() ?>
+
+<?php $this->start('main') ?>
+    <h1>404</h1>
+    <hr>
+    <h3><?= $this->translate('Page not found.') ?></h3>
+    <p><?= $this->translate('The page you requested could not be found.') ?></p>
+<?php $this->end() ?>

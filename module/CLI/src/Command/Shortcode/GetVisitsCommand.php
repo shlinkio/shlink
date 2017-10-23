@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\CLI\Command\Shortcode;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Shlinkio\Shlink\Common\Util\DateRange;
-use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -26,13 +26,6 @@ class GetVisitsCommand extends Command
      */
     private $translator;
 
-    /**
-     * GetVisitsCommand constructor.
-     * @param VisitsTrackerInterface $visitsTracker
-     * @param TranslatorInterface $translator
-     *
-     * @Inject({VisitsTracker::class, "translator"})
-     */
     public function __construct(VisitsTrackerInterface $visitsTracker, TranslatorInterface $translator)
     {
         $this->visitsTracker = $visitsTracker;

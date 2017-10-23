@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\CLI\Install\Plugin;
 
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
@@ -49,7 +51,7 @@ class UrlShortenerConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
                 new ConfirmationQuestion(
                     '<question>Do you want to validate long urls by 200 HTTP status code on response (Y/n):</question>'
                 )
-            )
+            ),
         ]);
     }
 }

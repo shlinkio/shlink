@@ -1,15 +1,20 @@
 <?php
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\Core\Action;
 
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Action\PreviewAction;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
+use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 class PreviewActionTest extends TestCase
@@ -40,9 +45,11 @@ class PreviewActionTest extends TestCase
     public function invalidShortCodeFallsBackToNextMiddleware()
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(null)->shouldBeCalledTimes(1);
+        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
+                                                       ->shouldBeCalledTimes(1);
         $delegate = $this->prophesize(DelegateInterface::class);
-        $delegate->process(Argument::cetera())->shouldBeCalledTimes(1);
+        $delegate->process(Argument::cetera())->shouldBeCalledTimes(1)
+                                              ->willReturn(new Response());
 
         $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
@@ -79,12 +86,14 @@ class PreviewActionTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
                                                        ->shouldBeCalledTimes(1);
         $delegate = $this->prophesize(DelegateInterface::class);
+        /** @var MethodProphecy $process */
+        $process = $delegate->process(Argument::any())->willReturn(new Response());
 
         $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
             $delegate->reveal()
         );
 
-        $delegate->process(Argument::any())->shouldHaveBeenCalledTimes(1);
+        $process->shouldHaveBeenCalledTimes(1);
     }
 }

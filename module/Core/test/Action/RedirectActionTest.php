@@ -1,11 +1,15 @@
 <?php
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\Core\Action;
 
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
@@ -56,29 +60,15 @@ class RedirectActionTest extends TestCase
     public function nextMiddlewareIsInvokedIfLongUrlIsNotFound()
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(null)
-                           ->shouldBeCalledTimes(1);
-        $delegate = $this->prophesize(DelegateInterface::class);
-
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
-        $this->action->process($request, $delegate->reveal());
-
-        $delegate->process($request)->shouldHaveBeenCalledTimes(1);
-    }
-
-    /**
-     * @test
-     */
-    public function nextMiddlewareIsInvokedIfAnExceptionIsThrown()
-    {
-        $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(\Exception::class)
+        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
                                                        ->shouldBeCalledTimes(1);
         $delegate = $this->prophesize(DelegateInterface::class);
+        /** @var MethodProphecy $process */
+        $process = $delegate->process(Argument::any())->willReturn(new Response());
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $this->action->process($request, $delegate->reveal());
 
-        $delegate->process($request)->shouldHaveBeenCalledTimes(1);
+        $process->shouldHaveBeenCalledTimes(1);
     }
 }

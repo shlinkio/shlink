@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\ErrorHandler;
 
 use Acelaya\ExpressiveErrorHandler\ErrorHandler\ErrorResponseGeneratorInterface;
@@ -6,7 +8,6 @@ use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\Expressive\Router\RouteResult;
 
 class JsonErrorResponseGenerator implements ErrorResponseGeneratorInterface, StatusCodeInterface
 {
@@ -17,6 +18,7 @@ class JsonErrorResponseGenerator implements ErrorResponseGeneratorInterface, Sta
      * @param Request $request
      * @param Response $response
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function __invoke($e, Request $request, Response $response)
     {
@@ -30,11 +32,7 @@ class JsonErrorResponseGenerator implements ErrorResponseGeneratorInterface, Sta
         ], $status);
     }
 
-    /**
-     * @param string $responsePhrase
-     * @return string
-     */
-    protected function responsePhraseToCode($responsePhrase)
+    protected function responsePhraseToCode(string $responsePhrase): string
     {
         return strtoupper(str_replace(' ', '_', $responsePhrase));
     }

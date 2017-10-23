@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Service;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
@@ -13,12 +14,6 @@ class VisitService implements VisitServiceInterface
      */
     private $em;
 
-    /**
-     * VisitService constructor.
-     * @param EntityManagerInterface $em
-     *
-     * @Inject({"em"})
-     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;

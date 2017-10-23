@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Psr\Http\Message\ResponseInterface as Response;
@@ -37,7 +39,7 @@ class PathVersionMiddleware implements MiddlewareInterface
         $uri = $request->getUri();
         $path = $uri->getPath();
 
-        // If the path does not begin with the version number, prepend v1 by default for retrocompatibility purposes
+        // If the path does not begin with the version number, prepend v1 by default for BC compatibility purposes
         if (strpos($path, '/v') !== 0) {
             $parts = explode('/', $path);
             // Remove the first empty part and the

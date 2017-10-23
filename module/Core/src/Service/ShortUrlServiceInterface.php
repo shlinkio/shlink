@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Service;
 
 use Shlinkio\Shlink\Core\Entity\ShortUrl;

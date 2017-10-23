@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\Authentication;
 
 use Shlinkio\Shlink\Rest\Entity\ApiKey;

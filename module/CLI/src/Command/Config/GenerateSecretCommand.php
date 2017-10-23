@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\CLI\Command\Config;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,16 +18,10 @@ class GenerateSecretCommand extends Command
      */
     private $translator;
 
-    /**
-     * GenerateCharsetCommand constructor.
-     * @param TranslatorInterface $translator
-     *
-     * @Inject({"translator"})
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
-        parent::__construct(null);
+        parent::__construct();
     }
 
     public function configure()

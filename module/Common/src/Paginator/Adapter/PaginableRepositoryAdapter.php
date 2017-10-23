@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Common\Paginator\Adapter;
 
 use Shlinkio\Shlink\Common\Repository\PaginableRepositoryInterface;
@@ -32,7 +34,7 @@ class PaginableRepositoryAdapter implements AdapterInterface
         $orderBy = null
     ) {
         $this->paginableRepository = $paginableRepository;
-        $this->searchTerm = trim(strip_tags($searchTerm));
+        $this->searchTerm = $searchTerm !== null ? trim(strip_tags($searchTerm)) : null;
         $this->orderBy = $orderBy;
         $this->tags = $tags;
     }

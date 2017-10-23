@@ -1,13 +1,14 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
@@ -29,16 +30,6 @@ class CreateShortcodeAction extends AbstractRestAction
      */
     private $translator;
 
-    /**
-     * GenerateShortcodeMiddleware constructor.
-     *
-     * @param UrlShortenerInterface $urlShortener
-     * @param TranslatorInterface $translator
-     * @param array $domainConfig
-     * @param LoggerInterface|null $logger
-     *
-     * @Inject({UrlShortener::class, "translator", "config.url_shortener.domain", "Logger_Shlink"})
-     */
     public function __construct(
         UrlShortenerInterface $urlShortener,
         TranslatorInterface $translator,
@@ -67,17 +58,24 @@ class CreateShortcodeAction extends AbstractRestAction
             ], self::STATUS_BAD_REQUEST);
         }
         $longUrl = $postData['longUrl'];
-        $tags = isset($postData['tags']) && is_array($postData['tags']) ? $postData['tags'] : [];
+        $customSlug = $postData['customSlug'] ?? null;
 
         try {
-            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl), $tags);
+            $shortCode = $this->urlShortener->urlToShortCode(
+                new Uri($longUrl),
+                (array) ($postData['tags'] ?? []),
+                $this->getOptionalDate($postData, 'validSince'),
+                $this->getOptionalDate($postData, 'validUntil'),
+                $customSlug,
+                isset($postData['maxVisits']) ? (int) $postData['maxVisits'] : null
+            );
             $shortUrl = (new Uri())->withPath($shortCode)
                                    ->withScheme($this->domainConfig['schema'])
                                    ->withHost($this->domainConfig['hostname']);
 
             return new JsonResponse([
                 'longUrl' => $longUrl,
-                'shortUrl' => $shortUrl->__toString(),
+                'shortUrl' => (string) $shortUrl,
                 'shortCode' => $shortCode,
             ]);
         } catch (InvalidUrlException $e) {
@@ -89,12 +87,26 @@ class CreateShortcodeAction extends AbstractRestAction
                     $longUrl
                 ),
             ], self::STATUS_BAD_REQUEST);
-        } catch (\Exception $e) {
+        } catch (NonUniqueSlugException $e) {
+            $this->logger->warning('Provided non-unique slug.' . PHP_EOL . $e);
+            return new JsonResponse([
+                'error' => RestUtils::getRestErrorCodeFromException($e),
+                'message' => sprintf(
+                    $this->translator->translate('Provided slug %s is already in use. Try with a different one.'),
+                    $customSlug
+                ),
+            ], self::STATUS_BAD_REQUEST);
+        } catch (\Throwable $e) {
             $this->logger->error('Unexpected error creating shortcode.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),
             ], self::STATUS_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private function getOptionalDate(array $postData, string $fieldName)
+    {
+        return isset($postData[$fieldName]) ? new \DateTime($postData[$fieldName]) : null;
     }
 }

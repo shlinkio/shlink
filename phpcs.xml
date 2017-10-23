@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="Coding standard">
     <description>Coding standard</description>
+    <config name="installed_paths" value="../../slevomat/coding-standard"/>
 
     <!-- display progress -->
     <arg value="p"/>
@@ -9,11 +10,35 @@
     <!-- inherit rules from: -->
     <rule ref="PSR2"/>
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+    <!-- Make sure string concatenations use 1 space between every element -->
+    <rule ref="Squiz.Strings.ConcatenationSpacing">
+        <properties>
+            <property name="spacing" value="1"/>
+            <property name="ignoreNewlines" value="true"/>
+        </properties>
+    </rule>
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
         <properties>
             <property name="ignoreBlankLines" value="false"/>
         </properties>
     </rule>
+    <rule ref="Squiz.Strings.DoubleQuoteUsage"/>
+    <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
+        <properties>
+            <property name="newlinesCountBetweenOpenTagAndDeclare" value="1"/>
+            <property name="spacesCountAroundEqualsSign" value="0"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" value="true"/>
+        </properties>
+    </rule>
+    <!-- Force strict comparison with === or !== instead of == or != -->
+    <rule ref="SlevomatCodingStandard.ControlStructures.DisallowEqualOperators"/>
+    <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
+    <rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses"/>
+    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHintSpacing"/>
 
     <!-- Paths to check -->
     <file>bin</file>

@@ -20,8 +20,8 @@ cp -R "${projectdir}"/* "${builtcontent}"
 cd "${builtcontent}"
 
 # Install dependencies
-rm -r vendor
-rm composer.lock
+rm -rf vendor
+rm -f composer.lock
 composer self-update
 composer install --no-dev --optimize-autoloader --no-progress --no-interaction
 
@@ -35,8 +35,8 @@ rm indocker
 rm docker-compose.yml
 rm php*
 rm README.md
-rm -r build
-rm -f data/database.sqlite
+rm -rf build
+rm -ff data/database.sqlite
 rm -rf data/infra
 rm -rf data/{cache,log,proxies}/{*,.gitignore}
 rm -rf config/params/{*,.gitignore}

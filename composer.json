@@ -12,36 +12,45 @@
         }
     ],
     "require": {
-        "php": "^5.6 || ^7.0",
+        "php": "^7.0",
+        "acelaya/ze-content-based-error-handler": "^2.0",
+        "cocur/slugify": "^3.0",
+        "doctrine/annotations": "^1.4 <1.5",
+        "doctrine/cache": "^1.6 <1.7",
+        "doctrine/collections": "^1.4 <1.5",
+        "doctrine/common": "^2.7 <2.8",
+        "doctrine/dbal": "^2.5 <2.6",
+        "doctrine/migrations": "^1.4",
+        "doctrine/orm": "^2.5 <2.6",
+        "endroid/qrcode": "^1.7",
+        "firebase/php-jwt": "^4.0",
+        "guzzlehttp/guzzle": "^6.2",
+        "http-interop/http-middleware": "^0.4.1",
+        "mikehaertl/phpwkhtmltopdf": "^2.2",
+        "monolog/monolog": "^1.21",
+        "roave/security-advisories": "dev-master",
+        "symfony/console": "^3.0",
+        "symfony/filesystem": "^3.0",
+        "symfony/process": "^3.0",
+        "theorchard/monolog-cascade": "^0.4",
+        "zendframework/zend-config": "^3.0",
+        "zendframework/zend-config-aggregator": "^1.0",
         "zendframework/zend-expressive": "^2.0",
         "zendframework/zend-expressive-fastroute": "^2.0",
-        "zendframework/zend-expressive-twigrenderer": "^1.4",
-        "zendframework/zend-stdlib": "^3.0",
-        "zendframework/zend-servicemanager": "^3.0",
-        "zendframework/zend-paginator": "^2.6",
-        "zendframework/zend-config": "^3.0",
+        "zendframework/zend-expressive-helpers": "^4.2",
+        "zendframework/zend-expressive-platesrenderer": "^1.3",
         "zendframework/zend-i18n": "^2.7",
-        "zendframework/zend-config-aggregator": "^0.1",
-        "acelaya/zsm-annotated-services": "^1.0",
-        "acelaya/ze-content-based-error-handler": "^2.0",
-        "doctrine/orm": "^2.5",
-        "guzzlehttp/guzzle": "^6.2",
-        "symfony/console": "^3.0",
-        "symfony/process": "^3.0",
-        "symfony/filesystem": "^3.0",
-        "firebase/php-jwt": "^4.0",
-        "monolog/monolog": "^1.21",
-        "theorchard/monolog-cascade": "^0.4",
-        "endroid/qrcode": "^1.7",
-        "mikehaertl/phpwkhtmltopdf": "^2.2",
-        "doctrine/migrations": "^1.4",
-        "http-interop/http-middleware": "^0.4"
+        "zendframework/zend-paginator": "^2.6",
+        "zendframework/zend-servicemanager": "^3.0",
+        "zendframework/zend-stdlib": "^3.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7 || ^6.0",
-        "squizlabs/php_codesniffer": "^2.3",
-        "roave/security-advisories": "dev-master",
         "filp/whoops": "^2.0",
+        "phpunit/dbunit": "^3.0",
+        "phpunit/phpcov": "^4.0",
+        "phpunit/phpunit": "^6.0",
+        "slevomat/coding-standard": "^4.0",
+        "squizlabs/php_codesniffer": "^3.1",
         "symfony/var-dumper": "^3.0",
         "vlucas/phpdotenv": "^2.2",
         "zendframework/zend-expressive-tooling": "^0.4"
@@ -61,22 +70,39 @@
         "psr-4": {
             "ShlinkioTest\\Shlink\\CLI\\": "module/CLI/test",
             "ShlinkioTest\\Shlink\\Rest\\": "module/Rest/test",
-            "ShlinkioTest\\Shlink\\Core\\": "module/Core/test",
-            "ShlinkioTest\\Shlink\\Common\\": "module/Common/test"
+            "ShlinkioTest\\Shlink\\Core\\": [
+                "module/Core/test",
+                "module/Core/test-func"
+            ],
+            "ShlinkioTest\\Shlink\\Common\\": [
+                "module/Common/test",
+                "module/Common/test-func"
+            ]
         }
     },
     "scripts": {
         "check": [
             "@cs",
-            "@test"
+            "@test",
+            "@func-test"
         ],
         "cs": "phpcs",
         "cs-fix": "phpcbf",
         "serve": "php -S 0.0.0.0:8000 -t public/",
-        "test": "phpunit --coverage-clover build/clover.xml",
-        "pretty-test": "phpunit --coverage-html build/coverage"
+        "test": "phpunit --coverage-php build/coverage-unit.cov",
+        "pretty-test": "phpunit --coverage-html build/coverage",
+        "func-test": "phpunit -c phpunit-func.xml --coverage-php build/coverage-func.cov",
+        "complete-pretty-test": [
+            "@test",
+            "@func-test",
+            "phpcov merge build --html build/html"
+        ]
     },
     "config": {
-        "process-timeout": 0
+        "process-timeout": 0,
+        "sort-packages": true,
+        "platform": {
+            "php": "7.0"
+        }
     }
 }

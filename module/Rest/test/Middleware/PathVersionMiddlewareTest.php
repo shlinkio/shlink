@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
 use PHPUnit\Framework\TestCase;

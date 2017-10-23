@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Action;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Endroid\QrCode\QrCode;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
@@ -10,13 +11,16 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
+use Shlinkio\Shlink\Core\Action\Util\ErrorResponseBuilderTrait;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Zend\Expressive\Router\RouterInterface;
 
 class QrCodeAction implements MiddlewareInterface
 {
+    use ErrorResponseBuilderTrait;
+
     /**
      * @var RouterInterface
      */
@@ -30,14 +34,6 @@ class QrCodeAction implements MiddlewareInterface
      */
     private $logger;
 
-    /**
-     * QrCodeAction constructor.
-     * @param RouterInterface $router
-     * @param UrlShortenerInterface $urlShortener
-     * @param LoggerInterface $logger
-     *
-     * @Inject({RouterInterface::class, UrlShortener::class, "Logger_Shlink"})
-     */
     public function __construct(
         RouterInterface $router,
         UrlShortenerInterface $urlShortener,
@@ -62,19 +58,19 @@ class QrCodeAction implements MiddlewareInterface
         // Make sure the short URL exists for this short code
         $shortCode = $request->getAttribute('shortCode');
         try {
-            $shortUrl = $this->urlShortener->shortCodeToUrl($shortCode);
-            if ($shortUrl === null) {
-                return $delegate->process($request);
-            }
+            $this->urlShortener->shortCodeToUrl($shortCode);
         } catch (InvalidShortCodeException $e) {
             $this->logger->warning('Tried to create a QR code with an invalid short code' . PHP_EOL . $e);
-            return $delegate->process($request);
+            return $this->buildErrorResponse($request, $delegate);
+        } catch (EntityDoesNotExistException $e) {
+            $this->logger->warning('Tried to create a QR code with a not found short code' . PHP_EOL . $e);
+            return $this->buildErrorResponse($request, $delegate);
         }
 
         $path = $this->router->generateUri('long-url-redirect', ['shortCode' => $shortCode]);
         $size = $this->getSizeParam($request);
 
-        $qrCode = new QrCode($request->getUri()->withPath($path)->withQuery(''));
+        $qrCode = new QrCode((string) $request->getUri()->withPath($path)->withQuery(''));
         $qrCode->setSize($size)
                ->setPadding(0);
         return new QrCodeResponse($qrCode);
