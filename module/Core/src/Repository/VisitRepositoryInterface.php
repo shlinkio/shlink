@@ -13,12 +13,12 @@ interface VisitRepositoryInterface extends ObjectRepository
     /**
      * @return Visit[]
      */
-    public function findUnlocatedVisits();
+    public function findUnlocatedVisits(): array;
 
     /**
      * @param ShortUrl|int $shortUrl
      * @param DateRange|null $dateRange
      * @return Visit[]
      */
-    public function findVisitsByShortUrl($shortUrl, DateRange $dateRange = null);
+    public function findVisitsByShortUrl($shortUrl, DateRange $dateRange = null): array;
 }

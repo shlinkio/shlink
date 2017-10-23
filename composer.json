@@ -82,14 +82,15 @@
     "scripts": {
         "check": [
             "@cs",
-            "@test"
+            "@test",
+            "@func-test"
         ],
         "cs": "phpcs",
         "cs-fix": "phpcbf",
         "serve": "php -S 0.0.0.0:8000 -t public/",
-        "test": "phpunit --coverage-clover build/clover.xml",
+        "test": "phpunit --coverage-clover build/unit-clover.xml",
         "pretty-test": "phpunit --coverage-html build/coverage",
-        "func-test": "phpunit -c phpunit-func.xml"
+        "func-test": "phpunit -c phpunit-func.xml --coverage-clover build/func-clover.xml"
     },
     "config": {
         "process-timeout": 0,
