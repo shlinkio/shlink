@@ -75,7 +75,7 @@ class CacheFactoryTest extends TestCase
      */
     public function filesystemCacheAdaptersReadDirOption()
     {
-        $dir = sys_get_temp_dir();
+        $dir = realpath(sys_get_temp_dir());
         /** @var FilesystemCache $instance */
         $instance = $this->factory->__invoke($this->createSM(FilesystemCache::class, ['dir' => $dir]), '');
         $this->assertInstanceOf(FilesystemCache::class, $instance);

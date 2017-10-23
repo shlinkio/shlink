@@ -12,6 +12,7 @@ return [
             'hostname' => env('SHORTENED_URL_HOSTNAME'),
         ],
         'shortcode_chars' => env('SHORTCODE_CHARS', UrlShortener::DEFAULT_CHARS),
+        'validate_url' => true,
     ],
 
 ];

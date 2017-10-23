@@ -47,8 +47,9 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
             'SCHEMA' => 'something',
             'HOSTNAME' => 'something',
             'CHARS' => 'something',
+            'VALIDATE_URL' => 'something',
         ], $config->getUrlShortener());
-        $askSecret->shouldHaveBeenCalledTimes(3);
+        $askSecret->shouldHaveBeenCalledTimes(4);
     }
 
     /**
@@ -66,6 +67,7 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
             'SCHEMA' => 'bar',
             'HOSTNAME' => 'bar',
             'CHARS' => 'bar',
+            'VALIDATE_URL' => 'bar',
         ]);
 
         $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
@@ -74,8 +76,9 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
             'SCHEMA' => 'foo',
             'HOSTNAME' => 'foo',
             'CHARS' => 'foo',
+            'VALIDATE_URL' => false,
         ], $config->getUrlShortener());
-        $ask->shouldHaveBeenCalledTimes(4);
+        $ask->shouldHaveBeenCalledTimes(5);
     }
 
     /**
@@ -91,6 +94,7 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
             'SCHEMA' => 'foo',
             'HOSTNAME' => 'foo',
             'CHARS' => 'foo',
+            'VALIDATE_URL' => 'foo',
         ]);
 
         $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
@@ -99,6 +103,7 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
             'SCHEMA' => 'foo',
             'HOSTNAME' => 'foo',
             'CHARS' => 'foo',
+            'VALIDATE_URL' => 'foo',
         ], $config->getUrlShortener());
         $ask->shouldHaveBeenCalledTimes(1);
     }

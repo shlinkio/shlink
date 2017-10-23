@@ -46,18 +46,24 @@ class UrlShortener implements UrlShortenerInterface
      * @var SlugifyInterface
      */
     private $slugger;
+    /**
+     * @var bool
+     */
+    private $urlValidationEnabled;
 
     public function __construct(
         ClientInterface $httpClient,
         EntityManagerInterface $em,
         Cache $cache,
+        $urlValidationEnabled,
         $chars = self::DEFAULT_CHARS,
         SlugifyInterface $slugger = null
     ) {
         $this->httpClient = $httpClient;
         $this->em = $em;
-        $this->chars = empty($chars) ? self::DEFAULT_CHARS : $chars;
         $this->cache = $cache;
+        $this->urlValidationEnabled = $urlValidationEnabled;
+        $this->chars = empty($chars) ? self::DEFAULT_CHARS : $chars;
         $this->slugger = $slugger ?: new Slugify();
     }
 
@@ -91,8 +97,11 @@ class UrlShortener implements UrlShortenerInterface
             return $shortUrl->getShortCode();
         }
 
-        // Check that the URL exists
-        $this->checkUrlExists($url);
+        // Check if the validation of url is enabled in the config
+        if (true === $this->urlValidationEnabled) {
+            // Check that the URL exists
+            $this->checkUrlExists($url);
+        }
         $customSlug = $this->processCustomSlug($customSlug);
 
         // Transactionally insert the short url, then generate the short code and finally update the short code

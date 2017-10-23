@@ -191,6 +191,7 @@ final class CustomizableAppConfig implements ArraySerializableInterface
                 'SCHEMA' => $urlShortener['domain']['schema'],
                 'HOSTNAME' => $urlShortener['domain']['hostname'],
                 'CHARS' => $urlShortener['shortcode_chars'],
+                'VALIDATE_URL' => $urlShortener['validate_url'],
             ]);
         }
     }
@@ -242,6 +243,7 @@ final class CustomizableAppConfig implements ArraySerializableInterface
                     'hostname' => $this->urlShortener['HOSTNAME'],
                 ],
                 'shortcode_chars' => $this->urlShortener['CHARS'],
+                'validate_url' => $this->urlShortener['VALIDATE_URL'],
             ],
         ];
 

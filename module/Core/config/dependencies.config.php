@@ -42,7 +42,13 @@ return [
         NotFoundDelegate::class => [TemplateRendererInterface::class],
 
         // Services
-        Service\UrlShortener::class => ['httpClient', 'em', Cache::class, 'config.url_shortener.shortcode_chars'],
+        Service\UrlShortener::class => [
+            'httpClient',
+            'em',
+            Cache::class,
+            'config.url_shortener.validate_url',
+            'config.url_shortener.shortcode_chars',
+        ],
         Service\VisitsTracker::class => ['em'],
         Service\ShortUrlService::class => ['em'],
         Service\VisitService::class => ['em'],
