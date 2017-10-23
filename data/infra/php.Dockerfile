@@ -26,7 +26,7 @@ RUN apk add --no-cache --virtual libpng-dev
 RUN docker-php-ext-install gd
 
 # Install redis extension
-ADD https://github.com/phpredis/phpredis/archive/php7.tar.gz /tmp/phpredis.tar.gz
+ADD https://github.com/phpredis/phpredis/archive/3.1.4.tar.gz /tmp/phpredis.tar.gz
 RUN mkdir -p /usr/src/php/ext/redis\
   && tar xf /tmp/phpredis.tar.gz -C /usr/src/php/ext/redis --strip-components=1
 # configure and install
@@ -85,3 +85,6 @@ RUN rm /tmp/xdebug.tar.gz
 RUN php -r "readfile('https://getcomposer.org/installer');" | php
 RUN chmod +x composer.phar
 RUN mv composer.phar /usr/local/bin/composer
+
+# Make home directory writable by anyone
+RUN chmod 777 /home

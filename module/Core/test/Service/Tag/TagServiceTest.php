@@ -1,8 +1,11 @@
 <?php
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\Core\Service\Tag;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -10,7 +13,6 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Service\Tag\TagService;
-use PHPUnit\Framework\TestCase;
 
 class TagServiceTest extends TestCase
 {

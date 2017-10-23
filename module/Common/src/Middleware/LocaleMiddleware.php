@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Common\Middleware;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -15,12 +16,6 @@ class LocaleMiddleware implements MiddlewareInterface
      */
     private $translator;
 
-    /**
-     * LocaleMiddleware constructor.
-     * @param Translator $translator
-     *
-     * @Inject({"translator"})
-     */
     public function __construct(Translator $translator)
     {
         $this->translator = $translator;

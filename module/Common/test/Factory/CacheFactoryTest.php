@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\Common\Factory;
 
 use Doctrine\Common\Cache\ApcuCache;
@@ -73,7 +75,7 @@ class CacheFactoryTest extends TestCase
      */
     public function filesystemCacheAdaptersReadDirOption()
     {
-        $dir = sys_get_temp_dir();
+        $dir = realpath(sys_get_temp_dir());
         /** @var FilesystemCache $instance */
         $instance = $this->factory->__invoke($this->createSM(FilesystemCache::class, ['dir' => $dir]), '');
         $this->assertInstanceOf(FilesystemCache::class, $instance);
@@ -88,11 +90,11 @@ class CacheFactoryTest extends TestCase
         $servers = [
             [
                 'host' => '1.2.3.4',
-                'port' => 123
+                'port' => 123,
             ],
             [
                 'host' => '4.3.2.1',
-                'port' => 321
+                'port' => 321,
             ],
         ];
         /** @var MemcachedCache $instance */

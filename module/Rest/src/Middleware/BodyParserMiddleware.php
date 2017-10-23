@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\RequestMethodInterface;
@@ -28,7 +30,7 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
         if (! empty($currentParams) || in_array($method, [
             self::METHOD_GET,
             self::METHOD_HEAD,
-            self::METHOD_OPTIONS
+            self::METHOD_OPTIONS,
         ], true)) {
             return $delegate->process($request);
         }

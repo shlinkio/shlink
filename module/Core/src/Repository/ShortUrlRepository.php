@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\ORM\EntityRepository;
@@ -15,8 +17,13 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
      * @param string|array|null $orderBy
      * @return \Shlinkio\Shlink\Core\Entity\ShortUrl[]
      */
-    public function findList($limit = null, $offset = null, $searchTerm = null, array $tags = [], $orderBy = null)
-    {
+    public function findList(
+        int $limit = null,
+        int $offset = null,
+        string $searchTerm = null,
+        array $tags = [],
+        $orderBy = null
+    ): array {
         $qb = $this->createListQueryBuilder($searchTerm, $tags);
         $qb->select('s');
 
@@ -43,22 +50,14 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         $fieldName = is_array($orderBy) ? key($orderBy) : $orderBy;
         $order = is_array($orderBy) ? $orderBy[$fieldName] : 'ASC';
 
-        if (in_array($fieldName, [
-            'visits',
-            'visitsCount',
-            'visitCount',
-        ], true)) {
+        if (in_array($fieldName, ['visits', 'visitsCount', 'visitCount'], true)) {
             $qb->addSelect('COUNT(v) AS totalVisits')
                ->leftJoin('s.visits', 'v')
                ->groupBy('s')
                ->orderBy('totalVisits', $order);
 
             return array_column($qb->getQuery()->getResult(), 0);
-        } elseif (in_array($fieldName, [
-            'originalUrl',
-            'shortCode',
-            'dateCreated',
-        ], true)) {
+        } elseif (in_array($fieldName, ['originalUrl', 'shortCode', 'dateCreated'], true)) {
             $qb->orderBy('s.' . $fieldName, $order);
         }
 
@@ -72,7 +71,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
      * @param array $tags
      * @return int
      */
-    public function countList($searchTerm = null, array $tags = [])
+    public function countList(string $searchTerm = null, array $tags = []): int
     {
         $qb = $this->createListQueryBuilder($searchTerm, $tags);
         $qb->select('COUNT(s)');
@@ -85,7 +84,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
      * @param array $tags
      * @return QueryBuilder
      */
-    protected function createListQueryBuilder($searchTerm = null, array $tags = [])
+    protected function createListQueryBuilder(string $searchTerm = null, array $tags = []): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's');
@@ -114,5 +113,32 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         }
 
         return $qb;
+    }
+
+    /**
+     * @param string $shortCode
+     * @return ShortUrl|null
+     */
+    public function findOneByShortCode(string $shortCode)
+    {
+        $now = new \DateTimeImmutable();
+
+        $qb = $this->createQueryBuilder('s');
+        $qb->where($qb->expr()->eq('s.shortCode', ':shortCode'))
+           ->setParameter('shortCode', $shortCode)
+           ->andWhere($qb->expr()->orX(
+               $qb->expr()->lte('s.validSince', ':now'),
+               $qb->expr()->isNull('s.validSince')
+           ))
+           ->andWhere($qb->expr()->orX(
+               $qb->expr()->gte('s.validUntil', ':now'),
+               $qb->expr()->isNull('s.validUntil')
+           ))
+           ->setParameter('now', $now)
+           ->setMaxResults(1);
+
+        /** @var ShortUrl|null $result */
+        $result = $qb->getQuery()->getOneOrNullResult();
+        return $result === null || $result->maxVisitsReached() ? null : $result;
     }
 }

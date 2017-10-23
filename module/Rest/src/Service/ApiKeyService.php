@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\Service;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -13,12 +14,6 @@ class ApiKeyService implements ApiKeyServiceInterface
      */
     private $em;
 
-    /**
-     * ApiKeyService constructor.
-     * @param EntityManagerInterface $em
-     *
-     * @Inject({"em"})
-     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;

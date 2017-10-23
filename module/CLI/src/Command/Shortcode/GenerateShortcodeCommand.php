@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\CLI\Command\Shortcode;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -30,14 +31,6 @@ class GenerateShortcodeCommand extends Command
      */
     private $translator;
 
-    /**
-     * GenerateShortcodeCommand constructor.
-     * @param UrlShortenerInterface $urlShortener
-     * @param TranslatorInterface $translator
-     * @param array $domainConfig
-     *
-     * @Inject({UrlShortener::class, "translator", "config.url_shortener.domain"})
-     */
     public function __construct(
         UrlShortenerInterface $urlShortener,
         TranslatorInterface $translator,
@@ -59,9 +52,23 @@ class GenerateShortcodeCommand extends Command
              ->addOption(
                  'tags',
                  't',
-                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
+                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                  $this->translator->translate('Tags to apply to the new short URL')
-             );
+             )
+             ->addOption('validSince', 's', InputOption::VALUE_REQUIRED, $this->translator->translate(
+                 'The date from which this short URL will be valid. '
+                 . 'If someone tries to access it before this date, it will not be found.'
+             ))
+             ->addOption('validUntil', 'u', InputOption::VALUE_REQUIRED, $this->translator->translate(
+                 'The date until which this short URL will be valid. '
+                 . 'If someone tries to access it after this date, it will not be found.'
+             ))
+             ->addOption('customSlug', 'c', InputOption::VALUE_REQUIRED, $this->translator->translate(
+                 'If provided, this slug will be used instead of generating a short code'
+             ))
+             ->addOption('maxVisits', 'm', InputOption::VALUE_REQUIRED, $this->translator->translate(
+                 'This will limit the number of visits for this short URL.'
+             ));
     }
 
     public function interact(InputInterface $input, OutputInterface $output)
@@ -94,6 +101,8 @@ class GenerateShortcodeCommand extends Command
             $processedTags = array_merge($processedTags, $explodedTags);
         }
         $tags = $processedTags;
+        $customSlug = $input->getOption('customSlug');
+        $maxVisits = $input->getOption('maxVisits');
 
         try {
             if (! isset($longUrl)) {
@@ -101,7 +110,14 @@ class GenerateShortcodeCommand extends Command
                 return;
             }
 
-            $shortCode = $this->urlShortener->urlToShortCode(new Uri($longUrl), $tags);
+            $shortCode = $this->urlShortener->urlToShortCode(
+                new Uri($longUrl),
+                $tags,
+                $this->getOptionalDate($input, 'validSince'),
+                $this->getOptionalDate($input, 'validUntil'),
+                $customSlug,
+                $maxVisits !== null ? (int) $maxVisits : null
+            );
             $shortUrl = (new Uri())->withPath($shortCode)
                                    ->withScheme($this->domainConfig['schema'])
                                    ->withHost($this->domainConfig['hostname']);
@@ -117,6 +133,19 @@ class GenerateShortcodeCommand extends Command
                 ) . '</error>',
                 $longUrl
             ));
+        } catch (NonUniqueSlugException $e) {
+            $output->writeln(sprintf(
+                '<error>' . $this->translator->translate(
+                    'Provided slug "%s" is already in use by another URL. Try with a different one.'
+                ) . '</error>',
+                $customSlug
+            ));
         }
+    }
+
+    private function getOptionalDate(InputInterface $input, string $fieldName)
+    {
+        $since = $input->getOption($fieldName);
+        return $since !== null ? new \DateTime($since) : null;
     }
 }

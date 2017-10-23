@@ -1,13 +1,13 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
-use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
@@ -26,14 +26,6 @@ class ListShortcodesAction extends AbstractRestAction
      */
     private $translator;
 
-    /**
-     * ListShortcodesAction constructor.
-     * @param ShortUrlServiceInterface|ShortUrlService $shortUrlService
-     * @param TranslatorInterface $translator
-     * @param LoggerInterface $logger
-     *
-     * @Inject({ShortUrlService::class, "translator", "Logger_Shlink"})
-     */
     public function __construct(
         ShortUrlServiceInterface $shortUrlService,
         TranslatorInterface $translator,

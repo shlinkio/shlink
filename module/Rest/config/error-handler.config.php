@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 use Shlinkio\Shlink\Rest\ErrorHandler\JsonErrorResponseGenerator;
 
 return [

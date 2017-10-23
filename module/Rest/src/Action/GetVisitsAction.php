@@ -1,14 +1,14 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
-use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
@@ -25,14 +25,6 @@ class GetVisitsAction extends AbstractRestAction
      */
     private $translator;
 
-    /**
-     * GetVisitsAction constructor.
-     * @param VisitsTrackerInterface $visitsTracker
-     * @param TranslatorInterface $translator
-     * @param LoggerInterface $logger
-     *
-     * @Inject({VisitsTracker::class, "translator", "Logger_Shlink"})
-     */
     public function __construct(
         VisitsTrackerInterface $visitsTracker,
         TranslatorInterface $translator,
@@ -61,10 +53,10 @@ class GetVisitsAction extends AbstractRestAction
             return new JsonResponse([
                 'visits' => [
                     'data' => $visits,
-                ]
+                ],
             ]);
         } catch (InvalidArgumentException $e) {
-            $this->logger->warning('Provided nonexistent shortcode'. PHP_EOL . $e);
+            $this->logger->warning('Provided nonexistent shortcode' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => sprintf(
@@ -73,7 +65,7 @@ class GetVisitsAction extends AbstractRestAction
                 ),
             ], self::STATUS_NOT_FOUND);
         } catch (\Exception $e) {
-            $this->logger->error('Unexpected error while parsing short code'. PHP_EOL . $e);
+            $this->logger->error('Unexpected error while parsing short code' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),

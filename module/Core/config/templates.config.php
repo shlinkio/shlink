@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
 
 return [
 
     'templates' => [
         'paths' => [
-            'module/Core/templates',
+            'ShlinkCore' => __DIR__ . '/../templates',
         ],
     ],
 

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Common\Service;
 
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;

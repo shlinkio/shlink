@@ -1,7 +1,10 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Service;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
+use Cocur\Slugify\Slugify;
+use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -10,8 +13,11 @@ use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
+use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 
 class UrlShortener implements UrlShortenerInterface
@@ -36,26 +42,29 @@ class UrlShortener implements UrlShortenerInterface
      * @var Cache
      */
     private $cache;
-
     /**
-     * UrlShortener constructor.
-     * @param ClientInterface $httpClient
-     * @param EntityManagerInterface $em
-     * @param Cache $cache
-     * @param string $chars
-     *
-     * @Inject({"httpClient", "em", Cache::class, "config.url_shortener.shortcode_chars"})
+     * @var SlugifyInterface
      */
+    private $slugger;
+    /**
+     * @var bool
+     */
+    private $urlValidationEnabled;
+
     public function __construct(
         ClientInterface $httpClient,
         EntityManagerInterface $em,
         Cache $cache,
-        $chars = self::DEFAULT_CHARS
+        $urlValidationEnabled,
+        $chars = self::DEFAULT_CHARS,
+        SlugifyInterface $slugger = null
     ) {
         $this->httpClient = $httpClient;
         $this->em = $em;
-        $this->chars = empty($chars) ? self::DEFAULT_CHARS : $chars;
         $this->cache = $cache;
+        $this->urlValidationEnabled = $urlValidationEnabled;
+        $this->chars = empty($chars) ? self::DEFAULT_CHARS : $chars;
+        $this->slugger = $slugger ?: new Slugify();
     }
 
     /**
@@ -63,22 +72,37 @@ class UrlShortener implements UrlShortenerInterface
      *
      * @param UriInterface $url
      * @param string[] $tags
+     * @param \DateTime|null $validSince
+     * @param \DateTime|null $validUntil
+     * @param string|null $customSlug
+     * @param int|null $maxVisits
      * @return string
+     * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      * @throws RuntimeException
      */
-    public function urlToShortCode(UriInterface $url, array $tags = [])
-    {
+    public function urlToShortCode(
+        UriInterface $url,
+        array $tags = [],
+        \DateTime $validSince = null,
+        \DateTime $validUntil = null,
+        string $customSlug = null,
+        int $maxVisits = null
+    ): string {
         // If the url already exists in the database, just return its short code
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'originalUrl' => $url,
         ]);
-        if (isset($shortUrl)) {
+        if ($shortUrl !== null) {
             return $shortUrl->getShortCode();
         }
 
-        // Check that the URL exists
-        $this->checkUrlExists($url);
+        // Check if the validation of url is enabled in the config
+        if (true === $this->urlValidationEnabled) {
+            // Check that the URL exists
+            $this->checkUrlExists($url);
+        }
+        $customSlug = $this->processCustomSlug($customSlug);
 
         // Transactionally insert the short url, then generate the short code and finally update the short code
         try {
@@ -86,12 +110,15 @@ class UrlShortener implements UrlShortenerInterface
 
             // First, create the short URL with an empty short code
             $shortUrl = new ShortUrl();
-            $shortUrl->setOriginalUrl($url);
+            $shortUrl->setOriginalUrl((string) $url)
+                     ->setValidSince($validSince)
+                     ->setValidUntil($validUntil)
+                     ->setMaxVisits($maxVisits);
             $this->em->persist($shortUrl);
             $this->em->flush();
 
             // Generate the short code and persist it
-            $shortCode = $this->convertAutoincrementIdToShortCode($shortUrl->getId());
+            $shortCode = $customSlug ?? $this->convertAutoincrementIdToShortCode($shortUrl->getId());
             $shortUrl->setShortCode($shortCode)
                      ->setTags($this->tagNamesToEntities($this->em, $tags));
             $this->em->flush();
@@ -112,9 +139,9 @@ class UrlShortener implements UrlShortenerInterface
      * Tries to perform a GET request to provided url, returning true on success and false on failure
      *
      * @param UriInterface $url
-     * @return bool
+     * @return void
      */
-    protected function checkUrlExists(UriInterface $url)
+    private function checkUrlExists(UriInterface $url)
     {
         try {
             $this->httpClient->request('GET', $url, ['allow_redirects' => [
@@ -131,29 +158,46 @@ class UrlShortener implements UrlShortenerInterface
      * @param int $id
      * @return string
      */
-    protected function convertAutoincrementIdToShortCode($id)
+    private function convertAutoincrementIdToShortCode($id): string
     {
-        $id = intval($id) + 200000; // Increment the Id so that the generated shortcode is not too short
+        $id = ((int) $id) + 200000; // Increment the Id so that the generated shortcode is not too short
         $length = strlen($this->chars);
         $code = '';
 
         while ($id > 0) {
             // Determine the value of the next higher character in the short code and prepend it
-            $code = $this->chars[intval(fmod($id, $length))] . $code;
+            $code = $this->chars[(int) fmod($id, $length)] . $code;
             $id = floor($id / $length);
         }
 
-        return $this->chars[intval($id)] . $code;
+        return $this->chars[(int) $id] . $code;
+    }
+
+    private function processCustomSlug($customSlug)
+    {
+        if ($customSlug === null) {
+            return null;
+        }
+
+        // If a custom slug was provided, check it is unique
+        $customSlug = $this->slugger->slugify($customSlug);
+        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy(['shortCode' => $customSlug]);
+        if ($shortUrl !== null) {
+            throw NonUniqueSlugException::fromSlug($customSlug);
+        }
+
+        return $customSlug;
     }
 
     /**
      * Tries to find the mapped URL for provided short code. Returns null if not found
      *
      * @param string $shortCode
-     * @return string|null
+     * @return string
      * @throws InvalidShortCodeException
+     * @throws EntityDoesNotExistException
      */
-    public function shortCodeToUrl($shortCode)
+    public function shortCodeToUrl(string $shortCode): string
     {
         $cacheKey = sprintf('%s_longUrl', $shortCode);
         // Check if the short code => URL map is already cached
@@ -162,21 +206,22 @@ class UrlShortener implements UrlShortenerInterface
         }
 
         // Validate short code format
-        if (! preg_match('|[' . $this->chars . "]+|", $shortCode)) {
+        if (! preg_match('|[' . $this->chars . ']+|', $shortCode)) {
             throw InvalidShortCodeException::fromCharset($shortCode, $this->chars);
         }
 
-        /** @var ShortUrl $shortUrl */
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
-            'shortCode' => $shortCode,
-        ]);
-        // Cache the shortcode
-        if (isset($shortUrl)) {
-            $url = $shortUrl->getOriginalUrl();
-            $this->cache->save($cacheKey, $url);
-            return $url;
+        /** @var ShortUrlRepository $shortUrlRepo */
+        $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
+        $shortUrl = $shortUrlRepo->findOneByShortCode($shortCode);
+        if ($shortUrl === null) {
+            throw EntityDoesNotExistException::createFromEntityAndConditions(ShortUrl::class, [
+                'shortCode' => $shortCode,
+            ]);
         }
 
-        return null;
+        // Cache the shortcode
+        $url = $shortUrl->getOriginalUrl();
+        $this->cache->save($cacheKey, $url);
+        return $url;
     }
 }

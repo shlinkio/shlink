@@ -6,12 +6,13 @@ branches:
     - develop
 
 php:
-  - 5.6
   - 7
   - 7.1
   - 7.2
 
-before_install: phpenv config-add .travis-php.ini
+before_install:
+  - phpenv config-add data/infra/travis-php/memcached.ini
+  - phpenv config-add data/infra/travis-php/apcu.ini
 
 before_script:
   - composer self-update
@@ -22,6 +23,7 @@ script:
   - composer check
 
 after_script:
+  - vendor/bin/phpcov merge build --clover build/clover.xml
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml
 

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\Common;
 
 use PHPUnit\Framework\TestCase;
@@ -24,6 +26,6 @@ class ConfigProviderTest extends TestCase
         $config = $this->configProvider->__invoke();
 
         $this->assertArrayHasKey('dependencies', $config);
-        $this->assertArrayHasKey('twig', $config);
+        $this->assertArrayHasKey('plates', $config);
     }
 }

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\CLI\Command\Shortcode;
 
 use PHPUnit\Framework\TestCase;
@@ -63,7 +65,7 @@ class GeneratePreviewCommandTest extends TestCase
         $this->previewGenerator->generatePreview('http://baz.com/something')->shouldBeCalledTimes(1);
 
         $this->commandTester->execute([
-            'command' => 'shortcode:process-previews'
+            'command' => 'shortcode:process-previews',
         ]);
     }
 
@@ -83,7 +85,7 @@ class GeneratePreviewCommandTest extends TestCase
                                                                  ->shouldBeCalledTimes(count($items));
 
         $this->commandTester->execute([
-            'command' => 'shortcode:process-previews'
+            'command' => 'shortcode:process-previews',
         ]);
         $output = $this->commandTester->getDisplay();
         $this->assertEquals(count($items), substr_count($output, 'Error'));

@@ -1,11 +1,10 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\CLI\Command\Shortcode;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
-use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Common\Service\PreviewGeneratorInterface;
-use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,14 +26,6 @@ class GeneratePreviewCommand extends Command
      */
     private $shortUrlService;
 
-    /**
-     * GeneratePreviewCommand constructor.
-     * @param ShortUrlServiceInterface $shortUrlService
-     * @param PreviewGeneratorInterface $previewGenerator
-     * @param TranslatorInterface $translator
-     *
-     * @Inject({ShortUrlService::class, PreviewGenerator::class, "translator"})
-     */
     public function __construct(
         ShortUrlServiceInterface $shortUrlService,
         PreviewGeneratorInterface $previewGenerator,

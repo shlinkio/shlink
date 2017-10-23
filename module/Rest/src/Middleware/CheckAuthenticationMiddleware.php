@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\Middleware;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Fig\Http\Message\StatusCodeInterface;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
@@ -10,7 +11,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
-use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Authentication\JWTServiceInterface;
 use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
@@ -36,14 +36,6 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeIn
      */
     private $logger;
 
-    /**
-     * CheckAuthenticationMiddleware constructor.
-     * @param JWTServiceInterface|JWTService $jwtService
-     * @param TranslatorInterface $translator
-     * @param LoggerInterface $logger
-     *
-     * @Inject({JWTService::class, "translator", "Logger_Shlink"})
-     */
     public function __construct(
         JWTServiceInterface $jwtService,
         TranslatorInterface $translator,
@@ -62,6 +54,7 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeIn
      * @param DelegateInterface $delegate
      *
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function process(Request $request, DelegateInterface $delegate)
     {

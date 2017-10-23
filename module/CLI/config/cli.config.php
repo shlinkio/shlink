@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 use Shlinkio\Shlink\CLI\Command;
 use Shlinkio\Shlink\Common;
 
@@ -22,7 +24,7 @@ return [
             Command\Tag\CreateTagCommand::class,
             Command\Tag\RenameTagCommand::class,
             Command\Tag\DeleteTagsCommand::class,
-        ]
+        ],
     ],
 
 ];

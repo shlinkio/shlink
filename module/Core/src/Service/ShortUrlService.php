@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Service;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -19,12 +20,6 @@ class ShortUrlService implements ShortUrlServiceInterface
      */
     private $em;
 
-    /**
-     * ShortUrlService constructor.
-     * @param EntityManagerInterface $em
-     *
-     * @Inject({"em"})
-     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
@@ -60,7 +55,7 @@ class ShortUrlService implements ShortUrlServiceInterface
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'shortCode' => $shortCode,
         ]);
-        if (! isset($shortUrl)) {
+        if ($shortUrl === null) {
             throw InvalidShortCodeException::fromNotFoundShortCode($shortCode);
         }
 

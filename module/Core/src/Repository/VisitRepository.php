@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\ORM\EntityRepository;
@@ -11,7 +13,7 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
     /**
      * @return Visit[]
      */
-    public function findUnlocatedVisits()
+    public function findUnlocatedVisits(): array
     {
         $qb = $this->createQueryBuilder('v');
         $qb->where($qb->expr()->isNull('v.visitLocation'));
@@ -20,15 +22,20 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
     }
 
     /**
-     * @param ShortUrl|int $shortUrl
+     * @param ShortUrl|int $shortUrlOrId
      * @param DateRange|null $dateRange
      * @return Visit[]
      */
-    public function findVisitsByShortUrl($shortUrl, DateRange $dateRange = null)
+    public function findVisitsByShortUrl($shortUrlOrId, DateRange $dateRange = null): array
     {
-        $shortUrl = $shortUrl instanceof ShortUrl
-            ? $shortUrl
-            : $this->getEntityManager()->find(ShortUrl::class, $shortUrl);
+        /** @var ShortUrl|null $shortUrl */
+        $shortUrl = $shortUrlOrId instanceof ShortUrl
+            ? $shortUrlOrId
+            : $this->getEntityManager()->find(ShortUrl::class, $shortUrlOrId);
+
+        if ($shortUrl === null) {
+            return [];
+        }
 
         $qb = $this->createQueryBuilder('v');
         $qb->where($qb->expr()->eq('v.shortUrl', ':shortUrl'))
@@ -36,11 +43,11 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
            ->orderBy('v.date', 'DESC') ;
 
         // Apply date range filtering
-        if (! empty($dateRange->getStartDate())) {
+        if ($dateRange !== null && $dateRange->getStartDate() !== null) {
             $qb->andWhere($qb->expr()->gte('v.date', ':startDate'))
                ->setParameter('startDate', $dateRange->getStartDate());
         }
-        if (! empty($dateRange->getEndDate())) {
+        if ($dateRange !== null && $dateRange->getEndDate() !== null) {
             $qb->andWhere($qb->expr()->lte('v.date', ':endDate'))
                ->setParameter('endDate', $dateRange->getEndDate());
         }

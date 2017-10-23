@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Service\Tag;
 
-use Acelaya\ZsmAnnotatedServices\Annotation as DI;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -18,12 +19,6 @@ class TagService implements TagServiceInterface
      */
     private $em;
 
-    /**
-     * VisitService constructor.
-     * @param EntityManagerInterface $em
-     *
-     * @DI\Inject({"em"})
-     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;

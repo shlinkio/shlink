@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Common\Service;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
@@ -15,12 +16,6 @@ class IpLocationResolver implements IpLocationResolverInterface
      */
     private $httpClient;
 
-    /**
-     * IpLocationResolver constructor.
-     * @param Client $httpClient
-     *
-     * @Inject({"httpClient"})
-     */
     public function __construct(Client $httpClient)
     {
         $this->httpClient = $httpClient;
@@ -34,7 +29,7 @@ class IpLocationResolver implements IpLocationResolverInterface
     {
         try {
             $response = $this->httpClient->get(sprintf(self::SERVICE_PATTERN, $ipAddress));
-            return json_decode($response->getBody(), true);
+            return json_decode((string) $response->getBody(), true);
         } catch (GuzzleException $e) {
             throw WrongIpException::fromIpAddress($ipAddress, $e);
         }

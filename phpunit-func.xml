@@ -1,0 +1,15 @@
+<phpunit bootstrap="./func_tests_bootstrap.php" colors="true">
+    <testsuites>
+        <testsuite name="Shlink functional database tests">
+            <directory>./module/*/test-func</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./module/*/src/Repository</directory>
+            <directory suffix=".php">./module/*/src/**/Repository</directory>
+            <directory suffix=".php">./module/*/src/**/**/Repository</directory>
+        </whitelist>
+    </filter>
+</phpunit>

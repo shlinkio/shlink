@@ -1,12 +1,12 @@
 <?php
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Acelaya\ZsmAnnotatedServices\Annotation\Inject;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Authentication\JWTServiceInterface;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
@@ -29,15 +29,6 @@ class AuthenticateAction extends AbstractRestAction
      */
     private $jwtService;
 
-    /**
-     * AuthenticateAction constructor.
-     * @param ApiKeyServiceInterface|ApiKeyService $apiKeyService
-     * @param JWTServiceInterface|JWTService $jwtService
-     * @param TranslatorInterface $translator
-     * @param LoggerInterface|null $logger
-     *
-     * @Inject({ApiKeyService::class, JWTService::class, "translator", "Logger_Shlink"})
-     */
     public function __construct(
         ApiKeyServiceInterface $apiKeyService,
         JWTServiceInterface $jwtService,

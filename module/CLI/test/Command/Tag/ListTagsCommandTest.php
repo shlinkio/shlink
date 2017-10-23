@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\ListTagsCommand;
-use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Application;
