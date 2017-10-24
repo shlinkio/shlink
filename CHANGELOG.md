@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### 1.6.1
+
+* Added gitattributes file to avoid files not needed in production to be included in distribution
+
 ### 1.6.0
 
 **Features**
