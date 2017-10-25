@@ -1,8 +1,16 @@
 ## CHANGELOG
 
+### 1.6.2
+
+**Bugs**
+
+* [109: Fix installation error due to typo in latest migration](https://github.com/shlinkio/shlink/issues/109)
+
 ### 1.6.1
 
-* Added gitattributes file to avoid files not needed in production to be included in distribution
+**Tasks**
+
+* [110: Create gitattributes file to define files to be excluded from distributable package](https://github.com/shlinkio/shlink/issues/110)
 
 ### 1.6.0
 
