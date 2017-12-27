@@ -6,10 +6,10 @@ namespace Shlinkio\Shlink\CLI\Command\Api;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class ListKeysCommand extends Command
@@ -46,33 +46,32 @@ class ListKeysCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
         $enabledOnly = $input->getOption('enabledOnly');
         $list = $this->apiKeyService->listKeys($enabledOnly);
-
-        $table = new Table($output);
-        $table->setHeaders(array_filter([
-            $this->translator->translate('Key'),
-            ! $enabledOnly ? $this->translator->translate('Is enabled') : null,
-            $this->translator->translate('Expiration date'),
-        ]));
+        $rows = [];
 
         /** @var ApiKey $row */
         foreach ($list as $row) {
             $key = $row->getKey();
             $expiration = $row->getExpirationDate();
-            $rowData = [];
             $formatMethod = $this->determineFormatMethod($row);
 
-            $rowData[] = $formatMethod($key);
+            // Set columns for this row
+            $rowData = [$formatMethod($key)];
             if (! $enabledOnly) {
                 $rowData[] = $formatMethod($this->getEnabledSymbol($row));
             }
-
             $rowData[] = $expiration !== null ? $expiration->format(\DateTime::ATOM) : '-';
-            $table->addRow($rowData);
+
+            $rows[] = $rowData;
         }
 
-        $table->render();
+        $io->table(array_filter([
+            $this->translator->translate('Key'),
+            ! $enabledOnly ? $this->translator->translate('Is enabled') : null,
+            $this->translator->translate('Expiration date'),
+        ]), $rows);
     }
 
     private function determineFormatMethod(ApiKey $apiKey): callable
