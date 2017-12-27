@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service\Tag;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
@@ -16,11 +15,11 @@ class TagService implements TagServiceInterface
     use TagManagerTrait;
 
     /**
-     * @var EntityManager|EntityManagerInterface
+     * @var ORM\EntityManagerInterface
      */
     private $em;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ORM\EntityManagerInterface $em)
     {
         $this->em = $em;
     }
@@ -64,6 +63,7 @@ class TagService implements TagServiceInterface
      * @param string $newName
      * @return Tag
      * @throws EntityDoesNotExistException
+     * @throws ORM\OptimisticLockException
      */
     public function renameTag($oldName, $newName)
     {
@@ -75,7 +75,10 @@ class TagService implements TagServiceInterface
         }
 
         $tag->setName($newName);
-        $this->em->flush($tag);
+
+        /** @var ORM\EntityManager $em */
+        $em = $this->em;
+        $em->flush($tag);
 
         return $tag;
     }

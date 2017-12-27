@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Service;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
@@ -15,11 +14,11 @@ use Shlinkio\Shlink\Core\Repository\VisitRepository;
 class VisitsTracker implements VisitsTrackerInterface
 {
     /**
-     * @var EntityManager|EntityManagerInterface
+     * @var ORM\EntityManagerInterface
      */
     private $em;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ORM\EntityManagerInterface $em)
     {
         $this->em = $em;
     }
@@ -29,6 +28,8 @@ class VisitsTracker implements VisitsTrackerInterface
      *
      * @param string $shortCode
      * @param ServerRequestInterface $request
+     * @throws ORM\ORMInvalidArgumentException
+     * @throws ORM\OptimisticLockException
      */
     public function track($shortCode, ServerRequestInterface $request)
     {
@@ -43,8 +44,10 @@ class VisitsTracker implements VisitsTrackerInterface
               ->setReferer($request->getHeaderLine('Referer'))
               ->setRemoteAddr($this->findOutRemoteAddr($request));
 
-        $this->em->persist($visit);
-        $this->em->flush($visit);
+        /** @var ORM\EntityManager $em */
+        $em = $this->em;
+        $em->persist($visit);
+        $em->flush($visit);
     }
 
     /**
