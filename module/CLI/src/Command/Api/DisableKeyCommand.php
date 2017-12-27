@@ -8,6 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class DisableKeyCommand extends Command
@@ -40,18 +41,13 @@ class DisableKeyCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $apiKey = $input->getArgument('apiKey');
+        $io = new SymfonyStyle($input, $output);
 
         try {
             $this->apiKeyService->disable($apiKey);
-            $output->writeln(sprintf(
-                $this->translator->translate('API key %s properly disabled'),
-                '<info>' . $apiKey . '</info>'
-            ));
+            $io->success(sprintf($this->translator->translate('API key "%s" properly disabled'), $apiKey));
         } catch (\InvalidArgumentException $e) {
-            $output->writeln(sprintf(
-                '<error>' . $this->translator->translate('API key "%s" does not exist.') . '</error>',
-                $apiKey
-            ));
+            $io->error(sprintf($this->translator->translate('API key "%s" does not exist.'), $apiKey));
         }
     }
 }
