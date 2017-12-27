@@ -12,6 +12,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class CreateTagCommand extends Command
 {
+    const NAME = 'tag:create';
+
     /**
      * @var TagServiceInterface
      */
@@ -31,7 +33,7 @@ class CreateTagCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('tag:create')
+            ->setName(self::NAME)
             ->setDescription($this->translator->translate('Creates one or more tags.'))
             ->addOption(
                 'name',

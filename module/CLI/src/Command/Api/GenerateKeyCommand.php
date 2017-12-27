@@ -12,6 +12,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class GenerateKeyCommand extends Command
 {
+    const NAME = 'api-key:generate';
+
     /**
      * @var ApiKeyServiceInterface
      */
@@ -30,7 +32,7 @@ class GenerateKeyCommand extends Command
 
     public function configure()
     {
-        $this->setName('api-key:generate')
+        $this->setName(self::NAME)
              ->setDescription($this->translator->translate('Generates a new valid API key.'))
              ->addOption(
                  'expirationDate',

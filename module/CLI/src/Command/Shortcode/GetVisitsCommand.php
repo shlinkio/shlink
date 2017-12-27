@@ -17,6 +17,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class GetVisitsCommand extends Command
 {
+    const NAME = 'shortcode:visits';
+
     /**
      * @var VisitsTrackerInterface
      */
@@ -35,7 +37,7 @@ class GetVisitsCommand extends Command
 
     public function configure()
     {
-        $this->setName('shortcode:visits')
+        $this->setName(self::NAME)
             ->setDescription(
                 $this->translator->translate('Returns the detailed visits information for provided short code')
             )

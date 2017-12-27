@@ -12,6 +12,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class DeleteTagsCommand extends Command
 {
+    const NAME = 'tag:delete';
+
     /**
      * @var TagServiceInterface
      */
@@ -31,7 +33,7 @@ class DeleteTagsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('tag:delete')
+            ->setName(self::NAME)
             ->setDescription($this->translator->translate('Deletes one or more tags.'))
             ->addOption(
                 'name',

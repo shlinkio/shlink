@@ -11,6 +11,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class GenerateCharsetCommand extends Command
 {
+    const NAME = 'config:generate-charset';
+
     /**
      * @var TranslatorInterface
      */
@@ -24,7 +26,7 @@ class GenerateCharsetCommand extends Command
 
     public function configure()
     {
-        $this->setName('config:generate-charset')
+        $this->setName(self::NAME)
              ->setDescription(sprintf($this->translator->translate(
                  'Generates a character set sample just by shuffling the default one, "%s". '
                  . 'Then it can be set in the SHORTCODE_CHARS environment variable'

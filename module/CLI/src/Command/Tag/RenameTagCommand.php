@@ -13,6 +13,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class RenameTagCommand extends Command
 {
+    const NAME = 'tag:rename';
+
     /**
      * @var TagServiceInterface
      */
@@ -32,7 +34,7 @@ class RenameTagCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('tag:rename')
+            ->setName(self::NAME)
             ->setDescription($this->translator->translate('Renames one existing tag.'))
             ->addArgument('oldName', InputArgument::REQUIRED, $this->translator->translate('Current name of the tag.'))
             ->addArgument('newName', InputArgument::REQUIRED, $this->translator->translate('New name of the tag.'));

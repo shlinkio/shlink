@@ -13,6 +13,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class ListTagsCommand extends Command
 {
+    const NAME = 'tag:list';
+
     /**
      * @var TagServiceInterface
      */
@@ -32,7 +34,7 @@ class ListTagsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('tag:list')
+            ->setName(self::NAME)
             ->setDescription($this->translator->translate('Lists existing tags.'));
     }
 

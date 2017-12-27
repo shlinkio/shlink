@@ -12,6 +12,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class DisableKeyCommand extends Command
 {
+    const NAME = 'api-key:disable';
+
     /**
      * @var ApiKeyServiceInterface
      */
@@ -30,7 +32,7 @@ class DisableKeyCommand extends Command
 
     public function configure()
     {
-        $this->setName('api-key:disable')
+        $this->setName(self::NAME)
              ->setDescription($this->translator->translate('Disables an API key.'))
              ->addArgument('apiKey', InputArgument::REQUIRED, $this->translator->translate('The API key to disable'));
     }

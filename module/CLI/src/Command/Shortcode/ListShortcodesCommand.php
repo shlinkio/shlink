@@ -19,6 +19,8 @@ class ListShortcodesCommand extends Command
 {
     use PaginatorUtilsTrait;
 
+    const NAME = 'shortcode:list';
+
     /**
      * @var ShortUrlServiceInterface
      */
@@ -37,7 +39,7 @@ class ListShortcodesCommand extends Command
 
     public function configure()
     {
-        $this->setName('shortcode:list')
+        $this->setName(self::NAME)
              ->setDescription($this->translator->translate('List all short URLs'))
              ->addOption(
                  'page',

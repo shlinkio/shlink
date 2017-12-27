@@ -16,6 +16,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class ResolveUrlCommand extends Command
 {
+    const NAME = 'shortcode:parse';
+
     /**
      * @var UrlShortenerInterface
      */
@@ -34,7 +36,7 @@ class ResolveUrlCommand extends Command
 
     public function configure()
     {
-        $this->setName('shortcode:parse')
+        $this->setName(self::NAME)
              ->setDescription($this->translator->translate('Returns the long URL behind a short code'))
              ->addArgument(
                  'shortCode',

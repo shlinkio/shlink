@@ -18,6 +18,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class GenerateShortcodeCommand extends Command
 {
+    const NAME = 'shortcode:generate';
+
     /**
      * @var UrlShortenerInterface
      */
@@ -44,7 +46,7 @@ class GenerateShortcodeCommand extends Command
 
     public function configure()
     {
-        $this->setName('shortcode:generate')
+        $this->setName(self::NAME)
              ->setDescription(
                  $this->translator->translate('Generates a short code for provided URL and returns the short URL')
              )

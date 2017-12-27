@@ -14,6 +14,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class ListKeysCommand extends Command
 {
+    const NAME = 'api-key:list';
+
     /**
      * @var ApiKeyServiceInterface
      */
@@ -32,7 +34,7 @@ class ListKeysCommand extends Command
 
     public function configure()
     {
-        $this->setName('api-key:list')
+        $this->setName(self::NAME)
              ->setDescription($this->translator->translate('Lists all the available API keys.'))
              ->addOption(
                  'enabledOnly',

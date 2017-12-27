@@ -13,6 +13,8 @@ class GenerateSecretCommand extends Command
 {
     use StringUtilsTrait;
 
+    const NAME = 'config:generate-secret';
+
     /**
      * @var TranslatorInterface
      */
@@ -26,7 +28,7 @@ class GenerateSecretCommand extends Command
 
     public function configure()
     {
-        $this->setName('config:generate-secret')
+        $this->setName(self::NAME)
              ->setDescription($this->translator->translate(
                  'Generates a random secret string that can be used for JWT token encryption'
              ));

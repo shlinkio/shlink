@@ -15,6 +15,7 @@ use Zend\I18n\Translator\TranslatorInterface;
 class ProcessVisitsCommand extends Command
 {
     const LOCALHOST = '127.0.0.1';
+    const NAME = 'visit:process';
 
     /**
      * @var VisitServiceInterface
@@ -42,7 +43,7 @@ class ProcessVisitsCommand extends Command
 
     public function configure()
     {
-        $this->setName('visit:process')
+        $this->setName(self::NAME)
              ->setDescription(
                  $this->translator->translate('Processes visits where location is not set yet')
              );

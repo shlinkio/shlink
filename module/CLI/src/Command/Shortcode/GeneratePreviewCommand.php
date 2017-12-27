@@ -13,6 +13,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class GeneratePreviewCommand extends Command
 {
+    const NAME = 'shortcode:process-previews';
+
     /**
      * @var PreviewGeneratorInterface
      */
@@ -39,7 +41,7 @@ class GeneratePreviewCommand extends Command
 
     public function configure()
     {
-        $this->setName('shortcode:process-previews')
+        $this->setName(self::NAME)
              ->setDescription(
                  $this->translator->translate(
                      'Processes and generates the previews for every URL, improving performance for later web requests.'
