@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service\Tag;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
@@ -15,7 +16,7 @@ class TagService implements TagServiceInterface
     use TagManagerTrait;
 
     /**
-     * @var EntityManagerInterface
+     * @var EntityManager|EntityManagerInterface
      */
     private $em;
 

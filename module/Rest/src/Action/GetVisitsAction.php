@@ -75,10 +75,10 @@ class GetVisitsAction extends AbstractRestAction
 
     /**
      * @param Request $request
-     * @param $key
+     * @param string $key
      * @return \DateTime|null
      */
-    protected function getDateQueryParam(Request $request, $key)
+    private function getDateQueryParam(Request $request, string $key)
     {
         $query = $request->getQueryParams();
         if (! isset($query[$key]) || empty($query[$key])) {

@@ -49,9 +49,9 @@ class ShortUrlService implements ShortUrlServiceInterface
      * @return ShortUrl
      * @throws InvalidShortCodeException
      */
-    public function setTagsByShortCode($shortCode, array $tags = [])
+    public function setTagsByShortCode($shortCode, array $tags = []): ShortUrl
     {
-        /** @var ShortUrl $shortUrl */
+        /** @var ShortUrl|null $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'shortCode' => $shortCode,
         ]);

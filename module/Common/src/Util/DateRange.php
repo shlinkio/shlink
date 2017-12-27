@@ -6,11 +6,11 @@ namespace Shlinkio\Shlink\Common\Util;
 class DateRange
 {
     /**
-     * @var \DateTimeInterface
+     * @var \DateTimeInterface|null
      */
     private $startDate;
     /**
-     * @var \DateTimeInterface
+     * @var \DateTimeInterface|null
      */
     private $endDate;
 
@@ -21,7 +21,7 @@ class DateRange
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return \DateTimeInterface|null
      */
     public function getStartDate()
     {
@@ -29,7 +29,7 @@ class DateRange
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return \DateTimeInterface|null
      */
     public function getEndDate()
     {
@@ -39,8 +39,8 @@ class DateRange
     /**
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
-        return is_null($this->startDate) && is_null($this->endDate);
+        return $this->startDate === null && $this->endDate === null;
     }
 }

@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Repository\VisitRepository;
 class VisitsTracker implements VisitsTrackerInterface
 {
     /**
-     * @var EntityManagerInterface|EntityManager
+     * @var EntityManager|EntityManagerInterface
      */
     private $em;
 
@@ -66,14 +66,14 @@ class VisitsTracker implements VisitsTrackerInterface
     /**
      * Returns the visits on certain short code
      *
-     * @param $shortCode
+     * @param string $shortCode
      * @param DateRange $dateRange
      * @return Visit[]
      * @throws InvalidArgumentException
      */
-    public function info($shortCode, DateRange $dateRange = null): array
+    public function info(string $shortCode, DateRange $dateRange = null): array
     {
-        /** @var ShortUrl $shortUrl */
+        /** @var ShortUrl|null $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'shortCode' => $shortCode,
         ]);

@@ -71,14 +71,6 @@ class ResolveUrlCommand extends Command
 
         try {
             $longUrl = $this->urlShortener->shortCodeToUrl($shortCode);
-            if (! isset($longUrl)) {
-                $output->writeln(sprintf(
-                    '<error>' . $this->translator->translate('No URL found for short code "%s"') . '</error>',
-                    $shortCode
-                ));
-                return;
-            }
-
             $output->writeln(sprintf('%s <info>%s</info>', $this->translator->translate('Long URL:'), $longUrl));
         } catch (InvalidShortCodeException $e) {
             $output->writeln(sprintf('<error>' . $this->translator->translate(

@@ -90,6 +90,7 @@ class UrlShortener implements UrlShortenerInterface
         int $maxVisits = null
     ): string {
         // If the url already exists in the database, just return its short code
+        /** @var ShortUrl|null $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'originalUrl' => $url,
         ]);
@@ -148,6 +149,7 @@ class UrlShortener implements UrlShortenerInterface
                 'max' => 15,
             ]]);
         } catch (GuzzleException $e) {
+            /** @var \Throwable $e */
             throw InvalidUrlException::fromUrl($url, $e);
         }
     }
@@ -155,13 +157,13 @@ class UrlShortener implements UrlShortenerInterface
     /**
      * Generates the unique shortcode for an autoincrement ID
      *
-     * @param int $id
+     * @param float $id
      * @return string
      */
-    private function convertAutoincrementIdToShortCode($id): string
+    private function convertAutoincrementIdToShortCode(float $id): string
     {
-        $id = ((int) $id) + 200000; // Increment the Id so that the generated shortcode is not too short
-        $length = strlen($this->chars);
+        $id += 200000; // Increment the Id so that the generated shortcode is not too short
+        $length = \strlen($this->chars);
         $code = '';
 
         while ($id > 0) {

@@ -49,12 +49,6 @@ class RedirectAction implements MiddlewareInterface
         try {
             $longUrl = $this->urlShortener->shortCodeToUrl($shortCode);
 
-            // If provided shortCode does not belong to a valid long URL, dispatch next middleware, which will trigger
-            // a not-found error
-            if ($longUrl === null) {
-                return $delegate->process($request);
-            }
-
             // Track visit to this short code
             $this->visitTracker->track($shortCode, $request);
 

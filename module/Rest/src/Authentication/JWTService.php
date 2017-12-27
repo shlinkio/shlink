@@ -27,7 +27,7 @@ class JWTService implements JWTServiceInterface
      * @param int $lifetime
      * @return string
      */
-    public function create(ApiKey $apiKey, $lifetime = self::DEFAULT_LIFETIME)
+    public function create(ApiKey $apiKey, $lifetime = self::DEFAULT_LIFETIME): string
     {
         $currentTimestamp = time();
 
@@ -48,7 +48,7 @@ class JWTService implements JWTServiceInterface
      * @return string
      * @throws AuthenticationException If the token has expired
      */
-    public function refresh($jwt, $lifetime = self::DEFAULT_LIFETIME)
+    public function refresh(string $jwt, $lifetime = self::DEFAULT_LIFETIME): string
     {
         $payload = $this->getPayload($jwt);
         $payload['exp'] = time() + $lifetime;
@@ -61,7 +61,7 @@ class JWTService implements JWTServiceInterface
      * @param string $jwt
      * @return bool
      */
-    public function verify($jwt)
+    public function verify(string $jwt): bool
     {
         try {
             // If no exception is thrown while decoding the token, it is considered valid
@@ -79,7 +79,7 @@ class JWTService implements JWTServiceInterface
      * @return array
      * @throws AuthenticationException If the token has expired
      */
-    public function getPayload($jwt)
+    public function getPayload(string $jwt): array
     {
         try {
             return $this->decode($jwt);
@@ -92,16 +92,16 @@ class JWTService implements JWTServiceInterface
      * @param array $data
      * @return string
      */
-    protected function encode(array $data)
+    protected function encode(array $data): string
     {
         return JWT::encode($data, $this->appOptions->getSecretKey(), self::DEFAULT_ENCRYPTION_ALG);
     }
 
     /**
-     * @param $jwt
+     * @param string $jwt
      * @return array
      */
-    protected function decode($jwt)
+    protected function decode(string $jwt): array
     {
         return (array) JWT::decode($jwt, $this->appOptions->getSecretKey(), [self::DEFAULT_ENCRYPTION_ALG]);
     }

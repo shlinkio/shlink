@@ -55,13 +55,14 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeIn
      *
      * @return Response
      * @throws \InvalidArgumentException
+     * @throws \ErrorException
      */
     public function process(Request $request, DelegateInterface $delegate)
     {
         // If current route is the authenticate route or an OPTIONS request, continue to the next middleware
-        /** @var RouteResult $routeResult */
+        /** @var RouteResult|null $routeResult */
         $routeResult = $request->getAttribute(RouteResult::class);
-        if (! isset($routeResult)
+        if ($routeResult === null
             || $routeResult->isFailure()
             || $routeResult->getMatchedRouteName() === AuthenticateAction::class
             || $request->getMethod() === 'OPTIONS'

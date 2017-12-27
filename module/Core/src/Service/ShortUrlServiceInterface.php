@@ -24,5 +24,5 @@ interface ShortUrlServiceInterface
      * @return ShortUrl
      * @throws InvalidShortCodeException
      */
-    public function setTagsByShortCode($shortCode, array $tags = []);
+    public function setTagsByShortCode($shortCode, array $tags = []): ShortUrl;
 }
