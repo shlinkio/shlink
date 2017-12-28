@@ -7,6 +7,7 @@ use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class GenerateSecretCommand extends Command
@@ -37,6 +38,8 @@ class GenerateSecretCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $secret = $this->generateRandomString(32);
-        $output->writeln($this->translator->translate('Secret key:') . sprintf(' <info>%s</info>', $secret));
+        (new SymfonyStyle($input, $output))->success(
+            sprintf($this->translator->translate('Secret key: "%s"'), $secret)
+        );
     }
 }
