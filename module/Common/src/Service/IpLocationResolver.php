@@ -32,7 +32,6 @@ class IpLocationResolver implements IpLocationResolverInterface
             $response = $this->httpClient->get(sprintf(self::SERVICE_PATTERN, $ipAddress));
             return json_decode((string) $response->getBody(), true);
         } catch (GuzzleException $e) {
-            /** @var \Throwable $e */
             throw WrongIpException::fromIpAddress($ipAddress, $e);
         }
     }

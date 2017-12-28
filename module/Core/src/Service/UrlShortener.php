@@ -149,7 +149,6 @@ class UrlShortener implements UrlShortenerInterface
                 'max' => 15,
             ]]);
         } catch (GuzzleException $e) {
-            /** @var \Throwable $e */
             throw InvalidUrlException::fromUrl($url, $e);
         }
     }
