@@ -1,0 +1,3 @@
+parameters:
+	excludes_analyse:
+		- module/Common/src/Template/Extension/TranslatorExtension.php
