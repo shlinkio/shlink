@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Install;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Shlinkio\Shlink\CLI\Install\ConfigCustomizerPluginManagerInterface;
 use Shlinkio\Shlink\CLI\Install\Plugin;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
@@ -10,11 +12,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\ProcessHelper;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Zend\Config\Writer\WriterInterface;
@@ -24,17 +24,9 @@ class InstallCommand extends Command
     const GENERATED_CONFIG_PATH = 'config/params/generated_config.php';
 
     /**
-     * @var InputInterface
+     * @var SymfonyStyle
      */
-    private $input;
-    /**
-     * @var OutputInterface
-     */
-    private $output;
-    /**
-     * @var QuestionHelper
-     */
-    private $questionHelper;
+    private $io;
     /**
      * @var ProcessHelper
      */
@@ -60,6 +52,7 @@ class InstallCommand extends Command
      * InstallCommand constructor.
      * @param WriterInterface $configWriter
      * @param Filesystem $filesystem
+     * @param ConfigCustomizerPluginManagerInterface $configCustomizers
      * @param bool $isUpdate
      * @throws LogicException
      */
@@ -83,30 +76,35 @@ class InstallCommand extends Command
             ->setDescription('Installs or updates Shlink');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
-        $this->output = $output;
-        $this->questionHelper = $this->getHelper('question');
+        $this->io = new SymfonyStyle($input, $output);
         $this->processHelper = $this->getHelper('process');
 
-        $output->writeln([
+        $this->io->writeln([
             '<info>Welcome to Shlink!!</info>',
             'This will guide you through the installation process.',
         ]);
 
         // Check if a cached config file exists and drop it if so
         if ($this->filesystem->exists('data/cache/app_config.php')) {
-            $output->write('Deleting old cached config...');
+            $this->io->write('Deleting old cached config...');
             try {
                 $this->filesystem->remove('data/cache/app_config.php');
-                $output->writeln(' <info>Success</info>');
+                $this->io->writeln(' <info>Success</info>');
             } catch (IOException $e) {
-                $output->writeln(
+                $this->io->writeln(
                     ' <error>Failed!</error> You will have to manually delete the data/cache/app_config.php file to get'
                     . ' new config applied.'
                 );
-                if ($output->isVerbose()) {
+                if ($this->io->isVerbose()) {
                     $this->getApplication()->renderException($e, $output);
                 }
                 return;
@@ -130,28 +128,37 @@ class InstallCommand extends Command
 
         // Generate config params files
         $this->configWriter->toFile(self::GENERATED_CONFIG_PATH, $config->getArrayCopy(), false);
-        $output->writeln(['<info>Custom configuration properly generated!</info>', '']);
+        $this->io->writeln(['<info>Custom configuration properly generated!</info>', '']);
 
         // If current command is not update, generate database
         if (!  $this->isUpdate) {
-            $this->output->writeln('Initializing database...');
+            $this->io->writeln('Initializing database...');
             if (! $this->runCommand(
                 'php vendor/bin/doctrine.php orm:schema-tool:create',
-                'Error generating database.'
+                'Error generating database.',
+                $output
             )) {
                 return;
             }
         }
 
         // Run database migrations
-        $output->writeln('Updating database...');
-        if (! $this->runCommand('php vendor/bin/doctrine-migrations migrations:migrate', 'Error updating database.')) {
+        $this->io->writeln('Updating database...');
+        if (! $this->runCommand(
+            'php vendor/bin/doctrine-migrations migrations:migrate',
+            'Error updating database.',
+            $output
+        )) {
             return;
         }
 
         // Generate proxies
-        $output->writeln('Generating proxies...');
-        if (! $this->runCommand('php vendor/bin/doctrine.php orm:generate-proxies', 'Error generating proxies.')) {
+        $this->io->writeln('Generating proxies...');
+        if (! $this->runCommand(
+            'php vendor/bin/doctrine.php orm:generate-proxies',
+            'Error generating proxies.',
+            $output
+        )) {
             return;
         }
     }
@@ -160,14 +167,14 @@ class InstallCommand extends Command
      * @return CustomizableAppConfig
      * @throws RuntimeException
      */
-    private function importConfig()
+    private function importConfig(): CustomizableAppConfig
     {
         $config = new CustomizableAppConfig();
 
         // Ask the user if he/she wants to import an older configuration
-        $importConfig = $this->questionHelper->ask($this->input, $this->output, new ConfirmationQuestion(
+        $importConfig = $this->io->confirm(
             '<question>Do you want to import previous configuration? (Y/n):</question> '
-        ));
+        );
         if (! $importConfig) {
             return $config;
         }
@@ -182,10 +189,10 @@ class InstallCommand extends Command
             $configExists = $this->filesystem->exists($configFile);
 
             if (! $configExists) {
-                $keepAsking = $this->questionHelper->ask($this->input, $this->output, new ConfirmationQuestion(
+                $keepAsking = $this->io->confirm(
                     'Provided path does not seem to be a valid shlink root path. '
                     . '<question>Do you want to try another path? (Y/n):</question> '
-                ));
+                );
             }
         } while (! $configExists && $keepAsking);
 
@@ -206,18 +213,16 @@ class InstallCommand extends Command
      * @return string
      * @throws RuntimeException
      */
-    private function ask($text, $default = null, $allowEmpty = false)
+    private function ask($text, $default = null, $allowEmpty = false): string
     {
         if ($default !== null) {
             $text .= ' (defaults to ' . $default . ')';
         }
+
         do {
-            $value = $this->questionHelper->ask($this->input, $this->output, new Question(
-                '<question>' . $text . ':</question> ',
-                $default
-            ));
+            $value = $this->io->ask('<question>' . $text . ':</question> ', $default);
             if (empty($value) && ! $allowEmpty) {
-                $this->output->writeln('<error>Value can\'t be empty</error>');
+                $this->io->writeln('<error>Value can\'t be empty</error>');
             }
         } while (empty($value) && $default === null && ! $allowEmpty);
 
@@ -227,21 +232,22 @@ class InstallCommand extends Command
     /**
      * @param string $command
      * @param string $errorMessage
+     * @param OutputInterface $output
      * @return bool
      */
-    private function runCommand($command, $errorMessage)
+    private function runCommand($command, $errorMessage, OutputInterface $output): bool
     {
-        $process = $this->processHelper->run($this->output, $command);
+        $process = $this->processHelper->run($output, $command);
         if ($process->isSuccessful()) {
-            $this->output->writeln('    <info>Success!</info>');
+            $this->io->writeln('    <info>Success!</info>');
             return true;
         }
 
-        if ($this->output->isVerbose()) {
+        if ($this->io->isVerbose()) {
             return false;
         }
 
-        $this->output->writeln(
+        $this->io->writeln(
             '    <error>' . $errorMessage . '</error>  Run this command with -vvv to see specific error info.'
         );
         return false;

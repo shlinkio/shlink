@@ -3,14 +3,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Install\Plugin;
 
-use Acelaya\ZsmAnnotatedServices\Annotation as DI;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Exception\RuntimeException;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -27,16 +24,8 @@ class DatabaseConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
      */
     private $filesystem;
 
-    /**
-     * DatabaseConfigCustomizerPlugin constructor.
-     * @param QuestionHelper $questionHelper
-     * @param Filesystem $filesystem
-     *
-     * @DI\Inject({QuestionHelper::class, Filesystem::class})
-     */
-    public function __construct(QuestionHelper $questionHelper, Filesystem $filesystem)
+    public function __construct(Filesystem $filesystem)
     {
-        parent::__construct($questionHelper);
         $this->filesystem = $filesystem;
     }
 
@@ -50,11 +39,12 @@ class DatabaseConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
      */
     public function process(InputInterface $input, OutputInterface $output, CustomizableAppConfig $appConfig)
     {
-        $this->printTitle($output, 'DATABASE');
+        $io = new SymfonyStyle($input, $output);
+        $io->title('DATABASE');
 
-        if ($appConfig->hasDatabase() && $this->questionHelper->ask($input, $output, new ConfirmationQuestion(
+        if ($appConfig->hasDatabase() && $io->confirm(
             '<question>Do you want to keep imported database config? (Y/n):</question> '
-        ))) {
+        )) {
             // If the user selected to keep DB config and is configured to use sqlite, copy DB file
             if ($appConfig->getDatabase()['DRIVER'] === self::DATABASE_DRIVERS['SQLite']) {
                 try {
@@ -74,20 +64,20 @@ class DatabaseConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
         // Select database type
         $params = [];
         $databases = array_keys(self::DATABASE_DRIVERS);
-        $dbType = $this->questionHelper->ask($input, $output, new ChoiceQuestion(
+        $dbType = $io->choice(
             '<question>Select database type (defaults to ' . $databases[0] . '):</question>',
             $databases,
             0
-        ));
+        );
         $params['DRIVER'] = self::DATABASE_DRIVERS[$dbType];
 
         // Ask for connection params if database is not SQLite
         if ($params['DRIVER'] !== self::DATABASE_DRIVERS['SQLite']) {
-            $params['NAME'] = $this->ask($input, $output, 'Database name', 'shlink');
-            $params['USER'] = $this->ask($input, $output, 'Database username');
-            $params['PASSWORD'] = $this->ask($input, $output, 'Database password');
-            $params['HOST'] = $this->ask($input, $output, 'Database host', 'localhost');
-            $params['PORT'] = $this->ask($input, $output, 'Database port', $this->getDefaultDbPort($params['DRIVER']));
+            $params['NAME'] = $this->ask($io, 'Database name', 'shlink');
+            $params['USER'] = $this->ask($io, 'Database username');
+            $params['PASSWORD'] = $this->ask($io, 'Database password');
+            $params['HOST'] = $this->ask($io, 'Database host', 'localhost');
+            $params['PORT'] = $this->ask($io, 'Database port', $this->getDefaultDbPort($params['DRIVER']));
         }
 
         $appConfig->setDatabase($params);

@@ -7,8 +7,7 @@ use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class LanguageConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
 {
@@ -23,27 +22,28 @@ class LanguageConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
      */
     public function process(InputInterface $input, OutputInterface $output, CustomizableAppConfig $appConfig)
     {
-        $this->printTitle($output, 'LANGUAGE');
+        $io = new SymfonyStyle($input, $output);
+        $io->title('LANGUAGE');
 
-        if ($appConfig->hasLanguage() && $this->questionHelper->ask($input, $output, new ConfirmationQuestion(
+        if ($appConfig->hasLanguage() && $io->confirm(
             '<question>Do you want to keep imported language? (Y/n):</question> '
-        ))) {
+        )) {
             return;
         }
 
         $appConfig->setLanguage([
-            'DEFAULT' => $this->questionHelper->ask($input, $output, new ChoiceQuestion(
+            'DEFAULT' => $io->choice(
                 '<question>Select default language for the application in general (defaults to '
                 . self::SUPPORTED_LANGUAGES[0] . '):</question>',
                 self::SUPPORTED_LANGUAGES,
                 0
-            )),
-            'CLI' => $this->questionHelper->ask($input, $output, new ChoiceQuestion(
+            ),
+            'CLI' => $io->choice(
                 '<question>Select default language for CLI executions (defaults to '
                 . self::SUPPORTED_LANGUAGES[0] . '):</question>',
                 self::SUPPORTED_LANGUAGES,
                 0
-            )),
+            ),
         ]);
     }
 }

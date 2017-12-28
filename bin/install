@@ -1,9 +1,9 @@
 #!/usr/bin/env php
 <?php
+
 use Shlinkio\Shlink\CLI\Factory\InstallApplicationFactory;
 use Shlinkio\Shlink\CLI\Install\Plugin\DatabaseConfigCustomizerPlugin;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Filesystem\Filesystem;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\ServiceManager\Factory\InvokableFactory;
@@ -17,12 +17,11 @@ $container = new ServiceManager([
     'factories' => [
         Application::class => InstallApplicationFactory::class,
         Filesystem::class => InvokableFactory::class,
-        QuestionHelper::class => InvokableFactory::class,
     ],
     'services' => [
         'config' => [
             ConfigAbstractFactory::class => [
-                DatabaseConfigCustomizerPlugin::class => [QuestionHelper::class, Filesystem::class]
+                DatabaseConfigCustomizerPlugin::class => [Filesystem::class]
             ],
         ],
     ],

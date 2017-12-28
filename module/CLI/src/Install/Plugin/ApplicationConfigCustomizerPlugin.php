@@ -7,7 +7,7 @@ use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ApplicationConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
 {
@@ -22,18 +22,18 @@ class ApplicationConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
      */
     public function process(InputInterface $input, OutputInterface $output, CustomizableAppConfig $appConfig)
     {
-        $this->printTitle($output, 'APPLICATION');
+        $io = new SymfonyStyle($input, $output);
+        $io->title('APPLICATION');
 
-        if ($appConfig->hasApp() && $this->questionHelper->ask($input, $output, new ConfirmationQuestion(
+        if ($appConfig->hasApp() && $io->confirm(
             '<question>Do you want to keep imported application config? (Y/n):</question> '
-        ))) {
+        )) {
             return;
         }
 
         $appConfig->setApp([
             'SECRET' => $this->ask(
-                $input,
-                $output,
+                $io,
                 'Define a secret string that will be used to sign API tokens (leave empty to autogenerate one)',
                 null,
                 true
