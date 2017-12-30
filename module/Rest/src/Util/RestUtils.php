@@ -20,7 +20,7 @@ class RestUtils
     const NOT_FOUND_ERROR = 'NOT_FOUND';
     const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
 
-    public static function getRestErrorCodeFromException(Common\ExceptionInterface $e)
+    public static function getRestErrorCodeFromException(\Throwable $e)
     {
         switch (true) {
             case $e instanceof Core\InvalidShortCodeException:

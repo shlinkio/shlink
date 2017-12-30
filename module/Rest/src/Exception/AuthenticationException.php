@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Exception;
 
-use Shlinkio\Shlink\Common\Exception\ExceptionInterface;
-
-class AuthenticationException extends \RuntimeException implements ExceptionInterface
+class AuthenticationException extends RuntimeException
 {
     public static function fromCredentials($username, $password)
     {
