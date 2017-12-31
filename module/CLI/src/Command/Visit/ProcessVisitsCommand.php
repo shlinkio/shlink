@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Service\VisitServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class ProcessVisitsCommand extends Command
@@ -51,13 +52,14 @@ class ProcessVisitsCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
         $visits = $this->visitService->getUnlocatedVisits();
 
         foreach ($visits as $visit) {
             $ipAddr = $visit->getRemoteAddr();
-            $output->write(sprintf('%s <info>%s</info>', $this->translator->translate('Processing IP'), $ipAddr));
+            $io->write(sprintf('%s <info>%s</info>', $this->translator->translate('Processing IP'), $ipAddr));
             if ($ipAddr === self::LOCALHOST) {
-                $output->writeln(
+                $io->writeln(
                     sprintf(' (<comment>%s</comment>)', $this->translator->translate('Ignored localhost address'))
                 );
                 continue;
@@ -65,11 +67,13 @@ class ProcessVisitsCommand extends Command
 
             try {
                 $result = $this->ipLocationResolver->resolveIpLocation($ipAddr);
+
                 $location = new VisitLocation();
                 $location->exchangeArray($result);
                 $visit->setVisitLocation($location);
                 $this->visitService->saveVisit($visit);
-                $output->writeln(sprintf(
+
+                $io->writeln(sprintf(
                     ' (' . $this->translator->translate('Address located at "%s"') . ')',
                     $location->getCityName()
                 ));
@@ -78,6 +82,6 @@ class ProcessVisitsCommand extends Command
             }
         }
 
-        $output->writeln($this->translator->translate('Finished processing all IPs'));
+        $io->success($this->translator->translate('Finished processing all IPs'));
     }
 }
