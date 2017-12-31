@@ -6,13 +6,11 @@ namespace Shlinkio\Shlink\CLI\Command\Shortcode;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class GetVisitsCommand extends Command
@@ -32,7 +30,7 @@ class GetVisitsCommand extends Command
     {
         $this->visitsTracker = $visitsTracker;
         $this->translator = $translator;
-        parent::__construct(null);
+        parent::__construct();
     }
 
     public function configure()
@@ -67,14 +65,10 @@ class GetVisitsCommand extends Command
             return;
         }
 
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelper('question');
-        $question = new Question(sprintf(
-            '<question>%s</question> ',
-            $this->translator->translate('A short code was not provided. Which short code do you want to use?:')
-        ));
-
-        $shortCode = $helper->ask($input, $output, $question);
+        $io = new SymfonyStyle($input, $output);
+        $shortCode = $io->ask(
+            $this->translator->translate('A short code was not provided. Which short code do you want to use?')
+        );
         if (! empty($shortCode)) {
             $input->setArgument('shortCode', $shortCode);
         }
@@ -82,33 +76,32 @@ class GetVisitsCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
         $shortCode = $input->getArgument('shortCode');
         $startDate = $this->getDateOption($input, 'startDate');
         $endDate = $this->getDateOption($input, 'endDate');
 
         $visits = $this->visitsTracker->info($shortCode, new DateRange($startDate, $endDate));
-        $table = new Table($output);
-        $table->setHeaders([
-            $this->translator->translate('Referer'),
-            $this->translator->translate('Date'),
-            $this->translator->translate('Remote Address'),
-            $this->translator->translate('User agent'),
-        ]);
-
+        $rows = [];
         foreach ($visits as $row) {
             $rowData = $row->jsonSerialize();
             // Unset location info
             unset($rowData['visitLocation']);
 
-            $table->addRow(array_values($rowData));
+            $rows[] = \array_values($rowData);
         }
-        $table->render();
+        $io->table([
+            $this->translator->translate('Referer'),
+            $this->translator->translate('Date'),
+            $this->translator->translate('Remote Address'),
+            $this->translator->translate('User agent'),
+        ], $rows);
     }
 
     protected function getDateOption(InputInterface $input, $key)
     {
         $value = $input->getOption($key);
-        if (isset($value)) {
+        if (! empty($value)) {
             $value = new \DateTime($value);
         }
 
