@@ -100,9 +100,9 @@ class InstallCommand extends Command
                 $this->filesystem->remove('data/cache/app_config.php');
                 $this->io->writeln(' <info>Success</info>');
             } catch (IOException $e) {
-                $this->io->writeln(
-                    ' <error>Failed!</error> You will have to manually delete the data/cache/app_config.php file to get'
-                    . ' new config applied.'
+                $this->io->error(
+                    'Failed! You will have to manually delete the data/cache/app_config.php file to'
+                    . ' get new config applied.'
                 );
                 if ($this->io->isVerbose()) {
                     $this->getApplication()->renderException($e, $output);
