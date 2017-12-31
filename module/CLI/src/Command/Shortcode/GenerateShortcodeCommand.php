@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\Diactoros\Uri;
 use Zend\I18n\Translator\TranslatorInterface;
 
@@ -75,19 +76,15 @@ class GenerateShortcodeCommand extends Command
 
     public function interact(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
         $longUrl = $input->getArgument('longUrl');
         if (! empty($longUrl)) {
             return;
         }
 
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelper('question');
-        $question = new Question(sprintf(
-            '<question>%s</question> ',
-            $this->translator->translate('A long URL was not provided. Which URL do you want to shorten?:')
-        ));
-
-        $longUrl = $helper->ask($input, $output, $question);
+        $longUrl = $io->ask(
+            $this->translator->translate('A long URL was not provided. Which URL do you want to be shortened?')
+        );
         if (! empty($longUrl)) {
             $input->setArgument('longUrl', $longUrl);
         }
@@ -95,23 +92,24 @@ class GenerateShortcodeCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
         $longUrl = $input->getArgument('longUrl');
+        if (empty($longUrl)) {
+            $io->error($this->translator->translate('A URL was not provided!'));
+            return;
+        }
+
         $tags = $input->getOption('tags');
         $processedTags = [];
         foreach ($tags as $key => $tag) {
-            $explodedTags = explode(',', $tag);
-            $processedTags = array_merge($processedTags, $explodedTags);
+            $explodedTags = \explode(',', $tag);
+            $processedTags = \array_merge($processedTags, $explodedTags);
         }
         $tags = $processedTags;
         $customSlug = $input->getOption('customSlug');
         $maxVisits = $input->getOption('maxVisits');
 
         try {
-            if (! isset($longUrl)) {
-                $output->writeln(sprintf('<error>%s</error>', $this->translator->translate('A URL was not provided!')));
-                return;
-            }
-
             $shortCode = $this->urlShortener->urlToShortCode(
                 new Uri($longUrl),
                 $tags,
@@ -124,22 +122,20 @@ class GenerateShortcodeCommand extends Command
                                    ->withScheme($this->domainConfig['schema'])
                                    ->withHost($this->domainConfig['hostname']);
 
-            $output->writeln([
-                sprintf('%s <info>%s</info>', $this->translator->translate('Processed URL:'), $longUrl),
-                sprintf('%s <info>%s</info>', $this->translator->translate('Generated URL:'), $shortUrl),
+            $io->writeln([
+                \sprintf('%s <info>%s</info>', $this->translator->translate('Processed long URL:'), $longUrl),
+                \sprintf('%s <info>%s</info>', $this->translator->translate('Generated short URL:'), $shortUrl),
             ]);
         } catch (InvalidUrlException $e) {
-            $output->writeln(sprintf(
-                '<error>' . $this->translator->translate(
-                    'Provided URL "%s" is invalid. Try with a different one.'
-                ) . '</error>',
+            $io->error(\sprintf(
+                $this->translator->translate('Provided URL "%s" is invalid. Try with a different one.'),
                 $longUrl
             ));
         } catch (NonUniqueSlugException $e) {
-            $output->writeln(sprintf(
-                '<error>' . $this->translator->translate(
+            $io->error(\sprintf(
+                $this->translator->translate(
                     'Provided slug "%s" is already in use by another URL. Try with a different one.'
-                ) . '</error>',
+                ),
                 $customSlug
             ));
         }

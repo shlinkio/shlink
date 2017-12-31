@@ -65,8 +65,9 @@ class GenerateShortcodeCommandTest extends TestCase
             'longUrl' => 'http://domain.com/invalid',
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertTrue(
-            strpos($output, 'Provided URL "http://domain.com/invalid" is invalid. Try with a different one.') === 0
+        $this->assertContains(
+            'Provided URL "http://domain.com/invalid" is invalid.',
+            $output
         );
     }
 }
