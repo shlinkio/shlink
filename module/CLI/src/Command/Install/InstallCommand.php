@@ -132,7 +132,7 @@ class InstallCommand extends Command
 
         // If current command is not update, generate database
         if (!  $this->isUpdate) {
-            $this->io->writeln('Initializing database...');
+            $this->io->write('Initializing database...');
             if (! $this->runCommand(
                 'php vendor/bin/doctrine.php orm:schema-tool:create',
                 'Error generating database.',
@@ -143,7 +143,7 @@ class InstallCommand extends Command
         }
 
         // Run database migrations
-        $this->io->writeln('Updating database...');
+        $this->io->write('Updating database...');
         if (! $this->runCommand(
             'php vendor/bin/doctrine-migrations migrations:migrate',
             'Error updating database.',
@@ -153,7 +153,7 @@ class InstallCommand extends Command
         }
 
         // Generate proxies
-        $this->io->writeln('Generating proxies...');
+        $this->io->write('Generating proxies...');
         if (! $this->runCommand(
             'php vendor/bin/doctrine.php orm:generate-proxies',
             'Error generating proxies.',
@@ -161,6 +161,8 @@ class InstallCommand extends Command
         )) {
             return;
         }
+
+        $this->io->success('Installation complete!');
     }
 
     /**
@@ -239,7 +241,7 @@ class InstallCommand extends Command
     {
         $process = $this->processHelper->run($output, $command);
         if ($process->isSuccessful()) {
-            $this->io->writeln('    <info>Success!</info>');
+            $this->io->writeln(' <info>Success!</info>');
             return true;
         }
 
@@ -247,9 +249,7 @@ class InstallCommand extends Command
             return false;
         }
 
-        $this->io->writeln(
-            '    <error>' . $errorMessage . '</error>  Run this command with -vvv to see specific error info.'
-        );
+        $this->io->error($errorMessage . '  Run this command with -vvv to see specific error info.');
         return false;
     }
 }
