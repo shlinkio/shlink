@@ -8,6 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class DeleteTagsCommand extends Command
@@ -45,19 +46,15 @@ class DeleteTagsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
         $tagNames = $input->getOption('name');
+
         if (empty($tagNames)) {
-            $output->writeln(sprintf(
-                '<comment>%s</comment>',
-                $this->translator->translate('You have to provide at least one tag name')
-            ));
+            $io->warning($this->translator->translate('You have to provide at least one tag name'));
             return;
         }
 
         $this->tagService->deleteTags($tagNames);
-        $output->writeln($this->translator->translate('Deleted tags') . sprintf(': ["<info>%s</info>"]', implode(
-            '</info>", "<info>',
-            $tagNames
-        )));
+        $io->success($this->translator->translate('Tags properly deleted'));
     }
 }
