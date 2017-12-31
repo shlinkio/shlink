@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Install\Plugin\UrlShortenerConfigCustomizer;
+use Shlinkio\Shlink\CLI\Install\Plugin\ApplicationConfigCustomizer;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -15,10 +15,10 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class UrlShortenerConfigCustomizerPluginTest extends TestCase
+class ApplicationConfigCustomizerTest extends TestCase
 {
     /**
-     * @var UrlShortenerConfigCustomizer
+     * @var ApplicationConfigCustomizer
      */
     private $plugin;
     /**
@@ -29,7 +29,7 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
     public function setUp()
     {
         $this->questionHelper = $this->prophesize(QuestionHelper::class);
-        $this->plugin = new UrlShortenerConfigCustomizer($this->questionHelper->reveal());
+        $this->plugin = new ApplicationConfigCustomizer($this->questionHelper->reveal());
     }
 
     /**
@@ -38,19 +38,16 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
     public function configIsRequestedToTheUser()
     {
         /** @var MethodProphecy $askSecret */
-        $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('something');
+        $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('the_secret');
         $config = new CustomizableAppConfig();
 
         $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
-        $this->assertTrue($config->hasUrlShortener());
+        $this->assertTrue($config->hasApp());
         $this->assertEquals([
-            'SCHEMA' => 'something',
-            'HOSTNAME' => 'something',
-            'CHARS' => 'something',
-            'VALIDATE_URL' => 'something',
-        ], $config->getUrlShortener());
-        $askSecret->shouldHaveBeenCalledTimes(4);
+            'SECRET' => 'the_secret',
+        ], $config->getApp());
+        $askSecret->shouldHaveBeenCalledTimes(1);
     }
 
     /**
@@ -61,25 +58,19 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
         /** @var MethodProphecy $ask */
         $ask = $this->questionHelper->ask(Argument::cetera())->will(function (array $args) {
             $last = array_pop($args);
-            return $last instanceof ConfirmationQuestion ? false : 'foo';
+            return $last instanceof ConfirmationQuestion ? false : 'the_new_secret';
         });
         $config = new CustomizableAppConfig();
-        $config->setUrlShortener([
-            'SCHEMA' => 'bar',
-            'HOSTNAME' => 'bar',
-            'CHARS' => 'bar',
-            'VALIDATE_URL' => 'bar',
+        $config->setApp([
+            'SECRET' => 'foo',
         ]);
 
         $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
-            'SCHEMA' => 'foo',
-            'HOSTNAME' => 'foo',
-            'CHARS' => 'foo',
-            'VALIDATE_URL' => false,
-        ], $config->getUrlShortener());
-        $ask->shouldHaveBeenCalledTimes(5);
+            'SECRET' => 'the_new_secret',
+        ], $config->getApp());
+        $ask->shouldHaveBeenCalledTimes(2);
     }
 
     /**
@@ -91,21 +82,15 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
         $ask = $this->questionHelper->ask(Argument::cetera())->willReturn(true);
 
         $config = new CustomizableAppConfig();
-        $config->setUrlShortener([
-            'SCHEMA' => 'foo',
-            'HOSTNAME' => 'foo',
-            'CHARS' => 'foo',
-            'VALIDATE_URL' => 'foo',
+        $config->setApp([
+            'SECRET' => 'foo',
         ]);
 
         $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
-            'SCHEMA' => 'foo',
-            'HOSTNAME' => 'foo',
-            'CHARS' => 'foo',
-            'VALIDATE_URL' => 'foo',
-        ], $config->getUrlShortener());
+            'SECRET' => 'foo',
+        ], $config->getApp());
         $ask->shouldHaveBeenCalledTimes(1);
     }
 }

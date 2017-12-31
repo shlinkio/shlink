@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Install\Plugin\ApplicationConfigCustomizer;
+use Shlinkio\Shlink\CLI\Install\Plugin\LanguageConfigCustomizer;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -15,21 +15,21 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ApplicationConfigCustomizerPluginTest extends TestCase
+class LanguageConfigCustomizerTest extends TestCase
 {
     /**
-     * @var ApplicationConfigCustomizer
+     * @var LanguageConfigCustomizer
      */
-    private $plugin;
+    protected $plugin;
     /**
      * @var ObjectProphecy
      */
-    private $questionHelper;
+    protected $questionHelper;
 
     public function setUp()
     {
         $this->questionHelper = $this->prophesize(QuestionHelper::class);
-        $this->plugin = new ApplicationConfigCustomizer($this->questionHelper->reveal());
+        $this->plugin = new LanguageConfigCustomizer($this->questionHelper->reveal());
     }
 
     /**
@@ -38,16 +38,17 @@ class ApplicationConfigCustomizerPluginTest extends TestCase
     public function configIsRequestedToTheUser()
     {
         /** @var MethodProphecy $askSecret */
-        $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('the_secret');
+        $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('en');
         $config = new CustomizableAppConfig();
 
         $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
-        $this->assertTrue($config->hasApp());
+        $this->assertTrue($config->hasLanguage());
         $this->assertEquals([
-            'SECRET' => 'the_secret',
-        ], $config->getApp());
-        $askSecret->shouldHaveBeenCalledTimes(1);
+            'DEFAULT' => 'en',
+            'CLI' => 'en',
+        ], $config->getLanguage());
+        $askSecret->shouldHaveBeenCalledTimes(2);
     }
 
     /**
@@ -58,19 +59,21 @@ class ApplicationConfigCustomizerPluginTest extends TestCase
         /** @var MethodProphecy $ask */
         $ask = $this->questionHelper->ask(Argument::cetera())->will(function (array $args) {
             $last = array_pop($args);
-            return $last instanceof ConfirmationQuestion ? false : 'the_new_secret';
+            return $last instanceof ConfirmationQuestion ? false : 'es';
         });
         $config = new CustomizableAppConfig();
-        $config->setApp([
-            'SECRET' => 'foo',
+        $config->setLanguage([
+            'DEFAULT' => 'en',
+            'CLI' => 'en',
         ]);
 
         $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
-            'SECRET' => 'the_new_secret',
-        ], $config->getApp());
-        $ask->shouldHaveBeenCalledTimes(2);
+            'DEFAULT' => 'es',
+            'CLI' => 'es',
+        ], $config->getLanguage());
+        $ask->shouldHaveBeenCalledTimes(3);
     }
 
     /**
@@ -82,15 +85,17 @@ class ApplicationConfigCustomizerPluginTest extends TestCase
         $ask = $this->questionHelper->ask(Argument::cetera())->willReturn(true);
 
         $config = new CustomizableAppConfig();
-        $config->setApp([
-            'SECRET' => 'foo',
+        $config->setLanguage([
+            'DEFAULT' => 'es',
+            'CLI' => 'es',
         ]);
 
         $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
-            'SECRET' => 'foo',
-        ], $config->getApp());
+            'DEFAULT' => 'es',
+            'CLI' => 'es',
+        ], $config->getLanguage());
         $ask->shouldHaveBeenCalledTimes(1);
     }
 }

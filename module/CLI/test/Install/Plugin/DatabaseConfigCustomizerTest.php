@@ -16,7 +16,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 
-class DatabaseConfigCustomizerPluginTest extends TestCase
+class DatabaseConfigCustomizerTest extends TestCase
 {
     /**
      * @var DatabaseConfigCustomizer
