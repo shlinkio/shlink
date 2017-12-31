@@ -43,7 +43,7 @@ class DatabaseConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
         $io->title('DATABASE');
 
         if ($appConfig->hasDatabase() && $io->confirm(
-            '<question>Do you want to keep imported database config? (Y/n):</question> '
+            '<question>Do you want to keep imported database config? (Y/n)</question> '
         )) {
             // If the user selected to keep DB config and is configured to use sqlite, copy DB file
             if ($appConfig->getDatabase()['DRIVER'] === self::DATABASE_DRIVERS['SQLite']) {
@@ -53,7 +53,7 @@ class DatabaseConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
                         CustomizableAppConfig::SQLITE_DB_PATH
                     );
                 } catch (IOException $e) {
-                    $output->writeln('<error>It wasn\'t possible to import the SQLite database</error>');
+                    $io->error('It wasn\'t possible to import the SQLite database');
                     throw $e;
                 }
             }
@@ -63,27 +63,23 @@ class DatabaseConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
 
         // Select database type
         $params = [];
-        $databases = array_keys(self::DATABASE_DRIVERS);
-        $dbType = $io->choice(
-            '<question>Select database type (defaults to ' . $databases[0] . '):</question>',
-            $databases,
-            0
-        );
+        $databases = \array_keys(self::DATABASE_DRIVERS);
+        $dbType = $io->choice('Select database type', $databases, $databases[0]);
         $params['DRIVER'] = self::DATABASE_DRIVERS[$dbType];
 
         // Ask for connection params if database is not SQLite
         if ($params['DRIVER'] !== self::DATABASE_DRIVERS['SQLite']) {
-            $params['NAME'] = $this->ask($io, 'Database name', 'shlink');
-            $params['USER'] = $this->ask($io, 'Database username');
-            $params['PASSWORD'] = $this->ask($io, 'Database password');
-            $params['HOST'] = $this->ask($io, 'Database host', 'localhost');
-            $params['PORT'] = $this->ask($io, 'Database port', $this->getDefaultDbPort($params['DRIVER']));
+            $params['NAME'] = $io->ask('Database name', 'shlink');
+            $params['USER'] = $io->ask('Database username');
+            $params['PASSWORD'] = $io->ask('Database password');
+            $params['HOST'] = $io->ask('Database host', 'localhost');
+            $params['PORT'] = $io->ask('Database port', $this->getDefaultDbPort($params['DRIVER']));
         }
 
         $appConfig->setDatabase($params);
     }
 
-    private function getDefaultDbPort($driver)
+    private function getDefaultDbPort(string $driver): string
     {
         return $driver === 'pdo_mysql' ? '3306' : '5432';
     }

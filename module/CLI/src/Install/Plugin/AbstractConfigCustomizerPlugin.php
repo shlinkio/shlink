@@ -20,7 +20,7 @@ abstract class AbstractConfigCustomizerPlugin implements ConfigCustomizerPluginI
             $text .= ' (defaults to ' . $default . ')';
         }
         do {
-            $value = $io->ask('<question>' . $text . ':</question> ', $default);
+            $value = $io->ask($text, $default);
             if (empty($value) && ! $allowEmpty) {
                 $io->writeln('<error>Value can\'t be empty</error>');
             }
