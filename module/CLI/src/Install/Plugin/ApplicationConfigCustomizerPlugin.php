@@ -18,25 +18,23 @@ class ApplicationConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
      * @param OutputInterface $output
      * @param CustomizableAppConfig $appConfig
      * @return void
-     * @throws \Symfony\Component\Console\Exception\RuntimeException
      */
     public function process(InputInterface $input, OutputInterface $output, CustomizableAppConfig $appConfig)
     {
         $io = new SymfonyStyle($input, $output);
         $io->title('APPLICATION');
 
-        if ($appConfig->hasApp() && $io->confirm(
-            '<question>Do you want to keep imported application config? (Y/n):</question> '
-        )) {
+        if ($appConfig->hasApp() && $io->confirm('Do you want to keep imported application config?')) {
             return;
         }
 
         $appConfig->setApp([
-            'SECRET' => $this->ask(
-                $io,
+            'SECRET' => $io->ask(
                 'Define a secret string that will be used to sign API tokens (leave empty to autogenerate one)',
                 null,
-                true
+                function ($value) {
+                    return $value;
+                }
             ) ?: $this->generateRandomString(32),
         ]);
     }

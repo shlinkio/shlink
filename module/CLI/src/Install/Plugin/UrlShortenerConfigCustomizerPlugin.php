@@ -5,7 +5,6 @@ namespace Shlinkio\Shlink\CLI\Install\Plugin;
 
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
-use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -17,7 +16,6 @@ class UrlShortenerConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
      * @param OutputInterface $output
      * @param CustomizableAppConfig $appConfig
      * @return void
-     * @throws RuntimeException
      */
     public function process(InputInterface $input, OutputInterface $output, CustomizableAppConfig $appConfig)
     {

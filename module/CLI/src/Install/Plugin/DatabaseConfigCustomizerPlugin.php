@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Install\Plugin;
 
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
-use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -35,7 +34,6 @@ class DatabaseConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
      * @param CustomizableAppConfig $appConfig
      * @return void
      * @throws IOException
-     * @throws RuntimeException
      */
     public function process(InputInterface $input, OutputInterface $output, CustomizableAppConfig $appConfig)
     {
