@@ -5,14 +5,9 @@ namespace ShlinkioTest\Shlink\CLI\Install\Plugin;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Install\Plugin\UrlShortenerConfigCustomizer;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class UrlShortenerConfigCustomizerTest extends TestCase
@@ -24,12 +19,13 @@ class UrlShortenerConfigCustomizerTest extends TestCase
     /**
      * @var ObjectProphecy
      */
-    private $questionHelper;
+    private $io;
 
     public function setUp()
     {
-        $this->questionHelper = $this->prophesize(QuestionHelper::class);
-        $this->plugin = new UrlShortenerConfigCustomizer($this->questionHelper->reveal());
+        $this->io = $this->prophesize(SymfonyStyle::class);
+        $this->io->title(Argument::any())->willReturn(null);
+        $this->plugin = new UrlShortenerConfigCustomizer();
     }
 
     /**
@@ -37,20 +33,23 @@ class UrlShortenerConfigCustomizerTest extends TestCase
      */
     public function configIsRequestedToTheUser()
     {
-        /** @var MethodProphecy $askSecret */
-        $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('something');
+        $choice = $this->io->choice(Argument::cetera())->willReturn('something');
+        $ask = $this->io->ask(Argument::cetera())->willReturn('something');
+        $confirm = $this->io->confirm(Argument::cetera())->willReturn(true);
         $config = new CustomizableAppConfig();
 
-        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
+        $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertTrue($config->hasUrlShortener());
         $this->assertEquals([
             'SCHEMA' => 'something',
             'HOSTNAME' => 'something',
             'CHARS' => 'something',
-            'VALIDATE_URL' => 'something',
+            'VALIDATE_URL' => true,
         ], $config->getUrlShortener());
-        $askSecret->shouldHaveBeenCalledTimes(4);
+        $ask->shouldHaveBeenCalledTimes(2);
+        $choice->shouldHaveBeenCalledTimes(1);
+        $confirm->shouldHaveBeenCalledTimes(1);
     }
 
     /**
@@ -58,20 +57,18 @@ class UrlShortenerConfigCustomizerTest extends TestCase
      */
     public function overwriteIsRequestedIfValueIsAlreadySet()
     {
-        /** @var MethodProphecy $ask */
-        $ask = $this->questionHelper->ask(Argument::cetera())->will(function (array $args) {
-            $last = array_pop($args);
-            return $last instanceof ConfirmationQuestion ? false : 'foo';
-        });
+        $choice = $this->io->choice(Argument::cetera())->willReturn('foo');
+        $ask = $this->io->ask(Argument::cetera())->willReturn('foo');
+        $confirm = $this->io->confirm(Argument::cetera())->willReturn(false);
         $config = new CustomizableAppConfig();
         $config->setUrlShortener([
             'SCHEMA' => 'bar',
             'HOSTNAME' => 'bar',
             'CHARS' => 'bar',
-            'VALIDATE_URL' => 'bar',
+            'VALIDATE_URL' => true,
         ]);
 
-        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
+        $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
             'SCHEMA' => 'foo',
@@ -79,7 +76,9 @@ class UrlShortenerConfigCustomizerTest extends TestCase
             'CHARS' => 'foo',
             'VALIDATE_URL' => false,
         ], $config->getUrlShortener());
-        $ask->shouldHaveBeenCalledTimes(5);
+        $ask->shouldHaveBeenCalledTimes(2);
+        $choice->shouldHaveBeenCalledTimes(1);
+        $confirm->shouldHaveBeenCalledTimes(2);
     }
 
     /**
@@ -87,8 +86,7 @@ class UrlShortenerConfigCustomizerTest extends TestCase
      */
     public function existingValueIsKeptIfRequested()
     {
-        /** @var MethodProphecy $ask */
-        $ask = $this->questionHelper->ask(Argument::cetera())->willReturn(true);
+        $confirm = $this->io->confirm(Argument::cetera())->willReturn(true);
 
         $config = new CustomizableAppConfig();
         $config->setUrlShortener([
@@ -98,7 +96,7 @@ class UrlShortenerConfigCustomizerTest extends TestCase
             'VALIDATE_URL' => 'foo',
         ]);
 
-        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
+        $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
             'SCHEMA' => 'foo',
@@ -106,6 +104,6 @@ class UrlShortenerConfigCustomizerTest extends TestCase
             'CHARS' => 'foo',
             'VALIDATE_URL' => 'foo',
         ], $config->getUrlShortener());
-        $ask->shouldHaveBeenCalledTimes(1);
+        $confirm->shouldHaveBeenCalledTimes(1);
     }
 }

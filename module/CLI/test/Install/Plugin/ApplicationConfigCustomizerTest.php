@@ -5,14 +5,9 @@ namespace ShlinkioTest\Shlink\CLI\Install\Plugin;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Install\Plugin\ApplicationConfigCustomizer;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ApplicationConfigCustomizerTest extends TestCase
@@ -24,12 +19,14 @@ class ApplicationConfigCustomizerTest extends TestCase
     /**
      * @var ObjectProphecy
      */
-    private $questionHelper;
+    private $io;
 
     public function setUp()
     {
-        $this->questionHelper = $this->prophesize(QuestionHelper::class);
-        $this->plugin = new ApplicationConfigCustomizer($this->questionHelper->reveal());
+        $this->io = $this->prophesize(SymfonyStyle::class);
+        $this->io->title(Argument::any())->willReturn(null);
+
+        $this->plugin = new ApplicationConfigCustomizer();
     }
 
     /**
@@ -37,11 +34,10 @@ class ApplicationConfigCustomizerTest extends TestCase
      */
     public function configIsRequestedToTheUser()
     {
-        /** @var MethodProphecy $askSecret */
-        $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('the_secret');
+        $askSecret = $this->io->ask(Argument::cetera())->willReturn('the_secret');
         $config = new CustomizableAppConfig();
 
-        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
+        $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertTrue($config->hasApp());
         $this->assertEquals([
@@ -55,22 +51,20 @@ class ApplicationConfigCustomizerTest extends TestCase
      */
     public function overwriteIsRequestedIfValueIsAlreadySet()
     {
-        /** @var MethodProphecy $ask */
-        $ask = $this->questionHelper->ask(Argument::cetera())->will(function (array $args) {
-            $last = array_pop($args);
-            return $last instanceof ConfirmationQuestion ? false : 'the_new_secret';
-        });
+        $ask = $this->io->ask(Argument::cetera())->willReturn('the_new_secret');
+        $confirm = $this->io->confirm(Argument::cetera())->willReturn(false);
         $config = new CustomizableAppConfig();
         $config->setApp([
             'SECRET' => 'foo',
         ]);
 
-        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
+        $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
             'SECRET' => 'the_new_secret',
         ], $config->getApp());
-        $ask->shouldHaveBeenCalledTimes(2);
+        $ask->shouldHaveBeenCalledTimes(1);
+        $confirm->shouldHaveBeenCalledTimes(1);
     }
 
     /**
@@ -78,19 +72,18 @@ class ApplicationConfigCustomizerTest extends TestCase
      */
     public function existingValueIsKeptIfRequested()
     {
-        /** @var MethodProphecy $ask */
-        $ask = $this->questionHelper->ask(Argument::cetera())->willReturn(true);
+        $confirm = $this->io->confirm(Argument::cetera())->willReturn(true);
 
         $config = new CustomizableAppConfig();
         $config->setApp([
             'SECRET' => 'foo',
         ]);
 
-        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
+        $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
             'SECRET' => 'foo',
         ], $config->getApp());
-        $ask->shouldHaveBeenCalledTimes(1);
+        $confirm->shouldHaveBeenCalledTimes(1);
     }
 }

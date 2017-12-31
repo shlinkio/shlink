@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\CLI\Install\Plugin;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class LanguageConfigCustomizer extends AbstractConfigCustomizer
+class LanguageConfigCustomizer implements ConfigCustomizerInterface
 {
     const SUPPORTED_LANGUAGES = ['en', 'es'];
 

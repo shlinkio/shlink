@@ -5,14 +5,9 @@ namespace ShlinkioTest\Shlink\CLI\Install\Plugin;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Install\Plugin\DatabaseConfigCustomizer;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -25,7 +20,7 @@ class DatabaseConfigCustomizerTest extends TestCase
     /**
      * @var ObjectProphecy
      */
-    private $questionHelper;
+    private $io;
     /**
      * @var ObjectProphecy
      */
@@ -33,13 +28,11 @@ class DatabaseConfigCustomizerTest extends TestCase
 
     public function setUp()
     {
-        $this->questionHelper = $this->prophesize(QuestionHelper::class);
+        $this->io = $this->prophesize(SymfonyStyle::class);
+        $this->io->title(Argument::any())->willReturn(null);
         $this->filesystem = $this->prophesize(Filesystem::class);
 
-        $this->plugin = new DatabaseConfigCustomizer(
-            $this->questionHelper->reveal(),
-            $this->filesystem->reveal()
-        );
+        $this->plugin = new DatabaseConfigCustomizer($this->filesystem->reveal());
     }
 
     /**
@@ -47,22 +40,23 @@ class DatabaseConfigCustomizerTest extends TestCase
      */
     public function configIsRequestedToTheUser()
     {
-        /** @var MethodProphecy $askSecret */
-        $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('MySQL');
+        $choice = $this->io->choice(Argument::cetera())->willReturn('MySQL');
+        $ask = $this->io->ask(Argument::cetera())->willReturn('param');
         $config = new CustomizableAppConfig();
 
-        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
+        $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertTrue($config->hasDatabase());
         $this->assertEquals([
             'DRIVER' => 'pdo_mysql',
-            'NAME' => 'MySQL',
-            'USER' => 'MySQL',
-            'PASSWORD' => 'MySQL',
-            'HOST' => 'MySQL',
-            'PORT' => 'MySQL',
+            'NAME' => 'param',
+            'USER' => 'param',
+            'PASSWORD' => 'param',
+            'HOST' => 'param',
+            'PORT' => 'param',
         ], $config->getDatabase());
-        $askSecret->shouldHaveBeenCalledTimes(6);
+        $choice->shouldHaveBeenCalledTimes(1);
+        $ask->shouldHaveBeenCalledTimes(5);
     }
 
     /**
@@ -70,11 +64,9 @@ class DatabaseConfigCustomizerTest extends TestCase
      */
     public function overwriteIsRequestedIfValueIsAlreadySet()
     {
-        /** @var MethodProphecy $ask */
-        $ask = $this->questionHelper->ask(Argument::cetera())->will(function (array $args) {
-            $last = array_pop($args);
-            return $last instanceof ConfirmationQuestion ? false : 'MySQL';
-        });
+        $choice = $this->io->choice(Argument::cetera())->willReturn('MySQL');
+        $confirm = $this->io->confirm(Argument::cetera())->willReturn(false);
+        $ask = $this->io->ask(Argument::cetera())->willReturn('MySQL');
         $config = new CustomizableAppConfig();
         $config->setDatabase([
             'DRIVER' => 'pdo_pgsql',
@@ -85,7 +77,7 @@ class DatabaseConfigCustomizerTest extends TestCase
             'PORT' => 'MySQL',
         ]);
 
-        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
+        $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
             'DRIVER' => 'pdo_mysql',
@@ -95,7 +87,9 @@ class DatabaseConfigCustomizerTest extends TestCase
             'HOST' => 'MySQL',
             'PORT' => 'MySQL',
         ], $config->getDatabase());
-        $ask->shouldHaveBeenCalledTimes(7);
+        $confirm->shouldHaveBeenCalledTimes(1);
+        $choice->shouldHaveBeenCalledTimes(1);
+        $ask->shouldHaveBeenCalledTimes(5);
     }
 
     /**
@@ -103,8 +97,7 @@ class DatabaseConfigCustomizerTest extends TestCase
      */
     public function existingValueIsKeptIfRequested()
     {
-        /** @var MethodProphecy $ask */
-        $ask = $this->questionHelper->ask(Argument::cetera())->willReturn(true);
+        $confirm = $this->io->confirm(Argument::cetera())->willReturn(true);
 
         $config = new CustomizableAppConfig();
         $config->setDatabase([
@@ -116,7 +109,7 @@ class DatabaseConfigCustomizerTest extends TestCase
             'PORT' => 'MySQL',
         ]);
 
-        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
+        $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
             'DRIVER' => 'pdo_pgsql',
@@ -126,7 +119,7 @@ class DatabaseConfigCustomizerTest extends TestCase
             'HOST' => 'MySQL',
             'PORT' => 'MySQL',
         ], $config->getDatabase());
-        $ask->shouldHaveBeenCalledTimes(1);
+        $confirm->shouldHaveBeenCalledTimes(1);
     }
 
     /**
@@ -134,9 +127,7 @@ class DatabaseConfigCustomizerTest extends TestCase
      */
     public function sqliteDatabaseIsImportedWhenRequested()
     {
-        /** @var MethodProphecy $ask */
-        $ask = $this->questionHelper->ask(Argument::cetera())->willReturn(true);
-        /** @var MethodProphecy $copy */
+        $confirm = $this->io->confirm(Argument::cetera())->willReturn(true);
         $copy = $this->filesystem->copy(Argument::cetera())->willReturn(null);
 
         $config = new CustomizableAppConfig();
@@ -144,12 +135,12 @@ class DatabaseConfigCustomizerTest extends TestCase
             'DRIVER' => 'pdo_sqlite',
         ]);
 
-        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
+        $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
             'DRIVER' => 'pdo_sqlite',
         ], $config->getDatabase());
-        $ask->shouldHaveBeenCalledTimes(1);
+        $confirm->shouldHaveBeenCalledTimes(1);
         $copy->shouldHaveBeenCalledTimes(1);
     }
 }

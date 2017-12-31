@@ -7,7 +7,7 @@ use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ApplicationConfigCustomizer extends AbstractConfigCustomizer
+class ApplicationConfigCustomizer implements ConfigCustomizerInterface
 {
     use StringUtilsTrait;
 
