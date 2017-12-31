@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Install\Plugin\LanguageConfigCustomizerPlugin;
+use Shlinkio\Shlink\CLI\Install\Plugin\LanguageConfigCustomizer;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class LanguageConfigCustomizerPluginTest extends TestCase
 {
     /**
-     * @var LanguageConfigCustomizerPlugin
+     * @var LanguageConfigCustomizer
      */
     protected $plugin;
     /**
@@ -29,7 +29,7 @@ class LanguageConfigCustomizerPluginTest extends TestCase
     public function setUp()
     {
         $this->questionHelper = $this->prophesize(QuestionHelper::class);
-        $this->plugin = new LanguageConfigCustomizerPlugin($this->questionHelper->reveal());
+        $this->plugin = new LanguageConfigCustomizer($this->questionHelper->reveal());
     }
 
     /**

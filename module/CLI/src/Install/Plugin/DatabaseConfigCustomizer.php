@@ -8,7 +8,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
-class DatabaseConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
+class DatabaseConfigCustomizer extends AbstractConfigCustomizer
 {
     const DATABASE_DRIVERS = [
         'MySQL' => 'pdo_mysql',

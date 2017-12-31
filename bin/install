@@ -2,7 +2,7 @@
 <?php
 
 use Shlinkio\Shlink\CLI\Factory\InstallApplicationFactory;
-use Shlinkio\Shlink\CLI\Install\Plugin\DatabaseConfigCustomizerPlugin;
+use Shlinkio\Shlink\CLI\Install\Plugin\DatabaseConfigCustomizer;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Filesystem\Filesystem;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
@@ -21,7 +21,7 @@ $container = new ServiceManager([
     'services' => [
         'config' => [
             ConfigAbstractFactory::class => [
-                DatabaseConfigCustomizerPlugin::class => [Filesystem::class]
+                DatabaseConfigCustomizer::class => [Filesystem::class]
             ],
         ],
     ],

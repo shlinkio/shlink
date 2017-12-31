@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\CLI\Install\Plugin;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-interface ConfigCustomizerPluginInterface
+interface ConfigCustomizerInterface
 {
     /**
      * @param SymfonyStyle $io

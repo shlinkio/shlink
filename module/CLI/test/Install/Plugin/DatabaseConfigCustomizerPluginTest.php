@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Install\Plugin\DatabaseConfigCustomizerPlugin;
+use Shlinkio\Shlink\CLI\Install\Plugin\DatabaseConfigCustomizer;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -19,7 +19,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class DatabaseConfigCustomizerPluginTest extends TestCase
 {
     /**
-     * @var DatabaseConfigCustomizerPlugin
+     * @var DatabaseConfigCustomizer
      */
     private $plugin;
     /**
@@ -36,7 +36,7 @@ class DatabaseConfigCustomizerPluginTest extends TestCase
         $this->questionHelper = $this->prophesize(QuestionHelper::class);
         $this->filesystem = $this->prophesize(Filesystem::class);
 
-        $this->plugin = new DatabaseConfigCustomizerPlugin(
+        $this->plugin = new DatabaseConfigCustomizer(
             $this->questionHelper->reveal(),
             $this->filesystem->reveal()
         );

@@ -42,10 +42,10 @@ class InstallApplicationFactory implements FactoryInterface
             new PhpArray(),
             $container->get(Filesystem::class),
             new ConfigCustomizerPluginManager($container, ['factories' => [
-                Plugin\DatabaseConfigCustomizerPlugin::class => ConfigAbstractFactory::class,
-                Plugin\UrlShortenerConfigCustomizerPlugin::class => InvokableFactory::class,
-                Plugin\LanguageConfigCustomizerPlugin::class => InvokableFactory::class,
-                Plugin\ApplicationConfigCustomizerPlugin::class => InvokableFactory::class,
+                Plugin\DatabaseConfigCustomizer::class => ConfigAbstractFactory::class,
+                Plugin\UrlShortenerConfigCustomizer::class => InvokableFactory::class,
+                Plugin\LanguageConfigCustomizer::class => InvokableFactory::class,
+                Plugin\ApplicationConfigCustomizer::class => InvokableFactory::class,
             ]]),
             $isUpdate
         );

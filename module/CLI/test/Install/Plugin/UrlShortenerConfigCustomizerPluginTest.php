@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Install\Plugin\UrlShortenerConfigCustomizerPlugin;
+use Shlinkio\Shlink\CLI\Install\Plugin\UrlShortenerConfigCustomizer;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class UrlShortenerConfigCustomizerPluginTest extends TestCase
 {
     /**
-     * @var UrlShortenerConfigCustomizerPlugin
+     * @var UrlShortenerConfigCustomizer
      */
     private $plugin;
     /**
@@ -29,7 +29,7 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
     public function setUp()
     {
         $this->questionHelper = $this->prophesize(QuestionHelper::class);
-        $this->plugin = new UrlShortenerConfigCustomizerPlugin($this->questionHelper->reveal());
+        $this->plugin = new UrlShortenerConfigCustomizer($this->questionHelper->reveal());
     }
 
     /**

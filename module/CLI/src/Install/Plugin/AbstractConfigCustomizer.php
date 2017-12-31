@@ -5,7 +5,7 @@ namespace Shlinkio\Shlink\CLI\Install\Plugin;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-abstract class AbstractConfigCustomizerPlugin implements ConfigCustomizerPluginInterface
+abstract class AbstractConfigCustomizer implements ConfigCustomizerInterface
 {
     /**
      * @param SymfonyStyle $io

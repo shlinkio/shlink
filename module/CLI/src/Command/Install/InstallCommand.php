@@ -116,12 +116,12 @@ class InstallCommand extends Command
 
         // Ask for custom config params
         foreach ([
-            Plugin\DatabaseConfigCustomizerPlugin::class,
-            Plugin\UrlShortenerConfigCustomizerPlugin::class,
-            Plugin\LanguageConfigCustomizerPlugin::class,
-            Plugin\ApplicationConfigCustomizerPlugin::class,
+            Plugin\DatabaseConfigCustomizer::class,
+            Plugin\UrlShortenerConfigCustomizer::class,
+            Plugin\LanguageConfigCustomizer::class,
+            Plugin\ApplicationConfigCustomizer::class,
         ] as $pluginName) {
-            /** @var Plugin\ConfigCustomizerPluginInterface $configCustomizer */
+            /** @var Plugin\ConfigCustomizerInterface $configCustomizer */
             $configCustomizer = $this->configCustomizers->get($pluginName);
             $configCustomizer->process($this->io, $config);
         }

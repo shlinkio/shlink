@@ -7,7 +7,7 @@ use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class UrlShortenerConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
+class UrlShortenerConfigCustomizer extends AbstractConfigCustomizer
 {
     /**
      * @param SymfonyStyle $io
