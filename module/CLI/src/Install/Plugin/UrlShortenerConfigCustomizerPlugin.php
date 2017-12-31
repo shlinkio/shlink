@@ -24,29 +24,26 @@ class UrlShortenerConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
         $io = new SymfonyStyle($input, $output);
         $io->title('URL SHORTENER');
 
-        if ($appConfig->hasUrlShortener() && $io->confirm(
-            '<question>Do you want to keep imported URL shortener config? (Y/n):</question> '
-        )) {
+        if ($appConfig->hasUrlShortener() && $io->confirm('Do you want to keep imported URL shortener config?')) {
             return;
         }
 
         // Ask for URL shortener params
         $appConfig->setUrlShortener([
             'SCHEMA' => $io->choice(
-                '<question>Select schema for generated short URLs (defaults to http):</question>',
+                'Select schema for generated short URLs',
                 ['http', 'https'],
-                0
+                'http'
             ),
-            'HOSTNAME' => $this->ask($io, 'Hostname for generated URLs'),
-            'CHARS' => $this->ask(
-                $io,
+            'HOSTNAME' => $io->ask('Hostname for generated URLs'),
+            'CHARS' => $io->ask(
                 'Character set for generated short codes (leave empty to autogenerate one)',
                 null,
-                true
-            ) ?: str_shuffle(UrlShortener::DEFAULT_CHARS),
-            'VALIDATE_URL' => $io->confirm(
-                '<question>Do you want to validate long urls by 200 HTTP status code on response (Y/n):</question>'
-            ),
+                function ($value) {
+                    return $value;
+                }
+            ) ?: \str_shuffle(UrlShortener::DEFAULT_CHARS),
+            'VALIDATE_URL' => $io->confirm('Do you want to validate long urls by 200 HTTP status code on response'),
         ]);
     }
 }

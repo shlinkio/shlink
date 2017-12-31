@@ -42,9 +42,7 @@ class DatabaseConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
         $io = new SymfonyStyle($input, $output);
         $io->title('DATABASE');
 
-        if ($appConfig->hasDatabase() && $io->confirm(
-            '<question>Do you want to keep imported database config? (Y/n)</question> '
-        )) {
+        if ($appConfig->hasDatabase() && $io->confirm('Do you want to keep imported database config?')) {
             // If the user selected to keep DB config and is configured to use sqlite, copy DB file
             if ($appConfig->getDatabase()['DRIVER'] === self::DATABASE_DRIVERS['SQLite']) {
                 try {
