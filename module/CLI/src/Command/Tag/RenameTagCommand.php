@@ -9,6 +9,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class RenameTagCommand extends Command
@@ -42,16 +43,15 @@ class RenameTagCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
         $oldName = $input->getArgument('oldName');
         $newName = $input->getArgument('newName');
 
         try {
             $this->tagService->renameTag($oldName, $newName);
-            $output->writeln(sprintf('<info>%s</info>', $this->translator->translate('Tag properly renamed.')));
+            $io->success($this->translator->translate('Tag properly renamed.'));
         } catch (EntityDoesNotExistException $e) {
-            $output->writeln('<error>' . sprintf($this->translator->translate(
-                'A tag with name "%s" was not found'
-            ), $oldName) . '</error>');
+            $io->error(\sprintf($this->translator->translate('A tag with name "%s" was not found'), $oldName));
         }
     }
 }
