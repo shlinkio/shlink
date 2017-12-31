@@ -84,7 +84,7 @@ class InstallCommand extends Command
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
 
