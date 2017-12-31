@@ -5,10 +5,10 @@ namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 
 class VisitsTracker implements VisitsTrackerInterface

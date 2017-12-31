@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 
 interface VisitsTrackerInterface
 {
