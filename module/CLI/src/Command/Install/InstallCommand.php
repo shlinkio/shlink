@@ -123,7 +123,7 @@ class InstallCommand extends Command
         ] as $pluginName) {
             /** @var Plugin\ConfigCustomizerPluginInterface $configCustomizer */
             $configCustomizer = $this->configCustomizers->get($pluginName);
-            $configCustomizer->process($input, $output, $config);
+            $configCustomizer->process($this->io, $config);
         }
 
         // Generate config params files

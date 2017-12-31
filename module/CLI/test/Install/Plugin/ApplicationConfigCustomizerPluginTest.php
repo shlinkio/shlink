@@ -13,6 +13,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ApplicationConfigCustomizerPluginTest extends TestCase
 {
@@ -40,7 +41,7 @@ class ApplicationConfigCustomizerPluginTest extends TestCase
         $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('the_secret');
         $config = new CustomizableAppConfig();
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertTrue($config->hasApp());
         $this->assertEquals([
@@ -64,7 +65,7 @@ class ApplicationConfigCustomizerPluginTest extends TestCase
             'SECRET' => 'foo',
         ]);
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
             'SECRET' => 'the_new_secret',
@@ -85,7 +86,7 @@ class ApplicationConfigCustomizerPluginTest extends TestCase
             'SECRET' => 'foo',
         ]);
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
             'SECRET' => 'foo',

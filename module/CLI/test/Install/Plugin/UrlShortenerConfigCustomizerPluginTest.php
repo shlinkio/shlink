@@ -13,6 +13,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class UrlShortenerConfigCustomizerPluginTest extends TestCase
 {
@@ -40,7 +41,7 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
         $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('something');
         $config = new CustomizableAppConfig();
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertTrue($config->hasUrlShortener());
         $this->assertEquals([
@@ -70,7 +71,7 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
             'VALIDATE_URL' => 'bar',
         ]);
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
             'SCHEMA' => 'foo',
@@ -97,7 +98,7 @@ class UrlShortenerConfigCustomizerPluginTest extends TestCase
             'VALIDATE_URL' => 'foo',
         ]);
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
             'SCHEMA' => 'foo',

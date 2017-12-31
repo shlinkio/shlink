@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Install\Plugin;
 
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class LanguageConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
@@ -13,14 +11,12 @@ class LanguageConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
     const SUPPORTED_LANGUAGES = ['en', 'es'];
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * @param SymfonyStyle $io
      * @param CustomizableAppConfig $appConfig
      * @return void
      */
-    public function process(InputInterface $input, OutputInterface $output, CustomizableAppConfig $appConfig)
+    public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig)
     {
-        $io = new SymfonyStyle($input, $output);
         $io->title('LANGUAGE');
 
         if ($appConfig->hasLanguage() && $io->confirm('Do you want to keep imported language?')) {

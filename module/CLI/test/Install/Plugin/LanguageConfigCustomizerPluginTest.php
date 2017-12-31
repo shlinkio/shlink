@@ -13,6 +13,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class LanguageConfigCustomizerPluginTest extends TestCase
 {
@@ -40,7 +41,7 @@ class LanguageConfigCustomizerPluginTest extends TestCase
         $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('en');
         $config = new CustomizableAppConfig();
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertTrue($config->hasLanguage());
         $this->assertEquals([
@@ -66,7 +67,7 @@ class LanguageConfigCustomizerPluginTest extends TestCase
             'CLI' => 'en',
         ]);
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
             'DEFAULT' => 'es',
@@ -89,7 +90,7 @@ class LanguageConfigCustomizerPluginTest extends TestCase
             'CLI' => 'es',
         ]);
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
             'DEFAULT' => 'es',

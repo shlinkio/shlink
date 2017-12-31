@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Install\Plugin;
 
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -29,15 +27,13 @@ class DatabaseConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * @param SymfonyStyle $io
      * @param CustomizableAppConfig $appConfig
      * @return void
      * @throws IOException
      */
-    public function process(InputInterface $input, OutputInterface $output, CustomizableAppConfig $appConfig)
+    public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig)
     {
-        $io = new SymfonyStyle($input, $output);
         $io->title('DATABASE');
 
         if ($appConfig->hasDatabase() && $io->confirm('Do you want to keep imported database config?')) {

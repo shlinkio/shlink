@@ -13,6 +13,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 
 class DatabaseConfigCustomizerPluginTest extends TestCase
@@ -50,7 +51,7 @@ class DatabaseConfigCustomizerPluginTest extends TestCase
         $askSecret = $this->questionHelper->ask(Argument::cetera())->willReturn('MySQL');
         $config = new CustomizableAppConfig();
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertTrue($config->hasDatabase());
         $this->assertEquals([
@@ -84,7 +85,7 @@ class DatabaseConfigCustomizerPluginTest extends TestCase
             'PORT' => 'MySQL',
         ]);
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
             'DRIVER' => 'pdo_mysql',
@@ -115,7 +116,7 @@ class DatabaseConfigCustomizerPluginTest extends TestCase
             'PORT' => 'MySQL',
         ]);
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
             'DRIVER' => 'pdo_pgsql',
@@ -143,7 +144,7 @@ class DatabaseConfigCustomizerPluginTest extends TestCase
             'DRIVER' => 'pdo_sqlite',
         ]);
 
-        $this->plugin->process(new ArrayInput([]), new NullOutput(), $config);
+        $this->plugin->process(new SymfonyStyle(new ArrayInput([]), new NullOutput()), $config);
 
         $this->assertEquals([
             'DRIVER' => 'pdo_sqlite',

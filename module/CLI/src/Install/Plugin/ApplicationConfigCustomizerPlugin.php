@@ -5,8 +5,6 @@ namespace Shlinkio\Shlink\CLI\Install\Plugin;
 
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ApplicationConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
@@ -14,14 +12,12 @@ class ApplicationConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
     use StringUtilsTrait;
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * @param SymfonyStyle $io
      * @param CustomizableAppConfig $appConfig
      * @return void
      */
-    public function process(InputInterface $input, OutputInterface $output, CustomizableAppConfig $appConfig)
+    public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig)
     {
-        $io = new SymfonyStyle($input, $output);
         $io->title('APPLICATION');
 
         if ($appConfig->hasApp() && $io->confirm('Do you want to keep imported application config?')) {

@@ -5,21 +5,17 @@ namespace Shlinkio\Shlink\CLI\Install\Plugin;
 
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class UrlShortenerConfigCustomizerPlugin extends AbstractConfigCustomizerPlugin
 {
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * @param SymfonyStyle $io
      * @param CustomizableAppConfig $appConfig
      * @return void
      */
-    public function process(InputInterface $input, OutputInterface $output, CustomizableAppConfig $appConfig)
+    public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig)
     {
-        $io = new SymfonyStyle($input, $output);
         $io->title('URL SHORTENER');
 
         if ($appConfig->hasUrlShortener() && $io->confirm('Do you want to keep imported URL shortener config?')) {
