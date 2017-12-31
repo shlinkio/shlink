@@ -9,6 +9,7 @@ use Shlinkio\Shlink\CLI\Install\ConfigCustomizerManagerInterface;
 use Shlinkio\Shlink\CLI\Install\Plugin;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\ProcessHelper;
@@ -86,7 +87,6 @@ class InstallCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output): void
     {
         $this->io = new SymfonyStyle($input, $output);
-        $this->processHelper = $this->getHelper('process');
 
         $this->io->writeln([
             '<info>Welcome to Shlink!!</info>',
@@ -174,9 +174,7 @@ class InstallCommand extends Command
         $config = new CustomizableAppConfig();
 
         // Ask the user if he/she wants to import an older configuration
-        $importConfig = $this->io->confirm(
-            '<question>Do you want to import previous configuration? (Y/n):</question> '
-        );
+        $importConfig = $this->io->confirm('Do you want to import configuration from previous installation?');
         if (! $importConfig) {
             return $config;
         }
@@ -184,7 +182,7 @@ class InstallCommand extends Command
         // Ask the user for the older shlink path
         $keepAsking = true;
         do {
-            $config->setImportedInstallationPath($this->ask(
+            $config->setImportedInstallationPath($this->io->ask(
                 'Previous shlink installation path from which to import config'
             ));
             $configFile = $config->getImportedInstallationPath() . '/' . self::GENERATED_CONFIG_PATH;
@@ -192,8 +190,7 @@ class InstallCommand extends Command
 
             if (! $configExists) {
                 $keepAsking = $this->io->confirm(
-                    'Provided path does not seem to be a valid shlink root path. '
-                    . '<question>Do you want to try another path? (Y/n):</question> '
+                    'Provided path does not seem to be a valid shlink root path. Do you want to try another path?'
                 );
             }
         } while (! $configExists && $keepAsking);
@@ -209,36 +206,19 @@ class InstallCommand extends Command
     }
 
     /**
-     * @param string $text
-     * @param string|null $default
-     * @param bool $allowEmpty
-     * @return string
-     * @throws RuntimeException
-     */
-    private function ask($text, $default = null, $allowEmpty = false): string
-    {
-        if ($default !== null) {
-            $text .= ' (defaults to ' . $default . ')';
-        }
-
-        do {
-            $value = $this->io->ask('<question>' . $text . ':</question> ', $default);
-            if (empty($value) && ! $allowEmpty) {
-                $this->io->writeln('<error>Value can\'t be empty</error>');
-            }
-        } while (empty($value) && $default === null && ! $allowEmpty);
-
-        return $value;
-    }
-
-    /**
      * @param string $command
      * @param string $errorMessage
      * @param OutputInterface $output
      * @return bool
+     * @throws LogicException
+     * @throws InvalidArgumentException
      */
     private function runCommand($command, $errorMessage, OutputInterface $output): bool
     {
+        if ($this->processHelper === null) {
+            $this->processHelper = $this->getHelper('process');
+        }
+
         $process = $this->processHelper->run($output, $command);
         if ($process->isSuccessful()) {
             $this->io->writeln(' <info>Success!</info>');
