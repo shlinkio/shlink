@@ -66,7 +66,7 @@ class ResolveUrlCommandTest extends TestCase
             'shortCode' => $shortCode,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertEquals('Provided short code "' . $shortCode . '" could not be found.' . PHP_EOL, $output);
+        $this->assertContains('Provided short code "' . $shortCode . '" could not be found.', $output);
     }
 
     /**
@@ -83,6 +83,6 @@ class ResolveUrlCommandTest extends TestCase
             'shortCode' => $shortCode,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertEquals('Provided short code "' . $shortCode . '" has an invalid format.' . PHP_EOL, $output);
+        $this->assertContains('Provided short code "' . $shortCode . '" has an invalid format.', $output);
     }
 }
