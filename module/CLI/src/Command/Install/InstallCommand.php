@@ -5,7 +5,7 @@ namespace Shlinkio\Shlink\CLI\Command\Install;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Shlinkio\Shlink\CLI\Install\ConfigCustomizerPluginManagerInterface;
+use Shlinkio\Shlink\CLI\Install\ConfigCustomizerManagerInterface;
 use Shlinkio\Shlink\CLI\Install\Plugin;
 use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Command\Command;
@@ -40,7 +40,7 @@ class InstallCommand extends Command
      */
     private $filesystem;
     /**
-     * @var ConfigCustomizerPluginManagerInterface
+     * @var ConfigCustomizerManagerInterface
      */
     private $configCustomizers;
     /**
@@ -52,14 +52,14 @@ class InstallCommand extends Command
      * InstallCommand constructor.
      * @param WriterInterface $configWriter
      * @param Filesystem $filesystem
-     * @param ConfigCustomizerPluginManagerInterface $configCustomizers
+     * @param ConfigCustomizerManagerInterface $configCustomizers
      * @param bool $isUpdate
      * @throws LogicException
      */
     public function __construct(
         WriterInterface $configWriter,
         Filesystem $filesystem,
-        ConfigCustomizerPluginManagerInterface $configCustomizers,
+        ConfigCustomizerManagerInterface $configCustomizers,
         $isUpdate = false
     ) {
         parent::__construct();

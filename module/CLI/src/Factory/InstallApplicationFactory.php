@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\CLI\Factory;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Shlinkio\Shlink\CLI\Command\Install\InstallCommand;
-use Shlinkio\Shlink\CLI\Install\ConfigCustomizerPluginManager;
+use Shlinkio\Shlink\CLI\Install\ConfigCustomizerManager;
 use Shlinkio\Shlink\CLI\Install\Plugin;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\LogicException;
@@ -41,7 +41,7 @@ class InstallApplicationFactory implements FactoryInterface
         $command = new InstallCommand(
             new PhpArray(),
             $container->get(Filesystem::class),
-            new ConfigCustomizerPluginManager($container, ['factories' => [
+            new ConfigCustomizerManager($container, ['factories' => [
                 Plugin\DatabaseConfigCustomizer::class => ConfigAbstractFactory::class,
                 Plugin\UrlShortenerConfigCustomizer::class => InvokableFactory::class,
                 Plugin\LanguageConfigCustomizer::class => InvokableFactory::class,
