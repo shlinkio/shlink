@@ -40,6 +40,7 @@
         "zendframework/zend-expressive-helpers": "^4.2",
         "zendframework/zend-expressive-platesrenderer": "^1.3",
         "zendframework/zend-i18n": "^2.7",
+        "zendframework/zend-inputfilter": "^2.8",
         "zendframework/zend-paginator": "^2.6",
         "zendframework/zend-servicemanager": "^3.2",
         "zendframework/zend-stdlib": "^3.0"
