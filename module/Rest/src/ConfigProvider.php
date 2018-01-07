@@ -12,9 +12,9 @@ class ConfigProvider
 
     public function __invoke()
     {
-        return $this->applyRoutesPrefix(
-            Factory::fromFiles(Glob::glob(__DIR__ . '/../config/{,*.}config.php', Glob::GLOB_BRACE))
-        );
+        /** @var array $config */
+        $config = Factory::fromFiles(Glob::glob(__DIR__ . '/../config/{,*.}config.php', Glob::GLOB_BRACE));
+        return $this->applyRoutesPrefix($config);
     }
 
     private function applyRoutesPrefix(array $config): array
