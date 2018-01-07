@@ -20,6 +20,5 @@ class EditShortCodeAction extends AbstractRestAction
      */
     public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
     {
-
     }
 }
