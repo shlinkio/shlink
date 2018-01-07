@@ -30,6 +30,7 @@ class RestUtils
             case $e instanceof Core\NonUniqueSlugException:
                 return self::INVALID_SLUG_ERROR;
             case $e instanceof Common\InvalidArgumentException:
+            case $e instanceof Core\ValidationException:
                 return self::INVALID_ARGUMENT_ERROR;
             case $e instanceof Rest\AuthenticationException:
                 return self::INVALID_CREDENTIALS_ERROR;
