@@ -54,5 +54,69 @@
                 }
             }
         }
+    },
+
+    "put": {
+        "tags": [
+            "ShortCodes"
+        ],
+        "summary": "Edit short code",
+        "description": "Update certain meta arguments from an existing short URL.",
+        "parameters": [
+            {
+                "name": "shortCode",
+                "in": "path",
+                "type": "string",
+                "description": "The short code to edit.",
+                "required": true
+            },
+            {
+                "name": "validSince",
+                "in": "formData",
+                "description": "The date (in ISO-8601 format) from which this short code will be valid",
+                "required": false,
+                "type": "string"
+            },
+            {
+                "name": "validUntil",
+                "in": "formData",
+                "description": "The date (in ISO-8601 format) until which this short code will be valid",
+                "required": false,
+                "type": "string"
+            },
+            {
+                "name": "maxVisits",
+                "in": "formData",
+                "description": "The maximum number of allowed visits for this short code",
+                "required": false,
+                "type": "number"
+            },
+            {
+                "$ref": "../parameters/Authorization.json"
+            }
+        ],
+        "responses": {
+            "204": {
+                "description": "The short code has been properly updated."
+            },
+            "400": {
+                "description": "Provided meta arguments are invalid.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            },
+            "404": {
+                "description": "No short URL was found for provided short code.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "schema": {
+                    "$ref": "../definitions/Error.json"
+                }
+            }
+        }
     }
 }
