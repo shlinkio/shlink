@@ -7,7 +7,6 @@ use Cocur\Slugify\Slugify;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\UriInterface;
@@ -119,14 +118,14 @@ class UrlShortener implements UrlShortenerInterface
             $this->em->flush();
 
             // Generate the short code and persist it
-            $shortCode = $customSlug ?? $this->convertAutoincrementIdToShortCode($shortUrl->getId());
+            $shortCode = $customSlug ?? $this->convertAutoincrementIdToShortCode((float) $shortUrl->getId());
             $shortUrl->setShortCode($shortCode)
                      ->setTags($this->tagNamesToEntities($this->em, $tags));
             $this->em->flush();
 
             $this->em->commit();
             return $shortCode;
-        } catch (ORMException $e) {
+        } catch (\Throwable $e) {
             if ($this->em->getConnection()->isTransactionActive()) {
                 $this->em->rollback();
                 $this->em->close();
