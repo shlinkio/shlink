@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\Model;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 
-final class ShortCodeMeta
+final class ShortUrlMeta
 {
     /**
      * @var \DateTime|null
@@ -32,7 +32,7 @@ final class ShortCodeMeta
 
     /**
      * @param array $data
-     * @return ShortCodeMeta
+     * @return ShortUrlMeta
      * @throws ValidationException
      */
     public static function createFromRawData(array $data): self
@@ -47,7 +47,7 @@ final class ShortCodeMeta
      * @param string|\DateTimeInterface|null $validUntil
      * @param string|null $customSlug
      * @param int|null $maxVisits
-     * @return ShortCodeMeta
+     * @return ShortUrlMeta
      * @throws ValidationException
      */
     public static function createFromParams(
@@ -79,7 +79,9 @@ final class ShortCodeMeta
         }
 
         $this->validSince = $inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE);
+        $this->validSince = $this->validSince !== null ? new \DateTime($this->validSince) : null;
         $this->validUntil = $inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL);
+        $this->validUntil = $this->validUntil !== null ? new \DateTime($this->validUntil) : null;
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
         $this->maxVisits = $inputFilter->getValue(ShortUrlMetaInputFilter::MAX_VISITS);
         $this->maxVisits = $this->maxVisits !== null ? (int) $this->maxVisits : null;

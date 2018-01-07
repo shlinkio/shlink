@@ -10,8 +10,11 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
+use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 
 class ShortUrlServiceTest extends TestCase
 {
@@ -55,7 +58,6 @@ class ShortUrlServiceTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Shlinkio\Shlink\Core\Exception\InvalidShortCodeException
      */
     public function exceptionIsThrownWhenSettingTagsOnInvalidShortcode()
     {
@@ -65,6 +67,7 @@ class ShortUrlServiceTest extends TestCase
                                                      ->shouldBeCalledTimes(1);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
+        $this->expectException(InvalidShortCodeException::class);
         $this->service->setTagsByShortCode($shortCode);
     }
 
@@ -87,5 +90,33 @@ class ShortUrlServiceTest extends TestCase
         $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
 
         $this->service->setTagsByShortCode($shortCode, ['foo', 'bar']);
+    }
+
+    /**
+     * @test
+     */
+    public function updateMetadataByShortCodeUpdatesProvidedData()
+    {
+        $shortUrl = new ShortUrl();
+
+        $repo = $this->prophesize(ShortUrlRepository::class);
+        $findShortUrl = $repo->findOneBy(['shortCode' => 'abc123'])->willReturn($shortUrl);
+        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
+        $flush = $this->em->flush($shortUrl)->willReturn(null);
+
+        $result = $this->service->updateMetadataByShortCode('abc123', ShortUrlMeta::createFromParams(
+            (new \DateTime('2017-01-01 00:00:00'))->format(\DateTime::ATOM),
+            (new \DateTime('2017-01-05 00:00:00'))->format(\DateTime::ATOM),
+            null,
+            5
+        ));
+
+        $this->assertSame($shortUrl, $result);
+        $this->assertEquals(new \DateTime('2017-01-01 00:00:00'), $shortUrl->getValidSince());
+        $this->assertEquals(new \DateTime('2017-01-05 00:00:00'), $shortUrl->getValidUntil());
+        $this->assertEquals(5, $shortUrl->getMaxVisits());
+        $findShortUrl->shouldHaveBeenCalled();
+        $getRepo->shouldHaveBeenCalled();
+        $flush->shouldHaveBeenCalled();
     }
 }

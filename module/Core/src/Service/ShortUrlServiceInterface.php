@@ -5,7 +5,7 @@ namespace Shlinkio\Shlink\Core\Service;
 
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
-use Shlinkio\Shlink\Core\Model\ShortCodeMeta;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Zend\Paginator\Paginator;
 
 interface ShortUrlServiceInterface
@@ -29,9 +29,9 @@ interface ShortUrlServiceInterface
 
     /**
      * @param string $shortCode
-     * @param ShortCodeMeta $shortCodeMeta
+     * @param ShortUrlMeta $shortCodeMeta
      * @return ShortUrl
      * @throws InvalidShortCodeException
      */
-    public function updateMetadataByShortCode(string $shortCode, ShortCodeMeta $shortCodeMeta): ShortUrl;
+    public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortCodeMeta): ShortUrl;
 }
