@@ -24,14 +24,21 @@ class ApplicationConfigCustomizer implements ConfigCustomizerInterface
             return;
         }
 
+        $validator = function ($value) {
+            return $value;
+        };
         $appConfig->setApp([
             'SECRET' => $io->ask(
                 'Define a secret string that will be used to sign API tokens (leave empty to autogenerate one)',
                 null,
-                function ($value) {
-                    return $value;
-                }
+                $validator
             ) ?: $this->generateRandomString(32),
+            'DISABLE_TRACK_PARAM' => $io->ask(
+                'Provide a parameter name that you will be able to use to disable tracking on specific request to '
+                . 'short URLs (leave empty and this feature won\'t be enabled)',
+                null,
+                $validator
+            ),
         ]);
     }
 }

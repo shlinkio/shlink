@@ -22,6 +22,10 @@ class AppOptions extends AbstractOptions
      * @var string
      */
     protected $secretKey = '';
+    /**
+     * @var string|null
+     */
+    protected $disableTrackParam;
 
     /**
      * AppOptions constructor.
@@ -83,6 +87,24 @@ class AppOptions extends AbstractOptions
     protected function setSecretKey($secretKey)
     {
         $this->secretKey = $secretKey;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDisableTrackParam()
+    {
+        return $this->disableTrackParam;
+    }
+
+    /**
+     * @param string|null $disableTrackParam
+     * @return $this|self
+     */
+    protected function setDisableTrackParam($disableTrackParam): self
+    {
+        $this->disableTrackParam = $disableTrackParam;
         return $this;
     }
 

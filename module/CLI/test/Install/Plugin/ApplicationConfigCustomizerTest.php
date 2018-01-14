@@ -34,7 +34,7 @@ class ApplicationConfigCustomizerTest extends TestCase
      */
     public function configIsRequestedToTheUser()
     {
-        $askSecret = $this->io->ask(Argument::cetera())->willReturn('the_secret');
+        $ask = $this->io->ask(Argument::cetera())->willReturn('the_secret');
         $config = new CustomizableAppConfig();
 
         $this->plugin->process($this->io->reveal(), $config);
@@ -42,8 +42,9 @@ class ApplicationConfigCustomizerTest extends TestCase
         $this->assertTrue($config->hasApp());
         $this->assertEquals([
             'SECRET' => 'the_secret',
+            'DISABLE_TRACK_PARAM' => 'the_secret',
         ], $config->getApp());
-        $askSecret->shouldHaveBeenCalledTimes(1);
+        $ask->shouldHaveBeenCalledTimes(2);
     }
 
     /**
@@ -62,8 +63,9 @@ class ApplicationConfigCustomizerTest extends TestCase
 
         $this->assertEquals([
             'SECRET' => 'the_new_secret',
+            'DISABLE_TRACK_PARAM' => 'the_new_secret',
         ], $config->getApp());
-        $ask->shouldHaveBeenCalledTimes(1);
+        $ask->shouldHaveBeenCalledTimes(2);
         $confirm->shouldHaveBeenCalledTimes(1);
     }
 
