@@ -55,7 +55,11 @@ return [
         Service\Tag\TagService::class => ['em'],
 
         // Middleware
-        Action\RedirectAction::class => [Service\UrlShortener::class, Service\VisitsTracker::class],
+        Action\RedirectAction::class => [
+            Service\UrlShortener::class,
+            Service\VisitsTracker::class,
+            Options\AppOptions::class,
+        ],
         Action\QrCodeAction::class => [RouterInterface::class, Service\UrlShortener::class, 'Logger_Shlink'],
         Action\PreviewAction::class => [PreviewGenerator::class, Service\UrlShortener::class],
         Middleware\QrCodeCacheMiddleware::class => [Cache::class],
