@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Action\Util\ErrorResponseBuilderTrait;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Zend\Diactoros\Response\RedirectResponse;
@@ -26,11 +27,19 @@ class RedirectAction implements MiddlewareInterface
      * @var VisitsTrackerInterface
      */
     private $visitTracker;
+    /**
+     * @var AppOptions
+     */
+    private $appOptions;
 
-    public function __construct(UrlShortenerInterface $urlShortener, VisitsTrackerInterface $visitTracker)
-    {
+    public function __construct(
+        UrlShortenerInterface $urlShortener,
+        VisitsTrackerInterface $visitTracker,
+        AppOptions $appOptions
+    ) {
         $this->urlShortener = $urlShortener;
         $this->visitTracker = $visitTracker;
+        $this->appOptions = $appOptions;
     }
 
     /**
@@ -45,18 +54,16 @@ class RedirectAction implements MiddlewareInterface
     public function process(Request $request, DelegateInterface $delegate)
     {
         $shortCode = $request->getAttribute('shortCode', '');
+        $query = $request->getQueryParams();
+        $disableTrackParam = $this->appOptions->getDisableTrackParam();
 
         try {
             $longUrl = $this->urlShortener->shortCodeToUrl($shortCode);
 
-            // If provided shortCode does not belong to a valid long URL, dispatch next middleware, which will trigger
-            // a not-found error
-            if ($longUrl === null) {
-                return $delegate->process($request);
-            }
-
             // Track visit to this short code
-            $this->visitTracker->track($shortCode, $request);
+            if ($disableTrackParam === null || ! \array_key_exists($disableTrackParam, $query)) {
+                $this->visitTracker->track($shortCode, $request);
+            }
 
             // Return a redirect response to the long URL.
             // Use a temporary redirect to make sure browsers always hit the server for analytics purposes

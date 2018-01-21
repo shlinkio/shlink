@@ -46,13 +46,9 @@ class ApiKeyService implements ApiKeyServiceInterface
      */
     public function check($key)
     {
-        /** @var ApiKey $apiKey */
+        /** @var ApiKey|null $apiKey */
         $apiKey = $this->getByKey($key);
-        if (! isset($apiKey)) {
-            return false;
-        }
-
-        return $apiKey->isValid();
+        return $apiKey !== null && $apiKey->isValid();
     }
 
     /**
@@ -60,12 +56,13 @@ class ApiKeyService implements ApiKeyServiceInterface
      *
      * @param string $key
      * @return ApiKey
+     * @throws InvalidArgumentException
      */
     public function disable($key)
     {
-        /** @var ApiKey $apiKey */
+        /** @var ApiKey|null $apiKey */
         $apiKey = $this->getByKey($key);
-        if (! isset($apiKey)) {
+        if ($apiKey === null) {
             throw new InvalidArgumentException(sprintf('API key "%s" does not exist and can\'t be disabled', $key));
         }
 
@@ -75,7 +72,7 @@ class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /**
-     * Lists all existing appi keys
+     * Lists all existing api keys
      *
      * @param bool $enabledOnly Tells if only enabled keys should be returned
      * @return ApiKey[]
@@ -94,8 +91,10 @@ class ApiKeyService implements ApiKeyServiceInterface
      */
     public function getByKey($key)
     {
-        return $this->em->getRepository(ApiKey::class)->findOneBy([
+        /** @var ApiKey|null $apiKey */
+        $apiKey = $this->em->getRepository(ApiKey::class)->findOneBy([
             'key' => $key,
         ]);
+        return $apiKey;
     }
 }

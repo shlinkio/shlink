@@ -20,7 +20,7 @@ class RestUtils
     const NOT_FOUND_ERROR = 'NOT_FOUND';
     const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
 
-    public static function getRestErrorCodeFromException(Common\ExceptionInterface $e)
+    public static function getRestErrorCodeFromException(\Throwable $e)
     {
         switch (true) {
             case $e instanceof Core\InvalidShortCodeException:
@@ -30,6 +30,7 @@ class RestUtils
             case $e instanceof Core\NonUniqueSlugException:
                 return self::INVALID_SLUG_ERROR;
             case $e instanceof Common\InvalidArgumentException:
+            case $e instanceof Core\ValidationException:
                 return self::INVALID_ARGUMENT_ERROR;
             case $e instanceof Rest\AuthenticationException:
                 return self::INVALID_CREDENTIALS_ERROR;

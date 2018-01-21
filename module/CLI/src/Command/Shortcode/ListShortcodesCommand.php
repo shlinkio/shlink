@@ -7,17 +7,17 @@ use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class ListShortcodesCommand extends Command
 {
     use PaginatorUtilsTrait;
+
+    const NAME = 'shortcode:list';
 
     /**
      * @var ShortUrlServiceInterface
@@ -32,12 +32,12 @@ class ListShortcodesCommand extends Command
     {
         $this->shortUrlService = $shortUrlService;
         $this->translator = $translator;
-        parent::__construct(null);
+        parent::__construct();
     }
 
     public function configure()
     {
-        $this->setName('shortcode:list')
+        $this->setName(self::NAME)
              ->setDescription($this->translator->translate('List all short URLs'))
              ->addOption(
                  'page',
@@ -81,19 +81,16 @@ class ListShortcodesCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
         $page = (int) $input->getOption('page');
         $searchTerm = $input->getOption('searchTerm');
         $tags = $input->getOption('tags');
-        $tags = ! empty($tags) ? explode(',', $tags) : [];
+        $tags = ! empty($tags) ? \explode(',', $tags) : [];
         $showTags = $input->getOption('showTags');
-
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelper('question');
 
         do {
             $result = $this->shortUrlService->listShortUrls($page, $searchTerm, $tags, $this->processOrderBy($input));
             $page++;
-            $table = new Table($output);
 
             $headers = [
                 $this->translator->translate('Short code'),
@@ -104,8 +101,8 @@ class ListShortcodesCommand extends Command
             if ($showTags) {
                 $headers[] = $this->translator->translate('Tags');
             }
-            $table->setHeaders($headers);
 
+            $rows = [];
             foreach ($result as $row) {
                 $shortUrl = $row->jsonSerialize();
                 if ($showTags) {
@@ -118,27 +115,23 @@ class ListShortcodesCommand extends Command
                     unset($shortUrl['tags']);
                 }
 
-                $table->addRow(array_values($shortUrl));
+                $rows[] = \array_values($shortUrl);
             }
-            $table->render();
+            $io->table($headers, $rows);
 
             if ($this->isLastPage($result)) {
                 $continue = false;
-                $output->writeln(
-                    sprintf('<info>%s</info>', $this->translator->translate('You have reached last page'))
-                );
+                $io->success($this->translator->translate('Short codes properly listed'));
             } else {
-                $continue = $helper->ask($input, $output, new ConfirmationQuestion(
-                    sprintf('<question>' . $this->translator->translate(
-                        'Continue with page'
-                    ) . ' <bg=cyan;options=bold>%s</>? (y/N)</question> ', $page),
+                $continue = $io->confirm(
+                    \sprintf($this->translator->translate('Continue with page') . ' <options=bold>%s</>?', $page),
                     false
-                ));
+                );
             }
         } while ($continue);
     }
 
-    protected function processOrderBy(InputInterface $input)
+    private function processOrderBy(InputInterface $input)
     {
         $orderBy = $input->getOption('orderBy');
         if (empty($orderBy)) {

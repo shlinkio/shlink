@@ -225,6 +225,7 @@ final class CustomizableAppConfig implements ArraySerializableInterface
         $config = [
             'app_options' => [
                 'secret_key' => $this->app['SECRET'],
+                'disable_track_param' => $this->app['DISABLE_TRACK_PARAM'] ?? null,
             ],
             'entity_manager' => [
                 'connection' => [

@@ -25,7 +25,7 @@ class ApiKey extends AbstractEntity
      */
     protected $key;
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      * @ORM\Column(name="expiration_date", nullable=true, type="datetime")
      */
     protected $expirationDate;
@@ -60,7 +60,7 @@ class ApiKey extends AbstractEntity
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getExpirationDate()
     {

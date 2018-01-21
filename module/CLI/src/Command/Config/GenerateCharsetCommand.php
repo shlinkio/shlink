@@ -7,10 +7,13 @@ use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class GenerateCharsetCommand extends Command
 {
+    const NAME = 'config:generate-charset';
+
     /**
      * @var TranslatorInterface
      */
@@ -24,7 +27,7 @@ class GenerateCharsetCommand extends Command
 
     public function configure()
     {
-        $this->setName('config:generate-charset')
+        $this->setName(self::NAME)
              ->setDescription(sprintf($this->translator->translate(
                  'Generates a character set sample just by shuffling the default one, "%s". '
                  . 'Then it can be set in the SHORTCODE_CHARS environment variable'
@@ -34,6 +37,8 @@ class GenerateCharsetCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $charSet = str_shuffle(UrlShortener::DEFAULT_CHARS);
-        $output->writeln($this->translator->translate('Character set:') . sprintf(' <info>%s</info>', $charSet));
+        (new SymfonyStyle($input, $output))->success(
+            \sprintf($this->translator->translate('Character set: "%s"'), $charSet)
+        );
     }
 }

@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Shlinkio\Shlink\Common;
+use function Shlinkio\Shlink\Common\env;
 
 return [
 
     'app_options' => [
         'name' => 'Shlink',
-        'version' => '1.2.0',
-        'secret_key' => Common\env('SECRET_KEY'),
+        'version' => '1.7.0',
+        'secret_key' => env('SECRET_KEY'),
     ],
 
 ];

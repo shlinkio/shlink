@@ -15,10 +15,6 @@ use Zend\I18n\Translator\Translator;
 class CreateTagCommandTest extends TestCase
 {
     /**
-     * @var CreateTagCommand
-     */
-    private $command;
-    /**
      * @var CommandTester
      */
     private $commandTester;
@@ -63,7 +59,7 @@ class CreateTagCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains(sprintf('Created tags: ["%s"]', implode('", "', $tagNames)), $output);
+        $this->assertContains('Tags properly created', $output);
         $createTags->shouldHaveBeenCalled();
     }
 }

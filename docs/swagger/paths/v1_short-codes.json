@@ -116,6 +116,7 @@
             }
         }
     },
+
     "post": {
         "tags": [
             "ShortCodes"
@@ -139,6 +140,34 @@
                 "items": {
                     "type": "string"
                 }
+            },
+            {
+                "name": "validSince",
+                "in": "formData",
+                "description": "The date (in ISO-8601 format) from which this short code will be valid",
+                "required": false,
+                "type": "string"
+            },
+            {
+                "name": "validUntil",
+                "in": "formData",
+                "description": "The date (in ISO-8601 format) until which this short code will be valid",
+                "required": false,
+                "type": "string"
+            },
+            {
+                "name": "customSlug",
+                "in": "formData",
+                "description": "A unique custom slug to be used instead of the generated short code",
+                "required": false,
+                "type": "string"
+            },
+            {
+                "name": "maxVisits",
+                "in": "formData",
+                "description": "The maximum number of allowed visits for this short code",
+                "required": false,
+                "type": "number"
             },
             {
                 "$ref": "../parameters/Authorization.json"

@@ -59,6 +59,6 @@ class DisableKeyCommandTest extends TestCase
             'apiKey' => $apiKey,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertEquals('API key "abcd1234" does not exist.' . PHP_EOL, $output);
+        $this->assertContains('API key "abcd1234" does not exist.', $output);
     }
 }

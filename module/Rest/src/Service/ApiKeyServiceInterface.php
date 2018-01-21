@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Service;
 
+use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface ApiKeyServiceInterface
@@ -28,11 +29,12 @@ interface ApiKeyServiceInterface
      *
      * @param string $key
      * @return ApiKey
+     * @throws InvalidArgumentException
      */
     public function disable($key);
 
     /**
-     * Lists all existing appi keys
+     * Lists all existing api keys
      *
      * @param bool $enabledOnly Tells if only enabled keys should be returned
      * @return ApiKey[]

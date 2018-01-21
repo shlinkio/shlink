@@ -3,23 +3,22 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Service;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 
 class VisitsTracker implements VisitsTrackerInterface
 {
     /**
-     * @var EntityManagerInterface|EntityManager
+     * @var ORM\EntityManagerInterface
      */
     private $em;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ORM\EntityManagerInterface $em)
     {
         $this->em = $em;
     }
@@ -29,6 +28,8 @@ class VisitsTracker implements VisitsTrackerInterface
      *
      * @param string $shortCode
      * @param ServerRequestInterface $request
+     * @throws ORM\ORMInvalidArgumentException
+     * @throws ORM\OptimisticLockException
      */
     public function track($shortCode, ServerRequestInterface $request)
     {
@@ -43,8 +44,10 @@ class VisitsTracker implements VisitsTrackerInterface
               ->setReferer($request->getHeaderLine('Referer'))
               ->setRemoteAddr($this->findOutRemoteAddr($request));
 
-        $this->em->persist($visit);
-        $this->em->flush($visit);
+        /** @var ORM\EntityManager $em */
+        $em = $this->em;
+        $em->persist($visit);
+        $em->flush($visit);
     }
 
     /**
@@ -66,14 +69,14 @@ class VisitsTracker implements VisitsTrackerInterface
     /**
      * Returns the visits on certain short code
      *
-     * @param $shortCode
+     * @param string $shortCode
      * @param DateRange $dateRange
      * @return Visit[]
      * @throws InvalidArgumentException
      */
-    public function info($shortCode, DateRange $dateRange = null): array
+    public function info(string $shortCode, DateRange $dateRange = null): array
     {
-        /** @var ShortUrl $shortUrl */
+        /** @var ShortUrl|null $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'shortCode' => $shortCode,
         ]);

@@ -6,14 +6,16 @@ namespace Shlinkio\Shlink\CLI\Command\Api;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class ListKeysCommand extends Command
 {
+    const NAME = 'api-key:list';
+
     /**
      * @var ApiKeyServiceInterface
      */
@@ -32,7 +34,7 @@ class ListKeysCommand extends Command
 
     public function configure()
     {
-        $this->setName('api-key:list')
+        $this->setName(self::NAME)
              ->setDescription($this->translator->translate('Lists all the available API keys.'))
              ->addOption(
                  'enabledOnly',
@@ -44,78 +46,75 @@ class ListKeysCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
         $enabledOnly = $input->getOption('enabledOnly');
         $list = $this->apiKeyService->listKeys($enabledOnly);
-
-        $table = new Table($output);
-        if ($enabledOnly) {
-            $table->setHeaders([
-                $this->translator->translate('Key'),
-                $this->translator->translate('Expiration date'),
-            ]);
-        } else {
-            $table->setHeaders([
-                $this->translator->translate('Key'),
-                $this->translator->translate('Is enabled'),
-                $this->translator->translate('Expiration date'),
-            ]);
-        }
+        $rows = [];
 
         /** @var ApiKey $row */
         foreach ($list as $row) {
             $key = $row->getKey();
             $expiration = $row->getExpirationDate();
-            $rowData = [];
-            $formatMethod = ! $row->isEnabled()
-                ? 'getErrorString'
-                : ($row->isExpired() ? 'getWarningString' : 'getSuccessString');
+            $formatMethod = $this->determineFormatMethod($row);
 
-            if ($enabledOnly) {
-                $rowData[] = $this->{$formatMethod}($key);
-            } else {
-                $rowData[] = $this->{$formatMethod}($key);
-                $rowData[] = $this->{$formatMethod}($this->getEnabledSymbol($row));
+            // Set columns for this row
+            $rowData = [$formatMethod($key)];
+            if (! $enabledOnly) {
+                $rowData[] = $formatMethod($this->getEnabledSymbol($row));
             }
+            $rowData[] = $expiration !== null ? $expiration->format(\DateTime::ATOM) : '-';
 
-            $rowData[] = isset($expiration) ? $expiration->format(\DateTime::ATOM) : '-';
-            $table->addRow($rowData);
+            $rows[] = $rowData;
         }
 
-        $table->render();
+        $io->table(array_filter([
+            $this->translator->translate('Key'),
+            ! $enabledOnly ? $this->translator->translate('Is enabled') : null,
+            $this->translator->translate('Expiration date'),
+        ]), $rows);
+    }
+
+    private function determineFormatMethod(ApiKey $apiKey): callable
+    {
+        if (! $apiKey->isEnabled()) {
+            return [$this, 'getErrorString'];
+        }
+
+        return $apiKey->isExpired() ? [$this, 'getWarningString'] : [$this, 'getSuccessString'];
     }
 
     /**
-     * @param string $string
+     * @param string $value
      * @return string
      */
-    protected function getErrorString($string)
+    private function getErrorString(string $value): string
     {
-        return sprintf('<fg=red>%s</>', $string);
+        return sprintf('<fg=red>%s</>', $value);
     }
 
     /**
-     * @param string $string
+     * @param string $value
      * @return string
      */
-    protected function getSuccessString($string)
+    private function getSuccessString(string $value): string
     {
-        return sprintf('<info>%s</info>', $string);
+        return sprintf('<info>%s</info>', $value);
     }
 
     /**
-     * @param $string
+     * @param string $value
      * @return string
      */
-    protected function getWarningString($string)
+    private function getWarningString(string $value): string
     {
-        return sprintf('<comment>%s</comment>', $string);
+        return sprintf('<comment>%s</comment>', $value);
     }
 
     /**
      * @param ApiKey $apiKey
      * @return string
      */
-    protected function getEnabledSymbol(ApiKey $apiKey)
+    private function getEnabledSymbol(ApiKey $apiKey): string
     {
         return ! $apiKey->isEnabled() || $apiKey->isExpired() ? '---' : '+++';
     }

@@ -50,7 +50,7 @@ class CreateShortcodeAction extends AbstractRestAction
      */
     public function process(Request $request, DelegateInterface $delegate)
     {
-        $postData = $request->getParsedBody();
+        $postData = (array) $request->getParsedBody();
         if (! isset($postData['longUrl'])) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,

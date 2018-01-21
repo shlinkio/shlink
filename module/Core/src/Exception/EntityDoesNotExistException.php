@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Exception;
 
-use Shlinkio\Shlink\Common\Exception\ExceptionInterface;
-
-class EntityDoesNotExistException extends \RuntimeException implements ExceptionInterface
+class EntityDoesNotExistException extends RuntimeException
 {
     public static function createFromEntityAndConditions($entityName, array $conditions)
     {

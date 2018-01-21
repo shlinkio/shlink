@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Exception;
 
-use Shlinkio\Shlink\Common\Exception\RuntimeException;
-
 class InvalidShortCodeException extends RuntimeException
 {
     public static function fromCharset($shortCode, $charSet, \Exception $previous = null)
