@@ -1,5 +1,23 @@
 ## CHANGELOG
 
+### 1.7.0
+
+**Features**
+
+* [88: Allow to disable tracking of the short URL by including a configurable query param](https://github.com/shlinkio/shlink/issues/88)
+* [108: Allow to edit metadata in created shortcodes](https://github.com/shlinkio/shlink/issues/108)
+
+**Enhancements:**
+
+* [113: Update CLI commands to use SymfonyStyle](https://github.com/shlinkio/shlink/issues/113)
+* [112: Configure cli commands lazy loading](https://github.com/shlinkio/shlink/issues/112)
+
+**Tasks**
+
+* [117: Make every module which throws exceptions have its own ExceptionInterface, and make them all extend Throwable](https://github.com/shlinkio/shlink/issues/117)
+* [115: Add phpstan to build matrix on PHP >=7.1 envs](https://github.com/shlinkio/shlink/issues/115)
+* [114: Replace vlucas/phpdotenv dev requirement by symfony/env](https://github.com/shlinkio/shlink/issues/114)
+
 ### 1.6.2
 
 **Bugs**
