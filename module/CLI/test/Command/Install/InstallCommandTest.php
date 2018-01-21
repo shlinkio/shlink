@@ -8,8 +8,8 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Install\InstallCommand;
-use Shlinkio\Shlink\CLI\Install\ConfigCustomizerPluginManagerInterface;
-use Shlinkio\Shlink\CLI\Install\Plugin\ConfigCustomizerPluginInterface;
+use Shlinkio\Shlink\CLI\Install\ConfigCustomizerManagerInterface;
+use Shlinkio\Shlink\CLI\Install\Plugin\ConfigCustomizerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -51,8 +51,8 @@ class InstallCommandTest extends TestCase
 
         $this->configWriter = $this->prophesize(WriterInterface::class);
 
-        $configCustomizer = $this->prophesize(ConfigCustomizerPluginInterface::class);
-        $configCustomizers = $this->prophesize(ConfigCustomizerPluginManagerInterface::class);
+        $configCustomizer = $this->prophesize(ConfigCustomizerInterface::class);
+        $configCustomizers = $this->prophesize(ConfigCustomizerManagerInterface::class);
         $configCustomizers->get(Argument::cetera())->willReturn($configCustomizer->reveal());
 
         $app = new Application();

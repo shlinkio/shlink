@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
@@ -32,6 +33,8 @@ class AuthenticateActionTest extends TestCase
     {
         $this->apiKeyService = $this->prophesize(ApiKeyService::class);
         $this->jwtService = $this->prophesize(JWTService::class);
+        $this->jwtService->create(Argument::cetera())->willReturn('');
+
         $this->action = new AuthenticateAction(
             $this->apiKeyService->reveal(),
             $this->jwtService->reveal(),

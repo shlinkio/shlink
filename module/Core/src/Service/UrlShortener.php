@@ -7,16 +7,15 @@ use Cocur\Slugify\Slugify;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\UriInterface;
-use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Exception\RuntimeException;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 
@@ -90,6 +89,7 @@ class UrlShortener implements UrlShortenerInterface
         int $maxVisits = null
     ): string {
         // If the url already exists in the database, just return its short code
+        /** @var ShortUrl|null $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'originalUrl' => $url,
         ]);
@@ -118,14 +118,14 @@ class UrlShortener implements UrlShortenerInterface
             $this->em->flush();
 
             // Generate the short code and persist it
-            $shortCode = $customSlug ?? $this->convertAutoincrementIdToShortCode($shortUrl->getId());
+            $shortCode = $customSlug ?? $this->convertAutoincrementIdToShortCode((float) $shortUrl->getId());
             $shortUrl->setShortCode($shortCode)
                      ->setTags($this->tagNamesToEntities($this->em, $tags));
             $this->em->flush();
 
             $this->em->commit();
             return $shortCode;
-        } catch (ORMException $e) {
+        } catch (\Throwable $e) {
             if ($this->em->getConnection()->isTransactionActive()) {
                 $this->em->rollback();
                 $this->em->close();
@@ -155,13 +155,13 @@ class UrlShortener implements UrlShortenerInterface
     /**
      * Generates the unique shortcode for an autoincrement ID
      *
-     * @param int $id
+     * @param float $id
      * @return string
      */
-    private function convertAutoincrementIdToShortCode($id): string
+    private function convertAutoincrementIdToShortCode(float $id): string
     {
-        $id = ((int) $id) + 200000; // Increment the Id so that the generated shortcode is not too short
-        $length = strlen($this->chars);
+        $id += 200000; // Increment the Id so that the generated shortcode is not too short
+        $length = \strlen($this->chars);
         $code = '';
 
         while ($id > 0) {

@@ -9,10 +9,13 @@ use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class GeneratePreviewCommand extends Command
 {
+    const NAME = 'shortcode:process-previews';
+
     /**
      * @var PreviewGeneratorInterface
      */
@@ -39,7 +42,7 @@ class GeneratePreviewCommand extends Command
 
     public function configure()
     {
-        $this->setName('shortcode:process-previews')
+        $this->setName(self::NAME)
              ->setDescription(
                  $this->translator->translate(
                      'Processes and generates the previews for every URL, improving performance for later web requests.'
@@ -59,22 +62,20 @@ class GeneratePreviewCommand extends Command
             }
         } while ($page <= $shortUrls->count());
 
-        $output->writeln('<info>' . $this->translator->translate('Finished processing all URLs') . '</info>');
+        (new SymfonyStyle($input, $output))->success($this->translator->translate('Finished processing all URLs'));
     }
 
     protected function processUrl($url, OutputInterface $output)
     {
         try {
-            $output->write(sprintf($this->translator->translate('Processing URL %s...'), $url));
+            $output->write(\sprintf($this->translator->translate('Processing URL %s...'), $url));
             $this->previewGenerator->generatePreview($url);
             $output->writeln($this->translator->translate(' <info>Success!</info>'));
         } catch (PreviewGenerationException $e) {
-            $messages = [' <error>' . $this->translator->translate('Error') . '</error>'];
+            $output->writeln(' <error>' . $this->translator->translate('Error') . '</error>');
             if ($output->isVerbose()) {
-                $messages[] = '<error>' . $e->__toString() . '</error>';
+                $this->getApplication()->renderException($e, $output);
             }
-
-            $output->writeln($messages);
         }
     }
 }

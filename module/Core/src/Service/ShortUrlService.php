@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM;
 use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Zend\Paginator\Paginator;
@@ -16,11 +17,11 @@ class ShortUrlService implements ShortUrlServiceInterface
     use TagManagerTrait;
 
     /**
-     * @var EntityManagerInterface
+     * @var ORM\EntityManagerInterface
      */
     private $em;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ORM\EntityManagerInterface $em)
     {
         $this->em = $em;
     }
@@ -49,18 +50,54 @@ class ShortUrlService implements ShortUrlServiceInterface
      * @return ShortUrl
      * @throws InvalidShortCodeException
      */
-    public function setTagsByShortCode($shortCode, array $tags = [])
+    public function setTagsByShortCode(string $shortCode, array $tags = []): ShortUrl
     {
-        /** @var ShortUrl $shortUrl */
+        $shortUrl = $this->findByShortCode($shortCode);
+        $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
+        $this->em->flush();
+
+        return $shortUrl;
+    }
+
+    /**
+     * @param string $shortCode
+     * @param ShortUrlMeta $shortCodeMeta
+     * @return ShortUrl
+     * @throws InvalidShortCodeException
+     */
+    public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortCodeMeta): ShortUrl
+    {
+        $shortUrl = $this->findByShortCode($shortCode);
+        if ($shortCodeMeta->hasValidSince()) {
+            $shortUrl->setValidSince($shortCodeMeta->getValidSince());
+        }
+        if ($shortCodeMeta->hasValidUntil()) {
+            $shortUrl->setValidUntil($shortCodeMeta->getValidUntil());
+        }
+        if ($shortCodeMeta->hasMaxVisits()) {
+            $shortUrl->setMaxVisits($shortCodeMeta->getMaxVisits());
+        }
+
+        /** @var ORM\EntityManager $em */
+        $em = $this->em;
+        $em->flush($shortUrl);
+        return $shortUrl;
+    }
+
+    /**
+     * @param string $shortCode
+     * @return ShortUrl
+     * @throws InvalidShortCodeException
+     */
+    private function findByShortCode(string $shortCode): ShortUrl
+    {
+        /** @var ShortUrl|null $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
             'shortCode' => $shortCode,
         ]);
         if ($shortUrl === null) {
             throw InvalidShortCodeException::fromNotFoundShortCode($shortCode);
         }
-
-        $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
-        $this->em->flush();
 
         return $shortUrl;
     }

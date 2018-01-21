@@ -10,7 +10,6 @@ use Shlinkio\Shlink\CLI\Command\Shortcode\ListShortcodesCommand;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
 use Zend\I18n\Translator\Translator;
 use Zend\Paginator\Adapter\ArrayAdapter;
@@ -23,10 +22,6 @@ class ListShortcodesCommandTest extends TestCase
      */
     protected $commandTester;
     /**
-     * @var QuestionHelper
-     */
-    protected $questionHelper;
-    /**
      * @var ObjectProphecy
      */
     protected $shortUrlService;
@@ -37,8 +32,6 @@ class ListShortcodesCommandTest extends TestCase
         $app = new Application();
         $command = new ListShortcodesCommand($this->shortUrlService->reveal(), Translator::factory([]));
         $app->add($command);
-
-        $this->questionHelper = $command->getHelper('question');
         $this->commandTester = new CommandTester($command);
     }
 
@@ -47,10 +40,10 @@ class ListShortcodesCommandTest extends TestCase
      */
     public function noInputCallsListJustOnce()
     {
-        $this->questionHelper->setInputStream($this->getInputStream('\n'));
         $this->shortUrlService->listShortUrls(1, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
                                                                 ->shouldBeCalledTimes(1);
 
+        $this->commandTester->setInputs(['n']);
         $this->commandTester->execute(['command' => 'shortcode:list']);
     }
 
@@ -61,22 +54,15 @@ class ListShortcodesCommandTest extends TestCase
     {
         // The paginator will return more than one page for the first 3 times
         $data = [];
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $data[] = new ShortUrl();
         }
-        $data = array_chunk($data, 11);
 
-        $questionHelper = $this->questionHelper;
-        $that = $this;
-        $this->shortUrlService->listShortUrls(Argument::cetera())->will(function () use (
-            &$data,
-            $questionHelper,
-            $that
-        ) {
-            $questionHelper->setInputStream($that->getInputStream('y'));
-            return new Paginator(new ArrayAdapter(array_shift($data)));
+        $this->shortUrlService->listShortUrls(Argument::cetera())->will(function () use (&$data) {
+            return new Paginator(new ArrayAdapter($data));
         })->shouldBeCalledTimes(3);
 
+        $this->commandTester->setInputs(['y', 'y', 'n']);
         $this->commandTester->execute(['command' => 'shortcode:list']);
     }
 
@@ -91,10 +77,10 @@ class ListShortcodesCommandTest extends TestCase
             $data[] = new ShortUrl();
         }
 
-        $this->questionHelper->setInputStream($this->getInputStream('n'));
         $this->shortUrlService->listShortUrls(Argument::cetera())->willReturn(new Paginator(new ArrayAdapter($data)))
                                                                  ->shouldBeCalledTimes(1);
 
+        $this->commandTester->setInputs(['n']);
         $this->commandTester->execute(['command' => 'shortcode:list']);
     }
 
@@ -104,10 +90,10 @@ class ListShortcodesCommandTest extends TestCase
     public function passingPageWillMakeListStartOnThatPage()
     {
         $page = 5;
-        $this->questionHelper->setInputStream($this->getInputStream('\n'));
         $this->shortUrlService->listShortUrls($page, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
                                                                     ->shouldBeCalledTimes(1);
 
+        $this->commandTester->setInputs(['y']);
         $this->commandTester->execute([
             'command' => 'shortcode:list',
             '--page' => $page,
@@ -119,24 +105,15 @@ class ListShortcodesCommandTest extends TestCase
      */
     public function ifTagsFlagIsProvidedTagsColumnIsIncluded()
     {
-        $this->questionHelper->setInputStream($this->getInputStream('\n'));
         $this->shortUrlService->listShortUrls(1, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
                                                                 ->shouldBeCalledTimes(1);
 
+        $this->commandTester->setInputs(['y']);
         $this->commandTester->execute([
             'command' => 'shortcode:list',
             '--showTags' => true,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertTrue(strpos($output, 'Tags') > 0);
-    }
-
-    protected function getInputStream($inputData)
-    {
-        $stream = fopen('php://memory', 'r+', false);
-        fputs($stream, $inputData);
-        rewind($stream);
-
-        return $stream;
+        $this->assertContains('Tags', $output);
     }
 }

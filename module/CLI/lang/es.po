@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2017-10-21 20:17+0200\n"
-"PO-Revision-Date: 2017-10-21 20:19+0200\n"
+"POT-Creation-Date: 2018-01-21 09:36+0100\n"
+"PO-Revision-Date: 2018-01-21 09:39+0100\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.0.4\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -24,8 +24,8 @@ msgid "The API key to disable"
 msgstr "La clave de API a deshabilitar"
 
 #, php-format
-msgid "API key %s properly disabled"
-msgstr "Clave de API %s deshabilitada correctamente"
+msgid "API key \"%s\" properly disabled"
+msgstr "Clave de API \"%s\" deshabilitada correctamente"
 
 #, php-format
 msgid "API key \"%s\" does not exist."
@@ -39,8 +39,9 @@ msgstr ""
 "La fecha en la que la clave de API debe expirar. Utiliza cualquier valor "
 "válido en PHP."
 
-msgid "Generated API key"
-msgstr "Generada clave de API"
+#, php-format
+msgid "Generated API key: \"%s\""
+msgstr "Generada clave de API. \"%s\""
 
 msgid "Lists all the available API keys."
 msgstr "Lista todas las claves de API disponibles."
@@ -51,11 +52,11 @@ msgstr "Define si sólo las claves de API habilitadas deben ser devueltas."
 msgid "Key"
 msgstr "Clave"
 
-msgid "Expiration date"
-msgstr "Fecha de caducidad"
-
 msgid "Is enabled"
 msgstr "Está habilitada"
+
+msgid "Expiration date"
+msgstr "Fecha de caducidad"
 
 #, php-format
 msgid ""
@@ -65,8 +66,9 @@ msgstr ""
 "Genera un grupo de caracteres simplemente mexclando el grupo por defecto \"%s"
 "\". Después puede ser utilizado en la variable de entrono SHORTCODE_CHARS"
 
-msgid "Character set:"
-msgstr "Grupo de caracteres:"
+#, php-format
+msgid "Character set: \"%s\""
+msgstr "Grupo de caracteres: \"%s\""
 
 msgid ""
 "Generates a random secret string that can be used for JWT token encryption"
@@ -74,8 +76,9 @@ msgstr ""
 "Genera una cadena de caracteres aleatoria que puede ser usada para cifrar "
 "tokens JWT"
 
-msgid "Secret key:"
-msgstr "Clave secreta:"
+#, php-format
+msgid "Secret key: \"%s\""
+msgstr "Clave secreta: \"%s\""
 
 msgid ""
 "Processes and generates the previews for every URL, improving performance "
@@ -125,17 +128,22 @@ msgid "If provided, this slug will be used instead of generating a short code"
 msgstr ""
 "Si se proporciona, este slug será usado en vez de generar un código corto"
 
-msgid "A long URL was not provided. Which URL do you want to shorten?:"
+msgid "This will limit the number of visits for this short URL."
+msgstr "Esto limitará el número de visitas a esta URL acortada."
+
+#, fuzzy
+#| msgid "A long URL was not provided. Which URL do you want to shorten?:"
+msgid "A long URL was not provided. Which URL do you want to be shortened?"
 msgstr "No se ha proporcionado una URL larga. ¿Qué URL deseas acortar?"
 
 msgid "A URL was not provided!"
 msgstr "¡No se ha proporcionado una URL!"
 
-msgid "Processed URL:"
-msgstr "URL procesada:"
+msgid "Processed long URL:"
+msgstr "URL larga procesada:"
 
-msgid "Generated URL:"
-msgstr "URL generada:"
+msgid "Generated short URL:"
+msgstr "URL corta generada:"
 
 #, php-format
 msgid "Provided URL \"%s\" is invalid. Try with a different one."
@@ -166,8 +174,8 @@ msgid "Allows to filter visits, returning only those newer than end date"
 msgstr ""
 "Permite filtrar las visitas, devolviendo sólo aquellas más nuevas que endDate"
 
-msgid "A short code was not provided. Which short code do you want to use?:"
-msgstr "No se prporcionó un código corto. ¿Qué código corto deseas usar?:"
+msgid "A short code was not provided. Which short code do you want to use?"
+msgstr "No se proporcionó un código corto. ¿Qué código corto deseas usar?"
 
 msgid "Referer"
 msgstr "Origen"
@@ -222,8 +230,8 @@ msgstr "Número de visitas"
 msgid "Tags"
 msgstr "Etiquetas"
 
-msgid "You have reached last page"
-msgstr "Has alcanzado la última página"
+msgid "Short codes properly listed"
+msgstr "Códigos cortos correctamente listados"
 
 msgid "Continue with page"
 msgstr "Continuar con la página"
@@ -234,13 +242,9 @@ msgstr "Devuelve la URL larga detrás de un código corto"
 msgid "The short code to parse"
 msgstr "El código corto a convertir"
 
-msgid "A short code was not provided. Which short code do you want to parse?:"
+msgid "A short code was not provided. Which short code do you want to parse?"
 msgstr ""
-"No se proporcionó un código corto. ¿Qué código corto quieres convertir?:"
-
-#, php-format
-msgid "No URL found for short code \"%s\""
-msgstr "No se ha encontrado ninguna URL para el código corto \"%s\""
+"No se proporcionó un código corto. ¿Qué código corto quieres convertir?"
 
 msgid "Long URL:"
 msgstr "URL larga:"
@@ -262,8 +266,8 @@ msgstr "El nombre de las etiquetas a crear"
 msgid "You have to provide at least one tag name"
 msgstr "Debes proporcionar al menos un nombre de etiqueta"
 
-msgid "Created tags"
-msgstr "Etiquetas creadas"
+msgid "Tags properly created"
+msgstr "Etiquetas correctamente creadas"
 
 msgid "Deletes one or more tags."
 msgstr "Elimina una o más etiquetas."
@@ -271,8 +275,8 @@ msgstr "Elimina una o más etiquetas."
 msgid "The name of the tags to delete"
 msgstr "El nombre de las etiquetas a eliminar"
 
-msgid "Deleted tags"
-msgstr "Etiquetas eliminadas"
+msgid "Tags properly deleted"
+msgstr "Etiquetas correctamente eliminadas"
 
 msgid "Lists existing tags."
 msgstr "Lista las etiquetas existentes."
@@ -315,3 +319,15 @@ msgstr "Dirección localizada en \"%s\""
 
 msgid "Finished processing all IPs"
 msgstr "Finalizado el procesado de todas las IPs"
+
+#~ msgid "You have reached last page"
+#~ msgstr "Has alcanzado la última página"
+
+#~ msgid "No URL found for short code \"%s\""
+#~ msgstr "No se ha encontrado ninguna URL para el código corto \"%s\""
+
+#~ msgid "Created tags"
+#~ msgstr "Etiquetas creadas"
+
+#~ msgid "Deleted tags"
+#~ msgstr "Etiquetas eliminadas"

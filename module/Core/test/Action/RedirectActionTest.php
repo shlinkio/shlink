@@ -10,6 +10,7 @@ use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
+use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
@@ -26,13 +27,21 @@ class RedirectActionTest extends TestCase
      * @var ObjectProphecy
      */
     protected $urlShortener;
+    /**
+     * @var ObjectProphecy
+     */
+    protected $visitTracker;
 
     public function setUp()
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $visitTracker = $this->prophesize(VisitsTracker::class);
-        $visitTracker->track(Argument::any());
-        $this->action = new RedirectAction($this->urlShortener->reveal(), $visitTracker->reveal());
+        $this->visitTracker = $this->prophesize(VisitsTracker::class);
+
+        $this->action = new RedirectAction(
+            $this->urlShortener->reveal(),
+            $this->visitTracker->reveal(),
+            new AppOptions(['disableTrackParam' => 'foobar'])
+        );
     }
 
     /**
@@ -44,6 +53,8 @@ class RedirectActionTest extends TestCase
         $expectedUrl = 'http://domain.com/foo/bar';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($expectedUrl)
                                                        ->shouldBeCalledTimes(1);
+        $this->visitTracker->track(Argument::cetera())->willReturn(null)
+                                                      ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
@@ -62,6 +73,9 @@ class RedirectActionTest extends TestCase
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
                                                        ->shouldBeCalledTimes(1);
+        $this->visitTracker->track(Argument::cetera())->willReturn(null)
+                                                      ->shouldNotBeCalled();
+
         $delegate = $this->prophesize(DelegateInterface::class);
         /** @var MethodProphecy $process */
         $process = $delegate->process(Argument::any())->willReturn(new Response());
@@ -70,5 +84,27 @@ class RedirectActionTest extends TestCase
         $this->action->process($request, $delegate->reveal());
 
         $process->shouldHaveBeenCalledTimes(1);
+    }
+
+    /**
+     * @test
+     */
+    public function visitIsNotTrackedIfDisableParamIsProvided()
+    {
+        $shortCode = 'abc123';
+        $expectedUrl = 'http://domain.com/foo/bar';
+        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($expectedUrl)
+                                                       ->shouldBeCalledTimes(1);
+        $this->visitTracker->track(Argument::cetera())->willReturn(null)
+                                                      ->shouldNotBeCalled();
+
+        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode)
+                                                      ->withQueryParams(['foobar' => true]);
+        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+
+        $this->assertInstanceOf(Response\RedirectResponse::class, $response);
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertTrue($response->hasHeader('Location'));
+        $this->assertEquals($expectedUrl, $response->getHeaderLine('Location'));
     }
 }

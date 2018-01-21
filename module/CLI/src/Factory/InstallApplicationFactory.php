@@ -6,9 +6,8 @@ namespace Shlinkio\Shlink\CLI\Factory;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Shlinkio\Shlink\CLI\Command\Install\InstallCommand;
-use Shlinkio\Shlink\CLI\Install\ConfigCustomizerPluginManager;
+use Shlinkio\Shlink\CLI\Install\ConfigCustomizerManager;
 use Shlinkio\Shlink\CLI\Install\Plugin;
-use Shlinkio\Shlink\CLI\Install\Plugin\Factory\DefaultConfigCustomizerPluginFactory;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -17,6 +16,7 @@ use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 class InstallApplicationFactory implements FactoryInterface
 {
@@ -41,11 +41,11 @@ class InstallApplicationFactory implements FactoryInterface
         $command = new InstallCommand(
             new PhpArray(),
             $container->get(Filesystem::class),
-            new ConfigCustomizerPluginManager($container, ['factories' => [
-                Plugin\DatabaseConfigCustomizerPlugin::class => ConfigAbstractFactory::class,
-                Plugin\UrlShortenerConfigCustomizerPlugin::class => DefaultConfigCustomizerPluginFactory::class,
-                Plugin\LanguageConfigCustomizerPlugin::class => DefaultConfigCustomizerPluginFactory::class,
-                Plugin\ApplicationConfigCustomizerPlugin::class => DefaultConfigCustomizerPluginFactory::class,
+            new ConfigCustomizerManager($container, ['factories' => [
+                Plugin\DatabaseConfigCustomizer::class => ConfigAbstractFactory::class,
+                Plugin\UrlShortenerConfigCustomizer::class => InvokableFactory::class,
+                Plugin\LanguageConfigCustomizer::class => InvokableFactory::class,
+                Plugin\ApplicationConfigCustomizer::class => InvokableFactory::class,
             ]]),
             $isUpdate
         );

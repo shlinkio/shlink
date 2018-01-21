@@ -22,10 +22,11 @@ class IpLocationResolver implements IpLocationResolverInterface
     }
 
     /**
-     * @param $ipAddress
+     * @param string $ipAddress
      * @return array
+     * @throws WrongIpException
      */
-    public function resolveIpLocation($ipAddress)
+    public function resolveIpLocation(string $ipAddress): array
     {
         try {
             $response = $this->httpClient->get(sprintf(self::SERVICE_PATTERN, $ipAddress));

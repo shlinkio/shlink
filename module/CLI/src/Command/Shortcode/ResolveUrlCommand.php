@@ -7,15 +7,16 @@ use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class ResolveUrlCommand extends Command
 {
+    const NAME = 'shortcode:parse';
+
     /**
      * @var UrlShortenerInterface
      */
@@ -34,7 +35,7 @@ class ResolveUrlCommand extends Command
 
     public function configure()
     {
-        $this->setName('shortcode:parse')
+        $this->setName(self::NAME)
              ->setDescription($this->translator->translate('Returns the long URL behind a short code'))
              ->addArgument(
                  'shortCode',
@@ -50,14 +51,10 @@ class ResolveUrlCommand extends Command
             return;
         }
 
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelper('question');
-        $question = new Question(sprintf(
-            '<question>%s</question> ',
-            $this->translator->translate('A short code was not provided. Which short code do you want to parse?:')
-        ));
-
-        $shortCode = $helper->ask($input, $output, $question);
+        $io = new SymfonyStyle($input, $output);
+        $shortCode = $io->ask(
+            $this->translator->translate('A short code was not provided. Which short code do you want to parse?')
+        );
         if (! empty($shortCode)) {
             $input->setArgument('shortCode', $shortCode);
         }
@@ -65,27 +62,20 @@ class ResolveUrlCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
         $shortCode = $input->getArgument('shortCode');
 
         try {
             $longUrl = $this->urlShortener->shortCodeToUrl($shortCode);
-            if (! isset($longUrl)) {
-                $output->writeln(sprintf(
-                    '<error>' . $this->translator->translate('No URL found for short code "%s"') . '</error>',
-                    $shortCode
-                ));
-                return;
-            }
-
-            $output->writeln(sprintf('%s <info>%s</info>', $this->translator->translate('Long URL:'), $longUrl));
+            $output->writeln(\sprintf('%s <info>%s</info>', $this->translator->translate('Long URL:'), $longUrl));
         } catch (InvalidShortCodeException $e) {
-            $output->writeln(sprintf('<error>' . $this->translator->translate(
-                'Provided short code "%s" has an invalid format.'
-            ) . '</error>', $shortCode));
+            $io->error(
+                \sprintf($this->translator->translate('Provided short code "%s" has an invalid format.'), $shortCode)
+            );
         } catch (EntityDoesNotExistException $e) {
-            $output->writeln(sprintf('<error>' . $this->translator->translate(
-                'Provided short code "%s" could not be found.'
-            ) . '</error>', $shortCode));
+            $io->error(
+                \sprintf($this->translator->translate('Provided short code "%s" could not be found.'), $shortCode)
+            );
         }
     }
 }

@@ -22,3 +22,4 @@ indocker export-ignore
 phpcs.xml export-ignore
 phpunit.xml.dist export-ignore
 phpunit-func.xml export-ignore
+phpstan.neon

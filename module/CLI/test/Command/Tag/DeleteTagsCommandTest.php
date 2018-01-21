@@ -64,7 +64,7 @@ class DeleteTagsCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains(sprintf('Deleted tags: ["%s"]', implode('", "', $tagNames)), $output);
+        $this->assertContains('Tags properly deleted', $output);
         $deleteTags->shouldHaveBeenCalled();
     }
 }

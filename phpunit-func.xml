@@ -1,4 +1,9 @@
-<phpunit bootstrap="./func_tests_bootstrap.php" colors="true">
+<?xml version="1.0"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
+        bootstrap="./func_tests_bootstrap.php"
+        colors="true">
     <testsuites>
         <testsuite name="Shlink functional database tests">
             <directory>./module/*/test-func</directory>

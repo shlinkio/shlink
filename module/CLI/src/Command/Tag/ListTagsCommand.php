@@ -6,13 +6,15 @@ namespace Shlinkio\Shlink\CLI\Command\Tag;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class ListTagsCommand extends Command
 {
+    const NAME = 'tag:list';
+
     /**
      * @var TagServiceInterface
      */
@@ -32,17 +34,14 @@ class ListTagsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('tag:list')
+            ->setName(self::NAME)
             ->setDescription($this->translator->translate('Lists existing tags.'));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $table = new Table($output);
-        $table->setHeaders([$this->translator->translate('Name')])
-              ->setRows($this->getTagsRows());
-
-        $table->render();
+        $io = new SymfonyStyle($input, $output);
+        $io->table([$this->translator->translate('Name')], $this->getTagsRows());
     }
 
     private function getTagsRows()
@@ -52,7 +51,7 @@ class ListTagsCommand extends Command
             return [[$this->translator->translate('No tags yet')]];
         }
 
-        return array_map(function (Tag $tag) {
+        return \array_map(function (Tag $tag) {
             return [$tag->getName()];
         }, $tags);
     }
