@@ -8,18 +8,14 @@
 
     "servers": [
         {
-            "url": "{schema}://{host}/rest",
+            "url": "{schema}://{server}/rest",
             "variables": {
                 "schema": {
-                    "type": "string",
                     "default": "https",
-                    "enum": [
-                        "https",
-                        "http"
-                    ]
+                    "enum": ["https", "http"]
                 },
-                "host": {
-                    "type": "string"
+                "server": {
+                    "default": "acel.me"
                 }
             }
         }
