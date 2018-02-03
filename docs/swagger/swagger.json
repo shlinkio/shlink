@@ -8,7 +8,7 @@
 
     "servers": [
         {
-            "url": "{schema}://{host}",
+            "url": "{schema}://{host}/rest",
             "variables": {
                 "schema": {
                     "type": "string",
