@@ -5,24 +5,28 @@
         ],
         "summary": "List existing tags",
         "description": "Returns the list of all tags used in any short URL, ordered by name",
-        "parameters": [
+        "security": [
             {
-                "$ref": "../parameters/Authorization.json"
+                "Bearer": []
             }
         ],
         "responses": {
             "200": {
                 "description": "The list of tags",
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "tags": {
+                "content": {
+                    "application/json": {
+                        "schema": {
                             "type": "object",
                             "properties": {
-                                "data": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
+                                "tags": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -44,8 +48,12 @@
             },
             "500": {
                 "description": "Unexpected error.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             }
         }
@@ -57,31 +65,51 @@
         ],
         "summary": "Create tags",
         "description": "Provided a list of tags, creates all that do not yet exist",
-        "parameters": [
+        "security": [
             {
-                "$ref": "../parameters/Authorization.json"
-            },
-            {
-                "name": "tags[]",
-                "in": "formData",
-                "description": "The list of tag names to create",
-                "required": true,
-                "type": "array"
+                "Bearer": []
             }
         ],
+        "requestBody": {
+            "description": "Request body.",
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "tags"
+                        ],
+                        "properties": {
+                            "tags": {
+                                "description": "The list of tag names to create",
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "responses": {
             "200": {
                 "description": "The list of tags",
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "tags": {
+                "content": {
+                    "application/json": {
+                        "schema": {
                             "type": "object",
                             "properties": {
-                                "data": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
+                                "tags": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -103,8 +131,12 @@
             },
             "500": {
                 "description": "Unexpected error.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             }
         }
@@ -116,45 +148,68 @@
         ],
         "summary": "Rename tag",
         "description": "Renames one existing tag",
-        "parameters": [
+        "security": [
             {
-                "$ref": "../parameters/Authorization.json"
-            },
-            {
-                "name": "oldName",
-                "in": "formData",
-                "description": "Current name of the tag",
-                "required": true,
-                "type": "string"
-            },
-            {
-                "name": "newName",
-                "in": "formData",
-                "description": "New name of the tag",
-                "required": true,
-                "type": "string"
+                "Bearer": []
             }
         ],
+        "requestBody": {
+            "description": "Request body.",
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "oldName",
+                            "newName"
+                        ],
+                        "properties": {
+                            "oldName": {
+                                "description": "Current name of the tag",
+                                "type": "string"
+                            },
+                            "newName": {
+                                "description": "New name of the tag",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "responses": {
             "204": {
                 "description": "The tag has been properly renamed"
             },
             "400": {
                 "description": "You have not provided either the oldName or the newName params.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             },
             "404": {
                 "description": "There's no tag found with the name provided in oldName param.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             },
             "500": {
                 "description": "Unexpected error.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             }
         }
@@ -168,14 +223,21 @@
         "description": "Deletes provided list of tags",
         "parameters": [
             {
-                "$ref": "../parameters/Authorization.json"
-            },
-            {
                 "name": "tags[]",
                 "in": "query",
                 "description": "The names of the tags to delete",
                 "required": true,
-                "type": "array"
+                "schema": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        ],
+        "security": [
+            {
+                "Bearer": []
             }
         ],
         "responses": {
@@ -184,8 +246,12 @@
             },
             "500": {
                 "description": "Unexpected error.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             }
         }

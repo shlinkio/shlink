@@ -1,22 +1,40 @@
 {
-    "swagger": "2.0",
+    "openapi": "3.0.0",
     "info": {
         "title": "Shlink",
         "description": "Shlink, the self-hosted URL shortener",
         "version": "1.0"
     },
-    "schemes": [
-        "http",
-        "https"
+
+    "servers": [
+        {
+            "url": "{schema}://{host}.com",
+            "variables": {
+                "schema": {
+                    "type": "string",
+                    "default": "https",
+                    "enum": [
+                        "https",
+                        "http"
+                    ]
+                },
+                "host": {
+                    "type": "string"
+                }
+            }
+        }
     ],
-    "basePath": "/rest",
-    "produces": [
-        "application/json"
-    ],
-    "consumes": [
-        "application/x-www-form-urlencoded",
-        "application/json"
-    ],
+
+    "components": {
+        "securitySchemes": {
+            "Bearer": {
+                "description": "The JWT identifying a previously logged API key",
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
 
     "paths": {
         "/v1/authenticate": {
