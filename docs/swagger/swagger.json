@@ -8,7 +8,7 @@
 
     "servers": [
         {
-            "url": "{schema}://{server}/rest",
+            "url": "{schema}://{server}.com/rest",
             "variables": {
                 "schema": {
                     "default": "https",
