@@ -8,7 +8,7 @@
 
     "servers": [
         {
-            "url": "{schema}://{host}.com",
+            "url": "{schema}://{host}",
             "variables": {
                 "schema": {
                     "type": "string",
