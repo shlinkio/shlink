@@ -5,24 +5,39 @@
         ],
         "summary": "Perform authentication",
         "description": "Performs an authentication",
-        "parameters": [
-            {
-                "name": "apiKey",
-                "in": "formData",
-                "description": "The API key to authenticate with",
-                "required": true,
-                "type": "string"
+        "requestBody": {
+            "description": "Request body.",
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "apiKey"
+                        ],
+                        "properties": {
+                            "apiKey": {
+                                "description": "The API key to authenticate with",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
             }
-        ],
+        },
         "responses": {
             "200": {
                 "description": "The authentication worked.",
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "token": {
-                            "type": "string",
-                            "description": "The authentication token that needs to be sent in the Authorization header"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "token": {
+                                    "type": "string",
+                                    "description": "The authentication token that needs to be sent in the Authorization header"
+                                }
+                            }
                         }
                     }
                 },
@@ -34,20 +49,32 @@
             },
             "400": {
                 "description": "An API key was not provided.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             },
             "401": {
                 "description": "The API key is incorrect, is disabled or has expired.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             },
             "500": {
                 "description": "Unexpected error.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             }
         }

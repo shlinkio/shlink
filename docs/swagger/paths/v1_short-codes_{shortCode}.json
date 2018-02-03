@@ -9,23 +9,31 @@
             {
                 "name": "shortCode",
                 "in": "path",
-                "type": "string",
                 "description": "The short code to resolve.",
-                "required": true
-            },
+                "required": true,
+                "schema": {
+                    "type": "string"
+                }
+            }
+        ],
+        "security": [
             {
-                "$ref": "../parameters/Authorization.json"
+                "Bearer": []
             }
         ],
         "responses": {
             "200": {
                 "description": "The long URL behind a short code.",
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "longUrl": {
-                            "type": "string",
-                            "description": "The original long URL behind the short code."
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "longUrl": {
+                                    "type": "string",
+                                    "description": "The original long URL behind the short code."
+                                }
+                            }
                         }
                     }
                 },
@@ -37,20 +45,32 @@
             },
             "400": {
                 "description": "Provided shortCode does not match the character set currently used by the app to generate short codes.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             },
             "404": {
                 "description": "No URL was found for provided short code.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             },
             "500": {
                 "description": "Unexpected error.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             }
         }
@@ -66,33 +86,41 @@
             {
                 "name": "shortCode",
                 "in": "path",
-                "type": "string",
                 "description": "The short code to edit.",
-                "required": true
-            },
+                "required": true,
+                "schema": {
+                    "type": "string"
+                }
+            }
+        ],
+        "requestBody": {
+            "description": "Request body.",
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "validSince": {
+                                "description": "The date (in ISO-8601 format) from which this short code will be valid",
+                                "type": "string"
+                            },
+                            "validUntil": {
+                                "description": "The date (in ISO-8601 format) until which this short code will be valid",
+                                "type": "string"
+                            },
+                            "maxVisits": {
+                                "description": "The maximum number of allowed visits for this short code",
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "security": [
             {
-                "name": "validSince",
-                "in": "formData",
-                "description": "The date (in ISO-8601 format) from which this short code will be valid",
-                "required": false,
-                "type": "string"
-            },
-            {
-                "name": "validUntil",
-                "in": "formData",
-                "description": "The date (in ISO-8601 format) until which this short code will be valid",
-                "required": false,
-                "type": "string"
-            },
-            {
-                "name": "maxVisits",
-                "in": "formData",
-                "description": "The maximum number of allowed visits for this short code",
-                "required": false,
-                "type": "number"
-            },
-            {
-                "$ref": "../parameters/Authorization.json"
+                "Bearer": []
             }
         ],
         "responses": {
@@ -101,20 +129,32 @@
             },
             "400": {
                 "description": "Provided meta arguments are invalid.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             },
             "404": {
                 "description": "No short URL was found for provided short code.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             },
             "500": {
                 "description": "Unexpected error.",
-                "schema": {
-                    "$ref": "../definitions/Error.json"
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
                 }
             }
         }
