@@ -17,6 +17,8 @@ use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
 use Zend\I18n\Translator\Translator;
 
+use function Zend\Stratigility\middleware;
+
 class CheckAuthenticationMiddlewareTest extends TestCase
 {
     /**
@@ -28,10 +30,18 @@ class CheckAuthenticationMiddlewareTest extends TestCase
      */
     protected $jwtService;
 
+    /**
+     * @var callable
+     */
+    protected $dummyMiddleware;
+
     public function setUp()
     {
         $this->jwtService = $this->prophesize(JWTService::class);
         $this->middleware = new CheckAuthenticationMiddleware($this->jwtService->reveal(), Translator::factory([]));
+        $this->dummyMiddleware = middleware(function ($request, $handler) {
+            return new Response\EmptyResponse;
+        });
     }
 
     /**
@@ -59,7 +69,12 @@ class CheckAuthenticationMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('foo', '', Route::HTTP_METHOD_ANY, AuthenticateAction::class))
+            RouteResult::fromRoute(new Route(
+                'foo',
+                $this->dummyMiddleware,
+                Route::HTTP_METHOD_ANY,
+                AuthenticateAction::class
+            ))
         );
         $delegate = $this->prophesize(DelegateInterface::class);
         /** @var MethodProphecy $process */
@@ -69,7 +84,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', 'foo'), [])
+            RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
         )->withMethod('OPTIONS');
         $delegate = $this->prophesize(DelegateInterface::class);
         /** @var MethodProphecy $process */
@@ -85,7 +100,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', 'foo'), [])
+            RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
         );
         $response = $this->middleware->process($request, TestUtils::createDelegateMock()->reveal());
         $this->assertEquals(401, $response->getStatusCode());
@@ -99,7 +114,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $authToken = 'ABC-abc';
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', 'foo'), [])
+            RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
         )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, $authToken);
 
         $response = $this->middleware->process($request, TestUtils::createDelegateMock()->reveal());
@@ -116,7 +131,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $authToken = 'ABC-abc';
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', 'foo'), [])
+            RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
         )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'Basic ' . $authToken);
 
         $response = $this->middleware->process($request, TestUtils::createDelegateMock()->reveal());
@@ -135,7 +150,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $authToken = 'ABC-abc';
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', 'foo'), [])
+            RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
         )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'Bearer ' . $authToken);
         $this->jwtService->verify($authToken)->willReturn(false)->shouldBeCalledTimes(1);
 
@@ -151,7 +166,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $authToken = 'ABC-abc';
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', 'foo'), [])
+            RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
         )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'bearer ' . $authToken);
         $this->jwtService->verify($authToken)->willReturn(true)->shouldBeCalledTimes(1);
         $this->jwtService->refresh($authToken)->willReturn($authToken)->shouldBeCalledTimes(1);

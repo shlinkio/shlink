@@ -18,6 +18,8 @@ use Zend\ConfigAggregator;
  */
 
 return (new ConfigAggregator\ConfigAggregator([
+    Zend\Expressive\ConfigProvider::class,
+    Zend\Expressive\Router\ConfigProvider::class,
     ExpressiveErrorHandler\ConfigProvider::class,
     Common\ConfigProvider::class,
     Core\ConfigProvider::class,

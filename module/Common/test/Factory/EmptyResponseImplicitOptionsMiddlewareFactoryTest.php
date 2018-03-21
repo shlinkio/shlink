@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\Common\Factory;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Factory\EmptyResponseImplicitOptionsMiddlewareFactory;
 use Zend\Diactoros\Response\EmptyResponse;
-use Zend\Expressive\Middleware\ImplicitOptionsMiddleware;
+use Zend\Expressive\Router\Middleware\ImplicitOptionsMiddleware;
 use Zend\ServiceManager\ServiceManager;
 
 class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase

@@ -29,7 +29,7 @@ return [
 
         'routing' => [
             'middleware' => [
-                Expressive\Application::ROUTING_MIDDLEWARE,
+                Expressive\Router\Middleware\RouteMiddleware::class,
             ],
             'priority' => 10,
         ],
@@ -38,7 +38,7 @@ return [
             'path' => '/rest',
             'middleware' => [
                 CrossDomainMiddleware::class,
-                Expressive\Middleware\ImplicitOptionsMiddleware::class,
+                Expressive\Router\Middleware\ImplicitOptionsMiddleware::class,
                 BodyParserMiddleware::class,
                 CheckAuthenticationMiddleware::class,
             ],
@@ -47,7 +47,7 @@ return [
 
         'post-routing' => [
             'middleware' => [
-                Expressive\Application::DISPATCH_MIDDLEWARE,
+                Expressive\Router\Middleware\DispatchMiddleware::class,
             ],
             'priority' => 1,
         ],
