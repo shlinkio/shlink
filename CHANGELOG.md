@@ -1,5 +1,15 @@
 ## CHANGELOG
 
+### 1.7.1
+
+**Enhancements:**
+
+* [128: Upgrade to expressive 2.2](https://github.com/shlinkio/shlink/issues/128)
+
+**Bugs**
+
+* [126: Expressive 2.2 causes failures by triggering E_USER_DEPRECATED errors](https://github.com/shlinkio/shlink/issues/126)
+
 ### 1.7.0
 
 **Features**
