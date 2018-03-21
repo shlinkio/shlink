@@ -30,6 +30,11 @@ class CheckAuthenticationMiddlewareTest extends TestCase
      */
     protected $jwtService;
 
+    /**
+     * @var callable
+     */
+    protected $dummyMiddleware;
+
     public function setUp()
     {
         $this->jwtService = $this->prophesize(JWTService::class);
