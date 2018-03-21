@@ -29,7 +29,7 @@ return [
 
         'routing' => [
             'middleware' => [
-                Expressive\Router\Middleware\RouteMiddleware::class
+                Expressive\Router\Middleware\RouteMiddleware::class,
             ],
             'priority' => 10,
         ],
@@ -47,7 +47,7 @@ return [
 
         'post-routing' => [
             'middleware' => [
-                Expressive\Router\Middleware\DispatchMiddleware::class
+                Expressive\Router\Middleware\DispatchMiddleware::class,
             ],
             'priority' => 1,
         ],

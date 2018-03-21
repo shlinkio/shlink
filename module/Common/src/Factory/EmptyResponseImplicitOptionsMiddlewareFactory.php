@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Common\Factory;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\Diactoros\Response\EmptyResponse;
-use Zend\Expressive\Middleware\ImplicitOptionsMiddleware;
+use Zend\Expressive\Router\Middleware\ImplicitOptionsMiddleware;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
