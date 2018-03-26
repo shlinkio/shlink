@@ -1,5 +1,20 @@
 ## CHANGELOG
 
+### 1.8.1
+
+**Features**
+
+* [125: Implement a path which returns a 1px image instead of a redirection](https://github.com/shlinkio/shlink/issues/125)
+
+**Enhancements:**
+
+* [130: Update to Expressive 3](https://github.com/shlinkio/shlink/issues/130)
+
+**Tasks**
+
+* [131: Drop support for PHP 7](https://github.com/shlinkio/shlink/issues/131)
+* [132: Add infection to improve tests](https://github.com/shlinkio/shlink/issues/132)
+
 ### 1.7.2
 
 **Bugs:**
