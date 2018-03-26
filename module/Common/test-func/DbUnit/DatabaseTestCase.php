@@ -3,40 +3,17 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Common\DbUnit;
 
-use Doctrine\DBAL\Driver\PDOConnection;
 use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit\DbUnit\Database\Connection as DbConn;
-use PHPUnit\DbUnit\DataSet\IDataSet as DataSet;
-use PHPUnit\DbUnit\TestCase;
+use PHPUnit\Framework\TestCase;
 
 abstract class DatabaseTestCase extends TestCase
 {
-    const ENTITIES_TO_EMPTY = [];
+    protected const ENTITIES_TO_EMPTY = [];
 
     /**
      * @var EntityManagerInterface
      */
     public static $em;
-    /**
-     * @var DbConn
-     */
-    private static $conn;
-
-    public function getConnection(): DbConn
-    {
-        if (isset(self::$conn)) {
-            return self::$conn;
-        }
-
-        /** @var PDOConnection $pdo */
-        $pdo = static::$em->getConnection()->getWrappedConnection();
-        return self::$conn = $this->createDefaultDBConnection($pdo, static::$em->getConnection()->getDatabase());
-    }
-
-    public function getDataSet(): DataSet
-    {
-        return $this->createArrayDataSet([]);
-    }
 
     protected function getEntityManager(): EntityManagerInterface
     {
