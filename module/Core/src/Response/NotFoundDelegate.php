@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Response;
 
 use Fig\Http\Message\StatusCodeInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Zend\Diactoros\Response;
 use Zend\Expressive\Template\TemplateRendererInterface;
 
@@ -37,7 +37,7 @@ class NotFoundDelegate implements DelegateInterface
      * @return ResponseInterface
      * @throws \InvalidArgumentException
      */
-    public function process(ServerRequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $accepts = explode(',', $request->getHeaderLine('Accept'));
         $accept = array_shift($accepts);

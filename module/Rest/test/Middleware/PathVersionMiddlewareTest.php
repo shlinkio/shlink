@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Shlinkio\Shlink\Rest\Middleware\PathVersionMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;

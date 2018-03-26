@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Middleware\CheckAuthenticationMiddleware;
@@ -16,7 +16,6 @@ use Zend\Diactoros\ServerRequestFactory;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
 use Zend\I18n\Translator\Translator;
-
 use function Zend\Stratigility\middleware;
 
 class CheckAuthenticationMiddlewareTest extends TestCase

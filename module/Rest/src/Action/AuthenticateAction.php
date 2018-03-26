@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -43,11 +42,10 @@ class AuthenticateAction extends AbstractRestAction
 
     /**
      * @param Request $request
-     * @param DelegateInterface $delegate
      * @return null|Response
      * @throws \InvalidArgumentException
      */
-    public function process(Request $request, DelegateInterface $delegate)
+    public function handle(Request $request): Response
     {
         $authData = $request->getParsedBody();
         if (! isset($authData['apiKey'])) {
@@ -61,7 +59,7 @@ class AuthenticateAction extends AbstractRestAction
 
         // Authenticate using provided API key
         $apiKey = $this->apiKeyService->getByKey($authData['apiKey']);
-        if (! isset($apiKey) || ! $apiKey->isValid()) {
+        if ($apiKey === null || ! $apiKey->isValid()) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_API_KEY_ERROR,
                 'message' => $this->translator->translate('Provided API key does not exist or is invalid.'),

@@ -48,6 +48,7 @@ return [
         'post-routing' => [
             'middleware' => [
                 Expressive\Router\Middleware\DispatchMiddleware::class,
+                Expressive\Handler\NotFoundHandler::class,
             ],
             'priority' => 1,
         ],

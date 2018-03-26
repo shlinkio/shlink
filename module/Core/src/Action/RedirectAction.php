@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Action;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\Util\ErrorResponseBuilderTrait;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
@@ -47,11 +47,11 @@ class RedirectAction implements MiddlewareInterface
      * to the next middleware component to create the response.
      *
      * @param Request $request
-     * @param DelegateInterface $delegate
+     * @param RequestHandlerInterface $handler
      *
      * @return Response
      */
-    public function process(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         $shortCode = $request->getAttribute('shortCode', '');
         $query = $request->getQueryParams();
@@ -69,9 +69,9 @@ class RedirectAction implements MiddlewareInterface
             // Use a temporary redirect to make sure browsers always hit the server for analytics purposes
             return new RedirectResponse($longUrl);
         } catch (InvalidShortCodeException $e) {
-            return $this->buildErrorResponse($request, $delegate);
+            return $this->buildErrorResponse($request, $handler);
         } catch (EntityDoesNotExistException $e) {
-            return $this->buildErrorResponse($request, $delegate);
+            return $this->buildErrorResponse($request, $handler);
         }
     }
 }

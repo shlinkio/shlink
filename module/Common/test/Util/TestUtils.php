@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Common\Util;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use Prophecy\Argument;
 use Prophecy\Prophet;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Zend\Diactoros\Response;
 
 class TestUtils

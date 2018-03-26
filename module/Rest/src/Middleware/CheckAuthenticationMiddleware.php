@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\StatusCodeInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
@@ -21,7 +21,7 @@ use Zend\Stdlib\ErrorHandler;
 
 class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface
 {
-    const AUTHORIZATION_HEADER = 'Authorization';
+    public const AUTHORIZATION_HEADER = 'Authorization';
 
     /**
      * @var TranslatorInterface
@@ -51,13 +51,13 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeIn
      * to the next middleware component to create the response.
      *
      * @param Request $request
-     * @param DelegateInterface $delegate
+     * @param RequestHandlerInterface $handler
      *
      * @return Response
      * @throws \InvalidArgumentException
      * @throws \ErrorException
      */
-    public function process(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         // If current route is the authenticate route or an OPTIONS request, continue to the next middleware
         /** @var RouteResult|null $routeResult */
@@ -67,7 +67,7 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeIn
             || $routeResult->getMatchedRouteName() === AuthenticateAction::class
             || $request->getMethod() === 'OPTIONS'
         ) {
-            return $delegate->process($request);
+            return $handler->handle($request);
         }
 
         // Check that the auth header was provided, and that it belongs to a non-expired token
@@ -107,7 +107,7 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeIn
 
             // Update the token expiration and continue to next middleware
             $jwt = $this->jwtService->refresh($jwt);
-            $response = $delegate->process($request);
+            $response = $handler->handle($request);
 
             // Return the response with the updated token on it
             return $response->withHeader(self::AUTHORIZATION_HEADER, 'Bearer ' . $jwt);

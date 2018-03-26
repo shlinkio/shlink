@@ -5,9 +5,9 @@ namespace ShlinkioTest\Shlink\Core\Middleware;
 
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Shlinkio\Shlink\Core\Middleware\QrCodeCacheMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;

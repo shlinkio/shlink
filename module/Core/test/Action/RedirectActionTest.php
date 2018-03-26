@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Action;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Options\AppOptions;

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -38,11 +37,10 @@ class ListShortcodesAction extends AbstractRestAction
 
     /**
      * @param Request $request
-     * @param DelegateInterface $delegate
      * @return null|Response
      * @throws \InvalidArgumentException
      */
-    public function process(Request $request, DelegateInterface $delegate)
+    public function handle(Request $request): Response
     {
         try {
             $params = $this->queryToListParams($request->getQueryParams());
@@ -64,10 +62,10 @@ class ListShortcodesAction extends AbstractRestAction
     public function queryToListParams(array $query)
     {
         return [
-            isset($query['page']) ? $query['page'] : 1,
-            isset($query['searchTerm']) ? $query['searchTerm'] : null,
-            isset($query['tags']) ? $query['tags'] : [],
-            isset($query['orderBy']) ? $query['orderBy'] : null,
+            $query['page'] ?? 1,
+            $query['searchTerm'] ?? null,
+            $query['tags'] ?? [],
+            $query['orderBy'] ?? null,
         ];
     }
 }

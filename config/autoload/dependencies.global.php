@@ -17,18 +17,16 @@ return [
 
     'dependencies' => [
         'factories' => [
-            Expressive\Application::class => Container\ApplicationFactory::class,
-            Template\TemplateRendererInterface::class => Plates\PlatesRendererFactory::class,
-            Router\RouterInterface::class => Router\FastRouteRouterFactory::class,
-            ErrorHandler::class => Container\ErrorHandlerFactory::class,
             ImplicitOptionsMiddleware::class => EmptyResponseImplicitOptionsMiddlewareFactory::class,
 
             Helper\UrlHelper::class => Helper\UrlHelperFactory::class,
             Helper\ServerUrlHelper::class => InvokableFactory::class,
         ],
 
-        'aliases' => [
-            Middleware\ImplicitOptionsMiddleware::class => ImplicitOptionsMiddleware::class,
+        'delegators' => [
+            Expressive\Application::class => [
+                Container\ApplicationConfigInjectionDelegator::class,
+            ],
         ],
     ],
 

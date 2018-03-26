@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\Tag;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -29,15 +29,14 @@ class CreateTagsAction extends AbstractRestAction
      * to the next middleware component to create the response.
      *
      * @param ServerRequestInterface $request
-     * @param DelegateInterface $delegate
      *
      * @return ResponseInterface
      * @throws \InvalidArgumentException
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $tags = isset($body['tags']) ? $body['tags'] : [];
+        $tags = $body['tags'] ?? [];
 
         return new JsonResponse([
             'tags' => [
