@@ -7,7 +7,7 @@ use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Middleware\QrCodeCacheMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
@@ -35,8 +35,8 @@ class QrCodeCacheMiddlewareTest extends TestCase
      */
     public function noCachedPathFallsBackToNextMiddleware()
     {
-        $delegate = $this->prophesize(DelegateInterface::class);
-        $delegate->process(Argument::any())->willReturn(new Response())->shouldBeCalledTimes(1);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
+        $delegate->handle(Argument::any())->willReturn(new Response())->shouldBeCalledTimes(1);
 
         $this->middleware->process(ServerRequestFactory::fromGlobals()->withUri(
             new Uri('/foo/bar')
@@ -53,7 +53,7 @@ class QrCodeCacheMiddlewareTest extends TestCase
         $isCalled = false;
         $uri = (new Uri())->withPath('/foo');
         $this->cache->save('/foo', ['body' => 'the body', 'content-type' => 'image/png']);
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
 
         $resp = $this->middleware->process(
             ServerRequestFactory::fromGlobals()->withUri($uri),
@@ -64,6 +64,6 @@ class QrCodeCacheMiddlewareTest extends TestCase
         $resp->getBody()->rewind();
         $this->assertEquals('the body', $resp->getBody()->getContents());
         $this->assertEquals('image/png', $resp->getHeaderLine('Content-Type'));
-        $delegate->process(Argument::any())->shouldHaveBeenCalledTimes(0);
+        $delegate->handle(Argument::any())->shouldHaveBeenCalledTimes(0);
     }
 }

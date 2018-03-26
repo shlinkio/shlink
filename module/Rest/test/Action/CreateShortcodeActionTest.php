@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\CreateShortcodeAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
-use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Uri;
 use Zend\I18n\Translator\Translator;
@@ -41,10 +40,7 @@ class CreateShortcodeActionTest extends TestCase
      */
     public function missingLongUrlParamReturnsError()
     {
-        $response = $this->action->process(
-            ServerRequestFactory::fromGlobals(),
-            TestUtils::createDelegateMock()->reveal()
-        );
+        $response = $this->action->handle(ServerRequestFactory::fromGlobals());
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -60,7 +56,7 @@ class CreateShortcodeActionTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
         ]);
-        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->action->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), 'http://foo.com/abc123') > 0);
     }
@@ -77,7 +73,7 @@ class CreateShortcodeActionTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
         ]);
-        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->action->handle($request);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::INVALID_URL_ERROR) > 0);
     }
@@ -100,7 +96,7 @@ class CreateShortcodeActionTest extends TestCase
             'longUrl' => 'http://www.domain.com/foo/bar',
             'customSlug' => 'foo',
         ]);
-        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->action->handle($request);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertContains(RestUtils::INVALID_SLUG_ERROR, (string) $response->getBody());
     }
@@ -117,7 +113,7 @@ class CreateShortcodeActionTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
         ]);
-        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->action->handle($request);
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::UNKNOWN_ERROR) > 0);
     }

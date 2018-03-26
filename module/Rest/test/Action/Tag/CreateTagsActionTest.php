@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\CreateTagsAction;
 use Zend\Diactoros\ServerRequestFactory;
@@ -40,7 +39,7 @@ class CreateTagsActionTest extends TestCase
         /** @var MethodProphecy $deleteTags */
         $deleteTags = $this->tagService->createTags($tags ?: [])->willReturn(new ArrayCollection());
 
-        $response = $this->action->process($request, $this->prophesize(DelegateInterface::class)->reveal());
+        $response = $this->action->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $deleteTags->shouldHaveBeenCalled();

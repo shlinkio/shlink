@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\DeleteTagsAction;
 use Zend\Diactoros\ServerRequestFactory;
@@ -39,7 +38,7 @@ class DeleteTagsActionTest extends TestCase
         /** @var MethodProphecy $deleteTags */
         $deleteTags = $this->tagService->deleteTags($tags ?: []);
 
-        $response = $this->action->process($request, $this->prophesize(DelegateInterface::class)->reveal());
+        $response = $this->action->handle($request);
 
         $this->assertEquals(204, $response->getStatusCode());
         $deleteTags->shouldHaveBeenCalled();

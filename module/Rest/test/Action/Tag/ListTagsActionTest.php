@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\ListTagsAction;
@@ -37,10 +36,7 @@ class ListTagsActionTest extends TestCase
         /** @var MethodProphecy $listTags */
         $listTags = $this->tagService->listTags()->willReturn([new Tag('foo'), new Tag('bar')]);
 
-        $resp = $this->action->process(
-            ServerRequestFactory::fromGlobals(),
-            $this->prophesize(DelegateInterface::class)->reveal()
-        );
+        $resp = $this->action->handle(ServerRequestFactory::fromGlobals());
 
         $this->assertEquals([
             'tags' => [

@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
@@ -25,7 +25,7 @@ class CrossDomainMiddlewareTest extends TestCase
     public function setUp()
     {
         $this->middleware = new CrossDomainMiddleware();
-        $this->delegate = $this->prophesize(DelegateInterface::class);
+        $this->delegate = $this->prophesize(RequestHandlerInterface::class);
     }
 
     /**
@@ -34,7 +34,7 @@ class CrossDomainMiddlewareTest extends TestCase
     public function nonCrossDomainRequestsAreNotAffected()
     {
         $originalResponse = new Response();
-        $this->delegate->process(Argument::any())->willReturn($originalResponse)->shouldbeCalledTimes(1);
+        $this->delegate->handle(Argument::any())->willReturn($originalResponse)->shouldbeCalledTimes(1);
 
         $response = $this->middleware->process(ServerRequestFactory::fromGlobals(), $this->delegate->reveal());
         $this->assertSame($originalResponse, $response);
@@ -50,7 +50,7 @@ class CrossDomainMiddlewareTest extends TestCase
     public function anyRequestIncludesTheAllowAccessHeader()
     {
         $originalResponse = new Response();
-        $this->delegate->process(Argument::any())->willReturn($originalResponse)->shouldbeCalledTimes(1);
+        $this->delegate->handle(Argument::any())->willReturn($originalResponse)->shouldbeCalledTimes(1);
 
         $response = $this->middleware->process(
             ServerRequestFactory::fromGlobals()->withHeader('Origin', 'local'),
@@ -70,7 +70,7 @@ class CrossDomainMiddlewareTest extends TestCase
     {
         $originalResponse = new Response();
         $request = ServerRequestFactory::fromGlobals()->withMethod('OPTIONS')->withHeader('Origin', 'local');
-        $this->delegate->process(Argument::any())->willReturn($originalResponse)->shouldbeCalledTimes(1);
+        $this->delegate->handle(Argument::any())->willReturn($originalResponse)->shouldbeCalledTimes(1);
 
         $response = $this->middleware->process($request, $this->delegate->reveal());
         $this->assertNotSame($originalResponse, $response);

@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\Rest\Action;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
@@ -43,7 +42,7 @@ class EditShortCodeActionTest extends TestCase
         ]);
 
         /** @var JsonResponse $resp */
-        $resp = $this->action->process($request, $this->prophesize(DelegateInterface::class)->reveal());
+        $resp = $this->action->handle($request);
         $payload = $resp->getPayload();
 
         $this->assertEquals(400, $resp->getStatusCode());
@@ -65,7 +64,7 @@ class EditShortCodeActionTest extends TestCase
         );
 
         /** @var JsonResponse $resp */
-        $resp = $this->action->process($request, $this->prophesize(DelegateInterface::class)->reveal());
+        $resp = $this->action->handle($request);
         $payload = $resp->getPayload();
 
         $this->assertEquals(404, $resp->getStatusCode());
@@ -85,7 +84,7 @@ class EditShortCodeActionTest extends TestCase
                                                       ]);
         $updateMeta = $this->shortUrlService->updateMetadataByShortCode(Argument::cetera())->willReturn(new ShortUrl());
 
-        $resp = $this->action->process($request, $this->prophesize(DelegateInterface::class)->reveal());
+        $resp = $this->action->handle($request);
 
         $this->assertEquals(204, $resp->getStatusCode());
         $updateMeta->shouldHaveBeenCalled();

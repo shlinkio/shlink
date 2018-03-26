@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Action\PreviewAction;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
@@ -47,8 +47,8 @@ class PreviewActionTest extends TestCase
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
                                                        ->shouldBeCalledTimes(1);
-        $delegate = $this->prophesize(DelegateInterface::class);
-        $delegate->process(Argument::cetera())->shouldBeCalledTimes(1)
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
+        $delegate->handle(Argument::cetera())->shouldBeCalledTimes(1)
                                               ->willReturn(new Response());
 
         $this->action->process(
@@ -70,7 +70,7 @@ class PreviewActionTest extends TestCase
 
         $resp = $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            TestUtils::createDelegateMock()->reveal()
+            TestUtils::createReqHandlerMock()->reveal()
         );
 
         $this->assertEquals(filesize($path), $resp->getHeaderLine('Content-length'));
@@ -85,9 +85,9 @@ class PreviewActionTest extends TestCase
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
                                                        ->shouldBeCalledTimes(1);
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
-        $process = $delegate->process(Argument::any())->willReturn(new Response());
+        $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
         $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),

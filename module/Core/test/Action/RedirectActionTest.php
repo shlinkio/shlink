@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Options\AppOptions;
@@ -57,7 +57,7 @@ class RedirectActionTest extends TestCase
                                                       ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
-        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->action->process($request, TestUtils::createReqHandlerMock()->reveal());
 
         $this->assertInstanceOf(Response\RedirectResponse::class, $response);
         $this->assertEquals(302, $response->getStatusCode());
@@ -76,9 +76,9 @@ class RedirectActionTest extends TestCase
         $this->visitTracker->track(Argument::cetera())->willReturn(null)
                                                       ->shouldNotBeCalled();
 
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
-        $process = $delegate->process(Argument::any())->willReturn(new Response());
+        $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $this->action->process($request, $delegate->reveal());
@@ -100,7 +100,7 @@ class RedirectActionTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode)
                                                       ->withQueryParams(['foobar' => true]);
-        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->action->process($request, TestUtils::createReqHandlerMock()->reveal());
 
         $this->assertInstanceOf(Response\RedirectResponse::class, $response);
         $this->assertEquals(302, $response->getStatusCode());

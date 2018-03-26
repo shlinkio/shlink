@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Rest\Action\GetVisitsAction;
-use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 
@@ -40,10 +39,7 @@ class GetVisitsActionTest extends TestCase
         $this->visitsTracker->info($shortCode, Argument::type(DateRange::class))->willReturn([])
                                                                                 ->shouldBeCalledTimes(1);
 
-        $response = $this->action->process(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            TestUtils::createDelegateMock()->reveal()
-        );
+        $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode));
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -57,10 +53,7 @@ class GetVisitsActionTest extends TestCase
             InvalidArgumentException::class
         )->shouldBeCalledTimes(1);
 
-        $response = $this->action->process(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            TestUtils::createDelegateMock()->reveal()
-        );
+        $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode));
         $this->assertEquals(404, $response->getStatusCode());
     }
 
@@ -74,10 +67,7 @@ class GetVisitsActionTest extends TestCase
             \Exception::class
         )->shouldBeCalledTimes(1);
 
-        $response = $this->action->process(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            TestUtils::createDelegateMock()->reveal()
-        );
+        $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode));
         $this->assertEquals(500, $response->getStatusCode());
     }
 
@@ -91,10 +81,9 @@ class GetVisitsActionTest extends TestCase
             ->willReturn([])
             ->shouldBeCalledTimes(1);
 
-        $response = $this->action->process(
+        $response = $this->action->handle(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode)
-                                               ->withQueryParams(['endDate' => '2016-01-01 00:00:00']),
-            TestUtils::createDelegateMock()->reveal()
+                                               ->withQueryParams(['endDate' => '2016-01-01 00:00:00'])
         );
         $this->assertEquals(200, $response->getStatusCode());
     }

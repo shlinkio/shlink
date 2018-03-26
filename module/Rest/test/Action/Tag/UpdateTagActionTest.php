@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
@@ -39,7 +38,7 @@ class UpdateTagActionTest extends TestCase
     public function whenInvalidParamsAreProvidedAnErrorIsReturned(array $bodyParams)
     {
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($bodyParams);
-        $resp = $this->action->process($request, $this->prophesize(DelegateInterface::class)->reveal());
+        $resp = $this->action->handle($request);
 
         $this->assertEquals(400, $resp->getStatusCode());
     }
@@ -65,7 +64,7 @@ class UpdateTagActionTest extends TestCase
         /** @var MethodProphecy $rename */
         $rename = $this->tagService->renameTag('foo', 'bar')->willThrow(EntityDoesNotExistException::class);
 
-        $resp = $this->action->process($request, $this->prophesize(DelegateInterface::class)->reveal());
+        $resp = $this->action->handle($request);
 
         $this->assertEquals(404, $resp->getStatusCode());
         $rename->shouldHaveBeenCalled();
@@ -83,7 +82,7 @@ class UpdateTagActionTest extends TestCase
         /** @var MethodProphecy $rename */
         $rename = $this->tagService->renameTag('foo', 'bar')->willReturn(new Tag());
 
-        $resp = $this->action->process($request, $this->prophesize(DelegateInterface::class)->reveal());
+        $resp = $this->action->handle($request);
 
         $this->assertEquals(204, $resp->getStatusCode());
         $rename->shouldHaveBeenCalled();

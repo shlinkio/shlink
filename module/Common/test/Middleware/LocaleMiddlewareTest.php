@@ -32,7 +32,7 @@ class LocaleMiddlewareTest extends TestCase
     public function whenNoHeaderIsPresentLocaleIsNotChanged()
     {
         $this->assertEquals('ru', $this->translator->getLocale());
-        $this->middleware->process(ServerRequestFactory::fromGlobals(), TestUtils::createDelegateMock()->reveal());
+        $this->middleware->process(ServerRequestFactory::fromGlobals(), TestUtils::createReqHandlerMock()->reveal());
         $this->assertEquals('ru', $this->translator->getLocale());
     }
 
@@ -43,7 +43,7 @@ class LocaleMiddlewareTest extends TestCase
     {
         $this->assertEquals('ru', $this->translator->getLocale());
         $request = ServerRequestFactory::fromGlobals()->withHeader('Accept-Language', 'es');
-        $this->middleware->process($request, TestUtils::createDelegateMock()->reveal());
+        $this->middleware->process($request, TestUtils::createReqHandlerMock()->reveal());
         $this->assertEquals('es', $this->translator->getLocale());
     }
 
@@ -52,7 +52,7 @@ class LocaleMiddlewareTest extends TestCase
      */
     public function localeGetsNormalized()
     {
-        $delegate = TestUtils::createDelegateMock();
+        $delegate = TestUtils::createReqHandlerMock();
 
         $this->assertEquals('ru', $this->translator->getLocale());
 

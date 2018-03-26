@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Middleware\CheckAuthenticationMiddleware;
@@ -49,9 +49,9 @@ class CheckAuthenticationMiddlewareTest extends TestCase
     public function someWhiteListedSituationsFallbackToNextMiddleware()
     {
         $request = ServerRequestFactory::fromGlobals();
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
-        $process = $delegate->process($request)->willReturn(new Response());
+        $process = $delegate->handle($request)->willReturn(new Response());
 
         $this->middleware->process($request, $delegate->reveal());
         $process->shouldHaveBeenCalledTimes(1);
@@ -60,9 +60,9 @@ class CheckAuthenticationMiddlewareTest extends TestCase
             RouteResult::class,
             RouteResult::fromRouteFailure(['GET'])
         );
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
-        $process = $delegate->process($request)->willReturn(new Response());
+        $process = $delegate->handle($request)->willReturn(new Response());
         $this->middleware->process($request, $delegate->reveal());
         $process->shouldHaveBeenCalledTimes(1);
 
@@ -75,9 +75,9 @@ class CheckAuthenticationMiddlewareTest extends TestCase
                 AuthenticateAction::class
             ))
         );
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
-        $process = $delegate->process($request)->willReturn(new Response());
+        $process = $delegate->handle($request)->willReturn(new Response());
         $this->middleware->process($request, $delegate->reveal());
         $process->shouldHaveBeenCalledTimes(1);
 
@@ -85,9 +85,9 @@ class CheckAuthenticationMiddlewareTest extends TestCase
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
         )->withMethod('OPTIONS');
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
-        $process = $delegate->process($request)->willReturn(new Response());
+        $process = $delegate->handle($request)->willReturn(new Response());
         $this->middleware->process($request, $delegate->reveal());
         $process->shouldHaveBeenCalledTimes(1);
     }
@@ -101,7 +101,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
         );
-        $response = $this->middleware->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->middleware->process($request, TestUtils::createReqHandlerMock()->reveal());
         $this->assertEquals(401, $response->getStatusCode());
     }
 
@@ -116,7 +116,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
             RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
         )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, $authToken);
 
-        $response = $this->middleware->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->middleware->process($request, TestUtils::createReqHandlerMock()->reveal());
 
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), 'You need to provide the Bearer type') > 0);
@@ -133,7 +133,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
             RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
         )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'Basic ' . $authToken);
 
-        $response = $this->middleware->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->middleware->process($request, TestUtils::createReqHandlerMock()->reveal());
 
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertTrue(
@@ -153,7 +153,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'Bearer ' . $authToken);
         $this->jwtService->verify($authToken)->willReturn(false)->shouldBeCalledTimes(1);
 
-        $response = $this->middleware->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->middleware->process($request, TestUtils::createReqHandlerMock()->reveal());
         $this->assertEquals(401, $response->getStatusCode());
     }
 
@@ -170,9 +170,9 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $this->jwtService->verify($authToken)->willReturn(true)->shouldBeCalledTimes(1);
         $this->jwtService->refresh($authToken)->willReturn($authToken)->shouldBeCalledTimes(1);
 
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
-        $process = $delegate->process($request)->willReturn(new Response());
+        $process = $delegate->handle($request)->willReturn(new Response());
         $resp = $this->middleware->process($request, $delegate->reveal());
 
         $process->shouldHaveBeenCalledTimes(1);

@@ -7,7 +7,7 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\PathVersionMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
@@ -32,8 +32,8 @@ class PathVersionMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/rest/v2/foo'));
 
-        $delegate = $this->prophesize(DelegateInterface::class);
-        $process = $delegate->process($request)->willReturn(new Response());
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
+        $process = $delegate->handle($request)->willReturn(new Response());
 
         $this->middleware->process($request, $delegate->reveal());
 
@@ -47,8 +47,8 @@ class PathVersionMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/foo'));
 
-        $delegate = $this->prophesize(DelegateInterface::class);
-        $process = $delegate->process($request)->willReturn(new Response());
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
+        $process = $delegate->handle($request)->willReturn(new Response());
 
         $this->middleware->process($request, $delegate->reveal());
 
@@ -62,8 +62,8 @@ class PathVersionMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/rest/bar/baz'));
 
-        $delegate = $this->prophesize(DelegateInterface::class);
-        $delegate->process(Argument::type(Request::class))->will(function (array $args) use ($request) {
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
+        $delegate->handle(Argument::type(Request::class))->will(function (array $args) use ($request) {
             $req = \array_shift($args);
 
             Assert::assertNotSame($request, $req);
