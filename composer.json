@@ -106,7 +106,7 @@
             "phpcov merge build --html build/html"
         ],
         "stan": "phpstan analyse module/*/src/ --level=6 -c phpstan.neon",
-        "infect": "infection --threads=4 --min-msi=65 --only-covered --log-verbosity=2",
+        "infect": "infection --threads=4 --min-msi=60 --only-covered --log-verbosity=2",
         "expressive": "expressive"
     },
     "config": {
