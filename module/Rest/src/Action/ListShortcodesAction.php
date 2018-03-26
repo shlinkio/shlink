@@ -37,7 +37,7 @@ class ListShortcodesAction extends AbstractRestAction
 
     /**
      * @param Request $request
-     * @return null|Response
+     * @return Response
      * @throws \InvalidArgumentException
      */
     public function handle(Request $request): Response
