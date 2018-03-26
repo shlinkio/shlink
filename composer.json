@@ -56,7 +56,6 @@
         "symfony/dotenv": "^3.4",
         "symfony/var-dumper": "^3.0",
         "zendframework/zend-component-installer": "^2.1",
-        "zendframework/zend-expressive-migration": "^0.1.3",
         "zendframework/zend-expressive-tooling": "^1.0"
     },
     "autoload": {
