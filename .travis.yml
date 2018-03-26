@@ -5,7 +5,6 @@ branches:
     - /.*/
 
 php:
-  - 7
   - 7.1
   - 7.2
 
@@ -16,12 +15,10 @@ before_install:
 before_script:
   - composer self-update
   - composer install --no-interaction
-  - if [[ $TRAVIS_PHP_VERSION = 7.1 ]] || [[ $TRAVIS_PHP_VERSION = 7.2 ]]; then composer global require --dev phpstan/phpstan:0.9.*; fi
 
 script:
   - mkdir build
   - composer check
-  - if [[ $TRAVIS_PHP_VERSION = 7.1 ]] || [[ $TRAVIS_PHP_VERSION = 7.2 ]]; then ~/.composer/vendor/bin/phpstan analyse module/*/src/ --level=6 -c phpstan.neon; fi
 
 after_script:
   - vendor/bin/phpcov merge build --clover build/clover.xml
