@@ -20,7 +20,7 @@ return [
             'priority' => 11,
         ],
         'pre-routing-rest' => [
-            'path' => '/rest',
+//            'path' => '/rest',
             'middleware' => [
                 PathVersionMiddleware::class,
             ],
