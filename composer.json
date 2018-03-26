@@ -47,6 +47,7 @@
     },
     "require-dev": {
         "filp/whoops": "^2.0",
+        "infection/infection": "^0.8.1",
         "phpstan/phpstan": "0.9",
         "phpunit/dbunit": "^3.0",
         "phpunit/phpcov": "^4.0",
@@ -87,7 +88,8 @@
             "@cs",
             "@stan",
             "@test",
-            "@func-test"
+            "@func-test",
+            "@infect"
         ],
         "cs": "phpcs",
         "cs-fix": "phpcbf",
@@ -100,7 +102,8 @@
             "@func-test",
             "phpcov merge build --html build/html"
         ],
-        "stan": "phpstan analyse module/*/src/ --level=6 -c phpstan.neon"
+        "stan": "phpstan analyse module/*/src/ --level=6 -c phpstan.neon",
+        "infect": "infection --threads=4 --min-msi=65 --only-covered --log-verbosity=2"
     },
     "config": {
         "process-timeout": 0,
