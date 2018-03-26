@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### 1.7.2
+
+**Bugs:**
+
+* [135: Fix PathVersionMiddleware being ignored when using expressive 2.2](https://github.com/shlinkio/shlink/issues/135)
+
 ### 1.7.1
 
 **Enhancements:**
