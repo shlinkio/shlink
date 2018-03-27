@@ -59,7 +59,7 @@ class ListShortcodesAction extends AbstractRestAction
      * @param array $query
      * @return array
      */
-    public function queryToListParams(array $query)
+    private function queryToListParams(array $query): array
     {
         return [
             $query['page'] ?? 1,

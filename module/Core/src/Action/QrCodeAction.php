@@ -80,7 +80,7 @@ class QrCodeAction implements MiddlewareInterface
      * @param Request $request
      * @return int
      */
-    protected function getSizeParam(Request $request)
+    private function getSizeParam(Request $request): int
     {
         $size = (int) $request->getAttribute('size', 300);
         if ($size < 50) {

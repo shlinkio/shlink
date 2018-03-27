@@ -32,8 +32,8 @@ class JsonErrorResponseGenerator implements ErrorResponseGeneratorInterface, Sta
         ], $status);
     }
 
-    protected function responsePhraseToCode(string $responsePhrase): string
+    private function responsePhraseToCode(string $responsePhrase): string
     {
-        return strtoupper(str_replace(' ', '_', $responsePhrase));
+        return \strtoupper(\str_replace(' ', '_', $responsePhrase));
     }
 }

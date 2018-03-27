@@ -9,6 +9,7 @@
 **Enhancements:**
 
 * [130: Update to Expressive 3](https://github.com/shlinkio/shlink/issues/130)
+* [137: Update symfony packages to v4](https://github.com/shlinkio/shlink/issues/137)
 
 **Tasks**
 

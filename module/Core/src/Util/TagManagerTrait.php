@@ -14,7 +14,7 @@ trait TagManagerTrait
      * @param string[] $tags
      * @return Collections\Collection|Tag[]
      */
-    protected function tagNamesToEntities(EntityManagerInterface $em, array $tags)
+    private function tagNamesToEntities(EntityManagerInterface $em, array $tags)
     {
         $entities = [];
         foreach ($tags as $tagName) {
@@ -33,8 +33,8 @@ trait TagManagerTrait
      * @param string $tagName
      * @return string
      */
-    protected function normalizeTagName($tagName)
+    private function normalizeTagName($tagName): string
     {
-        return str_replace(' ', '-', strtolower(trim($tagName)));
+        return \str_replace(' ', '-', \strtolower(\trim($tagName)));
     }
 }

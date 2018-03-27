@@ -77,22 +77,22 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeIn
 
         // Get token making sure the an authorization type is provided
         $authToken = $request->getHeaderLine(self::AUTHORIZATION_HEADER);
-        $authTokenParts = explode(' ', $authToken);
-        if (count($authTokenParts) === 1) {
+        $authTokenParts = \explode(' ', $authToken);
+        if (\count($authTokenParts) === 1) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_AUTHORIZATION_ERROR,
-                'message' => sprintf($this->translator->translate(
+                'message' => \sprintf($this->translator->translate(
                     'You need to provide the Bearer type in the %s header.'
                 ), self::AUTHORIZATION_HEADER),
             ], self::STATUS_UNAUTHORIZED);
         }
 
         // Make sure the authorization type is Bearer
-        list($authType, $jwt) = $authTokenParts;
-        if (strtolower($authType) !== 'bearer') {
+        [$authType, $jwt] = $authTokenParts;
+        if (\strtolower($authType) !== 'bearer') {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_AUTHORIZATION_ERROR,
-                'message' => sprintf($this->translator->translate(
+                'message' => \sprintf($this->translator->translate(
                     'Provided authorization type %s is not supported. Use Bearer instead.'
                 ), $authType),
             ], self::STATUS_UNAUTHORIZED);
@@ -119,11 +119,15 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeIn
         }
     }
 
-    protected function createTokenErrorResponse()
+    /**
+     * @return JsonResponse
+     * @throws \InvalidArgumentException
+     */
+    private function createTokenErrorResponse(): JsonResponse
     {
         return new JsonResponse([
             'error' => RestUtils::INVALID_AUTH_TOKEN_ERROR,
-            'message' => sprintf(
+            'message' => \sprintf(
                 $this->translator->translate(
                     'Missing or invalid auth token provided. Perform a new authentication request and send provided '
                     . 'token on every new request on the "%s" header'
