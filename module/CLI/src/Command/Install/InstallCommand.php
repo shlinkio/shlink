@@ -134,7 +134,7 @@ class InstallCommand extends Command
         if (!  $this->isUpdate) {
             $this->io->write('Initializing database...');
             if (! $this->runCommand(
-                'php vendor/bin/doctrine.php orm:schema-tool:create',
+                'php vendor/bin/doctrine orm:schema-tool:create',
                 'Error generating database.',
                 $output
             )) {
@@ -155,7 +155,7 @@ class InstallCommand extends Command
         // Generate proxies
         $this->io->write('Generating proxies...');
         if (! $this->runCommand(
-            'php vendor/bin/doctrine.php orm:generate-proxies',
+            'php vendor/bin/doctrine orm:generate-proxies',
             'Error generating proxies.',
             $output
         )) {

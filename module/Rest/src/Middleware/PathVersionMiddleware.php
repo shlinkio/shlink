@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Middleware;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class PathVersionMiddleware implements MiddlewareInterface
 {
@@ -15,18 +15,18 @@ class PathVersionMiddleware implements MiddlewareInterface
      * to the next middleware component to create the response.
      *
      * @param Request $request
-     * @param DelegateInterface $delegate
+     * @param RequestHandlerInterface $handler
      *
      * @return Response
      */
-    public function process(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         $uri = $request->getUri();
         $path = $uri->getPath();
 
         // TODO Workaround... Do not process the request if it does not start with rest
         if (\strpos($path, '/rest') !== 0) {
-            return $delegate->process($request);
+            return $handler->handle($request);
         }
 
         // If the path does not begin with the version number, prepend v1 by default for BC compatibility purposes
@@ -41,6 +41,6 @@ class PathVersionMiddleware implements MiddlewareInterface
             $request = $request->withUri($uri->withPath(\implode('/', $parts)));
         }
 
-        return $delegate->process($request);
+        return $handler->handle($request);
     }
 }

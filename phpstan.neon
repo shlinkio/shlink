@@ -1,3 +1,4 @@
 parameters:
 	excludes_analyse:
 		- module/Common/src/Template/Extension/TranslatorExtension.php
+		- module/Rest/src/Util/RestUtils.php

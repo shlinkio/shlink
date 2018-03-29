@@ -9,7 +9,6 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\EditShortcodeTagsAction;
-use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 
@@ -35,10 +34,7 @@ class EditShortcodeTagsActionTest extends TestCase
      */
     public function notProvidingTagsReturnsError()
     {
-        $response = $this->action->process(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123'),
-            TestUtils::createDelegateMock()->reveal()
-        );
+        $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123'));
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -51,10 +47,9 @@ class EditShortcodeTagsActionTest extends TestCase
         $this->shortUrlService->setTagsByShortCode($shortCode, [])->willThrow(InvalidShortCodeException::class)
                                                                   ->shouldBeCalledTimes(1);
 
-        $response = $this->action->process(
+        $response = $this->action->handle(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123')
-                                               ->withParsedBody(['tags' => []]),
-            TestUtils::createDelegateMock()->reveal()
+                                               ->withParsedBody(['tags' => []])
         );
         $this->assertEquals(404, $response->getStatusCode());
     }
@@ -68,10 +63,9 @@ class EditShortcodeTagsActionTest extends TestCase
         $this->shortUrlService->setTagsByShortCode($shortCode, [])->willReturn(new ShortUrl())
                                                                   ->shouldBeCalledTimes(1);
 
-        $response = $this->action->process(
+        $response = $this->action->handle(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123')
-                ->withParsedBody(['tags' => []]),
-            TestUtils::createDelegateMock()->reveal()
+                                               ->withParsedBody(['tags' => []])
         );
         $this->assertEquals(200, $response->getStatusCode());
     }

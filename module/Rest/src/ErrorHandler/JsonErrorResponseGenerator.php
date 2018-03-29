@@ -20,7 +20,7 @@ class JsonErrorResponseGenerator implements ErrorResponseGeneratorInterface, Sta
      * @return Response
      * @throws \InvalidArgumentException
      */
-    public function __invoke($e, Request $request, Response $response)
+    public function __invoke(?\Throwable $e, Request $request, Response $response)
     {
         $status = $response->getStatusCode();
         $responsePhrase = $status < 400 ? 'Internal Server Error' : $response->getReasonPhrase();
@@ -32,8 +32,8 @@ class JsonErrorResponseGenerator implements ErrorResponseGeneratorInterface, Sta
         ], $status);
     }
 
-    protected function responsePhraseToCode(string $responsePhrase): string
+    private function responsePhraseToCode(string $responsePhrase): string
     {
-        return strtoupper(str_replace(' ', '_', $responsePhrase));
+        return \strtoupper(\str_replace(' ', '_', $responsePhrase));
     }
 }

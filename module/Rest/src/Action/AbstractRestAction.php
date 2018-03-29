@@ -5,11 +5,11 @@ namespace Shlinkio\Shlink\Rest\Action;
 
 use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-abstract class AbstractRestAction implements MiddlewareInterface, RequestMethodInterface, StatusCodeInterface
+abstract class AbstractRestAction implements RequestHandlerInterface, RequestMethodInterface, StatusCodeInterface
 {
     /**
      * @var LoggerInterface

@@ -57,7 +57,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
     /**
      * @return string
      */
-    public function getReferer()
+    public function getReferer(): string
     {
         return $this->referer;
     }
@@ -66,7 +66,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
      * @param string $referer
      * @return $this
      */
-    public function setReferer($referer)
+    public function setReferer($referer): self
     {
         $this->referer = $referer;
         return $this;
@@ -75,7 +75,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
     /**
      * @return \DateTime
      */
-    public function getDate()
+    public function getDate(): \DateTime
     {
         return $this->date;
     }
@@ -84,7 +84,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
      * @param \DateTime $date
      * @return $this
      */
-    public function setDate($date)
+    public function setDate($date): self
     {
         $this->date = $date;
         return $this;
@@ -93,7 +93,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
     /**
      * @return ShortUrl
      */
-    public function getShortUrl()
+    public function getShortUrl(): ShortUrl
     {
         return $this->shortUrl;
     }
@@ -102,7 +102,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
      * @param ShortUrl $shortUrl
      * @return $this
      */
-    public function setShortUrl($shortUrl)
+    public function setShortUrl($shortUrl): self
     {
         $this->shortUrl = $shortUrl;
         return $this;
@@ -111,7 +111,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
     /**
      * @return string
      */
-    public function getRemoteAddr()
+    public function getRemoteAddr(): string
     {
         return $this->remoteAddr;
     }
@@ -120,7 +120,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
      * @param string $remoteAddr
      * @return $this
      */
-    public function setRemoteAddr($remoteAddr)
+    public function setRemoteAddr($remoteAddr): self
     {
         $this->remoteAddr = $remoteAddr;
         return $this;
@@ -129,7 +129,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
     /**
      * @return string
      */
-    public function getUserAgent()
+    public function getUserAgent(): string
     {
         return $this->userAgent;
     }
@@ -138,7 +138,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
      * @param string $userAgent
      * @return $this
      */
-    public function setUserAgent($userAgent)
+    public function setUserAgent($userAgent): self
     {
         $this->userAgent = $userAgent;
         return $this;
@@ -147,7 +147,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
     /**
      * @return VisitLocation
      */
-    public function getVisitLocation()
+    public function getVisitLocation(): VisitLocation
     {
         return $this->visitLocation;
     }
@@ -156,7 +156,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
      * @param VisitLocation $visitLocation
      * @return $this
      */
-    public function setVisitLocation($visitLocation)
+    public function setVisitLocation($visitLocation): self
     {
         $this->visitLocation = $visitLocation;
         return $this;
@@ -165,11 +165,11 @@ class Visit extends AbstractEntity implements \JsonSerializable
     /**
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * @return array data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'referer' => $this->referer,

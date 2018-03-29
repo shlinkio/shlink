@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -40,7 +39,7 @@ class CreateTagsActionTest extends TestCase
         /** @var MethodProphecy $deleteTags */
         $deleteTags = $this->tagService->createTags($tags ?: [])->willReturn(new ArrayCollection());
 
-        $response = $this->action->process($request, $this->prophesize(DelegateInterface::class)->reveal());
+        $response = $this->action->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $deleteTags->shouldHaveBeenCalled();

@@ -7,6 +7,7 @@ use Shlinkio\Shlink\Common;
 use Shlinkio\Shlink\Core;
 use Shlinkio\Shlink\Rest;
 use Zend\ConfigAggregator;
+use Zend\Expressive;
 
 /**
  * Configuration files are loaded in a specific order. First ``global.php``, then ``*.global.php``.
@@ -18,8 +19,11 @@ use Zend\ConfigAggregator;
  */
 
 return (new ConfigAggregator\ConfigAggregator([
-    Zend\Expressive\ConfigProvider::class,
-    Zend\Expressive\Router\ConfigProvider::class,
+    Expressive\ConfigProvider::class,
+    Expressive\Router\ConfigProvider::class,
+    Expressive\Router\FastRouteRouter\ConfigProvider::class,
+    Expressive\Plates\ConfigProvider::class,
+    Expressive\Helper\ConfigProvider::class,
     ExpressiveErrorHandler\ConfigProvider::class,
     Common\ConfigProvider::class,
     Core\ConfigProvider::class,

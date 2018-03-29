@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\RequestMethodInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterface
 {
@@ -16,15 +16,15 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
      * to the next middleware component to create the response.
      *
      * @param Request $request
-     * @param DelegateInterface $delegate
+     * @param RequestHandlerInterface $handler
      *
      * @return Response
      * @throws \InvalidArgumentException
      */
-    public function process(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         /** @var Response $response */
-        $response = $delegate->process($request);
+        $response = $handler->handle($request);
         if (! $request->hasHeader('Origin')) {
             return $response;
         }

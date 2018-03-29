@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
@@ -31,9 +31,9 @@ class BodyParserMiddlewareTest extends TestCase
     public function requestsFromOtherMethodsJustFallbackToNextMiddleware()
     {
         $request = ServerRequestFactory::fromGlobals()->withMethod('GET');
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
-        $process = $delegate->process($request)->willReturn(new Response());
+        $process = $delegate->handle($request)->willReturn(new Response());
 
         $this->middleware->process($request, $delegate->reveal());
 
@@ -51,9 +51,9 @@ class BodyParserMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withMethod('PUT')
                                                       ->withBody($body)
                                                       ->withHeader('content-type', 'application/json');
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
-        $process = $delegate->process(Argument::type(ServerRequestInterface::class))->will(
+        $process = $delegate->handle(Argument::type(ServerRequestInterface::class))->will(
             function (array $args) use ($test) {
                 /** @var ServerRequestInterface $req */
                 $req = array_shift($args);
@@ -82,9 +82,9 @@ class BodyParserMiddlewareTest extends TestCase
         $body->write('foo=bar&bar[]=one&bar[]=5');
         $request = ServerRequestFactory::fromGlobals()->withMethod('PUT')
                                                       ->withBody($body);
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
-        $process = $delegate->process(Argument::type(ServerRequestInterface::class))->will(
+        $process = $delegate->handle(Argument::type(ServerRequestInterface::class))->will(
             function (array $args) use ($test) {
                 /** @var ServerRequestInterface $req */
                 $req = array_shift($args);
