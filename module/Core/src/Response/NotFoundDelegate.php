@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Response;
 
 use Fig\Http\Message\StatusCodeInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Zend\Diactoros\Response;
 use Zend\Expressive\Template\TemplateRendererInterface;
 
@@ -37,14 +37,14 @@ class NotFoundDelegate implements DelegateInterface
      * @return ResponseInterface
      * @throws \InvalidArgumentException
      */
-    public function process(ServerRequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $accepts = explode(',', $request->getHeaderLine('Accept'));
-        $accept = array_shift($accepts);
+        $accepts = \explode(',', $request->getHeaderLine('Accept'));
+        $accept = \array_shift($accepts);
         $status = StatusCodeInterface::STATUS_NOT_FOUND;
 
         // If the first accepted type is json, return a json response
-        if (in_array($accept, ['application/json', 'text/json', 'application/x-json'], true)) {
+        if (\in_array($accept, ['application/json', 'text/json', 'application/x-json'], true)) {
             return new Response\JsonResponse([
                 'error' => 'NOT_FOUND',
                 'message' => 'Not found',

@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Middleware;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Zend\I18n\Translator\Translator;
 
 class LocaleMiddleware implements MiddlewareInterface
@@ -32,15 +32,15 @@ class LocaleMiddleware implements MiddlewareInterface
      *
      * @return Response
      */
-    public function process(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, DelegateInterface $delegate): Response
     {
         if (! $request->hasHeader('Accept-Language')) {
-            return $delegate->process($request);
+            return $delegate->handle($request);
         }
 
         $locale = $request->getHeaderLine('Accept-Language');
         $this->translator->setLocale($this->normalizeLocale($locale));
-        return $delegate->process($request);
+        return $delegate->handle($request);
     }
 
     /**

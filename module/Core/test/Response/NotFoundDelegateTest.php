@@ -43,7 +43,7 @@ class NotFoundDelegateTest extends TestCase
         /** @var MethodProphecy $render */
         $render = $this->renderer->render(Argument::cetera())->willReturn('');
 
-        $resp = $this->delegate->process($request);
+        $resp = $this->delegate->handle($request);
 
         $this->assertInstanceOf($expectedResponse, $resp);
         $render->shouldHaveBeenCalledTimes($renderCalls);

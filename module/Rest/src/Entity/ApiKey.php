@@ -44,7 +44,7 @@ class ApiKey extends AbstractEntity
     /**
      * @return string
      */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
@@ -53,7 +53,7 @@ class ApiKey extends AbstractEntity
      * @param string $key
      * @return $this
      */
-    public function setKey($key)
+    public function setKey($key): self
     {
         $this->key = $key;
         return $this;
@@ -62,7 +62,7 @@ class ApiKey extends AbstractEntity
     /**
      * @return \DateTime|null
      */
-    public function getExpirationDate()
+    public function getExpirationDate(): ?\DateTime
     {
         return $this->expirationDate;
     }
@@ -71,7 +71,7 @@ class ApiKey extends AbstractEntity
      * @param \DateTime $expirationDate
      * @return $this
      */
-    public function setExpirationDate($expirationDate)
+    public function setExpirationDate($expirationDate): self
     {
         $this->expirationDate = $expirationDate;
         return $this;
@@ -80,9 +80,9 @@ class ApiKey extends AbstractEntity
     /**
      * @return bool
      */
-    public function isExpired()
+    public function isExpired(): bool
     {
-        if (! isset($this->expirationDate)) {
+        if ($this->expirationDate === null) {
             return false;
         }
 
@@ -92,7 +92,7 @@ class ApiKey extends AbstractEntity
     /**
      * @return boolean
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
@@ -101,7 +101,7 @@ class ApiKey extends AbstractEntity
      * @param boolean $enabled
      * @return $this
      */
-    public function setEnabled($enabled)
+    public function setEnabled($enabled): self
     {
         $this->enabled = $enabled;
         return $this;
@@ -112,7 +112,7 @@ class ApiKey extends AbstractEntity
      *
      * @return $this
      */
-    public function disable()
+    public function disable(): self
     {
         return $this->setEnabled(false);
     }
@@ -122,17 +122,17 @@ class ApiKey extends AbstractEntity
      *
      * @return bool
      */
-    public function isValid()
+    public function isValid(): bool
     {
         return $this->isEnabled() && ! $this->isExpired();
     }
 
     /**
-     * The string repesentation of an API key is the key itself
+     * The string representation of an API key is the key itself
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getKey();
     }

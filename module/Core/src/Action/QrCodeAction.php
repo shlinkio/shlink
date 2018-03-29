@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Action;
 
 use Endroid\QrCode\QrCode;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
@@ -49,11 +49,11 @@ class QrCodeAction implements MiddlewareInterface
      * to the next middleware component to create the response.
      *
      * @param Request $request
-     * @param DelegateInterface $delegate
+     * @param RequestHandlerInterface $handler
      *
      * @return Response
      */
-    public function process(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         // Make sure the short URL exists for this short code
         $shortCode = $request->getAttribute('shortCode');
@@ -61,10 +61,10 @@ class QrCodeAction implements MiddlewareInterface
             $this->urlShortener->shortCodeToUrl($shortCode);
         } catch (InvalidShortCodeException $e) {
             $this->logger->warning('Tried to create a QR code with an invalid short code' . PHP_EOL . $e);
-            return $this->buildErrorResponse($request, $delegate);
+            return $this->buildErrorResponse($request, $handler);
         } catch (EntityDoesNotExistException $e) {
             $this->logger->warning('Tried to create a QR code with a not found short code' . PHP_EOL . $e);
-            return $this->buildErrorResponse($request, $delegate);
+            return $this->buildErrorResponse($request, $handler);
         }
 
         $path = $this->router->generateUri('long-url-redirect', ['shortCode' => $shortCode]);
@@ -80,7 +80,7 @@ class QrCodeAction implements MiddlewareInterface
      * @param Request $request
      * @return int
      */
-    protected function getSizeParam(Request $request)
+    private function getSizeParam(Request $request): int
     {
         $size = (int) $request->getAttribute('size', 300);
         if ($size < 50) {

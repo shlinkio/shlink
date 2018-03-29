@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\Tag;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -29,14 +28,13 @@ class DeleteTagsAction extends AbstractRestAction
      * to the next middleware component to create the response.
      *
      * @param ServerRequestInterface $request
-     * @param DelegateInterface $delegate
      *
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $query = $request->getQueryParams();
-        $tags = isset($query['tags']) ? $query['tags'] : [];
+        $tags = $query['tags'] ?? [];
 
         $this->tagService->deleteTags($tags);
         return new EmptyResponse();

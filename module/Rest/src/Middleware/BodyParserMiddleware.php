@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\RequestMethodInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Exception\RuntimeException;
 
 class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterface
@@ -17,11 +17,11 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
      * to the next middleware component to create the response.
      *
      * @param Request $request
-     * @param DelegateInterface $delegate
+     * @param RequestHandlerInterface $handler
      *
      * @return Response
      */
-    public function process(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         $method = $request->getMethod();
         $currentParams = $request->getParsedBody();
@@ -32,16 +32,16 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
             self::METHOD_HEAD,
             self::METHOD_OPTIONS,
         ], true)) {
-            return $delegate->process($request);
+            return $handler->handle($request);
         }
 
         // If the accepted content is JSON, try to parse the body from JSON
         $contentType = $this->getRequestContentType($request);
         if (\in_array($contentType, ['application/json', 'text/json', 'application/x-json'], true)) {
-            return $delegate->process($this->parseFromJson($request));
+            return $handler->handle($this->parseFromJson($request));
         }
 
-        return $delegate->process($this->parseFromUrlEncoded($request));
+        return $handler->handle($this->parseFromUrlEncoded($request));
     }
 
     /**

@@ -27,6 +27,8 @@ class EmptyResponseImplicitOptionsMiddlewareFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ImplicitOptionsMiddleware(new EmptyResponse());
+        return new ImplicitOptionsMiddleware(function () {
+            return new EmptyResponse();
+        });
     }
 }

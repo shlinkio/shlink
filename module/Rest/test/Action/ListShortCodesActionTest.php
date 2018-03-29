@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ListShortcodesAction;
-use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 use Zend\Paginator\Adapter\ArrayAdapter;
@@ -39,12 +38,9 @@ class ListShortCodesActionTest extends TestCase
         $this->service->listShortUrls($page, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
                                                             ->shouldBeCalledTimes(1);
 
-        $response = $this->action->process(
-            ServerRequestFactory::fromGlobals()->withQueryParams([
-                'page' => $page,
-            ]),
-            TestUtils::createDelegateMock()->reveal()
-        );
+        $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams([
+            'page' => $page,
+        ]));
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -57,12 +53,9 @@ class ListShortCodesActionTest extends TestCase
         $this->service->listShortUrls($page, null, [], null)->willThrow(\Exception::class)
                                                             ->shouldBeCalledTimes(1);
 
-        $response = $this->action->process(
-            ServerRequestFactory::fromGlobals()->withQueryParams([
-                'page' => $page,
-            ]),
-            TestUtils::createDelegateMock()->reveal()
-        );
+        $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams([
+            'page' => $page,
+        ]));
         $this->assertEquals(500, $response->getStatusCode());
     }
 }

@@ -9,7 +9,7 @@ use Zend\InputFilter\Input;
 
 trait InputFactoryTrait
 {
-    public function createInput($name, $required = true): Input
+    private function createInput($name, $required = true): Input
     {
         $input = new Input($name);
         $input->setRequired($required)

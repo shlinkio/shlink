@@ -28,6 +28,7 @@ return [
 
             // Middleware
             Action\RedirectAction::class => ConfigAbstractFactory::class,
+            Action\PixelAction::class => ConfigAbstractFactory::class,
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
             Action\PreviewAction::class => ConfigAbstractFactory::class,
             Middleware\QrCodeCacheMiddleware::class => ConfigAbstractFactory::class,
@@ -56,6 +57,11 @@ return [
 
         // Middleware
         Action\RedirectAction::class => [
+            Service\UrlShortener::class,
+            Service\VisitsTracker::class,
+            Options\AppOptions::class,
+        ],
+        Action\PixelAction::class => [
             Service\UrlShortener::class,
             Service\VisitsTracker::class,
             Options\AppOptions::class,

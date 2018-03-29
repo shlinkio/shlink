@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -41,12 +40,11 @@ class EditShortCodeAction extends AbstractRestAction
      * to the next middleware component to create the response.
      *
      * @param ServerRequestInterface $request
-     * @param DelegateInterface $delegate
      *
      * @return ResponseInterface
      * @throws \InvalidArgumentException
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $postData = (array) $request->getParsedBody();
         $shortCode = $request->getAttribute('shortCode', '');

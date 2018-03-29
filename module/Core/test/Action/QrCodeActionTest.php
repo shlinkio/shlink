@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Action;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Action\QrCodeAction;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
@@ -46,8 +46,8 @@ class QrCodeActionTest extends TestCase
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
                                                        ->shouldBeCalledTimes(1);
-        $delegate = $this->prophesize(DelegateInterface::class);
-        $process = $delegate->process(Argument::any())->willReturn(new Response());
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
+        $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
         $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
@@ -65,9 +65,9 @@ class QrCodeActionTest extends TestCase
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
                                                        ->shouldBeCalledTimes(1);
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
-        $process = $delegate->process(Argument::any())->willReturn(new Response());
+        $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
         $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
@@ -84,7 +84,7 @@ class QrCodeActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn('')->shouldBeCalledTimes(1);
-        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
 
         $resp = $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
@@ -93,6 +93,6 @@ class QrCodeActionTest extends TestCase
 
         $this->assertInstanceOf(QrCodeResponse::class, $resp);
         $this->assertEquals(200, $resp->getStatusCode());
-        $delegate->process(Argument::any())->shouldHaveBeenCalledTimes(0);
+        $delegate->handle(Argument::any())->shouldHaveBeenCalledTimes(0);
     }
 }

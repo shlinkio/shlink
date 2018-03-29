@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
-use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 
@@ -47,7 +46,7 @@ class AuthenticateActionTest extends TestCase
      */
     public function notProvidingAuthDataReturnsError()
     {
-        $resp = $this->action->process(ServerRequestFactory::fromGlobals(), TestUtils::createDelegateMock()->reveal());
+        $resp = $this->action->handle(ServerRequestFactory::fromGlobals());
         $this->assertEquals(400, $resp->getStatusCode());
     }
 
@@ -62,7 +61,7 @@ class AuthenticateActionTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'apiKey' => 'foo',
         ]);
-        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->action->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
 
         $response->getBody()->rewind();
@@ -80,7 +79,7 @@ class AuthenticateActionTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'apiKey' => 'foo',
         ]);
-        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->action->handle($request);
         $this->assertEquals(401, $response->getStatusCode());
     }
 }

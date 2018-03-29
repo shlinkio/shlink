@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ResolveUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
-use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 
@@ -41,7 +40,7 @@ class ResolveUrlActionTest extends TestCase
                                                        ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
-        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->action->handle($request);
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::INVALID_ARGUMENT_ERROR) > 0);
     }
@@ -56,7 +55,7 @@ class ResolveUrlActionTest extends TestCase
                                                        ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
-        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->action->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), 'http://domain.com/foo/bar') > 0);
     }
@@ -71,7 +70,7 @@ class ResolveUrlActionTest extends TestCase
                                                        ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
-        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->action->handle($request);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::INVALID_SHORTCODE_ERROR) > 0);
     }
@@ -86,7 +85,7 @@ class ResolveUrlActionTest extends TestCase
                                                        ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
-        $response = $this->action->process($request, TestUtils::createDelegateMock()->reveal());
+        $response = $this->action->handle($request);
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::UNKNOWN_ERROR) > 0);
     }

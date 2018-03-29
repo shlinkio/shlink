@@ -14,6 +14,12 @@ return [
             'allowed_methods' => ['GET'],
         ],
         [
+            'name' => 'pixel-tracking',
+            'path' => '/{shortCode}/track',
+            'middleware' => Action\PixelAction::class,
+            'allowed_methods' => ['GET'],
+        ],
+        [
             'name' => 'short-url-qr-code',
             'path' => '/{shortCode}/qr-code[/{size:[0-9]+}]',
             'middleware' => [

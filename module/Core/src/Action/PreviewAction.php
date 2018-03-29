@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Action;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\Common\Service\PreviewGeneratorInterface;
 use Shlinkio\Shlink\Common\Util\ResponseUtilsTrait;
@@ -40,11 +40,11 @@ class PreviewAction implements MiddlewareInterface
      * to the next middleware component to create the response.
      *
      * @param Request $request
-     * @param DelegateInterface $delegate
+     * @param RequestHandlerInterface $handler
      *
      * @return Response
      */
-    public function process(Request $request, DelegateInterface $delegate)
+    public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         $shortCode = $request->getAttribute('shortCode');
 
@@ -52,12 +52,8 @@ class PreviewAction implements MiddlewareInterface
             $url = $this->urlShortener->shortCodeToUrl($shortCode);
             $imagePath = $this->previewGenerator->generatePreview($url);
             return $this->generateImageResponse($imagePath);
-        } catch (InvalidShortCodeException $e) {
-            return $this->buildErrorResponse($request, $delegate);
-        } catch (EntityDoesNotExistException $e) {
-            return $this->buildErrorResponse($request, $delegate);
-        } catch (PreviewGenerationException $e) {
-            return $this->buildErrorResponse($request, $delegate);
+        } catch (InvalidShortCodeException | EntityDoesNotExistException | PreviewGenerationException $e) {
+            return $this->buildErrorResponse($request, $handler);
         }
     }
 }

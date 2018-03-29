@@ -38,8 +38,8 @@ class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
         $instance = $this->factory->__invoke(new ServiceManager(), '');
 
         $ref = new \ReflectionObject($instance);
-        $prop = $ref->getProperty('response');
+        $prop = $ref->getProperty('responseFactory');
         $prop->setAccessible(true);
-        $this->assertInstanceOf(EmptyResponse::class, $prop->getValue($instance));
+        $this->assertInstanceOf(EmptyResponse::class, $prop->getValue($instance)());
     }
 }
