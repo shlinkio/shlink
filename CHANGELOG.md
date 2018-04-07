@@ -2,6 +2,16 @@
 
 ### 1.8.1
 
+**Tasks**
+
+* [141: Remove workaround used in PathVersionMiddleware](https://github.com/shlinkio/shlink/issues/141)
+
+**Bugs:**
+
+* [140: Installation failed. Warning thrown while trying to include doctrine script](https://github.com/shlinkio/shlink/issues/140)
+
+### 1.8.0
+
 **Features**
 
 * [125: Implement a path which returns a 1px image instead of a redirection](https://github.com/shlinkio/shlink/issues/125)

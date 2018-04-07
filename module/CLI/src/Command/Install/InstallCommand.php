@@ -134,7 +134,7 @@ class InstallCommand extends Command
         if (!  $this->isUpdate) {
             $this->io->write('Initializing database...');
             if (! $this->runCommand(
-                'php vendor/bin/doctrine orm:schema-tool:create',
+                'php vendor/doctrine/orm/bin/doctrine.php orm:schema-tool:create',
                 'Error generating database.',
                 $output
             )) {
@@ -145,7 +145,7 @@ class InstallCommand extends Command
         // Run database migrations
         $this->io->write('Updating database...');
         if (! $this->runCommand(
-            'php vendor/bin/doctrine-migrations migrations:migrate',
+            'php vendor/doctrine/migrations/bin/doctrine-migrations.php migrations:migrate',
             'Error updating database.',
             $output
         )) {
@@ -155,7 +155,7 @@ class InstallCommand extends Command
         // Generate proxies
         $this->io->write('Generating proxies...');
         if (! $this->runCommand(
-            'php vendor/bin/doctrine orm:generate-proxies',
+            'php vendor/doctrine/orm/bin/doctrine.php orm:generate-proxies',
             'Error generating proxies.',
             $output
         )) {
