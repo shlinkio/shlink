@@ -30,22 +30,7 @@ class PathVersionMiddlewareTest extends TestCase
      */
     public function whenVersionIsProvidedRequestRemainsUnchanged()
     {
-        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/rest/v2/foo'));
-
-        $delegate = $this->prophesize(RequestHandlerInterface::class);
-        $process = $delegate->handle($request)->willReturn(new Response());
-
-        $this->middleware->process($request, $delegate->reveal());
-
-        $process->shouldHaveBeenCalled();
-    }
-
-    /**
-     * @test
-     */
-    public function whenPathDoesNotStartWithRestRemainsUnchanged()
-    {
-        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/foo'));
+        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/v2/foo'));
 
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle($request)->willReturn(new Response());
@@ -60,14 +45,14 @@ class PathVersionMiddlewareTest extends TestCase
      */
     public function versionOneIsPrependedWhenNoVersionIsDefined()
     {
-        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/rest/bar/baz'));
+        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/bar/baz'));
 
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $delegate->handle(Argument::type(Request::class))->will(function (array $args) use ($request) {
             $req = \array_shift($args);
 
             Assert::assertNotSame($request, $req);
-            Assert::assertEquals('/rest/v1/bar/baz', $req->getUri()->getPath());
+            Assert::assertEquals('/v1/bar/baz', $req->getUri()->getPath());
             return new Response();
         });
 
