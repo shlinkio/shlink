@@ -59,7 +59,12 @@ return [
         Action\Tag\CreateTagsAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
         Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class, Translator::class, LoggerInterface::class],
 
-        Middleware\CheckAuthenticationMiddleware::class => [JWTService::class, 'translator', 'Logger_Shlink'],
+        Middleware\CheckAuthenticationMiddleware::class => [
+            JWTService::class,
+            'translator',
+            'config.auth.routes_whitelist',
+            'Logger_Shlink',
+        ],
     ],
 
 ];
