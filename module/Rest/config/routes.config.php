@@ -10,12 +10,7 @@ return [
         Action\AuthenticateAction::getRouteDef(),
 
         // Short codes
-        [
-            'name' => Action\CreateShortcodeAction::class,
-            'path' => '/short-codes',
-            'middleware' => Action\CreateShortcodeAction::class,
-            'allowed_methods' => [RequestMethod::METHOD_POST],
-        ],
+        Action\CreateShortcodeAction::getRouteDef(),
 //        [
 //            'name' => Action\CreateShortcodeAction::class,
 //            'path' => '/short-codes',

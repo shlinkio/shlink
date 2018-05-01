@@ -71,7 +71,7 @@ final class ShortUrlMeta
      * @param array $data
      * @throws ValidationException
      */
-    private function validate(array $data)
+    private function validate(array $data): void
     {
         $inputFilter = new ShortUrlMetaInputFilter($data);
         if (! $inputFilter->isValid()) {
