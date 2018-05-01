@@ -80,7 +80,7 @@ class CreateShortcodeAction extends AbstractRestAction
             $this->logger->warning('Provided Invalid URL.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf(
+                'message' => \sprintf(
                     $this->translator->translate('Provided URL %s is invalid. Try with a different one.'),
                     $longUrl
                 ),
@@ -89,7 +89,7 @@ class CreateShortcodeAction extends AbstractRestAction
             $this->logger->warning('Provided non-unique slug.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf(
+                'message' => \sprintf(
                     $this->translator->translate('Provided slug %s is already in use. Try with a different one.'),
                     $customSlug
                 ),

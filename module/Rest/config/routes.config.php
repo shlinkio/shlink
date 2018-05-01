@@ -21,6 +21,12 @@ return [
             'middleware' => Action\CreateShortcodeAction::class,
             'allowed_methods' => [RequestMethod::METHOD_POST],
         ],
+//        [
+//            'name' => Action\CreateShortcodeAction::class,
+//            'path' => '/short-codes',
+//            'middleware' => Action\CreateShortcodeAction::class,
+//            'allowed_methods' => [RequestMethod::METHOD_GET],
+//        ],
         [
             'name' => Action\EditShortCodeAction::class,
             'path' => '/short-codes/{shortCode}',
