@@ -57,7 +57,15 @@ abstract class AbstractCreateShortCodeAction extends AbstractRestAction
             $shortCodeMeta = $shortCodeData->getMeta();
             $longUrl = $shortCodeData->getLongUrl();
             $customSlug = $shortCodeMeta->getCustomSlug();
+        } catch (ValidationException | InvalidArgumentException $e) {
+            $this->logger->warning('Provided data is invalid.' . PHP_EOL . $e);
+            return new JsonResponse([
+                'error' => RestUtils::INVALID_ARGUMENT_ERROR,
+                'message' => $this->translator->translate('Provided data is invalid'),
+            ], self::STATUS_BAD_REQUEST);
+        }
 
+        try {
             $shortCode = $this->urlShortener->urlToShortCode(
                 $longUrl,
                 $shortCodeData->getTags(),
@@ -93,12 +101,6 @@ abstract class AbstractCreateShortCodeAction extends AbstractRestAction
                     $this->translator->translate('Provided slug %s is already in use. Try with a different one.'),
                     $customSlug
                 ),
-            ], self::STATUS_BAD_REQUEST);
-        } catch (ValidationException | InvalidArgumentException $e) {
-            $this->logger->warning('Provided data is invalid.' . PHP_EOL . $e);
-            return new JsonResponse([
-                'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' => $this->translator->translate('Provided data is invalid'),
             ], self::STATUS_BAD_REQUEST);
         } catch (\Throwable $e) {
             $this->logger->error('Unexpected error creating shortcode.' . PHP_EOL . $e);

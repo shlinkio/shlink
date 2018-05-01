@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use Shlinkio\Shlink\Rest\Action;
 
 return [
