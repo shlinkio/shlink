@@ -16,6 +16,9 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class EditShortCodeAction extends AbstractRestAction
 {
+    protected const ROUTE_PATH = '/short-codes/{shortCode}';
+    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PUT];
+
     /**
      * @var ShortUrlServiceInterface
      */

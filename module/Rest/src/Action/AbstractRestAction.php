@@ -12,7 +12,7 @@ use Psr\Log\NullLogger;
 abstract class AbstractRestAction implements RequestHandlerInterface, RequestMethodInterface, StatusCodeInterface
 {
     protected const ROUTE_PATH = '';
-    protected const ALLOWED_METHODS = [];
+    protected const ROUTE_ALLOWED_METHODS = [];
 
     /**
      * @var LoggerInterface
@@ -30,7 +30,7 @@ abstract class AbstractRestAction implements RequestHandlerInterface, RequestMet
             'name' => static::class,
             'middleware' => \array_merge($prevMiddleware, [static::class], $postMiddleware),
             'path' => static::ROUTE_PATH,
-            'allowed_methods' => static::ALLOWED_METHODS,
+            'allowed_methods' => static::ROUTE_ALLOWED_METHODS,
         ];
     }
 }

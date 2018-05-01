@@ -7,12 +7,7 @@ use Shlinkio\Shlink\Rest\Action;
 return [
 
     'routes' => [
-        [
-            'name' => Action\AuthenticateAction::class,
-            'path' => '/authenticate',
-            'middleware' => Action\AuthenticateAction::class,
-            'allowed_methods' => [RequestMethod::METHOD_POST],
-        ],
+        Action\AuthenticateAction::getRouteDef(),
 
         // Short codes
         [
@@ -27,64 +22,19 @@ return [
 //            'middleware' => Action\CreateShortcodeAction::class,
 //            'allowed_methods' => [RequestMethod::METHOD_GET],
 //        ],
-        [
-            'name' => Action\EditShortCodeAction::class,
-            'path' => '/short-codes/{shortCode}',
-            'middleware' => Action\EditShortCodeAction::class,
-            'allowed_methods' => [RequestMethod::METHOD_PUT],
-        ],
-        [
-            'name' => Action\ResolveUrlAction::class,
-            'path' => '/short-codes/{shortCode}',
-            'middleware' => Action\ResolveUrlAction::class,
-            'allowed_methods' => [RequestMethod::METHOD_GET],
-        ],
-        [
-            'name' => Action\ListShortcodesAction::class,
-            'path' => '/short-codes',
-            'middleware' => Action\ListShortcodesAction::class,
-            'allowed_methods' => [RequestMethod::METHOD_GET],
-        ],
-        [
-            'name' => Action\EditShortcodeTagsAction::class,
-            'path' => '/short-codes/{shortCode}/tags',
-            'middleware' => Action\EditShortcodeTagsAction::class,
-            'allowed_methods' => [RequestMethod::METHOD_PUT],
-        ],
+        Action\EditShortCodeAction::getRouteDef(),
+        Action\ResolveUrlAction::getRouteDef(),
+        Action\ListShortcodesAction::getRouteDef(),
+        Action\EditShortcodeTagsAction::getRouteDef(),
 
         // Visits
-        [
-            'name' => Action\GetVisitsAction::class,
-            'path' => '/short-codes/{shortCode}/visits',
-            'middleware' => Action\GetVisitsAction::class,
-            'allowed_methods' => [RequestMethod::METHOD_GET],
-        ],
+        Action\GetVisitsAction::getRouteDef(),
 
         // Tags
-        [
-            'name' => Action\Tag\ListTagsAction::class,
-            'path' => '/tags',
-            'middleware' => Action\Tag\ListTagsAction::class,
-            'allowed_methods' => [RequestMethod::METHOD_GET],
-        ],
-        [
-            'name' => Action\Tag\DeleteTagsAction::class,
-            'path' => '/tags',
-            'middleware' => Action\Tag\DeleteTagsAction::class,
-            'allowed_methods' => [RequestMethod::METHOD_DELETE],
-        ],
-        [
-            'name' => Action\Tag\CreateTagsAction::class,
-            'path' => '/tags',
-            'middleware' => Action\Tag\CreateTagsAction::class,
-            'allowed_methods' => [RequestMethod::METHOD_POST],
-        ],
-        [
-            'name' => Action\Tag\UpdateTagAction::class,
-            'path' => '/tags',
-            'middleware' => Action\Tag\UpdateTagAction::class,
-            'allowed_methods' => [RequestMethod::METHOD_PUT],
-        ],
+        Action\Tag\ListTagsAction::getRouteDef(),
+        Action\Tag\DeleteTagsAction::getRouteDef(),
+        Action\Tag\CreateTagsAction::getRouteDef(),
+        Action\Tag\UpdateTagAction::getRouteDef(),
     ],
 
 ];

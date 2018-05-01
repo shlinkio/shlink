@@ -15,6 +15,9 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class AuthenticateAction extends AbstractRestAction
 {
+    protected const ROUTE_PATH = '/authenticate';
+    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_POST];
+
     /**
      * @var TranslatorInterface
      */

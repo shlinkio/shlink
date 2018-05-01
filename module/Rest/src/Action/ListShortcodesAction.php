@@ -16,6 +16,9 @@ class ListShortcodesAction extends AbstractRestAction
 {
     use PaginatorUtilsTrait;
 
+    protected const ROUTE_PATH = '/short-codes';
+    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
+
     /**
      * @var ShortUrlServiceInterface
      */

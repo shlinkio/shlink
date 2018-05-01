@@ -15,6 +15,9 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class GetVisitsAction extends AbstractRestAction
 {
+    protected const ROUTE_PATH = '/short-codes/{shortCode}/visits';
+    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
+
     /**
      * @var VisitsTrackerInterface
      */
