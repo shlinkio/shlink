@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
-use Shlinkio\Shlink\Rest\Action\ListShortCodesAction;
+use Shlinkio\Shlink\Rest\Action\ShortCode\ListShortCodesAction;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 use Zend\Paginator\Adapter\ArrayAdapter;

@@ -13,7 +13,7 @@ return [
         Action\ShortCode\SingleStepCreateShortCodeAction::getRouteDef(),
         Action\ShortCode\EditShortCodeAction::getRouteDef(),
         Action\ResolveUrlAction::getRouteDef(),
-        Action\ListShortCodesAction::getRouteDef(),
+        Action\ShortCode\ListShortCodesAction::getRouteDef(),
         Action\EditShortCodeTagsAction::getRouteDef(),
 
         // Visits
