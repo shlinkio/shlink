@@ -14,7 +14,7 @@ return [
         Action\ShortCode\EditShortCodeAction::getRouteDef(),
         Action\ShortCode\ResolveUrlAction::getRouteDef(),
         Action\ShortCode\ListShortCodesAction::getRouteDef(),
-        Action\EditShortCodeTagsAction::getRouteDef(),
+        Action\ShortCode\EditShortCodeTagsAction::getRouteDef(),
 
         // Visits
         Action\GetVisitsAction::getRouteDef(),

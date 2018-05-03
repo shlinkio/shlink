@@ -8,7 +8,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
-use Shlinkio\Shlink\Rest\Action\EditShortCodeTagsAction;
+use Shlinkio\Shlink\Rest\Action\ShortCode\EditShortCodeTagsAction;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 
