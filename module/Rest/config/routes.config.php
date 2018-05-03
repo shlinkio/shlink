@@ -11,7 +11,7 @@ return [
         // Short codes
         Action\ShortCode\CreateShortCodeAction::getRouteDef(),
         Action\ShortCode\SingleStepCreateShortCodeAction::getRouteDef(),
-        Action\EditShortCodeAction::getRouteDef(),
+        Action\ShortCode\EditShortCodeAction::getRouteDef(),
         Action\ResolveUrlAction::getRouteDef(),
         Action\ListShortCodesAction::getRouteDef(),
         Action\EditShortCodeTagsAction::getRouteDef(),
