@@ -25,7 +25,11 @@ class CreateShortCodeContentNegotiationMiddleware implements MiddlewareInterface
     {
         /** @var JsonResponse $response */
         $response = $handler->handle($request);
-        $acceptedType = $this->determineAcceptedType($request);
+        $acceptedType = $request->hasHeader('Accept')
+            ? $this->determineAcceptTypeFromHeader($request->getHeaderLine('Accept'))
+            : $this->determineAcceptTypeFromQuery($request->getQueryParams());
+
+        // If JSON was requested, return the response from next handler as is
         if ($acceptedType === self::JSON) {
             return $response;
         }
@@ -38,9 +42,19 @@ class CreateShortCodeContentNegotiationMiddleware implements MiddlewareInterface
         return $resp;
     }
 
-    private function determineAcceptedType(ServerRequestInterface $request): string
+    private function determineAcceptTypeFromQuery(array $query): string
     {
-        $accepts = \explode(',', $request->getHeaderLine('Accept'));
+        if (! isset($query['format'])) {
+            return self::JSON;
+        }
+
+        $format = \strtolower((string) $query['format']);
+        return $format === 'txt' ? self::PLAIN_TEXT : self::JSON;
+    }
+
+    private function determineAcceptTypeFromHeader(string $acceptValue): string
+    {
+        $accepts = \explode(',', $acceptValue);
         $accept = \strtolower(\array_shift($accepts));
         return \strpos($accept, 'text/plain') !== false ? self::PLAIN_TEXT : self::JSON;
     }
