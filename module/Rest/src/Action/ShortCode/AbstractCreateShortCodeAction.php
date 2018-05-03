@@ -77,7 +77,6 @@ abstract class AbstractCreateShortCodeAction extends AbstractRestAction
                                    ->withScheme($this->domainConfig['schema'])
                                    ->withHost($this->domainConfig['hostname']);
 
-            // TODO Make response to be generated based on Accept header
             return new JsonResponse([
                 'longUrl' => (string) $longUrl,
                 'shortUrl' => (string) $shortUrl,

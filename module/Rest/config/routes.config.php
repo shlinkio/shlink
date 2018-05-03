@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace Shlinkio\Shlink\Rest;
+
 use Shlinkio\Shlink\Rest\Action;
 
 return [
@@ -9,8 +11,12 @@ return [
         Action\AuthenticateAction::getRouteDef(),
 
         // Short codes
-        Action\ShortCode\CreateShortCodeAction::getRouteDef(),
-        Action\ShortCode\SingleStepCreateShortCodeAction::getRouteDef(),
+        Action\ShortCode\CreateShortCodeAction::getRouteDef([
+            Middleware\ShortCode\CreateShortCodeContentNegotiationMiddleware::class,
+        ]),
+        Action\ShortCode\SingleStepCreateShortCodeAction::getRouteDef([
+            Middleware\ShortCode\CreateShortCodeContentNegotiationMiddleware::class,
+        ]),
         Action\ShortCode\EditShortCodeAction::getRouteDef(),
         Action\ShortCode\ResolveUrlAction::getRouteDef(),
         Action\ShortCode\ListShortCodesAction::getRouteDef(),
