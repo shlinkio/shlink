@@ -16,6 +16,7 @@ return [
         'pre-routing' => [
             'middleware' => [
                 ErrorHandler::class,
+                Expressive\Helper\ContentLengthMiddleware::class,
                 LocaleMiddleware::class,
             ],
             'priority' => 11,
