@@ -9,7 +9,6 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
-use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortCodeData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -31,7 +30,7 @@ abstract class AbstractCreateShortCodeAction extends AbstractRestAction
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    protected $translator;
 
     public function __construct(
         UrlShortenerInterface $urlShortener,
@@ -57,11 +56,11 @@ abstract class AbstractCreateShortCodeAction extends AbstractRestAction
             $shortCodeMeta = $shortCodeData->getMeta();
             $longUrl = $shortCodeData->getLongUrl();
             $customSlug = $shortCodeMeta->getCustomSlug();
-        } catch (ValidationException | InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $this->logger->warning('Provided data is invalid.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' => $this->translator->translate('Provided data is invalid'),
+                'message' => $e->getMessage(),
             ], self::STATUS_BAD_REQUEST);
         }
 
@@ -114,7 +113,6 @@ abstract class AbstractCreateShortCodeAction extends AbstractRestAction
     /**
      * @param Request $request
      * @return CreateShortCodeData
-     * @throws ValidationException
      * @throws InvalidArgumentException
      */
     abstract protected function buildUrlToShortCodeData(Request $request): CreateShortCodeData;

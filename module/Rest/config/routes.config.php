@@ -10,12 +10,7 @@ return [
 
         // Short codes
         Action\CreateShortCodeAction::getRouteDef(),
-//        [
-//            'name' => Action\CreateShortCodeAction::class,
-//            'path' => '/short-codes',
-//            'middleware' => Action\CreateShortCodeAction::class,
-//            'allowed_methods' => [RequestMethod::METHOD_GET],
-//        ],
+        Action\ShortCode\SingleStepCreateShortCodeAction::getRouteDef(),
         Action\EditShortCodeAction::getRouteDef(),
         Action\ResolveUrlAction::getRouteDef(),
         Action\ListShortCodesAction::getRouteDef(),

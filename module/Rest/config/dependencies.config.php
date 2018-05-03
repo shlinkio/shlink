@@ -21,6 +21,7 @@ return [
 
             Action\AuthenticateAction::class => ConfigAbstractFactory::class,
             Action\CreateShortCodeAction::class => ConfigAbstractFactory::class,
+            Action\ShortCode\SingleStepCreateShortCodeAction::class => ConfigAbstractFactory::class,
             Action\EditShortCodeAction::class => ConfigAbstractFactory::class,
             Action\ResolveUrlAction::class => ConfigAbstractFactory::class,
             Action\GetVisitsAction::class => ConfigAbstractFactory::class,
@@ -46,6 +47,13 @@ return [
         Action\CreateShortCodeAction::class => [
             Service\UrlShortener::class,
             'translator',
+            'config.url_shortener.domain',
+            'Logger_Shlink',
+        ],
+        Action\ShortCode\SingleStepCreateShortCodeAction::class => [
+            Service\UrlShortener::class,
+            'translator',
+            ApiKeyService::class,
             'config.url_shortener.domain',
             'Logger_Shlink',
         ],

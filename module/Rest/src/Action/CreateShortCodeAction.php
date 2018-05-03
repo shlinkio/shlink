@@ -5,7 +5,6 @@ namespace Shlinkio\Shlink\Rest\Action;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
-use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortCodeData;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Rest\Action\ShortCode\AbstractCreateShortCodeAction;
@@ -19,7 +18,6 @@ class CreateShortCodeAction extends AbstractCreateShortCodeAction
     /**
      * @param Request $request
      * @return CreateShortCodeData
-     * @throws ValidationException
      * @throws InvalidArgumentException
      * @throws \InvalidArgumentException
      */
@@ -27,7 +25,7 @@ class CreateShortCodeAction extends AbstractCreateShortCodeAction
     {
         $postData = (array) $request->getParsedBody();
         if (! isset($postData['longUrl'])) {
-            throw new InvalidArgumentException('A URL was not provided');
+            throw new InvalidArgumentException($this->translator->translate('A URL was not provided'));
         }
 
         return new CreateShortCodeData(
