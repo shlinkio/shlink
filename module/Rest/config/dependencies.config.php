@@ -20,7 +20,7 @@ return [
             ApiKeyService::class => ConfigAbstractFactory::class,
 
             Action\AuthenticateAction::class => ConfigAbstractFactory::class,
-            Action\CreateShortCodeAction::class => ConfigAbstractFactory::class,
+            Action\ShortCode\CreateShortCodeAction::class => ConfigAbstractFactory::class,
             Action\ShortCode\SingleStepCreateShortCodeAction::class => ConfigAbstractFactory::class,
             Action\EditShortCodeAction::class => ConfigAbstractFactory::class,
             Action\ResolveUrlAction::class => ConfigAbstractFactory::class,
@@ -44,7 +44,7 @@ return [
         ApiKeyService::class => ['em'],
 
         Action\AuthenticateAction::class => [ApiKeyService::class, JWTService::class, 'translator', 'Logger_Shlink'],
-        Action\CreateShortCodeAction::class => [
+        Action\ShortCode\CreateShortCodeAction::class => [
             Service\UrlShortener::class,
             'translator',
             'config.url_shortener.domain',

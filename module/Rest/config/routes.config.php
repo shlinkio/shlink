@@ -9,7 +9,7 @@ return [
         Action\AuthenticateAction::getRouteDef(),
 
         // Short codes
-        Action\CreateShortCodeAction::getRouteDef(),
+        Action\ShortCode\CreateShortCodeAction::getRouteDef(),
         Action\ShortCode\SingleStepCreateShortCodeAction::getRouteDef(),
         Action\EditShortCodeAction::getRouteDef(),
         Action\ResolveUrlAction::getRouteDef(),

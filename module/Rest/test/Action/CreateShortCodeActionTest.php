@@ -9,7 +9,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
-use Shlinkio\Shlink\Rest\Action\CreateShortCodeAction;
+use Shlinkio\Shlink\Rest\Action\ShortCode\CreateShortCodeAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Uri;
