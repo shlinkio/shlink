@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\Action;
+namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
