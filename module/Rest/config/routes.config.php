@@ -12,7 +12,7 @@ return [
         Action\ShortCode\CreateShortCodeAction::getRouteDef(),
         Action\ShortCode\SingleStepCreateShortCodeAction::getRouteDef(),
         Action\ShortCode\EditShortCodeAction::getRouteDef(),
-        Action\ResolveUrlAction::getRouteDef(),
+        Action\ShortCode\ResolveUrlAction::getRouteDef(),
         Action\ShortCode\ListShortCodesAction::getRouteDef(),
         Action\EditShortCodeTagsAction::getRouteDef(),
 
