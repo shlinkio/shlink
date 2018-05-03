@@ -9,16 +9,16 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
-use Shlinkio\Shlink\Rest\Action\CreateShortcodeAction;
+use Shlinkio\Shlink\Rest\Action\CreateShortCodeAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Uri;
 use Zend\I18n\Translator\Translator;
 
-class CreateShortcodeActionTest extends TestCase
+class CreateShortCodeActionTest extends TestCase
 {
     /**
-     * @var CreateShortcodeAction
+     * @var CreateShortCodeAction
      */
     protected $action;
     /**
@@ -29,7 +29,7 @@ class CreateShortcodeActionTest extends TestCase
     public function setUp()
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $this->action = new CreateShortcodeAction($this->urlShortener->reveal(), Translator::factory([]), [
+        $this->action = new CreateShortCodeAction($this->urlShortener->reveal(), Translator::factory([]), [
             'schema' => 'http',
             'hostname' => 'foo.com',
         ]);

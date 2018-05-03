@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class EditShortcodeTagsAction extends AbstractRestAction
+class EditShortCodeTagsAction extends AbstractRestAction
 {
     protected const ROUTE_PATH = '/short-codes/{shortCode}/tags';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PUT];

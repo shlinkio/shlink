@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class ListShortcodesAction extends AbstractRestAction
+class ListShortCodesAction extends AbstractRestAction
 {
     use PaginatorUtilsTrait;
 

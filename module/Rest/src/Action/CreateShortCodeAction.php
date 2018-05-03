@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Rest\Action\ShortCode\AbstractCreateShortCodeAction;
 use Zend\Diactoros\Uri;
 
-class CreateShortcodeAction extends AbstractCreateShortCodeAction
+class CreateShortCodeAction extends AbstractCreateShortCodeAction
 {
     protected const ROUTE_PATH = '/short-codes';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_POST];

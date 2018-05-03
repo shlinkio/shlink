@@ -9,17 +9,17 @@ return [
         Action\AuthenticateAction::getRouteDef(),
 
         // Short codes
-        Action\CreateShortcodeAction::getRouteDef(),
+        Action\CreateShortCodeAction::getRouteDef(),
 //        [
-//            'name' => Action\CreateShortcodeAction::class,
+//            'name' => Action\CreateShortCodeAction::class,
 //            'path' => '/short-codes',
-//            'middleware' => Action\CreateShortcodeAction::class,
+//            'middleware' => Action\CreateShortCodeAction::class,
 //            'allowed_methods' => [RequestMethod::METHOD_GET],
 //        ],
         Action\EditShortCodeAction::getRouteDef(),
         Action\ResolveUrlAction::getRouteDef(),
-        Action\ListShortcodesAction::getRouteDef(),
-        Action\EditShortcodeTagsAction::getRouteDef(),
+        Action\ListShortCodesAction::getRouteDef(),
+        Action\EditShortCodeTagsAction::getRouteDef(),
 
         // Visits
         Action\GetVisitsAction::getRouteDef(),
