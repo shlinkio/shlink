@@ -17,7 +17,7 @@ return [
         Action\ShortCode\EditShortCodeTagsAction::getRouteDef(),
 
         // Visits
-        Action\GetVisitsAction::getRouteDef(),
+        Action\Visit\GetVisitsAction::getRouteDef(),
 
         // Tags
         Action\Tag\ListTagsAction::getRouteDef(),
