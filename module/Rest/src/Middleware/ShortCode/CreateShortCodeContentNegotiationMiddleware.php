@@ -23,8 +23,13 @@ class CreateShortCodeContentNegotiationMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var JsonResponse $response */
         $response = $handler->handle($request);
+
+        // If the response is not JSON, return it as is
+        if (! $response instanceof JsonResponse) {
+            return $response;
+        }
+
         $acceptedType = $request->hasHeader('Accept')
             ? $this->determineAcceptTypeFromHeader($request->getHeaderLine('Accept'))
             : $this->determineAcceptTypeFromQuery($request->getQueryParams());
@@ -37,7 +42,7 @@ class CreateShortCodeContentNegotiationMiddleware implements MiddlewareInterface
         // If requested, return a plain text response containing the short URL only
         $resp = (new Response())->withHeader('Content-Type', 'text/plain');
         $body = $resp->getBody();
-        $body->write($response->getPayload()['shortUrl'] ?? '');
+        $body->write($this->determineBody($response));
         $body->rewind();
         return $resp;
     }
@@ -57,5 +62,11 @@ class CreateShortCodeContentNegotiationMiddleware implements MiddlewareInterface
         $accepts = \explode(',', $acceptValue);
         $accept = \strtolower(\array_shift($accepts));
         return \strpos($accept, 'text/plain') !== false ? self::PLAIN_TEXT : self::JSON;
+    }
+
+    private function determineBody(JsonResponse $resp): string
+    {
+        $payload = $resp->getPayload();
+        return $payload['shortUrl'] ?? $payload['error'] ?? '';
     }
 }
