@@ -1,0 +1,125 @@
+{
+    "get": {
+        "tags": [
+            "ShortCodes"
+        ],
+        "summary": "Create a short URL",
+        "description": "Creates a short URL in a single API call. Useful for third party integrations",
+        "parameters": [
+            {
+                "name": "apiKey",
+                "in": "query",
+                "description": "The API key used to authenticate the request",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "longUrl",
+                "in": "query",
+                "description": "The URL to be shortened",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "format",
+                "in": "query",
+                "description": "The format in which you want the response to be returned. You can also use the \"Accept\" header instead of this",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "txt",
+                        "json"
+                    ]
+                }
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The list of short URLs",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "longUrl": {
+                                    "type": "string",
+                                    "description": "The original long URL that has been shortened"
+                                },
+                                "shortUrl": {
+                                    "type": "string",
+                                    "description": "The generated short URL"
+                                },
+                                "shortCode": {
+                                    "type": "string",
+                                    "description": "the short code that is being used in the short URL"
+                                }
+                            }
+                        }
+                    },
+                    "text/plain": {
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "longUrl": "https://github.com/shlinkio/shlink",
+                        "shortUrl": "https://dom.ain/abc123",
+                        "shortCode": "abc123"
+                    },
+                    "text/plain": "https://dom.ain/abc123"
+                }
+            },
+            "400": {
+                "description": "The long URL was not provided or is invalid.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    },
+                    "text/plain": {
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "error": "INVALID_URL",
+                        "message": "Provided URL foo is invalid. Try with a different one."
+                    },
+                    "text/plain": "INVALID_URL"
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    },
+                    "text/plain": {
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "error": "UNKNOWN_ERROR",
+                        "message": "Unexpected error occurred"
+                    },
+                    "text/plain": "UNKNOWN_ERROR"
+                }
+            }
+        }
+    }
+}
