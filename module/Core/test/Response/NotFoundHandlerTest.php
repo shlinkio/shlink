@@ -7,15 +7,15 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Core\Response\NotFoundDelegate;
+use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Expressive\Template\TemplateRendererInterface;
 
-class NotFoundDelegateTest extends TestCase
+class NotFoundHandlerTest extends TestCase
 {
     /**
-     * @var NotFoundDelegate
+     * @var NotFoundHandler
      */
     private $delegate;
     /**
@@ -26,7 +26,7 @@ class NotFoundDelegateTest extends TestCase
     public function setUp()
     {
         $this->renderer = $this->prophesize(TemplateRendererInterface::class);
-        $this->delegate = new NotFoundDelegate($this->renderer->reveal());
+        $this->delegate = new NotFoundHandler($this->renderer->reveal());
     }
 
     /**
