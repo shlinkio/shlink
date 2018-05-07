@@ -30,9 +30,10 @@ class CreateShortCodeContentNegotiationMiddleware implements MiddlewareInterface
             return $response;
         }
 
-        $acceptedType = $request->hasHeader('Accept')
-            ? $this->determineAcceptTypeFromHeader($request->getHeaderLine('Accept'))
-            : $this->determineAcceptTypeFromQuery($request->getQueryParams());
+        $query = $request->getQueryParams();
+        $acceptedType = isset($query['format'])
+            ? $this->determineAcceptTypeFromQuery($query)
+            : $this->determineAcceptTypeFromHeader($request->getHeaderLine('Accept'));
 
         // If JSON was requested, return the response from next handler as is
         if ($acceptedType === self::JSON) {

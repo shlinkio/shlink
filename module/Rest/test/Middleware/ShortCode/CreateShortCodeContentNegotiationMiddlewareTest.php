@@ -74,6 +74,7 @@ class CreateShortCodeContentNegotiationMiddlewareTest extends TestCase
             ['application/json', [], 'application/json'],
             ['application/xml', [], 'application/json'],
             ['text/plain', [], 'text/plain'],
+            ['application/json', ['format' => 'txt'], 'text/plain'],
         ];
     }
 
