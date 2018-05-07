@@ -33,8 +33,12 @@ rm composer.*
 rm LICENSE
 rm indocker
 rm docker-compose.yml
+rm docker-compose.override.yml
+rm docker-compose.override.yml.dist
+rm func_tests_bootstrap.php
 rm php*
 rm README.md
+rm infection.json
 rm -rf build
 rm -ff data/database.sqlite
 rm -rf data/infra
