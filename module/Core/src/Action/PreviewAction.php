@@ -7,6 +7,8 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\Common\Service\PreviewGeneratorInterface;
 use Shlinkio\Shlink\Common\Util\ResponseUtilsTrait;
@@ -28,11 +30,19 @@ class PreviewAction implements MiddlewareInterface
      * @var UrlShortenerInterface
      */
     private $urlShortener;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
-    public function __construct(PreviewGeneratorInterface $previewGenerator, UrlShortenerInterface $urlShortener)
-    {
+    public function __construct(
+        PreviewGeneratorInterface $previewGenerator,
+        UrlShortenerInterface $urlShortener,
+        LoggerInterface $logger = null
+    ) {
         $this->previewGenerator = $previewGenerator;
         $this->urlShortener = $urlShortener;
+        $this->logger = $logger ?: new NullLogger();
     }
 
     /**
@@ -53,6 +63,7 @@ class PreviewAction implements MiddlewareInterface
             $imagePath = $this->previewGenerator->generatePreview($url);
             return $this->generateImageResponse($imagePath);
         } catch (InvalidShortCodeException | EntityDoesNotExistException | PreviewGenerationException $e) {
+            $this->logger->warning('An error occurred while generating preview image.' . PHP_EOL . $e);
             return $this->buildErrorResponse($request, $handler);
         }
     }

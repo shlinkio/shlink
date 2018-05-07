@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use Shlinkio\Shlink\Common\Middleware\LocaleMiddleware;
-use Shlinkio\Shlink\Core\Response\NotFoundDelegate;
+use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
 use Shlinkio\Shlink\Rest\Middleware\CheckAuthenticationMiddleware;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
@@ -16,6 +16,7 @@ return [
         'pre-routing' => [
             'middleware' => [
                 ErrorHandler::class,
+                Expressive\Helper\ContentLengthMiddleware::class,
                 LocaleMiddleware::class,
             ],
             'priority' => 11,
@@ -49,7 +50,7 @@ return [
         'post-routing' => [
             'middleware' => [
                 Expressive\Router\Middleware\DispatchMiddleware::class,
-                NotFoundDelegate::class,
+                NotFoundHandler::class,
             ],
             'priority' => 1,
         ],

@@ -28,7 +28,7 @@ class ApiKeyService implements ApiKeyServiceInterface
     public function create(\DateTime $expirationDate = null)
     {
         $key = new ApiKey();
-        if (isset($expirationDate)) {
+        if ($expirationDate !== null) {
             $key->setExpirationDate($expirationDate);
         }
 
@@ -44,7 +44,7 @@ class ApiKeyService implements ApiKeyServiceInterface
      * @param string $key
      * @return bool
      */
-    public function check($key)
+    public function check(string $key)
     {
         /** @var ApiKey|null $apiKey */
         $apiKey = $this->getByKey($key);
@@ -58,7 +58,7 @@ class ApiKeyService implements ApiKeyServiceInterface
      * @return ApiKey
      * @throws InvalidArgumentException
      */
-    public function disable($key)
+    public function disable(string $key)
     {
         /** @var ApiKey|null $apiKey */
         $apiKey = $this->getByKey($key);
@@ -77,7 +77,7 @@ class ApiKeyService implements ApiKeyServiceInterface
      * @param bool $enabledOnly Tells if only enabled keys should be returned
      * @return ApiKey[]
      */
-    public function listKeys($enabledOnly = false)
+    public function listKeys(bool $enabledOnly = false)
     {
         $conditions = $enabledOnly ? ['enabled' => true] : [];
         return $this->em->getRepository(ApiKey::class)->findBy($conditions);
@@ -89,7 +89,7 @@ class ApiKeyService implements ApiKeyServiceInterface
      * @param string $key
      * @return ApiKey|null
      */
-    public function getByKey($key)
+    public function getByKey(string $key)
     {
         /** @var ApiKey|null $apiKey */
         $apiKey = $this->em->getRepository(ApiKey::class)->findOneBy([

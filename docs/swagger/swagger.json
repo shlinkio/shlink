@@ -40,6 +40,9 @@
         "/v1/short-codes": {
             "$ref": "paths/v1_short-codes.json"
         },
+        "/v1/short-codes/shorten": {
+            "$ref": "paths/v1_short-codes_shorten.json"
+        },
         "/v1/short-codes/{shortCode}": {
             "$ref": "paths/v1_short-codes_{shortCode}.json"
         },

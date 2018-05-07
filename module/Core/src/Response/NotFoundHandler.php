@@ -6,13 +6,13 @@ namespace Shlinkio\Shlink\Core\Response;
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response;
 use Zend\Expressive\Template\TemplateRendererInterface;
 
-class NotFoundDelegate implements DelegateInterface
+class NotFoundHandler implements RequestHandlerInterface
 {
-    const NOT_FOUND_TEMPLATE = 'notFoundTemplate';
+    public const NOT_FOUND_TEMPLATE = 'notFoundTemplate';
 
     /**
      * @var TemplateRendererInterface

@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\Action;
+namespace ShlinkioTest\Shlink\Rest\Action\ShortCode;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
-use Shlinkio\Shlink\Rest\Action\ResolveUrlAction;
+use Shlinkio\Shlink\Rest\Action\ShortCode\ResolveUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;

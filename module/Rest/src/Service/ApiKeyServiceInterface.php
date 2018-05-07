@@ -22,7 +22,7 @@ interface ApiKeyServiceInterface
      * @param string $key
      * @return bool
      */
-    public function check($key);
+    public function check(string $key);
 
     /**
      * Disables provided api key
@@ -31,7 +31,7 @@ interface ApiKeyServiceInterface
      * @return ApiKey
      * @throws InvalidArgumentException
      */
-    public function disable($key);
+    public function disable(string $key);
 
     /**
      * Lists all existing api keys
@@ -39,7 +39,7 @@ interface ApiKeyServiceInterface
      * @param bool $enabledOnly Tells if only enabled keys should be returned
      * @return ApiKey[]
      */
-    public function listKeys($enabledOnly = false);
+    public function listKeys(bool $enabledOnly = false);
 
     /**
      * Tries to find one API key by its key string
@@ -47,5 +47,5 @@ interface ApiKeyServiceInterface
      * @param string $key
      * @return ApiKey|null
      */
-    public function getByKey($key);
+    public function getByKey(string $key);
 }

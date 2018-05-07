@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2018-01-21 09:40+0100\n"
-"PO-Revision-Date: 2018-01-21 09:40+0100\n"
+"POT-Creation-Date: 2018-05-06 12:34+0200\n"
+"PO-Revision-Date: 2018-05-06 12:35+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 2.0.6\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -25,9 +25,6 @@ msgstr ""
 msgid "Provided API key does not exist or is invalid."
 msgstr "La clave de API proporcionada no existe o es inválida."
 
-msgid "A URL was not provided"
-msgstr "No se ha proporcionado una URL"
-
 #, php-format
 msgid "Provided URL %s is invalid. Try with a different one."
 msgstr "La URL proporcionada \"%s\" es inválida. Prueba con una diferente."
@@ -38,6 +35,9 @@ msgstr "El slug proporcionado \"%s\" ya está en uso. Prueba con uno diferente."
 
 msgid "Unexpected error occurred"
 msgstr "Ocurrió un error inesperado"
+
+msgid "A URL was not provided"
+msgstr "No se ha proporcionado una URL"
 
 #, php-format
 msgid "No URL found for short code \"%s\""
@@ -50,12 +50,11 @@ msgid "A list of tags was not provided"
 msgstr "No se ha proporcionado una lista de etiquetas"
 
 #, php-format
-msgid "Provided short code %s does not exist"
-msgstr "El código corto \"%s\" proporcionado no existe"
-
-#, php-format
 msgid "Provided short code \"%s\" has an invalid format"
 msgstr "El código corto proporcionado \"%s\" tiene un formato no inválido"
+
+msgid "No API key was provided or it is not valid"
+msgstr "No se ha proporcionado una clave de API o esta es inválida"
 
 msgid ""
 "You have to provide both 'oldName' and 'newName' params in order to properly "
@@ -67,6 +66,10 @@ msgstr ""
 #, php-format
 msgid "It wasn't possible to find a tag with name '%s'"
 msgstr "No fue posible encontrar una etiqueta con el nombre '%s'"
+
+#, php-format
+msgid "Provided short code %s does not exist"
+msgstr "El código corto \"%s\" proporcionado no existe"
 
 #, php-format
 msgid "You need to provide the Bearer type in the %s header."

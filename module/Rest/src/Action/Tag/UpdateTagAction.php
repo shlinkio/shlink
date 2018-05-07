@@ -16,6 +16,9 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class UpdateTagAction extends AbstractRestAction
 {
+    protected const ROUTE_PATH = '/tags';
+    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PUT];
+
     /**
      * @var TagServiceInterface
      */

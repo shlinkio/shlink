@@ -11,6 +11,9 @@ use Psr\Log\NullLogger;
 
 abstract class AbstractRestAction implements RequestHandlerInterface, RequestMethodInterface, StatusCodeInterface
 {
+    protected const ROUTE_PATH = '';
+    protected const ROUTE_ALLOWED_METHODS = [];
+
     /**
      * @var LoggerInterface
      */
@@ -19,5 +22,15 @@ abstract class AbstractRestAction implements RequestHandlerInterface, RequestMet
     public function __construct(LoggerInterface $logger = null)
     {
         $this->logger = $logger ?: new NullLogger();
+    }
+
+    public static function getRouteDef(array $prevMiddleware = [], array $postMiddleware = []): array
+    {
+        return [
+            'name' => static::class,
+            'middleware' => \array_merge($prevMiddleware, [static::class], $postMiddleware),
+            'path' => static::ROUTE_PATH,
+            'allowed_methods' => static::ROUTE_ALLOWED_METHODS,
+        ];
     }
 }

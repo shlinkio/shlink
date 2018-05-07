@@ -1,20 +1,23 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Rest\Action;
+namespace Shlinkio\Shlink\Rest\Action\ShortCode;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Model\CreateShortCodeData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
+use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Uri;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class CreateShortcodeAction extends AbstractRestAction
+abstract class AbstractCreateShortCodeAction extends AbstractRestAction
 {
     /**
      * @var UrlShortenerInterface
@@ -27,7 +30,7 @@ class CreateShortcodeAction extends AbstractRestAction
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    protected $translator;
 
     public function __construct(
         UrlShortenerInterface $urlShortener,
@@ -48,31 +51,34 @@ class CreateShortcodeAction extends AbstractRestAction
      */
     public function handle(Request $request): Response
     {
-        $postData = (array) $request->getParsedBody();
-        if (! isset($postData['longUrl'])) {
+        try {
+            $shortCodeData = $this->buildUrlToShortCodeData($request);
+            $shortCodeMeta = $shortCodeData->getMeta();
+            $longUrl = $shortCodeData->getLongUrl();
+            $customSlug = $shortCodeMeta->getCustomSlug();
+        } catch (InvalidArgumentException $e) {
+            $this->logger->warning('Provided data is invalid.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' => $this->translator->translate('A URL was not provided'),
+                'message' => $e->getMessage(),
             ], self::STATUS_BAD_REQUEST);
         }
-        $longUrl = $postData['longUrl'];
-        $customSlug = $postData['customSlug'] ?? null;
 
         try {
             $shortCode = $this->urlShortener->urlToShortCode(
-                new Uri($longUrl),
-                (array) ($postData['tags'] ?? []),
-                $this->getOptionalDate($postData, 'validSince'),
-                $this->getOptionalDate($postData, 'validUntil'),
+                $longUrl,
+                $shortCodeData->getTags(),
+                $shortCodeMeta->getValidSince(),
+                $shortCodeMeta->getValidUntil(),
                 $customSlug,
-                isset($postData['maxVisits']) ? (int) $postData['maxVisits'] : null
+                $shortCodeMeta->getMaxVisits()
             );
             $shortUrl = (new Uri())->withPath($shortCode)
                                    ->withScheme($this->domainConfig['schema'])
                                    ->withHost($this->domainConfig['hostname']);
 
             return new JsonResponse([
-                'longUrl' => $longUrl,
+                'longUrl' => (string) $longUrl,
                 'shortUrl' => (string) $shortUrl,
                 'shortCode' => $shortCode,
             ]);
@@ -80,7 +86,7 @@ class CreateShortcodeAction extends AbstractRestAction
             $this->logger->warning('Provided Invalid URL.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf(
+                'message' => \sprintf(
                     $this->translator->translate('Provided URL %s is invalid. Try with a different one.'),
                     $longUrl
                 ),
@@ -89,7 +95,7 @@ class CreateShortcodeAction extends AbstractRestAction
             $this->logger->warning('Provided non-unique slug.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf(
+                'message' => \sprintf(
                     $this->translator->translate('Provided slug %s is already in use. Try with a different one.'),
                     $customSlug
                 ),
@@ -103,8 +109,10 @@ class CreateShortcodeAction extends AbstractRestAction
         }
     }
 
-    private function getOptionalDate(array $postData, string $fieldName)
-    {
-        return isset($postData[$fieldName]) ? new \DateTime($postData[$fieldName]) : null;
-    }
+    /**
+     * @param Request $request
+     * @return CreateShortCodeData
+     * @throws InvalidArgumentException
+     */
+    abstract protected function buildUrlToShortCodeData(Request $request): CreateShortCodeData;
 }

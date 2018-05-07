@@ -1,5 +1,15 @@
 ## CHANGELOG
 
+### 1.9.0
+
+**Features**
+
+* [147: Allow short URLs to be created on the fly with query param authentication](https://github.com/shlinkio/shlink/issues/147)
+
+**Bugs:**
+
+* [139: Make sure all core actions log exceptions](https://github.com/shlinkio/shlink/issues/139)
+
 ### 1.8.1
 
 **Tasks**
