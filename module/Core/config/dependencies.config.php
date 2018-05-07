@@ -6,7 +6,7 @@ use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Action;
 use Shlinkio\Shlink\Core\Middleware;
 use Shlinkio\Shlink\Core\Options;
-use Shlinkio\Shlink\Core\Response\NotFoundDelegate;
+use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Shlinkio\Shlink\Core\Service;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Template\TemplateRendererInterface;
@@ -17,7 +17,7 @@ return [
     'dependencies' => [
         'factories' => [
             Options\AppOptions::class => Options\AppOptionsFactory::class,
-            NotFoundDelegate::class => ConfigAbstractFactory::class,
+            NotFoundHandler::class => ConfigAbstractFactory::class,
 
             // Services
             Service\UrlShortener::class => ConfigAbstractFactory::class,
@@ -33,14 +33,10 @@ return [
             Action\PreviewAction::class => ConfigAbstractFactory::class,
             Middleware\QrCodeCacheMiddleware::class => ConfigAbstractFactory::class,
         ],
-
-        'aliases' => [
-            'Zend\Expressive\Delegate\DefaultDelegate' => NotFoundDelegate::class,
-        ],
     ],
 
     ConfigAbstractFactory::class => [
-        NotFoundDelegate::class => [TemplateRendererInterface::class],
+        NotFoundHandler::class => [TemplateRendererInterface::class],
 
         // Services
         Service\UrlShortener::class => [
@@ -60,14 +56,16 @@ return [
             Service\UrlShortener::class,
             Service\VisitsTracker::class,
             Options\AppOptions::class,
+            'Logger_Shlink',
         ],
         Action\PixelAction::class => [
             Service\UrlShortener::class,
             Service\VisitsTracker::class,
             Options\AppOptions::class,
+            'Logger_Shlink',
         ],
         Action\QrCodeAction::class => [RouterInterface::class, Service\UrlShortener::class, 'Logger_Shlink'],
-        Action\PreviewAction::class => [PreviewGenerator::class, Service\UrlShortener::class],
+        Action\PreviewAction::class => [PreviewGenerator::class, Service\UrlShortener::class, 'Logger_Shlink'],
         Middleware\QrCodeCacheMiddleware::class => [Cache::class],
     ],
 

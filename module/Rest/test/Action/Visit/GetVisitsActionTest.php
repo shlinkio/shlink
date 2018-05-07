@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\Action;
+namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -9,7 +9,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
-use Shlinkio\Shlink\Rest\Action\GetVisitsAction;
+use Shlinkio\Shlink\Rest\Action\Visit\GetVisitsAction;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 

@@ -12,6 +12,9 @@ use Zend\Diactoros\Response\EmptyResponse;
 
 class DeleteTagsAction extends AbstractRestAction
 {
+    protected const ROUTE_PATH = '/tags';
+    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_DELETE];
+
     /**
      * @var TagServiceInterface
      */

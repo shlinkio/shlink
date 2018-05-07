@@ -10,7 +10,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\JWTServiceInterface;
 use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
@@ -35,14 +34,20 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeIn
      * @var LoggerInterface
      */
     private $logger;
+    /**
+     * @var array
+     */
+    private $routesWhitelist;
 
     public function __construct(
         JWTServiceInterface $jwtService,
         TranslatorInterface $translator,
+        array $routesWhitelist,
         LoggerInterface $logger = null
     ) {
         $this->translator = $translator;
         $this->jwtService = $jwtService;
+        $this->routesWhitelist = $routesWhitelist;
         $this->logger = $logger ?: new NullLogger();
     }
 
@@ -64,8 +69,8 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeIn
         $routeResult = $request->getAttribute(RouteResult::class);
         if ($routeResult === null
             || $routeResult->isFailure()
-            || $routeResult->getMatchedRouteName() === AuthenticateAction::class
             || $request->getMethod() === 'OPTIONS'
+            || \in_array($routeResult->getMatchedRouteName(), $this->routesWhitelist, true)
         ) {
             return $handler->handle($request);
         }

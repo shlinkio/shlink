@@ -37,9 +37,11 @@ class CheckAuthenticationMiddlewareTest extends TestCase
     public function setUp()
     {
         $this->jwtService = $this->prophesize(JWTService::class);
-        $this->middleware = new CheckAuthenticationMiddleware($this->jwtService->reveal(), Translator::factory([]));
-        $this->dummyMiddleware = middleware(function ($request, $handler) {
-            return new Response\EmptyResponse;
+        $this->middleware = new CheckAuthenticationMiddleware($this->jwtService->reveal(), Translator::factory([]), [
+            AuthenticateAction::class,
+        ]);
+        $this->dummyMiddleware = middleware(function () {
+            return new Response\EmptyResponse();
         });
     }
 
