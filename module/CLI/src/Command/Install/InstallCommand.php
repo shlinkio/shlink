@@ -18,6 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Zend\Config\Writer\WriterInterface;
 
 class InstallCommand extends Command
@@ -48,6 +49,14 @@ class InstallCommand extends Command
      * @var bool
      */
     private $isUpdate;
+    /**
+     * @var PhpExecutableFinder
+     */
+    private $phpFinder;
+    /**
+     * @var string|bool
+     */
+    private $phpBinary;
 
     /**
      * InstallCommand constructor.
@@ -55,22 +64,25 @@ class InstallCommand extends Command
      * @param Filesystem $filesystem
      * @param ConfigCustomizerManagerInterface $configCustomizers
      * @param bool $isUpdate
+     * @param PhpExecutableFinder|null $phpFinder
      * @throws LogicException
      */
     public function __construct(
         WriterInterface $configWriter,
         Filesystem $filesystem,
         ConfigCustomizerManagerInterface $configCustomizers,
-        $isUpdate = false
+        bool $isUpdate = false,
+        PhpExecutableFinder $phpFinder = null
     ) {
         parent::__construct();
         $this->configWriter = $configWriter;
         $this->isUpdate = $isUpdate;
         $this->filesystem = $filesystem;
         $this->configCustomizers = $configCustomizers;
+        $this->phpFinder = $phpFinder ?: new PhpExecutableFinder();
     }
 
-    public function configure()
+    protected function configure(): void
     {
         $this
             ->setName('shlink:install')
@@ -84,7 +96,7 @@ class InstallCommand extends Command
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $this->io = new SymfonyStyle($input, $output);
 
@@ -133,8 +145,8 @@ class InstallCommand extends Command
         // If current command is not update, generate database
         if (!  $this->isUpdate) {
             $this->io->write('Initializing database...');
-            if (! $this->runCommand(
-                'php vendor/doctrine/orm/bin/doctrine.php orm:schema-tool:create',
+            if (! $this->runPhpCommand(
+                'vendor/doctrine/orm/bin/doctrine.php orm:schema-tool:create',
                 'Error generating database.',
                 $output
             )) {
@@ -144,8 +156,8 @@ class InstallCommand extends Command
 
         // Run database migrations
         $this->io->write('Updating database...');
-        if (! $this->runCommand(
-            'php vendor/doctrine/migrations/bin/doctrine-migrations.php migrations:migrate',
+        if (! $this->runPhpCommand(
+            'vendor/doctrine/migrations/bin/doctrine-migrations.php migrations:migrate',
             'Error updating database.',
             $output
         )) {
@@ -154,8 +166,8 @@ class InstallCommand extends Command
 
         // Generate proxies
         $this->io->write('Generating proxies...');
-        if (! $this->runCommand(
-            'php vendor/doctrine/orm/bin/doctrine.php orm:generate-proxies',
+        if (! $this->runPhpCommand(
+            'vendor/doctrine/orm/bin/doctrine.php orm:generate-proxies',
             'Error generating proxies.',
             $output
         )) {
@@ -213,23 +225,27 @@ class InstallCommand extends Command
      * @throws LogicException
      * @throws InvalidArgumentException
      */
-    private function runCommand($command, $errorMessage, OutputInterface $output): bool
+    private function runPhpCommand($command, $errorMessage, OutputInterface $output): bool
     {
         if ($this->processHelper === null) {
             $this->processHelper = $this->getHelper('process');
         }
 
-        $process = $this->processHelper->run($output, $command);
+        if ($this->phpBinary === null) {
+            $this->phpBinary = $this->phpFinder->find(false) ?: 'php';
+        }
+
+        $this->io->writeln('Running "' . sprintf('%s %s', $this->phpBinary, $command) . '"');
+        $process = $this->processHelper->run($output, sprintf('%s %s', $this->phpBinary, $command));
         if ($process->isSuccessful()) {
             $this->io->writeln(' <info>Success!</info>');
             return true;
         }
 
-        if ($this->io->isVerbose()) {
-            return false;
+        if (! $this->io->isVerbose()) {
+            $this->io->error($errorMessage . '  Run this command with -vvv to see specific error info.');
         }
 
-        $this->io->error($errorMessage . '  Run this command with -vvv to see specific error info.');
         return false;
     }
 }

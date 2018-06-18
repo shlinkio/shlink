@@ -1,5 +1,16 @@
 ## CHANGELOG
 
+### 1.9.1
+
+**Bugs:**
+
+* [154: When filtering by searchTerm, sizes of every result page has an unexpected behavior](https://github.com/shlinkio/shlink/issues/154)
+* [157: Background commands executed by installation process do not respect the used php binary](https://github.com/shlinkio/shlink/issues/157)
+
+**Enhancements:**
+
+* [155: Improve the pagination object returned in lists, including more meaningful properties](https://github.com/shlinkio/shlink/issues/155)
+
 ### 1.9.0
 
 **Features**
