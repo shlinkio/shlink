@@ -116,7 +116,10 @@
                             ],
                             "pagination": {
                                 "currentPage": 5,
-                                "pagesCount": 12
+                                "pagesCount": 12,
+                                "itemsPerPage": 10,
+                                "itemsInCurrentPage": 10,
+                                "totalItems": 115
                             }
                         }
                     }

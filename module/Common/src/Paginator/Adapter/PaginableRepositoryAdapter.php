@@ -8,7 +8,7 @@ use Zend\Paginator\Adapter\AdapterInterface;
 
 class PaginableRepositoryAdapter implements AdapterInterface
 {
-    const ITEMS_PER_PAGE = 10;
+    public const ITEMS_PER_PAGE = 10;
 
     /**
      * @var PaginableRepositoryInterface
@@ -34,7 +34,7 @@ class PaginableRepositoryAdapter implements AdapterInterface
         $orderBy = null
     ) {
         $this->paginableRepository = $paginableRepository;
-        $this->searchTerm = $searchTerm !== null ? trim(strip_tags($searchTerm)) : null;
+        $this->searchTerm = $searchTerm !== null ? \trim(\strip_tags($searchTerm)) : null;
         $this->orderBy = $orderBy;
         $this->tags = $tags;
     }
@@ -46,7 +46,7 @@ class PaginableRepositoryAdapter implements AdapterInterface
      * @param  int $itemCountPerPage Number of items per page
      * @return array
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems($offset, $itemCountPerPage): array
     {
         return $this->paginableRepository->findList(
             $itemCountPerPage,
@@ -66,7 +66,7 @@ class PaginableRepositoryAdapter implements AdapterInterface
      * The return value is cast to an integer.
      * @since 5.1.0
      */
-    public function count()
+    public function count(): int
     {
         return $this->paginableRepository->countList($this->searchTerm, $this->tags);
     }

@@ -15,6 +15,7 @@ use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Zend\Config\Writer\WriterInterface;
 
@@ -55,6 +56,9 @@ class InstallCommandTest extends TestCase
         $configCustomizers = $this->prophesize(ConfigCustomizerManagerInterface::class);
         $configCustomizers->get(Argument::cetera())->willReturn($configCustomizer->reveal());
 
+        $finder = $this->prophesize(PhpExecutableFinder::class);
+        $finder->find(false)->willReturn('php');
+
         $app = new Application();
         $helperSet = $app->getHelperSet();
         $helperSet->set($processHelper->reveal());
@@ -62,7 +66,9 @@ class InstallCommandTest extends TestCase
         $this->command = new InstallCommand(
             $this->configWriter->reveal(),
             $this->filesystem->reveal(),
-            $configCustomizers->reveal()
+            $configCustomizers->reveal(),
+            false,
+            $finder->reveal()
         );
         $app->add($this->command);
 
