@@ -25,7 +25,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         $orderBy = null
     ): array {
         $qb = $this->createListQueryBuilder($searchTerm, $tags);
-        $qb->select('s');
+        $qb->select('DISTINCT s');
 
         // Set limit and offset
         if ($limit !== null) {
@@ -47,17 +47,17 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
 
     protected function processOrderByForList(QueryBuilder $qb, $orderBy)
     {
-        $fieldName = is_array($orderBy) ? key($orderBy) : $orderBy;
-        $order = is_array($orderBy) ? $orderBy[$fieldName] : 'ASC';
+        $fieldName = \is_array($orderBy) ? \key($orderBy) : $orderBy;
+        $order = \is_array($orderBy) ? $orderBy[$fieldName] : 'ASC';
 
-        if (in_array($fieldName, ['visits', 'visitsCount', 'visitCount'], true)) {
+        if (\in_array($fieldName, ['visits', 'visitsCount', 'visitCount'], true)) {
             $qb->addSelect('COUNT(v) AS totalVisits')
                ->leftJoin('s.visits', 'v')
                ->groupBy('s')
                ->orderBy('totalVisits', $order);
 
-            return array_column($qb->getQuery()->getResult(), 0);
-        } elseif (in_array($fieldName, ['originalUrl', 'shortCode', 'dateCreated'], true)) {
+            return \array_column($qb->getQuery()->getResult(), 0);
+        } elseif (\in_array($fieldName, ['originalUrl', 'shortCode', 'dateCreated'], true)) {
             $qb->orderBy('s.' . $fieldName, $order);
         }
 
@@ -74,7 +74,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
     public function countList(string $searchTerm = null, array $tags = []): int
     {
         $qb = $this->createListQueryBuilder($searchTerm, $tags);
-        $qb->select('COUNT(s)');
+        $qb->select('COUNT(DISTINCT s)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
@@ -92,7 +92,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
 
         // Apply search term to every searchable field if not empty
         if (! empty($searchTerm)) {
-            $qb->join('s.tags', 't');
+            $qb->leftJoin('s.tags', 't');
 
             $conditions = [
                 $qb->expr()->like('s.originalUrl', ':searchPattern'),
@@ -102,8 +102,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
 
             // Unpack and apply search conditions
             $qb->andWhere($qb->expr()->orX(...$conditions));
-            $searchTerm = '%' . $searchTerm . '%';
-            $qb->setParameter('searchPattern', $searchTerm);
+            $qb->setParameter('searchPattern', '%' . $searchTerm . '%');
         }
 
         // Filter by tags if provided
@@ -119,7 +118,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
      * @param string $shortCode
      * @return ShortUrl|null
      */
-    public function findOneByShortCode(string $shortCode)
+    public function findOneByShortCode(string $shortCode): ?ShortUrl
     {
         $now = new \DateTimeImmutable();
 
