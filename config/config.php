@@ -24,6 +24,9 @@ return (new ConfigAggregator\ConfigAggregator([
     Expressive\Router\FastRouteRouter\ConfigProvider::class,
     Expressive\Plates\ConfigProvider::class,
     Expressive\Helper\ConfigProvider::class,
+    \class_exists(Expressive\Swoole\ConfigProvider::class)
+        ? Expressive\Swoole\ConfigProvider::class
+        : new ConfigAggregator\ArrayProvider([]),
     ExpressiveErrorHandler\ConfigProvider::class,
     Common\ConfigProvider::class,
     Core\ConfigProvider::class,
