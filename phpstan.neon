@@ -2,3 +2,5 @@ parameters:
 	excludes_analyse:
 		- module/Common/src/Template/Extension/TranslatorExtension.php
 		- module/Rest/src/Util/RestUtils.php
+	ignoreErrors:
+		- '#is not subtype of Throwable#'
