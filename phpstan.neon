@@ -4,3 +4,4 @@ parameters:
 		- module/Rest/src/Util/RestUtils.php
 	ignoreErrors:
 		- '#is not subtype of Throwable#'
+		- '#Cannot access offset#'
