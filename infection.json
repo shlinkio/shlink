@@ -14,5 +14,9 @@
     "tmpDir": "build/infection/temp",
     "phpUnit": {
         "configDir": "."
+    },
+    "mutators": {
+        "@default": true,
+        "IdenticalEqual": false
     }
 }

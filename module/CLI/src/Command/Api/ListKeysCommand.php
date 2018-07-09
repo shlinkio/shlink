@@ -14,7 +14,11 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class ListKeysCommand extends Command
 {
-    const NAME = 'api-key:list';
+    private const ERROR_STRING_PATTERN = '<fg=red>%s</>';
+    private const SUCCESS_STRING_PATTERN = '<info>%s</info>';
+    private const WARNING_STRING_PATTERN = '<comment>%s</comment>';
+
+    public const NAME = 'api-key:list';
 
     /**
      * @var ApiKeyServiceInterface
@@ -55,59 +59,32 @@ class ListKeysCommand extends Command
         foreach ($list as $row) {
             $key = $row->getKey();
             $expiration = $row->getExpirationDate();
-            $formatMethod = $this->determineFormatMethod($row);
+            $messagePattern = $this->determineMessagePattern($row);
 
             // Set columns for this row
-            $rowData = [$formatMethod($key)];
+            $rowData = [\sprintf($messagePattern, $key)];
             if (! $enabledOnly) {
-                $rowData[] = $formatMethod($this->getEnabledSymbol($row));
+                $rowData[] = \sprintf($messagePattern, $this->getEnabledSymbol($row));
             }
             $rowData[] = $expiration !== null ? $expiration->format(\DateTime::ATOM) : '-';
 
             $rows[] = $rowData;
         }
 
-        $io->table(array_filter([
+        $io->table(\array_filter([
             $this->translator->translate('Key'),
             ! $enabledOnly ? $this->translator->translate('Is enabled') : null,
             $this->translator->translate('Expiration date'),
         ]), $rows);
     }
 
-    private function determineFormatMethod(ApiKey $apiKey): callable
+    private function determineMessagePattern(ApiKey $apiKey): string
     {
         if (! $apiKey->isEnabled()) {
-            return [$this, 'getErrorString'];
+            return self::ERROR_STRING_PATTERN;
         }
 
-        return $apiKey->isExpired() ? [$this, 'getWarningString'] : [$this, 'getSuccessString'];
-    }
-
-    /**
-     * @param string $value
-     * @return string
-     */
-    private function getErrorString(string $value): string
-    {
-        return sprintf('<fg=red>%s</>', $value);
-    }
-
-    /**
-     * @param string $value
-     * @return string
-     */
-    private function getSuccessString(string $value): string
-    {
-        return sprintf('<info>%s</info>', $value);
-    }
-
-    /**
-     * @param string $value
-     * @return string
-     */
-    private function getWarningString(string $value): string
-    {
-        return sprintf('<comment>%s</comment>', $value);
+        return $apiKey->isExpired() ? self::WARNING_STRING_PATTERN : self::SUCCESS_STRING_PATTERN;
     }
 
     /**

@@ -26,7 +26,7 @@ class PixelResponse extends Response
     private function createBody(): StreamInterface
     {
         $body = new Stream('php://temp', 'wb+');
-        $body->write(\base64_decode(self::BASE_64_IMAGE));
+        $body->write((string) \base64_decode(self::BASE_64_IMAGE));
         $body->rewind();
         return $body;
     }
