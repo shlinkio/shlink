@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.9.1
+## 1.9.1 - 2018-06-18
 
 #### Added
 
@@ -49,7 +49,7 @@
 * [#157](https://github.com/shlinkio/shlink/issues/157) Background commands executed by installation process now respect the originally used php binary
 
 
-## 1.9.0
+## 1.9.0 - 2018-05-07
 
 #### Added
 
@@ -76,7 +76,7 @@
 * [#139](https://github.com/shlinkio/shlink/issues/139) Ensured all core actions log exceptions
 
 
-## 1.8.1
+## 1.8.1 - 2018-04-07
 
 #### Added
 
@@ -99,7 +99,7 @@
 * [#140](https://github.com/shlinkio/shlink/issues/140) Fixed warning thrown during installation while trying to include doctrine script
 
 
-## 1.8.0
+## 1.8.0 - 2018-03-29
 
 #### Added
 
@@ -127,7 +127,7 @@
 * *Nothing*
 
 
-## 1.7.2
+## 1.7.2 - 2018-03-26
 
 #### Added
 
@@ -150,7 +150,7 @@
 * [#135](https://github.com/shlinkio/shlink/issues/135) Fixed `PathVersionMiddleware` being ignored when using expressive 2.2
 
 
-## 1.7.1
+## 1.7.1 - 2018-03-21
 
 #### Added
 
@@ -175,7 +175,7 @@
 * [#126](https://github.com/shlinkio/shlink/issues/126) Fixed `E_USER_DEPRECATED` errors triggered when using Expressive 2.2
 
 
-## 1.7.0
+## 1.7.0 - 2018-01-21
 
 #### Added
 
@@ -203,7 +203,7 @@
 * *Nothing*
 
 
-## 1.6.2
+## 1.6.2 - 2017-10-25
 
 #### Added
 
@@ -226,7 +226,7 @@
 * [#109](https://github.com/shlinkio/shlink/issues/109) Fixed installation error due to typo in latest migration
 
 
-## 1.6.1
+## 1.6.1 - 2017-10-24
 
 #### Added
 
@@ -249,7 +249,7 @@
 * *Nothing*
 
 
-## 1.6.0
+## 1.6.0 - 2017-10-23
 
 #### Added
 
@@ -280,7 +280,7 @@
 * [#103](https://github.com/shlinkio/shlink/issues/103) `NotFoundDelegate` now returns proper content types based on accepted content
 
 
-## 1.5.0
+## 1.5.0 - 2017-07-16
 
 #### Added
 
@@ -307,7 +307,7 @@
 * [#92](https://github.com/shlinkio/shlink/issues/92) Fixed formatted dates, using an ISO compliant format
 
 
-## 1.4.0
+## 1.4.0 - 2017-03-25
 
 #### Added
 
@@ -330,7 +330,7 @@
 * *Nothing*
 
 
-## 1.3.1
+## 1.3.1 - 2017-01-22
 
 #### Added
 
@@ -358,7 +358,7 @@
 * [#77](https://github.com/shlinkio/shlink/issues/77) Allowed defining database server hostname and port
 
 
-## 1.3.0
+## 1.3.0 - 2016-10-23
 
 #### Added
 
@@ -387,7 +387,7 @@
 * *Nothing*
 
 
-## 1.2.2
+## 1.2.2 - 2016-08-29
 
 #### Added
 
@@ -410,7 +410,7 @@
 * Fixed minor bugs on CORS requests
 
 
-## 1.2.1
+## 1.2.1 - 2016-08-21
 
 #### Added
 
@@ -433,7 +433,7 @@
 * [#62](https://github.com/shlinkio/shlink/issues/62) Fixed cross-domain requests in REST API
 
 
-## 1.2.0
+## 1.2.0 - 2016-08-21
 
 #### Added
 
@@ -464,7 +464,7 @@
 * [#52](https://github.com/shlinkio/shlink/issues/52) Added missing htaccess file for apache environments
 
 
-## 1.1.0
+## 1.1.0 - 2016-08-09
 
 #### Added
 
@@ -496,7 +496,7 @@
 * [#40](https://github.com/shlinkio/shlink/issues/40) Taken into account the `X-Forwarded-For` header in order to get the visitor information, in case the server is behind a load balancer or proxy
 
 
-## 1.0.0
+## 1.0.0 - 2016-08-01
 
 #### Added
 
@@ -531,7 +531,7 @@
 * [#24](https://github.com/shlinkio/shlink/issues/24) Prevented duplicated short codes errors because of the case insensitive behavior on MySQL
 
 
-## 0.2.0
+## 0.2.0 - 2016-08-01
 
 #### Added
 
