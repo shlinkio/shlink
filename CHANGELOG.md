@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## 1.10.0 - 2018-07-09
+
+#### Added
+
+* [#161](https://github.com/shlinkio/shlink/issues/161) AddED support for shlink to be run with [swoole](https://www.swoole.co.uk/) via [zend-expressive-swoole](https://github.com/zendframework/zend-expressive-swoole) package
+
+#### Changed
+
+* [#159](https://github.com/shlinkio/shlink/issues/159) Updated CHANGELOG to follow the [keep-a-changelog](https://keepachangelog.com) format
+* [#160](https://github.com/shlinkio/shlink/issues/160) Update infection to v0.9 and phpstan to v 0.10
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* *Nothing*
+
+
 ## 1.9.1 - 2018-06-18
 
 #### Added
