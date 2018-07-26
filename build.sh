@@ -47,9 +47,7 @@ rm -rf config/params/{*,.gitignore}
 rm -rf config/autoload/{{,*.}local.php{,.dist},.gitignore}
 
 # Update shlink version in config
-latestShlinkVersion=$(git tag -l --sort=-v:refname | head -n 1)
-computedVersion=${latestShlinkVersion:1:${#latestShlinkVersion}}
-sed -i "s/%SHLINK_VERSION%/${computedVersion}/g" config/autoload/app_options.global.php
+sed -i "s/%SHLINK_VERSION%/${version}/g" config/autoload/app_options.global.php
 
 # Compressing file
 rm -f "${projectdir}"/build/shlink_${version}_dist.zip
