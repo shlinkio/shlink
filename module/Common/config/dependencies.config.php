@@ -32,7 +32,7 @@ return [
 
             Image\ImageBuilder::class => Image\ImageBuilderFactory::class,
 
-            Service\IpLocationResolver::class => ConfigAbstractFactory::class,
+            Service\IpApiLocationResolver::class => ConfigAbstractFactory::class,
             Service\PreviewGenerator::class => ConfigAbstractFactory::class,
         ],
         'aliases' => [
@@ -51,7 +51,7 @@ return [
     ConfigAbstractFactory::class => [
         TranslatorExtension::class => ['translator'],
         LocaleMiddleware::class => ['translator'],
-        Service\IpLocationResolver::class => ['httpClient'],
+        Service\IpApiLocationResolver::class => ['httpClient'],
         Service\PreviewGenerator::class => [
             ImageBuilder::class,
             Filesystem::class,
