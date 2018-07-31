@@ -12,13 +12,13 @@ interface TagServiceInterface
     /**
      * @return Tag[]
      */
-    public function listTags();
+    public function listTags(): array;
 
     /**
      * @param string[] $tagNames
      * @return void
      */
-    public function deleteTags(array $tagNames);
+    public function deleteTags(array $tagNames): void;
 
     /**
      * Provided a list of tag names, creates all that do not exist yet
@@ -26,7 +26,7 @@ interface TagServiceInterface
      * @param string[] $tagNames
      * @return Collection|Tag[]
      */
-    public function createTags(array $tagNames);
+    public function createTags(array $tagNames): Collection;
 
     /**
      * @param string $oldName
@@ -34,5 +34,5 @@ interface TagServiceInterface
      * @return Tag
      * @throws EntityDoesNotExistException
      */
-    public function renameTag($oldName, $newName);
+    public function renameTag($oldName, $newName): Tag;
 }
