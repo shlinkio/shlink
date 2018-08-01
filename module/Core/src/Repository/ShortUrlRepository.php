@@ -57,10 +57,11 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
                ->orderBy('totalVisits', $order);
 
             return \array_column($qb->getQuery()->getResult(), 0);
-        } elseif (\in_array($fieldName, ['originalUrl', 'shortCode', 'dateCreated'], true)) {
-            $qb->orderBy('s.' . $fieldName, $order);
         }
 
+        if (\in_array($fieldName, ['originalUrl', 'shortCode', 'dateCreated'], true)) {
+            $qb->orderBy('s.' . $fieldName, $order);
+        }
         return $qb->getQuery()->getResult();
     }
 
