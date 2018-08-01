@@ -29,7 +29,7 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
      *     name="short_code",
      *     type="string",
      *     nullable=false,
-     *     length=10,
+     *     length=255,
      *     unique=true
      * )
      */
