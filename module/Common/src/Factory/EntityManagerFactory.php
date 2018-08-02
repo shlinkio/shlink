@@ -23,8 +23,7 @@ class EntityManagerFactory implements FactoryInterface
      * @param  null|array $options
      * @return object
      * @throws ServiceNotFoundException if unable to resolve the service.
-     * @throws ServiceNotCreatedException if an exception is raised when
-     *     creating a service.
+     * @throws ServiceNotCreatedException if an exception is raised when creating a service.
      * @throws ContainerException if any other error occurs
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
@@ -32,14 +31,14 @@ class EntityManagerFactory implements FactoryInterface
         $globalConfig = $container->get('config');
         $isDevMode = isset($globalConfig['debug']) ? ((bool) $globalConfig['debug']) : false;
         $cache = $container->has(Cache::class) ? $container->get(Cache::class) : new ArrayCache();
-        $emConfig = isset($globalConfig['entity_manager']) ? $globalConfig['entity_manager'] : [];
-        $connecitonConfig = isset($emConfig['connection']) ? $emConfig['connection'] : [];
-        $ormConfig = isset($emConfig['orm']) ? $emConfig['orm'] : [];
+        $emConfig = $globalConfig['entity_manager'] ?? [];
+        $connectionConfig = $emConfig['connection'] ?? [];
+        $ormConfig = $emConfig['orm'] ?? [];
 
-        return EntityManager::create($connecitonConfig, Setup::createAnnotationMetadataConfiguration(
-            isset($ormConfig['entities_paths']) ? $ormConfig['entities_paths'] : [],
+        return EntityManager::create($connectionConfig, Setup::createAnnotationMetadataConfiguration(
+            $ormConfig['entities_paths'] ?? [],
             $isDevMode,
-            isset($ormConfig['proxies_dir']) ? $ormConfig['proxies_dir'] : null,
+            $ormConfig['proxies_dir'] ?? null,
             $cache,
             false
         ));

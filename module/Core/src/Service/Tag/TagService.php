@@ -28,16 +28,18 @@ class TagService implements TagServiceInterface
      * @return Tag[]
      * @throws \UnexpectedValueException
      */
-    public function listTags()
+    public function listTags(): array
     {
-        return $this->em->getRepository(Tag::class)->findBy([], ['name' => 'ASC']);
+        /** @var Tag[] $tags */
+        $tags = $this->em->getRepository(Tag::class)->findBy([], ['name' => 'ASC']);
+        return $tags;
     }
 
     /**
      * @param array $tagNames
      * @return void
      */
-    public function deleteTags(array $tagNames)
+    public function deleteTags(array $tagNames): void
     {
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
@@ -50,7 +52,7 @@ class TagService implements TagServiceInterface
      * @param string[] $tagNames
      * @return Collection|Tag[]
      */
-    public function createTags(array $tagNames)
+    public function createTags(array $tagNames): Collection
     {
         $tags = $this->tagNamesToEntities($this->em, $tagNames);
         $this->em->flush();
@@ -65,7 +67,7 @@ class TagService implements TagServiceInterface
      * @throws EntityDoesNotExistException
      * @throws ORM\OptimisticLockException
      */
-    public function renameTag($oldName, $newName)
+    public function renameTag($oldName, $newName): Tag
     {
         $criteria = ['name' => $oldName];
         /** @var Tag|null $tag */

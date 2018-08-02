@@ -78,19 +78,34 @@ final class ShortUrlMeta
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
-        $this->validSince = $inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE);
-        $this->validSince = $this->validSince !== null ? new \DateTime($this->validSince) : null;
-        $this->validUntil = $inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL);
-        $this->validUntil = $this->validUntil !== null ? new \DateTime($this->validUntil) : null;
+        $this->validSince = $this->parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
+        $this->validUntil = $this->parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
         $this->maxVisits = $inputFilter->getValue(ShortUrlMetaInputFilter::MAX_VISITS);
         $this->maxVisits = $this->maxVisits !== null ? (int) $this->maxVisits : null;
     }
 
     /**
+     * @param string|\DateTime|null $date
      * @return \DateTime|null
      */
-    public function getValidSince()
+    private function parseDateField($date): ?\DateTime
+    {
+        if ($date === null || $date instanceof \DateTime) {
+            return $date;
+        }
+
+        if (\is_string($date)) {
+            return new \DateTime($date);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getValidSince(): ?\DateTime
     {
         return $this->validSince;
     }
@@ -103,7 +118,7 @@ final class ShortUrlMeta
     /**
      * @return \DateTime|null
      */
-    public function getValidUntil()
+    public function getValidUntil(): ?\DateTime
     {
         return $this->validUntil;
     }

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 use Shlinkio\Shlink\CLI\Command;
 use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
-use Shlinkio\Shlink\Common\Service\IpLocationResolver;
+use Shlinkio\Shlink\Common\Service\IpApiLocationResolver;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
@@ -51,7 +51,7 @@ return [
         ],
         Command\Visit\ProcessVisitsCommand::class => [
             Service\VisitService::class,
-            IpLocationResolver::class,
+            IpApiLocationResolver::class,
             'translator',
         ],
         Command\Config\GenerateCharsetCommand::class => ['translator'],

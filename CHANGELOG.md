@@ -1,5 +1,35 @@
 # CHANGELOG
 
+## 1.10.1 - 2018-08-02
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* [#167](https://github.com/shlinkio/shlink/issues/167) Shlink version is now set at build time to avoid older version numbers to be kept in newer builds.
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#165](https://github.com/shlinkio/shlink/issues/165) Fixed custom slugs failing when they are longer than 10 characters.
+* [#166](https://github.com/shlinkio/shlink/issues/166) Fixed unusual edge case in which visits were not properly counted when ordering by visit and filtering by search term in `[GET] /short-codes` API endpoint.
+* [#174](https://github.com/shlinkio/shlink/issues/174) Fixed geolocation not working due to a deprecation on used service.
+* [#172](https://github.com/shlinkio/shlink/issues/172) Documented missing filtering params for `[GET] /short-codes/{shortCode}/visits` API endpoint, which allow the list to be filtered by date range.
+
+    For example: `https://doma.in/rest/v1/short-urls/abc123/visits?startDate=2017-05-23&endDate=2017-10-05`
+
+* [#169](https://github.com/shlinkio/shlink/issues/169) Fixed unhandled error when parsing `ShortUrlMeta` and date fields are already `DateTime` instances.
+
+
 ## 1.10.0 - 2018-07-09
 
 #### Added

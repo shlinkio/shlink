@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -52,7 +53,7 @@ class CreateTagCommandTest extends TestCase
     {
         $tagNames = ['foo', 'bar'];
         /** @var MethodProphecy $createTags */
-        $createTags = $this->tagService->createTags($tagNames)->willReturn([]);
+        $createTags = $this->tagService->createTags($tagNames)->willReturn(new ArrayCollection());
 
         $this->commandTester->execute([
             '--name' => $tagNames,

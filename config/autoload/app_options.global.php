@@ -7,7 +7,7 @@ return [
 
     'app_options' => [
         'name' => 'Shlink',
-        'version' => '1.7.0',
+        'version' => '%SHLINK_VERSION%',
         'secret_key' => env('SECRET_KEY'),
     ],
 

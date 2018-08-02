@@ -15,8 +15,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class ProcessVisitsCommand extends Command
 {
-    const LOCALHOST = '127.0.0.1';
-    const NAME = 'visit:process';
+    private const LOCALHOST = '127.0.0.1';
+    public const NAME = 'visit:process';
 
     /**
      * @var VisitServiceInterface
@@ -57,10 +57,10 @@ class ProcessVisitsCommand extends Command
 
         foreach ($visits as $visit) {
             $ipAddr = $visit->getRemoteAddr();
-            $io->write(sprintf('%s <info>%s</info>', $this->translator->translate('Processing IP'), $ipAddr));
+            $io->write(\sprintf('%s <info>%s</info>', $this->translator->translate('Processing IP'), $ipAddr));
             if ($ipAddr === self::LOCALHOST) {
                 $io->writeln(
-                    sprintf(' (<comment>%s</comment>)', $this->translator->translate('Ignored localhost address'))
+                    \sprintf(' (<comment>%s</comment>)', $this->translator->translate('Ignored localhost address'))
                 );
                 continue;
             }
@@ -73,12 +73,17 @@ class ProcessVisitsCommand extends Command
                 $visit->setVisitLocation($location);
                 $this->visitService->saveVisit($visit);
 
-                $io->writeln(sprintf(
+                $io->writeln(\sprintf(
                     ' (' . $this->translator->translate('Address located at "%s"') . ')',
                     $location->getCityName()
                 ));
             } catch (WrongIpException $e) {
-                continue;
+                $io->writeln(
+                    \sprintf(' <error>%s</error>', $this->translator->translate('An error occurred while locating IP'))
+                );
+                if ($io->isVerbose()) {
+                    $this->getApplication()->renderException($e, $output);
+                }
             }
         }
 
