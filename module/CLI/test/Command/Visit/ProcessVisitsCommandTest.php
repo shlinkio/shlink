@@ -33,6 +33,8 @@ class ProcessVisitsCommandTest extends TestCase
     {
         $this->visitService = $this->prophesize(VisitService::class);
         $this->ipResolver = $this->prophesize(IpApiLocationResolver::class);
+        $this->ipResolver->getApiLimit()->willReturn(10000000000);
+
         $command = new ProcessVisitsCommand(
             $this->visitService->reveal(),
             $this->ipResolver->reveal(),
