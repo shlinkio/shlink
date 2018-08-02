@@ -38,7 +38,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $bar = new ShortUrl();
         $bar->setOriginalUrl('bar')
-            ->setShortCode('bar')
+            ->setShortCode('bar_very_long_text')
             ->setValidSince((new \DateTime())->add(new \DateInterval('P1M')));
         $this->getEntityManager()->persist($bar);
 

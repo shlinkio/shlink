@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Api\GenerateKeyCommand;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -37,7 +38,8 @@ class GenerateKeyCommandTest extends TestCase
      */
     public function noExpirationDateIsDefinedIfNotProvided()
     {
-        $this->apiKeyService->create(null)->shouldBeCalledTimes(1);
+        $this->apiKeyService->create(null)->shouldBeCalledTimes(1)
+                                          ->willReturn(new ApiKey());
         $this->commandTester->execute([
             'command' => 'api-key:generate',
         ]);
@@ -46,9 +48,10 @@ class GenerateKeyCommandTest extends TestCase
     /**
      * @test
      */
-    public function expirationDateIsDefinedIfWhenProvided()
+    public function expirationDateIsDefinedIfProvided()
     {
-        $this->apiKeyService->create(Argument::type(\DateTime::class))->shouldBeCalledTimes(1);
+        $this->apiKeyService->create(Argument::type(\DateTime::class))->shouldBeCalledTimes(1)
+                                                                      ->willReturn(new ApiKey());
         $this->commandTester->execute([
             'command' => 'api-key:generate',
             '--expirationDate' => '2016-01-01',

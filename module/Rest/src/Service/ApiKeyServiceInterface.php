@@ -14,7 +14,7 @@ interface ApiKeyServiceInterface
      * @param \DateTime $expirationDate
      * @return ApiKey
      */
-    public function create(\DateTime $expirationDate = null);
+    public function create(\DateTime $expirationDate = null): ApiKey;
 
     /**
      * Checks if provided key is a valid api key
@@ -22,7 +22,7 @@ interface ApiKeyServiceInterface
      * @param string $key
      * @return bool
      */
-    public function check(string $key);
+    public function check(string $key): bool;
 
     /**
      * Disables provided api key
@@ -31,7 +31,7 @@ interface ApiKeyServiceInterface
      * @return ApiKey
      * @throws InvalidArgumentException
      */
-    public function disable(string $key);
+    public function disable(string $key): ApiKey;
 
     /**
      * Lists all existing api keys
@@ -39,7 +39,7 @@ interface ApiKeyServiceInterface
      * @param bool $enabledOnly Tells if only enabled keys should be returned
      * @return ApiKey[]
      */
-    public function listKeys(bool $enabledOnly = false);
+    public function listKeys(bool $enabledOnly = false): array;
 
     /**
      * Tries to find one API key by its key string
@@ -47,5 +47,5 @@ interface ApiKeyServiceInterface
      * @param string $key
      * @return ApiKey|null
      */
-    public function getByKey(string $key);
+    public function getByKey(string $key): ?ApiKey;
 }

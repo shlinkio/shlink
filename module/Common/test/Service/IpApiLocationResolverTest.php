@@ -8,12 +8,12 @@ use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Common\Service\IpLocationResolver;
+use Shlinkio\Shlink\Common\Service\IpApiLocationResolver;
 
-class IpLocationResolverTest extends TestCase
+class IpApiLocationResolverTest extends TestCase
 {
     /**
-     * @var IpLocationResolver
+     * @var IpApiLocationResolver
      */
     protected $ipResolver;
     /**
@@ -24,7 +24,7 @@ class IpLocationResolverTest extends TestCase
     public function setUp()
     {
         $this->client = $this->prophesize(Client::class);
-        $this->ipResolver = new IpLocationResolver($this->client->reveal());
+        $this->ipResolver = new IpApiLocationResolver($this->client->reveal());
     }
 
     /**
@@ -32,16 +32,26 @@ class IpLocationResolverTest extends TestCase
      */
     public function correctIpReturnsDecodedInfo()
     {
+        $actual = [
+            'countryCode' => 'bar',
+            'lat' => 5,
+            'lon' => 10,
+        ];
         $expected = [
-            'foo' => 'bar',
-            'baz' => 'foo',
+            'country_code' => 'bar',
+            'country_name' => '',
+            'region_name' => '',
+            'city' => '',
+            'latitude' => 5,
+            'longitude' => 10,
+            'time_zone' => '',
         ];
         $response = new Response();
-        $response->getBody()->write(json_encode($expected));
+        $response->getBody()->write(\json_encode($actual));
         $response->getBody()->rewind();
 
-        $this->client->get('http://freegeoip.net/json/1.2.3.4')->willReturn($response)
-                                                               ->shouldBeCalledTimes(1);
+        $this->client->get('http://ip-api.com/json/1.2.3.4')->willReturn($response)
+                                                            ->shouldBeCalledTimes(1);
         $this->assertEquals($expected, $this->ipResolver->resolveIpLocation('1.2.3.4'));
     }
 
@@ -51,8 +61,8 @@ class IpLocationResolverTest extends TestCase
      */
     public function guzzleExceptionThrowsShlinkException()
     {
-        $this->client->get('http://freegeoip.net/json/1.2.3.4')->willThrow(new TransferException())
-                                                               ->shouldBeCalledTimes(1);
+        $this->client->get('http://ip-api.com/json/1.2.3.4')->willThrow(new TransferException())
+                                                            ->shouldBeCalledTimes(1);
         $this->ipResolver->resolveIpLocation('1.2.3.4');
     }
 }

@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\ProcessVisitsCommand;
-use Shlinkio\Shlink\Common\Service\IpLocationResolver;
+use Shlinkio\Shlink\Common\Service\IpApiLocationResolver;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Service\VisitService;
 use Symfony\Component\Console\Application;
@@ -32,7 +32,7 @@ class ProcessVisitsCommandTest extends TestCase
     public function setUp()
     {
         $this->visitService = $this->prophesize(VisitService::class);
-        $this->ipResolver = $this->prophesize(IpLocationResolver::class);
+        $this->ipResolver = $this->prophesize(IpApiLocationResolver::class);
         $command = new ProcessVisitsCommand(
             $this->visitService->reveal(),
             $this->ipResolver->reveal(),
