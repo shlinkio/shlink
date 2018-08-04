@@ -93,7 +93,10 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
 
         // Apply search term to every searchable field if not empty
         if (! empty($searchTerm)) {
-            $qb->leftJoin('s.tags', 't');
+            // Left join with tags only if no tags were provided. In case of tags, an inner join will be done later
+            if (empty($tags)) {
+                $qb->leftJoin('s.tags', 't');
+            }
 
             $conditions = [
                 $qb->expr()->like('s.originalUrl', ':searchPattern'),
