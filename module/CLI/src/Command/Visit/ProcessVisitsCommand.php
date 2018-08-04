@@ -55,6 +55,7 @@ class ProcessVisitsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $visits = $this->visitService->getUnlocatedVisits();
 
+        $count = 0;
         foreach ($visits as $visit) {
             $ipAddr = $visit->getRemoteAddr();
             $io->write(\sprintf('%s <info>%s</info>', $this->translator->translate('Processing IP'), $ipAddr));
@@ -65,6 +66,7 @@ class ProcessVisitsCommand extends Command
                 continue;
             }
 
+            $count++;
             try {
                 $result = $this->ipLocationResolver->resolveIpLocation($ipAddr);
 
@@ -84,6 +86,16 @@ class ProcessVisitsCommand extends Command
                 if ($io->isVerbose()) {
                     $this->getApplication()->renderException($e, $output);
                 }
+            }
+
+            if ($count === $this->ipLocationResolver->getApiLimit()) {
+                $count = 0;
+                $seconds = $this->ipLocationResolver->getApiInterval();
+                $io->note(\sprintf(
+                    $this->translator->translate('IP location resolver limit reached. Waiting %s seconds...'),
+                    $seconds
+                ));
+                \sleep($seconds);
             }
         }
 

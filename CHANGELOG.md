@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## 1.10.2 - 2018-08-04
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#177](https://github.com/shlinkio/shlink/issues/177) Fixed `[GET] /short-codes` endpoint returning a 500 status code when trying to filter by `tags` and `searchTerm` at the same time.
+* [#175](https://github.com/shlinkio/shlink/issues/175) Fixed error introduced in previous version, where you could end up banned from the service used to resolve IP address locations.
+
+    In order to fix that, just fill [this form](http://ip-api.com/docs/unban) including your server's IP address and your server should be unbanned.
+    
+    In order to prevent this, after resolving 150 IP addresses, shlink now waits 1 minute before trying to resolve any more addresses.
+
+
 ## 1.10.1 - 2018-08-02
 
 #### Added

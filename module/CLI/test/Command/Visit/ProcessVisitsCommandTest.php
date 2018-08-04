@@ -33,6 +33,8 @@ class ProcessVisitsCommandTest extends TestCase
     {
         $this->visitService = $this->prophesize(VisitService::class);
         $this->ipResolver = $this->prophesize(IpApiLocationResolver::class);
+        $this->ipResolver->getApiLimit()->willReturn(10000000000);
+
         $command = new ProcessVisitsCommand(
             $this->visitService->reveal(),
             $this->ipResolver->reveal(),
@@ -94,5 +96,42 @@ class ProcessVisitsCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
         $this->assertTrue(strpos($output, 'Ignored localhost address') > 0);
+    }
+
+    /**
+     * @test
+     */
+    public function sleepsEveryTimeTheApiLimitIsReached()
+    {
+        $visits = [
+            (new Visit())->setRemoteAddr('1.2.3.4'),
+            (new Visit())->setRemoteAddr('4.3.2.1'),
+            (new Visit())->setRemoteAddr('12.34.56.78'),
+            (new Visit())->setRemoteAddr('1.2.3.4'),
+            (new Visit())->setRemoteAddr('4.3.2.1'),
+            (new Visit())->setRemoteAddr('12.34.56.78'),
+            (new Visit())->setRemoteAddr('1.2.3.4'),
+            (new Visit())->setRemoteAddr('4.3.2.1'),
+            (new Visit())->setRemoteAddr('12.34.56.78'),
+            (new Visit())->setRemoteAddr('4.3.2.1'),
+        ];
+        $apiLimit = 3;
+
+        $this->visitService->getUnlocatedVisits()->willReturn($visits);
+        $this->visitService->saveVisit(Argument::any())->will(function () {
+        });
+
+        $getApiLimit = $this->ipResolver->getApiLimit()->willReturn($apiLimit);
+        $getApiInterval = $this->ipResolver->getApiInterval()->willReturn(0);
+        $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([])
+            ->shouldBeCalledTimes(count($visits));
+
+        $this->commandTester->execute([
+            'command' => 'visit:process',
+        ]);
+
+        $getApiLimit->shouldHaveBeenCalledTimes(\count($visits));
+        $getApiInterval->shouldHaveBeenCalledTimes(\round(\count($visits) / $apiLimit));
+        $resolveIpLocation->shouldHaveBeenCalledTimes(\count($visits));
     }
 }

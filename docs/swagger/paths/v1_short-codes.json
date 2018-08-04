@@ -25,7 +25,7 @@
                 }
             },
             {
-                "name": "tags",
+                "name": "tags[]",
                 "in": "query",
                 "description": "A list of tags used to filter the resultset. Only short URLs tagged with at least one of the provided tags will be returned. (Since v1.3.0)",
                 "required": false,
