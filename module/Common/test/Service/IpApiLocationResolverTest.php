@@ -65,4 +65,20 @@ class IpApiLocationResolverTest extends TestCase
                                                             ->shouldBeCalledTimes(1);
         $this->ipResolver->resolveIpLocation('1.2.3.4');
     }
+
+    /**
+     * @test
+     */
+    public function getApiIntervalReturnsExpectedValue()
+    {
+        $this->assertEquals(65, $this->ipResolver->getApiInterval());
+    }
+
+    /**
+     * @test
+     */
+    public function getApiLimitReturnsExpectedValue()
+    {
+        $this->assertEquals(145, $this->ipResolver->getApiLimit());
+    }
 }
