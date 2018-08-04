@@ -12,7 +12,7 @@ use ShlinkioTest\Shlink\Common\DbUnit\DatabaseTestCase;
 
 class VisitRepositoryTest extends DatabaseTestCase
 {
-    const ENTITIES_TO_EMPTY = [
+    protected const ENTITIES_TO_EMPTY = [
         VisitLocation::class,
         Visit::class,
         ShortUrl::class,

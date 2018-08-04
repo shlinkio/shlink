@@ -5,15 +5,17 @@ namespace ShlinkioTest\Shlink\Core\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use ShlinkioTest\Shlink\Common\DbUnit\DatabaseTestCase;
 
 class ShortUrlRepositoryTest extends DatabaseTestCase
 {
-    const ENTITIES_TO_EMPTY = [
+    protected const ENTITIES_TO_EMPTY = [
         ShortUrl::class,
         Visit::class,
+        Tag::class,
     ];
 
     /**
@@ -78,5 +80,36 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         $this->assertEquals($count, $this->repo->countList());
+    }
+
+    /**
+     * @test
+     */
+    public function findListProperlyFiltersByTagAndSearchTerm()
+    {
+        $tag = new Tag('bar');
+        $this->getEntityManager()->persist($tag);
+
+        $foo = new ShortUrl();
+        $foo->setOriginalUrl('foo')
+            ->setShortCode('foo')
+            ->setTags(new ArrayCollection([$tag]));
+        $this->getEntityManager()->persist($foo);
+
+        $bar = new ShortUrl();
+        $bar->setOriginalUrl('bar')
+            ->setShortCode('bar_very_long_text');
+        $this->getEntityManager()->persist($bar);
+
+        $foo2 = new ShortUrl();
+        $foo2->setOriginalUrl('foo_2')
+            ->setShortCode('foo_2');
+        $this->getEntityManager()->persist($foo2);
+
+        $this->getEntityManager()->flush();
+
+        $result = $this->repo->findList(null, null, 'foo', ['bar']);
+        $this->assertCount(1, $result);
+        $this->assertSame($foo, $result[0]);
     }
 }

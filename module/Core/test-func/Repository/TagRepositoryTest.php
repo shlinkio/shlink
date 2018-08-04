@@ -9,7 +9,7 @@ use ShlinkioTest\Shlink\Common\DbUnit\DatabaseTestCase;
 
 class TagRepositoryTest extends DatabaseTestCase
 {
-    const ENTITIES_TO_EMPTY = [
+    protected const ENTITIES_TO_EMPTY = [
         Tag::class,
     ];
 
