@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass="Shlinkio\Shlink\Core\Repository\ShortUrlRepository")
  * @ORM\Table(name="short_urls")
  */
-class ShortUrl extends AbstractEntity implements \JsonSerializable
+class ShortUrl extends AbstractEntity
 {
     /**
      * @var string
@@ -84,19 +84,38 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
     /**
      * @return string
      */
-    public function getOriginalUrl(): string
+    public function getLongUrl(): string
     {
         return $this->originalUrl;
     }
 
     /**
-     * @param string $originalUrl
+     * @param string $longUrl
      * @return $this
      */
-    public function setOriginalUrl(string $originalUrl)
+    public function setLongUrl(string $longUrl): self
     {
-        $this->originalUrl = $originalUrl;
+        $this->originalUrl = $longUrl;
         return $this;
+    }
+
+    /**
+     * @return string
+     * @deprecated Use getLongUrl() instead
+     */
+    public function getOriginalUrl(): string
+    {
+        return $this->getLongUrl();
+    }
+
+    /**
+     * @param string $originalUrl
+     * @return $this
+     * @deprecated Use setLongUrl() instead
+     */
+    public function setOriginalUrl(string $originalUrl): self
+    {
+        return $this->setLongUrl($originalUrl);
     }
 
     /**
@@ -236,23 +255,5 @@ class ShortUrl extends AbstractEntity implements \JsonSerializable
     public function maxVisitsReached(): bool
     {
         return $this->maxVisits !== null && $this->getVisitsCount() >= $this->maxVisits;
-    }
-
-    /**
-     * Specify data which should be serialized to JSON
-     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
-    public function jsonSerialize()
-    {
-        return [
-            'shortCode' => $this->shortCode,
-            'originalUrl' => $this->originalUrl,
-            'dateCreated' => $this->dateCreated !== null ? $this->dateCreated->format(\DateTime::ATOM) : null,
-            'visitsCount' => $this->getVisitsCount(),
-            'tags' => $this->tags->toArray(),
-        ];
     }
 }

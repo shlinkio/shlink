@@ -61,7 +61,12 @@ return [
         Action\ShortCode\EditShortCodeAction::class => [Service\ShortUrlService::class, 'translator', 'Logger_Shlink',],
         Action\ShortCode\ResolveUrlAction::class => [Service\UrlShortener::class, 'translator'],
         Action\Visit\GetVisitsAction::class => [Service\VisitsTracker::class, 'translator', 'Logger_Shlink'],
-        Action\ShortCode\ListShortCodesAction::class => [Service\ShortUrlService::class, 'translator', 'Logger_Shlink'],
+        Action\ShortCode\ListShortCodesAction::class => [
+            Service\ShortUrlService::class,
+            'translator',
+            'config.url_shortener.domain',
+            'Logger_Shlink',
+        ],
         Action\ShortCode\EditShortCodeTagsAction::class => [
             Service\ShortUrlService::class,
             'translator',

@@ -26,7 +26,10 @@ class ListShortCodesActionTest extends TestCase
     public function setUp()
     {
         $this->service = $this->prophesize(ShortUrlService::class);
-        $this->action = new ListShortCodesAction($this->service->reveal(), Translator::factory([]));
+        $this->action = new ListShortCodesAction($this->service->reveal(), Translator::factory([]), [
+            'hostname' => 'doma.in',
+            'schema' => 'https',
+        ]);
     }
 
     /**

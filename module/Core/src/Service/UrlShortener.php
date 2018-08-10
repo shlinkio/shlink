@@ -23,7 +23,7 @@ class UrlShortener implements UrlShortenerInterface
 {
     use TagManagerTrait;
 
-    const DEFAULT_CHARS = '123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
+    public const DEFAULT_CHARS = '123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
 
     /**
      * @var ClientInterface

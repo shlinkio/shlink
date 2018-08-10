@@ -30,7 +30,7 @@ class ListShortcodesCommandTest extends TestCase
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
         $app = new Application();
-        $command = new ListShortcodesCommand($this->shortUrlService->reveal(), Translator::factory([]));
+        $command = new ListShortcodesCommand($this->shortUrlService->reveal(), Translator::factory([]), []);
         $app->add($command);
         $this->commandTester = new CommandTester($command);
     }
@@ -55,7 +55,7 @@ class ListShortcodesCommandTest extends TestCase
         // The paginator will return more than one page for the first 3 times
         $data = [];
         for ($i = 0; $i < 50; $i++) {
-            $data[] = new ShortUrl();
+            $data[] = (new ShortUrl())->setLongUrl('url_' . $i);
         }
 
         $this->shortUrlService->listShortUrls(Argument::cetera())->will(function () use (&$data) {
@@ -74,7 +74,7 @@ class ListShortcodesCommandTest extends TestCase
         // The paginator will return more than one page
         $data = [];
         for ($i = 0; $i < 30; $i++) {
-            $data[] = new ShortUrl();
+            $data[] = (new ShortUrl())->setLongUrl('url_' . $i);
         }
 
         $this->shortUrlService->listShortUrls(Argument::cetera())->willReturn(new Paginator(new ArrayAdapter($data)))
