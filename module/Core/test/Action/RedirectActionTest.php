@@ -9,6 +9,7 @@ use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
@@ -51,7 +52,8 @@ class RedirectActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($expectedUrl)
+        $shortUrl = (new ShortUrl())->setLongUrl($expectedUrl);
+        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
                                                        ->shouldBeCalledTimes(1);
         $this->visitTracker->track(Argument::cetera())->willReturn(null)
                                                       ->shouldBeCalledTimes(1);
@@ -93,7 +95,8 @@ class RedirectActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($expectedUrl)
+        $shortUrl = (new ShortUrl())->setLongUrl($expectedUrl);
+        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
                                                        ->shouldBeCalledTimes(1);
         $this->visitTracker->track(Argument::cetera())->willReturn(null)
                                                       ->shouldNotBeCalled();
