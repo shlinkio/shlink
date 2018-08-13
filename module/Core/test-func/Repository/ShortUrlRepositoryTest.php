@@ -119,7 +119,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     public function findListProperlyMapsFieldNamesToColumnNamesWhenOrdering()
     {
         $urls = ['a', 'z', 'c', 'b'];
-        foreach($urls as $url) {
+        foreach ($urls as $url) {
             $this->getEntityManager()->persist(
                 (new ShortUrl())->setShortCode($url)
                                 ->setLongUrl($url)
