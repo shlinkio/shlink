@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\Shortcode;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Shortcode\ResolveUrlCommand;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
@@ -41,7 +42,8 @@ class ResolveUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($expectedUrl)
+        $shortUrl = (new ShortUrl())->setLongUrl($expectedUrl);
+        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
                                                        ->shouldBeCalledTimes(1);
 
         $this->commandTester->execute([

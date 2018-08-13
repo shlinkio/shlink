@@ -5,6 +5,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortCode;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
@@ -27,7 +28,7 @@ class ResolveUrlActionTest extends TestCase
     public function setUp()
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $this->action = new ResolveUrlAction($this->urlShortener->reveal(), Translator::factory([]));
+        $this->action = new ResolveUrlAction($this->urlShortener->reveal(), Translator::factory([]), []);
     }
 
     /**
@@ -51,8 +52,9 @@ class ResolveUrlActionTest extends TestCase
     public function correctShortCodeReturnsSuccess()
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn('http://domain.com/foo/bar')
-                                                       ->shouldBeCalledTimes(1);
+        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(
+            (new ShortUrl())->setLongUrl('http://domain.com/foo/bar')
+        )->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $response = $this->action->handle($request);

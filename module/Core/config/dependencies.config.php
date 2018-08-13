@@ -42,7 +42,6 @@ return [
         Service\UrlShortener::class => [
             'httpClient',
             'em',
-            Cache::class,
             'config.url_shortener.validate_url',
             'config.url_shortener.shortcode_chars',
         ],

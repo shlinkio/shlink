@@ -65,14 +65,14 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
         $disableTrackParam = $this->appOptions->getDisableTrackParam();
 
         try {
-            $longUrl = $this->urlShortener->shortCodeToUrl($shortCode);
+            $url = $this->urlShortener->shortCodeToUrl($shortCode);
 
             // Track visit to this short code
             if ($disableTrackParam === null || ! \array_key_exists($disableTrackParam, $query)) {
                 $this->visitTracker->track($shortCode, $request);
             }
 
-            return $this->createResp($longUrl);
+            return $this->createResp($url->getLongUrl());
         } catch (InvalidShortCodeException | EntityDoesNotExistException $e) {
             $this->logger->warning('An error occurred while tracking short code.' . PHP_EOL . $e);
             return $this->buildErrorResponse($request, $handler);

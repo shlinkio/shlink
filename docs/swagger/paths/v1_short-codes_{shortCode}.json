@@ -23,23 +23,24 @@
         ],
         "responses": {
             "200": {
-                "description": "The long URL behind a short code.",
+                "description": "The URL info behind a short code.",
                 "content": {
                     "application/json": {
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "longUrl": {
-                                    "type": "string",
-                                    "description": "The original long URL behind the short code."
-                                }
-                            }
+                            "$ref": "../definitions/ShortUrl.json"
                         }
                     }
                 },
                 "examples": {
                     "application/json": {
-                        "longUrl": "https://shlink.io"
+                        "shortCode": "12Kb3",
+                        "shortUrl": "https://doma.in/12Kb3",
+                        "longUrl": "https://shlink.io",
+                        "dateCreated": "2016-05-01T20:34:16+02:00",
+                        "visitsCount": 1029,
+                        "tags": [
+                            "shlink"
+                        ]
                     }
                 }
             },

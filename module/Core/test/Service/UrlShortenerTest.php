@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Service;
 
 use Cocur\Slugify\SlugifyInterface;
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,10 +36,6 @@ class UrlShortenerTest extends TestCase
      */
     protected $httpClient;
     /**
-     * @var Cache
-     */
-    protected $cache;
-    /**
      * @var ObjectProphecy
      */
     protected $slugger;
@@ -66,7 +60,6 @@ class UrlShortenerTest extends TestCase
         $repo->findOneBy(Argument::any())->willReturn(null);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $this->cache = new ArrayCache();
         $this->slugger = $this->prophesize(SlugifyInterface::class);
 
         $this->setUrlShortener(false);
@@ -80,7 +73,6 @@ class UrlShortenerTest extends TestCase
         $this->urlShortener = new UrlShortener(
             $this->httpClient->reveal(),
             $this->em->reveal(),
-            $this->cache,
             $urlValidationEnabled,
             UrlShortener::DEFAULT_CHARS,
             $this->slugger->reveal()
@@ -205,10 +197,8 @@ class UrlShortenerTest extends TestCase
         $repo->findOneByShortCode($shortCode)->willReturn($shortUrl);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $this->assertFalse($this->cache->contains($shortCode . '_longUrl'));
         $url = $this->urlShortener->shortCodeToUrl($shortCode);
-        $this->assertEquals($shortUrl->getOriginalUrl(), $url);
-        $this->assertTrue($this->cache->contains($shortCode . '_longUrl'));
+        $this->assertSame($shortUrl, $url);
     }
 
     /**
@@ -218,19 +208,5 @@ class UrlShortenerTest extends TestCase
     public function invalidCharSetThrowsException()
     {
         $this->urlShortener->shortCodeToUrl('&/(');
-    }
-
-    /**
-     * @test
-     */
-    public function cachedShortCodeDoesNotHitDatabase()
-    {
-        $shortCode = '12C1c';
-        $expectedUrl = 'expected_url';
-        $this->cache->save($shortCode . '_longUrl', $expectedUrl);
-        $this->em->getRepository(ShortUrl::class)->willReturn(null)->shouldBeCalledTimes(0);
-
-        $url = $this->urlShortener->shortCodeToUrl($shortCode);
-        $this->assertEquals($expectedUrl, $url);
     }
 }

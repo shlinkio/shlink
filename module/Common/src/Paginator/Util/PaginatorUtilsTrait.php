@@ -3,15 +3,16 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Paginator\Util;
 
+use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\ArrayUtils;
 
 trait PaginatorUtilsTrait
 {
-    protected function serializePaginator(Paginator $paginator): array
+    private function serializePaginator(Paginator $paginator, ?DataTransformerInterface $transformer = null): array
     {
         return [
-            'data' => ArrayUtils::iteratorToArray($paginator->getCurrentItems()),
+            'data' => $this->serializeItems(ArrayUtils::iteratorToArray($paginator->getCurrentItems()), $transformer),
             'pagination' => [
                 'currentPage' => $paginator->getCurrentPageNumber(),
                 'pagesCount' => $paginator->count(),
@@ -22,13 +23,18 @@ trait PaginatorUtilsTrait
         ];
     }
 
+    private function serializeItems(array $items, ?DataTransformerInterface $transformer = null): array
+    {
+        return $transformer === null ? $items : \array_map([$transformer, 'transform'], $items);
+    }
+
     /**
      * Checks if provided paginator is in last page
      *
      * @param Paginator $paginator
      * @return bool
      */
-    protected function isLastPage(Paginator $paginator): bool
+    private function isLastPage(Paginator $paginator): bool
     {
         return $paginator->getCurrentPageNumber() >= $paginator->count();
     }

@@ -42,7 +42,11 @@ return [
             'config.url_shortener.domain',
         ],
         Command\Shortcode\ResolveUrlCommand::class => [Service\UrlShortener::class, 'translator'],
-        Command\Shortcode\ListShortcodesCommand::class => [Service\ShortUrlService::class, 'translator'],
+        Command\Shortcode\ListShortcodesCommand::class => [
+            Service\ShortUrlService::class,
+            'translator',
+            'config.url_shortener.domain',
+        ],
         Command\Shortcode\GetVisitsCommand::class => [Service\VisitsTracker::class, 'translator'],
         Command\Shortcode\GeneratePreviewCommand::class => [
             Service\ShortUrlService::class,

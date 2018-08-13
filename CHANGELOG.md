@@ -1,5 +1,46 @@
 # CHANGELOG
 
+## 1.11.0 - 2018-08-13
+
+#### Added
+
+* [#170](https://github.com/shlinkio/shlink/issues/170) and [#171](https://github.com/shlinkio/shlink/issues/171) Updated `[GET /short-codes]` and `[GET /short-codes/{shortCode}]` endpoints to return more meaningful information and make their response consistent.
+
+    The short URLs are now represented by this object in both cases:
+
+    ```json
+    {
+        "shortCode": "12Kb3",
+        "shortUrl": "https://doma.in/12Kb3",
+        "longUrl": "https://shlink.io",
+        "dateCreated": "2016-05-01T20:34:16+02:00",
+        "visitsCount": 1029,
+        "tags": [
+            "shlink"
+        ],
+        "originalUrl": "https://shlink.io"
+    }
+    ```
+
+    The `originalUrl` property is considered deprecated and has been kept for backward compatibility purposes. It holds the same value as the `longUrl` property.
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* The `originalUrl` property in `[GET /short-codes]` and `[GET /short-codes/{shortCode}]` endpoints is now deprecated and replaced by the `longUrl` property.
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* *Nothing*
+
+
 ## 1.10.2 - 2018-08-04
 
 #### Added

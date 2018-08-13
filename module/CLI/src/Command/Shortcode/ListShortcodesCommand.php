@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\Shortcode;
 use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
+use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,15 +28,23 @@ class ListShortcodesCommand extends Command
      * @var TranslatorInterface
      */
     private $translator;
+    /**
+     * @var array
+     */
+    private $domainConfig;
 
-    public function __construct(ShortUrlServiceInterface $shortUrlService, TranslatorInterface $translator)
-    {
+    public function __construct(
+        ShortUrlServiceInterface $shortUrlService,
+        TranslatorInterface $translator,
+        array $domainConfig
+    ) {
         $this->shortUrlService = $shortUrlService;
         $this->translator = $translator;
         parent::__construct();
+        $this->domainConfig = $domainConfig;
     }
 
-    public function configure()
+    protected function configure(): void
     {
         $this->setName(self::NAME)
              ->setDescription($this->translator->translate('List all short URLs'))
@@ -79,7 +88,7 @@ class ListShortcodesCommand extends Command
              );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
         $page = (int) $input->getOption('page');
@@ -87,6 +96,7 @@ class ListShortcodesCommand extends Command
         $tags = $input->getOption('tags');
         $tags = ! empty($tags) ? \explode(',', $tags) : [];
         $showTags = $input->getOption('showTags');
+        $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
         do {
             $result = $this->shortUrlService->listShortUrls($page, $searchTerm, $tags, $this->processOrderBy($input));
@@ -94,7 +104,8 @@ class ListShortcodesCommand extends Command
 
             $headers = [
                 $this->translator->translate('Short code'),
-                $this->translator->translate('Original URL'),
+                $this->translator->translate('Short URL'),
+                $this->translator->translate('Long URL'),
                 $this->translator->translate('Date created'),
                 $this->translator->translate('Visits count'),
             ];
@@ -104,17 +115,14 @@ class ListShortcodesCommand extends Command
 
             $rows = [];
             foreach ($result as $row) {
-                $shortUrl = $row->jsonSerialize();
+                $shortUrl = $transformer->transform($row);
                 if ($showTags) {
-                    $shortUrl['tags'] = [];
-                    foreach ($row->getTags() as $tag) {
-                        $shortUrl['tags'][] = $tag->getName();
-                    }
                     $shortUrl['tags'] = implode(', ', $shortUrl['tags']);
                 } else {
                     unset($shortUrl['tags']);
                 }
 
+                unset($shortUrl['originalUrl']);
                 $rows[] = \array_values($shortUrl);
             }
             $io->table($headers, $rows);

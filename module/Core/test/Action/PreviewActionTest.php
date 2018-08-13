@@ -10,6 +10,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Action\PreviewAction;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
@@ -64,8 +65,9 @@ class PreviewActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $url = 'foobar.com';
+        $shortUrl = (new ShortUrl())->setLongUrl($url);
         $path = __FILE__;
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($url)->shouldBeCalledTimes(1);
+        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)->shouldBeCalledTimes(1);
         $this->previewGenerator->generatePreview($url)->willReturn($path)->shouldBeCalledTimes(1);
 
         $resp = $this->action->process(

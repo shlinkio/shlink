@@ -13,6 +13,7 @@
     ],
     "require": {
         "php": "^7.1",
+        "ext-json": "*",
         "acelaya/ze-content-based-error-handler": "^2.2",
         "cocur/slugify": "^3.0",
         "doctrine/cache": "^1.6",

@@ -66,8 +66,10 @@ class ResolveUrlCommand extends Command
         $shortCode = $input->getArgument('shortCode');
 
         try {
-            $longUrl = $this->urlShortener->shortCodeToUrl($shortCode);
-            $output->writeln(\sprintf('%s <info>%s</info>', $this->translator->translate('Long URL:'), $longUrl));
+            $url = $this->urlShortener->shortCodeToUrl($shortCode);
+            $output->writeln(
+                \sprintf('%s <info>%s</info>', $this->translator->translate('Long URL:'), $url->getLongUrl())
+            );
         } catch (InvalidShortCodeException $e) {
             $io->error(
                 \sprintf($this->translator->translate('Provided short code "%s" has an invalid format.'), $shortCode)

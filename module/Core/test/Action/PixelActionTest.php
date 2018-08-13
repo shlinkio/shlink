@@ -9,6 +9,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Response\PixelResponse;
 use Shlinkio\Shlink\Core\Action\PixelAction;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
@@ -48,8 +49,9 @@ class PixelActionTest extends TestCase
     public function imageIsReturned()
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn('http://domain.com/foo/bar')
-                                                       ->shouldBeCalledTimes(1);
+        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(
+            (new ShortUrl())->setLongUrl('http://domain.com/foo/bar')
+        )->shouldBeCalledTimes(1);
         $this->visitTracker->track(Argument::cetera())->willReturn(null)
                                                       ->shouldBeCalledTimes(1);
 

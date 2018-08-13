@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
+use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
@@ -28,15 +29,21 @@ class ListShortCodesAction extends AbstractRestAction
      * @var TranslatorInterface
      */
     private $translator;
+    /**
+     * @var array
+     */
+    private $domainConfig;
 
     public function __construct(
         ShortUrlServiceInterface $shortUrlService,
         TranslatorInterface $translator,
+        array $domainConfig,
         LoggerInterface $logger = null
     ) {
         parent::__construct($logger);
         $this->shortUrlService = $shortUrlService;
         $this->translator = $translator;
+        $this->domainConfig = $domainConfig;
     }
 
     /**
@@ -49,7 +56,9 @@ class ListShortCodesAction extends AbstractRestAction
         try {
             $params = $this->queryToListParams($request->getQueryParams());
             $shortUrls = $this->shortUrlService->listShortUrls(...$params);
-            return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls)]);
+            return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls, new ShortUrlDataTransformer(
+                $this->domainConfig
+            ))]);
         } catch (\Exception $e) {
             $this->logger->error('Unexpected error while listing short URLs.' . PHP_EOL . $e);
             return new JsonResponse([

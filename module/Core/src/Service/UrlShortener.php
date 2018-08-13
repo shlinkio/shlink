@@ -5,7 +5,6 @@ namespace Shlinkio\Shlink\Core\Service;
 
 use Cocur\Slugify\Slugify;
 use Cocur\Slugify\SlugifyInterface;
-use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -23,7 +22,7 @@ class UrlShortener implements UrlShortenerInterface
 {
     use TagManagerTrait;
 
-    const DEFAULT_CHARS = '123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
+    public const DEFAULT_CHARS = '123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
 
     /**
      * @var ClientInterface
@@ -38,10 +37,6 @@ class UrlShortener implements UrlShortenerInterface
      */
     private $chars;
     /**
-     * @var Cache
-     */
-    private $cache;
-    /**
      * @var SlugifyInterface
      */
     private $slugger;
@@ -53,14 +48,12 @@ class UrlShortener implements UrlShortenerInterface
     public function __construct(
         ClientInterface $httpClient,
         EntityManagerInterface $em,
-        Cache $cache,
         $urlValidationEnabled,
         $chars = self::DEFAULT_CHARS,
         SlugifyInterface $slugger = null
     ) {
         $this->httpClient = $httpClient;
         $this->em = $em;
-        $this->cache = $cache;
         $this->urlValidationEnabled = $urlValidationEnabled;
         $this->chars = empty($chars) ? self::DEFAULT_CHARS : $chars;
         $this->slugger = $slugger ?: new Slugify();
@@ -192,19 +185,11 @@ class UrlShortener implements UrlShortenerInterface
     /**
      * Tries to find the mapped URL for provided short code. Returns null if not found
      *
-     * @param string $shortCode
-     * @return string
      * @throws InvalidShortCodeException
      * @throws EntityDoesNotExistException
      */
-    public function shortCodeToUrl(string $shortCode): string
+    public function shortCodeToUrl(string $shortCode): ShortUrl
     {
-        $cacheKey = sprintf('%s_longUrl', $shortCode);
-        // Check if the short code => URL map is already cached
-        if ($this->cache->contains($cacheKey)) {
-            return $this->cache->fetch($cacheKey);
-        }
-
         // Validate short code format
         if (! preg_match('|[' . $this->chars . ']+|', $shortCode)) {
             throw InvalidShortCodeException::fromCharset($shortCode, $this->chars);
@@ -219,9 +204,6 @@ class UrlShortener implements UrlShortenerInterface
             ]);
         }
 
-        // Cache the shortcode
-        $url = $shortUrl->getOriginalUrl();
-        $this->cache->save($cacheKey, $url);
-        return $url;
+        return $shortUrl;
     }
 }

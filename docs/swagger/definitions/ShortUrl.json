@@ -5,7 +5,11 @@
             "type": "string",
             "description": "The short code for this short URL."
         },
-        "originalUrl": {
+        "shortUrl": {
+            "type": "string",
+            "description": "The short URL."
+        },
+        "longUrl": {
             "type": "string",
             "description": "The original long URL."
         },
@@ -24,6 +28,11 @@
                 "type": "string"
             },
             "description": "A list of tags applied to this short URL"
+        },
+        "originalUrl": {
+            "deprecated": true,
+            "type": "string",
+            "description": "The original long URL. [DEPRECATED. Use longUrl instead]"
         }
     }
 }
