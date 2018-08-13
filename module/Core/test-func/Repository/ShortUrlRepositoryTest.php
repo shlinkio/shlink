@@ -112,4 +112,28 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->assertCount(1, $result);
         $this->assertSame($foo, $result[0]);
     }
+
+    /**
+     * @test
+     */
+    public function findListProperlyMapsFieldNamesToColumnNamesWhenOrdering()
+    {
+        $urls = ['a', 'z', 'c', 'b'];
+        foreach($urls as $url) {
+            $this->getEntityManager()->persist(
+                (new ShortUrl())->setShortCode($url)
+                                ->setLongUrl($url)
+            );
+        }
+
+        $this->getEntityManager()->flush();
+
+        $result = $this->repo->findList(null, null, null, [], ['longUrl' => 'ASC']);
+
+        $this->assertCount(\count($urls), $result);
+        $this->assertEquals('a', $result[0]->getLongUrl());
+        $this->assertEquals('b', $result[1]->getLongUrl());
+        $this->assertEquals('c', $result[2]->getLongUrl());
+        $this->assertEquals('z', $result[3]->getLongUrl());
+    }
 }
