@@ -7,4 +7,137 @@
 [![License](https://img.shields.io/github/license/shlinkio/shlink.svg?style=flat-square)](https://github.com/shlinkio/shlink/blob/master/LICENSE)
 [![Paypal donate](https://img.shields.io/badge/Donate-paypal-blue.svg?style=flat-square&logo=paypal&colorA=aaaaaa)](https://acel.me/donate)
 
-A PHP-based URL shortener application with analytics and management
+A PHP-based self-hosted URL shortener that can be used to serve shortened URLs under your own custom domain.
+
+## Installation
+
+First make sure the host where you are going to run shlink fulfills these requirements:
+
+* PHP 7.1 or greater with JSON, APCu, intl, curl, PDO and gd extensions enabled.
+* MySQL, PostgreSQL or SQLite.
+* The web server of your choice with PHP integration (Apache or Nginx recommended).
+
+Then, you will need a built version of the project. There are a few ways to get it.
+
+* **Using a dist file**
+
+    The easiest way to install shlink is by using one of the pre-bundled distributable packages.
+
+    Just go to the [latest version](https://github.com/shlinkio/shlink/releases/latest) and download the `shlink_X.X.X_dist.zip` file you will find there.
+
+    Finally, decompress the file in the location of your choice.
+
+* **Building from sources**
+
+    If for any reason you want to build the project yourself, follow these steps:
+
+    * Clone the project with git (`git clone https://github.com/shlinkio/shlink.git`), or download it by clicking the **Clone or download** green button.
+    * Download the [Composer](https://getcomposer.org/) PHP package manager.
+    * Use composer to install the production project dependencies by running `php composer.phar install --no-dev --optimize-autoloader --no-progress --no-interaction`.
+
+Despite how you built the project, you are going to need to install it now, by following these steps:
+
+* If you are going to use MySQL or PostgreSQL, create an empty database with the name of your choice.
+* Recursively grant write permissions to the `data` directory. Shlink uses it to cache some information.
+* Setup the application by running the `bin/install` script. It will guide you through the installation process.
+* Configure the web server of your choice to serve shlink using your short domain.
+
+    For example, assuming your domain is doma.in and shlink is in the `/path/to/shlink` folder, this would be the basic configuration for Nginx and Apache.
+
+    *Nginx:*
+
+    ```nginx
+    server {
+        server_name doma.in;
+        listen 80;
+        root /path/to/shlink/public;
+        index index.php;
+        charset utf-8;
+
+        location / {
+            try_files $uri $uri/ /index.php$is_args$args;
+        }
+
+        location ~ \.php$ {
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
+            fastcgi_index index.php;
+            include fastcgi.conf;
+        }
+
+        location ~ /\.ht {
+            deny all;
+        }
+    }
+    ```
+
+    *Apache:*
+
+    ```apache
+    <VirtualHost *:80>
+        ServerName doma.in
+        DocumentRoot "/path/to/shlink/public"
+
+        <Directory "/path/to/shlink/public">
+            Options FollowSymLinks Includes ExecCGI
+            AllowOverride all
+            Order allow,deny
+            Allow from all
+        </Directory>
+    </VirtualHost>
+    ```
+
+* Generate your first API key by running `bin/cli api-key:generate`. You will need the key in order to interact with shlink's API.
+* Finally access to [https://app.shlink.io](https://app.shlink.io) and configure your server to start creating short URLs.
+
+**Bonus**
+
+There are a couple of time-consuming tasks that shlink expects you to do manually, or at least it is recommended, since it will improve runtime performance.
+
+Those tasks can be performed using shlink's CLI, so it should be easy to schedule them to be run in the background (for example, using cron jobs):
+
+* Resolve IP address locations: `/path/to/shlink/bin/cli visit:process`
+
+    If you don't run this command regularly, the stats will say all visits come from *unknown* locations.
+
+* Generate website previews: `/path/to/shlink/bin/cli shortcode:process-previews`
+
+    Running this will improve the performance of the `doma.in/abc123/preview` URLs, which return a preview of the site.
+
+## Update to new version
+
+When a new Shlink version is available, you don't need to repeat the whole process yourself.
+
+Instead, get the latest version as explained in previous step, and then, run the script `bin/update`.
+
+The script will ask you for the location from previous shlink version, and use it in order to import the configuration.
+
+It will then update the database and generate some assets.
+
+Right now, it does not import cached info (like website previews), but it will. By now you will need to regenerate them again.
+
+**Important!** It is recommended that you don't skip any version when using this process. The update gets better on every version, but older versions might make assumptions.
+
+## Using a docker image
+
+Currently there's no official docker image, but there's a work in progress alpha version you can find [here](https://hub.docker.com/r/shlinkio/shlink/).
+
+The idea will be that you can just generate a container using the image and provide predefined config files via volumes or CLI arguments, so that you get shlink up and running.
+
+Currently the image does not expose an entry point which let's you interact with shlink's CLI interface, nor allows configuration to be passed.
+
+## Using shlink
+
+Once shlink is installed, there are two main ways to interact with it, in order to create shortened URLs:
+
+* **The command line**. Try running `bin/cli` and see all the available commands.
+
+    All of those commands can be run with the `--help`/`-h` flag in order to see how to use them and all the available options.
+
+    It is probably a good idea symlinking the CLI entry point (`bin/cli`) to somewhere in your path, so that you can run shlink from any directory.
+
+* **The REST API**. The complete docs on how to use the API can be found [here](https://shlink.io/api-docs), and a sandbox which also documents every endpoint can be found [here](https://shlink.io/swagger-ui/index.html).
+
+    However, you probably don't want to consume the raw API yourself. That's why a nice [web client](https://github.com/shlinkio/shlink-web-client) is provided that can be directly used from [https://app.shlink.io](https://app.shlink.io), or you can host it yourself too.
+
+Both the API and CLI allow you to do the same operations, except for API key management, which can be done from the command line only.
