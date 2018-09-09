@@ -1,0 +1,5 @@
+# For more information about the robots.txt standard, see:
+# http://www.robotstxt.org/orig.html
+
+User-agent: *
+Disallow: /
