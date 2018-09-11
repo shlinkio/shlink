@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common;
 
+use function getenv;
+use function strtolower;
+use function trim;
+
 /**
  * Gets the value of an environment variable. Supports boolean, empty and null.
  * This is basically Laravel's env helper
