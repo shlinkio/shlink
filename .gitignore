@@ -1,9 +1,9 @@
 .idea
 build
 composer.lock
+composer.phar
 vendor/
 .env
 data/database.sqlite
 docs/swagger-ui
 docker-compose.override.yml
-composer.phar
