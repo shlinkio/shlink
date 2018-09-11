@@ -122,21 +122,6 @@ class UrlShortenerTest extends TestCase
     /**
      * @test
      */
-    public function whenShortUrlExistsItsShortcodeIsReturned()
-    {
-        $shortUrl = new ShortUrl();
-        $shortUrl->setShortCode('expected_shortcode');
-        $repo = $this->prophesize(ObjectRepository::class);
-        $repo->findOneBy(Argument::any())->willReturn($shortUrl);
-        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
-
-        $shortCode = $this->urlShortener->urlToShortCode(new Uri('http://foobar.com/12345/hello?foo=bar'));
-        $this->assertEquals($shortUrl->getShortCode(), $shortCode);
-    }
-
-    /**
-     * @test
-     */
     public function whenCustomSlugIsProvidedItIsUsed()
     {
         /** @var MethodProphecy $slugify */

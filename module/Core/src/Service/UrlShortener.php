@@ -23,6 +23,7 @@ class UrlShortener implements UrlShortenerInterface
     use TagManagerTrait;
 
     public const DEFAULT_CHARS = '123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
+    private const ID_INCREMENT = 200000;
 
     /**
      * @var ClientInterface
@@ -54,7 +55,7 @@ class UrlShortener implements UrlShortenerInterface
     ) {
         $this->httpClient = $httpClient;
         $this->em = $em;
-        $this->urlValidationEnabled = $urlValidationEnabled;
+        $this->urlValidationEnabled = (bool) $urlValidationEnabled;
         $this->chars = empty($chars) ? self::DEFAULT_CHARS : $chars;
         $this->slugger = $slugger ?: new Slugify();
     }
@@ -81,18 +82,8 @@ class UrlShortener implements UrlShortenerInterface
         string $customSlug = null,
         int $maxVisits = null
     ): string {
-        // If the url already exists in the database, just return its short code
-        /** @var ShortUrl|null $shortUrl */
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
-            'originalUrl' => $url,
-        ]);
-        if ($shortUrl !== null) {
-            return $shortUrl->getShortCode();
-        }
-
-        // Check if the validation of url is enabled in the config
-        if (true === $this->urlValidationEnabled) {
-            // Check that the URL exists
+        // If the URL validation is enabled, check that the URL actually exists
+        if ($this->urlValidationEnabled) {
             $this->checkUrlExists($url);
         }
         $customSlug = $this->processCustomSlug($customSlug);
@@ -153,14 +144,14 @@ class UrlShortener implements UrlShortenerInterface
      */
     private function convertAutoincrementIdToShortCode(float $id): string
     {
-        $id += 200000; // Increment the Id so that the generated shortcode is not too short
+        $id += self::ID_INCREMENT; // Increment the Id so that the generated shortcode is not too short
         $length = \strlen($this->chars);
         $code = '';
 
         while ($id > 0) {
             // Determine the value of the next higher character in the short code and prepend it
-            $code = $this->chars[(int) fmod($id, $length)] . $code;
-            $id = floor($id / $length);
+            $code = $this->chars[(int) \fmod($id, $length)] . $code;
+            $id = \floor($id / $length);
         }
 
         return $this->chars[(int) $id] . $code;
@@ -172,7 +163,7 @@ class UrlShortener implements UrlShortenerInterface
             return null;
         }
 
-        // If a custom slug was provided, check it is unique
+        // If a custom slug was provided, make sure it's unique
         $customSlug = $this->slugger->slugify($customSlug);
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy(['shortCode' => $customSlug]);
         if ($shortUrl !== null) {
@@ -191,7 +182,7 @@ class UrlShortener implements UrlShortenerInterface
     public function shortCodeToUrl(string $shortCode): ShortUrl
     {
         // Validate short code format
-        if (! preg_match('|[' . $this->chars . ']+|', $shortCode)) {
+        if (! \preg_match('|[' . $this->chars . ']+|', $shortCode)) {
             throw InvalidShortCodeException::fromCharset($shortCode, $this->chars);
         }
 
