@@ -10,6 +10,7 @@ fi
 version=$1
 builtcontent=$(readlink -f "../shlink_${version}_dist")
 projectdir=$(pwd)
+[ -f ./composer.phar ] && composerBin='./composer.phar' || composerBin='composer'
 
 # Copy project content to temp dir
 echo 'Copying project files...'
@@ -20,10 +21,11 @@ cp -R "${projectdir}"/* "${builtcontent}"
 cd "${builtcontent}"
 
 # Install dependencies
+echo "Installing dependencies with $composerBin..."
 rm -rf vendor
 rm -f composer.lock
-composer self-update
-composer install --no-dev --optimize-autoloader --no-progress --no-interaction
+$composerBin self-update
+$composerBin install --no-dev --optimize-autoloader --no-progress --no-interaction
 
 # Delete development files
 echo 'Deleting dev files...'
@@ -50,6 +52,9 @@ rm -rf config/autoload/{{,*.}local.php{,.dist},.gitignore}
 sed -i "s/%SHLINK_VERSION%/${version}/g" config/autoload/app_options.global.php
 
 # Compressing file
+echo 'Compressing files...'
 rm -f "${projectdir}"/build/shlink_${version}_dist.zip
 zip -ry "${projectdir}"/build/shlink_${version}_dist.zip "../shlink_${version}_dist"
 rm -rf "${builtcontent}"
+
+echo 'Done!'

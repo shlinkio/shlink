@@ -1,6 +1,7 @@
 .idea
 build
 composer.lock
+composer.phar
 vendor/
 .env
 data/database.sqlite
