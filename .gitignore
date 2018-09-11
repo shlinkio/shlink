@@ -6,3 +6,4 @@ vendor/
 data/database.sqlite
 docs/swagger-ui
 docker-compose.override.yml
+composer.phar

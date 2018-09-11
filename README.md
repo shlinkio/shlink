@@ -32,8 +32,12 @@ Then, you will need a built version of the project. There are a few ways to get 
     If for any reason you want to build the project yourself, follow these steps:
 
     * Clone the project with git (`git clone https://github.com/shlinkio/shlink.git`), or download it by clicking the **Clone or download** green button.
-    * Download the [Composer](https://getcomposer.org/) PHP package manager.
-    * Use composer to install the production project dependencies by running `php composer.phar install --no-dev --optimize-autoloader --no-progress --no-interaction`.
+    * Download the [Composer](https://getcomposer.org/download/) PHP package manager inside the project folder.
+    * Run `./build.sh 1.0.0`, replacing the version with the version number you are going to build (the version number is only used for the generated dist file).
+
+    After that, you will have a `shlink_x.x.x_dist.zip` dist file inside the `build` directory.
+
+    This is the process used when releasing new shlink versions. After tagging the new version with git, the Github release is created, attaching generated dist file to it.
 
 Despite how you built the project, you are going to need to install it now, by following these steps:
 
@@ -128,16 +132,16 @@ Currently the image does not expose an entry point which let's you interact with
 
 ## Using shlink
 
-Once shlink is installed, there are two main ways to interact with it, in order to create shortened URLs:
+Once shlink is installed, there are two main ways to interact with it:
 
 * **The command line**. Try running `bin/cli` and see all the available commands.
 
     All of those commands can be run with the `--help`/`-h` flag in order to see how to use them and all the available options.
 
-    It is probably a good idea symlinking the CLI entry point (`bin/cli`) to somewhere in your path, so that you can run shlink from any directory.
+    It is probably a good idea to symlink the CLI entry point (`bin/cli`) to somewhere in your path, so that you can run shlink from any directory.
 
 * **The REST API**. The complete docs on how to use the API can be found [here](https://shlink.io/api-docs), and a sandbox which also documents every endpoint can be found [here](https://shlink.io/swagger-ui/index.html).
 
     However, you probably don't want to consume the raw API yourself. That's why a nice [web client](https://github.com/shlinkio/shlink-web-client) is provided that can be directly used from [https://app.shlink.io](https://app.shlink.io), or you can host it yourself too.
 
-Both the API and CLI allow you to do the same operations, except for API key management, which can be done from the command line only.
+Both the API and CLI allow you to do the same operations, except for API key management, which can be done from the command line interface only.
