@@ -69,7 +69,6 @@ class UrlShortener implements UrlShortenerInterface
      * @param \DateTime|null $validUntil
      * @param string|null $customSlug
      * @param int|null $maxVisits
-     * @return string
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      * @throws RuntimeException
@@ -81,7 +80,7 @@ class UrlShortener implements UrlShortenerInterface
         \DateTime $validUntil = null,
         string $customSlug = null,
         int $maxVisits = null
-    ): string {
+    ): ShortUrl {
         // If the URL validation is enabled, check that the URL actually exists
         if ($this->urlValidationEnabled) {
             $this->checkUrlExists($url);
@@ -108,7 +107,7 @@ class UrlShortener implements UrlShortenerInterface
             $this->em->flush();
 
             $this->em->commit();
-            return $shortCode;
+            return $shortUrl;
         } catch (\Throwable $e) {
             if ($this->em->getConnection()->isTransactionActive()) {
                 $this->em->rollback();

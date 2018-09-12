@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\Shortcode;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
+use Shlinkio\Shlink\Core\Util\ShortUrlBuilderTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +18,9 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class GenerateShortcodeCommand extends Command
 {
-    const NAME = 'shortcode:generate';
+    use ShortUrlBuilderTrait;
+
+    public const NAME = 'shortcode:generate';
 
     /**
      * @var UrlShortenerInterface
@@ -115,10 +118,8 @@ class GenerateShortcodeCommand extends Command
                 $this->getOptionalDate($input, 'validUntil'),
                 $customSlug,
                 $maxVisits !== null ? (int) $maxVisits : null
-            );
-            $shortUrl = (new Uri())->withPath($shortCode)
-                                   ->withScheme($this->domainConfig['schema'])
-                                   ->withHost($this->domainConfig['hostname']);
+            )->getShortCode();
+            $shortUrl = $this->buildShortUrl($this->domainConfig, $shortCode);
 
             $io->writeln([
                 \sprintf('%s <info>%s</info>', $this->translator->translate('Processed long URL:'), $longUrl),

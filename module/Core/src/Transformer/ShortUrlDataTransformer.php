@@ -6,9 +6,12 @@ namespace Shlinkio\Shlink\Core\Transformer;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Util\ShortUrlBuilderTrait;
 
 class ShortUrlDataTransformer implements DataTransformerInterface
 {
+    use ShortUrlBuilderTrait;
+
     /**
      * @var array
      */
@@ -31,12 +34,7 @@ class ShortUrlDataTransformer implements DataTransformerInterface
 
         return [
             'shortCode' => $shortCode,
-            'shortUrl' => \sprintf(
-                '%s://%s/%s',
-                $this->domainConfig['schema'] ?? 'http',
-                $this->domainConfig['hostname'] ?? '',
-                $shortCode
-            ),
+            'shortUrl' => $this->buildShortUrl($this->domainConfig, $shortCode),
             'longUrl' => $longUrl,
             'dateCreated' => $dateCreated !== null ? $dateCreated->format(\DateTime::ATOM) : null,
             'visitsCount' => $value->getVisitsCount(),

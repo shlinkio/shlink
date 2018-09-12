@@ -11,10 +11,10 @@ use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\CreateShortCodeData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
+use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\Uri;
 use Zend\I18n\Translator\TranslatorInterface;
 
 abstract class AbstractCreateShortCodeAction extends AbstractRestAction
@@ -65,7 +65,7 @@ abstract class AbstractCreateShortCodeAction extends AbstractRestAction
         }
 
         try {
-            $shortCode = $this->urlShortener->urlToShortCode(
+            $shortUrl = $this->urlShortener->urlToShortCode(
                 $longUrl,
                 $shortCodeData->getTags(),
                 $shortCodeMeta->getValidSince(),
@@ -73,15 +73,9 @@ abstract class AbstractCreateShortCodeAction extends AbstractRestAction
                 $customSlug,
                 $shortCodeMeta->getMaxVisits()
             );
-            $shortUrl = (new Uri())->withPath($shortCode)
-                                   ->withScheme($this->domainConfig['schema'])
-                                   ->withHost($this->domainConfig['hostname']);
+            $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
-            return new JsonResponse([
-                'longUrl' => (string) $longUrl,
-                'shortUrl' => (string) $shortUrl,
-                'shortCode' => $shortCode,
-            ]);
+            return new JsonResponse($transformer->transform($shortUrl));
         } catch (InvalidUrlException $e) {
             $this->logger->warning('Provided Invalid URL.' . PHP_EOL . $e);
             return new JsonResponse([

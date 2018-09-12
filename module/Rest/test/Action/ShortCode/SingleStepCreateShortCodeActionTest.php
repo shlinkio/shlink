@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\UriInterface;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\ShortCode\SingleStepCreateShortCodeAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -112,7 +113,7 @@ class SingleStepCreateShortCodeActionTest extends TestCase
             null,
             null,
             null
-        );
+        )->willReturn((new ShortUrl())->setLongUrl(''));
 
         $resp = $this->action->handle($request);
 
