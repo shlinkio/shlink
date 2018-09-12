@@ -85,8 +85,8 @@ class UrlShortenerTest extends TestCase
     public function urlIsProperlyShortened()
     {
         // 10 -> 12C1c
-        $shortCode = $this->urlShortener->urlToShortCode(new Uri('http://foobar.com/12345/hello?foo=bar'));
-        $this->assertEquals('12C1c', $shortCode);
+        $shortUrl = $this->urlShortener->urlToShortCode(new Uri('http://foobar.com/12345/hello?foo=bar'));
+        $this->assertEquals('12C1c', $shortUrl->getShortCode());
     }
 
     /**

@@ -115,10 +115,10 @@ class GenerateShortcodeCommand extends Command
                 $this->getOptionalDate($input, 'validUntil'),
                 $customSlug,
                 $maxVisits !== null ? (int) $maxVisits : null
-            );
-            $shortUrl = (new Uri())->withPath($shortCode)
-                                   ->withScheme($this->domainConfig['schema'])
-                                   ->withHost($this->domainConfig['hostname']);
+            )->getShortCode();
+            $shortUrl = (string) (new Uri())->withPath($shortCode)
+                                            ->withScheme($this->domainConfig['schema'])
+                                            ->withHost($this->domainConfig['hostname']);
 
             $io->writeln([
                 \sprintf('%s <info>%s</info>', $this->translator->translate('Processed long URL:'), $longUrl),

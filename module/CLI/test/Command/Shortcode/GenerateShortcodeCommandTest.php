@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Shortcode\GenerateShortcodeCommand;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;
@@ -41,8 +42,12 @@ class GenerateShortcodeCommandTest extends TestCase
      */
     public function properShortCodeIsCreatedIfLongUrlIsCorrect()
     {
-        $this->urlShortener->urlToShortCode(Argument::cetera())->willReturn('abc123')
-                                                               ->shouldBeCalledTimes(1);
+        $this->urlShortener->urlToShortCode(Argument::cetera())
+            ->willReturn(
+                (new ShortUrl())->setShortCode('abc123')
+                                ->setLongUrl('')
+            )
+            ->shouldBeCalledTimes(1);
 
         $this->commandTester->execute([
             'command' => 'shortcode:generate',

@@ -33,7 +33,7 @@ interface UrlShortenerInterface
         \DateTime $validUntil = null,
         string $customSlug = null,
         int $maxVisits = null
-    ): string;
+    ): ShortUrl;
 
     /**
      * Tries to find the mapped URL for provided short code. Returns null if not found

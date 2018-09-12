@@ -117,7 +117,7 @@ class ListShortcodesCommand extends Command
             foreach ($result as $row) {
                 $shortUrl = $transformer->transform($row);
                 if ($showTags) {
-                    $shortUrl['tags'] = implode(', ', $shortUrl['tags']);
+                    $shortUrl['tags'] = \implode(', ', $shortUrl['tags']);
                 } else {
                     unset($shortUrl['tags']);
                 }
@@ -146,7 +146,7 @@ class ListShortcodesCommand extends Command
             return null;
         }
 
-        $orderBy = explode(',', $orderBy);
-        return count($orderBy) === 1 ? $orderBy[0] : [$orderBy[0] => $orderBy[1]];
+        $orderBy = \explode(',', $orderBy);
+        return \count($orderBy) === 1 ? $orderBy[0] : [$orderBy[0] => $orderBy[1]];
     }
 }

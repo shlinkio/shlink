@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortCode;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
@@ -50,7 +51,10 @@ class CreateShortCodeActionTest extends TestCase
     public function properShortcodeConversionReturnsData()
     {
         $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
-            ->willReturn('abc123')
+            ->willReturn(
+                (new ShortUrl())->setShortCode('abc123')
+                                ->setLongUrl('')
+            )
             ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([

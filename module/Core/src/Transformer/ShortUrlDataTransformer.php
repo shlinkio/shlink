@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Transformer;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Zend\Diactoros\Uri;
 
 class ShortUrlDataTransformer implements DataTransformerInterface
 {
@@ -31,12 +32,7 @@ class ShortUrlDataTransformer implements DataTransformerInterface
 
         return [
             'shortCode' => $shortCode,
-            'shortUrl' => \sprintf(
-                '%s://%s/%s',
-                $this->domainConfig['schema'] ?? 'http',
-                $this->domainConfig['hostname'] ?? '',
-                $shortCode
-            ),
+            'shortUrl' => $this->buildShortUrl($shortCode),
             'longUrl' => $longUrl,
             'dateCreated' => $dateCreated !== null ? $dateCreated->format(\DateTime::ATOM) : null,
             'visitsCount' => $value->getVisitsCount(),
@@ -45,6 +41,13 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             // Deprecated
             'originalUrl' => $longUrl,
         ];
+    }
+
+    private function buildShortUrl(string $shortCode): string
+    {
+        return (string) (new Uri())->withPath($shortCode)
+                                   ->withScheme($this->domainConfig['schema'] ?? 'http')
+                                   ->withHost($this->domainConfig['hostname'] ?? '');
     }
 
     private function serializeTag(Tag $tag): string
