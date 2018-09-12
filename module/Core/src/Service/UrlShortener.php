@@ -69,7 +69,6 @@ class UrlShortener implements UrlShortenerInterface
      * @param \DateTime|null $validUntil
      * @param string|null $customSlug
      * @param int|null $maxVisits
-     * @return string
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      * @throws RuntimeException
