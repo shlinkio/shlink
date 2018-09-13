@@ -29,12 +29,12 @@ class Visit extends AbstractEntity implements \JsonSerializable
      */
     private $date;
     /**
-     * @var string
+     * @var string|null
      * @ORM\Column(type="string", length=256, name="remote_addr", nullable=true)
      */
     private $remoteAddr;
     /**
-     * @var string
+     * @var string|null
      * @ORM\Column(type="string", length=256, name="remote_addr_hash", nullable=true)
      */
     private $remoteAddrHash;
