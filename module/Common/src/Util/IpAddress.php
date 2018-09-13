@@ -27,13 +27,13 @@ final class IpAddress
      * @var string
      */
     private $fourthOctet;
-    /**
-     * @var bool
-     */
-    private $isLocalhost;
 
-    private function __construct()
+    private function __construct(string $firstOctet, string $secondOctet, string $thirdOctet, string $fourthOctet)
     {
+        $this->firstOctet = $firstOctet;
+        $this->secondOctet = $secondOctet;
+        $this->thirdOctet = $thirdOctet;
+        $this->fourthOctet = $fourthOctet;
     }
 
     /**
@@ -49,17 +49,17 @@ final class IpAddress
             throw WrongIpException::fromIpAddress($address);
         }
 
-        $instance = new self();
-        $instance->isLocalhost = $address === self::LOCALHOST;
-        [$instance->firstOctet, $instance->secondOctet, $instance->thirdOctet, $instance->fourthOctet] = $parts;
-        return $instance;
+        return new self(...$parts);
     }
 
     public function getObfuscatedCopy(): self
     {
-        $copy = clone $this;
-        $copy->fourthOctet = $this->isLocalhost ? $this->fourthOctet : self::OBFUSCATED_OCTET;
-        return $copy;
+        return new self(
+            $this->firstOctet,
+            $this->secondOctet,
+            $this->thirdOctet,
+            self::OBFUSCATED_OCTET
+        );
     }
 
     public function __toString(): string

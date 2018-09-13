@@ -35,6 +35,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
     private $remoteAddr;
     /**
      * @var string
+     * @ORM\Column(type="string", length=256, name="remote_addr_hash", nullable=true)
      */
     private $remoteAddrHash;
     /**
@@ -108,8 +109,9 @@ class Visit extends AbstractEntity implements \JsonSerializable
 
     private function obfuscateAddress(?string $address): ?string
     {
-        if ($address === null) {
-            return null;
+        // Localhost addresses do not need to be obfuscated
+        if ($address === null || $address === IpAddress::LOCALHOST) {
+            return $address;
         }
 
         try {
@@ -122,6 +124,12 @@ class Visit extends AbstractEntity implements \JsonSerializable
     private function hashAddress(?string $address): ?string
     {
         return $address ? \hash('sha256', $address) : null;
+    }
+
+    public function resetObfuscatedAddr(): self
+    {
+        $this->remoteAddr = null;
+        return $this;
     }
 
     public function getUserAgent(): string
