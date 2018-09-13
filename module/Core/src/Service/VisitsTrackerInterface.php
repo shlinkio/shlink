@@ -16,7 +16,7 @@ interface VisitsTrackerInterface
      * @param string $shortCode
      * @param ServerRequestInterface $request
      */
-    public function track($shortCode, ServerRequestInterface $request);
+    public function track($shortCode, ServerRequestInterface $request): void;
 
     /**
      * Returns the visits on certain short code

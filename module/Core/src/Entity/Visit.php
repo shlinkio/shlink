@@ -5,6 +5,8 @@ namespace Shlinkio\Shlink\Core\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Common\Exception\WrongIpException;
+use Shlinkio\Shlink\Common\Util\IpAddress;
 
 /**
  * Class Visit
@@ -54,109 +56,81 @@ class Visit extends AbstractEntity implements \JsonSerializable
         $this->date = new \DateTime();
     }
 
-    /**
-     * @return string
-     */
     public function getReferer(): string
     {
         return $this->referer;
     }
 
-    /**
-     * @param string $referer
-     * @return $this
-     */
-    public function setReferer($referer): self
+    public function setReferer(string $referer): self
     {
         $this->referer = $referer;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getDate(): \DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param \DateTime $date
-     * @return $this
-     */
-    public function setDate($date): self
+    public function setDate(\DateTime $date): self
     {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return ShortUrl
-     */
     public function getShortUrl(): ShortUrl
     {
         return $this->shortUrl;
     }
 
-    /**
-     * @param ShortUrl $shortUrl
-     * @return $this
-     */
-    public function setShortUrl($shortUrl): self
+    public function setShortUrl(ShortUrl $shortUrl): self
     {
         $this->shortUrl = $shortUrl;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getRemoteAddr(): string
     {
         return $this->remoteAddr;
     }
 
-    /**
-     * @param string $remoteAddr
-     * @return $this
-     */
-    public function setRemoteAddr($remoteAddr): self
+    public function setRemoteAddr(?string $remoteAddr): self
     {
-        $this->remoteAddr = $remoteAddr;
+        // TODO Generate hash for the original remote address
+        $this->remoteAddr = $this->obfuscateAddress($remoteAddr);
         return $this;
     }
 
-    /**
-     * @return string
-     */
+    private function obfuscateAddress(?string $address): ?string
+    {
+        if ($address === null) {
+            return null;
+        }
+
+        try {
+            return (string) IpAddress::fromString($address)->getObfuscatedCopy();
+        } catch (WrongIpException $e) {
+            return null;
+        }
+    }
+
     public function getUserAgent(): string
     {
         return $this->userAgent;
     }
 
-    /**
-     * @param string $userAgent
-     * @return $this
-     */
-    public function setUserAgent($userAgent): self
+    public function setUserAgent(string $userAgent): self
     {
         $this->userAgent = $userAgent;
         return $this;
     }
 
-    /**
-     * @return VisitLocation
-     */
     public function getVisitLocation(): VisitLocation
     {
         return $this->visitLocation;
     }
 
-    /**
-     * @param VisitLocation $visitLocation
-     * @return $this
-     */
-    public function setVisitLocation($visitLocation): self
+    public function setVisitLocation(VisitLocation $visitLocation): self
     {
         $this->visitLocation = $visitLocation;
         return $this;

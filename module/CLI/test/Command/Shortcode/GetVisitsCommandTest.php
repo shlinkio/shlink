@@ -86,8 +86,8 @@ class GetVisitsCommandTest extends TestCase
             'shortCode' => $shortCode,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertTrue(strpos($output, 'foo') > 0);
-        $this->assertTrue(strpos($output, '1.2.3.4') > 0);
-        $this->assertTrue(strpos($output, 'bar') > 0);
+        $this->assertTrue(\strpos($output, 'foo') > 0);
+        $this->assertTrue(\strpos($output, '1.2.3.0') > 0);
+        $this->assertTrue(\strpos($output, 'bar') > 0);
     }
 }
