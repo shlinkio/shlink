@@ -22,34 +22,38 @@ class Visit extends AbstractEntity implements \JsonSerializable
      * @var string
      * @ORM\Column(type="string", length=256, nullable=true)
      */
-    protected $referer;
+    private $referer;
     /**
      * @var \DateTime
      * @ORM\Column(type="datetime", nullable=false)
      */
-    protected $date;
+    private $date;
     /**
      * @var string
      * @ORM\Column(type="string", length=256, name="remote_addr", nullable=true)
      */
-    protected $remoteAddr;
+    private $remoteAddr;
+    /**
+     * @var string
+     */
+    private $remoteAddrHash;
     /**
      * @var string
      * @ORM\Column(type="string", length=256, name="user_agent", nullable=true)
      */
-    protected $userAgent;
+    private $userAgent;
     /**
      * @var ShortUrl
      * @ORM\ManyToOne(targetEntity=ShortUrl::class)
      * @ORM\JoinColumn(name="short_url_id", referencedColumnName="id")
      */
-    protected $shortUrl;
+    private $shortUrl;
     /**
      * @var VisitLocation
      * @ORM\ManyToOne(targetEntity=VisitLocation::class, cascade={"persist"})
      * @ORM\JoinColumn(name="visit_location_id", referencedColumnName="id", nullable=true)
      */
-    protected $visitLocation;
+    private $visitLocation;
 
     public function __construct()
     {
@@ -96,8 +100,9 @@ class Visit extends AbstractEntity implements \JsonSerializable
 
     public function setRemoteAddr(?string $remoteAddr): self
     {
-        // TODO Generate hash for the original remote address
         $this->remoteAddr = $this->obfuscateAddress($remoteAddr);
+        $this->remoteAddrHash = $this->hashAddress($remoteAddr);
+
         return $this;
     }
 
@@ -112,6 +117,11 @@ class Visit extends AbstractEntity implements \JsonSerializable
         } catch (WrongIpException $e) {
             return null;
         }
+    }
+
+    private function hashAddress(?string $address): ?string
+    {
+        return $address ? \hash('sha256', $address) : null;
     }
 
     public function getUserAgent(): string
