@@ -9,6 +9,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Shortcode\GetVisitsCommand;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -77,7 +78,7 @@ class GetVisitsCommandTest extends TestCase
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::any())->willReturn([
             (new Visit())->setReferer('foo')
-                         ->setRemoteAddr('1.2.3.4')
+                         ->setVisitLocation((new VisitLocation())->setCountryName('Spain'))
                          ->setUserAgent('bar'),
         ])->shouldBeCalledTimes(1);
 
@@ -86,8 +87,8 @@ class GetVisitsCommandTest extends TestCase
             'shortCode' => $shortCode,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertTrue(\strpos($output, 'foo') > 0);
-        $this->assertTrue(\strpos($output, '1.2.3.0') > 0);
-        $this->assertTrue(\strpos($output, 'bar') > 0);
+        $this->assertGreaterThan(0, \strpos($output, 'foo'));
+        $this->assertGreaterThan(0, \strpos($output, 'Spain'));
+        $this->assertGreaterThan(0, \strpos($output, 'bar'));
     }
 }
