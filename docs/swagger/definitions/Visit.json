@@ -10,17 +10,17 @@
             "format": "date-time",
             "description": "The date in which the visit was performed"
         },
-        "remoteAddr": {
-            "type": "string",
-            "description": "This value is deprecated and will always be null",
-            "deprecated": true
-        },
         "userAgent": {
             "type": "string",
             "description": "The user agent from which the visit was performed"
         },
         "visitLocation": {
             "$ref": "./VisitLocation.json"
+        },
+        "remoteAddr": {
+            "type": "string",
+            "description": "This value is deprecated and will always be null",
+            "deprecated": true
         }
     }
 }

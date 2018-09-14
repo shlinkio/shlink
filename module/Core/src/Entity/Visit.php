@@ -34,11 +34,6 @@ class Visit extends AbstractEntity implements \JsonSerializable
      */
     private $remoteAddr;
     /**
-     * @var string|null
-     * @ORM\Column(type="string", length=256, name="remote_addr_hash", nullable=true)
-     */
-    private $remoteAddrHash;
-    /**
      * @var string
      * @ORM\Column(type="string", length=256, name="user_agent", nullable=true)
      */
@@ -94,7 +89,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
         return $this;
     }
 
-    public function getRemoteAddr(): string
+    public function getRemoteAddr(): ?string
     {
         return $this->remoteAddr;
     }
@@ -102,8 +97,6 @@ class Visit extends AbstractEntity implements \JsonSerializable
     public function setRemoteAddr(?string $remoteAddr): self
     {
         $this->remoteAddr = $this->obfuscateAddress($remoteAddr);
-        $this->remoteAddrHash = $this->hashAddress($remoteAddr);
-
         return $this;
     }
 
@@ -119,17 +112,6 @@ class Visit extends AbstractEntity implements \JsonSerializable
         } catch (WrongIpException $e) {
             return null;
         }
-    }
-
-    private function hashAddress(?string $address): ?string
-    {
-        return $address ? \hash('sha256', $address) : null;
-    }
-
-    public function resetObfuscatedAddr(): self
-    {
-        $this->remoteAddr = null;
-        return $this;
     }
 
     public function getUserAgent(): string
@@ -166,9 +148,11 @@ class Visit extends AbstractEntity implements \JsonSerializable
         return [
             'referer' => $this->referer,
             'date' => isset($this->date) ? $this->date->format(\DateTime::ATOM) : null,
-            'remoteAddr' => $this->remoteAddr,
             'userAgent' => $this->userAgent,
             'visitLocation' => $this->visitLocation,
+
+            // Deprecated
+            'remoteAddr' => null,
         ];
     }
 }
