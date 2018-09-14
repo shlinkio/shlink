@@ -1,0 +1,26 @@
+{
+    "type": "object",
+    "properties": {
+        "cityName": {
+            "type": "string"
+        },
+        "countryCode": {
+            "type": "string"
+        },
+        "countryName": {
+            "type": "string"
+        },
+        "latitude": {
+            "type": "string"
+        },
+        "longitude": {
+            "type": "string"
+        },
+        "regionName": {
+            "type": "string"
+        },
+        "timezone": {
+            "type": "string"
+        }
+    }
+}

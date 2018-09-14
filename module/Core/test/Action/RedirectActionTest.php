@@ -55,8 +55,7 @@ class RedirectActionTest extends TestCase
         $shortUrl = (new ShortUrl())->setLongUrl($expectedUrl);
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
                                                        ->shouldBeCalledTimes(1);
-        $this->visitTracker->track(Argument::cetera())->willReturn(null)
-                                                      ->shouldBeCalledTimes(1);
+        $this->visitTracker->track(Argument::cetera())->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $response = $this->action->process($request, TestUtils::createReqHandlerMock()->reveal());
@@ -75,8 +74,7 @@ class RedirectActionTest extends TestCase
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
                                                        ->shouldBeCalledTimes(1);
-        $this->visitTracker->track(Argument::cetera())->willReturn(null)
-                                                      ->shouldNotBeCalled();
+        $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();
 
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
@@ -98,8 +96,7 @@ class RedirectActionTest extends TestCase
         $shortUrl = (new ShortUrl())->setLongUrl($expectedUrl);
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
                                                        ->shouldBeCalledTimes(1);
-        $this->visitTracker->track(Argument::cetera())->willReturn(null)
-                                                      ->shouldNotBeCalled();
+        $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode)
                                                       ->withQueryParams(['foobar' => true]);

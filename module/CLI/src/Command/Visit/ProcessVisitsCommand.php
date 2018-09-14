@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\CLI\Command\Visit;
 
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\Service\IpLocationResolverInterface;
+use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Service\VisitServiceInterface;
 use Symfony\Component\Console\Command\Command;
@@ -15,7 +16,6 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class ProcessVisitsCommand extends Command
 {
-    private const LOCALHOST = '127.0.0.1';
     public const NAME = 'visit:process';
 
     /**
@@ -59,7 +59,7 @@ class ProcessVisitsCommand extends Command
         foreach ($visits as $visit) {
             $ipAddr = $visit->getRemoteAddr();
             $io->write(\sprintf('%s <info>%s</info>', $this->translator->translate('Processing IP'), $ipAddr));
-            if ($ipAddr === self::LOCALHOST) {
+            if ($ipAddr === IpAddress::LOCALHOST) {
                 $io->writeln(
                     \sprintf(' (<comment>%s</comment>)', $this->translator->translate('Ignored localhost address'))
                 );

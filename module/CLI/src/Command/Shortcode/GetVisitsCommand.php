@@ -85,16 +85,19 @@ class GetVisitsCommand extends Command
         $rows = [];
         foreach ($visits as $row) {
             $rowData = $row->jsonSerialize();
-            // Unset location info
-            unset($rowData['visitLocation']);
+
+            // Unset location info and remote addr
+            unset($rowData['visitLocation'], $rowData['remoteAddr']);
+
+            $rowData['country'] = $row->getVisitLocation()->getCountryName();
 
             $rows[] = \array_values($rowData);
         }
         $io->table([
             $this->translator->translate('Referer'),
             $this->translator->translate('Date'),
-            $this->translator->translate('Remote Address'),
             $this->translator->translate('User agent'),
+            $this->translator->translate('Country'),
         ], $rows);
     }
 

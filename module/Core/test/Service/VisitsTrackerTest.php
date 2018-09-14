@@ -61,7 +61,7 @@ class VisitsTrackerTest extends TestCase
         $this->em->persist(Argument::any())->will(function ($args) use ($test) {
             /** @var Visit $visit */
             $visit = $args[0];
-            $test->assertEquals('4.3.2.1', $visit->getRemoteAddr());
+            $test->assertEquals('4.3.2.0', $visit->getRemoteAddr());
         })->shouldBeCalledTimes(1);
         $this->em->flush(Argument::type(Visit::class))->shouldBeCalledTimes(1);
 

@@ -67,9 +67,9 @@ class ProcessVisitsCommandTest extends TestCase
             'command' => 'visit:process',
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertTrue(strpos($output, 'Processing IP 1.2.3.4') === 0);
-        $this->assertTrue(strpos($output, 'Processing IP 4.3.2.1') > 0);
-        $this->assertTrue(strpos($output, 'Processing IP 12.34.56.78') > 0);
+        $this->assertEquals(0, \strpos($output, 'Processing IP 1.2.3.0'));
+        $this->assertGreaterThan(0, \strpos($output, 'Processing IP 4.3.2.0'));
+        $this->assertGreaterThan(0, \strpos($output, 'Processing IP 12.34.56.0'));
     }
 
     /**
@@ -87,15 +87,15 @@ class ProcessVisitsCommandTest extends TestCase
         $this->visitService->getUnlocatedVisits()->willReturn($visits)
             ->shouldBeCalledTimes(1);
 
-        $this->visitService->saveVisit(Argument::any())->shouldBeCalledTimes(count($visits) - 2);
+        $this->visitService->saveVisit(Argument::any())->shouldBeCalledTimes(\count($visits) - 2);
         $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([])
-                                                             ->shouldBeCalledTimes(count($visits) - 2);
+                                                             ->shouldBeCalledTimes(\count($visits) - 2);
 
         $this->commandTester->execute([
             'command' => 'visit:process',
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertTrue(strpos($output, 'Ignored localhost address') > 0);
+        $this->assertGreaterThan(0, \strpos($output, 'Ignored localhost address'));
     }
 
     /**

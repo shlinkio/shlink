@@ -31,7 +31,7 @@ class VisitsTracker implements VisitsTrackerInterface
      * @throws ORM\ORMInvalidArgumentException
      * @throws ORM\OptimisticLockException
      */
-    public function track($shortCode, ServerRequestInterface $request)
+    public function track($shortCode, ServerRequestInterface $request): void
     {
         /** @var ShortUrl $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
@@ -52,9 +52,8 @@ class VisitsTracker implements VisitsTrackerInterface
 
     /**
      * @param ServerRequestInterface $request
-     * @return string|null
      */
-    private function findOutRemoteAddr(ServerRequestInterface $request)
+    private function findOutRemoteAddr(ServerRequestInterface $request): ?string
     {
         $forwardedFor = $request->getHeaderLine('X-Forwarded-For');
         if (empty($forwardedFor)) {
@@ -62,7 +61,7 @@ class VisitsTracker implements VisitsTrackerInterface
             return $serverParams['REMOTE_ADDR'] ?? null;
         }
 
-        $ips = explode(',', $forwardedFor);
+        $ips = \explode(',', $forwardedFor);
         return $ips[0] ?? null;
     }
 

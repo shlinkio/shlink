@@ -235,7 +235,11 @@ class InstallCommand extends Command
             $this->phpBinary = $this->phpFinder->find(false) ?: 'php';
         }
 
-        $this->io->writeln('Running "' . sprintf('%s %s', $this->phpBinary, $command) . '"');
+        $this->io->write(
+            ' <options=bold>[Running "' . sprintf('%s %s', $this->phpBinary, $command) . '"]</> ',
+            false,
+            OutputInterface::VERBOSITY_VERBOSE
+        );
         $process = $this->processHelper->run($output, sprintf('%s %s', $this->phpBinary, $command));
         if ($process->isSuccessful()) {
             $this->io->writeln(' <info>Success!</info>');

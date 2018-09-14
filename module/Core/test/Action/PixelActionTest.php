@@ -52,8 +52,7 @@ class PixelActionTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(
             (new ShortUrl())->setLongUrl('http://domain.com/foo/bar')
         )->shouldBeCalledTimes(1);
-        $this->visitTracker->track(Argument::cetera())->willReturn(null)
-                                                      ->shouldBeCalledTimes(1);
+        $this->visitTracker->track(Argument::cetera())->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $response = $this->action->process($request, TestUtils::createReqHandlerMock()->reveal());

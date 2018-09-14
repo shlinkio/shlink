@@ -2,17 +2,25 @@
     "type": "object",
     "properties": {
         "referer": {
-            "type": "string"
+            "type": "string",
+            "description": "The origin from which the visit was performed"
         },
         "date": {
             "type": "string",
-            "format": "date-time"
-        },
-        "remoteAddr": {
-            "type": "string"
+            "format": "date-time",
+            "description": "The date in which the visit was performed"
         },
         "userAgent": {
-            "type": "string"
+            "type": "string",
+            "description": "The user agent from which the visit was performed"
+        },
+        "visitLocation": {
+            "$ref": "./VisitLocation.json"
+        },
+        "remoteAddr": {
+            "type": "string",
+            "description": "This value is deprecated and will always be null",
+            "deprecated": true
         }
     }
 }
