@@ -46,12 +46,12 @@ final class Version20180913205455 extends AbstractMigration
 
             $qb->setParameters([
                 'id' => $row['id'],
-                'obfuscatedAddr' => $this->determineAddress((string) $addr, $row),
+                'obfuscatedAddr' => $this->determineAddress((string) $addr),
             ])->execute();
         }
     }
 
-    private function determineAddress(string $addr, array $row): ?string
+    private function determineAddress(string $addr): ?string
     {
         if ($addr === IpAddress::LOCALHOST) {
             return $addr;
