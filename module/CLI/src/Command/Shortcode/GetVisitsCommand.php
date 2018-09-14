@@ -15,7 +15,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class GetVisitsCommand extends Command
 {
-    const NAME = 'shortcode:visits';
+    public const NAME = 'short-code:visits';
+    private const ALIASES = ['shortcode:visits'];
 
     /**
      * @var VisitsTrackerInterface
@@ -33,9 +34,11 @@ class GetVisitsCommand extends Command
         parent::__construct();
     }
 
-    public function configure()
+    protected function configure(): void
     {
-        $this->setName(self::NAME)
+        $this
+            ->setName(self::NAME)
+            ->setAliases(self::ALIASES)
             ->setDescription(
                 $this->translator->translate('Returns the detailed visits information for provided short code')
             )
@@ -58,7 +61,7 @@ class GetVisitsCommand extends Command
             );
     }
 
-    public function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output): void
     {
         $shortCode = $input->getArgument('shortCode');
         if (! empty($shortCode)) {
@@ -74,7 +77,7 @@ class GetVisitsCommand extends Command
         }
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
         $shortCode = $input->getArgument('shortCode');
@@ -101,7 +104,7 @@ class GetVisitsCommand extends Command
         ], $rows);
     }
 
-    protected function getDateOption(InputInterface $input, $key)
+    private function getDateOption(InputInterface $input, $key)
     {
         $value = $input->getOption($key);
         if (! empty($value)) {

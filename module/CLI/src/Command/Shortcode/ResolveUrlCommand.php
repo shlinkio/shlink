@@ -15,7 +15,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class ResolveUrlCommand extends Command
 {
-    const NAME = 'shortcode:parse';
+    public const NAME = 'short-code:parse';
+    private const ALIASES = ['shortcode:parse'];
 
     /**
      * @var UrlShortenerInterface
@@ -33,18 +34,20 @@ class ResolveUrlCommand extends Command
         parent::__construct(null);
     }
 
-    public function configure()
+    protected function configure(): void
     {
-        $this->setName(self::NAME)
-             ->setDescription($this->translator->translate('Returns the long URL behind a short code'))
-             ->addArgument(
-                 'shortCode',
-                 InputArgument::REQUIRED,
-                 $this->translator->translate('The short code to parse')
-             );
+        $this
+            ->setName(self::NAME)
+            ->setAliases(self::ALIASES)
+            ->setDescription($this->translator->translate('Returns the long URL behind a short code'))
+            ->addArgument(
+                'shortCode',
+                InputArgument::REQUIRED,
+                $this->translator->translate('The short code to parse')
+            );
     }
 
-    public function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output): void
     {
         $shortCode = $input->getArgument('shortCode');
         if (! empty($shortCode)) {
@@ -60,7 +63,7 @@ class ResolveUrlCommand extends Command
         }
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
         $shortCode = $input->getArgument('shortCode');

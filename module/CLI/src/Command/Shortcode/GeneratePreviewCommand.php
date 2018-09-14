@@ -14,7 +14,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class GeneratePreviewCommand extends Command
 {
-    const NAME = 'shortcode:process-previews';
+    public const NAME = 'short-code:process-previews';
+    private const ALIASES = ['shortcode:process-previews'];
 
     /**
      * @var PreviewGeneratorInterface
@@ -40,17 +41,19 @@ class GeneratePreviewCommand extends Command
         parent::__construct(null);
     }
 
-    public function configure()
+    protected function configure(): void
     {
-        $this->setName(self::NAME)
-             ->setDescription(
-                 $this->translator->translate(
-                     'Processes and generates the previews for every URL, improving performance for later web requests.'
-                 )
-             );
+        $this
+            ->setName(self::NAME)
+            ->setAliases(self::ALIASES)
+            ->setDescription(
+                $this->translator->translate(
+                    'Processes and generates the previews for every URL, improving performance for later web requests.'
+                )
+            );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $page = 1;
         do {
@@ -65,7 +68,7 @@ class GeneratePreviewCommand extends Command
         (new SymfonyStyle($input, $output))->success($this->translator->translate('Finished processing all URLs'));
     }
 
-    protected function processUrl($url, OutputInterface $output)
+    private function processUrl($url, OutputInterface $output): void
     {
         try {
             $output->write(\sprintf($this->translator->translate('Processing URL %s...'), $url));
