@@ -23,6 +23,7 @@ return [
             Action\ShortCode\CreateShortCodeAction::class => ConfigAbstractFactory::class,
             Action\ShortCode\SingleStepCreateShortCodeAction::class => ConfigAbstractFactory::class,
             Action\ShortCode\EditShortCodeAction::class => ConfigAbstractFactory::class,
+            Action\ShortCode\DeleteShortCodeAction::class => ConfigAbstractFactory::class,
             Action\ShortCode\ResolveUrlAction::class => ConfigAbstractFactory::class,
             Action\Visit\GetVisitsAction::class => ConfigAbstractFactory::class,
             Action\ShortCode\ListShortCodesAction::class => ConfigAbstractFactory::class,
@@ -58,7 +59,12 @@ return [
             'config.url_shortener.domain',
             'Logger_Shlink',
         ],
-        Action\ShortCode\EditShortCodeAction::class => [Service\ShortUrlService::class, 'translator', 'Logger_Shlink',],
+        Action\ShortCode\EditShortCodeAction::class => [Service\ShortUrlService::class, 'translator', 'Logger_Shlink'],
+        Action\ShortCode\DeleteShortCodeAction::class => [
+            Service\ShortUrl\DeleteShortUrlService::class,
+            'translator',
+            'Logger_Shlink',
+        ],
         Action\ShortCode\ResolveUrlAction::class => [
             Service\UrlShortener::class,
             'translator',

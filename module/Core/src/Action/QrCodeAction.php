@@ -22,6 +22,10 @@ class QrCodeAction implements MiddlewareInterface
 {
     use ErrorResponseBuilderTrait;
 
+    private const DEFAULT_SIZE = 300;
+    private const MIN_SIZE = 50;
+    private const MAX_SIZE = 1000;
+
     /**
      * @var RouterInterface
      */
@@ -82,11 +86,11 @@ class QrCodeAction implements MiddlewareInterface
      */
     private function getSizeParam(Request $request): int
     {
-        $size = (int) $request->getAttribute('size', 300);
-        if ($size < 50) {
-            return 50;
+        $size = (int) $request->getAttribute('size', self::DEFAULT_SIZE);
+        if ($size < self::MIN_SIZE) {
+            return self::MIN_SIZE;
         }
 
-        return $size > 1000 ? 1000 : $size;
+        return $size > self::MAX_SIZE ? self::MAX_SIZE : $size;
     }
 }

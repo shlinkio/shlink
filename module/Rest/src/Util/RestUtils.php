@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Rest\Exception as Rest;
 class RestUtils
 {
     public const INVALID_SHORTCODE_ERROR = 'INVALID_SHORTCODE';
+    public const INVALID_SHORTCODE_DELETION_ERROR = 'INVALID_SHORTCODE_DELETION';
     public const INVALID_URL_ERROR = 'INVALID_URL';
     public const INVALID_ARGUMENT_ERROR = 'INVALID_ARGUMENT';
     public const INVALID_SLUG_ERROR = 'INVALID_SLUG';
@@ -35,6 +36,8 @@ class RestUtils
                 return self::INVALID_ARGUMENT_ERROR;
             case $e instanceof Rest\AuthenticationException:
                 return self::INVALID_CREDENTIALS_ERROR;
+            case $e instanceof Core\DeleteShortUrlException:
+                return self::INVALID_SHORTCODE_DELETION_ERROR;
             default:
                 return self::UNKNOWN_ERROR;
         }
