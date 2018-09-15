@@ -7,13 +7,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 
 /**
  * Class ShortUrl
  * @author
  * @link
  *
- * @ORM\Entity(repositoryClass="Shlinkio\Shlink\Core\Repository\ShortUrlRepository")
+ * @ORM\Entity(repositoryClass=ShortUrlRepository::class)
  * @ORM\Table(name="short_urls")
  */
 class ShortUrl extends AbstractEntity
@@ -22,7 +23,7 @@ class ShortUrl extends AbstractEntity
      * @var string
      * @ORM\Column(name="original_url", type="string", nullable=false, length=1024)
      */
-    protected $originalUrl;
+    private $originalUrl;
     /**
      * @var string
      * @ORM\Column(
@@ -33,17 +34,17 @@ class ShortUrl extends AbstractEntity
      *     unique=true
      * )
      */
-    protected $shortCode;
+    private $shortCode;
     /**
      * @var \DateTime
      * @ORM\Column(name="date_created", type="datetime")
      */
-    protected $dateCreated;
+    private $dateCreated;
     /**
      * @var Collection|Visit[]
      * @ORM\OneToMany(targetEntity=Visit::class, mappedBy="shortUrl", fetch="EXTRA_LAZY")
      */
-    protected $visits;
+    private $visits;
     /**
      * @var Collection|Tag[]
      * @ORM\ManyToMany(targetEntity=Tag::class, cascade={"persist"})
@@ -53,46 +54,36 @@ class ShortUrl extends AbstractEntity
      *     @ORM\JoinColumn(name="tag_id", referencedColumnName="id")
      * })
      */
-    protected $tags;
+    private $tags;
     /**
      * @var \DateTime
      * @ORM\Column(name="valid_since", type="datetime", nullable=true)
      */
-    protected $validSince;
+    private $validSince;
     /**
      * @var \DateTime
      * @ORM\Column(name="valid_until", type="datetime", nullable=true)
      */
-    protected $validUntil;
+    private $validUntil;
     /**
      * @var integer
      * @ORM\Column(name="max_visits", type="integer", nullable=true)
      */
-    protected $maxVisits;
+    private $maxVisits;
 
-    /**
-     * ShortUrl constructor.
-     */
     public function __construct()
     {
+        $this->shortCode = '';
         $this->dateCreated = new \DateTime();
         $this->visits = new ArrayCollection();
-        $this->shortCode = '';
         $this->tags = new ArrayCollection();
     }
 
-    /**
-     * @return string
-     */
     public function getLongUrl(): string
     {
         return $this->originalUrl;
     }
 
-    /**
-     * @param string $longUrl
-     * @return $this
-     */
     public function setLongUrl(string $longUrl): self
     {
         $this->originalUrl = $longUrl;
@@ -100,7 +91,6 @@ class ShortUrl extends AbstractEntity
     }
 
     /**
-     * @return string
      * @deprecated Use getLongUrl() instead
      */
     public function getOriginalUrl(): string
@@ -109,8 +99,6 @@ class ShortUrl extends AbstractEntity
     }
 
     /**
-     * @param string $originalUrl
-     * @return $this
      * @deprecated Use setLongUrl() instead
      */
     public function setOriginalUrl(string $originalUrl): self
@@ -118,37 +106,23 @@ class ShortUrl extends AbstractEntity
         return $this->setLongUrl($originalUrl);
     }
 
-    /**
-     * @return string
-     */
     public function getShortCode(): string
     {
         return $this->shortCode;
     }
 
-    /**
-     * @param string $shortCode
-     * @return $this
-     */
-    public function setShortCode(string $shortCode)
+    public function setShortCode(string $shortCode): self
     {
         $this->shortCode = $shortCode;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getDateCreated(): \DateTime
     {
         return $this->dateCreated;
     }
 
-    /**
-     * @param \DateTime $dateCreated
-     * @return $this
-     */
-    public function setDateCreated(\DateTime $dateCreated)
+    public function setDateCreated(\DateTime $dateCreated): self
     {
         $this->dateCreated = $dateCreated;
         return $this;
@@ -164,55 +138,36 @@ class ShortUrl extends AbstractEntity
 
     /**
      * @param Collection|Tag[] $tags
-     * @return $this
      */
-    public function setTags(Collection $tags)
+    public function setTags(Collection $tags): self
     {
         $this->tags = $tags;
         return $this;
     }
 
-    /**
-     * @param Tag $tag
-     * @return $this
-     */
-    public function addTag(Tag $tag)
+    public function addTag(Tag $tag): self
     {
         $this->tags->add($tag);
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getValidSince()
+    public function getValidSince(): ?\DateTime
     {
         return $this->validSince;
     }
 
-    /**
-     * @param \DateTime|null $validSince
-     * @return $this|self
-     */
-    public function setValidSince($validSince): self
+    public function setValidSince(?\DateTime $validSince): self
     {
         $this->validSince = $validSince;
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getValidUntil()
+    public function getValidUntil(): ?\DateTime
     {
         return $this->validUntil;
     }
 
-    /**
-     * @param \DateTime|null $validUntil
-     * @return $this|self
-     */
-    public function setValidUntil($validUntil): self
+    public function setValidUntil(?\DateTime $validUntil): self
     {
         $this->validUntil = $validUntil;
         return $this;
@@ -224,7 +179,7 @@ class ShortUrl extends AbstractEntity
     }
 
     /**
-     * @param Collection $visits
+     * @param Collection|Visit[] $visits
      * @return ShortUrl
      * @internal
      */
@@ -234,19 +189,12 @@ class ShortUrl extends AbstractEntity
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getMaxVisits()
+    public function getMaxVisits(): ?int
     {
         return $this->maxVisits;
     }
 
-    /**
-     * @param int|null $maxVisits
-     * @return $this|self
-     */
-    public function setMaxVisits($maxVisits): self
+    public function setMaxVisits(?int $maxVisits): self
     {
         $this->maxVisits = $maxVisits;
         return $this;

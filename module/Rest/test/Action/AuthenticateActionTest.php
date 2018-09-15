@@ -55,7 +55,7 @@ class AuthenticateActionTest extends TestCase
      */
     public function properApiKeyReturnsTokenInResponse()
     {
-        $this->apiKeyService->getByKey('foo')->willReturn((new ApiKey())->setId(5))
+        $this->apiKeyService->getByKey('foo')->willReturn((new ApiKey())->setId('5'))
                                              ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([

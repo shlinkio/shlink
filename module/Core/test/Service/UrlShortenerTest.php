@@ -54,7 +54,7 @@ class UrlShortenerTest extends TestCase
         $this->em->persist(Argument::any())->will(function ($arguments) {
             /** @var ShortUrl $shortUrl */
             $shortUrl = $arguments[0];
-            $shortUrl->setId(10);
+            $shortUrl->setId('10');
         });
         $repo = $this->prophesize(ObjectRepository::class);
         $repo->findOneBy(Argument::any())->willReturn(null);
