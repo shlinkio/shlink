@@ -1,5 +1,58 @@
 # CHANGELOG
 
+## 1.12.0 - 2018-09-15
+
+#### Added
+
+* [#187](https://github.com/shlinkio/shlink/issues/187) Included an API endpoint and a CLI command to delete short URLs.
+
+    Due to the implicit danger of this operation, the deletion includes a safety check. URLs cannot be deleted if they have more than a specific amount of visits.
+
+    The visits threshold is set to **15** by default and currently it has to be manually changed. In future versions the installation/update process will ask you about the value of the visits threshold.
+
+    In order to change it, open the `config/autoload/delete_short_urls.global.php` file, which has this structure:
+
+    ```php
+    return [
+
+        'delete_short_urls' => [
+            'visits_threshold' => 15,
+            'check_visits_threshold' => true,
+        ],
+
+    ];
+    ```
+
+    Properties are self explanatory. Change `check_visits_threshold` to `false` to completely disable this safety check, and change the value of `visits_threshold` to allow short URLs with a different number of visits to be deleted.
+
+    Once changed, delete the `data/cache/app_config.php` file (if any) to let shlink know about the new values.
+
+    This check is implicit for the API endpoint, but can be "disabled" for the CLI command, which will ask you when trying to delete a URL which has reached to threshold in order to force the deletion.
+
+* [#183](https://github.com/shlinkio/shlink/issues/183) and [#190](https://github.com/shlinkio/shlink/issues/190) Included important documentation improvements in the repository itself. You no longer need to go to the website in order to see how to install or use shlink.
+* [#186](https://github.com/shlinkio/shlink/issues/186) Added a small robots.txt file that prevents 404 errors to be logged due to search engines trying to index the domain where shlink is located. Thanks to [@robwent](https://github.com/robwent) for the contribution.
+
+#### Changed
+
+* [#145](https://github.com/shlinkio/shlink/issues/145) Shlink now obfuscates IP addresses from visitors by replacing the latest octet by `0`, which does not affect geolocation and allows it to fulfil the GDPR.
+
+    Other known services follow this same approach, like [Google Analytics](https://support.google.com/analytics/answer/2763052?hl=en) or [Matomo](https://matomo.org/docs/privacy/#step-1-automatically-anonymize-visitor-ips)
+
+* [#182](https://github.com/shlinkio/shlink/issues/182) The short URL creation API endpoints now return the same model used for lists and details endpoints.
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#188](https://github.com/shlinkio/shlink/issues/188) Shlink now allows multiple short URLs to be created that resolve to the same long URL.
+
+
 ## 1.11.0 - 2018-08-13
 
 #### Added
