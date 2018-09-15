@@ -27,9 +27,4 @@ interface ShortUrlServiceInterface
      * @throws InvalidShortCodeException
      */
     public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortCodeMeta): ShortUrl;
-
-    /**
-     * @throws InvalidShortCodeException
-     */
-    public function deleteByShortCode(string $shortCode): void;
 }

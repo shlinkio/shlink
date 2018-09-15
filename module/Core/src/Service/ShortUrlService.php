@@ -9,11 +9,13 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
+use Shlinkio\Shlink\Core\Service\ShortUrl\FindShortCodeTrait;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Zend\Paginator\Paginator;
 
 class ShortUrlService implements ShortUrlServiceInterface
 {
+    use FindShortCodeTrait;
     use TagManagerTrait;
 
     /**
@@ -48,7 +50,7 @@ class ShortUrlService implements ShortUrlServiceInterface
      */
     public function setTagsByShortCode(string $shortCode, array $tags = []): ShortUrl
     {
-        $shortUrl = $this->findByShortCode($shortCode);
+        $shortUrl = $this->findByShortCode($this->em, $shortCode);
         $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
         $this->em->flush();
 
@@ -60,7 +62,7 @@ class ShortUrlService implements ShortUrlServiceInterface
      */
     public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortCodeMeta): ShortUrl
     {
-        $shortUrl = $this->findByShortCode($shortCode);
+        $shortUrl = $this->findByShortCode($this->em, $shortCode);
         if ($shortCodeMeta->hasValidSince()) {
             $shortUrl->setValidSince($shortCodeMeta->getValidSince());
         }
@@ -74,33 +76,6 @@ class ShortUrlService implements ShortUrlServiceInterface
         /** @var ORM\EntityManager $em */
         $em = $this->em;
         $em->flush($shortUrl);
-
-        return $shortUrl;
-    }
-
-    /**
-     * @throws InvalidShortCodeException
-     */
-    public function deleteByShortCode(string $shortCode): void
-    {
-        $this->em->remove($this->findByShortCode($shortCode));
-        $this->em->flush();
-    }
-
-    /**
-     * @param string $shortCode
-     * @return ShortUrl
-     * @throws InvalidShortCodeException
-     */
-    private function findByShortCode(string $shortCode): ShortUrl
-    {
-        /** @var ShortUrl|null $shortUrl */
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
-            'shortCode' => $shortCode,
-        ]);
-        if ($shortUrl === null) {
-            throw InvalidShortCodeException::fromNotFoundShortCode($shortCode);
-        }
 
         return $shortUrl;
     }

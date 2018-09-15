@@ -175,7 +175,7 @@ class ShortUrl extends AbstractEntity
 
     public function getVisitsCount(): int
     {
-        return count($this->visits);
+        return \count($this->visits);
     }
 
     /**
