@@ -159,5 +159,70 @@
                 }
             }
         }
+    },
+
+    "delete": {
+        "tags": [
+            "ShortCodes"
+        ],
+        "summary": "Delete short code",
+        "description": "Deletes the short URL for provided short code.",
+        "parameters": [
+            {
+                "name": "shortCode",
+                "in": "path",
+                "description": "The short code to edit.",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                }
+            }
+        ],
+        "security": [
+            {
+                "Bearer": []
+            }
+        ],
+        "responses": {
+            "204": {
+                "description": "The short code has been properly deleted."
+            },
+            "400": {
+                "description": "The visits threshold in shlink does not allow this short URL to be deleted.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "error": "INVALID_SHORTCODE_DELETION",
+                        "message": "It is not possible to delete URL with short code \"abc123\" because it has reached more than \"15\" visits."
+                    }
+                }
+            },
+            "404": {
+                "description": "No short URL was found for provided short code.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            }
+        }
     }
 }
