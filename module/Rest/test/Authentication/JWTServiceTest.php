@@ -30,7 +30,7 @@ class JWTServiceTest extends TestCase
      */
     public function tokenIsProperlyCreated()
     {
-        $id = 34;
+        $id = '34';
         $token = $this->service->create((new ApiKey())->setId($id));
         $payload = (array) JWT::decode($token, 'foo', [JWTService::DEFAULT_ENCRYPTION_ALG]);
         $this->assertGreaterThanOrEqual($payload['iat'], time());

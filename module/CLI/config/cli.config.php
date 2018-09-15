@@ -14,6 +14,7 @@ return [
             Command\Shortcode\ListShortcodesCommand::NAME => Command\Shortcode\ListShortcodesCommand::class,
             Command\Shortcode\GetVisitsCommand::NAME => Command\Shortcode\GetVisitsCommand::class,
             Command\Shortcode\GeneratePreviewCommand::NAME => Command\Shortcode\GeneratePreviewCommand::class,
+            Command\Shortcode\DeleteShortCodeCommand::NAME => Command\Shortcode\DeleteShortCodeCommand::class,
 
             Command\Visit\ProcessVisitsCommand::NAME => Command\Visit\ProcessVisitsCommand::class,
 

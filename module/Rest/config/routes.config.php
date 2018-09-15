@@ -18,6 +18,7 @@ return [
             Middleware\ShortCode\CreateShortCodeContentNegotiationMiddleware::class,
         ]),
         Action\ShortCode\EditShortCodeAction::getRouteDef(),
+        Action\ShortCode\DeleteShortCodeAction::getRouteDef(),
         Action\ShortCode\ResolveUrlAction::getRouteDef(),
         Action\ShortCode\ListShortCodesAction::getRouteDef(),
         Action\ShortCode\EditShortCodeTagsAction::getRouteDef(),

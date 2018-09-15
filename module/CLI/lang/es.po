@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2018-08-04 16:35+0200\n"
-"PO-Revision-Date: 2018-08-04 16:37+0200\n"
+"POT-Creation-Date: 2018-09-15 17:57+0200\n"
+"PO-Revision-Date: 2018-09-15 18:02+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -79,6 +79,41 @@ msgstr ""
 #, php-format
 msgid "Secret key: \"%s\""
 msgstr "Clave secreta: \"%s\""
+
+msgid "Deletes a short URL"
+msgstr "Elimina una URL"
+
+msgid "The short code to be deleted"
+msgstr "El código corto a eliminar"
+
+msgid ""
+"Ignores the safety visits threshold check, which could make short URLs with "
+"many visits to be accidentally deleted"
+msgstr ""
+"Ignora el límite de seguridad de visitas, pudiendo resultar en el borrado "
+"accidental de URLs con muchas visitas"
+
+#, php-format
+msgid "Provided short code \"%s\" could not be found."
+msgstr "El código corto proporcionado \"%s\" no ha podido ser encontrado."
+
+#, php-format
+msgid ""
+"It was not possible to delete the short URL with short code \"%s\" because "
+"it has more than %s visits."
+msgstr ""
+"No se pudo eliminar la URL acortada con código corto \"%s\" porque tiene más "
+"de %s visitas."
+
+msgid "Do you want to delete it anyway?"
+msgstr "¿Aún así quieres eliminarla?"
+
+msgid "Short URL was not deleted."
+msgstr "La URL corta no ha sido eliminada."
+
+#, php-format
+msgid "Short URL with short code \"%s\" successfully deleted."
+msgstr "La URL acortada con el código corto \"%s\" eliminada correctamente."
 
 msgid ""
 "Processes and generates the previews for every URL, improving performance "
@@ -183,11 +218,11 @@ msgstr "Origen"
 msgid "Date"
 msgstr "Fecha"
 
-msgid "Remote Address"
-msgstr "Dirección remota"
-
 msgid "User agent"
 msgstr "Agente de usuario"
+
+msgid "Country"
+msgstr "País"
 
 msgid "List all short URLs"
 msgstr "Listar todas las URLs cortas"
@@ -218,8 +253,11 @@ msgstr "Si se desea mostrar las etiquetas o no"
 msgid "Short code"
 msgstr "Código corto"
 
-msgid "Original URL"
-msgstr "URL original"
+msgid "Short URL"
+msgstr "URL corta"
+
+msgid "Long URL"
+msgstr "URL larga"
 
 msgid "Date created"
 msgstr "Fecha de creación"
@@ -252,10 +290,6 @@ msgstr "URL larga:"
 #, php-format
 msgid "Provided short code \"%s\" has an invalid format."
 msgstr "El código corto proporcionado \"%s\" tiene un formato inválido."
-
-#, php-format
-msgid "Provided short code \"%s\" could not be found."
-msgstr "El código corto proporcionado \"%s\" no ha podido ser encontrado."
 
 msgid "Creates one or more tags."
 msgstr "Crea una o más etiquetas."
@@ -326,6 +360,12 @@ msgstr "Limite del localizador de IPs alcanzado. Esperando %s segundos..."
 
 msgid "Finished processing all IPs"
 msgstr "Finalizado el procesado de todas las IPs"
+
+#~ msgid "Remote Address"
+#~ msgstr "Dirección remota"
+
+#~ msgid "Original URL"
+#~ msgstr "URL original"
 
 #~ msgid "You have reached last page"
 #~ msgstr "Has alcanzado la última página"

@@ -23,17 +23,17 @@ class ApiKey extends AbstractEntity
      * @var string
      * @ORM\Column(name="`key`", nullable=false, unique=true)
      */
-    protected $key;
+    private $key;
     /**
      * @var \DateTime|null
      * @ORM\Column(name="expiration_date", nullable=true, type="datetime")
      */
-    protected $expirationDate;
+    private $expirationDate;
     /**
      * @var bool
      * @ORM\Column(type="boolean")
      */
-    protected $enabled;
+    private $enabled;
 
     public function __construct()
     {
@@ -41,45 +41,28 @@ class ApiKey extends AbstractEntity
         $this->key = $this->generateV4Uuid();
     }
 
-    /**
-     * @return string
-     */
     public function getKey(): string
     {
         return $this->key;
     }
 
-    /**
-     * @param string $key
-     * @return $this
-     */
-    public function setKey($key): self
+    public function setKey(string $key): self
     {
         $this->key = $key;
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
     public function getExpirationDate(): ?\DateTime
     {
         return $this->expirationDate;
     }
 
-    /**
-     * @param \DateTime $expirationDate
-     * @return $this
-     */
-    public function setExpirationDate($expirationDate): self
+    public function setExpirationDate(\DateTime $expirationDate): self
     {
         $this->expirationDate = $expirationDate;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isExpired(): bool
     {
         if ($this->expirationDate === null) {
@@ -89,29 +72,17 @@ class ApiKey extends AbstractEntity
         return $this->expirationDate < new \DateTime();
     }
 
-    /**
-     * @return boolean
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * @param boolean $enabled
-     * @return $this
-     */
-    public function setEnabled($enabled): self
+    public function setEnabled(bool $enabled): self
     {
         $this->enabled = $enabled;
         return $this;
     }
 
-    /**
-     * Disables this API key
-     *
-     * @return $this
-     */
     public function disable(): self
     {
         return $this->setEnabled(false);
@@ -119,19 +90,12 @@ class ApiKey extends AbstractEntity
 
     /**
      * Tells if this api key is enabled and not expired
-     *
-     * @return bool
      */
     public function isValid(): bool
     {
         return $this->isEnabled() && ! $this->isExpired();
     }
 
-    /**
-     * The string representation of an API key is the key itself
-     *
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->getKey();

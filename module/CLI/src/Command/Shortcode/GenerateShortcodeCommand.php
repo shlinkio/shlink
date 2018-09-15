@@ -20,7 +20,8 @@ class GenerateShortcodeCommand extends Command
 {
     use ShortUrlBuilderTrait;
 
-    public const NAME = 'shortcode:generate';
+    public const NAME = 'short-code:generate';
+    private const ALIASES = ['shortcode:generate'];
 
     /**
      * @var UrlShortenerInterface
@@ -46,36 +47,38 @@ class GenerateShortcodeCommand extends Command
         parent::__construct(null);
     }
 
-    public function configure()
+    protected function configure(): void
     {
-        $this->setName(self::NAME)
-             ->setDescription(
-                 $this->translator->translate('Generates a short code for provided URL and returns the short URL')
-             )
-             ->addArgument('longUrl', InputArgument::REQUIRED, $this->translator->translate('The long URL to parse'))
-             ->addOption(
-                 'tags',
-                 't',
-                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-                 $this->translator->translate('Tags to apply to the new short URL')
-             )
-             ->addOption('validSince', 's', InputOption::VALUE_REQUIRED, $this->translator->translate(
-                 'The date from which this short URL will be valid. '
-                 . 'If someone tries to access it before this date, it will not be found.'
-             ))
-             ->addOption('validUntil', 'u', InputOption::VALUE_REQUIRED, $this->translator->translate(
-                 'The date until which this short URL will be valid. '
-                 . 'If someone tries to access it after this date, it will not be found.'
-             ))
-             ->addOption('customSlug', 'c', InputOption::VALUE_REQUIRED, $this->translator->translate(
-                 'If provided, this slug will be used instead of generating a short code'
-             ))
-             ->addOption('maxVisits', 'm', InputOption::VALUE_REQUIRED, $this->translator->translate(
-                 'This will limit the number of visits for this short URL.'
-             ));
+        $this
+            ->setName(self::NAME)
+            ->setAliases(self::ALIASES)
+            ->setDescription(
+                $this->translator->translate('Generates a short code for provided URL and returns the short URL')
+            )
+            ->addArgument('longUrl', InputArgument::REQUIRED, $this->translator->translate('The long URL to parse'))
+            ->addOption(
+                'tags',
+                't',
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                $this->translator->translate('Tags to apply to the new short URL')
+            )
+            ->addOption('validSince', 's', InputOption::VALUE_REQUIRED, $this->translator->translate(
+                'The date from which this short URL will be valid. '
+                . 'If someone tries to access it before this date, it will not be found.'
+            ))
+            ->addOption('validUntil', 'u', InputOption::VALUE_REQUIRED, $this->translator->translate(
+                'The date until which this short URL will be valid. '
+                . 'If someone tries to access it after this date, it will not be found.'
+            ))
+            ->addOption('customSlug', 'c', InputOption::VALUE_REQUIRED, $this->translator->translate(
+                'If provided, this slug will be used instead of generating a short code'
+            ))
+            ->addOption('maxVisits', 'm', InputOption::VALUE_REQUIRED, $this->translator->translate(
+                'This will limit the number of visits for this short URL.'
+            ));
     }
 
-    public function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
         $longUrl = $input->getArgument('longUrl');
@@ -91,7 +94,7 @@ class GenerateShortcodeCommand extends Command
         }
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
         $longUrl = $input->getArgument('longUrl');
@@ -140,7 +143,7 @@ class GenerateShortcodeCommand extends Command
         }
     }
 
-    private function getOptionalDate(InputInterface $input, string $fieldName)
+    private function getOptionalDate(InputInterface $input, string $fieldName): ?\DateTime
     {
         $since = $input->getOption($fieldName);
         return $since !== null ? new \DateTime($since) : null;

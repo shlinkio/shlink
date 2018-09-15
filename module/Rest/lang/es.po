@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2018-05-06 12:34+0200\n"
-"PO-Revision-Date: 2018-05-06 12:35+0200\n"
+"POT-Creation-Date: 2018-09-15 18:02+0200\n"
+"PO-Revision-Date: 2018-09-15 18:03+0200\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -42,6 +42,14 @@ msgstr "No se ha proporcionado una URL"
 #, php-format
 msgid "No URL found for short code \"%s\""
 msgstr "No se ha encontrado ninguna URL para el código corto \"%s\""
+
+#, php-format
+msgid ""
+"It is not possible to delete URL with short code \"%s\" because it has "
+"reached more than \"%s\" visits."
+msgstr ""
+"No es posible eliminar la URL con el código corto \"%s\" porque ha alcanzado "
+"más de \"%s\" visitas."
 
 msgid "Provided data is invalid."
 msgstr "Los datos proporcionados son inválidos."

@@ -21,159 +21,110 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
      * @var string
      * @ORM\Column(nullable=true)
      */
-    protected $countryCode;
+    private $countryCode;
     /**
      * @var string
      * @ORM\Column(nullable=true)
      */
-    protected $countryName;
+    private $countryName;
     /**
      * @var string
      * @ORM\Column(nullable=true)
      */
-    protected $regionName;
+    private $regionName;
     /**
      * @var string
      * @ORM\Column(nullable=true)
      */
-    protected $cityName;
+    private $cityName;
     /**
      * @var string
      * @ORM\Column(nullable=true)
      */
-    protected $latitude;
+    private $latitude;
     /**
      * @var string
      * @ORM\Column(nullable=true)
      */
-    protected $longitude;
+    private $longitude;
     /**
      * @var string
      * @ORM\Column(nullable=true)
      */
-    protected $timezone;
+    private $timezone;
 
-    /**
-     * @return string
-     */
-    public function getCountryCode()
+    public function getCountryCode(): string
     {
-        return $this->countryCode;
+        return $this->countryCode ?? '';
     }
 
-    /**
-     * @param string $countryCode
-     * @return $this
-     */
-    public function setCountryCode($countryCode)
+    public function setCountryCode(string $countryCode)
     {
         $this->countryCode = $countryCode;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCountryName()
+    public function getCountryName(): string
     {
-        return $this->countryName;
+        return $this->countryName ?? '';
     }
 
-    /**
-     * @param string $countryName
-     * @return $this
-     */
-    public function setCountryName($countryName)
+    public function setCountryName(string $countryName): self
     {
         $this->countryName = $countryName;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getRegionName()
+    public function getRegionName(): string
     {
-        return $this->regionName;
+        return $this->regionName ?? '';
     }
 
-    /**
-     * @param string $regionName
-     * @return $this
-     */
-    public function setRegionName($regionName)
+    public function setRegionName(string $regionName): self
     {
         $this->regionName = $regionName;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCityName()
+    public function getCityName(): string
     {
-        return $this->cityName;
+        return $this->cityName ?? '';
     }
 
-    /**
-     * @param string $cityName
-     * @return $this
-     */
-    public function setCityName($cityName)
+    public function setCityName(string $cityName): self
     {
         $this->cityName = $cityName;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLatitude()
+    public function getLatitude(): string
     {
-        return $this->latitude;
+        return $this->latitude ?? '';
     }
 
-    /**
-     * @param string $latitude
-     * @return $this
-     */
-    public function setLatitude($latitude)
+    public function setLatitude(string $latitude): self
     {
         $this->latitude = $latitude;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLongitude()
+    public function getLongitude(): string
     {
-        return $this->longitude;
+        return $this->longitude ?? '';
     }
 
-    /**
-     * @param string $longitude
-     * @return $this
-     */
-    public function setLongitude($longitude)
+    public function setLongitude(string $longitude): self
     {
         $this->longitude = $longitude;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTimezone()
+    public function getTimezone(): string
     {
-        return $this->timezone;
+        return $this->timezone ?? '';
     }
 
-    /**
-     * @param string $timezone
-     * @return $this
-     */
-    public function setTimezone($timezone)
+    public function setTimezone(string $timezone): self
     {
         $this->timezone = $timezone;
         return $this;
@@ -181,41 +132,36 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
 
     /**
      * Exchange internal values from provided array
-     *
-     * @param  array $array
-     * @return void
      */
-    public function exchangeArray(array $array)
+    public function exchangeArray(array $array): void
     {
-        if (array_key_exists('country_code', $array)) {
+        if (\array_key_exists('country_code', $array)) {
             $this->setCountryCode($array['country_code']);
         }
-        if (array_key_exists('country_name', $array)) {
+        if (\array_key_exists('country_name', $array)) {
             $this->setCountryName($array['country_name']);
         }
-        if (array_key_exists('region_name', $array)) {
+        if (\array_key_exists('region_name', $array)) {
             $this->setRegionName($array['region_name']);
         }
-        if (array_key_exists('city', $array)) {
+        if (\array_key_exists('city', $array)) {
             $this->setCityName($array['city']);
         }
-        if (array_key_exists('latitude', $array)) {
+        if (\array_key_exists('latitude', $array)) {
             $this->setLatitude($array['latitude']);
         }
-        if (array_key_exists('longitude', $array)) {
+        if (\array_key_exists('longitude', $array)) {
             $this->setLongitude($array['longitude']);
         }
-        if (array_key_exists('time_zone', $array)) {
+        if (\array_key_exists('time_zone', $array)) {
             $this->setTimezone($array['time_zone']);
         }
     }
 
     /**
      * Return an array representation of the object
-     *
-     * @return array
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         return [
             'countryCode' => $this->countryCode,
@@ -228,14 +174,7 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
         ];
     }
 
-    /**
-     * Specify data which should be serialized to JSON
-     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->getArrayCopy();
     }

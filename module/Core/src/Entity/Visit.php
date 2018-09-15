@@ -7,13 +7,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
+use Shlinkio\Shlink\Core\Repository\VisitRepository;
 
 /**
  * Class Visit
  * @author
  * @link
  *
- * @ORM\Entity(repositoryClass="Shlinkio\Shlink\Core\Repository\VisitRepository")
+ * @ORM\Entity(repositoryClass=VisitRepository::class)
  * @ORM\Table(name="visits")
  */
 class Visit extends AbstractEntity implements \JsonSerializable

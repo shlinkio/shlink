@@ -18,7 +18,8 @@ class ListShortcodesCommand extends Command
 {
     use PaginatorUtilsTrait;
 
-    const NAME = 'shortcode:list';
+    public const NAME = 'short-code:list';
+    private const ALIASES = ['shortcode:list'];
 
     /**
      * @var ShortUrlServiceInterface
@@ -46,49 +47,51 @@ class ListShortcodesCommand extends Command
 
     protected function configure(): void
     {
-        $this->setName(self::NAME)
-             ->setDescription($this->translator->translate('List all short URLs'))
-             ->addOption(
-                 'page',
-                 'p',
-                 InputOption::VALUE_OPTIONAL,
-                 sprintf(
-                     $this->translator->translate('The first page to list (%s items per page)'),
-                     PaginableRepositoryAdapter::ITEMS_PER_PAGE
-                 ),
-                 1
-             )
-             ->addOption(
-                 'searchTerm',
-                 's',
-                 InputOption::VALUE_OPTIONAL,
-                 $this->translator->translate(
-                     'A query used to filter results by searching for it on the longUrl and shortCode fields'
-                 )
-             )
-             ->addOption(
-                 'tags',
-                 't',
-                 InputOption::VALUE_OPTIONAL,
-                 $this->translator->translate('A comma-separated list of tags to filter results')
-             )
-             ->addOption(
-                 'orderBy',
-                 'o',
-                 InputOption::VALUE_OPTIONAL,
-                 $this->translator->translate(
-                     'The field from which we want to order by. Pass ASC or DESC separated by a comma'
-                 )
-             )
-             ->addOption(
-                 'showTags',
-                 null,
-                 InputOption::VALUE_NONE,
-                 $this->translator->translate('Whether to display the tags or not')
-             );
+        $this
+            ->setName(self::NAME)
+            ->setAliases(self::ALIASES)
+            ->setDescription($this->translator->translate('List all short URLs'))
+            ->addOption(
+                'page',
+                'p',
+                InputOption::VALUE_OPTIONAL,
+                sprintf(
+                    $this->translator->translate('The first page to list (%s items per page)'),
+                    PaginableRepositoryAdapter::ITEMS_PER_PAGE
+                ),
+                1
+            )
+            ->addOption(
+                'searchTerm',
+                's',
+                InputOption::VALUE_OPTIONAL,
+                $this->translator->translate(
+                    'A query used to filter results by searching for it on the longUrl and shortCode fields'
+                )
+            )
+            ->addOption(
+                'tags',
+                't',
+                InputOption::VALUE_OPTIONAL,
+                $this->translator->translate('A comma-separated list of tags to filter results')
+            )
+            ->addOption(
+                'orderBy',
+                'o',
+                InputOption::VALUE_OPTIONAL,
+                $this->translator->translate(
+                    'The field from which we want to order by. Pass ASC or DESC separated by a comma'
+                )
+            )
+            ->addOption(
+                'showTags',
+                null,
+                InputOption::VALUE_NONE,
+                $this->translator->translate('Whether to display the tags or not')
+            );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
         $page = (int) $input->getOption('page');

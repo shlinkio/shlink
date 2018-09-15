@@ -17,6 +17,7 @@ return [
     'dependencies' => [
         'factories' => [
             Options\AppOptions::class => Options\AppOptionsFactory::class,
+            Options\DeleteShortUrlsOptions::class => Options\DeleteShortUrlsOptionsFactory::class,
             NotFoundHandler::class => ConfigAbstractFactory::class,
 
             // Services
@@ -25,6 +26,7 @@ return [
             Service\ShortUrlService::class => ConfigAbstractFactory::class,
             Service\VisitService::class => ConfigAbstractFactory::class,
             Service\Tag\TagService::class => ConfigAbstractFactory::class,
+            Service\ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
 
             // Middleware
             Action\RedirectAction::class => ConfigAbstractFactory::class,
@@ -49,6 +51,7 @@ return [
         Service\ShortUrlService::class => ['em'],
         Service\VisitService::class => ['em'],
         Service\Tag\TagService::class => ['em'],
+        Service\ShortUrl\DeleteShortUrlService::class => ['em', Options\DeleteShortUrlsOptions::class],
 
         // Middleware
         Action\RedirectAction::class => [
