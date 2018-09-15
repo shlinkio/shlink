@@ -58,6 +58,22 @@ class DeleteShortUrlServiceTest extends TestCase
     /**
      * @test
      */
+    public function deleteByShortCodeDeletesUrlWhenThresholdIsReachedButExplicitlyIgnored()
+    {
+        $service = $this->createService();
+
+        $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
+        $flush = $this->em->flush()->willReturn(null);
+
+        $service->deleteByShortCode('abc123', true);
+
+        $remove->shouldHaveBeenCalledTimes(1);
+        $flush->shouldHaveBeenCalledTimes(1);
+    }
+
+    /**
+     * @test
+     */
     public function deleteByShortCodeDeletesUrlWhenThresholdIsReachedButCheckIsDisabled()
     {
         $service = $this->createService(false);

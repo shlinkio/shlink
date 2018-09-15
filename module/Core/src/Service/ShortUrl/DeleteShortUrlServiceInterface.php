@@ -11,5 +11,5 @@ interface DeleteShortUrlServiceInterface
      * @throws Exception\InvalidShortCodeException
      * @throws Exception\DeleteShortUrlException
      */
-    public function deleteByShortCode(string $shortCode): void;
+    public function deleteByShortCode(string $shortCode, bool $ignoreThreshold = false): void;
 }

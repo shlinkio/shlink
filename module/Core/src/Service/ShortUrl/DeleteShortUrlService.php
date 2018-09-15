@@ -31,10 +31,10 @@ class DeleteShortUrlService implements DeleteShortUrlServiceInterface
      * @throws Exception\InvalidShortCodeException
      * @throws Exception\DeleteShortUrlException
      */
-    public function deleteByShortCode(string $shortCode): void
+    public function deleteByShortCode(string $shortCode, bool $ignoreThreshold = false): void
     {
         $shortUrl = $this->findByShortCode($this->em, $shortCode);
-        if ($this->isThresholdReached($shortUrl)) {
+        if (! $ignoreThreshold && $this->isThresholdReached($shortUrl)) {
             throw Exception\DeleteShortUrlException::fromVisitsThreshold(
                 $this->deleteShortUrlsOptions->getVisitsThreshold(),
                 $shortUrl->getShortCode()

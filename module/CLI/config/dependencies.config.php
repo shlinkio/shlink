@@ -22,12 +22,17 @@ return [
             Command\Shortcode\ListShortcodesCommand::class => ConfigAbstractFactory::class,
             Command\Shortcode\GetVisitsCommand::class => ConfigAbstractFactory::class,
             Command\Shortcode\GeneratePreviewCommand::class => ConfigAbstractFactory::class,
+            Command\Shortcode\DeleteShortCodeCommand::class => ConfigAbstractFactory::class,
+
             Command\Visit\ProcessVisitsCommand::class => ConfigAbstractFactory::class,
+
             Command\Config\GenerateCharsetCommand::class => ConfigAbstractFactory::class,
             Command\Config\GenerateSecretCommand::class => ConfigAbstractFactory::class,
+
             Command\Api\GenerateKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\DisableKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\ListKeysCommand::class => ConfigAbstractFactory::class,
+
             Command\Tag\ListTagsCommand::class => ConfigAbstractFactory::class,
             Command\Tag\CreateTagCommand::class => ConfigAbstractFactory::class,
             Command\Tag\RenameTagCommand::class => ConfigAbstractFactory::class,
@@ -53,16 +58,24 @@ return [
             PreviewGenerator::class,
             'translator',
         ],
+        Command\Shortcode\DeleteShortCodeCommand::class => [
+            Service\ShortUrl\DeleteShortUrlService::class,
+            'translator',
+        ],
+
         Command\Visit\ProcessVisitsCommand::class => [
             Service\VisitService::class,
             IpApiLocationResolver::class,
             'translator',
         ],
+
         Command\Config\GenerateCharsetCommand::class => ['translator'],
         Command\Config\GenerateSecretCommand::class => ['translator'],
+
         Command\Api\GenerateKeyCommand::class => [ApiKeyService::class, 'translator'],
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class, 'translator'],
         Command\Api\ListKeysCommand::class => [ApiKeyService::class, 'translator'],
+
         Command\Tag\ListTagsCommand::class => [Service\Tag\TagService::class, Translator::class],
         Command\Tag\CreateTagCommand::class => [Service\Tag\TagService::class, Translator::class],
         Command\Tag\RenameTagCommand::class => [Service\Tag\TagService::class, Translator::class],
