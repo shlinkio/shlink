@@ -27,13 +27,11 @@ class ShortUrlService implements ShortUrlServiceInterface
     }
 
     /**
-     * @param int $page
-     * @param string $searchQuery
-     * @param array $tags
-     * @param null $orderBy
+     * @param string[] $tags
+     * @param array|string|null $orderBy
      * @return ShortUrl[]|Paginator
      */
-    public function listShortUrls($page = 1, $searchQuery = null, array $tags = [], $orderBy = null)
+    public function listShortUrls(int $page = 1, string $searchQuery = null, array $tags = [], $orderBy = null)
     {
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
@@ -45,9 +43,7 @@ class ShortUrlService implements ShortUrlServiceInterface
     }
 
     /**
-     * @param string $shortCode
      * @param string[] $tags
-     * @return ShortUrl
      * @throws InvalidShortCodeException
      */
     public function setTagsByShortCode(string $shortCode, array $tags = []): ShortUrl
@@ -60,9 +56,6 @@ class ShortUrlService implements ShortUrlServiceInterface
     }
 
     /**
-     * @param string $shortCode
-     * @param ShortUrlMeta $shortCodeMeta
-     * @return ShortUrl
      * @throws InvalidShortCodeException
      */
     public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortCodeMeta): ShortUrl
@@ -81,7 +74,17 @@ class ShortUrlService implements ShortUrlServiceInterface
         /** @var ORM\EntityManager $em */
         $em = $this->em;
         $em->flush($shortUrl);
+
         return $shortUrl;
+    }
+
+    /**
+     * @throws InvalidShortCodeException
+     */
+    public function deleteByShortCode(string $shortCode): void
+    {
+        $this->em->remove($this->findByShortCode($shortCode));
+        $this->em->flush();
     }
 
     /**

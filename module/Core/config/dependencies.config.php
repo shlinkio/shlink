@@ -17,6 +17,7 @@ return [
     'dependencies' => [
         'factories' => [
             Options\AppOptions::class => Options\AppOptionsFactory::class,
+            Options\DeleteShortUrlsOptions::class => Options\DeleteShortUrlsOptionsFactory::class,
             NotFoundHandler::class => ConfigAbstractFactory::class,
 
             // Services

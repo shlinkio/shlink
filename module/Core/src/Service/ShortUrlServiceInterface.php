@@ -11,27 +11,25 @@ use Zend\Paginator\Paginator;
 interface ShortUrlServiceInterface
 {
     /**
-     * @param int $page
-     * @param string $searchQuery
-     * @param array $tags
-     * @param null $orderBy
+     * @param string[] $tags
+     * @param array|string|null $orderBy
      * @return ShortUrl[]|Paginator
      */
-    public function listShortUrls($page = 1, $searchQuery = null, array $tags = [], $orderBy = null);
+    public function listShortUrls(int $page = 1, string $searchQuery = null, array $tags = [], $orderBy = null);
 
     /**
-     * @param string $shortCode
      * @param string[] $tags
-     * @return ShortUrl
      * @throws InvalidShortCodeException
      */
     public function setTagsByShortCode(string $shortCode, array $tags = []): ShortUrl;
 
     /**
-     * @param string $shortCode
-     * @param ShortUrlMeta $shortCodeMeta
-     * @return ShortUrl
      * @throws InvalidShortCodeException
      */
     public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortCodeMeta): ShortUrl;
+
+    /**
+     * @throws InvalidShortCodeException
+     */
+    public function deleteByShortCode(string $shortCode): void;
 }

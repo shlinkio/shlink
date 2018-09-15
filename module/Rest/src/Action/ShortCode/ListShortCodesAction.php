@@ -75,7 +75,7 @@ class ListShortCodesAction extends AbstractRestAction
     private function queryToListParams(array $query): array
     {
         return [
-            $query['page'] ?? 1,
+            (int) ($query['page'] ?? 1),
             $query['searchTerm'] ?? null,
             $query['tags'] ?? [],
             $query['orderBy'] ?? null,

@@ -9,7 +9,7 @@ use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class AppOptionsFactory implements FactoryInterface
+class DeleteShortUrlsOptionsFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -26,6 +26,6 @@ class AppOptionsFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = $container->has('config') ? $container->get('config') : [];
-        return new AppOptions($config['app_options'] ?? []);
+        return new DeleteShortUrlsOptions($config['delete_short_urls'] ?? []);
     }
 }
