@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Command\Shortcode;
+namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
@@ -15,8 +15,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class GetVisitsCommand extends Command
 {
-    public const NAME = 'short-code:visits';
-    private const ALIASES = ['shortcode:visits'];
+    public const NAME = 'short-url:visits';
+    private const ALIASES = ['shortcode:visits', 'short-code:visits'];
 
     /**
      * @var VisitsTrackerInterface

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Command\Shortcode;
+namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
@@ -16,12 +16,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\Diactoros\Uri;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class GenerateShortcodeCommand extends Command
+class GenerateShortUrlCommand extends Command
 {
     use ShortUrlBuilderTrait;
 
-    public const NAME = 'short-code:generate';
-    private const ALIASES = ['shortcode:generate'];
+    public const NAME = 'short-url:generate';
+    private const ALIASES = ['shortcode:generate', 'short-code:generate'];
 
     /**
      * @var UrlShortenerInterface
@@ -53,7 +53,7 @@ class GenerateShortcodeCommand extends Command
             ->setName(self::NAME)
             ->setAliases(self::ALIASES)
             ->setDescription(
-                $this->translator->translate('Generates a short code for provided URL and returns the short URL')
+                $this->translator->translate('Generates a short URL for provided long URL and returns it')
             )
             ->addArgument('longUrl', InputArgument::REQUIRED, $this->translator->translate('The long URL to parse'))
             ->addOption(

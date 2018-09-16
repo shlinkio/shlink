@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Command\Shortcode;
+namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\Common\Service\PreviewGeneratorInterface;
@@ -14,8 +14,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class GeneratePreviewCommand extends Command
 {
-    public const NAME = 'short-code:process-previews';
-    private const ALIASES = ['shortcode:process-previews'];
+    public const NAME = 'short-url:process-previews';
+    private const ALIASES = ['shortcode:process-previews', 'short-code:process-previews'];
 
     /**
      * @var PreviewGeneratorInterface

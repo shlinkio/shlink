@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\CLI\Command\Shortcode;
+namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Command\Shortcode\GenerateShortcodeCommand;
+use Shlinkio\Shlink\CLI\Command\ShortUrl\GenerateShortUrlCommand;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
@@ -28,7 +28,7 @@ class GenerateShortcodeCommandTest extends TestCase
     public function setUp()
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $command = new GenerateShortcodeCommand($this->urlShortener->reveal(), Translator::factory([]), [
+        $command = new GenerateShortUrlCommand($this->urlShortener->reveal(), Translator::factory([]), [
             'schema' => 'http',
             'hostname' => 'foo.com',
         ]);

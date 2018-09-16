@@ -28,7 +28,7 @@ class GenerateCharsetCommand extends Command
     public function configure()
     {
         $this->setName(self::NAME)
-             ->setDescription(sprintf($this->translator->translate(
+             ->setDescription(\sprintf($this->translator->translate(
                  'Generates a character set sample just by shuffling the default one, "%s". '
                  . 'Then it can be set in the SHORTCODE_CHARS environment variable'
              ), UrlShortener::DEFAULT_CHARS));

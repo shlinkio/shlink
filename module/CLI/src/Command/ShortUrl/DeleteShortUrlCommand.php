@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Command\Shortcode;
+namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
@@ -13,10 +13,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class DeleteShortCodeCommand extends Command
+class DeleteShortUrlCommand extends Command
 {
-    public const NAME = 'short-code:delete';
-    private const ALIASES = [];
+    public const NAME = 'short-url:delete';
+    private const ALIASES = ['short-code:delete'];
 
     /**
      * @var DeleteShortUrlServiceInterface
@@ -45,7 +45,7 @@ class DeleteShortCodeCommand extends Command
             ->addArgument(
                 'shortCode',
                 InputArgument::REQUIRED,
-                $this->translator->translate('The short code to be deleted')
+                $this->translator->translate('The short code for the short URL to be deleted')
             )
             ->addOption(
                 'ignore-threshold',

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Command\Shortcode;
+namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
@@ -15,8 +15,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class ResolveUrlCommand extends Command
 {
-    public const NAME = 'short-code:parse';
-    private const ALIASES = ['shortcode:parse'];
+    public const NAME = 'short-url:parse';
+    private const ALIASES = ['shortcode:parse', 'short-code:parse'];
 
     /**
      * @var UrlShortenerInterface

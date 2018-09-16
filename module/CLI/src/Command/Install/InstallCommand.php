@@ -102,7 +102,7 @@ class InstallCommand extends Command
 
         $this->io->writeln([
             '<info>Welcome to Shlink!!</info>',
-            'This will guide you through the installation process.',
+            'This tool will guide you through the installation process.',
         ]);
 
         // Check if a cached config file exists and drop it if so
