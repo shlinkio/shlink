@@ -9,12 +9,12 @@ return [
     'cli' => [
         'locale' => Common\env('CLI_LOCALE', 'en'),
         'commands' => [
-            Command\Shortcode\GenerateShortcodeCommand::NAME => Command\Shortcode\GenerateShortcodeCommand::class,
-            Command\Shortcode\ResolveUrlCommand::NAME => Command\Shortcode\ResolveUrlCommand::class,
-            Command\Shortcode\ListShortcodesCommand::NAME => Command\Shortcode\ListShortcodesCommand::class,
-            Command\Shortcode\GetVisitsCommand::NAME => Command\Shortcode\GetVisitsCommand::class,
-            Command\Shortcode\GeneratePreviewCommand::NAME => Command\Shortcode\GeneratePreviewCommand::class,
-            Command\Shortcode\DeleteShortCodeCommand::NAME => Command\Shortcode\DeleteShortCodeCommand::class,
+            Command\ShortUrl\GenerateShortUrlCommand::NAME => Command\ShortUrl\GenerateShortUrlCommand::class,
+            Command\ShortUrl\ResolveUrlCommand::NAME => Command\ShortUrl\ResolveUrlCommand::class,
+            Command\ShortUrl\ListShortUrlsCommand::NAME => Command\ShortUrl\ListShortUrlsCommand::class,
+            Command\ShortUrl\GetVisitsCommand::NAME => Command\ShortUrl\GetVisitsCommand::class,
+            Command\ShortUrl\GeneratePreviewCommand::NAME => Command\ShortUrl\GeneratePreviewCommand::class,
+            Command\ShortUrl\DeleteShortUrlCommand::NAME => Command\ShortUrl\DeleteShortUrlCommand::class,
 
             Command\Visit\ProcessVisitsCommand::NAME => Command\Visit\ProcessVisitsCommand::class,
 

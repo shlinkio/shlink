@@ -17,12 +17,12 @@ return [
         'factories' => [
             Application::class => ApplicationFactory::class,
 
-            Command\Shortcode\GenerateShortcodeCommand::class => ConfigAbstractFactory::class,
-            Command\Shortcode\ResolveUrlCommand::class => ConfigAbstractFactory::class,
-            Command\Shortcode\ListShortcodesCommand::class => ConfigAbstractFactory::class,
-            Command\Shortcode\GetVisitsCommand::class => ConfigAbstractFactory::class,
-            Command\Shortcode\GeneratePreviewCommand::class => ConfigAbstractFactory::class,
-            Command\Shortcode\DeleteShortCodeCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\GenerateShortUrlCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\ResolveUrlCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\ListShortUrlsCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\GetVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\GeneratePreviewCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\DeleteShortUrlCommand::class => ConfigAbstractFactory::class,
 
             Command\Visit\ProcessVisitsCommand::class => ConfigAbstractFactory::class,
 
@@ -41,24 +41,24 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        Command\Shortcode\GenerateShortcodeCommand::class => [
+        Command\ShortUrl\GenerateShortUrlCommand::class => [
             Service\UrlShortener::class,
             'translator',
             'config.url_shortener.domain',
         ],
-        Command\Shortcode\ResolveUrlCommand::class => [Service\UrlShortener::class, 'translator'],
-        Command\Shortcode\ListShortcodesCommand::class => [
+        Command\ShortUrl\ResolveUrlCommand::class => [Service\UrlShortener::class, 'translator'],
+        Command\ShortUrl\ListShortUrlsCommand::class => [
             Service\ShortUrlService::class,
             'translator',
             'config.url_shortener.domain',
         ],
-        Command\Shortcode\GetVisitsCommand::class => [Service\VisitsTracker::class, 'translator'],
-        Command\Shortcode\GeneratePreviewCommand::class => [
+        Command\ShortUrl\GetVisitsCommand::class => [Service\VisitsTracker::class, 'translator'],
+        Command\ShortUrl\GeneratePreviewCommand::class => [
             Service\ShortUrlService::class,
             PreviewGenerator::class,
             'translator',
         ],
-        Command\Shortcode\DeleteShortCodeCommand::class => [
+        Command\ShortUrl\DeleteShortUrlCommand::class => [
             Service\ShortUrl\DeleteShortUrlService::class,
             'translator',
         ],

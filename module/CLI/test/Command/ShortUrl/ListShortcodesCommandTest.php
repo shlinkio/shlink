@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\CLI\Command\Shortcode;
+namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Command\Shortcode\ListShortcodesCommand;
+use Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Symfony\Component\Console\Application;
@@ -30,7 +30,7 @@ class ListShortcodesCommandTest extends TestCase
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
         $app = new Application();
-        $command = new ListShortcodesCommand($this->shortUrlService->reveal(), Translator::factory([]), []);
+        $command = new ListShortUrlsCommand($this->shortUrlService->reveal(), Translator::factory([]), []);
         $app->add($command);
         $this->commandTester = new CommandTester($command);
     }

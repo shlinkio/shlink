@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Command\Shortcode;
+namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
@@ -14,12 +14,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class ListShortcodesCommand extends Command
+class ListShortUrlsCommand extends Command
 {
     use PaginatorUtilsTrait;
 
-    public const NAME = 'short-code:list';
-    private const ALIASES = ['shortcode:list'];
+    public const NAME = 'short-url:list';
+    private const ALIASES = ['shortcode:list', 'short-code:list'];
 
     /**
      * @var ShortUrlServiceInterface
@@ -132,7 +132,7 @@ class ListShortcodesCommand extends Command
 
             if ($this->isLastPage($result)) {
                 $continue = false;
-                $io->success($this->translator->translate('Short codes properly listed'));
+                $io->success($this->translator->translate('Short URLs properly listed'));
             } else {
                 $continue = $io->confirm(
                     \sprintf($this->translator->translate('Continue with page') . ' <options=bold>%s</>?', $page),

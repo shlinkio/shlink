@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\CLI\Command\Shortcode;
+namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Command\Shortcode\DeleteShortCodeCommand;
+use Shlinkio\Shlink\CLI\Command\ShortUrl\DeleteShortUrlCommand;
 use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Symfony\Component\Console\Application;
@@ -28,7 +28,7 @@ class DeleteShortCodeCommandTest extends TestCase
     {
         $this->service = $this->prophesize(DeleteShortUrlServiceInterface::class);
 
-        $command = new DeleteShortCodeCommand($this->service->reveal(), Translator::factory([]));
+        $command = new DeleteShortUrlCommand($this->service->reveal(), Translator::factory([]));
         $app = new Application();
         $app->add($command);
 
