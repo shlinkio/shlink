@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+declare(strict_types=1);
 
 use Shlinkio\Shlink\CLI\Factory\InstallApplicationFactory;
 use Shlinkio\Shlink\CLI\Install\Plugin\DatabaseConfigCustomizer;

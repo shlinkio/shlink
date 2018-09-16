@@ -50,7 +50,7 @@ class InstallApplicationFactory implements FactoryInterface
             $isUpdate
         );
         $app->add($command);
-        $app->setDefaultCommand($command->getName());
+        $app->setDefaultCommand($command->getName(), true);
 
         return $app;
     }
