@@ -1,7 +1,8 @@
 {
     "get": {
+        "operationId": "listShortUrls",
         "tags": [
-            "ShortCodes"
+            "Short URLs"
         ],
         "summary": "List short URLs",
         "description": "Returns the list of short codes",
@@ -142,8 +143,9 @@
     },
 
     "post": {
+        "operationId": "createShortUrl",
         "tags": [
-            "ShortCodes"
+            "Short URLs"
         ],
         "summary": "Create short URL",
         "description": "Creates a new short code",

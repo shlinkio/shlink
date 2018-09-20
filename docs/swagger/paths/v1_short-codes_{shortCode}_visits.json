@@ -1,7 +1,7 @@
 {
     "get": {
+        "operationId": "getShortUrlVisits",
         "tags": [
-            "ShortCodes",
             "Visits"
         ],
         "summary": "List visits for short URL",

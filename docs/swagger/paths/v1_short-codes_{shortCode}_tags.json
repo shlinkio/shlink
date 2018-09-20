@@ -1,8 +1,8 @@
 {
     "put": {
+        "operationId": "editShortUrlTags",
         "tags": [
-            "ShortCodes",
-            "Tags"
+            "Short URLs"
         ],
         "summary": "Edit tags on short URL",
         "description": "Edit the tags on provided short code.",

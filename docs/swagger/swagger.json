@@ -32,21 +32,40 @@
         }
     },
 
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Authentication-related endpoints"
+        },
+        {
+            "name": "Short URLs",
+            "description": "Operations that can be performed on short URLs"
+        },
+        {
+            "name": "Tags",
+            "description": "Let you handle the list of available tags"
+        },
+        {
+            "name": "Visits",
+            "description": "Operations to manage visits on short URLs"
+        }
+    ],
+
     "paths": {
         "/v1/authenticate": {
             "$ref": "paths/v1_authenticate.json"
         },
 
-        "/v1/short-codes": {
+        "/v1/short-urls": {
             "$ref": "paths/v1_short-codes.json"
         },
-        "/v1/short-codes/shorten": {
+        "/v1/short-urls/shorten": {
             "$ref": "paths/v1_short-codes_shorten.json"
         },
-        "/v1/short-codes/{shortCode}": {
+        "/v1/short-urls/{shortCode}": {
             "$ref": "paths/v1_short-codes_{shortCode}.json"
         },
-        "/v1/short-codes/{shortCode}/tags": {
+        "/v1/short-urls/{shortCode}/tags": {
             "$ref": "paths/v1_short-codes_{shortCode}_tags.json"
         },
 
@@ -54,7 +73,7 @@
             "$ref": "paths/v1_tags.json"
         },
 
-        "/v1/short-codes/{shortCode}/visits": {
+        "/v1/short-urls/{shortCode}/visits": {
             "$ref": "paths/v1_short-codes_{shortCode}_visits.json"
         }
     }
