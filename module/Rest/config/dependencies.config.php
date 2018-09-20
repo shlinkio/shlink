@@ -1,12 +1,11 @@
 <?php
 declare(strict_types=1);
 
+namespace Shlinkio\Shlink\Rest;
+
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service;
-use Shlinkio\Shlink\Rest\Action;
-use Shlinkio\Shlink\Rest\Authentication\JWTService;
-use Shlinkio\Shlink\Rest\Middleware;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Zend\I18n\Translator\Translator;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
@@ -16,7 +15,7 @@ return [
 
     'dependencies' => [
         'factories' => [
-            JWTService::class => ConfigAbstractFactory::class,
+            Authentication\JWTService::class => ConfigAbstractFactory::class,
             ApiKeyService::class => ConfigAbstractFactory::class,
 
             Action\AuthenticateAction::class => ConfigAbstractFactory::class,
@@ -38,14 +37,20 @@ return [
             Middleware\PathVersionMiddleware::class => InvokableFactory::class,
             Middleware\CheckAuthenticationMiddleware::class => ConfigAbstractFactory::class,
             Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class => InvokableFactory::class,
+            Middleware\ShortUrl\ShortCodePathMiddleware::class => InvokableFactory::class,
         ],
     ],
 
     ConfigAbstractFactory::class => [
-        JWTService::class => [AppOptions::class],
+        Authentication\JWTService::class => [AppOptions::class],
         ApiKeyService::class => ['em'],
 
-        Action\AuthenticateAction::class => [ApiKeyService::class, JWTService::class, 'translator', 'Logger_Shlink'],
+        Action\AuthenticateAction::class => [
+            ApiKeyService::class,
+            Authentication\JWTService::class,
+            'translator',
+            'Logger_Shlink',
+        ],
         Action\ShortUrl\CreateShortUrlAction::class => [
             Service\UrlShortener::class,
             'translator',
@@ -88,7 +93,7 @@ return [
         Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class, Translator::class, LoggerInterface::class],
 
         Middleware\CheckAuthenticationMiddleware::class => [
-            JWTService::class,
+            Authentication\JWTService::class,
             'translator',
             'config.auth.routes_whitelist',
             'Logger_Shlink',

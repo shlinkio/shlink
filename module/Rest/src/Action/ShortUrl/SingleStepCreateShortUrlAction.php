@@ -15,7 +15,7 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
 {
-    protected const ROUTE_PATH = '/short-codes/shorten';
+    protected const ROUTE_PATH = '/short-urls/shorten';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     /**

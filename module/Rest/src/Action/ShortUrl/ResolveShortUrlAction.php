@@ -17,7 +17,7 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class ResolveShortUrlAction extends AbstractRestAction
 {
-    protected const ROUTE_PATH = '/short-codes/{shortCode}';
+    protected const ROUTE_PATH = '/short-urls/{shortCode}';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     /**

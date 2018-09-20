@@ -1,12 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Shlinkio\Shlink\Common\Middleware\LocaleMiddleware;
-use Shlinkio\Shlink\Core\Response\NotFoundHandler;
-use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
-use Shlinkio\Shlink\Rest\Middleware\CheckAuthenticationMiddleware;
-use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
-use Shlinkio\Shlink\Rest\Middleware\PathVersionMiddleware;
+namespace Shlinkio\Shlink;
+
 use Zend\Expressive;
 use Zend\Stratigility\Middleware\ErrorHandler;
 
@@ -17,14 +13,15 @@ return [
             'middleware' => [
                 ErrorHandler::class,
                 Expressive\Helper\ContentLengthMiddleware::class,
-                LocaleMiddleware::class,
+                Common\Middleware\LocaleMiddleware::class,
             ],
-            'priority' => 11,
+            'priority' => 12,
         ],
         'pre-routing-rest' => [
             'path' => '/rest',
             'middleware' => [
-                PathVersionMiddleware::class,
+                Rest\Middleware\PathVersionMiddleware::class,
+                Rest\Middleware\ShortUrl\ShortCodePathMiddleware::class,
             ],
             'priority' => 11,
         ],
@@ -39,10 +36,10 @@ return [
         'rest' => [
             'path' => '/rest',
             'middleware' => [
-                CrossDomainMiddleware::class,
+                Rest\Middleware\CrossDomainMiddleware::class,
                 Expressive\Router\Middleware\ImplicitOptionsMiddleware::class,
-                BodyParserMiddleware::class,
-                CheckAuthenticationMiddleware::class,
+                Rest\Middleware\BodyParserMiddleware::class,
+                Rest\Middleware\CheckAuthenticationMiddleware::class,
             ],
             'priority' => 5,
         ],
@@ -50,7 +47,7 @@ return [
         'post-routing' => [
             'middleware' => [
                 Expressive\Router\Middleware\DispatchMiddleware::class,
-                NotFoundHandler::class,
+                Core\Response\NotFoundHandler::class,
             ],
             'priority' => 1,
         ],
