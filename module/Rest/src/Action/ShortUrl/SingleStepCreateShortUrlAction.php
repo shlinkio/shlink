@@ -6,9 +6,8 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
-use Shlinkio\Shlink\Core\Model\CreateShortCodeData;
+use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
-use Shlinkio\Shlink\Rest\Action\ShortUrl\AbstractCreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Zend\Diactoros\Uri;
 use Zend\I18n\Translator\TranslatorInterface;
@@ -36,11 +35,11 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
 
     /**
      * @param Request $request
-     * @return CreateShortCodeData
+     * @return CreateShortUrlData
      * @throws \InvalidArgumentException
      * @throws InvalidArgumentException
      */
-    protected function buildUrlToShortCodeData(Request $request): CreateShortCodeData
+    protected function buildShortUrlData(Request $request): CreateShortUrlData
     {
         $query = $request->getQueryParams();
 
@@ -56,6 +55,6 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
             throw new InvalidArgumentException($this->translator->translate('A URL was not provided'));
         }
 
-        return new CreateShortCodeData(new Uri($query['longUrl']));
+        return new CreateShortUrlData(new Uri($query['longUrl']));
     }
 }

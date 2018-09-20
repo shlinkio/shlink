@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Rest\Exception as Rest;
 class RestUtils
 {
     public const INVALID_SHORTCODE_ERROR = 'INVALID_SHORTCODE';
+    // FIXME Should be INVALID_SHORT_URL_DELETION
     public const INVALID_SHORTCODE_DELETION_ERROR = 'INVALID_SHORTCODE_DELETION';
     public const INVALID_URL_ERROR = 'INVALID_URL';
     public const INVALID_ARGUMENT_ERROR = 'INVALID_ARGUMENT';
