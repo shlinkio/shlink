@@ -12,10 +12,10 @@ return [
 
         // Short codes
         Action\ShortUrl\CreateShortUrlAction::getRouteDef([
-            Middleware\ShortCode\CreateShortCodeContentNegotiationMiddleware::class,
+            Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class,
         ]),
         Action\ShortUrl\SingleStepCreateShortUrlAction::getRouteDef([
-            Middleware\ShortCode\CreateShortCodeContentNegotiationMiddleware::class,
+            Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class,
         ]),
         Action\ShortUrl\EditShortUrlAction::getRouteDef(),
         Action\ShortUrl\DeleteShortUrlAction::getRouteDef(),

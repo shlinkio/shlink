@@ -37,7 +37,7 @@ return [
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
             Middleware\PathVersionMiddleware::class => InvokableFactory::class,
             Middleware\CheckAuthenticationMiddleware::class => ConfigAbstractFactory::class,
-            Middleware\ShortCode\CreateShortCodeContentNegotiationMiddleware::class => InvokableFactory::class,
+            Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class => InvokableFactory::class,
         ],
     ],
 

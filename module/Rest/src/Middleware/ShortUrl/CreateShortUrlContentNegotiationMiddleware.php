@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Rest\Middleware\ShortCode;
+namespace Shlinkio\Shlink\Rest\Middleware\ShortUrl;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -10,7 +10,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\JsonResponse;
 
-class CreateShortCodeContentNegotiationMiddleware implements MiddlewareInterface
+class CreateShortUrlContentNegotiationMiddleware implements MiddlewareInterface
 {
     private const PLAIN_TEXT = 'text';
     private const JSON = 'json';
