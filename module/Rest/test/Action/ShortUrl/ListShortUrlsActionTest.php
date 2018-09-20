@@ -1,21 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\Action\ShortCode;
+namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
-use Shlinkio\Shlink\Rest\Action\ShortCode\ListShortCodesAction;
+use Shlinkio\Shlink\Rest\Action\ShortUrl\ListShortUrlsAction;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 
-class ListShortCodesActionTest extends TestCase
+class ListShortUrlsActionTest extends TestCase
 {
     /**
-     * @var ListShortCodesAction
+     * @var ListShortUrlsAction
      */
     protected $action;
     /**
@@ -26,7 +26,7 @@ class ListShortCodesActionTest extends TestCase
     public function setUp()
     {
         $this->service = $this->prophesize(ShortUrlService::class);
-        $this->action = new ListShortCodesAction($this->service->reveal(), Translator::factory([]), [
+        $this->action = new ListShortUrlsAction($this->service->reveal(), Translator::factory([]), [
             'hostname' => 'doma.in',
             'schema' => 'https',
         ]);

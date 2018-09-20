@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\Action\ShortCode;
+namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
@@ -10,17 +10,17 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
-use Shlinkio\Shlink\Rest\Action\ShortCode\SingleStepCreateShortCodeAction;
+use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 
-class SingleStepCreateShortCodeActionTest extends TestCase
+class SingleStepCreateShortUrlActionTest extends TestCase
 {
     /**
-     * @var SingleStepCreateShortCodeAction
+     * @var SingleStepCreateShortUrlAction
      */
     private $action;
     /**
@@ -37,7 +37,7 @@ class SingleStepCreateShortCodeActionTest extends TestCase
         $this->urlShortener = $this->prophesize(UrlShortenerInterface::class);
         $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
 
-        $this->action = new SingleStepCreateShortCodeAction(
+        $this->action = new SingleStepCreateShortUrlAction(
             $this->urlShortener->reveal(),
             Translator::factory([]),
             $this->apiKeyService->reveal(),

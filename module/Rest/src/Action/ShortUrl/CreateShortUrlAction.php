@@ -1,15 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Rest\Action\ShortCode;
+namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\CreateShortCodeData;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Rest\Action\ShortUrl\AbstractCreateShortUrlAction;
 use Zend\Diactoros\Uri;
 
-class CreateShortCodeAction extends AbstractCreateShortCodeAction
+class CreateShortUrlAction extends AbstractCreateShortUrlAction
 {
     protected const ROUTE_PATH = '/short-codes';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_POST];

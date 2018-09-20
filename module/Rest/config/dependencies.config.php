@@ -20,14 +20,14 @@ return [
             ApiKeyService::class => ConfigAbstractFactory::class,
 
             Action\AuthenticateAction::class => ConfigAbstractFactory::class,
-            Action\ShortCode\CreateShortCodeAction::class => ConfigAbstractFactory::class,
-            Action\ShortCode\SingleStepCreateShortCodeAction::class => ConfigAbstractFactory::class,
-            Action\ShortCode\EditShortCodeAction::class => ConfigAbstractFactory::class,
-            Action\ShortCode\DeleteShortCodeAction::class => ConfigAbstractFactory::class,
-            Action\ShortCode\ResolveUrlAction::class => ConfigAbstractFactory::class,
+            Action\ShortUrl\CreateShortUrlAction::class => ConfigAbstractFactory::class,
+            Action\ShortUrl\SingleStepCreateShortUrlAction::class => ConfigAbstractFactory::class,
+            Action\ShortUrl\EditShortUrlAction::class => ConfigAbstractFactory::class,
+            Action\ShortUrl\DeleteShortUrlAction::class => ConfigAbstractFactory::class,
+            Action\ShortUrl\ResolveShortUrlAction::class => ConfigAbstractFactory::class,
             Action\Visit\GetVisitsAction::class => ConfigAbstractFactory::class,
-            Action\ShortCode\ListShortCodesAction::class => ConfigAbstractFactory::class,
-            Action\ShortCode\EditShortCodeTagsAction::class => ConfigAbstractFactory::class,
+            Action\ShortUrl\ListShortUrlsAction::class => ConfigAbstractFactory::class,
+            Action\ShortUrl\EditShortUrlTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\ListTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\DeleteTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\CreateTagsAction::class => ConfigAbstractFactory::class,
@@ -46,38 +46,38 @@ return [
         ApiKeyService::class => ['em'],
 
         Action\AuthenticateAction::class => [ApiKeyService::class, JWTService::class, 'translator', 'Logger_Shlink'],
-        Action\ShortCode\CreateShortCodeAction::class => [
+        Action\ShortUrl\CreateShortUrlAction::class => [
             Service\UrlShortener::class,
             'translator',
             'config.url_shortener.domain',
             'Logger_Shlink',
         ],
-        Action\ShortCode\SingleStepCreateShortCodeAction::class => [
+        Action\ShortUrl\SingleStepCreateShortUrlAction::class => [
             Service\UrlShortener::class,
             'translator',
             ApiKeyService::class,
             'config.url_shortener.domain',
             'Logger_Shlink',
         ],
-        Action\ShortCode\EditShortCodeAction::class => [Service\ShortUrlService::class, 'translator', 'Logger_Shlink'],
-        Action\ShortCode\DeleteShortCodeAction::class => [
+        Action\ShortUrl\EditShortUrlAction::class => [Service\ShortUrlService::class, 'translator', 'Logger_Shlink'],
+        Action\ShortUrl\DeleteShortUrlAction::class => [
             Service\ShortUrl\DeleteShortUrlService::class,
             'translator',
             'Logger_Shlink',
         ],
-        Action\ShortCode\ResolveUrlAction::class => [
+        Action\ShortUrl\ResolveShortUrlAction::class => [
             Service\UrlShortener::class,
             'translator',
             'config.url_shortener.domain',
         ],
         Action\Visit\GetVisitsAction::class => [Service\VisitsTracker::class, 'translator', 'Logger_Shlink'],
-        Action\ShortCode\ListShortCodesAction::class => [
+        Action\ShortUrl\ListShortUrlsAction::class => [
             Service\ShortUrlService::class,
             'translator',
             'config.url_shortener.domain',
             'Logger_Shlink',
         ],
-        Action\ShortCode\EditShortCodeTagsAction::class => [
+        Action\ShortUrl\EditShortUrlTagsAction::class => [
             Service\ShortUrlService::class,
             'translator',
             'Logger_Shlink',

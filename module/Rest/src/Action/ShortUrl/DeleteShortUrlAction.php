@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Rest\Action\ShortCode;
+namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,7 +14,7 @@ use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class DeleteShortCodeAction extends AbstractRestAction
+class DeleteShortUrlAction extends AbstractRestAction
 {
     protected const ROUTE_PATH = '/short-codes/{shortCode}';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_DELETE];

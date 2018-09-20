@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Rest\Action\ShortCode;
+namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
 
-abstract class AbstractCreateShortCodeAction extends AbstractRestAction
+abstract class AbstractCreateShortUrlAction extends AbstractRestAction
 {
     /**
      * @var UrlShortenerInterface

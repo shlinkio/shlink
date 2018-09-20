@@ -8,7 +8,7 @@ return [
     'auth' => [
         'routes_whitelist' => [
             Action\AuthenticateAction::class,
-            Action\ShortCode\SingleStepCreateShortCodeAction::class,
+            Action\ShortUrl\SingleStepCreateShortUrlAction::class,
         ],
     ],
 

@@ -11,17 +11,17 @@ return [
         Action\AuthenticateAction::getRouteDef(),
 
         // Short codes
-        Action\ShortCode\CreateShortCodeAction::getRouteDef([
+        Action\ShortUrl\CreateShortUrlAction::getRouteDef([
             Middleware\ShortCode\CreateShortCodeContentNegotiationMiddleware::class,
         ]),
-        Action\ShortCode\SingleStepCreateShortCodeAction::getRouteDef([
+        Action\ShortUrl\SingleStepCreateShortUrlAction::getRouteDef([
             Middleware\ShortCode\CreateShortCodeContentNegotiationMiddleware::class,
         ]),
-        Action\ShortCode\EditShortCodeAction::getRouteDef(),
-        Action\ShortCode\DeleteShortCodeAction::getRouteDef(),
-        Action\ShortCode\ResolveUrlAction::getRouteDef(),
-        Action\ShortCode\ListShortCodesAction::getRouteDef(),
-        Action\ShortCode\EditShortCodeTagsAction::getRouteDef(),
+        Action\ShortUrl\EditShortUrlAction::getRouteDef(),
+        Action\ShortUrl\DeleteShortUrlAction::getRouteDef(),
+        Action\ShortUrl\ResolveShortUrlAction::getRouteDef(),
+        Action\ShortUrl\ListShortUrlsAction::getRouteDef(),
+        Action\ShortUrl\EditShortUrlTagsAction::getRouteDef(),
 
         // Visits
         Action\Visit\GetVisitsAction::getRouteDef(),
