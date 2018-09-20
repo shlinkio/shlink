@@ -8,6 +8,9 @@
         "description": "Returns the list of all tags used in any short URL, ordered by name",
         "security": [
             {
+                "ApiKey": []
+            },
+            {
                 "Bearer": []
             }
         ],
@@ -68,6 +71,9 @@
         "summary": "Create tags",
         "description": "Provided a list of tags, creates all that do not yet exist",
         "security": [
+            {
+                "ApiKey": []
+            },
             {
                 "Bearer": []
             }
@@ -152,6 +158,9 @@
         "summary": "Rename tag",
         "description": "Renames one existing tag",
         "security": [
+            {
+                "ApiKey": []
+            },
             {
                 "Bearer": []
             }
@@ -240,6 +249,9 @@
             }
         ],
         "security": [
+            {
+                "ApiKey": []
+            },
             {
                 "Bearer": []
             }

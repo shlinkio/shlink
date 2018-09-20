@@ -42,6 +42,9 @@
         },
         "security": [
             {
+                "ApiKey": []
+            },
+            {
                 "Bearer": []
             }
         ],
