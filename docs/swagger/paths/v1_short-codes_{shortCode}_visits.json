@@ -10,7 +10,7 @@
             {
                 "name": "shortCode",
                 "in": "path",
-                "description": "The shortCode from which we want to get the visits.",
+                "description": "The short code for the short URL from which we want to get the visits.",
                 "required": true,
                 "schema": {
                     "type": "string"
