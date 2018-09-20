@@ -1,21 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\Middleware\ShortCode;
+namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Shlinkio\Shlink\Rest\Middleware\ShortCode\CreateShortCodeContentNegotiationMiddleware;
+use Shlinkio\Shlink\Rest\Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequestFactory;
 
-class CreateShortCodeContentNegotiationMiddlewareTest extends TestCase
+class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 {
     /**
-     * @var CreateShortCodeContentNegotiationMiddleware
+     * @var CreateShortUrlContentNegotiationMiddleware
      */
     private $middleware;
     /**
@@ -25,7 +25,7 @@ class CreateShortCodeContentNegotiationMiddlewareTest extends TestCase
 
     public function setUp()
     {
-        $this->middleware = new CreateShortCodeContentNegotiationMiddleware();
+        $this->middleware = new CreateShortUrlContentNegotiationMiddleware();
         $this->requestHandler = $this->prophesize(RequestHandlerInterface::class);
     }
 

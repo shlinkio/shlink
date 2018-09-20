@@ -1,33 +1,34 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Rest\Action\ShortCode;
+namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
-use Shlinkio\Shlink\Core\Model\CreateShortCodeData;
+use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Rest\Action\ShortUrl\AbstractCreateShortUrlAction;
 use Zend\Diactoros\Uri;
 
-class CreateShortCodeAction extends AbstractCreateShortCodeAction
+class CreateShortUrlAction extends AbstractCreateShortUrlAction
 {
-    protected const ROUTE_PATH = '/short-codes';
+    protected const ROUTE_PATH = '/short-urls';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_POST];
 
     /**
      * @param Request $request
-     * @return CreateShortCodeData
+     * @return CreateShortUrlData
      * @throws InvalidArgumentException
      * @throws \InvalidArgumentException
      */
-    protected function buildUrlToShortCodeData(Request $request): CreateShortCodeData
+    protected function buildShortUrlData(Request $request): CreateShortUrlData
     {
         $postData = (array) $request->getParsedBody();
         if (! isset($postData['longUrl'])) {
             throw new InvalidArgumentException($this->translator->translate('A URL was not provided'));
         }
 
-        return new CreateShortCodeData(
+        return new CreateShortUrlData(
             new Uri($postData['longUrl']),
             (array) ($postData['tags'] ?? []),
             ShortUrlMeta::createFromParams(

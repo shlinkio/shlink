@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Rest\Action\ShortCode;
+namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -14,11 +14,11 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class ListShortCodesAction extends AbstractRestAction
+class ListShortUrlsAction extends AbstractRestAction
 {
     use PaginatorUtilsTrait;
 
-    protected const ROUTE_PATH = '/short-codes';
+    protected const ROUTE_PATH = '/short-urls';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     /**

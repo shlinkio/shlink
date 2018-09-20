@@ -5,7 +5,7 @@ namespace Shlinkio\Shlink\Core\Model;
 
 use Psr\Http\Message\UriInterface;
 
-final class CreateShortCodeData
+final class CreateShortUrlData
 {
     /**
      * @var UriInterface

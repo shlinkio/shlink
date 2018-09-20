@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Rest\Action\ShortCode;
+namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
-use Shlinkio\Shlink\Core\Model\CreateShortCodeData;
+use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
 
-abstract class AbstractCreateShortCodeAction extends AbstractRestAction
+abstract class AbstractCreateShortUrlAction extends AbstractRestAction
 {
     /**
      * @var UrlShortenerInterface
@@ -52,10 +52,10 @@ abstract class AbstractCreateShortCodeAction extends AbstractRestAction
     public function handle(Request $request): Response
     {
         try {
-            $shortCodeData = $this->buildUrlToShortCodeData($request);
-            $shortCodeMeta = $shortCodeData->getMeta();
-            $longUrl = $shortCodeData->getLongUrl();
-            $customSlug = $shortCodeMeta->getCustomSlug();
+            $shortUrlData = $this->buildShortUrlData($request);
+            $shortUrlMeta = $shortUrlData->getMeta();
+            $longUrl = $shortUrlData->getLongUrl();
+            $customSlug = $shortUrlMeta->getCustomSlug();
         } catch (InvalidArgumentException $e) {
             $this->logger->warning('Provided data is invalid.' . PHP_EOL . $e);
             return new JsonResponse([
@@ -67,11 +67,11 @@ abstract class AbstractCreateShortCodeAction extends AbstractRestAction
         try {
             $shortUrl = $this->urlShortener->urlToShortCode(
                 $longUrl,
-                $shortCodeData->getTags(),
-                $shortCodeMeta->getValidSince(),
-                $shortCodeMeta->getValidUntil(),
+                $shortUrlData->getTags(),
+                $shortUrlMeta->getValidSince(),
+                $shortUrlMeta->getValidUntil(),
                 $customSlug,
-                $shortCodeMeta->getMaxVisits()
+                $shortUrlMeta->getMaxVisits()
             );
             $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
@@ -95,7 +95,7 @@ abstract class AbstractCreateShortCodeAction extends AbstractRestAction
                 ),
             ], self::STATUS_BAD_REQUEST);
         } catch (\Throwable $e) {
-            $this->logger->error('Unexpected error creating shortcode.' . PHP_EOL . $e);
+            $this->logger->error('Unexpected error creating short url.' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),
@@ -105,8 +105,8 @@ abstract class AbstractCreateShortCodeAction extends AbstractRestAction
 
     /**
      * @param Request $request
-     * @return CreateShortCodeData
+     * @return CreateShortUrlData
      * @throws InvalidArgumentException
      */
-    abstract protected function buildUrlToShortCodeData(Request $request): CreateShortCodeData;
+    abstract protected function buildShortUrlData(Request $request): CreateShortUrlData;
 }

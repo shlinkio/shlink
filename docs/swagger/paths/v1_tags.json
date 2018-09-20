@@ -1,5 +1,6 @@
 {
     "get": {
+        "operationId": "listTags",
         "tags": [
             "Tags"
         ],
@@ -60,6 +61,7 @@
     },
 
     "post": {
+        "operationId": "createTags",
         "tags": [
             "Tags"
         ],
@@ -143,6 +145,7 @@
     },
 
     "put": {
+        "operationId": "renameTag",
         "tags": [
             "Tags"
         ],
@@ -216,6 +219,7 @@
     },
 
     "delete": {
+        "operationId": "deleteTags",
         "tags": [
             "Tags"
         ],

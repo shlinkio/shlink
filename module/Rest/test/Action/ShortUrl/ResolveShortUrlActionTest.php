@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\Action\ShortCode;
+namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -9,15 +9,15 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
-use Shlinkio\Shlink\Rest\Action\ShortCode\ResolveUrlAction;
+use Shlinkio\Shlink\Rest\Action\ShortUrl\ResolveShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 
-class ResolveUrlActionTest extends TestCase
+class ResolveShortUrlActionTest extends TestCase
 {
     /**
-     * @var ResolveUrlAction
+     * @var ResolveShortUrlAction
      */
     protected $action;
     /**
@@ -28,7 +28,7 @@ class ResolveUrlActionTest extends TestCase
     public function setUp()
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $this->action = new ResolveUrlAction($this->urlShortener->reveal(), Translator::factory([]), []);
+        $this->action = new ResolveShortUrlAction($this->urlShortener->reveal(), Translator::factory([]), []);
     }
 
     /**

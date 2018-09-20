@@ -1,20 +1,20 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Rest\Action\ShortCode;
+namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
-use Shlinkio\Shlink\Core\Model\CreateShortCodeData;
+use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Zend\Diactoros\Uri;
 use Zend\I18n\Translator\TranslatorInterface;
 
-class SingleStepCreateShortCodeAction extends AbstractCreateShortCodeAction
+class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
 {
-    protected const ROUTE_PATH = '/short-codes/shorten';
+    protected const ROUTE_PATH = '/short-urls/shorten';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     /**
@@ -35,11 +35,11 @@ class SingleStepCreateShortCodeAction extends AbstractCreateShortCodeAction
 
     /**
      * @param Request $request
-     * @return CreateShortCodeData
+     * @return CreateShortUrlData
      * @throws \InvalidArgumentException
      * @throws InvalidArgumentException
      */
-    protected function buildUrlToShortCodeData(Request $request): CreateShortCodeData
+    protected function buildShortUrlData(Request $request): CreateShortUrlData
     {
         $query = $request->getQueryParams();
 
@@ -55,6 +55,6 @@ class SingleStepCreateShortCodeAction extends AbstractCreateShortCodeAction
             throw new InvalidArgumentException($this->translator->translate('A URL was not provided'));
         }
 
-        return new CreateShortCodeData(new Uri($query['longUrl']));
+        return new CreateShortUrlData(new Uri($query['longUrl']));
     }
 }

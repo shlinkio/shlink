@@ -1,8 +1,8 @@
 {
     "put": {
+        "operationId": "editShortUrlTags",
         "tags": [
-            "ShortCodes",
-            "Tags"
+            "Short URLs"
         ],
         "summary": "Edit tags on short URL",
         "description": "Edit the tags on provided short code.",
@@ -10,7 +10,7 @@
             {
                 "name": "shortCode",
                 "in": "path",
-                "description": "The shortCode in which we want to edit tags.",
+                "description": "The short code for the short URL in which we want to edit tags.",
                 "required": true,
                 "schema": {
                     "type": "string"

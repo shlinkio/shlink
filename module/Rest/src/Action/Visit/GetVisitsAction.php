@@ -16,7 +16,7 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class GetVisitsAction extends AbstractRestAction
 {
-    protected const ROUTE_PATH = '/short-codes/{shortCode}/visits';
+    protected const ROUTE_PATH = '/short-urls/{shortCode}/visits';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     /**
@@ -58,7 +58,7 @@ class GetVisitsAction extends AbstractRestAction
                 ],
             ]);
         } catch (InvalidArgumentException $e) {
-            $this->logger->warning('Provided nonexistent shortcode' . PHP_EOL . $e);
+            $this->logger->warning('Provided nonexistent short code' . PHP_EOL . $e);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => sprintf(

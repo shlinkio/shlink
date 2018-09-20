@@ -1,23 +1,23 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\Action\ShortCode;
+namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
-use Shlinkio\Shlink\Rest\Action\ShortCode\DeleteShortCodeAction;
+use Shlinkio\Shlink\Rest\Action\ShortUrl\DeleteShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 
-class DeleteShortCodeActionTest extends TestCase
+class DeleteShortUrlActionTest extends TestCase
 {
     /**
-     * @var DeleteShortCodeAction
+     * @var DeleteShortUrlAction
      */
     private $action;
     /**
@@ -28,7 +28,7 @@ class DeleteShortCodeActionTest extends TestCase
     public function setUp()
     {
         $this->service = $this->prophesize(DeleteShortUrlServiceInterface::class);
-        $this->action = new DeleteShortCodeAction($this->service->reveal(), Translator::factory([]));
+        $this->action = new DeleteShortUrlAction($this->service->reveal(), Translator::factory([]));
     }
 
     /**

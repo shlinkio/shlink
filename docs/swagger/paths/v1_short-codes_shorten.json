@@ -1,7 +1,8 @@
 {
     "get": {
+        "operationId": "shortenUrl",
         "tags": [
-            "ShortCodes"
+            "Short URLs"
         ],
         "summary": "Create a short URL",
         "description": "Creates a short URL in a single API call. Useful for third party integrations",

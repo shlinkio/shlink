@@ -1,21 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\Action\ShortCode;
+namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
-use Shlinkio\Shlink\Rest\Action\ShortCode\EditShortCodeTagsAction;
+use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlTagsAction;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
 
-class EditShortCodeTagsActionTest extends TestCase
+class EditShortUrlTagsActionTest extends TestCase
 {
     /**
-     * @var EditShortCodeTagsAction
+     * @var EditShortUrlTagsAction
      */
     protected $action;
     /**
@@ -26,7 +26,7 @@ class EditShortCodeTagsActionTest extends TestCase
     public function setUp()
     {
         $this->shortUrlService = $this->prophesize(ShortUrlService::class);
-        $this->action = new EditShortCodeTagsAction($this->shortUrlService->reveal(), Translator::factory([]));
+        $this->action = new EditShortUrlTagsAction($this->shortUrlService->reveal(), Translator::factory([]));
     }
 
     /**

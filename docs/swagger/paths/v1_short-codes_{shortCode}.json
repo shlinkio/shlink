@@ -1,7 +1,8 @@
 {
     "get": {
+        "operationId": "getShortUrl",
         "tags": [
-            "ShortCodes"
+            "Short URLs"
         ],
         "summary": "Parse short code",
         "description": "Get the long URL behind a short code.",
@@ -78,8 +79,9 @@
     },
 
     "put": {
+        "operationId": "editShortUrl",
         "tags": [
-            "ShortCodes"
+            "Short URLs"
         ],
         "summary": "Edit short code",
         "description": "Update certain meta arguments from an existing short URL.",
@@ -162,8 +164,9 @@
     },
 
     "delete": {
+        "operationId": "deleteShortUrl",
         "tags": [
-            "ShortCodes"
+            "Short URLs"
         ],
         "summary": "Delete short code",
         "description": "Deletes the short URL for provided short code.",
