@@ -5,7 +5,7 @@
             "Visits"
         ],
         "summary": "List visits for short URL",
-        "description": "Get the list of visits on provided short code.",
+        "description": "Get the list of visits on the short URL behind provided short code.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
         "parameters": [
             {
                 "name": "shortCode",

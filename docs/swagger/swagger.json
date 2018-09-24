@@ -57,16 +57,16 @@
         },
 
         "/v1/short-urls": {
-            "$ref": "paths/v1_short-codes.json"
+            "$ref": "paths/v1_short-urls.json"
         },
         "/v1/short-urls/shorten": {
-            "$ref": "paths/v1_short-codes_shorten.json"
+            "$ref": "paths/v1_short-urls_shorten.json"
         },
         "/v1/short-urls/{shortCode}": {
-            "$ref": "paths/v1_short-codes_{shortCode}.json"
+            "$ref": "paths/v1_short-urls_{shortCode}.json"
         },
         "/v1/short-urls/{shortCode}/tags": {
-            "$ref": "paths/v1_short-codes_{shortCode}_tags.json"
+            "$ref": "paths/v1_short-urls_{shortCode}_tags.json"
         },
 
         "/v1/tags": {
@@ -74,7 +74,7 @@
         },
 
         "/v1/short-urls/{shortCode}/visits": {
-            "$ref": "paths/v1_short-codes_{shortCode}_visits.json"
+            "$ref": "paths/v1_short-urls_{shortCode}_visits.json"
         }
     }
 }
