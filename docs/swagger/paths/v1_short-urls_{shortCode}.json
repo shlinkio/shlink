@@ -5,7 +5,7 @@
             "Short URLs"
         ],
         "summary": "Parse short code",
-        "description": "Get the long URL behind a short code.",
+        "description": "Get the long URL behind a short URL's short code.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
         "parameters": [
             {
                 "name": "shortCode",
@@ -83,8 +83,8 @@
         "tags": [
             "Short URLs"
         ],
-        "summary": "Edit short code",
-        "description": "Update certain meta arguments from an existing short URL.",
+        "summary": "Edit short URL",
+        "description": "Update certain meta arguments from an existing short URL.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
         "parameters": [
             {
                 "name": "shortCode",
@@ -168,8 +168,8 @@
         "tags": [
             "Short URLs"
         ],
-        "summary": "Delete short code",
-        "description": "Deletes the short URL for provided short code.",
+        "summary": "Delete short URL",
+        "description": "Deletes the short URL for provided short code.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
         "parameters": [
             {
                 "name": "shortCode",
@@ -188,7 +188,7 @@
         ],
         "responses": {
             "204": {
-                "description": "The short code has been properly deleted."
+                "description": "The short URL has been properly deleted."
             },
             "400": {
                 "description": "The visits threshold in shlink does not allow this short URL to be deleted.",
