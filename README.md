@@ -37,7 +37,7 @@ Then, you will need a built version of the project. There are a few ways to get 
 
     After that, you will have a `shlink_x.x.x_dist.zip` dist file inside the `build` directory.
 
-    This is the process used when releasing new shlink versions. After tagging the new version with git, the Github release is created, attaching generated dist file to it.
+    This is the process used when releasing new shlink versions. After tagging the new version with git, the Github release is automatically created by [travis](https://travis-ci.org/shlinkio/shlink), attaching generated dist file to it.
 
 Despite how you built the project, you are going to need to install it now, by following these steps:
 
