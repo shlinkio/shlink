@@ -27,7 +27,7 @@
                 "description": "A valid shlink API key",
                 "type": "apiKey",
                 "in": "header",
-                "name": "X-API-KEY"
+                "name": "X-Api-Key"
             },
             "Bearer": {
                 "description": "**[Deprecated]** The JWT identifying a previously authenticated API key",

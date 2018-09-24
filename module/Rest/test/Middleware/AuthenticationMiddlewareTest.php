@@ -9,7 +9,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
-use Shlinkio\Shlink\Rest\Middleware\CheckAuthenticationMiddleware;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
@@ -18,10 +18,10 @@ use Zend\Expressive\Router\RouteResult;
 use Zend\I18n\Translator\Translator;
 use function Zend\Stratigility\middleware;
 
-class CheckAuthenticationMiddlewareTest extends TestCase
+class AuthenticationMiddlewareTest extends TestCase
 {
     /**
-     * @var CheckAuthenticationMiddleware
+     * @var AuthenticationMiddleware
      */
     protected $middleware;
     /**
@@ -37,7 +37,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
     public function setUp()
     {
         $this->jwtService = $this->prophesize(JWTService::class);
-        $this->middleware = new CheckAuthenticationMiddleware($this->jwtService->reveal(), Translator::factory([]), [
+        $this->middleware = new AuthenticationMiddleware($this->jwtService->reveal(), Translator::factory([]), [
             AuthenticateAction::class,
         ]);
         $this->dummyMiddleware = middleware(function () {
@@ -116,7 +116,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
-        )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, $authToken);
+        )->withHeader(AuthenticationMiddleware::AUTHORIZATION_HEADER, $authToken);
 
         $response = $this->middleware->process($request, TestUtils::createReqHandlerMock()->reveal());
 
@@ -133,7 +133,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
-        )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'Basic ' . $authToken);
+        )->withHeader(AuthenticationMiddleware::AUTHORIZATION_HEADER, 'Basic ' . $authToken);
 
         $response = $this->middleware->process($request, TestUtils::createReqHandlerMock()->reveal());
 
@@ -152,7 +152,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
-        )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'Bearer ' . $authToken);
+        )->withHeader(AuthenticationMiddleware::AUTHORIZATION_HEADER, 'Bearer ' . $authToken);
         $this->jwtService->verify($authToken)->willReturn(false)->shouldBeCalledTimes(1);
 
         $response = $this->middleware->process($request, TestUtils::createReqHandlerMock()->reveal());
@@ -168,7 +168,7 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $this->dummyMiddleware), [])
-        )->withHeader(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, 'bearer ' . $authToken);
+        )->withHeader(AuthenticationMiddleware::AUTHORIZATION_HEADER, 'bearer ' . $authToken);
         $this->jwtService->verify($authToken)->willReturn(true)->shouldBeCalledTimes(1);
         $this->jwtService->refresh($authToken)->willReturn($authToken)->shouldBeCalledTimes(1);
 
@@ -178,6 +178,6 @@ class CheckAuthenticationMiddlewareTest extends TestCase
         $resp = $this->middleware->process($request, $delegate->reveal());
 
         $process->shouldHaveBeenCalledTimes(1);
-        $this->assertArrayHasKey(CheckAuthenticationMiddleware::AUTHORIZATION_HEADER, $resp->getHeaders());
+        $this->assertArrayHasKey(AuthenticationMiddleware::AUTHORIZATION_HEADER, $resp->getHeaders());
     }
 }

@@ -35,7 +35,7 @@ return [
             Middleware\BodyParserMiddleware::class => InvokableFactory::class,
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
             Middleware\PathVersionMiddleware::class => InvokableFactory::class,
-            Middleware\CheckAuthenticationMiddleware::class => ConfigAbstractFactory::class,
+            Middleware\AuthenticationMiddleware::class => ConfigAbstractFactory::class,
             Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class => InvokableFactory::class,
             Middleware\ShortUrl\ShortCodePathMiddleware::class => InvokableFactory::class,
         ],
@@ -92,7 +92,7 @@ return [
         Action\Tag\CreateTagsAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
         Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class, Translator::class, LoggerInterface::class],
 
-        Middleware\CheckAuthenticationMiddleware::class => [
+        Middleware\AuthenticationMiddleware::class => [
             Authentication\JWTService::class,
             'translator',
             'config.auth.routes_whitelist',

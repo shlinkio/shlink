@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Middleware;
 
+use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -18,9 +19,10 @@ use Zend\Expressive\Router\RouteResult;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Stdlib\ErrorHandler;
 
-class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface
+class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface, RequestMethodInterface
 {
     public const AUTHORIZATION_HEADER = 'Authorization';
+    public const API_KEY_HEADER = 'X-Api-Key';
 
     /**
      * @var TranslatorInterface
@@ -64,12 +66,11 @@ class CheckAuthenticationMiddleware implements MiddlewareInterface, StatusCodeIn
      */
     public function process(Request $request, RequestHandlerInterface $handler): Response
     {
-        // If current route is the authenticate route or an OPTIONS request, continue to the next middleware
         /** @var RouteResult|null $routeResult */
         $routeResult = $request->getAttribute(RouteResult::class);
         if ($routeResult === null
             || $routeResult->isFailure()
-            || $request->getMethod() === 'OPTIONS'
+            || $request->getMethod() === self::METHOD_OPTIONS
             || \in_array($routeResult->getMatchedRouteName(), $this->routesWhitelist, true)
         ) {
             return $handler->handle($request);
