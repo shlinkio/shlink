@@ -8,53 +8,51 @@ if [ "$#" -ne 1 ]; then
 fi
 
 version=$1
-builtcontent=$(readlink -f "../shlink_${version}_dist")
+builtcontent="./build/shlink_${version}_dist"
 projectdir=$(pwd)
 [ -f ./composer.phar ] && composerBin='./composer.phar' || composerBin='composer'
 
 # Copy project content to temp dir
 echo 'Copying project files...'
 rm -rf "${builtcontent}"
-mkdir "${builtcontent}"
-sudo chmod -R 777 "${projectdir}"/data/infra/{database,nginx}
-cp -R "${projectdir}"/* "${builtcontent}"
+mkdir -p "${builtcontent}"
+rsync -av * "${builtcontent}" \
+    --exclude=data/infra \
+    --exclude=**/.gitignore \
+    --exclude=CHANGELOG.md \
+    --exclude=composer.lock \
+    --exclude=vendor \
+    --exclude=docs \
+    --exclude=indocker \
+    --exclude=docker* \
+    --exclude=func_tests_bootstrap.php \
+    --exclude=php* \
+    --exclude=infection.json \
+    --exclude=phpstan.neon \
+    --exclude=config/autoload/*local* \
+    --exclude=**/test* \
+    --exclude=build*
 cd "${builtcontent}"
 
 # Install dependencies
 echo "Installing dependencies with $composerBin..."
-rm -rf vendor
-rm -f composer.lock
-$composerBin self-update
-$composerBin install --no-dev --optimize-autoloader --no-progress --no-interaction
+${composerBin} self-update
+${composerBin} install --no-dev --optimize-autoloader --no-progress --no-interaction
 
 # Delete development files
 echo 'Deleting dev files...'
-rm build.sh
-rm CHANGELOG.md
 rm composer.*
-rm LICENSE
-rm indocker
-rm docker-compose.yml
-rm docker-compose.override.yml
-rm docker-compose.override.yml.dist
-rm func_tests_bootstrap.php
-rm php*
-rm README.md
-rm infection.json
-rm -rf build
-rm -ff data/database.sqlite
-rm -rf data/infra
-rm -rf data/{cache,log,proxies}/{*,.gitignore}
-rm -rf config/params/{*,.gitignore}
-rm -rf config/autoload/{{,*.}local.php{,.dist},.gitignore}
+rm -f data/database.sqlite
 
 # Update shlink version in config
 sed -i "s/%SHLINK_VERSION%/${version}/g" config/autoload/app_options.global.php
 
 # Compressing file
 echo 'Compressing files...'
-rm -f "${projectdir}"/build/shlink_${version}_dist.zip
-zip -ry "${projectdir}"/build/shlink_${version}_dist.zip "../shlink_${version}_dist"
+cd "${projectdir}"/build
+rm -f ./shlink_${version}_dist.zip
+zip -ry ./shlink_${version}_dist.zip ./shlink_${version}_dist
+cd "${projectdir}"
 rm -rf "${builtcontent}"
 
 echo 'Done!'
