@@ -11,7 +11,6 @@ use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
-use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequestFactory;
@@ -50,12 +49,11 @@ class SingleStepCreateShortUrlActionTest extends TestCase
 
     /**
      * @test
-     * @dataProvider provideInvalidApiKeys
      */
-    public function errorResponseIsReturnedIfInvalidApiKeyIsProvided(?ApiKey $apiKey)
+    public function errorResponseIsReturnedIfInvalidApiKeyIsProvided()
     {
         $request = ServerRequestFactory::fromGlobals()->withQueryParams(['apiKey' => 'abc123']);
-        $findApiKey = $this->apiKeyService->getByKey('abc123')->willReturn($apiKey);
+        $findApiKey = $this->apiKeyService->check('abc123')->willReturn(false);
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle($request);
@@ -67,21 +65,13 @@ class SingleStepCreateShortUrlActionTest extends TestCase
         $findApiKey->shouldHaveBeenCalled();
     }
 
-    public function provideInvalidApiKeys(): array
-    {
-        return [
-            [null],
-            [(new ApiKey())->disable()],
-        ];
-    }
-
     /**
      * @test
      */
     public function errorResponseIsReturnedIfNoUrlIsProvided()
     {
         $request = ServerRequestFactory::fromGlobals()->withQueryParams(['apiKey' => 'abc123']);
-        $findApiKey = $this->apiKeyService->getByKey('abc123')->willReturn(new ApiKey());
+        $findApiKey = $this->apiKeyService->check('abc123')->willReturn(true);
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle($request);
@@ -102,7 +92,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
             'apiKey' => 'abc123',
             'longUrl' => 'http://foobar.com',
         ]);
-        $findApiKey = $this->apiKeyService->getByKey('abc123')->willReturn(new ApiKey());
+        $findApiKey = $this->apiKeyService->check('abc123')->willReturn(true);
         $generateShortCode = $this->urlShortener->urlToShortCode(
             Argument::that(function (UriInterface $argument) {
                 Assert::assertEquals('http://foobar.com', (string) $argument);

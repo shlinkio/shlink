@@ -7,6 +7,7 @@ use Firebase\JWT\JWT;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
+use function time;
 
 class JWTService implements JWTServiceInterface
 {
@@ -32,7 +33,7 @@ class JWTService implements JWTServiceInterface
         $currentTimestamp = time();
 
         return $this->encode([
-            'iss' => $this->appOptions->__toString(),
+            'iss' => (string) $this->appOptions,
             'iat' => $currentTimestamp,
             'exp' => $currentTimestamp + $lifetime,
             'sub' => 'auth',

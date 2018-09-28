@@ -43,9 +43,7 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
     {
         $query = $request->getQueryParams();
 
-        // Check provided API key
-        $apiKey = $this->apiKeyService->getByKey($query['apiKey'] ?? '');
-        if ($apiKey === null || ! $apiKey->isValid()) {
+        if (! $this->apiKeyService->check($query['apiKey'] ?? '')) {
             throw new InvalidArgumentException(
                 $this->translator->translate('No API key was provided or it is not valid')
             );
