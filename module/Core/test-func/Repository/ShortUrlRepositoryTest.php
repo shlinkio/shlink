@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Repository;
 
+use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -41,7 +42,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $bar = new ShortUrl();
         $bar->setOriginalUrl('bar')
             ->setShortCode('bar_very_long_text')
-            ->setValidSince((new \DateTime())->add(new \DateInterval('P1M')));
+            ->setValidSince(Chronos::now()->addMonth());
         $this->getEntityManager()->persist($bar);
 
         $visits = [];

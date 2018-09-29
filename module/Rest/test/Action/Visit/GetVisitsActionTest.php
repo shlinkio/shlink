@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
+use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -77,7 +78,7 @@ class GetVisitsActionTest extends TestCase
     public function datesAreReadFromQuery()
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info($shortCode, new DateRange(null, new \DateTime('2016-01-01 00:00:00')))
+        $this->visitsTracker->info($shortCode, new DateRange(null, Chronos::parse('2016-01-01 00:00:00')))
             ->willReturn([])
             ->shouldBeCalledTimes(1);
 

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Repository;
 
+use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -131,7 +132,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
      */
     public function findOneByShortCode(string $shortCode): ?ShortUrl
     {
-        $now = new \DateTimeImmutable();
+        $now = Chronos::now();
 
         $qb = $this->createQueryBuilder('s');
         $qb->where($qb->expr()->eq('s.shortCode', ':shortCode'))

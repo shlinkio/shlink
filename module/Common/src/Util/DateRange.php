@@ -3,42 +3,35 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Util;
 
-class DateRange
+use Cake\Chronos\Chronos;
+
+final class DateRange
 {
     /**
-     * @var \DateTimeInterface|null
+     * @var Chronos|null
      */
     private $startDate;
     /**
-     * @var \DateTimeInterface|null
+     * @var Chronos|null
      */
     private $endDate;
 
-    public function __construct(\DateTimeInterface $startDate = null, \DateTimeInterface $endDate = null)
+    public function __construct(?Chronos $startDate = null, ?Chronos $endDate = null)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
     }
 
-    /**
-     * @return \DateTimeInterface|null
-     */
-    public function getStartDate()
+    public function getStartDate(): ?Chronos
     {
         return $this->startDate;
     }
 
-    /**
-     * @return \DateTimeInterface|null
-     */
-    public function getEndDate()
+    public function getEndDate(): ?Chronos
     {
         return $this->endDate;
     }
 
-    /**
-     * @return bool
-     */
     public function isEmpty(): bool
     {
         return $this->startDate === null && $this->endDate === null;

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Service;
 
+use Cake\Chronos\Chronos;
 use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
@@ -14,14 +15,6 @@ use Shlinkio\Shlink\Core\Exception\RuntimeException;
 interface UrlShortenerInterface
 {
     /**
-     * Creates and persists a unique shortcode generated for provided url
-     *
-     * @param UriInterface $url
-     * @param string[] $tags
-     * @param \DateTime|null $validSince
-     * @param \DateTime|null $validUntil
-     * @param string|null $customSlug
-     * @param int|null $maxVisits
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      * @throws RuntimeException
@@ -29,10 +22,10 @@ interface UrlShortenerInterface
     public function urlToShortCode(
         UriInterface $url,
         array $tags = [],
-        \DateTime $validSince = null,
-        \DateTime $validUntil = null,
-        string $customSlug = null,
-        int $maxVisits = null
+        ?Chronos $validSince = null,
+        ?Chronos $validUntil = null,
+        ?string $customSlug = null,
+        ?int $maxVisits = null
     ): ShortUrl;
 
     /**

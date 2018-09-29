@@ -24,7 +24,6 @@ class ShortUrlDataTransformer implements DataTransformerInterface
 
     /**
      * @param ShortUrl $value
-     * @return array
      */
     public function transform($value): array
     {
@@ -36,7 +35,7 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             'shortCode' => $shortCode,
             'shortUrl' => $this->buildShortUrl($this->domainConfig, $shortCode),
             'longUrl' => $longUrl,
-            'dateCreated' => $dateCreated !== null ? $dateCreated->format(\DateTime::ATOM) : null,
+            'dateCreated' => $dateCreated !== null ? $dateCreated->toAtomString() : null,
             'visitsCount' => $value->getVisitsCount(),
             'tags' => \array_map([$this, 'serializeTag'], $value->getTags()->toArray()),
 

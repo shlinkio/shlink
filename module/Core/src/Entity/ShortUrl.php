@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Entity;
 
+use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -36,8 +37,8 @@ class ShortUrl extends AbstractEntity
      */
     private $shortCode;
     /**
-     * @var \DateTime
-     * @ORM\Column(name="date_created", type="datetime")
+     * @var Chronos
+     * @ORM\Column(name="date_created", type="chronos_datetime")
      */
     private $dateCreated;
     /**
@@ -56,13 +57,13 @@ class ShortUrl extends AbstractEntity
      */
     private $tags;
     /**
-     * @var \DateTime
-     * @ORM\Column(name="valid_since", type="datetime", nullable=true)
+     * @var Chronos|null
+     * @ORM\Column(name="valid_since", type="chronos_datetime", nullable=true)
      */
     private $validSince;
     /**
-     * @var \DateTime
-     * @ORM\Column(name="valid_until", type="datetime", nullable=true)
+     * @var Chronos|null
+     * @ORM\Column(name="valid_until", type="chronos_datetime", nullable=true)
      */
     private $validUntil;
     /**
@@ -74,7 +75,7 @@ class ShortUrl extends AbstractEntity
     public function __construct()
     {
         $this->shortCode = '';
-        $this->dateCreated = new \DateTime();
+        $this->dateCreated = Chronos::now();
         $this->visits = new ArrayCollection();
         $this->tags = new ArrayCollection();
     }
@@ -117,12 +118,12 @@ class ShortUrl extends AbstractEntity
         return $this;
     }
 
-    public function getDateCreated(): \DateTime
+    public function getDateCreated(): Chronos
     {
         return $this->dateCreated;
     }
 
-    public function setDateCreated(\DateTime $dateCreated): self
+    public function setDateCreated(Chronos $dateCreated): self
     {
         $this->dateCreated = $dateCreated;
         return $this;
@@ -151,23 +152,23 @@ class ShortUrl extends AbstractEntity
         return $this;
     }
 
-    public function getValidSince(): ?\DateTime
+    public function getValidSince(): ?Chronos
     {
         return $this->validSince;
     }
 
-    public function setValidSince(?\DateTime $validSince): self
+    public function setValidSince(?Chronos $validSince): self
     {
         $this->validSince = $validSince;
         return $this;
     }
 
-    public function getValidUntil(): ?\DateTime
+    public function getValidUntil(): ?Chronos
     {
         return $this->validUntil;
     }
 
-    public function setValidUntil(?\DateTime $validUntil): self
+    public function setValidUntil(?Chronos $validUntil): self
     {
         $this->validUntil = $validUntil;
         return $this;

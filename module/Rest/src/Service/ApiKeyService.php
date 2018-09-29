@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Service;
 
+use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -20,13 +21,7 @@ class ApiKeyService implements ApiKeyServiceInterface
         $this->em = $em;
     }
 
-    /**
-     * Creates a new ApiKey with provided expiration date
-     *
-     * @param \DateTime $expirationDate
-     * @return ApiKey
-     */
-    public function create(\DateTime $expirationDate = null): ApiKey
+    public function create(?Chronos $expirationDate = null): ApiKey
     {
         $key = new ApiKey();
         if ($expirationDate !== null) {
@@ -39,12 +34,6 @@ class ApiKeyService implements ApiKeyServiceInterface
         return $key;
     }
 
-    /**
-     * Checks if provided key is a valid api key
-     *
-     * @param string $key
-     * @return bool
-     */
     public function check(string $key): bool
     {
         /** @var ApiKey|null $apiKey */
@@ -53,10 +42,6 @@ class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /**
-     * Disables provided api key
-     *
-     * @param string $key
-     * @return ApiKey
      * @throws InvalidArgumentException
      */
     public function disable(string $key): ApiKey
@@ -72,12 +57,6 @@ class ApiKeyService implements ApiKeyServiceInterface
         return $apiKey;
     }
 
-    /**
-     * Lists all existing api keys
-     *
-     * @param bool $enabledOnly Tells if only enabled keys should be returned
-     * @return ApiKey[]
-     */
     public function listKeys(bool $enabledOnly = false): array
     {
         $conditions = $enabledOnly ? ['enabled' => true] : [];
@@ -86,12 +65,6 @@ class ApiKeyService implements ApiKeyServiceInterface
         return $apiKeys;
     }
 
-    /**
-     * Tries to find one API key by its key string
-     *
-     * @param string $key
-     * @return ApiKey|null
-     */
     public function getByKey(string $key): ?ApiKey
     {
         /** @var ApiKey|null $apiKey */

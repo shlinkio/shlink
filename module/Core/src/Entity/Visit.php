@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Entity;
 
+use Cake\Chronos\Chronos;
 use Doctrine\ORM\Mapping as ORM;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
@@ -25,8 +26,8 @@ class Visit extends AbstractEntity implements \JsonSerializable
      */
     private $referer;
     /**
-     * @var \DateTime
-     * @ORM\Column(type="datetime", nullable=false)
+     * @var Chronos
+     * @ORM\Column(type="chronos_datetime", nullable=false)
      */
     private $date;
     /**
@@ -54,7 +55,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
 
     public function __construct()
     {
-        $this->date = new \DateTime();
+        $this->date = Chronos::now();
     }
 
     public function getReferer(): string
@@ -68,12 +69,12 @@ class Visit extends AbstractEntity implements \JsonSerializable
         return $this;
     }
 
-    public function getDate(): \DateTime
+    public function getDate(): Chronos
     {
         return $this->date;
     }
 
-    public function setDate(\DateTime $date): self
+    public function setDate(Chronos $date): self
     {
         $this->date = $date;
         return $this;
@@ -148,7 +149,7 @@ class Visit extends AbstractEntity implements \JsonSerializable
     {
         return [
             'referer' => $this->referer,
-            'date' => isset($this->date) ? $this->date->format(\DateTime::ATOM) : null,
+            'date' => isset($this->date) ? $this->date->toAtomString() : null,
             'userAgent' => $this->userAgent,
             'visitLocation' => $this->visitLocation,
 

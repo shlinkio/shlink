@@ -3,17 +3,19 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Model;
 
+use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use function is_string;
 
 final class ShortUrlMeta
 {
     /**
-     * @var \DateTime|null
+     * @var Chronos|null
      */
     private $validSince;
     /**
-     * @var \DateTime|null
+     * @var Chronos|null
      */
     private $validUntil;
     /**
@@ -43,8 +45,8 @@ final class ShortUrlMeta
     }
 
     /**
-     * @param string|\DateTimeInterface|null $validSince
-     * @param string|\DateTimeInterface|null $validUntil
+     * @param string|Chronos|null $validSince
+     * @param string|Chronos|null $validUntil
      * @param string|null $customSlug
      * @param int|null $maxVisits
      * @return ShortUrlMeta
@@ -86,26 +88,23 @@ final class ShortUrlMeta
     }
 
     /**
-     * @param string|\DateTime|null $date
-     * @return \DateTime|null
+     * @param string|Chronos|null $date
+     * @return Chronos|null
      */
-    private function parseDateField($date): ?\DateTime
+    private function parseDateField($date): ?Chronos
     {
-        if ($date === null || $date instanceof \DateTime) {
+        if ($date === null || $date instanceof Chronos) {
             return $date;
         }
 
-        if (\is_string($date)) {
-            return new \DateTime($date);
+        if (is_string($date)) {
+            return Chronos::parse($date);
         }
 
         return null;
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getValidSince(): ?\DateTime
+    public function getValidSince(): ?Chronos
     {
         return $this->validSince;
     }
@@ -115,10 +114,7 @@ final class ShortUrlMeta
         return $this->validSince !== null;
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getValidUntil(): ?\DateTime
+    public function getValidUntil(): ?Chronos
     {
         return $this->validUntil;
     }

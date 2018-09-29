@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
+use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -58,7 +59,7 @@ class GetVisitsCommandTest extends TestCase
         $shortCode = 'abc123';
         $startDate = '2016-01-01';
         $endDate = '2016-02-01';
-        $this->visitsTracker->info($shortCode, new DateRange(new \DateTime($startDate), new \DateTime($endDate)))
+        $this->visitsTracker->info($shortCode, new DateRange(Chronos::parse($startDate), Chronos::parse($endDate)))
             ->willReturn([])
             ->shouldBeCalledTimes(1);
 

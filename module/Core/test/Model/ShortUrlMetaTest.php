@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Model;
 
+use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
@@ -42,10 +43,10 @@ class ShortUrlMetaTest extends TestCase
      */
     public function properlyCreatedInstanceReturnsValues()
     {
-        $meta = ShortUrlMeta::createFromParams((new \DateTime('2015-01-01'))->format(\DateTime::ATOM), null, 'foobar');
+        $meta = ShortUrlMeta::createFromParams(Chronos::parse('2015-01-01')->toAtomString(), null, 'foobar');
 
         $this->assertTrue($meta->hasValidSince());
-        $this->assertEquals(new \DateTime('2015-01-01'), $meta->getValidSince());
+        $this->assertEquals(Chronos::parse('2015-01-01'), $meta->getValidSince());
 
         $this->assertFalse($meta->hasValidUntil());
         $this->assertNull($meta->getValidUntil());

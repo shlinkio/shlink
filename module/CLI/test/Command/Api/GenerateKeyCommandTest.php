@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
+use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -50,8 +51,8 @@ class GenerateKeyCommandTest extends TestCase
      */
     public function expirationDateIsDefinedIfProvided()
     {
-        $this->apiKeyService->create(Argument::type(\DateTime::class))->shouldBeCalledTimes(1)
-                                                                      ->willReturn(new ApiKey());
+        $this->apiKeyService->create(Argument::type(Chronos::class))->shouldBeCalledTimes(1)
+                                                                    ->willReturn(new ApiKey());
         $this->commandTester->execute([
             'command' => 'api-key:generate',
             '--expirationDate' => '2016-01-01',

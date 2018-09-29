@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Repository;
 
+use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use ShlinkioTest\Shlink\Common\DbUnit\DatabaseTestCase;
+use function sprintf;
 
 class VisitRepositoryTest extends DatabaseTestCase
 {
@@ -61,7 +63,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         for ($i = 0; $i < 6; $i++) {
             $visit = new Visit();
             $visit->setShortUrl($shortUrl)
-                  ->setDate(new \DateTime('2016-01-0' . ($i + 1)));
+                  ->setDate(Chronos::parse(sprintf('2016-01-0%s', $i + 1)));
 
             $this->getEntityManager()->persist($visit);
         }
@@ -70,11 +72,11 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->assertCount(0, $this->repo->findVisitsByShortUrl('invalid'));
         $this->assertCount(6, $this->repo->findVisitsByShortUrl($shortUrl->getId()));
         $this->assertCount(2, $this->repo->findVisitsByShortUrl($shortUrl->getId(), new DateRange(
-            new \DateTime('2016-01-02'),
-            new \DateTime('2016-01-03')
+            Chronos::parse('2016-01-02'),
+            Chronos::parse('2016-01-03')
         )));
         $this->assertCount(4, $this->repo->findVisitsByShortUrl($shortUrl->getId(), new DateRange(
-            new \DateTime('2016-01-03')
+            Chronos::parse('2016-01-03')
         )));
     }
 }

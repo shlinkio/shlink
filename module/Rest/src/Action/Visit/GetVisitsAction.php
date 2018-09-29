@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\Visit;
 
+use Cake\Chronos\Chronos;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -75,18 +76,9 @@ class GetVisitsAction extends AbstractRestAction
         }
     }
 
-    /**
-     * @param Request $request
-     * @param string $key
-     * @return \DateTime|null
-     */
-    private function getDateQueryParam(Request $request, string $key)
+    private function getDateQueryParam(Request $request, string $key): ?Chronos
     {
         $query = $request->getQueryParams();
-        if (! isset($query[$key]) || empty($query[$key])) {
-            return null;
-        }
-
-        return new \DateTime($query[$key]);
+        return ! isset($query[$key]) || empty($query[$key]) ? null : Chronos::parse($query[$key]);
     }
 }

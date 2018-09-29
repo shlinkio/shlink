@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
+use Cake\Chronos\Chronos;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
@@ -40,8 +41,8 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
         );
     }
 
-    private function getOptionalDate(array $postData, string $fieldName)
+    private function getOptionalDate(array $postData, string $fieldName): ?Chronos
     {
-        return isset($postData[$fieldName]) ? new \DateTime($postData[$fieldName]) : null;
+        return isset($postData[$fieldName]) ? Chronos::parse($postData[$fieldName]) : null;
     }
 }

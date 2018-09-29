@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Service;
 
+use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
@@ -104,15 +105,15 @@ class ShortUrlServiceTest extends TestCase
         $flush = $this->em->flush($shortUrl)->willReturn(null);
 
         $result = $this->service->updateMetadataByShortCode('abc123', ShortUrlMeta::createFromParams(
-            (new \DateTime('2017-01-01 00:00:00'))->format(\DateTime::ATOM),
-            (new \DateTime('2017-01-05 00:00:00'))->format(\DateTime::ATOM),
+            Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
+            Chronos::parse('2017-01-05 00:00:00')->toAtomString(),
             null,
             5
         ));
 
         $this->assertSame($shortUrl, $result);
-        $this->assertEquals(new \DateTime('2017-01-01 00:00:00'), $shortUrl->getValidSince());
-        $this->assertEquals(new \DateTime('2017-01-05 00:00:00'), $shortUrl->getValidUntil());
+        $this->assertEquals(Chronos::parse('2017-01-01 00:00:00'), $shortUrl->getValidSince());
+        $this->assertEquals(Chronos::parse('2017-01-05 00:00:00'), $shortUrl->getValidUntil());
         $this->assertEquals(5, $shortUrl->getMaxVisits());
         $findShortUrl->shouldHaveBeenCalled();
         $getRepo->shouldHaveBeenCalled();
