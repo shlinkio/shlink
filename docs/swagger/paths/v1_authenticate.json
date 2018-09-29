@@ -1,11 +1,12 @@
 {
     "post": {
+        "deprecated": true,
         "operationId": "authenticate",
         "tags": [
             "Authentication"
         ],
-        "summary": "Perform authentication",
-        "description": "Performs an authentication",
+        "summary": "[Deprecated] Perform authentication",
+        "description": "**This endpoint is deprecated, since the authentication can be performed via API key now**. Performs an authentication.",
         "requestBody": {
             "description": "Request body.",
             "required": true,

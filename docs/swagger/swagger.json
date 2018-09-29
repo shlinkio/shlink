@@ -23,8 +23,14 @@
 
     "components": {
         "securitySchemes": {
+            "ApiKey": {
+                "description": "A valid shlink API key",
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-Api-Key"
+            },
             "Bearer": {
-                "description": "The JWT identifying a previously logged API key",
+                "description": "**[Deprecated]** The JWT identifying a previously authenticated API key",
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT"
@@ -33,10 +39,6 @@
     },
 
     "tags": [
-        {
-            "name": "Authentication",
-            "description": "Authentication-related endpoints"
-        },
         {
             "name": "Short URLs",
             "description": "Operations that can be performed on short URLs"
@@ -48,14 +50,14 @@
         {
             "name": "Visits",
             "description": "Operations to manage visits on short URLs"
+        },
+        {
+            "name": "Authentication",
+            "description": "Authentication-related endpoints"
         }
     ],
 
     "paths": {
-        "/v1/authenticate": {
-            "$ref": "paths/v1_authenticate.json"
-        },
-
         "/v1/short-urls": {
             "$ref": "paths/v1_short-urls.json"
         },
@@ -75,6 +77,10 @@
 
         "/v1/short-urls/{shortCode}/visits": {
             "$ref": "paths/v1_short-urls_{shortCode}_visits.json"
+        },
+
+        "/v1/authenticate": {
+            "$ref": "paths/v1_authenticate.json"
         }
     }
 }

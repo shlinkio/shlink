@@ -19,6 +19,9 @@
         ],
         "security": [
             {
+                "ApiKey": []
+            },
+            {
                 "Bearer": []
             }
         ],
@@ -123,6 +126,9 @@
         },
         "security": [
             {
+                "ApiKey": []
+            },
+            {
                 "Bearer": []
             }
         ],
@@ -182,6 +188,9 @@
             }
         ],
         "security": [
+            {
+                "ApiKey": []
+            },
             {
                 "Bearer": []
             }

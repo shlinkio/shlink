@@ -39,7 +39,7 @@ return [
                 Rest\Middleware\CrossDomainMiddleware::class,
                 Expressive\Router\Middleware\ImplicitOptionsMiddleware::class,
                 Rest\Middleware\BodyParserMiddleware::class,
-                Rest\Middleware\CheckAuthenticationMiddleware::class,
+                Rest\Middleware\AuthenticationMiddleware::class,
             ],
             'priority' => 5,
         ],

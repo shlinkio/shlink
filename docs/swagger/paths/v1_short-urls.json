@@ -55,6 +55,9 @@
         ],
         "security": [
             {
+                "ApiKey": []
+            },
+            {
                 "Bearer": []
             }
         ],
@@ -150,6 +153,9 @@
         "summary": "Create short URL",
         "description": "Creates a new short URL.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
         "security": [
+            {
+                "ApiKey": []
+            },
             {
                 "Bearer": []
             }
