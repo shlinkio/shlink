@@ -11,12 +11,7 @@ class ApplicationConfigCustomizer implements ConfigCustomizerInterface
 {
     use StringUtilsTrait;
 
-    /**
-     * @param SymfonyStyle $io
-     * @param CustomizableAppConfig $appConfig
-     * @return void
-     */
-    public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig)
+    public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig): void
     {
         $io->title('APPLICATION');
 

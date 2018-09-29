@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Installer\Config\Plugin;
 
-use Shlinkio\Shlink\Installer\Config\Plugin\ConfigCustomizerInterface;
 use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -28,12 +27,9 @@ class DatabaseConfigCustomizer implements ConfigCustomizerInterface
     }
 
     /**
-     * @param SymfonyStyle $io
-     * @param CustomizableAppConfig $appConfig
-     * @return void
      * @throws IOException
      */
-    public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig)
+    public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig): void
     {
         $io->title('DATABASE');
 
