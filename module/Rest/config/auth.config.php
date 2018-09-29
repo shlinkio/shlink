@@ -31,6 +31,7 @@ return [
         'factories' => [
             Authentication\AuthenticationPluginManager::class =>
                 Authentication\AuthenticationPluginManagerFactory::class,
+            Authentication\RequestToHttpAuthPlugin::class => ConfigAbstractFactory::class,
 
             Middleware\AuthenticationMiddleware::class => ConfigAbstractFactory::class,
         ],
@@ -39,8 +40,10 @@ return [
     ConfigAbstractFactory::class => [
         Authentication\Plugin\AuthorizationHeaderPlugin::class => [Authentication\JWTService::class, 'translator'],
 
+        Authentication\RequestToHttpAuthPlugin::class => [Authentication\AuthenticationPluginManager::class],
+
         Middleware\AuthenticationMiddleware::class => [
-            Authentication\AuthenticationPluginManager::class,
+            Authentication\RequestToHttpAuthPlugin::class,
             'translator',
             'config.auth.routes_whitelist',
             'Logger_Shlink',

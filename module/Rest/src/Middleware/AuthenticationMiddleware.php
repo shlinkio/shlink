@@ -12,8 +12,8 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Shlinkio\Shlink\Rest\Authentication\AuthenticationPluginManager;
-use Shlinkio\Shlink\Rest\Authentication\AuthenticationPluginManagerInterface;
+use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPlugin;
+use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPluginInterface;
 use Shlinkio\Shlink\Rest\Exception\NoAuthenticationException;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
@@ -26,9 +26,6 @@ use function sprintf;
 
 class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface, RequestMethodInterface
 {
-    public const AUTHORIZATION_HEADER = 'Authorization';
-    public const API_KEY_HEADER = 'X-Api-Key';
-
     /**
      * @var TranslatorInterface
      */
@@ -42,12 +39,12 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
      */
     private $routesWhitelist;
     /**
-     * @var AuthenticationPluginManagerInterface
+     * @var RequestToHttpAuthPluginInterface
      */
-    private $authPluginManager;
+    private $requestToAuthPlugin;
 
     public function __construct(
-        AuthenticationPluginManagerInterface $authPluginManager,
+        RequestToHttpAuthPluginInterface $requestToAuthPlugin,
         TranslatorInterface $translator,
         array $routesWhitelist,
         LoggerInterface $logger = null
@@ -55,7 +52,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
         $this->translator = $translator;
         $this->routesWhitelist = $routesWhitelist;
         $this->logger = $logger ?: new NullLogger();
-        $this->authPluginManager = $authPluginManager;
+        $this->requestToAuthPlugin = $requestToAuthPlugin;
     }
 
     /**
@@ -81,12 +78,12 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
         }
 
         try {
-            $plugin = $this->authPluginManager->fromRequest($request);
+            $plugin = $this->requestToAuthPlugin->fromRequest($request);
         } catch (ContainerExceptionInterface | NoAuthenticationException $e) {
             $this->logger->warning('Invalid or no authentication provided.' . PHP_EOL . $e);
             return $this->createErrorResponse(sprintf($this->translator->translate(
                 'Expected one of the following authentication headers, but none were provided, ["%s"]'
-            ), implode('", "', AuthenticationPluginManager::SUPPORTED_AUTH_HEADERS)));
+            ), implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)));
         }
 
         try {
