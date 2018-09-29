@@ -66,7 +66,7 @@ class ListKeysCommand extends Command
             if (! $enabledOnly) {
                 $rowData[] = \sprintf($messagePattern, $this->getEnabledSymbol($row));
             }
-            $rowData[] = $expiration !== null ? $expiration->format(\DateTime::ATOM) : '-';
+            $rowData[] = $expiration !== null ? $expiration->toAtomString() : '-';
 
             $rows[] = $rowData;
         }

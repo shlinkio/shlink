@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
@@ -143,9 +144,9 @@ class GenerateShortUrlCommand extends Command
         }
     }
 
-    private function getOptionalDate(InputInterface $input, string $fieldName): ?\DateTime
+    private function getOptionalDate(InputInterface $input, string $fieldName): ?Chronos
     {
         $since = $input->getOption($fieldName);
-        return $since !== null ? new \DateTime($since) : null;
+        return $since !== null ? Chronos::parse($since) : null;
     }
 }

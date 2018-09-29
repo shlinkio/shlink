@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -107,10 +108,6 @@ class GetVisitsCommand extends Command
     private function getDateOption(InputInterface $input, $key)
     {
         $value = $input->getOption($key);
-        if (! empty($value)) {
-            $value = new \DateTime($value);
-        }
-
-        return $value;
+        return ! empty($value) ? Chronos::parse($value) : $value;
     }
 }

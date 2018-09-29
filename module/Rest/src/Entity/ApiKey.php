@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Entity;
 
+use Cake\Chronos\Chronos;
 use Doctrine\ORM\Mapping as ORM;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
@@ -25,8 +26,8 @@ class ApiKey extends AbstractEntity
      */
     private $key;
     /**
-     * @var \DateTime|null
-     * @ORM\Column(name="expiration_date", nullable=true, type="datetime")
+     * @var Chronos|null
+     * @ORM\Column(name="expiration_date", nullable=true, type="chronos_datetime")
      */
     private $expirationDate;
     /**
@@ -52,12 +53,12 @@ class ApiKey extends AbstractEntity
         return $this;
     }
 
-    public function getExpirationDate(): ?\DateTime
+    public function getExpirationDate(): ?Chronos
     {
         return $this->expirationDate;
     }
 
-    public function setExpirationDate(\DateTime $expirationDate): self
+    public function setExpirationDate(Chronos $expirationDate): self
     {
         $this->expirationDate = $expirationDate;
         return $this;
@@ -69,7 +70,7 @@ class ApiKey extends AbstractEntity
             return false;
         }
 
-        return $this->expirationDate < new \DateTime();
+        return $this->expirationDate->lt(Chronos::now());
     }
 
     public function isEnabled(): bool

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Service;
 
+use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
@@ -48,7 +49,7 @@ class ApiKeyServiceTest extends TestCase
         $this->em->flush()->shouldBeCalledTimes(1);
         $this->em->persist(Argument::type(ApiKey::class))->shouldBeCalledTimes(1);
 
-        $date = new \DateTime('2030-01-01');
+        $date = Chronos::parse('2030-01-01');
         $key = $this->service->create($date);
         $this->assertSame($date, $key->getExpirationDate());
     }
@@ -87,7 +88,7 @@ class ApiKeyServiceTest extends TestCase
     public function checkReturnsFalseWhenKeyIsExpired()
     {
         $key = new ApiKey();
-        $key->setExpirationDate((new \DateTime())->sub(new \DateInterval('P1D')));
+        $key->setExpirationDate(Chronos::now()->subDay());
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['key' => '12345'])->willReturn($key)
                                             ->shouldBeCalledTimes(1);

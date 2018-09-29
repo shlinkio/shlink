@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Common\Util;
 
+use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Util\DateRange;
 
@@ -24,8 +25,8 @@ class DateRangeTest extends TestCase
      */
     public function providedDatesAreSet()
     {
-        $startDate = new \DateTime();
-        $endDate = new \DateTime();
+        $startDate = Chronos::now();
+        $endDate = Chronos::now();
         $range = new DateRange($startDate, $endDate);
         $this->assertSame($startDate, $range->getStartDate());
         $this->assertSame($endDate, $range->getEndDate());

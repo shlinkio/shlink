@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
+use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -46,7 +47,7 @@ class GenerateKeyCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $expirationDate = $input->getOption('expirationDate');
-        $apiKey = $this->apiKeyService->create(isset($expirationDate) ? new \DateTime($expirationDate) : null);
+        $apiKey = $this->apiKeyService->create(isset($expirationDate) ? Chronos::parse($expirationDate) : null);
 
         (new SymfonyStyle($input, $output))->success(
             sprintf($this->translator->translate('Generated API key: "%s"'), $apiKey)
