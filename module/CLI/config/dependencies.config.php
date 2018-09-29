@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Shlinkio\Shlink\CLI\Command;
-use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
+namespace Shlinkio\Shlink\CLI;
+
 use Shlinkio\Shlink\Common\Service\IpApiLocationResolver;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Service;
@@ -15,7 +15,7 @@ return [
 
     'dependencies' => [
         'factories' => [
-            Application::class => ApplicationFactory::class,
+            Application::class => Factory\ApplicationFactory::class,
 
             Command\ShortUrl\GenerateShortUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ResolveUrlCommand::class => ConfigAbstractFactory::class,

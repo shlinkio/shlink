@@ -2,8 +2,8 @@
 <?php
 declare(strict_types=1);
 
-use Shlinkio\Shlink\CLI\Factory\InstallApplicationFactory;
-use Shlinkio\Shlink\CLI\Install\Plugin\DatabaseConfigCustomizer;
+use Shlinkio\Shlink\Installer\Factory\InstallApplicationFactory;
+use Shlinkio\Shlink\Installer\Config\Plugin\DatabaseConfigCustomizer;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Filesystem\Filesystem;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;

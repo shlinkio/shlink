@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Install\Plugin;
+namespace Shlinkio\Shlink\Installer\Config\Plugin;
 
-use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
+use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ApplicationConfigCustomizer implements ConfigCustomizerInterface

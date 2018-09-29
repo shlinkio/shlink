@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Install\Plugin;
+namespace Shlinkio\Shlink\Installer\Config\Plugin;
 
-use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use function str_shuffle;
 
 class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
 {
@@ -36,7 +37,7 @@ class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
                 function ($value) {
                     return $value;
                 }
-            ) ?: \str_shuffle(UrlShortener::DEFAULT_CHARS),
+            ) ?: str_shuffle(UrlShortener::DEFAULT_CHARS),
             'VALIDATE_URL' => $io->confirm('Do you want to validate long urls by 200 HTTP status code on response'),
         ]);
     }

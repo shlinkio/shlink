@@ -1,16 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Install\Plugin;
+namespace Shlinkio\Shlink\Installer\Config\Plugin;
 
-use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
+use Shlinkio\Shlink\Installer\Config\Plugin\ConfigCustomizerInterface;
+use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
 class DatabaseConfigCustomizer implements ConfigCustomizerInterface
 {
-    const DATABASE_DRIVERS = [
+    private const DATABASE_DRIVERS = [
         'MySQL' => 'pdo_mysql',
         'PostgreSQL' => 'pdo_pgsql',
         'SQLite' => 'pdo_sqlite',

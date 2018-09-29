@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\CLI\Factory;
+namespace ShlinkioTest\Shlink\Installer\Factory;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\CLI\Factory\InstallApplicationFactory;
+use Shlinkio\Shlink\Installer\Factory\InstallApplicationFactory;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Filesystem\Filesystem;
 use Zend\ServiceManager\ServiceManager;
