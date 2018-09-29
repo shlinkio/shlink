@@ -42,7 +42,7 @@ class InstallCommand extends Command
      */
     private $filesystem;
     /**
-     * @var \Shlinkio\Shlink\Installer\Config\ConfigCustomizerManagerInterface
+     * @var ConfigCustomizerManagerInterface
      */
     private $configCustomizers;
     /**
