@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Factory;
+namespace Shlinkio\Shlink\Installer\Factory;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
-use Shlinkio\Shlink\CLI\Command\Install\InstallCommand;
-use Shlinkio\Shlink\CLI\Install\ConfigCustomizerManager;
-use Shlinkio\Shlink\CLI\Install\Plugin;
+use Shlinkio\Shlink\Installer\Command\InstallCommand;
+use Shlinkio\Shlink\Installer\Config\ConfigCustomizerManager;
+use Shlinkio\Shlink\Installer\Config\Plugin;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Filesystem\Filesystem;

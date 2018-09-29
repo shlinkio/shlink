@@ -17,6 +17,9 @@
         <testsuite name="CLI">
             <directory>./module/CLI/test</directory>
         </testsuite>
+        <testsuite name="Installer">
+            <directory>./module/Installer/test</directory>
+        </testsuite>
     </testsuites>
 
     <filter>

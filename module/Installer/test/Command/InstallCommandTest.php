@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\CLI\Command\Install;
+namespace ShlinkioTest\Shlink\Installer\Command;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Command\Install\InstallCommand;
-use Shlinkio\Shlink\CLI\Install\ConfigCustomizerManagerInterface;
-use Shlinkio\Shlink\CLI\Install\Plugin\ConfigCustomizerInterface;
+use Shlinkio\Shlink\Installer\Command\InstallCommand;
+use Shlinkio\Shlink\Installer\Config\ConfigCustomizerManagerInterface;
+use Shlinkio\Shlink\Installer\Config\Plugin\ConfigCustomizerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -131,14 +131,14 @@ class InstallCommandTest extends TestCase
 
         /** @var MethodProphecy $importedConfigExists */
         $importedConfigExists = $this->filesystem->exists(
-            __DIR__ . '/../../../test-resources/' . InstallCommand::GENERATED_CONFIG_PATH
+            __DIR__ . '/../../test-resources/' . InstallCommand::GENERATED_CONFIG_PATH
         )->willReturn(true);
 
         $this->commandTester->setInputs([
             '',
             '/foo/bar/wrong_previous_shlink',
             '',
-            __DIR__ . '/../../../test-resources',
+            __DIR__ . '/../../test-resources',
         ]);
         $this->commandTester->execute([]);
 

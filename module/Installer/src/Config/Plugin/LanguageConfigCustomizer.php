@@ -1,21 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Install\Plugin;
+namespace Shlinkio\Shlink\Installer\Config\Plugin;
 
-use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
+use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class LanguageConfigCustomizer implements ConfigCustomizerInterface
 {
-    const SUPPORTED_LANGUAGES = ['en', 'es'];
+    private const SUPPORTED_LANGUAGES = ['en', 'es'];
 
-    /**
-     * @param SymfonyStyle $io
-     * @param CustomizableAppConfig $appConfig
-     * @return void
-     */
-    public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig)
+    public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig): void
     {
         $io->title('LANGUAGE');
 

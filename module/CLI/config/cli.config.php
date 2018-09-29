@@ -1,13 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Shlinkio\Shlink\CLI\Command;
-use Shlinkio\Shlink\Common;
+namespace Shlinkio\Shlink\CLI;
+
+use function Shlinkio\Shlink\Common\env;
 
 return [
 
     'cli' => [
-        'locale' => Common\env('CLI_LOCALE', 'en'),
+        'locale' => env('CLI_LOCALE', 'en'),
         'commands' => [
             Command\ShortUrl\GenerateShortUrlCommand::NAME => Command\ShortUrl\GenerateShortUrlCommand::class,
             Command\ShortUrl\ResolveUrlCommand::NAME => Command\ShortUrl\ResolveUrlCommand::class,

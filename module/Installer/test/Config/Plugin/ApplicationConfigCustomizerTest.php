@@ -1,31 +1,32 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\CLI\Install\Plugin;
+namespace ShlinkioTest\Shlink\Installer\Config\Plugin;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Install\Plugin\LanguageConfigCustomizer;
-use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
+use Shlinkio\Shlink\Installer\Config\Plugin\ApplicationConfigCustomizer;
+use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class LanguageConfigCustomizerTest extends TestCase
+class ApplicationConfigCustomizerTest extends TestCase
 {
     /**
-     * @var LanguageConfigCustomizer
+     * @var ApplicationConfigCustomizer
      */
-    protected $plugin;
+    private $plugin;
     /**
      * @var ObjectProphecy
      */
-    protected $io;
+    private $io;
 
     public function setUp()
     {
         $this->io = $this->prophesize(SymfonyStyle::class);
         $this->io->title(Argument::any())->willReturn(null);
-        $this->plugin = new LanguageConfigCustomizer();
+
+        $this->plugin = new ApplicationConfigCustomizer();
     }
 
     /**
@@ -33,16 +34,16 @@ class LanguageConfigCustomizerTest extends TestCase
      */
     public function configIsRequestedToTheUser()
     {
-        $ask = $this->io->choice(Argument::cetera())->willReturn('en');
+        $ask = $this->io->ask(Argument::cetera())->willReturn('the_secret');
         $config = new CustomizableAppConfig();
 
         $this->plugin->process($this->io->reveal(), $config);
 
-        $this->assertTrue($config->hasLanguage());
+        $this->assertTrue($config->hasApp());
         $this->assertEquals([
-            'DEFAULT' => 'en',
-            'CLI' => 'en',
-        ], $config->getLanguage());
+            'SECRET' => 'the_secret',
+            'DISABLE_TRACK_PARAM' => 'the_secret',
+        ], $config->getApp());
         $ask->shouldHaveBeenCalledTimes(2);
     }
 
@@ -51,21 +52,20 @@ class LanguageConfigCustomizerTest extends TestCase
      */
     public function overwriteIsRequestedIfValueIsAlreadySet()
     {
-        $choice = $this->io->choice(Argument::cetera())->willReturn('es');
+        $ask = $this->io->ask(Argument::cetera())->willReturn('the_new_secret');
         $confirm = $this->io->confirm(Argument::cetera())->willReturn(false);
         $config = new CustomizableAppConfig();
-        $config->setLanguage([
-            'DEFAULT' => 'en',
-            'CLI' => 'en',
+        $config->setApp([
+            'SECRET' => 'foo',
         ]);
 
         $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
-            'DEFAULT' => 'es',
-            'CLI' => 'es',
-        ], $config->getLanguage());
-        $choice->shouldHaveBeenCalledTimes(2);
+            'SECRET' => 'the_new_secret',
+            'DISABLE_TRACK_PARAM' => 'the_new_secret',
+        ], $config->getApp());
+        $ask->shouldHaveBeenCalledTimes(2);
         $confirm->shouldHaveBeenCalledTimes(1);
     }
 
@@ -74,20 +74,18 @@ class LanguageConfigCustomizerTest extends TestCase
      */
     public function existingValueIsKeptIfRequested()
     {
-        $ask = $this->io->confirm(Argument::cetera())->willReturn(true);
+        $confirm = $this->io->confirm(Argument::cetera())->willReturn(true);
 
         $config = new CustomizableAppConfig();
-        $config->setLanguage([
-            'DEFAULT' => 'es',
-            'CLI' => 'es',
+        $config->setApp([
+            'SECRET' => 'foo',
         ]);
 
         $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
-            'DEFAULT' => 'es',
-            'CLI' => 'es',
-        ], $config->getLanguage());
-        $ask->shouldHaveBeenCalledTimes(1);
+            'SECRET' => 'foo',
+        ], $config->getApp());
+        $confirm->shouldHaveBeenCalledTimes(1);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Install;
+namespace Shlinkio\Shlink\Installer\Config;
 
 use Psr\Container\ContainerInterface;
 

@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Command\Install;
+namespace Shlinkio\Shlink\Installer\Command;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Shlinkio\Shlink\CLI\Install\ConfigCustomizerManagerInterface;
-use Shlinkio\Shlink\CLI\Install\Plugin;
-use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
+use Shlinkio\Shlink\Installer\Config\ConfigCustomizerManagerInterface;
+use Shlinkio\Shlink\Installer\Config\Plugin;
+use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
@@ -23,7 +23,7 @@ use Zend\Config\Writer\WriterInterface;
 
 class InstallCommand extends Command
 {
-    const GENERATED_CONFIG_PATH = 'config/params/generated_config.php';
+    public const GENERATED_CONFIG_PATH = 'config/params/generated_config.php';
 
     /**
      * @var SymfonyStyle

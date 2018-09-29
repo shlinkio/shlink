@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\CLI\Install\Plugin;
+namespace ShlinkioTest\Shlink\Installer\Config\Plugin;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Install\Plugin\DatabaseConfigCustomizer;
-use Shlinkio\Shlink\CLI\Model\CustomizableAppConfig;
+use Shlinkio\Shlink\Installer\Config\Plugin\DatabaseConfigCustomizer;
+use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 

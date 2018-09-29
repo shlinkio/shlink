@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Model;
+namespace Shlinkio\Shlink\Installer\Model;
 
 use Zend\Stdlib\ArraySerializableInterface;
 
 final class CustomizableAppConfig implements ArraySerializableInterface
 {
-    const SQLITE_DB_PATH = 'data/database.sqlite';
+    public const SQLITE_DB_PATH = 'data/database.sqlite';
 
     /**
      * @var array

@@ -43,7 +43,7 @@ Despite how you built the project, you are going to need to install it now, by f
 
 * If you are going to use MySQL or PostgreSQL, create an empty database with the name of your choice.
 * Recursively grant write permissions to the `data` directory. Shlink uses it to cache some information.
-* Setup the application by running the `bin/install` script. It will guide you through the installation process.
+* Setup the application by running the `bin/install` script. It is a command line tool that will guide you through the installation process. **Take into account that this tool has to be run directly on the server where you plan to host Shlink. Do not run it before uploading/moving it there.**
 * Configure the web server of your choice to serve shlink using your short domain.
 
     For example, assuming your domain is doma.in and shlink is in the `/path/to/shlink` folder, this would be the basic configuration for Nginx and Apache.
