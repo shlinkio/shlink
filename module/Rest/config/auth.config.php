@@ -39,6 +39,7 @@ return [
 
     ConfigAbstractFactory::class => [
         Authentication\Plugin\AuthorizationHeaderPlugin::class => [Authentication\JWTService::class, 'translator'],
+        Authentication\Plugin\ApiKeyHeaderPlugin::class => [Service\ApiKeyService::class, 'translator'],
 
         Authentication\RequestToHttpAuthPlugin::class => [Authentication\AuthenticationPluginManager::class],
 
