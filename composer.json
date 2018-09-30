@@ -27,7 +27,7 @@
         "mikehaertl/phpwkhtmltopdf": "^2.2",
         "monolog/monolog": "^1.21",
         "roave/security-advisories": "dev-master",
-        "symfony/console": "^4.0",
+        "symfony/console": "^4.0 <4.1.5",
         "symfony/filesystem": "^4.0",
         "symfony/process": "^4.0",
         "theorchard/monolog-cascade": "^0.4",
@@ -89,30 +89,44 @@
             "@cs",
             "@stan",
             "@test",
-            "@func-test",
             "@infect"
         ],
+
         "cs": "phpcs",
-        "cs-fix": "phpcbf",
-        "serve": "php -S 0.0.0.0:8000 -t public/",
-        "test": "phpunit --coverage-php build/coverage-unit.cov",
-        "pretty-test": "phpunit --coverage-html build/coverage",
-        "func-test": "phpunit -c phpunit-func.xml --coverage-php build/coverage-func.cov",
-        "complete-pretty-test": [
-            "@test",
-            "@func-test",
+        "cs:fix": "phpcbf",
+        "stan": "phpstan analyse module/*/src/ --level=6 -c phpstan.neon",
+
+        "test": [
+            "@test:unit",
+            "@test:func"
+        ],
+        "test:unit": "phpunit --coverage-php build/coverage-unit.cov",
+        "test:func": "phpunit -c phpunit-func.xml --coverage-php build/coverage-func.cov",
+
+        "test:pretty": [
+            "@test:unit",
+            "@test:func",
             "phpcov merge build --html build/html"
         ],
-        "stan": "phpstan analyse module/*/src/ --level=6 -c phpstan.neon",
+        "test:unit:pretty": "phpunit --coverage-html build/coverage",
+
         "infect": "infection --threads=4 --min-msi=60 --only-covered --log-verbosity=2",
-        "infect-show": "infection --threads=4 --min-msi=60 --only-covered --log-verbosity=2 --show-mutations",
-        "expressive": "expressive"
+        "infect:show": "infection --threads=4 --min-msi=60 --only-covered --log-verbosity=2 --show-mutations"
+    },
+    "scripts-descriptions": {
+        "check": "<fg=blue;options=bold>Alias for \"cs\", \"stan\", \"test\" and \"infect\"</>",
+        "cs": "<fg=blue;options=bold>Checks coding styles</>",
+        "cs:fix": "<fg=blue;options=bold>Fixes coding styles, when possible</>",
+        "stan": "<fg=blue;options=bold>Inspects code with phpstan</>",
+        "test": "<fg=blue;options=bold>Runs all test suites</>",
+        "test:unit": "<fg=blue;options=bold>Runs unit test suites</>",
+        "test:func": "<fg=blue;options=bold>Runs functional test suites (covering entity repositories)</>",
+        "test:pretty": "<fg=blue;options=bold>Runs all test suites and generates an HTML code coverage report</>",
+        "test:unit:pretty": "<fg=blue;options=bold>Runs unit test suites and generates an HTML code coverage report</>",
+        "infect": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>",
+        "infect:show": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing and shows applied mutators</>"
     },
     "config": {
-        "process-timeout": 0,
-        "sort-packages": true,
-        "platform": {
-            "php": "7.1.8"
-        }
+        "sort-packages": true
     }
 }

@@ -4,12 +4,15 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Installer\Config\Plugin;
 
 use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
+use Shlinkio\Shlink\Installer\Util\AskUtilsTrait;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
 class DatabaseConfigCustomizer implements ConfigCustomizerInterface
 {
+    use AskUtilsTrait;
+
     private const DATABASE_DRIVERS = [
         'MySQL' => 'pdo_mysql',
         'PostgreSQL' => 'pdo_pgsql',
@@ -59,8 +62,8 @@ class DatabaseConfigCustomizer implements ConfigCustomizerInterface
         // Ask for connection params if database is not SQLite
         if ($params['DRIVER'] !== self::DATABASE_DRIVERS['SQLite']) {
             $params['NAME'] = $io->ask('Database name', 'shlink');
-            $params['USER'] = $io->ask('Database username');
-            $params['PASSWORD'] = $io->ask('Database password');
+            $params['USER'] = $this->askRequired($io, 'username', 'Database username');
+            $params['PASSWORD'] = $this->askRequired($io, 'password', 'Database password');
             $params['HOST'] = $io->ask('Database host', 'localhost');
             $params['PORT'] = $io->ask('Database port', $this->getDefaultDbPort($params['DRIVER']));
         }

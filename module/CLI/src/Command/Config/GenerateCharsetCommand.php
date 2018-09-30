@@ -9,10 +9,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
+use function sprintf;
+use function str_shuffle;
 
 class GenerateCharsetCommand extends Command
 {
-    const NAME = 'config:generate-charset';
+    public const NAME = 'config:generate-charset';
 
     /**
      * @var TranslatorInterface
@@ -25,20 +27,20 @@ class GenerateCharsetCommand extends Command
         parent::__construct();
     }
 
-    public function configure()
+    protected function configure(): void
     {
         $this->setName(self::NAME)
-             ->setDescription(\sprintf($this->translator->translate(
+             ->setDescription(sprintf($this->translator->translate(
                  'Generates a character set sample just by shuffling the default one, "%s". '
                  . 'Then it can be set in the SHORTCODE_CHARS environment variable'
              ), UrlShortener::DEFAULT_CHARS));
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $charSet = str_shuffle(UrlShortener::DEFAULT_CHARS);
         (new SymfonyStyle($input, $output))->success(
-            \sprintf($this->translator->translate('Character set: "%s"'), $charSet)
+            sprintf($this->translator->translate('Character set: "%s"'), $charSet)
         );
     }
 }

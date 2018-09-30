@@ -10,10 +10,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
+use function array_map;
 
 class ListTagsCommand extends Command
 {
-    const NAME = 'tag:list';
+    public const NAME = 'tag:list';
 
     /**
      * @var TagServiceInterface
@@ -31,14 +32,14 @@ class ListTagsCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName(self::NAME)
             ->setDescription($this->translator->translate('Lists existing tags.'));
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
         $io->table([$this->translator->translate('Name')], $this->getTagsRows());
@@ -51,7 +52,7 @@ class ListTagsCommand extends Command
             return [[$this->translator->translate('No tags yet')]];
         }
 
-        return \array_map(function (Tag $tag) {
+        return array_map(function (Tag $tag) {
             return [$tag->getName()];
         }, $tags);
     }

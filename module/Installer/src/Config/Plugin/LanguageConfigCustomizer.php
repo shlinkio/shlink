@@ -19,12 +19,12 @@ class LanguageConfigCustomizer implements ConfigCustomizerInterface
         }
 
         $appConfig->setLanguage([
-            'DEFAULT' => $this->chooseLanguage('Select default language for the application in general', $io),
-            'CLI' => $this->chooseLanguage('Select default language for CLI executions', $io),
+            'DEFAULT' => $this->chooseLanguage($io, 'Select default language for the application in general'),
+            'CLI' => $this->chooseLanguage($io, 'Select default language for CLI executions'),
         ]);
     }
 
-    private function chooseLanguage(string $message, SymfonyStyle $io): string
+    private function chooseLanguage(SymfonyStyle $io, string $message): string
     {
         return $io->choice($message, self::SUPPORTED_LANGUAGES, self::SUPPORTED_LANGUAGES[0]);
     }

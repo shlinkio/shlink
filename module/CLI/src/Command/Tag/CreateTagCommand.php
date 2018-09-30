@@ -13,7 +13,7 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class CreateTagCommand extends Command
 {
-    const NAME = 'tag:create';
+    public const NAME = 'tag:create';
 
     /**
      * @var TagServiceInterface
@@ -31,7 +31,7 @@ class CreateTagCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName(self::NAME)
@@ -44,7 +44,7 @@ class CreateTagCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
         $tagNames = $input->getOption('name');

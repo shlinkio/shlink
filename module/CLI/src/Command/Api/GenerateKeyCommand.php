@@ -11,10 +11,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
+use function sprintf;
 
 class GenerateKeyCommand extends Command
 {
-    const NAME = 'api-key:generate';
+    public const NAME = 'api-key:generate';
 
     /**
      * @var ApiKeyServiceInterface
@@ -32,7 +33,7 @@ class GenerateKeyCommand extends Command
         parent::__construct();
     }
 
-    public function configure()
+    protected function configure(): void
     {
         $this->setName(self::NAME)
              ->setDescription($this->translator->translate('Generates a new valid API key.'))
@@ -44,7 +45,7 @@ class GenerateKeyCommand extends Command
              );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $expirationDate = $input->getOption('expirationDate');
         $apiKey = $this->apiKeyService->create(isset($expirationDate) ? Chronos::parse($expirationDate) : null);

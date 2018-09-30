@@ -1,4 +1,4 @@
-FROM php:7.1-fpm-alpine
+FROM php:7.1.22-fpm-alpine
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 RUN apk update
