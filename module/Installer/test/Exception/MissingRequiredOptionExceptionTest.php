@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Installer\Exception;
 
-use Shlinkio\Shlink\Installer\Exception\MissingRequiredOptionException;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Installer\Exception\MissingRequiredOptionException;
 
 class MissingRequiredOptionExceptionTest extends TestCase
 {
