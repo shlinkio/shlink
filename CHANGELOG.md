@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## Unreleased
+
+#### Added
+
+* [#197](https://github.com/shlinkio/shlink/issues/197) Added [cakephp/chronos](https://book.cakephp.org/3.0/en/chronos.html) library for date manipulations.
+* [#214](https://github.com/shlinkio/shlink/issues/214) Improved build script, which allows builds to be done without "jumping" outside the project directory, and generates smaller dist files.
+
+    It also allows automating the dist file generation in travis-ci builds.
+
+#### Changed
+
+* [#211](https://github.com/shlinkio/shlink/issues/211) Extracted installer to its own module, which will simplify moving it to a separated package in the future.
+* [#200](https://github.com/shlinkio/shlink/issues/200) and [#201](https://github.com/shlinkio/shlink/issues/201) Renamed REST Action classes and CLI Command classes to use the concept of `ShortUrl` instead of the concept of `ShortCode` when referring to the entity, and left the `short code` concept to the identifier which is used as a unique code for a specific `Short URL`.
+
+#### Deprecated
+
+* [#205](https://github.com/shlinkio/shlink/issues/205) Deprecated `[POST /authenticate]` endpoint, and allowed any API request to be automatically authenticated using the `X-Api-Key` header with a valid API key.
+
+    This effectively deprecates the `Authorization: Bearer <JWT>` authentication form, but it will keep working.
+
+* As of [#200](https://github.com/shlinkio/shlink/issues/200) and [#201](https://github.com/shlinkio/shlink/issues/201) REST urls have changed from `/short-codes/...` to `/short-urls/...`, and the command namespaces have changed from `short-code:...` to `short-url:...`.
+
+    In both cases, backwards compatibility has been retained and the old ones are aliases for the new ones, but the old ones are considered deprecated.
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#203](https://github.com/shlinkio/shlink/issues/203) Fixed some warnings thrown while unzipping distributable files.
+* [#206](https://github.com/shlinkio/shlink/issues/206) An error is now thrown during installation if any required param is left empty, making the installer display a message and ask again until a value is set.
+
+
 ## 1.12.0 - 2018-09-15
 
 #### Added
