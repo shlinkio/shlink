@@ -152,43 +152,44 @@ final class CustomizableAppConfig implements ArraySerializableInterface
 
     public function getArrayCopy(): array
     {
+        $dbDriver = $this->database['DRIVER'] ?? '';
         $config = [
             'app_options' => [
-                'secret_key' => $this->app['SECRET'],
+                'secret_key' => $this->app['SECRET'] ?? '',
                 'disable_track_param' => $this->app['DISABLE_TRACK_PARAM'] ?? null,
             ],
             'entity_manager' => [
                 'connection' => [
-                    'driver' => $this->database['DRIVER'],
+                    'driver' => $dbDriver,
                 ],
             ],
             'translator' => [
-                'locale' => $this->language['DEFAULT'],
+                'locale' => $this->language['DEFAULT'] ?? 'en',
             ],
             'cli' => [
-                'locale' => $this->language['CLI'],
+                'locale' => $this->language['CLI'] ?? 'en',
             ],
             'url_shortener' => [
                 'domain' => [
-                    'schema' => $this->urlShortener['SCHEMA'],
-                    'hostname' => $this->urlShortener['HOSTNAME'],
+                    'schema' => $this->urlShortener['SCHEMA'] ?? 'http',
+                    'hostname' => $this->urlShortener['HOSTNAME'] ?? '',
                 ],
-                'shortcode_chars' => $this->urlShortener['CHARS'],
-                'validate_url' => $this->urlShortener['VALIDATE_URL'],
+                'shortcode_chars' => $this->urlShortener['CHARS'] ?? '',
+                'validate_url' => $this->urlShortener['VALIDATE_URL'] ?? true,
             ],
         ];
 
         // Build dynamic database config based on selected driver
-        if ($this->database['DRIVER'] === 'pdo_sqlite') {
+        if ($dbDriver === 'pdo_sqlite') {
             $config['entity_manager']['connection']['path'] = self::SQLITE_DB_PATH;
         } else {
-            $config['entity_manager']['connection']['user'] = $this->database['USER'];
-            $config['entity_manager']['connection']['password'] = $this->database['PASSWORD'];
-            $config['entity_manager']['connection']['dbname'] = $this->database['NAME'];
-            $config['entity_manager']['connection']['host'] = $this->database['HOST'];
-            $config['entity_manager']['connection']['port'] = $this->database['PORT'];
+            $config['entity_manager']['connection']['user'] = $this->database['USER'] ?? '';
+            $config['entity_manager']['connection']['password'] = $this->database['PASSWORD'] ?? '';
+            $config['entity_manager']['connection']['dbname'] = $this->database['NAME'] ?? '';
+            $config['entity_manager']['connection']['host'] = $this->database['HOST'] ?? '';
+            $config['entity_manager']['connection']['port'] = $this->database['PORT'] ?? '';
 
-            if ($this->database['DRIVER'] === 'pdo_mysql') {
+            if ($dbDriver === 'pdo_mysql') {
                 $config['entity_manager']['connection']['driverOptions'] = [
                     \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
                 ];
