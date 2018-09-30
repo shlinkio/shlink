@@ -11,6 +11,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
+use function array_filter;
+use function sprintf;
 
 class ListKeysCommand extends Command
 {
@@ -36,7 +38,7 @@ class ListKeysCommand extends Command
         parent::__construct();
     }
 
-    public function configure()
+    protected function configure(): void
     {
         $this->setName(self::NAME)
              ->setDescription($this->translator->translate('Lists all the available API keys.'))
@@ -48,7 +50,7 @@ class ListKeysCommand extends Command
              );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
         $enabledOnly = $input->getOption('enabledOnly');
@@ -62,16 +64,16 @@ class ListKeysCommand extends Command
             $messagePattern = $this->determineMessagePattern($row);
 
             // Set columns for this row
-            $rowData = [\sprintf($messagePattern, $key)];
+            $rowData = [sprintf($messagePattern, $key)];
             if (! $enabledOnly) {
-                $rowData[] = \sprintf($messagePattern, $this->getEnabledSymbol($row));
+                $rowData[] = sprintf($messagePattern, $this->getEnabledSymbol($row));
             }
             $rowData[] = $expiration !== null ? $expiration->toAtomString() : '-';
 
             $rows[] = $rowData;
         }
 
-        $io->table(\array_filter([
+        $io->table(array_filter([
             $this->translator->translate('Key'),
             ! $enabledOnly ? $this->translator->translate('Is enabled') : null,
             $this->translator->translate('Expiration date'),

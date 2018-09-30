@@ -9,12 +9,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
+use function sprintf;
 
 class GenerateSecretCommand extends Command
 {
     use StringUtilsTrait;
 
-    const NAME = 'config:generate-secret';
+    public const NAME = 'config:generate-secret';
 
     /**
      * @var TranslatorInterface
@@ -27,7 +28,7 @@ class GenerateSecretCommand extends Command
         parent::__construct();
     }
 
-    public function configure()
+    protected function configure(): void
     {
         $this->setName(self::NAME)
              ->setDescription($this->translator->translate(
@@ -35,7 +36,7 @@ class GenerateSecretCommand extends Command
              ));
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $secret = $this->generateRandomString(32);
         (new SymfonyStyle($input, $output))->success(

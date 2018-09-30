@@ -13,7 +13,7 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class DeleteTagsCommand extends Command
 {
-    const NAME = 'tag:delete';
+    public const NAME = 'tag:delete';
 
     /**
      * @var TagServiceInterface
@@ -31,7 +31,7 @@ class DeleteTagsCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName(self::NAME)
@@ -44,7 +44,7 @@ class DeleteTagsCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
         $tagNames = $input->getOption('name');

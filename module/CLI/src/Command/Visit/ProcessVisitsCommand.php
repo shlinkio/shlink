@@ -13,6 +13,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
+use function sleep;
+use function sprintf;
 
 class ProcessVisitsCommand extends Command
 {
@@ -42,7 +44,7 @@ class ProcessVisitsCommand extends Command
         parent::__construct(null);
     }
 
-    public function configure()
+    protected function configure(): void
     {
         $this->setName(self::NAME)
              ->setDescription(
@@ -50,7 +52,7 @@ class ProcessVisitsCommand extends Command
              );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
         $visits = $this->visitService->getUnlocatedVisits();
@@ -58,10 +60,10 @@ class ProcessVisitsCommand extends Command
         $count = 0;
         foreach ($visits as $visit) {
             $ipAddr = $visit->getRemoteAddr();
-            $io->write(\sprintf('%s <info>%s</info>', $this->translator->translate('Processing IP'), $ipAddr));
+            $io->write(sprintf('%s <info>%s</info>', $this->translator->translate('Processing IP'), $ipAddr));
             if ($ipAddr === IpAddress::LOCALHOST) {
                 $io->writeln(
-                    \sprintf(' (<comment>%s</comment>)', $this->translator->translate('Ignored localhost address'))
+                    sprintf(' (<comment>%s</comment>)', $this->translator->translate('Ignored localhost address'))
                 );
                 continue;
             }
@@ -75,13 +77,13 @@ class ProcessVisitsCommand extends Command
                 $visit->setVisitLocation($location);
                 $this->visitService->saveVisit($visit);
 
-                $io->writeln(\sprintf(
+                $io->writeln(sprintf(
                     ' (' . $this->translator->translate('Address located at "%s"') . ')',
                     $location->getCityName()
                 ));
             } catch (WrongIpException $e) {
                 $io->writeln(
-                    \sprintf(' <error>%s</error>', $this->translator->translate('An error occurred while locating IP'))
+                    sprintf(' <error>%s</error>', $this->translator->translate('An error occurred while locating IP'))
                 );
                 if ($io->isVerbose()) {
                     $this->getApplication()->renderException($e, $output);
@@ -91,11 +93,11 @@ class ProcessVisitsCommand extends Command
             if ($count === $this->ipLocationResolver->getApiLimit()) {
                 $count = 0;
                 $seconds = $this->ipLocationResolver->getApiInterval();
-                $io->note(\sprintf(
+                $io->note(sprintf(
                     $this->translator->translate('IP location resolver limit reached. Waiting %s seconds...'),
                     $seconds
                 ));
-                \sleep($seconds);
+                sleep($seconds);
             }
         }
 
