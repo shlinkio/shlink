@@ -79,12 +79,14 @@ class ApplicationConfigCustomizerTest extends TestCase
         $config = new CustomizableAppConfig();
         $config->setApp([
             'SECRET' => 'foo',
+            'DISABLE_TRACK_PARAM' => 'the_new_secret',
         ]);
 
         $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
             'SECRET' => 'foo',
+            'DISABLE_TRACK_PARAM' => 'the_new_secret',
         ], $config->getApp());
         $confirm->shouldHaveBeenCalledTimes(1);
     }

@@ -114,6 +114,7 @@ final class CustomizableAppConfig implements ArraySerializableInterface
     {
         $this->setApp([
             'SECRET' => $array['app_options']['secret_key'] ?? null,
+            'DISABLE_TRACK_PARAM' => $array['app_options']['disable_track_param'] ?? null,
         ]);
 
         $this->deserializeDatabase($array['entity_manager']['connection'] ?? []);

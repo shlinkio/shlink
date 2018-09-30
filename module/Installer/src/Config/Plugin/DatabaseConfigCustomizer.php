@@ -8,6 +8,7 @@ use Shlinkio\Shlink\Installer\Util\AskUtilsTrait;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
+use function array_keys;
 
 class DatabaseConfigCustomizer implements ConfigCustomizerInterface
 {
@@ -55,7 +56,7 @@ class DatabaseConfigCustomizer implements ConfigCustomizerInterface
 
         // Select database type
         $params = [];
-        $databases = \array_keys(self::DATABASE_DRIVERS);
+        $databases = array_keys(self::DATABASE_DRIVERS);
         $dbType = $io->choice('Select database type', $databases, $databases[0]);
         $params['DRIVER'] = self::DATABASE_DRIVERS[$dbType];
 
