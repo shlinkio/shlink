@@ -12,191 +12,126 @@ final class CustomizableAppConfig implements ArraySerializableInterface
     /**
      * @var array
      */
-    private $database;
+    private $database = [];
     /**
      * @var array
      */
-    private $urlShortener;
+    private $urlShortener = [];
     /**
      * @var array
      */
-    private $language;
+    private $language = [];
     /**
      * @var array
      */
-    private $app;
+    private $app = [];
     /**
-     * @var string
+     * @var string|null
      */
     private $importedInstallationPath;
 
-    /**
-     * @return array
-     */
-    public function getDatabase()
+    public function getDatabase(): array
     {
         return $this->database;
     }
 
-    /**
-     * @param array $database
-     * @return $this
-     */
-    public function setDatabase(array $database)
+    public function setDatabase(array $database): self
     {
         $this->database = $database;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasDatabase()
+    public function hasDatabase(): bool
     {
         return ! empty($this->database);
     }
 
-    /**
-     * @return array
-     */
-    public function getUrlShortener()
+    public function getUrlShortener(): array
     {
         return $this->urlShortener;
     }
 
-    /**
-     * @param array $urlShortener
-     * @return $this
-     */
-    public function setUrlShortener(array $urlShortener)
+    public function setUrlShortener(array $urlShortener): self
     {
         $this->urlShortener = $urlShortener;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasUrlShortener()
+    public function hasUrlShortener(): bool
     {
         return ! empty($this->urlShortener);
     }
 
-    /**
-     * @return array
-     */
-    public function getLanguage()
+    public function getLanguage(): array
     {
         return $this->language;
     }
 
-    /**
-     * @param array $language
-     * @return $this
-     */
-    public function setLanguage(array $language)
+    public function setLanguage(array $language): self
     {
         $this->language = $language;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasLanguage()
+    public function hasLanguage(): bool
     {
         return ! empty($this->language);
     }
 
-    /**
-     * @return array
-     */
-    public function getApp()
+    public function getApp(): array
     {
         return $this->app;
     }
 
-    /**
-     * @param array $app
-     * @return $this
-     */
-    public function setApp(array $app)
+    public function setApp(array $app): self
     {
         $this->app = $app;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasApp()
+    public function hasApp(): bool
     {
         return ! empty($this->app);
     }
 
-    /**
-     * @return string
-     */
-    public function getImportedInstallationPath()
+    public function getImportedInstallationPath(): ?string
     {
         return $this->importedInstallationPath;
     }
 
-    /**
-     * @param string $importedInstallationPath
-     * @return $this|self
-     */
-    public function setImportedInstallationPath($importedInstallationPath)
+    public function setImportedInstallationPath(string $importedInstallationPath): self
     {
         $this->importedInstallationPath = $importedInstallationPath;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasImportedInstallationPath()
+    public function hasImportedInstallationPath(): bool
     {
         return $this->importedInstallationPath !== null;
     }
 
-    /**
-     * Exchange internal values from provided array
-     *
-     * @param array $array
-     * @return void
-     */
-    public function exchangeArray(array $array)
+    public function exchangeArray(array $array): void
     {
-        if (isset($array['app_options'], $array['app_options']['secret_key'])) {
-            $this->setApp([
-                'SECRET' => $array['app_options']['secret_key'],
-            ]);
-        }
+        $this->setApp([
+            'SECRET' => $array['app_options']['secret_key'] ?? null,
+        ]);
 
-        if (isset($array['entity_manager'], $array['entity_manager']['connection'])) {
-            $this->deserializeDatabase($array['entity_manager']['connection']);
-        }
+        $this->deserializeDatabase($array['entity_manager']['connection'] ?? []);
 
-        if (isset($array['translator'], $array['translator']['locale'], $array['cli'], $array['cli']['locale'])) {
-            $this->setLanguage([
-                'DEFAULT' => $array['translator']['locale'],
-                'CLI' => $array['cli']['locale'],
-            ]);
-        }
+        $this->setLanguage([
+            'DEFAULT' => $array['translator']['locale'] ?? null,
+            'CLI' => $array['cli']['locale'] ?? null,
+        ]);
 
-        if (isset($array['url_shortener'])) {
-            $urlShortener = $array['url_shortener'];
-            $this->setUrlShortener([
-                'SCHEMA' => $urlShortener['domain']['schema'],
-                'HOSTNAME' => $urlShortener['domain']['hostname'],
-                'CHARS' => $urlShortener['shortcode_chars'],
-                'VALIDATE_URL' => $urlShortener['validate_url'] ?? true,
-            ]);
-        }
+        $this->setUrlShortener([
+            'SCHEMA' => $array['url_shortener']['domain']['schema'] ?? null,
+            'HOSTNAME' => $array['url_shortener']['domain']['hostname'] ?? null,
+            'CHARS' => $array['url_shortener']['shortcode_chars'] ?? null,
+            'VALIDATE_URL' => $array['url_shortener']['validate_url'] ?? true,
+        ]);
     }
 
-    private function deserializeDatabase(array $conn)
+    private function deserializeDatabase(array $conn): void
     {
         if (! isset($conn['driver'])) {
             return;
@@ -205,22 +140,17 @@ final class CustomizableAppConfig implements ArraySerializableInterface
 
         $params = ['DRIVER' => $driver];
         if ($driver !== 'pdo_sqlite') {
-            $params['USER'] = $conn['user'];
-            $params['PASSWORD'] = $conn['password'];
-            $params['NAME'] = $conn['dbname'];
-            $params['HOST'] = $conn['host'];
-            $params['PORT'] = $conn['port'];
+            $params['USER'] = $conn['user'] ?? null;
+            $params['PASSWORD'] = $conn['password'] ?? null;
+            $params['NAME'] = $conn['dbname'] ?? null;
+            $params['HOST'] = $conn['host'] ?? null;
+            $params['PORT'] = $conn['port'] ?? null;
         }
 
         $this->setDatabase($params);
     }
 
-    /**
-     * Return an array representation of the object
-     *
-     * @return array
-     */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         $config = [
             'app_options' => [
