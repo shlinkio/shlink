@@ -8,6 +8,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Shlinkio\Shlink\Installer\Config\ConfigCustomizerManagerInterface;
 use Shlinkio\Shlink\Installer\Config\Plugin;
 use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
+use Shlinkio\Shlink\Installer\Util\AskUtilsTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
@@ -23,6 +24,8 @@ use Zend\Config\Writer\WriterInterface;
 
 class InstallCommand extends Command
 {
+    use AskUtilsTrait;
+
     public const GENERATED_CONFIG_PATH = 'config/params/generated_config.php';
 
     /**
@@ -194,7 +197,9 @@ class InstallCommand extends Command
         // Ask the user for the older shlink path
         $keepAsking = true;
         do {
-            $config->setImportedInstallationPath($this->io->ask(
+            $config->setImportedInstallationPath($this->askRequired(
+                $this->io,
+                'previous installation path',
                 'Previous shlink installation path from which to import config'
             ));
             $configFile = $config->getImportedInstallationPath() . '/' . self::GENERATED_CONFIG_PATH;
