@@ -5,23 +5,48 @@ namespace Shlinkio\Shlink\Installer\Config\Plugin;
 
 use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use function array_diff;
+use function array_keys;
 
 class LanguageConfigCustomizer implements ConfigCustomizerInterface
 {
     private const SUPPORTED_LANGUAGES = ['en', 'es'];
+    private const DEFAULT_LANG = 'DEFAULT';
+    private const CLI_LANG = 'CLI';
+    private const EXPECTED_KEYS = [
+        self::DEFAULT_LANG,
+        self::CLI_LANG,
+    ];
 
     public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig): void
     {
         $io->title('LANGUAGE');
 
-        if ($appConfig->hasLanguage() && $io->confirm('Do you want to keep imported language?')) {
+        $lang = $appConfig->getLanguage();
+        $keysToAskFor = $appConfig->hasLanguage() && $io->confirm('Do you want to keep imported language?')
+            ? array_diff(self::EXPECTED_KEYS, array_keys($lang))
+            : self::EXPECTED_KEYS;
+
+        if (empty($keysToAskFor)) {
             return;
         }
 
-        $appConfig->setLanguage([
-            'DEFAULT' => $this->chooseLanguage($io, 'Select default language for the application in general'),
-            'CLI' => $this->chooseLanguage($io, 'Select default language for CLI executions'),
-        ]);
+        foreach ($keysToAskFor as $key) {
+            $lang[$key] = $this->ask($io, $key);
+        }
+        $appConfig->setLanguage($lang);
+    }
+
+    private function ask(SymfonyStyle $io, string $key)
+    {
+        switch ($key) {
+            case self::DEFAULT_LANG:
+                return $this->chooseLanguage($io, 'Select default language for the application in general');
+            case self::CLI_LANG:
+                return $this->chooseLanguage($io, 'Select default language for CLI executions');
+        }
+
+        return '';
     }
 
     private function chooseLanguage(SymfonyStyle $io, string $message): string

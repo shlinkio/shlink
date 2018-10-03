@@ -117,7 +117,7 @@ final class CustomizableAppConfig implements ArraySerializableInterface
             'DISABLE_TRACK_PARAM' => $array['app_options']['disable_track_param'] ?? null,
         ]);
 
-        $this->deserializeDatabase($array['entity_manager']['connection'] ?? []);
+        $this->setDatabase($this->deserializeDatabase($array['entity_manager']['connection'] ?? []));
 
         $this->setLanguage([
             'DEFAULT' => $array['translator']['locale'] ?? null,
@@ -132,10 +132,10 @@ final class CustomizableAppConfig implements ArraySerializableInterface
         ]);
     }
 
-    private function deserializeDatabase(array $conn): void
+    private function deserializeDatabase(array $conn): array
     {
         if (! isset($conn['driver'])) {
-            return;
+            return [];
         }
         $driver = $conn['driver'];
 
@@ -148,7 +148,7 @@ final class CustomizableAppConfig implements ArraySerializableInterface
             $params['PORT'] = $conn['port'] ?? null;
         }
 
-        $this->setDatabase($params);
+        return $params;
     }
 
     public function getArrayCopy(): array
