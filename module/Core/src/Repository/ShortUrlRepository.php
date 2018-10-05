@@ -7,6 +7,11 @@ use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use function array_column;
+use function array_key_exists;
+use function is_array;
+use function key;
+use function Shlinkio\Shlink\Common\contains;
 
 class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryInterface
 {
@@ -55,19 +60,19 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
             'shortCode' => 'shortCode',
             'dateCreated' => 'dateCreated',
         ];
-        $fieldName = \is_array($orderBy) ? \key($orderBy) : $orderBy;
-        $order = \is_array($orderBy) ? $orderBy[$fieldName] : 'ASC';
+        $fieldName = is_array($orderBy) ? key($orderBy) : $orderBy;
+        $order = is_array($orderBy) ? $orderBy[$fieldName] : 'ASC';
 
-        if (\in_array($fieldName, ['visits', 'visitsCount', 'visitCount'], true)) {
+        if (contains($fieldName, ['visits', 'visitsCount', 'visitCount'])) {
             $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
                ->leftJoin('s.visits', 'v')
                ->groupBy('s')
                ->orderBy('totalVisits', $order);
 
-            return \array_column($qb->getQuery()->getResult(), 0);
+            return array_column($qb->getQuery()->getResult(), 0);
         }
 
-        if (\array_key_exists($fieldName, $fieldNameMap)) {
+        if (array_key_exists($fieldName, $fieldNameMap)) {
             $qb->orderBy('s.' . $fieldNameMap[$fieldName], $order);
         }
         return $qb->getQuery()->getResult();

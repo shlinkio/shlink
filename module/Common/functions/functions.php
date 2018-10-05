@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Common;
 
 use function getenv;
+use function in_array;
 use function strtolower;
 use function trim;
 
@@ -43,5 +44,5 @@ function env($key, $default = null)
 
 function contains($needle, array $haystack)
 {
-    return \in_array($needle, $haystack, true);
+    return in_array($needle, $haystack, true);
 }

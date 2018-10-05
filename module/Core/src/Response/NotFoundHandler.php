@@ -9,6 +9,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response;
 use Zend\Expressive\Template\TemplateRendererInterface;
+use function array_shift;
+use function explode;
+use function Shlinkio\Shlink\Common\contains;
 
 class NotFoundHandler implements RequestHandlerInterface
 {
@@ -39,12 +42,12 @@ class NotFoundHandler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $accepts = \explode(',', $request->getHeaderLine('Accept'));
-        $accept = \array_shift($accepts);
+        $accepts = explode(',', $request->getHeaderLine('Accept'));
+        $accept = array_shift($accepts);
         $status = StatusCodeInterface::STATUS_NOT_FOUND;
 
         // If the first accepted type is json, return a json response
-        if (\in_array($accept, ['application/json', 'text/json', 'application/x-json'], true)) {
+        if (contains($accept, ['application/json', 'text/json', 'application/x-json'])) {
             return new Response\JsonResponse([
                 'error' => 'NOT_FOUND',
                 'message' => 'Not found',
