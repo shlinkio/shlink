@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common;
 
+use const JSON_ERROR_NONE;
 use function getenv;
 use function in_array;
+use function json_last_error;
+use function json_last_error_msg;
 use function strtolower;
 use function trim;
 
@@ -42,7 +45,17 @@ function env($key, $default = null)
     return trim($value);
 }
 
-function contains($needle, array $haystack)
+function contains($needle, array $haystack): bool
 {
     return in_array($needle, $haystack, true);
+}
+
+function json_decode(string $json, int $depth = 512, int $options = 0): array
+{
+    $data = \json_decode($json, true, $depth, $options);
+    if (JSON_ERROR_NONE !== json_last_error()) {
+        throw new Exception\InvalidArgumentException('Error decoding JSON: ' . json_last_error_msg());
+    }
+
+    return $data;
 }

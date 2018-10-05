@@ -8,15 +8,11 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Shlinkio\Shlink\Rest\Exception\RuntimeException;
 use function array_shift;
 use function explode;
-use function json_decode;
-use function json_last_error;
-use function json_last_error_msg;
 use function parse_str;
 use function Shlinkio\Shlink\Common\contains;
-use function sprintf;
+use function Shlinkio\Shlink\Common\json_decode;
 use function trim;
 
 class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterface
@@ -67,7 +63,6 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
     /**
      * @param Request $request
      * @return Request
-     * @throws RuntimeException
      */
     private function parseFromJson(Request $request): Request
     {
@@ -76,11 +71,7 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
             return $request;
         }
 
-        $parsedJson = json_decode($rawBody, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new RuntimeException(sprintf('Error when parsing JSON request body: %s', json_last_error_msg()));
-        }
-
+        $parsedJson = json_decode($rawBody);
         return $request->withParsedBody($parsedJson);
     }
 

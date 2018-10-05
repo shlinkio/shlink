@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\ListTagsAction;
 use Zend\Diactoros\ServerRequestFactory;
+use function Shlinkio\Shlink\Common\json_decode;
 
 class ListTagsActionTest extends TestCase
 {
@@ -42,7 +43,7 @@ class ListTagsActionTest extends TestCase
             'tags' => [
                 'data' => ['foo', 'bar'],
             ],
-        ], \json_decode((string) $resp->getBody(), true));
+        ], json_decode((string) $resp->getBody()));
         $listTags->shouldHaveBeenCalled();
     }
 }
