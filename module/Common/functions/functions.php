@@ -40,3 +40,8 @@ function env($key, $default = null)
 
     return trim($value);
 }
+
+function contains($needle, array $haystack)
+{
+    return \in_array($needle, $haystack, true);
+}

@@ -146,7 +146,7 @@ class InstallCommand extends Command
         $this->io->writeln(['<info>Custom configuration properly generated!</info>', '']);
 
         // If current command is not update, generate database
-        if (!  $this->isUpdate) {
+        if (! $this->isUpdate) {
             $this->io->write('Initializing database...');
             if (! $this->runPhpCommand(
                 'vendor/doctrine/orm/bin/doctrine.php orm:schema-tool:create',

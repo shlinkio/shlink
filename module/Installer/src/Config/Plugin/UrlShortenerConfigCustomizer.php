@@ -31,8 +31,8 @@ class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
         $io->title('URL SHORTENER');
 
         $urlShortener = $appConfig->getUrlShortener();
-        $diffKeys = $appConfig->hasUrlShortener() && $io->confirm('Do you want to keep imported URL shortener config?');
-        $keysToAskFor = $diffKeys ? array_diff(self::EXPECTED_KEYS, array_keys($urlShortener)) : self::EXPECTED_KEYS;
+        $doImport = $appConfig->hasUrlShortener() && $io->confirm('Do you want to keep imported URL shortener config?');
+        $keysToAskFor = $doImport ? array_diff(self::EXPECTED_KEYS, array_keys($urlShortener)) : self::EXPECTED_KEYS;
 
         if (empty($keysToAskFor)) {
             return;

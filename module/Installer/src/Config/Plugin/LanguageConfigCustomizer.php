@@ -10,13 +10,14 @@ use function array_keys;
 
 class LanguageConfigCustomizer implements ConfigCustomizerInterface
 {
-    private const SUPPORTED_LANGUAGES = ['en', 'es'];
     private const DEFAULT_LANG = 'DEFAULT';
     private const CLI_LANG = 'CLI';
     private const EXPECTED_KEYS = [
         self::DEFAULT_LANG,
         self::CLI_LANG,
     ];
+
+    private const SUPPORTED_LANGUAGES = ['en', 'es'];
 
     public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig): void
     {
