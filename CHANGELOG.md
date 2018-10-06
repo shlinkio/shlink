@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 1.13.0 - 2018-10-06
 
 #### Added
 
