@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Installer\Model;
 
 use Zend\Stdlib\ArraySerializableInterface;
+use function Shlinkio\Shlink\Common\array_get_path;
+use function Shlinkio\Shlink\Common\array_path_exists;
 
 final class CustomizableAppConfig implements ArraySerializableInterface
 {
@@ -112,43 +114,43 @@ final class CustomizableAppConfig implements ArraySerializableInterface
 
     public function exchangeArray(array $array): void
     {
-        $this->setApp([
-            'SECRET' => $array['app_options']['secret_key'] ?? null,
-            'DISABLE_TRACK_PARAM' => $array['app_options']['disable_track_param'] ?? null,
-        ]);
+        $this->setApp($this->mapExistingPathsToKeys([
+            'SECRET' => ['app_options', 'secret_key'],
+            'DISABLE_TRACK_PARAM' => ['app_options', 'disable_track_param'],
+        ], $array));
 
-        $this->setDatabase($this->deserializeDatabase($array['entity_manager']['connection'] ?? []));
+        $this->setDatabase($this->mapExistingPathsToKeys([
+            'DRIVER' => ['entity_manager', 'connection', 'driver'],
+            'USER' => ['entity_manager', 'connection', 'user'],
+            'PASSWORD' => ['entity_manager', 'connection', 'password'],
+            'NAME' => ['entity_manager', 'connection', 'dbname'],
+            'HOST' => ['entity_manager', 'connection', 'host'],
+            'PORT' => ['entity_manager', 'connection', 'port'],
+        ], $array));
 
-        $this->setLanguage([
-            'DEFAULT' => $array['translator']['locale'] ?? null,
-            'CLI' => $array['cli']['locale'] ?? null,
-        ]);
+        $this->setLanguage($this->mapExistingPathsToKeys([
+            'DEFAULT' => ['translator', 'locale'],
+            'CLI' => ['cli', 'locale'],
+        ], $array));
 
-        $this->setUrlShortener([
-            'SCHEMA' => $array['url_shortener']['domain']['schema'] ?? null,
-            'HOSTNAME' => $array['url_shortener']['domain']['hostname'] ?? null,
-            'CHARS' => $array['url_shortener']['shortcode_chars'] ?? null,
-            'VALIDATE_URL' => $array['url_shortener']['validate_url'] ?? true,
-        ]);
+        $this->setUrlShortener($this->mapExistingPathsToKeys([
+            'SCHEMA' => ['url_shortener', 'domain', 'schema'],
+            'HOSTNAME' => ['url_shortener', 'domain', 'hostname'],
+            'CHARS' => ['url_shortener', 'shortcode_chars'],
+            'VALIDATE_URL' => ['url_shortener', 'validate_url'],
+        ], $array));
     }
 
-    private function deserializeDatabase(array $conn): array
+    private function mapExistingPathsToKeys(array $map, array $config): array
     {
-        if (! isset($conn['driver'])) {
-            return [];
-        }
-        $driver = $conn['driver'];
-
-        $params = ['DRIVER' => $driver];
-        if ($driver !== 'pdo_sqlite') {
-            $params['USER'] = $conn['user'] ?? null;
-            $params['PASSWORD'] = $conn['password'] ?? null;
-            $params['NAME'] = $conn['dbname'] ?? null;
-            $params['HOST'] = $conn['host'] ?? null;
-            $params['PORT'] = $conn['port'] ?? null;
+        $result = [];
+        foreach ($map as $key => $path) {
+            if (array_path_exists($path, $config)) {
+                $result[$key] = array_get_path($path, $config);
+            }
         }
 
-        return $params;
+        return $result;
     }
 
     public function getArrayCopy(): array
