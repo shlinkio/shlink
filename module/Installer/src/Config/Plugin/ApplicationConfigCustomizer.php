@@ -4,10 +4,13 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Installer\Config\Plugin;
 
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
+use Shlinkio\Shlink\Installer\Exception\InvalidConfigOptionException;
 use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use function array_diff;
 use function array_keys;
+use function is_numeric;
+use function sprintf;
 
 class ApplicationConfigCustomizer implements ConfigCustomizerInterface
 {
@@ -64,12 +67,24 @@ class ApplicationConfigCustomizer implements ConfigCustomizerInterface
                     . 'have more than a specific amount of visits?'
                 );
             case self::VISITS_THRESHOLD:
-                return (int) $io->ask(
+                return $io->ask(
                     'What is the amount of visits from which the system will not allow short URLs to be deleted?',
-                    15
+                    15,
+                    [$this, 'validateVisitsThreshold']
                 );
         }
 
         return '';
+    }
+
+    public function validateVisitsThreshold($value): int
+    {
+        if (! is_numeric($value) || $value < 1) {
+            throw new InvalidConfigOptionException(
+                sprintf('Provided value "%s" is invalid. Expected a number greater than 1', $value)
+            );
+        }
+
+        return (int) $value;
     }
 }
