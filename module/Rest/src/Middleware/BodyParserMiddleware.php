@@ -8,7 +8,12 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Shlinkio\Shlink\Rest\Exception\RuntimeException;
+use function array_shift;
+use function explode;
+use function parse_str;
+use function Shlinkio\Shlink\Common\contains;
+use function Shlinkio\Shlink\Common\json_decode;
+use function trim;
 
 class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterface
 {
@@ -27,17 +32,17 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
         $currentParams = $request->getParsedBody();
 
         // In requests that do not allow body or if the body has already been parsed, continue to next middleware
-        if (! empty($currentParams) || \in_array($method, [
+        if (! empty($currentParams) || contains($method, [
             self::METHOD_GET,
             self::METHOD_HEAD,
             self::METHOD_OPTIONS,
-        ], true)) {
+        ])) {
             return $handler->handle($request);
         }
 
         // If the accepted content is JSON, try to parse the body from JSON
         $contentType = $this->getRequestContentType($request);
-        if (\in_array($contentType, ['application/json', 'text/json', 'application/x-json'], true)) {
+        if (contains($contentType, ['application/json', 'text/json', 'application/x-json'])) {
             return $handler->handle($this->parseFromJson($request));
         }
 
@@ -51,14 +56,13 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
     private function getRequestContentType(Request $request): string
     {
         $contentType = $request->getHeaderLine('Content-type');
-        $contentTypes = \explode(';', $contentType);
-        return \trim(\array_shift($contentTypes));
+        $contentTypes = explode(';', $contentType);
+        return trim(array_shift($contentTypes));
     }
 
     /**
      * @param Request $request
      * @return Request
-     * @throws RuntimeException
      */
     private function parseFromJson(Request $request): Request
     {
@@ -67,11 +71,7 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
             return $request;
         }
 
-        $parsedJson = \json_decode($rawBody, true);
-        if (\json_last_error() !== JSON_ERROR_NONE) {
-            throw new RuntimeException(\sprintf('Error when parsing JSON request body: %s', \json_last_error_msg()));
-        }
-
+        $parsedJson = json_decode($rawBody);
         return $request->withParsedBody($parsedJson);
     }
 

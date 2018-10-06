@@ -17,6 +17,8 @@ trait AskUtilsTrait
             if (empty($value)) {
                 throw MissingRequiredOptionException::fromOption($optionName);
             };
+
+            return $value;
         });
     }
 }

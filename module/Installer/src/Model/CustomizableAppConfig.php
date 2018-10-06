@@ -3,7 +3,13 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Installer\Model;
 
+use Shlinkio\Shlink\Installer\Config\Plugin\ApplicationConfigCustomizer;
+use Shlinkio\Shlink\Installer\Config\Plugin\DatabaseConfigCustomizer;
+use Shlinkio\Shlink\Installer\Config\Plugin\LanguageConfigCustomizer;
+use Shlinkio\Shlink\Installer\Config\Plugin\UrlShortenerConfigCustomizer;
 use Zend\Stdlib\ArraySerializableInterface;
+use function Shlinkio\Shlink\Common\array_get_path;
+use function Shlinkio\Shlink\Common\array_path_exists;
 
 final class CustomizableAppConfig implements ArraySerializableInterface
 {
@@ -112,51 +118,52 @@ final class CustomizableAppConfig implements ArraySerializableInterface
 
     public function exchangeArray(array $array): void
     {
-        $this->setApp([
-            'SECRET' => $array['app_options']['secret_key'] ?? null,
-        ]);
+        $this->setApp($this->mapExistingPathsToKeys([
+            ApplicationConfigCustomizer::SECRET => ['app_options', 'secret_key'],
+            ApplicationConfigCustomizer::DISABLE_TRACK_PARAM => ['app_options', 'disable_track_param'],
+        ], $array));
 
-        $this->deserializeDatabase($array['entity_manager']['connection'] ?? []);
+        $this->setDatabase($this->mapExistingPathsToKeys([
+            DatabaseConfigCustomizer::DRIVER => ['entity_manager', 'connection', 'driver'],
+            DatabaseConfigCustomizer::USER => ['entity_manager', 'connection', 'user'],
+            DatabaseConfigCustomizer::PASSWORD => ['entity_manager', 'connection', 'password'],
+            DatabaseConfigCustomizer::NAME => ['entity_manager', 'connection', 'dbname'],
+            DatabaseConfigCustomizer::HOST => ['entity_manager', 'connection', 'host'],
+            DatabaseConfigCustomizer::PORT => ['entity_manager', 'connection', 'port'],
+        ], $array));
 
-        $this->setLanguage([
-            'DEFAULT' => $array['translator']['locale'] ?? null,
-            'CLI' => $array['cli']['locale'] ?? null,
-        ]);
+        $this->setLanguage($this->mapExistingPathsToKeys([
+            LanguageConfigCustomizer::DEFAULT_LANG => ['translator', 'locale'],
+            LanguageConfigCustomizer::CLI_LANG => ['cli', 'locale'],
+        ], $array));
 
-        $this->setUrlShortener([
-            'SCHEMA' => $array['url_shortener']['domain']['schema'] ?? null,
-            'HOSTNAME' => $array['url_shortener']['domain']['hostname'] ?? null,
-            'CHARS' => $array['url_shortener']['shortcode_chars'] ?? null,
-            'VALIDATE_URL' => $array['url_shortener']['validate_url'] ?? true,
-        ]);
+        $this->setUrlShortener($this->mapExistingPathsToKeys([
+            UrlShortenerConfigCustomizer::SCHEMA => ['url_shortener', 'domain', 'schema'],
+            UrlShortenerConfigCustomizer::HOSTNAME => ['url_shortener', 'domain', 'hostname'],
+            UrlShortenerConfigCustomizer::CHARS => ['url_shortener', 'shortcode_chars'],
+            UrlShortenerConfigCustomizer::VALIDATE_URL => ['url_shortener', 'validate_url'],
+        ], $array));
     }
 
-    private function deserializeDatabase(array $conn): void
+    private function mapExistingPathsToKeys(array $map, array $config): array
     {
-        if (! isset($conn['driver'])) {
-            return;
-        }
-        $driver = $conn['driver'];
-
-        $params = ['DRIVER' => $driver];
-        if ($driver !== 'pdo_sqlite') {
-            $params['USER'] = $conn['user'] ?? null;
-            $params['PASSWORD'] = $conn['password'] ?? null;
-            $params['NAME'] = $conn['dbname'] ?? null;
-            $params['HOST'] = $conn['host'] ?? null;
-            $params['PORT'] = $conn['port'] ?? null;
+        $result = [];
+        foreach ($map as $key => $path) {
+            if (array_path_exists($path, $config)) {
+                $result[$key] = array_get_path($path, $config);
+            }
         }
 
-        $this->setDatabase($params);
+        return $result;
     }
 
     public function getArrayCopy(): array
     {
-        $dbDriver = $this->database['DRIVER'] ?? '';
+        $dbDriver = $this->database[DatabaseConfigCustomizer::DRIVER] ?? '';
         $config = [
             'app_options' => [
-                'secret_key' => $this->app['SECRET'] ?? '',
-                'disable_track_param' => $this->app['DISABLE_TRACK_PARAM'] ?? null,
+                'secret_key' => $this->app[ApplicationConfigCustomizer::SECRET] ?? '',
+                'disable_track_param' => $this->app[ApplicationConfigCustomizer::DISABLE_TRACK_PARAM] ?? null,
             ],
             'entity_manager' => [
                 'connection' => [
@@ -164,18 +171,18 @@ final class CustomizableAppConfig implements ArraySerializableInterface
                 ],
             ],
             'translator' => [
-                'locale' => $this->language['DEFAULT'] ?? 'en',
+                'locale' => $this->language[LanguageConfigCustomizer::DEFAULT_LANG] ?? 'en',
             ],
             'cli' => [
-                'locale' => $this->language['CLI'] ?? 'en',
+                'locale' => $this->language[LanguageConfigCustomizer::CLI_LANG] ?? 'en',
             ],
             'url_shortener' => [
                 'domain' => [
-                    'schema' => $this->urlShortener['SCHEMA'] ?? 'http',
-                    'hostname' => $this->urlShortener['HOSTNAME'] ?? '',
+                    'schema' => $this->urlShortener[UrlShortenerConfigCustomizer::SCHEMA] ?? 'http',
+                    'hostname' => $this->urlShortener[UrlShortenerConfigCustomizer::HOSTNAME] ?? '',
                 ],
-                'shortcode_chars' => $this->urlShortener['CHARS'] ?? '',
-                'validate_url' => $this->urlShortener['VALIDATE_URL'] ?? true,
+                'shortcode_chars' => $this->urlShortener[UrlShortenerConfigCustomizer::CHARS] ?? '',
+                'validate_url' => $this->urlShortener[UrlShortenerConfigCustomizer::VALIDATE_URL] ?? true,
             ],
         ];
 
@@ -183,11 +190,12 @@ final class CustomizableAppConfig implements ArraySerializableInterface
         if ($dbDriver === 'pdo_sqlite') {
             $config['entity_manager']['connection']['path'] = self::SQLITE_DB_PATH;
         } else {
-            $config['entity_manager']['connection']['user'] = $this->database['USER'] ?? '';
-            $config['entity_manager']['connection']['password'] = $this->database['PASSWORD'] ?? '';
-            $config['entity_manager']['connection']['dbname'] = $this->database['NAME'] ?? '';
-            $config['entity_manager']['connection']['host'] = $this->database['HOST'] ?? '';
-            $config['entity_manager']['connection']['port'] = $this->database['PORT'] ?? '';
+            $config['entity_manager']['connection']['user'] = $this->database[DatabaseConfigCustomizer::USER] ?? '';
+            $config['entity_manager']['connection']['password'] =
+                $this->database[DatabaseConfigCustomizer::PASSWORD] ?? '';
+            $config['entity_manager']['connection']['dbname'] = $this->database[DatabaseConfigCustomizer::NAME] ?? '';
+            $config['entity_manager']['connection']['host'] = $this->database[DatabaseConfigCustomizer::HOST] ?? '';
+            $config['entity_manager']['connection']['port'] = $this->database[DatabaseConfigCustomizer::PORT] ?? '';
 
             if ($dbDriver === 'pdo_mysql') {
                 $config['entity_manager']['connection']['driverOptions'] = [

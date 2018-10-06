@@ -50,10 +50,9 @@ class ApplicationConfigCustomizerTest extends TestCase
     /**
      * @test
      */
-    public function overwriteIsRequestedIfValueIsAlreadySet()
+    public function onlyMissingOptionsAreAsked()
     {
-        $ask = $this->io->ask(Argument::cetera())->willReturn('the_new_secret');
-        $confirm = $this->io->confirm(Argument::cetera())->willReturn(false);
+        $ask = $this->io->ask(Argument::cetera())->willReturn('disable_param');
         $config = new CustomizableAppConfig();
         $config->setApp([
             'SECRET' => 'foo',
@@ -62,30 +61,31 @@ class ApplicationConfigCustomizerTest extends TestCase
         $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
-            'SECRET' => 'the_new_secret',
-            'DISABLE_TRACK_PARAM' => 'the_new_secret',
+            'SECRET' => 'foo',
+            'DISABLE_TRACK_PARAM' => 'disable_param',
         ], $config->getApp());
-        $ask->shouldHaveBeenCalledTimes(2);
-        $confirm->shouldHaveBeenCalledTimes(1);
+        $ask->shouldHaveBeenCalledTimes(1);
     }
 
     /**
      * @test
      */
-    public function existingValueIsKeptIfRequested()
+    public function noQuestionsAskedIfImportedConfigContainsEverything()
     {
-        $confirm = $this->io->confirm(Argument::cetera())->willReturn(true);
+        $ask = $this->io->ask(Argument::cetera())->willReturn('the_new_secret');
 
         $config = new CustomizableAppConfig();
         $config->setApp([
             'SECRET' => 'foo',
+            'DISABLE_TRACK_PARAM' => 'the_new_secret',
         ]);
 
         $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
             'SECRET' => 'foo',
+            'DISABLE_TRACK_PARAM' => 'the_new_secret',
         ], $config->getApp());
-        $confirm->shouldHaveBeenCalledTimes(1);
+        $ask->shouldNotHaveBeenCalled();
     }
 }

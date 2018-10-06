@@ -5,7 +5,10 @@ namespace Shlinkio\Shlink\Common\Service;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
+use function Shlinkio\Shlink\Common\json_decode;
+use function sprintf;
 
 class IpApiLocationResolver implements IpLocationResolverInterface
 {
@@ -29,10 +32,12 @@ class IpApiLocationResolver implements IpLocationResolverInterface
     public function resolveIpLocation(string $ipAddress): array
     {
         try {
-            $response = $this->httpClient->get(\sprintf(self::SERVICE_PATTERN, $ipAddress));
-            return $this->mapFields(\json_decode((string) $response->getBody(), true));
+            $response = $this->httpClient->get(sprintf(self::SERVICE_PATTERN, $ipAddress));
+            return $this->mapFields(json_decode((string) $response->getBody()));
         } catch (GuzzleException $e) {
             throw WrongIpException::fromIpAddress($ipAddress, $e);
+        } catch (InvalidArgumentException $e) {
+            throw new WrongIpException('IP-API returned invalid body while locating IP address', 0, $e);
         }
     }
 
