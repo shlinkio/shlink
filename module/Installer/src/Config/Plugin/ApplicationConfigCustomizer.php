@@ -22,17 +22,14 @@ class ApplicationConfigCustomizer implements ConfigCustomizerInterface
 
     public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig): void
     {
-        $io->title('APPLICATION');
-
         $app = $appConfig->getApp();
-        $keysToAskFor = $appConfig->hasApp() && $io->confirm('Do you want to keep imported application config?')
-            ? array_diff(self::EXPECTED_KEYS, array_keys($app))
-            : self::EXPECTED_KEYS;
+        $keysToAskFor = $appConfig->hasApp() ? array_diff(self::EXPECTED_KEYS, array_keys($app)) : self::EXPECTED_KEYS;
 
         if (empty($keysToAskFor)) {
             return;
         }
 
+        $io->title('APPLICATION');
         foreach ($keysToAskFor as $key) {
             $app[$key] = $this->ask($io, $key);
         }

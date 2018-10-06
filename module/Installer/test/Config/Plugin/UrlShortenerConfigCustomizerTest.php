@@ -33,8 +33,8 @@ class UrlShortenerConfigCustomizerTest extends TestCase
      */
     public function configIsRequestedToTheUser()
     {
-        $choice = $this->io->choice(Argument::cetera())->willReturn('something');
-        $ask = $this->io->ask(Argument::cetera())->willReturn('something');
+        $choice = $this->io->choice(Argument::cetera())->willReturn('chosen');
+        $ask = $this->io->ask(Argument::cetera())->willReturn('asked');
         $confirm = $this->io->confirm(Argument::cetera())->willReturn(true);
         $config = new CustomizableAppConfig();
 
@@ -42,9 +42,9 @@ class UrlShortenerConfigCustomizerTest extends TestCase
 
         $this->assertTrue($config->hasUrlShortener());
         $this->assertEquals([
-            'SCHEMA' => 'something',
-            'HOSTNAME' => 'something',
-            'CHARS' => 'something',
+            'SCHEMA' => 'chosen',
+            'HOSTNAME' => 'asked',
+            'CHARS' => 'asked',
             'VALIDATE_URL' => true,
         ], $config->getUrlShortener());
         $ask->shouldHaveBeenCalledTimes(2);
@@ -55,16 +55,44 @@ class UrlShortenerConfigCustomizerTest extends TestCase
     /**
      * @test
      */
-    public function overwriteIsRequestedIfValueIsAlreadySet()
+    public function onlyMissingOptionsAreAsked()
     {
-        $choice = $this->io->choice(Argument::cetera())->willReturn('foo');
-        $ask = $this->io->ask(Argument::cetera())->willReturn('foo');
+        $choice = $this->io->choice(Argument::cetera())->willReturn('chosen');
+        $ask = $this->io->ask(Argument::cetera())->willReturn('asked');
         $confirm = $this->io->confirm(Argument::cetera())->willReturn(false);
         $config = new CustomizableAppConfig();
         $config->setUrlShortener([
-            'SCHEMA' => 'bar',
-            'HOSTNAME' => 'bar',
-            'CHARS' => 'bar',
+            'SCHEMA' => 'foo',
+            'HOSTNAME' => 'foo',
+        ]);
+
+        $this->plugin->process($this->io->reveal(), $config);
+
+        $this->assertEquals([
+            'SCHEMA' => 'foo',
+            'HOSTNAME' => 'foo',
+            'CHARS' => 'asked',
+            'VALIDATE_URL' => false,
+        ], $config->getUrlShortener());
+        $choice->shouldNotHaveBeenCalled();
+        $ask->shouldHaveBeenCalledTimes(1);
+        $confirm->shouldHaveBeenCalledTimes(1);
+    }
+
+    /**
+     * @test
+     */
+    public function noQuestionsAskedIfImportedConfigContainsEverything()
+    {
+        $choice = $this->io->choice(Argument::cetera())->willReturn('chosen');
+        $ask = $this->io->ask(Argument::cetera())->willReturn('asked');
+        $confirm = $this->io->confirm(Argument::cetera())->willReturn(false);
+
+        $config = new CustomizableAppConfig();
+        $config->setUrlShortener([
+            'SCHEMA' => 'foo',
+            'HOSTNAME' => 'foo',
+            'CHARS' => 'foo',
             'VALIDATE_URL' => true,
         ]);
 
@@ -74,36 +102,10 @@ class UrlShortenerConfigCustomizerTest extends TestCase
             'SCHEMA' => 'foo',
             'HOSTNAME' => 'foo',
             'CHARS' => 'foo',
-            'VALIDATE_URL' => false,
+            'VALIDATE_URL' => true,
         ], $config->getUrlShortener());
-        $ask->shouldHaveBeenCalledTimes(2);
-        $choice->shouldHaveBeenCalledTimes(1);
-        $confirm->shouldHaveBeenCalledTimes(2);
-    }
-
-    /**
-     * @test
-     */
-    public function existingValueIsKeptIfRequested()
-    {
-        $confirm = $this->io->confirm(Argument::cetera())->willReturn(true);
-
-        $config = new CustomizableAppConfig();
-        $config->setUrlShortener([
-            'SCHEMA' => 'foo',
-            'HOSTNAME' => 'foo',
-            'CHARS' => 'foo',
-            'VALIDATE_URL' => 'foo',
-        ]);
-
-        $this->plugin->process($this->io->reveal(), $config);
-
-        $this->assertEquals([
-            'SCHEMA' => 'foo',
-            'HOSTNAME' => 'foo',
-            'CHARS' => 'foo',
-            'VALIDATE_URL' => 'foo',
-        ], $config->getUrlShortener());
-        $confirm->shouldHaveBeenCalledTimes(1);
+        $choice->shouldNotHaveBeenCalled();
+        $ask->shouldNotHaveBeenCalled();
+        $confirm->shouldNotHaveBeenCalled();
     }
 }

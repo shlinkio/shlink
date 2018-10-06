@@ -33,7 +33,7 @@ class LanguageConfigCustomizerTest extends TestCase
      */
     public function configIsRequestedToTheUser()
     {
-        $ask = $this->io->choice(Argument::cetera())->willReturn('en');
+        $choice = $this->io->choice(Argument::cetera())->willReturn('en');
         $config = new CustomizableAppConfig();
 
         $this->plugin->process($this->io->reveal(), $config);
@@ -43,38 +43,35 @@ class LanguageConfigCustomizerTest extends TestCase
             'DEFAULT' => 'en',
             'CLI' => 'en',
         ], $config->getLanguage());
-        $ask->shouldHaveBeenCalledTimes(2);
+        $choice->shouldHaveBeenCalledTimes(2);
     }
 
     /**
      * @test
      */
-    public function overwriteIsRequestedIfValueIsAlreadySet()
+    public function onlyMissingOptionsAreAsked()
     {
         $choice = $this->io->choice(Argument::cetera())->willReturn('es');
-        $confirm = $this->io->confirm(Argument::cetera())->willReturn(false);
         $config = new CustomizableAppConfig();
         $config->setLanguage([
             'DEFAULT' => 'en',
-            'CLI' => 'en',
         ]);
 
         $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
-            'DEFAULT' => 'es',
+            'DEFAULT' => 'en',
             'CLI' => 'es',
         ], $config->getLanguage());
-        $choice->shouldHaveBeenCalledTimes(2);
-        $confirm->shouldHaveBeenCalledTimes(1);
+        $choice->shouldHaveBeenCalledTimes(1);
     }
 
     /**
      * @test
      */
-    public function existingValueIsKeptIfRequested()
+    public function noQuestionsAskedIfImportedConfigContainsEverything()
     {
-        $ask = $this->io->confirm(Argument::cetera())->willReturn(true);
+        $choice = $this->io->choice(Argument::cetera())->willReturn('en');
 
         $config = new CustomizableAppConfig();
         $config->setLanguage([
@@ -88,6 +85,6 @@ class LanguageConfigCustomizerTest extends TestCase
             'DEFAULT' => 'es',
             'CLI' => 'es',
         ], $config->getLanguage());
-        $ask->shouldHaveBeenCalledTimes(1);
+        $choice->shouldNotHaveBeenCalled();
     }
 }

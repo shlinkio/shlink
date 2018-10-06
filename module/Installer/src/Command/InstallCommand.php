@@ -189,7 +189,10 @@ class InstallCommand extends Command
         $config = new CustomizableAppConfig();
 
         // Ask the user if he/she wants to import an older configuration
-        $importConfig = $this->io->confirm('Do you want to import configuration from previous installation?');
+        $importConfig = $this->io->confirm(
+            'Do you want to import configuration from previous installation? (You will still be asked for any new '
+            . 'config option that did not exist in previous shlink versions)'
+        );
         if (! $importConfig) {
             return $config;
         }

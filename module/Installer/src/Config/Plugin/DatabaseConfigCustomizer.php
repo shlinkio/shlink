@@ -53,10 +53,9 @@ class DatabaseConfigCustomizer implements ConfigCustomizerInterface
      */
     public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig): void
     {
-        $io->title('DATABASE');
-
+        $titlePrinted = false;
         $db = $appConfig->getDatabase();
-        $doImport = $appConfig->hasDatabase() && $io->confirm('Do you want to keep imported database config?');
+        $doImport = $appConfig->hasDatabase();
         $keysToAskFor = $doImport ? array_diff(self::EXPECTED_KEYS, array_keys($db)) : self::EXPECTED_KEYS;
 
         // If the user selected to keep DB, try to import SQLite database
@@ -70,6 +69,8 @@ class DatabaseConfigCustomizer implements ConfigCustomizerInterface
 
         // If the driver is one of the params to ask for, ask for it first
         if (contains(self::DRIVER, $keysToAskFor)) {
+            $io->title('DATABASE');
+            $titlePrinted = true;
             $db[self::DRIVER] = $this->ask($io, self::DRIVER);
             $keysToAskFor = array_diff($keysToAskFor, [self::DRIVER]);
         }
@@ -79,7 +80,9 @@ class DatabaseConfigCustomizer implements ConfigCustomizerInterface
             $keysToAskFor = array_diff($keysToAskFor, self::DRIVER_DEPENDANT_OPTIONS);
         }
 
-        // Iterate any remaining option and ask for it
+        if (! $titlePrinted && ! empty($keysToAskFor)) {
+            $io->title('DATABASE');
+        }
         foreach ($keysToAskFor as $key) {
             $db[$key] = $this->ask($io, $key, $db);
         }

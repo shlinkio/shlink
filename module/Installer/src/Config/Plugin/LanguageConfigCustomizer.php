@@ -21,10 +21,8 @@ class LanguageConfigCustomizer implements ConfigCustomizerInterface
 
     public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig): void
     {
-        $io->title('LANGUAGE');
-
         $lang = $appConfig->getLanguage();
-        $keysToAskFor = $appConfig->hasLanguage() && $io->confirm('Do you want to keep imported language?')
+        $keysToAskFor = $appConfig->hasLanguage()
             ? array_diff(self::EXPECTED_KEYS, array_keys($lang))
             : self::EXPECTED_KEYS;
 
@@ -32,6 +30,7 @@ class LanguageConfigCustomizer implements ConfigCustomizerInterface
             return;
         }
 
+        $io->title('LANGUAGE');
         foreach ($keysToAskFor as $key) {
             $lang[$key] = $this->ask($io, $key);
         }

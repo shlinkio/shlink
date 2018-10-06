@@ -62,64 +62,62 @@ class DatabaseConfigCustomizerTest extends TestCase
     /**
      * @test
      */
-    public function overwriteIsRequestedIfValueIsAlreadySet()
+    public function onlyMissingOptionsAreAsked()
     {
         $choice = $this->io->choice(Argument::cetera())->willReturn('MySQL');
-        $confirm = $this->io->confirm(Argument::cetera())->willReturn(false);
-        $ask = $this->io->ask(Argument::cetera())->willReturn('MySQL');
+        $ask = $this->io->ask(Argument::cetera())->willReturn('asked');
+
         $config = new CustomizableAppConfig();
         $config->setDatabase([
             'DRIVER' => 'pdo_pgsql',
-            'NAME' => 'MySQL',
-            'USER' => 'MySQL',
-            'PASSWORD' => 'MySQL',
-            'HOST' => 'MySQL',
-            'PORT' => 'MySQL',
+            'NAME' => 'foo',
+            'PASSWORD' => 'foo',
         ]);
 
         $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
-            'DRIVER' => 'pdo_mysql',
-            'NAME' => 'MySQL',
-            'USER' => 'MySQL',
-            'PASSWORD' => 'MySQL',
-            'HOST' => 'MySQL',
-            'PORT' => 'MySQL',
+            'DRIVER' => 'pdo_pgsql',
+            'NAME' => 'foo',
+            'USER' => 'asked',
+            'PASSWORD' => 'foo',
+            'HOST' => 'asked',
+            'PORT' => 'asked',
         ], $config->getDatabase());
-        $confirm->shouldHaveBeenCalledTimes(1);
-        $choice->shouldHaveBeenCalledTimes(1);
-        $ask->shouldHaveBeenCalledTimes(5);
+        $choice->shouldNotHaveBeenCalled();
+        $ask->shouldHaveBeenCalledTimes(3);
     }
 
     /**
      * @test
      */
-    public function existingValueIsKeptIfRequested()
+    public function noQuestionsAskedIfImportedConfigContainsEverything()
     {
-        $confirm = $this->io->confirm(Argument::cetera())->willReturn(true);
+        $choice = $this->io->choice(Argument::cetera())->willReturn('MySQL');
+        $ask = $this->io->ask(Argument::cetera())->willReturn('asked');
 
         $config = new CustomizableAppConfig();
         $config->setDatabase([
             'DRIVER' => 'pdo_pgsql',
-            'NAME' => 'MySQL',
-            'USER' => 'MySQL',
-            'PASSWORD' => 'MySQL',
-            'HOST' => 'MySQL',
-            'PORT' => 'MySQL',
+            'NAME' => 'foo',
+            'USER' => 'foo',
+            'PASSWORD' => 'foo',
+            'HOST' => 'foo',
+            'PORT' => 'foo',
         ]);
 
         $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
             'DRIVER' => 'pdo_pgsql',
-            'NAME' => 'MySQL',
-            'USER' => 'MySQL',
-            'PASSWORD' => 'MySQL',
-            'HOST' => 'MySQL',
-            'PORT' => 'MySQL',
+            'NAME' => 'foo',
+            'USER' => 'foo',
+            'PASSWORD' => 'foo',
+            'HOST' => 'foo',
+            'PORT' => 'foo',
         ], $config->getDatabase());
-        $confirm->shouldHaveBeenCalledTimes(1);
+        $choice->shouldNotHaveBeenCalled();
+        $ask->shouldNotHaveBeenCalled();
     }
 
     /**
@@ -127,7 +125,6 @@ class DatabaseConfigCustomizerTest extends TestCase
      */
     public function sqliteDatabaseIsImportedWhenRequested()
     {
-        $confirm = $this->io->confirm(Argument::cetera())->willReturn(true);
         $copy = $this->filesystem->copy(Argument::cetera())->willReturn(null);
 
         $config = new CustomizableAppConfig();
@@ -140,7 +137,6 @@ class DatabaseConfigCustomizerTest extends TestCase
         $this->assertEquals([
             'DRIVER' => 'pdo_sqlite',
         ], $config->getDatabase());
-        $confirm->shouldHaveBeenCalledTimes(1);
         $copy->shouldHaveBeenCalledTimes(1);
     }
 }

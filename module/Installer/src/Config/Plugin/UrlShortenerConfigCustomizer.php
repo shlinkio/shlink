@@ -28,16 +28,15 @@ class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
 
     public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig): void
     {
-        $io->title('URL SHORTENER');
-
         $urlShortener = $appConfig->getUrlShortener();
-        $doImport = $appConfig->hasUrlShortener() && $io->confirm('Do you want to keep imported URL shortener config?');
+        $doImport = $appConfig->hasUrlShortener();
         $keysToAskFor = $doImport ? array_diff(self::EXPECTED_KEYS, array_keys($urlShortener)) : self::EXPECTED_KEYS;
 
         if (empty($keysToAskFor)) {
             return;
         }
 
+        $io->title('URL SHORTENER');
         foreach ($keysToAskFor as $key) {
             $urlShortener[$key] = $this->ask($io, $key);
         }
