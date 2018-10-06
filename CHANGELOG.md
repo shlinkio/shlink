@@ -9,10 +9,18 @@
 
     It also allows automating the dist file generation in travis-ci builds.
 
+* [#207](https://github.com/shlinkio/shlink/issues/207) Added two new config options which are asked during installation process. The config options already existed in previous shlink version, but you had to manually set their values.
+
+    * Visits threshold to allow short URLs to be deleted.
+    * Check the visits threshold when trying to delete a short URL via REST API.
+
 #### Changed
 
 * [#211](https://github.com/shlinkio/shlink/issues/211) Extracted installer to its own module, which will simplify moving it to a separated package in the future.
 * [#200](https://github.com/shlinkio/shlink/issues/200) and [#201](https://github.com/shlinkio/shlink/issues/201) Renamed REST Action classes and CLI Command classes to use the concept of `ShortUrl` instead of the concept of `ShortCode` when referring to the entity, and left the `short code` concept to the identifier which is used as a unique code for a specific `Short URL`.
+* [#181](https://github.com/shlinkio/shlink/issues/181) When importing the configuration from a previous shlink installation, it no longer asks to import every block. Instead, it is capable oif detecting only new config options introduced in the new version, and ask only for those.
+
+    If no new options are found and you have selected to import config, no further questions will be asked and shlink will just import the old config.
 
 #### Deprecated
 
