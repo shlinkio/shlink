@@ -121,6 +121,8 @@ final class CustomizableAppConfig implements ArraySerializableInterface
         $this->setApp($this->mapExistingPathsToKeys([
             ApplicationConfigCustomizer::SECRET => ['app_options', 'secret_key'],
             ApplicationConfigCustomizer::DISABLE_TRACK_PARAM => ['app_options', 'disable_track_param'],
+            ApplicationConfigCustomizer::CHECK_VISITS_THRESHOLD => ['delete_short_urls', 'check_visits_threshold'],
+            ApplicationConfigCustomizer::VISITS_THRESHOLD => ['delete_short_urls', 'visits_threshold'],
         ], $array));
 
         $this->setDatabase($this->mapExistingPathsToKeys([
@@ -164,6 +166,10 @@ final class CustomizableAppConfig implements ArraySerializableInterface
             'app_options' => [
                 'secret_key' => $this->app[ApplicationConfigCustomizer::SECRET] ?? '',
                 'disable_track_param' => $this->app[ApplicationConfigCustomizer::DISABLE_TRACK_PARAM] ?? null,
+            ],
+            'delete_short_urls' => [
+                'check_visits_threshold' => $this->app[ApplicationConfigCustomizer::CHECK_VISITS_THRESHOLD] ?? true,
+                'visits_threshold' => $this->app[ApplicationConfigCustomizer::VISITS_THRESHOLD] ?? 15,
             ],
             'entity_manager' => [
                 'connection' => [
