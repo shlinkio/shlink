@@ -15,10 +15,10 @@ class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
 {
     use AskUtilsTrait;
 
-    private const SCHEMA = 'SCHEMA';
-    private const HOSTNAME = 'HOSTNAME';
-    private const CHARS = 'CHARS';
-    private const VALIDATE_URL = 'VALIDATE_URL';
+    public const SCHEMA = 'SCHEMA';
+    public const HOSTNAME = 'HOSTNAME';
+    public const CHARS = 'CHARS';
+    public const VALIDATE_URL = 'VALIDATE_URL';
     private const EXPECTED_KEYS = [
         self::SCHEMA,
         self::HOSTNAME,

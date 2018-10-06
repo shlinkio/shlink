@@ -10,8 +10,8 @@ use function array_keys;
 
 class LanguageConfigCustomizer implements ConfigCustomizerInterface
 {
-    private const DEFAULT_LANG = 'DEFAULT';
-    private const CLI_LANG = 'CLI';
+    public const DEFAULT_LANG = 'DEFAULT';
+    public const CLI_LANG = 'CLI';
     private const EXPECTED_KEYS = [
         self::DEFAULT_LANG,
         self::CLI_LANG,

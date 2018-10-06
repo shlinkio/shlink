@@ -16,12 +16,12 @@ class DatabaseConfigCustomizer implements ConfigCustomizerInterface
 {
     use AskUtilsTrait;
 
-    private const DRIVER = 'DRIVER';
-    private const NAME = 'NAME';
-    private const USER = 'USER';
-    private const PASSWORD = 'PASSWORD';
-    private const HOST = 'HOST';
-    private const PORT = 'PORT';
+    public const DRIVER = 'DRIVER';
+    public const NAME = 'NAME';
+    public const USER = 'USER';
+    public const PASSWORD = 'PASSWORD';
+    public const HOST = 'HOST';
+    public const PORT = 'PORT';
     private const DRIVER_DEPENDANT_OPTIONS = [
         self::DRIVER,
         self::NAME,

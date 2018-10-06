@@ -13,8 +13,8 @@ class ApplicationConfigCustomizer implements ConfigCustomizerInterface
 {
     use StringUtilsTrait;
 
-    private const SECRET = 'SECRET';
-    private const DISABLE_TRACK_PARAM = 'DISABLE_TRACK_PARAM';
+    public const SECRET = 'SECRET';
+    public const DISABLE_TRACK_PARAM = 'DISABLE_TRACK_PARAM';
     private const EXPECTED_KEYS = [
         self::SECRET,
         self::DISABLE_TRACK_PARAM,
