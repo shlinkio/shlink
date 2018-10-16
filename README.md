@@ -145,3 +145,43 @@ Once shlink is installed, there are two main ways to interact with it:
     However, you probably don't want to consume the raw API yourself. That's why a nice [web client](https://github.com/shlinkio/shlink-web-client) is provided that can be directly used from [https://app.shlink.io](https://app.shlink.io), or you can host it yourself too.
 
 Both the API and CLI allow you to do the same operations, except for API key management, which can be done from the command line interface only.
+
+
+## Shlink CLI Help
+
+Usage:
+  command [options] [arguments]
+
+Options:
+  -h, --help            Display this help message
+  -q, --quiet           Do not output any message
+  -V, --version         Display this application version
+      --ansi            Force ANSI output
+      --no-ansi         Disable ANSI output
+  -n, --no-interaction  Do not ask any interactive question
+  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Available commands:
+  help                        Displays help for a command
+  list                        Lists commands
+ api-key
+  api-key:disable             Disables an API key.
+  api-key:generate            Generates a new valid API key.
+  api-key:list                Lists all the available API keys.
+ config
+  config:generate-charset     Generates a character set sample just by shuffling the default one, "123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ". Then it can be set in the SHORTCODE_CHARS environment variable
+  config:generate-secret      Generates a random secret string that can be used for JWT token encryption
+ short-url
+  short-url:delete            [short-code:delete] Deletes a short URL
+  short-url:generate          [shortcode:generate|short-code:generate] Generates a short URL for provided long URL and returns it
+  short-url:list              [shortcode:list|short-code:list] List all short URLs
+  short-url:parse             [shortcode:parse|short-code:parse] Returns the long URL behind a short code
+  short-url:process-previews  [shortcode:process-previews|short-code:process-previews] Processes and generates the previews for every URL, improving performance for later web requests.
+  short-url:visits            [shortcode:visits|short-code:visits] Returns the detailed visits information for provided short code
+ tag
+  tag:create                  Creates one or more tags.
+  tag:delete                  Deletes one or more tags.
+  tag:list                    Lists existing tags.
+  tag:rename                  Renames one existing tag.
+ visit
+  visit:process               Processes visits where location is not set yet
