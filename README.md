@@ -148,7 +148,7 @@ Both the API and CLI allow you to do the same operations, except for API key man
 
 
 ## Shlink CLI Help
-
+```
 Usage:
   command [options] [arguments]
 
@@ -185,3 +185,4 @@ Available commands:
   tag:rename                  Renames one existing tag.
  visit
   visit:process               Processes visits where location is not set yet
+```
