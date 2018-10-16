@@ -104,7 +104,7 @@ Those tasks can be performed using shlink's CLI, so it should be easy to schedul
 
     If you don't run this command regularly, the stats will say all visits come from *unknown* locations.
 
-* Generate website previews: `/path/to/shlink/bin/cli shortcode:process-previews`
+* Generate website previews: `/path/to/shlink/bin/cli short-url:process-previews`
 
     Running this will improve the performance of the `doma.in/abc123/preview` URLs, which return a preview of the site.
 
@@ -112,7 +112,7 @@ Those tasks can be performed using shlink's CLI, so it should be easy to schedul
 
 When a new Shlink version is available, you don't need to repeat the whole process yourself.
 
-Instead, get the latest version as explained in previous step, and then, run the script `bin/update`.
+Instead, download the new version to a new directory, rename the old directory to something else, then rename the new directory to the previous name of the old directory, and then inside the new directory (which now has the name of the old directory), run the script `bin/update`.
 
 The script will ask you for the location from previous shlink version, and use it in order to import the configuration.
 
