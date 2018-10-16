@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## 1.13.1 - 2018-10-16
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#231](https://github.com/shlinkio/shlink/issues/197) Fixed error when processing visits.
+
+
 ## 1.13.0 - 2018-10-06
 
 #### Added
