@@ -136,25 +136,25 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
     public function exchangeArray(array $array): void
     {
         if (\array_key_exists('country_code', $array)) {
-            $this->setCountryCode($array['country_code']);
+            $this->setCountryCode((string) $array['country_code']);
         }
         if (\array_key_exists('country_name', $array)) {
-            $this->setCountryName($array['country_name']);
+            $this->setCountryName((string) $array['country_name']);
         }
         if (\array_key_exists('region_name', $array)) {
-            $this->setRegionName($array['region_name']);
+            $this->setRegionName((string) $array['region_name']);
         }
         if (\array_key_exists('city', $array)) {
-            $this->setCityName($array['city']);
+            $this->setCityName((string) $array['city']);
         }
         if (\array_key_exists('latitude', $array)) {
-            $this->setLatitude($array['latitude']);
+            $this->setLatitude((string) $array['latitude']);
         }
         if (\array_key_exists('longitude', $array)) {
-            $this->setLongitude($array['longitude']);
+            $this->setLongitude((string) $array['longitude']);
         }
         if (\array_key_exists('time_zone', $array)) {
-            $this->setTimezone($array['time_zone']);
+            $this->setTimezone((string) $array['time_zone']);
         }
     }
 
