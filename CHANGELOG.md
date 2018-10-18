@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Added
 
-* [#233](https://github.com/shlinkio/shlink/issues/233) Added support for PHP 7.3
+* [#233](https://github.com/shlinkio/shlink/issues/233) Added PHP 7.3 to build matrix allowing its failure.
 
 #### Changed
 

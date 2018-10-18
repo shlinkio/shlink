@@ -11,6 +11,10 @@ php:
   - 7.2
   - 7.3
 
+matrix:
+  allow_failures:
+    - php: 7.3
+
 before_install:
   - phpenv config-add data/infra/travis-php/memcached.ini
   - phpenv config-add data/infra/travis-php/apcu.ini
