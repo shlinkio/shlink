@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
-use Zend\Diactoros\ServerRequestFactory;
 
 class VisitsTrackerTest extends TestCase
 {

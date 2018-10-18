@@ -3,8 +3,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Model;
 
+use Psr\Http\Message\ServerRequestInterface;
+
 final class Visitor
 {
+    public const REMOTE_ADDRESS_ATTR = 'remote_address';
+
     /**
      * @var string
      */
@@ -23,6 +27,15 @@ final class Visitor
         $this->userAgent = $userAgent;
         $this->referer = $referer;
         $this->remoteAddress = $remoteAddress;
+    }
+
+    public static function fromRequest(ServerRequestInterface $request): self
+    {
+        return new self(
+            $request->getHeaderLine('User-Agent'),
+            $request->getHeaderLine('Referer'),
+            $request->getAttribute(self::REMOTE_ADDRESS_ATTR)
+        );
     }
 
     public static function emptyInstance(): self

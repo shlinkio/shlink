@@ -9,7 +9,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Action\Util\ErrorResponseBuilderTrait;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
@@ -71,11 +70,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
 
             // Track visit to this short code
             if ($disableTrackParam === null || ! \array_key_exists($disableTrackParam, $query)) {
-                $this->visitTracker->track($shortCode, new Visitor(
-                    $request->getHeaderLine('User-Agent'),
-                    $request->getHeaderLine('Referer'),
-                    $request->getAttribute(IpAddressMiddlewareFactory::REMOTE_ADDRESS)
-                ));
+                $this->visitTracker->track($shortCode, Visitor::fromRequest($request));
             }
 
             return $this->createResp($url->getLongUrl());
