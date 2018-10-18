@@ -11,6 +11,8 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 
 class IpAddressMiddlewareFactory implements FactoryInterface
 {
+    public const REMOTE_ADDRESS = 'remote_address';
+
     /**
      * Create an object
      *
@@ -22,6 +24,6 @@ class IpAddressMiddlewareFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): IpAddress
     {
-        return new IpAddress(true, []);
+        return new IpAddress(true, [], self::REMOTE_ADDRESS);
     }
 }

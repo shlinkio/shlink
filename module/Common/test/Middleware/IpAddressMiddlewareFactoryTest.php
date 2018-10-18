@@ -29,8 +29,11 @@ class IpAddressMiddlewareFactoryTest extends TestCase
         $checkProxyHeaders->setAccessible(true);
         $trustedProxies = $ref->getProperty('trustedProxies');
         $trustedProxies->setAccessible(true);
+        $attributeName = $ref->getProperty('attributeName');
+        $attributeName->setAccessible(true);
 
         $this->assertTrue($checkProxyHeaders->getValue($instance));
         $this->assertEquals([], $trustedProxies->getValue($instance));
+        $this->assertEquals(IpAddressMiddlewareFactory::REMOTE_ADDRESS, $attributeName->getValue($instance));
     }
 }

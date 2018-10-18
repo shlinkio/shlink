@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use RKA\Middleware\IpAddress;
 use Shlinkio\Shlink\Core\Action;
 use Shlinkio\Shlink\Core\Middleware;
 
@@ -10,13 +11,19 @@ return [
         [
             'name' => 'long-url-redirect',
             'path' => '/{shortCode}',
-            'middleware' => Action\RedirectAction::class,
+            'middleware' => [
+                IpAddress::class,
+                Action\RedirectAction::class,
+            ],
             'allowed_methods' => ['GET'],
         ],
         [
             'name' => 'pixel-tracking',
             'path' => '/{shortCode}/track',
-            'middleware' => Action\PixelAction::class,
+            'middleware' => [
+                IpAddress::class,
+                Action\PixelAction::class,
+            ],
             'allowed_methods' => ['GET'],
         ],
         [
