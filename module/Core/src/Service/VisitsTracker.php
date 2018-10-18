@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM;
-use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 
 class VisitsTracker implements VisitsTrackerInterface
@@ -24,14 +24,9 @@ class VisitsTracker implements VisitsTrackerInterface
     }
 
     /**
-     * Tracks a new visit to provided short code, using an array of data to look up information
-     *
-     * @param string $shortCode
-     * @param ServerRequestInterface $request
-     * @throws ORM\ORMInvalidArgumentException
-     * @throws ORM\OptimisticLockException
+     * Tracks a new visit to provided short code from provided visitor
      */
-    public function track($shortCode, ServerRequestInterface $request): void
+    public function track(string $shortCode, Visitor $visitor): void
     {
         /** @var ShortUrl $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
@@ -40,29 +35,14 @@ class VisitsTracker implements VisitsTrackerInterface
 
         $visit = new Visit();
         $visit->setShortUrl($shortUrl)
-              ->setUserAgent($request->getHeaderLine('User-Agent'))
-              ->setReferer($request->getHeaderLine('Referer'))
-              ->setRemoteAddr($this->findOutRemoteAddr($request));
+              ->setUserAgent($visitor->getUserAgent())
+              ->setReferer($visitor->getReferer())
+              ->setRemoteAddr($visitor->getRemoteAddress());
 
         /** @var ORM\EntityManager $em */
         $em = $this->em;
         $em->persist($visit);
         $em->flush($visit);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     */
-    private function findOutRemoteAddr(ServerRequestInterface $request): ?string
-    {
-        $forwardedFor = $request->getHeaderLine('X-Forwarded-For');
-        if (empty($forwardedFor)) {
-            $serverParams = $request->getServerParams();
-            return $serverParams['REMOTE_ADDR'] ?? null;
-        }
-
-        $ips = \explode(',', $forwardedFor);
-        return $ips[0] ?? null;
     }
 
     /**

@@ -10,9 +10,9 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
-use Zend\Diactoros\ServerRequestFactory;
 
 class VisitsTrackerTest extends TestCase
 {
@@ -44,13 +44,13 @@ class VisitsTrackerTest extends TestCase
         $this->em->persist(Argument::any())->shouldBeCalledTimes(1);
         $this->em->flush(Argument::type(Visit::class))->shouldBeCalledTimes(1);
 
-        $this->visitsTracker->track($shortCode, ServerRequestFactory::fromGlobals());
+        $this->visitsTracker->track($shortCode, Visitor::emptyInstance());
     }
 
     /**
      * @test
      */
-    public function trackUsesForwardedForHeaderIfPresent()
+    public function trackedIpAddressGetsObfuscated()
     {
         $shortCode = '123ABC';
         $test = $this;
@@ -65,9 +65,7 @@ class VisitsTrackerTest extends TestCase
         })->shouldBeCalledTimes(1);
         $this->em->flush(Argument::type(Visit::class))->shouldBeCalledTimes(1);
 
-        $this->visitsTracker->track($shortCode, ServerRequestFactory::fromGlobals(
-            ['REMOTE_ADDR' => '1.2.3.4']
-        )->withHeader('X-Forwarded-For', '4.3.2.1,99.99.99.99'));
+        $this->visitsTracker->track($shortCode, new Visitor('', '', '4.3.2.1'));
     }
 
     /**

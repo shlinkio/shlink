@@ -3,20 +3,17 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Service;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Core\Model\Visitor;
 
 interface VisitsTrackerInterface
 {
     /**
-     * Tracks a new visit to provided short code, using an array of data to look up information
-     *
-     * @param string $shortCode
-     * @param ServerRequestInterface $request
+     * Tracks a new visit to provided short code from provided visitor
      */
-    public function track($shortCode, ServerRequestInterface $request): void;
+    public function track(string $shortCode, Visitor $visitor): void;
 
     /**
      * Returns the visits on certain short code

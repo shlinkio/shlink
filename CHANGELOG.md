@@ -1,5 +1,35 @@
 # CHANGELOG
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org).
+
+
+## [Unreleased]
+
+#### Added
+
+* [#233](https://github.com/shlinkio/shlink/issues/233) Added PHP 7.3 to build matrix allowing its failure.
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#237](https://github.com/shlinkio/shlink/issues/233) Solved errors when trying to geo-locate `null` IP addresses.
+
+    Also improved how visitor IP addresses are discovered, thanks to [akrabat/ip-address-middleware](https://github.com/akrabat/ip-address-middleware) package.
+
+
 ## 1.13.1 - 2018-10-16
 
 #### Added

@@ -4,6 +4,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Common\Util;
 
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
+use function count;
+use function explode;
+use function implode;
+use function trim;
 
 final class IpAddress
 {
@@ -43,9 +47,9 @@ final class IpAddress
      */
     public static function fromString(string $address): self
     {
-        $address = \trim($address);
-        $parts = \explode('.', $address);
-        if (\count($parts) !== self::IPV4_PARTS_COUNT) {
+        $address = trim($address);
+        $parts = explode('.', $address);
+        if (count($parts) !== self::IPV4_PARTS_COUNT) {
             throw WrongIpException::fromIpAddress($address);
         }
 
@@ -64,7 +68,7 @@ final class IpAddress
 
     public function __toString(): string
     {
-        return \implode('.', [
+        return implode('.', [
             $this->firstOctet,
             $this->secondOctet,
             $this->thirdOctet,
