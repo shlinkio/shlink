@@ -102,6 +102,11 @@ class Visit extends AbstractEntity implements \JsonSerializable
         return $this;
     }
 
+    public function hasRemoteAddr(): bool
+    {
+        return ! empty($this->remoteAddr);
+    }
+
     private function obfuscateAddress(?string $address): ?string
     {
         // Localhost addresses do not need to be obfuscated

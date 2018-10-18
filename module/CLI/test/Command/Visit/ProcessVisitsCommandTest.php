@@ -11,8 +11,11 @@ use Shlinkio\Shlink\Common\Service\IpApiLocationResolver;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Service\VisitService;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Zend\I18n\Translator\Translator;
+use function count;
+use function round;
 
 class ProcessVisitsCommandTest extends TestCase
 {
@@ -67,15 +70,15 @@ class ProcessVisitsCommandTest extends TestCase
             'command' => 'visit:process',
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertEquals(0, \strpos($output, 'Processing IP 1.2.3.0'));
-        $this->assertGreaterThan(0, \strpos($output, 'Processing IP 4.3.2.0'));
-        $this->assertGreaterThan(0, \strpos($output, 'Processing IP 12.34.56.0'));
+        $this->assertContains('Processing IP 1.2.3.0', $output);
+        $this->assertContains('Processing IP 4.3.2.0', $output);
+        $this->assertContains('Processing IP 12.34.56.0', $output);
     }
 
     /**
      * @test
      */
-    public function localhostAddressIsIgnored()
+    public function localhostAndEmptyAddressIsIgnored()
     {
         $visits = [
             (new Visit())->setRemoteAddr('1.2.3.4'),
@@ -83,19 +86,22 @@ class ProcessVisitsCommandTest extends TestCase
             (new Visit())->setRemoteAddr('12.34.56.78'),
             (new Visit())->setRemoteAddr('127.0.0.1'),
             (new Visit())->setRemoteAddr('127.0.0.1'),
+            (new Visit())->setRemoteAddr(''),
+            (new Visit())->setRemoteAddr(null),
         ];
         $this->visitService->getUnlocatedVisits()->willReturn($visits)
             ->shouldBeCalledTimes(1);
 
-        $this->visitService->saveVisit(Argument::any())->shouldBeCalledTimes(\count($visits) - 2);
+        $this->visitService->saveVisit(Argument::any())->shouldBeCalledTimes(count($visits) - 4);
         $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([])
-                                                             ->shouldBeCalledTimes(\count($visits) - 2);
+                                                             ->shouldBeCalledTimes(count($visits) - 4);
 
         $this->commandTester->execute([
             'command' => 'visit:process',
-        ]);
+        ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $output = $this->commandTester->getDisplay();
-        $this->assertGreaterThan(0, \strpos($output, 'Ignored localhost address'));
+        $this->assertContains('Ignored localhost address', $output);
+        $this->assertContains('Ignored visit with no IP address', $output);
     }
 
     /**
@@ -130,8 +136,8 @@ class ProcessVisitsCommandTest extends TestCase
             'command' => 'visit:process',
         ]);
 
-        $getApiLimit->shouldHaveBeenCalledTimes(\count($visits));
-        $getApiInterval->shouldHaveBeenCalledTimes(\round(\count($visits) / $apiLimit));
-        $resolveIpLocation->shouldHaveBeenCalledTimes(\count($visits));
+        $getApiLimit->shouldHaveBeenCalledTimes(count($visits));
+        $getApiInterval->shouldHaveBeenCalledTimes(round(count($visits) / $apiLimit));
+        $resolveIpLocation->shouldHaveBeenCalledTimes(count($visits));
     }
 }

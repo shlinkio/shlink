@@ -59,6 +59,14 @@ class ProcessVisitsCommand extends Command
 
         $count = 0;
         foreach ($visits as $visit) {
+            if (! $visit->hasRemoteAddr()) {
+                $io->writeln(
+                    sprintf('<comment>%s</comment>', $this->translator->translate('Ignored visit with no IP address')),
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
+                continue;
+            }
+
             $ipAddr = $visit->getRemoteAddr();
             $io->write(sprintf('%s <info>%s</info>', $this->translator->translate('Processing IP'), $ipAddr));
             if ($ipAddr === IpAddress::LOCALHOST) {
