@@ -16,8 +16,8 @@ matrix:
     - php: 7.3
 
 before_install:
-  - phpenv config-add data/infra/travis-php/memcached.ini
-  - phpenv config-add data/infra/travis-php/apcu.ini
+  - echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 install:
   - composer self-update
