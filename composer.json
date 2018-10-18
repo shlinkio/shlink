@@ -16,6 +16,7 @@
         "ext-json": "*",
         "ext-pdo": "*",
         "acelaya/ze-content-based-error-handler": "^2.2",
+        "akrabat/ip-address-middleware": "^1.0",
         "cakephp/chronos": "^1.2",
         "cocur/slugify": "^3.0",
         "doctrine/cache": "^1.6",
