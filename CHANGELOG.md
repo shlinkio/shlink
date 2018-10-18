@@ -25,7 +25,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Fixed
 
-* *Nothing*
+* [#237](https://github.com/shlinkio/shlink/issues/233) Solved errors when trying to geo-locate `null` IP addresses.
+
+    Also improved how visitor IP addresses are discovered, thanks to [akrabat/ip-address-middleware](https://github.com/akrabat/ip-address-middleware) package.
 
 
 ## 1.13.1 - 2018-10-16
