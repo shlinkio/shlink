@@ -1,5 +1,33 @@
 # CHANGELOG
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org).
+
+
+## [Unreleased]
+
+#### Added
+
+* [#233](https://github.com/shlinkio/shlink/issues/233) Added support for PHP 7.3
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* *Nothing*
+
+
 ## 1.13.1 - 2018-10-16
 
 #### Added
