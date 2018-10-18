@@ -34,6 +34,7 @@ after_success:
 
 # Before deploying, build dist file for current travis tag
 before_deploy:
+  - rm -f ocular.phar
   - ./build.sh ${TRAVIS_TAG#?}
 
 deploy:
