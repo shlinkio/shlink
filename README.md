@@ -110,15 +110,15 @@ Those tasks can be performed using shlink's CLI, so it should be easy to schedul
 
 ## Update to new version
 
-When a new Shlink version is available, you don't need to repeat the whole process yourself.
+When a new Shlink version is available, you don't need to repeat the entire process yourself. Instead, follow these steps:
 
-Instead, download the new version to a new directory, rename the old directory to something else, then rename the new directory to the previous name of the old directory, and then inside the new directory (which now has the name of the old directory), run the script `bin/update`.
+1. Rename your existing Shlink directory to something else (ie. `shlink` ---> `shlink-old`)
+2. Download and extract the new version of Shlink, and set the directories name to that of the old version. (ie. `shlink`)
+3. Run the `bin/update` script in the new version's directory to migrate your configuration over.
 
-The script will ask you for the location from previous shlink version, and use it in order to import the configuration.
+The script will ask you for the location from previous shlink version, and use it in order to import the configuration. It will then update the database and generate some the assets neccessary for Shlink to function.
 
-It will then update the database and generate some assets.
-
-Right now, it does not import cached info (like website previews), but it will. By now you will need to regenerate them again.
+Right now, it does not import cached info (like website previews), but it will. For now you will need to regenerate them again.
 
 **Important!** It is recommended that you don't skip any version when using this process. The update gets better on every version, but older versions might make assumptions.
 
@@ -146,8 +146,8 @@ Once shlink is installed, there are two main ways to interact with it:
 
 Both the API and CLI allow you to do the same operations, except for API key management, which can be done from the command line interface only.
 
+### Shlink CLI Help
 
-## Shlink CLI Help
 ```
 Usage:
   command [options] [arguments]
