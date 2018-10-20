@@ -59,7 +59,7 @@ class ResolveShortUrlAction extends AbstractRestAction
             $url = $this->urlShortener->shortCodeToUrl($shortCode);
             return new JsonResponse($transformer->transform($url));
         } catch (InvalidShortCodeException $e) {
-            $this->logger->warning('Provided short code with invalid format.' . PHP_EOL . $e);
+            $this->logger->warning('Provided short code with invalid format. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => \sprintf(
@@ -68,13 +68,13 @@ class ResolveShortUrlAction extends AbstractRestAction
                 ),
             ], self::STATUS_BAD_REQUEST);
         } catch (EntityDoesNotExistException $e) {
-            $this->logger->warning('Provided short code couldn\'t be found.' . PHP_EOL . $e);
+            $this->logger->warning('Provided short code couldn\'t be found. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
                 'message' => \sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
             ], self::STATUS_NOT_FOUND);
         } catch (\Exception $e) {
-            $this->logger->error('Unexpected error while resolving the URL behind a short code.' . PHP_EOL . $e);
+            $this->logger->error('Unexpected error while resolving the URL behind a short code. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),

@@ -60,7 +60,7 @@ class ListShortUrlsAction extends AbstractRestAction
                 $this->domainConfig
             ))]);
         } catch (\Exception $e) {
-            $this->logger->error('Unexpected error while listing short URLs.' . PHP_EOL . $e);
+            $this->logger->error('Unexpected error while listing short URLs. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),

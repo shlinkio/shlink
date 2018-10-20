@@ -75,7 +75,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
 
             return $this->createResp($url->getLongUrl());
         } catch (InvalidShortCodeException | EntityDoesNotExistException $e) {
-            $this->logger->warning('An error occurred while tracking short code.' . PHP_EOL . $e);
+            $this->logger->warning('An error occurred while tracking short code. {e}', ['e' => $e]);
             return $this->buildErrorResponse($request, $handler);
         }
     }

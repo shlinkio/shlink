@@ -60,13 +60,13 @@ class EditShortUrlAction extends AbstractRestAction
             );
             return new EmptyResponse();
         } catch (Exception\InvalidShortCodeException $e) {
-            $this->logger->warning('Provided data is invalid.' . PHP_EOL . $e);
+            $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => \sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
             ], self::STATUS_NOT_FOUND);
         } catch (Exception\ValidationException $e) {
-            $this->logger->warning('Provided data is invalid.' . PHP_EOL . $e);
+            $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => $this->translator->translate('Provided data is invalid.'),

@@ -63,7 +63,7 @@ class PreviewAction implements MiddlewareInterface
             $imagePath = $this->previewGenerator->generatePreview($url->getLongUrl());
             return $this->generateImageResponse($imagePath);
         } catch (InvalidShortCodeException | EntityDoesNotExistException | PreviewGenerationException $e) {
-            $this->logger->warning('An error occurred while generating preview image.' . PHP_EOL . $e);
+            $this->logger->warning('An error occurred while generating preview image. {e}', ['e' => $e]);
             return $this->buildErrorResponse($request, $handler);
         }
     }

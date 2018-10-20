@@ -50,14 +50,15 @@ class DeleteShortUrlAction extends AbstractRestAction
             return new EmptyResponse();
         } catch (Exception\InvalidShortCodeException $e) {
             $this->logger->warning(
-                \sprintf('Provided short code %s does not belong to any URL.', $shortCode) . PHP_EOL . $e
+                'Provided short code {shortCode} does not belong to any URL. {e}',
+                ['e' => $e, 'shortCode' => $shortCode]
             );
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => \sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
             ], self::STATUS_NOT_FOUND);
         } catch (Exception\DeleteShortUrlException $e) {
-            $this->logger->warning('Provided data is invalid.' . PHP_EOL . $e);
+            $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
             $messagePlaceholder = $this->translator->translate(
                 'It is not possible to delete URL with short code "%s" because it has reached more than "%s" visits.'
             );

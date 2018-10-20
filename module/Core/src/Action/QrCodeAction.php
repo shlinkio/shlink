@@ -67,7 +67,7 @@ class QrCodeAction implements MiddlewareInterface
         try {
             $this->urlShortener->shortCodeToUrl($shortCode);
         } catch (InvalidShortCodeException | EntityDoesNotExistException $e) {
-            $this->logger->warning('An error occurred while creating QR code' . PHP_EOL . $e);
+            $this->logger->warning('An error occurred while creating QR code. {e}', ['e' => $e]);
             return $this->buildErrorResponse($request, $handler);
         }
 
