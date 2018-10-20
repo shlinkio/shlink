@@ -59,7 +59,7 @@ class GetVisitsAction extends AbstractRestAction
                 ],
             ]);
         } catch (InvalidArgumentException $e) {
-            $this->logger->warning('Provided nonexistent short code' . PHP_EOL . $e);
+            $this->logger->warning('Provided nonexistent short code {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => sprintf(
@@ -68,7 +68,7 @@ class GetVisitsAction extends AbstractRestAction
                 ),
             ], self::STATUS_NOT_FOUND);
         } catch (\Exception $e) {
-            $this->logger->error('Unexpected error while parsing short code' . PHP_EOL . $e);
+            $this->logger->error('Unexpected error while parsing short code {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),

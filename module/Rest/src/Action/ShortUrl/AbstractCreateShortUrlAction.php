@@ -57,7 +57,7 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
             $longUrl = $shortUrlData->getLongUrl();
             $customSlug = $shortUrlMeta->getCustomSlug();
         } catch (InvalidArgumentException $e) {
-            $this->logger->warning('Provided data is invalid.' . PHP_EOL . $e);
+            $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
                 'message' => $e->getMessage(),
@@ -77,7 +77,7 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
 
             return new JsonResponse($transformer->transform($shortUrl));
         } catch (InvalidUrlException $e) {
-            $this->logger->warning('Provided Invalid URL.' . PHP_EOL . $e);
+            $this->logger->warning('Provided Invalid URL. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => \sprintf(
@@ -86,7 +86,7 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
                 ),
             ], self::STATUS_BAD_REQUEST);
         } catch (NonUniqueSlugException $e) {
-            $this->logger->warning('Provided non-unique slug.' . PHP_EOL . $e);
+            $this->logger->warning('Provided non-unique slug. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => \sprintf(
@@ -95,7 +95,7 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
                 ),
             ], self::STATUS_BAD_REQUEST);
         } catch (\Throwable $e) {
-            $this->logger->error('Unexpected error creating short url.' . PHP_EOL . $e);
+            $this->logger->error('Unexpected error creating short url. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
                 'message' => $this->translator->translate('Unexpected error occurred'),

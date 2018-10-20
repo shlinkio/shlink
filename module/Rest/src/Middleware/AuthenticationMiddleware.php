@@ -80,7 +80,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
         try {
             $plugin = $this->requestToAuthPlugin->fromRequest($request);
         } catch (ContainerExceptionInterface | NoAuthenticationException $e) {
-            $this->logger->warning('Invalid or no authentication provided.' . PHP_EOL . $e);
+            $this->logger->warning('Invalid or no authentication provided. {e}', ['e' => $e]);
             return $this->createErrorResponse(sprintf($this->translator->translate(
                 'Expected one of the following authentication headers, but none were provided, ["%s"]'
             ), implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)));
@@ -91,7 +91,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
             $response = $handler->handle($request);
             return $plugin->update($request, $response);
         } catch (VerifyAuthenticationException $e) {
-            $this->logger->warning('Authentication verification failed.' . PHP_EOL . $e);
+            $this->logger->warning('Authentication verification failed. {e}', ['e' => $e]);
             return $this->createErrorResponse($e->getPublicMessage(), $e->getErrorCode());
         }
     }

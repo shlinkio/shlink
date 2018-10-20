@@ -1,15 +1,19 @@
 <?php
 declare(strict_types=1);
 
+namespace Shlinkio\Shlink;
+
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
+use Monolog\Processor;
+use const PHP_EOL;
 
 return [
 
     'logger' => [
         'formatters' => [
             'dashed' => [
-                'format' => '[%datetime%] %channel%.%level_name% - %message% %context%' . PHP_EOL,
+                'format' => '[%datetime%] %channel%.%level_name% - %message%' . PHP_EOL,
                 'include_stacktraces' => true,
             ],
         ],
@@ -24,9 +28,19 @@ return [
             ],
         ],
 
+        'processors' => [
+            'exception_with_new_line' => [
+                'class' => Common\Logger\Processor\ExceptionWithNewLineProcessor::class,
+            ],
+            'psr3' => [
+                'class' => Processor\PsrLogMessageProcessor::class,
+            ],
+        ],
+
         'loggers' => [
             'Shlink' => [
                 'handlers' => ['rotating_file_handler'],
+                'processors' => ['exception_with_new_line', 'psr3'],
             ],
         ],
     ],
