@@ -18,6 +18,7 @@ rm -rf "${builtcontent}"
 mkdir -p "${builtcontent}"
 rsync -av * "${builtcontent}" \
     --exclude=data/infra \
+    --exclude=data/migrations_template.txt \
     --exclude=**/.gitignore \
     --exclude=CHANGELOG.md \
     --exclude=composer.lock \
