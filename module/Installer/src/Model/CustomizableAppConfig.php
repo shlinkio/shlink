@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Installer\Model;
 
+use Shlinkio\Shlink\Common\Collection\PathCollection;
 use Shlinkio\Shlink\Installer\Config\Plugin\ApplicationConfigCustomizer;
 use Shlinkio\Shlink\Installer\Config\Plugin\DatabaseConfigCustomizer;
 use Shlinkio\Shlink\Installer\Config\Plugin\LanguageConfigCustomizer;
 use Shlinkio\Shlink\Installer\Config\Plugin\UrlShortenerConfigCustomizer;
 use Zend\Stdlib\ArraySerializableInterface;
-use function Shlinkio\Shlink\Common\array_get_path;
-use function Shlinkio\Shlink\Common\array_path_exists;
 
 final class CustomizableAppConfig implements ArraySerializableInterface
 {
@@ -118,12 +117,14 @@ final class CustomizableAppConfig implements ArraySerializableInterface
 
     public function exchangeArray(array $array): void
     {
+        $pathCollection = new PathCollection($array);
+
         $this->setApp($this->mapExistingPathsToKeys([
             ApplicationConfigCustomizer::SECRET => ['app_options', 'secret_key'],
             ApplicationConfigCustomizer::DISABLE_TRACK_PARAM => ['app_options', 'disable_track_param'],
             ApplicationConfigCustomizer::CHECK_VISITS_THRESHOLD => ['delete_short_urls', 'check_visits_threshold'],
             ApplicationConfigCustomizer::VISITS_THRESHOLD => ['delete_short_urls', 'visits_threshold'],
-        ], $array));
+        ], $pathCollection));
 
         $this->setDatabase($this->mapExistingPathsToKeys([
             DatabaseConfigCustomizer::DRIVER => ['entity_manager', 'connection', 'driver'],
@@ -132,27 +133,27 @@ final class CustomizableAppConfig implements ArraySerializableInterface
             DatabaseConfigCustomizer::NAME => ['entity_manager', 'connection', 'dbname'],
             DatabaseConfigCustomizer::HOST => ['entity_manager', 'connection', 'host'],
             DatabaseConfigCustomizer::PORT => ['entity_manager', 'connection', 'port'],
-        ], $array));
+        ], $pathCollection));
 
         $this->setLanguage($this->mapExistingPathsToKeys([
             LanguageConfigCustomizer::DEFAULT_LANG => ['translator', 'locale'],
             LanguageConfigCustomizer::CLI_LANG => ['cli', 'locale'],
-        ], $array));
+        ], $pathCollection));
 
         $this->setUrlShortener($this->mapExistingPathsToKeys([
             UrlShortenerConfigCustomizer::SCHEMA => ['url_shortener', 'domain', 'schema'],
             UrlShortenerConfigCustomizer::HOSTNAME => ['url_shortener', 'domain', 'hostname'],
             UrlShortenerConfigCustomizer::CHARS => ['url_shortener', 'shortcode_chars'],
             UrlShortenerConfigCustomizer::VALIDATE_URL => ['url_shortener', 'validate_url'],
-        ], $array));
+        ], $pathCollection));
     }
 
-    private function mapExistingPathsToKeys(array $map, array $config): array
+    private function mapExistingPathsToKeys(array $map, PathCollection $pathCollection): array
     {
         $result = [];
         foreach ($map as $key => $path) {
-            if (array_path_exists($path, $config)) {
-                $result[$key] = array_get_path($path, $config);
+            if ($pathCollection->pathExists($path)) {
+                $result[$key] = $pathCollection->getValueInPath($path);
             }
         }
 
