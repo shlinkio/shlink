@@ -134,7 +134,7 @@ Currently the image does not expose an entry point which let's you interact with
 
 Once shlink is installed, there are two main ways to interact with it:
 
-* **The command line**. Try running `bin/cli` and see all the available commands.
+* **The command line**. Try running `bin/cli` and see all the [available commands](#shlink-cli-help).
 
     All of those commands can be run with the `--help`/`-h` flag in order to see how to use them and all the available options.
 
