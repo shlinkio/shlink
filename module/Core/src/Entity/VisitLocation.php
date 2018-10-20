@@ -19,37 +19,37 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
 {
     /**
      * @var string
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(nullable=true, name="country_code")
      */
     private $countryCode;
     /**
      * @var string
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(nullable=true, name="country_name")
      */
     private $countryName;
     /**
      * @var string
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(nullable=true, name="region_name")
      */
     private $regionName;
     /**
      * @var string
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(nullable=true, name="city_name")
      */
     private $cityName;
     /**
      * @var string
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(nullable=true, name="latitude")
      */
     private $latitude;
     /**
      * @var string
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(nullable=true, name="longitude")
      */
     private $longitude;
     /**
      * @var string
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(nullable=true, name="timezone")
      */
     private $timezone;
 
