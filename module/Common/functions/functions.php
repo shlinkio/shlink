@@ -9,6 +9,7 @@ use function in_array;
 use function json_decode as spl_json_decode;
 use function json_last_error;
 use function json_last_error_msg;
+use function sprintf;
 use function strtolower;
 use function trim;
 

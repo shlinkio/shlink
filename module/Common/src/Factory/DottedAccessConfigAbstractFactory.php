@@ -10,6 +10,11 @@ use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
+use function array_shift;
+use function explode;
+use function is_array;
+use function sprintf;
+use function substr_count;
 
 class DottedAccessConfigAbstractFactory implements AbstractFactoryInterface
 {

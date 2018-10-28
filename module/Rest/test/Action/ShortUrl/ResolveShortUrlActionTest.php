@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Rest\Action\ShortUrl\ResolveShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
+use function strpos;
 
 class ResolveShortUrlActionTest extends TestCase
 {

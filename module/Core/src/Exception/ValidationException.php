@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\Core\Exception;
 
 use Throwable;
 use Zend\InputFilter\InputFilterInterface;
+use const PHP_EOL;
 use function is_array;
 use function print_r;
 use function sprintf;

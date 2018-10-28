@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
+use function time;
 
 class JWTServiceTest extends TestCase
 {

@@ -8,6 +8,8 @@ use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 use Zend\Stdlib\ArrayUtils;
+use const FILEINFO_MIME;
+use function basename;
 
 trait ResponseUtilsTrait
 {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Exception;
 
 use Throwable;
+use function sprintf;
 
 class InvalidUrlException extends RuntimeException
 {

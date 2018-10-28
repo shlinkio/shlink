@@ -9,6 +9,8 @@ use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use function count;
+use function explode;
 
 class LoggerFactory implements FactoryInterface
 {

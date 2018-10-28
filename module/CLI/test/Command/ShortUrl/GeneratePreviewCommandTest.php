@@ -16,6 +16,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Zend\I18n\Translator\Translator;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
+use function count;
+use function substr_count;
 
 class GeneratePreviewCommandTest extends TestCase
 {

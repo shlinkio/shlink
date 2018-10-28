@@ -33,7 +33,9 @@ class EntityManagerFactory implements FactoryInterface
         $connectionConfig = $emConfig['connection'] ?? [];
         $ormConfig = $emConfig['orm'] ?? [];
 
-        Type::addType(ChronosDateTimeType::CHRONOS_DATETIME, ChronosDateTimeType::class);
+        if (! Type::hasType(ChronosDateTimeType::CHRONOS_DATETIME)) {
+            Type::addType(ChronosDateTimeType::CHRONOS_DATETIME, ChronosDateTimeType::class);
+        }
 
         return EntityManager::create($connectionConfig, Setup::createAnnotationMetadataConfiguration(
             $ormConfig['entities_paths'] ?? [],
