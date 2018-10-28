@@ -56,8 +56,7 @@ class VisitRepositoryTest extends DatabaseTestCase
      */
     public function findVisitsByShortUrlReturnsProperData()
     {
-        $shortUrl = new ShortUrl();
-        $shortUrl->setOriginalUrl('');
+        $shortUrl = new ShortUrl('');
         $this->getEntityManager()->persist($shortUrl);
 
         for ($i = 0; $i < 6; $i++) {

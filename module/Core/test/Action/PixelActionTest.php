@@ -50,7 +50,7 @@ class PixelActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(
-            (new ShortUrl())->setLongUrl('http://domain.com/foo/bar')
+            new ShortUrl('http://domain.com/foo/bar')
         )->shouldBeCalledTimes(1);
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledTimes(1);
 

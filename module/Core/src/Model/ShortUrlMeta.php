@@ -32,9 +32,13 @@ final class ShortUrlMeta
     {
     }
 
+    public static function createEmpty(): self
+    {
+        return new self();
+    }
+
     /**
      * @param array $data
-     * @return ShortUrlMeta
      * @throws ValidationException
      */
     public static function createFromRawData(array $data): self
@@ -49,7 +53,6 @@ final class ShortUrlMeta
      * @param string|Chronos|null $validUntil
      * @param string|null $customSlug
      * @param int|null $maxVisits
-     * @return ShortUrlMeta
      * @throws ValidationException
      */
     public static function createFromParams(
@@ -124,10 +127,7 @@ final class ShortUrlMeta
         return $this->validUntil !== null;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getCustomSlug()
+    public function getCustomSlug(): ?string
     {
         return $this->customSlug;
     }
@@ -137,10 +137,7 @@ final class ShortUrlMeta
         return $this->customSlug !== null;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getMaxVisits()
+    public function getMaxVisits(): ?int
     {
         return $this->maxVisits;
     }

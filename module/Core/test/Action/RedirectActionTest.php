@@ -52,7 +52,7 @@ class RedirectActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
-        $shortUrl = (new ShortUrl())->setLongUrl($expectedUrl);
+        $shortUrl = new ShortUrl($expectedUrl);
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
                                                        ->shouldBeCalledTimes(1);
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledTimes(1);
@@ -93,7 +93,7 @@ class RedirectActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
-        $shortUrl = (new ShortUrl())->setLongUrl($expectedUrl);
+        $shortUrl = new ShortUrl($expectedUrl);
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
                                                        ->shouldBeCalledTimes(1);
         $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();

@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use ShlinkioTest\Shlink\Common\DbUnit\DatabaseTestCase;
 use function count;
@@ -35,15 +36,12 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
      */
     public function findOneByShortCodeReturnsProperData()
     {
-        $foo = new ShortUrl();
-        $foo->setOriginalUrl('foo')
-            ->setShortCode('foo');
+        $foo = new ShortUrl('foo');
+        $foo->setShortCode('foo');
         $this->getEntityManager()->persist($foo);
 
-        $bar = new ShortUrl();
-        $bar->setOriginalUrl('bar')
-            ->setShortCode('bar_very_long_text')
-            ->setValidSince(Chronos::now()->addMonth());
+        $bar = new ShortUrl('bar', ShortUrlMeta::createFromParams(Chronos::now()->addMonth()));
+        $bar->setShortCode('bar_very_long_text');
         $this->getEntityManager()->persist($bar);
 
         $visits = [];
@@ -52,11 +50,9 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             $this->getEntityManager()->persist($visit);
             $visits[] = $visit;
         }
-        $baz = new ShortUrl();
-        $baz->setOriginalUrl('baz')
-            ->setShortCode('baz')
-            ->setVisits(new ArrayCollection($visits))
-            ->setMaxVisits(3);
+        $baz = new ShortUrl('baz', ShortUrlMeta::createFromRawData(['maxVisits' => 3]));
+        $baz->setShortCode('baz')
+            ->setVisits(new ArrayCollection($visits));
         $this->getEntityManager()->persist($baz);
 
         $this->getEntityManager()->flush();
@@ -75,8 +71,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $count = 5;
         for ($i = 0; $i < $count; $i++) {
             $this->getEntityManager()->persist(
-                (new ShortUrl())->setOriginalUrl((string) $i)
-                                ->setShortCode((string) $i)
+                (new ShortUrl((string) $i))->setShortCode((string) $i)
             );
         }
         $this->getEntityManager()->flush();
@@ -92,20 +87,17 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $tag = new Tag('bar');
         $this->getEntityManager()->persist($tag);
 
-        $foo = new ShortUrl();
-        $foo->setOriginalUrl('foo')
-            ->setShortCode('foo')
+        $foo = new ShortUrl('foo');
+        $foo->setShortCode('foo')
             ->setTags(new ArrayCollection([$tag]));
         $this->getEntityManager()->persist($foo);
 
-        $bar = new ShortUrl();
-        $bar->setOriginalUrl('bar')
-            ->setShortCode('bar_very_long_text');
+        $bar = new ShortUrl('bar');
+        $bar->setShortCode('bar_very_long_text');
         $this->getEntityManager()->persist($bar);
 
-        $foo2 = new ShortUrl();
-        $foo2->setOriginalUrl('foo_2')
-            ->setShortCode('foo_2');
+        $foo2 = new ShortUrl('foo_2');
+        $foo2->setShortCode('foo_2');
         $this->getEntityManager()->persist($foo2);
 
         $this->getEntityManager()->flush();
@@ -123,8 +115,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $urls = ['a', 'z', 'c', 'b'];
         foreach ($urls as $url) {
             $this->getEntityManager()->persist(
-                (new ShortUrl())->setShortCode($url)
-                                ->setLongUrl($url)
+                (new ShortUrl($url))->setShortCode($url)
             );
         }
 

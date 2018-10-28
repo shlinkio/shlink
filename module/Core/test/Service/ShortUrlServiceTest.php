@@ -42,10 +42,10 @@ class ShortUrlServiceTest extends TestCase
     public function listedUrlsAreReturnedFromEntityManager()
     {
         $list = [
-            new ShortUrl(),
-            new ShortUrl(),
-            new ShortUrl(),
-            new ShortUrl(),
+            new ShortUrl(''),
+            new ShortUrl(''),
+            new ShortUrl(''),
+            new ShortUrl(''),
         ];
 
         $repo = $this->prophesize(ShortUrlRepository::class);
@@ -98,7 +98,7 @@ class ShortUrlServiceTest extends TestCase
      */
     public function updateMetadataByShortCodeUpdatesProvidedData()
     {
-        $shortUrl = new ShortUrl();
+        $shortUrl = new ShortUrl('');
 
         $repo = $this->prophesize(ShortUrlRepository::class);
         $findShortUrl = $repo->findOneBy(['shortCode' => 'abc123'])->willReturn($shortUrl);

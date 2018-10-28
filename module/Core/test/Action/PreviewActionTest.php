@@ -68,7 +68,7 @@ class PreviewActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $url = 'foobar.com';
-        $shortUrl = (new ShortUrl())->setLongUrl($url);
+        $shortUrl = new ShortUrl($url);
         $path = __FILE__;
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)->shouldBeCalledTimes(1);
         $this->previewGenerator->generatePreview($url)->willReturn($path)->shouldBeCalledTimes(1);

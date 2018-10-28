@@ -56,9 +56,9 @@ class GeneratePreviewCommandTest extends TestCase
     public function previewsForEveryUrlAreGenerated()
     {
         $paginator = $this->createPaginator([
-            (new ShortUrl())->setOriginalUrl('http://foo.com'),
-            (new ShortUrl())->setOriginalUrl('https://bar.com'),
-            (new ShortUrl())->setOriginalUrl('http://baz.com/something'),
+            new ShortUrl('http://foo.com'),
+            new ShortUrl('https://bar.com'),
+            new ShortUrl('http://baz.com/something'),
         ]);
         $this->shortUrlService->listShortUrls(1)->willReturn($paginator)->shouldBeCalledTimes(1);
 
@@ -77,9 +77,9 @@ class GeneratePreviewCommandTest extends TestCase
     public function exceptionWillOutputError()
     {
         $items = [
-            (new ShortUrl())->setOriginalUrl('http://foo.com'),
-            (new ShortUrl())->setOriginalUrl('https://bar.com'),
-            (new ShortUrl())->setOriginalUrl('http://baz.com/something'),
+            new ShortUrl('http://foo.com'),
+            new ShortUrl('https://bar.com'),
+            new ShortUrl('http://baz.com/something'),
         ];
         $paginator = $this->createPaginator($items);
         $this->shortUrlService->listShortUrls(1)->willReturn($paginator)->shouldBeCalledTimes(1);

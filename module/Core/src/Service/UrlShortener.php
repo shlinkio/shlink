@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Exception\RuntimeException;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Throwable;
@@ -90,15 +91,15 @@ class UrlShortener implements UrlShortenerInterface
             $this->em->beginTransaction();
 
             // First, create the short URL with an empty short code
-            $shortUrl = new ShortUrl();
-            $shortUrl->setOriginalUrl((string) $url)
-                     ->setValidSince($validSince)
-                     ->setValidUntil($validUntil)
-                     ->setMaxVisits($maxVisits);
+            $shortUrl = new ShortUrl(
+                (string) $url,
+                ShortUrlMeta::createFromParams($validSince, $validUntil, null, $maxVisits)
+            );
             $this->em->persist($shortUrl);
             $this->em->flush();
 
             // Generate the short code and persist it
+            // TODO Somehow provide the logic to calculate the shortCode to avoid the need of a setter
             $shortCode = $customSlug ?? $this->convertAutoincrementIdToShortCode((float) $shortUrl->getId());
             $shortUrl->setShortCode($shortCode)
                      ->setTags($this->tagNamesToEntities($this->em, $tags));

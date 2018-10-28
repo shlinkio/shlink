@@ -55,8 +55,8 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
     {
         // Map public field names to column names
         $fieldNameMap = [
-            'originalUrl' => 'originalUrl',
-            'longUrl' => 'originalUrl',
+            'originalUrl' => 'longUrl',
+            'longUrl' => 'longUrl',
             'shortCode' => 'shortCode',
             'dateCreated' => 'dateCreated',
         ];
@@ -112,7 +112,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
             }
 
             $conditions = [
-                $qb->expr()->like('s.originalUrl', ':searchPattern'),
+                $qb->expr()->like('s.longUrl', ':searchPattern'),
                 $qb->expr()->like('s.shortCode', ':searchPattern'),
                 $qb->expr()->like('t.name', ':searchPattern'),
             ];

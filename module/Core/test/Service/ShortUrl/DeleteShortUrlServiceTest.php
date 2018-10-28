@@ -30,10 +30,10 @@ class DeleteShortUrlServiceTest extends TestCase
 
     public function setUp()
     {
-        $shortUrl = (new ShortUrl())->setShortCode('abc123')
-                                    ->setVisits(new ArrayCollection(array_map(function () {
-                                        return new Visit();
-                                    }, range(0, 10))));
+        $shortUrl = (new ShortUrl(''))->setShortCode('abc123')
+                                      ->setVisits(new ArrayCollection(array_map(function () {
+                                          return new Visit();
+                                      }, range(0, 10))));
 
         $this->em = $this->prophesize(EntityManagerInterface::class);
 

@@ -103,7 +103,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
             null,
             null,
             null
-        )->willReturn((new ShortUrl())->setLongUrl(''));
+        )->willReturn(new ShortUrl(''));
 
         $resp = $this->action->handle($request);
 

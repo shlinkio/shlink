@@ -148,7 +148,7 @@ class UrlShortenerTest extends TestCase
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
         /** @var MethodProphecy $findBySlug */
-        $findBySlug = $repo->findOneBy(['shortCode' => 'custom-slug'])->willReturn(new ShortUrl());
+        $findBySlug = $repo->findOneBy(['shortCode' => 'custom-slug'])->willReturn(new ShortUrl(''));
         $repo->findOneBy(Argument::cetera())->willReturn(null);
         /** @var MethodProphecy $getRepo */
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
@@ -174,9 +174,8 @@ class UrlShortenerTest extends TestCase
     {
         // 12C1c -> 10
         $shortCode = '12C1c';
-        $shortUrl = new ShortUrl();
-        $shortUrl->setShortCode($shortCode)
-                 ->setOriginalUrl('expected_url');
+        $shortUrl = new ShortUrl('expected_url');
+        $shortUrl->setShortCode($shortCode);
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
         $repo->findOneByShortCode($shortCode)->willReturn($shortUrl);

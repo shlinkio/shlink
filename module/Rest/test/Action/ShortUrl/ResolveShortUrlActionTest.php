@@ -55,7 +55,7 @@ class ResolveShortUrlActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(
-            (new ShortUrl())->setLongUrl('http://domain.com/foo/bar')
+            new ShortUrl('http://domain.com/foo/bar')
         )->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
