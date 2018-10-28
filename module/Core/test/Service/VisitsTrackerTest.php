@@ -80,8 +80,8 @@ class VisitsTrackerTest extends TestCase
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledTimes(1);
 
         $list = [
-            new Visit(),
-            new Visit(),
+            new Visit(new ShortUrl(''), Visitor::emptyInstance()),
+            new Visit(new ShortUrl(''), Visitor::emptyInstance()),
         ];
         $repo2 = $this->prophesize(VisitRepository::class);
         $repo2->findVisitsByShortUrl($shortUrl, null)->willReturn($list);

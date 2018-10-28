@@ -8,7 +8,9 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\ProcessVisitsCommand;
 use Shlinkio\Shlink\Common\Service\IpApiLocationResolver;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Service\VisitService;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -54,10 +56,12 @@ class ProcessVisitsCommandTest extends TestCase
      */
     public function allReturnedVisitsIpsAreProcessed()
     {
+        $shortUrl = new ShortUrl('');
+
         $visits = [
-            (new Visit())->setRemoteAddr('1.2.3.4'),
-            (new Visit())->setRemoteAddr('4.3.2.1'),
-            (new Visit())->setRemoteAddr('12.34.56.78'),
+            new Visit($shortUrl, new Visitor('', '', '1.2.3.4')),
+            new Visit($shortUrl, new Visitor('', '', '4.3.2.1')),
+            new Visit($shortUrl, new Visitor('', '', '12.34.56.78')),
         ];
         $this->visitService->getUnlocatedVisits()->willReturn($visits)
                                                  ->shouldBeCalledTimes(1);
@@ -80,14 +84,16 @@ class ProcessVisitsCommandTest extends TestCase
      */
     public function localhostAndEmptyAddressIsIgnored()
     {
+        $shortUrl = new ShortUrl('');
+
         $visits = [
-            (new Visit())->setRemoteAddr('1.2.3.4'),
-            (new Visit())->setRemoteAddr('4.3.2.1'),
-            (new Visit())->setRemoteAddr('12.34.56.78'),
-            (new Visit())->setRemoteAddr('127.0.0.1'),
-            (new Visit())->setRemoteAddr('127.0.0.1'),
-            (new Visit())->setRemoteAddr(''),
-            (new Visit())->setRemoteAddr(null),
+            new Visit($shortUrl, new Visitor('', '', '1.2.3.4')),
+            new Visit($shortUrl, new Visitor('', '', '4.3.2.1')),
+            new Visit($shortUrl, new Visitor('', '', '12.34.56.78')),
+            new Visit($shortUrl, new Visitor('', '', '127.0.0.1')),
+            new Visit($shortUrl, new Visitor('', '', '127.0.0.1')),
+            new Visit($shortUrl, new Visitor('', '', '')),
+            new Visit($shortUrl, new Visitor('', '', null)),
         ];
         $this->visitService->getUnlocatedVisits()->willReturn($visits)
             ->shouldBeCalledTimes(1);
@@ -109,17 +115,19 @@ class ProcessVisitsCommandTest extends TestCase
      */
     public function sleepsEveryTimeTheApiLimitIsReached()
     {
+        $shortUrl = new ShortUrl('');
+
         $visits = [
-            (new Visit())->setRemoteAddr('1.2.3.4'),
-            (new Visit())->setRemoteAddr('4.3.2.1'),
-            (new Visit())->setRemoteAddr('12.34.56.78'),
-            (new Visit())->setRemoteAddr('1.2.3.4'),
-            (new Visit())->setRemoteAddr('4.3.2.1'),
-            (new Visit())->setRemoteAddr('12.34.56.78'),
-            (new Visit())->setRemoteAddr('1.2.3.4'),
-            (new Visit())->setRemoteAddr('4.3.2.1'),
-            (new Visit())->setRemoteAddr('12.34.56.78'),
-            (new Visit())->setRemoteAddr('4.3.2.1'),
+            new Visit($shortUrl, new Visitor('', '', '1.2.3.4')),
+            new Visit($shortUrl, new Visitor('', '', '4.3.2.1')),
+            new Visit($shortUrl, new Visitor('', '', '12.34.56.78')),
+            new Visit($shortUrl, new Visitor('', '', '1.2.3.4')),
+            new Visit($shortUrl, new Visitor('', '', '4.3.2.1')),
+            new Visit($shortUrl, new Visitor('', '', '12.34.56.78')),
+            new Visit($shortUrl, new Visitor('', '', '1.2.3.4')),
+            new Visit($shortUrl, new Visitor('', '', '4.3.2.1')),
+            new Visit($shortUrl, new Visitor('', '', '12.34.56.78')),
+            new Visit($shortUrl, new Visitor('', '', '4.3.2.1')),
         ];
         $apiLimit = 3;
 

@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use ShlinkioTest\Shlink\Common\DbUnit\DatabaseTestCase;
 use function count;
@@ -44,13 +45,13 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $bar->setShortCode('bar_very_long_text');
         $this->getEntityManager()->persist($bar);
 
+        $baz = new ShortUrl('baz', ShortUrlMeta::createFromRawData(['maxVisits' => 3]));
         $visits = [];
         for ($i = 0; $i < 3; $i++) {
-            $visit = new Visit();
+            $visit = new Visit($baz, Visitor::emptyInstance());
             $this->getEntityManager()->persist($visit);
             $visits[] = $visit;
         }
-        $baz = new ShortUrl('baz', ShortUrlMeta::createFromRawData(['maxVisits' => 3]));
         $baz->setShortCode('baz')
             ->setVisits(new ArrayCollection($visits));
         $this->getEntityManager()->persist($baz);

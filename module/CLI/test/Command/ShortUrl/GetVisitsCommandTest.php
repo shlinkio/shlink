@@ -9,8 +9,10 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GetVisitsCommand;
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -79,9 +81,9 @@ class GetVisitsCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::any())->willReturn([
-            (new Visit())->setReferer('foo')
-                         ->setVisitLocation(new VisitLocation(['country_name' => 'Spain']))
-                         ->setUserAgent('bar'),
+            (new Visit(new ShortUrl(''), new Visitor('bar', 'foo', '')))->setVisitLocation(
+                new VisitLocation(['country_name' => 'Spain'])
+            ),
         ])->shouldBeCalledTimes(1);
 
         $this->commandTester->execute([
