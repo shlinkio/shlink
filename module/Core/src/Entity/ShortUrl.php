@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use function count;
 
@@ -25,7 +26,7 @@ class ShortUrl extends AbstractEntity
      * @var string
      * @ORM\Column(name="original_url", type="string", nullable=false, length=1024)
      */
-    private $originalUrl;
+    private $longUrl;
     /**
      * @var string
      * @ORM\Column(
@@ -73,39 +74,23 @@ class ShortUrl extends AbstractEntity
      */
     private $maxVisits;
 
-    public function __construct()
+    public function __construct(string $longUrl, ShortUrlMeta $meta = null)
     {
-        $this->shortCode = '';
+        $meta = $meta ?? ShortUrlMeta::createEmpty();
+
+        $this->longUrl = $longUrl;
         $this->dateCreated = Chronos::now();
         $this->visits = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->validSince = $meta->getValidSince();
+        $this->validUntil = $meta->getValidUntil();
+        $this->maxVisits = $meta->getMaxVisits();
+        $this->shortCode = $meta->getCustomSlug() ?? ''; // TODO logic to calculate short code should be passed somehow
     }
 
     public function getLongUrl(): string
     {
-        return $this->originalUrl;
-    }
-
-    public function setLongUrl(string $longUrl): self
-    {
-        $this->originalUrl = $longUrl;
-        return $this;
-    }
-
-    /**
-     * @deprecated Use getLongUrl() instead
-     */
-    public function getOriginalUrl(): string
-    {
-        return $this->getLongUrl();
-    }
-
-    /**
-     * @deprecated Use setLongUrl() instead
-     */
-    public function setOriginalUrl(string $originalUrl): self
-    {
-        return $this->setLongUrl($originalUrl);
+        return $this->longUrl;
     }
 
     public function getShortCode(): string
@@ -113,6 +98,7 @@ class ShortUrl extends AbstractEntity
         return $this->shortCode;
     }
 
+    // TODO Short code is currently calculated based on the ID, so a setter is needed
     public function setShortCode(string $shortCode): self
     {
         $this->shortCode = $shortCode;
@@ -122,12 +108,6 @@ class ShortUrl extends AbstractEntity
     public function getDateCreated(): Chronos
     {
         return $this->dateCreated;
-    }
-
-    public function setDateCreated(Chronos $dateCreated): self
-    {
-        $this->dateCreated = $dateCreated;
-        return $this;
     }
 
     /**
@@ -147,10 +127,17 @@ class ShortUrl extends AbstractEntity
         return $this;
     }
 
-    public function addTag(Tag $tag): self
+    public function updateMeta(ShortUrlMeta $shortCodeMeta): void
     {
-        $this->tags->add($tag);
-        return $this;
+        if ($shortCodeMeta->hasValidSince()) {
+            $this->validSince = $shortCodeMeta->getValidSince();
+        }
+        if ($shortCodeMeta->hasValidUntil()) {
+            $this->validUntil = $shortCodeMeta->getValidUntil();
+        }
+        if ($shortCodeMeta->hasMaxVisits()) {
+            $this->maxVisits = $shortCodeMeta->getMaxVisits();
+        }
     }
 
     public function getValidSince(): ?Chronos
@@ -158,21 +145,9 @@ class ShortUrl extends AbstractEntity
         return $this->validSince;
     }
 
-    public function setValidSince(?Chronos $validSince): self
-    {
-        $this->validSince = $validSince;
-        return $this;
-    }
-
     public function getValidUntil(): ?Chronos
     {
         return $this->validUntil;
-    }
-
-    public function setValidUntil(?Chronos $validUntil): self
-    {
-        $this->validUntil = $validUntil;
-        return $this;
     }
 
     public function getVisitsCount(): int
@@ -194,12 +169,6 @@ class ShortUrl extends AbstractEntity
     public function getMaxVisits(): ?int
     {
         return $this->maxVisits;
-    }
-
-    public function setMaxVisits(?int $maxVisits): self
-    {
-        $this->maxVisits = $maxVisits;
-        return $this;
     }
 
     public function maxVisitsReached(): bool

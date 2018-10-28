@@ -45,8 +45,7 @@ class GenerateShortcodeCommandTest extends TestCase
     {
         $this->urlShortener->urlToShortCode(Argument::cetera())
             ->willReturn(
-                (new ShortUrl())->setShortCode('abc123')
-                                ->setLongUrl('')
+                (new ShortUrl(''))->setShortCode('abc123')
             )
             ->shouldBeCalledTimes(1);
 

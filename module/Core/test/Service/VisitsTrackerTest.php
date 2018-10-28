@@ -38,7 +38,7 @@ class VisitsTrackerTest extends TestCase
     {
         $shortCode = '123ABC';
         $repo = $this->prophesize(EntityRepository::class);
-        $repo->findOneBy(['shortCode' => $shortCode])->willReturn(new ShortUrl());
+        $repo->findOneBy(['shortCode' => $shortCode])->willReturn(new ShortUrl(''));
 
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledTimes(1);
         $this->em->persist(Argument::any())->shouldBeCalledTimes(1);
@@ -55,7 +55,7 @@ class VisitsTrackerTest extends TestCase
         $shortCode = '123ABC';
         $test = $this;
         $repo = $this->prophesize(EntityRepository::class);
-        $repo->findOneBy(['shortCode' => $shortCode])->willReturn(new ShortUrl());
+        $repo->findOneBy(['shortCode' => $shortCode])->willReturn(new ShortUrl(''));
 
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledTimes(1);
         $this->em->persist(Argument::any())->will(function ($args) use ($test) {
@@ -74,14 +74,14 @@ class VisitsTrackerTest extends TestCase
     public function infoReturnsVisistForCertainShortCode()
     {
         $shortCode = '123ABC';
-        $shortUrl = (new ShortUrl())->setOriginalUrl('http://domain.com/foo/bar');
+        $shortUrl = new ShortUrl('http://domain.com/foo/bar');
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['shortCode' => $shortCode])->willReturn($shortUrl);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledTimes(1);
 
         $list = [
-            new Visit(),
-            new Visit(),
+            new Visit(new ShortUrl(''), Visitor::emptyInstance()),
+            new Visit(new ShortUrl(''), Visitor::emptyInstance()),
         ];
         $repo2 = $this->prophesize(VisitRepository::class);
         $repo2->findVisitsByShortUrl($shortUrl, null)->willReturn($list);

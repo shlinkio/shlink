@@ -62,7 +62,7 @@ class GeneratePreviewCommand extends Command
             $page += 1;
 
             foreach ($shortUrls as $shortUrl) {
-                $this->processUrl($shortUrl->getOriginalUrl(), $output);
+                $this->processUrl($shortUrl->getLongUrl(), $output);
             }
         } while ($page <= $shortUrls->count());
 

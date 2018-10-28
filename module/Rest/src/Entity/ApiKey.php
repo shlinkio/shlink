@@ -36,32 +36,16 @@ class ApiKey extends AbstractEntity
      */
     private $enabled;
 
-    public function __construct()
+    public function __construct(?Chronos $expirationDate = null)
     {
-        $this->enabled = true;
         $this->key = $this->generateV4Uuid();
-    }
-
-    public function getKey(): string
-    {
-        return $this->key;
-    }
-
-    public function setKey(string $key): self
-    {
-        $this->key = $key;
-        return $this;
+        $this->expirationDate = $expirationDate;
+        $this->enabled = true;
     }
 
     public function getExpirationDate(): ?Chronos
     {
         return $this->expirationDate;
-    }
-
-    public function setExpirationDate(Chronos $expirationDate): self
-    {
-        $this->expirationDate = $expirationDate;
-        return $this;
     }
 
     public function isExpired(): bool
@@ -78,15 +62,10 @@ class ApiKey extends AbstractEntity
         return $this->enabled;
     }
 
-    public function setEnabled(bool $enabled): self
-    {
-        $this->enabled = $enabled;
-        return $this;
-    }
-
     public function disable(): self
     {
-        return $this->setEnabled(false);
+        $this->enabled = false;
+        return $this;
     }
 
     /**
@@ -99,6 +78,6 @@ class ApiKey extends AbstractEntity
 
     public function __toString(): string
     {
-        return $this->getKey();
+        return $this->key;
     }
 }

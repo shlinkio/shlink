@@ -80,7 +80,7 @@ class UpdateTagActionTest extends TestCase
             'newName' => 'bar',
         ]);
         /** @var MethodProphecy $rename */
-        $rename = $this->tagService->renameTag('foo', 'bar')->willReturn(new Tag());
+        $rename = $this->tagService->renameTag('foo', 'bar')->willReturn(new Tag('bar'));
 
         $resp = $this->action->handle($request);
 

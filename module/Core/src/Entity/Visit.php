@@ -9,6 +9,7 @@ use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
+use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 
 /**
@@ -54,58 +55,13 @@ class Visit extends AbstractEntity implements JsonSerializable
      */
     private $visitLocation;
 
-    public function __construct()
-    {
-        $this->date = Chronos::now();
-    }
-
-    public function getReferer(): string
-    {
-        return $this->referer;
-    }
-
-    public function setReferer(string $referer): self
-    {
-        $this->referer = $referer;
-        return $this;
-    }
-
-    public function getDate(): Chronos
-    {
-        return $this->date;
-    }
-
-    public function setDate(Chronos $date): self
-    {
-        $this->date = $date;
-        return $this;
-    }
-
-    public function getShortUrl(): ShortUrl
-    {
-        return $this->shortUrl;
-    }
-
-    public function setShortUrl(ShortUrl $shortUrl): self
+    public function __construct(ShortUrl $shortUrl, Visitor $visitor, ?Chronos $date = null)
     {
         $this->shortUrl = $shortUrl;
-        return $this;
-    }
-
-    public function getRemoteAddr(): ?string
-    {
-        return $this->remoteAddr;
-    }
-
-    public function setRemoteAddr(?string $remoteAddr): self
-    {
-        $this->remoteAddr = $this->obfuscateAddress($remoteAddr);
-        return $this;
-    }
-
-    public function hasRemoteAddr(): bool
-    {
-        return ! empty($this->remoteAddr);
+        $this->date = $date ?? Chronos::now();
+        $this->userAgent = $visitor->getUserAgent();
+        $this->referer = $visitor->getReferer();
+        $this->remoteAddr = $this->obfuscateAddress($visitor->getRemoteAddress());
     }
 
     private function obfuscateAddress(?string $address): ?string
@@ -122,15 +78,14 @@ class Visit extends AbstractEntity implements JsonSerializable
         }
     }
 
-    public function getUserAgent(): string
+    public function getRemoteAddr(): ?string
     {
-        return $this->userAgent;
+        return $this->remoteAddr;
     }
 
-    public function setUserAgent(string $userAgent): self
+    public function hasRemoteAddr(): bool
     {
-        $this->userAgent = $userAgent;
-        return $this;
+        return ! empty($this->remoteAddr);
     }
 
     public function getVisitLocation(): VisitLocation

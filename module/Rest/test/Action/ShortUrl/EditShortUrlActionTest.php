@@ -82,7 +82,9 @@ class EditShortUrlActionTest extends TestCase
                                                       ->withParsedBody([
                                                           'maxVisits' => 5,
                                                       ]);
-        $updateMeta = $this->shortUrlService->updateMetadataByShortCode(Argument::cetera())->willReturn(new ShortUrl());
+        $updateMeta = $this->shortUrlService->updateMetadataByShortCode(Argument::cetera())->willReturn(
+            new ShortUrl('')
+        );
 
         $resp = $this->action->handle($request);
 

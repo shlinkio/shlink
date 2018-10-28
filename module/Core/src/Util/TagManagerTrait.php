@@ -22,7 +22,7 @@ trait TagManagerTrait
         $entities = [];
         foreach ($tags as $tagName) {
             $tagName = $this->normalizeTagName($tagName);
-            $tag = $em->getRepository(Tag::class)->findOneBy(['name' => $tagName]) ?: (new Tag())->setName($tagName);
+            $tag = $em->getRepository(Tag::class)->findOneBy(['name' => $tagName]) ?: new Tag($tagName);
             $em->persist($tag);
             $entities[] = $tag;
         }

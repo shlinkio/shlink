@@ -76,7 +76,7 @@ class TagService implements TagServiceInterface
             throw EntityDoesNotExistException::createFromEntityAndConditions(Tag::class, $criteria);
         }
 
-        $tag->setName($newName);
+        $tag->rename($newName);
 
         /** @var ORM\EntityManager $em */
         $em = $this->em;

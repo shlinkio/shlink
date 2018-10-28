@@ -8,6 +8,7 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use ShlinkioTest\Shlink\Common\DbUnit\DatabaseTestCase;
 use function sprintf;
@@ -35,11 +36,14 @@ class VisitRepositoryTest extends DatabaseTestCase
      */
     public function findUnlocatedVisitsReturnsProperVisits()
     {
+        $shortUrl = new ShortUrl('');
+        $this->getEntityManager()->persist($shortUrl);
+
         for ($i = 0; $i < 6; $i++) {
-            $visit = new Visit();
+            $visit = new Visit($shortUrl, Visitor::emptyInstance());
 
             if ($i % 2 === 0) {
-                $location = new VisitLocation();
+                $location = new VisitLocation([]);
                 $this->getEntityManager()->persist($location);
                 $visit->setVisitLocation($location);
             }
@@ -56,15 +60,11 @@ class VisitRepositoryTest extends DatabaseTestCase
      */
     public function findVisitsByShortUrlReturnsProperData()
     {
-        $shortUrl = new ShortUrl();
-        $shortUrl->setOriginalUrl('');
+        $shortUrl = new ShortUrl('');
         $this->getEntityManager()->persist($shortUrl);
 
         for ($i = 0; $i < 6; $i++) {
-            $visit = new Visit();
-            $visit->setShortUrl($shortUrl)
-                  ->setDate(Chronos::parse(sprintf('2016-01-0%s', $i + 1)));
-
+            $visit = new Visit($shortUrl, Visitor::emptyInstance(), Chronos::parse(sprintf('2016-01-0%s', $i + 1)));
             $this->getEntityManager()->persist($visit);
         }
         $this->getEntityManager()->flush();

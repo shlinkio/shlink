@@ -43,7 +43,7 @@ class ResolveUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
-        $shortUrl = (new ShortUrl())->setLongUrl($expectedUrl);
+        $shortUrl = new ShortUrl($expectedUrl);
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
                                                        ->shouldBeCalledTimes(1);
 

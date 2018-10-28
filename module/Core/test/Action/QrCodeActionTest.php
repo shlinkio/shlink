@@ -84,7 +84,7 @@ class QrCodeActionTest extends TestCase
     public function aCorrectRequestReturnsTheQrCodeResponse()
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn((new ShortUrl())->setLongUrl(''))
+        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(new ShortUrl(''))
                                                        ->shouldBeCalledTimes(1);
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 

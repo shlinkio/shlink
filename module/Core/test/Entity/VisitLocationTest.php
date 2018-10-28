@@ -18,8 +18,7 @@ class VisitLocationTest extends TestCase
             'longitude' => -2000.4,
         ];
 
-        $location = new VisitLocation();
-        $location->exchangeArray($payload);
+        $location = new VisitLocation($payload);
 
         $this->assertSame('1000.7', $location->getLatitude());
         $this->assertSame('-2000.4', $location->getLongitude());

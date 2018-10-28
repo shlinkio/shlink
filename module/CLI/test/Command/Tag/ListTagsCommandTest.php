@@ -61,8 +61,8 @@ class ListTagsCommandTest extends TestCase
     {
         /** @var MethodProphecy $listTags */
         $listTags = $this->tagService->listTags()->willReturn([
-            (new Tag())->setName('foo'),
-            (new Tag())->setName('bar'),
+            new Tag('foo'),
+            new Tag('bar'),
         ]);
 
         $this->commandTester->execute([]);

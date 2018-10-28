@@ -60,18 +60,10 @@ class ShortUrlService implements ShortUrlServiceInterface
     /**
      * @throws InvalidShortCodeException
      */
-    public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortCodeMeta): ShortUrl
+    public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortUrlMeta): ShortUrl
     {
         $shortUrl = $this->findByShortCode($this->em, $shortCode);
-        if ($shortCodeMeta->hasValidSince()) {
-            $shortUrl->setValidSince($shortCodeMeta->getValidSince());
-        }
-        if ($shortCodeMeta->hasValidUntil()) {
-            $shortUrl->setValidUntil($shortCodeMeta->getValidUntil());
-        }
-        if ($shortCodeMeta->hasMaxVisits()) {
-            $shortUrl->setMaxVisits($shortCodeMeta->getMaxVisits());
-        }
+        $shortUrl->updateMeta($shortUrlMeta);
 
         /** @var ORM\EntityManager $em */
         $em = $this->em;

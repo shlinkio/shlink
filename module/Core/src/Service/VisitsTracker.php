@@ -34,11 +34,7 @@ class VisitsTracker implements VisitsTrackerInterface
             'shortCode' => $shortCode,
         ]);
 
-        $visit = new Visit();
-        $visit->setShortUrl($shortUrl)
-              ->setUserAgent($visitor->getUserAgent())
-              ->setReferer($visitor->getReferer())
-              ->setRemoteAddr($visitor->getRemoteAddress());
+        $visit = new Visit($shortUrl, $visitor);
 
         /** @var ORM\EntityManager $em */
         $em = $this->em;

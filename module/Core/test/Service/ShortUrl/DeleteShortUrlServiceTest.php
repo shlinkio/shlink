@@ -11,6 +11,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
+use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\DeleteShortUrlsOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlService;
@@ -30,10 +31,10 @@ class DeleteShortUrlServiceTest extends TestCase
 
     public function setUp()
     {
-        $shortUrl = (new ShortUrl())->setShortCode('abc123')
-                                    ->setVisits(new ArrayCollection(array_map(function () {
-                                        return new Visit();
-                                    }, range(0, 10))));
+        $shortUrl = (new ShortUrl(''))->setShortCode('abc123')
+                                      ->setVisits(new ArrayCollection(array_map(function () {
+                                          return new Visit(new ShortUrl(''), Visitor::emptyInstance());
+                                      }, range(0, 10))));
 
         $this->em = $this->prophesize(EntityManagerInterface::class);
 

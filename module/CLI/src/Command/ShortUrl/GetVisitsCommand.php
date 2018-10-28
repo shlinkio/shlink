@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,7 +14,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
-use function array_values;
+use function array_map;
+use function Shlinkio\Shlink\Common\pick;
 
 class GetVisitsCommand extends Command
 {
@@ -87,17 +89,11 @@ class GetVisitsCommand extends Command
         $endDate = $this->getDateOption($input, 'endDate');
 
         $visits = $this->visitsTracker->info($shortCode, new DateRange($startDate, $endDate));
-        $rows = [];
-        foreach ($visits as $row) {
-            $rowData = $row->jsonSerialize();
-
-            // Unset location info and remote addr
-            unset($rowData['visitLocation'], $rowData['remoteAddr']);
-
-            $rowData['country'] = $row->getVisitLocation()->getCountryName();
-
-            $rows[] = array_values($rowData);
-        }
+        $rows = array_map(function (Visit $visit) {
+            $rowData = $visit->jsonSerialize();
+            $rowData['country'] = $visit->getVisitLocation()->getCountryName();
+            return pick($rowData, ['referer', 'date', 'userAgent', 'country']);
+        }, $visits);
         $io->table([
             $this->translator->translate('Referer'),
             $this->translator->translate('Date'),

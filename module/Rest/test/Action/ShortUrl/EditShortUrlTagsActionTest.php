@@ -60,7 +60,7 @@ class EditShortUrlTagsActionTest extends TestCase
     public function tagsListIsReturnedIfCorrectShortCodeIsProvided()
     {
         $shortCode = 'abc123';
-        $this->shortUrlService->setTagsByShortCode($shortCode, [])->willReturn(new ShortUrl())
+        $this->shortUrlService->setTagsByShortCode($shortCode, [])->willReturn(new ShortUrl(''))
                                                                   ->shouldBeCalledTimes(1);
 
         $response = $this->action->handle(
