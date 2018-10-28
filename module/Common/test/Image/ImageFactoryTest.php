@@ -5,6 +5,7 @@ namespace ShlinkioTest\Shlink\Common\Image;
 
 use mikehaertl\wkhtmlto\Image;
 use PHPUnit\Framework\TestCase;
+use ReflectionObject;
 use Shlinkio\Shlink\Common\Image\ImageFactory;
 use Zend\ServiceManager\ServiceManager;
 
@@ -31,7 +32,7 @@ class ImageFactoryTest extends TestCase
         ]]), '');
         $this->assertInstanceOf(Image::class, $image);
 
-        $ref = new \ReflectionObject($image);
+        $ref = new ReflectionObject($image);
         $page = $ref->getProperty('_page');
         $page->setAccessible(true);
         $this->assertNull($page->getValue($image));
@@ -50,7 +51,7 @@ class ImageFactoryTest extends TestCase
         ]]), '', ['url' => $expectedPage]);
         $this->assertInstanceOf(Image::class, $image);
 
-        $ref = new \ReflectionObject($image);
+        $ref = new ReflectionObject($image);
         $page = $ref->getProperty('_page');
         $page->setAccessible(true);
         $this->assertEquals($expectedPage, $page->getValue($image));

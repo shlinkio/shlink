@@ -16,6 +16,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\Diactoros\Uri;
 use Zend\I18n\Translator\TranslatorInterface;
+use function array_merge;
+use function explode;
+use function sprintf;
 
 class GenerateShortUrlCommand extends Command
 {
@@ -107,8 +110,8 @@ class GenerateShortUrlCommand extends Command
         $tags = $input->getOption('tags');
         $processedTags = [];
         foreach ($tags as $key => $tag) {
-            $explodedTags = \explode(',', $tag);
-            $processedTags = \array_merge($processedTags, $explodedTags);
+            $explodedTags = explode(',', $tag);
+            $processedTags = array_merge($processedTags, $explodedTags);
         }
         $tags = $processedTags;
         $customSlug = $input->getOption('customSlug');
@@ -126,16 +129,16 @@ class GenerateShortUrlCommand extends Command
             $shortUrl = $this->buildShortUrl($this->domainConfig, $shortCode);
 
             $io->writeln([
-                \sprintf('%s <info>%s</info>', $this->translator->translate('Processed long URL:'), $longUrl),
-                \sprintf('%s <info>%s</info>', $this->translator->translate('Generated short URL:'), $shortUrl),
+                sprintf('%s <info>%s</info>', $this->translator->translate('Processed long URL:'), $longUrl),
+                sprintf('%s <info>%s</info>', $this->translator->translate('Generated short URL:'), $shortUrl),
             ]);
         } catch (InvalidUrlException $e) {
-            $io->error(\sprintf(
+            $io->error(sprintf(
                 $this->translator->translate('Provided URL "%s" is invalid. Try with a different one.'),
                 $longUrl
             ));
         } catch (NonUniqueSlugException $e) {
-            $io->error(\sprintf(
+            $io->error(sprintf(
                 $this->translator->translate(
                     'Provided slug "%s" is already in use by another URL. Try with a different one.'
                 ),

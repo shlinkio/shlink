@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Factory;
 
+use ArrayAccess;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
@@ -72,7 +73,7 @@ class DottedAccessConfigAbstractFactory implements AbstractFactoryInterface
         }
 
         $value = $array[$key];
-        if (! empty($keys) && (is_array($value) || $value instanceof \ArrayAccess)) {
+        if (! empty($keys) && (is_array($value) || $value instanceof ArrayAccess)) {
             $value = $this->readKeysFromArray($keys, $value);
         }
 

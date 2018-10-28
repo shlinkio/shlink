@@ -6,6 +6,7 @@ namespace ShlinkMigrations;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use PDO;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 
@@ -38,7 +39,7 @@ final class Version20180913205455 extends AbstractMigration
            ->set('v.remote_addr', ':obfuscatedAddr')
            ->where('v.id=:id');
 
-        while ($row = $st->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
             $addr = $row['remote_addr'] ?? null;
             if ($addr === null) {
                 continue;

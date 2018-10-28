@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
+use ReflectionObject;
 use Shlinkio\Shlink\Installer\Command\InstallCommand;
 use Shlinkio\Shlink\Installer\Config\ConfigCustomizerManagerInterface;
 use Shlinkio\Shlink\Installer\Config\Plugin\ConfigCustomizerInterface;
@@ -124,7 +125,7 @@ class InstallCommandTest extends TestCase
      */
     public function whenCommandIsUpdatePreviousConfigCanBeImported()
     {
-        $ref = new \ReflectionObject($this->command);
+        $ref = new ReflectionObject($this->command);
         $prop = $ref->getProperty('isUpdate');
         $prop->setAccessible(true);
         $prop->setValue($this->command, true);

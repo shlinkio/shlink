@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Exception;
 
 use Throwable;
+use function sprintf;
 
 class DeleteShortUrlException extends RuntimeException
 {
@@ -20,7 +21,7 @@ class DeleteShortUrlException extends RuntimeException
 
     public static function fromVisitsThreshold(int $threshold, string $shortCode): self
     {
-        return new self($threshold, \sprintf(
+        return new self($threshold, sprintf(
             'Impossible to delete short URL with short code "%s" since it has more than "%s" visits.',
             $shortCode,
             $threshold

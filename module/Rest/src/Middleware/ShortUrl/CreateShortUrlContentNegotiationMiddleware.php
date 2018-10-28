@@ -9,6 +9,10 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\JsonResponse;
+use function array_shift;
+use function explode;
+use function strpos;
+use function strtolower;
 
 class CreateShortUrlContentNegotiationMiddleware implements MiddlewareInterface
 {
@@ -54,15 +58,15 @@ class CreateShortUrlContentNegotiationMiddleware implements MiddlewareInterface
             return self::JSON;
         }
 
-        $format = \strtolower((string) $query['format']);
+        $format = strtolower((string) $query['format']);
         return $format === 'txt' ? self::PLAIN_TEXT : self::JSON;
     }
 
     private function determineAcceptTypeFromHeader(string $acceptValue): string
     {
-        $accepts = \explode(',', $acceptValue);
-        $accept = \strtolower(\array_shift($accepts));
-        return \strpos($accept, 'text/plain') !== false ? self::PLAIN_TEXT : self::JSON;
+        $accepts = explode(',', $acceptValue);
+        $accept = strtolower(array_shift($accepts));
+        return strpos($accept, 'text/plain') !== false ? self::PLAIN_TEXT : self::JSON;
     }
 
     private function determineBody(JsonResponse $resp): string

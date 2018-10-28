@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Installer\Model;
 
+use PDO;
 use Shlinkio\Shlink\Common\Collection\PathCollection;
 use Shlinkio\Shlink\Installer\Config\Plugin\ApplicationConfigCustomizer;
 use Shlinkio\Shlink\Installer\Config\Plugin\DatabaseConfigCustomizer;
@@ -206,7 +207,7 @@ final class CustomizableAppConfig implements ArraySerializableInterface
 
             if ($dbDriver === 'pdo_mysql') {
                 $config['entity_manager']['connection']['driverOptions'] = [
-                    \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
                 ];
             }
         }

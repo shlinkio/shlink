@@ -13,6 +13,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
+use function array_values;
+use function count;
+use function explode;
+use function implode;
+use function sprintf;
 
 class ListShortUrlsCommand extends Command
 {
@@ -97,7 +102,7 @@ class ListShortUrlsCommand extends Command
         $page = (int) $input->getOption('page');
         $searchTerm = $input->getOption('searchTerm');
         $tags = $input->getOption('tags');
-        $tags = ! empty($tags) ? \explode(',', $tags) : [];
+        $tags = ! empty($tags) ? explode(',', $tags) : [];
         $showTags = $input->getOption('showTags');
         $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
@@ -120,13 +125,13 @@ class ListShortUrlsCommand extends Command
             foreach ($result as $row) {
                 $shortUrl = $transformer->transform($row);
                 if ($showTags) {
-                    $shortUrl['tags'] = \implode(', ', $shortUrl['tags']);
+                    $shortUrl['tags'] = implode(', ', $shortUrl['tags']);
                 } else {
                     unset($shortUrl['tags']);
                 }
 
                 unset($shortUrl['originalUrl']);
-                $rows[] = \array_values($shortUrl);
+                $rows[] = array_values($shortUrl);
             }
             $io->table($headers, $rows);
 
@@ -135,7 +140,7 @@ class ListShortUrlsCommand extends Command
                 $io->success($this->translator->translate('Short URLs properly listed'));
             } else {
                 $continue = $io->confirm(
-                    \sprintf($this->translator->translate('Continue with page') . ' <options=bold>%s</>?', $page),
+                    sprintf($this->translator->translate('Continue with page') . ' <options=bold>%s</>?', $page),
                     false
                 );
             }
@@ -149,7 +154,7 @@ class ListShortUrlsCommand extends Command
             return null;
         }
 
-        $orderBy = \explode(',', $orderBy);
-        return \count($orderBy) === 1 ? $orderBy[0] : [$orderBy[0] => $orderBy[1]];
+        $orderBy = explode(',', $orderBy);
+        return count($orderBy) === 1 ? $orderBy[0] : [$orderBy[0] => $orderBy[1]];
     }
 }

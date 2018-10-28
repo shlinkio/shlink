@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
@@ -53,7 +54,7 @@ class ListShortUrlsActionTest extends TestCase
     public function anExceptionsReturnsErrorResponse()
     {
         $page = 3;
-        $this->service->listShortUrls($page, null, [], null)->willThrow(\Exception::class)
+        $this->service->listShortUrls($page, null, [], null)->willThrow(Exception::class)
                                                             ->shouldBeCalledTimes(1);
 
         $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams([

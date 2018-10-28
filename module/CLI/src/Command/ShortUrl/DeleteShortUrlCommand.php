@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
+use function sprintf;
 
 class DeleteShortUrlCommand extends Command
 {
@@ -68,7 +69,7 @@ class DeleteShortUrlCommand extends Command
             $this->runDelete($io, $shortCode, $ignoreThreshold);
         } catch (Exception\InvalidShortCodeException $e) {
             $io->error(
-                \sprintf($this->translator->translate('Provided short code "%s" could not be found.'), $shortCode)
+                sprintf($this->translator->translate('Provided short code "%s" could not be found.'), $shortCode)
             );
         } catch (Exception\DeleteShortUrlException $e) {
             $this->retry($io, $shortCode, $e);
@@ -77,7 +78,7 @@ class DeleteShortUrlCommand extends Command
 
     private function retry(SymfonyStyle $io, string $shortCode, Exception\DeleteShortUrlException $e): void
     {
-        $warningMsg = \sprintf($this->translator->translate(
+        $warningMsg = sprintf($this->translator->translate(
             'It was not possible to delete the short URL with short code "%s" because it has more than %s visits.'
         ), $shortCode, $e->getVisitsThreshold());
         $io->writeln('<bg=yellow>' . $warningMsg . '</>');
@@ -93,7 +94,7 @@ class DeleteShortUrlCommand extends Command
     private function runDelete(SymfonyStyle $io, string $shortCode, bool $ignoreThreshold): void
     {
         $this->deleteShortUrlService->deleteByShortCode($shortCode, $ignoreThreshold);
-        $io->success(\sprintf(
+        $io->success(sprintf(
             $this->translator->translate('Short URL with short code "%s" successfully deleted.'),
             $shortCode
         ));

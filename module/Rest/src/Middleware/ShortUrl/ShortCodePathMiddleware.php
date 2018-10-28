@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use function str_replace;
 
 class ShortCodePathMiddleware implements MiddlewareInterface
 {
@@ -24,7 +25,7 @@ class ShortCodePathMiddleware implements MiddlewareInterface
 
         // If the path starts with the old prefix, replace it by the new one
         return $handler->handle(
-            $request->withUri($uri->withPath(\str_replace(self::OLD_PATH_PREFIX, self::NEW_PATH_PREFIX, $path)))
+            $request->withUri($uri->withPath(str_replace(self::OLD_PATH_PREFIX, self::NEW_PATH_PREFIX, $path)))
         );
     }
 }

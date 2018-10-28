@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
+use function count;
 
 /**
  * Class ShortUrl
@@ -176,7 +177,7 @@ class ShortUrl extends AbstractEntity
 
     public function getVisitsCount(): int
     {
-        return \count($this->visits);
+        return count($this->visits);
     }
 
     /**

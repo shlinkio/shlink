@@ -8,6 +8,7 @@ use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use function array_merge;
 
 abstract class AbstractRestAction implements RequestHandlerInterface, RequestMethodInterface, StatusCodeInterface
 {
@@ -28,7 +29,7 @@ abstract class AbstractRestAction implements RequestHandlerInterface, RequestMet
     {
         return [
             'name' => static::class,
-            'middleware' => \array_merge($prevMiddleware, [static::class], $postMiddleware),
+            'middleware' => array_merge($prevMiddleware, [static::class], $postMiddleware),
             'path' => static::ROUTE_PATH,
             'allowed_methods' => static::ROUTE_ALLOWED_METHODS,
         ];

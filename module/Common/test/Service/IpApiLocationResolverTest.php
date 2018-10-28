@@ -9,6 +9,7 @@ use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Service\IpApiLocationResolver;
+use function json_encode;
 
 class IpApiLocationResolverTest extends TestCase
 {
@@ -47,7 +48,7 @@ class IpApiLocationResolverTest extends TestCase
             'time_zone' => '',
         ];
         $response = new Response();
-        $response->getBody()->write(\json_encode($actual));
+        $response->getBody()->write(json_encode($actual));
         $response->getBody()->rewind();
 
         $this->client->get('http://ip-api.com/json/1.2.3.4')->willReturn($response)

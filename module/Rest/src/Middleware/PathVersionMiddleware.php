@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use function strpos;
 
 class PathVersionMiddleware implements MiddlewareInterface
 {
@@ -26,7 +27,7 @@ class PathVersionMiddleware implements MiddlewareInterface
         $path = $uri->getPath();
 
         // If the path does not begin with the version number, prepend v1 by default for BC compatibility purposes
-        if (\strpos($path, '/v') !== 0) {
+        if (strpos($path, '/v') !== 0) {
             $request = $request->withUri($uri->withPath('/v1' . $uri->getPath()));
         }
 

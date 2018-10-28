@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
+use function sprintf;
 
 class EditShortUrlAction extends AbstractRestAction
 {
@@ -63,7 +64,7 @@ class EditShortUrlAction extends AbstractRestAction
             $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => \sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
+                'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
             ], self::STATUS_NOT_FOUND);
         } catch (Exception\ValidationException $e) {
             $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);

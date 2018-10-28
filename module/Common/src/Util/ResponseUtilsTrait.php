@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Util;
 
+use finfo;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
@@ -31,7 +32,7 @@ trait ResponseUtilsTrait
     {
         $body = new Stream($path);
         return new Response($body, 200, ArrayUtils::merge([
-            'Content-Type' => (new \finfo(FILEINFO_MIME))->file($path),
+            'Content-Type' => (new finfo(FILEINFO_MIME))->file($path),
             'Content-Length' => (string) $body->getSize(),
         ], $extraHeaders));
     }

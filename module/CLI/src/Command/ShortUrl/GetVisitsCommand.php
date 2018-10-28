@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
+use function array_values;
 
 class GetVisitsCommand extends Command
 {
@@ -95,7 +96,7 @@ class GetVisitsCommand extends Command
 
             $rowData['country'] = $row->getVisitLocation()->getCountryName();
 
-            $rows[] = \array_values($rowData);
+            $rows[] = array_values($rowData);
         }
         $io->table([
             $this->translator->translate('Referer'),

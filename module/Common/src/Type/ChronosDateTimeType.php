@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Common\Type;
 
 use Cake\Chronos\Chronos;
+use DateTimeInterface;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\DateTimeImmutableType;
@@ -39,14 +40,14 @@ class ChronosDateTimeType extends DateTimeImmutableType
             return $value;
         }
 
-        if ($value instanceof \DateTimeInterface) {
+        if ($value instanceof DateTimeInterface) {
             return $value->format($platform->getDateTimeFormatString());
         }
 
         throw ConversionException::conversionFailedInvalidType(
             $value,
             $this->getName(),
-            ['null', \DateTimeInterface::class]
+            ['null', DateTimeInterface::class]
         );
     }
 }

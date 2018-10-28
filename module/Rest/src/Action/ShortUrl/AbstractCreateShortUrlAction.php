@@ -14,8 +14,10 @@ use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
+use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
+use function sprintf;
 
 abstract class AbstractCreateShortUrlAction extends AbstractRestAction
 {
@@ -80,7 +82,7 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
             $this->logger->warning('Provided Invalid URL. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => \sprintf(
+                'message' => sprintf(
                     $this->translator->translate('Provided URL %s is invalid. Try with a different one.'),
                     $longUrl
                 ),
@@ -89,12 +91,12 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
             $this->logger->warning('Provided non-unique slug. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => \sprintf(
+                'message' => sprintf(
                     $this->translator->translate('Provided slug %s is already in use. Try with a different one.'),
                     $customSlug
                 ),
             ], self::STATUS_BAD_REQUEST);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error('Unexpected error creating short url. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,

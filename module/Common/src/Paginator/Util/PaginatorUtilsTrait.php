@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Common\Paginator\Util;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\ArrayUtils;
+use function array_map;
 
 trait PaginatorUtilsTrait
 {
@@ -25,7 +26,7 @@ trait PaginatorUtilsTrait
 
     private function serializeItems(array $items, ?DataTransformerInterface $transformer = null): array
     {
-        return $transformer === null ? $items : \array_map([$transformer, 'transform'], $items);
+        return $transformer === null ? $items : array_map([$transformer, 'transform'], $items);
     }
 
     /**

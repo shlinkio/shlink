@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Zend\I18n\Translator\Translator;
+use function strpos;
 
 class GetVisitsCommandTest extends TestCase
 {
@@ -88,8 +89,8 @@ class GetVisitsCommandTest extends TestCase
             'shortCode' => $shortCode,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertGreaterThan(0, \strpos($output, 'foo'));
-        $this->assertGreaterThan(0, \strpos($output, 'Spain'));
-        $this->assertGreaterThan(0, \strpos($output, 'bar'));
+        $this->assertGreaterThan(0, strpos($output, 'foo'));
+        $this->assertGreaterThan(0, strpos($output, 'Spain'));
+        $this->assertGreaterThan(0, strpos($output, 'bar'));
     }
 }

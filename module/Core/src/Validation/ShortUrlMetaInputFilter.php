@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Validation;
 
+use DateTime;
 use Zend\I18n\Validator\IsInt;
 use Zend\InputFilter\InputFilter;
 use Zend\Validator\Date;
@@ -28,11 +29,11 @@ class ShortUrlMetaInputFilter extends InputFilter
     private function initialize(): void
     {
         $validSince = $this->createInput(self::VALID_SINCE, false);
-        $validSince->getValidatorChain()->attach(new Date(['format' => \DateTime::ATOM]));
+        $validSince->getValidatorChain()->attach(new Date(['format' => DateTime::ATOM]));
         $this->add($validSince);
 
         $validUntil = $this->createInput(self::VALID_UNTIL, false);
-        $validUntil->getValidatorChain()->attach(new Date(['format' => \DateTime::ATOM]));
+        $validUntil->getValidatorChain()->attach(new Date(['format' => DateTime::ATOM]));
         $this->add($validUntil);
 
         $this->add($this->createInput(self::CUSTOM_SLUG, false));

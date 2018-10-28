@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\DeleteShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
+use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
@@ -49,7 +50,7 @@ class DeleteShortUrlActionTest extends TestCase
      * @test
      * @dataProvider provideExceptions
      */
-    public function returnsErrorResponseInCaseOfException(\Throwable $e, string $error, int $statusCode)
+    public function returnsErrorResponseInCaseOfException(Throwable $e, string $error, int $statusCode)
     {
         $deleteByShortCode = $this->service->deleteByShortCode(Argument::any())->willThrow($e);
 

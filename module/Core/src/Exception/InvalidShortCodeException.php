@@ -3,13 +3,16 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Exception;
 
+use Exception;
+use function sprintf;
+
 class InvalidShortCodeException extends RuntimeException
 {
-    public static function fromCharset($shortCode, $charSet, \Exception $previous = null)
+    public static function fromCharset($shortCode, $charSet, Exception $previous = null)
     {
         $code = $previous !== null ? $previous->getCode() : -1;
         return new static(
-            \sprintf('Provided short code "%s" does not match the char set "%s"', $shortCode, $charSet),
+            sprintf('Provided short code "%s" does not match the char set "%s"', $shortCode, $charSet),
             $code,
             $previous
         );
@@ -17,6 +20,6 @@ class InvalidShortCodeException extends RuntimeException
 
     public static function fromNotFoundShortCode($shortCode)
     {
-        return new static(\sprintf('Provided short code "%s" does not belong to a short URL', $shortCode));
+        return new static(sprintf('Provided short code "%s" does not belong to a short URL', $shortCode));
     }
 }

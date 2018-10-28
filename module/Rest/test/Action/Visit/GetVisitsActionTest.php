@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use Cake\Chronos\Chronos;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -65,7 +66,7 @@ class GetVisitsActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::type(DateRange::class))->willThrow(
-            \Exception::class
+            Exception::class
         )->shouldBeCalledTimes(1);
 
         $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode));

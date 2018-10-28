@@ -14,6 +14,8 @@ use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
 use Shlinkio\Shlink\Core\Options\DeleteShortUrlsOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlService;
+use function array_map;
+use function range;
 
 class DeleteShortUrlServiceTest extends TestCase
 {
@@ -29,9 +31,9 @@ class DeleteShortUrlServiceTest extends TestCase
     public function setUp()
     {
         $shortUrl = (new ShortUrl())->setShortCode('abc123')
-                                    ->setVisits(new ArrayCollection(\array_map(function () {
+                                    ->setVisits(new ArrayCollection(array_map(function () {
                                         return new Visit();
-                                    }, \range(0, 10))));
+                                    }, range(0, 10))));
 
         $this->em = $this->prophesize(EntityManagerInterface::class);
 

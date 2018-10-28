@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
+use function sprintf;
 
 class GeneratePreviewCommand extends Command
 {
@@ -71,7 +72,7 @@ class GeneratePreviewCommand extends Command
     private function processUrl($url, OutputInterface $output): void
     {
         try {
-            $output->write(\sprintf($this->translator->translate('Processing URL %s...'), $url));
+            $output->write(sprintf($this->translator->translate('Processing URL %s...'), $url));
             $this->previewGenerator->generatePreview($url);
             $output->writeln($this->translator->translate(' <info>Success!</info>'));
         } catch (PreviewGenerationException $e) {
