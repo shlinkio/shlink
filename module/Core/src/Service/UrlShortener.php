@@ -18,6 +18,11 @@ use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Exception\RuntimeException;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
+use Throwable;
+use function floor;
+use function fmod;
+use function preg_match;
+use function strlen;
 
 class UrlShortener implements UrlShortenerInterface
 {
@@ -101,7 +106,7 @@ class UrlShortener implements UrlShortenerInterface
 
             $this->em->commit();
             return $shortUrl;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if ($this->em->getConnection()->isTransactionActive()) {
                 $this->em->rollback();
                 $this->em->close();
@@ -137,13 +142,13 @@ class UrlShortener implements UrlShortenerInterface
     private function convertAutoincrementIdToShortCode(float $id): string
     {
         $id += self::ID_INCREMENT; // Increment the Id so that the generated shortcode is not too short
-        $length = \strlen($this->chars);
+        $length = strlen($this->chars);
         $code = '';
 
         while ($id > 0) {
             // Determine the value of the next higher character in the short code and prepend it
-            $code = $this->chars[(int) \fmod($id, $length)] . $code;
-            $id = \floor($id / $length);
+            $code = $this->chars[(int) fmod($id, $length)] . $code;
+            $id = floor($id / $length);
         }
 
         return $this->chars[(int) $id] . $code;
@@ -174,7 +179,7 @@ class UrlShortener implements UrlShortenerInterface
     public function shortCodeToUrl(string $shortCode): ShortUrl
     {
         // Validate short code format
-        if (! \preg_match('|[' . $this->chars . ']+|', $shortCode)) {
+        if (! preg_match('|[' . $this->chars . ']+|', $shortCode)) {
             throw InvalidShortCodeException::fromCharset($shortCode, $this->chars);
         }
 
