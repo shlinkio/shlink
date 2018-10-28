@@ -1,6 +1,12 @@
 tools:
   external_code_coverage: true
 checks:
-    php:
-        code_rating: true
-        duplication: true
+  php:
+    code_rating: true
+    duplication: true
+build:
+  nodes:
+    analysis:
+      tests:
+        override:
+          - php-scrutinizer-run
