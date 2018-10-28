@@ -23,11 +23,7 @@ class ApiKeyService implements ApiKeyServiceInterface
 
     public function create(?Chronos $expirationDate = null): ApiKey
     {
-        $key = new ApiKey();
-        if ($expirationDate !== null) {
-            $key->setExpirationDate($expirationDate);
-        }
-
+        $key = new ApiKey($expirationDate);
         $this->em->persist($key);
         $this->em->flush();
 
@@ -57,6 +53,9 @@ class ApiKeyService implements ApiKeyServiceInterface
         return $apiKey;
     }
 
+    /**
+     * @return ApiKey[]
+     */
     public function listKeys(bool $enabledOnly = false): array
     {
         $conditions = $enabledOnly ? ['enabled' => true] : [];

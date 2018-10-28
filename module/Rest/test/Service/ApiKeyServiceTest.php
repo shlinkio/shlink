@@ -87,8 +87,7 @@ class ApiKeyServiceTest extends TestCase
      */
     public function checkReturnsFalseWhenKeyIsExpired()
     {
-        $key = new ApiKey();
-        $key->setExpirationDate(Chronos::now()->subDay());
+        $key = new ApiKey(Chronos::now()->subDay());
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['key' => '12345'])->willReturn($key)
                                             ->shouldBeCalledTimes(1);

@@ -12,6 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 use function array_filter;
+use function array_map;
 use function sprintf;
 
 class ListKeysCommand extends Command
@@ -54,24 +55,20 @@ class ListKeysCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $enabledOnly = $input->getOption('enabledOnly');
-        $list = $this->apiKeyService->listKeys($enabledOnly);
-        $rows = [];
 
-        /** @var ApiKey $row */
-        foreach ($list as $row) {
-            $key = $row->getKey();
-            $expiration = $row->getExpirationDate();
-            $messagePattern = $this->determineMessagePattern($row);
+        $rows = array_map(function (ApiKey $apiKey) use ($enabledOnly) {
+            $key = (string) $apiKey;
+            $expiration = $apiKey->getExpirationDate();
+            $messagePattern = $this->determineMessagePattern($apiKey);
 
             // Set columns for this row
             $rowData = [sprintf($messagePattern, $key)];
             if (! $enabledOnly) {
-                $rowData[] = sprintf($messagePattern, $this->getEnabledSymbol($row));
+                $rowData[] = sprintf($messagePattern, $this->getEnabledSymbol($apiKey));
             }
             $rowData[] = $expiration !== null ? $expiration->toAtomString() : '-';
-
-            $rows[] = $rowData;
-        }
+            return $rowData;
+        }, $this->apiKeyService->listKeys($enabledOnly));
 
         $io->table(array_filter([
             $this->translator->translate('Key'),

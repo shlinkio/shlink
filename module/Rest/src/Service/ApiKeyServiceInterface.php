@@ -18,6 +18,9 @@ interface ApiKeyServiceInterface
      */
     public function disable(string $key): ApiKey;
 
+    /**
+     * @return ApiKey[]
+     */
     public function listKeys(bool $enabledOnly = false): array;
 
     public function getByKey(string $key): ?ApiKey;

@@ -74,7 +74,7 @@ class AuthenticateActionTest extends TestCase
      */
     public function invalidApiKeyReturnsErrorResponse()
     {
-        $this->apiKeyService->getByKey('foo')->willReturn((new ApiKey())->setEnabled(false))
+        $this->apiKeyService->getByKey('foo')->willReturn((new ApiKey())->disable())
                                              ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
