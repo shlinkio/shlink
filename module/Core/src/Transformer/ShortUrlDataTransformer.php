@@ -47,6 +47,6 @@ class ShortUrlDataTransformer implements DataTransformerInterface
 
     private function serializeTag(Tag $tag): string
     {
-        return $tag->getName();
+        return (string) $tag;
     }
 }

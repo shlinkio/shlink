@@ -24,23 +24,22 @@ class Tag extends AbstractEntity implements JsonSerializable
      */
     private $name;
 
-    public function __construct($name = null)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    public function getName(): string
+    public function rename(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function jsonSerialize(): string
     {
         return $this->name;
     }
 
-    public function setName(string $name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    public function jsonSerialize(): string
+    public function __toString(): string
     {
         return $this->name;
     }

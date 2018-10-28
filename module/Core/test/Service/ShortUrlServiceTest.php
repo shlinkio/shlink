@@ -86,7 +86,7 @@ class ShortUrlServiceTest extends TestCase
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $tagRepo = $this->prophesize(EntityRepository::class);
-        $tagRepo->findOneBy(['name' => 'foo'])->willReturn(new Tag())->shouldbeCalledTimes(1);
+        $tagRepo->findOneBy(['name' => 'foo'])->willReturn(new Tag('foo'))->shouldbeCalledTimes(1);
         $tagRepo->findOneBy(['name' => 'bar'])->willReturn(null)->shouldbeCalledTimes(1);
         $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
 

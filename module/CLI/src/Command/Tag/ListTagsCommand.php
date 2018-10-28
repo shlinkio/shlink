@@ -53,7 +53,7 @@ class ListTagsCommand extends Command
         }
 
         return array_map(function (Tag $tag) {
-            return [$tag->getName()];
+            return [(string) $tag];
         }, $tags);
     }
 }

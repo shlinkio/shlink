@@ -36,7 +36,7 @@ class TagServiceTest extends TestCase
      */
     public function listTagsDelegatesOnRepository()
     {
-        $expected = [new Tag(), new Tag()];
+        $expected = [new Tag('foo'), new Tag('bar')];
 
         $repo = $this->prophesize(EntityRepository::class);
         /** @var MethodProphecy $find */
@@ -75,7 +75,7 @@ class TagServiceTest extends TestCase
     {
         $repo = $this->prophesize(TagRepository::class);
         /** @var MethodProphecy $find */
-        $find = $repo->findOneBy(Argument::cetera())->willReturn(new Tag());
+        $find = $repo->findOneBy(Argument::cetera())->willReturn(new Tag('foo'));
         /** @var MethodProphecy $getRepo */
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
         /** @var MethodProphecy $persist */
@@ -115,7 +115,7 @@ class TagServiceTest extends TestCase
      */
     public function renameValidTagChangesItsName()
     {
-        $expected = new Tag();
+        $expected = new Tag('foo');
 
         $repo = $this->prophesize(TagRepository::class);
         /** @var MethodProphecy $find */
@@ -128,7 +128,7 @@ class TagServiceTest extends TestCase
         $tag = $this->service->renameTag('foo', 'bar');
 
         $this->assertSame($expected, $tag);
-        $this->assertEquals('bar', $tag->getName());
+        $this->assertEquals('bar', (string) $tag);
         $find->shouldHaveBeenCalled();
         $getRepo->shouldHaveBeenCalled();
         $flush->shouldHaveBeenCalled();

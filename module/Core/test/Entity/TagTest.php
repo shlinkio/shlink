@@ -11,10 +11,9 @@ class TagTest extends TestCase
     /**
      * @test
      */
-    public function jsonSerializationOfTagsReturnsItsName()
+    public function jsonSerializationOfTagsReturnsItsStringRepresentation()
     {
-        $tag = new Tag();
-        $tag->setName('This is my name');
-        $this->assertEquals($tag->getName(), $tag->jsonSerialize());
+        $tag = new Tag('This is my name');
+        $this->assertEquals((string) $tag, $tag->jsonSerialize());
     }
 }

@@ -68,7 +68,7 @@ class RenameTagCommandTest extends TestCase
         $oldName = 'foo';
         $newName = 'bar';
         /** @var MethodProphecy $renameTag */
-        $renameTag = $this->tagService->renameTag($oldName, $newName)->willReturn(new Tag());
+        $renameTag = $this->tagService->renameTag($oldName, $newName)->willReturn(new Tag($newName));
 
         $this->commandTester->execute([
             'oldName' => $oldName,
