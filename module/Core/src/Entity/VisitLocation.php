@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\Core\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
-use Zend\Stdlib\ArraySerializableInterface;
 use function array_key_exists;
 
 /**
@@ -17,7 +16,7 @@ use function array_key_exists;
  * @ORM\Entity()
  * @ORM\Table(name="visit_locations")
  */
-class VisitLocation extends AbstractEntity implements ArraySerializableInterface, JsonSerializable
+class VisitLocation extends AbstractEntity implements JsonSerializable
 {
     /**
      * @var string
@@ -55,15 +54,9 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
      */
     private $timezone;
 
-    public function getCountryCode(): string
+    public function __construct(array $locationInfo)
     {
-        return $this->countryCode ?? '';
-    }
-
-    public function setCountryCode(string $countryCode)
-    {
-        $this->countryCode = $countryCode;
-        return $this;
+        $this->exchangeArray($locationInfo);
     }
 
     public function getCountryName(): string
@@ -71,43 +64,9 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
         return $this->countryName ?? '';
     }
 
-    public function setCountryName(string $countryName): self
-    {
-        $this->countryName = $countryName;
-        return $this;
-    }
-
-    public function getRegionName(): string
-    {
-        return $this->regionName ?? '';
-    }
-
-    public function setRegionName(string $regionName): self
-    {
-        $this->regionName = $regionName;
-        return $this;
-    }
-
-    public function getCityName(): string
-    {
-        return $this->cityName ?? '';
-    }
-
-    public function setCityName(string $cityName): self
-    {
-        $this->cityName = $cityName;
-        return $this;
-    }
-
     public function getLatitude(): string
     {
         return $this->latitude ?? '';
-    }
-
-    public function setLatitude(string $latitude): self
-    {
-        $this->latitude = $latitude;
-        return $this;
     }
 
     public function getLongitude(): string
@@ -115,55 +74,40 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
         return $this->longitude ?? '';
     }
 
-    public function setLongitude(string $longitude): self
+    public function getCityName(): string
     {
-        $this->longitude = $longitude;
-        return $this;
-    }
-
-    public function getTimezone(): string
-    {
-        return $this->timezone ?? '';
-    }
-
-    public function setTimezone(string $timezone): self
-    {
-        $this->timezone = $timezone;
-        return $this;
+        return $this->cityName ?? '';
     }
 
     /**
      * Exchange internal values from provided array
      */
-    public function exchangeArray(array $array): void
+    private function exchangeArray(array $array): void
     {
         if (array_key_exists('country_code', $array)) {
-            $this->setCountryCode((string) $array['country_code']);
+            $this->countryCode = (string) $array['country_code'];
         }
         if (array_key_exists('country_name', $array)) {
-            $this->setCountryName((string) $array['country_name']);
+            $this->countryName = (string) $array['country_name'];
         }
         if (array_key_exists('region_name', $array)) {
-            $this->setRegionName((string) $array['region_name']);
+            $this->regionName = (string) $array['region_name'];
         }
         if (array_key_exists('city', $array)) {
-            $this->setCityName((string) $array['city']);
+            $this->cityName = (string) $array['city'];
         }
         if (array_key_exists('latitude', $array)) {
-            $this->setLatitude((string) $array['latitude']);
+            $this->latitude = (string) $array['latitude'];
         }
         if (array_key_exists('longitude', $array)) {
-            $this->setLongitude((string) $array['longitude']);
+            $this->longitude = (string) $array['longitude'];
         }
         if (array_key_exists('time_zone', $array)) {
-            $this->setTimezone((string) $array['time_zone']);
+            $this->timezone = (string) $array['time_zone'];
         }
     }
 
-    /**
-     * Return an array representation of the object
-     */
-    public function getArrayCopy(): array
+    public function jsonSerialize(): array
     {
         return [
             'countryCode' => $this->countryCode,
@@ -174,10 +118,5 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
             'longitude' => $this->longitude,
             'timezone' => $this->timezone,
         ];
-    }
-
-    public function jsonSerialize(): array
-    {
-        return $this->getArrayCopy();
     }
 }

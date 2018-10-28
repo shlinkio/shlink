@@ -80,8 +80,7 @@ class ProcessVisitsCommand extends Command
             try {
                 $result = $this->ipLocationResolver->resolveIpLocation($ipAddr);
 
-                $location = new VisitLocation();
-                $location->exchangeArray($result);
+                $location = new VisitLocation($result);
                 $visit->setVisitLocation($location);
                 $this->visitService->saveVisit($visit);
 

@@ -80,7 +80,7 @@ class GetVisitsCommandTest extends TestCase
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::any())->willReturn([
             (new Visit())->setReferer('foo')
-                         ->setVisitLocation((new VisitLocation())->setCountryName('Spain'))
+                         ->setVisitLocation(new VisitLocation(['country_name' => 'Spain']))
                          ->setUserAgent('bar'),
         ])->shouldBeCalledTimes(1);
 

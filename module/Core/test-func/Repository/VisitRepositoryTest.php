@@ -39,7 +39,7 @@ class VisitRepositoryTest extends DatabaseTestCase
             $visit = new Visit();
 
             if ($i % 2 === 0) {
-                $location = new VisitLocation();
+                $location = new VisitLocation([]);
                 $this->getEntityManager()->persist($location);
                 $visit->setVisitLocation($location);
             }
