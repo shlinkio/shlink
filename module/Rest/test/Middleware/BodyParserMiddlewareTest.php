@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Stream;
+use function array_shift;
 
 class BodyParserMiddlewareTest extends TestCase
 {

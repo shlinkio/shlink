@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\Core\Entity;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
@@ -18,7 +19,7 @@ use Shlinkio\Shlink\Core\Repository\VisitRepository;
  * @ORM\Entity(repositoryClass=VisitRepository::class)
  * @ORM\Table(name="visits")
  */
-class Visit extends AbstractEntity implements \JsonSerializable
+class Visit extends AbstractEntity implements JsonSerializable
 {
     /**
      * @var string

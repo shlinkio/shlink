@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Action;
 
+use finfo;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
@@ -17,6 +18,8 @@ use Shlinkio\Shlink\Core\Service\UrlShortener;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
+use const FILEINFO_MIME;
+use function filesize;
 
 class PreviewActionTest extends TestCase
 {
@@ -76,7 +79,7 @@ class PreviewActionTest extends TestCase
         );
 
         $this->assertEquals(filesize($path), $resp->getHeaderLine('Content-length'));
-        $this->assertEquals((new \finfo(FILEINFO_MIME))->file($path), $resp->getHeaderLine('Content-type'));
+        $this->assertEquals((new finfo(FILEINFO_MIME))->file($path), $resp->getHeaderLine('Content-type'));
     }
 
     /**

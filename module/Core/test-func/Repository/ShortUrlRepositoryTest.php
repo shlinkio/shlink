@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use ShlinkioTest\Shlink\Common\DbUnit\DatabaseTestCase;
+use function count;
 
 class ShortUrlRepositoryTest extends DatabaseTestCase
 {
@@ -131,7 +132,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $result = $this->repo->findList(null, null, null, [], ['longUrl' => 'ASC']);
 
-        $this->assertCount(\count($urls), $result);
+        $this->assertCount(count($urls), $result);
         $this->assertEquals('a', $result[0]->getLongUrl());
         $this->assertEquals('b', $result[1]->getLongUrl());
         $this->assertEquals('c', $result[2]->getLongUrl());

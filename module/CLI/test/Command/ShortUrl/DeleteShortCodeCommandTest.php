@@ -12,6 +12,8 @@ use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Zend\I18n\Translator\Translator;
+use function array_pop;
+use function sprintf;
 
 class DeleteShortCodeCommandTest extends TestCase
 {
@@ -47,7 +49,7 @@ class DeleteShortCodeCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains(\sprintf('Short URL with short code "%s" successfully deleted.', $shortCode), $output);
+        $this->assertContains(sprintf('Short URL with short code "%s" successfully deleted.', $shortCode), $output);
         $deleteByShortCode->shouldHaveBeenCalledTimes(1);
     }
 
@@ -64,7 +66,7 @@ class DeleteShortCodeCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains(\sprintf('Provided short code "%s" could not be found.', $shortCode), $output);
+        $this->assertContains(sprintf('Provided short code "%s" could not be found.', $shortCode), $output);
         $deleteByShortCode->shouldHaveBeenCalledTimes(1);
     }
 
@@ -76,7 +78,7 @@ class DeleteShortCodeCommandTest extends TestCase
         $shortCode = 'abc123';
         $deleteByShortCode = $this->service->deleteByShortCode($shortCode, Argument::type('bool'))->will(
             function (array $args) {
-                $ignoreThreshold = \array_pop($args);
+                $ignoreThreshold = array_pop($args);
 
                 if (!$ignoreThreshold) {
                     throw new Exception\DeleteShortUrlException(10);
@@ -88,11 +90,11 @@ class DeleteShortCodeCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains(\sprintf(
+        $this->assertContains(sprintf(
             'It was not possible to delete the short URL with short code "%s" because it has more than 10 visits.',
             $shortCode
         ), $output);
-        $this->assertContains(\sprintf('Short URL with short code "%s" successfully deleted.', $shortCode), $output);
+        $this->assertContains(sprintf('Short URL with short code "%s" successfully deleted.', $shortCode), $output);
         $deleteByShortCode->shouldHaveBeenCalledTimes(2);
     }
 
@@ -110,7 +112,7 @@ class DeleteShortCodeCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains(\sprintf(
+        $this->assertContains(sprintf(
             'It was not possible to delete the short URL with short code "%s" because it has more than 10 visits.',
             $shortCode
         ), $output);

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Exception;
 
-class RuntimeException extends \RuntimeException implements ExceptionInterface
+use RuntimeException as SplRuntimeException;
+
+class RuntimeException extends SplRuntimeException implements ExceptionInterface
 {
 }

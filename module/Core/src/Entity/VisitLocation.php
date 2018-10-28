@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Zend\Stdlib\ArraySerializableInterface;
+use function array_key_exists;
 
 /**
  * Class VisitLocation
@@ -15,7 +17,7 @@ use Zend\Stdlib\ArraySerializableInterface;
  * @ORM\Entity()
  * @ORM\Table(name="visit_locations")
  */
-class VisitLocation extends AbstractEntity implements ArraySerializableInterface, \JsonSerializable
+class VisitLocation extends AbstractEntity implements ArraySerializableInterface, JsonSerializable
 {
     /**
      * @var string
@@ -135,25 +137,25 @@ class VisitLocation extends AbstractEntity implements ArraySerializableInterface
      */
     public function exchangeArray(array $array): void
     {
-        if (\array_key_exists('country_code', $array)) {
+        if (array_key_exists('country_code', $array)) {
             $this->setCountryCode((string) $array['country_code']);
         }
-        if (\array_key_exists('country_name', $array)) {
+        if (array_key_exists('country_name', $array)) {
             $this->setCountryName((string) $array['country_name']);
         }
-        if (\array_key_exists('region_name', $array)) {
+        if (array_key_exists('region_name', $array)) {
             $this->setRegionName((string) $array['region_name']);
         }
-        if (\array_key_exists('city', $array)) {
+        if (array_key_exists('city', $array)) {
             $this->setCityName((string) $array['city']);
         }
-        if (\array_key_exists('latitude', $array)) {
+        if (array_key_exists('latitude', $array)) {
             $this->setLatitude((string) $array['latitude']);
         }
-        if (\array_key_exists('longitude', $array)) {
+        if (array_key_exists('longitude', $array)) {
             $this->setLongitude((string) $array['longitude']);
         }
-        if (\array_key_exists('time_zone', $array)) {
+        if (array_key_exists('time_zone', $array)) {
             $this->setTimezone((string) $array['time_zone']);
         }
     }

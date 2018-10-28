@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Exception;
 
+use function sprintf;
+
 class PreviewGenerationException extends RuntimeException
 {
     public static function fromImageError($error)

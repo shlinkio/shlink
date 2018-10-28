@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
+use function array_key_exists;
 
 abstract class AbstractTrackingAction implements MiddlewareInterface
 {
@@ -69,7 +70,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
             $url = $this->urlShortener->shortCodeToUrl($shortCode);
 
             // Track visit to this short code
-            if ($disableTrackParam === null || ! \array_key_exists($disableTrackParam, $query)) {
+            if ($disableTrackParam === null || ! array_key_exists($disableTrackParam, $query)) {
                 $this->visitTracker->track($shortCode, Visitor::fromRequest($request));
             }
 

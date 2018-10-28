@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Rest\Middleware\PathVersionMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Uri;
+use function array_shift;
 
 class PathVersionMiddlewareTest extends TestCase
 {
@@ -49,7 +50,7 @@ class PathVersionMiddlewareTest extends TestCase
 
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $delegate->handle(Argument::type(Request::class))->will(function (array $args) use ($request) {
-            $req = \array_shift($args);
+            $req = array_shift($args);
 
             Assert::assertNotSame($request, $req);
             Assert::assertEquals('/v1/bar/baz', $req->getUri()->getPath());

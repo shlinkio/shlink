@@ -6,6 +6,9 @@ namespace Shlinkio\Shlink\Core\Util;
 use Doctrine\Common\Collections;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use function str_replace;
+use function strtolower;
+use function trim;
 
 trait TagManagerTrait
 {
@@ -35,6 +38,6 @@ trait TagManagerTrait
      */
     private function normalizeTagName($tagName): string
     {
-        return \str_replace(' ', '-', \strtolower(\trim($tagName)));
+        return str_replace(' ', '-', strtolower(trim($tagName)));
     }
 }

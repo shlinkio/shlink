@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Zend\I18n\Translator\Translator;
+use function strpos;
 
 class GenerateShortcodeCommandTest extends TestCase
 {

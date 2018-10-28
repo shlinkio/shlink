@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
+use function sprintf;
 
 class EditShortUrlTagsAction extends AbstractRestAction
 {

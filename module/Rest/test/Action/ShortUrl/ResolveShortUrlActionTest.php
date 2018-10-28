@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -13,6 +14,7 @@ use Shlinkio\Shlink\Rest\Action\ShortUrl\ResolveShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
+use function strpos;
 
 class ResolveShortUrlActionTest extends TestCase
 {
@@ -83,7 +85,7 @@ class ResolveShortUrlActionTest extends TestCase
     public function unexpectedExceptionWillReturnError()
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(\Exception::class)
+        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(Exception::class)
                                                        ->shouldBeCalledTimes(1);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);

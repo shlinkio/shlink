@@ -7,6 +7,7 @@ use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Util\ShortUrlBuilderTrait;
+use function array_map;
 
 class ShortUrlDataTransformer implements DataTransformerInterface
 {
@@ -37,7 +38,7 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             'longUrl' => $longUrl,
             'dateCreated' => $dateCreated !== null ? $dateCreated->toAtomString() : null,
             'visitsCount' => $value->getVisitsCount(),
-            'tags' => \array_map([$this, 'serializeTag'], $value->getTags()->toArray()),
+            'tags' => array_map([$this, 'serializeTag'], $value->getTags()->toArray()),
 
             // Deprecated
             'originalUrl' => $longUrl,

@@ -3,12 +3,18 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Factory;
 
+use ArrayAccess;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
+use function array_shift;
+use function explode;
+use function is_array;
+use function sprintf;
+use function substr_count;
 
 class DottedAccessConfigAbstractFactory implements AbstractFactoryInterface
 {
@@ -72,7 +78,7 @@ class DottedAccessConfigAbstractFactory implements AbstractFactoryInterface
         }
 
         $value = $array[$key];
-        if (! empty($keys) && (is_array($value) || $value instanceof \ArrayAccess)) {
+        if (! empty($keys) && (is_array($value) || $value instanceof ArrayAccess)) {
             $value = $this->readKeysFromArray($keys, $value);
         }
 

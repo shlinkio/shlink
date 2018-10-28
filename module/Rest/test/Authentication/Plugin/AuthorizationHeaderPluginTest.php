@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\I18n\Translator\Translator;
+use function sprintf;
 
 class AuthorizationHeaderPluginTest extends TestCase
 {

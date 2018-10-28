@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
+use function sprintf;
 
 class DeleteShortUrlAction extends AbstractRestAction
 {
@@ -55,7 +56,7 @@ class DeleteShortUrlAction extends AbstractRestAction
             );
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => \sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
+                'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
             ], self::STATUS_NOT_FOUND);
         } catch (Exception\DeleteShortUrlException $e) {
             $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
@@ -65,7 +66,7 @@ class DeleteShortUrlAction extends AbstractRestAction
 
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => \sprintf($messagePlaceholder, $shortCode, $e->getVisitsThreshold()),
+                'message' => sprintf($messagePlaceholder, $shortCode, $e->getVisitsThreshold()),
             ], self::STATUS_BAD_REQUEST);
         }
     }

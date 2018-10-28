@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Common\Factory;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionObject;
 use Shlinkio\Shlink\Common\Factory\EmptyResponseImplicitOptionsMiddlewareFactory;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Expressive\Router\Middleware\ImplicitOptionsMiddleware;
@@ -37,7 +38,7 @@ class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
     {
         $instance = $this->factory->__invoke(new ServiceManager(), '');
 
-        $ref = new \ReflectionObject($instance);
+        $ref = new ReflectionObject($instance);
         $prop = $ref->getProperty('responseFactory');
         $prop->setAccessible(true);
         $this->assertInstanceOf(EmptyResponse::class, $prop->getValue($instance)());

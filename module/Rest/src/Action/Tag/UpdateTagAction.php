@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\I18n\Translator\TranslatorInterface;
+use function sprintf;
 
 class UpdateTagAction extends AbstractRestAction
 {

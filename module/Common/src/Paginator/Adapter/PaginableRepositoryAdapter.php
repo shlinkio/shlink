@@ -5,6 +5,8 @@ namespace Shlinkio\Shlink\Common\Paginator\Adapter;
 
 use Shlinkio\Shlink\Common\Repository\PaginableRepositoryInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
+use function strip_tags;
+use function trim;
 
 class PaginableRepositoryAdapter implements AdapterInterface
 {
@@ -34,7 +36,7 @@ class PaginableRepositoryAdapter implements AdapterInterface
         $orderBy = null
     ) {
         $this->paginableRepository = $paginableRepository;
-        $this->searchTerm = $searchTerm !== null ? \trim(\strip_tags($searchTerm)) : null;
+        $this->searchTerm = $searchTerm !== null ? trim(strip_tags($searchTerm)) : null;
         $this->orderBy = $orderBy;
         $this->tags = $tags;
     }

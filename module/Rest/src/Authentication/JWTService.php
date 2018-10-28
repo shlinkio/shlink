@@ -7,6 +7,7 @@ use Firebase\JWT\JWT;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
+use UnexpectedValueException;
 use function time;
 
 class JWTService implements JWTServiceInterface
@@ -68,7 +69,7 @@ class JWTService implements JWTServiceInterface
             // If no exception is thrown while decoding the token, it is considered valid
             $this->decode($jwt);
             return true;
-        } catch (\UnexpectedValueException $e) {
+        } catch (UnexpectedValueException $e) {
             return false;
         }
     }
@@ -84,7 +85,7 @@ class JWTService implements JWTServiceInterface
     {
         try {
             return $this->decode($jwt);
-        } catch (\UnexpectedValueException $e) {
+        } catch (UnexpectedValueException $e) {
             throw AuthenticationException::expiredJWT($e);
         }
     }

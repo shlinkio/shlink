@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Common\Response;
 use Psr\Http\Message\StreamInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
+use function base64_decode;
 
 class PixelResponse extends Response
 {
@@ -26,7 +27,7 @@ class PixelResponse extends Response
     private function createBody(): StreamInterface
     {
         $body = new Stream('php://temp', 'wb+');
-        $body->write((string) \base64_decode(self::BASE_64_IMAGE));
+        $body->write((string) base64_decode(self::BASE_64_IMAGE));
         $body->rewind();
         return $body;
     }

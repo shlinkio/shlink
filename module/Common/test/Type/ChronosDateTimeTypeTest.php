@@ -4,11 +4,15 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Common\Type;
 
 use Cake\Chronos\Chronos;
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Type\ChronosDateTimeType;
+use stdClass;
 
 class ChronosDateTimeTypeTest extends TestCase
 {
@@ -65,7 +69,7 @@ class ChronosDateTimeTypeTest extends TestCase
      * @test
      * @dataProvider providePhpValues
      */
-    public function valueIsConvertedToDatabaseFormat(?\DateTimeInterface $value, ?string $expected)
+    public function valueIsConvertedToDatabaseFormat(?DateTimeInterface $value, ?string $expected)
     {
         $platform = $this->prophesize(AbstractPlatform::class);
         $platform->getDateTimeFormatString()->willReturn('Y-m-d');
@@ -77,9 +81,9 @@ class ChronosDateTimeTypeTest extends TestCase
     {
         return [
             [null, null],
-            [new \DateTimeImmutable('2017-01-01'), '2017-01-01'],
+            [new DateTimeImmutable('2017-01-01'), '2017-01-01'],
             [Chronos::parse('2017-02-01'), '2017-02-01'],
-            [new \DateTime('2017-03-01'), '2017-03-01'],
+            [new DateTime('2017-03-01'), '2017-03-01'],
         ];
     }
 
@@ -89,6 +93,6 @@ class ChronosDateTimeTypeTest extends TestCase
     public function exceptionIsThrownIfInvalidValueIsParsedToDatabase()
     {
         $this->expectException(ConversionException::class);
-        $this->type->convertToDatabaseValue(new \stdClass(), $this->prophesize(AbstractPlatform::class)->reveal());
+        $this->type->convertToDatabaseValue(new stdClass(), $this->prophesize(AbstractPlatform::class)->reveal());
     }
 }

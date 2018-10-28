@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Util;
 use Shlinkio\Shlink\Common\Exception as Common;
 use Shlinkio\Shlink\Core\Exception as Core;
 use Shlinkio\Shlink\Rest\Exception as Rest;
+use Throwable;
 
 class RestUtils
 {
@@ -22,7 +23,7 @@ class RestUtils
     public const NOT_FOUND_ERROR = 'NOT_FOUND';
     public const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
 
-    public static function getRestErrorCodeFromException(\Throwable $e)
+    public static function getRestErrorCodeFromException(Throwable $e)
     {
         switch (true) {
             case $e instanceof Core\InvalidShortCodeException:

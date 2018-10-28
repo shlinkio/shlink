@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
+use function sprintf;
 
 class ResolveUrlCommand extends Command
 {
@@ -71,15 +72,15 @@ class ResolveUrlCommand extends Command
         try {
             $url = $this->urlShortener->shortCodeToUrl($shortCode);
             $output->writeln(
-                \sprintf('%s <info>%s</info>', $this->translator->translate('Long URL:'), $url->getLongUrl())
+                sprintf('%s <info>%s</info>', $this->translator->translate('Long URL:'), $url->getLongUrl())
             );
         } catch (InvalidShortCodeException $e) {
             $io->error(
-                \sprintf($this->translator->translate('Provided short code "%s" has an invalid format.'), $shortCode)
+                sprintf($this->translator->translate('Provided short code "%s" has an invalid format.'), $shortCode)
             );
         } catch (EntityDoesNotExistException $e) {
             $io->error(
-                \sprintf($this->translator->translate('Provided short code "%s" could not be found.'), $shortCode)
+                sprintf($this->translator->translate('Provided short code "%s" could not be found.'), $shortCode)
             );
         }
     }

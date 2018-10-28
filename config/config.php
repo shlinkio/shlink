@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink;
 use Acelaya\ExpressiveErrorHandler;
 use Zend\ConfigAggregator;
 use Zend\Expressive;
+use function class_exists;
 
 return (new ConfigAggregator\ConfigAggregator([
     Expressive\ConfigProvider::class,
@@ -13,7 +14,7 @@ return (new ConfigAggregator\ConfigAggregator([
     Expressive\Router\FastRouteRouter\ConfigProvider::class,
     Expressive\Plates\ConfigProvider::class,
     Expressive\Helper\ConfigProvider::class,
-    \class_exists(Expressive\Swoole\ConfigProvider::class)
+    class_exists(Expressive\Swoole\ConfigProvider::class)
         ? Expressive\Swoole\ConfigProvider::class
         : new ConfigAggregator\ArrayProvider([]),
     ExpressiveErrorHandler\ConfigProvider::class,

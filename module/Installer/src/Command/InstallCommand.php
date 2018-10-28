@@ -21,6 +21,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Zend\Config\Writer\WriterInterface;
+use function sprintf;
 
 class InstallCommand extends Command
 {
