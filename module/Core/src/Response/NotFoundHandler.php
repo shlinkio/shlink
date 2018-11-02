@@ -11,7 +11,7 @@ use Zend\Diactoros\Response;
 use Zend\Expressive\Template\TemplateRendererInterface;
 use function array_shift;
 use function explode;
-use function Shlinkio\Shlink\Common\contains;
+use function Functional\contains;
 
 class NotFoundHandler implements RequestHandlerInterface
 {
@@ -47,7 +47,7 @@ class NotFoundHandler implements RequestHandlerInterface
         $status = StatusCodeInterface::STATUS_NOT_FOUND;
 
         // If the first accepted type is json, return a json response
-        if (contains($accept, ['application/json', 'text/json', 'application/x-json'])) {
+        if (contains(['application/json', 'text/json', 'application/x-json'], $accept)) {
             return new Response\JsonResponse([
                 'error' => 'NOT_FOUND',
                 'message' => 'Not found',

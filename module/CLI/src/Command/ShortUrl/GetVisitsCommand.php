@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
 use function array_map;
-use function Shlinkio\Shlink\Common\pick;
+use function Functional\select_keys;
 
 class GetVisitsCommand extends Command
 {
@@ -92,7 +92,7 @@ class GetVisitsCommand extends Command
         $rows = array_map(function (Visit $visit) {
             $rowData = $visit->jsonSerialize();
             $rowData['country'] = $visit->getVisitLocation()->getCountryName();
-            return pick($rowData, ['referer', 'date', 'userAgent', 'country']);
+            return select_keys($rowData, ['referer', 'date', 'userAgent', 'country']);
         }, $visits);
         $io->table([
             $this->translator->translate('Referer'),

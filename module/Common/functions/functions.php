@@ -3,11 +3,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common;
 
-use const ARRAY_FILTER_USE_KEY;
 use const JSON_ERROR_NONE;
-use function array_filter;
 use function getenv;
-use function in_array;
 use function json_decode as spl_json_decode;
 use function json_last_error;
 use function json_last_error_msg;
@@ -47,24 +44,6 @@ function env($key, $default = null)
     }
 
     return trim($value);
-}
-
-function contains($needle, array $haystack): bool
-{
-    return in_array($needle, $haystack, true);
-}
-
-/**
- * Returns only the keys in keysToPick from provided array
- *
- * @param array $array
- * @param array $keysToPick
- */
-function pick(array $array, array $keysToPick): array
-{
-    return array_filter($array, function (string $key) use ($keysToPick) {
-        return contains($key, $keysToPick);
-    }, ARRAY_FILTER_USE_KEY);
 }
 
 /**

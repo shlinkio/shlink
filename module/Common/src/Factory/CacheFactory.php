@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Core\Options\AppOptions;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use function Shlinkio\Shlink\Common\contains;
+use function Functional\contains;
 use function Shlinkio\Shlink\Common\env;
 
 class CacheFactory implements FactoryInterface
@@ -53,7 +53,7 @@ class CacheFactory implements FactoryInterface
     {
         // Try to get the adapter from config
         $config = $container->get('config');
-        if (isset($config['cache']['adapter']) && contains($config['cache']['adapter'], self::VALID_CACHE_ADAPTERS)) {
+        if (isset($config['cache']['adapter']) && contains(self::VALID_CACHE_ADAPTERS, $config['cache']['adapter'])) {
             return $this->resolveCacheAdapter($config['cache']);
         }
 

@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
-use function array_map;
+use function Functional\map;
 
 class ListTagsCommand extends Command
 {
@@ -45,15 +45,15 @@ class ListTagsCommand extends Command
         $io->table([$this->translator->translate('Name')], $this->getTagsRows());
     }
 
-    private function getTagsRows()
+    private function getTagsRows(): array
     {
         $tags = $this->tagService->listTags();
         if (empty($tags)) {
             return [[$this->translator->translate('No tags yet')]];
         }
 
-        return array_map(function (Tag $tag) {
+        return map($tags, function (Tag $tag) {
             return [(string) $tag];
-        }, $tags);
+        });
     }
 }

@@ -5,9 +5,8 @@ namespace Shlinkio\Shlink\Core\Transformer;
 
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Util\ShortUrlBuilderTrait;
-use function array_map;
+use function Functional\invoke;
 
 class ShortUrlDataTransformer implements DataTransformerInterface
 {
@@ -38,15 +37,10 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             'longUrl' => $longUrl,
             'dateCreated' => $dateCreated !== null ? $dateCreated->toAtomString() : null,
             'visitsCount' => $value->getVisitsCount(),
-            'tags' => array_map([$this, 'serializeTag'], $value->getTags()->toArray()),
+            'tags' => invoke($value->getTags(), '__toString'),
 
             // Deprecated
             'originalUrl' => $longUrl,
         ];
-    }
-
-    private function serializeTag(Tag $tag): string
-    {
-        return (string) $tag;
     }
 }
