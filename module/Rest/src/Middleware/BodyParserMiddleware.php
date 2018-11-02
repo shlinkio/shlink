@@ -10,8 +10,8 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use function array_shift;
 use function explode;
+use function Functional\contains;
 use function parse_str;
-use function Shlinkio\Shlink\Common\contains;
 use function Shlinkio\Shlink\Common\json_decode;
 use function trim;
 
@@ -32,17 +32,17 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
         $currentParams = $request->getParsedBody();
 
         // In requests that do not allow body or if the body has already been parsed, continue to next middleware
-        if (! empty($currentParams) || contains($method, [
+        if (! empty($currentParams) || contains([
             self::METHOD_GET,
             self::METHOD_HEAD,
             self::METHOD_OPTIONS,
-        ])) {
+        ], $method)) {
             return $handler->handle($request);
         }
 
         // If the accepted content is JSON, try to parse the body from JSON
         $contentType = $this->getRequestContentType($request);
-        if (contains($contentType, ['application/json', 'text/json', 'application/x-json'])) {
+        if (contains(['application/json', 'text/json', 'application/x-json'], $contentType)) {
             return $handler->handle($this->parseFromJson($request));
         }
 

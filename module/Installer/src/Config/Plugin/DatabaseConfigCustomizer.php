@@ -10,7 +10,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use function array_diff;
 use function array_keys;
-use function Shlinkio\Shlink\Common\contains;
+use function Functional\contains;
 
 class DatabaseConfigCustomizer implements ConfigCustomizerInterface
 {
@@ -68,7 +68,7 @@ class DatabaseConfigCustomizer implements ConfigCustomizerInterface
         }
 
         // If the driver is one of the params to ask for, ask for it first
-        if (contains(self::DRIVER, $keysToAskFor)) {
+        if (contains($keysToAskFor, self::DRIVER)) {
             $io->title('DATABASE');
             $titlePrinted = true;
             $db[self::DRIVER] = $this->ask($io, self::DRIVER);

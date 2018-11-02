@@ -9,9 +9,9 @@ use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use function array_column;
 use function array_key_exists;
+use function Functional\contains;
 use function is_array;
 use function key;
-use function Shlinkio\Shlink\Common\contains;
 
 class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryInterface
 {
@@ -63,7 +63,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         $fieldName = is_array($orderBy) ? key($orderBy) : $orderBy;
         $order = is_array($orderBy) ? $orderBy[$fieldName] : 'ASC';
 
-        if (contains($fieldName, ['visits', 'visitsCount', 'visitCount'])) {
+        if (contains(['visits', 'visitsCount', 'visitCount'], $fieldName)) {
             $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
                ->leftJoin('s.visits', 'v')
                ->groupBy('s')

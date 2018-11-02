@@ -20,8 +20,8 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouteResult;
 use Zend\I18n\Translator\TranslatorInterface;
+use function Functional\contains;
 use function implode;
-use function Shlinkio\Shlink\Common\contains;
 use function sprintf;
 
 class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface, RequestMethodInterface
@@ -72,7 +72,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
         if ($routeResult === null
             || $routeResult->isFailure()
             || $request->getMethod() === self::METHOD_OPTIONS
-            || contains($routeResult->getMatchedRouteName(), $this->routesWhitelist)
+            || contains($this->routesWhitelist, $routeResult->getMatchedRouteName())
         ) {
             return $handler->handle($request);
         }
