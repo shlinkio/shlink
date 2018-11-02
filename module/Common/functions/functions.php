@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common;
 
+use const JSON_ERROR_NONE;
 use function getenv;
 use function json_decode as spl_json_decode;
 use function json_last_error;
@@ -10,7 +11,6 @@ use function json_last_error_msg;
 use function sprintf;
 use function strtolower;
 use function trim;
-use const JSON_ERROR_NONE;
 
 /**
  * Gets the value of an environment variable. Supports boolean, empty and null.
