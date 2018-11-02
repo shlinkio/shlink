@@ -5,7 +5,7 @@ namespace ShlinkioTest\Shlink\Core\Exception;
 
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
-use function array_map;
+use function Functional\map;
 use function range;
 
 class DeleteShortUrlExceptionTest extends TestCase
@@ -56,8 +56,8 @@ class DeleteShortUrlExceptionTest extends TestCase
 
     public function provideThresholds(): array
     {
-        return array_map(function (int $number) {
+        return map(range(5, 50, 5), function (int $number) {
             return [$number];
-        }, range(5, 50, 5));
+        });
     }
 }
