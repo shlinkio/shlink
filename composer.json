@@ -90,14 +90,12 @@
         "check": [
             "@cs",
             "@stan",
-            "@test",
-            "@infect"
-        ],
-        "ci": [
-            "@cs",
-            "@stan",
             "@test:ci",
             "@infect:ci"
+        ],
+        "ci": [
+            "echo \"This command is DEPRECATED. Use check instead\"",
+            "@check"
         ],
 
         "cs": "phpcs",

@@ -26,7 +26,7 @@ install:
 
 script:
   - mkdir build
-  - composer ci
+  - composer check
 
 after_success:
   - rm -f build/clover.xml
