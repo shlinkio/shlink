@@ -13,6 +13,10 @@ return [
         ],
         'shortcode_chars' => env('SHORTCODE_CHARS', UrlShortener::DEFAULT_CHARS),
         'validate_url' => true,
+        'not_found_short_url' => [
+            'enable_redirection' => false,
+            'redirect_to' => null,
+        ],
     ],
 
 ];

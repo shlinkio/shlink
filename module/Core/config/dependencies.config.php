@@ -16,8 +16,9 @@ return [
 
     'dependencies' => [
         'factories' => [
-            Options\AppOptions::class => Options\AppOptionsFactory::class,
-            Options\DeleteShortUrlsOptions::class => Options\DeleteShortUrlsOptionsFactory::class,
+            Options\AppOptions::class => ConfigAbstractFactory::class,
+            Options\DeleteShortUrlsOptions::class => ConfigAbstractFactory::class,
+            Options\NotFoundShortUrlOptions::class => ConfigAbstractFactory::class,
             NotFoundHandler::class => ConfigAbstractFactory::class,
 
             // Services
@@ -39,6 +40,10 @@ return [
 
     ConfigAbstractFactory::class => [
         NotFoundHandler::class => [TemplateRendererInterface::class],
+
+        Options\AppOptions::class => ['config.app_options'],
+        Options\DeleteShortUrlsOptions::class => ['config.delete_short_urls'],
+        Options\NotFoundShortUrlOptions::class => ['config.url_shortener.not_found_short_url'],
 
         // Services
         Service\UrlShortener::class => [
