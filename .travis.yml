@@ -30,7 +30,7 @@ script:
 
 after_success:
   - rm -f build/clover.xml
-  - vendor/bin/phpcov merge build --clover build/clover.xml
+  - phpdbg -qrr vendor/bin/phpcov merge build --clover build/clover.xml
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml
 
