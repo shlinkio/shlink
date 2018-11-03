@@ -112,15 +112,15 @@
             "@test:unit:ci",
             "@test:func"
         ],
-        "test:unit": "phpunit --order-by=random --coverage-php build/coverage-unit.cov",
-        "test:unit:ci": "phpunit --order-by=random --coverage-php build/coverage-unit.cov --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/phpunit.junit.xml",
-        "test:func": "phpunit --order-by=random -c phpunit-func.xml --coverage-php build/coverage-func.cov",
+        "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov",
+        "test:unit:ci": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/phpunit.junit.xml",
+        "test:func": "phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-func.xml --coverage-php build/coverage-func.cov",
 
         "test:pretty": [
             "@test",
             "phpcov merge build --html build/html"
         ],
-        "test:unit:pretty": "phpunit --coverage-html build/coverage --order-by=random",
+        "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage --order-by=random",
 
         "infect": "infection --threads=4 --min-msi=60 --log-verbosity=2 --only-covered",
         "infect:ci": "infection --threads=4 --min-msi=60 --log-verbosity=2 --only-covered --coverage=build",
