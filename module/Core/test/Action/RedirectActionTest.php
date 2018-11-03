@@ -5,13 +5,12 @@ namespace ShlinkioTest\Shlink\Core\Action;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
-use Shlinkio\Shlink\Core\Options\AppOptions;
+use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
@@ -23,25 +22,31 @@ class RedirectActionTest extends TestCase
     /**
      * @var RedirectAction
      */
-    protected $action;
+    private $action;
     /**
      * @var ObjectProphecy
      */
-    protected $urlShortener;
+    private $urlShortener;
     /**
      * @var ObjectProphecy
      */
-    protected $visitTracker;
+    private $visitTracker;
+    /**
+     * @var Options\NotFoundShortUrlOptions
+     */
+    private $notFoundOptions;
 
     public function setUp()
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
         $this->visitTracker = $this->prophesize(VisitsTracker::class);
+        $this->notFoundOptions = new Options\NotFoundShortUrlOptions();
 
         $this->action = new RedirectAction(
             $this->urlShortener->reveal(),
             $this->visitTracker->reveal(),
-            new AppOptions(['disableTrackParam' => 'foobar'])
+            new Options\AppOptions(['disableTrackParam' => 'foobar']),
+            $this->notFoundOptions
         );
     }
 
@@ -76,14 +81,38 @@ class RedirectActionTest extends TestCase
                                                        ->shouldBeCalledTimes(1);
         $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();
 
-        $delegate = $this->prophesize(RequestHandlerInterface::class);
-        /** @var MethodProphecy $process */
-        $process = $delegate->handle(Argument::any())->willReturn(new Response());
+        $handler = $this->prophesize(RequestHandlerInterface::class);
+        $handle = $handler->handle(Argument::any())->willReturn(new Response());
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
-        $this->action->process($request, $delegate->reveal());
+        $this->action->process($request, $handler->reveal());
 
-        $process->shouldHaveBeenCalledTimes(1);
+        $handle->shouldHaveBeenCalledTimes(1);
+    }
+
+    /**
+     * @test
+     */
+    public function redirectToCustomUrlIsReturnedIfConfiguredSoAndShortUrlIsNotFound()
+    {
+        $shortCode = 'abc123';
+        $shortCodeToUrl = $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(
+            EntityDoesNotExistException::class
+        );
+
+        $handler = $this->prophesize(RequestHandlerInterface::class);
+        $handle = $handler->handle(Argument::any())->willReturn(new Response());
+
+        $this->notFoundOptions->enableRedirection = true;
+        $this->notFoundOptions->redirectTo = 'https://shlink.io';
+
+        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
+        $resp = $this->action->process($request, $handler->reveal());
+
+        $this->assertEquals(302, $resp->getStatusCode());
+        $this->assertEquals('https://shlink.io', $resp->getHeaderLine('Location'));
+        $shortCodeToUrl->shouldHaveBeenCalledTimes(1);
+        $handle->shouldNotHaveBeenCalled();
     }
 
     /**

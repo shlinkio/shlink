@@ -21,18 +21,18 @@ class NotFoundShortUrlOptions extends AbstractOptions
         return $this->enableRedirection;
     }
 
-    protected function enableRedirection(bool $enableRedirection = true): self
+    protected function setEnableRedirection(bool $enableRedirection = true): self
     {
         $this->enableRedirection = $enableRedirection;
         return $this;
     }
 
-    public function getRedirectTo(): ?string
+    public function getRedirectTo(): string
     {
-        return $this->redirectTo;
+        return $this->redirectTo ?? '';
     }
 
-    protected function setRedirectTo(string $redirectTo): self
+    protected function setRedirectTo(?string $redirectTo): self
     {
         $this->redirectTo = $redirectTo;
         return $this;

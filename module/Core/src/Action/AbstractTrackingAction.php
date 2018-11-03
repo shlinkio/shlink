@@ -9,7 +9,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Shlinkio\Shlink\Core\Action\Util\ErrorResponseBuilderTrait;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Model\Visitor;
@@ -20,8 +19,6 @@ use function array_key_exists;
 
 abstract class AbstractTrackingAction implements MiddlewareInterface
 {
-    use ErrorResponseBuilderTrait;
-
     /**
      * @var UrlShortenerInterface
      */
@@ -74,12 +71,17 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
                 $this->visitTracker->track($shortCode, Visitor::fromRequest($request));
             }
 
-            return $this->createResp($url->getLongUrl());
+            return $this->createSuccessResp($url->getLongUrl());
         } catch (InvalidShortCodeException | EntityDoesNotExistException $e) {
             $this->logger->warning('An error occurred while tracking short code. {e}', ['e' => $e]);
-            return $this->buildErrorResponse($request, $handler);
+            return $this->createErrorResp($request, $handler);
         }
     }
 
-    abstract protected function createResp(string $longUrl): ResponseInterface;
+    abstract protected function createSuccessResp(string $longUrl): ResponseInterface;
+
+    abstract protected function createErrorResp(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface;
 }
