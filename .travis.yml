@@ -18,6 +18,7 @@ matrix:
 before_install:
   - echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - phpenv config-rm xdebug.ini || return 0
 
 install:
   - composer self-update
@@ -25,9 +26,10 @@ install:
 
 script:
   - mkdir build
-  - composer check
+  - composer ci
 
 after_success:
+  - rm -f build/clover.xml
   - vendor/bin/phpcov merge build --clover build/clover.xml
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml

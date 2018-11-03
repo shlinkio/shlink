@@ -93,6 +93,12 @@
             "@test",
             "@infect"
         ],
+        "ci": [
+            "@cs",
+            "@stan",
+            "@test:ci",
+            "@infect:ci"
+        ],
 
         "cs": "phpcs",
         "cs:fix": "phpcbf",
@@ -102,30 +108,39 @@
             "@test:unit",
             "@test:func"
         ],
-        "test:unit": "phpunit --coverage-php build/coverage-unit.cov --order-by=random",
-        "test:func": "phpunit -c phpunit-func.xml --coverage-php build/coverage-func.cov --order-by=random",
+        "test:ci": [
+            "@test:unit:ci",
+            "@test:func"
+        ],
+        "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov",
+        "test:unit:ci": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/phpunit.junit.xml",
+        "test:func": "phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-func.xml --coverage-php build/coverage-func.cov",
 
         "test:pretty": [
-            "@test:unit",
-            "@test:func",
+            "@test",
             "phpcov merge build --html build/html"
         ],
-        "test:unit:pretty": "phpunit --coverage-html build/coverage --order-by=random",
+        "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage --order-by=random",
 
-        "infect": "infection --threads=4 --min-msi=60 --only-covered --log-verbosity=2",
-        "infect:show": "infection --threads=4 --min-msi=60 --only-covered --log-verbosity=2 --show-mutations"
+        "infect": "infection --threads=4 --min-msi=60 --log-verbosity=2 --only-covered",
+        "infect:ci": "infection --threads=4 --min-msi=60 --log-verbosity=2 --only-covered --coverage=build",
+        "infect:show": "infection --threads=4 --min-msi=60 --log-verbosity=2 --only-covered --show-mutations"
     },
     "scripts-descriptions": {
         "check": "<fg=blue;options=bold>Alias for \"cs\", \"stan\", \"test\" and \"infect\"</>",
+        "ci": "<fg=blue;options=bold>Alias for \"cs\", \"stan\", \"test:ci\" and \"infect:ci\"</>",
         "cs": "<fg=blue;options=bold>Checks coding styles</>",
         "cs:fix": "<fg=blue;options=bold>Fixes coding styles, when possible</>",
         "stan": "<fg=blue;options=bold>Inspects code with phpstan</>",
         "test": "<fg=blue;options=bold>Runs all test suites</>",
+        "test:ci": "<fg=blue;options=bold>Runs all test suites, generating all needed reports and logs for CI envs</>",
         "test:unit": "<fg=blue;options=bold>Runs unit test suites</>",
+        "test:unit:ci": "<fg=blue;options=bold>Runs unit test suites, generating all needed reports and logs for CI envs</>",
         "test:func": "<fg=blue;options=bold>Runs functional test suites (covering entity repositories)</>",
         "test:pretty": "<fg=blue;options=bold>Runs all test suites and generates an HTML code coverage report</>",
         "test:unit:pretty": "<fg=blue;options=bold>Runs unit test suites and generates an HTML code coverage report</>",
         "infect": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>",
+        "infect:ci": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing with existing reports and logs</>",
         "infect:show": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing and shows applied mutators</>"
     },
     "config": {
