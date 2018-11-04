@@ -19,11 +19,15 @@ class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
     public const HOSTNAME = 'HOSTNAME';
     public const CHARS = 'CHARS';
     public const VALIDATE_URL = 'VALIDATE_URL';
+    public const ENABLE_NOT_FOUND_REDIRECTION = 'ENABLE_NOT_FOUND_REDIRECTION';
+    public const NOT_FOUND_REDIRECT_TO = 'NOT_FOUND_REDIRECT_TO';
     private const EXPECTED_KEYS = [
         self::SCHEMA,
         self::HOSTNAME,
         self::CHARS,
         self::VALIDATE_URL,
+        self::ENABLE_NOT_FOUND_REDIRECTION,
+        self::NOT_FOUND_REDIRECT_TO,
     ];
 
     public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig): void
@@ -38,6 +42,11 @@ class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
 
         $io->title('URL SHORTENER');
         foreach ($keysToAskFor as $key) {
+            // Skip not found redirect URL when the user decided not to redirect
+            if ($key === self::NOT_FOUND_REDIRECT_TO && ! $urlShortener[self::ENABLE_NOT_FOUND_REDIRECTION]) {
+                continue;
+            }
+
             $urlShortener[$key] = $this->ask($io, $key);
         }
         $appConfig->setUrlShortener($urlShortener);
@@ -60,6 +69,18 @@ class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
                 ) ?: str_shuffle(UrlShortener::DEFAULT_CHARS);
             case self::VALIDATE_URL:
                 return $io->confirm('Do you want to validate long urls by 200 HTTP status code on response');
+            case self::ENABLE_NOT_FOUND_REDIRECTION:
+                return $io->confirm(
+                    'Do you want to enable a redirection to a custom URL when a user hits an invalid short URL? ' .
+                    '(If not enabled, the user will see a default "404 not found" page)',
+                    false
+                );
+            case self::NOT_FOUND_REDIRECT_TO:
+                return $this->askRequired(
+                    $io,
+                    'redirect URL',
+                    'Custom URL to redirect to when a user hits an invalid short URL'
+                );
         }
 
         return '';
