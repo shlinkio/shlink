@@ -146,6 +146,16 @@ final class CustomizableAppConfig implements ArraySerializableInterface
             UrlShortenerConfigCustomizer::HOSTNAME => ['url_shortener', 'domain', 'hostname'],
             UrlShortenerConfigCustomizer::CHARS => ['url_shortener', 'shortcode_chars'],
             UrlShortenerConfigCustomizer::VALIDATE_URL => ['url_shortener', 'validate_url'],
+            UrlShortenerConfigCustomizer::ENABLE_NOT_FOUND_REDIRECTION => [
+                'url_shortener',
+                'not_found_short_url',
+                'enable_redirection',
+            ],
+            UrlShortenerConfigCustomizer::NOT_FOUND_REDIRECT_TO => [
+                'url_shortener',
+                'not_found_short_url',
+                'redirect_to',
+            ],
         ], $pathCollection));
     }
 
@@ -191,6 +201,11 @@ final class CustomizableAppConfig implements ArraySerializableInterface
                 ],
                 'shortcode_chars' => $this->urlShortener[UrlShortenerConfigCustomizer::CHARS] ?? '',
                 'validate_url' => $this->urlShortener[UrlShortenerConfigCustomizer::VALIDATE_URL] ?? true,
+                'not_found_short_url' => [
+                    'enable_redirection' =>
+                        $this->urlShortener[UrlShortenerConfigCustomizer::ENABLE_NOT_FOUND_REDIRECTION] ?? false,
+                    'redirect_to' => $this->urlShortener[UrlShortenerConfigCustomizer::NOT_FOUND_REDIRECT_TO] ?? null,
+                ],
             ],
         ];
 

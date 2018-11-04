@@ -8,7 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Added
 
-* *Nothing*
+* [#236](https://github.com/shlinkio/shlink/issues/236) Added option to define a redirection to a custom URL when a user hits an invalid short URL.
+
+    It only affects URLs matched as "short URL" where the short code is invalid, not any 404 that happens in the app. For example, a request to the path `/foo/bar` will keep returning a 404.
+
+    This new option will be asked by the installer both for new shlink installations and for any previous shlink version which is updated.
 
 #### Changed
 

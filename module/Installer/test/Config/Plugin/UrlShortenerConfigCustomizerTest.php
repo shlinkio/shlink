@@ -46,10 +46,12 @@ class UrlShortenerConfigCustomizerTest extends TestCase
             'HOSTNAME' => 'asked',
             'CHARS' => 'asked',
             'VALIDATE_URL' => true,
+            'ENABLE_NOT_FOUND_REDIRECTION' => true,
+            'NOT_FOUND_REDIRECT_TO' => 'asked',
         ], $config->getUrlShortener());
-        $ask->shouldHaveBeenCalledTimes(2);
+        $ask->shouldHaveBeenCalledTimes(3);
         $choice->shouldHaveBeenCalledTimes(1);
-        $confirm->shouldHaveBeenCalledTimes(1);
+        $confirm->shouldHaveBeenCalledTimes(2);
     }
 
     /**
@@ -64,6 +66,8 @@ class UrlShortenerConfigCustomizerTest extends TestCase
         $config->setUrlShortener([
             'SCHEMA' => 'foo',
             'HOSTNAME' => 'foo',
+            'ENABLE_NOT_FOUND_REDIRECTION' => true,
+            'NOT_FOUND_REDIRECT_TO' => 'foo',
         ]);
 
         $this->plugin->process($this->io->reveal(), $config);
@@ -73,6 +77,8 @@ class UrlShortenerConfigCustomizerTest extends TestCase
             'HOSTNAME' => 'foo',
             'CHARS' => 'asked',
             'VALIDATE_URL' => false,
+            'ENABLE_NOT_FOUND_REDIRECTION' => true,
+            'NOT_FOUND_REDIRECT_TO' => 'foo',
         ], $config->getUrlShortener());
         $choice->shouldNotHaveBeenCalled();
         $ask->shouldHaveBeenCalledTimes(1);
@@ -94,6 +100,8 @@ class UrlShortenerConfigCustomizerTest extends TestCase
             'HOSTNAME' => 'foo',
             'CHARS' => 'foo',
             'VALIDATE_URL' => true,
+            'ENABLE_NOT_FOUND_REDIRECTION' => true,
+            'NOT_FOUND_REDIRECT_TO' => 'foo',
         ]);
 
         $this->plugin->process($this->io->reveal(), $config);
@@ -103,9 +111,41 @@ class UrlShortenerConfigCustomizerTest extends TestCase
             'HOSTNAME' => 'foo',
             'CHARS' => 'foo',
             'VALIDATE_URL' => true,
+            'ENABLE_NOT_FOUND_REDIRECTION' => true,
+            'NOT_FOUND_REDIRECT_TO' => 'foo',
         ], $config->getUrlShortener());
         $choice->shouldNotHaveBeenCalled();
         $ask->shouldNotHaveBeenCalled();
         $confirm->shouldNotHaveBeenCalled();
+    }
+
+    /**
+     * @test
+     */
+    public function redirectUrlOptionIsNotAskedIfAnswerToPreviousQuestionIsNo()
+    {
+        $ask = $this->io->ask(Argument::cetera())->willReturn('asked');
+        $confirm = $this->io->confirm(Argument::cetera())->willReturn(false);
+
+        $config = new CustomizableAppConfig();
+        $config->setUrlShortener([
+            'SCHEMA' => 'foo',
+            'HOSTNAME' => 'foo',
+            'CHARS' => 'foo',
+            'VALIDATE_URL' => true,
+        ]);
+
+        $this->plugin->process($this->io->reveal(), $config);
+
+        $this->assertTrue($config->hasUrlShortener());
+        $this->assertEquals([
+            'SCHEMA' => 'foo',
+            'HOSTNAME' => 'foo',
+            'CHARS' => 'foo',
+            'VALIDATE_URL' => true,
+            'ENABLE_NOT_FOUND_REDIRECTION' => false,
+        ], $config->getUrlShortener());
+        $ask->shouldNotHaveBeenCalled();
+        $confirm->shouldHaveBeenCalledTimes(1);
     }
 }
