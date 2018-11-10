@@ -39,7 +39,7 @@ class Visit extends AbstractEntity implements JsonSerializable
     private $remoteAddr;
     /**
      * @var string
-     * @ORM\Column(type="string", length=256, name="user_agent", nullable=true)
+     * @ORM\Column(type="string", length=512, name="user_agent", nullable=true)
      */
     private $userAgent;
     /**
