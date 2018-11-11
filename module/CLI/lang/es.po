@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2018-09-16 18:36+0200\n"
-"PO-Revision-Date: 2018-09-16 18:37+0200\n"
+"POT-Creation-Date: 2018-11-11 19:17+0100\n"
+"PO-Revision-Date: 2018-11-11 19:18+0100\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -340,6 +340,9 @@ msgstr "Una etiqueta con nombre \"%s\" no ha sido encontrada"
 msgid "Processes visits where location is not set yet"
 msgstr "Procesa las visitas donde la localización no ha sido establecida aún"
 
+msgid "Ignored visit with no IP address"
+msgstr "Ignorada visita sin dirección IP"
+
 msgid "Processing IP"
 msgstr "Procesando IP"
 
@@ -350,15 +353,14 @@ msgstr "Ignorada IP de localhost"
 msgid "Address located at \"%s\""
 msgstr "Dirección localizada en \"%s\""
 
-msgid "An error occurred while locating IP"
-msgstr "Se produjo un error al localizar la IP"
-
-#, php-format
-msgid "IP location resolver limit reached. Waiting %s seconds..."
-msgstr "Limite del localizador de IPs alcanzado. Esperando %s segundos..."
+msgid "An error occurred while locating IP. Skipped"
+msgstr "Se produjo un error al localizar la IP. Ignorado"
 
 msgid "Finished processing all IPs"
 msgstr "Finalizado el procesado de todas las IPs"
+
+#~ msgid "IP location resolver limit reached. Waiting %s seconds..."
+#~ msgstr "Limite del localizador de IPs alcanzado. Esperando %s segundos..."
 
 #~ msgid "Remote Address"
 #~ msgstr "Dirección remota"
