@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * [#196](https://github.com/shlinkio/shlink/issues/196) Reduced anemic model in entities, defining more expressive public APIs instead.
 * [#249](https://github.com/shlinkio/shlink/issues/249) Added [functional-php](https://github.com/lstrojny/functional-php) to ease collections handling.
 * [#253](https://github.com/shlinkio/shlink/issues/253) Increased `user_agent` column length in `visits` table to 512.
+* [#256](https://github.com/shlinkio/shlink/issues/256) Updated to Infection v0.11.
 
 #### Deprecated
 

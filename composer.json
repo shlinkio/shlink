@@ -48,7 +48,7 @@
     },
     "require-dev": {
         "filp/whoops": "^2.0",
-        "infection/infection": "^0.9.0",
+        "infection/infection": "^0.11.0",
         "phpstan/phpstan": "^0.10.0",
         "phpunit/phpcov": "^5.0",
         "phpunit/phpunit": "^7.3",

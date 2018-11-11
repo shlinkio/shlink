@@ -2,8 +2,7 @@
     "source": {
         "directories": [
             "module/*/src"
-        ],
-        "excludes": []
+        ]
     },
     "timeout": 10,
     "logs": {
@@ -17,6 +16,7 @@
     },
     "mutators": {
         "@default": true,
-        "IdenticalEqual": false
+        "IdenticalEqual": false,
+        "NotIdenticalNotEqual": false
     }
 }
