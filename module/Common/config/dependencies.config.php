@@ -44,10 +44,12 @@ return [
             'em' => EntityManager::class,
             'httpClient' => GuzzleClient::class,
             'translator' => Translator::class,
+
             'logger' => LoggerInterface::class,
             Logger::class => 'Logger_Shlink',
             LoggerInterface::class => 'Logger_Shlink',
-            IpGeolocation\IpLocationResolverInterface::class => IpGeolocation\GeoLite2LocationResolver::class,
+
+            IpGeolocation\IpLocationResolverInterface::class => IpGeolocation\ChainIpLocationResolver::class,
         ],
         'abstract_factories' => [
             Factory\DottedAccessConfigAbstractFactory::class,

@@ -83,7 +83,7 @@ class ProcessVisitsCommand extends Command
 
                 $io->writeln(sprintf(
                     ' [<info>' . $this->translator->translate('Address located at "%s"') . '</info>]',
-                    $location->getCityName()
+                    $location->getCountryName()
                 ));
             } catch (WrongIpException $e) {
                 $io->writeln(
