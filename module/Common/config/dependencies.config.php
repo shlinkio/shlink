@@ -37,6 +37,8 @@ return [
             IpGeolocation\IpApiLocationResolver::class => ConfigAbstractFactory::class,
             IpGeolocation\GeoLite2LocationResolver::class => ConfigAbstractFactory::class,
             IpGeolocation\ChainIpLocationResolver::class => ConfigAbstractFactory::class,
+            IpGeolocation\GeoLite2\GeoLite2Options::class => ConfigAbstractFactory::class,
+            IpGeolocation\GeoLite2\DbUpdater::class => ConfigAbstractFactory::class,
 
             Service\PreviewGenerator::class => ConfigAbstractFactory::class,
         ],
@@ -67,6 +69,12 @@ return [
         IpGeolocation\ChainIpLocationResolver::class => [
             IpGeolocation\GeoLite2LocationResolver::class,
             IpGeolocation\IpApiLocationResolver::class,
+        ],
+        IpGeolocation\GeoLite2\GeoLite2Options::class => ['config.geolite2'],
+        IpGeolocation\GeoLite2\DbUpdater::class => [
+            GuzzleClient::class,
+            Filesystem::class,
+            IpGeolocation\GeoLite2\GeoLite2Options::class,
         ],
 
         Service\PreviewGenerator::class => [
