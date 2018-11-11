@@ -68,10 +68,10 @@ class ProcessVisitsCommand extends Command
             }
 
             $ipAddr = $visit->getRemoteAddr();
-            $io->write(sprintf('%s <info>%s</info>', $this->translator->translate('Processing IP'), $ipAddr));
+            $io->write(sprintf('%s <fg=blue>%s</>', $this->translator->translate('Processing IP'), $ipAddr));
             if ($ipAddr === IpAddress::LOCALHOST) {
                 $io->writeln(
-                    sprintf(' (<comment>%s</comment>)', $this->translator->translate('Ignored localhost address'))
+                    sprintf(' [<comment>%s</comment>]', $this->translator->translate('Ignored localhost address'))
                 );
                 continue;
             }
@@ -85,12 +85,15 @@ class ProcessVisitsCommand extends Command
                 $this->visitService->saveVisit($visit);
 
                 $io->writeln(sprintf(
-                    ' (' . $this->translator->translate('Address located at "%s"') . ')',
+                    ' [<info>' . $this->translator->translate('Address located at "%s"') . '</info>]',
                     $location->getCityName()
                 ));
             } catch (WrongIpException $e) {
                 $io->writeln(
-                    sprintf(' <error>%s</error>', $this->translator->translate('An error occurred while locating IP'))
+                    sprintf(
+                        ' [<fg=red>%s</>]',
+                        $this->translator->translate('An error occurred while locating IP. Skipped')
+                    )
                 );
                 if ($io->isVerbose()) {
                     $this->getApplication()->renderException($e, $output);
