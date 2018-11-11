@@ -50,24 +50,4 @@ class GeoLite2LocationResolver implements IpLocationResolverInterface
             'time_zone' => $city->location->timeZone ?? '',
         ];
     }
-
-    /**
-     * Returns the interval in seconds that needs to be waited when the API limit is reached
-     *
-     * @return int
-     */
-    public function getApiInterval(): int
-    {
-        return 0;
-    }
-
-    /**
-     * Returns the limit of requests that can be performed to the API in a specific interval, or null if no limit exists
-     *
-     * @return int|null
-     */
-    public function getApiLimit(): ?int
-    {
-        return null;
-    }
 }

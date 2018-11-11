@@ -13,7 +13,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\I18n\Translator\TranslatorInterface;
-use function sleep;
 use function sprintf;
 
 class ProcessVisitsCommand extends Command
@@ -57,7 +56,6 @@ class ProcessVisitsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $visits = $this->visitService->getUnlocatedVisits();
 
-        $count = 0;
         foreach ($visits as $visit) {
             if (! $visit->hasRemoteAddr()) {
                 $io->writeln(
@@ -76,7 +74,6 @@ class ProcessVisitsCommand extends Command
                 continue;
             }
 
-            $count++;
             try {
                 $result = $this->ipLocationResolver->resolveIpLocation($ipAddr);
 
@@ -98,16 +95,6 @@ class ProcessVisitsCommand extends Command
                 if ($io->isVerbose()) {
                     $this->getApplication()->renderException($e, $output);
                 }
-            }
-
-            if ($count === $this->ipLocationResolver->getApiLimit()) {
-                $count = 0;
-                $seconds = $this->ipLocationResolver->getApiInterval();
-                $io->note(sprintf(
-                    $this->translator->translate('IP location resolver limit reached. Waiting %s seconds...'),
-                    $seconds
-                ));
-                sleep($seconds);
             }
         }
 
