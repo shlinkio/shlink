@@ -63,7 +63,7 @@ class LanguageConfigCustomizerTest extends TestCase
             'DEFAULT' => 'en',
             'CLI' => 'es',
         ], $config->getLanguage());
-        $choice->shouldHaveBeenCalledTimes(1);
+        $choice->shouldHaveBeenCalledOnce();
     }
 
     /**

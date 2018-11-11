@@ -50,9 +50,9 @@ class PreviewActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
-        $delegate->handle(Argument::cetera())->shouldBeCalledTimes(1)
+        $delegate->handle(Argument::cetera())->shouldBeCalledOnce()
                                               ->willReturn(new Response());
 
         $this->action->process(
@@ -70,8 +70,8 @@ class PreviewActionTest extends TestCase
         $url = 'foobar.com';
         $shortUrl = new ShortUrl($url);
         $path = __FILE__;
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)->shouldBeCalledTimes(1);
-        $this->previewGenerator->generatePreview($url)->willReturn($path)->shouldBeCalledTimes(1);
+        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)->shouldBeCalledOnce();
+        $this->previewGenerator->generatePreview($url)->willReturn($path)->shouldBeCalledOnce();
 
         $resp = $this->action->process(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
@@ -89,7 +89,7 @@ class PreviewActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
@@ -99,6 +99,6 @@ class PreviewActionTest extends TestCase
             $delegate->reveal()
         );
 
-        $process->shouldHaveBeenCalledTimes(1);
+        $process->shouldHaveBeenCalledOnce();
     }
 }

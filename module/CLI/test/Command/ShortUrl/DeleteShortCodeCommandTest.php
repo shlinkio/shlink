@@ -50,7 +50,7 @@ class DeleteShortCodeCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         $this->assertContains(sprintf('Short URL with short code "%s" successfully deleted.', $shortCode), $output);
-        $deleteByShortCode->shouldHaveBeenCalledTimes(1);
+        $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -67,7 +67,7 @@ class DeleteShortCodeCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         $this->assertContains(sprintf('Provided short code "%s" could not be found.', $shortCode), $output);
-        $deleteByShortCode->shouldHaveBeenCalledTimes(1);
+        $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -117,6 +117,6 @@ class DeleteShortCodeCommandTest extends TestCase
             $shortCode
         ), $output);
         $this->assertContains('Short URL was not deleted.', $output);
-        $deleteByShortCode->shouldHaveBeenCalledTimes(1);
+        $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 }

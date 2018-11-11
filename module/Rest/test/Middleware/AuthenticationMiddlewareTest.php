@@ -68,7 +68,7 @@ class AuthenticationMiddlewareTest extends TestCase
 
         $this->middleware->process($request, $handler->reveal());
 
-        $handle->shouldHaveBeenCalledTimes(1);
+        $handle->shouldHaveBeenCalledOnce();
         $fromRequest->shouldNotHaveBeenCalled();
     }
 
@@ -116,7 +116,7 @@ class AuthenticationMiddlewareTest extends TestCase
             'Expected one of the following authentication headers, but none were provided, ["%s"]',
             implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)
         ), $payload['message']);
-        $fromRequest->shouldHaveBeenCalledTimes(1);
+        $fromRequest->shouldHaveBeenCalledOnce();
     }
 
     public function provideExceptions(): array
@@ -150,8 +150,8 @@ class AuthenticationMiddlewareTest extends TestCase
 
         $this->assertEquals('the_error', $payload['error']);
         $this->assertEquals('the_message', $payload['message']);
-        $verify->shouldHaveBeenCalledTimes(1);
-        $fromRequest->shouldHaveBeenCalledTimes(1);
+        $verify->shouldHaveBeenCalledOnce();
+        $fromRequest->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -176,10 +176,10 @@ class AuthenticationMiddlewareTest extends TestCase
         $response = $this->middleware->process($request, $handler->reveal());
 
         $this->assertSame($response, $newResponse);
-        $verify->shouldHaveBeenCalledTimes(1);
-        $update->shouldHaveBeenCalledTimes(1);
-        $handle->shouldHaveBeenCalledTimes(1);
-        $fromRequest->shouldHaveBeenCalledTimes(1);
+        $verify->shouldHaveBeenCalledOnce();
+        $update->shouldHaveBeenCalledOnce();
+        $handle->shouldHaveBeenCalledOnce();
+        $fromRequest->shouldHaveBeenCalledOnce();
     }
 
     private function getDummyMiddleware(): MiddlewareInterface

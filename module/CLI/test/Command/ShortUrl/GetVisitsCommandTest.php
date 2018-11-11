@@ -46,7 +46,7 @@ class GetVisitsCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, new DateRange(null, null))->willReturn([])
-                                                                         ->shouldBeCalledTimes(1);
+                                                                         ->shouldBeCalledOnce();
 
         $this->commandTester->execute([
             'command' => 'shortcode:visits',
@@ -64,7 +64,7 @@ class GetVisitsCommandTest extends TestCase
         $endDate = '2016-02-01';
         $this->visitsTracker->info($shortCode, new DateRange(Chronos::parse($startDate), Chronos::parse($endDate)))
             ->willReturn([])
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledOnce();
 
         $this->commandTester->execute([
             'command' => 'shortcode:visits',
@@ -84,7 +84,7 @@ class GetVisitsCommandTest extends TestCase
             (new Visit(new ShortUrl(''), new Visitor('bar', 'foo', '')))->setVisitLocation(
                 new VisitLocation(['country_name' => 'Spain'])
             ),
-        ])->shouldBeCalledTimes(1);
+        ])->shouldBeCalledOnce();
 
         $this->commandTester->execute([
             'command' => 'shortcode:visits',

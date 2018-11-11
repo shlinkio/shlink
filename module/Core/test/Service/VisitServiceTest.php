@@ -35,8 +35,8 @@ class VisitServiceTest extends TestCase
     public function saveVisitsPersistsProvidedVisit()
     {
         $visit = new Visit(new ShortUrl(''), Visitor::emptyInstance());
-        $this->em->persist($visit)->shouldBeCalledTimes(1);
-        $this->em->flush()->shouldBeCalledTimes(1);
+        $this->em->persist($visit)->shouldBeCalledOnce();
+        $this->em->flush()->shouldBeCalledOnce();
         $this->visitService->saveVisit($visit);
     }
 
@@ -46,8 +46,8 @@ class VisitServiceTest extends TestCase
     public function getUnlocatedVisitsFallbacksToRepository()
     {
         $repo = $this->prophesize(VisitRepository::class);
-        $repo->findUnlocatedVisits()->shouldBeCalledTimes(1);
-        $this->em->getRepository(Visit::class)->willReturn($repo->reveal())->shouldBeCalledTimes(1);
+        $repo->findUnlocatedVisits()->shouldBeCalledOnce();
+        $this->em->getRepository(Visit::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
         $this->visitService->getUnlocatedVisits();
     }
 }

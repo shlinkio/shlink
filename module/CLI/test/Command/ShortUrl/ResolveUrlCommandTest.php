@@ -45,7 +45,7 @@ class ResolveUrlCommandTest extends TestCase
         $expectedUrl = 'http://domain.com/foo/bar';
         $shortUrl = new ShortUrl($expectedUrl);
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
 
         $this->commandTester->execute([
             'command' => 'shortcode:parse',
@@ -62,7 +62,7 @@ class ResolveUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
 
         $this->commandTester->execute([
             'command' => 'shortcode:parse',
@@ -79,7 +79,7 @@ class ResolveUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(new InvalidShortCodeException())
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
 
         $this->commandTester->execute([
             'command' => 'shortcode:parse',

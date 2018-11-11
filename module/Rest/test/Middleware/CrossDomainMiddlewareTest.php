@@ -34,7 +34,7 @@ class CrossDomainMiddlewareTest extends TestCase
     public function nonCrossDomainRequestsAreNotAffected()
     {
         $originalResponse = new Response();
-        $this->delegate->handle(Argument::any())->willReturn($originalResponse)->shouldbeCalledTimes(1);
+        $this->delegate->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
 
         $response = $this->middleware->process(ServerRequestFactory::fromGlobals(), $this->delegate->reveal());
         $this->assertSame($originalResponse, $response);
@@ -50,7 +50,7 @@ class CrossDomainMiddlewareTest extends TestCase
     public function anyRequestIncludesTheAllowAccessHeader()
     {
         $originalResponse = new Response();
-        $this->delegate->handle(Argument::any())->willReturn($originalResponse)->shouldbeCalledTimes(1);
+        $this->delegate->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
 
         $response = $this->middleware->process(
             ServerRequestFactory::fromGlobals()->withHeader('Origin', 'local'),
@@ -70,7 +70,7 @@ class CrossDomainMiddlewareTest extends TestCase
     {
         $originalResponse = new Response();
         $request = ServerRequestFactory::fromGlobals()->withMethod('OPTIONS')->withHeader('Origin', 'local');
-        $this->delegate->handle(Argument::any())->willReturn($originalResponse)->shouldbeCalledTimes(1);
+        $this->delegate->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
 
         $response = $this->middleware->process($request, $this->delegate->reveal());
         $this->assertNotSame($originalResponse, $response);

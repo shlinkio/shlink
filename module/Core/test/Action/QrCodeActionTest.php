@@ -46,7 +46,7 @@ class QrCodeActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
@@ -55,7 +55,7 @@ class QrCodeActionTest extends TestCase
             $delegate->reveal()
         );
 
-        $process->shouldHaveBeenCalledTimes(1);
+        $process->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -65,7 +65,7 @@ class QrCodeActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
@@ -75,7 +75,7 @@ class QrCodeActionTest extends TestCase
             $delegate->reveal()
         );
 
-        $process->shouldHaveBeenCalledTimes(1);
+        $process->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -85,7 +85,7 @@ class QrCodeActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(new ShortUrl(''))
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 
         $resp = $this->action->process(

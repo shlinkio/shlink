@@ -56,7 +56,7 @@ class CreateShortUrlActionTest extends TestCase
             ->willReturn(
                 (new ShortUrl(''))->setShortCode('abc123')
             )
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledOnce();
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
@@ -73,7 +73,7 @@ class CreateShortUrlActionTest extends TestCase
     {
         $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
             ->willThrow(InvalidUrlException::class)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledOnce();
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
@@ -95,7 +95,7 @@ class CreateShortUrlActionTest extends TestCase
             null,
             'foo',
             Argument::cetera()
-        )->willThrow(NonUniqueSlugException::class)->shouldBeCalledTimes(1);
+        )->willThrow(NonUniqueSlugException::class)->shouldBeCalledOnce();
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
@@ -113,7 +113,7 @@ class CreateShortUrlActionTest extends TestCase
     {
         $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
             ->willThrow(Exception::class)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledOnce();
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',

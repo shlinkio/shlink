@@ -43,7 +43,7 @@ class DeleteShortUrlActionTest extends TestCase
         $resp = $this->action->handle(ServerRequestFactory::fromGlobals());
 
         $this->assertEquals(204, $resp->getStatusCode());
-        $deleteByShortCode->shouldHaveBeenCalledTimes(1);
+        $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -60,7 +60,7 @@ class DeleteShortUrlActionTest extends TestCase
 
         $this->assertEquals($statusCode, $resp->getStatusCode());
         $this->assertEquals($error, $payload['error']);
-        $deleteByShortCode->shouldHaveBeenCalledTimes(1);
+        $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 
     public function provideExceptions(): array

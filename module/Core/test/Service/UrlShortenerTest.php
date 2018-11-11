@@ -98,8 +98,8 @@ class UrlShortenerTest extends TestCase
         $conn = $this->prophesize(Connection::class);
         $conn->isTransactionActive()->willReturn(true);
         $this->em->getConnection()->willReturn($conn->reveal());
-        $this->em->rollback()->shouldBeCalledTimes(1);
-        $this->em->close()->shouldBeCalledTimes(1);
+        $this->em->rollback()->shouldBeCalledOnce();
+        $this->em->close()->shouldBeCalledOnce();
 
         $this->em->flush()->willThrow(new ORMException());
         $this->urlShortener->urlToShortCode(new Uri('http://foobar.com/12345/hello?foo=bar'));
@@ -135,7 +135,7 @@ class UrlShortenerTest extends TestCase
             'custom-slug'
         );
 
-        $slugify->shouldHaveBeenCalledTimes(1);
+        $slugify->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -153,8 +153,8 @@ class UrlShortenerTest extends TestCase
         /** @var MethodProphecy $getRepo */
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $slugify->shouldBeCalledTimes(1);
-        $findBySlug->shouldBeCalledTimes(1);
+        $slugify->shouldBeCalledOnce();
+        $findBySlug->shouldBeCalledOnce();
         $getRepo->shouldBeCalled();
         $this->expectException(NonUniqueSlugException::class);
 

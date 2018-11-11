@@ -90,7 +90,7 @@ class AuthorizationHeaderPluginTest extends TestCase
 
         $this->plugin->verify($request);
 
-        $jwtVerify->shouldHaveBeenCalledTimes(1);
+        $jwtVerify->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -107,7 +107,7 @@ class AuthorizationHeaderPluginTest extends TestCase
 
         $this->plugin->verify($request);
 
-        $jwtVerify->shouldHaveBeenCalledTimes(1);
+        $jwtVerify->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -126,6 +126,6 @@ class AuthorizationHeaderPluginTest extends TestCase
 
         $this->assertTrue($response->hasHeader(AuthorizationHeaderPlugin::HEADER_NAME));
         $this->assertEquals('Bearer DEF-def', $response->getHeaderLine(AuthorizationHeaderPlugin::HEADER_NAME));
-        $jwtRefresh->shouldHaveBeenCalledTimes(1);
+        $jwtRefresh->shouldHaveBeenCalledOnce();
     }
 }

@@ -45,6 +45,6 @@ class ShortCodePathMiddlewareTest extends TestCase
 
         $this->middleware->process($request->reveal(), $this->requestHandler->reveal());
 
-        $withUri->shouldHaveBeenCalledTimes(1);
+        $withUri->shouldHaveBeenCalledOnce();
     }
 }

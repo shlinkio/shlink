@@ -36,7 +36,7 @@ class QrCodeCacheMiddlewareTest extends TestCase
     public function noCachedPathFallsBackToNextMiddleware()
     {
         $delegate = $this->prophesize(RequestHandlerInterface::class);
-        $delegate->handle(Argument::any())->willReturn(new Response())->shouldBeCalledTimes(1);
+        $delegate->handle(Argument::any())->willReturn(new Response())->shouldBeCalledOnce();
 
         $this->middleware->process(ServerRequestFactory::fromGlobals()->withUri(
             new Uri('/foo/bar')

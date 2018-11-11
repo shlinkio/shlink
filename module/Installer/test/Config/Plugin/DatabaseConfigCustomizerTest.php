@@ -55,7 +55,7 @@ class DatabaseConfigCustomizerTest extends TestCase
             'HOST' => 'param',
             'PORT' => 'param',
         ], $config->getDatabase());
-        $choice->shouldHaveBeenCalledTimes(1);
+        $choice->shouldHaveBeenCalledOnce();
         $ask->shouldHaveBeenCalledTimes(5);
     }
 
@@ -137,6 +137,6 @@ class DatabaseConfigCustomizerTest extends TestCase
         $this->assertEquals([
             'DRIVER' => 'pdo_sqlite',
         ], $config->getDatabase());
-        $copy->shouldHaveBeenCalledTimes(1);
+        $copy->shouldHaveBeenCalledOnce();
     }
 }

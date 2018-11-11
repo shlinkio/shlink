@@ -50,7 +50,7 @@ class PreviewGeneratorTest extends TestCase
     {
         $url = 'http://foo.com';
         $this->filesystem->exists(sprintf('dir/preview_%s.png', urlencode($url)))->willReturn(true)
-                                                                                 ->shouldBeCalledTimes(1);
+                                                                                 ->shouldBeCalledOnce();
         $this->image->saveAs(Argument::cetera())->shouldBeCalledTimes(0);
         $this->assertEquals(sprintf('dir/preview_%s.png', urlencode($url)), $this->generator->generatePreview($url));
     }
@@ -65,10 +65,10 @@ class PreviewGeneratorTest extends TestCase
         $expectedPath = 'dir/' . $cacheId;
 
         $this->filesystem->exists(sprintf('dir/preview_%s.png', urlencode($url)))->willReturn(false)
-                                                                                 ->shouldBeCalledTimes(1);
+                                                                                 ->shouldBeCalledOnce();
 
-        $this->image->saveAs($expectedPath)->shouldBeCalledTimes(1);
-        $this->image->getError()->willReturn('')->shouldBeCalledTimes(1);
+        $this->image->saveAs($expectedPath)->shouldBeCalledOnce();
+        $this->image->getError()->willReturn('')->shouldBeCalledOnce();
         $this->assertEquals($expectedPath, $this->generator->generatePreview($url));
     }
 
@@ -83,10 +83,10 @@ class PreviewGeneratorTest extends TestCase
         $expectedPath = 'dir/' . $cacheId;
 
         $this->filesystem->exists(sprintf('dir/preview_%s.png', urlencode($url)))->willReturn(false)
-                                                                                 ->shouldBeCalledTimes(1);
+                                                                                 ->shouldBeCalledOnce();
 
-        $this->image->saveAs($expectedPath)->shouldBeCalledTimes(1);
-        $this->image->getError()->willReturn('Error!!')->shouldBeCalledTimes(1);
+        $this->image->saveAs($expectedPath)->shouldBeCalledOnce();
+        $this->image->getError()->willReturn('Error!!')->shouldBeCalledOnce();
 
         $this->generator->generatePreview($url);
     }

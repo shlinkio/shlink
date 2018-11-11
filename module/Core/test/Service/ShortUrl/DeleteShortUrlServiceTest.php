@@ -70,8 +70,8 @@ class DeleteShortUrlServiceTest extends TestCase
 
         $service->deleteByShortCode('abc123', true);
 
-        $remove->shouldHaveBeenCalledTimes(1);
-        $flush->shouldHaveBeenCalledTimes(1);
+        $remove->shouldHaveBeenCalledOnce();
+        $flush->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -86,8 +86,8 @@ class DeleteShortUrlServiceTest extends TestCase
 
         $service->deleteByShortCode('abc123');
 
-        $remove->shouldHaveBeenCalledTimes(1);
-        $flush->shouldHaveBeenCalledTimes(1);
+        $remove->shouldHaveBeenCalledOnce();
+        $flush->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -102,8 +102,8 @@ class DeleteShortUrlServiceTest extends TestCase
 
         $service->deleteByShortCode('abc123');
 
-        $remove->shouldHaveBeenCalledTimes(1);
-        $flush->shouldHaveBeenCalledTimes(1);
+        $remove->shouldHaveBeenCalledOnce();
+        $flush->shouldHaveBeenCalledOnce();
     }
 
     private function createService(bool $checkVisitsThreshold = true, int $visitsThreshold = 5): DeleteShortUrlService

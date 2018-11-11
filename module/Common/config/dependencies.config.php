@@ -36,6 +36,8 @@ return [
 
             IpGeolocation\IpApiLocationResolver::class => ConfigAbstractFactory::class,
             IpGeolocation\GeoLite2LocationResolver::class => ConfigAbstractFactory::class,
+            IpGeolocation\ChainIpLocationResolver::class => ConfigAbstractFactory::class,
+
             Service\PreviewGenerator::class => ConfigAbstractFactory::class,
         ],
         'aliases' => [
@@ -57,8 +59,14 @@ return [
 
         Template\Extension\TranslatorExtension::class => ['translator'],
         Middleware\LocaleMiddleware::class => ['translator'],
+
         IpGeolocation\IpApiLocationResolver::class => ['httpClient'],
         IpGeolocation\GeoLite2LocationResolver::class => [Reader::class],
+        IpGeolocation\ChainIpLocationResolver::class => [
+            IpGeolocation\GeoLite2LocationResolver::class,
+            IpGeolocation\IpApiLocationResolver::class,
+        ],
+
         Service\PreviewGenerator::class => [
             Image\ImageBuilder::class,
             Filesystem::class,

@@ -52,7 +52,7 @@ class IpApiLocationResolverTest extends TestCase
         $response->getBody()->rewind();
 
         $this->client->get('http://ip-api.com/json/1.2.3.4')->willReturn($response)
-                                                            ->shouldBeCalledTimes(1);
+                                                            ->shouldBeCalledOnce();
         $this->assertEquals($expected, $this->ipResolver->resolveIpLocation('1.2.3.4'));
     }
 
@@ -63,23 +63,7 @@ class IpApiLocationResolverTest extends TestCase
     public function guzzleExceptionThrowsShlinkException()
     {
         $this->client->get('http://ip-api.com/json/1.2.3.4')->willThrow(new TransferException())
-                                                            ->shouldBeCalledTimes(1);
+                                                            ->shouldBeCalledOnce();
         $this->ipResolver->resolveIpLocation('1.2.3.4');
-    }
-
-    /**
-     * @test
-     */
-    public function getApiIntervalReturnsExpectedValue()
-    {
-        $this->assertEquals(65, $this->ipResolver->getApiInterval());
-    }
-
-    /**
-     * @test
-     */
-    public function getApiLimitReturnsExpectedValue()
-    {
-        $this->assertEquals(145, $this->ipResolver->getApiLimit());
     }
 }
