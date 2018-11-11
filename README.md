@@ -104,6 +104,12 @@ Those tasks can be performed using shlink's CLI, so it should be easy to schedul
 
     If you don't run this command regularly, the stats will say all visits come from *unknown* locations.
 
+* Update IP geolocation database: `/path/to/shlink/bin/cli visit:update-db`
+
+    When shlink is installed it downloads a fresh [GeoLite2](https://dev.maxmind.com/geoip/geoip2/geolite2/) db file. Running this command will update this file.
+
+    The file does not change very frequently, so it shouldn't be needed to run this command more than once per month.
+
 * Generate website previews: `/path/to/shlink/bin/cli short-url:process-previews`
 
     Running this will improve the performance of the `doma.in/abc123/preview` URLs, which return a preview of the site.
@@ -186,3 +192,5 @@ Available commands:
  visit
   visit:process               Processes visits where location is not set yet
 ```
+
+> This product includes GeoLite2 data created by MaxMind, available from [https://www.maxmind.com](https://www.maxmind.com)
