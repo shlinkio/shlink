@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI;
 
-use Shlinkio\Shlink\Common\Service\IpLocationResolverInterface;
+use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;

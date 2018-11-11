@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\Service;
+namespace ShlinkioTest\Shlink\Common\IpGeolocation;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Common\Service\IpApiLocationResolver;
+use Shlinkio\Shlink\Common\IpGeolocation\IpApiLocationResolver;
 use function json_encode;
 
 class IpApiLocationResolverTest extends TestCase

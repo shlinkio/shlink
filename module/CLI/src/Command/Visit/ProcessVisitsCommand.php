@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
-use Shlinkio\Shlink\Common\Service\IpLocationResolverInterface;
+use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Service\VisitServiceInterface;

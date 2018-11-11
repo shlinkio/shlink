@@ -34,8 +34,8 @@ return [
 
             Image\ImageBuilder::class => Image\ImageBuilderFactory::class,
 
-            Service\IpApiLocationResolver::class => ConfigAbstractFactory::class,
-            Service\GeoLite2LocationResolver::class => ConfigAbstractFactory::class,
+            IpGeolocation\IpApiLocationResolver::class => ConfigAbstractFactory::class,
+            IpGeolocation\GeoLite2LocationResolver::class => ConfigAbstractFactory::class,
             Service\PreviewGenerator::class => ConfigAbstractFactory::class,
         ],
         'aliases' => [
@@ -45,7 +45,7 @@ return [
             'logger' => LoggerInterface::class,
             Logger::class => 'Logger_Shlink',
             LoggerInterface::class => 'Logger_Shlink',
-            Service\IpLocationResolverInterface::class => Service\GeoLite2LocationResolver::class,
+            IpGeolocation\IpLocationResolverInterface::class => IpGeolocation\GeoLite2LocationResolver::class,
         ],
         'abstract_factories' => [
             Factory\DottedAccessConfigAbstractFactory::class,
@@ -57,8 +57,8 @@ return [
 
         Template\Extension\TranslatorExtension::class => ['translator'],
         Middleware\LocaleMiddleware::class => ['translator'],
-        Service\IpApiLocationResolver::class => ['httpClient'],
-        Service\GeoLite2LocationResolver::class => [Reader::class],
+        IpGeolocation\IpApiLocationResolver::class => ['httpClient'],
+        IpGeolocation\GeoLite2LocationResolver::class => [Reader::class],
         Service\PreviewGenerator::class => [
             Image\ImageBuilder::class,
             Filesystem::class,

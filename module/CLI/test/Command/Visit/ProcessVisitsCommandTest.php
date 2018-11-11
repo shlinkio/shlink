@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\ProcessVisitsCommand;
-use Shlinkio\Shlink\Common\Service\IpApiLocationResolver;
+use Shlinkio\Shlink\Common\IpGeolocation\IpApiLocationResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\Visitor;
