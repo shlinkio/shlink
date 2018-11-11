@@ -6,8 +6,10 @@ namespace Shlinkio\Shlink\Common\IpGeolocation;
 use GeoIp2\Database\Reader;
 use GeoIp2\Exception\AddressNotFoundException;
 use GeoIp2\Model\City;
+use GeoIp2\Record\Subdivision;
 use MaxMind\Db\Reader\InvalidDatabaseException;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
+use function Functional\first;
 
 class GeoLite2LocationResolver implements IpLocationResolverInterface
 {
@@ -40,13 +42,16 @@ class GeoLite2LocationResolver implements IpLocationResolverInterface
 
     private function mapFields(City $city): array
     {
+        /** @var Subdivision $region */
+        $region = first($city->subdivisions);
+
         return [
             'country_code' => $city->country->isoCode ?? '',
             'country_name' => $city->country->name ?? '',
-            'region_name' => $city->mostSpecificSubdivision->name ?? '',
+            'region_name' => $region->name ?? '',
             'city' => $city->city->name ?? '',
-            'latitude' => (string) $city->location->latitude, // FIXME Cast to string for BC compatibility
-            'longitude' => (string) $city->location->longitude, // FIXME Cast to string for BC compatibility
+            'latitude' => $city->location->latitude ?? '',
+            'longitude' => $city->location->longitude ?? '',
             'time_zone' => $city->location->timeZone ?? '',
         ];
     }
