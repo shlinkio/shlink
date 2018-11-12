@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Installer\Config\Plugin;
 use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Shlinkio\Shlink\Installer\Util\AskUtilsTrait;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\ProcessHelper;
@@ -149,7 +148,7 @@ class InstallCommand extends Command
         // If current command is not update, generate database
         if (! $this->isUpdate) {
             $this->io->write('Initializing database...');
-            if (! $this->runPhpCommand(
+            if (! $this->execPhp(
                 'vendor/doctrine/orm/bin/doctrine.php orm:schema-tool:create',
                 'Error generating database.',
                 $output
@@ -160,7 +159,7 @@ class InstallCommand extends Command
 
         // Run database migrations
         $this->io->write('Updating database...');
-        if (! $this->runPhpCommand(
+        if (! $this->execPhp(
             'vendor/doctrine/migrations/bin/doctrine-migrations.php migrations:migrate',
             'Error updating database.',
             $output
@@ -170,11 +169,17 @@ class InstallCommand extends Command
 
         // Generate proxies
         $this->io->write('Generating proxies...');
-        if (! $this->runPhpCommand(
+        if (! $this->execPhp(
             'vendor/doctrine/orm/bin/doctrine.php orm:generate-proxies',
             'Error generating proxies.',
             $output
         )) {
+            return;
+        }
+
+        // Download GeoLite2 db filte
+        $this->io->write('Downloading GeoLite2 db...');
+        if (! $this->execPhp('bin/cli visit:update-db', 'Error downloading GeoLite2 db.', $output)) {
             return;
         }
 
@@ -226,15 +231,7 @@ class InstallCommand extends Command
         return $config;
     }
 
-    /**
-     * @param string $command
-     * @param string $errorMessage
-     * @param OutputInterface $output
-     * @return bool
-     * @throws LogicException
-     * @throws InvalidArgumentException
-     */
-    private function runPhpCommand($command, $errorMessage, OutputInterface $output): bool
+    private function execPhp(string $command, string $errorMessage, OutputInterface $output): bool
     {
         if ($this->processHelper === null) {
             $this->processHelper = $this->getHelper('process');
@@ -256,7 +253,7 @@ class InstallCommand extends Command
         }
 
         if (! $this->io->isVerbose()) {
-            $this->io->error($errorMessage . '  Run this command with -vvv to see specific error info.');
+            $this->io->error($errorMessage . ' Run this command with -vvv to see specific error info.');
         }
 
         return false;
