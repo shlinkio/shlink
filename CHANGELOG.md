@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
     This new option will be asked by the installer both for new shlink installations and for any previous shlink version which is updated.
 
+* [#189](https://github.com/shlinkio/shlink/issues/189) and [#240](https://github.com/shlinkio/shlink/issues/240) Added new [GeoLite2](https://dev.maxmind.com/geoip/geoip2/geolite2/)-based geolocation service which is faster and more reliable than previous one.
+
+    It does not have API limit problems, since it uses a local database file.
+
+    Previous service is still used as a fallback in case GeoLite DB does not contain any IP address.
+
 #### Changed
 
 * [#241](https://github.com/shlinkio/shlink/issues/241) Fixed columns in `visit_locations` table, to be snake_case instead of camelCase.
