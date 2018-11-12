@@ -25,8 +25,6 @@ class IpApiLocationResolver implements IpLocationResolverInterface
     }
 
     /**
-     * @param string $ipAddress
-     * @return array
      * @throws WrongIpException
      */
     public function resolveIpLocation(string $ipAddress): array

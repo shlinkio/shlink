@@ -37,6 +37,7 @@ return [
 
             IpGeolocation\IpApiLocationResolver::class => ConfigAbstractFactory::class,
             IpGeolocation\GeoLite2LocationResolver::class => ConfigAbstractFactory::class,
+            IpGeolocation\EmptyIpLocationResolver::class => InvokableFactory::class,
             IpGeolocation\ChainIpLocationResolver::class => ConfigAbstractFactory::class,
             IpGeolocation\GeoLite2\GeoLite2Options::class => ConfigAbstractFactory::class,
             IpGeolocation\GeoLite2\DbUpdater::class => ConfigAbstractFactory::class,
@@ -83,6 +84,7 @@ return [
         IpGeolocation\ChainIpLocationResolver::class => [
             IpGeolocation\GeoLite2LocationResolver::class,
             IpGeolocation\IpApiLocationResolver::class,
+            IpGeolocation\EmptyIpLocationResolver::class,
         ],
         IpGeolocation\GeoLite2\GeoLite2Options::class => ['config.geolite2'],
         IpGeolocation\GeoLite2\DbUpdater::class => [
