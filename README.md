@@ -108,7 +108,7 @@ Those tasks can be performed using shlink's CLI, so it should be easy to schedul
 
     When shlink is installed it downloads a fresh [GeoLite2](https://dev.maxmind.com/geoip/geoip2/geolite2/) db file. Running this command will update this file.
 
-    The file does not change very frequently, so it shouldn't be needed to run this command more than once per month.
+    The file is updated the first Tuesday of every month, so it should be enough running this command the first Wednesday.
 
 * Generate website previews: `/path/to/shlink/bin/cli short-url:process-previews`
 
