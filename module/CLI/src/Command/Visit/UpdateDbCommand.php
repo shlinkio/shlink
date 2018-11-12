@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\Visit;
 use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -47,11 +48,23 @@ class UpdateDbCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
+        $progressBar = new ProgressBar($output);
+        $progressBar->start();
 
         try {
-            $this->geoLiteDbUpdater->downloadFreshCopy();
+            $this->geoLiteDbUpdater->downloadFreshCopy(function (int $total, int $downloaded) use ($progressBar) {
+                $progressBar->setMaxSteps($total);
+                $progressBar->setProgress($downloaded);
+            });
+
+            $progressBar->finish();
+            $io->writeln('');
+
             $io->success($this->translator->translate('GeoLite2 database properly updated'));
         } catch (RuntimeException $e) {
+            $progressBar->finish();
+            $io->writeln('');
+
             $io->error($this->translator->translate('An error occurred while updating GeoLite2 database'));
             if ($io->isVerbose()) {
                 $this->getApplication()->renderException($e, $output);

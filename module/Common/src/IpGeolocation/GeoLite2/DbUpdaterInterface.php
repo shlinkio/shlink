@@ -10,5 +10,5 @@ interface DbUpdaterInterface
     /**
      * @throws RuntimeException
      */
-    public function downloadFreshCopy(): void;
+    public function downloadFreshCopy(callable $handleProgress = null): void;
 }

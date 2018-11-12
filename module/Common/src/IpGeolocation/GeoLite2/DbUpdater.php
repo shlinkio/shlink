@@ -42,22 +42,23 @@ class DbUpdater implements DbUpdaterInterface
     /**
      * @throws RuntimeException
      */
-    public function downloadFreshCopy(): void
+    public function downloadFreshCopy(callable $handleProgress = null): void
     {
         $tempDir = $this->options->getTempDir();
         $compressedFile = sprintf('%s/%s', $tempDir, self::DB_COMPRESSED_FILE);
 
-        $this->downloadDbFile($compressedFile);
+        $this->downloadDbFile($compressedFile, $handleProgress);
         $tempFullPath = $this->extractDbFile($compressedFile, $tempDir);
         $this->copyNewDbFile($tempFullPath);
         $this->deleteTempFiles([$compressedFile, $tempFullPath]);
     }
 
-    private function downloadDbFile(string $dest): void
+    private function downloadDbFile(string $dest, callable $handleProgress = null): void
     {
         try {
             $this->httpClient->request(RequestMethod::METHOD_GET, $this->options->getDownloadFrom(), [
                 RequestOptions::SINK => $dest,
+                RequestOptions::PROGRESS => $handleProgress,
             ]);
         } catch (Throwable | GuzzleException $e) {
             throw new RuntimeException(

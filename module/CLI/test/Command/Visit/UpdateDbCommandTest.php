@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\UpdateDbCommand;
 use Shlinkio\Shlink\Common\Exception\RuntimeException;
@@ -39,7 +40,7 @@ class UpdateDbCommandTest extends TestCase
      */
     public function successMessageIsPrintedIfEverythingWorks()
     {
-        $download = $this->dbUpdater->downloadFreshCopy()->will(function () {
+        $download = $this->dbUpdater->downloadFreshCopy(Argument::type('callable'))->will(function () {
         });
 
         $this->commandTester->execute([]);
@@ -54,7 +55,7 @@ class UpdateDbCommandTest extends TestCase
      */
     public function errorMessageIsPrintedIfAnExceptionIsThrown()
     {
-        $download = $this->dbUpdater->downloadFreshCopy()->willThrow(RuntimeException::class);
+        $download = $this->dbUpdater->downloadFreshCopy(Argument::type('callable'))->willThrow(RuntimeException::class);
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
