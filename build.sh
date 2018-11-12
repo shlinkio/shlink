@@ -19,6 +19,7 @@ mkdir -p "${builtcontent}"
 rsync -av * "${builtcontent}" \
     --exclude=data/infra \
     --exclude=data/migrations_template.txt \
+    --exclude=data/GeoLite2-City.mmdb \
     --exclude=**/.gitignore \
     --exclude=CHANGELOG.md \
     --exclude=composer.lock \
