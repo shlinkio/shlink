@@ -40,7 +40,7 @@ class ProcessVisitsCommand extends Command
         $this->visitService = $visitService;
         $this->ipLocationResolver = $ipLocationResolver;
         $this->translator = $translator;
-        parent::__construct(null);
+        parent::__construct();
     }
 
     protected function configure(): void

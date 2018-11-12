@@ -18,6 +18,7 @@ return [
             Command\ShortUrl\DeleteShortUrlCommand::NAME => Command\ShortUrl\DeleteShortUrlCommand::class,
 
             Command\Visit\ProcessVisitsCommand::NAME => Command\Visit\ProcessVisitsCommand::class,
+            Command\Visit\UpdateDbCommand::NAME => Command\Visit\UpdateDbCommand::class,
 
             Command\Config\GenerateCharsetCommand::NAME => Command\Config\GenerateCharsetCommand::class,
             Command\Config\GenerateSecretCommand::NAME => Command\Config\GenerateSecretCommand::class,

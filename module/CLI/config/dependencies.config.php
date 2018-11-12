@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI;
 
+use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Service;
@@ -25,6 +26,7 @@ return [
             Command\ShortUrl\DeleteShortUrlCommand::class => ConfigAbstractFactory::class,
 
             Command\Visit\ProcessVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\Visit\UpdateDbCommand::class => ConfigAbstractFactory::class,
 
             Command\Config\GenerateCharsetCommand::class => ConfigAbstractFactory::class,
             Command\Config\GenerateSecretCommand::class => ConfigAbstractFactory::class,
@@ -68,6 +70,7 @@ return [
             IpLocationResolverInterface::class,
             'translator',
         ],
+        Command\Visit\UpdateDbCommand::class => [DbUpdater::class, 'translator'],
 
         Command\Config\GenerateCharsetCommand::class => ['translator'],
         Command\Config\GenerateSecretCommand::class => ['translator'],
