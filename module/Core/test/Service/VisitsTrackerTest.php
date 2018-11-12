@@ -40,9 +40,9 @@ class VisitsTrackerTest extends TestCase
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['shortCode' => $shortCode])->willReturn(new ShortUrl(''));
 
-        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledTimes(1);
-        $this->em->persist(Argument::any())->shouldBeCalledTimes(1);
-        $this->em->flush(Argument::type(Visit::class))->shouldBeCalledTimes(1);
+        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
+        $this->em->persist(Argument::any())->shouldBeCalledOnce();
+        $this->em->flush(Argument::type(Visit::class))->shouldBeCalledOnce();
 
         $this->visitsTracker->track($shortCode, Visitor::emptyInstance());
     }
@@ -57,13 +57,13 @@ class VisitsTrackerTest extends TestCase
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['shortCode' => $shortCode])->willReturn(new ShortUrl(''));
 
-        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledTimes(1);
+        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
         $this->em->persist(Argument::any())->will(function ($args) use ($test) {
             /** @var Visit $visit */
             $visit = $args[0];
             $test->assertEquals('4.3.2.0', $visit->getRemoteAddr());
-        })->shouldBeCalledTimes(1);
-        $this->em->flush(Argument::type(Visit::class))->shouldBeCalledTimes(1);
+        })->shouldBeCalledOnce();
+        $this->em->flush(Argument::type(Visit::class))->shouldBeCalledOnce();
 
         $this->visitsTracker->track($shortCode, new Visitor('', '', '4.3.2.1'));
     }
@@ -77,7 +77,7 @@ class VisitsTrackerTest extends TestCase
         $shortUrl = new ShortUrl('http://domain.com/foo/bar');
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['shortCode' => $shortCode])->willReturn($shortUrl);
-        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledTimes(1);
+        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
 
         $list = [
             new Visit(new ShortUrl(''), Visitor::emptyInstance()),
@@ -85,7 +85,7 @@ class VisitsTrackerTest extends TestCase
         ];
         $repo2 = $this->prophesize(VisitRepository::class);
         $repo2->findVisitsByShortUrl($shortUrl, null)->willReturn($list);
-        $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledTimes(1);
+        $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
 
         $this->assertEquals($list, $this->visitsTracker->info($shortCode));
     }

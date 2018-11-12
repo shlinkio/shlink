@@ -45,7 +45,7 @@ class EditShortUrlTagsActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->shortUrlService->setTagsByShortCode($shortCode, [])->willThrow(InvalidShortCodeException::class)
-                                                                  ->shouldBeCalledTimes(1);
+                                                                  ->shouldBeCalledOnce();
 
         $response = $this->action->handle(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123')
@@ -61,7 +61,7 @@ class EditShortUrlTagsActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->shortUrlService->setTagsByShortCode($shortCode, [])->willReturn(new ShortUrl(''))
-                                                                  ->shouldBeCalledTimes(1);
+                                                                  ->shouldBeCalledOnce();
 
         $response = $this->action->handle(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123')

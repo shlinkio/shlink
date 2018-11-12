@@ -40,7 +40,7 @@ class ResolveShortUrlActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $response = $this->action->handle($request);
@@ -56,7 +56,7 @@ class ResolveShortUrlActionTest extends TestCase
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(
             new ShortUrl('http://domain.com/foo/bar')
-        )->shouldBeCalledTimes(1);
+        )->shouldBeCalledOnce();
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $response = $this->action->handle($request);
@@ -71,7 +71,7 @@ class ResolveShortUrlActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $response = $this->action->handle($request);
@@ -86,7 +86,7 @@ class ResolveShortUrlActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(Exception::class)
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $response = $this->action->handle($request);

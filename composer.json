@@ -24,6 +24,7 @@
         "doctrine/orm": "^2.5",
         "endroid/qr-code": "^1.7",
         "firebase/php-jwt": "^4.0",
+        "geoip2/geoip2": "^2.9",
         "guzzlehttp/guzzle": "^6.2",
         "lstrojny/functional-php": "^1.8",
         "mikehaertl/phpwkhtmltopdf": "^2.2",
@@ -47,6 +48,7 @@
         "zendframework/zend-stdlib": "^3.0"
     },
     "require-dev": {
+        "devster/ubench": "^2.0",
         "filp/whoops": "^2.0",
         "infection/infection": "^0.11.0",
         "phpstan/phpstan": "^0.10.0",

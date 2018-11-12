@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\Service;
+namespace Shlinkio\Shlink\Common\IpGeolocation;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -25,8 +25,6 @@ class IpApiLocationResolver implements IpLocationResolverInterface
     }
 
     /**
-     * @param string $ipAddress
-     * @return array
      * @throws WrongIpException
      */
     public function resolveIpLocation(string $ipAddress): array
@@ -52,25 +50,5 @@ class IpApiLocationResolver implements IpLocationResolverInterface
             'longitude' => $entry['lon'] ?? '',
             'time_zone' => $entry['timezone'] ?? '',
         ];
-    }
-
-    /**
-     * Returns the interval in seconds that needs to be waited when the API limit is reached
-     *
-     * @return int
-     */
-    public function getApiInterval(): int
-    {
-        return 65; // ip-api interval is 1 minute. Return 5 extra seconds just in case
-    }
-
-    /**
-     * Returns the limit of requests that can be performed to the API in a specific interval, or null if no limit exists
-     *
-     * @return int|null
-     */
-    public function getApiLimit(): ?int
-    {
-        return 145; // ip-api limit is 150 requests per minute. Leave 5 less requests just in case
     }
 }

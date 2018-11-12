@@ -39,7 +39,7 @@ class GetVisitsActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::type(DateRange::class))->willReturn([])
-                                                                                ->shouldBeCalledTimes(1);
+                                                                                ->shouldBeCalledOnce();
 
         $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode));
         $this->assertEquals(200, $response->getStatusCode());
@@ -53,7 +53,7 @@ class GetVisitsActionTest extends TestCase
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::type(DateRange::class))->willThrow(
             InvalidArgumentException::class
-        )->shouldBeCalledTimes(1);
+        )->shouldBeCalledOnce();
 
         $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode));
         $this->assertEquals(404, $response->getStatusCode());
@@ -67,7 +67,7 @@ class GetVisitsActionTest extends TestCase
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::type(DateRange::class))->willThrow(
             Exception::class
-        )->shouldBeCalledTimes(1);
+        )->shouldBeCalledOnce();
 
         $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode));
         $this->assertEquals(500, $response->getStatusCode());
@@ -81,7 +81,7 @@ class GetVisitsActionTest extends TestCase
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, new DateRange(null, Chronos::parse('2016-01-01 00:00:00')))
             ->willReturn([])
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledOnce();
 
         $response = $this->action->handle(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode)

@@ -81,7 +81,7 @@ class InstallCommandTest extends TestCase
      */
     public function generatedConfigIsProperlyPersisted()
     {
-        $this->configWriter->toFile(Argument::any(), Argument::type('array'), false)->shouldBeCalledTimes(1);
+        $this->configWriter->toFile(Argument::any(), Argument::type('array'), false)->shouldBeCalledOnce();
         $this->commandTester->execute([]);
     }
 
@@ -97,8 +97,8 @@ class InstallCommandTest extends TestCase
 
         $this->commandTester->execute([]);
 
-        $appConfigExists->shouldHaveBeenCalledTimes(1);
-        $appConfigRemove->shouldHaveBeenCalledTimes(1);
+        $appConfigExists->shouldHaveBeenCalledOnce();
+        $appConfigRemove->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -115,8 +115,8 @@ class InstallCommandTest extends TestCase
 
         $this->commandTester->execute([]);
 
-        $appConfigExists->shouldHaveBeenCalledTimes(1);
-        $appConfigRemove->shouldHaveBeenCalledTimes(1);
+        $appConfigExists->shouldHaveBeenCalledOnce();
+        $appConfigRemove->shouldHaveBeenCalledOnce();
         $configToFile->shouldNotHaveBeenCalled();
     }
 

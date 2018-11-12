@@ -30,7 +30,7 @@ class PaginableRepositoryAdapterTest extends TestCase
      */
     public function getItemsFallbacksToFindList()
     {
-        $this->repo->findList(10, 5, 'search', ['foo', 'bar'], 'order')->shouldBeCalledTimes(1);
+        $this->repo->findList(10, 5, 'search', ['foo', 'bar'], 'order')->shouldBeCalledOnce();
         $this->adapter->getItems(5, 10);
     }
 
@@ -39,7 +39,7 @@ class PaginableRepositoryAdapterTest extends TestCase
      */
     public function countFallbacksToCountList()
     {
-        $this->repo->countList('search', ['foo', 'bar'])->shouldBeCalledTimes(1);
+        $this->repo->countList('search', ['foo', 'bar'])->shouldBeCalledOnce();
         $this->adapter->count();
     }
 }

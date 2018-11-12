@@ -60,11 +60,11 @@ class GeneratePreviewCommandTest extends TestCase
             new ShortUrl('https://bar.com'),
             new ShortUrl('http://baz.com/something'),
         ]);
-        $this->shortUrlService->listShortUrls(1)->willReturn($paginator)->shouldBeCalledTimes(1);
+        $this->shortUrlService->listShortUrls(1)->willReturn($paginator)->shouldBeCalledOnce();
 
-        $this->previewGenerator->generatePreview('http://foo.com')->shouldBeCalledTimes(1);
-        $this->previewGenerator->generatePreview('https://bar.com')->shouldBeCalledTimes(1);
-        $this->previewGenerator->generatePreview('http://baz.com/something')->shouldBeCalledTimes(1);
+        $this->previewGenerator->generatePreview('http://foo.com')->shouldBeCalledOnce();
+        $this->previewGenerator->generatePreview('https://bar.com')->shouldBeCalledOnce();
+        $this->previewGenerator->generatePreview('http://baz.com/something')->shouldBeCalledOnce();
 
         $this->commandTester->execute([
             'command' => 'shortcode:process-previews',
@@ -82,7 +82,7 @@ class GeneratePreviewCommandTest extends TestCase
             new ShortUrl('http://baz.com/something'),
         ];
         $paginator = $this->createPaginator($items);
-        $this->shortUrlService->listShortUrls(1)->willReturn($paginator)->shouldBeCalledTimes(1);
+        $this->shortUrlService->listShortUrls(1)->willReturn($paginator)->shouldBeCalledOnce();
         $this->previewGenerator->generatePreview(Argument::any())->willThrow(PreviewGenerationException::class)
                                                                  ->shouldBeCalledTimes(count($items));
 

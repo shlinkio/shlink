@@ -64,7 +64,7 @@ class RequestToAuthPluginTest extends TestCase
 
         $this->requestToPlugin->fromRequest($request);
 
-        $getPlugin->shouldHaveBeenCalledTimes(1);
+        $getPlugin->shouldHaveBeenCalledOnce();
     }
 
     public function provideHeaders(): array

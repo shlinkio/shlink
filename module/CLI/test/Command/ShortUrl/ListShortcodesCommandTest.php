@@ -41,7 +41,7 @@ class ListShortcodesCommandTest extends TestCase
     public function noInputCallsListJustOnce()
     {
         $this->shortUrlService->listShortUrls(1, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
-                                                                ->shouldBeCalledTimes(1);
+                                                                ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute(['command' => 'shortcode:list']);
@@ -78,7 +78,7 @@ class ListShortcodesCommandTest extends TestCase
         }
 
         $this->shortUrlService->listShortUrls(Argument::cetera())->willReturn(new Paginator(new ArrayAdapter($data)))
-                                                                 ->shouldBeCalledTimes(1);
+                                                                 ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute(['command' => 'shortcode:list']);
@@ -91,7 +91,7 @@ class ListShortcodesCommandTest extends TestCase
     {
         $page = 5;
         $this->shortUrlService->listShortUrls($page, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
-                                                                    ->shouldBeCalledTimes(1);
+                                                                    ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['y']);
         $this->commandTester->execute([
@@ -106,7 +106,7 @@ class ListShortcodesCommandTest extends TestCase
     public function ifTagsFlagIsProvidedTagsColumnIsIncluded()
     {
         $this->shortUrlService->listShortUrls(1, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
-                                                                ->shouldBeCalledTimes(1);
+                                                                ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['y']);
         $this->commandTester->execute([

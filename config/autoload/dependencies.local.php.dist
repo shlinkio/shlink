@@ -1,0 +1,12 @@
+<?php
+declare(strict_types=1);
+
+return [
+
+    'dependencies' => [
+        'lazy_services' => [
+            'write_proxy_files' => false,
+        ],
+    ],
+
+];

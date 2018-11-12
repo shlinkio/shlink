@@ -57,7 +57,7 @@ class AuthenticateActionTest extends TestCase
     public function properApiKeyReturnsTokenInResponse()
     {
         $this->apiKeyService->getByKey('foo')->willReturn((new ApiKey())->setId('5'))
-                                             ->shouldBeCalledTimes(1);
+                                             ->shouldBeCalledOnce();
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'apiKey' => 'foo',
@@ -75,7 +75,7 @@ class AuthenticateActionTest extends TestCase
     public function invalidApiKeyReturnsErrorResponse()
     {
         $this->apiKeyService->getByKey('foo')->willReturn((new ApiKey())->disable())
-                                             ->shouldBeCalledTimes(1);
+                                             ->shouldBeCalledOnce();
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody([
             'apiKey' => 'foo',

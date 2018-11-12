@@ -28,8 +28,8 @@ class TranslatorExtensionTest extends TestCase
     {
         $engine = $this->prophesize(Engine::class);
 
-        $engine->registerFunction('translate', Argument::type('callable'))->shouldBeCalledTimes(1);
-        $engine->registerFunction('translate_plural', Argument::type('callable'))->shouldBeCalledTimes(1);
+        $engine->registerFunction('translate', Argument::type('callable'))->shouldBeCalledOnce();
+        $engine->registerFunction('translate_plural', Argument::type('callable'))->shouldBeCalledOnce();
 
         $funcs = $this->extension->register($engine->reveal());
     }

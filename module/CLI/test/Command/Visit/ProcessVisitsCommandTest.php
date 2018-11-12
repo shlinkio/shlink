@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\ProcessVisitsCommand;
-use Shlinkio\Shlink\Common\Service\IpApiLocationResolver;
+use Shlinkio\Shlink\Common\IpGeolocation\IpApiLocationResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\Visitor;
@@ -17,28 +17,26 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Zend\I18n\Translator\Translator;
 use function count;
-use function round;
 
 class ProcessVisitsCommandTest extends TestCase
 {
     /**
      * @var CommandTester
      */
-    protected $commandTester;
+    private $commandTester;
     /**
      * @var ObjectProphecy
      */
-    protected $visitService;
+    private $visitService;
     /**
      * @var ObjectProphecy
      */
-    protected $ipResolver;
+    private $ipResolver;
 
     public function setUp()
     {
         $this->visitService = $this->prophesize(VisitService::class);
         $this->ipResolver = $this->prophesize(IpApiLocationResolver::class);
-        $this->ipResolver->getApiLimit()->willReturn(10000000000);
 
         $command = new ProcessVisitsCommand(
             $this->visitService->reveal(),
@@ -64,7 +62,7 @@ class ProcessVisitsCommandTest extends TestCase
             new Visit($shortUrl, new Visitor('', '', '12.34.56.78')),
         ];
         $this->visitService->getUnlocatedVisits()->willReturn($visits)
-                                                 ->shouldBeCalledTimes(1);
+                                                 ->shouldBeCalledOnce();
 
         $this->visitService->saveVisit(Argument::any())->shouldBeCalledTimes(count($visits));
         $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([])
@@ -96,7 +94,7 @@ class ProcessVisitsCommandTest extends TestCase
             new Visit($shortUrl, new Visitor('', '', null)),
         ];
         $this->visitService->getUnlocatedVisits()->willReturn($visits)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledOnce();
 
         $this->visitService->saveVisit(Argument::any())->shouldBeCalledTimes(count($visits) - 4);
         $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([])
@@ -108,44 +106,5 @@ class ProcessVisitsCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
         $this->assertContains('Ignored localhost address', $output);
         $this->assertContains('Ignored visit with no IP address', $output);
-    }
-
-    /**
-     * @test
-     */
-    public function sleepsEveryTimeTheApiLimitIsReached()
-    {
-        $shortUrl = new ShortUrl('');
-
-        $visits = [
-            new Visit($shortUrl, new Visitor('', '', '1.2.3.4')),
-            new Visit($shortUrl, new Visitor('', '', '4.3.2.1')),
-            new Visit($shortUrl, new Visitor('', '', '12.34.56.78')),
-            new Visit($shortUrl, new Visitor('', '', '1.2.3.4')),
-            new Visit($shortUrl, new Visitor('', '', '4.3.2.1')),
-            new Visit($shortUrl, new Visitor('', '', '12.34.56.78')),
-            new Visit($shortUrl, new Visitor('', '', '1.2.3.4')),
-            new Visit($shortUrl, new Visitor('', '', '4.3.2.1')),
-            new Visit($shortUrl, new Visitor('', '', '12.34.56.78')),
-            new Visit($shortUrl, new Visitor('', '', '4.3.2.1')),
-        ];
-        $apiLimit = 3;
-
-        $this->visitService->getUnlocatedVisits()->willReturn($visits);
-        $this->visitService->saveVisit(Argument::any())->will(function () {
-        });
-
-        $getApiLimit = $this->ipResolver->getApiLimit()->willReturn($apiLimit);
-        $getApiInterval = $this->ipResolver->getApiInterval()->willReturn(0);
-        $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([])
-            ->shouldBeCalledTimes(count($visits));
-
-        $this->commandTester->execute([
-            'command' => 'visit:process',
-        ]);
-
-        $getApiLimit->shouldHaveBeenCalledTimes(count($visits));
-        $getApiInterval->shouldHaveBeenCalledTimes(round(count($visits) / $apiLimit));
-        $resolveIpLocation->shouldHaveBeenCalledTimes(count($visits));
     }
 }

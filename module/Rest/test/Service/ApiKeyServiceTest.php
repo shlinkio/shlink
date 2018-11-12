@@ -34,8 +34,8 @@ class ApiKeyServiceTest extends TestCase
      */
     public function keyIsProperlyCreated()
     {
-        $this->em->flush()->shouldBeCalledTimes(1);
-        $this->em->persist(Argument::type(ApiKey::class))->shouldBeCalledTimes(1);
+        $this->em->flush()->shouldBeCalledOnce();
+        $this->em->persist(Argument::type(ApiKey::class))->shouldBeCalledOnce();
 
         $key = $this->service->create();
         $this->assertNull($key->getExpirationDate());
@@ -46,8 +46,8 @@ class ApiKeyServiceTest extends TestCase
      */
     public function keyIsProperlyCreatedWithExpirationDate()
     {
-        $this->em->flush()->shouldBeCalledTimes(1);
-        $this->em->persist(Argument::type(ApiKey::class))->shouldBeCalledTimes(1);
+        $this->em->flush()->shouldBeCalledOnce();
+        $this->em->persist(Argument::type(ApiKey::class))->shouldBeCalledOnce();
 
         $date = Chronos::parse('2030-01-01');
         $key = $this->service->create($date);
@@ -61,7 +61,7 @@ class ApiKeyServiceTest extends TestCase
     {
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['key' => '12345'])->willReturn(null)
-                                            ->shouldBeCalledTimes(1);
+                                            ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
         $this->assertFalse($this->service->check('12345'));
@@ -76,7 +76,7 @@ class ApiKeyServiceTest extends TestCase
         $key->disable();
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['key' => '12345'])->willReturn($key)
-                                            ->shouldBeCalledTimes(1);
+                                            ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
         $this->assertFalse($this->service->check('12345'));
@@ -90,7 +90,7 @@ class ApiKeyServiceTest extends TestCase
         $key = new ApiKey(Chronos::now()->subDay());
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['key' => '12345'])->willReturn($key)
-                                            ->shouldBeCalledTimes(1);
+                                            ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
         $this->assertFalse($this->service->check('12345'));
@@ -103,7 +103,7 @@ class ApiKeyServiceTest extends TestCase
     {
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['key' => '12345'])->willReturn(new ApiKey())
-                                            ->shouldBeCalledTimes(1);
+                                            ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
         $this->assertTrue($this->service->check('12345'));
@@ -117,7 +117,7 @@ class ApiKeyServiceTest extends TestCase
     {
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['key' => '12345'])->willReturn(null)
-                                            ->shouldBeCalledTimes(1);
+                                            ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
         $this->service->disable('12345');
@@ -131,10 +131,10 @@ class ApiKeyServiceTest extends TestCase
         $key = new ApiKey();
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['key' => '12345'])->willReturn($key)
-                                            ->shouldBeCalledTimes(1);
+                                            ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
-        $this->em->flush()->shouldBeCalledTimes(1);
+        $this->em->flush()->shouldBeCalledOnce();
 
         $this->assertTrue($key->isEnabled());
         $returnedKey = $this->service->disable('12345');
@@ -149,7 +149,7 @@ class ApiKeyServiceTest extends TestCase
     {
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findBy([])->willReturn([])
-                         ->shouldBeCalledTimes(1);
+                         ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
         $this->service->listKeys();
@@ -162,7 +162,7 @@ class ApiKeyServiceTest extends TestCase
     {
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findBy(['enabled' => true])->willReturn([])
-                                          ->shouldBeCalledTimes(1);
+                                          ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
         $this->service->listKeys(true);

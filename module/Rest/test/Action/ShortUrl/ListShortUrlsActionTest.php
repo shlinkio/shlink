@@ -40,7 +40,7 @@ class ListShortUrlsActionTest extends TestCase
     {
         $page = 3;
         $this->service->listShortUrls($page, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
-                                                            ->shouldBeCalledTimes(1);
+                                                            ->shouldBeCalledOnce();
 
         $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams([
             'page' => $page,
@@ -55,7 +55,7 @@ class ListShortUrlsActionTest extends TestCase
     {
         $page = 3;
         $this->service->listShortUrls($page, null, [], null)->willThrow(Exception::class)
-                                                            ->shouldBeCalledTimes(1);
+                                                            ->shouldBeCalledOnce();
 
         $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams([
             'page' => $page,

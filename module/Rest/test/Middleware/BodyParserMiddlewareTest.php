@@ -38,7 +38,7 @@ class BodyParserMiddlewareTest extends TestCase
 
         $this->middleware->process($request, $delegate->reveal());
 
-        $process->shouldHaveBeenCalledTimes(1);
+        $process->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -70,7 +70,7 @@ class BodyParserMiddlewareTest extends TestCase
 
         $this->middleware->process($request, $delegate->reveal());
 
-        $process->shouldHaveBeenCalledTimes(1);
+        $process->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -101,6 +101,6 @@ class BodyParserMiddlewareTest extends TestCase
 
         $this->middleware->process($request, $delegate->reveal());
 
-        $process->shouldHaveBeenCalledTimes(1);
+        $process->shouldHaveBeenCalledOnce();
     }
 }

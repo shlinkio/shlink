@@ -50,7 +50,7 @@ class UrlShortenerConfigCustomizerTest extends TestCase
             'NOT_FOUND_REDIRECT_TO' => 'asked',
         ], $config->getUrlShortener());
         $ask->shouldHaveBeenCalledTimes(3);
-        $choice->shouldHaveBeenCalledTimes(1);
+        $choice->shouldHaveBeenCalledOnce();
         $confirm->shouldHaveBeenCalledTimes(2);
     }
 
@@ -81,8 +81,8 @@ class UrlShortenerConfigCustomizerTest extends TestCase
             'NOT_FOUND_REDIRECT_TO' => 'foo',
         ], $config->getUrlShortener());
         $choice->shouldNotHaveBeenCalled();
-        $ask->shouldHaveBeenCalledTimes(1);
-        $confirm->shouldHaveBeenCalledTimes(1);
+        $ask->shouldHaveBeenCalledOnce();
+        $confirm->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -146,6 +146,6 @@ class UrlShortenerConfigCustomizerTest extends TestCase
             'ENABLE_NOT_FOUND_REDIRECTION' => false,
         ], $config->getUrlShortener());
         $ask->shouldNotHaveBeenCalled();
-        $confirm->shouldHaveBeenCalledTimes(1);
+        $confirm->shouldHaveBeenCalledOnce();
     }
 }

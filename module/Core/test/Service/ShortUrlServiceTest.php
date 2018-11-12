@@ -49,8 +49,8 @@ class ShortUrlServiceTest extends TestCase
         ];
 
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $repo->findList(Argument::cetera())->willReturn($list)->shouldBeCalledTimes(1);
-        $repo->countList(Argument::cetera())->willReturn(count($list))->shouldBeCalledTimes(1);
+        $repo->findList(Argument::cetera())->willReturn($list)->shouldBeCalledOnce();
+        $repo->countList(Argument::cetera())->willReturn(count($list))->shouldBeCalledOnce();
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $list = $this->service->listShortUrls();
@@ -65,7 +65,7 @@ class ShortUrlServiceTest extends TestCase
         $shortCode = 'abc123';
         $repo = $this->prophesize(ShortUrlRepository::class);
         $repo->findOneBy(['shortCode' => $shortCode])->willReturn(null)
-                                                     ->shouldBeCalledTimes(1);
+                                                     ->shouldBeCalledOnce();
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $this->expectException(InvalidShortCodeException::class);
@@ -78,16 +78,16 @@ class ShortUrlServiceTest extends TestCase
     public function providedTagsAreGetFromRepoAndSetToTheShortUrl()
     {
         $shortUrl = $this->prophesize(ShortUrl::class);
-        $shortUrl->setTags(Argument::any())->shouldBeCalledTimes(1);
+        $shortUrl->setTags(Argument::any())->shouldBeCalledOnce();
         $shortCode = 'abc123';
         $repo = $this->prophesize(ShortUrlRepository::class);
         $repo->findOneBy(['shortCode' => $shortCode])->willReturn($shortUrl->reveal())
-                                                     ->shouldBeCalledTimes(1);
+                                                     ->shouldBeCalledOnce();
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $tagRepo = $this->prophesize(EntityRepository::class);
-        $tagRepo->findOneBy(['name' => 'foo'])->willReturn(new Tag('foo'))->shouldbeCalledTimes(1);
-        $tagRepo->findOneBy(['name' => 'bar'])->willReturn(null)->shouldbeCalledTimes(1);
+        $tagRepo->findOneBy(['name' => 'foo'])->willReturn(new Tag('foo'))->shouldBeCalledOnce();
+        $tagRepo->findOneBy(['name' => 'bar'])->willReturn(null)->shouldBeCalledOnce();
         $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
 
         $this->service->setTagsByShortCode($shortCode, ['foo', 'bar']);

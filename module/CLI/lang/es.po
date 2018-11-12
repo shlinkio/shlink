@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2018-09-16 18:36+0200\n"
-"PO-Revision-Date: 2018-09-16 18:37+0200\n"
+"POT-Creation-Date: 2018-11-12 21:01+0100\n"
+"PO-Revision-Date: 2018-11-12 21:03+0100\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -340,6 +340,9 @@ msgstr "Una etiqueta con nombre \"%s\" no ha sido encontrada"
 msgid "Processes visits where location is not set yet"
 msgstr "Procesa las visitas donde la localización no ha sido establecida aún"
 
+msgid "Ignored visit with no IP address"
+msgstr "Ignorada visita sin dirección IP"
+
 msgid "Processing IP"
 msgstr "Procesando IP"
 
@@ -350,15 +353,32 @@ msgstr "Ignorada IP de localhost"
 msgid "Address located at \"%s\""
 msgstr "Dirección localizada en \"%s\""
 
-msgid "An error occurred while locating IP"
-msgstr "Se produjo un error al localizar la IP"
-
-#, php-format
-msgid "IP location resolver limit reached. Waiting %s seconds..."
-msgstr "Limite del localizador de IPs alcanzado. Esperando %s segundos..."
+msgid "An error occurred while locating IP. Skipped"
+msgstr "Se produjo un error al localizar la IP. Ignorado"
 
 msgid "Finished processing all IPs"
 msgstr "Finalizado el procesado de todas las IPs"
+
+msgid "Updates the GeoLite2 database file used to geolocate IP addresses"
+msgstr ""
+"Actualiza el fichero de base de datos de GeoLite2 usado para geolocalizar "
+"direcciones IP"
+
+msgid ""
+"The GeoLite2 database is updated first Tuesday every month, so this command "
+"should be ideally run every first Wednesday"
+msgstr ""
+"La base de datos de GeoLite2 se actualiza el primer Martes de cada mes, por "
+"lo que la opción ideal es ejecutar este comando cada primer miércoles de mes"
+
+msgid "GeoLite2 database properly updated"
+msgstr "Base de datos de GeoLite2 correctamente actualizada"
+
+msgid "An error occurred while updating GeoLite2 database"
+msgstr "Se produjo un error al actualizar la base de datos de GeoLite2"
+
+#~ msgid "IP location resolver limit reached. Waiting %s seconds..."
+#~ msgstr "Limite del localizador de IPs alcanzado. Esperando %s segundos..."
 
 #~ msgid "Remote Address"
 #~ msgstr "Dirección remota"

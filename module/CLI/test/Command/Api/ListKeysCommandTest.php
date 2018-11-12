@@ -41,7 +41,7 @@ class ListKeysCommandTest extends TestCase
             new ApiKey(),
             new ApiKey(),
             new ApiKey(),
-        ])->shouldBeCalledTimes(1);
+        ])->shouldBeCalledOnce();
         $this->commandTester->execute([
             'command' => 'api-key:list',
         ]);
@@ -55,7 +55,7 @@ class ListKeysCommandTest extends TestCase
         $this->apiKeyService->listKeys(true)->willReturn([
             new ApiKey(),
             new ApiKey(),
-        ])->shouldBeCalledTimes(1);
+        ])->shouldBeCalledOnce();
         $this->commandTester->execute([
             'command' => 'api-key:list',
             '--enabledOnly' => true,

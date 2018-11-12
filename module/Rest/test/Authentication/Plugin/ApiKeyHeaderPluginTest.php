@@ -37,7 +37,7 @@ class ApiKeyHeaderPluginTest extends TestCase
     {
         $apiKey = 'abc-ABC';
         $check = $this->apiKeyService->check($apiKey)->willReturn(false);
-        $check->shouldBeCalledTimes(1);
+        $check->shouldBeCalledOnce();
 
         $this->expectException(VerifyAuthenticationException::class);
         $this->expectExceptionMessage('Provided API key does not exist or is invalid');
@@ -55,7 +55,7 @@ class ApiKeyHeaderPluginTest extends TestCase
 
         $this->plugin->verify($this->createRequest($apiKey));
 
-        $check->shouldHaveBeenCalledTimes(1);
+        $check->shouldHaveBeenCalledOnce();
     }
 
     /**

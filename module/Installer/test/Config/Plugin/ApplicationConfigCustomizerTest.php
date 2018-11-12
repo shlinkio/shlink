@@ -51,7 +51,7 @@ class ApplicationConfigCustomizerTest extends TestCase
             'CHECK_VISITS_THRESHOLD' => false,
         ], $config->getApp());
         $ask->shouldHaveBeenCalledTimes(2);
-        $confirm->shouldHaveBeenCalledTimes(1);
+        $confirm->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -77,7 +77,7 @@ class ApplicationConfigCustomizerTest extends TestCase
             'VISITS_THRESHOLD' => 20,
         ], $config->getApp());
         $ask->shouldHaveBeenCalledTimes(3);
-        $confirm->shouldHaveBeenCalledTimes(1);
+        $confirm->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -101,7 +101,7 @@ class ApplicationConfigCustomizerTest extends TestCase
             'CHECK_VISITS_THRESHOLD' => true,
             'VISITS_THRESHOLD' => 20,
         ], $config->getApp());
-        $ask->shouldHaveBeenCalledTimes(1);
+        $ask->shouldHaveBeenCalledOnce();
     }
 
     /**

@@ -59,8 +59,8 @@ class RedirectActionTest extends TestCase
         $expectedUrl = 'http://domain.com/foo/bar';
         $shortUrl = new ShortUrl($expectedUrl);
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
-                                                       ->shouldBeCalledTimes(1);
-        $this->visitTracker->track(Argument::cetera())->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
+        $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $response = $this->action->process($request, TestUtils::createReqHandlerMock()->reveal());
@@ -78,7 +78,7 @@ class RedirectActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();
 
         $handler = $this->prophesize(RequestHandlerInterface::class);
@@ -87,7 +87,7 @@ class RedirectActionTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
         $this->action->process($request, $handler->reveal());
 
-        $handle->shouldHaveBeenCalledTimes(1);
+        $handle->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -111,7 +111,7 @@ class RedirectActionTest extends TestCase
 
         $this->assertEquals(302, $resp->getStatusCode());
         $this->assertEquals('https://shlink.io', $resp->getHeaderLine('Location'));
-        $shortCodeToUrl->shouldHaveBeenCalledTimes(1);
+        $shortCodeToUrl->shouldHaveBeenCalledOnce();
         $handle->shouldNotHaveBeenCalled();
     }
 
@@ -124,7 +124,7 @@ class RedirectActionTest extends TestCase
         $expectedUrl = 'http://domain.com/foo/bar';
         $shortUrl = new ShortUrl($expectedUrl);
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
-                                                       ->shouldBeCalledTimes(1);
+                                                       ->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode)
