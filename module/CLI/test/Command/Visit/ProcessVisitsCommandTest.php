@@ -23,15 +23,15 @@ class ProcessVisitsCommandTest extends TestCase
     /**
      * @var CommandTester
      */
-    protected $commandTester;
+    private $commandTester;
     /**
      * @var ObjectProphecy
      */
-    protected $visitService;
+    private $visitService;
     /**
      * @var ObjectProphecy
      */
-    protected $ipResolver;
+    private $ipResolver;
 
     public function setUp()
     {
