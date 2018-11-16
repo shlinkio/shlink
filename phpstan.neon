@@ -1,6 +1,4 @@
 parameters:
-	excludes_analyse:
-		- module/Common/src/Template/Extension/TranslatorExtension.php
-		- module/Rest/src/Util/RestUtils.php
 	ignoreErrors:
+		- '#League\\Plates\\callback#'
 		- '#is not subtype of Throwable#'
