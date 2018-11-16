@@ -30,9 +30,9 @@
         "mikehaertl/phpwkhtmltopdf": "^2.2",
         "monolog/monolog": "^1.21",
         "roave/security-advisories": "dev-master",
-        "symfony/console": "^4.0 <4.1.5",
-        "symfony/filesystem": "^4.0",
-        "symfony/process": "^4.0",
+        "symfony/console": "^4.1",
+        "symfony/filesystem": "^4.1",
+        "symfony/process": "^4.1",
         "theorchard/monolog-cascade": "^0.4",
         "zendframework/zend-config": "^3.0",
         "zendframework/zend-config-aggregator": "^1.0",
@@ -102,7 +102,7 @@
 
         "cs": "phpcs",
         "cs:fix": "phpcbf",
-        "stan": "phpstan analyse module/*/src/ --level=6 -c phpstan.neon",
+        "stan": "phpstan analyse module/*/src/ --level=5 -c phpstan.neon",
 
         "test": [
             "@test:unit",

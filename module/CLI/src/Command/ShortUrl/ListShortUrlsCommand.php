@@ -64,7 +64,7 @@ class ListShortUrlsCommand extends Command
                     $this->translator->translate('The first page to list (%s items per page)'),
                     PaginableRepositoryAdapter::ITEMS_PER_PAGE
                 ),
-                1
+                '1'
             )
             ->addOption(
                 'searchTerm',
