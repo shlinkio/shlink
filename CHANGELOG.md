@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## 1.14.0 - 2018-11-16
 
 #### Added
 
@@ -29,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * [#249](https://github.com/shlinkio/shlink/issues/249) Added [functional-php](https://github.com/lstrojny/functional-php) to ease collections handling.
 * [#253](https://github.com/shlinkio/shlink/issues/253) Increased `user_agent` column length in `visits` table to 512.
 * [#256](https://github.com/shlinkio/shlink/issues/256) Updated to Infection v0.11.
+* [#202](https://github.com/shlinkio/shlink/issues/202) Added missing response examples to OpenAPI docs.
 
 #### Deprecated
 
@@ -40,7 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Fixed
 
-* *Nothing*
+* [#223](https://github.com/shlinkio/shlink/issues/223) Fixed PHPStan errors produced with symfony/console 4.1.5
 
 
 ## 1.13.2 - 2018-10-18

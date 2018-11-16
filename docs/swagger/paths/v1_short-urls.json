@@ -209,22 +209,21 @@
                 "content": {
                     "application/json": {
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "longUrl": {
-                                    "type": "string",
-                                    "description": "The original long URL that has been parsed"
-                                },
-                                "shortUrl": {
-                                    "type": "string",
-                                    "description": "The generated short URL"
-                                },
-                                "shortCode": {
-                                    "type": "string",
-                                    "description": "the short code that is being used in the short URL"
-                                }
-                            }
+                            "$ref": "../definitions/ShortUrl.json"
                         }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "shortCode": "12C18",
+                        "shortUrl": "https://doma.in/12C18",
+                        "longUrl": "https://store.steampowered.com",
+                        "dateCreated": "2016-08-21T20:34:16+02:00",
+                        "visitsCount": 0,
+                        "tags": [
+                            "games",
+                            "tech"
+                        ]
                     }
                 }
             },

@@ -45,21 +45,7 @@
                 "content": {
                     "application/json": {
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "longUrl": {
-                                    "type": "string",
-                                    "description": "The original long URL that has been shortened"
-                                },
-                                "shortUrl": {
-                                    "type": "string",
-                                    "description": "The generated short URL"
-                                },
-                                "shortCode": {
-                                    "type": "string",
-                                    "description": "the short code that is being used in the short URL"
-                                }
-                            }
+                            "$ref": "../definitions/ShortUrl.json"
                         }
                     },
                     "text/plain": {
@@ -71,10 +57,16 @@
                 "examples": {
                     "application/json": {
                         "longUrl": "https://github.com/shlinkio/shlink",
-                        "shortUrl": "https://dom.ain/abc123",
-                        "shortCode": "abc123"
+                        "shortUrl": "https://doma.in/abc123",
+                        "shortCode": "abc123",
+                        "dateCreated": "2016-08-21T20:34:16+02:00",
+                        "visitsCount": 0,
+                        "tags": [
+                            "games",
+                            "tech"
+                        ]
                     },
-                    "text/plain": "https://dom.ain/abc123"
+                    "text/plain": "https://doma.in/abc123"
                 }
             },
             "400": {
