@@ -191,6 +191,7 @@ Available commands:
   tag:rename                  Renames one existing tag.
  visit
   visit:process               Processes visits where location is not set yet
+  visit:update-db             Updates the GeoLite2 database file used to geolocate IP addresses
 ```
 
 > This product includes GeoLite2 data created by MaxMind, available from [https://www.maxmind.com](https://www.maxmind.com)
