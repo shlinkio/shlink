@@ -19,6 +19,7 @@ use function sprintf;
 class ProcessVisitsCommand extends Command
 {
     public const NAME = 'visit:process';
+    private const CLEAR_INTERVAL = 100;
 
     /**
      * @var VisitServiceInterface
@@ -57,17 +58,18 @@ class ProcessVisitsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $visits = $this->visitService->getUnlocatedVisits();
 
-        foreach ($visits as $visit) {
-            $this->processVisit($io, $visit, false);
+        foreach ($visits as $i => $visit) {
+            $clear = ($i % self::CLEAR_INTERVAL) === 0;
+            $this->processVisit($output, $visit, $clear);
         }
 
         $io->success($this->translator->translate('Finished processing all IPs'));
     }
 
-    private function processVisit(SymfonyStyle $io, Visit $visit, bool $clear): void
+    private function processVisit(OutputInterface $output, Visit $visit, bool $clear): void
     {
         if (! $visit->hasRemoteAddr()) {
-            $io->writeln(
+            $output->writeln(
                 sprintf('<comment>%s</comment>', $this->translator->translate('Ignored visit with no IP address')),
                 OutputInterface::VERBOSITY_VERBOSE
             );
@@ -75,9 +77,9 @@ class ProcessVisitsCommand extends Command
         }
 
         $ipAddr = $visit->getRemoteAddr();
-        $io->write(sprintf('%s <fg=blue>%s</>', $this->translator->translate('Processing IP'), $ipAddr));
+        $output->write(sprintf('%s <fg=blue>%s</>', $this->translator->translate('Processing IP'), $ipAddr));
         if ($ipAddr === IpAddress::LOCALHOST) {
-            $io->writeln(
+            $output->writeln(
                 sprintf(' [<comment>%s</comment>]', $this->translator->translate('Ignored localhost address'))
             );
             return;
@@ -86,13 +88,13 @@ class ProcessVisitsCommand extends Command
         try {
             $result = $this->ipLocationResolver->resolveIpLocation($ipAddr);
         } catch (WrongIpException $e) {
-            $io->writeln(
+            $output->writeln(
                 sprintf(
                     ' [<fg=red>%s</>]',
                     $this->translator->translate('An error occurred while locating IP. Skipped')
                 )
             );
-            if ($io->isVerbose()) {
+            if ($output->isVerbose()) {
                 $this->getApplication()->renderException($e, $output);
             }
 
@@ -101,7 +103,7 @@ class ProcessVisitsCommand extends Command
 
         $location = new VisitLocation($result);
         $this->visitService->locateVisit($visit, $location, $clear);
-        $io->writeln(sprintf(
+        $output->writeln(sprintf(
             ' [<info>' . $this->translator->translate('Address located at "%s"') . '</info>]',
             $location->getCountryName()
         ));
