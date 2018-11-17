@@ -41,6 +41,7 @@ class GeoLite2LocationResolverTest extends TestCase
 
         $this->expectException(WrongIpException::class);
         $this->expectExceptionMessage($message);
+        $this->expectExceptionCode(0);
         $cityMethod->shouldBeCalledOnce();
 
         $this->resolver->resolveIpLocation($ipAddress);

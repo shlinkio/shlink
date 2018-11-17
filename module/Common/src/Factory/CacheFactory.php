@@ -45,11 +45,7 @@ class CacheFactory implements FactoryInterface
         return $adapter;
     }
 
-    /**
-     * @param ContainerInterface $container
-     * @return Cache\CacheProvider
-     */
-    protected function getAdapter(ContainerInterface $container)
+    private function getAdapter(ContainerInterface $container): Cache\CacheProvider
     {
         // Try to get the adapter from config
         $config = $container->get('config');
@@ -61,11 +57,7 @@ class CacheFactory implements FactoryInterface
         return env('APP_ENV', 'pro') === 'pro' ? new Cache\ApcuCache() : new Cache\ArrayCache();
     }
 
-    /**
-     * @param array $cacheConfig
-     * @return Cache\CacheProvider
-     */
-    protected function resolveCacheAdapter(array $cacheConfig)
+    private function resolveCacheAdapter(array $cacheConfig): Cache\CacheProvider
     {
         switch ($cacheConfig['adapter']) {
             case Cache\ArrayCache::class:

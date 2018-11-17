@@ -9,28 +9,15 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 use Zend\Stdlib\ArrayUtils;
 use const FILEINFO_MIME;
-use function basename;
 
 trait ResponseUtilsTrait
 {
-    protected function generateDownloadFileResponse(string $filePath): ResponseInterface
-    {
-        return $this->generateBinaryResponse($filePath, [
-            'Content-Disposition' => 'attachment; filename=' . basename($filePath),
-            'Content-Transfer-Encoding' => 'Binary',
-            'Content-Description' => 'File Transfer',
-            'Pragma' => 'public',
-            'Expires' => '0',
-            'Cache-Control' => 'must-revalidate',
-        ]);
-    }
-
-    protected function generateImageResponse(string $imagePath): ResponseInterface
+    private function generateImageResponse(string $imagePath): ResponseInterface
     {
         return $this->generateBinaryResponse($imagePath);
     }
 
-    protected function generateBinaryResponse(string $path, array $extraHeaders = []): ResponseInterface
+    private function generateBinaryResponse(string $path, array $extraHeaders = []): ResponseInterface
     {
         $body = new Stream($path);
         return new Response($body, 200, ArrayUtils::merge([

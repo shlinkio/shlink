@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Factory;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Symfony\Component\Console\Application;
@@ -29,7 +31,7 @@ class ApplicationFactoryTest extends TestCase
      */
     public function serviceIsCreated()
     {
-        $instance = $this->factory->__invoke($this->createServiceManager(), '');
+        $instance = ($this->factory)($this->createServiceManager(), '');
         $this->assertInstanceOf(Application::class, $instance);
     }
 
@@ -40,21 +42,24 @@ class ApplicationFactoryTest extends TestCase
     {
         $sm = $this->createServiceManager([
             'commands' => [
-                'foo',
-                'bar',
-                'baz',
+                'foo' => 'foo',
+                'bar' => 'bar',
+                'baz' => 'baz',
             ],
         ]);
-        $sm->setService('foo', $this->prophesize(Command::class)->reveal());
-        $sm->setService('baz', $this->prophesize(Command::class)->reveal());
+        $sm->setService('foo', $this->createCommandMock('foo')->reveal());
+        $sm->setService('bar', $this->createCommandMock('bar')->reveal());
 
         /** @var Application $instance */
-        $instance = $this->factory->__invoke($sm, '');
+        $instance = ($this->factory)($sm, '');
         $this->assertInstanceOf(Application::class, $instance);
-        $this->assertCount(2, $instance->all());
+
+        $this->assertTrue($instance->has('foo'));
+        $this->assertTrue($instance->has('bar'));
+        $this->assertFalse($instance->has('baz'));
     }
 
-    protected function createServiceManager($config = [])
+    private function createServiceManager(array $config = []): ServiceManager
     {
         return new ServiceManager(['services' => [
             'config' => [
@@ -63,5 +68,18 @@ class ApplicationFactoryTest extends TestCase
             AppOptions::class => new AppOptions(),
             Translator::class => Translator::factory([]),
         ]]);
+    }
+
+    private function createCommandMock(string $name): ObjectProphecy
+    {
+        $command = $this->prophesize(Command::class);
+        $command->getName()->willReturn($name);
+        $command->getDefinition()->willReturn($name);
+        $command->isEnabled()->willReturn(true);
+        $command->getAliases()->willReturn([]);
+        $command->setApplication(Argument::type(Application::class))->willReturn(function () {
+        });
+
+        return $command;
     }
 }

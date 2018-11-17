@@ -27,9 +27,9 @@ class ImageFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = $container->get('config')['phpwkhtmltopdf'];
-        $image = new Image(isset($config['images']) ? $config['images'] : null);
+        $image = new Image($config['images'] ?? null);
 
-        if (isset($options) && isset($options['url'])) {
+        if ($options['url'] ?? null) {
             $image->setPage($options['url']);
         }
 
