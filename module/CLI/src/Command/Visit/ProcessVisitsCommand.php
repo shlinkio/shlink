@@ -21,7 +21,6 @@ use function sprintf;
 class ProcessVisitsCommand extends Command
 {
     public const NAME = 'visit:process';
-    private const LOCK_NAME = 'visit_process';
 
     /**
      * @var VisitServiceInterface
@@ -69,7 +68,7 @@ class ProcessVisitsCommand extends Command
         $this->output = $output;
         $io = new SymfonyStyle($input, $output);
 
-        $lock = $this->locker->createLock(self::LOCK_NAME);
+        $lock = $this->locker->createLock(self::NAME);
         if (! $lock->acquire()) {
             $io->warning(sprintf(
                 $this->translator->translate('There is already an instance of the "%s" command in execution'),
