@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Lock;
 use Zend\I18n\Translator\Translator;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 
@@ -68,6 +69,7 @@ return [
         Command\Visit\ProcessVisitsCommand::class => [
             Service\VisitService::class,
             IpLocationResolverInterface::class,
+            Lock\Factory::class,
             'translator',
         ],
         Command\Visit\UpdateDbCommand::class => [DbUpdater::class, 'translator'],

@@ -19,9 +19,11 @@ use Shlinkio\Shlink\Core\Service\VisitService;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Lock;
 use Throwable;
 use Zend\I18n\Translator\Translator;
 use function array_shift;
+use function sprintf;
 
 class ProcessVisitsCommandTest extends TestCase
 {
@@ -37,15 +39,31 @@ class ProcessVisitsCommandTest extends TestCase
      * @var ObjectProphecy
      */
     private $ipResolver;
+    /**
+     * @var ObjectProphecy
+     */
+    private $locker;
+    /**
+     * @var ObjectProphecy
+     */
+    private $lock;
 
     public function setUp()
     {
         $this->visitService = $this->prophesize(VisitService::class);
         $this->ipResolver = $this->prophesize(IpApiLocationResolver::class);
 
+        $this->locker = $this->prophesize(Lock\Factory::class);
+        $this->lock = $this->prophesize(Lock\LockInterface::class);
+        $this->lock->acquire()->willReturn(true);
+        $this->lock->release()->will(function () {
+        });
+        $this->locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
+
         $command = new ProcessVisitsCommand(
             $this->visitService->reveal(),
             $this->ipResolver->reveal(),
+            $this->locker->reveal(),
             Translator::factory([])
         );
         $app = new Application();
@@ -159,5 +177,29 @@ class ProcessVisitsCommandTest extends TestCase
             $locateVisits->shouldHaveBeenCalledOnce();
             $resolveIpLocation->shouldHaveBeenCalledOnce();
         }
+    }
+
+    /**
+     * @test
+     */
+    public function noActionIsPerformedIfLockIsAcquired()
+    {
+        $this->lock->acquire()->willReturn(false);
+
+        $locateVisits = $this->visitService->locateVisits(Argument::cetera())->will(function () {
+        });
+        $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([]);
+
+        $this->commandTester->execute([
+            'command' => 'visit:process',
+        ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
+        $output = $this->commandTester->getDisplay();
+
+        $this->assertContains(
+            sprintf('There is already an instance of the "%s" command', ProcessVisitsCommand::NAME),
+            $output
+        );
+        $locateVisits->shouldNotHaveBeenCalled();
+        $resolveIpLocation->shouldNotHaveBeenCalled();
     }
 }

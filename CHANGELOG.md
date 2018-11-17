@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 #### Fixed
 
 * [#271](https://github.com/shlinkio/shlink/issues/271) Fixed memory leak produced when processing high amounts of visits at the same time.
+* [#272](https://github.com/shlinkio/shlink/issues/272) Fixed errors produced when trying to process visits multiple times in parallel, by using a lock which ensures only one instance is run at a time.
 
 
 ## 1.14.0 - 2018-11-16

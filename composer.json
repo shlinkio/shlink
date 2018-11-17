@@ -32,6 +32,7 @@
         "roave/security-advisories": "dev-master",
         "symfony/console": "^4.1",
         "symfony/filesystem": "^4.1",
+        "symfony/lock": "^4.1",
         "symfony/process": "^4.1",
         "theorchard/monolog-cascade": "^0.4",
         "zendframework/zend-config": "^3.0",
