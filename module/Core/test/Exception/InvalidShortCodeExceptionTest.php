@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Exception;
 
 use Exception;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Throwable;
 
 class InvalidShortCodeExceptionTest extends TestCase
