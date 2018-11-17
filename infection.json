@@ -4,7 +4,7 @@
             "module/*/src"
         ]
     },
-    "timeout": 10,
+    "timeout": 5,
     "logs": {
         "text": "build/infection/infection-log.txt",
         "summary": "build/infection/summary-log.txt",

@@ -35,30 +35,46 @@ class ListKeysCommandTest extends TestCase
     /**
      * @test
      */
-    public function ifEnabledOnlyIsNotProvidedEverythingIsListed()
+    public function everythingIsListedIfEnabledOnlyIsNotProvided()
     {
         $this->apiKeyService->listKeys(false)->willReturn([
             new ApiKey(),
             new ApiKey(),
             new ApiKey(),
         ])->shouldBeCalledOnce();
+
         $this->commandTester->execute([
-            'command' => 'api-key:list',
+            'command' => ListKeysCommand::NAME,
         ]);
+        $output = $this->commandTester->getDisplay();
+
+        $this->assertContains('Key', $output);
+        $this->assertContains('Is enabled', $output);
+        $this->assertContains(' +++ ', $output);
+        $this->assertNotContains(' --- ', $output);
+        $this->assertContains('Expiration date', $output);
     }
 
     /**
      * @test
      */
-    public function ifEnabledOnlyIsProvidedOnlyThoseKeysAreListed()
+    public function onlyEnabledKeysAreListedIfEnabledOnlyIsProvided()
     {
         $this->apiKeyService->listKeys(true)->willReturn([
-            new ApiKey(),
+            (new ApiKey())->disable(),
             new ApiKey(),
         ])->shouldBeCalledOnce();
+
         $this->commandTester->execute([
-            'command' => 'api-key:list',
+            'command' => ListKeysCommand::NAME,
             '--enabledOnly' => true,
         ]);
+        $output = $this->commandTester->getDisplay();
+
+        $this->assertContains('Key', $output);
+        $this->assertNotContains('Is enabled', $output);
+        $this->assertNotContains(' +++ ', $output);
+        $this->assertNotContains(' --- ', $output);
+        $this->assertContains('Expiration date', $output);
     }
 }
