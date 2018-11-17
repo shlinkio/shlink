@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Shlink 1.0\n"
-"POT-Creation-Date: 2018-11-12 21:01+0100\n"
-"PO-Revision-Date: 2018-11-12 21:03+0100\n"
+"POT-Creation-Date: 2018-11-17 14:29+0100\n"
+"PO-Revision-Date: 2018-11-17 14:29+0100\n"
 "Last-Translator: Alejandro Celaya <alejandro@alejandrocelaya.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -340,6 +340,17 @@ msgstr "Una etiqueta con nombre \"%s\" no ha sido encontrada"
 msgid "Processes visits where location is not set yet"
 msgstr "Procesa las visitas donde la localización no ha sido establecida aún"
 
+#, php-format
+msgid "There is already an instance of the \"%s\" command in execution"
+msgstr "Ya existe una instancia del comando \"%s\" en ejecución"
+
+#, php-format
+msgid "Address located at \"%s\""
+msgstr "Dirección localizada en \"%s\""
+
+msgid "Finished processing all IPs"
+msgstr "Finalizado el procesado de todas las IPs"
+
 msgid "Ignored visit with no IP address"
 msgstr "Ignorada visita sin dirección IP"
 
@@ -349,15 +360,8 @@ msgstr "Procesando IP"
 msgid "Ignored localhost address"
 msgstr "Ignorada IP de localhost"
 
-#, php-format
-msgid "Address located at \"%s\""
-msgstr "Dirección localizada en \"%s\""
-
 msgid "An error occurred while locating IP. Skipped"
 msgstr "Se produjo un error al localizar la IP. Ignorado"
-
-msgid "Finished processing all IPs"
-msgstr "Finalizado el procesado de todas las IPs"
 
 msgid "Updates the GeoLite2 database file used to geolocate IP addresses"
 msgstr ""
