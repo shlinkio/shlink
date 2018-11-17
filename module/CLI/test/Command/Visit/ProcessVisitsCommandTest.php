@@ -64,7 +64,7 @@ class ProcessVisitsCommandTest extends TestCase
         $this->visitService->getUnlocatedVisits()->willReturn($visits)
                                                  ->shouldBeCalledOnce();
 
-        $this->visitService->saveVisit(Argument::any())->shouldBeCalledTimes(count($visits));
+        $this->visitService->locateVisit(Argument::cetera())->shouldBeCalledTimes(count($visits));
         $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([])
                                                              ->shouldBeCalledTimes(count($visits));
 
@@ -96,7 +96,7 @@ class ProcessVisitsCommandTest extends TestCase
         $this->visitService->getUnlocatedVisits()->willReturn($visits)
             ->shouldBeCalledOnce();
 
-        $this->visitService->saveVisit(Argument::any())->shouldBeCalledTimes(count($visits) - 4);
+        $this->visitService->locateVisit(Argument::cetera())->shouldBeCalledTimes(count($visits) - 4);
         $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([])
                                                              ->shouldBeCalledTimes(count($visits) - 4);
 

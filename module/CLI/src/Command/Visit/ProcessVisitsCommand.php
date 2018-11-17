@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\Visit;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\Util\IpAddress;
+use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Service\VisitServiceInterface;
 use Symfony\Component\Console\Command\Command;
@@ -57,47 +58,52 @@ class ProcessVisitsCommand extends Command
         $visits = $this->visitService->getUnlocatedVisits();
 
         foreach ($visits as $visit) {
-            if (! $visit->hasRemoteAddr()) {
-                $io->writeln(
-                    sprintf('<comment>%s</comment>', $this->translator->translate('Ignored visit with no IP address')),
-                    OutputInterface::VERBOSITY_VERBOSE
-                );
-                continue;
-            }
-
-            $ipAddr = $visit->getRemoteAddr();
-            $io->write(sprintf('%s <fg=blue>%s</>', $this->translator->translate('Processing IP'), $ipAddr));
-            if ($ipAddr === IpAddress::LOCALHOST) {
-                $io->writeln(
-                    sprintf(' [<comment>%s</comment>]', $this->translator->translate('Ignored localhost address'))
-                );
-                continue;
-            }
-
-            try {
-                $result = $this->ipLocationResolver->resolveIpLocation($ipAddr);
-
-                $location = new VisitLocation($result);
-                $visit->setVisitLocation($location);
-                $this->visitService->saveVisit($visit);
-
-                $io->writeln(sprintf(
-                    ' [<info>' . $this->translator->translate('Address located at "%s"') . '</info>]',
-                    $location->getCountryName()
-                ));
-            } catch (WrongIpException $e) {
-                $io->writeln(
-                    sprintf(
-                        ' [<fg=red>%s</>]',
-                        $this->translator->translate('An error occurred while locating IP. Skipped')
-                    )
-                );
-                if ($io->isVerbose()) {
-                    $this->getApplication()->renderException($e, $output);
-                }
-            }
+            $this->processVisit($io, $visit, false);
         }
 
         $io->success($this->translator->translate('Finished processing all IPs'));
+    }
+
+    private function processVisit(SymfonyStyle $io, Visit $visit, bool $clear): void
+    {
+        if (! $visit->hasRemoteAddr()) {
+            $io->writeln(
+                sprintf('<comment>%s</comment>', $this->translator->translate('Ignored visit with no IP address')),
+                OutputInterface::VERBOSITY_VERBOSE
+            );
+            return;
+        }
+
+        $ipAddr = $visit->getRemoteAddr();
+        $io->write(sprintf('%s <fg=blue>%s</>', $this->translator->translate('Processing IP'), $ipAddr));
+        if ($ipAddr === IpAddress::LOCALHOST) {
+            $io->writeln(
+                sprintf(' [<comment>%s</comment>]', $this->translator->translate('Ignored localhost address'))
+            );
+            return;
+        }
+
+        try {
+            $result = $this->ipLocationResolver->resolveIpLocation($ipAddr);
+        } catch (WrongIpException $e) {
+            $io->writeln(
+                sprintf(
+                    ' [<fg=red>%s</>]',
+                    $this->translator->translate('An error occurred while locating IP. Skipped')
+                )
+            );
+            if ($io->isVerbose()) {
+                $this->getApplication()->renderException($e, $output);
+            }
+
+            return;
+        }
+
+        $location = new VisitLocation($result);
+        $this->visitService->locateVisit($visit, $location, $clear);
+        $io->writeln(sprintf(
+            ' [<info>' . $this->translator->translate('Address located at "%s"') . '</info>]',
+            $location->getCountryName()
+        ));
     }
 }

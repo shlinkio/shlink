@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 
 class VisitService implements VisitServiceInterface
@@ -22,19 +23,23 @@ class VisitService implements VisitServiceInterface
     /**
      * @return Visit[]
      */
-    public function getUnlocatedVisits()
+    public function getUnlocatedVisits(): array
     {
         /** @var VisitRepository $repo */
         $repo = $this->em->getRepository(Visit::class);
         return $repo->findUnlocatedVisits();
     }
 
-    /**
-     * @param Visit $visit
-     */
-    public function saveVisit(Visit $visit)
+    public function locateVisit(Visit $visit, VisitLocation $location, bool $clear = false): void
     {
+        $visit->locate($location);
+
         $this->em->persist($visit);
         $this->em->flush();
+
+        if ($clear) {
+            $this->em->clear(VisitLocation::class);
+            $this->em->clear(Visit::class);
+        }
     }
 }

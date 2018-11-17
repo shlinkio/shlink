@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Service\VisitService;
@@ -32,12 +33,12 @@ class VisitServiceTest extends TestCase
     /**
      * @test
      */
-    public function saveVisitsPersistsProvidedVisit()
+    public function locateVisitPersistsProvidedVisit()
     {
         $visit = new Visit(new ShortUrl(''), Visitor::emptyInstance());
         $this->em->persist($visit)->shouldBeCalledOnce();
         $this->em->flush()->shouldBeCalledOnce();
-        $this->visitService->saveVisit($visit);
+        $this->visitService->locateVisit($visit, new VisitLocation([]));
     }
 
     /**
