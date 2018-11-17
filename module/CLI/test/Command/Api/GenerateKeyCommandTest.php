@@ -39,11 +39,15 @@ class GenerateKeyCommandTest extends TestCase
      */
     public function noExpirationDateIsDefinedIfNotProvided()
     {
-        $this->apiKeyService->create(null)->shouldBeCalledOnce()
-                                          ->willReturn(new ApiKey());
+        $create = $this->apiKeyService->create(null)->willReturn(new ApiKey());
+
         $this->commandTester->execute([
             'command' => 'api-key:generate',
         ]);
+        $output = $this->commandTester->getDisplay();
+
+        $this->assertContains('Generated API key: ', $output);
+        $create->shouldHaveBeenCalledOnce();
     }
 
     /**

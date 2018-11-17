@@ -45,11 +45,7 @@ class LocaleMiddleware implements MiddlewareInterface
         return $delegate->handle($request);
     }
 
-    /**
-     * @param string $locale
-     * @return string
-     */
-    protected function normalizeLocale($locale)
+    private function normalizeLocale(string $locale): string
     {
         $parts = explode('_', $locale);
         if (count($parts) > 1) {

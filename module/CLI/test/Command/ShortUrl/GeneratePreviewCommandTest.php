@@ -62,13 +62,22 @@ class GeneratePreviewCommandTest extends TestCase
         ]);
         $this->shortUrlService->listShortUrls(1)->willReturn($paginator)->shouldBeCalledOnce();
 
-        $this->previewGenerator->generatePreview('http://foo.com')->shouldBeCalledOnce();
-        $this->previewGenerator->generatePreview('https://bar.com')->shouldBeCalledOnce();
-        $this->previewGenerator->generatePreview('http://baz.com/something')->shouldBeCalledOnce();
+        $generatePreview1 = $this->previewGenerator->generatePreview('http://foo.com')->willReturn('');
+        $generatePreview2 = $this->previewGenerator->generatePreview('https://bar.com')->willReturn('');
+        $generatePreview3 = $this->previewGenerator->generatePreview('http://baz.com/something')->willReturn('');
 
         $this->commandTester->execute([
             'command' => 'shortcode:process-previews',
         ]);
+        $output = $this->commandTester->getDisplay();
+
+        $this->assertContains('Processing URL http://foo.com', $output);
+        $this->assertContains('Processing URL https://bar.com', $output);
+        $this->assertContains('Processing URL http://baz.com/something', $output);
+        $this->assertContains('Finished processing all URLs', $output);
+        $generatePreview1->shouldHaveBeenCalledOnce();
+        $generatePreview2->shouldHaveBeenCalledOnce();
+        $generatePreview3->shouldHaveBeenCalledOnce();
     }
 
     /**

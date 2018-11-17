@@ -9,7 +9,7 @@ use function strlen;
 
 trait StringUtilsTrait
 {
-    private function generateRandomString($length = 10): string
+    private function generateRandomString(int $length = 10): string
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);

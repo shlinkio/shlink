@@ -126,7 +126,7 @@ class ProcessVisitsCommand extends Command
                 $this->getApplication()->renderException($e, $this->output);
             }
 
-            throw new IpCannotBeLocatedException('An error occurred while locating IP', 0, $e);
+            throw new IpCannotBeLocatedException('An error occurred while locating IP', $e->getCode(), $e);
         }
     }
 }

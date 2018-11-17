@@ -39,10 +39,14 @@ class DisableKeyCommandTest extends TestCase
     {
         $apiKey = 'abcd1234';
         $this->apiKeyService->disable($apiKey)->shouldBeCalledOnce();
+
         $this->commandTester->execute([
             'command' => 'api-key:disable',
             'apiKey' => $apiKey,
         ]);
+        $output = $this->commandTester->getDisplay();
+
+        $this->assertContains('API key "abcd1234" properly disabled', $output);
     }
 
     /**
@@ -51,14 +55,15 @@ class DisableKeyCommandTest extends TestCase
     public function errorIsReturnedIfServiceThrowsException()
     {
         $apiKey = 'abcd1234';
-        $this->apiKeyService->disable($apiKey)->willThrow(InvalidArgumentException::class)
-                                              ->shouldBeCalledOnce();
+        $disable = $this->apiKeyService->disable($apiKey)->willThrow(InvalidArgumentException::class);
 
         $this->commandTester->execute([
             'command' => 'api-key:disable',
             'apiKey' => $apiKey,
         ]);
         $output = $this->commandTester->getDisplay();
+
         $this->assertContains('API key "abcd1234" does not exist.', $output);
+        $disable->shouldHaveBeenCalledOnce();
     }
 }

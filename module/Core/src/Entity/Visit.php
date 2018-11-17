@@ -118,4 +118,12 @@ class Visit extends AbstractEntity implements JsonSerializable
             'remoteAddr' => null,
         ];
     }
+
+    /**
+     * @internal
+     */
+    public function getDate(): Chronos
+    {
+        return $this->date;
+    }
 }

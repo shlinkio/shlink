@@ -10,9 +10,7 @@ interface PreviewGeneratorInterface
     /**
      * Generates and stores preview for provided website and returns the path to the image file
      *
-     * @param string $url
-     * @return string
      * @throws PreviewGenerationException
      */
-    public function generatePreview($url);
+    public function generatePreview(string $url): string;
 }

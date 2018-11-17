@@ -32,4 +32,24 @@ class DateRangeTest extends TestCase
         $this->assertSame($endDate, $range->getEndDate());
         $this->assertFalse($range->isEmpty());
     }
+
+    /**
+     * @test
+     * @dataProvider provideDates
+     */
+    public function isConsideredEmptyOnlyIfNoneOfTheDatesIsSet(?Chronos $startDate, ?Chronos $endDate, bool $isEmpty)
+    {
+        $range = new DateRange($startDate, $endDate);
+        $this->assertEquals($isEmpty, $range->isEmpty());
+    }
+
+    public function provideDates(): array
+    {
+        return [
+            [null, null, true],
+            [null, Chronos::now(), false],
+            [Chronos::now(), null, false],
+            [Chronos::now(), Chronos::now(), false],
+        ];
+    }
 }

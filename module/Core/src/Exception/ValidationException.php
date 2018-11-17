@@ -42,7 +42,7 @@ class ValidationException extends RuntimeException
      * @param \Throwable|null $prev
      * @return ValidationException
      */
-    public static function fromArray(array $invalidData, Throwable $prev = null): self
+    private static function fromArray(array $invalidData, Throwable $prev = null): self
     {
         return new self(
             sprintf(
