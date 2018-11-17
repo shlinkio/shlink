@@ -29,10 +29,10 @@ class LoggerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = $container->has('config') ? $container->get('config') : [];
-        Cascade::fileConfig(isset($config['logger']) ? $config['logger'] : ['loggers' => []]);
+        Cascade::fileConfig($config['logger'] ?? ['loggers' => []]);
 
         // Compose requested logger name
-        $loggerName = isset($options) & isset($options['logger_name']) ? $options['logger_name'] : 'Logger';
+        $loggerName = $options['logger_name'] ?? 'Logger';
         $nameParts = explode('_', $requestedName);
         if (count($nameParts) > 1) {
             $loggerName = $nameParts[1];
