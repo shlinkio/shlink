@@ -5,6 +5,8 @@ namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 
 class VisitService implements VisitServiceInterface
@@ -19,22 +21,36 @@ class VisitService implements VisitServiceInterface
         $this->em = $em;
     }
 
-    /**
-     * @return Visit[]
-     */
-    public function getUnlocatedVisits()
+    public function locateVisits(callable $getGeolocationData, ?callable $locatedVisit = null): void
     {
         /** @var VisitRepository $repo */
         $repo = $this->em->getRepository(Visit::class);
-        return $repo->findUnlocatedVisits();
+        $results = $repo->findUnlocatedVisits();
+
+        foreach ($results as [$visit]) {
+            try {
+                $locationData = $getGeolocationData($visit);
+            } catch (IpCannotBeLocatedException $e) {
+                // Skip if the visit's IP could not be located
+                continue;
+            }
+
+            $location = new VisitLocation($locationData);
+            $this->locateVisit($visit, $location, $locatedVisit);
+        }
     }
 
-    /**
-     * @param Visit $visit
-     */
-    public function saveVisit(Visit $visit)
+    private function locateVisit(Visit $visit, VisitLocation $location, ?callable $locatedVisit): void
     {
+        $visit->locate($location);
+
         $this->em->persist($visit);
         $this->em->flush();
+
+        if ($locatedVisit !== null) {
+            $locatedVisit($location, $visit);
+        }
+
+        $this->em->clear();
     }
 }

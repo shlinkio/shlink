@@ -5,12 +5,18 @@ namespace ShlinkioTest\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Service\VisitService;
+use function array_shift;
+use function count;
+use function func_get_args;
 
 class VisitServiceTest extends TestCase
 {
@@ -32,22 +38,68 @@ class VisitServiceTest extends TestCase
     /**
      * @test
      */
-    public function saveVisitsPersistsProvidedVisit()
+    public function locateVisitsIteratesAndLocatesUnlocatedVisits()
     {
-        $visit = new Visit(new ShortUrl(''), Visitor::emptyInstance());
-        $this->em->persist($visit)->shouldBeCalledOnce();
-        $this->em->flush()->shouldBeCalledOnce();
-        $this->visitService->saveVisit($visit);
+        $unlocatedVisits = [
+            [new Visit(new ShortUrl('foo'), Visitor::emptyInstance())],
+            [new Visit(new ShortUrl('bar'), Visitor::emptyInstance())],
+        ];
+
+        $repo = $this->prophesize(VisitRepository::class);
+        $findUnlocatedVisits = $repo->findUnlocatedVisits()->willReturn($unlocatedVisits);
+        $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
+
+        $persist = $this->em->persist(Argument::type(Visit::class))->will(function () {
+        });
+        $flush = $this->em->flush()->will(function () {
+        });
+        $clear = $this->em->clear()->will(function () {
+        });
+
+        $this->visitService->locateVisits(function () {
+            return [];
+        }, function () {
+            $args = func_get_args();
+
+            $this->assertInstanceOf(VisitLocation::class, array_shift($args));
+            $this->assertInstanceOf(Visit::class, array_shift($args));
+        });
+
+        $findUnlocatedVisits->shouldHaveBeenCalledOnce();
+        $getRepo->shouldHaveBeenCalledOnce();
+        $persist->shouldHaveBeenCalledTimes(count($unlocatedVisits));
+        $flush->shouldHaveBeenCalledTimes(count($unlocatedVisits));
+        $clear->shouldHaveBeenCalledTimes(count($unlocatedVisits));
     }
 
     /**
      * @test
      */
-    public function getUnlocatedVisitsFallbacksToRepository()
+    public function visitsWhichCannotBeLocatedAreIgnored()
     {
+        $unlocatedVisits = [
+            [new Visit(new ShortUrl('foo'), Visitor::emptyInstance())],
+        ];
+
         $repo = $this->prophesize(VisitRepository::class);
-        $repo->findUnlocatedVisits()->shouldBeCalledOnce();
-        $this->em->getRepository(Visit::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
-        $this->visitService->getUnlocatedVisits();
+        $findUnlocatedVisits = $repo->findUnlocatedVisits()->willReturn($unlocatedVisits);
+        $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
+
+        $persist = $this->em->persist(Argument::type(Visit::class))->will(function () {
+        });
+        $flush = $this->em->flush()->will(function () {
+        });
+        $clear = $this->em->clear()->will(function () {
+        });
+
+        $this->visitService->locateVisits(function () {
+            throw new IpCannotBeLocatedException('Cannot be located');
+        });
+
+        $findUnlocatedVisits->shouldHaveBeenCalledOnce();
+        $getRepo->shouldHaveBeenCalledOnce();
+        $persist->shouldNotHaveBeenCalled();
+        $flush->shouldNotHaveBeenCalled();
+        $clear->shouldNotHaveBeenCalled();
     }
 }

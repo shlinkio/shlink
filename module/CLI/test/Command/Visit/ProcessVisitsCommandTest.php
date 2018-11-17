@@ -7,16 +7,21 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\ProcessVisitsCommand;
+use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpApiLocationResolver;
+use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Service\VisitService;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
+use Throwable;
 use Zend\I18n\Translator\Translator;
-use function count;
+use function array_shift;
 
 class ProcessVisitsCommandTest extends TestCase
 {
@@ -52,59 +57,107 @@ class ProcessVisitsCommandTest extends TestCase
     /**
      * @test
      */
-    public function allReturnedVisitsIpsAreProcessed()
+    public function allPendingVisitsAreProcessed()
     {
-        $shortUrl = new ShortUrl('');
+        $visit = new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4'));
+        $location = new VisitLocation([]);
 
-        $visits = [
-            new Visit($shortUrl, new Visitor('', '', '1.2.3.4')),
-            new Visit($shortUrl, new Visitor('', '', '4.3.2.1')),
-            new Visit($shortUrl, new Visitor('', '', '12.34.56.78')),
-        ];
-        $this->visitService->getUnlocatedVisits()->willReturn($visits)
-                                                 ->shouldBeCalledOnce();
+        $locateVisits = $this->visitService->locateVisits(Argument::cetera())->will(
+            function (array $args) use ($visit, $location) {
+                $firstCallback = array_shift($args);
+                $firstCallback($visit);
 
-        $this->visitService->saveVisit(Argument::any())->shouldBeCalledTimes(count($visits));
-        $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([])
-                                                             ->shouldBeCalledTimes(count($visits));
+                $secondCallback = array_shift($args);
+                $secondCallback($location, $visit);
+            }
+        );
+        $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([]);
 
         $this->commandTester->execute([
             'command' => 'visit:process',
         ]);
         $output = $this->commandTester->getDisplay();
+
         $this->assertContains('Processing IP 1.2.3.0', $output);
-        $this->assertContains('Processing IP 4.3.2.0', $output);
-        $this->assertContains('Processing IP 12.34.56.0', $output);
+        $locateVisits->shouldHaveBeenCalledOnce();
+        $resolveIpLocation->shouldHaveBeenCalledOnce();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideIgnoredAddresses
+     */
+    public function localhostAndEmptyAddressesAreIgnored(?string $address, string $message)
+    {
+        $visit = new Visit(new ShortUrl(''), new Visitor('', '', $address));
+        $location = new VisitLocation([]);
+
+        $locateVisits = $this->visitService->locateVisits(Argument::cetera())->will(
+            function (array $args) use ($visit, $location) {
+                $firstCallback = array_shift($args);
+                $firstCallback($visit);
+
+                $secondCallback = array_shift($args);
+                $secondCallback($location, $visit);
+            }
+        );
+        $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([]);
+
+        try {
+            $this->commandTester->execute([
+                'command' => 'visit:process',
+            ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
+        } catch (Throwable $e) {
+            $output = $this->commandTester->getDisplay();
+
+            $this->assertInstanceOf(IpCannotBeLocatedException::class, $e);
+
+            $this->assertContains($message, $output);
+            $locateVisits->shouldHaveBeenCalledOnce();
+            $resolveIpLocation->shouldNotHaveBeenCalled();
+        }
+    }
+
+    public function provideIgnoredAddresses(): array
+    {
+        return [
+            ['', 'Ignored visit with no IP address'],
+            [null, 'Ignored visit with no IP address'],
+            [IpAddress::LOCALHOST, 'Ignored localhost address'],
+        ];
     }
 
     /**
      * @test
      */
-    public function localhostAndEmptyAddressIsIgnored()
+    public function errorWhileLocatingIpIsDisplayed()
     {
-        $shortUrl = new ShortUrl('');
+        $visit = new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4'));
+        $location = new VisitLocation([]);
 
-        $visits = [
-            new Visit($shortUrl, new Visitor('', '', '1.2.3.4')),
-            new Visit($shortUrl, new Visitor('', '', '4.3.2.1')),
-            new Visit($shortUrl, new Visitor('', '', '12.34.56.78')),
-            new Visit($shortUrl, new Visitor('', '', '127.0.0.1')),
-            new Visit($shortUrl, new Visitor('', '', '127.0.0.1')),
-            new Visit($shortUrl, new Visitor('', '', '')),
-            new Visit($shortUrl, new Visitor('', '', null)),
-        ];
-        $this->visitService->getUnlocatedVisits()->willReturn($visits)
-            ->shouldBeCalledOnce();
+        $locateVisits = $this->visitService->locateVisits(Argument::cetera())->will(
+            function (array $args) use ($visit, $location) {
+                $firstCallback = array_shift($args);
+                $firstCallback($visit);
 
-        $this->visitService->saveVisit(Argument::any())->shouldBeCalledTimes(count($visits) - 4);
-        $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([])
-                                                             ->shouldBeCalledTimes(count($visits) - 4);
+                $secondCallback = array_shift($args);
+                $secondCallback($location, $visit);
+            }
+        );
+        $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willThrow(WrongIpException::class);
 
-        $this->commandTester->execute([
-            'command' => 'visit:process',
-        ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
-        $output = $this->commandTester->getDisplay();
-        $this->assertContains('Ignored localhost address', $output);
-        $this->assertContains('Ignored visit with no IP address', $output);
+        try {
+            $this->commandTester->execute([
+                'command' => 'visit:process',
+            ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
+        } catch (Throwable $e) {
+            $output = $this->commandTester->getDisplay();
+
+            $this->assertInstanceOf(IpCannotBeLocatedException::class, $e);
+
+            $this->assertContains('An error occurred while locating IP. Skipped', $output);
+            $locateVisits->shouldHaveBeenCalledOnce();
+            $resolveIpLocation->shouldHaveBeenCalledOnce();
+        }
     }
 }

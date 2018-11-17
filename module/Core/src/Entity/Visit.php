@@ -93,7 +93,7 @@ class Visit extends AbstractEntity implements JsonSerializable
         return $this->visitLocation;
     }
 
-    public function setVisitLocation(VisitLocation $visitLocation): self
+    public function locate(VisitLocation $visitLocation): self
     {
         $this->visitLocation = $visitLocation;
         return $this;

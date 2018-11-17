@@ -10,10 +10,7 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 
 interface VisitRepositoryInterface extends ObjectRepository
 {
-    /**
-     * @return Visit[]
-     */
-    public function findUnlocatedVisits(): array;
+    public function findUnlocatedVisits(): iterable;
 
     /**
      * @param ShortUrl|int $shortUrl

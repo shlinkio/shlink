@@ -81,7 +81,7 @@ class GetVisitsCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::any())->willReturn([
-            (new Visit(new ShortUrl(''), new Visitor('bar', 'foo', '')))->setVisitLocation(
+            (new Visit(new ShortUrl(''), new Visitor('bar', 'foo', '')))->locate(
                 new VisitLocation(['country_name' => 'Spain'])
             ),
         ])->shouldBeCalledOnce();
