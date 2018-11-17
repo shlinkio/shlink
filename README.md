@@ -114,6 +114,8 @@ Those tasks can be performed using shlink's CLI, so it should be easy to schedul
 
     Running this will improve the performance of the `doma.in/abc123/preview` URLs, which return a preview of the site.
 
+*Any of those commands accept the `-q` flag, which makes it not display any output. This is recommended when configuring the commands as cron jobs.*
+
 ## Update to new version
 
 When a new Shlink version is available, you don't need to repeat the entire process yourself. Instead, follow these steps:
