@@ -15,7 +15,7 @@ use Zend\I18n\Translator\Translator;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 
-class ListShortcodesCommandTest extends TestCase
+class ListShortUrlsCommandTest extends TestCase
 {
     /**
      * @var CommandTester
@@ -52,7 +52,7 @@ class ListShortcodesCommandTest extends TestCase
      */
     public function loadingMorePagesCallsListMoreTimes()
     {
-        // The paginator will return more than one page for the first 3 times
+        // The paginator will return more than one page
         $data = [];
         for ($i = 0; $i < 50; $i++) {
             $data[] = new ShortUrl('url_' . $i);
@@ -64,6 +64,11 @@ class ListShortcodesCommandTest extends TestCase
 
         $this->commandTester->setInputs(['y', 'y', 'n']);
         $this->commandTester->execute(['command' => 'shortcode:list']);
+        $output = $this->commandTester->getDisplay();
+
+        $this->assertContains('Continue with page 2?', $output);
+        $this->assertContains('Continue with page 3?', $output);
+        $this->assertContains('Continue with page 4?', $output);
     }
 
     /**
@@ -82,6 +87,15 @@ class ListShortcodesCommandTest extends TestCase
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute(['command' => 'shortcode:list']);
+        $output = $this->commandTester->getDisplay();
+
+        $this->assertContains('url_1', $output);
+        $this->assertContains('url_9', $output);
+        $this->assertNotContains('url_10', $output);
+        $this->assertNotContains('url_20', $output);
+        $this->assertNotContains('url_30', $output);
+        $this->assertContains('Continue with page 2?', $output);
+        $this->assertNotContains('Continue with page 3?', $output);
     }
 
     /**
