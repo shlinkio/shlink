@@ -82,8 +82,8 @@ class ListShortUrlsCommandTest extends TestCase
             $data[] = new ShortUrl('url_' . $i);
         }
 
-        $this->shortUrlService->listShortUrls(Argument::cetera())->willReturn(new Paginator(new ArrayAdapter($data)))
-                                                                 ->shouldBeCalledOnce();
+        $this->shortUrlService->listShortUrls(1, null, [], null)->willReturn(new Paginator(new ArrayAdapter($data)))
+                                                                ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute(['command' => 'shortcode:list']);
