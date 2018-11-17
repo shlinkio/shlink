@@ -52,7 +52,13 @@ class VisitRepositoryTest extends DatabaseTestCase
         }
         $this->getEntityManager()->flush();
 
-        $this->assertCount(3, $this->repo->findUnlocatedVisits());
+        $resultsCount = 0;
+        $results = $this->repo->findUnlocatedVisits();
+        foreach ($results as $value) {
+            $resultsCount++;
+        }
+
+        $this->assertEquals(3, $resultsCount);
     }
 
     /**

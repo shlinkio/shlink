@@ -8,6 +8,7 @@ use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Service\VisitServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,7 +20,6 @@ use function sprintf;
 class ProcessVisitsCommand extends Command
 {
     public const NAME = 'visit:process';
-    private const CLEAR_INTERVAL = 100;
 
     /**
      * @var VisitServiceInterface
@@ -55,57 +55,47 @@ class ProcessVisitsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $io = new SymfonyStyle($input, $output);
-        $visits = $this->visitService->getUnlocatedVisits();
-
-        foreach ($visits as $i => $visit) {
-            $clear = ($i % self::CLEAR_INTERVAL) === 0;
-            $this->processVisit($output, $visit, $clear);
-        }
-
-        $io->success($this->translator->translate('Finished processing all IPs'));
-    }
-
-    private function processVisit(OutputInterface $output, Visit $visit, bool $clear): void
-    {
-        if (! $visit->hasRemoteAddr()) {
-            $output->writeln(
-                sprintf('<comment>%s</comment>', $this->translator->translate('Ignored visit with no IP address')),
-                OutputInterface::VERBOSITY_VERBOSE
-            );
-            return;
-        }
-
-        $ipAddr = $visit->getRemoteAddr();
-        $output->write(sprintf('%s <fg=blue>%s</>', $this->translator->translate('Processing IP'), $ipAddr));
-        if ($ipAddr === IpAddress::LOCALHOST) {
-            $output->writeln(
-                sprintf(' [<comment>%s</comment>]', $this->translator->translate('Ignored localhost address'))
-            );
-            return;
-        }
-
-        try {
-            $result = $this->ipLocationResolver->resolveIpLocation($ipAddr);
-        } catch (WrongIpException $e) {
-            $output->writeln(
-                sprintf(
-                    ' [<fg=red>%s</>]',
-                    $this->translator->translate('An error occurred while locating IP. Skipped')
-                )
-            );
-            if ($output->isVerbose()) {
-                $this->getApplication()->renderException($e, $output);
+        $this->visitService->locateVisits(function (Visit $visit) use ($output) {
+            if (! $visit->hasRemoteAddr()) {
+                $output->writeln(
+                    sprintf('<comment>%s</comment>', $this->translator->translate('Ignored visit with no IP address')),
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
+                throw new IpCannotBeLocatedException('Ignored visit with no IP address');
             }
 
-            return;
-        }
+            $ipAddr = $visit->getRemoteAddr();
+            $output->write(sprintf('%s <fg=blue>%s</>', $this->translator->translate('Processing IP'), $ipAddr));
+            if ($ipAddr === IpAddress::LOCALHOST) {
+                $output->writeln(
+                    sprintf(' [<comment>%s</comment>]', $this->translator->translate('Ignored localhost address'))
+                );
+                throw new IpCannotBeLocatedException('Ignored localhost address');
+            }
 
-        $location = new VisitLocation($result);
-        $this->visitService->locateVisit($visit, $location, $clear);
-        $output->writeln(sprintf(
-            ' [<info>' . $this->translator->translate('Address located at "%s"') . '</info>]',
-            $location->getCountryName()
-        ));
+            try {
+                return $this->ipLocationResolver->resolveIpLocation($ipAddr);
+            } catch (WrongIpException $e) {
+                $output->writeln(
+                    sprintf(
+                        ' [<fg=red>%s</>]',
+                        $this->translator->translate('An error occurred while locating IP. Skipped')
+                    )
+                );
+                if ($output->isVerbose()) {
+                    $this->getApplication()->renderException($e, $output);
+                }
+
+                throw new IpCannotBeLocatedException('An error occurred while locating IP', 0, $e);
+            }
+        }, function (VisitLocation $location) use ($output) {
+            $output->writeln(sprintf(
+                ' [<info>' . $this->translator->translate('Address located at "%s"') . '</info>]',
+                $location->getCountryName()
+            ));
+        });
+
+        $io = new SymfonyStyle($input, $output);
+        $io->success($this->translator->translate('Finished processing all IPs'));
     }
 }

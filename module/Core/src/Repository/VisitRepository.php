@@ -10,15 +10,12 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 
 class VisitRepository extends EntityRepository implements VisitRepositoryInterface
 {
-    /**
-     * @return Visit[]
-     */
-    public function findUnlocatedVisits(): array
+    public function findUnlocatedVisits(): iterable
     {
         $qb = $this->createQueryBuilder('v');
         $qb->where($qb->expr()->isNull('v.visitLocation'));
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->iterate();
     }
 
     /**
