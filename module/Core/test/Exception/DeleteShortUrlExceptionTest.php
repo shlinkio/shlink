@@ -21,6 +21,7 @@ class DeleteShortUrlExceptionTest extends TestCase
     ) {
         $e = DeleteShortUrlException::fromVisitsThreshold($threshold, $shortCode);
         $this->assertEquals($expectedMessage, $e->getMessage());
+        $this->assertEquals(0, $e->getCode());
     }
 
     public function provideMessages(): array

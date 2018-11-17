@@ -8,7 +8,7 @@ use function sprintf;
 
 class InvalidShortCodeException extends RuntimeException
 {
-    public static function fromCharset($shortCode, $charSet, Exception $previous = null)
+    public static function fromCharset(string $shortCode, string $charSet, Exception $previous = null): self
     {
         $code = $previous !== null ? $previous->getCode() : -1;
         return new static(
@@ -18,7 +18,7 @@ class InvalidShortCodeException extends RuntimeException
         );
     }
 
-    public static function fromNotFoundShortCode($shortCode)
+    public static function fromNotFoundShortCode(string $shortCode): self
     {
         return new static(sprintf('Provided short code "%s" does not belong to a short URL', $shortCode));
     }

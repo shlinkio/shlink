@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Util;
 
+use Fig\Http\Message\StatusCodeInterface as StatusCode;
 use finfo;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
@@ -20,7 +21,7 @@ trait ResponseUtilsTrait
     private function generateBinaryResponse(string $path, array $extraHeaders = []): ResponseInterface
     {
         $body = new Stream($path);
-        return new Response($body, 200, ArrayUtils::merge([
+        return new Response($body, StatusCode::STATUS_OK, ArrayUtils::merge([
             'Content-Type' => (new finfo(FILEINFO_MIME))->file($path),
             'Content-Length' => (string) $body->getSize(),
         ], $extraHeaders));

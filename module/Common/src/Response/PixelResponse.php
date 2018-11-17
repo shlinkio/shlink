@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Response;
 
+use Fig\Http\Message\StatusCodeInterface as StatusCode;
 use Psr\Http\Message\StreamInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
@@ -13,7 +14,7 @@ class PixelResponse extends Response
     private const BASE_64_IMAGE = 'R0lGODlhAQABAJAAAP8AAAAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==';
     private const CONTENT_TYPE = 'image/gif';
 
-    public function __construct(int $status = 200, array $headers = [])
+    public function __construct(int $status = StatusCode::STATUS_OK, array $headers = [])
     {
         $headers['content-type'] = self::CONTENT_TYPE;
         parent::__construct($this->createBody(), $status, $headers);
