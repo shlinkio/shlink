@@ -12,7 +12,6 @@ use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 
 class RenameTagCommandTest extends TestCase
 {
@@ -33,7 +32,7 @@ class RenameTagCommandTest extends TestCase
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
 
-        $command = new RenameTagCommand($this->tagService->reveal(), Translator::factory([]));
+        $command = new RenameTagCommand($this->tagService->reveal());
         $app = new Application();
         $app->add($command);
 

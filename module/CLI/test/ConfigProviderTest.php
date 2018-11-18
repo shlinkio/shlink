@@ -23,10 +23,9 @@ class ConfigProviderTest extends TestCase
      */
     public function confiIsProperlyReturned()
     {
-        $config = $this->configProvider->__invoke();
+        $config = ($this->configProvider)();
 
         $this->assertArrayHasKey('cli', $config);
         $this->assertArrayHasKey('dependencies', $config);
-        $this->assertArrayHasKey('translator', $config);
     }
 }

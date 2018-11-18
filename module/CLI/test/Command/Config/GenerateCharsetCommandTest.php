@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Config\GenerateCharsetCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 use function implode;
 use function sort;
 use function str_split;
@@ -21,7 +20,7 @@ class GenerateCharsetCommandTest extends TestCase
 
     public function setUp()
     {
-        $command = new GenerateCharsetCommand(Translator::factory([]));
+        $command = new GenerateCharsetCommand();
         $app = new Application();
         $app->add($command);
 

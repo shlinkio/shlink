@@ -10,7 +10,6 @@ use Psr\Container\NotFoundExceptionInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Symfony\Component\Console\Application as CliApp;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
-use Zend\I18n\Translator\Translator;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
@@ -34,8 +33,6 @@ class ApplicationFactory implements FactoryInterface
     {
         $config = $container->get('config')['cli'];
         $appOptions = $container->get(AppOptions::class);
-        $translator = $container->get(Translator::class);
-        $translator->setLocale($config['locale']);
 
         $commands = $config['commands'] ?? [];
         $app = new CliApp($appOptions->getName(), $appOptions->getVersion());

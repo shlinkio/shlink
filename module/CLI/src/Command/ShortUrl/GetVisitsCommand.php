@@ -13,7 +13,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Zend\I18n\Translator\TranslatorInterface;
 use function array_map;
 use function Functional\select_keys;
 
@@ -26,15 +25,10 @@ class GetVisitsCommand extends Command
      * @var VisitsTrackerInterface
      */
     private $visitsTracker;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(VisitsTrackerInterface $visitsTracker, TranslatorInterface $translator)
+    public function __construct(VisitsTrackerInterface $visitsTracker)
     {
         $this->visitsTracker = $visitsTracker;
-        $this->translator = $translator;
         parent::__construct();
     }
 
@@ -43,25 +37,19 @@ class GetVisitsCommand extends Command
         $this
             ->setName(self::NAME)
             ->setAliases(self::ALIASES)
-            ->setDescription(
-                $this->translator->translate('Returns the detailed visits information for provided short code')
-            )
-            ->addArgument(
-                'shortCode',
-                InputArgument::REQUIRED,
-                $this->translator->translate('The short code which visits we want to get')
-            )
+            ->setDescription('Returns the detailed visits information for provided short code')
+            ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code which visits we want to get')
             ->addOption(
                 'startDate',
                 's',
                 InputOption::VALUE_OPTIONAL,
-                $this->translator->translate('Allows to filter visits, returning only those older than start date')
+                'Allows to filter visits, returning only those older than start date'
             )
             ->addOption(
                 'endDate',
                 'e',
                 InputOption::VALUE_OPTIONAL,
-                $this->translator->translate('Allows to filter visits, returning only those newer than end date')
+                'Allows to filter visits, returning only those newer than end date'
             );
     }
 
@@ -73,9 +61,7 @@ class GetVisitsCommand extends Command
         }
 
         $io = new SymfonyStyle($input, $output);
-        $shortCode = $io->ask(
-            $this->translator->translate('A short code was not provided. Which short code do you want to use?')
-        );
+        $shortCode = $io->ask('A short code was not provided. Which short code do you want to use?');
         if (! empty($shortCode)) {
             $input->setArgument('shortCode', $shortCode);
         }
@@ -94,12 +80,7 @@ class GetVisitsCommand extends Command
             $rowData['country'] = $visit->getVisitLocation()->getCountryName();
             return select_keys($rowData, ['referer', 'date', 'userAgent', 'country']);
         }, $visits);
-        $io->table([
-            $this->translator->translate('Referer'),
-            $this->translator->translate('Date'),
-            $this->translator->translate('User agent'),
-            $this->translator->translate('Country'),
-        ], $rows);
+        $io->table(['Referer', 'Date', 'User agent', 'Country'], $rows);
     }
 
     private function getDateOption(InputInterface $input, $key)

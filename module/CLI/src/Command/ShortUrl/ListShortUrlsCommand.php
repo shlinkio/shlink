@@ -12,7 +12,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Zend\I18n\Translator\TranslatorInterface;
 use function array_values;
 use function count;
 use function explode;
@@ -31,22 +30,14 @@ class ListShortUrlsCommand extends Command
      */
     private $shortUrlService;
     /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-    /**
      * @var array
      */
     private $domainConfig;
 
-    public function __construct(
-        ShortUrlServiceInterface $shortUrlService,
-        TranslatorInterface $translator,
-        array $domainConfig
-    ) {
-        $this->shortUrlService = $shortUrlService;
-        $this->translator = $translator;
+    public function __construct(ShortUrlServiceInterface $shortUrlService, array $domainConfig)
+    {
         parent::__construct();
+        $this->shortUrlService = $shortUrlService;
         $this->domainConfig = $domainConfig;
     }
 
@@ -55,45 +46,33 @@ class ListShortUrlsCommand extends Command
         $this
             ->setName(self::NAME)
             ->setAliases(self::ALIASES)
-            ->setDescription($this->translator->translate('List all short URLs'))
+            ->setDescription('List all short URLs')
             ->addOption(
                 'page',
                 'p',
                 InputOption::VALUE_OPTIONAL,
-                sprintf(
-                    $this->translator->translate('The first page to list (%s items per page)'),
-                    PaginableRepositoryAdapter::ITEMS_PER_PAGE
-                ),
+                sprintf('The first page to list (%s items per page)', PaginableRepositoryAdapter::ITEMS_PER_PAGE),
                 '1'
             )
             ->addOption(
                 'searchTerm',
                 's',
                 InputOption::VALUE_OPTIONAL,
-                $this->translator->translate(
-                    'A query used to filter results by searching for it on the longUrl and shortCode fields'
-                )
+                'A query used to filter results by searching for it on the longUrl and shortCode fields'
             )
             ->addOption(
                 'tags',
                 't',
                 InputOption::VALUE_OPTIONAL,
-                $this->translator->translate('A comma-separated list of tags to filter results')
+                'A comma-separated list of tags to filter results'
             )
             ->addOption(
                 'orderBy',
                 'o',
                 InputOption::VALUE_OPTIONAL,
-                $this->translator->translate(
-                    'The field from which we want to order by. Pass ASC or DESC separated by a comma'
-                )
+                'The field from which we want to order by. Pass ASC or DESC separated by a comma'
             )
-            ->addOption(
-                'showTags',
-                null,
-                InputOption::VALUE_NONE,
-                $this->translator->translate('Whether to display the tags or not')
-            );
+            ->addOption('showTags', null, InputOption::VALUE_NONE, 'Whether to display the tags or not');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
@@ -110,15 +89,9 @@ class ListShortUrlsCommand extends Command
             $result = $this->shortUrlService->listShortUrls($page, $searchTerm, $tags, $this->processOrderBy($input));
             $page++;
 
-            $headers = [
-                $this->translator->translate('Short code'),
-                $this->translator->translate('Short URL'),
-                $this->translator->translate('Long URL'),
-                $this->translator->translate('Date created'),
-                $this->translator->translate('Visits count'),
-            ];
+            $headers = ['Short code', 'Short URL', 'Long URL', 'Date created', 'Visits count'];
             if ($showTags) {
-                $headers[] = $this->translator->translate('Tags');
+                $headers[] = 'Tags';
             }
 
             $rows = [];
@@ -137,12 +110,9 @@ class ListShortUrlsCommand extends Command
 
             if ($this->isLastPage($result)) {
                 $continue = false;
-                $io->success($this->translator->translate('Short URLs properly listed'));
+                $io->success('Short URLs properly listed');
             } else {
-                $continue = $io->confirm(
-                    sprintf($this->translator->translate('Continue with page') . ' <options=bold>%s</>?', $page),
-                    false
-                );
+                $continue = $io->confirm(sprintf('Continue with page <options=bold>%s</>?', $page), false);
             }
         } while ($continue);
     }

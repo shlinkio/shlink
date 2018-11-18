@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 
 class UpdateDbCommandTest extends TestCase
 {
@@ -28,7 +27,7 @@ class UpdateDbCommandTest extends TestCase
     {
         $this->dbUpdater = $this->prophesize(DbUpdaterInterface::class);
 
-        $command = new UpdateDbCommand($this->dbUpdater->reveal(), Translator::factory([]));
+        $command = new UpdateDbCommand($this->dbUpdater->reveal());
         $app = new Application();
         $app->add($command);
 

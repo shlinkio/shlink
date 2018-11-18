@@ -10,7 +10,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Zend\I18n\Translator\TranslatorInterface;
 use function sprintf;
 
 class GeneratePreviewCommand extends Command
@@ -23,23 +22,15 @@ class GeneratePreviewCommand extends Command
      */
     private $previewGenerator;
     /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-    /**
      * @var ShortUrlServiceInterface
      */
     private $shortUrlService;
 
-    public function __construct(
-        ShortUrlServiceInterface $shortUrlService,
-        PreviewGeneratorInterface $previewGenerator,
-        TranslatorInterface $translator
-    ) {
+    public function __construct(ShortUrlServiceInterface $shortUrlService, PreviewGeneratorInterface $previewGenerator)
+    {
+        parent::__construct();
         $this->shortUrlService = $shortUrlService;
         $this->previewGenerator = $previewGenerator;
-        $this->translator = $translator;
-        parent::__construct(null);
     }
 
     protected function configure(): void
@@ -48,9 +39,7 @@ class GeneratePreviewCommand extends Command
             ->setName(self::NAME)
             ->setAliases(self::ALIASES)
             ->setDescription(
-                $this->translator->translate(
-                    'Processes and generates the previews for every URL, improving performance for later web requests.'
-                )
+                'Processes and generates the previews for every URL, improving performance for later web requests.'
             );
     }
 
@@ -66,17 +55,17 @@ class GeneratePreviewCommand extends Command
             }
         } while ($page <= $shortUrls->count());
 
-        (new SymfonyStyle($input, $output))->success($this->translator->translate('Finished processing all URLs'));
+        (new SymfonyStyle($input, $output))->success('Finished processing all URLs');
     }
 
     private function processUrl($url, OutputInterface $output): void
     {
         try {
-            $output->write(sprintf($this->translator->translate('Processing URL %s...'), $url));
+            $output->write(sprintf('Processing URL %s...', $url));
             $this->previewGenerator->generatePreview($url);
-            $output->writeln($this->translator->translate(' <info>Success!</info>'));
+            $output->writeln(' <info>Success!</info>');
         } catch (PreviewGenerationException $e) {
-            $output->writeln(' <error>' . $this->translator->translate('Error') . '</error>');
+            $output->writeln(' <error>Error</error>');
             if ($output->isVerbose()) {
                 $this->getApplication()->renderException($e, $output);
             }

@@ -15,7 +15,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\Diactoros\Uri;
-use Zend\I18n\Translator\TranslatorInterface;
 use function array_merge;
 use function explode;
 use function sprintf;
@@ -35,20 +34,12 @@ class GenerateShortUrlCommand extends Command
      * @var array
      */
     private $domainConfig;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(
-        UrlShortenerInterface $urlShortener,
-        TranslatorInterface $translator,
-        array $domainConfig
-    ) {
+    public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig)
+    {
+        parent::__construct();
         $this->urlShortener = $urlShortener;
-        $this->translator = $translator;
         $this->domainConfig = $domainConfig;
-        parent::__construct(null);
     }
 
     protected function configure(): void
@@ -56,30 +47,40 @@ class GenerateShortUrlCommand extends Command
         $this
             ->setName(self::NAME)
             ->setAliases(self::ALIASES)
-            ->setDescription(
-                $this->translator->translate('Generates a short URL for provided long URL and returns it')
-            )
-            ->addArgument('longUrl', InputArgument::REQUIRED, $this->translator->translate('The long URL to parse'))
+            ->setDescription('Generates a short URL for provided long URL and returns it')
+            ->addArgument('longUrl', InputArgument::REQUIRED, 'The long URL to parse')
             ->addOption(
                 'tags',
                 't',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-                $this->translator->translate('Tags to apply to the new short URL')
+                'Tags to apply to the new short URL'
             )
-            ->addOption('validSince', 's', InputOption::VALUE_REQUIRED, $this->translator->translate(
+            ->addOption(
+                'validSince',
+                's',
+                InputOption::VALUE_REQUIRED,
                 'The date from which this short URL will be valid. '
                 . 'If someone tries to access it before this date, it will not be found.'
-            ))
-            ->addOption('validUntil', 'u', InputOption::VALUE_REQUIRED, $this->translator->translate(
+            )
+            ->addOption(
+                'validUntil',
+                'u',
+                InputOption::VALUE_REQUIRED,
                 'The date until which this short URL will be valid. '
                 . 'If someone tries to access it after this date, it will not be found.'
-            ))
-            ->addOption('customSlug', 'c', InputOption::VALUE_REQUIRED, $this->translator->translate(
+            )
+            ->addOption(
+                'customSlug',
+                'c',
+                InputOption::VALUE_REQUIRED,
                 'If provided, this slug will be used instead of generating a short code'
-            ))
-            ->addOption('maxVisits', 'm', InputOption::VALUE_REQUIRED, $this->translator->translate(
+            )
+            ->addOption(
+                'maxVisits',
+                'm',
+                InputOption::VALUE_REQUIRED,
                 'This will limit the number of visits for this short URL.'
-            ));
+            );
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void
@@ -90,9 +91,7 @@ class GenerateShortUrlCommand extends Command
             return;
         }
 
-        $longUrl = $io->ask(
-            $this->translator->translate('A long URL was not provided. Which URL do you want to be shortened?')
-        );
+        $longUrl = $io->ask('A long URL was not provided. Which URL do you want to be shortened?');
         if (! empty($longUrl)) {
             $input->setArgument('longUrl', $longUrl);
         }
@@ -103,7 +102,7 @@ class GenerateShortUrlCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $longUrl = $input->getArgument('longUrl');
         if (empty($longUrl)) {
-            $io->error($this->translator->translate('A URL was not provided!'));
+            $io->error('A URL was not provided!');
             return;
         }
 
@@ -129,21 +128,15 @@ class GenerateShortUrlCommand extends Command
             $shortUrl = $this->buildShortUrl($this->domainConfig, $shortCode);
 
             $io->writeln([
-                sprintf('%s <info>%s</info>', $this->translator->translate('Processed long URL:'), $longUrl),
-                sprintf('%s <info>%s</info>', $this->translator->translate('Generated short URL:'), $shortUrl),
+                sprintf('Processed long URL: <info>%s</info>', $longUrl),
+                sprintf('Generated short URL: <info>%s</info>', $shortUrl),
             ]);
         } catch (InvalidUrlException $e) {
-            $io->error(sprintf(
-                $this->translator->translate('Provided URL "%s" is invalid. Try with a different one.'),
-                $longUrl
-            ));
+            $io->error(sprintf('Provided URL "%s" is invalid. Try with a different one.', $longUrl));
         } catch (NonUniqueSlugException $e) {
-            $io->error(sprintf(
-                $this->translator->translate(
-                    'Provided slug "%s" is already in use by another URL. Try with a different one.'
-                ),
-                $customSlug
-            ));
+            $io->error(
+                sprintf('Provided slug "%s" is already in use by another URL. Try with a different one.', $customSlug)
+            );
         }
     }
 

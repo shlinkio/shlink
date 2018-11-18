@@ -9,7 +9,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Zend\I18n\Translator\TranslatorInterface;
 use function Functional\map;
 
 class ListTagsCommand extends Command
@@ -20,36 +19,31 @@ class ListTagsCommand extends Command
      * @var TagServiceInterface
      */
     private $tagService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(TagServiceInterface $tagService, TranslatorInterface $translator)
+    public function __construct(TagServiceInterface $tagService)
     {
-        $this->tagService = $tagService;
-        $this->translator = $translator;
         parent::__construct();
+        $this->tagService = $tagService;
     }
 
     protected function configure(): void
     {
         $this
             ->setName(self::NAME)
-            ->setDescription($this->translator->translate('Lists existing tags.'));
+            ->setDescription('Lists existing tags.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
-        $io->table([$this->translator->translate('Name')], $this->getTagsRows());
+        $io->table(['Name'], $this->getTagsRows());
     }
 
     private function getTagsRows(): array
     {
         $tags = $this->tagService->listTags();
         if (empty($tags)) {
-            return [[$this->translator->translate('No tags yet')]];
+            return [['No tags yet']];
         }
 
         return map($tags, function (Tag $tag) {

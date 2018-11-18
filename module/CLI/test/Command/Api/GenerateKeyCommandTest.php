@@ -12,7 +12,6 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 
 class GenerateKeyCommandTest extends TestCase
 {
@@ -28,7 +27,7 @@ class GenerateKeyCommandTest extends TestCase
     public function setUp()
     {
         $this->apiKeyService = $this->prophesize(ApiKeyService::class);
-        $command = new GenerateKeyCommand($this->apiKeyService->reveal(), Translator::factory([]));
+        $command = new GenerateKeyCommand($this->apiKeyService->reveal());
         $app = new Application();
         $app->add($command);
         $this->commandTester = new CommandTester($command);

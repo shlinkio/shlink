@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 use function count;
@@ -39,11 +38,7 @@ class GeneratePreviewCommandTest extends TestCase
         $this->previewGenerator = $this->prophesize(PreviewGenerator::class);
         $this->shortUrlService = $this->prophesize(ShortUrlService::class);
 
-        $command = new GeneratePreviewCommand(
-            $this->shortUrlService->reveal(),
-            $this->previewGenerator->reveal(),
-            Translator::factory([])
-        );
+        $command = new GeneratePreviewCommand($this->shortUrlService->reveal(), $this->previewGenerator->reveal());
         $app = new Application();
         $app->add($command);
 

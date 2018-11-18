@@ -15,7 +15,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Lock\Factory as Locker;
-use Zend\I18n\Translator\TranslatorInterface;
 use function sprintf;
 
 class ProcessVisitsCommand extends Command
@@ -31,10 +30,6 @@ class ProcessVisitsCommand extends Command
      */
     private $ipLocationResolver;
     /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-    /**
      * @var Locker
      */
     private $locker;
@@ -46,21 +41,19 @@ class ProcessVisitsCommand extends Command
     public function __construct(
         VisitServiceInterface $visitService,
         IpLocationResolverInterface $ipLocationResolver,
-        Locker $locker,
-        TranslatorInterface $translator
+        Locker $locker
     ) {
+        parent::__construct();
         $this->visitService = $visitService;
         $this->ipLocationResolver = $ipLocationResolver;
-        $this->translator = $translator;
         $this->locker = $locker;
-        parent::__construct();
     }
 
     protected function configure(): void
     {
         $this
             ->setName(self::NAME)
-            ->setDescription($this->translator->translate('Processes visits where location is not set yet'));
+            ->setDescription('Processes visits where location is not set yet');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
@@ -70,10 +63,7 @@ class ProcessVisitsCommand extends Command
 
         $lock = $this->locker->createLock(self::NAME);
         if (! $lock->acquire()) {
-            $io->warning(sprintf(
-                $this->translator->translate('There is already an instance of the "%s" command in execution'),
-                self::NAME
-            ));
+            $io->warning(sprintf('There is already an instance of the "%s" command in execution', self::NAME));
             return;
         }
 
@@ -81,14 +71,11 @@ class ProcessVisitsCommand extends Command
             $this->visitService->locateVisits(
                 [$this, 'getGeolocationDataForVisit'],
                 function (VisitLocation $location) use ($output) {
-                    $output->writeln(sprintf(
-                        ' [<info>' . $this->translator->translate('Address located at "%s"') . '</info>]',
-                        $location->getCountryName()
-                    ));
+                    $output->writeln(sprintf(' [<info>Address located at "%s"</info>]', $location->getCountryName()));
                 }
             );
 
-            $io->success($this->translator->translate('Finished processing all IPs'));
+            $io->success('Finished processing all IPs');
         } finally {
             $lock->release();
         }
@@ -97,31 +84,24 @@ class ProcessVisitsCommand extends Command
     public function getGeolocationDataForVisit(Visit $visit): array
     {
         if (! $visit->hasRemoteAddr()) {
-            $this->output->writeln(sprintf(
-                '<comment>%s</comment>',
-                $this->translator->translate('Ignored visit with no IP address')
-            ), OutputInterface::VERBOSITY_VERBOSE);
+            $this->output->writeln(
+                '<comment>Ignored visit with no IP address</comment>',
+                OutputInterface::VERBOSITY_VERBOSE
+            );
             throw new IpCannotBeLocatedException('Ignored visit with no IP address');
         }
 
         $ipAddr = $visit->getRemoteAddr();
-        $this->output->write(sprintf('%s <fg=blue>%s</>', $this->translator->translate('Processing IP'), $ipAddr));
+        $this->output->write(sprintf('Processing IP <fg=blue>%s</>', $ipAddr));
         if ($ipAddr === IpAddress::LOCALHOST) {
-            $this->output->writeln(
-                sprintf(' [<comment>%s</comment>]', $this->translator->translate('Ignored localhost address'))
-            );
+            $this->output->writeln(' [<comment>Ignored localhost address</comment>]');
             throw new IpCannotBeLocatedException('Ignored localhost address');
         }
 
         try {
             return $this->ipLocationResolver->resolveIpLocation($ipAddr);
         } catch (WrongIpException $e) {
-            $this->output->writeln(
-                sprintf(
-                    ' [<fg=red>%s</>]',
-                    $this->translator->translate('An error occurred while locating IP. Skipped')
-                )
-            );
+            $this->output->writeln(' [<fg=red>An error occurred while locating IP. Skipped</>]');
             if ($this->output->isVerbose()) {
                 $this->getApplication()->renderException($e, $this->output);
             }

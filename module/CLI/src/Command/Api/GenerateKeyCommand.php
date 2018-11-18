@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Zend\I18n\Translator\TranslatorInterface;
 use function sprintf;
 
 class GenerateKeyCommand extends Command
@@ -21,28 +20,24 @@ class GenerateKeyCommand extends Command
      * @var ApiKeyServiceInterface
      */
     private $apiKeyService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(ApiKeyServiceInterface $apiKeyService, TranslatorInterface $translator)
+    public function __construct(ApiKeyServiceInterface $apiKeyService)
     {
         $this->apiKeyService = $apiKeyService;
-        $this->translator = $translator;
         parent::__construct();
     }
 
     protected function configure(): void
     {
-        $this->setName(self::NAME)
-             ->setDescription($this->translator->translate('Generates a new valid API key.'))
-             ->addOption(
-                 'expirationDate',
-                 'e',
-                 InputOption::VALUE_OPTIONAL,
-                 $this->translator->translate('The date in which the API key should expire. Use any valid PHP format.')
-             );
+        $this
+            ->setName(self::NAME)
+            ->setDescription('Generates a new valid API key.')
+            ->addOption(
+                'expirationDate',
+                'e',
+                InputOption::VALUE_OPTIONAL,
+                'The date in which the API key should expire. Use any valid PHP format.'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
@@ -50,8 +45,6 @@ class GenerateKeyCommand extends Command
         $expirationDate = $input->getOption('expirationDate');
         $apiKey = $this->apiKeyService->create(isset($expirationDate) ? Chronos::parse($expirationDate) : null);
 
-        (new SymfonyStyle($input, $output))->success(
-            sprintf($this->translator->translate('Generated API key: "%s"'), $apiKey)
-        );
+        (new SymfonyStyle($input, $output))->success(sprintf('Generated API key: "%s"', $apiKey));
     }
 }

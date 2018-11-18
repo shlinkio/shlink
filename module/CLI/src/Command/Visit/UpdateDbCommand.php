@@ -10,7 +10,6 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Zend\I18n\Translator\TranslatorInterface;
 
 class UpdateDbCommand extends Command
 {
@@ -20,29 +19,22 @@ class UpdateDbCommand extends Command
      * @var DbUpdaterInterface
      */
     private $geoLiteDbUpdater;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(DbUpdaterInterface $geoLiteDbUpdater, TranslatorInterface $translator)
+    public function __construct(DbUpdaterInterface $geoLiteDbUpdater)
     {
-        $this->geoLiteDbUpdater = $geoLiteDbUpdater;
-        $this->translator = $translator;
         parent::__construct();
+        $this->geoLiteDbUpdater = $geoLiteDbUpdater;
     }
 
     protected function configure(): void
     {
         $this
             ->setName(self::NAME)
-            ->setDescription(
-                $this->translator->translate('Updates the GeoLite2 database file used to geolocate IP addresses')
-            )
-            ->setHelp($this->translator->translate(
+            ->setDescription('Updates the GeoLite2 database file used to geolocate IP addresses')
+            ->setHelp(
                 'The GeoLite2 database is updated first Tuesday every month, so this command should be ideally run '
                 . 'every first Wednesday'
-            ));
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
@@ -60,12 +52,12 @@ class UpdateDbCommand extends Command
             $progressBar->finish();
             $io->writeln('');
 
-            $io->success($this->translator->translate('GeoLite2 database properly updated'));
+            $io->success('GeoLite2 database properly updated');
         } catch (RuntimeException $e) {
             $progressBar->finish();
             $io->writeln('');
 
-            $io->error($this->translator->translate('An error occurred while updating GeoLite2 database'));
+            $io->error('An error occurred while updating GeoLite2 database');
             if ($io->isVerbose()) {
                 $this->getApplication()->renderException($e, $output);
             }

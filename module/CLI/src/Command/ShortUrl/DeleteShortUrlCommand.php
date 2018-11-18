@@ -11,7 +11,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Zend\I18n\Translator\TranslatorInterface;
 use function sprintf;
 
 class DeleteShortUrlCommand extends Command
@@ -23,16 +22,11 @@ class DeleteShortUrlCommand extends Command
      * @var DeleteShortUrlServiceInterface
      */
     private $deleteShortUrlService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(DeleteShortUrlServiceInterface $deleteShortUrlService, TranslatorInterface $translator)
+    public function __construct(DeleteShortUrlServiceInterface $deleteShortUrlService)
     {
-        $this->deleteShortUrlService = $deleteShortUrlService;
-        $this->translator = $translator;
         parent::__construct();
+        $this->deleteShortUrlService = $deleteShortUrlService;
     }
 
     protected function configure(): void
@@ -40,22 +34,14 @@ class DeleteShortUrlCommand extends Command
         $this
             ->setName(self::NAME)
             ->setAliases(self::ALIASES)
-            ->setDescription(
-                $this->translator->translate('Deletes a short URL')
-            )
-            ->addArgument(
-                'shortCode',
-                InputArgument::REQUIRED,
-                $this->translator->translate('The short code for the short URL to be deleted')
-            )
+            ->setDescription('Deletes a short URL')
+            ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code for the short URL to be deleted')
             ->addOption(
                 'ignore-threshold',
                 'i',
                 InputOption::VALUE_NONE,
-                $this->translator->translate(
-                    'Ignores the safety visits threshold check, which could make short URLs with many visits to be '
-                    . 'accidentally deleted'
-                )
+                'Ignores the safety visits threshold check, which could make short URLs with many visits to be '
+                . 'accidentally deleted'
             );
     }
 
@@ -68,9 +54,7 @@ class DeleteShortUrlCommand extends Command
         try {
             $this->runDelete($io, $shortCode, $ignoreThreshold);
         } catch (Exception\InvalidShortCodeException $e) {
-            $io->error(
-                sprintf($this->translator->translate('Provided short code "%s" could not be found.'), $shortCode)
-            );
+            $io->error(sprintf('Provided short code "%s" could not be found.', $shortCode));
         } catch (Exception\DeleteShortUrlException $e) {
             $this->retry($io, $shortCode, $e);
         }
@@ -78,25 +62,24 @@ class DeleteShortUrlCommand extends Command
 
     private function retry(SymfonyStyle $io, string $shortCode, Exception\DeleteShortUrlException $e): void
     {
-        $warningMsg = sprintf($this->translator->translate(
-            'It was not possible to delete the short URL with short code "%s" because it has more than %s visits.'
-        ), $shortCode, $e->getVisitsThreshold());
+        $warningMsg = sprintf(
+            'It was not possible to delete the short URL with short code "%s" because it has more than %s visits.',
+            $shortCode,
+            $e->getVisitsThreshold()
+        );
         $io->writeln('<bg=yellow>' . $warningMsg . '</>');
-        $forceDelete = $io->confirm($this->translator->translate('Do you want to delete it anyway?'), false);
+        $forceDelete = $io->confirm('Do you want to delete it anyway?', false);
 
         if ($forceDelete) {
             $this->runDelete($io, $shortCode, true);
         } else {
-            $io->warning($this->translator->translate('Short URL was not deleted.'));
+            $io->warning('Short URL was not deleted.');
         }
     }
 
     private function runDelete(SymfonyStyle $io, string $shortCode, bool $ignoreThreshold): void
     {
         $this->deleteShortUrlService->deleteByShortCode($shortCode, $ignoreThreshold);
-        $io->success(sprintf(
-            $this->translator->translate('Short URL with short code "%s" successfully deleted.'),
-            $shortCode
-        ));
+        $io->success(sprintf('Short URL with short code "%s" successfully deleted.', $shortCode));
     }
 }
