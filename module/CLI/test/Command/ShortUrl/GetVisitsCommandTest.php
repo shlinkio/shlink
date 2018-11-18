@@ -16,7 +16,6 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 use function strpos;
 
 class GetVisitsCommandTest extends TestCase
@@ -33,7 +32,7 @@ class GetVisitsCommandTest extends TestCase
     public function setUp()
     {
         $this->visitsTracker = $this->prophesize(VisitsTrackerInterface::class);
-        $command = new GetVisitsCommand($this->visitsTracker->reveal(), Translator::factory([]));
+        $command = new GetVisitsCommand($this->visitsTracker->reveal());
         $app = new Application();
         $app->add($command);
         $this->commandTester = new CommandTester($command);

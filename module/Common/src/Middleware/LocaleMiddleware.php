@@ -13,6 +13,8 @@ use function explode;
 
 class LocaleMiddleware implements MiddlewareInterface
 {
+    private const ACCEPT_LANGUAGE = 'Accept-Language';
+
     /**
      * @var Translator
      */
@@ -36,11 +38,11 @@ class LocaleMiddleware implements MiddlewareInterface
      */
     public function process(Request $request, DelegateInterface $delegate): Response
     {
-        if (! $request->hasHeader('Accept-Language')) {
+        if (! $request->hasHeader(self::ACCEPT_LANGUAGE)) {
             return $delegate->handle($request);
         }
 
-        $locale = $request->getHeaderLine('Accept-Language');
+        $locale = $request->getHeaderLine(self::ACCEPT_LANGUAGE);
         $this->translator->setLocale($this->normalizeLocale($locale));
         return $delegate->handle($request);
     }

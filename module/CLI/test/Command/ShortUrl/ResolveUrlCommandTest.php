@@ -12,7 +12,6 @@ use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 use const PHP_EOL;
 
 class ResolveUrlCommandTest extends TestCase
@@ -29,7 +28,7 @@ class ResolveUrlCommandTest extends TestCase
     public function setUp()
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $command = new ResolveUrlCommand($this->urlShortener->reveal(), Translator::factory([]));
+        $command = new ResolveUrlCommand($this->urlShortener->reveal());
         $app = new Application();
         $app->add($command);
 

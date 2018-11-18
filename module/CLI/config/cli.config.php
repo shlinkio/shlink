@@ -3,12 +3,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI;
 
-use function Shlinkio\Shlink\Common\env;
-
 return [
 
     'cli' => [
-        'locale' => env('CLI_LOCALE', 'en'),
         'commands' => [
             Command\ShortUrl\GenerateShortUrlCommand::NAME => Command\ShortUrl\GenerateShortUrlCommand::class,
             Command\ShortUrl\ResolveUrlCommand::NAME => Command\ShortUrl\ResolveUrlCommand::class,

@@ -11,17 +11,12 @@ use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\I18n\Translator\TranslatorInterface;
 
 class AuthenticateAction extends AbstractRestAction
 {
     protected const ROUTE_PATH = '/authenticate';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_POST];
 
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
     /**
      * @var ApiKeyService|ApiKeyServiceInterface
      */
@@ -34,11 +29,9 @@ class AuthenticateAction extends AbstractRestAction
     public function __construct(
         ApiKeyServiceInterface $apiKeyService,
         JWTServiceInterface $jwtService,
-        TranslatorInterface $translator,
         LoggerInterface $logger = null
     ) {
         parent::__construct($logger);
-        $this->translator = $translator;
         $this->apiKeyService = $apiKeyService;
         $this->jwtService = $jwtService;
     }
@@ -54,9 +47,7 @@ class AuthenticateAction extends AbstractRestAction
         if (! isset($authData['apiKey'])) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' => $this->translator->translate(
-                    'You have to provide a valid API key under the "apiKey" param name.'
-                ),
+                'message' => 'You have to provide a valid API key under the "apiKey" param name.',
             ], self::STATUS_BAD_REQUEST);
         }
 
@@ -65,7 +56,7 @@ class AuthenticateAction extends AbstractRestAction
         if ($apiKey === null || ! $apiKey->isValid()) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_API_KEY_ERROR,
-                'message' => $this->translator->translate('Provided API key does not exist or is invalid.'),
+                'message' => 'Provided API key does not exist or is invalid.',
             ], self::STATUS_UNAUTHORIZED);
         }
 

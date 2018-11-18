@@ -12,7 +12,6 @@ use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\I18n\Translator\TranslatorInterface;
 use function sprintf;
 
 class UpdateTagAction extends AbstractRestAction
@@ -24,19 +23,11 @@ class UpdateTagAction extends AbstractRestAction
      * @var TagServiceInterface
      */
     private $tagService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(
-        TagServiceInterface $tagService,
-        TranslatorInterface $translator,
-        LoggerInterface $logger = null
-    ) {
+    public function __construct(TagServiceInterface $tagService, LoggerInterface $logger = null)
+    {
         parent::__construct($logger);
         $this->tagService = $tagService;
-        $this->translator = $translator;
     }
 
     /**
@@ -54,9 +45,8 @@ class UpdateTagAction extends AbstractRestAction
         if (! isset($body['oldName'], $body['newName'])) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' => $this->translator->translate(
-                    'You have to provide both \'oldName\' and \'newName\' params in order to properly rename the tag'
-                ),
+                'message' =>
+                    'You have to provide both \'oldName\' and \'newName\' params in order to properly rename the tag',
             ], self::STATUS_BAD_REQUEST);
         }
 
@@ -66,10 +56,7 @@ class UpdateTagAction extends AbstractRestAction
         } catch (EntityDoesNotExistException $e) {
             return new JsonResponse([
                 'error' => RestUtils::NOT_FOUND_ERROR,
-                'message' => sprintf(
-                    $this->translator->translate('It wasn\'t possible to find a tag with name \'%s\''),
-                    $body['oldName']
-                ),
+                'message' => sprintf('It was not possible to find a tag with name %s', $body['oldName']),
             ], self::STATUS_NOT_FOUND);
         }
     }

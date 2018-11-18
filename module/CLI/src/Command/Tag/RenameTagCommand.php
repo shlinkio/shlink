@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Zend\I18n\Translator\TranslatorInterface;
 use function sprintf;
 
 class RenameTagCommand extends Command
@@ -21,25 +20,20 @@ class RenameTagCommand extends Command
      * @var TagServiceInterface
      */
     private $tagService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(TagServiceInterface $tagService, TranslatorInterface $translator)
+    public function __construct(TagServiceInterface $tagService)
     {
-        $this->tagService = $tagService;
-        $this->translator = $translator;
         parent::__construct();
+        $this->tagService = $tagService;
     }
 
     protected function configure(): void
     {
         $this
             ->setName(self::NAME)
-            ->setDescription($this->translator->translate('Renames one existing tag.'))
-            ->addArgument('oldName', InputArgument::REQUIRED, $this->translator->translate('Current name of the tag.'))
-            ->addArgument('newName', InputArgument::REQUIRED, $this->translator->translate('New name of the tag.'));
+            ->setDescription('Renames one existing tag.')
+            ->addArgument('oldName', InputArgument::REQUIRED, 'Current name of the tag.')
+            ->addArgument('newName', InputArgument::REQUIRED, 'New name of the tag.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
@@ -50,9 +44,9 @@ class RenameTagCommand extends Command
 
         try {
             $this->tagService->renameTag($oldName, $newName);
-            $io->success($this->translator->translate('Tag properly renamed.'));
+            $io->success('Tag properly renamed.');
         } catch (EntityDoesNotExistException $e) {
-            $io->error(sprintf($this->translator->translate('A tag with name "%s" was not found'), $oldName));
+            $io->error(sprintf('A tag with name "%s" was not found', $oldName));
         }
     }
 }

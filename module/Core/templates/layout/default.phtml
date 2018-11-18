@@ -1,42 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title><?= $this->section('title', '') ?> | URL shortener</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
-    <style>
-        body {padding-top: 60px;}
-        .app {display: flex; min-height: 100vh; flex-direction: column;}
-        .app-content {flex: 1;}
-        .app-footer p {margin-bottom: 20px;}
-    </style>
-    <?= $this->section('stylesheets', '') ?>
+  <title><?= $this->section('title', '') ?> | URL shortener</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+  <style>
+    body {padding-top: 60px;}
+    .app {display: flex; min-height: 100vh; flex-direction: column;}
+    .app-content {flex: 1;}
+    .app-footer p {margin-bottom: 20px;}
+  </style>
+  <?= $this->section('stylesheets', '') ?>
 </head>
 <body class="app">
-    <div class="app-content">
-        <main class="container">
-            <?= $this->section('main', '') ?>
-        </main>
+  <div class="app-content">
+    <main class="container">
+      <?= $this->section('main', '') ?>
+    </main>
+  </div>
+
+  <footer class="app-footer">
+    <div class="container">
+      <hr />
+      <p>&copy; <?= date('Y') ?> <a href="https://shlink.io">Shlink</a></p>
     </div>
-
-    <footer class="app-footer">
-        <div class="container">
-            <hr />
-            <?php if ($this->section('footer')): ?>
-                <?= $this->section('footer') ?>
-            <?php else: ?>
-                <p>
-                    &copy; <?= date('Y') ?> <a href="https://shlink.io">Shlink</a>
-                </p>
-            <?php endif; ?>
-        </div>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <?= $this->section('javascript', '') ?>
+  </footer>
 </body>
 </html>

@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 
@@ -30,7 +29,7 @@ class ListShortUrlsCommandTest extends TestCase
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
         $app = new Application();
-        $command = new ListShortUrlsCommand($this->shortUrlService->reveal(), Translator::factory([]), []);
+        $command = new ListShortUrlsCommand($this->shortUrlService->reveal(), []);
         $app->add($command);
         $this->commandTester = new CommandTester($command);
     }

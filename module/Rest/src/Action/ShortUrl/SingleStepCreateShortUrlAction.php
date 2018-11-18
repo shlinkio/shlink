@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Zend\Diactoros\Uri;
-use Zend\I18n\Translator\TranslatorInterface;
 
 class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
 {
@@ -24,12 +23,11 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
 
     public function __construct(
         UrlShortenerInterface $urlShortener,
-        TranslatorInterface $translator,
         ApiKeyServiceInterface $apiKeyService,
         array $domainConfig,
         LoggerInterface $logger = null
     ) {
-        parent::__construct($urlShortener, $translator, $domainConfig, $logger);
+        parent::__construct($urlShortener, $domainConfig, $logger);
         $this->apiKeyService = $apiKeyService;
     }
 
@@ -44,13 +42,11 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
         $query = $request->getQueryParams();
 
         if (! $this->apiKeyService->check($query['apiKey'] ?? '')) {
-            throw new InvalidArgumentException(
-                $this->translator->translate('No API key was provided or it is not valid')
-            );
+            throw new InvalidArgumentException('No API key was provided or it is not valid');
         }
 
         if (! isset($query['longUrl'])) {
-            throw new InvalidArgumentException($this->translator->translate('A URL was not provided'));
+            throw new InvalidArgumentException('A URL was not provided');
         }
 
         return new CreateShortUrlData(new Uri($query['longUrl']));

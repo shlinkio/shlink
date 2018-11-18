@@ -14,7 +14,6 @@ use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 
 class GenerateShortUrlCommandTest extends TestCase
 {
@@ -30,7 +29,7 @@ class GenerateShortUrlCommandTest extends TestCase
     public function setUp()
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $command = new GenerateShortUrlCommand($this->urlShortener->reveal(), Translator::factory([]), [
+        $command = new GenerateShortUrlCommand($this->urlShortener->reveal(), [
             'schema' => 'http',
             'hostname' => 'foo.com',
         ]);

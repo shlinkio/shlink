@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\I18n\Translator\TranslatorInterface;
 use function sprintf;
 
 class EditShortUrlTagsAction extends AbstractRestAction
@@ -23,19 +22,11 @@ class EditShortUrlTagsAction extends AbstractRestAction
      * @var ShortUrlServiceInterface
      */
     private $shortUrlService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(
-        ShortUrlServiceInterface $shortUrlService,
-        TranslatorInterface $translator,
-        LoggerInterface $logger = null
-    ) {
+    public function __construct(ShortUrlServiceInterface $shortUrlService, LoggerInterface $logger = null)
+    {
         parent::__construct($logger);
         $this->shortUrlService = $shortUrlService;
-        $this->translator = $translator;
     }
 
     /**
@@ -51,7 +42,7 @@ class EditShortUrlTagsAction extends AbstractRestAction
         if (! isset($bodyParams['tags'])) {
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' => $this->translator->translate('A list of tags was not provided'),
+                'message' => 'A list of tags was not provided',
             ], self::STATUS_BAD_REQUEST);
         }
         $tags = $bodyParams['tags'];
@@ -62,7 +53,7 @@ class EditShortUrlTagsAction extends AbstractRestAction
         } catch (InvalidShortCodeException $e) {
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
+                'message' => sprintf('No URL found for short code "%s"', $shortCode),
             ], self::STATUS_NOT_FOUND);
         }
     }

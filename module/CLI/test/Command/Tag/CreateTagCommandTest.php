@@ -11,7 +11,6 @@ use Shlinkio\Shlink\CLI\Command\Tag\CreateTagCommand;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 
 class CreateTagCommandTest extends TestCase
 {
@@ -28,7 +27,7 @@ class CreateTagCommandTest extends TestCase
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
 
-        $command = new CreateTagCommand($this->tagService->reveal(), Translator::factory([]));
+        $command = new CreateTagCommand($this->tagService->reveal());
         $app = new Application();
         $app->add($command);
 

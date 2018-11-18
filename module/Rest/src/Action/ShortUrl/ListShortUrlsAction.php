@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\I18n\Translator\TranslatorInterface;
 
 class ListShortUrlsAction extends AbstractRestAction
 {
@@ -27,23 +26,17 @@ class ListShortUrlsAction extends AbstractRestAction
      */
     private $shortUrlService;
     /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-    /**
      * @var array
      */
     private $domainConfig;
 
     public function __construct(
         ShortUrlServiceInterface $shortUrlService,
-        TranslatorInterface $translator,
         array $domainConfig,
         LoggerInterface $logger = null
     ) {
         parent::__construct($logger);
         $this->shortUrlService = $shortUrlService;
-        $this->translator = $translator;
         $this->domainConfig = $domainConfig;
     }
 
@@ -64,7 +57,7 @@ class ListShortUrlsAction extends AbstractRestAction
             $this->logger->error('Unexpected error while listing short URLs. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
-                'message' => $this->translator->translate('Unexpected error occurred'),
+                'message' => 'Unexpected error occurred',
             ], self::STATUS_INTERNAL_SERVER_ERROR);
         }
     }

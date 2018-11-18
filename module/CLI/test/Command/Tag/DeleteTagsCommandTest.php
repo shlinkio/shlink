@@ -10,7 +10,6 @@ use Shlinkio\Shlink\CLI\Command\Tag\DeleteTagsCommand;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 
 class DeleteTagsCommandTest extends TestCase
 {
@@ -31,7 +30,7 @@ class DeleteTagsCommandTest extends TestCase
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
 
-        $command = new DeleteTagsCommand($this->tagService->reveal(), Translator::factory([]));
+        $command = new DeleteTagsCommand($this->tagService->reveal());
         $app = new Application();
         $app->add($command);
 

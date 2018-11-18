@@ -25,7 +25,6 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
-use Zend\I18n\Translator\Translator;
 use function implode;
 use function sprintf;
 use function Zend\Stratigility\middleware;
@@ -49,9 +48,7 @@ class AuthenticationMiddlewareTest extends TestCase
     public function setUp()
     {
         $this->requestToPlugin = $this->prophesize(RequestToHttpAuthPluginInterface::class);
-        $this->middleware = new AuthenticationMiddleware($this->requestToPlugin->reveal(), Translator::factory([]), [
-            AuthenticateAction::class,
-        ]);
+        $this->middleware = new AuthenticationMiddleware($this->requestToPlugin->reveal(), [AuthenticateAction::class]);
     }
 
     /**

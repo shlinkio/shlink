@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\I18n\Translator\Translator;
 
 class ApiKeyHeaderPluginTest extends TestCase
 {
@@ -27,7 +26,7 @@ class ApiKeyHeaderPluginTest extends TestCase
     public function setUp()
     {
         $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
-        $this->plugin = new ApiKeyHeaderPlugin($this->apiKeyService->reveal(), Translator::factory([]));
+        $this->plugin = new ApiKeyHeaderPlugin($this->apiKeyService->reveal());
     }
 
     /**

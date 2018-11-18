@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 
 class DisableKeyCommandTest extends TestCase
 {
@@ -26,7 +25,7 @@ class DisableKeyCommandTest extends TestCase
     public function setUp()
     {
         $this->apiKeyService = $this->prophesize(ApiKeyService::class);
-        $command = new DisableKeyCommand($this->apiKeyService->reveal(), Translator::factory([]));
+        $command = new DisableKeyCommand($this->apiKeyService->reveal());
         $app = new Application();
         $app->add($command);
         $this->commandTester = new CommandTester($command);

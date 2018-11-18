@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use RKA\Middleware\IpAddress;
 use Shlinkio\Shlink\Core\Action;
 use Shlinkio\Shlink\Core\Middleware;
@@ -15,7 +16,7 @@ return [
                 IpAddress::class,
                 Action\RedirectAction::class,
             ],
-            'allowed_methods' => ['GET'],
+            'allowed_methods' => [RequestMethod::METHOD_GET],
         ],
         [
             'name' => 'pixel-tracking',
@@ -24,7 +25,7 @@ return [
                 IpAddress::class,
                 Action\PixelAction::class,
             ],
-            'allowed_methods' => ['GET'],
+            'allowed_methods' => [RequestMethod::METHOD_GET],
         ],
         [
             'name' => 'short-url-qr-code',
@@ -33,13 +34,13 @@ return [
                 Middleware\QrCodeCacheMiddleware::class,
                 Action\QrCodeAction::class,
             ],
-            'allowed_methods' => ['GET'],
+            'allowed_methods' => [RequestMethod::METHOD_GET],
         ],
         [
             'name' => 'short-url-preview',
             'path' => '/{shortCode}/preview',
             'middleware' => Action\PreviewAction::class,
-            'allowed_methods' => ['GET'],
+            'allowed_methods' => [RequestMethod::METHOD_GET],
         ],
 
         // Old QR code route. Deprecated
@@ -50,7 +51,7 @@ return [
                 Middleware\QrCodeCacheMiddleware::class,
                 Action\QrCodeAction::class,
             ],
-            'allowed_methods' => ['GET'],
+            'allowed_methods' => [RequestMethod::METHOD_GET],
         ],
     ],
 

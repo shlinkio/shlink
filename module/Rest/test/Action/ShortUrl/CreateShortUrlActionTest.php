@@ -15,7 +15,6 @@ use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Uri;
-use Zend\I18n\Translator\Translator;
 use function strpos;
 
 class CreateShortUrlActionTest extends TestCase
@@ -32,7 +31,7 @@ class CreateShortUrlActionTest extends TestCase
     public function setUp()
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $this->action = new CreateShortUrlAction($this->urlShortener->reveal(), Translator::factory([]), [
+        $this->action = new CreateShortUrlAction($this->urlShortener->reveal(), [
             'schema' => 'http',
             'hostname' => 'foo.com',
         ]);

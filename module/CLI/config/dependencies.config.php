@@ -10,8 +10,8 @@ use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Lock;
-use Zend\I18n\Translator\Translator;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
 
@@ -29,8 +29,8 @@ return [
             Command\Visit\ProcessVisitsCommand::class => ConfigAbstractFactory::class,
             Command\Visit\UpdateDbCommand::class => ConfigAbstractFactory::class,
 
-            Command\Config\GenerateCharsetCommand::class => ConfigAbstractFactory::class,
-            Command\Config\GenerateSecretCommand::class => ConfigAbstractFactory::class,
+            Command\Config\GenerateCharsetCommand::class => InvokableFactory::class,
+            Command\Config\GenerateSecretCommand::class => InvokableFactory::class,
 
             Command\Api\GenerateKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\DisableKeyCommand::class => ConfigAbstractFactory::class,
@@ -44,47 +44,28 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        Command\ShortUrl\GenerateShortUrlCommand::class => [
-            Service\UrlShortener::class,
-            'translator',
-            'config.url_shortener.domain',
-        ],
-        Command\ShortUrl\ResolveUrlCommand::class => [Service\UrlShortener::class, 'translator'],
-        Command\ShortUrl\ListShortUrlsCommand::class => [
-            Service\ShortUrlService::class,
-            'translator',
-            'config.url_shortener.domain',
-        ],
-        Command\ShortUrl\GetVisitsCommand::class => [Service\VisitsTracker::class, 'translator'],
-        Command\ShortUrl\GeneratePreviewCommand::class => [
-            Service\ShortUrlService::class,
-            PreviewGenerator::class,
-            'translator',
-        ],
-        Command\ShortUrl\DeleteShortUrlCommand::class => [
-            Service\ShortUrl\DeleteShortUrlService::class,
-            'translator',
-        ],
+        Command\ShortUrl\GenerateShortUrlCommand::class => [Service\UrlShortener::class, 'config.url_shortener.domain'],
+        Command\ShortUrl\ResolveUrlCommand::class => [Service\UrlShortener::class],
+        Command\ShortUrl\ListShortUrlsCommand::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
+        Command\ShortUrl\GetVisitsCommand::class => [Service\VisitsTracker::class],
+        Command\ShortUrl\GeneratePreviewCommand::class => [Service\ShortUrlService::class, PreviewGenerator::class],
+        Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
 
         Command\Visit\ProcessVisitsCommand::class => [
             Service\VisitService::class,
             IpLocationResolverInterface::class,
             Lock\Factory::class,
-            'translator',
         ],
-        Command\Visit\UpdateDbCommand::class => [DbUpdater::class, 'translator'],
+        Command\Visit\UpdateDbCommand::class => [DbUpdater::class],
 
-        Command\Config\GenerateCharsetCommand::class => ['translator'],
-        Command\Config\GenerateSecretCommand::class => ['translator'],
+        Command\Api\GenerateKeyCommand::class => [ApiKeyService::class],
+        Command\Api\DisableKeyCommand::class => [ApiKeyService::class],
+        Command\Api\ListKeysCommand::class => [ApiKeyService::class],
 
-        Command\Api\GenerateKeyCommand::class => [ApiKeyService::class, 'translator'],
-        Command\Api\DisableKeyCommand::class => [ApiKeyService::class, 'translator'],
-        Command\Api\ListKeysCommand::class => [ApiKeyService::class, 'translator'],
-
-        Command\Tag\ListTagsCommand::class => [Service\Tag\TagService::class, Translator::class],
-        Command\Tag\CreateTagCommand::class => [Service\Tag\TagService::class, Translator::class],
-        Command\Tag\RenameTagCommand::class => [Service\Tag\TagService::class, Translator::class],
-        Command\Tag\DeleteTagsCommand::class => [Service\Tag\TagService::class, Translator::class],
+        Command\Tag\ListTagsCommand::class => [Service\Tag\TagService::class],
+        Command\Tag\CreateTagCommand::class => [Service\Tag\TagService::class],
+        Command\Tag\RenameTagCommand::class => [Service\Tag\TagService::class],
+        Command\Tag\DeleteTagsCommand::class => [Service\Tag\TagService::class],
     ],
 
 ];

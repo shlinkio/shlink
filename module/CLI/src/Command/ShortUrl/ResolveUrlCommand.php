@@ -11,7 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Zend\I18n\Translator\TranslatorInterface;
 use function sprintf;
 
 class ResolveUrlCommand extends Command
@@ -23,16 +22,11 @@ class ResolveUrlCommand extends Command
      * @var UrlShortenerInterface
      */
     private $urlShortener;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(UrlShortenerInterface $urlShortener, TranslatorInterface $translator)
+    public function __construct(UrlShortenerInterface $urlShortener)
     {
+        parent::__construct();
         $this->urlShortener = $urlShortener;
-        $this->translator = $translator;
-        parent::__construct(null);
     }
 
     protected function configure(): void
@@ -40,12 +34,8 @@ class ResolveUrlCommand extends Command
         $this
             ->setName(self::NAME)
             ->setAliases(self::ALIASES)
-            ->setDescription($this->translator->translate('Returns the long URL behind a short code'))
-            ->addArgument(
-                'shortCode',
-                InputArgument::REQUIRED,
-                $this->translator->translate('The short code to parse')
-            );
+            ->setDescription('Returns the long URL behind a short code')
+            ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code to parse');
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void
@@ -56,9 +46,7 @@ class ResolveUrlCommand extends Command
         }
 
         $io = new SymfonyStyle($input, $output);
-        $shortCode = $io->ask(
-            $this->translator->translate('A short code was not provided. Which short code do you want to parse?')
-        );
+        $shortCode = $io->ask('A short code was not provided. Which short code do you want to parse?');
         if (! empty($shortCode)) {
             $input->setArgument('shortCode', $shortCode);
         }
@@ -71,17 +59,11 @@ class ResolveUrlCommand extends Command
 
         try {
             $url = $this->urlShortener->shortCodeToUrl($shortCode);
-            $output->writeln(
-                sprintf('%s <info>%s</info>', $this->translator->translate('Long URL:'), $url->getLongUrl())
-            );
+            $output->writeln(sprintf('Long URL: <info>%s</info>', $url->getLongUrl()));
         } catch (InvalidShortCodeException $e) {
-            $io->error(
-                sprintf($this->translator->translate('Provided short code "%s" has an invalid format.'), $shortCode)
-            );
+            $io->error(sprintf('Provided short code "%s" has an invalid format.', $shortCode));
         } catch (EntityDoesNotExistException $e) {
-            $io->error(
-                sprintf($this->translator->translate('Provided short code "%s" could not be found.'), $shortCode)
-            );
+            $io->error(sprintf('Provided short code "%s" could not be found.', $shortCode));
         }
     }
 }

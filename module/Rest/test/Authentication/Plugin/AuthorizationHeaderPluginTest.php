@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthorizationHeaderPlugin;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\I18n\Translator\Translator;
 use function sprintf;
 
 class AuthorizationHeaderPluginTest extends TestCase
@@ -27,7 +26,7 @@ class AuthorizationHeaderPluginTest extends TestCase
     public function setUp()
     {
         $this->jwtService = $this->prophesize(JWTServiceInterface::class);
-        $this->plugin = new AuthorizationHeaderPlugin($this->jwtService->reveal(), Translator::factory([]));
+        $this->plugin = new AuthorizationHeaderPlugin($this->jwtService->reveal());
     }
 
     /**

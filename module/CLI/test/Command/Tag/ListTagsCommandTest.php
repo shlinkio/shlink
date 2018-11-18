@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 
 class ListTagsCommandTest extends TestCase
 {
@@ -32,7 +31,7 @@ class ListTagsCommandTest extends TestCase
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
 
-        $command = new ListTagsCommand($this->tagService->reveal(), Translator::factory([]));
+        $command = new ListTagsCommand($this->tagService->reveal());
         $app = new Application();
         $app->add($command);
 

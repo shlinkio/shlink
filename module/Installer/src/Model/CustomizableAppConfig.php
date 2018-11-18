@@ -138,7 +138,6 @@ final class CustomizableAppConfig implements ArraySerializableInterface
 
         $this->setLanguage($this->mapExistingPathsToKeys([
             LanguageConfigCustomizer::DEFAULT_LANG => ['translator', 'locale'],
-            LanguageConfigCustomizer::CLI_LANG => ['cli', 'locale'],
         ], $pathCollection));
 
         $this->setUrlShortener($this->mapExistingPathsToKeys([
@@ -190,9 +189,6 @@ final class CustomizableAppConfig implements ArraySerializableInterface
             ],
             'translator' => [
                 'locale' => $this->language[LanguageConfigCustomizer::DEFAULT_LANG] ?? 'en',
-            ],
-            'cli' => [
-                'locale' => $this->language[LanguageConfigCustomizer::CLI_LANG] ?? 'en',
             ],
             'url_shortener' => [
                 'domain' => [

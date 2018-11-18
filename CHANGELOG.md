@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* [#267](https://github.com/shlinkio/shlink/issues/267) API responses and the CLI interface is no longer translated and uses english always. Only not found error templates are still translated.
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#278](https://github.com/shlinkio/shlink/pull/278) Added missing `X-Api-Key` header to the list of valid cross domain headers.
+
+
 ## 1.14.1 - 2018-11-17
 
 #### Added

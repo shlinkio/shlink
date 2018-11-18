@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Zend\I18n\Translator\TranslatorInterface;
 use function array_filter;
 use function array_map;
 use function sprintf;
@@ -27,28 +26,24 @@ class ListKeysCommand extends Command
      * @var ApiKeyServiceInterface
      */
     private $apiKeyService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(ApiKeyServiceInterface $apiKeyService, TranslatorInterface $translator)
+    public function __construct(ApiKeyServiceInterface $apiKeyService)
     {
-        $this->apiKeyService = $apiKeyService;
-        $this->translator = $translator;
         parent::__construct();
+        $this->apiKeyService = $apiKeyService;
     }
 
     protected function configure(): void
     {
-        $this->setName(self::NAME)
-             ->setDescription($this->translator->translate('Lists all the available API keys.'))
-             ->addOption(
-                 'enabledOnly',
-                 null,
-                 InputOption::VALUE_NONE,
-                 $this->translator->translate('Tells if only enabled API keys should be returned.')
-             );
+        $this
+            ->setName(self::NAME)
+            ->setDescription('Lists all the available API keys.')
+            ->addOption(
+                'enabledOnly',
+                'e',
+                InputOption::VALUE_NONE,
+                'Tells if only enabled API keys should be returned.'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
@@ -70,9 +65,9 @@ class ListKeysCommand extends Command
         }, $this->apiKeyService->listKeys($enabledOnly));
 
         $io->table(array_filter([
-            $this->translator->translate('Key'),
-            ! $enabledOnly ? $this->translator->translate('Is enabled') : null,
-            $this->translator->translate('Expiration date'),
+            'Key',
+            ! $enabledOnly ? 'Is enabled' : null,
+            'Expiration date',
         ]), $rows);
     }
 

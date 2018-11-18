@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlTagsAction;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\I18n\Translator\Translator;
 
 class EditShortUrlTagsActionTest extends TestCase
 {
@@ -26,7 +25,7 @@ class EditShortUrlTagsActionTest extends TestCase
     public function setUp()
     {
         $this->shortUrlService = $this->prophesize(ShortUrlService::class);
-        $this->action = new EditShortUrlTagsAction($this->shortUrlService->reveal(), Translator::factory([]));
+        $this->action = new EditShortUrlTagsAction($this->shortUrlService->reveal());
     }
 
     /**

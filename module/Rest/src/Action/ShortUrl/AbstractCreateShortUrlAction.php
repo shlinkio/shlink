@@ -16,7 +16,6 @@ use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\I18n\Translator\TranslatorInterface;
 use function sprintf;
 
 abstract class AbstractCreateShortUrlAction extends AbstractRestAction
@@ -29,20 +28,14 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
      * @var array
      */
     private $domainConfig;
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
 
     public function __construct(
         UrlShortenerInterface $urlShortener,
-        TranslatorInterface $translator,
         array $domainConfig,
         LoggerInterface $logger = null
     ) {
         parent::__construct($logger);
         $this->urlShortener = $urlShortener;
-        $this->translator = $translator;
         $this->domainConfig = $domainConfig;
     }
 
@@ -82,25 +75,19 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
             $this->logger->warning('Provided Invalid URL. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf(
-                    $this->translator->translate('Provided URL %s is invalid. Try with a different one.'),
-                    $longUrl
-                ),
+                'message' => sprintf('Provided URL %s is invalid. Try with a different one.', $longUrl),
             ], self::STATUS_BAD_REQUEST);
         } catch (NonUniqueSlugException $e) {
             $this->logger->warning('Provided non-unique slug. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf(
-                    $this->translator->translate('Provided slug %s is already in use. Try with a different one.'),
-                    $customSlug
-                ),
+                'message' => sprintf('Provided slug %s is already in use. Try with a different one.', $customSlug),
             ], self::STATUS_BAD_REQUEST);
         } catch (Throwable $e) {
             $this->logger->error('Unexpected error creating short url. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
-                'message' => $this->translator->translate('Unexpected error occurred'),
+                'message' => 'Unexpected error occurred',
             ], self::STATUS_INTERNAL_SERVER_ERROR);
         }
     }

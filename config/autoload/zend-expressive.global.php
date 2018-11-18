@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
+use Zend\ConfigAggregator\ConfigAggregator;
+
 return [
 
     'debug' => false,
-    'config_cache_enabled' => true,
+    ConfigAggregator::ENABLE_CACHE => true,
 
 ];

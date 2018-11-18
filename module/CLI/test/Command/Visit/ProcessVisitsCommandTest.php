@@ -21,7 +21,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock;
 use Throwable;
-use Zend\I18n\Translator\Translator;
 use function array_shift;
 use function sprintf;
 
@@ -63,8 +62,7 @@ class ProcessVisitsCommandTest extends TestCase
         $command = new ProcessVisitsCommand(
             $this->visitService->reveal(),
             $this->ipResolver->reveal(),
-            $this->locker->reveal(),
-            Translator::factory([])
+            $this->locker->reveal()
         );
         $app = new Application();
         $app->add($command);

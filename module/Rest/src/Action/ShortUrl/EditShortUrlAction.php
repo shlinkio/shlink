@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\I18n\Translator\TranslatorInterface;
 use function sprintf;
 
 class EditShortUrlAction extends AbstractRestAction
@@ -25,19 +24,11 @@ class EditShortUrlAction extends AbstractRestAction
      * @var ShortUrlServiceInterface
      */
     private $shortUrlService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(
-        ShortUrlServiceInterface $shortUrlService,
-        TranslatorInterface $translator,
-        LoggerInterface $logger = null
-    ) {
+    public function __construct(ShortUrlServiceInterface $shortUrlService, LoggerInterface $logger = null)
+    {
         parent::__construct($logger);
         $this->shortUrlService = $shortUrlService;
-        $this->translator = $translator;
     }
 
     /**
@@ -64,13 +55,13 @@ class EditShortUrlAction extends AbstractRestAction
             $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
+                'message' => sprintf('No URL found for short code "%s"', $shortCode),
             ], self::STATUS_NOT_FOUND);
         } catch (Exception\ValidationException $e) {
             $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => $this->translator->translate('Provided data is invalid.'),
+                'message' => 'Provided data is invalid.',
             ], self::STATUS_BAD_REQUEST);
         }
     }

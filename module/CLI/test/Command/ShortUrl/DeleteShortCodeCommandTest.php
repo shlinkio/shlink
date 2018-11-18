@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\I18n\Translator\Translator;
 use function array_pop;
 use function sprintf;
 
@@ -30,7 +29,7 @@ class DeleteShortCodeCommandTest extends TestCase
     {
         $this->service = $this->prophesize(DeleteShortUrlServiceInterface::class);
 
-        $command = new DeleteShortUrlCommand($this->service->reveal(), Translator::factory([]));
+        $command = new DeleteShortUrlCommand($this->service->reveal());
         $app = new Application();
         $app->add($command);
 
