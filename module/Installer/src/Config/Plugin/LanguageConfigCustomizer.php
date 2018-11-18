@@ -11,10 +11,8 @@ use function array_keys;
 class LanguageConfigCustomizer implements ConfigCustomizerInterface
 {
     public const DEFAULT_LANG = 'DEFAULT';
-    public const CLI_LANG = 'CLI';
     private const EXPECTED_KEYS = [
         self::DEFAULT_LANG,
-        self::CLI_LANG,
     ];
 
     private const SUPPORTED_LANGUAGES = ['en', 'es'];
@@ -41,9 +39,7 @@ class LanguageConfigCustomizer implements ConfigCustomizerInterface
     {
         switch ($key) {
             case self::DEFAULT_LANG:
-                return $this->chooseLanguage($io, 'Select default language for the application in general');
-            case self::CLI_LANG:
-                return $this->chooseLanguage($io, 'Select default language for CLI executions');
+                return $this->chooseLanguage($io, 'Select default language for the application error pages');
         }
 
         return '';

@@ -41,9 +41,8 @@ class LanguageConfigCustomizerTest extends TestCase
         $this->assertTrue($config->hasLanguage());
         $this->assertEquals([
             'DEFAULT' => 'en',
-            'CLI' => 'en',
         ], $config->getLanguage());
-        $choice->shouldHaveBeenCalledTimes(2);
+        $choice->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -53,15 +52,11 @@ class LanguageConfigCustomizerTest extends TestCase
     {
         $choice = $this->io->choice(Argument::cetera())->willReturn('es');
         $config = new CustomizableAppConfig();
-        $config->setLanguage([
-            'DEFAULT' => 'en',
-        ]);
 
         $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
-            'DEFAULT' => 'en',
-            'CLI' => 'es',
+            'DEFAULT' => 'es',
         ], $config->getLanguage());
         $choice->shouldHaveBeenCalledOnce();
     }
@@ -76,14 +71,12 @@ class LanguageConfigCustomizerTest extends TestCase
         $config = new CustomizableAppConfig();
         $config->setLanguage([
             'DEFAULT' => 'es',
-            'CLI' => 'es',
         ]);
 
         $this->plugin->process($this->io->reveal(), $config);
 
         $this->assertEquals([
             'DEFAULT' => 'es',
-            'CLI' => 'es',
         ], $config->getLanguage());
         $choice->shouldNotHaveBeenCalled();
     }
