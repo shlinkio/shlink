@@ -49,19 +49,25 @@ class LocaleMiddlewareTest extends TestCase
 
     /**
      * @test
+     * @dataProvider provideLanguages
      */
-    public function localeGetsNormalized()
+    public function localeGetsNormalized(string $lang, string $expected)
     {
-        $delegate = TestUtils::createReqHandlerMock();
+        $handler = TestUtils::createReqHandlerMock();
 
         $this->assertEquals('ru', $this->translator->getLocale());
 
-        $request = ServerRequestFactory::fromGlobals()->withHeader('Accept-Language', 'es_ES');
-        $this->middleware->process($request, $delegate->reveal());
-        $this->assertEquals('es', $this->translator->getLocale());
+        $request = ServerRequestFactory::fromGlobals()->withHeader('Accept-Language', $lang);
+        $this->middleware->process($request, $handler->reveal());
+        $this->assertEquals($expected, $this->translator->getLocale());
+    }
 
-        $request = ServerRequestFactory::fromGlobals()->withHeader('Accept-Language', 'en-US');
-        $this->middleware->process($request, $delegate->reveal());
-        $this->assertEquals('en', $this->translator->getLocale());
+    public function provideLanguages(): array
+    {
+        return [
+            ['ru', 'ru'],
+            ['es_ES', 'es'],
+            ['en-US', 'en'],
+        ];
     }
 }
