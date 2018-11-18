@@ -55,6 +55,6 @@ class NotFoundHandler implements RequestHandlerInterface
         }
 
         $notFoundTemplate = $request->getAttribute(self::NOT_FOUND_TEMPLATE, $this->defaultTemplate);
-        return new Response\HtmlResponse($this->renderer->render($notFoundTemplate, ['request' => $request]), $status);
+        return new Response\HtmlResponse($this->renderer->render($notFoundTemplate), $status);
     }
 }

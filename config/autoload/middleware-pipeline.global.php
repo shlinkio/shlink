@@ -13,7 +13,6 @@ return [
             'middleware' => [
                 ErrorHandler::class,
                 Expressive\Helper\ContentLengthMiddleware::class,
-                Common\Middleware\LocaleMiddleware::class,
             ],
             'priority' => 12,
         ],
@@ -47,6 +46,9 @@ return [
         'post-routing' => [
             'middleware' => [
                 Expressive\Router\Middleware\DispatchMiddleware::class,
+
+                // Only if a not found error is triggered, set-up the locale to be used
+                Common\Middleware\LocaleMiddleware::class,
                 Core\Response\NotFoundHandler::class,
             ],
             'priority' => 1,
