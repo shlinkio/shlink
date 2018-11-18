@@ -19,9 +19,8 @@ class TranslatorExtension implements ExtensionInterface
         $this->translator = $translator;
     }
 
-    public function register(Engine $engine)
+    public function register(Engine $engine): void
     {
         $engine->registerFunction('translate', [$this->translator, 'translate']);
-        $engine->registerFunction('translate_plural', [$this->translator, 'translatePlural']);
     }
 }
