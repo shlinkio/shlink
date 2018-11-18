@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\I18n\Translator\Translator;
 
 class DeleteShortUrlActionTest extends TestCase
 {
@@ -29,7 +28,7 @@ class DeleteShortUrlActionTest extends TestCase
     public function setUp()
     {
         $this->service = $this->prophesize(DeleteShortUrlServiceInterface::class);
-        $this->action = new DeleteShortUrlAction($this->service->reveal(), Translator::factory([]));
+        $this->action = new DeleteShortUrlAction($this->service->reveal());
     }
 
     /**

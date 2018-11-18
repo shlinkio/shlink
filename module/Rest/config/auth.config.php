@@ -38,14 +38,13 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        Authentication\Plugin\AuthorizationHeaderPlugin::class => [Authentication\JWTService::class, 'translator'],
-        Authentication\Plugin\ApiKeyHeaderPlugin::class => [Service\ApiKeyService::class, 'translator'],
+        Authentication\Plugin\AuthorizationHeaderPlugin::class => [Authentication\JWTService::class],
+        Authentication\Plugin\ApiKeyHeaderPlugin::class => [Service\ApiKeyService::class],
 
         Authentication\RequestToHttpAuthPlugin::class => [Authentication\AuthenticationPluginManager::class],
 
         Middleware\AuthenticationMiddleware::class => [
             Authentication\RequestToHttpAuthPlugin::class,
-            'translator',
             'config.auth.routes_whitelist',
             'Logger_Shlink',
         ],

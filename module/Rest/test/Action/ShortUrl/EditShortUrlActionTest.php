@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\I18n\Translator\Translator;
 
 class EditShortUrlActionTest extends TestCase
 {
@@ -29,7 +28,7 @@ class EditShortUrlActionTest extends TestCase
     public function setUp()
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
-        $this->action = new EditShortUrlAction($this->shortUrlService->reveal(), Translator::factory([]));
+        $this->action = new EditShortUrlAction($this->shortUrlService->reveal());
     }
 
     /**

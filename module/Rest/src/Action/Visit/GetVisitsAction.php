@@ -14,7 +14,6 @@ use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\I18n\Translator\TranslatorInterface;
 use function sprintf;
 
 class GetVisitsAction extends AbstractRestAction
@@ -26,19 +25,11 @@ class GetVisitsAction extends AbstractRestAction
      * @var VisitsTrackerInterface
      */
     private $visitsTracker;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(
-        VisitsTrackerInterface $visitsTracker,
-        TranslatorInterface $translator,
-        LoggerInterface $logger = null
-    ) {
+    public function __construct(VisitsTrackerInterface $visitsTracker, LoggerInterface $logger = null)
+    {
         parent::__construct($logger);
         $this->visitsTracker = $visitsTracker;
-        $this->translator = $translator;
     }
 
     /**
@@ -64,16 +55,13 @@ class GetVisitsAction extends AbstractRestAction
             $this->logger->warning('Provided nonexistent short code {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf(
-                    $this->translator->translate('Provided short code %s does not exist'),
-                    $shortCode
-                ),
+                'message' => sprintf('Provided short code %s does not exist', $shortCode),
             ], self::STATUS_NOT_FOUND);
         } catch (Exception $e) {
             $this->logger->error('Unexpected error while parsing short code {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::UNKNOWN_ERROR,
-                'message' => $this->translator->translate('Unexpected error occurred'),
+                'message' => 'Unexpected error occurred',
             ], self::STATUS_INTERNAL_SERVER_ERROR);
         }
     }

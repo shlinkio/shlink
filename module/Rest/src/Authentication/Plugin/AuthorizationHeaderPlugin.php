@@ -9,7 +9,6 @@ use Shlinkio\Shlink\Rest\Authentication\JWTServiceInterface;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Throwable;
-use Zend\I18n\Translator\TranslatorInterface;
 use function count;
 use function explode;
 use function sprintf;
@@ -23,15 +22,10 @@ class AuthorizationHeaderPlugin implements AuthenticationPluginInterface
      * @var JWTServiceInterface
      */
     private $jwtService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(JWTServiceInterface $jwtService, TranslatorInterface $translator)
+    public function __construct(JWTServiceInterface $jwtService)
     {
         $this->jwtService = $jwtService;
-        $this->translator = $translator;
     }
 
     /**
@@ -45,10 +39,7 @@ class AuthorizationHeaderPlugin implements AuthenticationPluginInterface
         if (count($authTokenParts) === 1) {
             throw VerifyAuthenticationException::withError(
                 RestUtils::INVALID_AUTHORIZATION_ERROR,
-                sprintf(
-                    $this->translator->translate('You need to provide the Bearer type in the %s header.'),
-                    self::HEADER_NAME
-                )
+                sprintf('You need to provide the Bearer type in the %s header.', self::HEADER_NAME)
             );
         }
 
@@ -57,9 +48,7 @@ class AuthorizationHeaderPlugin implements AuthenticationPluginInterface
         if (strtolower($authType) !== 'bearer') {
             throw VerifyAuthenticationException::withError(
                 RestUtils::INVALID_AUTHORIZATION_ERROR,
-                sprintf($this->translator->translate(
-                    'Provided authorization type %s is not supported. Use Bearer instead.'
-                ), $authType)
+                sprintf('Provided authorization type %s is not supported. Use Bearer instead.', $authType)
             );
         }
 
@@ -76,10 +65,11 @@ class AuthorizationHeaderPlugin implements AuthenticationPluginInterface
     {
         return VerifyAuthenticationException::withError(
             RestUtils::INVALID_AUTH_TOKEN_ERROR,
-            sprintf($this->translator->translate(
+            sprintf(
                 'Missing or invalid auth token provided. Perform a new authentication request and send provided '
-                . 'token on every new request on the %s header'
-            ), self::HEADER_NAME),
+                . 'token on every new request on the %s header',
+                self::HEADER_NAME
+            ),
             $prev
         );
     }

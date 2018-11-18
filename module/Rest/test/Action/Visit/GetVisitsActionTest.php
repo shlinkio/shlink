@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Rest\Action\Visit\GetVisitsAction;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\I18n\Translator\Translator;
 
 class GetVisitsActionTest extends TestCase
 {
@@ -29,7 +28,7 @@ class GetVisitsActionTest extends TestCase
     public function setUp()
     {
         $this->visitsTracker = $this->prophesize(VisitsTracker::class);
-        $this->action = new GetVisitsAction($this->visitsTracker->reveal(), Translator::factory([]));
+        $this->action = new GetVisitsAction($this->visitsTracker->reveal());
     }
 
     /**

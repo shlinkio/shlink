@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\UpdateTagAction;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\I18n\Translator\Translator;
 
 class UpdateTagActionTest extends TestCase
 {
@@ -27,7 +26,7 @@ class UpdateTagActionTest extends TestCase
     public function setUp()
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
-        $this->action = new UpdateTagAction($this->tagService->reveal(), Translator::factory([]));
+        $this->action = new UpdateTagAction($this->tagService->reveal());
     }
 
     /**

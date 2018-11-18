@@ -12,7 +12,6 @@ use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\I18n\Translator\TranslatorInterface;
 use function sprintf;
 
 class DeleteShortUrlAction extends AbstractRestAction
@@ -24,19 +23,11 @@ class DeleteShortUrlAction extends AbstractRestAction
      * @var DeleteShortUrlServiceInterface
      */
     private $deleteShortUrlService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(
-        DeleteShortUrlServiceInterface $deleteShortUrlService,
-        TranslatorInterface $translator,
-        LoggerInterface $logger = null
-    ) {
+    public function __construct(DeleteShortUrlServiceInterface $deleteShortUrlService, LoggerInterface $logger = null)
+    {
         parent::__construct($logger);
         $this->deleteShortUrlService = $deleteShortUrlService;
-        $this->translator = $translator;
     }
 
     /**
@@ -56,13 +47,12 @@ class DeleteShortUrlAction extends AbstractRestAction
             );
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf($this->translator->translate('No URL found for short code "%s"'), $shortCode),
+                'message' => sprintf('No URL found for short code "%s"', $shortCode),
             ], self::STATUS_NOT_FOUND);
         } catch (Exception\DeleteShortUrlException $e) {
             $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
-            $messagePlaceholder = $this->translator->translate(
-                'It is not possible to delete URL with short code "%s" because it has reached more than "%s" visits.'
-            );
+            $messagePlaceholder =
+                'It is not possible to delete URL with short code "%s" because it has reached more than "%s" visits.';
 
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),

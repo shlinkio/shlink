@@ -8,7 +8,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
-use Zend\I18n\Translator\TranslatorInterface;
 
 class ApiKeyHeaderPlugin implements AuthenticationPluginInterface
 {
@@ -18,15 +17,10 @@ class ApiKeyHeaderPlugin implements AuthenticationPluginInterface
      * @var ApiKeyServiceInterface
      */
     private $apiKeyService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-    public function __construct(ApiKeyServiceInterface $apiKeyService, TranslatorInterface $translator)
+    public function __construct(ApiKeyServiceInterface $apiKeyService)
     {
         $this->apiKeyService = $apiKeyService;
-        $this->translator = $translator;
     }
 
     /**
@@ -41,7 +35,7 @@ class ApiKeyHeaderPlugin implements AuthenticationPluginInterface
 
         throw VerifyAuthenticationException::withError(
             RestUtils::INVALID_API_KEY_ERROR,
-            $this->translator->translate('Provided API key does not exist or is invalid.')
+            'Provided API key does not exist or is invalid.'
         );
     }
 

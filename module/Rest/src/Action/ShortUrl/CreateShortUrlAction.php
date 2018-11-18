@@ -8,7 +8,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Rest\Action\ShortUrl\AbstractCreateShortUrlAction;
 use Zend\Diactoros\Uri;
 
 class CreateShortUrlAction extends AbstractCreateShortUrlAction
@@ -26,7 +25,7 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
     {
         $postData = (array) $request->getParsedBody();
         if (! isset($postData['longUrl'])) {
-            throw new InvalidArgumentException($this->translator->translate('A URL was not provided'));
+            throw new InvalidArgumentException('A URL was not provided');
         }
 
         return new CreateShortUrlData(

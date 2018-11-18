@@ -9,7 +9,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ListShortUrlsAction;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\I18n\Translator\Translator;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 
@@ -27,7 +26,7 @@ class ListShortUrlsActionTest extends TestCase
     public function setUp()
     {
         $this->service = $this->prophesize(ShortUrlService::class);
-        $this->action = new ListShortUrlsAction($this->service->reveal(), Translator::factory([]), [
+        $this->action = new ListShortUrlsAction($this->service->reveal(), [
             'hostname' => 'doma.in',
             'schema' => 'https',
         ]);

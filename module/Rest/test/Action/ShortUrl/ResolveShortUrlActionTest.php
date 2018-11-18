@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ResolveShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\I18n\Translator\Translator;
 use function strpos;
 
 class ResolveShortUrlActionTest extends TestCase
@@ -30,7 +29,7 @@ class ResolveShortUrlActionTest extends TestCase
     public function setUp()
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $this->action = new ResolveShortUrlAction($this->urlShortener->reveal(), Translator::factory([]), []);
+        $this->action = new ResolveShortUrlAction($this->urlShortener->reveal(), []);
     }
 
     /**

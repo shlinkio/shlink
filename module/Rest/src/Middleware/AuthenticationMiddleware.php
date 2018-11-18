@@ -19,17 +19,12 @@ use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouteResult;
-use Zend\I18n\Translator\TranslatorInterface;
 use function Functional\contains;
 use function implode;
 use function sprintf;
 
 class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface, RequestMethodInterface
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
     /**
      * @var LoggerInterface
      */
@@ -45,14 +40,12 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
 
     public function __construct(
         RequestToHttpAuthPluginInterface $requestToAuthPlugin,
-        TranslatorInterface $translator,
         array $routesWhitelist,
         LoggerInterface $logger = null
     ) {
-        $this->translator = $translator;
         $this->routesWhitelist = $routesWhitelist;
-        $this->logger = $logger ?: new NullLogger();
         $this->requestToAuthPlugin = $requestToAuthPlugin;
+        $this->logger = $logger ?: new NullLogger();
     }
 
     /**
@@ -81,9 +74,10 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
             $plugin = $this->requestToAuthPlugin->fromRequest($request);
         } catch (ContainerExceptionInterface | NoAuthenticationException $e) {
             $this->logger->warning('Invalid or no authentication provided. {e}', ['e' => $e]);
-            return $this->createErrorResponse(sprintf($this->translator->translate(
-                'Expected one of the following authentication headers, but none were provided, ["%s"]'
-            ), implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)));
+            return $this->createErrorResponse(sprintf(
+                'Expected one of the following authentication headers, but none were provided, ["%s"]',
+                implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)
+            ));
         }
 
         try {

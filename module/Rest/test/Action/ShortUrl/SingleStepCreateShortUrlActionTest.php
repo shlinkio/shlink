@@ -14,7 +14,6 @@ use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\I18n\Translator\Translator;
 
 class SingleStepCreateShortUrlActionTest extends TestCase
 {
@@ -38,7 +37,6 @@ class SingleStepCreateShortUrlActionTest extends TestCase
 
         $this->action = new SingleStepCreateShortUrlAction(
             $this->urlShortener->reveal(),
-            Translator::factory([]),
             $this->apiKeyService->reveal(),
             [
                 'schema' => 'http',

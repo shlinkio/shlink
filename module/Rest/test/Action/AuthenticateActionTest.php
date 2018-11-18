@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\I18n\Translator\Translator;
 use function strpos;
 
 class AuthenticateActionTest extends TestCase
@@ -35,11 +34,7 @@ class AuthenticateActionTest extends TestCase
         $this->jwtService = $this->prophesize(JWTService::class);
         $this->jwtService->create(Argument::cetera())->willReturn('');
 
-        $this->action = new AuthenticateAction(
-            $this->apiKeyService->reveal(),
-            $this->jwtService->reveal(),
-            Translator::factory([])
-        );
+        $this->action = new AuthenticateAction($this->apiKeyService->reveal(), $this->jwtService->reveal());
     }
 
     /**
