@@ -17,13 +17,9 @@ class AuthenticateAction extends AbstractRestAction
     protected const ROUTE_PATH = '/authenticate';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_POST];
 
-    /**
-     * @var ApiKeyService|ApiKeyServiceInterface
-     */
+    /** @var ApiKeyService|ApiKeyServiceInterface */
     private $apiKeyService;
-    /**
-     * @var JWTServiceInterface
-     */
+    /** @var JWTServiceInterface */
     private $jwtService;
 
     public function __construct(

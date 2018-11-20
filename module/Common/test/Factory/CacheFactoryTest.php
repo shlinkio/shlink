@@ -19,9 +19,7 @@ use function sys_get_temp_dir;
 
 class CacheFactoryTest extends TestCase
 {
-    /**
-     * @var CacheFactory
-     */
+    /** @var CacheFactory */
     protected $factory;
 
     public function setUp()

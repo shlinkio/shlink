@@ -19,17 +19,11 @@ class DbUpdater implements DbUpdaterInterface
     private const DB_COMPRESSED_FILE = 'GeoLite2-City.tar.gz';
     private const DB_DECOMPRESSED_FILE = 'GeoLite2-City.mmdb';
 
-    /**
-     * @var ClientInterface
-     */
+    /** @var ClientInterface */
     private $httpClient;
-    /**
-     * @var Filesystem
-     */
+    /** @var Filesystem */
     private $filesystem;
-    /**
-     * @var GeoLite2Options
-     */
+    /** @var GeoLite2Options */
     private $options;
 
     public function __construct(ClientInterface $httpClient, Filesystem $filesystem, GeoLite2Options $options)

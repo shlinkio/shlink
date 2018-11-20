@@ -13,13 +13,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class DisableKeyCommandTest extends TestCase
 {
-    /**
-     * @var CommandTester
-     */
+    /** @var CommandTester */
     protected $commandTester;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $apiKeyService;
 
     public function setUp()

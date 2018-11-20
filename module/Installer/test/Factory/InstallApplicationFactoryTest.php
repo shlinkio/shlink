@@ -11,9 +11,7 @@ use Zend\ServiceManager\ServiceManager;
 
 class InstallApplicationFactoryTest extends TestCase
 {
-    /**
-     * @var InstallApplicationFactory
-     */
+    /** @var InstallApplicationFactory */
     private $factory;
 
     public function setUp()

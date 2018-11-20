@@ -17,13 +17,9 @@ use function sprintf;
 
 class RequestToAuthPluginTest extends TestCase
 {
-    /**
-     * @var RequestToHttpAuthPlugin
-     */
+    /** @var RequestToHttpAuthPlugin */
     private $requestToPlugin;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $pluginManager;
 
     public function setUp()

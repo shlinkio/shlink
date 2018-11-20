@@ -14,17 +14,11 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ListTagsCommandTest extends TestCase
 {
-    /**
-     * @var ListTagsCommand
-     */
+    /** @var ListTagsCommand */
     private $command;
-    /**
-     * @var CommandTester
-     */
+    /** @var CommandTester */
     private $commandTester;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $tagService;
 
     public function setUp()

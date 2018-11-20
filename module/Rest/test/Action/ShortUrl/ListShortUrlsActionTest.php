@@ -14,13 +14,9 @@ use Zend\Paginator\Paginator;
 
 class ListShortUrlsActionTest extends TestCase
 {
-    /**
-     * @var ListShortUrlsAction
-     */
+    /** @var ListShortUrlsAction */
     protected $action;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $service;
 
     public function setUp()

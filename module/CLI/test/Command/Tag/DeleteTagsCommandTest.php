@@ -13,17 +13,11 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class DeleteTagsCommandTest extends TestCase
 {
-    /**
-     * @var DeleteTagsCommand
-     */
+    /** @var DeleteTagsCommand */
     private $command;
-    /**
-     * @var CommandTester
-     */
+    /** @var CommandTester */
     private $commandTester;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $tagService;
 
     public function setUp()

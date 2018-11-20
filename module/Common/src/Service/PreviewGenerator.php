@@ -12,17 +12,11 @@ use function urlencode;
 
 class PreviewGenerator implements PreviewGeneratorInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $location;
-    /**
-     * @var ImageBuilderInterface
-     */
+    /** @var ImageBuilderInterface */
     private $imageBuilder;
-    /**
-     * @var Filesystem
-     */
+    /** @var Filesystem */
     private $filesystem;
 
     public function __construct(ImageBuilderInterface $imageBuilder, Filesystem $filesystem, $location)

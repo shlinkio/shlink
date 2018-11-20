@@ -14,13 +14,9 @@ use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
 class ApiKeyServiceTest extends TestCase
 {
-    /**
-     * @var ApiKeyService
-     */
+    /** @var ApiKeyService */
     protected $service;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $em;
 
     public function setUp()

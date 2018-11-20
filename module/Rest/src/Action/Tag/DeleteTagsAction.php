@@ -15,9 +15,7 @@ class DeleteTagsAction extends AbstractRestAction
     protected const ROUTE_PATH = '/tags';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_DELETE];
 
-    /**
-     * @var TagServiceInterface
-     */
+    /** @var TagServiceInterface */
     private $tagService;
 
     public function __construct(TagServiceInterface $tagService, LoggerInterface $logger = null)

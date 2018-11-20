@@ -13,9 +13,7 @@ use function str_split;
 
 class GenerateCharsetCommandTest extends TestCase
 {
-    /**
-     * @var CommandTester
-     */
+    /** @var CommandTester */
     protected $commandTester;
 
     public function setUp()

@@ -7,13 +7,9 @@ use Zend\Stdlib\AbstractOptions;
 
 class NotFoundShortUrlOptions extends AbstractOptions
 {
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $enableRedirection = false;
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     private $redirectTo;
 
     public function isRedirectionEnabled(): bool

@@ -8,9 +8,7 @@ use Shlinkio\Shlink\Installer\ConfigProvider;
 
 class ConfigProviderTest extends TestCase
 {
-    /**
-     * @var ConfigProvider
-     */
+    /** @var ConfigProvider */
     protected $configProvider;
 
     public function setUp()

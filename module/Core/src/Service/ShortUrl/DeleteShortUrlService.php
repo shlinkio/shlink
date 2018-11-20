@@ -12,13 +12,9 @@ class DeleteShortUrlService implements DeleteShortUrlServiceInterface
 {
     use FindShortCodeTrait;
 
-    /**
-     * @var EntityManagerInterface
-     */
+    /** @var EntityManagerInterface */
     private $em;
-    /**
-     * @var DeleteShortUrlsOptions
-     */
+    /** @var DeleteShortUrlsOptions */
     private $deleteShortUrlsOptions;
 
     public function __construct(EntityManagerInterface $em, DeleteShortUrlsOptions $deleteShortUrlsOptions)

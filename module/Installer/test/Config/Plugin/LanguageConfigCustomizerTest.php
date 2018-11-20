@@ -12,13 +12,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class LanguageConfigCustomizerTest extends TestCase
 {
-    /**
-     * @var LanguageConfigCustomizer
-     */
+    /** @var LanguageConfigCustomizer */
     protected $plugin;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $io;
 
     public function setUp()

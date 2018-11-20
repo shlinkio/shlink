@@ -17,21 +17,13 @@ use Zend\Diactoros\Response;
 
 class DbUpdaterTest extends TestCase
 {
-    /**
-     * @var DbUpdater
-     */
+    /** @var DbUpdater */
     private $dbUpdater;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $httpClient;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $filesystem;
-    /**
-     * @var GeoLite2Options
-     */
+    /** @var GeoLite2Options */
     private $options;
 
     public function setUp()

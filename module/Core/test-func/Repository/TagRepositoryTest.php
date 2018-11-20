@@ -13,9 +13,7 @@ class TagRepositoryTest extends DatabaseTestCase
         Tag::class,
     ];
 
-    /**
-     * @var TagRepository
-     */
+    /** @var TagRepository */
     private $repo;
 
     protected function setUp()

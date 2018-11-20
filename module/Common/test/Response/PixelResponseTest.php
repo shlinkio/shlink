@@ -8,9 +8,7 @@ use Shlinkio\Shlink\Common\Response\PixelResponse;
 
 class PixelResponseTest extends TestCase
 {
-    /**
-     * @var PixelResponse
-     */
+    /** @var PixelResponse */
     private $resp;
 
     public function setUp()

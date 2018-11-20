@@ -17,9 +17,7 @@ class RedirectAction extends AbstractTrackingAction
 {
     use ErrorResponseBuilderTrait;
 
-    /**
-     * @var Options\NotFoundShortUrlOptions
-     */
+    /** @var Options\NotFoundShortUrlOptions */
     private $notFoundOptions;
 
     public function __construct(

@@ -14,9 +14,7 @@ use function sprintf;
 
 class VisitsTracker implements VisitsTrackerInterface
 {
-    /**
-     * @var ORM\EntityManagerInterface
-     */
+    /** @var ORM\EntityManagerInterface */
     private $em;
 
     public function __construct(ORM\EntityManagerInterface $em)

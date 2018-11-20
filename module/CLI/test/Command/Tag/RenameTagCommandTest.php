@@ -15,17 +15,11 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class RenameTagCommandTest extends TestCase
 {
-    /**
-     * @var RenameTagCommand
-     */
+    /** @var RenameTagCommand */
     private $command;
-    /**
-     * @var CommandTester
-     */
+    /** @var CommandTester */
     private $commandTester;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $tagService;
 
     public function setUp()

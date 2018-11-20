@@ -16,17 +16,11 @@ use function urlencode;
 
 class PreviewGeneratorTest extends TestCase
 {
-    /**
-     * @var PreviewGenerator
-     */
+    /** @var PreviewGenerator */
     protected $generator;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $image;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $filesystem;
 
     public function setUp()

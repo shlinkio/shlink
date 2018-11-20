@@ -19,21 +19,13 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class RedirectActionTest extends TestCase
 {
-    /**
-     * @var RedirectAction
-     */
+    /** @var RedirectAction */
     private $action;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $urlShortener;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $visitTracker;
-    /**
-     * @var Options\NotFoundShortUrlOptions
-     */
+    /** @var Options\NotFoundShortUrlOptions */
     private $notFoundOptions;
 
     public function setUp()

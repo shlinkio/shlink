@@ -14,13 +14,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class CreateTagCommandTest extends TestCase
 {
-    /**
-     * @var CommandTester
-     */
+    /** @var CommandTester */
     private $commandTester;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $tagService;
 
     public function setUp()

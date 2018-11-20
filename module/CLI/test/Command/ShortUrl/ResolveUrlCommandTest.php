@@ -16,13 +16,9 @@ use const PHP_EOL;
 
 class ResolveUrlCommandTest extends TestCase
 {
-    /**
-     * @var CommandTester
-     */
+    /** @var CommandTester */
     protected $commandTester;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $urlShortener;
 
     public function setUp()

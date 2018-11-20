@@ -28,37 +28,21 @@ class InstallCommand extends Command
 
     public const GENERATED_CONFIG_PATH = 'config/params/generated_config.php';
 
-    /**
-     * @var SymfonyStyle
-     */
+    /** @var SymfonyStyle */
     private $io;
-    /**
-     * @var ProcessHelper
-     */
+    /** @var ProcessHelper */
     private $processHelper;
-    /**
-     * @var WriterInterface
-     */
+    /** @var WriterInterface */
     private $configWriter;
-    /**
-     * @var Filesystem
-     */
+    /** @var Filesystem */
     private $filesystem;
-    /**
-     * @var ConfigCustomizerManagerInterface
-     */
+    /** @var ConfigCustomizerManagerInterface */
     private $configCustomizers;
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $isUpdate;
-    /**
-     * @var PhpExecutableFinder
-     */
+    /** @var PhpExecutableFinder */
     private $phpFinder;
-    /**
-     * @var string|bool
-     */
+    /** @var string|bool */
     private $phpBinary;
 
     /**

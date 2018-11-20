@@ -8,9 +8,7 @@ use function sprintf;
 
 class DeleteShortUrlException extends RuntimeException
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $visitsThreshold;
 
     public function __construct(int $visitsThreshold, string $message = '', int $code = 0, Throwable $previous = null)

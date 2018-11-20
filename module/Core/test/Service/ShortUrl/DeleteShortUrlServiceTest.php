@@ -20,13 +20,9 @@ use function range;
 
 class DeleteShortUrlServiceTest extends TestCase
 {
-    /**
-     * @var DeleteShortUrlService
-     */
+    /** @var DeleteShortUrlService */
     private $service;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $em;
 
     public function setUp()

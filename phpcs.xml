@@ -46,6 +46,8 @@
             <property name="allowFallbackGlobalConstants" value="false"/>
         </properties>
     </rule>
+    <!-- Require comments with single line written as one-liners -->
+    <rule ref="SlevomatCodingStandard.Commenting.RequireOneLinePropertyDocComment"/>
 
     <!-- Paths to check -->
     <file>bin</file>

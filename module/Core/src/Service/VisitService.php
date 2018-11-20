@@ -11,9 +11,7 @@ use Shlinkio\Shlink\Core\Repository\VisitRepository;
 
 class VisitService implements VisitServiceInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
+    /** @var EntityManagerInterface */
     private $em;
 
     public function __construct(EntityManagerInterface $em)

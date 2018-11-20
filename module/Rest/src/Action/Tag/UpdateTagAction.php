@@ -19,9 +19,7 @@ class UpdateTagAction extends AbstractRestAction
     protected const ROUTE_PATH = '/tags';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PUT];
 
-    /**
-     * @var TagServiceInterface
-     */
+    /** @var TagServiceInterface */
     private $tagService;
 
     public function __construct(TagServiceInterface $tagService, LoggerInterface $logger = null)

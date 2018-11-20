@@ -12,9 +12,7 @@ class ShortUrlDataTransformer implements DataTransformerInterface
 {
     use ShortUrlBuilderTrait;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $domainConfig;
 
     public function __construct(array $domainConfig)

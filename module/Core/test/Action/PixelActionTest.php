@@ -18,17 +18,11 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class PixelActionTest extends TestCase
 {
-    /**
-     * @var RedirectAction
-     */
+    /** @var RedirectAction */
     protected $action;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $urlShortener;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $visitTracker;
 
     public function setUp()

@@ -16,9 +16,7 @@ use stdClass;
 
 class ChronosDateTimeTypeTest extends TestCase
 {
-    /**
-     * @var ChronosDateTimeType
-     */
+    /** @var ChronosDateTimeType */
     private $type;
 
     public function setUp()

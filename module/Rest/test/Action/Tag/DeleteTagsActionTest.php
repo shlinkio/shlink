@@ -12,13 +12,9 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class DeleteTagsActionTest extends TestCase
 {
-    /**
-     * @var DeleteTagsAction
-     */
+    /** @var DeleteTagsAction */
     private $action;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $tagService;
 
     public function setUp()

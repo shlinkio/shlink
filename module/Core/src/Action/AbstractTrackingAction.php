@@ -19,21 +19,13 @@ use function array_key_exists;
 
 abstract class AbstractTrackingAction implements MiddlewareInterface
 {
-    /**
-     * @var UrlShortenerInterface
-     */
+    /** @var UrlShortenerInterface */
     private $urlShortener;
-    /**
-     * @var VisitsTrackerInterface
-     */
+    /** @var VisitsTrackerInterface */
     private $visitTracker;
-    /**
-     * @var AppOptions
-     */
+    /** @var AppOptions */
     private $appOptions;
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
 
     public function __construct(

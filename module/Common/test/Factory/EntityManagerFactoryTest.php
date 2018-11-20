@@ -10,9 +10,7 @@ use Zend\ServiceManager\ServiceManager;
 
 class EntityManagerFactoryTest extends TestCase
 {
-    /**
-     * @var EntityManagerFactory
-     */
+    /** @var EntityManagerFactory */
     protected $factory;
 
     public function setUp()

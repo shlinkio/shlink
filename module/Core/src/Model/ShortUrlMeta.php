@@ -10,21 +10,13 @@ use function is_string;
 
 final class ShortUrlMeta
 {
-    /**
-     * @var Chronos|null
-     */
+    /** @var Chronos|null */
     private $validSince;
-    /**
-     * @var Chronos|null
-     */
+    /** @var Chronos|null */
     private $validUntil;
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     private $customSlug;
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     private $maxVisits;
 
     // Force named constructors

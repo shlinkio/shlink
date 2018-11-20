@@ -22,9 +22,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         Tag::class,
     ];
 
-    /**
-     * @var ShortUrlRepository
-     */
+    /** @var ShortUrlRepository */
     private $repo;
 
     public function setUp()

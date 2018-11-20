@@ -18,9 +18,7 @@ class ShortUrlService implements ShortUrlServiceInterface
     use FindShortCodeTrait;
     use TagManagerTrait;
 
-    /**
-     * @var ORM\EntityManagerInterface
-     */
+    /** @var ORM\EntityManagerInterface */
     private $em;
 
     public function __construct(ORM\EntityManagerInterface $em)

@@ -8,13 +8,9 @@ use function sprintf;
 
 class VerifyAuthenticationException extends RuntimeException
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $errorCode;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $publicMessage;
 
     public function __construct(

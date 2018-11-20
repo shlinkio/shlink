@@ -15,25 +15,15 @@ final class CustomizableAppConfig implements ArraySerializableInterface
 {
     public const SQLITE_DB_PATH = 'data/database.sqlite';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $database = [];
-    /**
-     * @var array
-     */
+    /** @var array */
     private $urlShortener = [];
-    /**
-     * @var array
-     */
+    /** @var array */
     private $language = [];
-    /**
-     * @var array
-     */
+    /** @var array */
     private $app = [];
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     private $importedInstallationPath;
 
     public function getDatabase(): array

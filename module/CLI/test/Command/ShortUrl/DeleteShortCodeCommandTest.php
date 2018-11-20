@@ -16,13 +16,9 @@ use function sprintf;
 
 class DeleteShortCodeCommandTest extends TestCase
 {
-    /**
-     * @var CommandTester
-     */
+    /** @var CommandTester */
     private $commandTester;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $service;
 
     public function setUp()

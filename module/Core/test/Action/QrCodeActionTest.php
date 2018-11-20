@@ -20,13 +20,9 @@ use Zend\Expressive\Router\RouterInterface;
 
 class QrCodeActionTest extends TestCase
 {
-    /**
-     * @var QrCodeAction
-     */
+    /** @var QrCodeAction */
     protected $action;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $urlShortener;
 
     public function setUp()

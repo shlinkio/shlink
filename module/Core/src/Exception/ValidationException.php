@@ -12,9 +12,7 @@ use function sprintf;
 
 class ValidationException extends RuntimeException
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $invalidElements;
 
     public function __construct(

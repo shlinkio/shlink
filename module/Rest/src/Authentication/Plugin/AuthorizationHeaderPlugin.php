@@ -18,9 +18,7 @@ class AuthorizationHeaderPlugin implements AuthenticationPluginInterface
 {
     public const HEADER_NAME = 'Authorization';
 
-    /**
-     * @var JWTServiceInterface
-     */
+    /** @var JWTServiceInterface */
     private $jwtService;
 
     public function __construct(JWTServiceInterface $jwtService)

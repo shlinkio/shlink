@@ -16,9 +16,7 @@ class RenameTagCommand extends Command
 {
     public const NAME = 'tag:rename';
 
-    /**
-     * @var TagServiceInterface
-     */
+    /** @var TagServiceInterface */
     private $tagService;
 
     public function __construct(TagServiceInterface $tagService)

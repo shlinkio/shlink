@@ -11,9 +11,7 @@ use Zend\ServiceManager\ServiceManager;
 
 class ImageFactoryTest extends TestCase
 {
-    /**
-     * @var ImageFactory
-     */
+    /** @var ImageFactory */
     protected $factory;
 
     public function setUp()

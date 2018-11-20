@@ -17,13 +17,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class GenerateShortUrlCommandTest extends TestCase
 {
-    /**
-     * @var CommandTester
-     */
+    /** @var CommandTester */
     protected $commandTester;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $urlShortener;
 
     public function setUp()

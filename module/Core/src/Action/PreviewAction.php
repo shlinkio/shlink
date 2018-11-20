@@ -22,17 +22,11 @@ class PreviewAction implements MiddlewareInterface
     use ResponseUtilsTrait;
     use ErrorResponseBuilderTrait;
 
-    /**
-     * @var PreviewGeneratorInterface
-     */
+    /** @var PreviewGeneratorInterface */
     private $previewGenerator;
-    /**
-     * @var UrlShortenerInterface
-     */
+    /** @var UrlShortenerInterface */
     private $urlShortener;
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
 
     public function __construct(

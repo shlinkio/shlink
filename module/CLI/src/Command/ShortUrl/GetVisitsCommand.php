@@ -21,9 +21,7 @@ class GetVisitsCommand extends Command
     public const NAME = 'short-url:visits';
     private const ALIASES = ['shortcode:visits', 'short-code:visits'];
 
-    /**
-     * @var VisitsTrackerInterface
-     */
+    /** @var VisitsTrackerInterface */
     private $visitsTracker;
 
     public function __construct(VisitsTrackerInterface $visitsTracker)

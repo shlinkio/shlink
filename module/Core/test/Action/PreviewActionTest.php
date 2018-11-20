@@ -23,17 +23,11 @@ use function filesize;
 
 class PreviewActionTest extends TestCase
 {
-    /**
-     * @var PreviewAction
-     */
+    /** @var PreviewAction */
     protected $action;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $previewGenerator;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $urlShortener;
 
     public function setUp()

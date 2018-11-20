@@ -16,9 +16,7 @@ class DisableKeyCommand extends Command
 {
     public const NAME = 'api-key:disable';
 
-    /**
-     * @var ApiKeyServiceInterface
-     */
+    /** @var ApiKeyServiceInterface */
     private $apiKeyService;
 
     public function __construct(ApiKeyServiceInterface $apiKeyService)

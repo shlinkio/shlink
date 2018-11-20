@@ -21,9 +21,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         ShortUrl::class,
     ];
 
-    /**
-     * @var VisitRepository
-     */
+    /** @var VisitRepository */
     private $repo;
 
     protected function setUp()

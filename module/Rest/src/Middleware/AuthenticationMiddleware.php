@@ -25,17 +25,11 @@ use function sprintf;
 
 class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface, RequestMethodInterface
 {
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
-    /**
-     * @var array
-     */
+    /** @var array */
     private $routesWhitelist;
-    /**
-     * @var RequestToHttpAuthPluginInterface
-     */
+    /** @var RequestToHttpAuthPluginInterface */
     private $requestToAuthPlugin;
 
     public function __construct(

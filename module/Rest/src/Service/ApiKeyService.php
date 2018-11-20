@@ -11,9 +11,7 @@ use function sprintf;
 
 class ApiKeyService implements ApiKeyServiceInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
+    /** @var EntityManagerInterface */
     private $em;
 
     public function __construct(EntityManagerInterface $em)

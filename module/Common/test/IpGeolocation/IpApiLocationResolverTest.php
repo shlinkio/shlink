@@ -13,13 +13,9 @@ use function json_encode;
 
 class IpApiLocationResolverTest extends TestCase
 {
-    /**
-     * @var IpApiLocationResolver
-     */
+    /** @var IpApiLocationResolver */
     protected $ipResolver;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $client;
 
     public function setUp()

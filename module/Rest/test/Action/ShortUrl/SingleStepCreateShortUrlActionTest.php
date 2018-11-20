@@ -17,17 +17,11 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class SingleStepCreateShortUrlActionTest extends TestCase
 {
-    /**
-     * @var SingleStepCreateShortUrlAction
-     */
+    /** @var SingleStepCreateShortUrlAction */
     private $action;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $urlShortener;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $apiKeyService;
 
     public function setUp()

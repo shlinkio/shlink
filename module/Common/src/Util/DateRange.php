@@ -7,13 +7,9 @@ use Cake\Chronos\Chronos;
 
 final class DateRange
 {
-    /**
-     * @var Chronos|null
-     */
+    /** @var Chronos|null */
     private $startDate;
-    /**
-     * @var Chronos|null
-     */
+    /** @var Chronos|null */
     private $endDate;
 
     public function __construct(?Chronos $startDate = null, ?Chronos $endDate = null)

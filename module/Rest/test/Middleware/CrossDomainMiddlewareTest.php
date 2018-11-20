@@ -13,13 +13,9 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class CrossDomainMiddlewareTest extends TestCase
 {
-    /**
-     * @var CrossDomainMiddleware
-     */
+    /** @var CrossDomainMiddleware */
     protected $middleware;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     protected $delegate;
 
     public function setUp()

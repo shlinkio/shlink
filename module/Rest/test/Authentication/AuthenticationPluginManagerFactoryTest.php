@@ -10,9 +10,7 @@ use Zend\ServiceManager\ServiceManager;
 
 class AuthenticationPluginManagerFactoryTest extends TestCase
 {
-    /**
-     * @var AuthenticationPluginManagerFactory
-     */
+    /** @var AuthenticationPluginManagerFactory */
     private $factory;
 
     public function setUp()
