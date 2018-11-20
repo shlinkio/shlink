@@ -13,7 +13,7 @@ use function time;
 class JWTServiceTest extends TestCase
 {
     /** @var JWTService */
-    protected $service;
+    private $service;
 
     public function setUp()
     {

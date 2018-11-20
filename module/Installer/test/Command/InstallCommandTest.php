@@ -23,13 +23,13 @@ use Zend\Config\Writer\WriterInterface;
 class InstallCommandTest extends TestCase
 {
     /** @var InstallCommand */
-    protected $command;
+    private $command;
     /** @var CommandTester */
-    protected $commandTester;
+    private $commandTester;
     /** @var ObjectProphecy */
-    protected $configWriter;
+    private $configWriter;
     /** @var ObjectProphecy */
-    protected $filesystem;
+    private $filesystem;
 
     public function setUp()
     {

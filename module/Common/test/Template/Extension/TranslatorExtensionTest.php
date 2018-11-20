@@ -12,7 +12,7 @@ use Zend\I18n\Translator\Translator;
 class TranslatorExtensionTest extends TestCase
 {
     /** @var TranslatorExtension */
-    protected $extension;
+    private $extension;
 
     public function setUp()
     {

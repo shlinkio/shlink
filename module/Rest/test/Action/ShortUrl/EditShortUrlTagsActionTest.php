@@ -14,7 +14,7 @@ use Zend\Diactoros\ServerRequestFactory;
 class EditShortUrlTagsActionTest extends TestCase
 {
     /** @var EditShortUrlTagsAction */
-    protected $action;
+    private $action;
     /** @var ObjectProphecy */
     private $shortUrlService;
 

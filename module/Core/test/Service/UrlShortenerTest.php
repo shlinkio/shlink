@@ -24,13 +24,13 @@ use Zend\Diactoros\Uri;
 class UrlShortenerTest extends TestCase
 {
     /** @var UrlShortener */
-    protected $urlShortener;
+    private $urlShortener;
     /** @var ObjectProphecy */
-    protected $em;
+    private $em;
     /** @var ObjectProphecy */
-    protected $httpClient;
+    private $httpClient;
     /** @var ObjectProphecy */
-    protected $slugger;
+    private $slugger;
 
     public function setUp()
     {

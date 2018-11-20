@@ -12,9 +12,9 @@ use Zend\I18n\Translator\Translator;
 class LocaleMiddlewareTest extends TestCase
 {
     /** @var LocaleMiddleware */
-    protected $middleware;
+    private $middleware;
     /** @var Translator */
-    protected $translator;
+    private $translator;
 
     public function setUp()
     {

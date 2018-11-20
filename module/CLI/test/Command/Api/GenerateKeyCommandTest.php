@@ -16,9 +16,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 class GenerateKeyCommandTest extends TestCase
 {
     /** @var CommandTester */
-    protected $commandTester;
+    private $commandTester;
     /** @var ObjectProphecy */
-    protected $apiKeyService;
+    private $apiKeyService;
 
     public function setUp()
     {

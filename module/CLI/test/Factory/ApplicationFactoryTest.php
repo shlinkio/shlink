@@ -16,7 +16,7 @@ use function array_merge;
 class ApplicationFactoryTest extends TestCase
 {
     /** @var ApplicationFactory */
-    protected $factory;
+    private $factory;
 
     public function setUp()
     {

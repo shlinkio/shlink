@@ -12,7 +12,7 @@ use Zend\ServiceManager\ServiceManager;
 class ImageFactoryTest extends TestCase
 {
     /** @var ImageFactory */
-    protected $factory;
+    private $factory;
 
     public function setUp()
     {

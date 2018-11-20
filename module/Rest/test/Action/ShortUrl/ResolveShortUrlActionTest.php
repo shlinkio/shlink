@@ -18,9 +18,9 @@ use function strpos;
 class ResolveShortUrlActionTest extends TestCase
 {
     /** @var ResolveShortUrlAction */
-    protected $action;
+    private $action;
     /** @var ObjectProphecy */
-    protected $urlShortener;
+    private $urlShortener;
 
     public function setUp()
     {

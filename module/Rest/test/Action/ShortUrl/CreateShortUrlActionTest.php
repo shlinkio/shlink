@@ -20,9 +20,9 @@ use function strpos;
 class CreateShortUrlActionTest extends TestCase
 {
     /** @var CreateShortUrlAction */
-    protected $action;
+    private $action;
     /** @var ObjectProphecy */
-    protected $urlShortener;
+    private $urlShortener;
 
     public function setUp()
     {

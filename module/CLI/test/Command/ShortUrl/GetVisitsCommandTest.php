@@ -21,9 +21,9 @@ use function strpos;
 class GetVisitsCommandTest extends TestCase
 {
     /** @var CommandTester */
-    protected $commandTester;
+    private $commandTester;
     /** @var ObjectProphecy */
-    protected $visitsTracker;
+    private $visitsTracker;
 
     public function setUp()
     {

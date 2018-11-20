@@ -21,7 +21,7 @@ use function substr_count;
 class GeneratePreviewCommandTest extends TestCase
 {
     /** @var CommandTester */
-    protected $commandTester;
+    private $commandTester;
     /** @var ObjectProphecy */
     private $previewGenerator;
     /** @var ObjectProphecy */

@@ -11,7 +11,7 @@ use Zend\ServiceManager\ServiceManager;
 class EntityManagerFactoryTest extends TestCase
 {
     /** @var EntityManagerFactory */
-    protected $factory;
+    private $factory;
 
     public function setUp()
     {

@@ -24,7 +24,7 @@ use function filesize;
 class PreviewActionTest extends TestCase
 {
     /** @var PreviewAction */
-    protected $action;
+    private $action;
     /** @var ObjectProphecy */
     private $previewGenerator;
     /** @var ObjectProphecy */

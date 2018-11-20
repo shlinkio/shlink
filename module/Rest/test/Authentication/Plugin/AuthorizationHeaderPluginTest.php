@@ -17,7 +17,7 @@ class AuthorizationHeaderPluginTest extends TestCase
     /** @var AuthorizationHeaderPlugin */
     private $plugin;
     /** @var ObjectProphecy */
-    protected $jwtService;
+    private $jwtService;
 
     public function setUp()
     {

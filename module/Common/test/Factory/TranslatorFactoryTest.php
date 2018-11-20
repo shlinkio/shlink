@@ -11,7 +11,7 @@ use Zend\ServiceManager\ServiceManager;
 class TranslatorFactoryTest extends TestCase
 {
     /** @var TranslatorFactory */
-    protected $factory;
+    private $factory;
 
     public function setUp()
     {

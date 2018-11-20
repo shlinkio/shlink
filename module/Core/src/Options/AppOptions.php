@@ -12,13 +12,13 @@ class AppOptions extends AbstractOptions
     use StringUtilsTrait;
 
     /** @var string */
-    protected $name = '';
+    private $name = '';
     /** @var string */
-    protected $version = '1.0';
+    private $version = '1.0';
     /** @var string */
-    protected $secretKey = '';
+    private $secretKey = '';
     /** @var string|null */
-    protected $disableTrackParam;
+    private $disableTrackParam;
 
     /**
      * AppOptions constructor.

@@ -32,12 +32,12 @@ use function Zend\Stratigility\middleware;
 class AuthenticationMiddlewareTest extends TestCase
 {
     /** @var AuthenticationMiddleware */
-    protected $middleware;
+    private $middleware;
     /** @var ObjectProphecy */
-    protected $requestToPlugin;
+    private $requestToPlugin;
 
     /** @var callable */
-    protected $dummyMiddleware;
+    private $dummyMiddleware;
 
     public function setUp()
     {

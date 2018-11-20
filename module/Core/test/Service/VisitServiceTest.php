@@ -21,9 +21,9 @@ use function func_get_args;
 class VisitServiceTest extends TestCase
 {
     /** @var VisitService */
-    protected $visitService;
+    private $visitService;
     /** @var ObjectProphecy */
-    protected $em;
+    private $em;
 
     public function setUp()
     {

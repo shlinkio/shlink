@@ -16,11 +16,11 @@ use function strpos;
 class AuthenticateActionTest extends TestCase
 {
     /** @var AuthenticateAction */
-    protected $action;
+    private $action;
     /** @var ObjectProphecy */
-    protected $apiKeyService;
+    private $apiKeyService;
     /** @var ObjectProphecy */
-    protected $jwtService;
+    private $jwtService;
 
     public function setUp()
     {
