@@ -10,9 +10,7 @@ abstract class DatabaseTestCase extends TestCase
 {
     protected const ENTITIES_TO_EMPTY = [];
 
-    /**
-     * @var EntityManagerInterface
-     */
+    /** @var EntityManagerInterface */
     public static $em;
 
     protected function getEntityManager(): EntityManagerInterface

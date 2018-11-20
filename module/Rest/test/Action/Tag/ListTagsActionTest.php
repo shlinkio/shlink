@@ -14,13 +14,9 @@ use function Shlinkio\Shlink\Common\json_decode;
 
 class ListTagsActionTest extends TestCase
 {
-    /**
-     * @var ListTagsAction
-     */
+    /** @var ListTagsAction */
     private $action;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $tagService;
 
     public function setUp()

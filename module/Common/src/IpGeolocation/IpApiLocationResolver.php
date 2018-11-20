@@ -14,9 +14,7 @@ class IpApiLocationResolver implements IpLocationResolverInterface
 {
     private const SERVICE_PATTERN = 'http://ip-api.com/json/%s';
 
-    /**
-     * @var Client
-     */
+    /** @var Client */
     private $httpClient;
 
     public function __construct(Client $httpClient)

@@ -10,14 +10,10 @@ use Shlinkio\Shlink\Common\Repository\PaginableRepositoryInterface;
 
 class PaginableRepositoryAdapterTest extends TestCase
 {
-    /**
-     * @var PaginableRepositoryAdapter
-     */
-    protected $adapter;
-    /**
-     * @var ObjectProphecy
-     */
-    protected $repo;
+    /** @var PaginableRepositoryAdapter */
+    private $adapter;
+    /** @var ObjectProphecy */
+    private $repo;
 
     public function setUp()
     {

@@ -17,13 +17,9 @@ class GeneratePreviewCommand extends Command
     public const NAME = 'short-url:process-previews';
     private const ALIASES = ['shortcode:process-previews', 'short-code:process-previews'];
 
-    /**
-     * @var PreviewGeneratorInterface
-     */
+    /** @var PreviewGeneratorInterface */
     private $previewGenerator;
-    /**
-     * @var ShortUrlServiceInterface
-     */
+    /** @var ShortUrlServiceInterface */
     private $shortUrlService;
 
     public function __construct(ShortUrlServiceInterface $shortUrlService, PreviewGeneratorInterface $previewGenerator)

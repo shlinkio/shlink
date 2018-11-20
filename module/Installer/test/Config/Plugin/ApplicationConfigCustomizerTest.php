@@ -15,13 +15,9 @@ use function strpos;
 
 class ApplicationConfigCustomizerTest extends TestCase
 {
-    /**
-     * @var ApplicationConfigCustomizer
-     */
+    /** @var ApplicationConfigCustomizer */
     private $plugin;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $io;
 
     public function setUp()

@@ -12,10 +12,8 @@ use Zend\ServiceManager\ServiceManager;
 
 class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
 {
-    /**
-     * @var EmptyResponseImplicitOptionsMiddlewareFactory
-     */
-    protected $factory;
+    /** @var EmptyResponseImplicitOptionsMiddlewareFactory */
+    private $factory;
 
     public function setUp()
     {

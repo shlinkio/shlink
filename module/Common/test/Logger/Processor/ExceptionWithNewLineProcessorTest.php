@@ -9,9 +9,7 @@ use const PHP_EOL;
 
 class ExceptionWithNewLineProcessorTest extends TestCase
 {
-    /**
-     * @var ExceptionWithNewLineProcessor
-     */
+    /** @var ExceptionWithNewLineProcessor */
     private $processor;
 
     public function setUp()

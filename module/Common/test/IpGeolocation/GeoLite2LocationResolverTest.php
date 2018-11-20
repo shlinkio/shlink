@@ -14,13 +14,9 @@ use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2LocationResolver;
 
 class GeoLite2LocationResolverTest extends TestCase
 {
-    /**
-     * @var GeoLite2LocationResolver
-     */
+    /** @var GeoLite2LocationResolver */
     private $resolver;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $reader;
 
     public function setUp()

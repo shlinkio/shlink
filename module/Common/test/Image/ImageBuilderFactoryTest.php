@@ -10,10 +10,8 @@ use Zend\ServiceManager\ServiceManager;
 
 class ImageBuilderFactoryTest extends TestCase
 {
-    /**
-     * @var ImageBuilderFactory
-     */
-    protected $factory;
+    /** @var ImageBuilderFactory */
+    private $factory;
 
     public function setUp()
     {

@@ -7,9 +7,7 @@ use Shlinkio\Shlink\Common\Exception\WrongIpException;
 
 class ChainIpLocationResolver implements IpLocationResolverInterface
 {
-    /**
-     * @var IpLocationResolverInterface[]
-     */
+    /** @var IpLocationResolverInterface[] */
     private $resolvers;
 
     public function __construct(IpLocationResolverInterface ...$resolvers)

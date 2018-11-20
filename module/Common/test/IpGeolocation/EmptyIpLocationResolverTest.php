@@ -23,9 +23,7 @@ class EmptyIpLocationResolverTest extends TestCase
         'time_zone' => '',
     ];
 
-    /**
-     * @var EmptyIpLocationResolver
-     */
+    /** @var EmptyIpLocationResolver */
     private $resolver;
 
     public function setUp()

@@ -10,10 +10,8 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class JsonErrorResponseGeneratorTest extends TestCase
 {
-    /**
-     * @var JsonErrorResponseGenerator
-     */
-    protected $errorHandler;
+    /** @var JsonErrorResponseGenerator */
+    private $errorHandler;
 
     public function setUp()
     {

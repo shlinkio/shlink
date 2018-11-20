@@ -13,9 +13,7 @@ class ApiKeyHeaderPlugin implements AuthenticationPluginInterface
 {
     public const HEADER_NAME = 'X-Api-Key';
 
-    /**
-     * @var ApiKeyServiceInterface
-     */
+    /** @var ApiKeyServiceInterface */
     private $apiKeyService;
 
     public function __construct(ApiKeyServiceInterface $apiKeyService)

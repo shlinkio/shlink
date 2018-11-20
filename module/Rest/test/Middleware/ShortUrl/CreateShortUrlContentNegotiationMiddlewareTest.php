@@ -14,13 +14,9 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 {
-    /**
-     * @var CreateShortUrlContentNegotiationMiddleware
-     */
+    /** @var CreateShortUrlContentNegotiationMiddleware */
     private $middleware;
-    /**
-     * @var RequestHandlerInterface
-     */
+    /** @var RequestHandlerInterface */
     private $requestHandler;
 
     public function setUp()

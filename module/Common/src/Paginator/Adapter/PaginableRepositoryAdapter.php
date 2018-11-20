@@ -12,21 +12,13 @@ class PaginableRepositoryAdapter implements AdapterInterface
 {
     public const ITEMS_PER_PAGE = 10;
 
-    /**
-     * @var PaginableRepositoryInterface
-     */
+    /** @var PaginableRepositoryInterface */
     private $paginableRepository;
-    /**
-     * @var null|string
-     */
+    /** @var null|string */
     private $searchTerm;
-    /**
-     * @var null|array|string
-     */
+    /** @var null|array|string */
     private $orderBy;
-    /**
-     * @var array
-     */
+    /** @var array */
     private $tags;
 
     public function __construct(

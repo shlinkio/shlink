@@ -32,25 +32,15 @@ class UrlShortener implements UrlShortenerInterface
     public const DEFAULT_CHARS = '123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
     private const ID_INCREMENT = 200000;
 
-    /**
-     * @var ClientInterface
-     */
+    /** @var ClientInterface */
     private $httpClient;
-    /**
-     * @var EntityManagerInterface
-     */
+    /** @var EntityManagerInterface */
     private $em;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $chars;
-    /**
-     * @var SlugifyInterface
-     */
+    /** @var SlugifyInterface */
     private $slugger;
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $urlValidationEnabled;
 
     public function __construct(

@@ -16,14 +16,10 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class GetVisitsActionTest extends TestCase
 {
-    /**
-     * @var GetVisitsAction
-     */
-    protected $action;
-    /**
-     * @var ObjectProphecy
-     */
-    protected $visitsTracker;
+    /** @var GetVisitsAction */
+    private $action;
+    /** @var ObjectProphecy */
+    private $visitsTracker;
 
     public function setUp()
     {

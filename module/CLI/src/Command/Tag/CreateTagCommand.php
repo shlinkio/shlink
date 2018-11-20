@@ -14,9 +14,7 @@ class CreateTagCommand extends Command
 {
     public const NAME = 'tag:create';
 
-    /**
-     * @var TagServiceInterface
-     */
+    /** @var TagServiceInterface */
     private $tagService;
 
     public function __construct(TagServiceInterface $tagService)

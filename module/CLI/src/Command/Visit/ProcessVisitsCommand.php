@@ -21,21 +21,13 @@ class ProcessVisitsCommand extends Command
 {
     public const NAME = 'visit:process';
 
-    /**
-     * @var VisitServiceInterface
-     */
+    /** @var VisitServiceInterface */
     private $visitService;
-    /**
-     * @var IpLocationResolverInterface
-     */
+    /** @var IpLocationResolverInterface */
     private $ipLocationResolver;
-    /**
-     * @var Locker
-     */
+    /** @var Locker */
     private $locker;
-    /**
-     * @var OutputInterface
-     */
+    /** @var OutputInterface */
     private $output;
 
     public function __construct(

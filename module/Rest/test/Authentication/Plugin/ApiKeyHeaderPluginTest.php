@@ -14,13 +14,9 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class ApiKeyHeaderPluginTest extends TestCase
 {
-    /**
-     * @var ApiKeyHeaderPlugin
-     */
+    /** @var ApiKeyHeaderPlugin */
     private $plugin;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $apiKeyService;
 
     public function setUp()

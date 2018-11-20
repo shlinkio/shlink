@@ -15,9 +15,7 @@ class UpdateDbCommand extends Command
 {
     public const NAME = 'visit:update-db';
 
-    /**
-     * @var DbUpdaterInterface
-     */
+    /** @var DbUpdaterInterface */
     private $geoLiteDbUpdater;
 
     public function __construct(DbUpdaterInterface $geoLiteDbUpdater)

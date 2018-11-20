@@ -15,14 +15,10 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class GenerateKeyCommandTest extends TestCase
 {
-    /**
-     * @var CommandTester
-     */
-    protected $commandTester;
-    /**
-     * @var ObjectProphecy
-     */
-    protected $apiKeyService;
+    /** @var CommandTester */
+    private $commandTester;
+    /** @var ObjectProphecy */
+    private $apiKeyService;
 
     public function setUp()
     {

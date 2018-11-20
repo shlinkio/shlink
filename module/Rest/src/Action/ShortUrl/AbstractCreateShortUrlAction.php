@@ -20,13 +20,9 @@ use function sprintf;
 
 abstract class AbstractCreateShortUrlAction extends AbstractRestAction
 {
-    /**
-     * @var UrlShortenerInterface
-     */
+    /** @var UrlShortenerInterface */
     private $urlShortener;
-    /**
-     * @var array
-     */
+    /** @var array */
     private $domainConfig;
 
     public function __construct(

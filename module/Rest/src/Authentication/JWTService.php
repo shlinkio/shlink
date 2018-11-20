@@ -12,9 +12,7 @@ use function time;
 
 class JWTService implements JWTServiceInterface
 {
-    /**
-     * @var AppOptions
-     */
+    /** @var AppOptions */
     private $appOptions;
 
     public function __construct(AppOptions $appOptions)

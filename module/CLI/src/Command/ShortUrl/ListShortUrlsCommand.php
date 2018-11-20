@@ -25,13 +25,9 @@ class ListShortUrlsCommand extends Command
     public const NAME = 'short-url:list';
     private const ALIASES = ['shortcode:list', 'short-code:list'];
 
-    /**
-     * @var ShortUrlServiceInterface
-     */
+    /** @var ShortUrlServiceInterface */
     private $shortUrlService;
-    /**
-     * @var array
-     */
+    /** @var array */
     private $domainConfig;
 
     public function __construct(ShortUrlServiceInterface $shortUrlService, array $domainConfig)

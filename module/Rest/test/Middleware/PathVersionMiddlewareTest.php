@@ -16,10 +16,8 @@ use function array_shift;
 
 class PathVersionMiddlewareTest extends TestCase
 {
-    /**
-     * @var PathVersionMiddleware
-     */
-    protected $middleware;
+    /** @var PathVersionMiddleware */
+    private $middleware;
 
     public function setUp()
     {

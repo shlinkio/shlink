@@ -38,9 +38,7 @@ class DatabaseConfigCustomizer implements ConfigCustomizerInterface
         'SQLite' => 'pdo_sqlite',
     ];
 
-    /**
-     * @var Filesystem
-     */
+    /** @var Filesystem */
     private $filesystem;
 
     public function __construct(Filesystem $filesystem)

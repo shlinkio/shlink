@@ -17,13 +17,9 @@ class NotFoundHandler implements RequestHandlerInterface
 {
     public const NOT_FOUND_TEMPLATE = 'notFoundTemplate';
 
-    /**
-     * @var TemplateRendererInterface
-     */
+    /** @var TemplateRendererInterface */
     private $renderer;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $defaultTemplate;
 
     public function __construct(TemplateRendererInterface $renderer, string $defaultTemplate = 'ShlinkCore::error/404')

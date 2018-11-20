@@ -11,9 +11,7 @@ use Zend\ServiceManager\ServiceManager;
 
 class DottedAccessConfigAbstractFactoryTest extends TestCase
 {
-    /**
-     * @var DottedAccessConfigAbstractFactory
-     */
+    /** @var DottedAccessConfigAbstractFactory */
     private $factory;
 
     public function setUp()

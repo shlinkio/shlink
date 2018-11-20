@@ -8,9 +8,7 @@ use Shlinkio\Shlink\Common\Collection\PathCollection;
 
 class PathCollectionTest extends TestCase
 {
-    /**
-     * @var PathCollection
-     */
+    /** @var PathCollection */
     private $collection;
 
     public function setUp()

@@ -18,9 +18,7 @@ class ResolveUrlCommand extends Command
     public const NAME = 'short-url:parse';
     private const ALIASES = ['shortcode:parse', 'short-code:parse'];
 
-    /**
-     * @var UrlShortenerInterface
-     */
+    /** @var UrlShortenerInterface */
     private $urlShortener;
 
     public function __construct(UrlShortenerInterface $urlShortener)

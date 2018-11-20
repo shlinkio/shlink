@@ -14,14 +14,10 @@ use function sprintf;
 
 class AuthorizationHeaderPluginTest extends TestCase
 {
-    /**
-     * @var AuthorizationHeaderPlugin
-     */
+    /** @var AuthorizationHeaderPlugin */
     private $plugin;
-    /**
-     * @var ObjectProphecy
-     */
-    protected $jwtService;
+    /** @var ObjectProphecy */
+    private $jwtService;
 
     public function setUp()
     {

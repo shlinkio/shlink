@@ -12,13 +12,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class UrlShortenerConfigCustomizerTest extends TestCase
 {
-    /**
-     * @var UrlShortenerConfigCustomizer
-     */
+    /** @var UrlShortenerConfigCustomizer */
     private $plugin;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $io;
 
     public function setUp()

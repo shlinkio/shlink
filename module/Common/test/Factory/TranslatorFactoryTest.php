@@ -10,10 +10,8 @@ use Zend\ServiceManager\ServiceManager;
 
 class TranslatorFactoryTest extends TestCase
 {
-    /**
-     * @var TranslatorFactory
-     */
-    protected $factory;
+    /** @var TranslatorFactory */
+    private $factory;
 
     public function setUp()
     {

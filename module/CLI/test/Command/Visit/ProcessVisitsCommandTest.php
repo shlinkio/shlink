@@ -26,25 +26,15 @@ use function sprintf;
 
 class ProcessVisitsCommandTest extends TestCase
 {
-    /**
-     * @var CommandTester
-     */
+    /** @var CommandTester */
     private $commandTester;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $visitService;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $ipResolver;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $locker;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $lock;
 
     public function setUp()

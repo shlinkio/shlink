@@ -11,17 +11,11 @@ use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 
 class ChainIpLocationResolverTest extends TestCase
 {
-    /**
-     * @var ChainIpLocationResolver
-     */
+    /** @var ChainIpLocationResolver */
     private $resolver;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $firstInnerResolver;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $secondInnerResolver;
 
     public function setUp()

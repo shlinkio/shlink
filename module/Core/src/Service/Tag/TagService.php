@@ -14,9 +14,7 @@ class TagService implements TagServiceInterface
 {
     use TagManagerTrait;
 
-    /**
-     * @var ORM\EntityManagerInterface
-     */
+    /** @var ORM\EntityManagerInterface */
     private $em;
 
     public function __construct(ORM\EntityManagerInterface $em)

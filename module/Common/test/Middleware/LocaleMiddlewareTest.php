@@ -11,14 +11,10 @@ use Zend\I18n\Translator\Translator;
 
 class LocaleMiddlewareTest extends TestCase
 {
-    /**
-     * @var LocaleMiddleware
-     */
-    protected $middleware;
-    /**
-     * @var Translator
-     */
-    protected $translator;
+    /** @var LocaleMiddleware */
+    private $middleware;
+    /** @var Translator */
+    private $translator;
 
     public function setUp()
     {

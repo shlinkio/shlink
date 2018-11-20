@@ -26,13 +26,9 @@ class GenerateShortUrlCommand extends Command
     public const NAME = 'short-url:generate';
     private const ALIASES = ['shortcode:generate', 'short-code:generate'];
 
-    /**
-     * @var UrlShortenerInterface
-     */
+    /** @var UrlShortenerInterface */
     private $urlShortener;
-    /**
-     * @var array
-     */
+    /** @var array */
     private $domainConfig;
 
     public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig)

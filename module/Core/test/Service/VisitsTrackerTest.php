@@ -16,14 +16,10 @@ use Shlinkio\Shlink\Core\Service\VisitsTracker;
 
 class VisitsTrackerTest extends TestCase
 {
-    /**
-     * @var VisitsTracker
-     */
-    protected $visitsTracker;
-    /**
-     * @var ObjectProphecy
-     */
-    protected $em;
+    /** @var VisitsTracker */
+    private $visitsTracker;
+    /** @var ObjectProphecy */
+    private $em;
 
     public function setUp()
     {

@@ -9,9 +9,7 @@ use Zend\I18n\Translator\TranslatorInterface;
 
 class TranslatorExtension implements ExtensionInterface
 {
-    /**
-     * @var TranslatorInterface
-     */
+    /** @var TranslatorInterface */
     private $translator;
 
     public function __construct(TranslatorInterface $translator)

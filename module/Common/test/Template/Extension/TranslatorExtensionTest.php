@@ -11,10 +11,8 @@ use Zend\I18n\Translator\Translator;
 
 class TranslatorExtensionTest extends TestCase
 {
-    /**
-     * @var TranslatorExtension
-     */
-    protected $extension;
+    /** @var TranslatorExtension */
+    private $extension;
 
     public function setUp()
     {

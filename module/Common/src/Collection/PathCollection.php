@@ -9,9 +9,7 @@ use function is_array;
 
 final class PathCollection
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $array;
 
     public function __construct(array $array)

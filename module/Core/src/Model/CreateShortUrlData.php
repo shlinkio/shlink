@@ -7,17 +7,11 @@ use Psr\Http\Message\UriInterface;
 
 final class CreateShortUrlData
 {
-    /**
-     * @var UriInterface
-     */
+    /** @var UriInterface */
     private $longUrl;
-    /**
-     * @var array
-     */
+    /** @var array */
     private $tags;
-    /**
-     * @var ShortUrlMeta
-     */
+    /** @var ShortUrlMeta */
     private $meta;
 
     public function __construct(

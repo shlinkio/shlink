@@ -15,9 +15,7 @@ class LocaleMiddleware implements MiddlewareInterface
 {
     private const ACCEPT_LANGUAGE = 'Accept-Language';
 
-    /**
-     * @var Translator
-     */
+    /** @var Translator */
     private $translator;
 
     public function __construct(Translator $translator)

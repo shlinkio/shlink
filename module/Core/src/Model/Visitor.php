@@ -9,17 +9,11 @@ final class Visitor
 {
     public const REMOTE_ADDRESS_ATTR = 'remote_address';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $userAgent;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $referer;
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     private $remoteAddress;
 
     public function __construct(string $userAgent, string $referer, ?string $remoteAddress)

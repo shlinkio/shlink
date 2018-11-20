@@ -14,13 +14,9 @@ use Zend\Expressive\Template\TemplateRendererInterface;
 
 class NotFoundHandlerTest extends TestCase
 {
-    /**
-     * @var NotFoundHandler
-     */
+    /** @var NotFoundHandler */
     private $delegate;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $renderer;
 
     public function setUp()

@@ -13,13 +13,9 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class CreateTagsActionTest extends TestCase
 {
-    /**
-     * @var CreateTagsAction
-     */
+    /** @var CreateTagsAction */
     private $action;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $tagService;
 
     public function setUp()

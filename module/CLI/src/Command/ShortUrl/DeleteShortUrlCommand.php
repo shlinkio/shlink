@@ -18,9 +18,7 @@ class DeleteShortUrlCommand extends Command
     public const NAME = 'short-url:delete';
     private const ALIASES = ['short-code:delete'];
 
-    /**
-     * @var DeleteShortUrlServiceInterface
-     */
+    /** @var DeleteShortUrlServiceInterface */
     private $deleteShortUrlService;
 
     public function __construct(DeleteShortUrlServiceInterface $deleteShortUrlService)

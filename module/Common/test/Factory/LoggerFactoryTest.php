@@ -11,10 +11,8 @@ use Zend\ServiceManager\ServiceManager;
 
 class LoggerFactoryTest extends TestCase
 {
-    /**
-     * @var LoggerFactory
-     */
-    protected $factory;
+    /** @var LoggerFactory */
+    private $factory;
 
     public function setUp()
     {

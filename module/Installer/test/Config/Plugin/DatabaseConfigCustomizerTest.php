@@ -13,17 +13,11 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class DatabaseConfigCustomizerTest extends TestCase
 {
-    /**
-     * @var DatabaseConfigCustomizer
-     */
+    /** @var DatabaseConfigCustomizer */
     private $plugin;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $io;
-    /**
-     * @var ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $filesystem;
 
     public function setUp()
