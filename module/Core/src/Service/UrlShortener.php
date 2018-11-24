@@ -107,13 +107,7 @@ class UrlShortener implements UrlShortenerInterface
         }
     }
 
-    /**
-     * Tries to perform a GET request to provided url, returning true on success and false on failure
-     *
-     * @param UriInterface $url
-     * @return void
-     */
-    private function checkUrlExists(UriInterface $url)
+    private function checkUrlExists(UriInterface $url): void
     {
         try {
             $this->httpClient->request('GET', $url, ['allow_redirects' => [
@@ -124,12 +118,6 @@ class UrlShortener implements UrlShortenerInterface
         }
     }
 
-    /**
-     * Generates the unique shortcode for an autoincrement ID
-     *
-     * @param float $id
-     * @return string
-     */
     private function convertAutoincrementIdToShortCode(float $id): string
     {
         $id += self::ID_INCREMENT; // Increment the Id so that the generated shortcode is not too short
@@ -145,7 +133,7 @@ class UrlShortener implements UrlShortenerInterface
         return $this->chars[(int) $id] . $code;
     }
 
-    private function processCustomSlug($customSlug)
+    private function processCustomSlug(?string $customSlug): ?string
     {
         if ($customSlug === null) {
             return null;
