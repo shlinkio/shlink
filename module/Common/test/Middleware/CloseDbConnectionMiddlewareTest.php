@@ -41,6 +41,8 @@ class CloseDbConnectionMiddlewareTest extends TestCase
         $closeConn = $conn->close()->will(function () {
         });
         $getConn = $this->em->getConnection()->willReturn($conn->reveal());
+        $clear = $this->em->clear()->will(function () {
+        });
         $handle = $this->handler->handle($req)->willReturn($resp);
 
         $result = $this->middleware->process($req, $this->handler->reveal());
@@ -48,6 +50,7 @@ class CloseDbConnectionMiddlewareTest extends TestCase
         $this->assertSame($result, $resp);
         $getConn->shouldHaveBeenCalledOnce();
         $closeConn->shouldHaveBeenCalledOnce();
+        $clear->shouldHaveBeenCalledOnce();
         $handle->shouldHaveBeenCalledOnce();
     }
 }
