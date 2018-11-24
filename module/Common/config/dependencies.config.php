@@ -31,6 +31,7 @@ return [
             Template\Extension\TranslatorExtension::class => ConfigAbstractFactory::class,
 
             Middleware\LocaleMiddleware::class => ConfigAbstractFactory::class,
+            Middleware\CloseDbConnectionMiddleware::class => ConfigAbstractFactory::class,
             IpAddress::class => Middleware\IpAddressMiddlewareFactory::class,
 
             Image\ImageBuilder::class => Image\ImageBuilderFactory::class,
@@ -78,6 +79,7 @@ return [
 
         Template\Extension\TranslatorExtension::class => ['translator'],
         Middleware\LocaleMiddleware::class => ['translator'],
+        Middleware\CloseDbConnectionMiddleware::class => ['em'],
 
         IpGeolocation\IpApiLocationResolver::class => ['httpClient'],
         IpGeolocation\GeoLite2LocationResolver::class => [Reader::class],
