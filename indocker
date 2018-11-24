@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-docker exec -it shlink_php /bin/sh -c "cd /home/shlink/www && $*"
+docker exec -it shlink_swoole /bin/sh -c "$*"
