@@ -56,4 +56,5 @@
     <file>config</file>
     <file>public/index.php</file>
     <exclude-pattern>config/params/*</exclude-pattern>
+    <exclude-pattern>public/index.php</exclude-pattern>
 </ruleset>

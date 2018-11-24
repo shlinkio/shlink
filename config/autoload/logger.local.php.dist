@@ -1,11 +1,13 @@
 <?php
+declare(strict_types=1);
+
 use Monolog\Logger;
 
 return [
 
     'logger' => [
         'handlers' => [
-            'rotating_file_handler' => [
+            'shlink_log_handler' => [
                 'level' => Logger::DEBUG,
             ],
         ],
