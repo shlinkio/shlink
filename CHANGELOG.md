@@ -8,7 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Added
 
-* *Nothing*
+* [#208](https://github.com/shlinkio/shlink/issues/208) Added initial support to run shlink using [swoole](https://www.swoole.co.uk/), a non-blocking IO server which improves the performance of shlink from 4 to 10 times.
+
+    Run shlink with `./vendor/bin/zend-expressive-swoole start` to start-up the service, which will be exposed in port `8080`.
+
+    Adding the `-d` flag, it will be started as a background service. Then you can use the `./vendor/bin/zend-expressive-swoole stop` command in order to stop it.
 
 #### Changed
 

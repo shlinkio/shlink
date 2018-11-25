@@ -18,6 +18,7 @@ matrix:
 before_install:
   - echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - yes | pecl install swoole
   - phpenv config-rm xdebug.ini || return 0
 
 install:

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Shlinkio\Shlink\Common;
+use function Shlinkio\Shlink\Common\env;
 
 return [
 
@@ -10,9 +10,9 @@ return [
             'proxies_dir' => 'data/proxies',
         ],
         'connection' => [
-            'user' => Common\env('DB_USER'),
-            'password' => Common\env('DB_PASSWORD'),
-            'dbname' => Common\env('DB_NAME', 'shlink'),
+            'user' => env('DB_USER'),
+            'password' => env('DB_PASSWORD'),
+            'dbname' => env('DB_NAME', 'shlink'),
             'charset' => 'utf8',
         ],
     ],

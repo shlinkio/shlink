@@ -10,10 +10,18 @@ return [
 
     'middleware_pipeline' => [
         'pre-routing' => [
-            'middleware' => [
-                ErrorHandler::class,
-                Expressive\Helper\ContentLengthMiddleware::class,
-            ],
+            'middleware' => (function () {
+                $middleware = [
+                    ErrorHandler::class,
+                    Expressive\Helper\ContentLengthMiddleware::class,
+                ];
+
+                if (Common\Exec\ExecutionContext::currentContextIsSwoole()) {
+                    $middleware[] = Common\Middleware\CloseDbConnectionMiddleware::class;
+                }
+
+                return $middleware;
+            })(),
             'priority' => 12,
         ],
         'pre-routing-rest' => [

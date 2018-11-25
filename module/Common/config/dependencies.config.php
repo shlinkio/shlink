@@ -23,7 +23,6 @@ return [
             EntityManager::class => Factory\EntityManagerFactory::class,
             GuzzleClient::class => InvokableFactory::class,
             Cache::class => Factory\CacheFactory::class,
-            'Logger_Shlink' => Factory\LoggerFactory::class,
             Filesystem::class => InvokableFactory::class,
             Reader::class => ConfigAbstractFactory::class,
 
@@ -31,6 +30,7 @@ return [
             Template\Extension\TranslatorExtension::class => ConfigAbstractFactory::class,
 
             Middleware\LocaleMiddleware::class => ConfigAbstractFactory::class,
+            Middleware\CloseDbConnectionMiddleware::class => ConfigAbstractFactory::class,
             IpAddress::class => Middleware\IpAddressMiddlewareFactory::class,
 
             Image\ImageBuilder::class => Image\ImageBuilderFactory::class,
@@ -78,6 +78,7 @@ return [
 
         Template\Extension\TranslatorExtension::class => ['translator'],
         Middleware\LocaleMiddleware::class => ['translator'],
+        Middleware\CloseDbConnectionMiddleware::class => ['em'],
 
         IpGeolocation\IpApiLocationResolver::class => ['httpClient'],
         IpGeolocation\GeoLite2LocationResolver::class => [Reader::class],
