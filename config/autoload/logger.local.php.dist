@@ -7,7 +7,7 @@ return [
 
     'logger' => [
         'handlers' => [
-            'shlink_log_handler' => [
+            'shlink_rotating_handler' => [
                 'level' => Logger::DEBUG,
             ],
         ],

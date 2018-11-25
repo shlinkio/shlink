@@ -7,6 +7,7 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor;
+use Zend\Expressive\Swoole\Log\AccessLogInterface;
 use const PHP_EOL;
 
 return [
@@ -20,17 +21,18 @@ return [
         ],
 
         'handlers' => [
-            'shlink_log_handler' => Common\Exec\ExecutionContext::currentContextIsSwoole() ? [
+            'shlink_rotating_handler' => [
+                'class' => RotatingFileHandler::class,
+                'level' => Logger::INFO,
+                'filename' => 'data/log/shlink_log.log',
+                'max_files' => 30,
+                'formatter' => 'dashed',
+            ],
+            'swoole_access_handler' => [
                 'class' => StreamHandler::class,
                 'level' => Logger::INFO,
                 'stream' => 'php://stdout',
                 'formatter' => 'dashed',
-            ] : [
-                'class' => RotatingFileHandler::class,
-                'level' => Logger::INFO,
-                'filename' => 'data/log/shlink_log.log',
-                'formatter' => 'dashed',
-                'max_files' => 30,
             ],
         ],
 
@@ -45,8 +47,29 @@ return [
 
         'loggers' => [
             'Shlink' => [
-                'handlers' => ['shlink_log_handler'],
+                'handlers' => ['shlink_rotating_handler'],
                 'processors' => ['exception_with_new_line', 'psr3'],
+            ],
+            'Swoole' => [
+                'handlers' => ['swoole_access_handler'],
+                'processors' => ['psr3'],
+            ],
+        ],
+    ],
+
+    'dependencies' => [
+        'factories' => [
+            'Logger_Shlink' => Common\Factory\LoggerFactory::class,
+            'Logger_Swoole' => Common\Factory\LoggerFactory::class,
+
+            AccessLogInterface::class => Common\Logger\Swoole\AccessLogFactory::class,
+        ],
+    ],
+
+    'zend-expressive-swoole' => [
+        'swoole-http-server' => [
+            'logger' => [
+                'logger_name' => 'Logger_Swoole',
             ],
         ],
     ],

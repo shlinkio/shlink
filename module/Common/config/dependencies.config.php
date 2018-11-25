@@ -23,7 +23,6 @@ return [
             EntityManager::class => Factory\EntityManagerFactory::class,
             GuzzleClient::class => InvokableFactory::class,
             Cache::class => Factory\CacheFactory::class,
-            'Logger_Shlink' => Factory\LoggerFactory::class,
             Filesystem::class => InvokableFactory::class,
             Reader::class => ConfigAbstractFactory::class,
 
