@@ -6,17 +6,23 @@ branches:
   only:
     - /.*/
 
-php:
-  - 7.1
-  - 7.2
-  - 7.3
-
 matrix:
+  include:
+    - php: 7.1
+      env:
+        - INSTALL_MEMCACHED=enable
+    - php: 7.2
+      env:
+        - INSTALL_MEMCACHED=enable
+    - php: 7.3
+      env:
+        - INSTALL_MEMCACHED=install
   allow_failures:
     - php: 7.3
 
 before_install:
-  - echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - if [[ $INSTALL_MEMCACHED == 'install' ]]; then yes | pecl install -fa memcached ; fi
+  - if [[ $INSTALL_MEMCACHED == 'enable' ]]; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini ; fi
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - phpenv config-rm xdebug.ini || return 0
 
