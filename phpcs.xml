@@ -1,53 +1,13 @@
 <?xml version="1.0"?>
 <ruleset name="Coding standard">
     <description>Coding standard</description>
-    <config name="installed_paths" value="../../slevomat/coding-standard"/>
 
     <!-- display progress -->
-    <arg value="p"/>
-    <arg name="colors"/>
+    <arg value="p" />
+    <arg name="colors" />
 
     <!-- inherit rules from: -->
-    <rule ref="PSR2"/>
-    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
-    <!-- Make sure string concatenations use 1 space between every element -->
-    <rule ref="Squiz.Strings.ConcatenationSpacing">
-        <properties>
-            <property name="spacing" value="1"/>
-            <property name="ignoreNewlines" value="true"/>
-        </properties>
-    </rule>
-    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
-        <properties>
-            <property name="ignoreBlankLines" value="false"/>
-        </properties>
-    </rule>
-    <rule ref="Squiz.Strings.DoubleQuoteUsage"/>
-    <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
-        <properties>
-            <property name="newlinesCountBetweenOpenTagAndDeclare" value="1"/>
-            <property name="spacesCountAroundEqualsSign" value="0"/>
-        </properties>
-    </rule>
-    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
-        <properties>
-            <property name="searchAnnotations" value="true"/>
-        </properties>
-    </rule>
-    <!-- Force strict comparison with === or !== instead of == or != -->
-    <rule ref="SlevomatCodingStandard.ControlStructures.DisallowEqualOperators"/>
-    <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
-    <rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses"/>
-    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHintSpacing"/>
-    <!-- Enforce all global namespace classes, functions and constants to be explicitly imported -->
-    <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly">
-        <properties>
-            <property name="allowFallbackGlobalFunctions" value="false"/>
-            <property name="allowFallbackGlobalConstants" value="false"/>
-        </properties>
-    </rule>
-    <!-- Require comments with single line written as one-liners -->
-    <rule ref="SlevomatCodingStandard.Commenting.RequireOneLinePropertyDocComment"/>
+    <rule ref="Shlinkio" />
 
     <!-- Paths to check -->
     <file>bin</file>
@@ -55,6 +15,8 @@
     <file>data/migrations</file>
     <file>config</file>
     <file>public/index.php</file>
+
+    <!-- Paths to exclude -->
     <exclude-pattern>config/params/*</exclude-pattern>
     <exclude-pattern>public/index.php</exclude-pattern>
 </ruleset>
