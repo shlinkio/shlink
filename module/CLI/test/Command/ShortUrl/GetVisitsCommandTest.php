@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -40,8 +41,8 @@ class GetVisitsCommandTest extends TestCase
     public function noDateFlagsTriesToListWithoutDateRange()
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info($shortCode, new DateRange(null, null))->willReturn([])
-                                                                         ->shouldBeCalledOnce();
+        $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange(null, null)))->willReturn([])
+                                                                                           ->shouldBeCalledOnce();
 
         $this->commandTester->execute([
             'command' => 'shortcode:visits',
@@ -57,7 +58,10 @@ class GetVisitsCommandTest extends TestCase
         $shortCode = 'abc123';
         $startDate = '2016-01-01';
         $endDate = '2016-02-01';
-        $this->visitsTracker->info($shortCode, new DateRange(Chronos::parse($startDate), Chronos::parse($endDate)))
+        $this->visitsTracker->info(
+            $shortCode,
+            new VisitsParams(new DateRange(Chronos::parse($startDate), Chronos::parse($endDate)))
+        )
             ->willReturn([])
             ->shouldBeCalledOnce();
 

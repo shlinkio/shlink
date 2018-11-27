@@ -8,9 +8,11 @@ use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 
@@ -80,9 +82,9 @@ class VisitsTrackerTest extends TestCase
             new Visit(new ShortUrl(''), Visitor::emptyInstance()),
         ];
         $repo2 = $this->prophesize(VisitRepository::class);
-        $repo2->findVisitsByShortUrl($shortUrl, null)->willReturn($list);
+        $repo2->findVisitsByShortUrl($shortUrl, Argument::type(DateRange::class))->willReturn($list);
         $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
 
-        $this->assertEquals($list, $this->visitsTracker->info($shortCode));
+        $this->assertEquals($list, $this->visitsTracker->info($shortCode, new VisitsParams()));
     }
 }

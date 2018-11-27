@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Action\Visit;
 
 use Cake\Chronos\Chronos;
-use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
@@ -42,7 +42,7 @@ class GetVisitsAction extends AbstractRestAction
         $endDate = $this->getDateQueryParam($request, 'endDate');
 
         try {
-            $visits = $this->visitsTracker->info($shortCode, new DateRange($startDate, $endDate));
+            $visits = $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange($startDate, $endDate)));
 
             return new JsonResponse([
                 'visits' => [
@@ -55,12 +55,6 @@ class GetVisitsAction extends AbstractRestAction
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => sprintf('Provided short code %s does not exist', $shortCode),
             ], self::STATUS_NOT_FOUND);
-        } catch (Exception $e) {
-            $this->logger->error('Unexpected error while parsing short code {e}', ['e' => $e]);
-            return new JsonResponse([
-                'error' => RestUtils::UNKNOWN_ERROR,
-                'message' => 'Unexpected error occurred',
-            ], self::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
 

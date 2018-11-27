@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM;
-use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use function sprintf;
 
@@ -43,12 +43,10 @@ class VisitsTracker implements VisitsTrackerInterface
     /**
      * Returns the visits on certain short code
      *
-     * @param string $shortCode
-     * @param DateRange $dateRange
      * @return Visit[]
      * @throws InvalidArgumentException
      */
-    public function info(string $shortCode, DateRange $dateRange = null): array
+    public function info(string $shortCode, VisitsParams $params): array
     {
         /** @var ShortUrl|null $shortUrl */
         $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
@@ -60,6 +58,6 @@ class VisitsTracker implements VisitsTrackerInterface
 
         /** @var VisitRepository $repo */
         $repo = $this->em->getRepository(Visit::class);
-        return $repo->findVisitsByShortUrl($shortUrl, $dateRange);
+        return $repo->findVisitsByShortUrl($shortUrl, $params->getDateRange());
     }
 }
