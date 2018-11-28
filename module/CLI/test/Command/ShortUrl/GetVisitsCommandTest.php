@@ -13,10 +13,12 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use function strpos;
+use Zend\Paginator\Adapter\ArrayAdapter;
+use Zend\Paginator\Paginator;
 
 class GetVisitsCommandTest extends TestCase
 {
@@ -40,8 +42,9 @@ class GetVisitsCommandTest extends TestCase
     public function noDateFlagsTriesToListWithoutDateRange()
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info($shortCode, new DateRange(null, null))->willReturn([])
-                                                                         ->shouldBeCalledOnce();
+        $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange(null, null)))->willReturn(
+            new Paginator(new ArrayAdapter([]))
+        )->shouldBeCalledOnce();
 
         $this->commandTester->execute([
             'command' => 'shortcode:visits',
@@ -57,8 +60,11 @@ class GetVisitsCommandTest extends TestCase
         $shortCode = 'abc123';
         $startDate = '2016-01-01';
         $endDate = '2016-02-01';
-        $this->visitsTracker->info($shortCode, new DateRange(Chronos::parse($startDate), Chronos::parse($endDate)))
-            ->willReturn([])
+        $this->visitsTracker->info(
+            $shortCode,
+            new VisitsParams(new DateRange(Chronos::parse($startDate), Chronos::parse($endDate)))
+        )
+            ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
 
         $this->commandTester->execute([
@@ -75,19 +81,21 @@ class GetVisitsCommandTest extends TestCase
     public function outputIsProperlyGenerated()
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info($shortCode, Argument::any())->willReturn([
-            (new Visit(new ShortUrl(''), new Visitor('bar', 'foo', '')))->locate(
-                new VisitLocation(['country_name' => 'Spain'])
-            ),
-        ])->shouldBeCalledOnce();
+        $this->visitsTracker->info($shortCode, Argument::any())->willReturn(
+            new Paginator(new ArrayAdapter([
+                (new Visit(new ShortUrl(''), new Visitor('bar', 'foo', '')))->locate(
+                    new VisitLocation(['country_name' => 'Spain'])
+                ),
+            ]))
+        )->shouldBeCalledOnce();
 
         $this->commandTester->execute([
             'command' => 'shortcode:visits',
             'shortCode' => $shortCode,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertGreaterThan(0, strpos($output, 'foo'));
-        $this->assertGreaterThan(0, strpos($output, 'Spain'));
-        $this->assertGreaterThan(0, strpos($output, 'bar'));
+        $this->assertContains('foo', $output);
+        $this->assertContains('Spain', $output);
+        $this->assertContains('bar', $output);
     }
 }

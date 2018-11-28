@@ -62,7 +62,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     /**
      * @test
      */
-    public function findVisitsByShortUrlReturnsProperData()
+    public function findVisitsByShortCodeReturnsProperData()
     {
         $shortUrl = new ShortUrl('');
         $this->getEntityManager()->persist($shortUrl);
@@ -73,13 +73,38 @@ class VisitRepositoryTest extends DatabaseTestCase
         }
         $this->getEntityManager()->flush();
 
-        $this->assertCount(0, $this->repo->findVisitsByShortUrl('invalid'));
-        $this->assertCount(6, $this->repo->findVisitsByShortUrl($shortUrl->getId()));
-        $this->assertCount(2, $this->repo->findVisitsByShortUrl($shortUrl->getId(), new DateRange(
+        $this->assertCount(0, $this->repo->findVisitsByShortCode('invalid'));
+        $this->assertCount(6, $this->repo->findVisitsByShortCode($shortUrl->getShortCode()));
+        $this->assertCount(2, $this->repo->findVisitsByShortCode($shortUrl->getShortCode(), new DateRange(
             Chronos::parse('2016-01-02'),
             Chronos::parse('2016-01-03')
         )));
-        $this->assertCount(4, $this->repo->findVisitsByShortUrl($shortUrl->getId(), new DateRange(
+        $this->assertCount(4, $this->repo->findVisitsByShortCode($shortUrl->getShortCode(), new DateRange(
+            Chronos::parse('2016-01-03')
+        )));
+    }
+
+    /**
+     * @test
+     */
+    public function countVisitsByShortCodeReturnsProperData()
+    {
+        $shortUrl = new ShortUrl('');
+        $this->getEntityManager()->persist($shortUrl);
+
+        for ($i = 0; $i < 6; $i++) {
+            $visit = new Visit($shortUrl, Visitor::emptyInstance(), Chronos::parse(sprintf('2016-01-0%s', $i + 1)));
+            $this->getEntityManager()->persist($visit);
+        }
+        $this->getEntityManager()->flush();
+
+        $this->assertEquals(0, $this->repo->countVisitsByShortCode('invalid'));
+        $this->assertEquals(6, $this->repo->countVisitsByShortCode($shortUrl->getShortCode()));
+        $this->assertEquals(2, $this->repo->countVisitsByShortCode($shortUrl->getShortCode(), new DateRange(
+            Chronos::parse('2016-01-02'),
+            Chronos::parse('2016-01-03')
+        )));
+        $this->assertEquals(4, $this->repo->countVisitsByShortCode($shortUrl->getShortCode(), new DateRange(
             Chronos::parse('2016-01-03')
         )));
     }

@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Service;
 
-use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Model\VisitsParams;
+use Zend\Paginator\Paginator;
 
 interface VisitsTrackerInterface
 {
@@ -18,10 +19,8 @@ interface VisitsTrackerInterface
     /**
      * Returns the visits on certain short code
      *
-     * @param string $shortCode
-     * @param DateRange $dateRange
-     * @return Visit[]
+     * @return Visit[]|Paginator
      * @throws InvalidArgumentException
      */
-    public function info(string $shortCode, DateRange $dateRange = null): array;
+    public function info(string $shortCode, VisitsParams $params): Paginator;
 }

@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
     Adding the `-d` flag, it will be started as a background service. Then you can use the `./vendor/bin/zend-expressive-swoole stop` command in order to stop it.
 
+* [#266](https://github.com/shlinkio/shlink/issues/266) Added pagination to `GET /short-urls/{shortCode}/visits` endpoint.
+
+    In order to make it backwards compatible, it keeps returning all visits by default, but it now allows to provide the `page` and `itemsPerPage` query parameters in order to configure the number of items to get.
+
 #### Changed
 
 * [#267](https://github.com/shlinkio/shlink/issues/267) API responses and the CLI interface is no longer translated and uses english always. Only not found error templates are still translated.

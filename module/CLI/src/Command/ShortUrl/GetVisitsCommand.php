@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Zend\Stdlib\ArrayUtils;
 use function array_map;
 use function Functional\select_keys;
 
@@ -72,7 +74,9 @@ class GetVisitsCommand extends Command
         $startDate = $this->getDateOption($input, 'startDate');
         $endDate = $this->getDateOption($input, 'endDate');
 
-        $visits = $this->visitsTracker->info($shortCode, new DateRange($startDate, $endDate));
+        $paginator = $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange($startDate, $endDate)));
+        $visits = ArrayUtils::iteratorToArray($paginator->getCurrentItems());
+
         $rows = array_map(function (Visit $visit) {
             $rowData = $visit->jsonSerialize();
             $rowData['country'] = $visit->getVisitLocation()->getCountryName();
