@@ -27,7 +27,11 @@ final class VisitsParams
         $startDate = self::getDateQueryParam($query, 'startDate');
         $endDate = self::getDateQueryParam($query, 'endDate');
 
-        return new self(new DateRange($startDate, $endDate), $query['page'] ?? 1, $query['itemsPerPage'] ?? null);
+        return new self(
+            new DateRange($startDate, $endDate),
+            (int) ($query['page'] ?? 1),
+            isset($query['itemsPerPage']) ? (int) $query['itemsPerPage'] : null
+        );
     }
 
     private static function getDateQueryParam(array $query, string $key): ?Chronos
