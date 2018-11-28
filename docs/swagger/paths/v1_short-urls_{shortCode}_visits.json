@@ -33,6 +33,24 @@
                 "schema": {
                     "type": "string"
                 }
+            },
+            {
+                "name": "page",
+                "in": "query",
+                "description": "The page to display. Defaults to 1",
+                "required": false,
+                "schema": {
+                    "type": "number"
+                }
+            },
+            {
+                "name": "itemsPerPage",
+                "in": "query",
+                "description": "The amount of items to return on every page. Defaults to all the items",
+                "required": false,
+                "schema": {
+                    "type": "number"
+                }
             }
         ],
         "security": [
@@ -59,6 +77,9 @@
                                             "items": {
                                                 "$ref": "../definitions/Visit.json"
                                             }
+                                        },
+                                        "pagination": {
+                                            "$ref": "../definitions/Pagination.json"
                                         }
                                     }
                                 }
@@ -96,7 +117,14 @@
                                     "userAgent": "some_web_crawler/1.4",
                                     "visitLocation": null
                                 }
-                            ]
+                            ],
+                            "pagination": {
+                                "currentPage": 5,
+                                "pagesCount": 12,
+                                "itemsPerPage": 10,
+                                "itemsInCurrentPage": 10,
+                                "totalItems": 115
+                            }
                         }
                     }
                 }
