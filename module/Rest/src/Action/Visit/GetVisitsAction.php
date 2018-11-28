@@ -3,12 +3,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\Visit;
 
-use Cake\Chronos\Chronos;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
-use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -38,11 +36,9 @@ class GetVisitsAction extends AbstractRestAction
     public function handle(Request $request): Response
     {
         $shortCode = $request->getAttribute('shortCode');
-        $startDate = $this->getDateQueryParam($request, 'startDate');
-        $endDate = $this->getDateQueryParam($request, 'endDate');
 
         try {
-            $visits = $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange($startDate, $endDate)));
+            $visits = $this->visitsTracker->info($shortCode, VisitsParams::fromRawData($request->getQueryParams()));
 
             return new JsonResponse([
                 'visits' => [
@@ -56,11 +52,5 @@ class GetVisitsAction extends AbstractRestAction
                 'message' => sprintf('Provided short code %s does not exist', $shortCode),
             ], self::STATUS_NOT_FOUND);
         }
-    }
-
-    private function getDateQueryParam(Request $request, string $key): ?Chronos
-    {
-        $query = $request->getQueryParams();
-        return ! isset($query[$key]) || empty($query[$key]) ? null : Chronos::parse($query[$key]);
     }
 }
