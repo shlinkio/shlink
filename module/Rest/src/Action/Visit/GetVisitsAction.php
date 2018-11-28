@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -16,6 +17,8 @@ use function sprintf;
 
 class GetVisitsAction extends AbstractRestAction
 {
+    use PaginatorUtilsTrait;
+
     protected const ROUTE_PATH = '/short-urls/{shortCode}/visits';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
@@ -41,9 +44,7 @@ class GetVisitsAction extends AbstractRestAction
             $visits = $this->visitsTracker->info($shortCode, VisitsParams::fromRawData($request->getQueryParams()));
 
             return new JsonResponse([
-                'visits' => [
-                    'data' => $visits,
-                ],
+                'visits' => $this->serializePaginator($visits),
             ]);
         } catch (InvalidArgumentException $e) {
             $this->logger->warning('Provided nonexistent short code {e}', ['e' => $e]);

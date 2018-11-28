@@ -9,7 +9,9 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
+use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
+use Zend\Paginator\Paginator;
 use function sprintf;
 
 class VisitsTracker implements VisitsTrackerInterface
@@ -43,21 +45,23 @@ class VisitsTracker implements VisitsTrackerInterface
     /**
      * Returns the visits on certain short code
      *
-     * @return Visit[]
+     * @return Visit[]|Paginator
      * @throws InvalidArgumentException
      */
-    public function info(string $shortCode, VisitsParams $params): array
+    public function info(string $shortCode, VisitsParams $params): Paginator
     {
-        /** @var ShortUrl|null $shortUrl */
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
-            'shortCode' => $shortCode,
-        ]);
-        if ($shortUrl === null) {
+        /** @var ORM\EntityRepository $repo */
+        $repo = $this->em->getRepository(ShortUrl::class);
+        if ($repo->count(['shortCode' => $shortCode]) < 1) {
             throw new InvalidArgumentException(sprintf('Short code "%s" not found', $shortCode));
         }
 
         /** @var VisitRepository $repo */
         $repo = $this->em->getRepository(Visit::class);
-        return $repo->findVisitsByShortUrl($shortUrl, $params->getDateRange());
+        $paginator = new Paginator(new VisitsPaginatorAdapter($repo, $shortCode, $params));
+        $paginator->setItemCountPerPage($params->hasItemsPerPage() ? $params->getItemsPerPage() : -1)
+                  ->setCurrentPageNumber($params->getPage());
+
+        return $paginator;
     }
 }

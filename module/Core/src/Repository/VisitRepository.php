@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Common\Util\DateRange;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 
 class VisitRepository extends EntityRepository implements VisitRepositoryInterface
@@ -19,24 +19,42 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
     }
 
     /**
-     * @param ShortUrl|int $shortUrlOrId
-     * @param DateRange|null $dateRange
      * @return Visit[]
      */
-    public function findVisitsByShortUrl($shortUrlOrId, DateRange $dateRange = null): array
-    {
-        /** @var ShortUrl|null $shortUrl */
-        $shortUrl = $shortUrlOrId instanceof ShortUrl
-            ? $shortUrlOrId
-            : $this->getEntityManager()->find(ShortUrl::class, $shortUrlOrId);
+    public function findVisitsByShortCode(
+        string $shortCode,
+        ?DateRange $dateRange = null,
+        ?int $limit = null,
+        ?int $offset = null
+    ): array {
+        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $dateRange);
+        $qb->select('v');
 
-        if ($shortUrl === null) {
-            return [];
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+        if ($offset !== null) {
+            $qb->setFirstResult($offset);
         }
 
-        $qb = $this->createQueryBuilder('v');
-        $qb->where($qb->expr()->eq('v.shortUrl', ':shortUrl'))
-           ->setParameter('shortUrl', $shortUrl)
+        return $qb->getQuery()->getResult();
+    }
+
+    public function countVisitsByShortCode(string $shortCode, ?DateRange $dateRange = null): int
+    {
+        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $dateRange);
+        $qb->select('COUNT(DISTINCT v.id)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    private function createVisitsByShortCodeQueryBuilder(string $shortCode, ?DateRange $dateRange = null): QueryBuilder
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(Visit::class, 'v')
+           ->join('v.shortUrl', 'su')
+           ->where($qb->expr()->eq('su.shortCode', ':shortCode'))
+           ->setParameter('shortCode', $shortCode)
            ->orderBy('v.date', 'DESC') ;
 
         // Apply date range filtering
@@ -49,6 +67,6 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
                ->setParameter('endDate', $dateRange->getEndDate());
         }
 
-        return $qb->getQuery()->getResult();
+        return $qb;
     }
 }

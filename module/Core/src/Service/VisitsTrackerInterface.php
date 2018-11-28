@@ -7,6 +7,7 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
+use Zend\Paginator\Paginator;
 
 interface VisitsTrackerInterface
 {
@@ -18,8 +19,8 @@ interface VisitsTrackerInterface
     /**
      * Returns the visits on certain short code
      *
-     * @return Visit[]
+     * @return Visit[]|Paginator
      * @throws InvalidArgumentException
      */
-    public function info(string $shortCode, VisitsParams $params): array;
+    public function info(string $shortCode, VisitsParams $params): Paginator;
 }

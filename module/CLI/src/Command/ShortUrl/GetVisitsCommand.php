@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Zend\Stdlib\ArrayUtils;
 use function array_map;
 use function Functional\select_keys;
 
@@ -73,7 +74,9 @@ class GetVisitsCommand extends Command
         $startDate = $this->getDateOption($input, 'startDate');
         $endDate = $this->getDateOption($input, 'endDate');
 
-        $visits = $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange($startDate, $endDate)));
+        $paginator = $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange($startDate, $endDate)));
+        $visits = ArrayUtils::iteratorToArray($paginator->getCurrentItems());
+
         $rows = array_map(function (Visit $visit) {
             $rowData = $visit->jsonSerialize();
             $rowData['country'] = $visit->getVisitLocation()->getCountryName();

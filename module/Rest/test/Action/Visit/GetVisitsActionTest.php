@@ -13,6 +13,8 @@ use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Rest\Action\Visit\GetVisitsAction;
 use Zend\Diactoros\ServerRequestFactory;
+use Zend\Paginator\Adapter\ArrayAdapter;
+use Zend\Paginator\Paginator;
 
 class GetVisitsActionTest extends TestCase
 {
@@ -33,8 +35,9 @@ class GetVisitsActionTest extends TestCase
     public function providingCorrectShortCodeReturnsVisits()
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info($shortCode, Argument::type(VisitsParams::class))->willReturn([])
-                                                                                ->shouldBeCalledOnce();
+        $this->visitsTracker->info($shortCode, Argument::type(VisitsParams::class))->willReturn(
+            new Paginator(new ArrayAdapter([]))
+        )->shouldBeCalledOnce();
 
         $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode));
         $this->assertEquals(200, $response->getStatusCode());
@@ -63,7 +66,7 @@ class GetVisitsActionTest extends TestCase
         $this->visitsTracker->info($shortCode, new VisitsParams(
             new DateRange(null, Chronos::parse('2016-01-01 00:00:00'))
         ))
-            ->willReturn([])
+            ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
 
         $response = $this->action->handle(
