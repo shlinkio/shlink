@@ -42,7 +42,7 @@
         "zendframework/zend-expressive-fastroute": "^3.0",
         "zendframework/zend-expressive-helpers": "^5.0",
         "zendframework/zend-expressive-platesrenderer": "^2.0",
-        "zendframework/zend-expressive-swoole": "^2.0.1",
+        "zendframework/zend-expressive-swoole": "^2.1",
         "zendframework/zend-i18n": "^2.7",
         "zendframework/zend-inputfilter": "^2.8",
         "zendframework/zend-paginator": "^2.6",

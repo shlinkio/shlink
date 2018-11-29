@@ -8,6 +8,10 @@ return [
 
         'swoole-http-server' => [
             'host' => '0.0.0.0',
+            'process-name' => 'shlink',
+            'static-files' => [
+                'enable' => false,
+            ],
         ],
     ],
 
