@@ -60,18 +60,24 @@ class GetVisitsActionTest extends TestCase
     /**
      * @test
      */
-    public function datesAreReadFromQuery()
+    public function paramsAreReadFromQuery()
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, new VisitsParams(
-            new DateRange(null, Chronos::parse('2016-01-01 00:00:00'))
+            new DateRange(null, Chronos::parse('2016-01-01 00:00:00')),
+            3,
+            10
         ))
             ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
 
         $response = $this->action->handle(
             ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode)
-                                               ->withQueryParams(['endDate' => '2016-01-01 00:00:00'])
+                                               ->withQueryParams([
+                                                   'endDate' => '2016-01-01 00:00:00',
+                                                   'page' => '3',
+                                                   'itemsPerPage' => '10',
+                                               ])
         );
         $this->assertEquals(200, $response->getStatusCode());
     }

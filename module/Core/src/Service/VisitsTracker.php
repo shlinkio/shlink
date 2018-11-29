@@ -59,7 +59,7 @@ class VisitsTracker implements VisitsTrackerInterface
         /** @var VisitRepository $repo */
         $repo = $this->em->getRepository(Visit::class);
         $paginator = new Paginator(new VisitsPaginatorAdapter($repo, $shortCode, $params));
-        $paginator->setItemCountPerPage($params->hasItemsPerPage() ? $params->getItemsPerPage() : -1)
+        $paginator->setItemCountPerPage($params->getItemsPerPage())
                   ->setCurrentPageNumber($params->getPage());
 
         return $paginator;
