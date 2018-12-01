@@ -17,6 +17,7 @@ use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Zend\Diactoros\Uri;
@@ -57,16 +58,12 @@ class UrlShortenerTest extends TestCase
         $this->setUrlShortener(false);
     }
 
-    /**
-     * @param bool $urlValidationEnabled
-     */
-    public function setUrlShortener($urlValidationEnabled)
+    public function setUrlShortener(bool $urlValidationEnabled)
     {
         $this->urlShortener = new UrlShortener(
             $this->httpClient->reveal(),
             $this->em->reveal(),
-            $urlValidationEnabled,
-            UrlShortener::DEFAULT_CHARS,
+            new UrlShortenerOptions(['validate_url' => $urlValidationEnabled]),
             $this->slugger->reveal()
         );
     }
