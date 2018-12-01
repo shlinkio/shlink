@@ -12,7 +12,6 @@ return (new ConfigAggregator\ConfigAggregator([
     Expressive\Router\ConfigProvider::class,
     Expressive\Router\FastRouteRouter\ConfigProvider::class,
     Expressive\Plates\ConfigProvider::class,
-    Expressive\Helper\ConfigProvider::class,
     Expressive\Swoole\ConfigProvider::class,
     ExpressiveErrorHandler\ConfigProvider::class,
     Common\ConfigProvider::class,
