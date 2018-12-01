@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Cake\Chronos\Chronos;
-use Cocur\Slugify\Slugify;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\ClientInterface;
@@ -17,6 +16,7 @@ use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Exception\RuntimeException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Throwable;
@@ -29,32 +29,29 @@ class UrlShortener implements UrlShortenerInterface
 {
     use TagManagerTrait;
 
-    public const DEFAULT_CHARS = '123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
+    /** @deprecated */
+    public const DEFAULT_CHARS = UrlShortenerOptions::DEFAULT_CHARS;
     private const ID_INCREMENT = 200000;
 
     /** @var ClientInterface */
     private $httpClient;
     /** @var EntityManagerInterface */
     private $em;
-    /** @var string */
-    private $chars;
     /** @var SlugifyInterface */
     private $slugger;
-    /** @var bool */
-    private $urlValidationEnabled;
+    /** @var UrlShortenerOptions */
+    private $options;
 
     public function __construct(
         ClientInterface $httpClient,
         EntityManagerInterface $em,
-        $urlValidationEnabled,
-        $chars = self::DEFAULT_CHARS,
-        SlugifyInterface $slugger = null
+        UrlShortenerOptions $options,
+        SlugifyInterface $slugger
     ) {
         $this->httpClient = $httpClient;
         $this->em = $em;
-        $this->urlValidationEnabled = (bool) $urlValidationEnabled;
-        $this->chars = empty($chars) ? self::DEFAULT_CHARS : $chars;
-        $this->slugger = $slugger ?: new Slugify();
+        $this->options = $options;
+        $this->slugger = $slugger;
     }
 
     /**
@@ -71,7 +68,7 @@ class UrlShortener implements UrlShortenerInterface
         ?int $maxVisits = null
     ): ShortUrl {
         // If the URL validation is enabled, check that the URL actually exists
-        if ($this->urlValidationEnabled) {
+        if ($this->options->isUrlValidationEnabled()) {
             $this->checkUrlExists($url);
         }
         $customSlug = $this->processCustomSlug($customSlug);
@@ -121,16 +118,18 @@ class UrlShortener implements UrlShortenerInterface
     private function convertAutoincrementIdToShortCode(float $id): string
     {
         $id += self::ID_INCREMENT; // Increment the Id so that the generated shortcode is not too short
-        $length = strlen($this->chars);
+        $chars = $this->options->getChars();
+
+        $length = strlen($chars);
         $code = '';
 
         while ($id > 0) {
             // Determine the value of the next higher character in the short code and prepend it
-            $code = $this->chars[(int) fmod($id, $length)] . $code;
+            $code = $chars[(int) fmod($id, $length)] . $code;
             $id = floor($id / $length);
         }
 
-        return $this->chars[(int) $id] . $code;
+        return $chars[(int) $id] . $code;
     }
 
     private function processCustomSlug(?string $customSlug): ?string
@@ -157,9 +156,11 @@ class UrlShortener implements UrlShortenerInterface
      */
     public function shortCodeToUrl(string $shortCode): ShortUrl
     {
+        $chars = $this->options->getChars();
+
         // Validate short code format
-        if (! preg_match('|[' . $this->chars . ']+|', $shortCode)) {
-            throw InvalidShortCodeException::fromCharset($shortCode, $this->chars);
+        if (! preg_match('|[' . $chars . ']+|', $shortCode)) {
+            throw InvalidShortCodeException::fromCharset($shortCode, $chars);
         }
 
         /** @var ShortUrlRepository $shortUrlRepo */

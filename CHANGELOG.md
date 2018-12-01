@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 #### Fixed
 
 * [#278](https://github.com/shlinkio/shlink/pull/278) Added missing `X-Api-Key` header to the list of valid cross domain headers.
+* [#295](https://github.com/shlinkio/shlink/pull/295) Fixed custom slugs so that they are case sensitive and do not try to lowercase provided values.
 
 
 ## 1.14.1 - 2018-11-17
