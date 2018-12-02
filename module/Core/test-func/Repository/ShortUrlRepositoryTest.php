@@ -92,7 +92,10 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($foo);
 
         $bar = new ShortUrl('bar');
-        $bar->setShortCode('bar_very_long_text');
+        $visit = new Visit($bar, Visitor::emptyInstance());
+        $this->getEntityManager()->persist($visit);
+        $bar->setShortCode('bar_very_long_text')
+            ->setVisits(new ArrayCollection([$visit]));
         $this->getEntityManager()->persist($bar);
 
         $foo2 = new ShortUrl('foo_2');
@@ -104,6 +107,22 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $result = $this->repo->findList(null, null, 'foo', ['bar']);
         $this->assertCount(1, $result);
         $this->assertSame($foo, $result[0]);
+
+        $result = $this->repo->findList();
+        $this->assertCount(3, $result);
+
+        $result = $this->repo->findList(2);
+        $this->assertCount(2, $result);
+
+        $result = $this->repo->findList(2, 1);
+        $this->assertCount(2, $result);
+
+        $result = $this->repo->findList(2, 2);
+        $this->assertCount(1, $result);
+
+        $result = $this->repo->findList(null, null, null, [], ['visits' => 'DESC']);
+        $this->assertCount(3, $result);
+        $this->assertSame($bar, $result[0]);
     }
 
     /**

@@ -14,7 +14,7 @@ class TagRepository extends EntityRepository implements TagRepositoryInterface
      * @param array $names
      * @return int The number of affected entries
      */
-    public function deleteByName(array $names)
+    public function deleteByName(array $names): int
     {
         if (empty($names)) {
             return 0;

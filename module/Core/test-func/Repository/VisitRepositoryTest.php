@@ -82,6 +82,8 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->assertCount(4, $this->repo->findVisitsByShortCode($shortUrl->getShortCode(), new DateRange(
             Chronos::parse('2016-01-03')
         )));
+        $this->assertCount(3, $this->repo->findVisitsByShortCode($shortUrl->getShortCode(), null, 3, 2));
+        $this->assertCount(2, $this->repo->findVisitsByShortCode($shortUrl->getShortCode(), null, 5, 4));
     }
 
     /**
