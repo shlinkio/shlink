@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 * [#267](https://github.com/shlinkio/shlink/issues/267) API responses and the CLI interface is no longer translated and uses english always. Only not found error templates are still translated.
 * [#289](https://github.com/shlinkio/shlink/issues/289) Extracted coding standard rules to a separated package.
+* [#273](https://github.com/shlinkio/shlink/issues/273) Improved code coverage in repository classes.
 
 #### Deprecated
 

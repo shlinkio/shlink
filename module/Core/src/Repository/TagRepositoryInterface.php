@@ -13,5 +13,5 @@ interface TagRepositoryInterface extends ObjectRepository
      * @param array $names
      * @return int The number of affected entries
      */
-    public function deleteByName(array $names);
+    public function deleteByName(array $names): int;
 }

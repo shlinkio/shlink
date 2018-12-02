@@ -119,7 +119,7 @@
 
         "test:pretty": [
             "@test",
-            "phpcov merge build --html build/html"
+            "phpdbg -qrr vendor/bin/phpcov merge build --html build/html"
         ],
         "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage --order-by=random",
 
