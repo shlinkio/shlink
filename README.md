@@ -97,7 +97,7 @@ Despite how you built the project, you are going to need to install it now, by f
 
         **Important!** Swoole support is still experimental. Use it with care, and report any found issue.
 
-        First you need to install the swoole PHP extension with [pecl](https://pecl.php.net/package/swoole) `pecl install swoole`.
+        First you need to install the swoole PHP extension with [pecl](https://pecl.php.net/package/swoole), `pecl install swoole`.
 
         Once installed, it's actually pretty easy to get shlink up and running with swoole. Just run `./vendor/bin/zend-expressive-swoole start -d` and you will get shlink running on port 8080.
 
