@@ -44,52 +44,132 @@ Despite how you built the project, you are going to need to install it now, by f
 * If you are going to use MySQL or PostgreSQL, create an empty database with the name of your choice.
 * Recursively grant write permissions to the `data` directory. Shlink uses it to cache some information.
 * Setup the application by running the `bin/install` script. It is a command line tool that will guide you through the installation process. **Take into account that this tool has to be run directly on the server where you plan to host Shlink. Do not run it before uploading/moving it there.**
-* Configure the web server of your choice to serve shlink using your short domain.
+* Expose shlink to the web, either by using a traditional web server + fast CGI approach, or by using a [swoole](https://www.swoole.co.uk/) non-blocking server.
 
-    For example, assuming your domain is doma.in and shlink is in the `/path/to/shlink` folder, this would be the basic configuration for Nginx and Apache.
+    * **Using a web server:**
 
-    *Nginx:*
+        For example, assuming your domain is doma.in and shlink is in the `/path/to/shlink` folder, these would be the basic configurations for Nginx and Apache.
 
-    ```nginx
-    server {
-        server_name doma.in;
-        listen 80;
-        root /path/to/shlink/public;
-        index index.php;
-        charset utf-8;
+        *Nginx:*
 
-        location / {
-            try_files $uri $uri/ /index.php$is_args$args;
+        ```nginx
+        server {
+            server_name doma.in;
+            listen 80;
+            root /path/to/shlink/public;
+            index index.php;
+            charset utf-8;
+
+            location / {
+                try_files $uri $uri/ /index.php$is_args$args;
+            }
+
+            location ~ \.php$ {
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
+                fastcgi_index index.php;
+                include fastcgi.conf;
+            }
+
+            location ~ /\.ht {
+                deny all;
+            }
+        }
+        ```
+
+        *Apache:*
+
+        ```apache
+        <VirtualHost *:80>
+            ServerName doma.in
+            DocumentRoot "/path/to/shlink/public"
+
+            <Directory "/path/to/shlink/public">
+                Options FollowSymLinks Includes ExecCGI
+                AllowOverride all
+                Order allow,deny
+                Allow from all
+            </Directory>
+        </VirtualHost>
+        ```
+
+    * **Using swoole:**
+
+        **Important!** Swoole support is still experimental. Use it with care, and report any found issue.
+
+        First you need to install the swoole PHP extension with [pecl](https://pecl.php.net/package/swoole), `pecl install swoole`.
+
+        Once installed, it's actually pretty easy to get shlink up and running with swoole. Just run `./vendor/bin/zend-expressive-swoole start -d` and you will get shlink running on port 8080.
+
+        However, by doing it this way, you are loosing all the access logs, and the service won't be automatically run if the server has to be restarted.
+
+        For that reason, you should create a daemon script, in `/etc/init.d/shlink_swoole`, like this one, replacing `/path/to/shlink` by the path to your shlink installation:
+
+        ```bash
+        #!/bin/bash
+        ### BEGIN INIT INFO
+        # Provides:          shlink_swoole
+        # Required-Start:    $local_fs $network $named $time $syslog
+        # Required-Stop:     $local_fs $network $named $time $syslog
+        # Default-Start:     2 3 4 5
+        # Default-Stop:      0 1 6
+        # Description:       Shlink non-blocking server with swoole
+        ### END INIT INFO
+
+        SCRIPT=/path/to/shlink/vendor/bin/zend-expressive-swoole\ start
+        RUNAS=root
+
+        PIDFILE=/var/run/shlink_swoole.pid
+        LOGDIR=/var/log/shlink
+        LOGFILE=${LOGDIR}/shlink_swoole.log
+
+        start() {
+          if [[ -f "$PIDFILE" ]] && kill -0 $(cat "$PIDFILE"); then
+            echo 'Shlink with swoole already running' >&2
+            return 1
+          fi
+          echo 'Starting shlink with swoole' >&2
+          mkdir -p "$LOGDIR"
+          touch "$LOGFILE"
+          local CMD="$SCRIPT &> \"$LOGFILE\" & echo \$!"
+          su -c "$CMD" $RUNAS > "$PIDFILE"
+          echo 'Shlink started' >&2
         }
 
-        location ~ \.php$ {
-            fastcgi_split_path_info ^(.+\.php)(/.+)$;
-            fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
-            fastcgi_index index.php;
-            include fastcgi.conf;
+        stop() {
+          if [[ ! -f "$PIDFILE" ]] || ! kill -0 $(cat "$PIDFILE"); then
+            echo 'Shlink with swoole not running' >&2
+            return 1
+          fi
+          echo 'Stopping shlink with swoole' >&2
+          kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
+          echo 'Shlink stopped' >&2
         }
 
-        location ~ /\.ht {
-            deny all;
-        }
-    }
-    ```
+        case "$1" in
+          start)
+            start
+            ;;
+          stop)
+            stop
+            ;;
+          restart)
+            stop
+            start
+            ;;
+          *)
+            echo "Usage: $0 {start|stop|restart}"
+        esac
+        ```
 
-    *Apache:*
+        Then run these commands to enable the service and start it:
 
-    ```apache
-    <VirtualHost *:80>
-        ServerName doma.in
-        DocumentRoot "/path/to/shlink/public"
+        * `sudo chmod +x /etc/init.d/shlink_swoole`
+        * `sudo update-rc.d shlink_swoole defaults`
+        * `sudo update-rc.d shlink_swoole enable`
+        * `/etc/init.d/shlink_swoole start`
 
-        <Directory "/path/to/shlink/public">
-            Options FollowSymLinks Includes ExecCGI
-            AllowOverride all
-            Order allow,deny
-            Allow from all
-        </Directory>
-    </VirtualHost>
-    ```
+        Now again, you can access shlink on port 8080, but this time the service will be automatically run at system start-up, and all access logs will be written in `/var/log/shlink/shlink_swoole.log` (you will probably want to [rotate those logs](https://www.digitalocean.com/community/tutorials/how-to-manage-logfiles-with-logrotate-on-ubuntu-16-04). You can find an example logrotate config file [here](data/infra/examples/shlink-daemon-logrotate.conf)).
 
 * Generate your first API key by running `bin/cli api-key:generate`. You will need the key in order to interact with shlink's API.
 * Finally access to [https://app.shlink.io](https://app.shlink.io) and configure your server to start creating short URLs.
@@ -115,6 +195,8 @@ Those tasks can be performed using shlink's CLI, so it should be easy to schedul
     Running this will improve the performance of the `doma.in/abc123/preview` URLs, which return a preview of the site.
 
 *Any of those commands accept the `-q` flag, which makes it not display any output. This is recommended when configuring the commands as cron jobs.*
+
+In future versions, it is planed that, when using **swoole** to serve shlink, some of these tasks are automatically run without blocking the request and also, without having to configure cron jobs. Probably resolving IP locations and generating previews.
 
 ## Update to new version
 
