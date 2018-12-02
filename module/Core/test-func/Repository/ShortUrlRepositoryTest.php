@@ -76,7 +76,6 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         $this->assertEquals($count, $this->repo->countList());
-        $this->assertEquals($count, $this->repo->countList());
     }
 
     /**
