@@ -7,7 +7,6 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor;
-use Zend\Expressive\Swoole\Log\AccessLogInterface;
 use const PHP_EOL;
 
 return [
@@ -32,7 +31,6 @@ return [
                 'class' => StreamHandler::class,
                 'level' => Logger::INFO,
                 'stream' => 'php://stdout',
-                'formatter' => 'dashed',
             ],
         ],
 
@@ -61,15 +59,13 @@ return [
         'factories' => [
             'Logger_Shlink' => Common\Factory\LoggerFactory::class,
             'Logger_Swoole' => Common\Factory\LoggerFactory::class,
-
-            AccessLogInterface::class => Common\Logger\Swoole\AccessLogFactory::class,
         ],
     ],
 
     'zend-expressive-swoole' => [
         'swoole-http-server' => [
             'logger' => [
-                'logger_name' => 'Logger_Swoole',
+                'logger-name' => 'Logger_Swoole',
             ],
         ],
     ],
