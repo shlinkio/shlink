@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* [#301](https://github.com/shlinkio/shlink/issues/301) Removed custom `AccessLogFactory` in favor of the implementation included in [zendframework/zend-expressive-swoole](https://github.com/zendframework/zend-expressive-swoole) v2.2.0
+
+#### Fixed
+
+* *Nothing*
+
+
 ## 1.15.0 - 2018-12-02
 
 #### Added
