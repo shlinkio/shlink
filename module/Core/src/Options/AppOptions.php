@@ -15,69 +15,48 @@ class AppOptions extends AbstractOptions
     private $name = '';
     /** @var string */
     private $version = '1.0';
-    /** @var string */
+    /**
+     * @var string
+     * @deprecated
+     */
     private $secretKey = '';
     /** @var string|null */
     private $disableTrackParam;
 
-    /**
-     * AppOptions constructor.
-     * @param array|null|\Traversable $options
-     */
-    public function __construct($options = null)
-    {
-        parent::__construct($options);
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return $this
-     */
-    protected function setName($name)
+    protected function setName(string $name): self
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->version;
     }
 
-    /**
-     * @param string $version
-     * @return $this
-     */
-    protected function setVersion($version)
+    protected function setVersion(string $version): self
     {
         $this->version = $version;
         return $this;
     }
 
     /**
-     * @return mixed
+     * @deprecated
      */
-    public function getSecretKey()
+    public function getSecretKey(): string
     {
         return $this->secretKey;
     }
 
     /**
-     * @param mixed $secretKey
-     * @return $this
+     * @deprecated
      */
-    protected function setSecretKey($secretKey)
+    protected function setSecretKey(string $secretKey): self
     {
         $this->secretKey = $secretKey;
         return $this;
@@ -86,25 +65,18 @@ class AppOptions extends AbstractOptions
     /**
      * @return string|null
      */
-    public function getDisableTrackParam()
+    public function getDisableTrackParam(): ?string
     {
         return $this->disableTrackParam;
     }
 
-    /**
-     * @param string|null $disableTrackParam
-     * @return $this|self
-     */
-    protected function setDisableTrackParam($disableTrackParam): self
+    protected function setDisableTrackParam(?string $disableTrackParam): self
     {
         $this->disableTrackParam = $disableTrackParam;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf('%s:v%s', $this->name, $this->version);
     }
