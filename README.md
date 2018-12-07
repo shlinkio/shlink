@@ -214,11 +214,9 @@ Right now, it does not import cached info (like website previews), but it will. 
 
 ## Using a docker image
 
-Currently there's no official docker image, but there's a work in progress alpha version you can find [here](https://hub.docker.com/r/shlinkio/shlink/).
+Starting with version 1.15.0, an official docker image is provided. You can find the docs on how to use it [here](https://hub.docker.com/r/shlinkio/shlink/).
 
-The idea will be that you can just generate a container using the image and provide predefined config files via volumes or CLI arguments, so that you get shlink up and running.
-
-Currently the image does not expose an entry point which let's you interact with shlink's CLI interface, nor allows configuration to be passed.
+The idea is that you can just generate a container using the image and provide custom config via env vars.
 
 ## Using shlink
 
