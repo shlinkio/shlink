@@ -8,7 +8,7 @@ return [
     'app_options' => [
         'name' => 'Shlink',
         'version' => '%SHLINK_VERSION%',
-        'secret_key' => env('SECRET_KEY'),
+        'secret_key' => env('SECRET_KEY', ''),
         'disable_track_param' => null,
     ],
 
