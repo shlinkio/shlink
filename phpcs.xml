@@ -18,5 +18,4 @@
 
     <!-- Paths to exclude -->
     <exclude-pattern>config/params/*</exclude-pattern>
-    <exclude-pattern>public/index.php</exclude-pattern>
 </ruleset>
