@@ -13,6 +13,7 @@ use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use function Functional\contains;
 use function Shlinkio\Shlink\Common\env;
+use function sys_get_temp_dir;
 
 class CacheFactory implements FactoryInterface
 {
@@ -23,6 +24,7 @@ class CacheFactory implements FactoryInterface
         Cache\PhpFileCache::class,
         Cache\MemcachedCache::class,
     ];
+    private const DEFAULT_MEMCACHED_PORT = 11211;
 
     /**
      * Create an object
@@ -40,7 +42,7 @@ class CacheFactory implements FactoryInterface
     {
         $appOptions = $container->get(AppOptions::class);
         $adapter = $this->getAdapter($container);
-        $adapter->setNamespace($appOptions->__toString());
+        $adapter->setNamespace((string) $appOptions);
 
         return $adapter;
     }
@@ -65,25 +67,35 @@ class CacheFactory implements FactoryInterface
                 return new $cacheConfig['adapter']();
             case Cache\FilesystemCache::class:
             case Cache\PhpFileCache::class:
-                return new $cacheConfig['adapter']($cacheConfig['options']['dir']);
+                return new $cacheConfig['adapter']($cacheConfig['options']['dir'] ?? sys_get_temp_dir());
             case Cache\MemcachedCache::class:
-                $memcached = new Memcached();
-                $servers = $cacheConfig['options']['servers'] ?? [];
-
-                foreach ($servers as $server) {
-                    if (! isset($server['host'])) {
-                        continue;
-                    }
-                    $port = isset($server['port']) ? (int) $server['port'] : 11211;
-
-                    $memcached->addServer($server['host'], $port);
-                }
-
                 $cache = new Cache\MemcachedCache();
-                $cache->setMemcached($memcached);
+                $cache->setMemcached($this->buildMemcached($cacheConfig));
                 return $cache;
             default:
                 return new Cache\ArrayCache();
         }
+    }
+
+    private function buildMemcached(array $cacheConfig): Memcached
+    {
+        $memcached = new Memcached();
+        $servers = $cacheConfig['options']['servers'] ?? [];
+
+        foreach ($servers as $server) {
+            $this->addMemcachedServer($memcached, $server);
+        }
+
+        return $memcached;
+    }
+
+    private function addMemcachedServer(Memcached $memcached, array $server): void
+    {
+        if (! isset($server['host'])) {
+            return;
+        }
+        $port = (int) ($server['port'] ?? self::DEFAULT_MEMCACHED_PORT);
+
+        $memcached->addServer($server['host'], $port);
     }
 }
