@@ -25,11 +25,14 @@ class TranslatorExtensionTest extends TestCase
     public function properFunctionsAreReturned()
     {
         $engine = $this->prophesize(Engine::class);
-        $registerFunction = $engine->registerFunction('translate', Argument::type('callable'))->will(function () {
+        $registerTranslate = $engine->registerFunction('translate', Argument::type('callable'))->will(function () {
+        });
+        $registerLocale = $engine->registerFunction('locale', Argument::type('array'))->will(function () {
         });
 
         $this->extension->register($engine->reveal());
 
-        $registerFunction->shouldHaveBeenCalledOnce();
+        $registerTranslate->shouldHaveBeenCalledOnce();
+        $registerLocale->shouldHaveBeenCalledOnce();
     }
 }

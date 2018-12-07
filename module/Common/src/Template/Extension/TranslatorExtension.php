@@ -20,5 +20,6 @@ class TranslatorExtension implements ExtensionInterface
     public function register(Engine $engine): void
     {
         $engine->registerFunction('translate', [$this->translator, 'translate']);
+        $engine->registerFunction('locale', [$this->translator, 'getLocale']);
     }
 }
