@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Fixed
 
-* *Nothing*
+* [#309](https://github.com/shlinkio/shlink/issues/309) Added missing favicon to prevent 404 errors logged when an error page is loaded in a browser.
 
 
 ## 1.15.0 - 2018-12-02
