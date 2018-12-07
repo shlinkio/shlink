@@ -19,5 +19,6 @@ return (new ConfigAggregator\ConfigAggregator([
     CLI\ConfigProvider::class,
     Installer\ConfigProvider::class,
     Rest\ConfigProvider::class,
-    new ConfigAggregator\ZendConfigProvider('config/{autoload/{{,*.}global,{,*.}local},params/generated_config}.php'),
+    new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
+    new ConfigAggregator\ZendConfigProvider('config/params/{generated_config.php,*.config.{php,json}}'),
 ], 'data/cache/app_config.php'))->getMergedConfig();

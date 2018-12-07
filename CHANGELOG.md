@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Changed
 
-* *Nothing*
+* [#312](https://github.com/shlinkio/shlink/issues/312) Now all config files both in `php` and `json` format are loaded from `config/params` folder, easing users to provided customizations to docker image.
 
 #### Deprecated
 
