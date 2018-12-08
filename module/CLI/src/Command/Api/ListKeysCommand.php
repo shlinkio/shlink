@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
+use Shlinkio\Shlink\Common\Console\ShlinkTable;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use function array_filter;
 use function array_map;
 use function sprintf;
@@ -46,7 +46,6 @@ class ListKeysCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $io = new SymfonyStyle($input, $output);
         $enabledOnly = $input->getOption('enabledOnly');
 
         $rows = array_map(function (ApiKey $apiKey) use ($enabledOnly) {
@@ -62,7 +61,7 @@ class ListKeysCommand extends Command
             return $rowData;
         }, $this->apiKeyService->listKeys($enabledOnly));
 
-        $io->table(array_filter([
+        ShlinkTable::fromOutput($output)->render(array_filter([
             'Key',
             ! $enabledOnly ? 'Is enabled' : null,
             'Expiration date',

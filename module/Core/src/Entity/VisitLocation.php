@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
 use function array_key_exists;
 
 /**
@@ -16,7 +16,7 @@ use function array_key_exists;
  * @ORM\Entity()
  * @ORM\Table(name="visit_locations")
  */
-class VisitLocation extends AbstractEntity implements JsonSerializable
+class VisitLocation extends AbstractEntity implements VisitLocationInterface
 {
     /**
      * @var string
