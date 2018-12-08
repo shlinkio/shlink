@@ -126,7 +126,10 @@ class ListShortUrlsCommand extends Command
             $rows[] = array_values($shortUrl);
         }
 
-        ShlinkTable::fromOutput($output)->render($headers, $rows);
+        ShlinkTable::fromOutput($output)->render($headers, $rows, $this->formatCurrentPageMessage(
+            $result,
+            'Page %s of %s'
+        ));
         return $result;
     }
 
