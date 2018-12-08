@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Common\Paginator\Util;
 
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
-use function sprintf;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\ArrayUtils;
 use function array_map;
+use function sprintf;
 
 trait PaginatorUtilsTrait
 {
