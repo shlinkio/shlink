@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
+use Shlinkio\Shlink\Common\Console\ShlinkTable;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
@@ -69,7 +70,6 @@ class GetVisitsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $io = new SymfonyStyle($input, $output);
         $shortCode = $input->getArgument('shortCode');
         $startDate = $this->getDateOption($input, 'startDate');
         $endDate = $this->getDateOption($input, 'endDate');
@@ -82,7 +82,7 @@ class GetVisitsCommand extends Command
             $rowData['country'] = $visit->getVisitLocation()->getCountryName();
             return select_keys($rowData, ['referer', 'date', 'userAgent', 'country']);
         }, $visits);
-        $io->table(['Referer', 'Date', 'User agent', 'Country'], $rows);
+        ShlinkTable::fromOutput($output)->render(['Referer', 'Date', 'User agent', 'Country'], $rows);
     }
 
     private function getDateOption(InputInterface $input, $key)
