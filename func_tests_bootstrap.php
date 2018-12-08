@@ -26,7 +26,7 @@ $config['entity_manager']['connection'] = [
 $sm->setService('config', $config);
 
 // Create database
-$process = new Process('vendor/bin/doctrine orm:schema-tool:create --no-interaction -q --test', __DIR__);
+$process = new Process(['vendor/bin/doctrine', 'orm:schema-tool:create', '--no-interaction', '-q', '--test'], __DIR__);
 $process->inheritEnvironmentVariables()
         ->mustRun();
 

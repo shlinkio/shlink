@@ -20,7 +20,8 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Zend\Config\Writer\WriterInterface;
-use function sprintf;
+use function array_unshift;
+use function implode;
 
 class InstallCommand extends Command
 {
@@ -133,7 +134,7 @@ class InstallCommand extends Command
         if (! $this->isUpdate) {
             $this->io->write('Initializing database...');
             if (! $this->execPhp(
-                'vendor/doctrine/orm/bin/doctrine.php orm:schema-tool:create',
+                ['vendor/doctrine/orm/bin/doctrine.php', 'orm:schema-tool:create'],
                 'Error generating database.',
                 $output
             )) {
@@ -144,7 +145,7 @@ class InstallCommand extends Command
         // Run database migrations
         $this->io->write('Updating database...');
         if (! $this->execPhp(
-            'vendor/doctrine/migrations/bin/doctrine-migrations.php migrations:migrate',
+            ['vendor/doctrine/migrations/bin/doctrine-migrations.php', 'migrations:migrate'],
             'Error updating database.',
             $output
         )) {
@@ -154,16 +155,16 @@ class InstallCommand extends Command
         // Generate proxies
         $this->io->write('Generating proxies...');
         if (! $this->execPhp(
-            'vendor/doctrine/orm/bin/doctrine.php orm:generate-proxies',
+            ['vendor/doctrine/orm/bin/doctrine.php', 'orm:generate-proxies'],
             'Error generating proxies.',
             $output
         )) {
             return;
         }
 
-        // Download GeoLite2 db filte
+        // Download GeoLite2 db file
         $this->io->write('Downloading GeoLite2 db...');
-        if (! $this->execPhp('bin/cli visit:update-db', 'Error downloading GeoLite2 db.', $output)) {
+        if (! $this->execPhp(['bin/cli', 'visit:update-db'], 'Error downloading GeoLite2 db.', $output)) {
             return;
         }
 
@@ -215,7 +216,7 @@ class InstallCommand extends Command
         return $config;
     }
 
-    private function execPhp(string $command, string $errorMessage, OutputInterface $output): bool
+    private function execPhp(array $command, string $errorMessage, OutputInterface $output): bool
     {
         if ($this->processHelper === null) {
             $this->processHelper = $this->getHelper('process');
@@ -225,12 +226,13 @@ class InstallCommand extends Command
             $this->phpBinary = $this->phpFinder->find(false) ?: 'php';
         }
 
+        array_unshift($command, $this->phpBinary);
         $this->io->write(
-            ' <options=bold>[Running "' . sprintf('%s %s', $this->phpBinary, $command) . '"]</> ',
+            ' <options=bold>[Running "' . implode(' ', $command) . '"]</> ',
             false,
             OutputInterface::VERBOSITY_VERBOSE
         );
-        $process = $this->processHelper->run($output, sprintf('%s %s', $this->phpBinary, $command));
+        $process = $this->processHelper->run($output, $command);
         if ($process->isSuccessful()) {
             $this->io->writeln(' <info>Success!</info>');
             return true;
