@@ -1,0 +1,44 @@
+{
+    "get": {
+        "operationId": "shortUrlPreview",
+        "tags": [
+            "URL Shortener"
+        ],
+        "summary": "Short URL preview image",
+        "description": "Returns the preview of the page behind a short URL",
+        "parameters": [
+            {
+                "name": "shortCode",
+                "in": "path",
+                "description": "The short code to resolve.",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                }
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "Image in PNG format",
+                "content": {
+                    "image/png": {
+                        "schema": {
+                            "type": "string",
+                            "format": "binary"
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
