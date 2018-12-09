@@ -6,15 +6,20 @@
         "version": "1.0"
     },
 
+    "externalDocs": {
+        "url": "https://shlink.io/api-docs",
+        "description": "Find more info on how to start using this API here"
+    },
+
     "servers": [
         {
-            "url": "{schema}://{server}/rest",
+            "url": "{scheme}://{host}",
             "variables": {
-                "schema": {
+                "scheme": {
                     "default": "https",
                     "enum": ["https", "http"]
                 },
-                "server": {
+                "host": {
                     "default": ""
                 }
             }
@@ -52,34 +57,51 @@
             "description": "Operations to manage visits on short URLs"
         },
         {
+            "name": "URL Shortener",
+            "description": "Non-rest endpoints, used to be publicly exposed"
+        },
+        {
             "name": "Authentication",
-            "description": "Authentication-related endpoints"
+            "description": "**[Deprecated]** Authentication-related endpoints"
         }
     ],
 
     "paths": {
-        "/v1/short-urls": {
+        "/rest/v1/short-urls": {
             "$ref": "paths/v1_short-urls.json"
         },
-        "/v1/short-urls/shorten": {
+        "/rest/v1/short-urls/shorten": {
             "$ref": "paths/v1_short-urls_shorten.json"
         },
-        "/v1/short-urls/{shortCode}": {
+        "/rest/v1/short-urls/{shortCode}": {
             "$ref": "paths/v1_short-urls_{shortCode}.json"
         },
-        "/v1/short-urls/{shortCode}/tags": {
+        "/rest/v1/short-urls/{shortCode}/tags": {
             "$ref": "paths/v1_short-urls_{shortCode}_tags.json"
         },
 
-        "/v1/tags": {
+        "/rest/v1/tags": {
             "$ref": "paths/v1_tags.json"
         },
 
-        "/v1/short-urls/{shortCode}/visits": {
+        "/rest/v1/short-urls/{shortCode}/visits": {
             "$ref": "paths/v1_short-urls_{shortCode}_visits.json"
         },
 
-        "/v1/authenticate": {
+        "/{shortCode}": {
+            "$ref": "paths/{shortCode}.json"
+        },
+        "/{shortCode}/track": {
+            "$ref": "paths/{shortCode}_track.json"
+        },
+        "/{shortCode}/qr-code": {
+            "$ref": "paths/{shortCode}_qr-code.json"
+        },
+        "/{shortCode}/preview": {
+            "$ref": "paths/{shortCode}_preview.json"
+        },
+
+        "/rest/v1/authenticate": {
             "$ref": "paths/v1_authenticate.json"
         }
     }

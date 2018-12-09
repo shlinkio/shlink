@@ -1,0 +1,36 @@
+{
+    "get": {
+        "operationId": "shortUrl",
+        "tags": [
+            "URL Shortener"
+        ],
+        "summary": "Short URL",
+        "description": "Represents a short URL. Tracks the visit and redirects tio the corresponding long URL",
+        "parameters": [
+            {
+                "name": "shortCode",
+                "in": "path",
+                "description": "The short code to resolve.",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                }
+            }
+        ],
+        "responses": {
+            "302": {
+                "description": "Visit properly tracked and redirected"
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
