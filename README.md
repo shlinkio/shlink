@@ -202,11 +202,12 @@ In future versions, it is planed that, when using **swoole** to serve shlink, so
 
 When a new Shlink version is available, you don't need to repeat the entire process yourself. Instead, follow these steps:
 
-1. Rename your existing Shlink directory to something else (ie. `shlink` ---> `shlink-old`)
-2. Download and extract the new version of Shlink, and set the directories name to that of the old version. (ie. `shlink`)
+1. Rename your existing Shlink directory to something else (ie. `shlink` ---> `shlink-old`).
+2. Download and extract the new version of Shlink, and set the directories name to that of the old version. (ie. `shlink`).
 3. Run the `bin/update` script in the new version's directory to migrate your configuration over.
+4. If you are using shlink with swoole, restart the service by running `/etc/init.d/shlink_swoole restart`.
 
-The script will ask you for the location from previous shlink version, and use it in order to import the configuration. It will then update the database and generate some the assets neccessary for Shlink to function.
+The `bin/update` script will ask you for the location from previous shlink version, and use it in order to import the configuration. It will then update the database and generate some assets shlink needs to work.
 
 Right now, it does not import cached info (like website previews), but it will. For now you will need to regenerate them again.
 
