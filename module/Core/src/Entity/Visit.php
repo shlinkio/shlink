@@ -11,6 +11,8 @@ use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
+use Shlinkio\Shlink\Core\Visit\Model\UnknownVisitLocation;
+use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
 
 /**
  * Class Visit
@@ -88,9 +90,9 @@ class Visit extends AbstractEntity implements JsonSerializable
         return ! empty($this->remoteAddr);
     }
 
-    public function getVisitLocation(): VisitLocation
+    public function getVisitLocation(): VisitLocationInterface
     {
-        return $this->visitLocation;
+        return $this->visitLocation ?? new UnknownVisitLocation();
     }
 
     public function locate(VisitLocation $visitLocation): self

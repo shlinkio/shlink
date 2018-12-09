@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
+use Shlinkio\Shlink\Common\Console\ShlinkTable;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use function Functional\map;
 
 class ListTagsCommand extends Command
@@ -33,8 +33,7 @@ class ListTagsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $io = new SymfonyStyle($input, $output);
-        $io->table(['Name'], $this->getTagsRows());
+        ShlinkTable::fromOutput($output)->render(['Name'], $this->getTagsRows());
     }
 
     private function getTagsRows(): array

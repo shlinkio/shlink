@@ -7,6 +7,7 @@ use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\ArrayUtils;
 use function array_map;
+use function sprintf;
 
 trait PaginatorUtilsTrait
 {
@@ -38,5 +39,10 @@ trait PaginatorUtilsTrait
     private function isLastPage(Paginator $paginator): bool
     {
         return $paginator->getCurrentPageNumber() >= $paginator->count();
+    }
+
+    private function formatCurrentPageMessage(Paginator $paginator, string $pattern): string
+    {
+        return sprintf($pattern, $paginator->getCurrentPageNumber(), $paginator->count());
     }
 }

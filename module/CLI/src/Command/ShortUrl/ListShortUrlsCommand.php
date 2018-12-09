@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use Shlinkio\Shlink\Common\Console\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
+use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Symfony\Component\Console\Command\Command;
@@ -12,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Zend\Paginator\Paginator;
 use function array_values;
 use function count;
 use function explode;
@@ -78,39 +81,56 @@ class ListShortUrlsCommand extends Command
         $searchTerm = $input->getOption('searchTerm');
         $tags = $input->getOption('tags');
         $tags = ! empty($tags) ? explode(',', $tags) : [];
-        $showTags = $input->getOption('showTags');
+        $showTags = (bool) $input->getOption('showTags');
         $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
         do {
-            $result = $this->shortUrlService->listShortUrls($page, $searchTerm, $tags, $this->processOrderBy($input));
+            $result = $this->renderPage($input, $output, $page, $searchTerm, $tags, $showTags, $transformer);
             $page++;
 
-            $headers = ['Short code', 'Short URL', 'Long URL', 'Date created', 'Visits count'];
-            if ($showTags) {
-                $headers[] = 'Tags';
-            }
-
-            $rows = [];
-            foreach ($result as $row) {
-                $shortUrl = $transformer->transform($row);
-                if ($showTags) {
-                    $shortUrl['tags'] = implode(', ', $shortUrl['tags']);
-                } else {
-                    unset($shortUrl['tags']);
-                }
-
-                unset($shortUrl['originalUrl']);
-                $rows[] = array_values($shortUrl);
-            }
-            $io->table($headers, $rows);
-
-            if ($this->isLastPage($result)) {
-                $continue = false;
-                $io->success('Short URLs properly listed');
-            } else {
-                $continue = $io->confirm(sprintf('Continue with page <options=bold>%s</>?', $page), false);
-            }
+            $continue = $this->isLastPage($result)
+                ? false
+                : $io->confirm(sprintf('Continue with page <options=bold>%s</>?', $page), false);
         } while ($continue);
+
+        $io->newLine();
+        $io->success('Short URLs properly listed');
+    }
+
+    private function renderPage(
+        InputInterface $input,
+        OutputInterface $output,
+        int $page,
+        ?string $searchTerm,
+        array $tags,
+        bool $showTags,
+        DataTransformerInterface $transformer
+    ): Paginator {
+        $result = $this->shortUrlService->listShortUrls($page, $searchTerm, $tags, $this->processOrderBy($input));
+
+        $headers = ['Short code', 'Short URL', 'Long URL', 'Date created', 'Visits count'];
+        if ($showTags) {
+            $headers[] = 'Tags';
+        }
+
+        $rows = [];
+        foreach ($result as $row) {
+            $shortUrl = $transformer->transform($row);
+            if ($showTags) {
+                $shortUrl['tags'] = implode(', ', $shortUrl['tags']);
+            } else {
+                unset($shortUrl['tags']);
+            }
+
+            unset($shortUrl['originalUrl']);
+            $rows[] = array_values($shortUrl);
+        }
+
+        ShlinkTable::fromOutput($output)->render($headers, $rows, $this->formatCurrentPageMessage(
+            $result,
+            'Page %s of %s'
+        ));
+        return $result;
     }
 
     private function processOrderBy(InputInterface $input)
