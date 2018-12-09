@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Added
 
-* *Nothing*
+* [#162](https://github.com/shlinkio/shlink/issues/162) Added non-rest endpoints to swagger definition.
 
 #### Changed
 

@@ -6,5 +6,5 @@ vendor/
 .env
 data/database.sqlite
 data/GeoLite2-City.mmdb
-docs/swagger-ui
+docs/swagger-ui*
 docker-compose.override.yml
