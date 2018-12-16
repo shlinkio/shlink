@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-if [ "$#" -ne 1 ]; then
+if [[ "$#" -ne 1 ]]; then
   echo "Usage:" >&2
   echo "   $0 {version}" >&2
   exit 1
@@ -10,7 +10,7 @@ fi
 version=$1
 builtcontent="./build/shlink_${version}_dist"
 projectdir=$(pwd)
-[ -f ./composer.phar ] && composerBin='./composer.phar' || composerBin='composer'
+[[ -f ./composer.phar ]] && composerBin='./composer.phar' || composerBin='composer'
 
 # Copy project content to temp dir
 echo 'Copying project files...'
@@ -18,6 +18,7 @@ rm -rf "${builtcontent}"
 mkdir -p "${builtcontent}"
 rsync -av * "${builtcontent}" \
     --exclude=data/infra \
+    --exclude=data/travis \
     --exclude=data/migrations_template.txt \
     --exclude=data/GeoLite2-City.mmdb \
     --exclude=**/.gitignore \
