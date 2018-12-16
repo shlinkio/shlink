@@ -3,55 +3,25 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
 use function array_key_exists;
 
-/**
- * Class VisitLocation
- * @author
- * @link
- *
- * @ORM\Entity()
- * @ORM\Table(name="visit_locations")
- */
 class VisitLocation extends AbstractEntity implements VisitLocationInterface
 {
-    /**
-     * @var string
-     * @ORM\Column(nullable=true, name="country_code")
-     */
+    /** @var string */
     private $countryCode;
-    /**
-     * @var string
-     * @ORM\Column(nullable=true, name="country_name")
-     */
+    /** @var string */
     private $countryName;
-    /**
-     * @var string
-     * @ORM\Column(nullable=true, name="region_name")
-     */
+    /** @var string */
     private $regionName;
-    /**
-     * @var string
-     * @ORM\Column(nullable=true, name="city_name")
-     */
+    /** @var string */
     private $cityName;
-    /**
-     * @var string
-     * @ORM\Column(nullable=true, name="latitude")
-     */
+    /** @var string */
     private $latitude;
-    /**
-     * @var string
-     * @ORM\Column(nullable=true, name="longitude")
-     */
+    /** @var string */
     private $longitude;
-    /**
-     * @var string
-     * @ORM\Column(nullable=true, name="timezone")
-     */
+    /** @var string */
     private $timezone;
 
     public function __construct(array $locationInfo)

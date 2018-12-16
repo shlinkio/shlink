@@ -6,72 +6,27 @@ namespace Shlinkio\Shlink\Core\Entity;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use function count;
 
-/**
- * Class ShortUrl
- * @author
- * @link
- *
- * @ORM\Entity(repositoryClass=ShortUrlRepository::class)
- * @ORM\Table(name="short_urls")
- */
 class ShortUrl extends AbstractEntity
 {
-    /**
-     * @var string
-     * @ORM\Column(name="original_url", type="string", nullable=false, length=1024)
-     */
+    /** @var string */
     private $longUrl;
-    /**
-     * @var string
-     * @ORM\Column(
-     *     name="short_code",
-     *     type="string",
-     *     nullable=false,
-     *     length=255,
-     *     unique=true
-     * )
-     */
+    /** @var string */
     private $shortCode;
-    /**
-     * @var Chronos
-     * @ORM\Column(name="date_created", type="chronos_datetime")
-     */
+    /** @var Chronos */
     private $dateCreated;
-    /**
-     * @var Collection|Visit[]
-     * @ORM\OneToMany(targetEntity=Visit::class, mappedBy="shortUrl", fetch="EXTRA_LAZY")
-     */
+    /** @var Collection|Visit[] */
     private $visits;
-    /**
-     * @var Collection|Tag[]
-     * @ORM\ManyToMany(targetEntity=Tag::class, cascade={"persist"})
-     * @ORM\JoinTable(name="short_urls_in_tags", joinColumns={
-     *     @ORM\JoinColumn(name="short_url_id", referencedColumnName="id")
-     * }, inverseJoinColumns={
-     *     @ORM\JoinColumn(name="tag_id", referencedColumnName="id")
-     * })
-     */
+    /** @var Collection|Tag[] */
     private $tags;
-    /**
-     * @var Chronos|null
-     * @ORM\Column(name="valid_since", type="chronos_datetime", nullable=true)
-     */
+    /** @var Chronos|null */
     private $validSince;
-    /**
-     * @var Chronos|null
-     * @ORM\Column(name="valid_until", type="chronos_datetime", nullable=true)
-     */
+    /** @var Chronos|null */
     private $validUntil;
-    /**
-     * @var integer
-     * @ORM\Column(name="max_visits", type="integer", nullable=true)
-     */
+    /** @var integer|null */
     private $maxVisits;
 
     public function __construct(string $longUrl, ShortUrlMeta $meta = null)
