@@ -4,57 +4,27 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Entity;
 
 use Cake\Chronos\Chronos;
-use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Model\Visitor;
-use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Visit\Model\UnknownVisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
 
-/**
- * Class Visit
- * @author
- * @link
- *
- * @ORM\Entity(repositoryClass=VisitRepository::class)
- * @ORM\Table(name="visits")
- */
 class Visit extends AbstractEntity implements JsonSerializable
 {
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=256, nullable=true)
-     */
+    /** @var string */
     private $referer;
-    /**
-     * @var Chronos
-     * @ORM\Column(type="chronos_datetime", nullable=false)
-     */
+    /** @var Chronos */
     private $date;
-    /**
-     * @var string|null
-     * @ORM\Column(type="string", length=256, name="remote_addr", nullable=true)
-     */
+    /** @var string|null */
     private $remoteAddr;
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=512, name="user_agent", nullable=true)
-     */
+    /** @var string */
     private $userAgent;
-    /**
-     * @var ShortUrl
-     * @ORM\ManyToOne(targetEntity=ShortUrl::class)
-     * @ORM\JoinColumn(name="short_url_id", referencedColumnName="id")
-     */
+    /** @var ShortUrl */
     private $shortUrl;
-    /**
-     * @var VisitLocation
-     * @ORM\ManyToOne(targetEntity=VisitLocation::class, cascade={"persist"})
-     * @ORM\JoinColumn(name="visit_location_id", referencedColumnName="id", nullable=true)
-     */
+    /** @var VisitLocation */
     private $visitLocation;
 
     public function __construct(ShortUrl $shortUrl, Visitor $visitor, ?Chronos $date = null)

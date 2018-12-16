@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\Common\Factory;
 
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Persistence\Mapping\Driver\PHPDriver;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
@@ -37,12 +38,9 @@ class EntityManagerFactory implements FactoryInterface
             Type::addType(ChronosDateTimeType::CHRONOS_DATETIME, ChronosDateTimeType::class);
         }
 
-        return EntityManager::create($connectionConfig, Setup::createAnnotationMetadataConfiguration(
-            $ormConfig['entities_paths'] ?? [],
-            $isDevMode,
-            $ormConfig['proxies_dir'] ?? null,
-            $cache,
-            false
-        ));
+        $config = Setup::createConfiguration($isDevMode, $ormConfig['proxies_dir'] ?? null, $cache);
+        $config->setMetadataDriverImpl(new PHPDriver($ormConfig['entities_mappings'] ?? []));
+
+        return EntityManager::create($connectionConfig, $config);
     }
 }
