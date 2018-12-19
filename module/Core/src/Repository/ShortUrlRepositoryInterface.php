@@ -9,9 +9,5 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 
 interface ShortUrlRepositoryInterface extends ObjectRepository, PaginableRepositoryInterface
 {
-    /**
-     * @param string $shortCode
-     * @return ShortUrl|null
-     */
-    public function findOneByShortCode(string $shortCode);
+    public function findOneByShortCode(string $shortCode): ?ShortUrl;
 }

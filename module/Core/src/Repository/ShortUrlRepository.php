@@ -16,12 +16,9 @@ use function key;
 class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryInterface
 {
     /**
-     * @param int|null $limit
-     * @param int|null $offset
-     * @param string|null $searchTerm
-     * @param array $tags
+     * @param string[] $tags
      * @param string|array|null $orderBy
-     * @return \Shlinkio\Shlink\Core\Entity\ShortUrl[]
+     * @return ShortUrl[]
      */
     public function findList(
         int $limit = null,
@@ -51,7 +48,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb->getQuery()->getResult();
     }
 
-    protected function processOrderByForList(QueryBuilder $qb, $orderBy)
+    private function processOrderByForList(QueryBuilder $qb, $orderBy): array
     {
         // Map public field names to column names
         $fieldNameMap = [
@@ -78,13 +75,6 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * Counts the number of elements in a list using provided filtering data
-     *
-     * @param null|string $searchTerm
-     * @param array $tags
-     * @return int
-     */
     public function countList(string $searchTerm = null, array $tags = []): int
     {
         $qb = $this->createListQueryBuilder($searchTerm, $tags);
@@ -93,12 +83,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * @param null|string $searchTerm
-     * @param array $tags
-     * @return QueryBuilder
-     */
-    protected function createListQueryBuilder(string $searchTerm = null, array $tags = []): QueryBuilder
+    private function createListQueryBuilder(?string $searchTerm = null, array $tags = []): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's');
@@ -131,30 +116,25 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb;
     }
 
-    /**
-     * @param string $shortCode
-     * @return ShortUrl|null
-     */
     public function findOneByShortCode(string $shortCode): ?ShortUrl
     {
-        $now = Chronos::now();
+        $dql= <<<DQL
+            SELECT s
+              FROM Shlinkio\Shlink\Core\Entity\ShortUrl AS s
+             WHERE s.shortCode = :shortCode
+               AND (s.validSince <= :now OR s.validSince IS NULL)
+               AND (s.validUntil >= :now OR s.validUntil IS NULL)
+DQL;
 
-        $qb = $this->createQueryBuilder('s');
-        $qb->where($qb->expr()->eq('s.shortCode', ':shortCode'))
-           ->setParameter('shortCode', $shortCode)
-           ->andWhere($qb->expr()->orX(
-               $qb->expr()->lte('s.validSince', ':now'),
-               $qb->expr()->isNull('s.validSince')
-           ))
-           ->andWhere($qb->expr()->orX(
-               $qb->expr()->gte('s.validUntil', ':now'),
-               $qb->expr()->isNull('s.validUntil')
-           ))
-           ->setParameter('now', $now)
-           ->setMaxResults(1);
+        $query = $this->getEntityManager()->createQuery($dql);
+        $query->setMaxResults(1)
+              ->setParameters([
+                  'shortCode' => $shortCode,
+                  'now' => Chronos::now(),
+              ]);
 
         /** @var ShortUrl|null $result */
-        $result = $qb->getQuery()->getOneOrNullResult();
+        $result = $query->getOneOrNullResult();
         return $result === null || $result->maxVisitsReached() ? null : $result;
     }
 }
