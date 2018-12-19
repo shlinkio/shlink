@@ -12,10 +12,10 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
 {
     public function findUnlocatedVisits(): iterable
     {
-        $qb = $this->createQueryBuilder('v');
-        $qb->where($qb->expr()->isNull('v.visitLocation'));
+        $dql = 'SELECT v FROM Shlinkio\Shlink\Core\Entity\Visit AS v WHERE v.visitLocation IS NULL';
+        $query = $this->getEntityManager()->createQuery($dql);
 
-        return $qb->getQuery()->iterate();
+        return $query->iterate();
     }
 
     /**
