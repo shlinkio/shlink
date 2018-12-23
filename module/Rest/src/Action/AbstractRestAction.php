@@ -14,6 +14,7 @@ abstract class AbstractRestAction implements RequestHandlerInterface, RequestMet
 {
     protected const ROUTE_PATH = '';
     protected const ROUTE_ALLOWED_METHODS = [];
+    protected const ROUTE_CAN_BE_VERSIONED = true;
 
     /** @var LoggerInterface */
     protected $logger;
@@ -30,6 +31,7 @@ abstract class AbstractRestAction implements RequestHandlerInterface, RequestMet
             'middleware' => array_merge($prevMiddleware, [static::class], $postMiddleware),
             'path' => static::ROUTE_PATH,
             'allowed_methods' => static::ROUTE_ALLOWED_METHODS,
+            'can_be_versioned' => static::ROUTE_CAN_BE_VERSIONED,
         ];
     }
 }

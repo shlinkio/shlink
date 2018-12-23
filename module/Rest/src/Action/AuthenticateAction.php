@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 
+/** @deprecated */
 class AuthenticateAction extends AbstractRestAction
 {
     protected const ROUTE_PATH = '/authenticate';

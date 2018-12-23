@@ -3,12 +3,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest;
 
-use Shlinkio\Shlink\Rest\Action;
-
 return [
 
     'routes' => [
         Action\AuthenticateAction::getRouteDef(),
+        Action\HealthAction::getRouteDef(),
 
         // Short codes
         Action\ShortUrl\CreateShortUrlAction::getRouteDef([
