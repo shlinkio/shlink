@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class EditShortUrlActionTest extends TestCase
 {
@@ -32,7 +32,7 @@ class EditShortUrlActionTest extends TestCase
      */
     public function invalidDataReturnsError()
     {
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody([
+        $request = (new ServerRequest())->withParsedBody([
             'maxVisits' => 'invalid',
         ]);
 
@@ -50,10 +50,10 @@ class EditShortUrlActionTest extends TestCase
      */
     public function incorrectShortCodeReturnsError()
     {
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123')
-                                                      ->withParsedBody([
-                                                          'maxVisits' => 5,
-                                                      ]);
+        $request = (new ServerRequest())->withAttribute('shortCode', 'abc123')
+                                        ->withParsedBody([
+                                            'maxVisits' => 5,
+                                        ]);
         $updateMeta = $this->shortUrlService->updateMetadataByShortCode(Argument::cetera())->willThrow(
             InvalidShortCodeException::class
         );
@@ -73,10 +73,10 @@ class EditShortUrlActionTest extends TestCase
      */
     public function correctShortCodeReturnsSuccess()
     {
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123')
-                                                      ->withParsedBody([
-                                                          'maxVisits' => 5,
-                                                      ]);
+        $request = (new ServerRequest())->withAttribute('shortCode', 'abc123')
+                                        ->withParsedBody([
+                                            'maxVisits' => 5,
+                                        ]);
         $updateMeta = $this->shortUrlService->updateMetadataByShortCode(Argument::cetera())->willReturn(
             new ShortUrl('')
         );

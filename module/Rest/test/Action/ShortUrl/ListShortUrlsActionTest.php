@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ListShortUrlsAction;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 
@@ -37,7 +37,7 @@ class ListShortUrlsActionTest extends TestCase
         $this->service->listShortUrls($page, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
                                                             ->shouldBeCalledOnce();
 
-        $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams([
+        $response = $this->action->handle((new ServerRequest())->withQueryParams([
             'page' => $page,
         ]));
         $this->assertEquals(200, $response->getStatusCode());
@@ -52,7 +52,7 @@ class ListShortUrlsActionTest extends TestCase
         $this->service->listShortUrls($page, null, [], null)->willThrow(Exception::class)
                                                             ->shouldBeCalledOnce();
 
-        $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams([
+        $response = $this->action->handle((new ServerRequest())->withQueryParams([
             'page' => $page,
         ]));
         $this->assertEquals(500, $response->getStatusCode());

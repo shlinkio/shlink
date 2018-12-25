@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
 use function strpos;
 
@@ -38,7 +38,7 @@ class CreateShortUrlActionTest extends TestCase
      */
     public function missingLongUrlParamReturnsError()
     {
-        $response = $this->action->handle(ServerRequestFactory::fromGlobals());
+        $response = $this->action->handle(new ServerRequest());
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -53,7 +53,7 @@ class CreateShortUrlActionTest extends TestCase
             )
             ->shouldBeCalledOnce();
 
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody([
+        $request = (new ServerRequest())->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
         ]);
         $response = $this->action->handle($request);
@@ -70,7 +70,7 @@ class CreateShortUrlActionTest extends TestCase
             ->willThrow(InvalidUrlException::class)
             ->shouldBeCalledOnce();
 
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody([
+        $request = (new ServerRequest())->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
         ]);
         $response = $this->action->handle($request);
@@ -92,7 +92,7 @@ class CreateShortUrlActionTest extends TestCase
             Argument::cetera()
         )->willThrow(NonUniqueSlugException::class)->shouldBeCalledOnce();
 
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody([
+        $request = (new ServerRequest())->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
             'customSlug' => 'foo',
         ]);
@@ -110,7 +110,7 @@ class CreateShortUrlActionTest extends TestCase
             ->willThrow(Exception::class)
             ->shouldBeCalledOnce();
 
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody([
+        $request = (new ServerRequest())->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
         ]);
         $response = $this->action->handle($request);

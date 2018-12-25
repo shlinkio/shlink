@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class PixelActionTest extends TestCase
 {
@@ -48,7 +48,7 @@ class PixelActionTest extends TestCase
         )->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->process($request, TestUtils::createReqHandlerMock()->reveal());
 
         $this->assertInstanceOf(PixelResponse::class, $response);

@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthorizationHeaderPlugin;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPlugin;
 use Shlinkio\Shlink\Rest\Exception\NoAuthenticationException;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use function implode;
 use function sprintf;
 
@@ -33,7 +33,7 @@ class RequestToAuthPluginTest extends TestCase
      */
     public function exceptionIsFoundWhenNoneOfTheSupportedMethodsIsFound()
     {
-        $request = ServerRequestFactory::fromGlobals();
+        $request = new ServerRequest();
 
         $this->expectException(NoAuthenticationException::class);
         $this->expectExceptionMessage(sprintf(
@@ -50,7 +50,7 @@ class RequestToAuthPluginTest extends TestCase
      */
     public function properPluginIsFetchedWhenAnyAuthTypeIsFound(array $headers, string $expectedHeader)
     {
-        $request = ServerRequestFactory::fromGlobals();
+        $request = new ServerRequest();
         foreach ($headers as $header => $value) {
             $request = $request->withHeader($header, $value);
         }

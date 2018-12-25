@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Rest\Authentication\Plugin\ApiKeyHeaderPlugin;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class ApiKeyHeaderPluginTest extends TestCase
 {
@@ -68,6 +68,6 @@ class ApiKeyHeaderPluginTest extends TestCase
 
     private function createRequest(string $apiKey): ServerRequestInterface
     {
-        return ServerRequestFactory::fromGlobals()->withHeader(ApiKeyHeaderPlugin::HEADER_NAME, $apiKey);
+        return (new ServerRequest())->withHeader(ApiKeyHeaderPlugin::HEADER_NAME, $apiKey);
     }
 }

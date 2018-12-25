@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\ErrorHandler;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Rest\ErrorHandler\JsonErrorResponseGenerator;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class JsonErrorResponseGeneratorTest extends TestCase
 {
@@ -23,7 +23,7 @@ class JsonErrorResponseGeneratorTest extends TestCase
      */
     public function noErrorStatusReturnsInternalServerError()
     {
-        $response = $this->errorHandler->__invoke(null, ServerRequestFactory::fromGlobals(), new Response());
+        $response = $this->errorHandler->__invoke(null, new ServerRequest(), new Response());
         $this->assertInstanceOf(Response\JsonResponse::class, $response);
         $this->assertEquals(500, $response->getStatusCode());
     }
@@ -35,7 +35,7 @@ class JsonErrorResponseGeneratorTest extends TestCase
     {
         $response = $this->errorHandler->__invoke(
             null,
-            ServerRequestFactory::fromGlobals(),
+            new ServerRequest(),
             (new Response())->withStatus(405)
         );
         $this->assertInstanceOf(Response\JsonResponse::class, $response);

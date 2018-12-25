@@ -10,7 +10,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 {
@@ -33,7 +33,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
         $expectedResp = new Response();
         $this->requestHandler->handle(Argument::type(ServerRequestInterface::class))->willReturn($expectedResp);
 
-        $resp = $this->middleware->process(ServerRequestFactory::fromGlobals(), $this->requestHandler->reveal());
+        $resp = $this->middleware->process(new ServerRequest(), $this->requestHandler->reveal());
 
         $this->assertSame($expectedResp, $resp);
     }
@@ -45,7 +45,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
      */
     public function properResponseIsReturned(?string $accept, array $query, string $expectedContentType)
     {
-        $request = ServerRequestFactory::fromGlobals()->withQueryParams($query);
+        $request = (new ServerRequest())->withQueryParams($query);
         if ($accept !== null) {
             $request = $request->withHeader('Accept', $accept);
         }
@@ -81,7 +81,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
      */
     public function properBodyIsReturnedInPlainTextResponses(array $json, string $expectedBody)
     {
-        $request = ServerRequestFactory::fromGlobals()->withQueryParams(['format' => 'txt']);
+        $request = (new ServerRequest())->withQueryParams(['format' => 'txt']);
 
         $handle = $this->requestHandler->handle(Argument::type(ServerRequestInterface::class))->willReturn(
             new JsonResponse($json)

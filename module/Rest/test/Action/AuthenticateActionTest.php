@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use function strpos;
 
 class AuthenticateActionTest extends TestCase
@@ -36,7 +36,7 @@ class AuthenticateActionTest extends TestCase
      */
     public function notProvidingAuthDataReturnsError()
     {
-        $resp = $this->action->handle(ServerRequestFactory::fromGlobals());
+        $resp = $this->action->handle(new ServerRequest());
         $this->assertEquals(400, $resp->getStatusCode());
     }
 
@@ -48,7 +48,7 @@ class AuthenticateActionTest extends TestCase
         $this->apiKeyService->getByKey('foo')->willReturn((new ApiKey())->setId('5'))
                                              ->shouldBeCalledOnce();
 
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody([
+        $request = (new ServerRequest())->withParsedBody([
             'apiKey' => 'foo',
         ]);
         $response = $this->action->handle($request);
@@ -66,7 +66,7 @@ class AuthenticateActionTest extends TestCase
         $this->apiKeyService->getByKey('foo')->willReturn((new ApiKey())->disable())
                                              ->shouldBeCalledOnce();
 
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody([
+        $request = (new ServerRequest())->withParsedBody([
             'apiKey' => 'foo',
         ]);
         $response = $this->action->handle($request);

@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\Common\Middleware;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Middleware\LocaleMiddleware;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use Zend\I18n\Translator\Translator;
 
 class LocaleMiddlewareTest extends TestCase
@@ -28,7 +28,7 @@ class LocaleMiddlewareTest extends TestCase
     public function whenNoHeaderIsPresentLocaleIsNotChanged()
     {
         $this->assertEquals('ru', $this->translator->getLocale());
-        $this->middleware->process(ServerRequestFactory::fromGlobals(), TestUtils::createReqHandlerMock()->reveal());
+        $this->middleware->process(new ServerRequest(), TestUtils::createReqHandlerMock()->reveal());
         $this->assertEquals('ru', $this->translator->getLocale());
     }
 
@@ -38,7 +38,7 @@ class LocaleMiddlewareTest extends TestCase
     public function whenTheHeaderIsPresentLocaleIsChanged()
     {
         $this->assertEquals('ru', $this->translator->getLocale());
-        $request = ServerRequestFactory::fromGlobals()->withHeader('Accept-Language', 'es');
+        $request = (new ServerRequest())->withHeader('Accept-Language', 'es');
         $this->middleware->process($request, TestUtils::createReqHandlerMock()->reveal());
         $this->assertEquals('es', $this->translator->getLocale());
     }
@@ -53,7 +53,7 @@ class LocaleMiddlewareTest extends TestCase
 
         $this->assertEquals('ru', $this->translator->getLocale());
 
-        $request = ServerRequestFactory::fromGlobals()->withHeader('Accept-Language', $lang);
+        $request = (new ServerRequest())->withHeader('Accept-Language', $lang);
         $this->middleware->process($request, $handler->reveal());
         $this->assertEquals($expected, $this->translator->getLocale());
     }

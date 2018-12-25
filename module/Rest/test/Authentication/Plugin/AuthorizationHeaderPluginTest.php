@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Rest\Authentication\JWTServiceInterface;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthorizationHeaderPlugin;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use function sprintf;
 
 class AuthorizationHeaderPluginTest extends TestCase
@@ -31,7 +31,7 @@ class AuthorizationHeaderPluginTest extends TestCase
     public function verifyAnAuthorizationWithoutBearerTypeThrowsException()
     {
         $authToken = 'ABC-abc';
-        $request = ServerRequestFactory::fromGlobals()->withHeader(
+        $request = (new ServerRequest())->withHeader(
             AuthorizationHeaderPlugin::HEADER_NAME,
             $authToken
         );
@@ -51,7 +51,7 @@ class AuthorizationHeaderPluginTest extends TestCase
     public function verifyAnAuthorizationWithWrongTypeThrowsException()
     {
         $authToken = 'Basic ABC-abc';
-        $request = ServerRequestFactory::fromGlobals()->withHeader(
+        $request = (new ServerRequest())->withHeader(
             AuthorizationHeaderPlugin::HEADER_NAME,
             $authToken
         );
@@ -70,7 +70,7 @@ class AuthorizationHeaderPluginTest extends TestCase
     public function verifyAnExpiredTokenThrowsException()
     {
         $authToken = 'Bearer ABC-abc';
-        $request = ServerRequestFactory::fromGlobals()->withHeader(
+        $request = (new ServerRequest())->withHeader(
             AuthorizationHeaderPlugin::HEADER_NAME,
             $authToken
         );
@@ -94,7 +94,7 @@ class AuthorizationHeaderPluginTest extends TestCase
     public function verifyValidTokenDoesNotThrowException()
     {
         $authToken = 'Bearer ABC-abc';
-        $request = ServerRequestFactory::fromGlobals()->withHeader(
+        $request = (new ServerRequest())->withHeader(
             AuthorizationHeaderPlugin::HEADER_NAME,
             $authToken
         );
@@ -111,7 +111,7 @@ class AuthorizationHeaderPluginTest extends TestCase
     public function updateReturnsAnUpdatedResponseWithNewJwt()
     {
         $authToken = 'Bearer ABC-abc';
-        $request = ServerRequestFactory::fromGlobals()->withHeader(
+        $request = (new ServerRequest())->withHeader(
             AuthorizationHeaderPlugin::HEADER_NAME,
             $authToken
         );

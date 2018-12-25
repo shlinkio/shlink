@@ -8,7 +8,7 @@ use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\DeleteTagsAction;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class DeleteTagsActionTest extends TestCase
 {
@@ -30,7 +30,7 @@ class DeleteTagsActionTest extends TestCase
      */
     public function processDelegatesIntoService($tags)
     {
-        $request = ServerRequestFactory::fromGlobals()->withQueryParams(['tags' => $tags]);
+        $request = (new ServerRequest())->withQueryParams(['tags' => $tags]);
         /** @var MethodProphecy $deleteTags */
         $deleteTags = $this->tagService->deleteTags($tags ?: []);
 

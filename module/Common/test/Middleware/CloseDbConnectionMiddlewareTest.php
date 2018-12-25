@@ -10,7 +10,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Middleware\CloseDbConnectionMiddleware;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class CloseDbConnectionMiddlewareTest extends TestCase
 {
@@ -34,7 +34,7 @@ class CloseDbConnectionMiddlewareTest extends TestCase
      */
     public function connectionIsClosedWhenMiddlewareIsProcessed()
     {
-        $req = ServerRequestFactory::fromGlobals();
+        $req = new ServerRequest();
         $resp = new Response();
 
         $conn = $this->prophesize(Connection::class);

@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\UpdateTagAction;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class UpdateTagActionTest extends TestCase
 {
@@ -32,7 +32,7 @@ class UpdateTagActionTest extends TestCase
      */
     public function whenInvalidParamsAreProvidedAnErrorIsReturned(array $bodyParams)
     {
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody($bodyParams);
+        $request = (new ServerRequest())->withParsedBody($bodyParams);
         $resp = $this->action->handle($request);
 
         $this->assertEquals(400, $resp->getStatusCode());
@@ -52,7 +52,7 @@ class UpdateTagActionTest extends TestCase
      */
     public function requestingInvalidTagReturnsError()
     {
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody([
+        $request = (new ServerRequest())->withParsedBody([
             'oldName' => 'foo',
             'newName' => 'bar',
         ]);
@@ -70,7 +70,7 @@ class UpdateTagActionTest extends TestCase
      */
     public function correctInvocationRenamesTag()
     {
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody([
+        $request = (new ServerRequest())->withParsedBody([
             'oldName' => 'foo',
             'newName' => 'bar',
         ]);

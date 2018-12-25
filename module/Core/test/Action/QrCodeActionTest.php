@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use Zend\Expressive\Router\RouterInterface;
 
 class QrCodeActionTest extends TestCase
@@ -46,10 +46,7 @@ class QrCodeActionTest extends TestCase
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
-        $this->action->process(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            $delegate->reveal()
-        );
+        $this->action->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate->reveal());
 
         $process->shouldHaveBeenCalledOnce();
     }
@@ -66,10 +63,7 @@ class QrCodeActionTest extends TestCase
         /** @var MethodProphecy $process */
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
-        $this->action->process(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            $delegate->reveal()
-        );
+        $this->action->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate->reveal());
 
         $process->shouldHaveBeenCalledOnce();
     }
@@ -85,7 +79,7 @@ class QrCodeActionTest extends TestCase
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 
         $resp = $this->action->process(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
+            (new ServerRequest())->withAttribute('shortCode', $shortCode),
             $delegate->reveal()
         );
 

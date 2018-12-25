@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use const FILEINFO_MIME;
 use function filesize;
 
@@ -49,10 +49,7 @@ class PreviewActionTest extends TestCase
         $delegate->handle(Argument::cetera())->shouldBeCalledOnce()
                                               ->willReturn(new Response());
 
-        $this->action->process(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
-            $delegate->reveal()
-        );
+        $this->action->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate->reveal());
     }
 
     /**
@@ -68,7 +65,7 @@ class PreviewActionTest extends TestCase
         $this->previewGenerator->generatePreview($url)->willReturn($path)->shouldBeCalledOnce();
 
         $resp = $this->action->process(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
+            (new ServerRequest())->withAttribute('shortCode', $shortCode),
             TestUtils::createReqHandlerMock()->reveal()
         );
 
@@ -89,7 +86,7 @@ class PreviewActionTest extends TestCase
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
         $this->action->process(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode),
+            (new ServerRequest())->withAttribute('shortCode', $shortCode),
             $delegate->reveal()
         );
 

@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class RedirectActionTest extends TestCase
 {
@@ -54,7 +54,7 @@ class RedirectActionTest extends TestCase
                                                        ->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->process($request, TestUtils::createReqHandlerMock()->reveal());
 
         $this->assertInstanceOf(Response\RedirectResponse::class, $response);
@@ -76,7 +76,7 @@ class RedirectActionTest extends TestCase
         $handler = $this->prophesize(RequestHandlerInterface::class);
         $handle = $handler->handle(Argument::any())->willReturn(new Response());
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $this->action->process($request, $handler->reveal());
 
         $handle->shouldHaveBeenCalledOnce();
@@ -98,7 +98,7 @@ class RedirectActionTest extends TestCase
         $this->notFoundOptions->enableRedirection = true;
         $this->notFoundOptions->redirectTo = 'https://shlink.io';
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $resp = $this->action->process($request, $handler->reveal());
 
         $this->assertEquals(302, $resp->getStatusCode());
@@ -119,7 +119,7 @@ class RedirectActionTest extends TestCase
                                                        ->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode)
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)
                                                       ->withQueryParams(['foobar' => true]);
         $response = $this->action->process($request, TestUtils::createReqHandlerMock()->reveal());
 

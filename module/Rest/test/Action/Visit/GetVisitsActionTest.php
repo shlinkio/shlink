@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Rest\Action\Visit\GetVisitsAction;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 
@@ -39,7 +39,7 @@ class GetVisitsActionTest extends TestCase
             new Paginator(new ArrayAdapter([]))
         )->shouldBeCalledOnce();
 
-        $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode));
+        $response = $this->action->handle((new ServerRequest())->withAttribute('shortCode', $shortCode));
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -53,7 +53,7 @@ class GetVisitsActionTest extends TestCase
             InvalidArgumentException::class
         )->shouldBeCalledOnce();
 
-        $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode));
+        $response = $this->action->handle((new ServerRequest())->withAttribute('shortCode', $shortCode));
         $this->assertEquals(404, $response->getStatusCode());
     }
 
@@ -72,12 +72,12 @@ class GetVisitsActionTest extends TestCase
             ->shouldBeCalledOnce();
 
         $response = $this->action->handle(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode)
-                                               ->withQueryParams([
-                                                   'endDate' => '2016-01-01 00:00:00',
-                                                   'page' => '3',
-                                                   'itemsPerPage' => '10',
-                                               ])
+            (new ServerRequest())->withAttribute('shortCode', $shortCode)
+                                 ->withQueryParams([
+                                     'endDate' => '2016-01-01 00:00:00',
+                                     'page' => '3',
+                                     'itemsPerPage' => '10',
+                                 ])
         );
         $this->assertEquals(200, $response->getStatusCode());
     }

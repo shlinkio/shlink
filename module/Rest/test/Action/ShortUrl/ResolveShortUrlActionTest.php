@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ResolveShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use function strpos;
 
 class ResolveShortUrlActionTest extends TestCase
@@ -37,7 +37,7 @@ class ResolveShortUrlActionTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
                                                        ->shouldBeCalledOnce();
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->handle($request);
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::INVALID_ARGUMENT_ERROR) > 0);
@@ -53,7 +53,7 @@ class ResolveShortUrlActionTest extends TestCase
             new ShortUrl('http://domain.com/foo/bar')
         )->shouldBeCalledOnce();
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), 'http://domain.com/foo/bar') > 0);
@@ -68,7 +68,7 @@ class ResolveShortUrlActionTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
                                                        ->shouldBeCalledOnce();
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->handle($request);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::INVALID_SHORTCODE_ERROR) > 0);
@@ -83,7 +83,7 @@ class ResolveShortUrlActionTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(Exception::class)
                                                        ->shouldBeCalledOnce();
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $shortCode);
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->handle($request);
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::UNKNOWN_ERROR) > 0);

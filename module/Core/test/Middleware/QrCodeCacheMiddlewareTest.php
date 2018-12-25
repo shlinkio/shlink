@@ -10,7 +10,7 @@ use Prophecy\Argument;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Middleware\QrCodeCacheMiddleware;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
 
 class QrCodeCacheMiddlewareTest extends TestCase
@@ -34,9 +34,7 @@ class QrCodeCacheMiddlewareTest extends TestCase
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $delegate->handle(Argument::any())->willReturn(new Response())->shouldBeCalledOnce();
 
-        $this->middleware->process(ServerRequestFactory::fromGlobals()->withUri(
-            new Uri('/foo/bar')
-        ), $delegate->reveal());
+        $this->middleware->process((new ServerRequest())->withUri(new Uri('/foo/bar')), $delegate->reveal());
 
         $this->assertTrue($this->cache->contains('/foo/bar'));
     }
@@ -51,10 +49,7 @@ class QrCodeCacheMiddlewareTest extends TestCase
         $this->cache->save('/foo', ['body' => 'the body', 'content-type' => 'image/png']);
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 
-        $resp = $this->middleware->process(
-            ServerRequestFactory::fromGlobals()->withUri($uri),
-            $delegate->reveal()
-        );
+        $resp = $this->middleware->process((new ServerRequest())->withUri($uri), $delegate->reveal());
 
         $this->assertFalse($isCalled);
         $resp->getBody()->rewind();

@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\PathVersionMiddleware;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
 use function array_shift;
 
@@ -29,7 +29,7 @@ class PathVersionMiddlewareTest extends TestCase
      */
     public function whenVersionIsProvidedRequestRemainsUnchanged()
     {
-        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/v2/foo'));
+        $request = (new ServerRequest())->withUri(new Uri('/v2/foo'));
 
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle($request)->willReturn(new Response());
@@ -44,7 +44,7 @@ class PathVersionMiddlewareTest extends TestCase
      */
     public function versionOneIsPrependedWhenNoVersionIsDefined()
     {
-        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/bar/baz'));
+        $request = (new ServerRequest())->withUri(new Uri('/bar/baz'));
 
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $delegate->handle(Argument::type(Request::class))->will(function (array $args) use ($request) {

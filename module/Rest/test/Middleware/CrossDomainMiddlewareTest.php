@@ -9,7 +9,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class CrossDomainMiddlewareTest extends TestCase
 {
@@ -32,7 +32,7 @@ class CrossDomainMiddlewareTest extends TestCase
         $originalResponse = new Response();
         $this->delegate->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
 
-        $response = $this->middleware->process(ServerRequestFactory::fromGlobals(), $this->delegate->reveal());
+        $response = $this->middleware->process(new ServerRequest(), $this->delegate->reveal());
         $this->assertSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
@@ -49,7 +49,7 @@ class CrossDomainMiddlewareTest extends TestCase
         $this->delegate->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
 
         $response = $this->middleware->process(
-            ServerRequestFactory::fromGlobals()->withHeader('Origin', 'local'),
+            (new ServerRequest())->withHeader('Origin', 'local'),
             $this->delegate->reveal()
         );
         $this->assertNotSame($originalResponse, $response);
@@ -65,7 +65,7 @@ class CrossDomainMiddlewareTest extends TestCase
     public function optionsRequestIncludesMoreHeaders()
     {
         $originalResponse = new Response();
-        $request = ServerRequestFactory::fromGlobals()->withMethod('OPTIONS')->withHeader('Origin', 'local');
+        $request = (new ServerRequest())->withMethod('OPTIONS')->withHeader('Origin', 'local');
         $this->delegate->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
 
         $response = $this->middleware->process($request, $this->delegate->reveal());

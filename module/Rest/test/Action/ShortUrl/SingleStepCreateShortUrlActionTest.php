@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class SingleStepCreateShortUrlActionTest extends TestCase
 {
@@ -44,7 +44,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
      */
     public function errorResponseIsReturnedIfInvalidApiKeyIsProvided()
     {
-        $request = ServerRequestFactory::fromGlobals()->withQueryParams(['apiKey' => 'abc123']);
+        $request = (new ServerRequest())->withQueryParams(['apiKey' => 'abc123']);
         $findApiKey = $this->apiKeyService->check('abc123')->willReturn(false);
 
         /** @var JsonResponse $resp */
@@ -62,7 +62,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
      */
     public function errorResponseIsReturnedIfNoUrlIsProvided()
     {
-        $request = ServerRequestFactory::fromGlobals()->withQueryParams(['apiKey' => 'abc123']);
+        $request = (new ServerRequest())->withQueryParams(['apiKey' => 'abc123']);
         $findApiKey = $this->apiKeyService->check('abc123')->willReturn(true);
 
         /** @var JsonResponse $resp */
@@ -80,7 +80,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
      */
     public function properDataIsPassedWhenGeneratingShortCode()
     {
-        $request = ServerRequestFactory::fromGlobals()->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'apiKey' => 'abc123',
             'longUrl' => 'http://foobar.com',
         ]);

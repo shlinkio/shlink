@@ -9,7 +9,7 @@ use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use Zend\Expressive\Template\TemplateRendererInterface;
 
 class NotFoundHandlerTest extends TestCase
@@ -35,7 +35,7 @@ class NotFoundHandlerTest extends TestCase
      */
     public function properResponseTypeIsReturned(string $expectedResponse, string $accept, int $renderCalls)
     {
-        $request = ServerRequestFactory::fromGlobals()->withHeader('Accept', $accept);
+        $request = (new ServerRequest())->withHeader('Accept', $accept);
         /** @var MethodProphecy $render */
         $render = $this->renderer->render(Argument::cetera())->willReturn('');
 

@@ -9,7 +9,7 @@ use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\CreateTagsAction;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class CreateTagsActionTest extends TestCase
 {
@@ -31,7 +31,7 @@ class CreateTagsActionTest extends TestCase
      */
     public function processDelegatesIntoService($tags)
     {
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody(['tags' => $tags]);
+        $request = (new ServerRequest())->withParsedBody(['tags' => $tags]);
         /** @var MethodProphecy $deleteTags */
         $deleteTags = $this->tagService->createTags($tags ?: [])->willReturn(new ArrayCollection());
 

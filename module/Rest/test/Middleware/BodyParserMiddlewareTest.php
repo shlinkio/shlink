@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Stream;
 use function array_shift;
 
@@ -29,7 +29,7 @@ class BodyParserMiddlewareTest extends TestCase
      */
     public function requestsFromOtherMethodsJustFallbackToNextMiddleware()
     {
-        $request = ServerRequestFactory::fromGlobals()->withMethod('GET');
+        $request = (new ServerRequest())->withMethod('GET');
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
         $process = $delegate->handle($request)->willReturn(new Response());
@@ -47,9 +47,9 @@ class BodyParserMiddlewareTest extends TestCase
         $test = $this;
         $body = new Stream('php://temp', 'wr');
         $body->write('{"foo": "bar", "bar": ["one", 5]}');
-        $request = ServerRequestFactory::fromGlobals()->withMethod('PUT')
-                                                      ->withBody($body)
-                                                      ->withHeader('content-type', 'application/json');
+        $request = (new ServerRequest())->withMethod('PUT')
+                                        ->withBody($body)
+                                        ->withHeader('content-type', 'application/json');
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
         $process = $delegate->handle(Argument::type(ServerRequestInterface::class))->will(
@@ -79,8 +79,8 @@ class BodyParserMiddlewareTest extends TestCase
         $test = $this;
         $body = new Stream('php://temp', 'wr');
         $body->write('foo=bar&bar[]=one&bar[]=5');
-        $request = ServerRequestFactory::fromGlobals()->withMethod('PUT')
-                                                      ->withBody($body);
+        $request = (new ServerRequest())->withMethod('PUT')
+                                        ->withBody($body);
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         /** @var MethodProphecy $process */
         $process = $delegate->handle(Argument::type(ServerRequestInterface::class))->will(

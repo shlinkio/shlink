@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Rest\Action\ShortUrl\DeleteShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class DeleteShortUrlActionTest extends TestCase
 {
@@ -35,7 +35,7 @@ class DeleteShortUrlActionTest extends TestCase
         $deleteByShortCode = $this->service->deleteByShortCode(Argument::any())->will(function () {
         });
 
-        $resp = $this->action->handle(ServerRequestFactory::fromGlobals());
+        $resp = $this->action->handle(new ServerRequest());
 
         $this->assertEquals(204, $resp->getStatusCode());
         $deleteByShortCode->shouldHaveBeenCalledOnce();
@@ -50,7 +50,7 @@ class DeleteShortUrlActionTest extends TestCase
         $deleteByShortCode = $this->service->deleteByShortCode(Argument::any())->willThrow($e);
 
         /** @var JsonResponse $resp */
-        $resp = $this->action->handle(ServerRequestFactory::fromGlobals());
+        $resp = $this->action->handle(new ServerRequest());
         $payload = $resp->getPayload();
 
         $this->assertEquals($statusCode, $resp->getStatusCode());

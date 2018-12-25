@@ -22,7 +22,7 @@ use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
 use function implode;
@@ -68,18 +68,18 @@ class AuthenticationMiddlewareTest extends TestCase
         $dummyMiddleware = $this->getDummyMiddleware();
 
         return [
-            'with no route result' => [ServerRequestFactory::fromGlobals()],
-            'with failure route result' => [ServerRequestFactory::fromGlobals()->withAttribute(
+            'with no route result' => [new ServerRequest()],
+            'with failure route result' => [(new ServerRequest())->withAttribute(
                 RouteResult::class,
                 RouteResult::fromRouteFailure([RequestMethodInterface::METHOD_GET])
             )],
-            'with whitelisted route' => [ServerRequestFactory::fromGlobals()->withAttribute(
+            'with whitelisted route' => [(new ServerRequest())->withAttribute(
                 RouteResult::class,
                 RouteResult::fromRoute(
                     new Route('foo', $dummyMiddleware, Route::HTTP_METHOD_ANY, AuthenticateAction::class)
                 )
             )],
-            'with OPTIONS method' => [ServerRequestFactory::fromGlobals()->withAttribute(
+            'with OPTIONS method' => [(new ServerRequest())->withAttribute(
                 RouteResult::class,
                 RouteResult::fromRoute(new Route('bar', $dummyMiddleware), [])
             )->withMethod(RequestMethodInterface::METHOD_OPTIONS)],
@@ -92,7 +92,7 @@ class AuthenticationMiddlewareTest extends TestCase
      */
     public function errorIsReturnedWhenNoValidAuthIsProvided($e)
     {
-        $request = ServerRequestFactory::fromGlobals()->withAttribute(
+        $request = (new ServerRequest())->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), [])
         );
@@ -124,7 +124,7 @@ class AuthenticationMiddlewareTest extends TestCase
      */
     public function errorIsReturnedWhenVerificationFails()
     {
-        $request = ServerRequestFactory::fromGlobals()->withAttribute(
+        $request = (new ServerRequest())->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), [])
         );
@@ -151,7 +151,7 @@ class AuthenticationMiddlewareTest extends TestCase
     public function updatedResponseIsReturnedWhenVerificationPasses()
     {
         $newResponse = new Response();
-        $request = ServerRequestFactory::fromGlobals()->withAttribute(
+        $request = (new ServerRequest())->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), [])
         );

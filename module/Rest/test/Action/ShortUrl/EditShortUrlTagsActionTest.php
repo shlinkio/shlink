@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlTagsAction;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\ServerRequest;
 
 class EditShortUrlTagsActionTest extends TestCase
 {
@@ -29,7 +29,7 @@ class EditShortUrlTagsActionTest extends TestCase
      */
     public function notProvidingTagsReturnsError()
     {
-        $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123'));
+        $response = $this->action->handle((new ServerRequest())->withAttribute('shortCode', 'abc123'));
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -43,8 +43,8 @@ class EditShortUrlTagsActionTest extends TestCase
                                                                   ->shouldBeCalledOnce();
 
         $response = $this->action->handle(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123')
-                                               ->withParsedBody(['tags' => []])
+            (new ServerRequest())->withAttribute('shortCode', 'abc123')
+                                 ->withParsedBody(['tags' => []])
         );
         $this->assertEquals(404, $response->getStatusCode());
     }
@@ -59,8 +59,8 @@ class EditShortUrlTagsActionTest extends TestCase
                                                                   ->shouldBeCalledOnce();
 
         $response = $this->action->handle(
-            ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123')
-                                               ->withParsedBody(['tags' => []])
+            (new ServerRequest())->withAttribute('shortCode', 'abc123')
+                                 ->withParsedBody(['tags' => []])
         );
         $this->assertEquals(200, $response->getStatusCode());
     }
