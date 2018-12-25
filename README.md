@@ -9,6 +9,14 @@
 
 A PHP-based self-hosted URL shortener that can be used to serve shortened URLs under your own custom domain.
 
+## Table of Contents
+
+- [Installation](#installation)
+- [Update to new version](#update-to-new-version)
+- [Using a docker image](#using-a-docker-image)
+- [Using shlink](#using-shlink)
+  - [Shlink CLI Help](#shlink-cli-help)
+
 ## Installation
 
 First make sure the host where you are going to run shlink fulfills these requirements:
