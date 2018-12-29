@@ -8,7 +8,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Added
 
-* *Nothing*
+* [#304](https://github.com/shlinkio/shlink/issues/304) Added health endpoint to check healthiness of the service. Useful in container-based infrastructures.
+
+    Call [GET /rest/health] in order to get a response like this:
+
+    ```http
+    HTTP/1.1 200 OK
+    Content-Type: application/health+json
+    Content-Length: 681
+
+    {
+      "status": "pass",
+      "version": "1.16.0",
+      "links": {
+        "about": "https://shlink.io",
+        "project": "https://github.com/shlinkio/shlink"
+      }
+    }
+    ```
+
+    The status code can be `200 OK` in case of success or `503 Service Unavailable` in case of error, while the `status` property will be one of `pass` or `fail`, as defined in the [Health check RFC](https://inadarei.github.io/rfc-healthcheck/).
 
 #### Changed
 
