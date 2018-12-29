@@ -5,10 +5,11 @@ namespace Shlinkio\Shlink\Rest;
 
 use Zend\Config\Factory;
 use Zend\Stdlib\Glob;
+use function sprintf;
 
 class ConfigProvider
 {
-    const ROUTES_PREFIX = '/rest/v{version:1}';
+    private const ROUTES_PREFIX = '/rest/v{version:1}';
 
     public function __invoke()
     {
@@ -23,7 +24,8 @@ class ConfigProvider
 
         // Prepend the routes prefix to every path
         foreach ($routes as $key => $route) {
-            $routes[$key]['path'] = self::ROUTES_PREFIX . $route['path'];
+            ['path' => $path] = $route;
+            $routes[$key]['path'] = sprintf('%s%s', self::ROUTES_PREFIX, $path);
         }
 
         return $config;

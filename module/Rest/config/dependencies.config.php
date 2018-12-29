@@ -18,6 +18,7 @@ return [
             ApiKeyService::class => ConfigAbstractFactory::class,
 
             Action\AuthenticateAction::class => ConfigAbstractFactory::class,
+            Action\HealthAction::class => Action\HealthActionFactory::class,
             Action\ShortUrl\CreateShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\SingleStepCreateShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\EditShortUrlAction::class => ConfigAbstractFactory::class,

@@ -10,6 +10,7 @@ return [
     'auth' => [
         'routes_whitelist' => [
             Action\AuthenticateAction::class,
+            Action\HealthAction::class,
             Action\ShortUrl\SingleStepCreateShortUrlAction::class,
         ],
 

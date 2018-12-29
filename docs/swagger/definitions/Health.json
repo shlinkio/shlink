@@ -1,0 +1,31 @@
+{
+    "type": "object",
+    "properties": {
+        "status": {
+            "type": "string",
+            "enum": [
+                "pass",
+                "fail"
+            ],
+            "description": "The status of the service"
+        },
+        "version": {
+            "type": "string",
+            "description": "Shlink version"
+        },
+        "links": {
+            "type": "object",
+            "properties": {
+                "about": {
+                    "type": "string",
+                    "description": "About shlink"
+                },
+                "project": {
+                    "type": "string",
+                    "description": "Shlink project repository"
+                }
+            },
+            "description": "A list of links"
+        }
+    }
+}

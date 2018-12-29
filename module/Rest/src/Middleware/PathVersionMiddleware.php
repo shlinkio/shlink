@@ -11,6 +11,9 @@ use function strpos;
 
 class PathVersionMiddleware implements MiddlewareInterface
 {
+    // TODO The /health endpoint needs this middleware in order to work without the version.
+    //      Take it into account if this middleware is ever removed.
+
     /**
      * Process an incoming server request and return a response, optionally delegating
      * to the next middleware component to create the response.
