@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
+use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
 
 class HealthAction extends AbstractRestAction
@@ -38,9 +39,13 @@ class HealthAction extends AbstractRestAction
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $connected = $this->conn->ping();
-        $statusCode = $connected ? self::STATUS_OK : self::STATUS_SERVICE_UNAVAILABLE;
+        try {
+            $connected = $this->conn->ping();
+        } catch (Throwable $e) {
+            $connected = false;
+        }
 
+        $statusCode = $connected ? self::STATUS_OK : self::STATUS_SERVICE_UNAVAILABLE;
         return new JsonResponse([
             'status' => $connected ? self::PASS_STATUS : self::FAIL_STATUS,
             'version' => $this->options->getVersion(),

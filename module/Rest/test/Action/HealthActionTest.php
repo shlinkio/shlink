@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action;
 
 use Doctrine\DBAL\Connection;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Options\AppOptions;
@@ -52,6 +53,28 @@ class HealthActionTest extends TestCase
     public function failResponseIsReturnedWhenConnectionFails()
     {
         $ping = $this->conn->ping()->willReturn(false);
+
+        /** @var JsonResponse $resp */
+        $resp = $this->action->handle(new ServerRequest());
+        $payload = $resp->getPayload();
+
+        $this->assertEquals(503, $resp->getStatusCode());
+        $this->assertEquals('fail', $payload['status']);
+        $this->assertEquals('1.2.3', $payload['version']);
+        $this->assertEquals([
+            'about' => 'https://shlink.io',
+            'project' => 'https://github.com/shlinkio/shlink',
+        ], $payload['links']);
+        $this->assertEquals('application/health+json', $resp->getHeaderLine('Content-type'));
+        $ping->shouldHaveBeenCalledOnce();
+    }
+
+    /**
+     * @test
+     */
+    public function failResponseIsReturnedWhenConnectionThrowsException()
+    {
+        $ping = $this->conn->ping()->willThrow(Exception::class);
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle(new ServerRequest());
