@@ -9,8 +9,7 @@ use function sprintf;
 
 class ConfigProvider
 {
-    private const ROUTES_PREFIX = '/rest';
-    private const ROUTES_VERSION_PARAM = '/v{version:1}';
+    private const ROUTES_PREFIX = '/rest/v{version:1}';
 
     public function __invoke()
     {
@@ -25,14 +24,8 @@ class ConfigProvider
 
         // Prepend the routes prefix to every path
         foreach ($routes as $key => $route) {
-            ['can_be_versioned' => $routeCanBeVersioned, 'path' => $path] = $route;
-            $routes[$key]['path'] = sprintf(
-                '%s%s%s',
-                self::ROUTES_PREFIX,
-                $routeCanBeVersioned ? self::ROUTES_VERSION_PARAM : '',
-                $path
-            );
-            unset($routes[$key]['can_be_versioned']);
+            ['path' => $path] = $route;
+            $routes[$key]['path'] = sprintf('%s%s', self::ROUTES_PREFIX, $path);
         }
 
         return $config;
