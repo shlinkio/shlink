@@ -57,6 +57,10 @@
             "description": "Operations to manage visits on short URLs"
         },
         {
+            "name": "Monitoring",
+            "description": "Public endpoints designed to monitor the service"
+        },
+        {
             "name": "URL Shortener",
             "description": "Non-rest endpoints, used to be publicly exposed"
         },
@@ -86,6 +90,10 @@
 
         "/rest/v1/short-urls/{shortCode}/visits": {
             "$ref": "paths/v1_short-urls_{shortCode}_visits.json"
+        },
+
+        "/rest/health": {
+            "$ref": "paths/health.json"
         },
 
         "/{shortCode}": {
