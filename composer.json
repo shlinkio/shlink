@@ -37,7 +37,7 @@
         "theorchard/monolog-cascade": "^0.4",
         "zendframework/zend-config": "^3.0",
         "zendframework/zend-config-aggregator": "^1.0",
-        "zendframework/zend-diactoros": "^2.0",
+        "zendframework/zend-diactoros": "^2.0 <2.0.2",
         "zendframework/zend-expressive": "^3.0",
         "zendframework/zend-expressive-fastroute": "^3.0",
         "zendframework/zend-expressive-helpers": "^5.0",
