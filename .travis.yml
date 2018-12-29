@@ -9,10 +9,6 @@ php:
   - 7.2
   - 7.3
 
-matrix:
-  allow_failures:
-    - php: 7.3
-
 before_install:
   - echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini

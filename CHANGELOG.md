@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 #### Changed
 
 * [#320](https://github.com/shlinkio/shlink/issues/320) Replaced query builder by plain DQL for all queries which do not need to be dynamically generated.
+* [#330](https://github.com/shlinkio/shlink/issues/330) No longer allow failures on PHP 7.3 envs during project CI build.
 
 #### Deprecated
 
