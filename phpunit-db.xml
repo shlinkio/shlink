@@ -2,11 +2,11 @@
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
-        bootstrap="./func_tests_bootstrap.php"
+        bootstrap="./db_tests_bootstrap.php"
         colors="true">
     <testsuites>
-        <testsuite name="Shlink functional database tests">
-            <directory>./module/*/test-func</directory>
+        <testsuite name="Shlink database tests">
+            <directory>./module/*/test-db</directory>
         </testsuite>
     </testsuites>
 
