@@ -6,6 +6,7 @@ use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\ServiceManager;
 
+// If the "--test" flag was provided, we are on a test environment
 $isTest = false;
 foreach ($_SERVER['argv'] as $i => $arg) {
     if ($arg === '--test') {
@@ -16,20 +17,7 @@ foreach ($_SERVER['argv'] as $i => $arg) {
 }
 
 /** @var ContainerInterface|ServiceManager $container */
-$container = include __DIR__ . '/container.php';
-
-// If in testing env, override DB connection to use an in-memory sqlite database
-if ($isTest) {
-    $container->setAllowOverride(true);
-    $config = $container->get('config');
-    $config['entity_manager']['connection'] = [
-        'driver' => 'pdo_sqlite',
-        'path' => realpath(sys_get_temp_dir()) . '/shlink-tests.db',
-    ];
-    $container->setService('config', $config);
-}
-
-/** @var EntityManager $em */
+$container = $isTest ? include __DIR__ . '/test-container.php' : include __DIR__ . '/container.php';
 $em = $container->get(EntityManager::class);
 
 return ConsoleRunner::createHelperSet($em);
