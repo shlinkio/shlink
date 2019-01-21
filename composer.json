@@ -80,25 +80,21 @@
             "ShlinkioTest\\Shlink\\Rest\\": "module/Rest/test",
             "ShlinkioTest\\Shlink\\Core\\": [
                 "module/Core/test",
-                "module/Core/test-func"
+                "module/Core/test-db"
             ],
             "ShlinkioTest\\Shlink\\Common\\": [
                 "module/Common/test",
-                "module/Common/test-func"
+                "module/Common/test-db"
             ],
             "ShlinkioTest\\Shlink\\Installer\\": "module/Installer/test"
         }
     },
     "scripts": {
-        "check": [
+        "ci": [
             "@cs",
             "@stan",
             "@test:ci",
             "@infect:ci"
-        ],
-        "ci": [
-            "echo \"This command is DEPRECATED. Use check instead\"",
-            "@check"
         ],
 
         "cs": "phpcs",
@@ -107,15 +103,15 @@
 
         "test": [
             "@test:unit",
-            "@test:func"
+            "@test:db"
         ],
         "test:ci": [
             "@test:unit:ci",
-            "@test:func"
+            "@test:db"
         ],
         "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov",
         "test:unit:ci": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/phpunit.junit.xml",
-        "test:func": "phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-func.xml --coverage-php build/coverage-func.cov",
+        "test:db": "phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-db.xml --coverage-php build/coverage-db.cov",
 
         "test:pretty": [
             "@test",
@@ -123,9 +119,9 @@
         ],
         "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage --order-by=random",
 
-        "infect": "infection --threads=4 --min-msi=65 --log-verbosity=2 --only-covered",
-        "infect:ci": "infection --threads=4 --min-msi=65 --log-verbosity=2 --only-covered --coverage=build",
-        "infect:show": "infection --threads=4 --min-msi=65 --log-verbosity=2 --only-covered --show-mutations",
+        "infect": "infection --threads=4 --min-msi=65 --log-verbosity=default --only-covered",
+        "infect:ci": "infection --threads=4 --min-msi=65 --log-verbosity=default --only-covered --coverage=build",
+        "infect:show": "infection --threads=4 --min-msi=65 --log-verbosity=default --only-covered --show-mutations",
         "infect:test": [
             "@test:unit:ci",
             "@infect:ci"
@@ -141,7 +137,7 @@
         "test:ci": "<fg=blue;options=bold>Runs all test suites, generating all needed reports and logs for CI envs</>",
         "test:unit": "<fg=blue;options=bold>Runs unit test suites</>",
         "test:unit:ci": "<fg=blue;options=bold>Runs unit test suites, generating all needed reports and logs for CI envs</>",
-        "test:func": "<fg=blue;options=bold>Runs functional test suites (covering entity repositories)</>",
+        "test:db": "<fg=blue;options=bold>Runs database test suites (covering entity repositories)</>",
         "test:pretty": "<fg=blue;options=bold>Runs all test suites and generates an HTML code coverage report</>",
         "test:unit:pretty": "<fg=blue;options=bold>Runs unit test suites and generates an HTML code coverage report</>",
         "infect": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>",
