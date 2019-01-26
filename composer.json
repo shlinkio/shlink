@@ -108,7 +108,8 @@
         ],
         "test:ci": [
             "@test:unit:ci",
-            "@test:db"
+            "@test:db",
+            "@test:api"
         ],
         "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov",
         "test:unit:ci": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/phpunit.junit.xml",

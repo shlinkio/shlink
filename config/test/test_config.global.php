@@ -4,11 +4,15 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink;
 
 use GuzzleHttp\Client;
+use Zend\ConfigAggregator\ConfigAggregator;
 use Zend\ServiceManager\Factory\InvokableFactory;
 use function realpath;
 use function sys_get_temp_dir;
 
 return [
+
+    'debug' => true,
+    ConfigAggregator::ENABLE_CACHE => false,
 
     'zend-expressive-swoole' => [
         'swoole-http-server' => [
