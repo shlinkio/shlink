@@ -1,26 +1,19 @@
 <?php
 declare(strict_types=1);
 
+namespace ShlinkioTest\Shlink\Common;
+
 use Psr\Container\ContainerInterface;
-use ShlinkioTest\Shlink\Common\DbTest\DatabaseTestCase;
-use Symfony\Component\Process\Process;
+use function file_exists;
+use function touch;
 
 // Create an empty .env file
 if (! file_exists('.env')) {
     touch('.env');
 }
 
-$shlinkDbPath = realpath(sys_get_temp_dir()) . '/shlink-tests.db';
-if (file_exists($shlinkDbPath)) {
-    unlink($shlinkDbPath);
-}
-
 /** @var ContainerInterface $container */
-$container = require __DIR__ . '/../test-container.php';
+$container = require __DIR__ . '/../container.php';
 
-// Create database
-$process = new Process(['vendor/bin/doctrine', 'orm:schema-tool:create', '--no-interaction', '-q', '--test']);
-$process->inheritEnvironmentVariables()
-        ->mustRun();
-
-DatabaseTestCase::$em = $container->get('em');
+$container->get(TestHelper::class)->createTestDb();
+DbTest\DatabaseTestCase::$em = $container->get('em');

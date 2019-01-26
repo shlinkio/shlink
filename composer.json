@@ -111,7 +111,7 @@
         ],
         "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov",
         "test:unit:ci": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/phpunit.junit.xml",
-        "test:db": "phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-db.xml --coverage-php build/coverage-db.cov",
+        "test:db": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-db.xml --coverage-php build/coverage-db.cov",
 
         "test:pretty": [
             "@test",
