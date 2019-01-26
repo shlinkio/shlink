@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
-use ShlinkioTest\Shlink\Common\DbUnit\DatabaseTestCase;
+use ShlinkioTest\Shlink\Common\DbTest\DatabaseTestCase;
 use function sprintf;
 
 class VisitRepositoryTest extends DatabaseTestCase

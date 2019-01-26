@@ -28,11 +28,11 @@ rsync -av * "${builtcontent}" \
     --exclude=docs \
     --exclude=indocker \
     --exclude=docker* \
-    --exclude=func_tests_bootstrap.php \
     --exclude=php* \
     --exclude=infection.json \
     --exclude=phpstan.neon \
     --exclude=config/autoload/*local* \
+    --exclude=config/test \
     --exclude=**/test* \
     --exclude=build*
 cd "${builtcontent}"

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use Psr\Container\ContainerInterface;
-use ShlinkioTest\Shlink\Common\DbUnit\DatabaseTestCase;
+use ShlinkioTest\Shlink\Common\DbTest\DatabaseTestCase;
 use Symfony\Component\Process\Process;
 
 // Create an empty .env file
@@ -16,10 +16,10 @@ if (file_exists($shlinkDbPath)) {
 }
 
 /** @var ContainerInterface $container */
-$container = require __DIR__ . '/config/test-container.php';
+$container = require __DIR__ . '/../test-container.php';
 
 // Create database
-$process = new Process(['vendor/bin/doctrine', 'orm:schema-tool:create', '--no-interaction', '-q', '--test'], __DIR__);
+$process = new Process(['vendor/bin/doctrine', 'orm:schema-tool:create', '--no-interaction', '-q', '--test']);
 $process->inheritEnvironmentVariables()
         ->mustRun();
 
