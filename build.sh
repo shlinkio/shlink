@@ -17,6 +17,7 @@ echo 'Copying project files...'
 rm -rf "${builtcontent}"
 mkdir -p "${builtcontent}"
 rsync -av * "${builtcontent}" \
+    --exclude=bin/test \
     --exclude=data/infra \
     --exclude=data/travis \
     --exclude=data/migrations_template.txt \
