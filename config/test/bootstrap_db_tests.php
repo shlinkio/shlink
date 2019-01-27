@@ -16,4 +16,4 @@ if (! file_exists('.env')) {
 $container = require __DIR__ . '/../container.php';
 
 $container->get(TestHelper::class)->createTestDb();
-DbTest\DatabaseTestCase::$em = $container->get('em');
+DbTest\DatabaseTestCase::setEntityManager($container->get('em'));

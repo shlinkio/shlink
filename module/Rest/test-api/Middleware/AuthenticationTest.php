@@ -16,6 +16,6 @@ class AuthenticationTest extends ApiTestCase
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(self::STATUS_UNAUTHORIZED);
 
-        $this->callApi(self::METHOD_GET, '/rest/v1/short-codes');
+        $this->callApi(self::METHOD_GET, '/short-codes');
     }
 }

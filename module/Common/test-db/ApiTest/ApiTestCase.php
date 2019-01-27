@@ -8,9 +8,12 @@ use Fig\Http\Message\StatusCodeInterface;
 use GuzzleHttp\ClientInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use function sprintf;
 
 abstract class ApiTestCase extends TestCase implements StatusCodeInterface, RequestMethodInterface
 {
+    private const PATH_PREFX = '/rest/v1';
+
     /** @var ClientInterface */
     private static $client;
 
@@ -24,6 +27,6 @@ abstract class ApiTestCase extends TestCase implements StatusCodeInterface, Requ
      */
     protected function callApi(string $method, string $uri, array $options = []): ResponseInterface
     {
-        return self::$client->request($method, $uri, $options);
+        return self::$client->request($method, sprintf('%s%s', self::PATH_PREFX, $uri), $options);
     }
 }
