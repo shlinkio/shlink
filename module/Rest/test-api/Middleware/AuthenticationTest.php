@@ -22,7 +22,7 @@ class AuthenticationTest extends ApiTestCase
         try {
             $this->callApi(self::METHOD_GET, '/short-codes');
         } catch (ClientException $e) {
-            ['error' => $error, 'message' => $message] = json_decode((string) $e->getResponse()->getBody());
+            ['error' => $error, 'message' => $message] = $this->getJsonResponsePayload($e->getResponse());
 
             $this->assertEquals(self::STATUS_UNAUTHORIZED, $e->getCode());
             $this->assertEquals(RestUtils::INVALID_AUTHORIZATION_ERROR, $error);

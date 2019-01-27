@@ -14,6 +14,13 @@ return [
     'debug' => true,
     ConfigAggregator::ENABLE_CACHE => false,
 
+    'url_shortener' => [
+        'domain' => [
+            'schema' => 'http',
+            'hostname' => 'doma.in',
+        ],
+    ],
+
     'zend-expressive-swoole' => [
         'swoole-http-server' => [
             'port' => 9999,
