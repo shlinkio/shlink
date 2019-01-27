@@ -29,6 +29,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     The status code can be `200 OK` in case of success or `503 Service Unavailable` in case of error, while the `status` property will be one of `pass` or `fail`, as defined in the [Health check RFC](https://inadarei.github.io/rfc-healthcheck/).
 
+* [#336](https://github.com/shlinkio/shlink/issues/336) Added an API test suite which performs API calls to an actual instance of the web service.
+
 #### Changed
 
 * [#320](https://github.com/shlinkio/shlink/issues/320) Replaced query builder by plain DQL for all queries which do not need to be dynamically generated.
