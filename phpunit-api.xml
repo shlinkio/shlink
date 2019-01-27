@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
+    bootstrap="./config/test/bootstrap_api_tests.php"
+    colors="true"
+>
+    <testsuites>
+        <testsuite name="Shlink API tests">
+            <directory>./module/*/test-api</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./module/*/src</directory>
+        </whitelist>
+    </filter>
+</phpunit>

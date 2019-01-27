@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink;
 use Acelaya\ExpressiveErrorHandler;
 use Zend\ConfigAggregator;
 use Zend\Expressive;
+use function Shlinkio\Shlink\Common\env;
 
 return (new ConfigAggregator\ConfigAggregator([
     Expressive\ConfigProvider::class,
@@ -21,4 +22,7 @@ return (new ConfigAggregator\ConfigAggregator([
     Rest\ConfigProvider::class,
     new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
     new ConfigAggregator\ZendConfigProvider('config/params/{generated_config.php,*.config.{php,json}}'),
+    env('APP_ENV') === 'test'
+        ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')
+        : new ConfigAggregator\ArrayProvider([]),
 ], 'data/cache/app_config.php'))->getMergedConfig();
