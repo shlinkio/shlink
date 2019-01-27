@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Common;
 
+use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
 use function file_exists;
 use function touch;
@@ -14,5 +15,12 @@ if (! file_exists('.env')) {
 
 /** @var ContainerInterface $container */
 $container = require __DIR__ . '/../container.php';
-$container->get(TestHelper::class)->createTestDb();
+$testHelper = $container->get(TestHelper::class);
+$config = $container->get('config');
+
+$testHelper->createTestDb();
+
+$em = $container->get(EntityManager::class);
+$testHelper->seedFixtures($em, $config['data_fixtures'] ?? []);
+
 ApiTest\ApiTestCase::setApiClient($container->get('shlink_test_api_client'));

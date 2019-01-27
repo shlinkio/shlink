@@ -41,4 +41,10 @@ return [
         ],
     ],
 
+    'data_fixtures' => [
+        'paths' => [
+            __DIR__ . '/../../module/Rest/test-api/Fixtures',
+        ],
+    ],
+
 ];

@@ -38,13 +38,14 @@ class AuthenticationTest extends ApiTestCase
 
     /**
      * @test
+     * @dataProvider provideInvalidApiKeys
      */
-    public function apiKeyErrorIsReturnedWhenProvidedApiKeyIsInvalid()
+    public function apiKeyErrorIsReturnedWhenProvidedApiKeyIsInvalid(string $apiKey)
     {
         try {
             $this->callApi(self::METHOD_GET, '/short-codes', [
                 'headers' => [
-                    ApiKeyHeaderPlugin::HEADER_NAME => 'invalid',
+                    ApiKeyHeaderPlugin::HEADER_NAME => $apiKey,
                 ],
             ]);
         } catch (ClientException $e) {
@@ -54,5 +55,14 @@ class AuthenticationTest extends ApiTestCase
             $this->assertEquals(RestUtils::INVALID_API_KEY_ERROR, $error);
             $this->assertEquals('Provided API key does not exist or is invalid.', $message);
         }
+    }
+
+    public function provideInvalidApiKeys(): array
+    {
+        return [
+            'key which does not exist' => ['invalid'],
+            'key which is expired' => ['expired_api_key'],
+            'key which is disabled' => ['disabled_api_key'],
+        ];
     }
 }
