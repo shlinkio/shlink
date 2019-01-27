@@ -19,6 +19,9 @@ return [
             'port' => 9999,
             'host' => '127.0.0.1',
             'process-name' => 'shlink_test',
+            'options' => [
+                'pid_file' => sys_get_temp_dir() . '/shlink-test-swoole.pid',
+            ],
         ],
     ],
 

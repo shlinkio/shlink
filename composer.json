@@ -114,11 +114,7 @@
         "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov",
         "test:unit:ci": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/phpunit.junit.xml",
         "test:db": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-db.xml --coverage-php build/coverage-db.cov",
-        "test:api": [
-            "APP_ENV=test vendor/bin/zend-expressive-swoole start -d",
-            "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-api.xml",
-            "APP_ENV=test vendor/bin/zend-expressive-swoole stop"
-        ],
+        "test:api": "APP_ENV=test vendor/bin/zend-expressive-swoole start -d && echo 'Waiting 2 seconds for server to start...' && sleep 2 && APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-api.xml && APP_ENV=test vendor/bin/zend-expressive-swoole stop",
 
         "test:pretty": [
             "@test",
