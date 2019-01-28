@@ -105,7 +105,8 @@
 
         "test": [
             "@test:unit",
-            "@test:db"
+            "@test:db",
+            "@test:api"
         ],
         "test:ci": [
             "@test:unit:ci",

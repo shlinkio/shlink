@@ -26,7 +26,7 @@ class ImageFactoryTest extends TestCase
     {
         /** @var Image $image */
         $image = $this->factory->__invoke(new ServiceManager(['services' => [
-            'config' => ['phpwkhtmltopdf' => []],
+            'config' => ['wkhtmltopdf' => []],
         ]]), '');
         $this->assertInstanceOf(Image::class, $image);
 
@@ -45,7 +45,7 @@ class ImageFactoryTest extends TestCase
 
         /** @var Image $image */
         $image = $this->factory->__invoke(new ServiceManager(['services' => [
-            'config' => ['phpwkhtmltopdf' => []],
+            'config' => ['wkhtmltopdf' => []],
         ]]), '', ['url' => $expectedPage]);
         $this->assertInstanceOf(Image::class, $image);
 

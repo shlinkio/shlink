@@ -2,7 +2,7 @@
 namespace PHPSTORM_META;
 
 use Psr\Container\ContainerInterface;
-use Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * PhpStorm Container Interop code completion
@@ -17,7 +17,7 @@ $STATIC_METHOD_TYPES = [
     ContainerInterface::get('') => [
         '' == '@',
     ],
-    ServiceManager::build('') => [
+    ServiceLocatorInterface::build('') => [
         '' == '@',
     ],
 ];
