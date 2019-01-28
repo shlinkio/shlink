@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 return [
 
-    'phpwkhtmltopdf' => [
+    'wkhtmltopdf' => [
         'images' => [
-            'binary' => 'bin/wkhtmltoimage',
+            'binary' => __DIR__ . '/../../bin/wkhtmltoimage',
             'type' => 'jpg',
         ],
     ],

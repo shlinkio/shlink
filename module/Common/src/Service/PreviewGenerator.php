@@ -19,7 +19,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
     /** @var Filesystem */
     private $filesystem;
 
-    public function __construct(ImageBuilderInterface $imageBuilder, Filesystem $filesystem, $location)
+    public function __construct(ImageBuilderInterface $imageBuilder, Filesystem $filesystem, string $location)
     {
         $this->location = $location;
         $this->imageBuilder = $imageBuilder;
@@ -33,7 +33,6 @@ class PreviewGenerator implements PreviewGeneratorInterface
      */
     public function generatePreview(string $url): string
     {
-        /** @var Image $image */
         $image = $this->imageBuilder->build(Image::class, ['url' => $url]);
 
         // If the file already exists, return its path
