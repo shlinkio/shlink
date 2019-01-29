@@ -7,7 +7,11 @@ use GuzzleHttp\Client;
 use Zend\ConfigAggregator\ConfigAggregator;
 use Zend\ServiceManager\Factory\InvokableFactory;
 use function realpath;
+use function sprintf;
 use function sys_get_temp_dir;
+
+$swooleTestingHost = '127.0.0.1';
+$swooleTestingPort = 9999;
 
 return [
 
@@ -23,8 +27,8 @@ return [
 
     'zend-expressive-swoole' => [
         'swoole-http-server' => [
-            'port' => 9999,
-            'host' => '127.0.0.1',
+            'host' => $swooleTestingHost,
+            'port' => $swooleTestingPort,
             'process-name' => 'shlink_test',
             'options' => [
                 'pid_file' => sys_get_temp_dir() . '/shlink-test-swoole.pid',
@@ -33,11 +37,13 @@ return [
     ],
 
     'dependencies' => [
+        'services' => [
+            'shlink_test_api_client' => new Client([
+                'base_uri' => sprintf('http://%s:%s/', $swooleTestingHost, $swooleTestingPort),
+            ]),
+        ],
         'factories' => [
             Common\TestHelper::class => InvokableFactory::class,
-            'shlink_test_api_client' => function () {
-                return new Client(['base_uri' => 'http://localhost:9999/']);
-            },
         ],
     ],
 
