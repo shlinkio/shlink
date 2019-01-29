@@ -29,8 +29,6 @@ class UrlShortener implements UrlShortenerInterface
 {
     use TagManagerTrait;
 
-    /** @deprecated */
-    public const DEFAULT_CHARS = UrlShortenerOptions::DEFAULT_CHARS;
     private const ID_INCREMENT = 200000;
 
     /** @var ClientInterface */

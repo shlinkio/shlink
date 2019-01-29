@@ -38,15 +38,11 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
     /**
      * @param Request $request
      * @return Response
-     * @throws \InvalidArgumentException
      */
     public function handle(Request $request): Response
     {
         try {
             $shortUrlData = $this->buildShortUrlData($request);
-            $shortUrlMeta = $shortUrlData->getMeta();
-            $longUrl = $shortUrlData->getLongUrl();
-            $customSlug = $shortUrlMeta->getCustomSlug();
         } catch (InvalidArgumentException $e) {
             $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
             return new JsonResponse([
@@ -54,6 +50,10 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
                 'message' => $e->getMessage(),
             ], self::STATUS_BAD_REQUEST);
         }
+
+        $longUrl = $shortUrlData->getLongUrl();
+        $shortUrlMeta = $shortUrlData->getMeta();
+        $customSlug = $shortUrlMeta->getCustomSlug();
 
         try {
             $shortUrl = $this->urlShortener->urlToShortCode(
