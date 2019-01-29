@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Util\ShortUrlBuilderTrait;
 use Symfony\Component\Console\Command\Command;
@@ -116,10 +117,12 @@ class GenerateShortUrlCommand extends Command
             $shortCode = $this->urlShortener->urlToShortCode(
                 new Uri($longUrl),
                 $tags,
-                $this->getOptionalDate($input, 'validSince'),
-                $this->getOptionalDate($input, 'validUntil'),
-                $customSlug,
-                $maxVisits !== null ? (int) $maxVisits : null
+                ShortUrlMeta::createFromParams(
+                    $this->getOptionalDate($input, 'validSince'),
+                    $this->getOptionalDate($input, 'validUntil'),
+                    $customSlug,
+                    $maxVisits !== null ? (int) $maxVisits : null
+                )
             )->getShortCode();
             $shortUrl = $this->buildShortUrl($this->domainConfig, $shortCode);
 

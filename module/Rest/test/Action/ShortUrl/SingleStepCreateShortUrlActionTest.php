@@ -9,6 +9,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
@@ -91,10 +92,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
                 return $argument;
             }),
             [],
-            null,
-            null,
-            null,
-            null
+            ShortUrlMeta::createEmpty()
         )->willReturn(new ShortUrl(''));
 
         $resp = $this->action->handle($request);

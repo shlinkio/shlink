@@ -10,6 +10,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
@@ -86,9 +87,7 @@ class CreateShortUrlActionTest extends TestCase
         $this->urlShortener->urlToShortCode(
             Argument::type(Uri::class),
             Argument::type('array'),
-            null,
-            null,
-            'foo',
+            ShortUrlMeta::createFromRawData(['customSlug' => 'foo']),
             Argument::cetera()
         )->willThrow(NonUniqueSlugException::class)->shouldBeCalledOnce();
 

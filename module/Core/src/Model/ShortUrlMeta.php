@@ -138,4 +138,12 @@ final class ShortUrlMeta
     {
         return $this->maxVisits !== null;
     }
+
+    public function withCustomSlug(string $customSlug): self
+    {
+        $clone = clone $this;
+        $clone->customSlug = $customSlug;
+
+        return $clone;
+    }
 }

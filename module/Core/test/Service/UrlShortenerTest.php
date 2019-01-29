@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Service;
 
 use Cocur\Slugify\SlugifyInterface;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -17,7 +16,9 @@ use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Zend\Diactoros\Uri;
@@ -49,8 +50,8 @@ class UrlShortenerTest extends TestCase
             $shortUrl = $arguments[0];
             $shortUrl->setId('10');
         });
-        $repo = $this->prophesize(ObjectRepository::class);
-        $repo->findOneBy(Argument::any())->willReturn(null);
+        $repo = $this->prophesize(ShortUrlRepository::class);
+        $repo->count(Argument::any())->willReturn(0);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $this->slugger = $this->prophesize(SlugifyInterface::class);
@@ -74,7 +75,11 @@ class UrlShortenerTest extends TestCase
     public function urlIsProperlyShortened()
     {
         // 10 -> 12C1c
-        $shortUrl = $this->urlShortener->urlToShortCode(new Uri('http://foobar.com/12345/hello?foo=bar'));
+        $shortUrl = $this->urlShortener->urlToShortCode(
+            new Uri('http://foobar.com/12345/hello?foo=bar'),
+            [],
+            ShortUrlMeta::createEmpty()
+        );
         $this->assertEquals('12C1c', $shortUrl->getShortCode());
     }
 
@@ -91,7 +96,11 @@ class UrlShortenerTest extends TestCase
         $this->em->close()->shouldBeCalledOnce();
 
         $this->em->flush()->willThrow(new ORMException());
-        $this->urlShortener->urlToShortCode(new Uri('http://foobar.com/12345/hello?foo=bar'));
+        $this->urlShortener->urlToShortCode(
+            new Uri('http://foobar.com/12345/hello?foo=bar'),
+            [],
+            ShortUrlMeta::createEmpty()
+        );
     }
 
     /**
@@ -105,7 +114,11 @@ class UrlShortenerTest extends TestCase
         $this->httpClient->request(Argument::cetera())->willThrow(
             new ClientException('', $this->prophesize(Request::class)->reveal())
         );
-        $this->urlShortener->urlToShortCode(new Uri('http://foobar.com/12345/hello?foo=bar'));
+        $this->urlShortener->urlToShortCode(
+            new Uri('http://foobar.com/12345/hello?foo=bar'),
+            [],
+            ShortUrlMeta::createEmpty()
+        );
     }
 
     /**
@@ -119,9 +132,7 @@ class UrlShortenerTest extends TestCase
         $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
-            null,
-            null,
-            'custom-slug'
+            ShortUrlMeta::createFromRawData(['customSlug' => 'custom-slug'])
         );
 
         $slugify->shouldHaveBeenCalledOnce();
@@ -135,24 +146,21 @@ class UrlShortenerTest extends TestCase
         /** @var MethodProphecy $slugify */
         $slugify = $this->slugger->slugify('custom-slug')->willReturnArgument();
 
-        $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        /** @var MethodProphecy $findBySlug */
-        $findBySlug = $repo->findOneBy(['shortCode' => 'custom-slug'])->willReturn(new ShortUrl(''));
+        $repo = $this->prophesize(ShortUrlRepository::class);
+        $countBySlug = $repo->count(['shortCode' => 'custom-slug'])->willReturn(1);
         $repo->findOneBy(Argument::cetera())->willReturn(null);
         /** @var MethodProphecy $getRepo */
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $slugify->shouldBeCalledOnce();
-        $findBySlug->shouldBeCalledOnce();
+        $countBySlug->shouldBeCalledOnce();
         $getRepo->shouldBeCalled();
         $this->expectException(NonUniqueSlugException::class);
 
         $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
-            null,
-            null,
-            'custom-slug'
+            ShortUrlMeta::createFromRawData(['customSlug' => 'custom-slug'])
         );
     }
 

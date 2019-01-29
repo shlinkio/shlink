@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Service;
 
-use Cake\Chronos\Chronos;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\ClientInterface;
@@ -53,41 +52,35 @@ class UrlShortener implements UrlShortenerInterface
     }
 
     /**
+     * @param string[] $tags
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      * @throws RuntimeException
      */
-    public function urlToShortCode(
-        UriInterface $url,
-        array $tags = [],
-        ?Chronos $validSince = null,
-        ?Chronos $validUntil = null,
-        ?string $customSlug = null,
-        ?int $maxVisits = null
-    ): ShortUrl {
+    public function urlToShortCode(UriInterface $url, array $tags, ShortUrlMeta $meta): ShortUrl
+    {
         // If the URL validation is enabled, check that the URL actually exists
         if ($this->options->isUrlValidationEnabled()) {
             $this->checkUrlExists($url);
         }
-        $customSlug = $this->processCustomSlug($customSlug);
+        $meta = $this->processCustomSlug($meta);
 
         // Transactionally insert the short url, then generate the short code and finally update the short code
         try {
             $this->em->beginTransaction();
 
             // First, create the short URL with an empty short code
-            $shortUrl = new ShortUrl(
-                (string) $url,
-                ShortUrlMeta::createFromParams($validSince, $validUntil, null, $maxVisits)
-            );
+            $shortUrl = new ShortUrl((string) $url, $meta);
             $this->em->persist($shortUrl);
             $this->em->flush();
 
-            // Generate the short code and persist it
-            // TODO Somehow provide the logic to calculate the shortCode to avoid the need of a setter
-            $shortCode = $customSlug ?? $this->convertAutoincrementIdToShortCode((float) $shortUrl->getId());
-            $shortUrl->setShortCode($shortCode)
-                     ->setTags($this->tagNamesToEntities($this->em, $tags));
+            // Generate the short code and persist it if no custom slug was provided
+            if (! $meta->hasCustomSlug()) {
+                // TODO Somehow provide the logic to calculate the shortCode to avoid the need of a setter
+                $shortCode = $this->convertAutoincrementIdToShortCode((float) $shortUrl->getId());
+                $shortUrl->setShortCode($shortCode);
+            }
+            $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
             $this->em->flush();
 
             $this->em->commit();
@@ -130,25 +123,27 @@ class UrlShortener implements UrlShortenerInterface
         return $chars[(int) $id] . $code;
     }
 
-    private function processCustomSlug(?string $customSlug): ?string
+    private function processCustomSlug(ShortUrlMeta $meta): ?ShortUrlMeta
     {
-        if ($customSlug === null) {
-            return null;
+        if (! $meta->hasCustomSlug()) {
+            return $meta;
         }
 
-        // If a custom slug was provided, make sure it's unique
-        $customSlug = $this->slugger->slugify($customSlug);
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy(['shortCode' => $customSlug]);
-        if ($shortUrl !== null) {
+        // FIXME If the slug was generated while filtering the value originally, we would not need an immutable setter
+        //       in ShortUrlMeta
+        $customSlug = $this->slugger->slugify($meta->getCustomSlug());
+
+        /** @var ShortUrlRepository $repo */
+        $repo = $this->em->getRepository(ShortUrl::class);
+        $shortUrlsCount = $repo->count(['shortCode' => $customSlug]);
+        if ($shortUrlsCount > 0) {
             throw NonUniqueSlugException::fromSlug($customSlug);
         }
 
-        return $customSlug;
+        return $meta->withCustomSlug($customSlug);
     }
 
     /**
-     * Tries to find the mapped URL for provided short code. Returns null if not found
-     *
      * @throws InvalidShortCodeException
      * @throws EntityDoesNotExistException
      */
