@@ -15,7 +15,7 @@ use function sprintf;
 
 abstract class ApiTestCase extends TestCase implements StatusCodeInterface, RequestMethodInterface
 {
-    private const REST_PATH_PREFX = '/rest/v1';
+    private const REST_PATH_PREFIX = '/rest/v1';
 
     /** @var ClientInterface */
     private static $client;
@@ -41,7 +41,7 @@ abstract class ApiTestCase extends TestCase implements StatusCodeInterface, Requ
 
     protected function callApi(string $method, string $uri, array $options = []): ResponseInterface
     {
-        return self::$client->request($method, sprintf('%s%s', self::REST_PATH_PREFX, $uri), $options);
+        return self::$client->request($method, sprintf('%s%s', self::REST_PATH_PREFIX, $uri), $options);
     }
 
     protected function callApiWithKey(string $method, string $uri, array $options = []): ResponseInterface
