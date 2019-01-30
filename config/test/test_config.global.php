@@ -40,6 +40,7 @@ return [
         'services' => [
             'shlink_test_api_client' => new Client([
                 'base_uri' => sprintf('http://%s:%s/', $swooleTestingHost, $swooleTestingPort),
+                'http_errors' => false,
             ]),
         ],
         'factories' => [

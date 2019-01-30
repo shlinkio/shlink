@@ -5,6 +5,7 @@ namespace ShlinkioTest\Shlink\Common;
 
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Loader;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Process\Process;
 use function file_exists;
@@ -38,7 +39,7 @@ class TestHelper
             $loader->loadFromDirectory($path);
         }
 
-        $executor = new ORMExecutor($em);
-        $executor->execute($loader->getFixtures(), true);
+        $executor = new ORMExecutor($em, new ORMPurger());
+        $executor->execute($loader->getFixtures());
     }
 }
