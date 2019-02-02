@@ -1,5 +1,10 @@
-FROM php:7.1.22-cli-alpine3.7
+FROM php:7.3.1-cli-alpine3.8
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
+
+ENV PREDIS_VERSION 4.2.0
+ENV MEMCACHED_VERSION 3.1.3
+ENV APCU_VERSION 5.1.16
+ENV APCU_BC_VERSION 1.0.4
 
 RUN apk update
 
@@ -16,17 +21,14 @@ RUN docker-php-ext-install pdo_sqlite
 RUN apk add --no-cache --virtual icu-dev
 RUN docker-php-ext-install intl
 
-RUN apk add --no-cache --virtual zlib-dev
+RUN apk add --no-cache --virtual libzip-dev zlib-dev
 RUN docker-php-ext-install zip
-
-RUN apk add --no-cache --virtual libmcrypt-dev
-RUN docker-php-ext-install mcrypt
 
 RUN apk add --no-cache --virtual libpng-dev
 RUN docker-php-ext-install gd
 
 # Install redis extension
-ADD https://github.com/phpredis/phpredis/archive/3.1.4.tar.gz /tmp/phpredis.tar.gz
+ADD https://github.com/phpredis/phpredis/archive/$PREDIS_VERSION.tar.gz /tmp/phpredis.tar.gz
 RUN mkdir -p /usr/src/php/ext/redis\
   && tar xf /tmp/phpredis.tar.gz -C /usr/src/php/ext/redis --strip-components=1
 # configure and install
@@ -38,7 +40,7 @@ RUN rm /tmp/phpredis.tar.gz
 # Install memcached extension
 RUN apk add --no-cache --virtual cyrus-sasl-dev
 RUN apk add --no-cache --virtual libmemcached-dev
-ADD https://github.com/php-memcached-dev/php-memcached/archive/php7.tar.gz /tmp/memcached.tar.gz
+ADD https://github.com/php-memcached-dev/php-memcached/archive/v$MEMCACHED_VERSION.tar.gz /tmp/memcached.tar.gz
 RUN mkdir -p /usr/src/php/ext/memcached\
   && tar xf /tmp/memcached.tar.gz -C /usr/src/php/ext/memcached --strip-components=1
 # configure and install
@@ -48,7 +50,7 @@ RUN docker-php-ext-configure memcached\
 RUN rm /tmp/memcached.tar.gz
 
 # Install APCu extension
-ADD https://pecl.php.net/get/apcu-5.1.3.tgz /tmp/apcu.tar.gz
+ADD https://pecl.php.net/get/apcu-$APCU_VERSION.tgz /tmp/apcu.tar.gz
 RUN mkdir -p /usr/src/php/ext/apcu\
   && tar xf /tmp/apcu.tar.gz -C /usr/src/php/ext/apcu --strip-components=1
 # configure and install
@@ -58,7 +60,7 @@ RUN docker-php-ext-configure apcu\
 RUN rm /tmp/apcu.tar.gz
 
 # Install APCu-BC extension
-ADD https://pecl.php.net/get/apcu_bc-1.0.3.tgz /tmp/apcu_bc.tar.gz
+ADD https://pecl.php.net/get/apcu_bc-$APCU_BC_VERSION.tgz /tmp/apcu_bc.tar.gz
 RUN mkdir -p /usr/src/php/ext/apcu-bc\
   && tar xf /tmp/apcu_bc.tar.gz -C /usr/src/php/ext/apcu-bc --strip-components=1
 # configure and install
