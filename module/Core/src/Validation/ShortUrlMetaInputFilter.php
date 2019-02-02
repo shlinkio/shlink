@@ -4,10 +4,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Validation;
 
 use DateTime;
-use Zend\I18n\Validator\IsInt;
+use Shlinkio\Shlink\Common\Validation\InputFactoryTrait;
 use Zend\InputFilter\InputFilter;
-use Zend\Validator\Date;
-use Zend\Validator\GreaterThan;
+use Zend\Validator;
 
 class ShortUrlMetaInputFilter extends InputFilter
 {
@@ -17,6 +16,7 @@ class ShortUrlMetaInputFilter extends InputFilter
     public const VALID_UNTIL = 'validUntil';
     public const CUSTOM_SLUG = 'customSlug';
     public const MAX_VISITS = 'maxVisits';
+    public const FIND_IF_EXISTS = 'findIfExists';
 
     public function __construct(?array $data = null)
     {
@@ -29,18 +29,20 @@ class ShortUrlMetaInputFilter extends InputFilter
     private function initialize(): void
     {
         $validSince = $this->createInput(self::VALID_SINCE, false);
-        $validSince->getValidatorChain()->attach(new Date(['format' => DateTime::ATOM]));
+        $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));
         $this->add($validSince);
 
         $validUntil = $this->createInput(self::VALID_UNTIL, false);
-        $validUntil->getValidatorChain()->attach(new Date(['format' => DateTime::ATOM]));
+        $validUntil->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));
         $this->add($validUntil);
 
         $this->add($this->createInput(self::CUSTOM_SLUG, false));
 
         $maxVisits = $this->createInput(self::MAX_VISITS, false);
-        $maxVisits->getValidatorChain()->attach(new IsInt())
-                                       ->attach(new GreaterThan(['min' => 1, 'inclusive' => true]));
+        $maxVisits->getValidatorChain()->attach(new Validator\Digits())
+                                       ->attach(new Validator\GreaterThan(['min' => 1, 'inclusive' => true]));
         $this->add($maxVisits);
+
+        $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
     }
 }

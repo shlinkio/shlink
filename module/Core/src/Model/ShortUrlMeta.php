@@ -18,6 +18,8 @@ final class ShortUrlMeta
     private $customSlug;
     /** @var int|null */
     private $maxVisits;
+    /** @var bool */
+    private $findIfExists;
 
     // Force named constructors
     private function __construct()
@@ -45,21 +47,25 @@ final class ShortUrlMeta
      * @param string|Chronos|null $validUntil
      * @param string|null $customSlug
      * @param int|null $maxVisits
+     * @param bool|null $findIfExists
      * @throws ValidationException
      */
     public static function createFromParams(
         $validSince = null,
         $validUntil = null,
         $customSlug = null,
-        $maxVisits = null
+        $maxVisits = null,
+        $findIfExists = null
     ): self {
-        // We do not type hint the arguments because that will be done by the validation process
+        // We do not type hint the arguments because that will be done by the validation process and we would get a
+        // type error if any of them do not match
         $instance = new self();
         $instance->validate([
             ShortUrlMetaInputFilter::VALID_SINCE => $validSince,
             ShortUrlMetaInputFilter::VALID_UNTIL => $validUntil,
             ShortUrlMetaInputFilter::CUSTOM_SLUG => $customSlug,
             ShortUrlMetaInputFilter::MAX_VISITS => $maxVisits,
+            ShortUrlMetaInputFilter::FIND_IF_EXISTS => $findIfExists,
         ]);
         return $instance;
     }
@@ -80,6 +86,7 @@ final class ShortUrlMeta
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
         $this->maxVisits = $inputFilter->getValue(ShortUrlMetaInputFilter::MAX_VISITS);
         $this->maxVisits = $this->maxVisits !== null ? (int) $this->maxVisits : null;
+        $this->findIfExists = (bool) $inputFilter->getValue(ShortUrlMetaInputFilter::FIND_IF_EXISTS);
     }
 
     /**
@@ -137,6 +144,11 @@ final class ShortUrlMeta
     public function hasMaxVisits(): bool
     {
         return $this->maxVisits !== null;
+    }
+
+    public function findIfExists(): bool
+    {
+        return $this->findIfExists;
     }
 
     public function withCustomSlug(string $customSlug): self
