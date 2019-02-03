@@ -9,15 +9,12 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Process\Process;
 use function file_exists;
-use function realpath;
-use function sys_get_temp_dir;
 use function unlink;
 
 class TestHelper
 {
-    public function createTestDb(): void
+    public function createTestDb(string $shlinkDbPath): void
     {
-        $shlinkDbPath = realpath(sys_get_temp_dir()) . '/shlink-tests.db';
         if (file_exists($shlinkDbPath)) {
             unlink($shlinkDbPath);
         }

@@ -19,7 +19,7 @@ $testHelper = $container->get(TestHelper::class);
 $config = $container->get('config');
 $em = $container->get(EntityManager::class);
 
-$testHelper->createTestDb();
+$testHelper->createTestDb($config['entity_manager']['connection']['path']);
 ApiTest\ApiTestCase::setApiClient($container->get('shlink_test_api_client'));
 ApiTest\ApiTestCase::setSeedFixturesCallback(function () use ($testHelper, $em, $config) {
     $testHelper->seedFixtures($em, $config['data_fixtures'] ?? []);

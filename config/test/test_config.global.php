@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink;
 use GuzzleHttp\Client;
 use Zend\ConfigAggregator\ConfigAggregator;
 use Zend\ServiceManager\Factory\InvokableFactory;
-use function realpath;
 use function sprintf;
 use function sys_get_temp_dir;
 
@@ -51,7 +50,8 @@ return [
     'entity_manager' => [
         'connection' => [
             'driver' => 'pdo_sqlite',
-            'path' => realpath(sys_get_temp_dir()) . '/shlink-tests.db',
+             'path' => sys_get_temp_dir() . '/shlink-tests.db',
+//            'path' => __DIR__ . '/../../data/shlink-tests.db',
         ],
     ],
 

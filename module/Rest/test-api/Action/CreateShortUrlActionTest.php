@@ -12,7 +12,7 @@ class CreateShortUrlActionTest extends ApiTestCase
     /**
      * @test
      */
-    public function createsNewShortUrlWhenOnlyLongUrlIsProvided()
+    public function createsNewShortUrlWhenOnlyLongUrlIsProvided(): void
     {
         $expectedKeys = ['shortCode', 'shortUrl', 'longUrl', 'dateCreated', 'visitsCount', 'tags'];
         [$statusCode, $payload] = $this->createShortUrl();
@@ -26,7 +26,7 @@ class CreateShortUrlActionTest extends ApiTestCase
     /**
      * @test
      */
-    public function createsNewShortUrlWithCustomSlug()
+    public function createsNewShortUrlWithCustomSlug(): void
     {
         [$statusCode, $payload] = $this->createShortUrl(['customSlug' => 'my cool slug']);
 
@@ -37,7 +37,7 @@ class CreateShortUrlActionTest extends ApiTestCase
     /**
      * @test
      */
-    public function createsNewShortUrlWithTags()
+    public function createsNewShortUrlWithTags(): void
     {
         [$statusCode, $payload] = $this->createShortUrl(['tags' => ['foo', 'bar', 'baz']]);
 
@@ -49,7 +49,7 @@ class CreateShortUrlActionTest extends ApiTestCase
      * @test
      * @dataProvider provideMaxVisits
      */
-    public function createsNewShortUrlWithVisitsLimit(int $maxVisits)
+    public function createsNewShortUrlWithVisitsLimit(int $maxVisits): void
     {
         [$statusCode, ['shortCode' => $shortCode]] = $this->createShortUrl(['maxVisits' => $maxVisits]);
 
@@ -75,7 +75,7 @@ class CreateShortUrlActionTest extends ApiTestCase
     /**
      * @test
      */
-    public function createsShortUrlWithValidSince()
+    public function createsShortUrlWithValidSince(): void
     {
         [$statusCode, ['shortCode' => $shortCode]] = $this->createShortUrl([
             'validSince' => Chronos::now()->addDay()->toAtomString(),
@@ -91,7 +91,7 @@ class CreateShortUrlActionTest extends ApiTestCase
     /**
      * @test
      */
-    public function createsShortUrlWithValidUntil()
+    public function createsShortUrlWithValidUntil(): void
     {
         [$statusCode, ['shortCode' => $shortCode]] = $this->createShortUrl([
             'validUntil' => Chronos::now()->subDay()->toAtomString(),
@@ -105,6 +105,76 @@ class CreateShortUrlActionTest extends ApiTestCase
     }
 
     /**
+     * @test
+     * @dataProvider provideMatchingBodies
+     */
+    public function returnsAnExistingShortUrlWhenRequested(array $body): void
+    {
+
+        [$firstStatusCode, ['shortCode' => $firstShortCode]] = $this->createShortUrl($body);
+
+        $body['findIfExists'] = true;
+        [$secondStatusCode, ['shortCode' => $secondShortCode]] = $this->createShortUrl($body);
+
+        $this->assertEquals(self::STATUS_OK, $firstStatusCode);
+        $this->assertEquals(self::STATUS_OK, $secondStatusCode);
+        $this->assertEquals($firstShortCode, $secondShortCode);
+    }
+
+    public function provideMatchingBodies(): array
+    {
+        $longUrl = 'https://www.alejandrocelaya.com';
+
+        return [
+            'only long URL' => [['longUrl' => $longUrl]],
+            'long URL and tags' => [['longUrl' => $longUrl, 'tags' => ['boo', 'far']]],
+            'long URL custom slug' => [['longUrl' => $longUrl, 'customSlug' => 'my cool slug']],
+            'several params' => [[
+                'longUrl' => $longUrl,
+                'tags' => ['boo', 'far'],
+                'validSince' => Chronos::now()->toAtomString(),
+                'maxVisits' => 7,
+            ]],
+        ];
+    }
+
+    /**
+     * @test
+     */
+    public function returnsErrorWhenRequestingReturnExistingButCustomSlugIsInUse(): void
+    {
+        $longUrl = 'https://www.alejandrocelaya.com';
+
+        [$firstStatusCode] = $this->createShortUrl(['longUrl' => $longUrl]);
+        [$secondStatusCode] = $this->createShortUrl([
+            'longUrl' => $longUrl,
+            'customSlug' => 'custom',
+            'findIfExists' => true,
+        ]);
+
+        $this->assertEquals(self::STATUS_OK, $firstStatusCode);
+        $this->assertEquals(self::STATUS_BAD_REQUEST, $secondStatusCode);
+    }
+
+    /**
+     * @test
+     */
+    public function createsNewShortUrlIfRequestedToFindButThereIsNoMatch(): void
+    {
+        [$firstStatusCode, ['shortCode' => $firstShortCode]] = $this->createShortUrl([
+            'longUrl' => 'https://www.alejandrocelaya.com',
+        ]);
+        [$secondStatusCode, ['shortCode' => $secondShortCode]] = $this->createShortUrl([
+            'longUrl' => 'https://www.alejandrocelaya.com/projects',
+            'findIfExists' => true,
+        ]);
+
+        $this->assertEquals(self::STATUS_OK, $firstStatusCode);
+        $this->assertEquals(self::STATUS_OK, $secondStatusCode);
+        $this->assertNotEquals($firstShortCode, $secondShortCode);
+    }
+
+    /**
      * @return array {
      *     @var int $statusCode
      *     @var array $payload
@@ -112,7 +182,9 @@ class CreateShortUrlActionTest extends ApiTestCase
      */
     private function createShortUrl(array $body = []): array
     {
-        $body['longUrl'] = 'https://app.shlink.io';
+        if (! isset($body['longUrl'])) {
+            $body['longUrl'] = 'https://app.shlink.io';
+        }
         $resp = $this->callApiWithKey(self::METHOD_POST, '/short-urls', [RequestOptions::JSON => $body]);
         $payload = $this->getJsonResponsePayload($resp);
 

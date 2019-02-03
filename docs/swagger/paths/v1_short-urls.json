@@ -197,6 +197,10 @@
                             "maxVisits": {
                                 "description": "The maximum number of allowed visits for this short code",
                                 "type": "number"
+                            },
+                            "findIfExists": {
+                                "description": "Will force existing matching URL to be returned if found, instead of creating a new one",
+                                "type": "boolean"
                             }
                         }
                     }
