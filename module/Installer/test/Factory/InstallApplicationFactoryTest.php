@@ -14,7 +14,7 @@ class InstallApplicationFactoryTest extends TestCase
     /** @var InstallApplicationFactory */
     private $factory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->factory = new InstallApplicationFactory();
     }
@@ -22,10 +22,11 @@ class InstallApplicationFactoryTest extends TestCase
     /**
      * @test
      */
-    public function serviceIsCreated()
+    public function serviceIsCreated(): void
     {
-        $instance = $this->factory->__invoke(new ServiceManager(['services' => [
+        $instance = ($this->factory)(new ServiceManager(['services' => [
             Filesystem::class => $this->prophesize(Filesystem::class)->reveal(),
+            'config' => ['config_customizer_plugins' => []],
         ]]), '');
 
         $this->assertInstanceOf(Application::class, $instance);

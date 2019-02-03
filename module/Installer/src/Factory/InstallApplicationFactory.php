@@ -7,16 +7,13 @@ use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Shlinkio\Shlink\Installer\Command\InstallCommand;
 use Shlinkio\Shlink\Installer\Config\ConfigCustomizerManager;
-use Shlinkio\Shlink\Installer\Config\Plugin;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Filesystem\Filesystem;
 use Zend\Config\Writer\PhpArray;
-use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\ServiceManager\Factory\InvokableFactory;
 
 class InstallApplicationFactory implements FactoryInterface
 {
@@ -41,12 +38,7 @@ class InstallApplicationFactory implements FactoryInterface
         $command = new InstallCommand(
             new PhpArray(),
             $container->get(Filesystem::class),
-            new ConfigCustomizerManager($container, ['factories' => [
-                Plugin\DatabaseConfigCustomizer::class => ConfigAbstractFactory::class,
-                Plugin\UrlShortenerConfigCustomizer::class => ConfigAbstractFactory::class,
-                Plugin\LanguageConfigCustomizer::class => InvokableFactory::class,
-                Plugin\ApplicationConfigCustomizer::class => InvokableFactory::class,
-            ]]),
+            new ConfigCustomizerManager($container, $container->get('config')['config_customizer_plugins']),
             $isUpdate
         );
         $app->add($command);
