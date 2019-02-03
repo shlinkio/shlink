@@ -43,6 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Changed
 
+* [#342](https://github.com/shlinkio/shlink/issues/342) The installer no longer asks for a charset to be provided, and instead, it shuffles the base62 charset.
 * [#320](https://github.com/shlinkio/shlink/issues/320) Replaced query builder by plain DQL for all queries which do not need to be dynamically generated.
 * [#330](https://github.com/shlinkio/shlink/issues/330) No longer allow failures on PHP 7.3 envs during project CI build.
 * [#335](https://github.com/shlinkio/shlink/issues/335) Renamed functional test suite to database test suite, since that better describes what it actually does.

@@ -71,13 +71,13 @@ class UrlShortenerTest extends TestCase
      */
     public function urlIsProperlyShortened(): void
     {
-        // 10 -> 12C1c
+        // 10 -> 0Q1Y
         $shortUrl = $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
             ShortUrlMeta::createEmpty()
         );
-        $this->assertEquals('12C1c', $shortUrl->getShortCode());
+        $this->assertEquals('0Q1Y', $shortUrl->getShortCode());
     }
 
     /**
@@ -215,7 +215,6 @@ class UrlShortenerTest extends TestCase
      */
     public function shortCodeIsProperlyParsed(): void
     {
-        // 12C1c -> 10
         $shortCode = '12C1c';
         $shortUrl = new ShortUrl('expected_url');
         $shortUrl->setShortCode($shortCode);

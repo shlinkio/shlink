@@ -21,7 +21,9 @@ class UrlShortenerConfigCustomizerTest extends TestCase
     {
         $this->io = $this->prophesize(SymfonyStyle::class);
         $this->io->title(Argument::any())->willReturn(null);
-        $this->plugin = new UrlShortenerConfigCustomizer();
+        $this->plugin = new UrlShortenerConfigCustomizer(function () {
+            return 'the_chars';
+        });
     }
 
     /**
@@ -40,12 +42,12 @@ class UrlShortenerConfigCustomizerTest extends TestCase
         $this->assertEquals([
             'SCHEMA' => 'chosen',
             'HOSTNAME' => 'asked',
-            'CHARS' => 'asked',
+            'CHARS' => 'the_chars',
             'VALIDATE_URL' => true,
             'ENABLE_NOT_FOUND_REDIRECTION' => true,
             'NOT_FOUND_REDIRECT_TO' => 'asked',
         ], $config->getUrlShortener());
-        $ask->shouldHaveBeenCalledTimes(3);
+        $ask->shouldHaveBeenCalledTimes(2);
         $choice->shouldHaveBeenCalledOnce();
         $confirm->shouldHaveBeenCalledTimes(2);
     }
@@ -61,7 +63,6 @@ class UrlShortenerConfigCustomizerTest extends TestCase
         $config = new CustomizableAppConfig();
         $config->setUrlShortener([
             'SCHEMA' => 'foo',
-            'HOSTNAME' => 'foo',
             'ENABLE_NOT_FOUND_REDIRECTION' => true,
             'NOT_FOUND_REDIRECT_TO' => 'foo',
         ]);
@@ -70,8 +71,8 @@ class UrlShortenerConfigCustomizerTest extends TestCase
 
         $this->assertEquals([
             'SCHEMA' => 'foo',
-            'HOSTNAME' => 'foo',
-            'CHARS' => 'asked',
+            'HOSTNAME' => 'asked',
+            'CHARS' => 'the_chars',
             'VALIDATE_URL' => false,
             'ENABLE_NOT_FOUND_REDIRECTION' => true,
             'NOT_FOUND_REDIRECT_TO' => 'foo',

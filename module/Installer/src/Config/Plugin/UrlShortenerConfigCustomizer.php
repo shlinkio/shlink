@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Installer\Config\Plugin;
 
-use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Shlinkio\Shlink\Installer\Util\AskUtilsTrait;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use function array_diff;
 use function array_keys;
-use function str_shuffle;
+use function count;
+use function Functional\contains;
 
 class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
 {
@@ -30,6 +30,14 @@ class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
         self::NOT_FOUND_REDIRECT_TO,
     ];
 
+    /** @var callable */
+    private $randomCharsGenerator;
+
+    public function __construct(callable $randomCharsGenerator)
+    {
+        $this->randomCharsGenerator = $randomCharsGenerator;
+    }
+
     public function process(SymfonyStyle $io, CustomizableAppConfig $appConfig): void
     {
         $urlShortener = $appConfig->getUrlShortener();
@@ -40,7 +48,11 @@ class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
             return;
         }
 
-        $io->title('URL SHORTENER');
+        // Print title if there are keys other than "chars"
+        $onlyKeyIsChars = count($keysToAskFor) === 1 && contains($keysToAskFor, self::CHARS);
+        if (! $onlyKeyIsChars) {
+            $io->title('URL SHORTENER');
+        }
         foreach ($keysToAskFor as $key) {
             // Skip not found redirect URL when the user decided not to redirect
             if ($key === self::NOT_FOUND_REDIRECT_TO && ! $urlShortener[self::ENABLE_NOT_FOUND_REDIRECTION]) {
@@ -64,9 +76,8 @@ class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
             case self::HOSTNAME:
                 return $this->askRequired($io, 'hostname', 'Hostname for generated URLs');
             case self::CHARS:
-                return $io->ask(
-                    'Character set for generated short codes (leave empty to autogenerate one)'
-                ) ?: str_shuffle(UrlShortenerOptions::DEFAULT_CHARS);
+                // This won't actually ask anything, just generate the chars. Asking for this was confusing for users
+                return ($this->randomCharsGenerator)();
             case self::VALIDATE_URL:
                 return $io->confirm('Do you want to validate long urls by 200 HTTP status code on response');
             case self::ENABLE_NOT_FOUND_REDIRECTION:
