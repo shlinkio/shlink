@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Fig\Http\Message\RequestMethodInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
@@ -18,8 +20,12 @@ use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Throwable;
+use function array_reduce;
+use function count;
 use function floor;
 use function fmod;
+use function Functional\contains;
+use function Functional\invoke;
 use function preg_match;
 use function strlen;
 
@@ -51,6 +57,14 @@ class UrlShortener implements UrlShortenerInterface
      */
     public function urlToShortCode(UriInterface $url, array $tags, ShortUrlMeta $meta): ShortUrl
     {
+        $url = (string) $url;
+
+        // First, check if a short URL exists for all provided params
+        $existingShortUrl = $this->findExistingShortUrlIfExists($url, $tags, $meta);
+        if ($existingShortUrl !== null) {
+            return $existingShortUrl;
+        }
+
         // If the URL validation is enabled, check that the URL actually exists
         if ($this->options->isUrlValidationEnabled()) {
             $this->checkUrlExists($url);
@@ -62,7 +76,7 @@ class UrlShortener implements UrlShortenerInterface
             $this->em->beginTransaction();
 
             // First, create the short URL with an empty short code
-            $shortUrl = new ShortUrl((string) $url, $meta);
+            $shortUrl = new ShortUrl($url, $meta);
             $this->em->persist($shortUrl);
             $this->em->flush();
 
@@ -87,14 +101,68 @@ class UrlShortener implements UrlShortenerInterface
         }
     }
 
-    private function checkUrlExists(UriInterface $url): void
+    private function findExistingShortUrlIfExists(string $url, array $tags, ShortUrlMeta $meta): ?ShortUrl
+    {
+        if (! $meta->findIfExists()) {
+            return null;
+        }
+
+        $criteria = ['longUrl' => $url];
+        if ($meta->hasCustomSlug()) {
+            $criteria['shortCode'] = $meta->getCustomSlug();
+        }
+        /** @var ShortUrl|null $shortUrl */
+        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy($criteria);
+        if ($shortUrl === null) {
+            return null;
+        }
+
+        if ($meta->hasMaxVisits() && $meta->getMaxVisits() !== $shortUrl->getMaxVisits()) {
+            return null;
+        }
+        if ($meta->hasValidSince() && ! $meta->getValidSince()->eq($shortUrl->getValidSince())) {
+            return null;
+        }
+        if ($meta->hasValidUntil() && ! $meta->getValidUntil()->eq($shortUrl->getValidUntil())) {
+            return null;
+        }
+
+        $shortUrlTags = invoke($shortUrl->getTags(), '__toString');
+        $hasAllTags = count($shortUrlTags) === count($tags) && array_reduce(
+            $tags,
+            function (bool $hasAllTags, string $tag) use ($shortUrlTags) {
+                return $hasAllTags && contains($shortUrlTags, $tag);
+            },
+            true
+        );
+
+        return $hasAllTags ? $shortUrl : null;
+    }
+
+    private function checkUrlExists(string $url): void
     {
         try {
-            $this->httpClient->request('GET', $url, ['allow_redirects' => [
-                'max' => 15,
-            ]]);
+            $this->httpClient->request(RequestMethodInterface::METHOD_GET, $url, [
+                RequestOptions::ALLOW_REDIRECTS => ['max' => 15],
+            ]);
         } catch (GuzzleException $e) {
             throw InvalidUrlException::fromUrl($url, $e);
+        }
+    }
+
+    private function verifyCustomSlug(ShortUrlMeta $meta): void
+    {
+        if (! $meta->hasCustomSlug()) {
+            return;
+        }
+
+        $customSlug = $meta->getCustomSlug();
+
+        /** @var ShortUrlRepository $repo */
+        $repo = $this->em->getRepository(ShortUrl::class);
+        $shortUrlsCount = $repo->count(['shortCode' => $customSlug]);
+        if ($shortUrlsCount > 0) {
+            throw NonUniqueSlugException::fromSlug($customSlug);
         }
     }
 
@@ -113,22 +181,6 @@ class UrlShortener implements UrlShortenerInterface
         }
 
         return $chars[(int) $id] . $code;
-    }
-
-    private function verifyCustomSlug(ShortUrlMeta $meta): void
-    {
-        if (! $meta->hasCustomSlug()) {
-            return;
-        }
-
-        $customSlug = $meta->getCustomSlug();
-
-        /** @var ShortUrlRepository $repo */
-        $repo = $this->em->getRepository(ShortUrl::class);
-        $shortUrlsCount = $repo->count(['shortCode' => $customSlug]);
-        if ($shortUrlsCount > 0) {
-            throw NonUniqueSlugException::fromSlug($customSlug);
-        }
     }
 
     /**

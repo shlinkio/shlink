@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\Core\Model;
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
-use function is_string;
 
 final class ShortUrlMeta
 {
@@ -18,7 +17,7 @@ final class ShortUrlMeta
     private $customSlug;
     /** @var int|null */
     private $maxVisits;
-    /** @var bool */
+    /** @var bool|null */
     private $findIfExists;
 
     // Force named constructors
@@ -86,12 +85,11 @@ final class ShortUrlMeta
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
         $this->maxVisits = $inputFilter->getValue(ShortUrlMetaInputFilter::MAX_VISITS);
         $this->maxVisits = $this->maxVisits !== null ? (int) $this->maxVisits : null;
-        $this->findIfExists = (bool) $inputFilter->getValue(ShortUrlMetaInputFilter::FIND_IF_EXISTS);
+        $this->findIfExists = $inputFilter->getValue(ShortUrlMetaInputFilter::FIND_IF_EXISTS);
     }
 
     /**
      * @param string|Chronos|null $date
-     * @return Chronos|null
      */
     private function parseDateField($date): ?Chronos
     {
@@ -99,11 +97,7 @@ final class ShortUrlMeta
             return $date;
         }
 
-        if (is_string($date)) {
-            return Chronos::parse($date);
-        }
-
-        return null;
+        return Chronos::parse($date);
     }
 
     public function getValidSince(): ?Chronos
@@ -148,6 +142,6 @@ final class ShortUrlMeta
 
     public function findIfExists(): bool
     {
-        return $this->findIfExists;
+        return (bool) $this->findIfExists;
     }
 }

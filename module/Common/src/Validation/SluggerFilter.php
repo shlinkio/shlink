@@ -26,6 +26,6 @@ class SluggerFilter implements FilterInterface
      */
     public function filter($value)
     {
-        return $value ? $this->slugger->slugify($value) : $value;
+        return ! empty($value) ? $this->slugger->slugify($value) : null;
     }
 }

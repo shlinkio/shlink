@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Service;
 
+use Cake\Chronos\Chronos;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -14,6 +16,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
@@ -31,7 +34,7 @@ class UrlShortenerTest extends TestCase
     /** @var ObjectProphecy */
     private $httpClient;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->httpClient = $this->prophesize(ClientInterface::class);
 
@@ -54,7 +57,7 @@ class UrlShortenerTest extends TestCase
         $this->setUrlShortener(false);
     }
 
-    public function setUrlShortener(bool $urlValidationEnabled)
+    public function setUrlShortener(bool $urlValidationEnabled): void
     {
         $this->urlShortener = new UrlShortener(
             $this->httpClient->reveal(),
@@ -66,7 +69,7 @@ class UrlShortenerTest extends TestCase
     /**
      * @test
      */
-    public function urlIsProperlyShortened()
+    public function urlIsProperlyShortened(): void
     {
         // 10 -> 12C1c
         $shortUrl = $this->urlShortener->urlToShortCode(
@@ -81,7 +84,7 @@ class UrlShortenerTest extends TestCase
      * @test
      * @expectedException \Shlinkio\Shlink\Core\Exception\RuntimeException
      */
-    public function exceptionIsThrownWhenOrmThrowsException()
+    public function exceptionIsThrownWhenOrmThrowsException(): void
     {
         $conn = $this->prophesize(Connection::class);
         $conn->isTransactionActive()->willReturn(true);
@@ -101,7 +104,7 @@ class UrlShortenerTest extends TestCase
      * @test
      * @expectedException \Shlinkio\Shlink\Core\Exception\InvalidUrlException
      */
-    public function exceptionIsThrownWhenUrlDoesNotExist()
+    public function exceptionIsThrownWhenUrlDoesNotExist(): void
     {
         $this->setUrlShortener(true);
 
@@ -118,7 +121,7 @@ class UrlShortenerTest extends TestCase
     /**
      * @test
      */
-    public function exceptionIsThrownWhenNonUniqueSlugIsProvided()
+    public function exceptionIsThrownWhenNonUniqueSlugIsProvided(): void
     {
         $repo = $this->prophesize(ShortUrlRepository::class);
         $countBySlug = $repo->count(['shortCode' => 'custom-slug'])->willReturn(1);
@@ -139,8 +142,78 @@ class UrlShortenerTest extends TestCase
 
     /**
      * @test
+     * @dataProvider provideExsitingShortUrls
      */
-    public function shortCodeIsProperlyParsed()
+    public function existingShortUrlIsReturnedWhenRequested(
+        string $url,
+        array $tags,
+        ShortUrlMeta $meta,
+        ?ShortUrl $expected
+    ): void {
+        $repo = $this->prophesize(ShortUrlRepository::class);
+        $findExisting = $repo->findOneBy(Argument::any())->willReturn($expected);
+        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
+
+        $result = $this->urlShortener->urlToShortCode(new Uri($url), $tags, $meta);
+
+        $this->assertSame($expected, $result);
+        $findExisting->shouldHaveBeenCalledOnce();
+        $getRepo->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideExsitingShortUrls(): array
+    {
+        $url = 'http://foo.com';
+
+        return [
+            [$url, [], ShortUrlMeta::createFromRawData(['findIfExists' => true]), new ShortUrl($url)],
+            [$url, [], ShortUrlMeta::createFromRawData(
+                ['findIfExists' => true, 'customSlug' => 'foo']
+            ), new ShortUrl($url)],
+            [
+                $url,
+                ['foo', 'bar'],
+                ShortUrlMeta::createFromRawData(['findIfExists' => true]),
+                (new ShortUrl($url))->setTags(new ArrayCollection([new Tag('bar'), new Tag('foo')])),
+            ],
+            [
+                $url,
+                [],
+                ShortUrlMeta::createFromRawData(['findIfExists' => true, 'maxVisits' => 3]),
+                new ShortUrl($url, ShortUrlMeta::createFromRawData(['maxVisits' => 3])),
+            ],
+            [
+                $url,
+                [],
+                ShortUrlMeta::createFromRawData(['findIfExists' => true, 'validSince' => Chronos::parse('2017-01-01')]),
+                new ShortUrl($url, ShortUrlMeta::createFromRawData(['validSince' => Chronos::parse('2017-01-01')])),
+            ],
+            [
+                $url,
+                [],
+                ShortUrlMeta::createFromRawData(['findIfExists' => true, 'validUntil' => Chronos::parse('2017-01-01')]),
+                new ShortUrl($url, ShortUrlMeta::createFromRawData(['validUntil' => Chronos::parse('2017-01-01')])),
+            ],
+            [
+                $url,
+                ['baz', 'foo', 'bar'],
+                ShortUrlMeta::createFromRawData([
+                    'findIfExists' => true,
+                    'validUntil' => Chronos::parse('2017-01-01'),
+                    'maxVisits' => 4,
+                ]),
+                (new ShortUrl($url, ShortUrlMeta::createFromRawData([
+                    'validUntil' => Chronos::parse('2017-01-01'),
+                    'maxVisits' => 4,
+                ])))->setTags(new ArrayCollection([new Tag('foo'), new Tag('bar'), new Tag('baz')])),
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     */
+    public function shortCodeIsProperlyParsed(): void
     {
         // 12C1c -> 10
         $shortCode = '12C1c';
@@ -159,7 +232,7 @@ class UrlShortenerTest extends TestCase
      * @test
      * @expectedException \Shlinkio\Shlink\Core\Exception\InvalidShortCodeException
      */
-    public function invalidCharSetThrowsException()
+    public function invalidCharSetThrowsException(): void
     {
         $this->urlShortener->shortCodeToUrl('&/(');
     }

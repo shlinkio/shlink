@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core;
 
-use Cocur\Slugify\Slugify;
 use Doctrine\Common\Cache\Cache;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Response\NotFoundHandler;
