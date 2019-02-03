@@ -17,10 +17,10 @@ if (! file_exists('.env')) {
 $container = require __DIR__ . '/../container.php';
 $testHelper = $container->get(TestHelper::class);
 $config = $container->get('config');
-
-$testHelper->createTestDb();
-
 $em = $container->get(EntityManager::class);
-$testHelper->seedFixtures($em, $config['data_fixtures'] ?? []);
 
+$testHelper->createTestDb($config['entity_manager']['connection']['path']);
 ApiTest\ApiTestCase::setApiClient($container->get('shlink_test_api_client'));
+ApiTest\ApiTestCase::setSeedFixturesCallback(function () use ($testHelper, $em, $config) {
+    $testHelper->seedFixtures($em, $config['data_fixtures'] ?? []);
+});

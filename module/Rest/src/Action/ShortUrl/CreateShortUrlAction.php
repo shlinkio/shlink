@@ -35,7 +35,8 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
                 $this->getOptionalDate($postData, 'validSince'),
                 $this->getOptionalDate($postData, 'validUntil'),
                 $postData['customSlug'] ?? null,
-                isset($postData['maxVisits']) ? (int) $postData['maxVisits'] : null
+                $postData['maxVisits'] ?? null,
+                $postData['findIfExists'] ?? null
             )
         );
     }

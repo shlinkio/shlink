@@ -5,6 +5,7 @@ composer.phar
 vendor/
 .env
 data/database.sqlite
+data/shlink-tests.db
 data/GeoLite2-City.mmdb
 docs/swagger-ui*
 docker-compose.override.yml

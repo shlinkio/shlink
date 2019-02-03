@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Util\ShortUrlBuilderTrait;
 use Symfony\Component\Console\Command\Command;
@@ -15,8 +16,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\Diactoros\Uri;
-use function array_merge;
-use function explode;
+use function array_map;
+use function Functional\curry;
+use function Functional\flatten;
+use function Functional\unique;
 use function sprintf;
 
 class GenerateShortUrlCommand extends Command
@@ -76,6 +79,12 @@ class GenerateShortUrlCommand extends Command
                 'm',
                 InputOption::VALUE_REQUIRED,
                 'This will limit the number of visits for this short URL.'
+            )
+            ->addOption(
+                'findIfExists',
+                'f',
+                InputOption::VALUE_NONE,
+                'This will force existing matching URL to be returned if found, instead of creating a new one.'
             );
     }
 
@@ -102,13 +111,8 @@ class GenerateShortUrlCommand extends Command
             return;
         }
 
-        $tags = $input->getOption('tags');
-        $processedTags = [];
-        foreach ($tags as $key => $tag) {
-            $explodedTags = explode(',', $tag);
-            $processedTags = array_merge($processedTags, $explodedTags);
-        }
-        $tags = $processedTags;
+        $explodeWithComma = curry('explode')(',');
+        $tags = unique(flatten(array_map($explodeWithComma, $input->getOption('tags'))));
         $customSlug = $input->getOption('customSlug');
         $maxVisits = $input->getOption('maxVisits');
 
@@ -116,10 +120,13 @@ class GenerateShortUrlCommand extends Command
             $shortCode = $this->urlShortener->urlToShortCode(
                 new Uri($longUrl),
                 $tags,
-                $this->getOptionalDate($input, 'validSince'),
-                $this->getOptionalDate($input, 'validUntil'),
-                $customSlug,
-                $maxVisits !== null ? (int) $maxVisits : null
+                ShortUrlMeta::createFromParams(
+                    $this->getOptionalDate($input, 'validSince'),
+                    $this->getOptionalDate($input, 'validUntil'),
+                    $customSlug,
+                    $maxVisits !== null ? (int) $maxVisits : null,
+                    $input->getOption('findIfExists')
+                )
             )->getShortCode();
             $shortUrl = $this->buildShortUrl($this->domainConfig, $shortCode);
 

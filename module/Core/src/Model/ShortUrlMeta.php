@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\Core\Model;
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
-use function is_string;
 
 final class ShortUrlMeta
 {
@@ -18,6 +17,8 @@ final class ShortUrlMeta
     private $customSlug;
     /** @var int|null */
     private $maxVisits;
+    /** @var bool|null */
+    private $findIfExists;
 
     // Force named constructors
     private function __construct()
@@ -45,21 +46,25 @@ final class ShortUrlMeta
      * @param string|Chronos|null $validUntil
      * @param string|null $customSlug
      * @param int|null $maxVisits
+     * @param bool|null $findIfExists
      * @throws ValidationException
      */
     public static function createFromParams(
         $validSince = null,
         $validUntil = null,
         $customSlug = null,
-        $maxVisits = null
+        $maxVisits = null,
+        $findIfExists = null
     ): self {
-        // We do not type hint the arguments because that will be done by the validation process
+        // We do not type hint the arguments because that will be done by the validation process and we would get a
+        // type error if any of them do not match
         $instance = new self();
         $instance->validate([
             ShortUrlMetaInputFilter::VALID_SINCE => $validSince,
             ShortUrlMetaInputFilter::VALID_UNTIL => $validUntil,
             ShortUrlMetaInputFilter::CUSTOM_SLUG => $customSlug,
             ShortUrlMetaInputFilter::MAX_VISITS => $maxVisits,
+            ShortUrlMetaInputFilter::FIND_IF_EXISTS => $findIfExists,
         ]);
         return $instance;
     }
@@ -80,11 +85,11 @@ final class ShortUrlMeta
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
         $this->maxVisits = $inputFilter->getValue(ShortUrlMetaInputFilter::MAX_VISITS);
         $this->maxVisits = $this->maxVisits !== null ? (int) $this->maxVisits : null;
+        $this->findIfExists = $inputFilter->getValue(ShortUrlMetaInputFilter::FIND_IF_EXISTS);
     }
 
     /**
      * @param string|Chronos|null $date
-     * @return Chronos|null
      */
     private function parseDateField($date): ?Chronos
     {
@@ -92,11 +97,7 @@ final class ShortUrlMeta
             return $date;
         }
 
-        if (is_string($date)) {
-            return Chronos::parse($date);
-        }
-
-        return null;
+        return Chronos::parse($date);
     }
 
     public function getValidSince(): ?Chronos
@@ -137,5 +138,10 @@ final class ShortUrlMeta
     public function hasMaxVisits(): bool
     {
         return $this->maxVisits !== null;
+    }
+
+    public function findIfExists(): bool
+    {
+        return (bool) $this->findIfExists;
     }
 }

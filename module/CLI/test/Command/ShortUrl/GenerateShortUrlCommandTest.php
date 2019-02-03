@@ -90,7 +90,7 @@ class GenerateShortUrlCommandTest extends TestCase
         $this->commandTester->execute([
             'command' => 'shortcode:generate',
             'longUrl' => 'http://domain.com/foo/bar',
-            '--tags' => ['foo,bar', 'baz', 'boo,zar'],
+            '--tags' => ['foo,bar', 'baz', 'boo,zar,baz'],
         ]);
         $output = $this->commandTester->getDisplay();
 

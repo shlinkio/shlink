@@ -38,15 +38,11 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
     /**
      * @param Request $request
      * @return Response
-     * @throws \InvalidArgumentException
      */
     public function handle(Request $request): Response
     {
         try {
             $shortUrlData = $this->buildShortUrlData($request);
-            $shortUrlMeta = $shortUrlData->getMeta();
-            $longUrl = $shortUrlData->getLongUrl();
-            $customSlug = $shortUrlMeta->getCustomSlug();
         } catch (InvalidArgumentException $e) {
             $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
             return new JsonResponse([
@@ -55,15 +51,11 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
             ], self::STATUS_BAD_REQUEST);
         }
 
+        $longUrl = $shortUrlData->getLongUrl();
+        $shortUrlMeta = $shortUrlData->getMeta();
+
         try {
-            $shortUrl = $this->urlShortener->urlToShortCode(
-                $longUrl,
-                $shortUrlData->getTags(),
-                $shortUrlMeta->getValidSince(),
-                $shortUrlMeta->getValidUntil(),
-                $customSlug,
-                $shortUrlMeta->getMaxVisits()
-            );
+            $shortUrl = $this->urlShortener->urlToShortCode($longUrl, $shortUrlData->getTags(), $shortUrlMeta);
             $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
             return new JsonResponse($transformer->transform($shortUrl));
@@ -74,6 +66,7 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
                 'message' => sprintf('Provided URL %s is invalid. Try with a different one.', $longUrl),
             ], self::STATUS_BAD_REQUEST);
         } catch (NonUniqueSlugException $e) {
+            $customSlug = $shortUrlMeta->getCustomSlug();
             $this->logger->warning('Provided non-unique slug. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::getRestErrorCodeFromException($e),

@@ -6,8 +6,11 @@ namespace ShlinkioTest\Shlink;
 use GuzzleHttp\Client;
 use Zend\ConfigAggregator\ConfigAggregator;
 use Zend\ServiceManager\Factory\InvokableFactory;
-use function realpath;
+use function sprintf;
 use function sys_get_temp_dir;
+
+$swooleTestingHost = '127.0.0.1';
+$swooleTestingPort = 9999;
 
 return [
 
@@ -23,8 +26,8 @@ return [
 
     'zend-expressive-swoole' => [
         'swoole-http-server' => [
-            'port' => 9999,
-            'host' => '127.0.0.1',
+            'host' => $swooleTestingHost,
+            'port' => $swooleTestingPort,
             'process-name' => 'shlink_test',
             'options' => [
                 'pid_file' => sys_get_temp_dir() . '/shlink-test-swoole.pid',
@@ -33,18 +36,22 @@ return [
     ],
 
     'dependencies' => [
+        'services' => [
+            'shlink_test_api_client' => new Client([
+                'base_uri' => sprintf('http://%s:%s/', $swooleTestingHost, $swooleTestingPort),
+                'http_errors' => false,
+            ]),
+        ],
         'factories' => [
             Common\TestHelper::class => InvokableFactory::class,
-            'shlink_test_api_client' => function () {
-                return new Client(['base_uri' => 'http://localhost:9999/']);
-            },
         ],
     ],
 
     'entity_manager' => [
         'connection' => [
             'driver' => 'pdo_sqlite',
-            'path' => realpath(sys_get_temp_dir()) . '/shlink-tests.db',
+             'path' => sys_get_temp_dir() . '/shlink-tests.db',
+//            'path' => __DIR__ . '/../../data/shlink-tests.db',
         ],
     ],
 

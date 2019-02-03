@@ -17,11 +17,11 @@ final class CreateShortUrlData
     public function __construct(
         UriInterface $longUrl,
         array $tags = [],
-        ShortUrlMeta $meta = null
+        ?ShortUrlMeta $meta = null
     ) {
         $this->longUrl = $longUrl;
         $this->tags = $tags;
-        $this->meta = $meta ?? ShortUrlMeta::createFromParams();
+        $this->meta = $meta ?? ShortUrlMeta::createEmpty();
     }
 
     /**

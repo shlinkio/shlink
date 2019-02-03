@@ -5,18 +5,16 @@ namespace ShlinkioTest\Shlink\Common;
 
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Loader;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Process\Process;
 use function file_exists;
-use function realpath;
-use function sys_get_temp_dir;
 use function unlink;
 
 class TestHelper
 {
-    public function createTestDb(): void
+    public function createTestDb(string $shlinkDbPath): void
     {
-        $shlinkDbPath = realpath(sys_get_temp_dir()) . '/shlink-tests.db';
         if (file_exists($shlinkDbPath)) {
             unlink($shlinkDbPath);
         }
@@ -38,7 +36,7 @@ class TestHelper
             $loader->loadFromDirectory($path);
         }
 
-        $executor = new ORMExecutor($em);
-        $executor->execute($loader->getFixtures(), true);
+        $executor = new ORMExecutor($em, new ORMPurger());
+        $executor->execute($loader->getFixtures());
     }
 }

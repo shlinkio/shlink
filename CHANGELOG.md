@@ -29,6 +29,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     The status code can be `200 OK` in case of success or `503 Service Unavailable` in case of error, while the `status` property will be one of `pass` or `fail`, as defined in the [Health check RFC](https://inadarei.github.io/rfc-healthcheck/).
 
+* [#279](https://github.com/shlinkio/shlink/issues/279) Added new `findIfExists` flag to the `[POST /short-url]` REST endpoint and the `short-urls:generate` CLI command. It can be used to return existing short URLs when found, instead of creating new ones.
+
+    Thanks to this flag you won't need to remember if you created a short URL for a long one. It will just create it if needed or return the existing one if possible.
+
+    The behavior might be a little bit counterintuitive when combined with other params. This is how the endpoint behaves when providing this new flag:
+
+    * Only the long URL is provided: It will return the newest match or create a new short URL if none is found.
+    * Long url and custom slug are provided: It will return the short URL when both params match, return an error when the slug is in use for another long URL, or create a new short URL otherwise.
+    * Any of the above but including other params (tags, validSince, validUntil, maxVisits): It will behave the same as the previous two cases, but it will try to exactly match existing results using all the params. If any of them does not match, it will try to create a new short URL.
+
 * [#336](https://github.com/shlinkio/shlink/issues/336) Added an API test suite which performs API calls to an actual instance of the web service.
 
 #### Changed

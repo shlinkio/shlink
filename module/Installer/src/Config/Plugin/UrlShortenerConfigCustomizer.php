@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Installer\Config\Plugin;
 
-use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Installer\Model\CustomizableAppConfig;
 use Shlinkio\Shlink\Installer\Util\AskUtilsTrait;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -66,7 +66,7 @@ class UrlShortenerConfigCustomizer implements ConfigCustomizerInterface
             case self::CHARS:
                 return $io->ask(
                     'Character set for generated short codes (leave empty to autogenerate one)'
-                ) ?: str_shuffle(UrlShortener::DEFAULT_CHARS);
+                ) ?: str_shuffle(UrlShortenerOptions::DEFAULT_CHARS);
             case self::VALIDATE_URL:
                 return $io->confirm('Do you want to validate long urls by 200 HTTP status code on response');
             case self::ENABLE_NOT_FOUND_REDIRECTION:
