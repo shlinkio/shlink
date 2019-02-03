@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Service;
 
-use Cocur\Slugify\SlugifyInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -31,8 +30,6 @@ class UrlShortenerTest extends TestCase
     private $em;
     /** @var ObjectProphecy */
     private $httpClient;
-    /** @var ObjectProphecy */
-    private $slugger;
 
     public function setUp()
     {
@@ -54,8 +51,6 @@ class UrlShortenerTest extends TestCase
         $repo->count(Argument::any())->willReturn(0);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $this->slugger = $this->prophesize(SlugifyInterface::class);
-
         $this->setUrlShortener(false);
     }
 
@@ -64,8 +59,7 @@ class UrlShortenerTest extends TestCase
         $this->urlShortener = new UrlShortener(
             $this->httpClient->reveal(),
             $this->em->reveal(),
-            new UrlShortenerOptions(['validate_url' => $urlValidationEnabled]),
-            $this->slugger->reveal()
+            new UrlShortenerOptions(['validate_url' => $urlValidationEnabled])
         );
     }
 
@@ -124,35 +118,14 @@ class UrlShortenerTest extends TestCase
     /**
      * @test
      */
-    public function whenCustomSlugIsProvidedItIsUsed()
-    {
-        /** @var MethodProphecy $slugify */
-        $slugify = $this->slugger->slugify('custom-slug')->willReturnArgument();
-
-        $this->urlShortener->urlToShortCode(
-            new Uri('http://foobar.com/12345/hello?foo=bar'),
-            [],
-            ShortUrlMeta::createFromRawData(['customSlug' => 'custom-slug'])
-        );
-
-        $slugify->shouldHaveBeenCalledOnce();
-    }
-
-    /**
-     * @test
-     */
     public function exceptionIsThrownWhenNonUniqueSlugIsProvided()
     {
-        /** @var MethodProphecy $slugify */
-        $slugify = $this->slugger->slugify('custom-slug')->willReturnArgument();
-
         $repo = $this->prophesize(ShortUrlRepository::class);
         $countBySlug = $repo->count(['shortCode' => 'custom-slug'])->willReturn(1);
         $repo->findOneBy(Argument::cetera())->willReturn(null);
         /** @var MethodProphecy $getRepo */
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $slugify->shouldBeCalledOnce();
         $countBySlug->shouldBeCalledOnce();
         $getRepo->shouldBeCalled();
         $this->expectException(NonUniqueSlugException::class);

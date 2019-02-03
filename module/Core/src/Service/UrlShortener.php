@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Service;
 
-use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -34,21 +33,14 @@ class UrlShortener implements UrlShortenerInterface
     private $httpClient;
     /** @var EntityManagerInterface */
     private $em;
-    /** @var SlugifyInterface */
-    private $slugger;
     /** @var UrlShortenerOptions */
     private $options;
 
-    public function __construct(
-        ClientInterface $httpClient,
-        EntityManagerInterface $em,
-        UrlShortenerOptions $options,
-        SlugifyInterface $slugger
-    ) {
+    public function __construct(ClientInterface $httpClient, EntityManagerInterface $em, UrlShortenerOptions $options)
+    {
         $this->httpClient = $httpClient;
         $this->em = $em;
         $this->options = $options;
-        $this->slugger = $slugger;
     }
 
     /**
@@ -63,7 +55,7 @@ class UrlShortener implements UrlShortenerInterface
         if ($this->options->isUrlValidationEnabled()) {
             $this->checkUrlExists($url);
         }
-        $meta = $this->processCustomSlug($meta);
+        $this->verifyCustomSlug($meta);
 
         // Transactionally insert the short url, then generate the short code and finally update the short code
         try {
@@ -123,15 +115,13 @@ class UrlShortener implements UrlShortenerInterface
         return $chars[(int) $id] . $code;
     }
 
-    private function processCustomSlug(ShortUrlMeta $meta): ?ShortUrlMeta
+    private function verifyCustomSlug(ShortUrlMeta $meta): void
     {
         if (! $meta->hasCustomSlug()) {
-            return $meta;
+            return;
         }
 
-        // FIXME If the slug was generated while filtering the value originally, we would not need an immutable setter
-        //       in ShortUrlMeta
-        $customSlug = $this->slugger->slugify($meta->getCustomSlug());
+        $customSlug = $meta->getCustomSlug();
 
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
@@ -139,8 +129,6 @@ class UrlShortener implements UrlShortenerInterface
         if ($shortUrlsCount > 0) {
             throw NonUniqueSlugException::fromSlug($customSlug);
         }
-
-        return $meta->withCustomSlug($customSlug);
     }
 
     /**

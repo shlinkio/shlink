@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Validation;
 
 use DateTime;
-use Shlinkio\Shlink\Common\Validation\InputFactoryTrait;
+use Shlinkio\Shlink\Common\Validation;
 use Zend\InputFilter\InputFilter;
 use Zend\Validator;
 
 class ShortUrlMetaInputFilter extends InputFilter
 {
-    use InputFactoryTrait;
+    use Validation\InputFactoryTrait;
 
     public const VALID_SINCE = 'validSince';
     public const VALID_UNTIL = 'validUntil';
@@ -36,7 +36,9 @@ class ShortUrlMetaInputFilter extends InputFilter
         $validUntil->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));
         $this->add($validUntil);
 
-        $this->add($this->createInput(self::CUSTOM_SLUG, false));
+        $customSlug = $this->createInput(self::CUSTOM_SLUG, false);
+        $customSlug->getFilterChain()->attach(new Validation\SluggerFilter());
+        $this->add($customSlug);
 
         $maxVisits = $this->createInput(self::MAX_VISITS, false);
         $maxVisits->getValidatorChain()->attach(new Validator\Digits())

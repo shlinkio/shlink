@@ -46,7 +46,7 @@ return [
         Options\NotFoundShortUrlOptions::class => ['config.url_shortener.not_found_short_url'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
-        Service\UrlShortener::class => ['httpClient', 'em', Options\UrlShortenerOptions::class, Slugify::class],
+        Service\UrlShortener::class => ['httpClient', 'em', Options\UrlShortenerOptions::class],
         Service\VisitsTracker::class => ['em'],
         Service\ShortUrlService::class => ['em'],
         Service\VisitService::class => ['em'],
