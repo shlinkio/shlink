@@ -43,7 +43,7 @@ class InstallApplicationFactory implements FactoryInterface
             $container->get(Filesystem::class),
             new ConfigCustomizerManager($container, ['factories' => [
                 Plugin\DatabaseConfigCustomizer::class => ConfigAbstractFactory::class,
-                Plugin\UrlShortenerConfigCustomizer::class => InvokableFactory::class,
+                Plugin\UrlShortenerConfigCustomizer::class => ConfigAbstractFactory::class,
                 Plugin\LanguageConfigCustomizer::class => InvokableFactory::class,
                 Plugin\ApplicationConfigCustomizer::class => InvokableFactory::class,
             ]]),

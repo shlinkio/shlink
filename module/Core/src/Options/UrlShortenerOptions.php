@@ -7,7 +7,7 @@ use Zend\Stdlib\AbstractOptions;
 
 class UrlShortenerOptions extends AbstractOptions
 {
-    public const DEFAULT_CHARS = '123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
+    public const DEFAULT_CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     // phpcs:disable
     protected $__strictMode__ = false;

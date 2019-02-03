@@ -1,7 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Shlinkio\Shlink\Installer\Config\Plugin\DatabaseConfigCustomizer;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Installer\Config\Plugin;
 use Shlinkio\Shlink\Installer\Factory\InstallApplicationFactory;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Filesystem\Filesystem;
@@ -19,9 +20,13 @@ $container = new ServiceManager([
         Filesystem::class => InvokableFactory::class,
     ],
     'services' => [
+        'random-chars-generator' => function () {
+            return str_shuffle(UrlShortenerOptions::DEFAULT_CHARS);
+        },
         'config' => [
             ConfigAbstractFactory::class => [
-                DatabaseConfigCustomizer::class => [Filesystem::class],
+                Plugin\DatabaseConfigCustomizer::class => [Filesystem::class],
+                Plugin\UrlShortenerConfigCustomizer::class => ['random-chars-generator'],
             ],
         ],
     ],
