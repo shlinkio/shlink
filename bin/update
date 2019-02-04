@@ -2,11 +2,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Installer;
+namespace Shlinkio\Shlink;
 
-use Symfony\Component\Console\Application;
-use Zend\ServiceManager\ServiceLocatorInterface;
-
-/** @var ServiceLocatorInterface $container */
-$container = include __DIR__ . '/../config/install-container.php';
-$container->build(Application::class, ['isUpdate' => true])->run();
+$run = require __DIR__ . '/../vendor/shlinkio/shlink-installer/bin/run.php';
+$run(true);
