@@ -1,12 +1,14 @@
+/config/test export-ignore
 /data/infra export-ignore
 /docs export-ignore
 /module/CLI/test export-ignore
 /module/CLI/test-resources export-ignore
 /module/Common/test export-ignore
-/module/Common/test-func export-ignore
+/module/Common/test-db export-ignore
 /module/Core/test export-ignore
-/module/Core/test-func export-ignore
+/module/Core/test-db export-ignore
 /module/Rest/test export-ignore
+/module/Rest/test-api export-ignore
 .env.dist export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
@@ -17,9 +19,9 @@ build.sh export-ignore
 CHANGELOG.md export-ignore
 docker-compose.override.yml.dist export-ignore
 docker-compose.yml export-ignore
-func_tests_bootstrap.php export-ignore
 indocker export-ignore
 phpcs.xml export-ignore
 phpunit.xml.dist export-ignore
-phpunit-func.xml export-ignore
+phpunit-api.xml export-ignore
+phpunit-db.xml export-ignore
 phpstan.neon
