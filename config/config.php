@@ -18,7 +18,6 @@ return (new ConfigAggregator\ConfigAggregator([
     Common\ConfigProvider::class,
     Core\ConfigProvider::class,
     CLI\ConfigProvider::class,
-    Installer\ConfigProvider::class,
     Rest\ConfigProvider::class,
     new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
     new ConfigAggregator\ZendConfigProvider('config/params/{generated_config.php,*.config.{php,json}}'),
