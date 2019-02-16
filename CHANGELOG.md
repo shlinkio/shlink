@@ -52,7 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Deprecated
 
-* *Nothing*
+* [#351](https://github.com/shlinkio/shlink/issues/351) Deprecated `config:generate-charset` and `config:generate-secret` CLI commands.
 
 #### Removed
 
