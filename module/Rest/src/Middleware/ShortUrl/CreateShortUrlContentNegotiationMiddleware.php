@@ -58,7 +58,7 @@ class CreateShortUrlContentNegotiationMiddleware implements MiddlewareInterface
             return self::JSON;
         }
 
-        $format = strtolower((string) $query['format']);
+        $format = strtolower($query['format']);
         return $format === 'txt' ? self::PLAIN_TEXT : self::JSON;
     }
 
