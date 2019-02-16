@@ -22,12 +22,12 @@ class CacheFactoryTest extends TestCase
     /** @var CacheFactory */
     private $factory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->factory = new CacheFactory();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         putenv('APP_ENV');
     }

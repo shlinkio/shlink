@@ -24,7 +24,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     /** @var VisitRepository */
     private $repo;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Visit::class);
     }

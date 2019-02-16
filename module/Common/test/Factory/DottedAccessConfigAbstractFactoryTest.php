@@ -14,7 +14,7 @@ class DottedAccessConfigAbstractFactoryTest extends TestCase
     /** @var DottedAccessConfigAbstractFactory */
     private $factory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->factory = new DottedAccessConfigAbstractFactory();
     }

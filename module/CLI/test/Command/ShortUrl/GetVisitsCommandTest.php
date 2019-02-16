@@ -27,7 +27,7 @@ class GetVisitsCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $visitsTracker;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->visitsTracker = $this->prophesize(VisitsTrackerInterface::class);
         $command = new GetVisitsCommand($this->visitsTracker->reveal());
@@ -94,8 +94,8 @@ class GetVisitsCommandTest extends TestCase
             'shortCode' => $shortCode,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertContains('foo', $output);
-        $this->assertContains('Spain', $output);
-        $this->assertContains('bar', $output);
+        $this->assertStringContainsString('foo', $output);
+        $this->assertStringContainsString('Spain', $output);
+        $this->assertStringContainsString('bar', $output);
     }
 }

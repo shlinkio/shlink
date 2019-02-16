@@ -25,7 +25,7 @@ class DeleteShortUrlServiceTest extends TestCase
     /** @var ObjectProphecy */
     private $em;
 
-    public function setUp()
+    public function setUp(): void
     {
         $shortUrl = (new ShortUrl(''))->setShortCode('abc123')
                                       ->setVisits(new ArrayCollection(map(range(0, 10), function () {

@@ -25,7 +25,7 @@ class QrCodeActionTest extends TestCase
     /** @var ObjectProphecy */
     private $urlShortener;
 
-    public function setUp()
+    public function setUp(): void
     {
         $router = $this->prophesize(RouterInterface::class);
         $router->generateUri(Argument::cetera())->willReturn('/foo/bar');

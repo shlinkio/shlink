@@ -22,7 +22,7 @@ class AuthenticateActionTest extends TestCase
     /** @var ObjectProphecy */
     private $jwtService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->apiKeyService = $this->prophesize(ApiKeyService::class);
         $this->jwtService = $this->prophesize(JWTService::class);

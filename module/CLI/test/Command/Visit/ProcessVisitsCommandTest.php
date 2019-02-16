@@ -37,7 +37,7 @@ class ProcessVisitsCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $lock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->visitService = $this->prophesize(VisitService::class);
         $this->ipResolver = $this->prophesize(IpApiLocationResolver::class);
@@ -84,7 +84,7 @@ class ProcessVisitsCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('Processing IP 1.2.3.0', $output);
+        $this->assertStringContainsString('Processing IP 1.2.3.0', $output);
         $locateVisits->shouldHaveBeenCalledOnce();
         $resolveIpLocation->shouldHaveBeenCalledOnce();
     }
@@ -118,7 +118,7 @@ class ProcessVisitsCommandTest extends TestCase
 
             $this->assertInstanceOf(IpCannotBeLocatedException::class, $e);
 
-            $this->assertContains($message, $output);
+            $this->assertStringContainsString($message, $output);
             $locateVisits->shouldHaveBeenCalledOnce();
             $resolveIpLocation->shouldNotHaveBeenCalled();
         }
@@ -161,7 +161,7 @@ class ProcessVisitsCommandTest extends TestCase
 
             $this->assertInstanceOf(IpCannotBeLocatedException::class, $e);
 
-            $this->assertContains('An error occurred while locating IP. Skipped', $output);
+            $this->assertStringContainsString('An error occurred while locating IP. Skipped', $output);
             $locateVisits->shouldHaveBeenCalledOnce();
             $resolveIpLocation->shouldHaveBeenCalledOnce();
         }
@@ -183,7 +183,7 @@ class ProcessVisitsCommandTest extends TestCase
         ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             sprintf('There is already an instance of the "%s" command', ProcessVisitsCommand::NAME),
             $output
         );

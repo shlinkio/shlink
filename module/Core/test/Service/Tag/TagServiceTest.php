@@ -21,7 +21,7 @@ class TagServiceTest extends TestCase
     /** @var ObjectProphecy */
     private $em;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->service = new TagService($this->em->reveal());

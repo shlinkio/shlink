@@ -28,7 +28,7 @@ class RedirectActionTest extends TestCase
     /** @var Options\NotFoundShortUrlOptions */
     private $notFoundOptions;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
         $this->visitTracker = $this->prophesize(VisitsTracker::class);

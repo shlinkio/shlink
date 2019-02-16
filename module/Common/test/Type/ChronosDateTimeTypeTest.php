@@ -19,7 +19,7 @@ class ChronosDateTimeTypeTest extends TestCase
     /** @var ChronosDateTimeType */
     private $type;
 
-    public function setUp()
+    public function setUp(): void
     {
         if (! Type::hasType(ChronosDateTimeType::CHRONOS_DATETIME)) {
             Type::addType(ChronosDateTimeType::CHRONOS_DATETIME, ChronosDateTimeType::class);

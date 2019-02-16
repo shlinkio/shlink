@@ -25,7 +25,7 @@ class CreateShortUrlActionTest extends TestCase
     /** @var ObjectProphecy */
     private $urlShortener;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
         $this->action = new CreateShortUrlAction($this->urlShortener->reveal(), [
@@ -97,7 +97,7 @@ class CreateShortUrlActionTest extends TestCase
         ]);
         $response = $this->action->handle($request);
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertContains(RestUtils::INVALID_SLUG_ERROR, (string) $response->getBody());
+        $this->assertStringContainsString(RestUtils::INVALID_SLUG_ERROR, (string) $response->getBody());
     }
 
     /**

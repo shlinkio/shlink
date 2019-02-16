@@ -11,7 +11,7 @@ class PixelResponseTest extends TestCase
     /** @var PixelResponse */
     private $resp;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->resp = new PixelResponse();
     }

@@ -30,7 +30,7 @@ class PreviewActionTest extends TestCase
     /** @var ObjectProphecy */
     private $urlShortener;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->previewGenerator = $this->prophesize(PreviewGenerator::class);
         $this->urlShortener = $this->prophesize(UrlShortener::class);

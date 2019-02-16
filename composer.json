@@ -55,8 +55,8 @@
         "filp/whoops": "^2.0",
         "infection/infection": "^0.11.0",
         "phpstan/phpstan": "^0.10.0",
-        "phpunit/phpcov": "^5.0",
-        "phpunit/phpunit": "^7.3",
+        "phpunit/phpcov": "^6.0@dev || ^5.0",
+        "phpunit/phpunit": "^8.0 || ^7.5",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~1.0.0",
         "symfony/dotenv": "^4.2",
@@ -112,9 +112,9 @@
             "@test:db",
             "@test:api"
         ],
-        "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov",
-        "test:unit:ci": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/phpunit.junit.xml",
-        "test:db": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-db.xml --coverage-php build/coverage-db.cov",
+        "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov --testdox",
+        "test:unit:ci": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/phpunit.junit.xml --testdox",
+        "test:db": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-db.xml --coverage-php build/coverage-db.cov --testdox",
         "test:api": "bin/test/run-api-tests.sh",
 
         "test:pretty": [
@@ -147,7 +147,8 @@
         "test:unit:pretty": "<fg=blue;options=bold>Runs unit test suites and generates an HTML code coverage report</>",
         "infect": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>",
         "infect:ci": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing with existing reports and logs</>",
-        "infect:show": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing and shows applied mutators</>"
+        "infect:show": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing and shows applied mutators</>",
+        "infect:test": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>"
     },
     "config": {
         "sort-packages": true

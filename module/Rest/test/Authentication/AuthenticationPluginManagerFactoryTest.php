@@ -13,7 +13,7 @@ class AuthenticationPluginManagerFactoryTest extends TestCase
     /** @var AuthenticationPluginManagerFactory */
     private $factory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->factory = new AuthenticationPluginManagerFactory();
     }

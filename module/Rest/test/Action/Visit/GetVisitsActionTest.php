@@ -23,7 +23,7 @@ class GetVisitsActionTest extends TestCase
     /** @var ObjectProphecy */
     private $visitsTracker;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->visitsTracker = $this->prophesize(VisitsTracker::class);
         $this->action = new GetVisitsAction($this->visitsTracker->reveal());

@@ -27,7 +27,7 @@ class GeneratePreviewCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $shortUrlService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->previewGenerator = $this->prophesize(PreviewGenerator::class);
         $this->shortUrlService = $this->prophesize(ShortUrlService::class);
@@ -60,10 +60,10 @@ class GeneratePreviewCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('Processing URL http://foo.com', $output);
-        $this->assertContains('Processing URL https://bar.com', $output);
-        $this->assertContains('Processing URL http://baz.com/something', $output);
-        $this->assertContains('Finished processing all URLs', $output);
+        $this->assertStringContainsString('Processing URL http://foo.com', $output);
+        $this->assertStringContainsString('Processing URL https://bar.com', $output);
+        $this->assertStringContainsString('Processing URL http://baz.com/something', $output);
+        $this->assertStringContainsString('Finished processing all URLs', $output);
         $generatePreview1->shouldHaveBeenCalledOnce();
         $generatePreview2->shouldHaveBeenCalledOnce();
         $generatePreview3->shouldHaveBeenCalledOnce();

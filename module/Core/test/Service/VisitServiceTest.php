@@ -25,7 +25,7 @@ class VisitServiceTest extends TestCase
     /** @var ObjectProphecy */
     private $em;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManager::class);
         $this->visitService = new VisitService($this->em->reveal());

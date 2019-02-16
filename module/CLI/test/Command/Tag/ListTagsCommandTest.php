@@ -21,7 +21,7 @@ class ListTagsCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $tagService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
 
@@ -43,7 +43,7 @@ class ListTagsCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('No tags yet', $output);
+        $this->assertStringContainsString('No tags yet', $output);
         $listTags->shouldHaveBeenCalled();
     }
 
@@ -61,8 +61,8 @@ class ListTagsCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('foo', $output);
-        $this->assertContains('bar', $output);
+        $this->assertStringContainsString('foo', $output);
+        $this->assertStringContainsString('bar', $output);
         $listTags->shouldHaveBeenCalled();
     }
 }

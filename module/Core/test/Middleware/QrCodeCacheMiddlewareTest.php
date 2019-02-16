@@ -20,7 +20,7 @@ class QrCodeCacheMiddlewareTest extends TestCase
     /** @var Cache */
     private $cache;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->cache = new ArrayCache();
         $this->middleware = new QrCodeCacheMiddleware($this->cache);

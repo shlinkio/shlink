@@ -22,7 +22,7 @@ class RenameTagCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $tagService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
 
@@ -49,7 +49,7 @@ class RenameTagCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('A tag with name "foo" was not found', $output);
+        $this->assertStringContainsString('A tag with name "foo" was not found', $output);
         $renameTag->shouldHaveBeenCalled();
     }
 
@@ -69,7 +69,7 @@ class RenameTagCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('Tag properly renamed', $output);
+        $this->assertStringContainsString('Tag properly renamed', $output);
         $renameTag->shouldHaveBeenCalled();
     }
 }

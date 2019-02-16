@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
+use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 use function time;
 
 class JWTServiceTest extends TestCase
@@ -15,7 +16,7 @@ class JWTServiceTest extends TestCase
     /** @var JWTService */
     private $service;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->service = new JWTService(new AppOptions([
             'name' => 'ShlinkTest',
@@ -83,12 +84,10 @@ class JWTServiceTest extends TestCase
         $this->assertEquals($originalPayload, $this->service->getPayload($token));
     }
 
-    /**
-     * @test
-     * @expectedException \Shlinkio\Shlink\Rest\Exception\AuthenticationException
-     */
+    /** @test */
     public function getPayloadThrowsExceptionWithIncorrectTokens()
     {
+        $this->expectException(AuthenticationException::class);
         $this->service->getPayload('invalidToken');
     }
 }

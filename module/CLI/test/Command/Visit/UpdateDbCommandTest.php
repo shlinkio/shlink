@@ -19,7 +19,7 @@ class UpdateDbCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $dbUpdater;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->dbUpdater = $this->prophesize(DbUpdaterInterface::class);
 
@@ -41,7 +41,7 @@ class UpdateDbCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('GeoLite2 database properly updated', $output);
+        $this->assertStringContainsString('GeoLite2 database properly updated', $output);
         $download->shouldHaveBeenCalledOnce();
     }
 
@@ -55,7 +55,7 @@ class UpdateDbCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('An error occurred while updating GeoLite2 database', $output);
+        $this->assertStringContainsString('An error occurred while updating GeoLite2 database', $output);
         $download->shouldHaveBeenCalledOnce();
     }
 }

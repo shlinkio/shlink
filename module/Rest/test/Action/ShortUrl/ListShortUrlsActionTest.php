@@ -19,7 +19,7 @@ class ListShortUrlsActionTest extends TestCase
     /** @var ObjectProphecy */
     private $service;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->service = $this->prophesize(ShortUrlService::class);
         $this->action = new ListShortUrlsAction($this->service->reveal(), [

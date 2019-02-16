@@ -18,7 +18,7 @@ class EditShortUrlTagsActionTest extends TestCase
     /** @var ObjectProphecy */
     private $shortUrlService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->shortUrlService = $this->prophesize(ShortUrlService::class);
         $this->action = new EditShortUrlTagsAction($this->shortUrlService->reveal());

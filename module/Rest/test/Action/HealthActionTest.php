@@ -19,7 +19,7 @@ class HealthActionTest extends TestCase
     /** @var ObjectProphecy */
     private $conn;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->conn = $this->prophesize(Connection::class);
         $this->action = new HealthAction($this->conn->reveal(), new AppOptions(['version' => '1.2.3']));

@@ -11,7 +11,7 @@ class ConfigProviderTest extends TestCase
     /** @var ConfigProvider */
     private $configProvider;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->configProvider = new ConfigProvider();
     }

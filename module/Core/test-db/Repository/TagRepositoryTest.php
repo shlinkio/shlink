@@ -16,7 +16,7 @@ class TagRepositoryTest extends DatabaseTestCase
     /** @var TagRepository */
     private $repo;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Tag::class);
     }

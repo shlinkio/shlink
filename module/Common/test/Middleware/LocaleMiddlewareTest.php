@@ -16,7 +16,7 @@ class LocaleMiddlewareTest extends TestCase
     /** @var Translator */
     private $translator;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->translator = Translator::factory(['locale' => 'ru']);
         $this->middleware = new LocaleMiddleware($this->translator);

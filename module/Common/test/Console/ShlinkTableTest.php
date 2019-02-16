@@ -19,7 +19,7 @@ class ShlinkTableTest extends TestCase
     /** @var ObjectProphecy */
     private $baseTable;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->baseTable = $this->prophesize(Table::class);
         $this->shlinkTable = new ShlinkTable($this->baseTable->reveal());

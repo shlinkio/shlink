@@ -22,7 +22,7 @@ class GenerateShortUrlCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $urlShortener;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
         $command = new GenerateShortUrlCommand($this->urlShortener->reveal(), [
@@ -50,7 +50,7 @@ class GenerateShortUrlCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('http://foo.com/abc123', $output);
+        $this->assertStringContainsString('http://foo.com/abc123', $output);
         $urlToShortCode->shouldHaveBeenCalledOnce();
     }
 
@@ -67,7 +67,7 @@ class GenerateShortUrlCommandTest extends TestCase
             'longUrl' => 'http://domain.com/invalid',
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertContains(
+        $this->assertStringContainsString(
             'Provided URL "http://domain.com/invalid" is invalid.',
             $output
         );
@@ -94,7 +94,7 @@ class GenerateShortUrlCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('http://foo.com/abc123', $output);
+        $this->assertStringContainsString('http://foo.com/abc123', $output);
         $urlToShortCode->shouldHaveBeenCalledOnce();
     }
 }

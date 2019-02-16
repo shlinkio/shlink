@@ -21,7 +21,7 @@ class CloseDbConnectionMiddlewareTest extends TestCase
     /** @var ObjectProphecy */
     private $em;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->handler = $this->prophesize(RequestHandlerInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);

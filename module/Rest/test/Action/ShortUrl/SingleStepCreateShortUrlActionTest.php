@@ -25,7 +25,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
     /** @var ObjectProphecy */
     private $apiKeyService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortenerInterface::class);
         $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);

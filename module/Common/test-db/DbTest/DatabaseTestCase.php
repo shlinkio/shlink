@@ -23,7 +23,7 @@ abstract class DatabaseTestCase extends TestCase
         return self::$em;
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         foreach (static::ENTITIES_TO_EMPTY as $entityClass) {
             $qb = $this->getEntityManager()->createQueryBuilder();

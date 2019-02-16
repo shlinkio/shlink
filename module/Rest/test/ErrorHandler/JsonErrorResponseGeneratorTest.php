@@ -13,7 +13,7 @@ class JsonErrorResponseGeneratorTest extends TestCase
     /** @var JsonErrorResponseGenerator */
     private $errorHandler;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->errorHandler = new JsonErrorResponseGenerator();
     }

@@ -26,7 +26,7 @@ class DbUpdaterTest extends TestCase
     /** @var GeoLite2Options */
     private $options;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->httpClient = $this->prophesize(ClientInterface::class);
         $this->filesystem = $this->prophesize(Filesystem::class);

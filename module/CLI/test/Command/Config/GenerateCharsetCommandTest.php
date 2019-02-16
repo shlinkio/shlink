@@ -16,7 +16,7 @@ class GenerateCharsetCommandTest extends TestCase
     /** @var CommandTester */
     private $commandTester;
 
-    public function setUp()
+    public function setUp(): void
     {
         $command = new GenerateCharsetCommand();
         $app = new Application();
@@ -38,7 +38,7 @@ class GenerateCharsetCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         // Both default character set and the new one should have the same length
-        $this->assertContains($prefix, $output);
+        $this->assertStringContainsString($prefix, $output);
     }
 
     protected function orderStringLetters($string)

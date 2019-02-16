@@ -12,7 +12,7 @@ class ExceptionWithNewLineProcessorTest extends TestCase
     /** @var ExceptionWithNewLineProcessor */
     private $processor;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->processor = new ExceptionWithNewLineProcessor();
     }

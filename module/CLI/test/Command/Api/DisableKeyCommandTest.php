@@ -18,7 +18,7 @@ class DisableKeyCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $apiKeyService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->apiKeyService = $this->prophesize(ApiKeyService::class);
         $command = new DisableKeyCommand($this->apiKeyService->reveal());
@@ -41,7 +41,7 @@ class DisableKeyCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('API key "abcd1234" properly disabled', $output);
+        $this->assertStringContainsString('API key "abcd1234" properly disabled', $output);
     }
 
     /**
@@ -58,7 +58,7 @@ class DisableKeyCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('API key "abcd1234" does not exist.', $output);
+        $this->assertStringContainsString('API key "abcd1234" does not exist.', $output);
         $disable->shouldHaveBeenCalledOnce();
     }
 }

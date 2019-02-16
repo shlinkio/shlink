@@ -15,7 +15,7 @@ class PaginableRepositoryAdapterTest extends TestCase
     /** @var ObjectProphecy */
     private $repo;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->repo = $this->prophesize(PaginableRepositoryInterface::class);
         $this->adapter = new PaginableRepositoryAdapter($this->repo->reveal(), 'search', ['foo', 'bar'], 'order');
