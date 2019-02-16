@@ -22,7 +22,7 @@ class ResolveShortUrlActionTest extends TestCase
     /** @var ObjectProphecy */
     private $urlShortener;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
         $this->action = new ResolveShortUrlAction($this->urlShortener->reveal(), []);

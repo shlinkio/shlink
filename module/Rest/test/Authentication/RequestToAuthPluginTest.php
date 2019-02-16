@@ -22,7 +22,7 @@ class RequestToAuthPluginTest extends TestCase
     /** @var ObjectProphecy */
     private $pluginManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->pluginManager = $this->prophesize(AuthenticationPluginManagerInterface::class);
         $this->requestToPlugin = new RequestToHttpAuthPlugin($this->pluginManager->reveal());

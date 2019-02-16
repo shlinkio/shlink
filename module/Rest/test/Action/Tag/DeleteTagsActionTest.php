@@ -17,7 +17,7 @@ class DeleteTagsActionTest extends TestCase
     /** @var ObjectProphecy */
     private $tagService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
         $this->action = new DeleteTagsAction($this->tagService->reveal());

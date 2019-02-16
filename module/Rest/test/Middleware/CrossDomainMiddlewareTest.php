@@ -18,7 +18,7 @@ class CrossDomainMiddlewareTest extends TestCase
     /** @var ObjectProphecy */
     private $delegate;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->middleware = new CrossDomainMiddleware();
         $this->delegate = $this->prophesize(RequestHandlerInterface::class);

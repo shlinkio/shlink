@@ -20,7 +20,7 @@ class GenerateKeyCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $apiKeyService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->apiKeyService = $this->prophesize(ApiKeyService::class);
         $command = new GenerateKeyCommand($this->apiKeyService->reveal());
@@ -41,7 +41,7 @@ class GenerateKeyCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('Generated API key: ', $output);
+        $this->assertStringContainsString('Generated API key: ', $output);
         $create->shouldHaveBeenCalledOnce();
     }
 

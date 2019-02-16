@@ -7,6 +7,7 @@ use mikehaertl\wkhtmlto\Image;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\Common\Image\ImageBuilder;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Symfony\Component\Filesystem\Filesystem;
@@ -23,7 +24,7 @@ class PreviewGeneratorTest extends TestCase
     /** @var ObjectProphecy */
     private $filesystem;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->image = $this->prophesize(Image::class);
         $this->filesystem = $this->prophesize(Filesystem::class);
@@ -66,10 +67,7 @@ class PreviewGeneratorTest extends TestCase
         $this->assertEquals($expectedPath, $this->generator->generatePreview($url));
     }
 
-    /**
-     * @test
-     * @expectedException \Shlinkio\Shlink\Common\Exception\PreviewGenerationException
-     */
+    /** @test */
     public function errorWhileGeneratingPreviewThrowsException()
     {
         $url = 'http://foo.com';
@@ -81,6 +79,8 @@ class PreviewGeneratorTest extends TestCase
 
         $this->image->saveAs($expectedPath)->shouldBeCalledOnce();
         $this->image->getError()->willReturn('Error!!')->shouldBeCalledOnce();
+
+        $this->expectException(PreviewGenerationException::class);
 
         $this->generator->generatePreview($url);
     }

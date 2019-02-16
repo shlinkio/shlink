@@ -25,7 +25,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     /** @var ShortUrlRepository */
     private $repo;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(ShortUrl::class);
     }

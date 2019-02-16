@@ -17,7 +17,10 @@ use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Exception\RuntimeException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
@@ -80,10 +83,7 @@ class UrlShortenerTest extends TestCase
         $this->assertEquals('0Q1Y', $shortUrl->getShortCode());
     }
 
-    /**
-     * @test
-     * @expectedException \Shlinkio\Shlink\Core\Exception\RuntimeException
-     */
+    /** @test */
     public function exceptionIsThrownWhenOrmThrowsException(): void
     {
         $conn = $this->prophesize(Connection::class);
@@ -93,6 +93,8 @@ class UrlShortenerTest extends TestCase
         $this->em->close()->shouldBeCalledOnce();
 
         $this->em->flush()->willThrow(new ORMException());
+
+        $this->expectException(RuntimeException::class);
         $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
@@ -100,10 +102,7 @@ class UrlShortenerTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @expectedException \Shlinkio\Shlink\Core\Exception\InvalidUrlException
-     */
+    /** @test */
     public function exceptionIsThrownWhenUrlDoesNotExist(): void
     {
         $this->setUrlShortener(true);
@@ -111,6 +110,8 @@ class UrlShortenerTest extends TestCase
         $this->httpClient->request(Argument::cetera())->willThrow(
             new ClientException('', $this->prophesize(Request::class)->reveal())
         );
+
+        $this->expectException(InvalidUrlException::class);
         $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
@@ -227,12 +228,10 @@ class UrlShortenerTest extends TestCase
         $this->assertSame($shortUrl, $url);
     }
 
-    /**
-     * @test
-     * @expectedException \Shlinkio\Shlink\Core\Exception\InvalidShortCodeException
-     */
+    /** @test */
     public function invalidCharSetThrowsException(): void
     {
+        $this->expectException(InvalidShortCodeException::class);
         $this->urlShortener->shortCodeToUrl('&/(');
     }
 }

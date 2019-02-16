@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
@@ -19,7 +20,7 @@ class ApiKeyServiceTest extends TestCase
     /** @var ObjectProphecy */
     private $em;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManager::class);
         $this->service = new ApiKeyService($this->em->reveal());
@@ -105,10 +106,7 @@ class ApiKeyServiceTest extends TestCase
         $this->assertTrue($this->service->check('12345'));
     }
 
-    /**
-     * @test
-     * @expectedException \Shlinkio\Shlink\Common\Exception\InvalidArgumentException
-     */
+    /** @test */
     public function disableThrowsExceptionWhenNoTokenIsFound()
     {
         $repo = $this->prophesize(EntityRepository::class);
@@ -116,6 +114,7 @@ class ApiKeyServiceTest extends TestCase
                                             ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
+        $this->expectException(InvalidArgumentException::class);
         $this->service->disable('12345');
     }
 

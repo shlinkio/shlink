@@ -25,7 +25,7 @@ class VisitsTrackerTest extends TestCase
     /** @var ObjectProphecy */
     private $em;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManager::class);
         $this->visitsTracker  = new VisitsTracker($this->em->reveal());

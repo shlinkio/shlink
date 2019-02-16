@@ -26,7 +26,7 @@ class EmptyIpLocationResolverTest extends TestCase
     /** @var EmptyIpLocationResolver */
     private $resolver;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->resolver = new EmptyIpLocationResolver();
     }

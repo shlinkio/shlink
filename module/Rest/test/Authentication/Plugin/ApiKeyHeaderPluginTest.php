@@ -19,7 +19,7 @@ class ApiKeyHeaderPluginTest extends TestCase
     /** @var ObjectProphecy */
     private $apiKeyService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
         $this->plugin = new ApiKeyHeaderPlugin($this->apiKeyService->reveal());

@@ -19,7 +19,7 @@ class PathVersionMiddlewareTest extends TestCase
     /** @var PathVersionMiddleware */
     private $middleware;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->middleware = new PathVersionMiddleware();
     }

@@ -21,7 +21,7 @@ class DeleteShortCodeCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $service;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->service = $this->prophesize(DeleteShortUrlServiceInterface::class);
 
@@ -44,7 +44,10 @@ class DeleteShortCodeCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains(sprintf('Short URL with short code "%s" successfully deleted.', $shortCode), $output);
+        $this->assertStringContainsString(
+            sprintf('Short URL with short code "%s" successfully deleted.', $shortCode),
+            $output
+        );
         $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 
@@ -61,7 +64,7 @@ class DeleteShortCodeCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains(sprintf('Provided short code "%s" could not be found.', $shortCode), $output);
+        $this->assertStringContainsString(sprintf('Provided short code "%s" could not be found.', $shortCode), $output);
         $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 
@@ -85,11 +88,14 @@ class DeleteShortCodeCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains(sprintf(
+        $this->assertStringContainsString(sprintf(
             'It was not possible to delete the short URL with short code "%s" because it has more than 10 visits.',
             $shortCode
         ), $output);
-        $this->assertContains(sprintf('Short URL with short code "%s" successfully deleted.', $shortCode), $output);
+        $this->assertStringContainsString(
+            sprintf('Short URL with short code "%s" successfully deleted.', $shortCode),
+            $output
+        );
         $deleteByShortCode->shouldHaveBeenCalledTimes(2);
     }
 
@@ -107,11 +113,11 @@ class DeleteShortCodeCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains(sprintf(
+        $this->assertStringContainsString(sprintf(
             'It was not possible to delete the short URL with short code "%s" because it has more than 10 visits.',
             $shortCode
         ), $output);
-        $this->assertContains('Short URL was not deleted.', $output);
+        $this->assertStringContainsString('Short URL was not deleted.', $output);
         $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 }

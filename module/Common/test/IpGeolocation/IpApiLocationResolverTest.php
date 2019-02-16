@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpApiLocationResolver;
 use function json_encode;
 
@@ -18,7 +19,7 @@ class IpApiLocationResolverTest extends TestCase
     /** @var ObjectProphecy */
     private $client;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->client = $this->prophesize(Client::class);
         $this->ipResolver = new IpApiLocationResolver($this->client->reveal());
@@ -52,14 +53,12 @@ class IpApiLocationResolverTest extends TestCase
         $this->assertEquals($expected, $this->ipResolver->resolveIpLocation('1.2.3.4'));
     }
 
-    /**
-     * @test
-     * @expectedException \Shlinkio\Shlink\Common\Exception\WrongIpException
-     */
+    /** @test */
     public function guzzleExceptionThrowsShlinkException()
     {
         $this->client->get('http://ip-api.com/json/1.2.3.4')->willThrow(new TransferException())
                                                             ->shouldBeCalledOnce();
+        $this->expectException(WrongIpException::class);
         $this->ipResolver->resolveIpLocation('1.2.3.4');
     }
 }

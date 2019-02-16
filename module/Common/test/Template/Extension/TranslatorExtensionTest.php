@@ -14,7 +14,7 @@ class TranslatorExtensionTest extends TestCase
     /** @var TranslatorExtension */
     private $extension;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->extension = new TranslatorExtension($this->prophesize(Translator::class)->reveal());
     }

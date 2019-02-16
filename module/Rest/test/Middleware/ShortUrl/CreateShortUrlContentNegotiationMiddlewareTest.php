@@ -19,7 +19,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
     /** @var RequestHandlerInterface */
     private $requestHandler;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->middleware = new CreateShortUrlContentNegotiationMiddleware();
         $this->requestHandler = $this->prophesize(RequestHandlerInterface::class);

@@ -24,7 +24,7 @@ class ShortUrlServiceTest extends TestCase
     /** @var ObjectProphecy|EntityManagerInterface */
     private $em;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->em->persist(Argument::any())->willReturn(null);

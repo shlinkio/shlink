@@ -19,7 +19,7 @@ class AuthorizationHeaderPluginTest extends TestCase
     /** @var ObjectProphecy */
     private $jwtService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->jwtService = $this->prophesize(JWTServiceInterface::class);
         $this->plugin = new AuthorizationHeaderPlugin($this->jwtService->reveal());

@@ -39,7 +39,7 @@ class AuthenticationMiddlewareTest extends TestCase
     /** @var callable */
     private $dummyMiddleware;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->requestToPlugin = $this->prophesize(RequestToHttpAuthPluginInterface::class);
         $this->middleware = new AuthenticationMiddleware($this->requestToPlugin->reveal(), [AuthenticateAction::class]);

@@ -18,7 +18,7 @@ class ListKeysCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $apiKeyService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->apiKeyService = $this->prophesize(ApiKeyService::class);
         $command = new ListKeysCommand($this->apiKeyService->reveal());
@@ -27,10 +27,8 @@ class ListKeysCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
-    public function everythingIsListedIfEnabledOnlyIsNotProvided()
+    /** @test */
+    public function everythingIsListedIfEnabledOnlyIsNotProvided(): void
     {
         $this->apiKeyService->listKeys(false)->willReturn([
             new ApiKey(),
@@ -43,17 +41,15 @@ class ListKeysCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('Key', $output);
-        $this->assertContains('Is enabled', $output);
-        $this->assertContains(' +++ ', $output);
-        $this->assertNotContains(' --- ', $output);
-        $this->assertContains('Expiration date', $output);
+        $this->assertStringContainsString('Key', $output);
+        $this->assertStringContainsString('Is enabled', $output);
+        $this->assertStringContainsString(' +++ ', $output);
+        $this->assertStringNotContainsString(' --- ', $output);
+        $this->assertStringContainsString('Expiration date', $output);
     }
 
-    /**
-     * @test
-     */
-    public function onlyEnabledKeysAreListedIfEnabledOnlyIsProvided()
+    /** @test */
+    public function onlyEnabledKeysAreListedIfEnabledOnlyIsProvided(): void
     {
         $this->apiKeyService->listKeys(true)->willReturn([
             (new ApiKey())->disable(),
@@ -66,10 +62,10 @@ class ListKeysCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('Key', $output);
-        $this->assertNotContains('Is enabled', $output);
-        $this->assertNotContains(' +++ ', $output);
-        $this->assertNotContains(' --- ', $output);
-        $this->assertContains('Expiration date', $output);
+        $this->assertStringContainsString('Key', $output);
+        $this->assertStringNotContainsString('Is enabled', $output);
+        $this->assertStringNotContainsString(' +++ ', $output);
+        $this->assertStringNotContainsString(' --- ', $output);
+        $this->assertStringContainsString('Expiration date', $output);
     }
 }

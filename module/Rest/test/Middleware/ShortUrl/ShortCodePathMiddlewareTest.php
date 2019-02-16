@@ -18,7 +18,7 @@ class ShortCodePathMiddlewareTest extends TestCase
     private $middleware;
     private $requestHandler;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->middleware = new ShortCodePathMiddleware();
         $this->requestHandler = $this->prophesize(RequestHandlerInterface::class);
@@ -37,8 +37,8 @@ class ShortCodePathMiddlewareTest extends TestCase
         $withUri = $request->withUri(Argument::that(function (UriInterface $uri) {
             $path = $uri->getPath();
 
-            Assert::assertContains('/short-urls', $path);
-            Assert::assertNotContains('/short-codes', $path);
+            Assert::assertStringContainsString('/short-urls', $path);
+            Assert::assertStringNotContainsString('/short-codes', $path);
 
             return $uri;
         }))->willReturn($request->reveal());

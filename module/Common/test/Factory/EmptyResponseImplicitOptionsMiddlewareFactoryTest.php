@@ -15,7 +15,7 @@ class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
     /** @var EmptyResponseImplicitOptionsMiddlewareFactory */
     private $factory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->factory = new EmptyResponseImplicitOptionsMiddlewareFactory();
     }

@@ -19,7 +19,7 @@ class NotFoundHandlerTest extends TestCase
     /** @var ObjectProphecy */
     private $renderer;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->renderer = $this->prophesize(TemplateRendererInterface::class);
         $this->delegate = new NotFoundHandler($this->renderer->reveal());

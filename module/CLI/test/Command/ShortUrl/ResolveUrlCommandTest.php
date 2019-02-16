@@ -21,7 +21,7 @@ class ResolveUrlCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $urlShortener;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
         $command = new ResolveUrlCommand($this->urlShortener->reveal());
@@ -64,7 +64,7 @@ class ResolveUrlCommandTest extends TestCase
             'shortCode' => $shortCode,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertContains('Provided short code "' . $shortCode . '" could not be found.', $output);
+        $this->assertStringContainsString('Provided short code "' . $shortCode . '" could not be found.', $output);
     }
 
     /**
@@ -81,6 +81,6 @@ class ResolveUrlCommandTest extends TestCase
             'shortCode' => $shortCode,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertContains('Provided short code "' . $shortCode . '" has an invalid format.', $output);
+        $this->assertStringContainsString('Provided short code "' . $shortCode . '" has an invalid format.', $output);
     }
 }

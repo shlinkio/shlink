@@ -21,7 +21,7 @@ class DeleteShortUrlActionTest extends TestCase
     /** @var ObjectProphecy */
     private $service;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->service = $this->prophesize(DeleteShortUrlServiceInterface::class);
         $this->action = new DeleteShortUrlAction($this->service->reveal());

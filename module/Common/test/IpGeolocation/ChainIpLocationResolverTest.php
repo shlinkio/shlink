@@ -18,7 +18,7 @@ class ChainIpLocationResolverTest extends TestCase
     /** @var ObjectProphecy */
     private $secondInnerResolver;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->firstInnerResolver = $this->prophesize(IpLocationResolverInterface::class);
         $this->secondInnerResolver = $this->prophesize(IpLocationResolverInterface::class);

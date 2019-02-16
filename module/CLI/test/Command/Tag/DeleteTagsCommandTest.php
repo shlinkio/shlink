@@ -20,7 +20,7 @@ class DeleteTagsCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $tagService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
 
@@ -39,7 +39,7 @@ class DeleteTagsCommandTest extends TestCase
         $this->commandTester->execute([]);
 
         $output = $this->commandTester->getDisplay();
-        $this->assertContains('You have to provide at least one tag name', $output);
+        $this->assertStringContainsString('You have to provide at least one tag name', $output);
     }
 
     /**
@@ -57,7 +57,7 @@ class DeleteTagsCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('Tags properly deleted', $output);
+        $this->assertStringContainsString('Tags properly deleted', $output);
         $deleteTags->shouldHaveBeenCalled();
     }
 }

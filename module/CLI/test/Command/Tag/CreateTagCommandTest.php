@@ -19,7 +19,7 @@ class CreateTagCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $tagService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
 
@@ -38,7 +38,7 @@ class CreateTagCommandTest extends TestCase
         $this->commandTester->execute([]);
 
         $output = $this->commandTester->getDisplay();
-        $this->assertContains('You have to provide at least one tag name', $output);
+        $this->assertStringContainsString('You have to provide at least one tag name', $output);
     }
 
     /**
@@ -55,7 +55,7 @@ class CreateTagCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('Tags properly created', $output);
+        $this->assertStringContainsString('Tags properly created', $output);
         $createTags->shouldHaveBeenCalled();
     }
 }

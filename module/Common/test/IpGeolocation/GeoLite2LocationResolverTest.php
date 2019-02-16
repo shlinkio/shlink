@@ -19,7 +19,7 @@ class GeoLite2LocationResolverTest extends TestCase
     /** @var ObjectProphecy */
     private $reader;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->reader = $this->prophesize(Reader::class);
         $this->resolver = new GeoLite2LocationResolver($this->reader->reveal());

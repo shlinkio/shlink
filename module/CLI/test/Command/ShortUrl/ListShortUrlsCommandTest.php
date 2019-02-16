@@ -21,7 +21,7 @@ class ListShortUrlsCommandTest extends TestCase
     /** @var ObjectProphecy */
     private $shortUrlService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
         $app = new Application();
@@ -61,9 +61,9 @@ class ListShortUrlsCommandTest extends TestCase
         $this->commandTester->execute(['command' => 'shortcode:list']);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('Continue with page 2?', $output);
-        $this->assertContains('Continue with page 3?', $output);
-        $this->assertContains('Continue with page 4?', $output);
+        $this->assertStringContainsString('Continue with page 2?', $output);
+        $this->assertStringContainsString('Continue with page 3?', $output);
+        $this->assertStringContainsString('Continue with page 4?', $output);
     }
 
     /**
@@ -84,13 +84,13 @@ class ListShortUrlsCommandTest extends TestCase
         $this->commandTester->execute(['command' => 'shortcode:list']);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('url_1', $output);
-        $this->assertContains('url_9', $output);
-        $this->assertNotContains('url_10', $output);
-        $this->assertNotContains('url_20', $output);
-        $this->assertNotContains('url_30', $output);
-        $this->assertContains('Continue with page 2?', $output);
-        $this->assertNotContains('Continue with page 3?', $output);
+        $this->assertStringContainsString('url_1', $output);
+        $this->assertStringContainsString('url_9', $output);
+        $this->assertStringNotContainsString('url_10', $output);
+        $this->assertStringNotContainsString('url_20', $output);
+        $this->assertStringNotContainsString('url_30', $output);
+        $this->assertStringContainsString('Continue with page 2?', $output);
+        $this->assertStringNotContainsString('Continue with page 3?', $output);
     }
 
     /**
@@ -123,6 +123,6 @@ class ListShortUrlsCommandTest extends TestCase
             '--showTags' => true,
         ]);
         $output = $this->commandTester->getDisplay();
-        $this->assertContains('Tags', $output);
+        $this->assertStringContainsString('Tags', $output);
     }
 }

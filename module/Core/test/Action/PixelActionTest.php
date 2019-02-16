@@ -25,7 +25,7 @@ class PixelActionTest extends TestCase
     /** @var ObjectProphecy */
     private $visitTracker;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
         $this->visitTracker = $this->prophesize(VisitsTracker::class);
