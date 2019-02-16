@@ -32,7 +32,7 @@ class DisableKeyCommand extends Command
              ->addArgument('apiKey', InputArgument::REQUIRED, 'The API key to disable');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $apiKey = $input->getArgument('apiKey');
         $io = new SymfonyStyle($input, $output);
@@ -40,8 +40,10 @@ class DisableKeyCommand extends Command
         try {
             $this->apiKeyService->disable($apiKey);
             $io->success(sprintf('API key "%s" properly disabled', $apiKey));
+            return 0;
         } catch (InvalidArgumentException $e) {
             $io->error(sprintf('API key "%s" does not exist.', $apiKey));
+            return -1;
         }
     }
 }

@@ -44,7 +44,7 @@ class ListKeysCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $enabledOnly = $input->getOption('enabledOnly');
 
@@ -66,6 +66,7 @@ class ListKeysCommand extends Command
             ! $enabledOnly ? 'Is enabled' : null,
             'Expiration date',
         ]), $rows);
+        return 0;
     }
 
     private function determineMessagePattern(ApiKey $apiKey): string

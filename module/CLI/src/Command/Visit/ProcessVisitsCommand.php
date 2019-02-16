@@ -48,7 +48,7 @@ class ProcessVisitsCommand extends Command
             ->setDescription('Processes visits where location is not set yet');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $this->output = $output;
         $io = new SymfonyStyle($input, $output);
@@ -56,7 +56,7 @@ class ProcessVisitsCommand extends Command
         $lock = $this->locker->createLock(self::NAME);
         if (! $lock->acquire()) {
             $io->warning(sprintf('There is already an instance of the "%s" command in execution', self::NAME));
-            return;
+            return 1;
         }
 
         try {
@@ -70,6 +70,7 @@ class ProcessVisitsCommand extends Command
             $io->success('Finished processing all IPs');
         } finally {
             $lock->release();
+            return 0;
         }
     }
 

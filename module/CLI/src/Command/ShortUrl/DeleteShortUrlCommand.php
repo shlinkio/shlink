@@ -43,7 +43,7 @@ class DeleteShortUrlCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $shortCode = $input->getArgument('shortCode');
@@ -51,14 +51,16 @@ class DeleteShortUrlCommand extends Command
 
         try {
             $this->runDelete($io, $shortCode, $ignoreThreshold);
+            return 0;
         } catch (Exception\InvalidShortCodeException $e) {
             $io->error(sprintf('Provided short code "%s" could not be found.', $shortCode));
+            return -1;
         } catch (Exception\DeleteShortUrlException $e) {
-            $this->retry($io, $shortCode, $e);
+            return $this->retry($io, $shortCode, $e);
         }
     }
 
-    private function retry(SymfonyStyle $io, string $shortCode, Exception\DeleteShortUrlException $e): void
+    private function retry(SymfonyStyle $io, string $shortCode, Exception\DeleteShortUrlException $e): int
     {
         $warningMsg = sprintf(
             'It was not possible to delete the short URL with short code "%s" because it has more than %s visits.',
@@ -73,6 +75,8 @@ class DeleteShortUrlCommand extends Command
         } else {
             $io->warning('Short URL was not deleted.');
         }
+
+        return $forceDelete ? 0 : 1;
     }
 
     private function runDelete(SymfonyStyle $io, string $shortCode, bool $ignoreThreshold): void

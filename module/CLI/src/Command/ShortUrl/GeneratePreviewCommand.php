@@ -39,7 +39,7 @@ class GeneratePreviewCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $page = 1;
         do {
@@ -52,6 +52,7 @@ class GeneratePreviewCommand extends Command
         } while ($page <= $shortUrls->count());
 
         (new SymfonyStyle($input, $output))->success('Finished processing all URLs');
+        return 0;
     }
 
     private function processUrl($url, OutputInterface $output): void

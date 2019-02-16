@@ -102,13 +102,13 @@ class GenerateShortUrlCommand extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $longUrl = $input->getArgument('longUrl');
         if (empty($longUrl)) {
             $io->error('A URL was not provided!');
-            return;
+            return -1;
         }
 
         $explodeWithComma = curry('explode')(',');
@@ -134,12 +134,15 @@ class GenerateShortUrlCommand extends Command
                 sprintf('Processed long URL: <info>%s</info>', $longUrl),
                 sprintf('Generated short URL: <info>%s</info>', $shortUrl),
             ]);
+            return 0;
         } catch (InvalidUrlException $e) {
             $io->error(sprintf('Provided URL "%s" is invalid. Try with a different one.', $longUrl));
+            return -1;
         } catch (NonUniqueSlugException $e) {
             $io->error(
                 sprintf('Provided slug "%s" is already in use by another URL. Try with a different one.', $customSlug)
             );
+            return -1;
         }
     }
 

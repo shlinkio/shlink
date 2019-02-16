@@ -27,9 +27,10 @@ class GenerateSecretCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $secret = $this->generateRandomString(32);
         (new SymfonyStyle($input, $output))->success(sprintf('Secret key: "%s"', $secret));
+        return 0;
     }
 }

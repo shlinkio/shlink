@@ -34,7 +34,7 @@ class RenameTagCommand extends Command
             ->addArgument('newName', InputArgument::REQUIRED, 'New name of the tag.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $oldName = $input->getArgument('oldName');
@@ -43,8 +43,10 @@ class RenameTagCommand extends Command
         try {
             $this->tagService->renameTag($oldName, $newName);
             $io->success('Tag properly renamed.');
+            return 0;
         } catch (EntityDoesNotExistException $e) {
             $io->error(sprintf('A tag with name "%s" was not found', $oldName));
+            return -1;
         }
     }
 }

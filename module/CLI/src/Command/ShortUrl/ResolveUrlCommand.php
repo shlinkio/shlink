@@ -50,7 +50,7 @@ class ResolveUrlCommand extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $shortCode = $input->getArgument('shortCode');
@@ -58,10 +58,13 @@ class ResolveUrlCommand extends Command
         try {
             $url = $this->urlShortener->shortCodeToUrl($shortCode);
             $output->writeln(sprintf('Long URL: <info>%s</info>', $url->getLongUrl()));
+            return 0;
         } catch (InvalidShortCodeException $e) {
             $io->error(sprintf('Provided short code "%s" has an invalid format.', $shortCode));
+            return -1;
         } catch (EntityDoesNotExistException $e) {
             $io->error(sprintf('Provided short code "%s" could not be found.', $shortCode));
+            return -1;
         }
     }
 }

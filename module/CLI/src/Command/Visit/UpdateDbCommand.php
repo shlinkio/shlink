@@ -35,7 +35,7 @@ class UpdateDbCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $progressBar = new ProgressBar($output);
@@ -51,6 +51,7 @@ class UpdateDbCommand extends Command
             $io->writeln('');
 
             $io->success('GeoLite2 database properly updated');
+            return 0;
         } catch (RuntimeException $e) {
             $progressBar->finish();
             $io->writeln('');
@@ -59,6 +60,7 @@ class UpdateDbCommand extends Command
             if ($io->isVerbose()) {
                 $this->getApplication()->renderException($e, $output);
             }
+            return -1;
         }
     }
 }

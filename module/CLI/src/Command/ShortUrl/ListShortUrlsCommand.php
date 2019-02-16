@@ -74,7 +74,7 @@ class ListShortUrlsCommand extends Command
             ->addOption('showTags', null, InputOption::VALUE_NONE, 'Whether to display the tags or not');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $page = (int) $input->getOption('page');
@@ -95,6 +95,7 @@ class ListShortUrlsCommand extends Command
 
         $io->newLine();
         $io->success('Short URLs properly listed');
+        return 0;
     }
 
     private function renderPage(

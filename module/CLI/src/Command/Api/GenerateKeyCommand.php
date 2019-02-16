@@ -38,11 +38,12 @@ class GenerateKeyCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $expirationDate = $input->getOption('expirationDate');
         $apiKey = $this->apiKeyService->create(isset($expirationDate) ? Chronos::parse($expirationDate) : null);
 
         (new SymfonyStyle($input, $output))->success(sprintf('Generated API key: "%s"', $apiKey));
+        return 0;
     }
 }

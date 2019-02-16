@@ -36,17 +36,18 @@ class CreateTagCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $tagNames = $input->getOption('name');
 
         if (empty($tagNames)) {
             $io->warning('You have to provide at least one tag name');
-            return;
+            return 1;
         }
 
         $this->tagService->createTags($tagNames);
         $io->success('Tags properly created');
+        return 0;
     }
 }
