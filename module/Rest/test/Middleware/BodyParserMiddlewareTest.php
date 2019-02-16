@@ -26,23 +26,40 @@ class BodyParserMiddlewareTest extends TestCase
 
     /**
      * @test
+     * @dataProvider provideIgnoredRequestMethods
      */
-    public function requestsFromOtherMethodsJustFallbackToNextMiddleware()
+    public function requestsFromOtherMethodsJustFallbackToNextMiddleware(string $method): void
     {
-        $request = (new ServerRequest())->withMethod('GET');
-        $delegate = $this->prophesize(RequestHandlerInterface::class);
-        /** @var MethodProphecy $process */
-        $process = $delegate->handle($request)->willReturn(new Response());
-
-        $this->middleware->process($request, $delegate->reveal());
-
-        $process->shouldHaveBeenCalledOnce();
+        $request = (new ServerRequest())->withMethod($method);
+        $this->assertHandlingRequestJustFallsBackToNext($request);
     }
 
-    /**
-     * @test
-     */
-    public function jsonRequestsAreJsonDecoded()
+    public function provideIgnoredRequestMethods(): iterable
+    {
+        yield 'with GET' => ['GET'];
+        yield 'with HEAD' => ['HEAD'];
+        yield 'with OPTIONS' => ['OPTIONS'];
+    }
+
+    /** @test */
+    public function requestsWithNonEmptyBodyJustFallbackToNextMiddleware(): void
+    {
+        $request = (new ServerRequest())->withParsedBody(['foo' => 'bar'])->withMethod('POST');
+        $this->assertHandlingRequestJustFallsBackToNext($request);
+    }
+
+    private function assertHandlingRequestJustFallsBackToNext(ServerRequestInterface $request): void
+    {
+        $nextHandler = $this->prophesize(RequestHandlerInterface::class);
+        $handle = $nextHandler->handle($request)->willReturn(new Response());
+
+        $this->middleware->process($request, $nextHandler->reveal());
+
+        $handle->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
+    public function jsonRequestsAreJsonDecoded(): void
     {
         $test = $this;
         $body = new Stream('php://temp', 'wr');
@@ -71,10 +88,8 @@ class BodyParserMiddlewareTest extends TestCase
         $process->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
-    public function regularRequestsAreUrlDecoded()
+    /** @test */
+    public function regularRequestsAreUrlDecoded(): void
     {
         $test = $this;
         $body = new Stream('php://temp', 'wr');

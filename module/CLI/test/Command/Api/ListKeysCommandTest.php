@@ -36,9 +36,7 @@ class ListKeysCommandTest extends TestCase
             new ApiKey(),
         ])->shouldBeCalledOnce();
 
-        $this->commandTester->execute([
-            'command' => ListKeysCommand::NAME,
-        ]);
+        $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString('Key', $output);
@@ -57,7 +55,6 @@ class ListKeysCommandTest extends TestCase
         ])->shouldBeCalledOnce();
 
         $this->commandTester->execute([
-            'command' => ListKeysCommand::NAME,
             '--enabledOnly' => true,
         ]);
         $output = $this->commandTester->getDisplay();

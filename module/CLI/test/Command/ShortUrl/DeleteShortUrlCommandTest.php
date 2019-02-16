@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
+use const PHP_EOL;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -14,7 +15,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use function array_pop;
 use function sprintf;
 
-class DeleteShortCodeCommandTest extends TestCase
+class DeleteShortUrlCommandTest extends TestCase
 {
     /** @var CommandTester */
     private $commandTester;
@@ -32,10 +33,8 @@ class DeleteShortCodeCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
-    public function successMessageIsPrintedIfUrlIsProperlyDeleted()
+    /** @test */
+    public function successMessageIsPrintedIfUrlIsProperlyDeleted(): void
     {
         $shortCode = 'abc123';
         $deleteByShortCode = $this->service->deleteByShortCode($shortCode, false)->will(function () {
@@ -51,10 +50,8 @@ class DeleteShortCodeCommandTest extends TestCase
         $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
-    public function invalidShortCodePrintsMessage()
+    /** @test */
+    public function invalidShortCodePrintsMessage(): void
     {
         $shortCode = 'abc123';
         $deleteByShortCode = $this->service->deleteByShortCode($shortCode, false)->willThrow(
@@ -70,9 +67,13 @@ class DeleteShortCodeCommandTest extends TestCase
 
     /**
      * @test
+     * @dataProvider provideRetryDeleteAnswers
      */
-    public function deleteIsRetriedWhenThresholdIsReachedAndQuestionIsAccepted()
-    {
+    public function deleteIsRetriedWhenThresholdIsReachedAndQuestionIsAccepted(
+        array $retryAnswer,
+        int $expectedDeleteCalls,
+        string $expectedMessage
+    ): void {
         $shortCode = 'abc123';
         $deleteByShortCode = $this->service->deleteByShortCode($shortCode, Argument::type('bool'))->will(
             function (array $args) {
@@ -83,7 +84,7 @@ class DeleteShortCodeCommandTest extends TestCase
                 }
             }
         );
-        $this->commandTester->setInputs(['yes']);
+        $this->commandTester->setInputs($retryAnswer);
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
@@ -92,17 +93,19 @@ class DeleteShortCodeCommandTest extends TestCase
             'It was not possible to delete the short URL with short code "%s" because it has more than 10 visits.',
             $shortCode
         ), $output);
-        $this->assertStringContainsString(
-            sprintf('Short URL with short code "%s" successfully deleted.', $shortCode),
-            $output
-        );
-        $deleteByShortCode->shouldHaveBeenCalledTimes(2);
+        $this->assertStringContainsString($expectedMessage, $output);
+        $deleteByShortCode->shouldHaveBeenCalledTimes($expectedDeleteCalls);
     }
 
-    /**
-     * @test
-     */
-    public function deleteIsNotRetriedWhenThresholdIsReachedAndQuestionIsDeclined()
+    public function provideRetryDeleteAnswers(): iterable
+    {
+        yield 'answering yes to retry' => [['yes'], 2, 'Short URL with short code "abc123" successfully deleted.'];
+        yield 'answering no to retry' => [['no'], 1, 'Short URL was not deleted.'];
+        yield 'answering default to retry' => [[PHP_EOL], 1, 'Short URL was not deleted.'];
+    }
+
+    /** @test */
+    public function deleteIsNotRetriedWhenThresholdIsReachedAndQuestionIsDeclined(): void
     {
         $shortCode = 'abc123';
         $deleteByShortCode = $this->service->deleteByShortCode($shortCode, false)->willThrow(
