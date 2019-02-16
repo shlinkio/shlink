@@ -48,6 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#330](https://github.com/shlinkio/shlink/issues/330) No longer allow failures on PHP 7.3 envs during project CI build.
 * [#335](https://github.com/shlinkio/shlink/issues/335) Renamed functional test suite to database test suite, since that better describes what it actually does.
 * [#346](https://github.com/shlinkio/shlink/issues/346) Extracted installer as an independent tool.
+* [#261](https://github.com/shlinkio/shlink/issues/261) Increased mutation score to 70%.
 
 #### Deprecated
 
