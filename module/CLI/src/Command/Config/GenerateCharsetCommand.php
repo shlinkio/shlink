@@ -11,6 +11,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use function sprintf;
 use function str_shuffle;
 
+/** @deprecated */
 class GenerateCharsetCommand extends Command
 {
     public const NAME = 'config:generate-charset';
@@ -20,10 +21,11 @@ class GenerateCharsetCommand extends Command
         $this
             ->setName(self::NAME)
             ->setDescription(sprintf(
-                'Generates a character set sample just by shuffling the default one, "%s". '
+                '[DEPRECATED] Generates a character set sample just by shuffling the default one, "%s". '
                 . 'Then it can be set in the SHORTCODE_CHARS environment variable',
                 UrlShortenerOptions::DEFAULT_CHARS
-            ));
+            ))
+            ->setHelp('<fg=red;options=bold>This command is deprecated. Better leave shlink generate the charset.</>');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void

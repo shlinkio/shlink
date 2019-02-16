@@ -266,8 +266,8 @@ Available commands:
   api-key:generate            Generates a new valid API key.
   api-key:list                Lists all the available API keys.
  config
-  config:generate-charset     Generates a character set sample just by shuffling the default one, "123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ". Then it can be set in the SHORTCODE_CHARS environment variable
-  config:generate-secret      Generates a random secret string that can be used for JWT token encryption
+  config:generate-charset     [DEPRECATED] Generates a character set sample just by shuffling the default one, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ". Then it can be set in the SHORTCODE_CHARS environment variable
+  config:generate-secret      [DEPRECATED] Generates a random secret string that can be used for JWT token encryption
  short-url
   short-url:delete            [short-code:delete] Deletes a short URL
   short-url:generate          [shortcode:generate|short-code:generate] Generates a short URL for provided long URL and returns it

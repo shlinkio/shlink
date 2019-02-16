@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use function sprintf;
 
+/** @deprecated */
 class GenerateSecretCommand extends Command
 {
     use StringUtilsTrait;
@@ -20,7 +21,10 @@ class GenerateSecretCommand extends Command
     {
         $this
             ->setName(self::NAME)
-            ->setDescription('[DEPRECATED] Generates a random secret string that can be used for JWT token encryption');
+            ->setDescription('[DEPRECATED] Generates a random secret string that can be used for JWT token encryption')
+            ->setHelp(
+                '<fg=red;options=bold>This command is deprecated. Better leave shlink generate the secret key.</>'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
