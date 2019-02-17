@@ -5,7 +5,6 @@ namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\CreateTagCommand;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
@@ -43,7 +42,6 @@ class CreateTagCommandTest extends TestCase
     public function serviceIsInvokedOnSuccess()
     {
         $tagNames = ['foo', 'bar'];
-        /** @var MethodProphecy $createTags */
         $createTags = $this->tagService->createTags($tagNames)->willReturn(new ArrayCollection());
 
         $this->commandTester->execute([

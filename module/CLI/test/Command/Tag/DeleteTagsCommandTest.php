@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\DeleteTagsCommand;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
@@ -44,7 +43,6 @@ class DeleteTagsCommandTest extends TestCase
     public function serviceIsInvokedOnSuccess()
     {
         $tagNames = ['foo', 'bar'];
-        /** @var MethodProphecy $deleteTags */
         $deleteTags = $this->tagService->deleteTags($tagNames)->will(function () {
         });
 

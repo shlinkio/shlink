@@ -13,7 +13,6 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Request;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -123,7 +122,6 @@ class UrlShortenerTest extends TestCase
         $repo = $this->prophesize(ShortUrlRepository::class);
         $countBySlug = $repo->count(['shortCode' => 'custom-slug'])->willReturn(1);
         $repo->findOneBy(Argument::cetera())->willReturn(null);
-        /** @var MethodProphecy $getRepo */
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $countBySlug->shouldBeCalledOnce();

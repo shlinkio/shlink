@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
@@ -33,9 +32,7 @@ class TagServiceTest extends TestCase
         $expected = [new Tag('foo'), new Tag('bar')];
 
         $repo = $this->prophesize(EntityRepository::class);
-        /** @var MethodProphecy $find */
         $find = $repo->findBy(Argument::cetera())->willReturn($expected);
-        /** @var MethodProphecy $getRepo */
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
 
         $result = $this->service->listTags();
@@ -49,9 +46,7 @@ class TagServiceTest extends TestCase
     public function deleteTagsDelegatesOnRepository()
     {
         $repo = $this->prophesize(TagRepository::class);
-        /** @var MethodProphecy $delete */
         $delete = $repo->deleteByName(['foo', 'bar'])->willReturn(4);
-        /** @var MethodProphecy $getRepo */
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
 
         $this->service->deleteTags(['foo', 'bar']);
@@ -64,13 +59,9 @@ class TagServiceTest extends TestCase
     public function createTagsPersistsEntities()
     {
         $repo = $this->prophesize(TagRepository::class);
-        /** @var MethodProphecy $find */
         $find = $repo->findOneBy(Argument::cetera())->willReturn(new Tag('foo'));
-        /** @var MethodProphecy $getRepo */
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
-        /** @var MethodProphecy $persist */
         $persist = $this->em->persist(Argument::type(Tag::class))->willReturn(null);
-        /** @var MethodProphecy $flush */
         $flush = $this->em->flush()->willReturn(null);
 
         $result = $this->service->createTags(['foo', 'bar']);
@@ -86,9 +77,7 @@ class TagServiceTest extends TestCase
     public function renameInvalidTagThrowsException()
     {
         $repo = $this->prophesize(TagRepository::class);
-        /** @var MethodProphecy $find */
         $find = $repo->findOneBy(Argument::cetera())->willReturn(null);
-        /** @var MethodProphecy $getRepo */
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
 
         $find->shouldBeCalled();
@@ -104,11 +93,8 @@ class TagServiceTest extends TestCase
         $expected = new Tag('foo');
 
         $repo = $this->prophesize(TagRepository::class);
-        /** @var MethodProphecy $find */
         $find = $repo->findOneBy(Argument::cetera())->willReturn($expected);
-        /** @var MethodProphecy $getRepo */
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
-        /** @var MethodProphecy $flush */
         $flush = $this->em->flush($expected)->willReturn(null);
 
         $tag = $this->service->renameTag('foo', 'bar');

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\DeleteTagsAction;
@@ -30,7 +29,6 @@ class DeleteTagsActionTest extends TestCase
     public function processDelegatesIntoService(?array $tags): void
     {
         $request = (new ServerRequest())->withQueryParams(['tags' => $tags]);
-        /** @var MethodProphecy $deleteTags */
         $deleteTags = $this->tagService->deleteTags($tags ?: []);
 
         $response = $this->action->handle($request);

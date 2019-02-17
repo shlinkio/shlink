@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
@@ -51,7 +50,6 @@ class UpdateTagActionTest extends TestCase
             'oldName' => 'foo',
             'newName' => 'bar',
         ]);
-        /** @var MethodProphecy $rename */
         $rename = $this->tagService->renameTag('foo', 'bar')->willThrow(EntityDoesNotExistException::class);
 
         $resp = $this->action->handle($request);
@@ -67,7 +65,6 @@ class UpdateTagActionTest extends TestCase
             'oldName' => 'foo',
             'newName' => 'bar',
         ]);
-        /** @var MethodProphecy $rename */
         $rename = $this->tagService->renameTag('foo', 'bar')->willReturn(new Tag('bar'));
 
         $resp = $this->action->handle($request);

@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\Core\Action;
 use finfo;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
@@ -76,7 +75,6 @@ class PreviewActionTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
                                                        ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
-        /** @var MethodProphecy $process */
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
         $this->action->process(
