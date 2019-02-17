@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -43,11 +44,11 @@ class CreateTagCommand extends Command
 
         if (empty($tagNames)) {
             $io->warning('You have to provide at least one tag name');
-            return 1;
+            return ExitCodes::EXIT_WARNING;
         }
 
         $this->tagService->createTags($tagNames);
         $io->success('Tags properly created');
-        return 0;
+        return ExitCodes::EXIT_SUCCESS;
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\Common\Service\PreviewGeneratorInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
@@ -52,7 +53,7 @@ class GeneratePreviewCommand extends Command
         } while ($page <= $shortUrls->count());
 
         (new SymfonyStyle($input, $output))->success('Finished processing all URLs');
-        return 0;
+        return ExitCodes::EXIT_SUCCESS;
     }
 
     private function processUrl($url, OutputInterface $output): void

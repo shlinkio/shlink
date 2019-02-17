@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Config;
 
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,6 +32,6 @@ class GenerateSecretCommand extends Command
     {
         $secret = $this->generateRandomString(32);
         (new SymfonyStyle($input, $output))->success(sprintf('Secret key: "%s"', $secret));
-        return 0;
+        return ExitCodes::EXIT_SUCCESS;
     }
 }

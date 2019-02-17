@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Common\Console\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
@@ -95,7 +96,7 @@ class ListShortUrlsCommand extends Command
 
         $io->newLine();
         $io->success('Short URLs properly listed');
-        return 0;
+        return ExitCodes::EXIT_SUCCESS;
     }
 
     private function renderPage(
