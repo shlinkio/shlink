@@ -36,9 +36,9 @@ class BodyParserMiddlewareTest extends TestCase
 
     public function provideIgnoredRequestMethods(): iterable
     {
-        yield 'with GET' => ['GET'];
-        yield 'with HEAD' => ['HEAD'];
-        yield 'with OPTIONS' => ['OPTIONS'];
+        yield 'GET' => ['GET'];
+        yield 'HEAD' => ['HEAD'];
+        yield 'OPTIONS' => ['OPTIONS'];
     }
 
     /** @test */

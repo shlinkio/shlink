@@ -15,7 +15,7 @@ class VisitTest extends TestCase
      * @test
      * @dataProvider provideDates
      */
-    public function isProperlyJsonSerialized(?Chronos $date)
+    public function isProperlyJsonSerialized(?Chronos $date): void
     {
         $visit = new Visit(new ShortUrl(''), new Visitor('Chrome', 'some site', '1.2.3.4'), $date);
 
@@ -30,11 +30,9 @@ class VisitTest extends TestCase
         ], $visit->jsonSerialize());
     }
 
-    public function provideDates(): array
+    public function provideDates(): iterable
     {
-        return [
-            [null],
-            [Chronos::now()->subDays(10)],
-        ];
+        yield 'null date' => [null];
+        yield 'not null date' => [Chronos::now()->subDays(10)];
     }
 }

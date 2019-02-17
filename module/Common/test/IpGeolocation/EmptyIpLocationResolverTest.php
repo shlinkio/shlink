@@ -26,7 +26,7 @@ class EmptyIpLocationResolverTest extends TestCase
      * @test
      * @dataProvider provideEmptyResponses
      */
-    public function alwaysReturnsAnEmptyResponse(string $ipAddress): void
+    public function alwaysReturnsAnEmptyLocation(string $ipAddress): void
     {
         $this->assertEquals(Location::emptyInstance(), $this->resolver->resolveIpLocation($ipAddress));
     }

@@ -20,30 +20,23 @@ class DottedAccessConfigAbstractFactoryTest extends TestCase
     }
 
     /**
-     * @param string $serviceName
-     * @param bool $canCreate
-     *
      * @test
      * @dataProvider provideDotNames
      */
-    public function canCreateOnlyServicesWithDot(string $serviceName, bool $canCreate)
+    public function canCreateOnlyServicesWithDot(string $serviceName, bool $canCreate): void
     {
         $this->assertEquals($canCreate, $this->factory->canCreate(new ServiceManager(), $serviceName));
     }
 
-    public function provideDotNames(): array
+    public function provideDotNames(): iterable
     {
-        return [
-            ['foo.bar', true],
-            ['config.something', true],
-            ['config_something', false],
-            ['foo', false],
-        ];
+        yield 'with a valid service' => ['foo.bar', true];
+        yield 'with another valid service' => ['config.something', true];
+        yield 'with an invalid service' => ['config_something', false];
+        yield 'with another invalid service' => ['foo', false];
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function throwsExceptionWhenFirstPartOfTheServiceIsNotRegistered()
     {
         $this->expectException(ServiceNotCreatedException::class);
@@ -54,9 +47,7 @@ class DottedAccessConfigAbstractFactoryTest extends TestCase
         $this->factory->__invoke(new ServiceManager(), 'foo.bar');
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function dottedNotationIsRecursivelyResolvedUntilLastValueIsFoundAndReturned()
     {
         $expected = 'this is the result';
@@ -70,9 +61,7 @@ class DottedAccessConfigAbstractFactoryTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function exceptionIsThrownIfAnyStepCannotBeResolved()
     {
         $this->expectException(InvalidArgumentException::class);

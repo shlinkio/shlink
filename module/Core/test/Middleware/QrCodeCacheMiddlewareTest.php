@@ -26,9 +26,7 @@ class QrCodeCacheMiddlewareTest extends TestCase
         $this->middleware = new QrCodeCacheMiddleware($this->cache);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function noCachedPathFallsBackToNextMiddleware()
     {
         $delegate = $this->prophesize(RequestHandlerInterface::class);
@@ -39,9 +37,7 @@ class QrCodeCacheMiddlewareTest extends TestCase
         $this->assertTrue($this->cache->contains('/foo/bar'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function cachedPathReturnsCacheContent()
     {
         $isCalled = false;

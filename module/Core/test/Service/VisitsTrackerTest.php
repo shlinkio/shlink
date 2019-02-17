@@ -31,9 +31,7 @@ class VisitsTrackerTest extends TestCase
         $this->visitsTracker  = new VisitsTracker($this->em->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function trackPersistsVisit()
     {
         $shortCode = '123ABC';
@@ -47,9 +45,7 @@ class VisitsTrackerTest extends TestCase
         $this->visitsTracker->track($shortCode, Visitor::emptyInstance());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function trackedIpAddressGetsObfuscated()
     {
         $shortCode = '123ABC';
@@ -67,9 +63,7 @@ class VisitsTrackerTest extends TestCase
         $this->visitsTracker->track($shortCode, new Visitor('', '', '4.3.2.1'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function infoReturnsVisistForCertainShortCode()
     {
         $shortCode = '123ABC';

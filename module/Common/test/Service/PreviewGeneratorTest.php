@@ -38,9 +38,7 @@ class PreviewGeneratorTest extends TestCase
         ]), $this->filesystem->reveal(), 'dir');
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function alreadyProcessedElementsAreNotProcessed()
     {
         $url = 'http://foo.com';
@@ -50,9 +48,7 @@ class PreviewGeneratorTest extends TestCase
         $this->assertEquals(sprintf('dir/preview_%s.png', urlencode($url)), $this->generator->generatePreview($url));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function nonProcessedElementsAreProcessed()
     {
         $url = 'http://foo.com';

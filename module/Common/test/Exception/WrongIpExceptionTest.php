@@ -9,9 +9,7 @@ use Shlinkio\Shlink\Common\Exception\WrongIpException;
 
 class WrongIpExceptionTest extends TestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function fromIpAddressProperlyCreatesExceptionWithoutPrev()
     {
         $e = WrongIpException::fromIpAddress('1.2.3.4');
@@ -20,9 +18,7 @@ class WrongIpExceptionTest extends TestCase
         $this->assertEquals(0, $e->getCode());
         $this->assertNull($e->getPrevious());
     }
-    /**
-     * @test
-     */
+    /** @test */
     public function fromIpAddressProperlyCreatesExceptionWithPrev()
     {
         $prev = new Exception('Previous error');

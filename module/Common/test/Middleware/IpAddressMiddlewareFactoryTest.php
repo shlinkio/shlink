@@ -18,9 +18,7 @@ class IpAddressMiddlewareFactoryTest extends TestCase
         $this->factory = new IpAddressMiddlewareFactory();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function returnedInstanceIsProperlyConfigured()
     {
         $instance = $this->factory->__invoke(new ServiceManager(), '');

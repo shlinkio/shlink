@@ -25,9 +25,7 @@ class GenerateCharsetCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function charactersAreGeneratedFromDefault()
     {
         $prefix = 'Character set: ';

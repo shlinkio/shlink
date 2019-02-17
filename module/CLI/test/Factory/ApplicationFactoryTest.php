@@ -23,18 +23,14 @@ class ApplicationFactoryTest extends TestCase
         $this->factory = new ApplicationFactory();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function serviceIsCreated()
     {
         $instance = ($this->factory)($this->createServiceManager(), '');
         $this->assertInstanceOf(Application::class, $instance);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function allCommandsWhichAreServicesAreAdded()
     {
         $sm = $this->createServiceManager([

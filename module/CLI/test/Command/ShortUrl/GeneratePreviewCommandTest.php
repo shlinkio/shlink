@@ -39,9 +39,7 @@ class GeneratePreviewCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function previewsForEveryUrlAreGenerated()
     {
         $paginator = $this->createPaginator([
@@ -69,9 +67,7 @@ class GeneratePreviewCommandTest extends TestCase
         $generatePreview3->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function exceptionWillOutputError()
     {
         $items = [

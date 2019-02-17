@@ -30,9 +30,7 @@ class ListShortUrlsCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function noInputCallsListJustOnce()
     {
         $this->shortUrlService->listShortUrls(1, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))
@@ -42,9 +40,7 @@ class ListShortUrlsCommandTest extends TestCase
         $this->commandTester->execute(['command' => 'shortcode:list']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function loadingMorePagesCallsListMoreTimes()
     {
         // The paginator will return more than one page
@@ -66,9 +62,7 @@ class ListShortUrlsCommandTest extends TestCase
         $this->assertStringContainsString('Continue with page 4?', $output);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function havingMorePagesButAnsweringNoCallsListJustOnce()
     {
         // The paginator will return more than one page
@@ -93,9 +87,7 @@ class ListShortUrlsCommandTest extends TestCase
         $this->assertStringNotContainsString('Continue with page 3?', $output);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function passingPageWillMakeListStartOnThatPage()
     {
         $page = 5;
@@ -109,9 +101,7 @@ class ListShortUrlsCommandTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function ifTagsFlagIsProvidedTagsColumnIsIncluded()
     {
         $this->shortUrlService->listShortUrls(1, null, [], null)->willReturn(new Paginator(new ArrayAdapter()))

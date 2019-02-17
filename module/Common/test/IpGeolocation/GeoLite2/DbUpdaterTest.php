@@ -39,10 +39,8 @@ class DbUpdaterTest extends TestCase
         $this->dbUpdater = new DbUpdater($this->httpClient->reveal(), $this->filesystem->reveal(), $this->options);
     }
 
-    /**
-     * @test
-     */
-    public function anExceptionIsThrownIfFreshDbCannotBeDownloaded()
+    /** @test */
+    public function anExceptionIsThrownIfFreshDbCannotBeDownloaded(): void
     {
         $request = $this->httpClient->request(Argument::cetera())->willThrow(ClientException::class);
 
@@ -56,10 +54,8 @@ class DbUpdaterTest extends TestCase
         $this->dbUpdater->downloadFreshCopy();
     }
 
-    /**
-     * @test
-     */
-    public function anExceptionIsThrownIfFreshDbCannotBeExtracted()
+    /** @test */
+    public function anExceptionIsThrownIfFreshDbCannotBeExtracted(): void
     {
         $this->options->tempDir = '__invalid__';
 
@@ -79,7 +75,7 @@ class DbUpdaterTest extends TestCase
      * @test
      * @dataProvider provideFilesystemExceptions
      */
-    public function anExceptionIsThrownIfFreshDbCannotBeCopiedToDestination(string $e)
+    public function anExceptionIsThrownIfFreshDbCannotBeCopiedToDestination(string $e): void
     {
         $request = $this->httpClient->request(Argument::cetera())->willReturn(new Response());
         $copy = $this->filesystem->copy(Argument::cetera())->willThrow($e);
@@ -93,18 +89,14 @@ class DbUpdaterTest extends TestCase
         $this->dbUpdater->downloadFreshCopy();
     }
 
-    public function provideFilesystemExceptions(): array
+    public function provideFilesystemExceptions(): iterable
     {
-        return [
-            [FilesystemException\FileNotFoundException::class],
-            [FilesystemException\IOException::class],
-        ];
+        yield 'file not found' => [FilesystemException\FileNotFoundException::class];
+        yield 'IO error' => [FilesystemException\IOException::class];
     }
 
-    /**
-     * @test
-     */
-    public function noExceptionsAreThrownIfEverythingWorksFine()
+    /** @test */
+    public function noExceptionsAreThrownIfEverythingWorksFine(): void
     {
         $request = $this->httpClient->request(Argument::cetera())->willReturn(new Response());
         $copy = $this->filesystem->copy(Argument::cetera())->will(function () {

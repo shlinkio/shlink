@@ -23,7 +23,7 @@ class AuthenticationExceptionTest extends TestCase
         $this->assertEquals('The token has expired.', $e->getMessage());
     }
 
-    public function providePrev()
+    public function providePrev(): iterable
     {
         yield 'with previous exception' => [new Exception('Prev')];
         yield 'without previous exception' => [null];

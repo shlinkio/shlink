@@ -39,9 +39,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function deleteByShortCodeThrowsExceptionWhenThresholdIsReached()
     {
         $service = $this->createService();
@@ -54,9 +52,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $service->deleteByShortCode('abc123');
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function deleteByShortCodeDeletesUrlWhenThresholdIsReachedButExplicitlyIgnored()
     {
         $service = $this->createService();
@@ -70,9 +66,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $flush->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function deleteByShortCodeDeletesUrlWhenThresholdIsReachedButCheckIsDisabled()
     {
         $service = $this->createService(false);
@@ -86,9 +80,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $flush->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function deleteByShortCodeDeletesUrlWhenThresholdIsNotReached()
     {
         $service = $this->createService(true, 100);

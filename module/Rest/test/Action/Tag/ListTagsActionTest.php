@@ -25,9 +25,7 @@ class ListTagsActionTest extends TestCase
         $this->action = new ListTagsAction($this->tagService->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function returnsDataFromService()
     {
         /** @var MethodProphecy $listTags */

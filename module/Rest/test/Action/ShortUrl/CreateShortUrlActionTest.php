@@ -34,18 +34,14 @@ class CreateShortUrlActionTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function missingLongUrlParamReturnsError()
     {
         $response = $this->action->handle(new ServerRequest());
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function properShortcodeConversionReturnsData()
     {
         $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
@@ -62,9 +58,7 @@ class CreateShortUrlActionTest extends TestCase
         $this->assertTrue(strpos($response->getBody()->getContents(), 'http://foo.com/abc123') > 0);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function anInvalidUrlReturnsError()
     {
         $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
@@ -79,9 +73,7 @@ class CreateShortUrlActionTest extends TestCase
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::INVALID_URL_ERROR) > 0);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function nonUniqueSlugReturnsError()
     {
         $this->urlShortener->urlToShortCode(
@@ -100,9 +92,7 @@ class CreateShortUrlActionTest extends TestCase
         $this->assertStringContainsString(RestUtils::INVALID_SLUG_ERROR, (string) $response->getBody());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function aGenericExceptionWillReturnError()
     {
         $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())

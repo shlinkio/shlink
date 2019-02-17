@@ -33,9 +33,7 @@ class RenameTagCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function errorIsPrintedIfExceptionIsThrown()
     {
         $oldName = 'foo';
@@ -53,9 +51,7 @@ class RenameTagCommandTest extends TestCase
         $renameTag->shouldHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function successIsPrintedIfNoErrorOccurs()
     {
         $oldName = 'foo';

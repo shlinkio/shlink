@@ -25,10 +25,8 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
         $this->requestHandler = $this->prophesize(RequestHandlerInterface::class);
     }
 
-    /**
-     * @test
-     */
-    public function whenNoJsonResponseIsReturnedNoFurtherOperationsArePerformed()
+    /** @test */
+    public function whenNoJsonResponseIsReturnedNoFurtherOperationsArePerformed(): void
     {
         $expectedResp = new Response();
         $this->requestHandler->handle(Argument::type(ServerRequestInterface::class))->willReturn($expectedResp);
@@ -43,7 +41,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
      * @dataProvider provideData
      * @param array $query
      */
-    public function properResponseIsReturned(?string $accept, array $query, string $expectedContentType)
+    public function properResponseIsReturned(?string $accept, array $query, string $expectedContentType): void
     {
         $request = (new ServerRequest())->withQueryParams($query);
         if ($accept !== null) {
@@ -60,18 +58,16 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
         $handle->shouldHaveBeenCalled();
     }
 
-    public function provideData(): array
+    public function provideData(): iterable
     {
-        return [
-            [null, [], 'application/json'],
-            [null, ['format' => 'json'], 'application/json'],
-            [null, ['format' => 'invalid'], 'application/json'],
-            [null, ['format' => 'txt'], 'text/plain'],
-            ['application/json', [], 'application/json'],
-            ['application/xml', [], 'application/json'],
-            ['text/plain', [], 'text/plain'],
-            ['application/json', ['format' => 'txt'], 'text/plain'],
-        ];
+        yield [null, [], 'application/json'];
+        yield [null, ['format' => 'json'], 'application/json'];
+        yield [null, ['format' => 'invalid'], 'application/json'];
+        yield [null, ['format' => 'txt'], 'text/plain'];
+        yield ['application/json', [], 'application/json'];
+        yield ['application/xml', [], 'application/json'];
+        yield ['text/plain', [], 'text/plain'];
+        yield ['application/json', ['format' => 'txt'], 'text/plain'];
     }
 
     /**
@@ -79,7 +75,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
      * @dataProvider provideTextBodies
      * @param array $json
      */
-    public function properBodyIsReturnedInPlainTextResponses(array $json, string $expectedBody)
+    public function properBodyIsReturnedInPlainTextResponses(array $json, string $expectedBody): void
     {
         $request = (new ServerRequest())->withQueryParams(['format' => 'txt']);
 
@@ -93,12 +89,10 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
         $handle->shouldHaveBeenCalled();
     }
 
-    public function provideTextBodies(): array
+    public function provideTextBodies(): iterable
     {
-        return [
-            [['shortUrl' => 'foobar'], 'foobar'],
-            [['error' => 'FOO_BAR'], 'FOO_BAR'],
-            [[], ''],
-        ];
+        yield 'shortUrl key' => [['shortUrl' => 'foobar'], 'foobar'];
+        yield 'error key' => [['error' => 'FOO_BAR'], 'FOO_BAR'];
+        yield 'no shortUrl or error keys' => [[], ''];
     }
 }

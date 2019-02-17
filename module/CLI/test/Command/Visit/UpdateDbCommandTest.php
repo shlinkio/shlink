@@ -30,9 +30,7 @@ class UpdateDbCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function successMessageIsPrintedIfEverythingWorks()
     {
         $download = $this->dbUpdater->downloadFreshCopy(Argument::type('callable'))->will(function () {
@@ -45,9 +43,7 @@ class UpdateDbCommandTest extends TestCase
         $download->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function errorMessageIsPrintedIfAnExceptionIsThrown()
     {
         $download = $this->dbUpdater->downloadFreshCopy(Argument::type('callable'))->willThrow(RuntimeException::class);

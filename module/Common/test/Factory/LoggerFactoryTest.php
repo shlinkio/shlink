@@ -19,9 +19,7 @@ class LoggerFactoryTest extends TestCase
         $this->factory = new LoggerFactory();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function serviceIsCreated()
     {
         /** @var Logger $instance */
@@ -30,9 +28,7 @@ class LoggerFactoryTest extends TestCase
         $this->assertEquals('Logger', $instance->getName());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function nameIsSetFromOptions()
     {
         /** @var Logger $instance */
@@ -41,9 +37,7 @@ class LoggerFactoryTest extends TestCase
         $this->assertEquals('Foo', $instance->getName());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function serviceNameOverwritesOptionsLoggerName()
     {
         /** @var Logger $instance */

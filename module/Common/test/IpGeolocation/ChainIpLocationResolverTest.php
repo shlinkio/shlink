@@ -30,9 +30,7 @@ class ChainIpLocationResolverTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function throwsExceptionWhenNoInnerResolverCanHandleTheResolution()
     {
         $ipAddress = '1.2.3.4';

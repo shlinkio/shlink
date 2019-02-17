@@ -21,9 +21,7 @@ class HealthActionFactoryTest extends TestCase
         $this->factory = new Action\HealthActionFactory();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function serviceIsCreatedExtractingConnectionFromEntityManager()
     {
         $em = $this->prophesize(EntityManager::class);

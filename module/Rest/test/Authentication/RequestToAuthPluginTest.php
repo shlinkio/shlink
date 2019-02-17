@@ -28,10 +28,8 @@ class RequestToAuthPluginTest extends TestCase
         $this->requestToPlugin = new RequestToHttpAuthPlugin($this->pluginManager->reveal());
     }
 
-    /**
-     * @test
-     */
-    public function exceptionIsFoundWhenNoneOfTheSupportedMethodsIsFound()
+    /** @test */
+    public function exceptionIsFoundWhenNoneOfTheSupportedMethodsIsFound(): void
     {
         $request = new ServerRequest();
 
@@ -48,7 +46,7 @@ class RequestToAuthPluginTest extends TestCase
      * @test
      * @dataProvider provideHeaders
      */
-    public function properPluginIsFetchedWhenAnyAuthTypeIsFound(array $headers, string $expectedHeader)
+    public function properPluginIsFetchedWhenAnyAuthTypeIsFound(array $headers, string $expectedHeader): void
     {
         $request = new ServerRequest();
         foreach ($headers as $header => $value) {
@@ -63,19 +61,17 @@ class RequestToAuthPluginTest extends TestCase
         $getPlugin->shouldHaveBeenCalledOnce();
     }
 
-    public function provideHeaders(): array
+    public function provideHeaders(): iterable
     {
-        return [
-            'API key header only' => [[
-                ApiKeyHeaderPlugin::HEADER_NAME => 'foobar',
-            ], ApiKeyHeaderPlugin::HEADER_NAME],
-            'Authorization header only' => [[
-                AuthorizationHeaderPlugin::HEADER_NAME => 'foobar',
-            ], AuthorizationHeaderPlugin::HEADER_NAME],
-            'Both headers' => [[
-                AuthorizationHeaderPlugin::HEADER_NAME => 'foobar',
-                ApiKeyHeaderPlugin::HEADER_NAME => 'foobar',
-            ], ApiKeyHeaderPlugin::HEADER_NAME],
-        ];
+        yield 'API key header only' => [[
+            ApiKeyHeaderPlugin::HEADER_NAME => 'foobar',
+        ], ApiKeyHeaderPlugin::HEADER_NAME];
+        yield 'Authorization header only' => [[
+            AuthorizationHeaderPlugin::HEADER_NAME => 'foobar',
+        ], AuthorizationHeaderPlugin::HEADER_NAME];
+        yield 'Both headers' => [[
+            AuthorizationHeaderPlugin::HEADER_NAME => 'foobar',
+            ApiKeyHeaderPlugin::HEADER_NAME => 'foobar',
+        ], ApiKeyHeaderPlugin::HEADER_NAME];
     }
 }

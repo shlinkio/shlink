@@ -19,9 +19,7 @@ class ImageFactoryTest extends TestCase
         $this->factory = new ImageFactory();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function noPageIsSetWhenOptionsAreNotProvided()
     {
         /** @var Image $image */
@@ -36,9 +34,7 @@ class ImageFactoryTest extends TestCase
         $this->assertNull($page->getValue($image));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function aPageIsSetWhenOptionsIncludeTheUrl()
     {
         $expectedPage = 'foo/bar.html';

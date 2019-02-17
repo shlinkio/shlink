@@ -19,9 +19,7 @@ class TranslatorExtensionTest extends TestCase
         $this->extension = new TranslatorExtension($this->prophesize(Translator::class)->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function properFunctionsAreReturned()
     {
         $engine = $this->prophesize(Engine::class);

@@ -155,9 +155,7 @@ class ProcessVisitsCommandTest extends TestCase
         $resolveIpLocation->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function noActionIsPerformedIfLockIsAcquired()
     {
         $this->lock->acquire()->willReturn(false);

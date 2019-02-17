@@ -35,9 +35,7 @@ class QrCodeActionTest extends TestCase
         $this->action = new QrCodeAction($router->reveal(), $this->urlShortener->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function aNotFoundShortCodeWillDelegateIntoNextMiddleware()
     {
         $shortCode = 'abc123';
@@ -51,9 +49,7 @@ class QrCodeActionTest extends TestCase
         $process->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function anInvalidShortCodeWillReturnNotFoundResponse()
     {
         $shortCode = 'abc123';
@@ -68,9 +64,7 @@ class QrCodeActionTest extends TestCase
         $process->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function aCorrectRequestReturnsTheQrCodeResponse()
     {
         $shortCode = 'abc123';

@@ -31,9 +31,7 @@ class DeleteTagsCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function errorIsReturnedWhenNoTagsAreProvided()
     {
         $this->commandTester->execute([]);
@@ -42,9 +40,7 @@ class DeleteTagsCommandTest extends TestCase
         $this->assertStringContainsString('You have to provide at least one tag name', $output);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function serviceIsInvokedOnSuccess()
     {
         $tagNames = ['foo', 'bar'];

@@ -28,9 +28,7 @@ class ResolveShortUrlActionTest extends TestCase
         $this->action = new ResolveShortUrlAction($this->urlShortener->reveal(), []);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function incorrectShortCodeReturnsError()
     {
         $shortCode = 'abc123';
@@ -43,9 +41,7 @@ class ResolveShortUrlActionTest extends TestCase
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::INVALID_ARGUMENT_ERROR) > 0);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function correctShortCodeReturnsSuccess()
     {
         $shortCode = 'abc123';
@@ -59,9 +55,7 @@ class ResolveShortUrlActionTest extends TestCase
         $this->assertTrue(strpos($response->getBody()->getContents(), 'http://domain.com/foo/bar') > 0);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function invalidShortCodeExceptionReturnsError()
     {
         $shortCode = 'abc123';
@@ -74,9 +68,7 @@ class ResolveShortUrlActionTest extends TestCase
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::INVALID_SHORTCODE_ERROR) > 0);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function unexpectedExceptionWillReturnError()
     {
         $shortCode = 'abc123';

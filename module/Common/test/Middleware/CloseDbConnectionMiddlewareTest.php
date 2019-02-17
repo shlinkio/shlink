@@ -29,9 +29,7 @@ class CloseDbConnectionMiddlewareTest extends TestCase
         $this->middleware = new CloseDbConnectionMiddleware($this->em->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function connectionIsClosedWhenMiddlewareIsProcessed()
     {
         $req = new ServerRequest();

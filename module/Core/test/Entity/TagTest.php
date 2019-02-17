@@ -8,9 +8,7 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 
 class TagTest extends TestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function jsonSerializationOfTagsReturnsItsStringRepresentation()
     {
         $tag = new Tag('This is my name');

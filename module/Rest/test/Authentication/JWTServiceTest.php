@@ -25,9 +25,7 @@ class JWTServiceTest extends TestCase
         ]));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function tokenIsProperlyCreated()
     {
         $id = '34';
@@ -40,9 +38,7 @@ class JWTServiceTest extends TestCase
         $this->assertEquals('ShlinkTest:v10000.3.1', $payload['iss']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function refreshIncreasesExpiration()
     {
         $originalLifetime = 10;
@@ -55,25 +51,19 @@ class JWTServiceTest extends TestCase
         $this->assertGreaterThan($originalPayload['exp'], $newPayload['exp']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function verifyReturnsTrueWhenTheTokenIsCorrect()
     {
         $this->assertTrue($this->service->verify(JWT::encode([], 'foo')));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function verifyReturnsFalseWhenTheTokenIsCorrect()
     {
         $this->assertFalse($this->service->verify('invalidToken'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function getPayloadWorksWithCorrectTokens()
     {
         $originalPayload = [

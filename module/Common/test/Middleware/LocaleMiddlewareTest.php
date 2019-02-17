@@ -22,20 +22,16 @@ class LocaleMiddlewareTest extends TestCase
         $this->middleware = new LocaleMiddleware($this->translator);
     }
 
-    /**
-     * @test
-     */
-    public function whenNoHeaderIsPresentLocaleIsNotChanged()
+    /** @test */
+    public function whenNoHeaderIsPresentLocaleIsNotChanged(): void
     {
         $this->assertEquals('ru', $this->translator->getLocale());
         $this->middleware->process(new ServerRequest(), TestUtils::createReqHandlerMock()->reveal());
         $this->assertEquals('ru', $this->translator->getLocale());
     }
 
-    /**
-     * @test
-     */
-    public function whenTheHeaderIsPresentLocaleIsChanged()
+    /** @test */
+    public function whenTheHeaderIsPresentLocaleIsChanged(): void
     {
         $this->assertEquals('ru', $this->translator->getLocale());
         $request = (new ServerRequest())->withHeader('Accept-Language', 'es');
@@ -47,7 +43,7 @@ class LocaleMiddlewareTest extends TestCase
      * @test
      * @dataProvider provideLanguages
      */
-    public function localeGetsNormalized(string $lang, string $expected)
+    public function localeGetsNormalized(string $lang, string $expected): void
     {
         $handler = TestUtils::createReqHandlerMock();
 
@@ -58,12 +54,10 @@ class LocaleMiddlewareTest extends TestCase
         $this->assertEquals($expected, $this->translator->getLocale());
     }
 
-    public function provideLanguages(): array
+    public function provideLanguages(): iterable
     {
-        return [
-            ['ru', 'ru'],
-            ['es_ES', 'es'],
-            ['en-US', 'en'],
-        ];
+        yield 'language only' => ['ru', 'ru'];
+        yield 'country and language with underscore' => ['es_ES', 'es'];
+        yield 'country and language with dash' => ['en-US', 'en'];
     }
 }

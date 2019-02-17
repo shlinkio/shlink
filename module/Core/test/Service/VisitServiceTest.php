@@ -67,9 +67,7 @@ class VisitServiceTest extends TestCase
         $clear->shouldHaveBeenCalledTimes(count($unlocatedVisits));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function visitsWhichCannotBeLocatedAreIgnored()
     {
         $unlocatedVisits = [

@@ -21,6 +21,7 @@ use Shlinkio\Shlink\Rest\Exception\NoAuthenticationException;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
+use Throwable;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Expressive\Router\Route;
@@ -49,7 +50,7 @@ class AuthenticationMiddlewareTest extends TestCase
      * @test
      * @dataProvider provideWhitelistedRequests
      */
-    public function someWhiteListedSituationsFallbackToNextMiddleware(ServerRequestInterface $request)
+    public function someWhiteListedSituationsFallbackToNextMiddleware(ServerRequestInterface $request): void
     {
         $handler = $this->prophesize(RequestHandlerInterface::class);
         $handle = $handler->handle($request)->willReturn(new Response());
@@ -63,34 +64,32 @@ class AuthenticationMiddlewareTest extends TestCase
         $fromRequest->shouldNotHaveBeenCalled();
     }
 
-    public function provideWhitelistedRequests(): array
+    public function provideWhitelistedRequests(): iterable
     {
         $dummyMiddleware = $this->getDummyMiddleware();
 
-        return [
-            'with no route result' => [new ServerRequest()],
-            'with failure route result' => [(new ServerRequest())->withAttribute(
-                RouteResult::class,
-                RouteResult::fromRouteFailure([RequestMethodInterface::METHOD_GET])
-            )],
-            'with whitelisted route' => [(new ServerRequest())->withAttribute(
-                RouteResult::class,
-                RouteResult::fromRoute(
-                    new Route('foo', $dummyMiddleware, Route::HTTP_METHOD_ANY, AuthenticateAction::class)
-                )
-            )],
-            'with OPTIONS method' => [(new ServerRequest())->withAttribute(
-                RouteResult::class,
-                RouteResult::fromRoute(new Route('bar', $dummyMiddleware), [])
-            )->withMethod(RequestMethodInterface::METHOD_OPTIONS)],
-        ];
+        yield 'with no route result' => [new ServerRequest()];
+        yield 'with failure route result' => [(new ServerRequest())->withAttribute(
+            RouteResult::class,
+            RouteResult::fromRouteFailure([RequestMethodInterface::METHOD_GET])
+        )];
+        yield 'with whitelisted route' => [(new ServerRequest())->withAttribute(
+            RouteResult::class,
+            RouteResult::fromRoute(
+                new Route('foo', $dummyMiddleware, Route::HTTP_METHOD_ANY, AuthenticateAction::class)
+            )
+        )];
+        yield 'with OPTIONS method' => [(new ServerRequest())->withAttribute(
+            RouteResult::class,
+            RouteResult::fromRoute(new Route('bar', $dummyMiddleware), [])
+        )->withMethod(RequestMethodInterface::METHOD_OPTIONS)];
     }
 
     /**
      * @test
      * @dataProvider provideExceptions
      */
-    public function errorIsReturnedWhenNoValidAuthIsProvided($e)
+    public function errorIsReturnedWhenNoValidAuthIsProvided(Throwable $e): void
     {
         $request = (new ServerRequest())->withAttribute(
             RouteResult::class,
@@ -110,19 +109,15 @@ class AuthenticationMiddlewareTest extends TestCase
         $fromRequest->shouldHaveBeenCalledOnce();
     }
 
-    public function provideExceptions(): array
+    public function provideExceptions(): iterable
     {
-        return [
-            [new class extends Exception implements ContainerExceptionInterface {
-            }],
-            [NoAuthenticationException::fromExpectedTypes([])],
-        ];
+        yield 'container exception' => [new class extends Exception implements ContainerExceptionInterface {
+        }];
+        yield 'authentication exception' => [NoAuthenticationException::fromExpectedTypes([])];
     }
 
-    /**
-     * @test
-     */
-    public function errorIsReturnedWhenVerificationFails()
+    /** @test */
+    public function errorIsReturnedWhenVerificationFails(): void
     {
         $request = (new ServerRequest())->withAttribute(
             RouteResult::class,
@@ -145,10 +140,8 @@ class AuthenticationMiddlewareTest extends TestCase
         $fromRequest->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
-    public function updatedResponseIsReturnedWhenVerificationPasses()
+    /** @test */
+    public function updatedResponseIsReturnedWhenVerificationPasses(): void
     {
         $newResponse = new Response();
         $request = (new ServerRequest())->withAttribute(

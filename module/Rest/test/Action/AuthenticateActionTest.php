@@ -31,18 +31,14 @@ class AuthenticateActionTest extends TestCase
         $this->action = new AuthenticateAction($this->apiKeyService->reveal(), $this->jwtService->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function notProvidingAuthDataReturnsError()
     {
         $resp = $this->action->handle(new ServerRequest());
         $this->assertEquals(400, $resp->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function properApiKeyReturnsTokenInResponse()
     {
         $this->apiKeyService->getByKey('foo')->willReturn((new ApiKey())->setId('5'))
@@ -58,9 +54,7 @@ class AuthenticateActionTest extends TestCase
         $this->assertTrue(strpos($response->getBody()->getContents(), '"token"') > 0);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function invalidApiKeyReturnsErrorResponse()
     {
         $this->apiKeyService->getByKey('foo')->willReturn((new ApiKey())->disable())

@@ -37,9 +37,7 @@ class PreviewActionTest extends TestCase
         $this->action = new PreviewAction($this->previewGenerator->reveal(), $this->urlShortener->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function invalidShortCodeFallsBackToNextMiddleware()
     {
         $shortCode = 'abc123';
@@ -52,9 +50,7 @@ class PreviewActionTest extends TestCase
         $this->action->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function correctShortCodeReturnsImageResponse()
     {
         $shortCode = 'abc123';
@@ -73,9 +69,7 @@ class PreviewActionTest extends TestCase
         $this->assertEquals((new finfo(FILEINFO_MIME))->file($path), $resp->getHeaderLine('Content-type'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function invalidShortCodeExceptionFallsBackToNextMiddleware()
     {
         $shortCode = 'abc123';

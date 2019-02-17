@@ -31,9 +31,7 @@ class ResolveUrlCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function correctShortCodeResolvesUrl()
     {
         $shortCode = 'abc123';
@@ -50,9 +48,7 @@ class ResolveUrlCommandTest extends TestCase
         $this->assertEquals('Long URL: ' . $expectedUrl . PHP_EOL, $output);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function incorrectShortCodeOutputsErrorMessage()
     {
         $shortCode = 'abc123';
@@ -67,9 +63,7 @@ class ResolveUrlCommandTest extends TestCase
         $this->assertStringContainsString('Provided short code "' . $shortCode . '" could not be found.', $output);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function wrongShortCodeFormatOutputsErrorMessage()
     {
         $shortCode = 'abc123';

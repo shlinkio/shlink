@@ -18,9 +18,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->factory = new EntityManagerFactory();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function serviceIsCreated()
     {
         $sm = new ServiceManager(['services' => [

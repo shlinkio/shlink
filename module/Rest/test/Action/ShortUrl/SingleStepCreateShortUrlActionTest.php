@@ -40,9 +40,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function errorResponseIsReturnedIfInvalidApiKeyIsProvided()
     {
         $request = (new ServerRequest())->withQueryParams(['apiKey' => 'abc123']);
@@ -58,9 +56,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
         $findApiKey->shouldHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function errorResponseIsReturnedIfNoUrlIsProvided()
     {
         $request = (new ServerRequest())->withQueryParams(['apiKey' => 'abc123']);
@@ -76,9 +72,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
         $findApiKey->shouldHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function properDataIsPassedWhenGeneratingShortCode()
     {
         $request = (new ServerRequest())->withQueryParams([

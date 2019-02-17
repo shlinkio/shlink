@@ -5,7 +5,6 @@ namespace ShlinkioTest\Shlink\Core\Response;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Zend\Diactoros\Response;
@@ -26,17 +25,12 @@ class NotFoundHandlerTest extends TestCase
     }
 
     /**
-     * @param string $expectedResponse
-     * @param string $accept
-     * @param int $renderCalls
-     *
      * @test
      * @dataProvider provideResponses
      */
-    public function properResponseTypeIsReturned(string $expectedResponse, string $accept, int $renderCalls)
+    public function properResponseTypeIsReturned(string $expectedResponse, string $accept, int $renderCalls): void
     {
         $request = (new ServerRequest())->withHeader('Accept', $accept);
-        /** @var MethodProphecy $render */
         $render = $this->renderer->render(Argument::cetera())->willReturn('');
 
         $resp = $this->delegate->handle($request);
@@ -45,13 +39,11 @@ class NotFoundHandlerTest extends TestCase
         $render->shouldHaveBeenCalledTimes($renderCalls);
     }
 
-    public function provideResponses(): array
+    public function provideResponses(): iterable
     {
-        return [
-            [Response\JsonResponse::class, 'application/json', 0],
-            [Response\JsonResponse::class, 'text/json', 0],
-            [Response\JsonResponse::class, 'application/x-json', 0],
-            [Response\HtmlResponse::class, 'text/html', 1],
-        ];
+        yield 'application/json' => [Response\JsonResponse::class, 'application/json', 0];
+        yield 'text/json' => [Response\JsonResponse::class, 'text/json', 0];
+        yield 'application/x-json' => [Response\JsonResponse::class, 'application/x-json', 0];
+        yield 'text/html' => [Response\HtmlResponse::class, 'text/html', 1];
     }
 }

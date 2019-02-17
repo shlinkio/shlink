@@ -37,9 +37,7 @@ class GetVisitsCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function noDateFlagsTriesToListWithoutDateRange()
     {
         $shortCode = 'abc123';
@@ -53,9 +51,7 @@ class GetVisitsCommandTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function providingDateFlagsTheListGetsFiltered()
     {
         $shortCode = 'abc123';

@@ -29,9 +29,7 @@ class GetVisitsActionTest extends TestCase
         $this->action = new GetVisitsAction($this->visitsTracker->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function providingCorrectShortCodeReturnsVisits()
     {
         $shortCode = 'abc123';
@@ -43,9 +41,7 @@ class GetVisitsActionTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function providingInvalidShortCodeReturnsError()
     {
         $shortCode = 'abc123';
@@ -57,9 +53,7 @@ class GetVisitsActionTest extends TestCase
         $this->assertEquals(404, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function paramsAreReadFromQuery()
     {
         $shortCode = 'abc123';

@@ -18,9 +18,7 @@ class AuthenticationPluginManagerFactoryTest extends TestCase
         $this->factory = new AuthenticationPluginManagerFactory();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function serviceIsProperlyCreated()
     {
         $instance = $this->factory->__invoke(new ServiceManager(['services' => [

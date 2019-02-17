@@ -9,9 +9,7 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 
 class DateRangeTest extends TestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function defaultConstructorSetDatesToNull()
     {
         $range = new DateRange();
@@ -20,9 +18,7 @@ class DateRangeTest extends TestCase
         $this->assertTrue($range->isEmpty());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function providedDatesAreSet()
     {
         $startDate = Chronos::now();
@@ -37,19 +33,20 @@ class DateRangeTest extends TestCase
      * @test
      * @dataProvider provideDates
      */
-    public function isConsideredEmptyOnlyIfNoneOfTheDatesIsSet(?Chronos $startDate, ?Chronos $endDate, bool $isEmpty)
-    {
+    public function isConsideredEmptyOnlyIfNoneOfTheDatesIsSet(
+        ?Chronos $startDate,
+        ?Chronos $endDate,
+        bool $isEmpty
+    ): void {
         $range = new DateRange($startDate, $endDate);
         $this->assertEquals($isEmpty, $range->isEmpty());
     }
 
-    public function provideDates(): array
+    public function provideDates(): iterable
     {
-        return [
-            [null, null, true],
-            [null, Chronos::now(), false],
-            [Chronos::now(), null, false],
-            [Chronos::now(), Chronos::now(), false],
-        ];
+        yield 'both are null' => [null, null, true];
+        yield 'start is null' => [null, Chronos::now(), false];
+        yield 'end is null' => [Chronos::now(), null, false];
+        yield 'none are null' => [Chronos::now(), Chronos::now(), false];
     }
 }

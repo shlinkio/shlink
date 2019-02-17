@@ -24,9 +24,7 @@ class PathVersionMiddlewareTest extends TestCase
         $this->middleware = new PathVersionMiddleware();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function whenVersionIsProvidedRequestRemainsUnchanged()
     {
         $request = (new ServerRequest())->withUri(new Uri('/v2/foo'));
@@ -39,9 +37,7 @@ class PathVersionMiddlewareTest extends TestCase
         $process->shouldHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function versionOneIsPrependedWhenNoVersionIsDefined()
     {
         $request = (new ServerRequest())->withUri(new Uri('/bar/baz'));

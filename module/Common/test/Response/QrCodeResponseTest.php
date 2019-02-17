@@ -9,9 +9,7 @@ use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 
 class QrCodeResponseTest extends TestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function providedQrCoideIsSetAsBody()
     {
         $qrCode = new QrCode('Hello');

@@ -42,9 +42,7 @@ class RedirectActionTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function redirectionIsPerformedToLongUrl()
     {
         $shortCode = 'abc123';
@@ -63,9 +61,7 @@ class RedirectActionTest extends TestCase
         $this->assertEquals($expectedUrl, $response->getHeaderLine('Location'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function nextMiddlewareIsInvokedIfLongUrlIsNotFound()
     {
         $shortCode = 'abc123';
@@ -82,9 +78,7 @@ class RedirectActionTest extends TestCase
         $handle->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function redirectToCustomUrlIsReturnedIfConfiguredSoAndShortUrlIsNotFound()
     {
         $shortCode = 'abc123';
@@ -107,9 +101,7 @@ class RedirectActionTest extends TestCase
         $handle->shouldNotHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function visitIsNotTrackedIfDisableParamIsProvided()
     {
         $shortCode = 'abc123';

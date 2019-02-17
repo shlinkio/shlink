@@ -28,10 +28,8 @@ class ChronosDateTimeTypeTest extends TestCase
         $this->type = Type::getType(ChronosDateTimeType::CHRONOS_DATETIME);
     }
 
-    /**
-     * @test
-     */
-    public function nameIsReturned()
+    /** @test */
+    public function nameIsReturned(): void
     {
         $this->assertEquals(ChronosDateTimeType::CHRONOS_DATETIME, $this->type->getName());
     }
@@ -40,7 +38,7 @@ class ChronosDateTimeTypeTest extends TestCase
      * @test
      * @dataProvider provideValues
      */
-    public function valueIsConverted(?string $value, ?string $expected)
+    public function valueIsConverted(?string $value, ?string $expected): void
     {
         $platform = $this->prophesize(AbstractPlatform::class);
         $platform->getDateTimeFormatString()->willReturn('Y-m-d H:i:s');
@@ -54,20 +52,18 @@ class ChronosDateTimeTypeTest extends TestCase
         }
     }
 
-    public function provideValues(): array
+    public function provideValues(): iterable
     {
-        return [
-            [null, null],
-            ['now', Chronos::class],
-            ['2017-01-01', Chronos::class],
-        ];
+        yield 'null date' => [null, null];
+        yield 'human friendly date' => ['now', Chronos::class];
+        yield 'numeric date' => ['2017-01-01', Chronos::class];
     }
 
     /**
      * @test
      * @dataProvider providePhpValues
      */
-    public function valueIsConvertedToDatabaseFormat(?DateTimeInterface $value, ?string $expected)
+    public function valueIsConvertedToDatabaseFormat(?DateTimeInterface $value, ?string $expected): void
     {
         $platform = $this->prophesize(AbstractPlatform::class);
         $platform->getDateTimeFormatString()->willReturn('Y-m-d');
@@ -75,20 +71,16 @@ class ChronosDateTimeTypeTest extends TestCase
         $this->assertEquals($expected, $this->type->convertToDatabaseValue($value, $platform->reveal()));
     }
 
-    public function providePhpValues(): array
+    public function providePhpValues(): iterable
     {
-        return [
-            [null, null],
-            [new DateTimeImmutable('2017-01-01'), '2017-01-01'],
-            [Chronos::parse('2017-02-01'), '2017-02-01'],
-            [new DateTime('2017-03-01'), '2017-03-01'],
-        ];
+        yield 'null date' => [null, null];
+        yield 'DateTimeImmutable date' => [new DateTimeImmutable('2017-01-01'), '2017-01-01'];
+        yield 'Chronos date' => [Chronos::parse('2017-02-01'), '2017-02-01'];
+        yield 'DateTime date' => [new DateTime('2017-03-01'), '2017-03-01'];
     }
 
-    /**
-     * @test
-     */
-    public function exceptionIsThrownIfInvalidValueIsParsedToDatabase()
+    /** @test */
+    public function exceptionIsThrownIfInvalidValueIsParsedToDatabase(): void
     {
         $this->expectException(ConversionException::class);
         $this->type->convertToDatabaseValue(new stdClass(), $this->prophesize(AbstractPlatform::class)->reveal());

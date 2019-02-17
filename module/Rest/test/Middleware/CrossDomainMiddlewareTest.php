@@ -24,9 +24,7 @@ class CrossDomainMiddlewareTest extends TestCase
         $this->delegate = $this->prophesize(RequestHandlerInterface::class);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function nonCrossDomainRequestsAreNotAffected()
     {
         $originalResponse = new Response();
@@ -40,9 +38,7 @@ class CrossDomainMiddlewareTest extends TestCase
         $this->assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function anyRequestIncludesTheAllowAccessHeader()
     {
         $originalResponse = new Response();
@@ -59,9 +55,7 @@ class CrossDomainMiddlewareTest extends TestCase
         $this->assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function optionsRequestIncludesMoreHeaders()
     {
         $originalResponse = new Response();

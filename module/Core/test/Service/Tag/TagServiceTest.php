@@ -27,9 +27,7 @@ class TagServiceTest extends TestCase
         $this->service = new TagService($this->em->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function listTagsDelegatesOnRepository()
     {
         $expected = [new Tag('foo'), new Tag('bar')];
@@ -47,9 +45,7 @@ class TagServiceTest extends TestCase
         $getRepo->shouldHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function deleteTagsDelegatesOnRepository()
     {
         $repo = $this->prophesize(TagRepository::class);
@@ -64,9 +60,7 @@ class TagServiceTest extends TestCase
         $getRepo->shouldHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function createTagsPersistsEntities()
     {
         $repo = $this->prophesize(TagRepository::class);
@@ -88,9 +82,7 @@ class TagServiceTest extends TestCase
         $flush->shouldHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function renameInvalidTagThrowsException()
     {
         $repo = $this->prophesize(TagRepository::class);
@@ -106,9 +98,7 @@ class TagServiceTest extends TestCase
         $this->service->renameTag('foo', 'bar');
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function renameValidTagChangesItsName()
     {
         $expected = new Tag('foo');

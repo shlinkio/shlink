@@ -12,10 +12,8 @@ use function sprintf;
 
 class AuthenticationTest extends ApiTestCase
 {
-    /**
-     * @test
-     */
-    public function authorizationErrorIsReturnedIfNoApiKeyIsSent()
+    /** @test */
+    public function authorizationErrorIsReturnedIfNoApiKeyIsSent(): void
     {
         $resp = $this->callApi(self::METHOD_GET, '/short-codes');
         ['error' => $error, 'message' => $message] = $this->getJsonResponsePayload($resp);
@@ -35,7 +33,7 @@ class AuthenticationTest extends ApiTestCase
      * @test
      * @dataProvider provideInvalidApiKeys
      */
-    public function apiKeyErrorIsReturnedWhenProvidedApiKeyIsInvalid(string $apiKey)
+    public function apiKeyErrorIsReturnedWhenProvidedApiKeyIsInvalid(string $apiKey): void
     {
         $resp = $this->callApi(self::METHOD_GET, '/short-codes', [
             'headers' => [
@@ -49,12 +47,10 @@ class AuthenticationTest extends ApiTestCase
         $this->assertEquals('Provided API key does not exist or is invalid.', $message);
     }
 
-    public function provideInvalidApiKeys(): array
+    public function provideInvalidApiKeys(): iterable
     {
-        return [
-            'key which does not exist' => ['invalid'],
-            'key which is expired' => ['expired_api_key'],
-            'key which is disabled' => ['disabled_api_key'],
-        ];
+        yield 'key which does not exist' => ['invalid'];
+        yield 'key which is expired' => ['expired_api_key'];
+        yield 'key which is disabled' => ['disabled_api_key'];
     }
 }

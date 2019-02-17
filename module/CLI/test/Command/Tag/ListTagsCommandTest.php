@@ -32,9 +32,7 @@ class ListTagsCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function noTagsPrintsEmptyMessage()
     {
         /** @var MethodProphecy $listTags */
@@ -47,9 +45,7 @@ class ListTagsCommandTest extends TestCase
         $listTags->shouldHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function listOfTagsIsPrinted()
     {
         /** @var MethodProphecy $listTags */

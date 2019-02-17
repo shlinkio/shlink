@@ -27,9 +27,7 @@ class DisableKeyCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function providedApiKeyIsDisabled()
     {
         $apiKey = 'abcd1234';
@@ -44,9 +42,7 @@ class DisableKeyCommandTest extends TestCase
         $this->assertStringContainsString('API key "abcd1234" properly disabled', $output);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function errorIsReturnedIfServiceThrowsException()
     {
         $apiKey = 'abcd1234';

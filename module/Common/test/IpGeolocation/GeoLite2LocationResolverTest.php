@@ -30,7 +30,7 @@ class GeoLite2LocationResolverTest extends TestCase
      * @test
      * @dataProvider provideReaderExceptions
      */
-    public function exceptionIsThrownIfReaderThrowsException(string $e, string $message)
+    public function exceptionIsThrownIfReaderThrowsException(string $e, string $message): void
     {
         $ipAddress = '1.2.3.4';
 
@@ -44,12 +44,10 @@ class GeoLite2LocationResolverTest extends TestCase
         $this->resolver->resolveIpLocation($ipAddress);
     }
 
-    public function provideReaderExceptions(): array
+    public function provideReaderExceptions(): iterable
     {
-        return [
-            [AddressNotFoundException::class, 'Provided IP "1.2.3.4" is invalid'],
-            [InvalidDatabaseException::class, 'Provided GeoLite2 db file is invalid'],
-        ];
+        yield 'invalid IP address' => [AddressNotFoundException::class, 'Provided IP "1.2.3.4" is invalid'];
+        yield 'invalid geolite DB' => [InvalidDatabaseException::class, 'Provided GeoLite2 db file is invalid'];
     }
 
     /** @test */
