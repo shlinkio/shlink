@@ -65,7 +65,7 @@ class ProcessVisitsCommandTest extends TestCase
         $visit = new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4'));
         $location = new VisitLocation(Location::emptyInstance());
 
-        $locateVisits = $this->visitService->locateVisits(Argument::cetera())->will(
+        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
             function (array $args) use ($visit, $location) {
                 $firstCallback = array_shift($args);
                 $firstCallback($visit);
@@ -97,7 +97,7 @@ class ProcessVisitsCommandTest extends TestCase
         $visit = new Visit(new ShortUrl(''), new Visitor('', '', $address));
         $location = new VisitLocation(Location::emptyInstance());
 
-        $locateVisits = $this->visitService->locateVisits(Argument::cetera())->will(
+        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
             function (array $args) use ($visit, $location) {
                 $firstCallback = array_shift($args);
                 $firstCallback($visit);
@@ -133,7 +133,7 @@ class ProcessVisitsCommandTest extends TestCase
         $visit = new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4'));
         $location = new VisitLocation(Location::emptyInstance());
 
-        $locateVisits = $this->visitService->locateVisits(Argument::cetera())->will(
+        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
             function (array $args) use ($visit, $location) {
                 $firstCallback = array_shift($args);
                 $firstCallback($visit);
@@ -162,7 +162,7 @@ class ProcessVisitsCommandTest extends TestCase
     {
         $this->lock->acquire()->willReturn(false);
 
-        $locateVisits = $this->visitService->locateVisits(Argument::cetera())->will(function () {
+        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(function () {
         });
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([]);
 

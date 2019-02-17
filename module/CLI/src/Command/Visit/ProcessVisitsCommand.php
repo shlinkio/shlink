@@ -62,7 +62,7 @@ class ProcessVisitsCommand extends Command
         }
 
         try {
-            $this->visitService->locateVisits(
+            $this->visitService->locateUnlocatedVisits(
                 [$this, 'getGeolocationDataForVisit'],
                 function (VisitLocation $location) use ($output) {
                     $output->writeln(sprintf(' [<info>Address located at "%s"</info>]', $location->getCountryName()));

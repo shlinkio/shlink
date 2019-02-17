@@ -51,7 +51,7 @@ class VisitServiceTest extends TestCase
         $clear = $this->em->clear()->will(function () {
         });
 
-        $this->visitService->locateVisits(function () {
+        $this->visitService->locateUnlocatedVisits(function () {
             return Location::emptyInstance();
         }, function () {
             $args = func_get_args();
@@ -87,7 +87,7 @@ class VisitServiceTest extends TestCase
         $clear = $this->em->clear()->will(function () {
         });
 
-        $this->visitService->locateVisits(function () {
+        $this->visitService->locateUnlocatedVisits(function () {
             throw new IpCannotBeLocatedException('Cannot be located');
         });
 

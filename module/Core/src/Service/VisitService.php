@@ -20,7 +20,7 @@ class VisitService implements VisitServiceInterface
         $this->em = $em;
     }
 
-    public function locateVisits(callable $geolocateVisit, ?callable $notifyVisitWithLocation = null): void
+    public function locateUnlocatedVisits(callable $geolocateVisit, ?callable $notifyVisitWithLocation = null): void
     {
         /** @var VisitRepository $repo */
         $repo = $this->em->getRepository(Visit::class);
