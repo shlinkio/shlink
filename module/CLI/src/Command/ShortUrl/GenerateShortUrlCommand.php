@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
@@ -102,13 +103,13 @@ class GenerateShortUrlCommand extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $longUrl = $input->getArgument('longUrl');
         if (empty($longUrl)) {
             $io->error('A URL was not provided!');
-            return;
+            return ExitCodes::EXIT_FAILURE;
         }
 
         $explodeWithComma = curry('explode')(',');
@@ -134,12 +135,15 @@ class GenerateShortUrlCommand extends Command
                 sprintf('Processed long URL: <info>%s</info>', $longUrl),
                 sprintf('Generated short URL: <info>%s</info>', $shortUrl),
             ]);
+            return ExitCodes::EXIT_SUCCESS;
         } catch (InvalidUrlException $e) {
             $io->error(sprintf('Provided URL "%s" is invalid. Try with a different one.', $longUrl));
+            return ExitCodes::EXIT_FAILURE;
         } catch (NonUniqueSlugException $e) {
             $io->error(
                 sprintf('Provided slug "%s" is already in use by another URL. Try with a different one.', $customSlug)
             );
+            return ExitCodes::EXIT_FAILURE;
         }
     }
 

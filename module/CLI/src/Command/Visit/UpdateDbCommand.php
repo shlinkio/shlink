@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Console\Command\Command;
@@ -35,7 +36,7 @@ class UpdateDbCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $progressBar = new ProgressBar($output);
@@ -51,6 +52,7 @@ class UpdateDbCommand extends Command
             $io->writeln('');
 
             $io->success('GeoLite2 database properly updated');
+            return ExitCodes::EXIT_SUCCESS;
         } catch (RuntimeException $e) {
             $progressBar->finish();
             $io->writeln('');
@@ -59,6 +61,7 @@ class UpdateDbCommand extends Command
             if ($io->isVerbose()) {
                 $this->getApplication()->renderException($e, $output);
             }
+            return ExitCodes::EXIT_FAILURE;
         }
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
@@ -50,7 +51,7 @@ class ResolveUrlCommand extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $shortCode = $input->getArgument('shortCode');
@@ -58,10 +59,13 @@ class ResolveUrlCommand extends Command
         try {
             $url = $this->urlShortener->shortCodeToUrl($shortCode);
             $output->writeln(sprintf('Long URL: <info>%s</info>', $url->getLongUrl()));
+            return ExitCodes::EXIT_SUCCESS;
         } catch (InvalidShortCodeException $e) {
             $io->error(sprintf('Provided short code "%s" has an invalid format.', $shortCode));
+            return ExitCodes::EXIT_FAILURE;
         } catch (EntityDoesNotExistException $e) {
             $io->error(sprintf('Provided short code "%s" could not be found.', $shortCode));
+            return ExitCodes::EXIT_FAILURE;
         }
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -36,17 +37,18 @@ class DeleteTagsCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $tagNames = $input->getOption('name');
 
         if (empty($tagNames)) {
             $io->warning('You have to provide at least one tag name');
-            return;
+            return ExitCodes::EXIT_WARNING;
         }
 
         $this->tagService->deleteTags($tagNames);
         $io->success('Tags properly deleted');
+        return ExitCodes::EXIT_SUCCESS;
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Common\Console\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
@@ -74,7 +75,7 @@ class ListShortUrlsCommand extends Command
             ->addOption('showTags', null, InputOption::VALUE_NONE, 'Whether to display the tags or not');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $page = (int) $input->getOption('page');
@@ -95,6 +96,7 @@ class ListShortUrlsCommand extends Command
 
         $io->newLine();
         $io->success('Short URLs properly listed');
+        return ExitCodes::EXIT_SUCCESS;
     }
 
     private function renderPage(

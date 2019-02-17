@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Common\Console\ShlinkTable;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
@@ -44,7 +45,7 @@ class ListKeysCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $enabledOnly = $input->getOption('enabledOnly');
 
@@ -66,6 +67,7 @@ class ListKeysCommand extends Command
             ! $enabledOnly ? 'Is enabled' : null,
             'Expiration date',
         ]), $rows);
+        return ExitCodes::EXIT_SUCCESS;
     }
 
     private function determineMessagePattern(ApiKey $apiKey): string

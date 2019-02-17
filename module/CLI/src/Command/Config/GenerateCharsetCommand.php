@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Config;
 
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,9 +29,10 @@ class GenerateCharsetCommand extends Command
             ->setHelp('<fg=red;options=bold>This command is deprecated. Better leave shlink generate the charset.</>');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $charSet = str_shuffle(UrlShortenerOptions::DEFAULT_CHARS);
         (new SymfonyStyle($input, $output))->success(sprintf('Character set: "%s"', $charSet));
+        return ExitCodes::EXIT_SUCCESS;
     }
 }
