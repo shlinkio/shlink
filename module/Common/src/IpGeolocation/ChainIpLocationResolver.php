@@ -18,7 +18,7 @@ class ChainIpLocationResolver implements IpLocationResolverInterface
     /**
      * @throws WrongIpException
      */
-    public function resolveIpLocation(string $ipAddress): array
+    public function resolveIpLocation(string $ipAddress): Model\Location
     {
         $error = null;
 

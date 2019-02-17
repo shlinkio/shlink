@@ -24,7 +24,7 @@ class GeoLite2LocationResolver implements IpLocationResolverInterface
     /**
      * @throws WrongIpException
      */
-    public function resolveIpLocation(string $ipAddress): array
+    public function resolveIpLocation(string $ipAddress): Model\Location
     {
         try {
             $city = $this->geoLiteDbReader->city($ipAddress);
@@ -36,19 +36,19 @@ class GeoLite2LocationResolver implements IpLocationResolverInterface
         }
     }
 
-    private function mapFields(City $city): array
+    private function mapFields(City $city): Model\Location
     {
         /** @var Subdivision $region */
         $region = first($city->subdivisions);
 
-        return [
-            'country_code' => $city->country->isoCode ?? '',
-            'country_name' => $city->country->name ?? '',
-            'region_name' => $region->name ?? '',
-            'city' => $city->city->name ?? '',
-            'latitude' => $city->location->latitude ?? '',
-            'longitude' => $city->location->longitude ?? '',
-            'time_zone' => $city->location->timeZone ?? '',
-        ];
+        return new Model\Location(
+            $city->country->isoCode ?? '',
+            $city->country->name ?? '',
+            $region->name ?? '',
+            $city->city->name ?? '',
+            (float) ($city->location->latitude ?? ''),
+            (float) ($city->location->longitude ?? ''),
+            $city->location->timeZone ?? ''
+        );
     }
 }

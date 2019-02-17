@@ -5,5 +5,5 @@ namespace Shlinkio\Shlink\Core\Service;
 
 interface VisitServiceInterface
 {
-    public function locateVisits(callable $getGeolocationData, ?callable $locatedVisit = null): void;
+    public function locateVisits(callable $geolocateVisit, ?callable $notifyVisitWithLocation = null): void;
 }

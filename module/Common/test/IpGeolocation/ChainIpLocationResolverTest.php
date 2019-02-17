@@ -8,6 +8,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\ChainIpLocationResolver;
 use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
+use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 
 class ChainIpLocationResolverTest extends TestCase
 {
@@ -46,14 +47,12 @@ class ChainIpLocationResolverTest extends TestCase
         $this->resolver->resolveIpLocation($ipAddress);
     }
 
-    /**
-     * @test
-     */
-    public function returnsResultOfFirstInnerResolver()
+    /** @test */
+    public function returnsResultOfFirstInnerResolver(): void
     {
         $ipAddress = '1.2.3.4';
 
-        $firstResolve = $this->firstInnerResolver->resolveIpLocation($ipAddress)->willReturn([]);
+        $firstResolve = $this->firstInnerResolver->resolveIpLocation($ipAddress)->willReturn(Location::emptyInstance());
         $secondResolve = $this->secondInnerResolver->resolveIpLocation($ipAddress)->willThrow(WrongIpException::class);
 
         $this->resolver->resolveIpLocation($ipAddress);
@@ -62,15 +61,15 @@ class ChainIpLocationResolverTest extends TestCase
         $secondResolve->shouldNotHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
-    public function returnsResultOfSecondInnerResolver()
+    /** @test */
+    public function returnsResultOfSecondInnerResolver(): void
     {
         $ipAddress = '1.2.3.4';
 
         $firstResolve = $this->firstInnerResolver->resolveIpLocation($ipAddress)->willThrow(WrongIpException::class);
-        $secondResolve = $this->secondInnerResolver->resolveIpLocation($ipAddress)->willReturn([]);
+        $secondResolve = $this->secondInnerResolver->resolveIpLocation($ipAddress)->willReturn(
+            Location::emptyInstance()
+        );
 
         $this->resolver->resolveIpLocation($ipAddress);
 

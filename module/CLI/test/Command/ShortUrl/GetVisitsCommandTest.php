@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GetVisitsCommand;
+use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -75,16 +76,14 @@ class GetVisitsCommandTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
-    public function outputIsProperlyGenerated()
+    /** @test */
+    public function outputIsProperlyGenerated(): void
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::any())->willReturn(
             new Paginator(new ArrayAdapter([
                 (new Visit(new ShortUrl(''), new Visitor('bar', 'foo', '')))->locate(
-                    new VisitLocation(['country_name' => 'Spain'])
+                    new VisitLocation(new Location('', 'Spain', '', '', 0, 0, ''))
                 ),
             ]))
         )->shouldBeCalledOnce();

@@ -5,6 +5,7 @@ namespace ShlinkioTest\Shlink\Common\IpGeolocation;
 
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\IpGeolocation\EmptyIpLocationResolver;
+use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use function Functional\map;
 use function range;
@@ -12,16 +13,6 @@ use function range;
 class EmptyIpLocationResolverTest extends TestCase
 {
     use StringUtilsTrait;
-
-    private const EMPTY_RESP = [
-        'country_code' => '',
-        'country_name' => '',
-        'region_name' => '',
-        'city' => '',
-        'latitude' => '',
-        'longitude' => '',
-        'time_zone' => '',
-    ];
 
     /** @var EmptyIpLocationResolver */
     private $resolver;
@@ -35,15 +26,15 @@ class EmptyIpLocationResolverTest extends TestCase
      * @test
      * @dataProvider provideEmptyResponses
      */
-    public function alwaysReturnsAnEmptyResponse(array $expected, string $ipAddress)
+    public function alwaysReturnsAnEmptyResponse(string $ipAddress): void
     {
-        $this->assertEquals($expected, $this->resolver->resolveIpLocation($ipAddress));
+        $this->assertEquals(Location::emptyInstance(), $this->resolver->resolveIpLocation($ipAddress));
     }
 
     public function provideEmptyResponses(): array
     {
         return map(range(0, 5), function () {
-            return [self::EMPTY_RESP, $this->generateRandomString(10)];
+            return [$this->generateRandomString(15)];
         });
     }
 }

@@ -10,16 +10,8 @@ class EmptyIpLocationResolver implements IpLocationResolverInterface
     /**
      * @throws WrongIpException
      */
-    public function resolveIpLocation(string $ipAddress): array
+    public function resolveIpLocation(string $ipAddress): Model\Location
     {
-        return [
-            'country_code' => '',
-            'country_name' => '',
-            'region_name' => '',
-            'city' => '',
-            'latitude' => '',
-            'longitude' => '',
-            'time_zone' => '',
-        ];
+        return Model\Location::emptyInstance();
     }
 }
