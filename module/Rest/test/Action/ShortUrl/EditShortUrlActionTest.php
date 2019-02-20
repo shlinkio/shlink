@@ -27,9 +27,7 @@ class EditShortUrlActionTest extends TestCase
         $this->action = new EditShortUrlAction($this->shortUrlService->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function invalidDataReturnsError()
     {
         $request = (new ServerRequest())->withParsedBody([
@@ -45,9 +43,7 @@ class EditShortUrlActionTest extends TestCase
         $this->assertEquals('Provided data is invalid.', $payload['message']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function incorrectShortCodeReturnsError()
     {
         $request = (new ServerRequest())->withAttribute('shortCode', 'abc123')
@@ -68,9 +64,7 @@ class EditShortUrlActionTest extends TestCase
         $updateMeta->shouldHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function correctShortCodeReturnsSuccess()
     {
         $request = (new ServerRequest())->withAttribute('shortCode', 'abc123')

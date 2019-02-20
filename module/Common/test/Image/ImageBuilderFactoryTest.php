@@ -18,9 +18,7 @@ class ImageBuilderFactoryTest extends TestCase
         $this->factory = new ImageBuilderFactory();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function serviceIsCreated()
     {
         $instance = $this->factory->__invoke(new ServiceManager(), '');

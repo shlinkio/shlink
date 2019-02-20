@@ -25,9 +25,7 @@ class ShlinkTableTest extends TestCase
         $this->shlinkTable = new ShlinkTable($this->baseTable->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function renderMakesTableToBeRenderedWithProvidedInfo()
     {
         $headers = [];
@@ -54,9 +52,7 @@ class ShlinkTableTest extends TestCase
         $render->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function newTableIsCreatedForFactoryMethod()
     {
         $instance = ShlinkTable::fromOutput($this->prophesize(OutputInterface::class)->reveal());

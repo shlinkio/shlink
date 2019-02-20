@@ -16,9 +16,7 @@ class PixelResponseTest extends TestCase
         $this->resp = new PixelResponse();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function responseHasGifTypeAndIsNotEmpty()
     {
         $this->assertEquals('image/gif', $this->resp->getHeaderLine('Content-Type'));

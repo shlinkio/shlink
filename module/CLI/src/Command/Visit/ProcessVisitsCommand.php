@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\Visit;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
+use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
@@ -61,7 +62,7 @@ class ProcessVisitsCommand extends Command
         }
 
         try {
-            $this->visitService->locateVisits(
+            $this->visitService->locateUnlocatedVisits(
                 [$this, 'getGeolocationDataForVisit'],
                 function (VisitLocation $location) use ($output) {
                     $output->writeln(sprintf(' [<info>Address located at "%s"</info>]', $location->getCountryName()));
@@ -75,7 +76,7 @@ class ProcessVisitsCommand extends Command
         }
     }
 
-    public function getGeolocationDataForVisit(Visit $visit): array
+    public function getGeolocationDataForVisit(Visit $visit): Location
     {
         if (! $visit->hasRemoteAddr()) {
             $this->output->writeln(

@@ -5,7 +5,6 @@ namespace ShlinkioTest\Shlink\Core\Action;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
@@ -35,9 +34,7 @@ class QrCodeActionTest extends TestCase
         $this->action = new QrCodeAction($router->reveal(), $this->urlShortener->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function aNotFoundShortCodeWillDelegateIntoNextMiddleware()
     {
         $shortCode = 'abc123';
@@ -51,16 +48,13 @@ class QrCodeActionTest extends TestCase
         $process->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function anInvalidShortCodeWillReturnNotFoundResponse()
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
                                                        ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
-        /** @var MethodProphecy $process */
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
         $this->action->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate->reveal());
@@ -68,9 +62,7 @@ class QrCodeActionTest extends TestCase
         $process->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function aCorrectRequestReturnsTheQrCodeResponse()
     {
         $shortCode = 'abc123';

@@ -16,32 +16,28 @@ class ShortUrlMetaTest extends TestCase
      * @test
      * @dataProvider provideInvalidData
      */
-    public function exceptionIsThrownIfProvidedDataIsInvalid(array $data)
+    public function exceptionIsThrownIfProvidedDataIsInvalid(array $data): void
     {
         $this->expectException(ValidationException::class);
         ShortUrlMeta::createFromRawData($data);
     }
 
-    public function provideInvalidData(): array
+    public function provideInvalidData(): iterable
     {
-        return [
-            [[
-                ShortUrlMetaInputFilter::VALID_SINCE => '',
-                ShortUrlMetaInputFilter::VALID_UNTIL => '',
-                ShortUrlMetaInputFilter::CUSTOM_SLUG => 'foobar',
-                ShortUrlMetaInputFilter::MAX_VISITS => 'invalid',
-            ]],
-            [[
-                ShortUrlMetaInputFilter::VALID_SINCE => '2017',
-                ShortUrlMetaInputFilter::MAX_VISITS => 5,
-            ]],
-        ];
+        yield [[
+            ShortUrlMetaInputFilter::VALID_SINCE => '',
+            ShortUrlMetaInputFilter::VALID_UNTIL => '',
+            ShortUrlMetaInputFilter::CUSTOM_SLUG => 'foobar',
+            ShortUrlMetaInputFilter::MAX_VISITS => 'invalid',
+        ]];
+        yield [[
+            ShortUrlMetaInputFilter::VALID_SINCE => '2017',
+            ShortUrlMetaInputFilter::MAX_VISITS => 5,
+        ]];
     }
 
-    /**
-     * @test
-     */
-    public function properlyCreatedInstanceReturnsValues()
+    /** @test */
+    public function properlyCreatedInstanceReturnsValues(): void
     {
         $meta = ShortUrlMeta::createFromParams(Chronos::parse('2015-01-01')->toAtomString(), null, 'foobar');
 

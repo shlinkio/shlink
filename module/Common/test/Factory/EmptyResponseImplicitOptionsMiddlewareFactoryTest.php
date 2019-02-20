@@ -20,18 +20,14 @@ class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
         $this->factory = new EmptyResponseImplicitOptionsMiddlewareFactory();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function serviceIsCreated()
     {
         $instance = $this->factory->__invoke(new ServiceManager(), '');
         $this->assertInstanceOf(ImplicitOptionsMiddleware::class, $instance);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function responsePrototypeIsEmptyResponse()
     {
         $instance = $this->factory->__invoke(new ServiceManager(), '');

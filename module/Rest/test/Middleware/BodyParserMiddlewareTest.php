@@ -5,7 +5,6 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\Prophecy\MethodProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
@@ -36,9 +35,9 @@ class BodyParserMiddlewareTest extends TestCase
 
     public function provideIgnoredRequestMethods(): iterable
     {
-        yield 'with GET' => ['GET'];
-        yield 'with HEAD' => ['HEAD'];
-        yield 'with OPTIONS' => ['OPTIONS'];
+        yield 'GET' => ['GET'];
+        yield 'HEAD' => ['HEAD'];
+        yield 'OPTIONS' => ['OPTIONS'];
     }
 
     /** @test */
@@ -68,7 +67,6 @@ class BodyParserMiddlewareTest extends TestCase
                                         ->withBody($body)
                                         ->withHeader('content-type', 'application/json');
         $delegate = $this->prophesize(RequestHandlerInterface::class);
-        /** @var MethodProphecy $process */
         $process = $delegate->handle(Argument::type(ServerRequestInterface::class))->will(
             function (array $args) use ($test) {
                 /** @var ServerRequestInterface $req */
@@ -97,7 +95,6 @@ class BodyParserMiddlewareTest extends TestCase
         $request = (new ServerRequest())->withMethod('PUT')
                                         ->withBody($body);
         $delegate = $this->prophesize(RequestHandlerInterface::class);
-        /** @var MethodProphecy $process */
         $process = $delegate->handle(Argument::type(ServerRequestInterface::class))->will(
             function (array $args) use ($test) {
                 /** @var ServerRequestInterface $req */

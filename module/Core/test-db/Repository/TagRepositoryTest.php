@@ -21,17 +21,13 @@ class TagRepositoryTest extends DatabaseTestCase
         $this->repo = $this->getEntityManager()->getRepository(Tag::class);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function deleteByNameDoesNothingWhenEmptyListIsProvided()
     {
         $this->assertEquals(0, $this->repo->deleteByName([]));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function allTagsWhichMatchNameAreDeleted()
     {
         $names = ['foo', 'bar', 'baz'];

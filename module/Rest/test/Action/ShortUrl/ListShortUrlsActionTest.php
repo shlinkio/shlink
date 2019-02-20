@@ -28,9 +28,7 @@ class ListShortUrlsActionTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function properListReturnsSuccessResponse()
     {
         $page = 3;
@@ -43,9 +41,7 @@ class ListShortUrlsActionTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function anExceptionsReturnsErrorResponse()
     {
         $page = 3;

@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
@@ -31,10 +32,8 @@ class VisitServiceTest extends TestCase
         $this->visitService = new VisitService($this->em->reveal());
     }
 
-    /**
-     * @test
-     */
-    public function locateVisitsIteratesAndLocatesUnlocatedVisits()
+    /** @test */
+    public function locateVisitsIteratesAndLocatesUnlocatedVisits(): void
     {
         $unlocatedVisits = [
             [new Visit(new ShortUrl('foo'), Visitor::emptyInstance())],
@@ -52,8 +51,8 @@ class VisitServiceTest extends TestCase
         $clear = $this->em->clear()->will(function () {
         });
 
-        $this->visitService->locateVisits(function () {
-            return [];
+        $this->visitService->locateUnlocatedVisits(function () {
+            return Location::emptyInstance();
         }, function () {
             $args = func_get_args();
 
@@ -68,9 +67,7 @@ class VisitServiceTest extends TestCase
         $clear->shouldHaveBeenCalledTimes(count($unlocatedVisits));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function visitsWhichCannotBeLocatedAreIgnored()
     {
         $unlocatedVisits = [
@@ -88,7 +85,7 @@ class VisitServiceTest extends TestCase
         $clear = $this->em->clear()->will(function () {
         });
 
-        $this->visitService->locateVisits(function () {
+        $this->visitService->locateUnlocatedVisits(function () {
             throw new IpCannotBeLocatedException('Cannot be located');
         });
 

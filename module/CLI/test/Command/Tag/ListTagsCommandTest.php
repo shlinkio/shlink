@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\ListTagsCommand;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -32,12 +31,9 @@ class ListTagsCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function noTagsPrintsEmptyMessage()
     {
-        /** @var MethodProphecy $listTags */
         $listTags = $this->tagService->listTags()->willReturn([]);
 
         $this->commandTester->execute([]);
@@ -47,12 +43,9 @@ class ListTagsCommandTest extends TestCase
         $listTags->shouldHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function listOfTagsIsPrinted()
     {
-        /** @var MethodProphecy $listTags */
         $listTags = $this->tagService->listTags()->willReturn([
             new Tag('foo'),
             new Tag('bar'),

@@ -13,9 +13,7 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 
 class RestUtilsTest extends TestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function correctCodeIsReturnedFromException()
     {
         $this->assertEquals(

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\DeleteTagsCommand;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
@@ -31,9 +30,7 @@ class DeleteTagsCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function errorIsReturnedWhenNoTagsAreProvided()
     {
         $this->commandTester->execute([]);
@@ -42,13 +39,10 @@ class DeleteTagsCommandTest extends TestCase
         $this->assertStringContainsString('You have to provide at least one tag name', $output);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function serviceIsInvokedOnSuccess()
     {
         $tagNames = ['foo', 'bar'];
-        /** @var MethodProphecy $deleteTags */
         $deleteTags = $this->tagService->deleteTags($tagNames)->will(function () {
         });
 

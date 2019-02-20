@@ -27,10 +27,8 @@ class DeleteShortUrlActionTest extends TestCase
         $this->action = new DeleteShortUrlAction($this->service->reveal());
     }
 
-    /**
-     * @test
-     */
-    public function emptyResponseIsReturnedIfProperlyDeleted()
+    /** @test */
+    public function emptyResponseIsReturnedIfProperlyDeleted(): void
     {
         $deleteByShortCode = $this->service->deleteByShortCode(Argument::any())->will(function () {
         });
@@ -45,7 +43,7 @@ class DeleteShortUrlActionTest extends TestCase
      * @test
      * @dataProvider provideExceptions
      */
-    public function returnsErrorResponseInCaseOfException(Throwable $e, string $error, int $statusCode)
+    public function returnsErrorResponseInCaseOfException(Throwable $e, string $error, int $statusCode): void
     {
         $deleteByShortCode = $this->service->deleteByShortCode(Argument::any())->willThrow($e);
 
@@ -58,11 +56,13 @@ class DeleteShortUrlActionTest extends TestCase
         $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 
-    public function provideExceptions(): array
+    public function provideExceptions(): iterable
     {
-        return [
-            [new Exception\InvalidShortCodeException(), RestUtils::INVALID_SHORTCODE_ERROR, 404],
-            [new Exception\DeleteShortUrlException(5), RestUtils::INVALID_SHORTCODE_DELETION_ERROR, 400],
+        yield 'not found' => [new Exception\InvalidShortCodeException(), RestUtils::INVALID_SHORTCODE_ERROR, 404];
+        yield 'bad request' => [
+            new Exception\DeleteShortUrlException(5),
+            RestUtils::INVALID_SHORTCODE_DELETION_ERROR,
+            400,
         ];
     }
 }

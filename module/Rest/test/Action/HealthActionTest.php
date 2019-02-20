@@ -25,9 +25,7 @@ class HealthActionTest extends TestCase
         $this->action = new HealthAction($this->conn->reveal(), new AppOptions(['version' => '1.2.3']));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function passResponseIsReturnedWhenConnectionSucceeds()
     {
         $ping = $this->conn->ping()->willReturn(true);
@@ -47,9 +45,7 @@ class HealthActionTest extends TestCase
         $ping->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function failResponseIsReturnedWhenConnectionFails()
     {
         $ping = $this->conn->ping()->willReturn(false);
@@ -69,9 +65,7 @@ class HealthActionTest extends TestCase
         $ping->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function failResponseIsReturnedWhenConnectionThrowsException()
     {
         $ping = $this->conn->ping()->willThrow(Exception::class);

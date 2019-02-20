@@ -24,18 +24,14 @@ class EditShortUrlTagsActionTest extends TestCase
         $this->action = new EditShortUrlTagsAction($this->shortUrlService->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function notProvidingTagsReturnsError()
     {
         $response = $this->action->handle((new ServerRequest())->withAttribute('shortCode', 'abc123'));
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function anInvalidShortCodeReturnsNotFound()
     {
         $shortCode = 'abc123';
@@ -49,9 +45,7 @@ class EditShortUrlTagsActionTest extends TestCase
         $this->assertEquals(404, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function tagsListIsReturnedIfCorrectShortCodeIsProvided()
     {
         $shortCode = 'abc123';

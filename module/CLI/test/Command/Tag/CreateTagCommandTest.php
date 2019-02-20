@@ -5,7 +5,6 @@ namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\CreateTagCommand;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
@@ -30,9 +29,7 @@ class CreateTagCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function errorIsReturnedWhenNoTagsAreProvided()
     {
         $this->commandTester->execute([]);
@@ -41,13 +38,10 @@ class CreateTagCommandTest extends TestCase
         $this->assertStringContainsString('You have to provide at least one tag name', $output);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function serviceIsInvokedOnSuccess()
     {
         $tagNames = ['foo', 'bar'];
-        /** @var MethodProphecy $createTags */
         $createTags = $this->tagService->createTags($tagNames)->willReturn(new ArrayCollection());
 
         $this->commandTester->execute([

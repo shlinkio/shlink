@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2LocationResolver;
+use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 
 class GeoLite2LocationResolverTest extends TestCase
 {
@@ -29,7 +30,7 @@ class GeoLite2LocationResolverTest extends TestCase
      * @test
      * @dataProvider provideReaderExceptions
      */
-    public function exceptionIsThrownIfReaderThrowsException(string $e, string $message)
+    public function exceptionIsThrownIfReaderThrowsException(string $e, string $message): void
     {
         $ipAddress = '1.2.3.4';
 
@@ -43,18 +44,14 @@ class GeoLite2LocationResolverTest extends TestCase
         $this->resolver->resolveIpLocation($ipAddress);
     }
 
-    public function provideReaderExceptions(): array
+    public function provideReaderExceptions(): iterable
     {
-        return [
-            [AddressNotFoundException::class, 'Provided IP "1.2.3.4" is invalid'],
-            [InvalidDatabaseException::class, 'Provided GeoLite2 db file is invalid'],
-        ];
+        yield 'invalid IP address' => [AddressNotFoundException::class, 'Provided IP "1.2.3.4" is invalid'];
+        yield 'invalid geolite DB' => [InvalidDatabaseException::class, 'Provided GeoLite2 db file is invalid'];
     }
 
-    /**
-     * @test
-     */
-    public function resolvedCityIsProperlyMapped()
+    /** @test */
+    public function resolvedCityIsProperlyMapped(): void
     {
         $ipAddress = '1.2.3.4';
         $city = new City([]);
@@ -63,15 +60,7 @@ class GeoLite2LocationResolverTest extends TestCase
 
         $result = $this->resolver->resolveIpLocation($ipAddress);
 
-        $this->assertEquals([
-            'country_code' => '',
-            'country_name' => '',
-            'region_name' => '',
-            'city' => '',
-            'latitude' => '',
-            'longitude' => '',
-            'time_zone' => '',
-        ], $result);
+        $this->assertEquals(Location::emptyInstance(), $result);
         $cityMethod->shouldHaveBeenCalledOnce();
     }
 }

@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\Core\Action;
 use finfo;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
@@ -37,9 +36,7 @@ class PreviewActionTest extends TestCase
         $this->action = new PreviewAction($this->previewGenerator->reveal(), $this->urlShortener->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function invalidShortCodeFallsBackToNextMiddleware()
     {
         $shortCode = 'abc123';
@@ -52,9 +49,7 @@ class PreviewActionTest extends TestCase
         $this->action->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function correctShortCodeReturnsImageResponse()
     {
         $shortCode = 'abc123';
@@ -73,16 +68,13 @@ class PreviewActionTest extends TestCase
         $this->assertEquals((new finfo(FILEINFO_MIME))->file($path), $resp->getHeaderLine('Content-type'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function invalidShortCodeExceptionFallsBackToNextMiddleware()
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
                                                        ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
-        /** @var MethodProphecy $process */
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
         $this->action->process(

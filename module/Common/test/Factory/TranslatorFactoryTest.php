@@ -18,9 +18,7 @@ class TranslatorFactoryTest extends TestCase
         $this->factory = new TranslatorFactory();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function serviceIsCreated()
     {
         $instance = $this->factory->__invoke(new ServiceManager(['services' => [

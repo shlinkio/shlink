@@ -30,9 +30,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->repo = $this->getEntityManager()->getRepository(ShortUrl::class);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function findOneByShortCodeReturnsProperData()
     {
         $foo = new ShortUrl('foo');
@@ -62,9 +60,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->assertNull($this->repo->findOneByShortCode($baz->getShortCode()));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function countListReturnsProperNumberOfResults()
     {
         $count = 5;
@@ -78,9 +74,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->assertEquals($count, $this->repo->countList());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function findListProperlyFiltersByTagAndSearchTerm()
     {
         $tag = new Tag('bar');
@@ -125,9 +119,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->assertSame($bar, $result[0]);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function findListProperlyMapsFieldNamesToColumnNamesWhenOrdering()
     {
         $urls = ['a', 'z', 'c', 'b'];

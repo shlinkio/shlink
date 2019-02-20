@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpApiLocationResolver;
+use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use function json_encode;
 
 class IpApiLocationResolverTest extends TestCase
@@ -25,25 +26,15 @@ class IpApiLocationResolverTest extends TestCase
         $this->ipResolver = new IpApiLocationResolver($this->client->reveal());
     }
 
-    /**
-     * @test
-     */
-    public function correctIpReturnsDecodedInfo()
+    /** @test */
+    public function correctIpReturnsDecodedInfo(): void
     {
         $actual = [
             'countryCode' => 'bar',
             'lat' => 5,
             'lon' => 10,
         ];
-        $expected = [
-            'country_code' => 'bar',
-            'country_name' => '',
-            'region_name' => '',
-            'city' => '',
-            'latitude' => 5,
-            'longitude' => 10,
-            'time_zone' => '',
-        ];
+        $expected = new Location('bar', '', '', '', 5, 10, '');
         $response = new Response();
         $response->getBody()->write(json_encode($actual));
         $response->getBody()->rewind();
@@ -54,7 +45,7 @@ class IpApiLocationResolverTest extends TestCase
     }
 
     /** @test */
-    public function guzzleExceptionThrowsShlinkException()
+    public function guzzleExceptionThrowsShlinkException(): void
     {
         $this->client->get('http://ip-api.com/json/1.2.3.4')->willThrow(new TransferException())
                                                             ->shouldBeCalledOnce();

@@ -25,9 +25,7 @@ class ShortCodePathMiddlewareTest extends TestCase
         $this->requestHandler->handle(Argument::type(ServerRequestInterface::class))->willReturn(new Response());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function properlyReplacesTheOldPathByTheNewOne()
     {
         $uri = new Uri('/short-codes/foo');

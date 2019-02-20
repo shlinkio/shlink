@@ -10,5 +10,5 @@ interface IpLocationResolverInterface
     /**
      * @throws WrongIpException
      */
-    public function resolveIpLocation(string $ipAddress): array;
+    public function resolveIpLocation(string $ipAddress): Model\Location;
 }

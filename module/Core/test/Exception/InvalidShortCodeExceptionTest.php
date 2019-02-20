@@ -14,7 +14,7 @@ class InvalidShortCodeExceptionTest extends TestCase
      * @test
      * @dataProvider providePrevious
      */
-    public function properlyCreatesExceptionFromCharset(?Throwable $prev)
+    public function properlyCreatesExceptionFromCharset(?Throwable $prev): void
     {
         $e = InvalidShortCodeException::fromCharset('abc123', 'def456', $prev);
 
@@ -23,18 +23,14 @@ class InvalidShortCodeExceptionTest extends TestCase
         $this->assertEquals($prev, $e->getPrevious());
     }
 
-    public function providePrevious(): array
+    public function providePrevious(): iterable
     {
-        return [
-            [null],
-            [new Exception('Previos error', 10)],
-        ];
+        yield 'null previous' => [null];
+        yield 'instance previous' => [new Exception('Previous error', 10)];
     }
 
-    /**
-     * @test
-     */
-    public function properlyCreatesExceptionFromNotFoundShortCode()
+    /** @test */
+    public function properlyCreatesExceptionFromNotFoundShortCode(): void
     {
         $e = InvalidShortCodeException::fromNotFoundShortCode('abc123');
 

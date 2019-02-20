@@ -32,9 +32,7 @@ class CacheFactoryTest extends TestCase
         putenv('APP_ENV');
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function productionReturnsApcAdapter()
     {
         putenv('APP_ENV=pro');
@@ -42,9 +40,7 @@ class CacheFactoryTest extends TestCase
         $this->assertInstanceOf(ApcuCache::class, $instance);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function developmentReturnsArrayAdapter()
     {
         putenv('APP_ENV=dev');
@@ -52,9 +48,7 @@ class CacheFactoryTest extends TestCase
         $this->assertInstanceOf(ArrayCache::class, $instance);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function adapterDefinedInConfigIgnoresEnvironment()
     {
         putenv('APP_ENV=pro');
@@ -62,9 +56,7 @@ class CacheFactoryTest extends TestCase
         $this->assertInstanceOf(ArrayCache::class, $instance);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function invalidAdapterDefinedInConfigFallbacksToEnvironment()
     {
         putenv('APP_ENV=pro');
@@ -72,9 +64,7 @@ class CacheFactoryTest extends TestCase
         $this->assertInstanceOf(ApcuCache::class, $instance);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function filesystemCacheAdaptersReadDirOption()
     {
         $dir = realpath(sys_get_temp_dir());
@@ -84,9 +74,7 @@ class CacheFactoryTest extends TestCase
         $this->assertEquals($dir, $instance->getDirectory());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function memcachedCacheAdaptersReadServersOption()
     {
         $servers = [

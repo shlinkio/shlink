@@ -16,9 +16,7 @@ class ConfigProviderTest extends TestCase
         $this->configProvider = new ConfigProvider();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function configIsReturned()
     {
         $config = $this->configProvider->__invoke();

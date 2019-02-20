@@ -29,9 +29,7 @@ class GenerateKeyCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function noExpirationDateIsDefinedIfNotProvided()
     {
         $create = $this->apiKeyService->create(null)->willReturn(new ApiKey());
@@ -45,9 +43,7 @@ class GenerateKeyCommandTest extends TestCase
         $create->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function expirationDateIsDefinedIfProvided()
     {
         $this->apiKeyService->create(Argument::type(Chronos::class))->shouldBeCalledOnce()

@@ -14,7 +14,7 @@ class InvalidUrlExceptionTest extends TestCase
      * @test
      * @dataProvider providePrevious
      */
-    public function properlyCreatesExceptionFromUrl(?Throwable $prev)
+    public function properlyCreatesExceptionFromUrl(?Throwable $prev): void
     {
         $e = InvalidUrlException::fromUrl('http://the_url.com', $prev);
 
@@ -23,11 +23,9 @@ class InvalidUrlExceptionTest extends TestCase
         $this->assertEquals($prev, $e->getPrevious());
     }
 
-    public function providePrevious(): array
+    public function providePrevious(): iterable
     {
-        return [
-            [null],
-            [new Exception('Previos error', 10)],
-        ];
+        yield 'null previous' => [null];
+        yield 'instance previous' => [new Exception('Previous error', 10)];
     }
 }

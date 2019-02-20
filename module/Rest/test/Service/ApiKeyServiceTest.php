@@ -26,9 +26,7 @@ class ApiKeyServiceTest extends TestCase
         $this->service = new ApiKeyService($this->em->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function keyIsProperlyCreated()
     {
         $this->em->flush()->shouldBeCalledOnce();
@@ -38,9 +36,7 @@ class ApiKeyServiceTest extends TestCase
         $this->assertNull($key->getExpirationDate());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function keyIsProperlyCreatedWithExpirationDate()
     {
         $this->em->flush()->shouldBeCalledOnce();
@@ -51,9 +47,7 @@ class ApiKeyServiceTest extends TestCase
         $this->assertSame($date, $key->getExpirationDate());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function checkReturnsFalseWhenKeyIsInvalid()
     {
         $repo = $this->prophesize(EntityRepository::class);
@@ -64,9 +58,7 @@ class ApiKeyServiceTest extends TestCase
         $this->assertFalse($this->service->check('12345'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function checkReturnsFalseWhenKeyIsDisabled()
     {
         $key = new ApiKey();
@@ -79,9 +71,7 @@ class ApiKeyServiceTest extends TestCase
         $this->assertFalse($this->service->check('12345'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function checkReturnsFalseWhenKeyIsExpired()
     {
         $key = new ApiKey(Chronos::now()->subDay());
@@ -93,9 +83,7 @@ class ApiKeyServiceTest extends TestCase
         $this->assertFalse($this->service->check('12345'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function checkReturnsTrueWhenConditionsAreFavorable()
     {
         $repo = $this->prophesize(EntityRepository::class);
@@ -118,9 +106,7 @@ class ApiKeyServiceTest extends TestCase
         $this->service->disable('12345');
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function disableReturnsDisabledKeyWhenFOund()
     {
         $key = new ApiKey();
@@ -137,9 +123,7 @@ class ApiKeyServiceTest extends TestCase
         $this->assertSame($key, $returnedKey);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function listFindsAllApiKeys()
     {
         $repo = $this->prophesize(EntityRepository::class);
@@ -150,9 +134,7 @@ class ApiKeyServiceTest extends TestCase
         $this->service->listKeys();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function listEnabledFindsOnlyEnabledApiKeys()
     {
         $repo = $this->prophesize(EntityRepository::class);

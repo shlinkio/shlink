@@ -7,9 +7,7 @@ use ShlinkioTest\Shlink\Common\ApiTest\ApiTestCase;
 
 class ListShortUrlsTest extends ApiTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function shortUrlsAreProperlyListed()
     {
         $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls');

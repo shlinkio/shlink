@@ -34,9 +34,7 @@ class GenerateShortUrlCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function properShortCodeIsCreatedIfLongUrlIsCorrect()
     {
         $urlToShortCode = $this->urlShortener->urlToShortCode(Argument::cetera())->willReturn(
@@ -54,9 +52,7 @@ class GenerateShortUrlCommandTest extends TestCase
         $urlToShortCode->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function exceptionWhileParsingLongUrlOutputsError()
     {
         $this->urlShortener->urlToShortCode(Argument::cetera())->willThrow(new InvalidUrlException())
@@ -73,9 +69,7 @@ class GenerateShortUrlCommandTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function properlyProcessesProvidedTags()
     {
         $urlToShortCode = $this->urlShortener->urlToShortCode(

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
@@ -28,9 +27,8 @@ class UpdateTagActionTest extends TestCase
     /**
      * @test
      * @dataProvider provideParams
-     * @param array $bodyParams
      */
-    public function whenInvalidParamsAreProvidedAnErrorIsReturned(array $bodyParams)
+    public function whenInvalidParamsAreProvidedAnErrorIsReturned(array $bodyParams): void
     {
         $request = (new ServerRequest())->withParsedBody($bodyParams);
         $resp = $this->action->handle($request);
@@ -38,25 +36,20 @@ class UpdateTagActionTest extends TestCase
         $this->assertEquals(400, $resp->getStatusCode());
     }
 
-    public function provideParams()
+    public function provideParams(): iterable
     {
-        return [
-            [['oldName' => 'foo']],
-            [['newName' => 'foo']],
-            [[]],
-        ];
+        yield 'old name only' => [['oldName' => 'foo']];
+        yield 'new name only' => [['newName' => 'foo']];
+        yield 'no params' => [[]];
     }
 
-    /**
-     * @test
-     */
-    public function requestingInvalidTagReturnsError()
+    /** @test */
+    public function requestingInvalidTagReturnsError(): void
     {
         $request = (new ServerRequest())->withParsedBody([
             'oldName' => 'foo',
             'newName' => 'bar',
         ]);
-        /** @var MethodProphecy $rename */
         $rename = $this->tagService->renameTag('foo', 'bar')->willThrow(EntityDoesNotExistException::class);
 
         $resp = $this->action->handle($request);
@@ -65,16 +58,13 @@ class UpdateTagActionTest extends TestCase
         $rename->shouldHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
-    public function correctInvocationRenamesTag()
+    /** @test */
+    public function correctInvocationRenamesTag(): void
     {
         $request = (new ServerRequest())->withParsedBody([
             'oldName' => 'foo',
             'newName' => 'bar',
         ]);
-        /** @var MethodProphecy $rename */
         $rename = $this->tagService->renameTag('foo', 'bar')->willReturn(new Tag('bar'));
 
         $resp = $this->action->handle($request);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\RenameTagCommand;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -33,14 +32,11 @@ class RenameTagCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function errorIsPrintedIfExceptionIsThrown()
     {
         $oldName = 'foo';
         $newName = 'bar';
-        /** @var MethodProphecy $renameTag */
         $renameTag = $this->tagService->renameTag($oldName, $newName)->willThrow(EntityDoesNotExistException::class);
 
         $this->commandTester->execute([
@@ -53,14 +49,11 @@ class RenameTagCommandTest extends TestCase
         $renameTag->shouldHaveBeenCalled();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function successIsPrintedIfNoErrorOccurs()
     {
         $oldName = 'foo';
         $newName = 'bar';
-        /** @var MethodProphecy $renameTag */
         $renameTag = $this->tagService->renameTag($oldName, $newName)->willReturn(new Tag($newName));
 
         $this->commandTester->execute([

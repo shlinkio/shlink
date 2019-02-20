@@ -25,7 +25,7 @@ class IpApiLocationResolver implements IpLocationResolverInterface
     /**
      * @throws WrongIpException
      */
-    public function resolveIpLocation(string $ipAddress): array
+    public function resolveIpLocation(string $ipAddress): Model\Location
     {
         try {
             $response = $this->httpClient->get(sprintf(self::SERVICE_PATTERN, $ipAddress));
@@ -37,16 +37,16 @@ class IpApiLocationResolver implements IpLocationResolverInterface
         }
     }
 
-    private function mapFields(array $entry): array
+    private function mapFields(array $entry): Model\Location
     {
-        return [
-            'country_code' => $entry['countryCode'] ?? '',
-            'country_name' => $entry['country'] ?? '',
-            'region_name' => $entry['regionName'] ?? '',
-            'city' => $entry['city'] ?? '',
-            'latitude' => $entry['lat'] ?? '',
-            'longitude' => $entry['lon'] ?? '',
-            'time_zone' => $entry['timezone'] ?? '',
-        ];
+        return new Model\Location(
+            (string) ($entry['countryCode'] ?? ''),
+            (string) ($entry['country'] ?? ''),
+            (string) ($entry['regionName'] ?? ''),
+            (string) ($entry['city'] ?? ''),
+            (float) ($entry['lat'] ?? 0.0),
+            (float) ($entry['lon'] ?? 0.0),
+            (string) ($entry['timezone'] ?? '')
+        );
     }
 }

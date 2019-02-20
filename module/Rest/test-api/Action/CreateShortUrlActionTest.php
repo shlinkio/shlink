@@ -6,12 +6,12 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
 use ShlinkioTest\Shlink\Common\ApiTest\ApiTestCase;
+use function Functional\map;
+use function range;
 
 class CreateShortUrlActionTest extends ApiTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function createsNewShortUrlWhenOnlyLongUrlIsProvided(): void
     {
         $expectedKeys = ['shortCode', 'shortUrl', 'longUrl', 'dateCreated', 'visitsCount', 'tags'];
@@ -23,9 +23,7 @@ class CreateShortUrlActionTest extends ApiTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function createsNewShortUrlWithCustomSlug(): void
     {
         [$statusCode, $payload] = $this->createShortUrl(['customSlug' => 'my cool slug']);
@@ -34,9 +32,7 @@ class CreateShortUrlActionTest extends ApiTestCase
         $this->assertEquals('my-cool-slug', $payload['shortCode']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function createsNewShortUrlWithTags(): void
     {
         [$statusCode, $payload] = $this->createShortUrl(['tags' => ['foo', 'bar', 'baz']]);
@@ -65,16 +61,12 @@ class CreateShortUrlActionTest extends ApiTestCase
 
     public function provideMaxVisits(): array
     {
-        return [
-            [1],
-            [5],
-            [3],
-        ];
+        return map(range(1, 20), function (int $i) {
+            return [$i];
+        });
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function createsShortUrlWithValidSince(): void
     {
         [$statusCode, ['shortCode' => $shortCode]] = $this->createShortUrl([
@@ -88,9 +80,7 @@ class CreateShortUrlActionTest extends ApiTestCase
         $this->assertEquals(self::STATUS_NOT_FOUND, $lastResp->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function createsShortUrlWithValidUntil(): void
     {
         [$statusCode, ['shortCode' => $shortCode]] = $this->createShortUrl([
@@ -110,7 +100,6 @@ class CreateShortUrlActionTest extends ApiTestCase
      */
     public function returnsAnExistingShortUrlWhenRequested(array $body): void
     {
-
         [$firstStatusCode, ['shortCode' => $firstShortCode]] = $this->createShortUrl($body);
 
         $body['findIfExists'] = true;
@@ -121,26 +110,22 @@ class CreateShortUrlActionTest extends ApiTestCase
         $this->assertEquals($firstShortCode, $secondShortCode);
     }
 
-    public function provideMatchingBodies(): array
+    public function provideMatchingBodies(): iterable
     {
         $longUrl = 'https://www.alejandrocelaya.com';
 
-        return [
-            'only long URL' => [['longUrl' => $longUrl]],
-            'long URL and tags' => [['longUrl' => $longUrl, 'tags' => ['boo', 'far']]],
-            'long URL custom slug' => [['longUrl' => $longUrl, 'customSlug' => 'my cool slug']],
-            'several params' => [[
-                'longUrl' => $longUrl,
-                'tags' => ['boo', 'far'],
-                'validSince' => Chronos::now()->toAtomString(),
-                'maxVisits' => 7,
-            ]],
-        ];
+        yield 'only long URL' => [['longUrl' => $longUrl]];
+        yield 'long URL and tags' => [['longUrl' => $longUrl, 'tags' => ['boo', 'far']]];
+        yield 'long URL and custom slug' => [['longUrl' => $longUrl, 'customSlug' => 'my cool slug']];
+        yield 'several params' => [[
+            'longUrl' => $longUrl,
+            'tags' => ['boo', 'far'],
+            'validSince' => Chronos::now()->toAtomString(),
+            'maxVisits' => 7,
+        ]];
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function returnsErrorWhenRequestingReturnExistingButCustomSlugIsInUse(): void
     {
         $longUrl = 'https://www.alejandrocelaya.com';
@@ -156,9 +141,7 @@ class CreateShortUrlActionTest extends ApiTestCase
         $this->assertEquals(self::STATUS_BAD_REQUEST, $secondStatusCode);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function createsNewShortUrlIfRequestedToFindButThereIsNoMatch(): void
     {
         [$firstStatusCode, ['shortCode' => $firstShortCode]] = $this->createShortUrl([

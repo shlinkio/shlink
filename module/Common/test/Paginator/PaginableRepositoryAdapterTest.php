@@ -21,18 +21,14 @@ class PaginableRepositoryAdapterTest extends TestCase
         $this->adapter = new PaginableRepositoryAdapter($this->repo->reveal(), 'search', ['foo', 'bar'], 'order');
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function getItemsFallbacksToFindList()
     {
         $this->repo->findList(10, 5, 'search', ['foo', 'bar'], 'order')->shouldBeCalledOnce();
         $this->adapter->getItems(5, 10);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function countFallbacksToCountList()
     {
         $this->repo->countList('search', ['foo', 'bar'])->shouldBeCalledOnce();

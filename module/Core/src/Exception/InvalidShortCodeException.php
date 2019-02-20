@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Exception;
 
-use Exception;
+use Throwable;
 use function sprintf;
 
 class InvalidShortCodeException extends RuntimeException
 {
-    public static function fromCharset(string $shortCode, string $charSet, Exception $previous = null): self
+    public static function fromCharset(string $shortCode, string $charSet, ?Throwable $previous = null): self
     {
         $code = $previous !== null ? $previous->getCode() : -1;
         return new static(

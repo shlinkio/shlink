@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Repository;
 
 use Cake\Chronos\Chronos;
+use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -29,10 +30,8 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->repo = $this->getEntityManager()->getRepository(Visit::class);
     }
 
-    /**
-     * @test
-     */
-    public function findUnlocatedVisitsReturnsProperVisits()
+    /** @test */
+    public function findUnlocatedVisitsReturnsProperVisits(): void
     {
         $shortUrl = new ShortUrl('');
         $this->getEntityManager()->persist($shortUrl);
@@ -41,7 +40,7 @@ class VisitRepositoryTest extends DatabaseTestCase
             $visit = new Visit($shortUrl, Visitor::emptyInstance());
 
             if ($i % 2 === 0) {
-                $location = new VisitLocation([]);
+                $location = new VisitLocation(Location::emptyInstance());
                 $this->getEntityManager()->persist($location);
                 $visit->locate($location);
             }
@@ -59,10 +58,8 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->assertEquals(3, $resultsCount);
     }
 
-    /**
-     * @test
-     */
-    public function findVisitsByShortCodeReturnsProperData()
+    /** @test */
+    public function findVisitsByShortCodeReturnsProperData(): void
     {
         $shortUrl = new ShortUrl('');
         $this->getEntityManager()->persist($shortUrl);
@@ -86,10 +83,8 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->assertCount(2, $this->repo->findVisitsByShortCode($shortUrl->getShortCode(), null, 5, 4));
     }
 
-    /**
-     * @test
-     */
-    public function countVisitsByShortCodeReturnsProperData()
+    /** @test */
+    public function countVisitsByShortCodeReturnsProperData(): void
     {
         $shortUrl = new ShortUrl('');
         $this->getEntityManager()->persist($shortUrl);

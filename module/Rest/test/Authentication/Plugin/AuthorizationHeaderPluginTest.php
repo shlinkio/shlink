@@ -25,9 +25,7 @@ class AuthorizationHeaderPluginTest extends TestCase
         $this->plugin = new AuthorizationHeaderPlugin($this->jwtService->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function verifyAnAuthorizationWithoutBearerTypeThrowsException()
     {
         $authToken = 'ABC-abc';
@@ -45,9 +43,7 @@ class AuthorizationHeaderPluginTest extends TestCase
         $this->plugin->verify($request);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function verifyAnAuthorizationWithWrongTypeThrowsException()
     {
         $authToken = 'Basic ABC-abc';
@@ -64,9 +60,7 @@ class AuthorizationHeaderPluginTest extends TestCase
         $this->plugin->verify($request);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function verifyAnExpiredTokenThrowsException()
     {
         $authToken = 'Bearer ABC-abc';
@@ -88,9 +82,7 @@ class AuthorizationHeaderPluginTest extends TestCase
         $jwtVerify->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function verifyValidTokenDoesNotThrowException()
     {
         $authToken = 'Bearer ABC-abc';
@@ -105,9 +97,7 @@ class AuthorizationHeaderPluginTest extends TestCase
         $jwtVerify->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function updateReturnsAnUpdatedResponseWithNewJwt()
     {
         $authToken = 'Bearer ABC-abc';

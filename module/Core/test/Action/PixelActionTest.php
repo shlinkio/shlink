@@ -37,9 +37,7 @@ class PixelActionTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function imageIsReturned()
     {
         $shortCode = 'abc123';

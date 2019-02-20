@@ -32,9 +32,7 @@ class ShortUrlServiceTest extends TestCase
         $this->service = new ShortUrlService($this->em->reveal());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function listedUrlsAreReturnedFromEntityManager()
     {
         $list = [
@@ -53,9 +51,7 @@ class ShortUrlServiceTest extends TestCase
         $this->assertEquals(4, $list->getCurrentItemCount());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function exceptionIsThrownWhenSettingTagsOnInvalidShortcode()
     {
         $shortCode = 'abc123';
@@ -68,9 +64,7 @@ class ShortUrlServiceTest extends TestCase
         $this->service->setTagsByShortCode($shortCode);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function providedTagsAreGetFromRepoAndSetToTheShortUrl()
     {
         $shortUrl = $this->prophesize(ShortUrl::class);
@@ -89,9 +83,7 @@ class ShortUrlServiceTest extends TestCase
         $this->service->setTagsByShortCode($shortCode, ['foo', 'bar']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function updateMetadataByShortCodeUpdatesProvidedData()
     {
         $shortUrl = new ShortUrl('');
