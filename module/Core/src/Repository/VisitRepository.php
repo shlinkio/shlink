@@ -5,17 +5,32 @@ namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableQueryAdapter;
+use Shlinkio\Shlink\Common\Paginator\ImplicitLoopPaginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Zend\Paginator\Paginator;
+use function array_shift;
 
 class VisitRepository extends EntityRepository implements VisitRepositoryInterface
 {
-    public function findUnlocatedVisits(): iterable
+    /**
+     * @return iterable|Visit[]
+     */
+    public function findUnlocatedVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
-        $dql = 'SELECT v FROM Shlinkio\Shlink\Core\Entity\Visit AS v WHERE v.visitLocation IS NULL';
+        $count = $this->count(['visitLocation' => null]);
+        $dql = <<<DQL
+SELECT v FROM Shlinkio\Shlink\Core\Entity\Visit AS v WHERE v.visitLocation IS NULL
+DQL;
         $query = $this->getEntityManager()->createQuery($dql);
 
-        return $query->iterate();
+        $paginator = new Paginator(new PaginableQueryAdapter($query, $count));
+        $paginator->setItemCountPerPage($blockSize);
+
+        return new ImplicitLoopPaginator($paginator, function (array $value) {
+            return array_shift($value);
+        });
     }
 
     /**

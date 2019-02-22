@@ -36,8 +36,8 @@ class VisitServiceTest extends TestCase
     public function locateVisitsIteratesAndLocatesUnlocatedVisits(): void
     {
         $unlocatedVisits = [
-            [new Visit(new ShortUrl('foo'), Visitor::emptyInstance())],
-            [new Visit(new ShortUrl('bar'), Visitor::emptyInstance())],
+            new Visit(new ShortUrl('foo'), Visitor::emptyInstance()),
+            new Visit(new ShortUrl('bar'), Visitor::emptyInstance()),
         ];
 
         $repo = $this->prophesize(VisitRepository::class);
@@ -71,7 +71,7 @@ class VisitServiceTest extends TestCase
     public function visitsWhichCannotBeLocatedAreIgnored()
     {
         $unlocatedVisits = [
-            [new Visit(new ShortUrl('foo'), Visitor::emptyInstance())],
+            new Visit(new ShortUrl('foo'), Visitor::emptyInstance()),
         ];
 
         $repo = $this->prophesize(VisitRepository::class);

@@ -26,7 +26,7 @@ class VisitService implements VisitServiceInterface
         $repo = $this->em->getRepository(Visit::class);
         $results = $repo->findUnlocatedVisits();
 
-        foreach ($results as [$visit]) {
+        foreach ($results as $visit) {
             try {
                 /** @var Location $location */
                 $location = $geolocateVisit($visit);

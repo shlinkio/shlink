@@ -9,7 +9,12 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 
 interface VisitRepositoryInterface extends ObjectRepository
 {
-    public function findUnlocatedVisits(): iterable;
+    public const DEFAULT_BLOCK_SIZE = 10000;
+
+    /**
+     * @return iterable|Visit[]
+     */
+    public function findUnlocatedVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
 
     /**
      * @return Visit[]
