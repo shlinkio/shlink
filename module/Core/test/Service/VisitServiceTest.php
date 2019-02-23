@@ -17,7 +17,11 @@ use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Service\VisitService;
 use function array_shift;
 use function count;
+use function floor;
 use function func_get_args;
+use function Functional\map;
+use function range;
+use function sprintf;
 
 class VisitServiceTest extends TestCase
 {
@@ -35,13 +39,12 @@ class VisitServiceTest extends TestCase
     /** @test */
     public function locateVisitsIteratesAndLocatesUnlocatedVisits(): void
     {
-        $unlocatedVisits = [
-            new Visit(new ShortUrl('foo'), Visitor::emptyInstance()),
-            new Visit(new ShortUrl('bar'), Visitor::emptyInstance()),
-        ];
+        $unlocatedVisits = map(range(1, 200), function (int $i) {
+            return new Visit(new ShortUrl(sprintf('short_code_%s', $i)), Visitor::emptyInstance());
+        });
 
         $repo = $this->prophesize(VisitRepository::class);
-        $findUnlocatedVisits = $repo->findUnlocatedVisits()->willReturn($unlocatedVisits);
+        $findUnlocatedVisits = $repo->findUnlocatedVisits(false)->willReturn($unlocatedVisits);
         $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
 
         $persist = $this->em->persist(Argument::type(Visit::class))->will(function () {
@@ -63,19 +66,19 @@ class VisitServiceTest extends TestCase
         $findUnlocatedVisits->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
         $persist->shouldHaveBeenCalledTimes(count($unlocatedVisits));
-        $flush->shouldHaveBeenCalledTimes(count($unlocatedVisits));
-        $clear->shouldHaveBeenCalledTimes(count($unlocatedVisits));
+        $flush->shouldHaveBeenCalledTimes(floor(count($unlocatedVisits) / 200) + 1);
+        $clear->shouldHaveBeenCalledTimes(floor(count($unlocatedVisits) / 200) + 1);
     }
 
     /** @test */
-    public function visitsWhichCannotBeLocatedAreIgnored()
+    public function visitsWhichCannotBeLocatedAreIgnored(): void
     {
         $unlocatedVisits = [
             new Visit(new ShortUrl('foo'), Visitor::emptyInstance()),
         ];
 
         $repo = $this->prophesize(VisitRepository::class);
-        $findUnlocatedVisits = $repo->findUnlocatedVisits()->willReturn($unlocatedVisits);
+        $findUnlocatedVisits = $repo->findUnlocatedVisits(false)->willReturn($unlocatedVisits);
         $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
 
         $persist = $this->em->persist(Argument::type(Visit::class))->will(function () {
@@ -92,7 +95,7 @@ class VisitServiceTest extends TestCase
         $findUnlocatedVisits->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
         $persist->shouldNotHaveBeenCalled();
-        $flush->shouldNotHaveBeenCalled();
-        $clear->shouldNotHaveBeenCalled();
+        $flush->shouldHaveBeenCalledOnce();
+        $clear->shouldHaveBeenCalledOnce();
     }
 }

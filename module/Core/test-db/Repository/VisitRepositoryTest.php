@@ -55,7 +55,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         $resultsCount = 0;
-        $results = $this->repo->findUnlocatedVisits($blockSize);
+        $results = $this->repo->findUnlocatedVisits(true, $blockSize);
         foreach ($results as $value) {
             $resultsCount++;
         }

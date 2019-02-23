@@ -11,22 +11,26 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 class VisitRepository extends EntityRepository implements VisitRepositoryInterface
 {
     /**
+     * This method will allow you to iterate the whole list of unlocated visits, but loading them into memory in
+     * smaller blocks of a specific size.
+     * This will have side effects if you update those rows while you iterate them.
+     * If you plan to do so, pass the first argument as false in order to disable applying offsets while slicing the
+     * dataset
+     *
      * @return iterable|Visit[]
      */
-    public function findUnlocatedVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
+    public function findUnlocatedVisits(bool $applyOffset = true, int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
         $dql = <<<DQL
 SELECT v FROM Shlinkio\Shlink\Core\Entity\Visit AS v WHERE v.visitLocation IS NULL
 DQL;
-        $query = $this->getEntityManager()->createQuery($dql);
+        $query = $this->getEntityManager()->createQuery($dql)
+                                          ->setMaxResults($blockSize);
         $remainingVisitsToProcess = $this->count(['visitLocation' => null]);
         $offset = 0;
 
         while ($remainingVisitsToProcess > 0) {
-            $iterator = $query->setMaxResults($blockSize)
-                              ->setFirstResult($offset)
-                              ->iterate();
-
+            $iterator = $query->setFirstResult($applyOffset ? $offset : null)->iterate();
             foreach ($iterator as $key => [$value]) {
                 yield $key => $value;
             }
