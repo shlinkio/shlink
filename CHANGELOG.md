@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## 1.16.0 - 2019-02-23
 
 #### Added
 
@@ -61,6 +61,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Fixed
 
 * [#317](https://github.com/shlinkio/shlink/issues/317) Fixed error while trying to generate previews because of global config file being deleted by mistake by build script.
+* [#307](https://github.com/shlinkio/shlink/issues/307) Fixed memory leak while trying to process huge amounts of visits due to the query not being properly paginated.
 
 
 ## 1.15.1 - 2018-12-16

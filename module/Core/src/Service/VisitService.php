@@ -24,9 +24,12 @@ class VisitService implements VisitServiceInterface
     {
         /** @var VisitRepository $repo */
         $repo = $this->em->getRepository(Visit::class);
-        $results = $repo->findUnlocatedVisits();
+        $results = $repo->findUnlocatedVisits(false);
+        $count = 0;
+        $persistBlock = 200;
 
-        foreach ($results as [$visit]) {
+        foreach ($results as $visit) {
+            $count++;
             try {
                 /** @var Location $location */
                 $location = $geolocateVisit($visit);
@@ -37,20 +40,25 @@ class VisitService implements VisitServiceInterface
 
             $location = new VisitLocation($location);
             $this->locateVisit($visit, $location, $notifyVisitWithLocation);
+
+            // Flush and clear after X iterations
+            if ($count % $persistBlock === 0) {
+                $this->em->flush();
+                $this->em->clear();
+            }
         }
+
+        $this->em->flush();
+        $this->em->clear();
     }
 
     private function locateVisit(Visit $visit, VisitLocation $location, ?callable $notifyVisitWithLocation): void
     {
         $visit->locate($location);
-
         $this->em->persist($visit);
-        $this->em->flush();
 
         if ($notifyVisitWithLocation !== null) {
             $notifyVisitWithLocation($location, $visit);
         }
-
-        $this->em->clear();
     }
 }

@@ -12,6 +12,8 @@ use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use ShlinkioTest\Shlink\Common\DbTest\DatabaseTestCase;
+use function Functional\map;
+use function range;
 use function sprintf;
 
 class VisitRepositoryTest extends DatabaseTestCase
@@ -30,8 +32,11 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->repo = $this->getEntityManager()->getRepository(Visit::class);
     }
 
-    /** @test */
-    public function findUnlocatedVisitsReturnsProperVisits(): void
+    /**
+     * @test
+     * @dataProvider provideBlockSize
+     */
+    public function findUnlocatedVisitsReturnsProperVisits(int $blockSize): void
     {
         $shortUrl = new ShortUrl('');
         $this->getEntityManager()->persist($shortUrl);
@@ -50,12 +55,19 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         $resultsCount = 0;
-        $results = $this->repo->findUnlocatedVisits();
+        $results = $this->repo->findUnlocatedVisits(true, $blockSize);
         foreach ($results as $value) {
             $resultsCount++;
         }
 
         $this->assertEquals(3, $resultsCount);
+    }
+
+    public function provideBlockSize(): iterable
+    {
+        return map(range(1, 5), function (int $value) {
+            return [$value];
+        });
     }
 
     /** @test */
