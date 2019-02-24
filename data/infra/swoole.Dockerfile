@@ -5,6 +5,7 @@ ENV PREDIS_VERSION 4.2.0
 ENV MEMCACHED_VERSION 3.1.3
 ENV APCU_VERSION 5.1.16
 ENV APCU_BC_VERSION 1.0.4
+ENV INOTIFY_VERSION 2.0.0
 
 RUN apk update
 
@@ -75,6 +76,16 @@ RUN rm /tmp/apcu_bc.tar.gz
 # Load APCU.ini before APC.ini
 RUN rm /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 RUN echo extension=apcu.so > /usr/local/etc/php/conf.d/20-php-ext-apcu.ini
+
+# Install inotify extension
+ADD https://pecl.php.net/get/inotify-$INOTIFY_VERSION.tgz /tmp/inotify.tar.gz
+RUN mkdir -p /usr/src/php/ext/inotify\
+  && tar xf /tmp/inotify.tar.gz -C /usr/src/php/ext/inotify --strip-components=1
+# configure and install
+RUN docker-php-ext-configure inotify\
+  && docker-php-ext-install inotify
+# cleanup
+RUN rm /tmp/inotify.tar.gz
 
 # Install swoole
 # First line fixes an error when installing pecl extensions. Found in https://github.com/docker-library/php/issues/233
