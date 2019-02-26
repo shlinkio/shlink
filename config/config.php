@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink;
 use Acelaya\ExpressiveErrorHandler;
 use Zend\ConfigAggregator;
 use Zend\Expressive;
+
 use function Shlinkio\Shlink\Common\env;
 
 return (new ConfigAggregator\ConfigAggregator([

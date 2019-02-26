@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Rest\ErrorHandler\JsonErrorResponseGenerator;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
+
 use function array_map;
 use function range;
 

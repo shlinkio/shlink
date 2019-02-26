@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Rest\Authentication\JWTService;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Zend\Diactoros\ServerRequest;
+
 use function strpos;
 
 class AuthenticateActionTest extends TestCase

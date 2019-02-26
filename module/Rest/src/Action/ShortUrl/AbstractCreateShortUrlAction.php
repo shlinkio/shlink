@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
+
 use function sprintf;
 
 abstract class AbstractCreateShortUrlAction extends AbstractRestAction

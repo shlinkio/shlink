@@ -7,6 +7,7 @@ use mikehaertl\wkhtmlto\Image;
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\Common\Image\ImageBuilderInterface;
 use Symfony\Component\Filesystem\Filesystem;
+
 use function sprintf;
 use function urlencode;
 

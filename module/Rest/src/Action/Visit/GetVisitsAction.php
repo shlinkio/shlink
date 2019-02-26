@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
+
 use function sprintf;
 
 class GetVisitsAction extends AbstractRestAction

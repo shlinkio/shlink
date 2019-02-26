@@ -19,6 +19,7 @@ use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouteResult;
+
 use function Functional\contains;
 use function implode;
 use function sprintf;

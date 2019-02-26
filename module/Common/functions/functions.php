@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Common;
 
 use const JSON_ERROR_NONE;
+
 use function getenv;
 use function json_decode as spl_json_decode;
 use function json_last_error;

@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Config\GenerateCharsetCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+
 use function implode;
 use function sort;
 use function str_split;

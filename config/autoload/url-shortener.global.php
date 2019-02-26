@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
+
 use function Shlinkio\Shlink\Common\env;
 
 return [

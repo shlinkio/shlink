@@ -17,7 +17,9 @@ use Shlinkio\Shlink\Core\Service\UrlShortener;
 use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
+
 use const FILEINFO_MIME;
+
 use function filesize;
 
 class PreviewActionTest extends TestCase

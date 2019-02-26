@@ -26,6 +26,7 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
+
 use function implode;
 use function sprintf;
 use function Zend\Stratigility\middleware;

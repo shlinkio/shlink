@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+
 use const PHP_EOL;
 
 class ResolveUrlCommandTest extends TestCase

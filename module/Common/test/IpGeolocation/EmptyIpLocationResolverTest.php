@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\IpGeolocation\EmptyIpLocationResolver;
 use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
+
 use function Functional\map;
 use function range;
 

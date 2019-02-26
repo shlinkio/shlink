@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Throwable;
+
 use function array_map;
 use function random_int;
 use function range;

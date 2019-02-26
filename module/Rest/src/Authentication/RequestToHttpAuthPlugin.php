@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Authentication;
 use Psr\Container;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Rest\Exception\NoAuthenticationException;
+
 use function array_filter;
 use function array_reduce;
 use function array_shift;

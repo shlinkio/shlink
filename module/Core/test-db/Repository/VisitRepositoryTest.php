@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use ShlinkioTest\Shlink\Common\DbTest\DatabaseTestCase;
+
 use function Functional\map;
 use function range;
 use function sprintf;

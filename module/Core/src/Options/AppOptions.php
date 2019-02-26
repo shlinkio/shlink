@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\Core\Options;
 
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Zend\Stdlib\AbstractOptions;
+
 use function sprintf;
 
 class AppOptions extends AbstractOptions

@@ -5,6 +5,7 @@ namespace ShlinkioTest\Shlink\Common;
 
 use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
+
 use function file_exists;
 use function touch;
 

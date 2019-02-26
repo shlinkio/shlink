@@ -5,6 +5,7 @@ namespace ShlinkioTest\Shlink\Common\Util;
 
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
+
 use function Functional\map;
 use function range;
 use function strlen;

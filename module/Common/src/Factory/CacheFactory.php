@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\Options\AppOptions;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
+
 use function Functional\contains;
 use function Shlinkio\Shlink\Common\env;
 use function sys_get_temp_dir;

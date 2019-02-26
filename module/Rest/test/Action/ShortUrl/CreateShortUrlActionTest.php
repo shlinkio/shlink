@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
+
 use function strpos;
 
 class CreateShortUrlActionTest extends TestCase

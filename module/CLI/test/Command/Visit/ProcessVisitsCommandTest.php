@@ -20,6 +20,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock;
+
 use function array_shift;
 use function sprintf;
 

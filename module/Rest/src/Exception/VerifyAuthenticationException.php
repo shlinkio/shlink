@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Exception;
 
 use Throwable;
+
 use function sprintf;
 
 class VerifyAuthenticationException extends RuntimeException

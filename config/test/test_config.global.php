@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink;
 use GuzzleHttp\Client;
 use Zend\ConfigAggregator\ConfigAggregator;
 use Zend\ServiceManager\Factory\InvokableFactory;
+
 use function sprintf;
 use function sys_get_temp_dir;
 

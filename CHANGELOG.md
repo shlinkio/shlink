@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## 1.16.1 - 2019-02-26
 
 #### Added
 
@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Changed
 
-* *Nothing*
+* [#363](https://github.com/shlinkio/shlink/issues/363) Updated to `shlinkio/php-coding-standard` version 1.1.0
 
 #### Deprecated
 

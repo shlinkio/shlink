@@ -7,6 +7,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
+
 use function sprintf;
 
 class ApiKeyService implements ApiKeyServiceInterface

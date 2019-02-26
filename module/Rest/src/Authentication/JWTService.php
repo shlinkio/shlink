@@ -8,6 +8,7 @@ use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 use UnexpectedValueException;
+
 use function time;
 
 class JWTService implements JWTServiceInterface

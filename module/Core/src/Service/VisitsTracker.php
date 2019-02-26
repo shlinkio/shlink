@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Zend\Paginator\Paginator;
+
 use function sprintf;
 
 class VisitsTracker implements VisitsTrackerInterface

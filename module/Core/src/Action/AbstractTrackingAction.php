@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
+
 use function array_key_exists;
 
 abstract class AbstractTrackingAction implements MiddlewareInterface

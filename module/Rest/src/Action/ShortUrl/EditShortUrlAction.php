@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\JsonResponse;
+
 use function sprintf;
 
 class EditShortUrlAction extends AbstractRestAction

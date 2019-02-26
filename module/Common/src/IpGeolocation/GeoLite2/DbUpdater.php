@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Symfony\Component\Filesystem\Exception as FilesystemException;
 use Symfony\Component\Filesystem\Filesystem;
 use Throwable;
+
 use function sprintf;
 
 class DbUpdater implements DbUpdaterInterface
