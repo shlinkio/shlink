@@ -72,4 +72,16 @@ class VisitLocation extends AbstractEntity implements VisitLocationInterface
             'timezone' => $this->timezone,
         ];
     }
+
+    public function isEmpty(): bool
+    {
+        return
+            $this->countryCode === '' &&
+            $this->countryName === '' &&
+            $this->regionName === '' &&
+            $this->cityName === '' &&
+            ((float) $this->latitude) === 0.0 &&
+            ((float) $this->longitude) === 0.0 &&
+            $this->timezone === '';
+    }
 }

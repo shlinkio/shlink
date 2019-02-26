@@ -116,6 +116,11 @@ class ProcessVisitsCommandTest extends TestCase
 
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString($message, $output);
+        if (empty($address)) {
+            $this->assertStringNotContainsString('Processing IP', $output);
+        } else {
+            $this->assertStringContainsString('Processing IP', $output);
+        }
         $locateVisits->shouldHaveBeenCalledOnce();
         $resolveIpLocation->shouldNotHaveBeenCalled();
     }

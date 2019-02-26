@@ -70,8 +70,11 @@ class VisitServiceTest extends TestCase
         $clear->shouldHaveBeenCalledTimes(floor(count($unlocatedVisits) / 200) + 1);
     }
 
-    /** @test */
-    public function visitsWhichCannotBeLocatedAreIgnored(): void
+    /**
+     * @test
+     * @dataProvider provideIsNonLocatableAddress
+     */
+    public function visitsWhichCannotBeLocatedAreIgnoredOrLocatedAsEmpty(bool $isNonLocatableAddress): void
     {
         $unlocatedVisits = [
             new Visit(new ShortUrl('foo'), Visitor::emptyInstance()),
@@ -88,14 +91,20 @@ class VisitServiceTest extends TestCase
         $clear = $this->em->clear()->will(function () {
         });
 
-        $this->visitService->locateUnlocatedVisits(function () {
-            throw new IpCannotBeLocatedException('Cannot be located');
+        $this->visitService->locateUnlocatedVisits(function () use ($isNonLocatableAddress) {
+            throw new IpCannotBeLocatedException($isNonLocatableAddress, 'Cannot be located');
         });
 
         $findUnlocatedVisits->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
-        $persist->shouldNotHaveBeenCalled();
+        $persist->shouldHaveBeenCalledTimes($isNonLocatableAddress ? 1 : 0);
         $flush->shouldHaveBeenCalledOnce();
         $clear->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideIsNonLocatableAddress(): iterable
+    {
+        yield 'The address is locatable' => [false];
+        yield 'The address is non-locatable' => [true];
     }
 }
