@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Exception\RuntimeException;
 use Throwable;
+
 use function count;
 use function func_get_args;
 use function random_int;

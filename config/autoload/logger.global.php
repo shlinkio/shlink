@@ -7,6 +7,7 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor;
+
 use const PHP_EOL;
 
 return [

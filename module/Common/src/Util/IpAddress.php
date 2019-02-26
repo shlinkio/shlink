@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Common\Util;
 
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
+
 use function count;
 use function explode;
 use function implode;

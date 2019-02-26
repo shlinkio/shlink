@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthorizationHeaderPlugin;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPlugin;
 use Shlinkio\Shlink\Rest\Exception\NoAuthenticationException;
 use Zend\Diactoros\ServerRequest;
+
 use function implode;
 use function sprintf;
 

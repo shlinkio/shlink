@@ -10,6 +10,7 @@ use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\ApiKeyHeaderPlugin;
+
 use function Shlinkio\Shlink\Common\json_decode;
 use function sprintf;
 

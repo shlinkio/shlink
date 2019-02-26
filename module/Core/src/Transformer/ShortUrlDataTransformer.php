@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Transformer;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Util\ShortUrlBuilderTrait;
+
 use function Functional\invoke;
 
 class ShortUrlDataTransformer implements DataTransformerInterface

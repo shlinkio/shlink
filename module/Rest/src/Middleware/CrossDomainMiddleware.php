@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Authentication;
+
 use function implode;
 
 class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterface

@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Factory\CacheFactory;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Zend\ServiceManager\ServiceManager;
+
 use function count;
 use function putenv;
 use function realpath;

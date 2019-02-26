@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Rest\Middleware\PathVersionMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
+
 use function array_shift;
 
 class PathVersionMiddlewareTest extends TestCase

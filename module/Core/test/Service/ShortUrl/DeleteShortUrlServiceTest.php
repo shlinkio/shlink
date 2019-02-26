@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\DeleteShortUrlsOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlService;
+
 use function Functional\map;
 use function range;
 

@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Common\Paginator\Util;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\ArrayUtils;
+
 use function array_map;
 use function sprintf;
 

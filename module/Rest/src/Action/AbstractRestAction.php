@@ -8,6 +8,7 @@ use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+
 use function array_merge;
 
 abstract class AbstractRestAction implements RequestHandlerInterface, RequestMethodInterface, StatusCodeInterface

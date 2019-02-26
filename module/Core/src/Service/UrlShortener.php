@@ -20,6 +20,7 @@ use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Throwable;
+
 use function array_reduce;
 use function count;
 use function floor;

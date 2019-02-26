@@ -6,7 +6,9 @@ namespace ShlinkioTest\Shlink\Common\Logger\Processor;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Logger\Processor\ExceptionWithNewLineProcessor;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
+
 use const PHP_EOL;
+
 use function Functional\map;
 use function range;
 

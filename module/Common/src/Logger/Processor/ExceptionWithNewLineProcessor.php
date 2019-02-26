@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Common\Logger\Processor;
 
 use const PHP_EOL;
+
 use function str_replace;
 use function strpos;
 

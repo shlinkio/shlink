@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Common;
 
 use Psr\Container\ContainerInterface;
+
 use function file_exists;
 use function touch;
 

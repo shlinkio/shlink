@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Exception;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
+
 use function Functional\map;
 use function range;
 use function sprintf;

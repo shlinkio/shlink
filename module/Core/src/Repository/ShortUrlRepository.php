@@ -7,6 +7,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+
 use function array_column;
 use function array_key_exists;
 use function Functional\contains;

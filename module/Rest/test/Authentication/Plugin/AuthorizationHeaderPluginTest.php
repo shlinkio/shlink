@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthorizationHeaderPlugin;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
+
 use function sprintf;
 
 class AuthorizationHeaderPluginTest extends TestCase

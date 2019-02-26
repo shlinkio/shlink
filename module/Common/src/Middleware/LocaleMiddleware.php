@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface as DelegateInterface;
 use Zend\I18n\Translator\Translator;
+
 use function count;
 use function explode;
 

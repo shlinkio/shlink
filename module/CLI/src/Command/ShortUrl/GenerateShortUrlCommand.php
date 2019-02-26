@@ -17,6 +17,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\Diactoros\Uri;
+
 use function array_map;
 use function Functional\curry;
 use function Functional\flatten;

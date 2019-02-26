@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Rest\Authentication\JWTServiceInterface;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Throwable;
+
 use function count;
 use function explode;
 use function sprintf;

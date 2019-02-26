@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
+
 use function str_replace;
 use function strtoupper;
 

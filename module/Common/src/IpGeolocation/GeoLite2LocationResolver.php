@@ -9,6 +9,7 @@ use GeoIp2\Model\City;
 use GeoIp2\Record\Subdivision;
 use MaxMind\Db\Reader\InvalidDatabaseException;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
+
 use function Functional\first;
 
 class GeoLite2LocationResolver implements IpLocationResolverInterface

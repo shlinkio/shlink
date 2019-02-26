@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\Rest;
 
 use Zend\Config\Factory;
 use Zend\Stdlib\Glob;
+
 use function sprintf;
 
 class ConfigProvider

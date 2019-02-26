@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\Options\AppOptions;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Zend\ServiceManager\ServiceManager;
+
 use function array_merge;
 
 class ApplicationFactoryTest extends TestCase

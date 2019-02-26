@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
 use function Functional\map;
 
 class ListTagsCommand extends Command

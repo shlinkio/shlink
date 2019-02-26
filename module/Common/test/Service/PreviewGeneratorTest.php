@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Common\Image\ImageBuilder;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Symfony\Component\Filesystem\Filesystem;
 use Zend\ServiceManager\ServiceManager;
+
 use function sprintf;
 use function urlencode;
 

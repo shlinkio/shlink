@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
+
 use function sprintf;
 
 class EditShortUrlTagsAction extends AbstractRestAction

@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\Common\Paginator\Adapter;
 
 use Shlinkio\Shlink\Common\Repository\PaginableRepositoryInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
+
 use function strip_tags;
 use function trim;
 

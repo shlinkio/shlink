@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response;
 use Zend\Expressive\Template\TemplateRendererInterface;
+
 use function array_shift;
 use function explode;
 use function Functional\contains;

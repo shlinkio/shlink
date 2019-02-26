@@ -7,6 +7,7 @@ use Fig\Http\Message\StatusCodeInterface as StatusCode;
 use Psr\Http\Message\StreamInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
+
 use function base64_decode;
 
 class PixelResponse extends Response

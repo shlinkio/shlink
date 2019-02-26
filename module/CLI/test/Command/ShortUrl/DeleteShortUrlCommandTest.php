@@ -11,7 +11,9 @@ use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+
 use const PHP_EOL;
+
 use function array_pop;
 use function sprintf;
 

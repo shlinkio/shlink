@@ -11,6 +11,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpApiLocationResolver;
 use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
+
 use function json_encode;
 
 class IpApiLocationResolverTest extends TestCase

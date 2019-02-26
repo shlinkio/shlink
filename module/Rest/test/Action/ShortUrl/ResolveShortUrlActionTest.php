@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ResolveShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\ServerRequest;
+
 use function strpos;
 
 class ResolveShortUrlActionTest extends TestCase
