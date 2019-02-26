@@ -35,7 +35,7 @@ class VisitService implements VisitServiceInterface
                 /** @var Location $location */
                 $location = $geolocateVisit($visit);
             } catch (IpCannotBeLocatedException $e) {
-                if (!$e->isNonLocatableAddress()) {
+                if (! $e->isNonLocatableAddress()) {
                     // Skip if the visit's IP could not be located because of an error
                     continue;
                 }
