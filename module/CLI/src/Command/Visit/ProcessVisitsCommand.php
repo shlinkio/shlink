@@ -83,14 +83,14 @@ class ProcessVisitsCommand extends Command
                 '<comment>Ignored visit with no IP address</comment>',
                 OutputInterface::VERBOSITY_VERBOSE
             );
-            throw new IpCannotBeLocatedException('Ignored visit with no IP address');
+            throw IpCannotBeLocatedException::forEmptyAddress();
         }
 
         $ipAddr = $visit->getRemoteAddr();
         $this->output->write(sprintf('Processing IP <fg=blue>%s</>', $ipAddr));
         if ($ipAddr === IpAddress::LOCALHOST) {
             $this->output->writeln(' [<comment>Ignored localhost address</comment>]');
-            throw new IpCannotBeLocatedException('Ignored localhost address');
+            throw IpCannotBeLocatedException::forLocalhost();
         }
 
         try {
@@ -101,7 +101,7 @@ class ProcessVisitsCommand extends Command
                 $this->getApplication()->renderException($e, $this->output);
             }
 
-            throw new IpCannotBeLocatedException('An error occurred while locating IP', $e->getCode(), $e);
+            throw IpCannotBeLocatedException::forError($e);
         }
     }
 }

@@ -30,12 +30,18 @@ class VisitService implements VisitServiceInterface
 
         foreach ($results as $visit) {
             $count++;
+
             try {
                 /** @var Location $location */
                 $location = $geolocateVisit($visit);
             } catch (IpCannotBeLocatedException $e) {
-                // Skip if the visit's IP could not be located
-                continue;
+                if (!$e->isNonLocatableAddress()) {
+                    // Skip if the visit's IP could not be located because of an error
+                    continue;
+                }
+
+                // If the IP address is non-locatable, locate it as empty to prevent next processes to pick it again
+                $location = Location::emptyInstance();
             }
 
             $location = new VisitLocation($location);

@@ -89,7 +89,7 @@ class VisitServiceTest extends TestCase
         });
 
         $this->visitService->locateUnlocatedVisits(function () {
-            throw new IpCannotBeLocatedException('Cannot be located');
+            throw new IpCannotBeLocatedException(false, 'Cannot be located');
         });
 
         $findUnlocatedVisits->shouldHaveBeenCalledOnce();
