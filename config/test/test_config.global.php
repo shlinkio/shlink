@@ -4,14 +4,51 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink;
 
 use GuzzleHttp\Client;
+use PDO;
 use Zend\ConfigAggregator\ConfigAggregator;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
+use function Shlinkio\Shlink\Common\env;
 use function sprintf;
 use function sys_get_temp_dir;
 
 $swooleTestingHost = '127.0.0.1';
 $swooleTestingPort = 9999;
+
+$buildDbConnection = function () {
+    $driver = env('DB_DRIVER', 'sqlite');
+
+    switch ($driver) {
+        case 'sqlite':
+            return [
+                'driver' => 'pdo_sqlite',
+                'path' => sys_get_temp_dir() . '/shlink-tests.db',
+            ];
+        case 'mysql':
+            return [
+                'driver' => 'pdo_mysql',
+                'host' => 'shlink_db',
+                'user' => 'root',
+                'password' => 'root',
+                'dbname' => 'shlink_test',
+                'charset' => 'utf8',
+                'driverOptions' => [
+                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+                ],
+            ];
+        case 'postgres':
+            return [
+                'driver' => 'pdo_pgsql',
+                'host' => 'shlink_db_postgres',
+                'user' => 'postgres',
+                'password' => 'root',
+                'dbname' => 'shlink_test',
+                'charset' => 'utf8',
+            ];
+        default:
+            return [];
+    }
+};
 
 return [
 
@@ -49,11 +86,7 @@ return [
     ],
 
     'entity_manager' => [
-        'connection' => [
-            'driver' => 'pdo_sqlite',
-             'path' => sys_get_temp_dir() . '/shlink-tests.db',
-//            'path' => __DIR__ . '/../../data/shlink-tests.db',
-        ],
+        'connection' => $buildDbConnection(),
     ],
 
     'data_fixtures' => [

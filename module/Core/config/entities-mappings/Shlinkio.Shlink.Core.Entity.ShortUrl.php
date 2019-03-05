@@ -58,6 +58,6 @@ $builder->createOneToMany('visits', Entity\Visit::class)
 
 $builder->createManyToMany('tags', Entity\Tag::class)
         ->setJoinTable('short_urls_in_tags')
-        ->addInverseJoinColumn('tag_id', 'id')
-        ->addJoinColumn('short_url_id', 'id')
+        ->addInverseJoinColumn('tag_id', 'id', true, false, 'CASCADE')
+        ->addJoinColumn('short_url_id', 'id', true, false, 'CASCADE')
         ->build();

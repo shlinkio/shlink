@@ -9,16 +9,13 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Process\Process;
 
-use function file_exists;
-use function unlink;
-
 class TestHelper
 {
-    public function createTestDb(string $shlinkDbPath): void
+    public function createTestDb(): void
     {
-        if (file_exists($shlinkDbPath)) {
-            unlink($shlinkDbPath);
-        }
+        $process = new Process(['vendor/bin/doctrine', 'orm:schema-tool:drop', '--force', '--no-interaction', '-q']);
+        $process->inheritEnvironmentVariables()
+                ->mustRun();
 
         $process = new Process(['vendor/bin/doctrine', 'orm:schema-tool:create', '--no-interaction', '-q']);
         $process->inheritEnvironmentVariables()

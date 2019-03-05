@@ -18,9 +18,9 @@ use function count;
 class ShortUrlRepositoryTest extends DatabaseTestCase
 {
     protected const ENTITIES_TO_EMPTY = [
-        ShortUrl::class,
-        Visit::class,
         Tag::class,
+        Visit::class,
+        ShortUrl::class,
     ];
 
     /** @var ShortUrlRepository */
