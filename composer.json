@@ -110,6 +110,8 @@
         "test:ci": [
             "@test:unit:ci",
             "@test:db",
+            "@test:db:mysql",
+            "@test:db:postgres",
             "@test:api"
         ],
         "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov --testdox",

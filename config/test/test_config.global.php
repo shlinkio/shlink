@@ -17,6 +17,7 @@ $swooleTestingPort = 9999;
 
 $buildDbConnection = function () {
     $driver = env('DB_DRIVER', 'sqlite');
+    $isCi = env('TRAVIS') === 'true';
 
     switch ($driver) {
         case 'sqlite':
@@ -27,9 +28,9 @@ $buildDbConnection = function () {
         case 'mysql':
             return [
                 'driver' => 'pdo_mysql',
-                'host' => 'shlink_db',
+                'host' => $isCi ? 'localhost' : 'shlink_db',
                 'user' => 'root',
-                'password' => 'root',
+                'password' => $isCi ? '' : 'root',
                 'dbname' => 'shlink_test',
                 'charset' => 'utf8',
                 'driverOptions' => [
@@ -39,9 +40,9 @@ $buildDbConnection = function () {
         case 'postgres':
             return [
                 'driver' => 'pdo_pgsql',
-                'host' => 'shlink_db_postgres',
+                'host' => $isCi ? 'localhost' : 'shlink_db_postgres',
                 'user' => 'postgres',
-                'password' => 'root',
+                'password' => $isCi ? '' : 'root',
                 'dbname' => 'shlink_test',
                 'charset' => 'utf8',
             ];
