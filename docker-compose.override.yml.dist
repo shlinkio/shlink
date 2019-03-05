@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
     shlink_php:
@@ -8,6 +8,18 @@ services:
             - /etc/group:/etc/group:ro
 
     shlink_swoole:
+        user: 1000:1000
+        volumes:
+            - /etc/passwd:/etc/passwd:ro
+            - /etc/group:/etc/group:ro
+
+    shlink_db:
+        user: 1000:1000
+        volumes:
+            - /etc/passwd:/etc/passwd:ro
+            - /etc/group:/etc/group:ro
+
+    shlink_db_postgres:
         user: 1000:1000
         volumes:
             - /etc/passwd:/etc/passwd:ro
