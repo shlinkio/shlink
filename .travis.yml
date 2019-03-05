@@ -26,9 +26,9 @@ install:
 before_script:
   - mysql -e 'CREATE DATABASE shlink_test;'
   - psql -c 'create database shlink_test;' -U postgres
+  - mkdir build
 
 script:
-  - mkdir build
   - composer ci
 
 after_success:
