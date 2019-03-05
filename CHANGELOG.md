@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## 1.16.2 - 2019-03-05
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#368](https://github.com/shlinkio/shlink/issues/368) Fixed error produced when running a `SELECT COUNT(...)` with `ORDER BY` in PostgreSQL databases.
+
+
 ## 1.16.1 - 2019-02-26
 
 #### Added

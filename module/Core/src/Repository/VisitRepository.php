@@ -50,7 +50,8 @@ DQL;
         ?int $offset = null
     ): array {
         $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $dateRange);
-        $qb->select('v');
+        $qb->select('v')
+           ->orderBy('v.date', 'DESC');
 
         if ($limit !== null) {
             $qb->setMaxResults($limit);
@@ -76,8 +77,7 @@ DQL;
         $qb->from(Visit::class, 'v')
            ->join('v.shortUrl', 'su')
            ->where($qb->expr()->eq('su.shortCode', ':shortCode'))
-           ->setParameter('shortCode', $shortCode)
-           ->orderBy('v.date', 'DESC') ;
+           ->setParameter('shortCode', $shortCode);
 
         // Apply date range filtering
         if ($dateRange !== null && $dateRange->getStartDate() !== null) {

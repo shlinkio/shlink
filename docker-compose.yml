@@ -1,17 +1,15 @@
-version: '2'
+version: '3'
 
 services:
     shlink_nginx:
         container_name: shlink_nginx
-        build:
-            context: .
-            dockerfile: ./data/infra/nginx.Dockerfile
+        image: nginx:1.15.9-alpine
         ports:
             - "8000:80"
         volumes:
             - ./:/home/shlink/www
             - ./docs:/home/shlink/www/public/docs
-            - ./data/infra/vhost.conf:/etc/nginx/conf.d/shlink-vhost.conf
+            - ./data/infra/vhost.conf:/etc/nginx/conf.d/default.conf
         links:
             - shlink_php
 
@@ -25,6 +23,7 @@ services:
             - ./data/infra/php.ini:/usr/local/etc/php/php.ini
         links:
             - shlink_db
+            - shlink_db_postgres
 
     shlink_swoole:
         container_name: shlink_swoole
@@ -37,12 +36,11 @@ services:
             - ./:/home/shlink
         links:
             - shlink_db
+            - shlink_db_postgres
 
     shlink_db:
         container_name: shlink_db
-        build:
-            context: .
-            dockerfile: ./data/infra/db.Dockerfile
+        image: mysql:5.7
         ports:
             - "3307:3306"
         volumes:
@@ -51,3 +49,16 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: shlink
+
+    shlink_db_postgres:
+        container_name: shlink_db_postgres
+        image: postgres:10.7-alpine
+        ports:
+            - "5433:5432"
+        volumes:
+            - ./:/home/shlink/www
+            - ./data/infra/database_pg:/var/lib/postgresql/data
+        environment:
+            POSTGRES_PASSWORD: root
+            POSTGRES_DB: shlink
+            PGDATA: /var/lib/postgresql/data/pgdata

@@ -27,6 +27,9 @@ RUN docker-php-ext-install zip
 RUN apk add --no-cache --virtual libpng-dev
 RUN docker-php-ext-install gd
 
+RUN apk add --no-cache postgresql-dev
+RUN docker-php-ext-install pdo_pgsql
+
 # Install redis extension
 ADD https://github.com/phpredis/phpredis/archive/$PREDIS_VERSION.tar.gz /tmp/phpredis.tar.gz
 RUN mkdir -p /usr/src/php/ext/redis\
