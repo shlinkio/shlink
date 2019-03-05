@@ -9,6 +9,10 @@ php:
   - 7.2
   - 7.3
 
+services:
+  - mysql
+  - postgresql
+
 before_install:
   - echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -19,8 +23,12 @@ install:
   - composer self-update
   - composer install --no-interaction
 
-script:
+before_script:
+  - mysql -e 'CREATE DATABASE shlink_test;'
+  - psql -c 'create database shlink_test;' -U postgres
   - mkdir build
+
+script:
   - composer ci
 
 after_success:

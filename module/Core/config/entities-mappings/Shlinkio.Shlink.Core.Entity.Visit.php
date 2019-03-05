@@ -43,10 +43,10 @@ $builder->createField('userAgent', Type::STRING)
         ->build();
 
 $builder->createManyToOne('shortUrl', Entity\ShortUrl::class)
-        ->addJoinColumn('short_url_id', 'id', false)
+        ->addJoinColumn('short_url_id', 'id', false, false, 'CASCADE')
         ->build();
 
 $builder->createManyToOne('visitLocation', Entity\VisitLocation::class)
-        ->addJoinColumn('visit_location_id', 'id')
+        ->addJoinColumn('visit_location_id', 'id', true, false, 'Set NULL')
         ->cascadePersist()
         ->build();

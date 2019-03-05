@@ -15,7 +15,5 @@ if (! file_exists('.env')) {
 
 /** @var ContainerInterface $container */
 $container = require __DIR__ . '/../container.php';
-$config = $container->get('config');
-
-$container->get(TestHelper::class)->createTestDb($config['entity_manager']['connection']['path']);
+$container->get(TestHelper::class)->createTestDb();
 DbTest\DatabaseTestCase::setEntityManager($container->get('em'));
