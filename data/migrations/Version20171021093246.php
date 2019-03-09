@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace ShlinkMigrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -14,10 +14,9 @@ use Doctrine\DBAL\Types\Type;
 class Version20171021093246 extends AbstractMigration
 {
     /**
-     * @param Schema $schema
      * @throws SchemaException
      */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
         $shortUrls = $schema->getTable('short_urls');
         if ($shortUrls->hasColumn('valid_since')) {
@@ -33,10 +32,9 @@ class Version20171021093246 extends AbstractMigration
     }
 
     /**
-     * @param Schema $schema
      * @throws SchemaException
      */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $shortUrls = $schema->getTable('short_urls');
         if (! $shortUrls->hasColumn('valid_since')) {

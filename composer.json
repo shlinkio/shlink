@@ -20,7 +20,7 @@
         "cakephp/chronos": "^1.2",
         "cocur/slugify": "^3.0",
         "doctrine/cache": "^1.6",
-        "doctrine/migrations": "^1.4",
+        "doctrine/migrations": "^2.0",
         "doctrine/orm": "^2.5",
         "endroid/qr-code": "^1.7",
         "firebase/php-jwt": "^4.0",

@@ -3,19 +3,16 @@ declare(strict_types=1);
 
 namespace ShlinkMigrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
 class Version20160820191203 extends AbstractMigration
 {
-    /**
-     * @param Schema $schema
-     */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
         // Check if the tables already exist
         $tables = $schema->getTables();
@@ -29,7 +26,7 @@ class Version20160820191203 extends AbstractMigration
         $this->createShortUrlsInTagsTable($schema);
     }
 
-    protected function createTagsTable(Schema $schema)
+    private function createTagsTable(Schema $schema): void
     {
         $table = $schema->createTable('tags');
         $table->addColumn('id', Type::BIGINT, [
@@ -46,7 +43,7 @@ class Version20160820191203 extends AbstractMigration
         $table->setPrimaryKey(['id']);
     }
 
-    protected function createShortUrlsInTagsTable(Schema $schema)
+    private function createShortUrlsInTagsTable(Schema $schema): void
     {
         $table = $schema->createTable('short_urls_in_tags');
         $table->addColumn('short_url_id', Type::BIGINT, [
@@ -70,10 +67,7 @@ class Version20160820191203 extends AbstractMigration
         $table->setPrimaryKey(['short_url_id', 'tag_id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $schema->dropTable('short_urls_in_tags');
         $schema->dropTable('tags');
