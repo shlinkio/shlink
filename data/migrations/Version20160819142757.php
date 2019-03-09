@@ -3,21 +3,24 @@ declare(strict_types=1);
 
 namespace ShlinkMigrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\SchemaException;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
 class Version20160819142757 extends AbstractMigration
 {
-    const MYSQL = 'mysql';
-    const SQLITE = 'sqlite';
+    private const MYSQL = 'mysql';
+    private const SQLITE = 'sqlite';
 
     /**
-     * @param Schema $schema
+     * @throws DBALException
+     * @throws SchemaException
      */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
         $db = $this->connection->getDatabasePlatform()->getName();
         $table = $schema->getTable('short_urls');
@@ -31,9 +34,9 @@ class Version20160819142757 extends AbstractMigration
     }
 
     /**
-     * @param Schema $schema
+     * @throws DBALException
      */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $db = $this->connection->getDatabasePlatform()->getName();
     }
