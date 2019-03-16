@@ -1,0 +1,21 @@
+<?php
+declare(strict_types=1);
+
+use Zend\Expressive\Swoole\HotCodeReload\FileWatcher\InotifyFileWatcher;
+use Zend\ServiceManager\Factory\InvokableFactory;
+
+return [
+
+    'zend-expressive-swoole' => [
+        'hot-code-reload' => [
+            'enable' => true,
+        ],
+    ],
+
+    'dependencies' => [
+        'factories' => [
+            InotifyFileWatcher::class => InvokableFactory::class,
+        ],
+    ],
+
+];
