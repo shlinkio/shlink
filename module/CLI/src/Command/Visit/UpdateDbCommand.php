@@ -9,8 +9,11 @@ use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+
+use function sprintf;
 
 class UpdateDbCommand extends Command
 {
@@ -33,6 +36,12 @@ class UpdateDbCommand extends Command
             ->setHelp(
                 'The GeoLite2 database is updated first Tuesday every month, so this command should be ideally run '
                 . 'every first Wednesday'
+            )
+            ->addOption(
+                'ignoreErrors',
+                'i',
+                InputOption::VALUE_NONE,
+                'Makes the command success even iof the update fails.'
             );
     }
 
@@ -49,19 +58,32 @@ class UpdateDbCommand extends Command
             });
 
             $progressBar->finish();
-            $io->writeln('');
+            $io->newLine();
 
             $io->success('GeoLite2 database properly updated');
             return ExitCodes::EXIT_SUCCESS;
         } catch (RuntimeException $e) {
             $progressBar->finish();
-            $io->writeln('');
+            $io->newLine();
 
-            $io->error('An error occurred while updating GeoLite2 database');
-            if ($io->isVerbose()) {
-                $this->getApplication()->renderException($e, $output);
-            }
-            return ExitCodes::EXIT_FAILURE;
+            return $this->handleError($e, $io, $input);
         }
+    }
+
+    private function handleError(RuntimeException $e, SymfonyStyle $io, InputInterface $input): int
+    {
+        $ignoreErrors = $input->getOption('ignoreErrors');
+        $baseErrorMsg = 'An error occurred while updating GeoLite2 database';
+
+        if ($ignoreErrors) {
+            $io->warning(sprintf('%s, but it was ignored', $baseErrorMsg));
+            return ExitCodes::EXIT_SUCCESS;
+        }
+
+        $io->error($baseErrorMsg);
+        if ($io->isVerbose()) {
+            $this->getApplication()->renderException($e, $io);
+        }
+        return ExitCodes::EXIT_FAILURE;
     }
 }

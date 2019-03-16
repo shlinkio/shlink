@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\UpdateDbCommand;
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Console\Application;
@@ -31,27 +32,45 @@ class UpdateDbCommandTest extends TestCase
     }
 
     /** @test */
-    public function successMessageIsPrintedIfEverythingWorks()
+    public function successMessageIsPrintedIfEverythingWorks(): void
     {
         $download = $this->dbUpdater->downloadFreshCopy(Argument::type('callable'))->will(function () {
         });
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
+        $exitCode = $this->commandTester->getStatusCode();
 
         $this->assertStringContainsString('GeoLite2 database properly updated', $output);
+        $this->assertEquals(ExitCodes::EXIT_SUCCESS, $exitCode);
         $download->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
-    public function errorMessageIsPrintedIfAnExceptionIsThrown()
+    public function errorMessageIsPrintedIfAnExceptionIsThrown(): void
     {
         $download = $this->dbUpdater->downloadFreshCopy(Argument::type('callable'))->willThrow(RuntimeException::class);
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
+        $exitCode = $this->commandTester->getStatusCode();
 
         $this->assertStringContainsString('An error occurred while updating GeoLite2 database', $output);
+        $this->assertEquals(ExitCodes::EXIT_FAILURE, $exitCode);
+        $download->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
+    public function warningMessageIsPrintedIfAnExceptionIsThrownAndErrorsAreIgnored(): void
+    {
+        $download = $this->dbUpdater->downloadFreshCopy(Argument::type('callable'))->willThrow(RuntimeException::class);
+
+        $this->commandTester->execute(['--ignoreErrors' => true]);
+        $output = $this->commandTester->getDisplay();
+        $exitCode = $this->commandTester->getStatusCode();
+
+        $this->assertStringContainsString('ignored', $output);
+        $this->assertEquals(ExitCodes::EXIT_SUCCESS, $exitCode);
         $download->shouldHaveBeenCalledOnce();
     }
 }
