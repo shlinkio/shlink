@@ -8,12 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Added
 
-* [#153](https://github.com/shlinkio/shlink/issues/153) Updated to [doctrine/migrations](https://github.com/doctrine/migrations) version 2.0.0
-* [#376](https://github.com/shlinkio/shlink/issues/376) Allowed `visit:update-db` command to not return an error exit code even if download fails, by passing the `-i` flag.
+* *Nothing*
 
 #### Changed
 
-* *Nothing*
+* [#153](https://github.com/shlinkio/shlink/issues/153) Updated to [doctrine/migrations](https://github.com/doctrine/migrations) version 2.0.0
+* [#376](https://github.com/shlinkio/shlink/issues/376) Allowed `visit:update-db` command to not return an error exit code even if download fails, by passing the `-i` flag.
 
 #### Deprecated
 
@@ -25,7 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Fixed
 
-* *Nothing*
+* [#382](https://github.com/shlinkio/shlink/issues/382) Fixed existing short URLs not properly checked when providing the `findIfExists` flag.
 
 
 ## 1.16.2 - 2019-03-05
