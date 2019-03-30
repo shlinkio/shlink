@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## 1.16.3 - 2019-03-30
 
 #### Added
 
@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#153](https://github.com/shlinkio/shlink/issues/153) Updated to [doctrine/migrations](https://github.com/doctrine/migrations) version 2.0.0
 * [#376](https://github.com/shlinkio/shlink/issues/376) Allowed `visit:update-db` command to not return an error exit code even if download fails, by passing the `-i` flag.
+* [#341](https://github.com/shlinkio/shlink/issues/341) Improved database tests so that they are executed against all supported database engines.
 
 #### Deprecated
 
