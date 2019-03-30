@@ -112,32 +112,39 @@ class UrlShortener implements UrlShortenerInterface
         if ($meta->hasCustomSlug()) {
             $criteria['shortCode'] = $meta->getCustomSlug();
         }
-        /** @var ShortUrl|null $shortUrl */
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy($criteria);
-        if ($shortUrl === null) {
+        /** @var ShortUrl[] $shortUrls */
+        $shortUrls = $this->em->getRepository(ShortUrl::class)->findBy($criteria);
+        if (empty($shortUrls)) {
             return null;
         }
 
-        if ($meta->hasMaxVisits() && $meta->getMaxVisits() !== $shortUrl->getMaxVisits()) {
-            return null;
-        }
-        if ($meta->hasValidSince() && ! $meta->getValidSince()->eq($shortUrl->getValidSince())) {
-            return null;
-        }
-        if ($meta->hasValidUntil() && ! $meta->getValidUntil()->eq($shortUrl->getValidUntil())) {
-            return null;
-        }
+        // Iterate short URLs until one that matches is found, or return null otherwise
+        return array_reduce($shortUrls, function (?ShortUrl $found, ShortUrl $shortUrl) use ($tags, $meta) {
+            if ($found) {
+                return $found;
+            }
 
-        $shortUrlTags = invoke($shortUrl->getTags(), '__toString');
-        $hasAllTags = count($shortUrlTags) === count($tags) && array_reduce(
-            $tags,
-            function (bool $hasAllTags, string $tag) use ($shortUrlTags) {
-                return $hasAllTags && contains($shortUrlTags, $tag);
-            },
-            true
-        );
+            if ($meta->hasMaxVisits() && $meta->getMaxVisits() !== $shortUrl->getMaxVisits()) {
+                return null;
+            }
+            if ($meta->hasValidSince() && ! $meta->getValidSince()->eq($shortUrl->getValidSince())) {
+                return null;
+            }
+            if ($meta->hasValidUntil() && ! $meta->getValidUntil()->eq($shortUrl->getValidUntil())) {
+                return null;
+            }
 
-        return $hasAllTags ? $shortUrl : null;
+            $shortUrlTags = invoke($shortUrl->getTags(), '__toString');
+            $hasAllTags = count($shortUrlTags) === count($tags) && array_reduce(
+                $tags,
+                function (bool $hasAllTags, string $tag) use ($shortUrlTags) {
+                    return $hasAllTags && contains($shortUrlTags, $tag);
+                },
+                true
+            );
+
+            return $hasAllTags ? $shortUrl : null;
+        });
     }
 
     private function checkUrlExists(string $url): void

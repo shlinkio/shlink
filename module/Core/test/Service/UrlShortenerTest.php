@@ -121,7 +121,7 @@ class UrlShortenerTest extends TestCase
     {
         $repo = $this->prophesize(ShortUrlRepository::class);
         $countBySlug = $repo->count(['shortCode' => 'custom-slug'])->willReturn(1);
-        $repo->findOneBy(Argument::cetera())->willReturn(null);
+        $repo->findBy(Argument::cetera())->willReturn([]);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $countBySlug->shouldBeCalledOnce();
@@ -146,7 +146,7 @@ class UrlShortenerTest extends TestCase
         ?ShortUrl $expected
     ): void {
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $findExisting = $repo->findOneBy(Argument::any())->willReturn($expected);
+        $findExisting = $repo->findBy(Argument::any())->willReturn([$expected]);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $result = $this->urlShortener->urlToShortCode(new Uri($url), $tags, $meta);
