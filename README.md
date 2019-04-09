@@ -21,7 +21,7 @@ A PHP-based self-hosted URL shortener that can be used to serve shortened URLs u
 
 First make sure the host where you are going to run shlink fulfills these requirements:
 
-* PHP 7.1 or greater with JSON, APCu, intl, curl, PDO and gd extensions enabled.
+* PHP 7.2 or greater with JSON, APCu, intl, curl, PDO and gd extensions enabled.
 * MySQL, PostgreSQL or SQLite.
 * The web server of your choice with PHP integration (Apache or Nginx recommended).
 
@@ -74,7 +74,7 @@ Despite how you built the project, you are going to need to install it now, by f
 
             location ~ \.php$ {
                 fastcgi_split_path_info ^(.+\.php)(/.+)$;
-                fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
+                fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
                 fastcgi_index index.php;
                 include fastcgi.conf;
             }
