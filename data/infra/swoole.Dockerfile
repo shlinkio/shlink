@@ -2,7 +2,6 @@ FROM php:7.3.1-cli-alpine3.8
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV PREDIS_VERSION 4.2.0
-ENV MEMCACHED_VERSION 3.1.3
 ENV APCU_VERSION 5.1.16
 ENV APCU_BC_VERSION 1.0.4
 ENV INOTIFY_VERSION 2.0.0
@@ -40,18 +39,6 @@ RUN docker-php-ext-configure redis\
   && docker-php-ext-install redis
 # cleanup
 RUN rm /tmp/phpredis.tar.gz
-
-# Install memcached extension
-RUN apk add --no-cache --virtual cyrus-sasl-dev
-RUN apk add --no-cache --virtual libmemcached-dev
-ADD https://github.com/php-memcached-dev/php-memcached/archive/v$MEMCACHED_VERSION.tar.gz /tmp/memcached.tar.gz
-RUN mkdir -p /usr/src/php/ext/memcached\
-  && tar xf /tmp/memcached.tar.gz -C /usr/src/php/ext/memcached --strip-components=1
-# configure and install
-RUN docker-php-ext-configure memcached\
-  && docker-php-ext-install memcached
-# cleanup
-RUN rm /tmp/memcached.tar.gz
 
 # Install APCu extension
 ADD https://pecl.php.net/get/apcu-$APCU_VERSION.tgz /tmp/apcu.tar.gz
