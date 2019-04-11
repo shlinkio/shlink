@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Changed
 
-* *Nothing*
+* [#56](https://github.com/shlinkio/shlink/issues/56) Simplified supported cache, requiring APCu always.
 
 ### Deprecated
 
