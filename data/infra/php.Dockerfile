@@ -1,7 +1,6 @@
 FROM php:7.3.1-fpm-alpine3.8
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
-ENV PREDIS_VERSION 4.2.0
 ENV APCU_VERSION 5.1.16
 ENV APCU_BC_VERSION 1.0.4
 ENV XDEBUG_VERSION "2.7.0RC1"
@@ -29,16 +28,6 @@ RUN docker-php-ext-install gd
 
 RUN apk add --no-cache postgresql-dev
 RUN docker-php-ext-install pdo_pgsql
-
-# Install redis extension
-ADD https://github.com/phpredis/phpredis/archive/$PREDIS_VERSION.tar.gz /tmp/phpredis.tar.gz
-RUN mkdir -p /usr/src/php/ext/redis\
-  && tar xf /tmp/phpredis.tar.gz -C /usr/src/php/ext/redis --strip-components=1
-# configure and install
-RUN docker-php-ext-configure redis\
-  && docker-php-ext-install redis
-# cleanup
-RUN rm /tmp/phpredis.tar.gz
 
 # Install APCu extension
 ADD https://pecl.php.net/get/apcu-$APCU_VERSION.tgz /tmp/apcu.tar.gz
