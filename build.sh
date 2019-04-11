@@ -35,7 +35,8 @@ rsync -av * "${builtcontent}" \
     --exclude=config/autoload/*local* \
     --exclude=config/test \
     --exclude=**/test* \
-    --exclude=build*
+    --exclude=build* \
+    --exclude=.github
 cd "${builtcontent}"
 
 # Install dependencies
