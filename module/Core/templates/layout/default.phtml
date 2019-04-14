@@ -5,28 +5,19 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="shortcut icon" href="/favicon.ico">
     <style>
-      body {padding-top: 60px;}
-      .app {display: flex; min-height: 100vh; flex-direction: column;}
-      .app-content {flex: 1;}
-      .app-footer p {margin-bottom: 20px;}
+      html, body {height: 100%}
+      .app {height: 100vh; display: flex; align-items: center; justify-content: center; flex-flow: column;}
     </style>
     <?= $this->section('stylesheets', '') ?>
   </head>
-  <body class="app">
-    <div class="app-content">
+  <body>
+    <div class="app">
       <main class="container">
         <?= $this->section('main', '') ?>
       </main>
     </div>
-
-    <footer class="app-footer">
-      <div class="container">
-        <hr>
-        <p>&copy; <?= date('Y') ?> <a href="https://shlink.io">Shlink</a></p>
-      </div>
-    </footer>
   </body>
 </html>
