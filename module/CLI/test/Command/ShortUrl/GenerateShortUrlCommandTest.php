@@ -42,7 +42,6 @@ class GenerateShortUrlCommandTest extends TestCase
         );
 
         $this->commandTester->execute([
-            'command' => 'shortcode:generate',
             'longUrl' => 'http://domain.com/foo/bar',
             '--maxVisits' => '3',
         ]);
@@ -58,10 +57,7 @@ class GenerateShortUrlCommandTest extends TestCase
         $this->urlShortener->urlToShortCode(Argument::cetera())->willThrow(new InvalidUrlException())
                                                                ->shouldBeCalledOnce();
 
-        $this->commandTester->execute([
-            'command' => 'shortcode:generate',
-            'longUrl' => 'http://domain.com/invalid',
-        ]);
+        $this->commandTester->execute(['longUrl' => 'http://domain.com/invalid']);
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString(
             'Provided URL "http://domain.com/invalid" is invalid.',
@@ -82,7 +78,6 @@ class GenerateShortUrlCommandTest extends TestCase
         )->willReturn((new ShortUrl(''))->setShortCode('abc123'));
 
         $this->commandTester->execute([
-            'command' => 'shortcode:generate',
             'longUrl' => 'http://domain.com/foo/bar',
             '--tags' => ['foo,bar', 'baz', 'boo,zar,baz'],
         ]);

@@ -37,7 +37,7 @@ class ListShortUrlsCommandTest extends TestCase
                                                                 ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['n']);
-        $this->commandTester->execute(['command' => 'shortcode:list']);
+        $this->commandTester->execute([]);
     }
 
     /** @test */
@@ -54,7 +54,7 @@ class ListShortUrlsCommandTest extends TestCase
         })->shouldBeCalledTimes(3);
 
         $this->commandTester->setInputs(['y', 'y', 'n']);
-        $this->commandTester->execute(['command' => 'shortcode:list']);
+        $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString('Continue with page 2?', $output);
@@ -75,7 +75,7 @@ class ListShortUrlsCommandTest extends TestCase
                                                                 ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['n']);
-        $this->commandTester->execute(['command' => 'shortcode:list']);
+        $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString('url_1', $output);
@@ -95,10 +95,7 @@ class ListShortUrlsCommandTest extends TestCase
                                                                     ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['y']);
-        $this->commandTester->execute([
-            'command' => 'shortcode:list',
-            '--page' => $page,
-        ]);
+        $this->commandTester->execute(['--page' => $page]);
     }
 
     /** @test */
@@ -108,10 +105,7 @@ class ListShortUrlsCommandTest extends TestCase
                                                                 ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['y']);
-        $this->commandTester->execute([
-            'command' => 'shortcode:list',
-            '--showTags' => true,
-        ]);
+        $this->commandTester->execute(['--showTags' => true]);
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Tags', $output);
     }

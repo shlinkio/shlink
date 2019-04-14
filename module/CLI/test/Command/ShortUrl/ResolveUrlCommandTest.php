@@ -41,10 +41,7 @@ class ResolveUrlCommandTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
                                                        ->shouldBeCalledOnce();
 
-        $this->commandTester->execute([
-            'command' => 'shortcode:parse',
-            'shortCode' => $shortCode,
-        ]);
+        $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
         $this->assertEquals('Long URL: ' . $expectedUrl . PHP_EOL, $output);
     }
@@ -56,10 +53,7 @@ class ResolveUrlCommandTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
                                                        ->shouldBeCalledOnce();
 
-        $this->commandTester->execute([
-            'command' => 'shortcode:parse',
-            'shortCode' => $shortCode,
-        ]);
+        $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Provided short code "' . $shortCode . '" could not be found.', $output);
     }
@@ -71,10 +65,7 @@ class ResolveUrlCommandTest extends TestCase
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(new InvalidShortCodeException())
                                                        ->shouldBeCalledOnce();
 
-        $this->commandTester->execute([
-            'command' => 'shortcode:parse',
-            'shortCode' => $shortCode,
-        ]);
+        $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Provided short code "' . $shortCode . '" has an invalid format.', $output);
     }

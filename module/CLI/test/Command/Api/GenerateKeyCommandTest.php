@@ -34,9 +34,7 @@ class GenerateKeyCommandTest extends TestCase
     {
         $create = $this->apiKeyService->create(null)->willReturn(new ApiKey());
 
-        $this->commandTester->execute([
-            'command' => 'api-key:generate',
-        ]);
+        $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString('Generated API key: ', $output);
@@ -49,7 +47,6 @@ class GenerateKeyCommandTest extends TestCase
         $this->apiKeyService->create(Argument::type(Chronos::class))->shouldBeCalledOnce()
                                                                     ->willReturn(new ApiKey());
         $this->commandTester->execute([
-            'command' => 'api-key:generate',
             '--expirationDate' => '2016-01-01',
         ]);
     }

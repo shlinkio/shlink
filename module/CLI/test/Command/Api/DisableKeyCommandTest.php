@@ -34,7 +34,6 @@ class DisableKeyCommandTest extends TestCase
         $this->apiKeyService->disable($apiKey)->shouldBeCalledOnce();
 
         $this->commandTester->execute([
-            'command' => 'api-key:disable',
             'apiKey' => $apiKey,
         ]);
         $output = $this->commandTester->getDisplay();
@@ -49,7 +48,6 @@ class DisableKeyCommandTest extends TestCase
         $disable = $this->apiKeyService->disable($apiKey)->willThrow(InvalidArgumentException::class);
 
         $this->commandTester->execute([
-            'command' => 'api-key:disable',
             'apiKey' => $apiKey,
         ]);
         $output = $this->commandTester->getDisplay();

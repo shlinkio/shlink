@@ -54,9 +54,7 @@ class GeneratePreviewCommandTest extends TestCase
         $generatePreview2 = $this->previewGenerator->generatePreview('https://bar.com')->willReturn('');
         $generatePreview3 = $this->previewGenerator->generatePreview('http://baz.com/something')->willReturn('');
 
-        $this->commandTester->execute([
-            'command' => 'shortcode:process-previews',
-        ]);
+        $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString('Processing URL http://foo.com', $output);
@@ -81,9 +79,7 @@ class GeneratePreviewCommandTest extends TestCase
         $this->previewGenerator->generatePreview(Argument::any())->willThrow(PreviewGenerationException::class)
                                                                  ->shouldBeCalledTimes(count($items));
 
-        $this->commandTester->execute([
-            'command' => 'shortcode:process-previews',
-        ]);
+        $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
         $this->assertEquals(count($items), substr_count($output, 'Error'));
     }

@@ -85,9 +85,7 @@ class LocateVisitsCommandTest extends TestCase
             Location::emptyInstance()
         );
 
-        $this->commandTester->execute([
-            'command' => 'visit:process',
-        ]);
+        $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString('Processing IP 1.2.3.0', $output);
@@ -117,9 +115,7 @@ class LocateVisitsCommandTest extends TestCase
             Location::emptyInstance()
         );
 
-        $this->commandTester->execute([
-            'command' => 'visit:process',
-        ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
+        $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
 
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString($message, $output);
@@ -156,9 +152,7 @@ class LocateVisitsCommandTest extends TestCase
         );
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willThrow(WrongIpException::class);
 
-        $this->commandTester->execute([
-            'command' => 'visit:process',
-        ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
+        $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
 
         $output = $this->commandTester->getDisplay();
 
@@ -176,9 +170,7 @@ class LocateVisitsCommandTest extends TestCase
         });
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([]);
 
-        $this->commandTester->execute([
-            'command' => 'visit:process',
-        ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
+        $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString(
