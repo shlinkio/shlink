@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Removed
 
 * [#385](https://github.com/shlinkio/shlink/issues/385) Dropped support for PHP 7.1
+* [#379](https://github.com/shlinkio/shlink/issues/379) Removed copyright from error templates.
 
 #### Fixed
 
