@@ -14,7 +14,7 @@ return [
             Command\ShortUrl\GeneratePreviewCommand::NAME => Command\ShortUrl\GeneratePreviewCommand::class,
             Command\ShortUrl\DeleteShortUrlCommand::NAME => Command\ShortUrl\DeleteShortUrlCommand::class,
 
-            Command\Visit\ProcessVisitsCommand::NAME => Command\Visit\ProcessVisitsCommand::class,
+            Command\Visit\LocateVisitsCommand::NAME => Command\Visit\LocateVisitsCommand::class,
             Command\Visit\UpdateDbCommand::NAME => Command\Visit\UpdateDbCommand::class,
 
             Command\Config\GenerateCharsetCommand::NAME => Command\Config\GenerateCharsetCommand::class,

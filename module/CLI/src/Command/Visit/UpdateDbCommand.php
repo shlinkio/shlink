@@ -15,6 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function sprintf;
 
+/** @deprecated */
 class UpdateDbCommand extends Command
 {
     public const NAME = 'visit:update-db';
@@ -32,7 +33,7 @@ class UpdateDbCommand extends Command
     {
         $this
             ->setName(self::NAME)
-            ->setDescription('Updates the GeoLite2 database file used to geolocate IP addresses')
+            ->setDescription('[DEPRECATED] Updates the GeoLite2 database file used to geolocate IP addresses')
             ->setHelp(
                 'The GeoLite2 database is updated first Tuesday every month, so this command should be ideally run '
                 . 'every first Wednesday'

@@ -8,7 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Added
 
-* *Nothing*
+* [#377](https://github.com/shlinkio/shlink/issues/377) Updated `visit:locate` command (formerly `visit:process`) to automatically update the GeoLite2 database if it is too old or it does not exist.
+
+    This simplifies processing visits in a container-based infrastructure, since a fresh container is capable of getting an updated version of the file by itself.
+
+    It also removes the need of asynchronously and programmatically updating the file, which deprecates the `visit:update-db` command.
 
 #### Changed
 

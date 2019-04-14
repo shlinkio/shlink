@@ -6,7 +6,9 @@ namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Command\Visit\ProcessVisitsCommand;
+use Shlinkio\Shlink\CLI\Command\Visit\LocateVisitsCommand;
+use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
+use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpApiLocationResolver;
 use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
@@ -24,7 +26,7 @@ use Symfony\Component\Lock;
 use function array_shift;
 use function sprintf;
 
-class ProcessVisitsCommandTest extends TestCase
+class LocateVisitsCommandTest extends TestCase
 {
     /** @var CommandTester */
     private $commandTester;
@@ -36,11 +38,14 @@ class ProcessVisitsCommandTest extends TestCase
     private $locker;
     /** @var ObjectProphecy */
     private $lock;
+    /** @var ObjectProphecy */
+    private $dbUpdater;
 
     public function setUp(): void
     {
         $this->visitService = $this->prophesize(VisitService::class);
         $this->ipResolver = $this->prophesize(IpApiLocationResolver::class);
+        $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
 
         $this->locker = $this->prophesize(Lock\Factory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
@@ -49,10 +54,11 @@ class ProcessVisitsCommandTest extends TestCase
         });
         $this->locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
 
-        $command = new ProcessVisitsCommand(
+        $command = new LocateVisitsCommand(
             $this->visitService->reveal(),
             $this->ipResolver->reveal(),
-            $this->locker->reveal()
+            $this->locker->reveal(),
+            $this->dbUpdater->reveal()
         );
         $app = new Application();
         $app->add($command);
@@ -176,10 +182,47 @@ class ProcessVisitsCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString(
-            sprintf('There is already an instance of the "%s" command', ProcessVisitsCommand::NAME),
+            sprintf('There is already an instance of the "%s" command', LocateVisitsCommand::NAME),
             $output
         );
         $locateVisits->shouldNotHaveBeenCalled();
         $resolveIpLocation->shouldNotHaveBeenCalled();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideParams
+     */
+    public function showsProperMessageWhenGeoLiteUpdateFails(bool $olderDbExists, string $expectedMessage): void
+    {
+        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(function () {
+        });
+        $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
+            function (array $args) use ($olderDbExists) {
+                [$mustBeUpdated, $handleProgress] = $args;
+
+                $mustBeUpdated($olderDbExists);
+                $handleProgress(100, 50);
+
+                throw GeolocationDbUpdateFailedException::create($olderDbExists);
+            }
+        );
+
+        $this->commandTester->execute([]);
+        $output = $this->commandTester->getDisplay();
+
+        $this->assertStringContainsString(
+            sprintf('%s GeoLite2 database...', $olderDbExists ? 'Updating' : 'Downloading'),
+            $output
+        );
+        $this->assertStringContainsString($expectedMessage, $output);
+        $locateVisits->shouldHaveBeenCalledTimes((int) $olderDbExists);
+        $checkDbUpdate->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideParams(): iterable
+    {
+        yield [true, '[Warning] GeoLite2 database update failed. Proceeding with old version.'];
+        yield [false, 'GeoLite2 database download failed. It is not possible to locate visits.'];
     }
 }

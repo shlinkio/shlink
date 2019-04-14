@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI;
 
+use GeoIp2\Database\Reader;
+use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
@@ -19,6 +21,8 @@ return [
         'factories' => [
             Application::class => Factory\ApplicationFactory::class,
 
+            GeolocationDbUpdater::class => ConfigAbstractFactory::class,
+
             Command\ShortUrl\GenerateShortUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ResolveUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ListShortUrlsCommand::class => ConfigAbstractFactory::class,
@@ -26,7 +30,7 @@ return [
             Command\ShortUrl\GeneratePreviewCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\DeleteShortUrlCommand::class => ConfigAbstractFactory::class,
 
-            Command\Visit\ProcessVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\Visit\LocateVisitsCommand::class => ConfigAbstractFactory::class,
             Command\Visit\UpdateDbCommand::class => ConfigAbstractFactory::class,
 
             Command\Config\GenerateCharsetCommand::class => InvokableFactory::class,
@@ -44,6 +48,8 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
+        GeolocationDbUpdater::class => [DbUpdater::class, Reader::class],
+
         Command\ShortUrl\GenerateShortUrlCommand::class => [Service\UrlShortener::class, 'config.url_shortener.domain'],
         Command\ShortUrl\ResolveUrlCommand::class => [Service\UrlShortener::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
@@ -51,10 +57,11 @@ return [
         Command\ShortUrl\GeneratePreviewCommand::class => [Service\ShortUrlService::class, PreviewGenerator::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
 
-        Command\Visit\ProcessVisitsCommand::class => [
+        Command\Visit\LocateVisitsCommand::class => [
             Service\VisitService::class,
             IpLocationResolverInterface::class,
             Lock\Factory::class,
+            GeolocationDbUpdater::class,
         ],
         Command\Visit\UpdateDbCommand::class => [DbUpdater::class],
 
