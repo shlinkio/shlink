@@ -188,21 +188,21 @@ There are a couple of time-consuming tasks that shlink expects you to do manuall
 
 Those tasks can be performed using shlink's CLI, so it should be easy to schedule them to be run in the background (for example, using cron jobs):
 
-* Resolve IP address locations: `/path/to/shlink/bin/cli visit:process`
+* Resolve IP address locations: `/path/to/shlink/bin/cli visit:locate`
 
     If you don't run this command regularly, the stats will say all visits come from *unknown* locations.
-
-* Update IP geolocation database: `/path/to/shlink/bin/cli visit:update-db`
-
-    When shlink is installed it downloads a fresh [GeoLite2](https://dev.maxmind.com/geoip/geoip2/geolite2/) db file. Running this command will update this file.
-
-    The file is updated the first Tuesday of every month, so it should be enough running this command the first Wednesday.
 
 * Generate website previews: `/path/to/shlink/bin/cli short-url:process-previews`
 
     Running this will improve the performance of the `doma.in/abc123/preview` URLs, which return a preview of the site.
 
-*Any of those commands accept the `-q` flag, which makes it not display any output. This is recommended when configuring the commands as cron jobs.*
+* **For shlink older than v1.17.0**: Update IP geolocation database: `/path/to/shlink/bin/cli visit:update-db`
+
+    When shlink is installed it downloads a fresh [GeoLite2](https://dev.maxmind.com/geoip/geoip2/geolite2/) db file. Running this command will update this file.
+
+    The file is updated the first Tuesday of every month, so it should be enough running this command the first Wednesday.
+
+*Any of these commands accept the `-q` flag, which makes it not display any output. This is recommended when configuring the commands as cron jobs.*
 
 In future versions, it is planed that, when using **swoole** to serve shlink, some of these tasks are automatically run without blocking the request and also, without having to configure cron jobs. Probably resolving IP locations and generating previews.
 
@@ -281,8 +281,8 @@ Available commands:
   tag:list                    Lists existing tags.
   tag:rename                  Renames one existing tag.
  visit
-  visit:process               Processes visits where location is not set yet
-  visit:update-db             Updates the GeoLite2 database file used to geolocate IP addresses
+  visit:locate                [visit:process] Resolves visits origin locations.
+  visit:update-db             [DEPRECATED] Updates the GeoLite2 database file used to geolocate IP addresses
 ```
 
 > This product includes GeoLite2 data created by MaxMind, available from [https://www.maxmind.com](https://www.maxmind.com)

@@ -31,9 +31,7 @@ class GenerateCharsetCommandTest extends TestCase
     {
         $prefix = 'Character set: ';
 
-        $this->commandTester->execute([
-            'command' => 'config:generate-charset',
-        ]);
+        $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
         // Both default character set and the new one should have the same length

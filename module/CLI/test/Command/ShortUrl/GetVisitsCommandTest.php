@@ -45,10 +45,7 @@ class GetVisitsCommandTest extends TestCase
             new Paginator(new ArrayAdapter([]))
         )->shouldBeCalledOnce();
 
-        $this->commandTester->execute([
-            'command' => 'shortcode:visits',
-            'shortCode' => $shortCode,
-        ]);
+        $this->commandTester->execute(['shortCode' => $shortCode]);
     }
 
     /** @test */
@@ -65,7 +62,6 @@ class GetVisitsCommandTest extends TestCase
             ->shouldBeCalledOnce();
 
         $this->commandTester->execute([
-            'command' => 'shortcode:visits',
             'shortCode' => $shortCode,
             '--startDate' => $startDate,
             '--endDate' => $endDate,
@@ -84,10 +80,7 @@ class GetVisitsCommandTest extends TestCase
             ]))
         )->shouldBeCalledOnce();
 
-        $this->commandTester->execute([
-            'command' => 'shortcode:visits',
-            'shortCode' => $shortCode,
-        ]);
+        $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('foo', $output);
         $this->assertStringContainsString('Spain', $output);
