@@ -30,7 +30,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     {
         try {
             $meta = $this->geoLiteDbReader->metadata();
-            if ($this->buildIsOlderThanOneWeek($meta->__get('buildEpoch'))) {
+            if ($this->buildIsTooOld($meta->__get('buildEpoch'))) {
                 $this->downloadNewDb(true, $mustBeUpdated, $handleProgress);
             }
         } catch (InvalidArgumentException $e) {
@@ -39,11 +39,11 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         }
     }
 
-    private function buildIsOlderThanOneWeek(int $buildTimestamp): bool
+    private function buildIsTooOld(int $buildTimestamp): bool
     {
         $buildDate = Chronos::createFromTimestamp($buildTimestamp);
         $now = Chronos::now();
-        return $now->gt($buildDate->addDays(7));
+        return $now->gt($buildDate->addDays(35));
     }
 
     /**
@@ -55,7 +55,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         callable $handleProgress = null
     ): void {
         if ($mustBeUpdated !== null) {
-            $mustBeUpdated();
+            $mustBeUpdated($olderDbExists);
         }
 
         try {

@@ -64,7 +64,7 @@ class GeolocationDbUpdaterTest extends TestCase
 
     /**
      * @test
-     * @dataProvider provideDaysBiggerThanSeven
+     * @dataProvider provideBigDays
      */
     public function exceptionIsThrownWhenOlderDbIsTooOldAndDownloadFails(int $days): void
     {
@@ -96,17 +96,17 @@ class GeolocationDbUpdaterTest extends TestCase
         $download->shouldHaveBeenCalledOnce();
     }
 
-    public function provideDaysBiggerThanSeven(): iterable
+    public function provideBigDays(): iterable
     {
-        yield [8];
-        yield [9];
-        yield [10];
+        yield [36];
+        yield [50];
+        yield [75];
         yield [100];
     }
 
     /**
      * @test
-     * @dataProvider provideDaysSmallerThanSeven
+     * @dataProvider provideSmallDays
      */
     public function databaseIsNotUpdatedIfItIsYoungerThanOneWeek(int $days): void
     {
@@ -130,9 +130,9 @@ class GeolocationDbUpdaterTest extends TestCase
         $download->shouldNotHaveBeenCalled();
     }
 
-    public function provideDaysSmallerThanSeven(): iterable
+    public function provideSmallDays(): iterable
     {
-        return map(range(0, 6), function (int $days) {
+        return map(range(0, 34), function (int $days) {
             return [$days];
         });
     }
