@@ -26,16 +26,16 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    public function checkDbUpdate(callable $handleProgress = null): void
+    public function checkDbUpdate(callable $mustBeUpdated = null, callable $handleProgress = null): void
     {
         try {
             $meta = $this->geoLiteDbReader->metadata();
             if ($this->buildIsOlderThanOneWeek($meta->__get('buildEpoch'))) {
-                $this->downloadNewDb(true, $handleProgress);
+                $this->downloadNewDb(true, $mustBeUpdated, $handleProgress);
             }
         } catch (InvalidArgumentException $e) {
             // This is the exception thrown by the reader when the database file does not exist
-            $this->downloadNewDb(false, $handleProgress);
+            $this->downloadNewDb(false, $mustBeUpdated, $handleProgress);
         }
     }
 
@@ -49,8 +49,15 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    private function downloadNewDb(bool $olderDbExists, callable $handleProgress = null): void
-    {
+    private function downloadNewDb(
+        bool $olderDbExists,
+        callable $mustBeUpdated = null,
+        callable $handleProgress = null
+    ): void {
+        if ($mustBeUpdated !== null) {
+            $mustBeUpdated();
+        }
+
         try {
             $this->dbUpdater->downloadFreshCopy($handleProgress);
         } catch (RuntimeException $e) {

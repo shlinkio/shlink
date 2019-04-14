@@ -41,12 +41,15 @@ class GeolocationDbUpdaterTest extends TestCase
     /** @test */
     public function exceptionIsThrownWhenOlderDbDoesNotExistAndDownloadFails(): void
     {
+        $mustBeUpdated = function () {
+            $this->assertTrue(true);
+        };
         $getMeta = $this->geoLiteDbReader->metadata()->willThrow(InvalidArgumentException::class);
         $prev = new RuntimeException('');
         $download = $this->dbUpdater->downloadFreshCopy(null)->willThrow($prev);
 
         try {
-            $this->geolocationDbUpdater->checkDbUpdate();
+            $this->geolocationDbUpdater->checkDbUpdate($mustBeUpdated);
             $this->assertTrue(false); // If this is reached, the test will fail
         } catch (Throwable $e) {
             /** @var GeolocationDbUpdateFailedException $e */

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI;
 
+use GeoIp2\Database\Reader;
+use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
@@ -18,6 +20,8 @@ return [
     'dependencies' => [
         'factories' => [
             Application::class => Factory\ApplicationFactory::class,
+
+            GeolocationDbUpdater::class => ConfigAbstractFactory::class,
 
             Command\ShortUrl\GenerateShortUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ResolveUrlCommand::class => ConfigAbstractFactory::class,
@@ -44,6 +48,8 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
+        GeolocationDbUpdater::class => [DbUpdater::class, Reader::class],
+
         Command\ShortUrl\GenerateShortUrlCommand::class => [Service\UrlShortener::class, 'config.url_shortener.domain'],
         Command\ShortUrl\ResolveUrlCommand::class => [Service\UrlShortener::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
