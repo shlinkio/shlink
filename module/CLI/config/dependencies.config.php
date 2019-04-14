@@ -26,7 +26,7 @@ return [
             Command\ShortUrl\GeneratePreviewCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\DeleteShortUrlCommand::class => ConfigAbstractFactory::class,
 
-            Command\Visit\ProcessVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\Visit\LocateVisitsCommand::class => ConfigAbstractFactory::class,
             Command\Visit\UpdateDbCommand::class => ConfigAbstractFactory::class,
 
             Command\Config\GenerateCharsetCommand::class => InvokableFactory::class,
@@ -51,7 +51,7 @@ return [
         Command\ShortUrl\GeneratePreviewCommand::class => [Service\ShortUrlService::class, PreviewGenerator::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
 
-        Command\Visit\ProcessVisitsCommand::class => [
+        Command\Visit\LocateVisitsCommand::class => [
             Service\VisitService::class,
             IpLocationResolverInterface::class,
             Lock\Factory::class,

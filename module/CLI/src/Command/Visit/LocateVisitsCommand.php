@@ -20,9 +20,10 @@ use Symfony\Component\Lock\Factory as Locker;
 
 use function sprintf;
 
-class ProcessVisitsCommand extends Command
+class LocateVisitsCommand extends Command
 {
-    public const NAME = 'visit:process';
+    public const NAME = 'visit:locate';
+    public const ALIASES = ['visit:process'];
 
     /** @var VisitServiceInterface */
     private $visitService;
@@ -48,7 +49,8 @@ class ProcessVisitsCommand extends Command
     {
         $this
             ->setName(self::NAME)
-            ->setDescription('Processes visits where location is not set yet');
+            ->setAliases(self::ALIASES)
+            ->setDescription('Resolves visits origin locations.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int

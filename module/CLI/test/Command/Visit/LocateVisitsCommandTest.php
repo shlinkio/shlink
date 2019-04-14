@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Command\Visit\ProcessVisitsCommand;
+use Shlinkio\Shlink\CLI\Command\Visit\LocateVisitsCommand;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpApiLocationResolver;
 use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
@@ -24,7 +24,7 @@ use Symfony\Component\Lock;
 use function array_shift;
 use function sprintf;
 
-class ProcessVisitsCommandTest extends TestCase
+class LocateVisitsCommandTest extends TestCase
 {
     /** @var CommandTester */
     private $commandTester;
@@ -49,7 +49,7 @@ class ProcessVisitsCommandTest extends TestCase
         });
         $this->locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
 
-        $command = new ProcessVisitsCommand(
+        $command = new LocateVisitsCommand(
             $this->visitService->reveal(),
             $this->ipResolver->reveal(),
             $this->locker->reveal()
@@ -176,7 +176,7 @@ class ProcessVisitsCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString(
-            sprintf('There is already an instance of the "%s" command', ProcessVisitsCommand::NAME),
+            sprintf('There is already an instance of the "%s" command', LocateVisitsCommand::NAME),
             $output
         );
         $locateVisits->shouldNotHaveBeenCalled();
