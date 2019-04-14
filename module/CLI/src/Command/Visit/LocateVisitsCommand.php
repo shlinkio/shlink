@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
+use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
@@ -13,6 +15,7 @@ use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Service\VisitServiceInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -31,18 +34,25 @@ class LocateVisitsCommand extends Command
     private $ipLocationResolver;
     /** @var Locker */
     private $locker;
-    /** @var OutputInterface */
-    private $output;
+    /** @var GeolocationDbUpdaterInterface */
+    private $dbUpdater;
+
+    /** @var SymfonyStyle */
+    private $io;
+    /** @var ProgressBar */
+    private $progressBar;
 
     public function __construct(
         VisitServiceInterface $visitService,
         IpLocationResolverInterface $ipLocationResolver,
-        Locker $locker
+        Locker $locker,
+        GeolocationDbUpdaterInterface $dbUpdater
     ) {
         parent::__construct();
         $this->visitService = $visitService;
         $this->ipLocationResolver = $ipLocationResolver;
         $this->locker = $locker;
+        $this->dbUpdater = $dbUpdater;
     }
 
     protected function configure(): void
@@ -55,16 +65,17 @@ class LocateVisitsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $this->output = $output;
-        $io = new SymfonyStyle($input, $output);
+        $this->io = new SymfonyStyle($input, $output);
 
         $lock = $this->locker->createLock(self::NAME);
         if (! $lock->acquire()) {
-            $io->warning(sprintf('There is already an instance of the "%s" command in execution', self::NAME));
+            $this->io->warning(sprintf('There is already an instance of the "%s" command in execution', self::NAME));
             return ExitCodes::EXIT_WARNING;
         }
 
         try {
+            $this->checkDbUpdate();
+
             $this->visitService->locateUnlocatedVisits(
                 [$this, 'getGeolocationDataForVisit'],
                 function (VisitLocation $location) use ($output) {
@@ -76,7 +87,7 @@ class LocateVisitsCommand extends Command
                 }
             );
 
-            $io->success('Finished processing all IPs');
+            $this->io->success('Finished processing all IPs');
         } finally {
             $lock->release();
             return ExitCodes::EXIT_SUCCESS;
@@ -86,7 +97,7 @@ class LocateVisitsCommand extends Command
     public function getGeolocationDataForVisit(Visit $visit): Location
     {
         if (! $visit->hasRemoteAddr()) {
-            $this->output->writeln(
+            $this->io->writeln(
                 '<comment>Ignored visit with no IP address</comment>',
                 OutputInterface::VERBOSITY_VERBOSE
             );
@@ -94,21 +105,51 @@ class LocateVisitsCommand extends Command
         }
 
         $ipAddr = $visit->getRemoteAddr();
-        $this->output->write(sprintf('Processing IP <fg=blue>%s</>', $ipAddr));
+        $this->io->write(sprintf('Processing IP <fg=blue>%s</>', $ipAddr));
         if ($ipAddr === IpAddress::LOCALHOST) {
-            $this->output->writeln(' [<comment>Ignored localhost address</comment>]');
+            $this->io->writeln(' [<comment>Ignored localhost address</comment>]');
             throw IpCannotBeLocatedException::forLocalhost();
         }
 
         try {
             return $this->ipLocationResolver->resolveIpLocation($ipAddr);
         } catch (WrongIpException $e) {
-            $this->output->writeln(' [<fg=red>An error occurred while locating IP. Skipped</>]');
-            if ($this->output->isVerbose()) {
-                $this->getApplication()->renderException($e, $this->output);
+            $this->io->writeln(' [<fg=red>An error occurred while locating IP. Skipped</>]');
+            if ($this->io->isVerbose()) {
+                $this->getApplication()->renderException($e, $this->io);
             }
 
             throw IpCannotBeLocatedException::forError($e);
+        }
+    }
+
+    private function checkDbUpdate(): void
+    {
+        try {
+            $this->dbUpdater->checkDbUpdate(function (bool $olderDbExists) {
+                $this->io->writeln(
+                    sprintf('<fg=blue>%s GeoLite2 database...</>', $olderDbExists ? 'Updating' : 'Downloading')
+                );
+                $this->progressBar = new ProgressBar($this->io);
+            }, function (int $total, int $downloaded) {
+                $this->progressBar->setMaxSteps($total);
+                $this->progressBar->setProgress($downloaded);
+            });
+
+            if ($this->progressBar !== null) {
+                $this->progressBar->finish();
+                $this->io->newLine();
+            }
+        } catch (GeolocationDbUpdateFailedException $e) {
+            if (! $e->olderDbExists()) {
+                $this->io->error('GeoLite2 database download failed. It is not possible to locate visits.');
+                throw $e;
+            }
+
+            $this->io->newLine();
+            $this->io->writeln(
+                '<fg=yellow;options=bold>[Warning] GeoLite2 database update failed. Proceeding with old version.</>'
+            );
         }
     }
 }

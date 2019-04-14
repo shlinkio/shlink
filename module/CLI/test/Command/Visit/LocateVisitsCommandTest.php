@@ -7,6 +7,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\LocateVisitsCommand;
+use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
+use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpApiLocationResolver;
 use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
@@ -36,11 +38,14 @@ class LocateVisitsCommandTest extends TestCase
     private $locker;
     /** @var ObjectProphecy */
     private $lock;
+    /** @var ObjectProphecy */
+    private $dbUpdater;
 
     public function setUp(): void
     {
         $this->visitService = $this->prophesize(VisitService::class);
         $this->ipResolver = $this->prophesize(IpApiLocationResolver::class);
+        $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
 
         $this->locker = $this->prophesize(Lock\Factory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
@@ -52,7 +57,8 @@ class LocateVisitsCommandTest extends TestCase
         $command = new LocateVisitsCommand(
             $this->visitService->reveal(),
             $this->ipResolver->reveal(),
-            $this->locker->reveal()
+            $this->locker->reveal(),
+            $this->dbUpdater->reveal()
         );
         $app = new Application();
         $app->add($command);
@@ -181,5 +187,42 @@ class LocateVisitsCommandTest extends TestCase
         );
         $locateVisits->shouldNotHaveBeenCalled();
         $resolveIpLocation->shouldNotHaveBeenCalled();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideParams
+     */
+    public function showsProperMessageWhenGeoLiteUpdateFails(bool $olderDbExists, string $expectedMessage): void
+    {
+        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(function () {
+        });
+        $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
+            function (array $args) use ($olderDbExists) {
+                [$mustBeUpdated, $handleProgress] = $args;
+
+                $mustBeUpdated($olderDbExists);
+                $handleProgress(100, 50);
+
+                throw GeolocationDbUpdateFailedException::create($olderDbExists);
+            }
+        );
+
+        $this->commandTester->execute([]);
+        $output = $this->commandTester->getDisplay();
+
+        $this->assertStringContainsString(
+            sprintf('%s GeoLite2 database...', $olderDbExists ? 'Updating' : 'Downloading'),
+            $output
+        );
+        $this->assertStringContainsString($expectedMessage, $output);
+        $locateVisits->shouldHaveBeenCalledTimes((int) $olderDbExists);
+        $checkDbUpdate->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideParams(): iterable
+    {
+        yield [true, '[Warning] GeoLite2 database update failed. Proceeding with old version.'];
+        yield [false, 'GeoLite2 database download failed. It is not possible to locate visits.'];
     }
 }

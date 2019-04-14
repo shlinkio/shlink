@@ -61,6 +61,7 @@ return [
             Service\VisitService::class,
             IpLocationResolverInterface::class,
             Lock\Factory::class,
+            GeolocationDbUpdater::class,
         ],
         Command\Visit\UpdateDbCommand::class => [DbUpdater::class],
 
