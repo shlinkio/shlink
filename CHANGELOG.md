@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     It also removes the need of asynchronously and programmatically updating the file, which deprecates the `visit:update-db` command.
 
+* [#373](https://github.com/shlinkio/shlink/issues/373) Added support for a simplified config. Specially useful to use with the docker container.
+
 #### Changed
 
 * [#56](https://github.com/shlinkio/shlink/issues/56) Simplified supported cache, requiring APCu always.
