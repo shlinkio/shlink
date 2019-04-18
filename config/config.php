@@ -25,4 +25,6 @@ return (new ConfigAggregator\ConfigAggregator([
     env('APP_ENV') === 'test'
         ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')
         : new ConfigAggregator\ArrayProvider([]),
-], 'data/cache/app_config.php'))->getMergedConfig();
+], 'data/cache/app_config.php', [
+    Core\ConfigPostProcessor::class,
+]))->getMergedConfig();
