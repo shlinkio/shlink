@@ -35,7 +35,7 @@
                 "name": "X-Api-Key"
             },
             "Bearer": {
-                "description": "**[Deprecated]** The JWT identifying a previously authenticated API key",
+                "description": "**[DEPRECATED]** The JWT identifying a previously authenticated API key",
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT"
@@ -66,7 +66,7 @@
         },
         {
             "name": "Authentication",
-            "description": "**[Deprecated]** Authentication-related endpoints"
+            "description": "**[DEPRECATED]** Authentication-related endpoints"
         }
     ],
 
