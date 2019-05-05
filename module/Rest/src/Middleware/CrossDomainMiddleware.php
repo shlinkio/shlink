@@ -37,7 +37,7 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
 
     private function addOptionsHeaders(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        /** @var RouteResult $matchedRoute */
+        /** @var RouteResult|null $matchedRoute */
         $matchedRoute = $request->getAttribute(RouteResult::class);
         $matchedMethods = $matchedRoute !== null ? $matchedRoute->getAllowedMethods() : [
             self::METHOD_GET,
