@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Deprecated
 
-* *Nothing*
+* [#406](https://github.com/shlinkio/shlink/issues/406) Deprecated `PUT /short-urls/{shortCode}` REST endpoint in favor of `PATCH /short-urls/{shortCode}`.
 
 #### Removed
 
