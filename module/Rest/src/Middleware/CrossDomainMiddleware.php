@@ -4,29 +4,19 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\RequestMethodInterface;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Authentication;
+use Zend\Expressive\Router\RouteResult;
 
 use function implode;
 
 class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterface
 {
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * to the next middleware component to create the response.
-     *
-     * @param Request $request
-     * @param RequestHandlerInterface $handler
-     *
-     * @return Response
-     * @throws \InvalidArgumentException
-     */
-    public function process(Request $request, RequestHandlerInterface $handler): Response
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var Response $response */
         $response = $handler->handle($request);
         if (! $request->hasHeader('Origin')) {
             return $response;
@@ -42,13 +32,28 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
             return $response;
         }
 
-        // Add OPTIONS-specific headers
-        foreach ([
-            'Access-Control-Allow-Methods' => 'GET,POST,PUT,PATCH,DELETE,OPTIONS', // TODO Should be dynamic
-//            'Access-Control-Allow-Methods' => $response->getHeaderLine('Allow'),
+        return $this->addOptionsHeaders($request, $response);
+    }
+
+    private function addOptionsHeaders(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        /** @var RouteResult $matchedRoute */
+        $matchedRoute = $request->getAttribute(RouteResult::class);
+        $matchedMethods = $matchedRoute !== null ? $matchedRoute->getAllowedMethods() : [
+            self::METHOD_GET,
+            self::METHOD_POST,
+            self::METHOD_PUT,
+            self::METHOD_PATCH,
+            self::METHOD_DELETE,
+            self::METHOD_OPTIONS,
+        ];
+        $corsHeaders = [
+            'Access-Control-Allow-Methods' => implode(',', $matchedMethods),
             'Access-Control-Max-Age' => '1000',
             'Access-Control-Allow-Headers' => $request->getHeaderLine('Access-Control-Request-Headers'),
-        ] as $key => $value) {
+        ];
+
+        foreach ($corsHeaders as $key => $value) {
             $response = $response->withHeader($key, $value);
         }
 
