@@ -28,7 +28,7 @@ return [
                 'max_files' => 30,
                 'formatter' => 'dashed',
             ],
-            'swoole_access_handler' => [
+            'access_handler' => [
                 'class' => StreamHandler::class,
                 'level' => Logger::INFO,
                 'stream' => 'php://stdout',
@@ -49,9 +49,9 @@ return [
                 'handlers' => ['shlink_rotating_handler'],
                 'processors' => ['exception_with_new_line', 'psr3'],
             ],
-            'Swoole' => [
-                'handlers' => ['swoole_access_handler'],
-                'processors' => ['psr3'],
+            'Access' => [
+                'handlers' => ['access_handler'],
+                'processors' => ['exception_with_new_line', 'psr3'],
             ],
         ],
     ],
@@ -59,14 +59,14 @@ return [
     'dependencies' => [
         'factories' => [
             'Logger_Shlink' => Common\Factory\LoggerFactory::class,
-            'Logger_Swoole' => Common\Factory\LoggerFactory::class,
+            'Logger_Access' => Common\Factory\LoggerFactory::class,
         ],
     ],
 
     'zend-expressive-swoole' => [
         'swoole-http-server' => [
             'logger' => [
-                'logger-name' => 'Logger_Swoole',
+                'logger-name' => 'Logger_Access',
             ],
         ],
     ],
