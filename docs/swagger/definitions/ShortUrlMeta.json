@@ -1,0 +1,21 @@
+{
+    "type": "object",
+    "required": ["validSince", "validUntil", "maxVisits"],
+    "properties": {
+        "validSince": {
+            "description": "The date (in ISO-8601 format) from which this short code will be valid",
+            "type": "string",
+            "nullable": true
+        },
+        "validUntil": {
+            "description": "The date (in ISO-8601 format) until which this short code will be valid",
+            "type": "string",
+            "nullable": true
+        },
+        "maxVisits": {
+            "description": "The maximum number of allowed visits for this short code",
+            "type": "number",
+            "nullable": true
+        }
+    }
+}

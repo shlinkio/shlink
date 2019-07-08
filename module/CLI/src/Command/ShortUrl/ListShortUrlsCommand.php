@@ -17,6 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\Paginator\Paginator;
 
+use function array_flip;
+use function array_intersect_key;
 use function array_values;
 use function count;
 use function explode;
@@ -29,6 +31,14 @@ class ListShortUrlsCommand extends Command
 
     public const NAME = 'short-url:list';
     private const ALIASES = ['shortcode:list', 'short-code:list'];
+    private const COLUMNS_WHITELIST = [
+        'shortCode',
+        'shortUrl',
+        'longUrl',
+        'dateCreated',
+        'visitsCount',
+        'tags',
+    ];
 
     /** @var ShortUrlServiceInterface */
     private $shortUrlService;
@@ -125,8 +135,7 @@ class ListShortUrlsCommand extends Command
                 unset($shortUrl['tags']);
             }
 
-            unset($shortUrl['originalUrl']);
-            $rows[] = array_values($shortUrl);
+            $rows[] = array_values(array_intersect_key($shortUrl, array_flip(self::COLUMNS_WHITELIST)));
         }
 
         ShlinkTable::fromOutput($output)->render($headers, $rows, $this->formatCurrentPageMessage(

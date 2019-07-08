@@ -100,7 +100,12 @@
                                     "tags": [
                                         "games",
                                         "tech"
-                                    ]
+                                    ],
+                                    "meta": {
+                                        "validSince": "2017-01-21T00:00:00+02:00",
+                                        "validUntil": null,
+                                        "maxVisits": 100
+                                    }
                                 },
                                 {
                                     "shortCode": "12Kb3",
@@ -110,7 +115,12 @@
                                     "visitsCount": 1029,
                                     "tags": [
                                         "shlink"
-                                    ]
+                                    ],
+                                    "meta": {
+                                        "validSince": null,
+                                        "validUntil": null,
+                                        "maxVisits": null
+                                    }
                                 },
                                 {
                                     "shortCode": "123bA",
@@ -118,7 +128,12 @@
                                     "longUrl": "https://www.google.com",
                                     "dateCreated": "2015-10-01T20:34:16+02:00",
                                     "visitsCount": 25,
-                                    "tags": []
+                                    "tags": [],
+                                    "meta": {
+                                        "validSince": "2017-01-21T00:00:00+02:00",
+                                        "validUntil": null,
+                                        "maxVisits": null
+                                    }
                                 }
                             ],
                             "pagination": {
@@ -227,7 +242,12 @@
                         "tags": [
                             "games",
                             "tech"
-                        ]
+                        ],
+                        "meta": {
+                            "validSince": "2017-01-21T00:00:00+02:00",
+                            "validUntil": null,
+                            "maxVisits": 500
+                        }
                     }
                 }
             },

@@ -4,6 +4,46 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+#### Added
+
+* [#411](https://github.com/shlinkio/shlink/issues/411) Added new `meta` property on the `ShortUrl` REST API model.
+
+    These endpoints are affected and include the new property when suitable:
+
+    * `GET /short-urls` - List short URLs.
+    * `GET /short-urls/shorten` - Create a short URL (for integrations).
+    * `GET /short-urls/{shortCode}` - Get one short URL.
+    * `POST /short-urls` - Create short URL.
+
+    The property includes the values `validSince`, `validUntil` and `maxVisits` in a single object. All of them are nullable.
+
+    ```json
+    {
+      "validSince": "2016-01-01T00:00:00+02:00",
+      "validUntil": null,
+      "maxVisits": 100
+    }
+    ```
+
+#### Changed
+
+* *Nothing*
+
+### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* *Nothing*
+
+
 ## 1.17.0 - 2019-05-13
 
 #### Added

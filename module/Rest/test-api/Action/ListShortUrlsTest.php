@@ -24,6 +24,11 @@ class ListShortUrlsTest extends ApiTestCase
                         'dateCreated' => '2019-01-01T00:00:00+00:00',
                         'visitsCount' => 3,
                         'tags' => ['foo'],
+                        'meta' => [
+                            'validSince' => null,
+                            'validUntil' => null,
+                            'maxVisits' => null,
+                        ],
                         'originalUrl' => 'https://shlink.io',
                     ],
                     [
@@ -35,6 +40,11 @@ class ListShortUrlsTest extends ApiTestCase
                         'dateCreated' => '2019-01-01T00:00:00+00:00',
                         'visitsCount' => 2,
                         'tags' => ['foo', 'bar'],
+                        'meta' => [
+                            'validSince' => '2020-05-01T00:00:00+00:00',
+                            'validUntil' => null,
+                            'maxVisits' => null,
+                        ],
                         'originalUrl' =>
                             'https://blog.alejandrocelaya.com/2017/12/09'
                             . '/acmailer-7-0-the-most-important-release-in-a-long-time/',
@@ -46,6 +56,11 @@ class ListShortUrlsTest extends ApiTestCase
                         'dateCreated' => '2019-01-01T00:00:00+00:00',
                         'visitsCount' => 0,
                         'tags' => [],
+                        'meta' => [
+                            'validSince' => null,
+                            'validUntil' => null,
+                            'maxVisits' => 2,
+                        ],
                         'originalUrl' => 'https://shlink.io',
                     ],
                 ],
