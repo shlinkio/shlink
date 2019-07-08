@@ -24,7 +24,7 @@ class ShortUrlsFixture extends AbstractFixture
 
         $defShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
-            ShortUrlMeta::createFromParams(Chronos::now()->addDays(3))
+            ShortUrlMeta::createFromParams(Chronos::parse('2020-05-01'))
         ))->setShortCode('def456');
         $manager->persist($defShortUrl);
 
