@@ -29,6 +29,9 @@
             },
             "description": "A list of tags applied to this short URL"
         },
+        "meta": {
+            "$ref": "./ShortUrlMeta.json"
+        },
         "originalUrl": {
             "deprecated": true,
             "type": "string",
