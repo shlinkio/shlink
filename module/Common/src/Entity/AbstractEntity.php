@@ -20,6 +20,9 @@ abstract class AbstractEntity
         return $this->id;
     }
 
+    /**
+     * @internal
+     */
     public function setId(string $id): self
     {
         $this->id = $id;
