@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\Core\EventDispatcher;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -42,9 +43,17 @@ class LocateShortUrlVisit
             return;
         }
 
-        $location = $visit->isLocatable()
-            ? $this->ipLocationResolver->resolveIpLocation($visit->getRemoteAddr())
-            : Location::emptyInstance();
+        try {
+            $location = $visit->isLocatable()
+                ? $this->ipLocationResolver->resolveIpLocation($visit->getRemoteAddr())
+                : Location::emptyInstance();
+        } catch (WrongIpException $e) {
+            $this->logger->warning(
+                sprintf('Tried to locate visit with id "%s", but its address seems to be wrong. {e}', $visitId),
+                ['e' => $e]
+            );
+            return;
+        }
 
         $visit->locate(new VisitLocation($location));
         $this->em->flush($visit);

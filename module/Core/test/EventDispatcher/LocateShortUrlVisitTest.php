@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Common\Util\IpAddress;
@@ -55,6 +56,29 @@ class LocateShortUrlVisitTest extends TestCase
         $this->em->flush(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->shouldNotHaveBeenCalled();
         $logWarning->shouldHaveBeenCalled();
+    }
+
+    /** @test */
+    public function invalidAddressLogsWarning(): void
+    {
+        $event = new ShortUrlVisited('123');
+        $findVisit = $this->em->find(Visit::class, '123')->willReturn(
+            new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4'))
+        );
+        $resolveLocation = $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->willThrow(
+            WrongIpException::class
+        );
+        $logWarning = $this->logger->warning(
+            Argument::containingString('Tried to locate visit with id "123", but its address seems to be wrong.'),
+            Argument::type('array')
+        );
+
+        ($this->locateVisit)($event);
+
+        $findVisit->shouldHaveBeenCalledOnce();
+        $resolveLocation->shouldHaveBeenCalledOnce();
+        $logWarning->shouldHaveBeenCalled();
+        $this->em->flush(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /**

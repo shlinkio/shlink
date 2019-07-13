@@ -15,7 +15,9 @@ return [
     ],
 
     'dependencies' => [
-        EventDispatcher\LocateShortUrlVisit::class => ConfigAbstractFactory::class,
+        'factories' => [
+            EventDispatcher\LocateShortUrlVisit::class => ConfigAbstractFactory::class,
+        ],
     ],
 
     ConfigAbstractFactory::class => [
