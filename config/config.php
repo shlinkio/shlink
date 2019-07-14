@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink;
 
 use Acelaya\ExpressiveErrorHandler;
 use Phly\EventDispatcher;
+use Phly\Swoole\TaskWorker;
 use Zend\ConfigAggregator;
 use Zend\Expressive;
 
@@ -18,6 +19,7 @@ return (new ConfigAggregator\ConfigAggregator([
     Expressive\Swoole\ConfigProvider::class,
     ExpressiveErrorHandler\ConfigProvider::class,
     EventDispatcher\ConfigProvider::class,
+    TaskWorker\ConfigProvider::class,
     Common\ConfigProvider::class,
     Core\ConfigProvider::class,
     CLI\ConfigProvider::class,

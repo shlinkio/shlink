@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\EventDispatcher;
 
-final class ShortUrlVisited
+use JsonSerializable;
+
+final class ShortUrlVisited implements JsonSerializable
 {
     /** @var string */
     private $visitId;
@@ -16,5 +18,10 @@ final class ShortUrlVisited
     public function visitId(): string
     {
         return $this->visitId;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return ['visitId' => $this->visitId];
     }
 }
