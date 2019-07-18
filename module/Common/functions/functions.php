@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common;
 
+use Swoole\Http\Server as HttpServer;
+
 use const JSON_ERROR_NONE;
 
 use function getenv;
@@ -58,4 +60,9 @@ function json_decode(string $json, int $depth = 512, int $options = 0): array
     }
 
     return $data;
+}
+
+function asyncListener(HttpServer $server, string $regularListenerName): EventDispatcher\AsyncEventListener
+{
+    return new EventDispatcher\AsyncEventListener($server, $regularListenerName);
 }
