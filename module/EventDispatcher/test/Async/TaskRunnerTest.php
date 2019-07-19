@@ -21,7 +21,7 @@ class TaskRunnerTest extends TestCase
     private $logger;
     /** @var ObjectProphecy */
     private $container;
-    /** @var ObjectProphecy */
+    /** @var HttpServer */
     private $server;
     /** @var ObjectProphecy */
     private $task;
