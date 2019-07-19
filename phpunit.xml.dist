@@ -18,8 +18,8 @@
         <testsuite name="CLI">
             <directory>./module/CLI/test</directory>
         </testsuite>
-        <testsuite name="Installer">
-            <directory>./module/Installer/test</directory>
+        <testsuite name="EventDispatcher">
+            <directory>./module/EventDispatcher/test</directory>
         </testsuite>
     </testsuites>
 

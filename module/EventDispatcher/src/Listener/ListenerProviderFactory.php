@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\EventDispatcher;
+namespace Shlinkio\Shlink\EventDispatcher\Listener;
 
 use Interop\Container\ContainerInterface;
 use Phly\EventDispatcher\ListenerProvider\AttachableListenerProvider;
@@ -9,7 +9,7 @@ use Swoole\Http\Server as HttpServer;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 use function Phly\EventDispatcher\lazyListener;
-use function Shlinkio\Shlink\Common\asyncListener;
+use function Shlinkio\Shlink\EventDispatcher\asyncListener;
 
 class ListenerProviderFactory implements FactoryInterface
 {

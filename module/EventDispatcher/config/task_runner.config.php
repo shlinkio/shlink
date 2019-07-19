@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common;
+namespace Shlinkio\Shlink\EventDispatcher;
 
 use Swoole\Http\Server as HttpServer;
 
@@ -9,11 +9,11 @@ return [
 
     'dependencies' => [
         'factories' => [
-            EventDispatcher\TaskRunner::class => EventDispatcher\TaskRunnerFactory::class,
+            Async\TaskRunner::class => Async\TaskRunnerFactory::class,
         ],
         'delegators' => [
             HttpServer::class => [
-                EventDispatcher\TaskRunnerDelegator::class,
+                Async\TaskRunnerDelegator::class,
             ],
         ],
     ],

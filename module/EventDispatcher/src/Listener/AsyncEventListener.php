@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\EventDispatcher;
+namespace Shlinkio\Shlink\EventDispatcher\Listener;
 
+use Shlinkio\Shlink\EventDispatcher\Async\Task;
 use Swoole\Http\Server as HttpServer;
 
 class AsyncEventListener

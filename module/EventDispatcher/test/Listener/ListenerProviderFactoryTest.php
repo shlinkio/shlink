@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\EventDispatcher;
+namespace ShlinkioTest\Shlink\EventDispatcher\Listener;
 
 use Interop\Container\ContainerInterface;
 use Phly\EventDispatcher\ListenerProvider\AttachableListenerProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionObject;
-use Shlinkio\Shlink\Common\EventDispatcher\ListenerProviderFactory;
+use Shlinkio\Shlink\EventDispatcher\Listener\ListenerProviderFactory;
 
 use function Phly\EventDispatcher\lazyListener;
 

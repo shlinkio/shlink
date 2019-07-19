@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\EventDispatcher;
+namespace Shlinkio\Shlink\EventDispatcher\Async;
 
 use Interop\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink;
 
 use Acelaya\ExpressiveErrorHandler;
-use Phly\EventDispatcher;
 use Zend\ConfigAggregator;
 use Zend\Expressive;
+
 use function Shlinkio\Shlink\Common\env;
 
 return (new ConfigAggregator\ConfigAggregator([
@@ -16,11 +16,11 @@ return (new ConfigAggregator\ConfigAggregator([
     Expressive\Plates\ConfigProvider::class,
     Expressive\Swoole\ConfigProvider::class,
     ExpressiveErrorHandler\ConfigProvider::class,
-    EventDispatcher\ConfigProvider::class,
     Common\ConfigProvider::class,
     Core\ConfigProvider::class,
     CLI\ConfigProvider::class,
     Rest\ConfigProvider::class,
+    EventDispatcher\ConfigProvider::class,
     new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
     new ConfigAggregator\ZendConfigProvider('config/params/{generated_config.php,*.config.{php,json}}'),
     env('APP_ENV') === 'test'
