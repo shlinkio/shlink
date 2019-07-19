@@ -31,6 +31,10 @@ class ListenerProviderFactory implements FactoryInterface
         AttachableListenerProvider $provider,
         bool $isAsync = false
     ): void {
+        if (empty($events)) {
+            return;
+        }
+
         // Avoid registering async event listeners when the swoole server is not registered
         if ($isAsync && ! $container->has(HttpServer::class)) {
             return;

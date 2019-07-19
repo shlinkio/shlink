@@ -5,7 +5,6 @@ namespace Shlinkio\Shlink\EventDispatcher;
 
 use Phly\EventDispatcher as Phly;
 use Psr\EventDispatcher as Psr;
-use Shlinkio\Shlink\Common;
 
 return [
 

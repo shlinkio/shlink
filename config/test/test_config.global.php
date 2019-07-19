@@ -70,6 +70,8 @@ return [
             'process-name' => 'shlink_test',
             'options' => [
                 'pid_file' => sys_get_temp_dir() . '/shlink-test-swoole.pid',
+                'worker_num' => 1,
+                'task_worker_num' => 1,
             ],
         ],
     ],
