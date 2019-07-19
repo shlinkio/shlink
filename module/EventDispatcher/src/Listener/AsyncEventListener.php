@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\EventDispatcher\Listener;
 
-use Shlinkio\Shlink\EventDispatcher\Async\Task;
 use Swoole\Http\Server as HttpServer;
 
 class AsyncEventListener
@@ -21,6 +20,6 @@ class AsyncEventListener
 
     public function __invoke(object $event): void
     {
-        $this->server->task(new Task($this->regularListenerName, $event));
+        $this->server->task(new EventListenerTask($this->regularListenerName, $event));
     }
 }

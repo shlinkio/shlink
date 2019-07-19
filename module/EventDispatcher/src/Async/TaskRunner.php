@@ -27,8 +27,8 @@ class TaskRunner
 
     public function __invoke(HttpServer $server, int $taskId, int $fromId, $task): void
     {
-        if (! $task instanceof Task) {
-            $this->logger->error('Invalid task provided to task worker: {type}', [
+        if (! $task instanceof TaskInterface) {
+            $this->logger->warning('Invalid task provided to task worker: {type}. Task ignored', [
                 'type' => is_object($task) ? get_class($task) : gettype($task),
             ]);
             $server->finish('');
@@ -41,14 +41,13 @@ class TaskRunner
         ]);
 
         try {
-            $task($this->container);
+            $task->run($this->container);
         } catch (Throwable $e) {
             $this->logger->error('Error processing task {taskId}: {e}', [
                 'taskId' => $taskId,
                 'e' => $e,
             ]);
         } finally {
-            // Notify the server that processing of the task has finished:
             $server->finish('');
         }
     }
