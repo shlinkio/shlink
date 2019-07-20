@@ -35,9 +35,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     public function checkDbUpdate(callable $mustBeUpdated = null, callable $handleProgress = null): void
     {
         $lock = $this->locker->createLock(self::LOCK_NAME);
-        if (! $lock->acquire()) {
-            return;
-        }
+        $lock->acquire(true); // Block until lock is released
 
         try {
             $meta = $this->geoLiteDbReader->metadata();

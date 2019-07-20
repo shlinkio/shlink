@@ -8,11 +8,13 @@ use GeoIp2\Database\Reader;
 use InvalidArgumentException;
 use MaxMind\Db\Reader\Metadata;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdaterInterface;
+use Symfony\Component\Lock;
 use Throwable;
 
 use function Functional\map;
@@ -26,15 +28,27 @@ class GeolocationDbUpdaterTest extends TestCase
     private $dbUpdater;
     /** @var ObjectProphecy */
     private $geoLiteDbReader;
+    /** @var ObjectProphecy */
+    private $locker;
+    /** @var ObjectProphecy */
+    private $lock;
 
     public function setUp(): void
     {
         $this->dbUpdater = $this->prophesize(DbUpdaterInterface::class);
         $this->geoLiteDbReader = $this->prophesize(Reader::class);
 
+        $this->locker = $this->prophesize(Lock\Factory::class);
+        $this->lock = $this->prophesize(Lock\LockInterface::class);
+        $this->lock->acquire(true)->willReturn(true);
+        $this->lock->release()->will(function () {
+        });
+        $this->locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
+
         $this->geolocationDbUpdater = new GeolocationDbUpdater(
             $this->dbUpdater->reveal(),
-            $this->geoLiteDbReader->reveal()
+            $this->geoLiteDbReader->reveal(),
+            $this->locker->reveal()
         );
     }
 
