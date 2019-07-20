@@ -5,6 +5,8 @@ namespace Shlinkio\Shlink\Core\EventDispatcher;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
+use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
@@ -21,15 +23,19 @@ class LocateShortUrlVisit
     private $em;
     /** @var LoggerInterface */
     private $logger;
+    /** @var GeolocationDbUpdaterInterface */
+    private $dbUpdater;
 
     public function __construct(
         IpLocationResolverInterface $ipLocationResolver,
         EntityManagerInterface $em,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        GeolocationDbUpdaterInterface $dbUpdater
     ) {
         $this->ipLocationResolver = $ipLocationResolver;
         $this->em = $em;
         $this->logger = $logger;
+        $this->dbUpdater = $dbUpdater;
     }
 
     public function __invoke(ShortUrlVisited $shortUrlVisited): void
@@ -41,6 +47,25 @@ class LocateShortUrlVisit
         if ($visit === null) {
             $this->logger->warning(sprintf('Tried to locate visit with id "%s", but it does not exist.', $visitId));
             return;
+        }
+
+        try {
+            $this->dbUpdater->checkDbUpdate(function (bool $olderDbExists) {
+                $this->logger->notice(sprintf('%s GeoLite2 database...', $olderDbExists ? 'Updating' : 'Downloading'));
+            });
+        } catch (GeolocationDbUpdateFailedException $e) {
+            if (! $e->olderDbExists()) {
+                $this->logger->error(
+                    sprintf(
+                        'GeoLite2 database download failed. It is not possible to locate visit with id %s. {e}',
+                        $visitId
+                    ),
+                    ['e' => $e]
+                );
+                return;
+            }
+
+            $this->logger->warning('GeoLite2 database update failed. Proceeding with old version. {e}', ['e' => $e]);
         }
 
         try {
