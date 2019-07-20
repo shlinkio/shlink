@@ -188,7 +188,7 @@ There are a couple of time-consuming tasks that shlink expects you to do manuall
 
 Those tasks can be performed using shlink's CLI, so it should be easy to schedule them to be run in the background (for example, using cron jobs):
 
-* Resolve IP address locations: `/path/to/shlink/bin/cli visit:locate`
+* **For shlink older than 1.18.0 or not using swoole as the web server**: Resolve IP address locations: `/path/to/shlink/bin/cli visit:locate`
 
     If you don't run this command regularly, the stats will say all visits come from *unknown* locations.
 
@@ -204,7 +204,7 @@ Those tasks can be performed using shlink's CLI, so it should be easy to schedul
 
 *Any of these commands accept the `-q` flag, which makes it not display any output. This is recommended when configuring the commands as cron jobs.*
 
-In future versions, it is planed that, when using **swoole** to serve shlink, some of these tasks are automatically run without blocking the request and also, without having to configure cron jobs. Probably resolving IP locations and generating previews.
+> In future versions, it is planed that, when using **swoole** to serve shlink, some of these tasks are automatically run without blocking the request and also, without having to configure cron jobs. Probably resolving IP locations and generating previews.
 
 ## Update to new version
 
