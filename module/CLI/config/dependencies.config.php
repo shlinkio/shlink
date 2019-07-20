@@ -48,7 +48,7 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        GeolocationDbUpdater::class => [DbUpdater::class, Reader::class],
+        GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, Lock\Factory::class],
 
         Command\ShortUrl\GenerateShortUrlCommand::class => [Service\UrlShortener::class, 'config.url_shortener.domain'],
         Command\ShortUrl\ResolveUrlCommand::class => [Service\UrlShortener::class],

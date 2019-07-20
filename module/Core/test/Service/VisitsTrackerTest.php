@@ -9,9 +9,11 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\EventDispatcher\ShortUrlVisited;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
@@ -24,15 +26,19 @@ class VisitsTrackerTest extends TestCase
     private $visitsTracker;
     /** @var ObjectProphecy */
     private $em;
+    /** @var EventDispatcherInterface */
+    private $eventDispatcher;
 
     public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManager::class);
-        $this->visitsTracker  = new VisitsTracker($this->em->reveal());
+        $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
+
+        $this->visitsTracker  = new VisitsTracker($this->em->reveal(), $this->eventDispatcher->reveal());
     }
 
     /** @test */
-    public function trackPersistsVisit()
+    public function trackPersistsVisit(): void
     {
         $shortCode = '123ABC';
         $repo = $this->prophesize(EntityRepository::class);
@@ -40,13 +46,18 @@ class VisitsTrackerTest extends TestCase
 
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
         $this->em->persist(Argument::any())->shouldBeCalledOnce();
-        $this->em->flush(Argument::type(Visit::class))->shouldBeCalledOnce();
+        $this->em->flush(Argument::that(function (Visit $visit) {
+            $visit->setId('1');
+            return $visit;
+        }))->shouldBeCalledOnce();
 
         $this->visitsTracker->track($shortCode, Visitor::emptyInstance());
+
+        $this->eventDispatcher->dispatch(Argument::type(ShortUrlVisited::class))->shouldHaveBeenCalled();
     }
 
     /** @test */
-    public function trackedIpAddressGetsObfuscated()
+    public function trackedIpAddressGetsObfuscated(): void
     {
         $shortCode = '123ABC';
         $repo = $this->prophesize(EntityRepository::class);
@@ -58,13 +69,18 @@ class VisitsTrackerTest extends TestCase
             $visit = $args[0];
             Assert::assertEquals('4.3.2.0', $visit->getRemoteAddr());
         })->shouldBeCalledOnce();
-        $this->em->flush(Argument::type(Visit::class))->shouldBeCalledOnce();
+        $this->em->flush(Argument::that(function (Visit $visit) {
+            $visit->setId('1');
+            return $visit;
+        }))->shouldBeCalledOnce();
 
         $this->visitsTracker->track($shortCode, new Visitor('', '', '4.3.2.1'));
+
+        $this->eventDispatcher->dispatch(Argument::type(ShortUrlVisited::class))->shouldHaveBeenCalled();
     }
 
     /** @test */
-    public function infoReturnsVisistForCertainShortCode()
+    public function infoReturnsVisitsForCertainShortCode(): void
     {
         $shortCode = '123ABC';
         $repo = $this->prophesize(EntityRepository::class);

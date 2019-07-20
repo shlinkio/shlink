@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\EventDispatcher\ShortUrlVisited;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
@@ -19,10 +21,13 @@ class VisitsTracker implements VisitsTrackerInterface
 {
     /** @var ORM\EntityManagerInterface */
     private $em;
+    /** @var EventDispatcherInterface */
+    private $eventDispatcher;
 
-    public function __construct(ORM\EntityManagerInterface $em)
+    public function __construct(ORM\EntityManagerInterface $em, EventDispatcherInterface $eventDispatcher)
     {
         $this->em = $em;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -41,6 +46,8 @@ class VisitsTracker implements VisitsTrackerInterface
         $em = $this->em;
         $em->persist($visit);
         $em->flush($visit);
+
+        $this->eventDispatcher->dispatch(new ShortUrlVisited($visit->getId()));
     }
 
     /**

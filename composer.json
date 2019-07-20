@@ -29,6 +29,7 @@
         "lstrojny/functional-php": "^1.8",
         "mikehaertl/phpwkhtmltopdf": "^2.2",
         "monolog/monolog": "^1.21",
+        "phly/phly-event-dispatcher": "^1.0",
         "shlinkio/shlink-installer": "^1.1",
         "symfony/console": "^4.2",
         "symfony/filesystem": "^4.2",
@@ -52,6 +53,7 @@
     "require-dev": {
         "devster/ubench": "^2.0",
         "doctrine/data-fixtures": "^1.3",
+        "eaglewu/swoole-ide-helper": "dev-master",
         "filp/whoops": "^2.0",
         "infection/infection": "^0.12.2",
         "phpstan/phpstan": "^0.11.2",
@@ -69,10 +71,12 @@
             "Shlinkio\\Shlink\\CLI\\": "module/CLI/src",
             "Shlinkio\\Shlink\\Rest\\": "module/Rest/src",
             "Shlinkio\\Shlink\\Core\\": "module/Core/src",
-            "Shlinkio\\Shlink\\Common\\": "module/Common/src"
+            "Shlinkio\\Shlink\\Common\\": "module/Common/src",
+            "Shlinkio\\Shlink\\EventDispatcher\\": "module/EventDispatcher/src"
         },
         "files": [
-            "module/Common/functions/functions.php"
+            "module/Common/functions/functions.php",
+            "module/EventDispatcher/functions/functions.php"
         ]
     },
     "autoload-dev": {
@@ -87,7 +91,8 @@
             "ShlinkioTest\\Shlink\\Common\\": [
                 "module/Common/test",
                 "module/Common/test-db"
-            ]
+            ],
+            "ShlinkioTest\\Shlink\\EventDispatcher\\": "module/EventDispatcher/test"
         }
     },
     "scripts": {

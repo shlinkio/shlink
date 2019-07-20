@@ -27,6 +27,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     }
     ```
 
+* [#285](https://github.com/shlinkio/shlink/issues/285) Visit location resolution is now done asynchronously but in real time thanks to swoole task management.
+
+    Now, when a short URL is visited, a task is enqueued to locate it. The user is immediately redirected to the long URL, and in the background, the visit is located, making stats to be available a couple of seconds after the visit without the requirement of cronjobs being run constantly.
+
+    Sadly, this feature is not enabled when serving shlink via apache/nginx, where you should still rely on cronjobs.
+
 #### Changed
 
 * *Nothing*

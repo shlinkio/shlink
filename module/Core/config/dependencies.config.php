@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core;
 
 use Doctrine\Common\Cache\Cache;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Zend\Expressive\Router\RouterInterface;
@@ -46,7 +47,7 @@ return [
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
         Service\UrlShortener::class => ['httpClient', 'em', Options\UrlShortenerOptions::class],
-        Service\VisitsTracker::class => ['em'],
+        Service\VisitsTracker::class => ['em', EventDispatcherInterface::class],
         Service\ShortUrlService::class => ['em'],
         Service\VisitService::class => ['em'],
         Service\Tag\TagService::class => ['em'],

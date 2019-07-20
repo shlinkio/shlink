@@ -65,6 +65,11 @@ class Visit extends AbstractEntity implements JsonSerializable
         return $this->visitLocation ?? new UnknownVisitLocation();
     }
 
+    public function isLocatable(): bool
+    {
+        return $this->hasRemoteAddr() && $this->remoteAddr !== IpAddress::LOCALHOST;
+    }
+
     public function locate(VisitLocation $visitLocation): self
     {
         $this->visitLocation = $visitLocation;
