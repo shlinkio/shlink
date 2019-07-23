@@ -47,7 +47,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Fixed
 
-* *Nothing*
+* [#416](https://github.com/shlinkio/shlink/issues/416) Fixed error thrown when trying to locate visits after the GeoLite2 DB is downloaded for the first time.
 
 
 ## 1.17.0 - 2019-05-13
