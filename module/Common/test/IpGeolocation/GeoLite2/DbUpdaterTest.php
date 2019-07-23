@@ -32,7 +32,7 @@ class DbUpdaterTest extends TestCase
         $this->filesystem = $this->prophesize(Filesystem::class);
         $this->options = new GeoLite2Options([
             'temp_dir' => __DIR__ . '/../../../test-resources',
-            'db_location' => '',
+            'db_location' => 'db_location',
             'download_from' => '',
         ]);
 
@@ -109,5 +109,24 @@ class DbUpdaterTest extends TestCase
         $request->shouldHaveBeenCalledOnce();
         $copy->shouldHaveBeenCalledOnce();
         $remove->shouldHaveBeenCalledOnce();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideExists
+     */
+    public function databaseFileExistsChecksIfTheFilesExistsInTheFilesystem(bool $expected): void
+    {
+        $exists = $this->filesystem->exists('db_location')->willReturn($expected);
+
+        $result = $this->dbUpdater->databaseFileExists();
+
+        $this->assertEquals($expected, $result);
+        $exists->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideExists(): iterable
+    {
+        return [[true], [false]];
     }
 }

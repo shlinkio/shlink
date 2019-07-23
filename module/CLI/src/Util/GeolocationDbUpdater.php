@@ -46,6 +46,9 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         }
     }
 
+    /**
+     * @throws GeolocationDbUpdateFailedException
+     */
     private function downloadIfNeeded(?callable $mustBeUpdated, ?callable $handleProgress): void
     {
         if (! $this->dbUpdater->databaseFileExists()) {
@@ -59,21 +62,11 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         }
     }
 
-    private function buildIsTooOld(int $buildTimestamp): bool
-    {
-        $buildDate = Chronos::createFromTimestamp($buildTimestamp);
-        $now = Chronos::now();
-        return $now->gt($buildDate->addDays(35));
-    }
-
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    private function downloadNewDb(
-        bool $olderDbExists,
-        callable $mustBeUpdated = null,
-        callable $handleProgress = null
-    ): void {
+    private function downloadNewDb(bool $olderDbExists, ?callable $mustBeUpdated, ?callable $handleProgress): void
+    {
         if ($mustBeUpdated !== null) {
             $mustBeUpdated($olderDbExists);
         }
@@ -83,5 +76,12 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         } catch (RuntimeException $e) {
             throw GeolocationDbUpdateFailedException::create($olderDbExists, $e);
         }
+    }
+
+    private function buildIsTooOld(int $buildTimestamp): bool
+    {
+        $buildDate = Chronos::createFromTimestamp($buildTimestamp);
+        $now = Chronos::now();
+        return $now->gt($buildDate->addDays(35));
     }
 }
