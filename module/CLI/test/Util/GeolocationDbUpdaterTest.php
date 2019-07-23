@@ -5,7 +5,6 @@ namespace ShlinkioTest\Shlink\CLI\Util;
 
 use Cake\Chronos\Chronos;
 use GeoIp2\Database\Reader;
-use InvalidArgumentException;
 use MaxMind\Db\Reader\Metadata;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
