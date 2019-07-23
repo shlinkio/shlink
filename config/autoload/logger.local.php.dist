@@ -14,7 +14,7 @@ $logger = $isSwoole ? [
         ],
         'shlink_stdout_handler' => [
             'class' => StreamHandler::class,
-            'level' => Logger::INFO,
+            'level' => Logger::DEBUG,
             'stream' => 'php://stdout',
             'formatter' => 'dashed',
         ],

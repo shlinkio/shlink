@@ -5,11 +5,11 @@ namespace Shlinkio\Shlink\CLI\Util;
 
 use Cake\Chronos\Chronos;
 use GeoIp2\Database\Reader;
-use InvalidArgumentException;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock\Factory as Locker;
+use Throwable;
 
 class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
 {
@@ -32,21 +32,30 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    public function checkDbUpdate(callable $mustBeUpdated = null, callable $handleProgress = null): void
+    public function checkDbUpdate(?callable $mustBeUpdated = null, ?callable $handleProgress = null): void
     {
         $lock = $this->locker->createLock(self::LOCK_NAME);
         $lock->acquire(true); // Block until lock is released
 
         try {
-            $meta = $this->geoLiteDbReader->metadata();
-            if ($this->buildIsTooOld($meta->__get('buildEpoch'))) {
-                $this->downloadNewDb(true, $mustBeUpdated, $handleProgress);
-            }
-        } catch (InvalidArgumentException $e) {
-            // This is the exception thrown by the reader when the database file does not exist
-            $this->downloadNewDb(false, $mustBeUpdated, $handleProgress);
+            $this->downloadIfNeeded($mustBeUpdated, $handleProgress);
+        } catch (Throwable $e) {
+            throw $e;
         } finally {
             $lock->release();
+        }
+    }
+
+    private function downloadIfNeeded(?callable $mustBeUpdated, ?callable $handleProgress): void
+    {
+        if (! $this->dbUpdater->databaseFileExists()) {
+            $this->downloadNewDb(false, $mustBeUpdated, $handleProgress);
+            return;
+        }
+
+        $meta = $this->geoLiteDbReader->metadata();
+        if ($this->buildIsTooOld($meta->__get('buildEpoch'))) {
+            $this->downloadNewDb(true, $mustBeUpdated, $handleProgress);
         }
     }
 
