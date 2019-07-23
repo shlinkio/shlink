@@ -5,11 +5,11 @@ namespace Shlinkio\Shlink\CLI\Util;
 
 use Cake\Chronos\Chronos;
 use GeoIp2\Database\Reader;
-use InvalidArgumentException;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\Common\Exception\RuntimeException;
 use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock\Factory as Locker;
+use Throwable;
 
 class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
 {
@@ -32,39 +32,41 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    public function checkDbUpdate(callable $mustBeUpdated = null, callable $handleProgress = null): void
+    public function checkDbUpdate(?callable $mustBeUpdated = null, ?callable $handleProgress = null): void
     {
         $lock = $this->locker->createLock(self::LOCK_NAME);
         $lock->acquire(true); // Block until lock is released
 
         try {
-            $meta = $this->geoLiteDbReader->metadata();
-            if ($this->buildIsTooOld($meta->__get('buildEpoch'))) {
-                $this->downloadNewDb(true, $mustBeUpdated, $handleProgress);
-            }
-        } catch (InvalidArgumentException $e) {
-            // This is the exception thrown by the reader when the database file does not exist
-            $this->downloadNewDb(false, $mustBeUpdated, $handleProgress);
+            $this->downloadIfNeeded($mustBeUpdated, $handleProgress);
+        } catch (Throwable $e) {
+            throw $e;
         } finally {
             $lock->release();
         }
     }
 
-    private function buildIsTooOld(int $buildTimestamp): bool
+    /**
+     * @throws GeolocationDbUpdateFailedException
+     */
+    private function downloadIfNeeded(?callable $mustBeUpdated, ?callable $handleProgress): void
     {
-        $buildDate = Chronos::createFromTimestamp($buildTimestamp);
-        $now = Chronos::now();
-        return $now->gt($buildDate->addDays(35));
+        if (! $this->dbUpdater->databaseFileExists()) {
+            $this->downloadNewDb(false, $mustBeUpdated, $handleProgress);
+            return;
+        }
+
+        $meta = $this->geoLiteDbReader->metadata();
+        if ($this->buildIsTooOld($meta->__get('buildEpoch'))) {
+            $this->downloadNewDb(true, $mustBeUpdated, $handleProgress);
+        }
     }
 
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    private function downloadNewDb(
-        bool $olderDbExists,
-        callable $mustBeUpdated = null,
-        callable $handleProgress = null
-    ): void {
+    private function downloadNewDb(bool $olderDbExists, ?callable $mustBeUpdated, ?callable $handleProgress): void
+    {
         if ($mustBeUpdated !== null) {
             $mustBeUpdated($olderDbExists);
         }
@@ -74,5 +76,12 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         } catch (RuntimeException $e) {
             throw GeolocationDbUpdateFailedException::create($olderDbExists, $e);
         }
+    }
+
+    private function buildIsTooOld(int $buildTimestamp): bool
+    {
+        $buildDate = Chronos::createFromTimestamp($buildTimestamp);
+        $now = Chronos::now();
+        return $now->gt($buildDate->addDays(35));
     }
 }

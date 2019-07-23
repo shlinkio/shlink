@@ -5,7 +5,6 @@ namespace ShlinkioTest\Shlink\CLI\Util;
 
 use Cake\Chronos\Chronos;
 use GeoIp2\Database\Reader;
-use InvalidArgumentException;
 use MaxMind\Db\Reader\Metadata;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -58,8 +57,10 @@ class GeolocationDbUpdaterTest extends TestCase
         $mustBeUpdated = function () {
             $this->assertTrue(true);
         };
-        $getMeta = $this->geoLiteDbReader->metadata()->willThrow(InvalidArgumentException::class);
         $prev = new RuntimeException('');
+
+        $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(false);
+        $getMeta = $this->geoLiteDbReader->metadata();
         $download = $this->dbUpdater->downloadFreshCopy(null)->willThrow($prev);
 
         try {
@@ -72,7 +73,8 @@ class GeolocationDbUpdaterTest extends TestCase
             $this->assertFalse($e->olderDbExists());
         }
 
-        $getMeta->shouldHaveBeenCalledOnce();
+        $fileExists->shouldHaveBeenCalledOnce();
+        $getMeta->shouldNotHaveBeenCalled();
         $download->shouldHaveBeenCalledOnce();
     }
 
@@ -82,6 +84,7 @@ class GeolocationDbUpdaterTest extends TestCase
      */
     public function exceptionIsThrownWhenOlderDbIsTooOldAndDownloadFails(int $days): void
     {
+        $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(true);
         $getMeta = $this->geoLiteDbReader->metadata()->willReturn(new Metadata([
             'binary_format_major_version' => '',
             'binary_format_minor_version' => '',
@@ -106,6 +109,7 @@ class GeolocationDbUpdaterTest extends TestCase
             $this->assertTrue($e->olderDbExists());
         }
 
+        $fileExists->shouldHaveBeenCalledOnce();
         $getMeta->shouldHaveBeenCalledOnce();
         $download->shouldHaveBeenCalledOnce();
     }
@@ -124,6 +128,7 @@ class GeolocationDbUpdaterTest extends TestCase
      */
     public function databaseIsNotUpdatedIfItIsYoungerThanOneWeek(int $days): void
     {
+        $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(true);
         $getMeta = $this->geoLiteDbReader->metadata()->willReturn(new Metadata([
             'binary_format_major_version' => '',
             'binary_format_minor_version' => '',
@@ -140,6 +145,7 @@ class GeolocationDbUpdaterTest extends TestCase
 
         $this->geolocationDbUpdater->checkDbUpdate();
 
+        $fileExists->shouldHaveBeenCalledOnce();
         $getMeta->shouldHaveBeenCalledOnce();
         $download->shouldNotHaveBeenCalled();
     }

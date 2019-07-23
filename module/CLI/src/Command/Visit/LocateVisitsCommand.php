@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
+use Exception;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
@@ -78,8 +79,8 @@ class LocateVisitsCommand extends Command
 
             $this->visitService->locateUnlocatedVisits(
                 [$this, 'getGeolocationDataForVisit'],
-                function (VisitLocation $location) use ($output) {
-                    if (! $location->isEmpty()) {
+                static function (VisitLocation $location) use ($output) {
+                    if (!$location->isEmpty()) {
                         $output->writeln(
                             sprintf(' [<info>Address located at "%s"</info>]', $location->getCountryName())
                         );
@@ -88,9 +89,16 @@ class LocateVisitsCommand extends Command
             );
 
             $this->io->success('Finished processing all IPs');
+            return ExitCodes::EXIT_SUCCESS;
+        } catch (Exception $e) {
+            $this->io->error($e->getMessage());
+            if ($this->io->isVerbose()) {
+                $this->getApplication()->renderException($e, $this->io);
+            }
+
+            return ExitCodes::EXIT_FAILURE;
         } finally {
             $lock->release();
-            return ExitCodes::EXIT_SUCCESS;
         }
     }
 

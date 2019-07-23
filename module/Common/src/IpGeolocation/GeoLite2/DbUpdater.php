@@ -98,4 +98,9 @@ class DbUpdater implements DbUpdaterInterface
             // Ignore any error produced when trying to delete temp files
         }
     }
+
+    public function databaseFileExists(): bool
+    {
+        return $this->filesystem->exists($this->options->getDbLocation());
+    }
 }
