@@ -84,7 +84,9 @@ WORKDIR /home/shlink
 # Expose swoole port
 EXPOSE 8080
 
-CMD /usr/local/bin/composer update && \
+CMD \
+    # Install dependencies if the vendor dir does not exist
+    if [[ ! -d "./vendor" ]]; then /usr/local/bin/composer install ; fi && \
     # When restarting the container, swoole might think it is already in execution
     # This forces the app to be started every second until the exit code is 0
     until php ./vendor/bin/zend-expressive-swoole start; do sleep 1 ; done
