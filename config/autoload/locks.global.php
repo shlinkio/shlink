@@ -15,11 +15,14 @@ return [
             Lock\Store\FlockStore::class => ConfigAbstractFactory::class,
             Lock\Factory::class => ConfigAbstractFactory::class,
         ],
+        'aliases' => [
+            'lock_adapter' => Lock\Store\FlockStore::class,
+        ],
     ],
 
     ConfigAbstractFactory::class => [
         Lock\Store\FlockStore::class => ['config.locks.locks_dir'],
-        Lock\Factory::class => [Lock\Store\FlockStore::class],
+        Lock\Factory::class => ['lock_adapter'],
     ],
 
 ];
