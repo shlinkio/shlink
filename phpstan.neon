@@ -3,3 +3,6 @@ parameters:
 		- '#League\\Plates\\callback#'
 		- '#is not subtype of Throwable#'
 		- '#ObjectManager::flush()#'
+		-
+			message: '#Access to an undefined property#'
+			path: %currentWorkingDirectory%/module/Common/src/Middleware/CloseDbConnectionMiddleware.php
