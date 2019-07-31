@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 use Shlinkio\Shlink\Common\Middleware\CloseDbConnectionMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
@@ -20,35 +21,52 @@ class CloseDbConnectionMiddlewareTest extends TestCase
     private $handler;
     /** @var ObjectProphecy */
     private $em;
+    /** @var ObjectProphecy */
+    private $conn;
 
     public function setUp(): void
     {
         $this->handler = $this->prophesize(RequestHandlerInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
+        $this->conn = $this->prophesize(Connection::class);
+        $this->conn->close()->will(function () {
+        });
+        $this->em->getConnection()->willReturn($this->conn->reveal());
+        $this->em->clear()->will(function () {
+        });
 
         $this->middleware = new CloseDbConnectionMiddleware($this->em->reveal());
     }
 
     /** @test */
-    public function connectionIsClosedWhenMiddlewareIsProcessed()
+    public function connectionIsClosedWhenMiddlewareIsProcessed(): void
     {
         $req = new ServerRequest();
         $resp = new Response();
-
-        $conn = $this->prophesize(Connection::class);
-        $closeConn = $conn->close()->will(function () {
-        });
-        $getConn = $this->em->getConnection()->willReturn($conn->reveal());
-        $clear = $this->em->clear()->will(function () {
-        });
         $handle = $this->handler->handle($req)->willReturn($resp);
 
         $result = $this->middleware->process($req, $this->handler->reveal());
 
         $this->assertSame($result, $resp);
-        $getConn->shouldHaveBeenCalledOnce();
-        $closeConn->shouldHaveBeenCalledOnce();
-        $clear->shouldHaveBeenCalledOnce();
+        $this->em->getConnection()->shouldHaveBeenCalledOnce();
+        $this->conn->close()->shouldHaveBeenCalledOnce();
+        $this->em->clear()->shouldHaveBeenCalledOnce();
         $handle->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
+    public function connectionIsClosedEvenIfExceptionIsThrownOnInnerMiddlewares(): void
+    {
+        $req = new ServerRequest();
+        $expectedError = new RuntimeException();
+        $this->handler->handle($req)->willThrow($expectedError)
+                                    ->shouldBeCalledOnce();
+
+        $this->em->getConnection()->shouldBeCalledOnce();
+        $this->conn->close()->shouldBeCalledOnce();
+        $this->em->clear()->shouldBeCalledOnce();
+        $this->expectExceptionObject($expectedError);
+
+        $this->middleware->process($req, $this->handler->reveal());
     }
 }
