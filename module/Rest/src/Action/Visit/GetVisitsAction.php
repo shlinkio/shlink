@@ -26,7 +26,7 @@ class GetVisitsAction extends AbstractRestAction
     /** @var VisitsTrackerInterface */
     private $visitsTracker;
 
-    public function __construct(VisitsTrackerInterface $visitsTracker, LoggerInterface $logger = null)
+    public function __construct(VisitsTrackerInterface $visitsTracker, ?LoggerInterface $logger = null)
     {
         parent::__construct($logger);
         $this->visitsTracker = $visitsTracker;

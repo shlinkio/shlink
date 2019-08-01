@@ -43,7 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Changed
 
-* *Nothing*
+* [#430](https://github.com/shlinkio/shlink/issues/430) Updated to [shlinkio/php-coding-standard](https://github.com/shlinkio/php-coding-standard) 1.2.2
 
 ### Deprecated
 
@@ -56,7 +56,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Fixed
 
 * [#416](https://github.com/shlinkio/shlink/issues/416) Fixed error thrown when trying to locate visits after the GeoLite2 DB is downloaded for the first time.
-* [#424](https://github.com/shlinkio/shlink/issues/424) Update wkhtmltoimage to version 0.12.5
+* [#424](https://github.com/shlinkio/shlink/issues/424) Updated wkhtmltoimage to version 0.12.5
 * [#427](https://github.com/shlinkio/shlink/issues/427) Fixed shlink being unusable after a database error on swoole contexts.
 
 

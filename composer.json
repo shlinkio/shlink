@@ -61,7 +61,7 @@
         "phpunit/phpcov": "^6.0",
         "phpunit/phpunit": "^8.0",
         "roave/security-advisories": "dev-master",
-        "shlinkio/php-coding-standard": "~1.1.0",
+        "shlinkio/php-coding-standard": "~1.2.2",
         "symfony/dotenv": "^4.2",
         "symfony/var-dumper": "^4.2",
         "zendframework/zend-component-installer": "^2.1",

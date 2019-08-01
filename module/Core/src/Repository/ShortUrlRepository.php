@@ -22,9 +22,9 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
      * @return ShortUrl[]
      */
     public function findList(
-        int $limit = null,
-        int $offset = null,
-        string $searchTerm = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?string $searchTerm = null,
         array $tags = [],
         $orderBy = null
     ): array {
@@ -76,7 +76,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb->getQuery()->getResult();
     }
 
-    public function countList(string $searchTerm = null, array $tags = []): int
+    public function countList(?string $searchTerm = null, array $tags = []): int
     {
         $qb = $this->createListQueryBuilder($searchTerm, $tags);
         $qb->select('COUNT(DISTINCT s)');

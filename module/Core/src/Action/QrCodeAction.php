@@ -36,7 +36,7 @@ class QrCodeAction implements MiddlewareInterface
     public function __construct(
         RouterInterface $router,
         UrlShortenerInterface $urlShortener,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ) {
         $this->router = $router;
         $this->urlShortener = $urlShortener;

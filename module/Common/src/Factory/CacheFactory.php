@@ -12,7 +12,7 @@ use function Shlinkio\Shlink\Common\env;
 
 class CacheFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): Cache\Cache
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): Cache\Cache
     {
         $appOptions = $container->get(AppOptions::class);
         $adapter = env('APP_ENV', 'pro') === 'pro' ? new Cache\ApcuCache() : new Cache\ArrayCache();

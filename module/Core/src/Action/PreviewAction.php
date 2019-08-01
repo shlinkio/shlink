@@ -32,7 +32,7 @@ class PreviewAction implements MiddlewareInterface
     public function __construct(
         PreviewGeneratorInterface $previewGenerator,
         UrlShortenerInterface $urlShortener,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ) {
         $this->previewGenerator = $previewGenerator;
         $this->urlShortener = $urlShortener;

@@ -12,7 +12,7 @@ class DeleteShortUrlException extends RuntimeException
     /** @var int */
     private $visitsThreshold;
 
-    public function __construct(int $visitsThreshold, string $message = '', int $code = 0, Throwable $previous = null)
+    public function __construct(int $visitsThreshold, string $message = '', int $code = 0, ?Throwable $previous = null)
     {
         $this->visitsThreshold = $visitsThreshold;
         parent::__construct($message, $code, $previous);

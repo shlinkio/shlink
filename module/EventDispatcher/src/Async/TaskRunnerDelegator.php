@@ -14,7 +14,7 @@ class TaskRunnerDelegator implements DelegatorFactoryInterface
         ContainerInterface $container,
         $name,
         callable $callback,
-        array $options = null
+        ?array $options = null
     ): HttpServer {
         $server = $callback();
         $logger = $container->get(LoggerInterface::class);

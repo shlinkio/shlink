@@ -30,7 +30,7 @@ class ShortUrl extends AbstractEntity
     /** @var integer|null */
     private $maxVisits;
 
-    public function __construct(string $longUrl, ShortUrlMeta $meta = null)
+    public function __construct(string $longUrl, ?ShortUrlMeta $meta = null)
     {
         $meta = $meta ?? ShortUrlMeta::createEmpty();
 

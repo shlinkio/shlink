@@ -9,7 +9,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 
 class TaskRunnerFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): TaskRunner
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): TaskRunner
     {
         $logger = $container->get(LoggerInterface::class);
         return new TaskRunner($logger, $container);

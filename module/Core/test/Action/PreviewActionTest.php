@@ -18,9 +18,9 @@ use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
-use const FILEINFO_MIME;
-
 use function filesize;
+
+use const FILEINFO_MIME;
 
 class PreviewActionTest extends TestCase
 {

@@ -25,7 +25,7 @@ class EntityManagerFactory implements FactoryInterface
      * @throws ORMException
      * @throws DBALException
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         $globalConfig = $container->get('config');
         $isDevMode = isset($globalConfig['debug']) ? ((bool) $globalConfig['debug']) : false;
