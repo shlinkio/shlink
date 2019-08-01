@@ -33,6 +33,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Sadly, this feature is not enabled when serving shlink via apache/nginx, where you should still rely on cronjobs.
 
+* [#384](https://github.com/shlinkio/shlink/issues/384) Improved how remote IP addresses are detected.
+
+    This new set of headers is now also inspected looking for the IP address:
+
+    * CF-Connecting-IP
+    * True-Client-IP
+    * X-Real-IP
+
 #### Changed
 
 * *Nothing*
@@ -49,6 +57,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#416](https://github.com/shlinkio/shlink/issues/416) Fixed error thrown when trying to locate visits after the GeoLite2 DB is downloaded for the first time.
 * [#424](https://github.com/shlinkio/shlink/issues/424) Update wkhtmltoimage to version 0.12.5
+* [#427](https://github.com/shlinkio/shlink/issues/427) Fixed shlink being unusable after a database error on swoole contexts.
 
 
 ## 1.17.0 - 2019-05-13
