@@ -23,6 +23,8 @@ class IpAddressMiddlewareFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): IpAddress
     {
-        return new IpAddress(true, [], Visitor::REMOTE_ADDRESS_ATTR);
+        $config = $container->get('config');
+        $headersToInspect = $config['ip_address_resolution']['headers_to_inspect'] ?? [];
+        return new IpAddress(true, [], Visitor::REMOTE_ADDRESS_ATTR, $headersToInspect);
     }
 }
