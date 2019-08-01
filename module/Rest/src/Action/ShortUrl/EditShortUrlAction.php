@@ -24,7 +24,7 @@ class EditShortUrlAction extends AbstractRestAction
     /** @var ShortUrlServiceInterface */
     private $shortUrlService;
 
-    public function __construct(ShortUrlServiceInterface $shortUrlService, LoggerInterface $logger = null)
+    public function __construct(ShortUrlServiceInterface $shortUrlService, ?LoggerInterface $logger = null)
     {
         parent::__construct($logger);
         $this->shortUrlService = $shortUrlService;

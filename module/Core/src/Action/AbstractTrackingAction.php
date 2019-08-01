@@ -33,7 +33,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
         UrlShortenerInterface $urlShortener,
         VisitsTrackerInterface $visitTracker,
         AppOptions $appOptions,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ) {
         $this->urlShortener = $urlShortener;
         $this->visitTracker = $visitTracker;

@@ -6,11 +6,11 @@ namespace Shlinkio\Shlink\Core\Exception;
 use Throwable;
 use Zend\InputFilter\InputFilterInterface;
 
-use const PHP_EOL;
-
 use function is_array;
 use function print_r;
 use function sprintf;
+
+use const PHP_EOL;
 
 class ValidationException extends RuntimeException
 {
@@ -21,7 +21,7 @@ class ValidationException extends RuntimeException
         string $message = '',
         array $invalidElements = [],
         int $code = 0,
-        Throwable $previous = null
+        ?Throwable $previous = null
     ) {
         $this->invalidElements = $invalidElements;
         parent::__construct($message, $code, $previous);
@@ -32,7 +32,7 @@ class ValidationException extends RuntimeException
      * @param \Throwable|null $prev
      * @return ValidationException
      */
-    public static function fromInputFilter(InputFilterInterface $inputFilter, Throwable $prev = null): self
+    public static function fromInputFilter(InputFilterInterface $inputFilter, ?Throwable $prev = null): self
     {
         return static::fromArray($inputFilter->getMessages(), $prev);
     }
@@ -42,7 +42,7 @@ class ValidationException extends RuntimeException
      * @param \Throwable|null $prev
      * @return ValidationException
      */
-    private static function fromArray(array $invalidData, Throwable $prev = null): self
+    private static function fromArray(array $invalidData, ?Throwable $prev = null): self
     {
         return new self(
             sprintf(

@@ -31,7 +31,7 @@ class ShortUrlService implements ShortUrlServiceInterface
      * @param array|string|null $orderBy
      * @return ShortUrl[]|Paginator
      */
-    public function listShortUrls(int $page = 1, string $searchQuery = null, array $tags = [], $orderBy = null)
+    public function listShortUrls(int $page = 1, ?string $searchQuery = null, array $tags = [], $orderBy = null)
     {
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);

@@ -29,7 +29,7 @@ class ListShortUrlsAction extends AbstractRestAction
     public function __construct(
         ShortUrlServiceInterface $shortUrlService,
         array $domainConfig,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ) {
         parent::__construct($logger);
         $this->shortUrlService = $shortUrlService;

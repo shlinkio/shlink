@@ -23,7 +23,7 @@ class DeleteShortUrlAction extends AbstractRestAction
     /** @var DeleteShortUrlServiceInterface */
     private $deleteShortUrlService;
 
-    public function __construct(DeleteShortUrlServiceInterface $deleteShortUrlService, LoggerInterface $logger = null)
+    public function __construct(DeleteShortUrlServiceInterface $deleteShortUrlService, ?LoggerInterface $logger = null)
     {
         parent::__construct($logger);
         $this->deleteShortUrlService = $deleteShortUrlService;

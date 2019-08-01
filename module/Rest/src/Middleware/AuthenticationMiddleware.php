@@ -36,7 +36,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
     public function __construct(
         RequestToHttpAuthPluginInterface $requestToAuthPlugin,
         array $routesWhitelist,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ) {
         $this->routesWhitelist = $routesWhitelist;
         $this->requestToAuthPlugin = $requestToAuthPlugin;

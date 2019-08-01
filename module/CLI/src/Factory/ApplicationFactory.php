@@ -29,7 +29,7 @@ class ApplicationFactory implements FactoryInterface
      * @throws ServiceNotCreatedException if an exception is raised when creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): CliApp
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): CliApp
     {
         $config = $container->get('config')['cli'];
         $appOptions = $container->get(AppOptions::class);

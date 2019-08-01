@@ -8,8 +8,8 @@ use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 
 interface JWTServiceInterface
 {
-    const DEFAULT_LIFETIME = 604800; // 1 week
-    const DEFAULT_ENCRYPTION_ALG = 'HS256';
+    public const DEFAULT_LIFETIME = 604800; // 1 week
+    public const DEFAULT_ENCRYPTION_ALG = 'HS256';
 
     /**
      * Creates a new JSON web token por provided API key

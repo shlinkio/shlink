@@ -26,7 +26,7 @@ class AuthenticateAction extends AbstractRestAction
     public function __construct(
         ApiKeyServiceInterface $apiKeyService,
         JWTServiceInterface $jwtService,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ) {
         parent::__construct($logger);
         $this->apiKeyService = $apiKeyService;

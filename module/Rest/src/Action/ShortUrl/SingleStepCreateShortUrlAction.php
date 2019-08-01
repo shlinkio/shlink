@@ -23,7 +23,7 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
         UrlShortenerInterface $urlShortener,
         ApiKeyServiceInterface $apiKeyService,
         array $domainConfig,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ) {
         parent::__construct($urlShortener, $domainConfig, $logger);
         $this->apiKeyService = $apiKeyService;

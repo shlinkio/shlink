@@ -60,7 +60,7 @@ class AuthorizationHeaderPlugin implements AuthenticationPluginInterface
         }
     }
 
-    private function createInvalidTokenError(Throwable $prev = null): VerifyAuthenticationException
+    private function createInvalidTokenError(?Throwable $prev = null): VerifyAuthenticationException
     {
         return VerifyAuthenticationException::withError(
             RestUtils::INVALID_AUTH_TOKEN_ERROR,

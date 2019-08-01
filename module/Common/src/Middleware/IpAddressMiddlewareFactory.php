@@ -21,7 +21,7 @@ class IpAddressMiddlewareFactory implements FactoryInterface
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when creating a service.
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): IpAddress
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): IpAddress
     {
         $config = $container->get('config');
         $headersToInspect = $config['ip_address_resolution']['headers_to_inspect'] ?? [];

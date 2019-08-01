@@ -25,7 +25,7 @@ class RedirectAction extends AbstractTrackingAction
         VisitsTrackerInterface $visitTracker,
         Options\AppOptions $appOptions,
         Options\NotFoundShortUrlOptions $notFoundOptions,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ) {
         parent::__construct($urlShortener, $visitTracker, $appOptions, $logger);
         $this->notFoundOptions = $notFoundOptions;

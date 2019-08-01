@@ -29,7 +29,7 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
     public function __construct(
         UrlShortenerInterface $urlShortener,
         array $domainConfig,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ) {
         parent::__construct($logger);
         $this->urlShortener = $urlShortener;

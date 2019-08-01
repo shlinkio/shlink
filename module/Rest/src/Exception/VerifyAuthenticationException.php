@@ -19,14 +19,14 @@ class VerifyAuthenticationException extends RuntimeException
         string $publicMessage,
         string $message = '',
         int $code = 0,
-        Throwable $previous = null
+        ?Throwable $previous = null
     ) {
         parent::__construct($message, $code, $previous);
         $this->errorCode = $errorCode;
         $this->publicMessage = $publicMessage;
     }
 
-    public static function withError(string $errorCode, string $publicMessage, Throwable $prev = null): self
+    public static function withError(string $errorCode, string $publicMessage, ?Throwable $prev = null): self
     {
         return new self(
             $errorCode,

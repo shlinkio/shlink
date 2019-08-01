@@ -19,7 +19,7 @@ class ApiKeyFixture implements FixtureInterface
         $manager->flush();
     }
 
-    private function buildApiKey(string $key, bool $enabled, Chronos $expiresAt = null): ApiKey
+    private function buildApiKey(string $key, bool $enabled, ?Chronos $expiresAt = null): ApiKey
     {
         $apiKey = new ApiKey($expiresAt);
         $refObj = new ReflectionObject($apiKey);

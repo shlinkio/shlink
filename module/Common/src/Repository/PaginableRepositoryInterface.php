@@ -16,9 +16,9 @@ interface PaginableRepositoryInterface
      * @return array
      */
     public function findList(
-        int $limit = null,
-        int $offset = null,
-        string $searchTerm = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?string $searchTerm = null,
         array $tags = [],
         $orderBy = null
     ): array;
@@ -30,5 +30,5 @@ interface PaginableRepositoryInterface
      * @param array $tags
      * @return int
      */
-    public function countList(string $searchTerm = null, array $tags = []): int;
+    public function countList(?string $searchTerm = null, array $tags = []): int;
 }

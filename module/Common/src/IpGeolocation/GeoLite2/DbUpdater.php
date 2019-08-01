@@ -37,7 +37,7 @@ class DbUpdater implements DbUpdaterInterface
     /**
      * @throws RuntimeException
      */
-    public function downloadFreshCopy(callable $handleProgress = null): void
+    public function downloadFreshCopy(?callable $handleProgress = null): void
     {
         $tempDir = $this->options->getTempDir();
         $compressedFile = sprintf('%s/%s', $tempDir, self::DB_COMPRESSED_FILE);
@@ -48,7 +48,7 @@ class DbUpdater implements DbUpdaterInterface
         $this->deleteTempFiles([$compressedFile, $tempFullPath]);
     }
 
-    private function downloadDbFile(string $dest, callable $handleProgress = null): void
+    private function downloadDbFile(string $dest, ?callable $handleProgress = null): void
     {
         try {
             $this->httpClient->request(RequestMethod::METHOD_GET, $this->options->getDownloadFrom(), [

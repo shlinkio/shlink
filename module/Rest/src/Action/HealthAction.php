@@ -25,7 +25,7 @@ class HealthAction extends AbstractRestAction
     /** @var Connection */
     private $conn;
 
-    public function __construct(Connection $conn, AppOptions $options, LoggerInterface $logger = null)
+    public function __construct(Connection $conn, AppOptions $options, ?LoggerInterface $logger = null)
     {
         parent::__construct($logger);
         $this->conn = $conn;

@@ -23,7 +23,7 @@ class UpdateTagAction extends AbstractRestAction
     /** @var TagServiceInterface */
     private $tagService;
 
-    public function __construct(TagServiceInterface $tagService, LoggerInterface $logger = null)
+    public function __construct(TagServiceInterface $tagService, ?LoggerInterface $logger = null)
     {
         parent::__construct($logger);
         $this->tagService = $tagService;

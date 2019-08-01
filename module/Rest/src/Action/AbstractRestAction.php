@@ -19,7 +19,7 @@ abstract class AbstractRestAction implements RequestHandlerInterface, RequestMet
     /** @var LoggerInterface */
     protected $logger;
 
-    public function __construct(LoggerInterface $logger = null)
+    public function __construct(?LoggerInterface $logger = null)
     {
         $this->logger = $logger ?: new NullLogger();
     }

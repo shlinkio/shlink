@@ -44,7 +44,7 @@ class DottedAccessConfigAbstractFactory implements AbstractFactoryInterface
      *     creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         $parts = explode('.', $requestedName);
         $serviceName = array_shift($parts);
