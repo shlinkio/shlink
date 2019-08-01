@@ -12,7 +12,7 @@ use function stripos;
 
 class LockMigrationsEntityManagerDelegator implements DelegatorFactoryInterface
 {
-    public function __invoke(ContainerInterface $container, $name, callable $callback, array $options = null)
+    public function __invoke(ContainerInterface $container, $name, callable $callback, ?array $options = null)
     {
         /** @var EntityManager $em */
         $em = $callback();
