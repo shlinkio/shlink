@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use function Shlinkio\Shlink\Common\env;
+namespace Shlinkio\Shlink\Common;
 
 return [
 

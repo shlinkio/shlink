@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Common;
 
 use Doctrine\Common\Cache\Cache;
-use Doctrine\ORM\EntityManager;
 use GeoIp2\Database\Reader;
 use GuzzleHttp\Client as GuzzleClient;
 use Monolog\Logger;
@@ -20,7 +19,6 @@ return [
 
     'dependencies' => [
         'factories' => [
-            EntityManager::class => Factory\EntityManagerFactory::class,
             GuzzleClient::class => InvokableFactory::class,
             Cache::class => Factory\CacheFactory::class,
             Filesystem::class => InvokableFactory::class,
@@ -45,7 +43,6 @@ return [
             Service\PreviewGenerator::class => ConfigAbstractFactory::class,
         ],
         'aliases' => [
-            'em' => EntityManager::class,
             'httpClient' => GuzzleClient::class,
             'translator' => Translator::class,
 

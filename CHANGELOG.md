@@ -57,7 +57,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#416](https://github.com/shlinkio/shlink/issues/416) Fixed error thrown when trying to locate visits after the GeoLite2 DB is downloaded for the first time.
 * [#424](https://github.com/shlinkio/shlink/issues/424) Updated wkhtmltoimage to version 0.12.5
-* [#427](https://github.com/shlinkio/shlink/issues/427) Fixed shlink being unusable after a database error on swoole contexts.
+* [#427](https://github.com/shlinkio/shlink/issues/427) and [#434](https://github.com/shlinkio/shlink/issues/434) Fixed shlink being unusable after a database error on swoole contexts.
 
 
 ## 1.17.0 - 2019-05-13
