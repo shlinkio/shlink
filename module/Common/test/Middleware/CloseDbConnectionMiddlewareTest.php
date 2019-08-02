@@ -10,7 +10,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
 use Shlinkio\Shlink\Common\Middleware\CloseDbConnectionMiddleware;
-use Throwable;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
@@ -35,7 +34,6 @@ class CloseDbConnectionMiddlewareTest extends TestCase
         $this->em->getConnection()->willReturn($this->conn->reveal());
         $this->em->clear()->will(function () {
         });
-        $this->em->isOpen()->willReturn(true);
 
         $this->middleware = new CloseDbConnectionMiddleware($this->em->reveal());
     }
@@ -70,32 +68,5 @@ class CloseDbConnectionMiddlewareTest extends TestCase
         $this->expectExceptionObject($expectedError);
 
         $this->middleware->process($req, $this->handler->reveal());
-    }
-
-    /**
-     * @test
-     * @dataProvider provideClosed
-     */
-    public function entityManagerIsReopenedAfterAnExceptionWhichClosedIt(bool $closed): void
-    {
-        $req = new ServerRequest();
-        $expectedError = new RuntimeException();
-        $this->handler->handle($req)->willThrow($expectedError)
-                                    ->shouldBeCalledOnce();
-        $this->em->closed = $closed;
-        $this->em->isOpen()->willReturn(false);
-
-        try {
-            $this->middleware->process($req, $this->handler->reveal());
-            $this->fail('Expected exception to be thrown but it did not.');
-        } catch (Throwable $e) {
-            $this->assertSame($expectedError, $e);
-            $this->assertFalse($this->em->closed);
-        }
-    }
-
-    public function provideClosed(): iterable
-    {
-        return [[true, false]];
     }
 }

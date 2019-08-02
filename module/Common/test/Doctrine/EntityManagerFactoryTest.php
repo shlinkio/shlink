@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\Factory;
+namespace ShlinkioTest\Shlink\Common\Doctrine;
 
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Common\Factory\EntityManagerFactory;
+use Shlinkio\Shlink\Common\Doctrine\EntityManagerFactory;
+use Shlinkio\Shlink\Common\Type\ChronosDateTimeType;
 use Zend\ServiceManager\ServiceManager;
 
 class EntityManagerFactoryTest extends TestCase
@@ -19,12 +20,17 @@ class EntityManagerFactoryTest extends TestCase
     }
 
     /** @test */
-    public function serviceIsCreated()
+    public function serviceIsCreated(): void
     {
         $sm = new ServiceManager(['services' => [
             'config' => [
                 'debug' => true,
                 'entity_manager' => [
+                    'orm' => [
+                        'types' => [
+                            ChronosDateTimeType::CHRONOS_DATETIME => ChronosDateTimeType::class,
+                        ],
+                    ],
                     'connection' => [
                         'driver' => 'pdo_sqlite',
                     ],
@@ -32,7 +38,7 @@ class EntityManagerFactoryTest extends TestCase
             ],
         ]]);
 
-        $em = $this->factory->__invoke($sm, EntityManager::class);
+        $em = ($this->factory)($sm, EntityManager::class);
         $this->assertInstanceOf(EntityManager::class, $em);
     }
 }
