@@ -4,15 +4,23 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Common\Doctrine;
 
 use Doctrine\ORM\Decorator\EntityManagerDecorator;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ReopeningEntityManager extends EntityManagerDecorator
 {
+    /** @var callable */
+    private $emFactory;
+
+    public function __construct(EntityManagerInterface $wrapped, callable $emFactory)
+    {
+        parent::__construct($wrapped);
+        $this->emFactory = $emFactory;
+    }
+
     protected function getWrappedEntityManager(): EntityManagerInterface
     {
         if (! $this->wrapped->isOpen()) {
-            $this->wrapped = EntityManager::create(
+            $this->wrapped = ($this->emFactory)(
                 $this->wrapped->getConnection(),
                 $this->wrapped->getConfiguration(),
                 $this->wrapped->getEventManager()
