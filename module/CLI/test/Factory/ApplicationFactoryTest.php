@@ -25,14 +25,7 @@ class ApplicationFactoryTest extends TestCase
     }
 
     /** @test */
-    public function serviceIsCreated()
-    {
-        $instance = ($this->factory)($this->createServiceManager(), '');
-        $this->assertInstanceOf(Application::class, $instance);
-    }
-
-    /** @test */
-    public function allCommandsWhichAreServicesAreAdded()
+    public function allCommandsWhichAreServicesAreAdded(): void
     {
         $sm = $this->createServiceManager([
             'commands' => [
@@ -45,8 +38,7 @@ class ApplicationFactoryTest extends TestCase
         $sm->setService('bar', $this->createCommandMock('bar')->reveal());
 
         /** @var Application $instance */
-        $instance = ($this->factory)($sm, '');
-        $this->assertInstanceOf(Application::class, $instance);
+        $instance = ($this->factory)($sm);
 
         $this->assertTrue($instance->has('foo'));
         $this->assertTrue($instance->has('bar'));

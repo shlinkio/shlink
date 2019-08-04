@@ -49,10 +49,10 @@ class LocateVisitsCommandTest extends TestCase
 
         $this->locker = $this->prophesize(Lock\Factory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
-        $this->lock->acquire()->willReturn(true);
+        $this->lock->acquire(false)->willReturn(true);
         $this->lock->release()->will(function () {
         });
-        $this->locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
+        $this->locker->createLock(Argument::type('string'), 90.0, false)->willReturn($this->lock->reveal());
 
         $command = new LocateVisitsCommand(
             $this->visitService->reveal(),
@@ -162,9 +162,9 @@ class LocateVisitsCommandTest extends TestCase
     }
 
     /** @test */
-    public function noActionIsPerformedIfLockIsAcquired()
+    public function noActionIsPerformedIfLockIsAcquired(): void
     {
-        $this->lock->acquire()->willReturn(false);
+        $this->lock->acquire(false)->willReturn(false);
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(function () {
         });
@@ -174,7 +174,7 @@ class LocateVisitsCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString(
-            sprintf('There is already an instance of the "%s" command', LocateVisitsCommand::NAME),
+            sprintf('Command "%s" is already in progress. Skipping.', LocateVisitsCommand::NAME),
             $output
         );
         $locateVisits->shouldNotHaveBeenCalled();

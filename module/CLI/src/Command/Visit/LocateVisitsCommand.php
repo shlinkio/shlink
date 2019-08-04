@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
 use Exception;
+use Shlinkio\Shlink\CLI\Command\Util\AbstractLockedCommand;
+use Shlinkio\Shlink\CLI\Command\Util\LockedCommandConfig;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
@@ -15,16 +17,16 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Service\VisitServiceInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Lock\Factory as Locker;
+use Throwable;
 
 use function sprintf;
 
-class LocateVisitsCommand extends Command
+class LocateVisitsCommand extends AbstractLockedCommand
 {
     public const NAME = 'visit:locate';
     public const ALIASES = ['visit:process'];
@@ -33,8 +35,6 @@ class LocateVisitsCommand extends Command
     private $visitService;
     /** @var IpLocationResolverInterface */
     private $ipLocationResolver;
-    /** @var Locker */
-    private $locker;
     /** @var GeolocationDbUpdaterInterface */
     private $dbUpdater;
 
@@ -49,10 +49,9 @@ class LocateVisitsCommand extends Command
         Locker $locker,
         GeolocationDbUpdaterInterface $dbUpdater
     ) {
-        parent::__construct();
+        parent::__construct($locker);
         $this->visitService = $visitService;
         $this->ipLocationResolver = $ipLocationResolver;
-        $this->locker = $locker;
         $this->dbUpdater = $dbUpdater;
     }
 
@@ -64,15 +63,9 @@ class LocateVisitsCommand extends Command
             ->setDescription('Resolves visits origin locations.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function lockedExecute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
-
-        $lock = $this->locker->createLock(self::NAME);
-        if (! $lock->acquire()) {
-            $this->io->warning(sprintf('There is already an instance of the "%s" command in execution', self::NAME));
-            return ExitCodes::EXIT_WARNING;
-        }
 
         try {
             $this->checkDbUpdate();
@@ -90,15 +83,13 @@ class LocateVisitsCommand extends Command
 
             $this->io->success('Finished processing all IPs');
             return ExitCodes::EXIT_SUCCESS;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->io->error($e->getMessage());
-            if ($this->io->isVerbose()) {
+            if ($e instanceof Exception && $this->io->isVerbose()) {
                 $this->getApplication()->renderException($e, $this->io);
             }
 
             return ExitCodes::EXIT_FAILURE;
-        } finally {
-            $lock->release();
         }
     }
 
@@ -159,5 +150,10 @@ class LocateVisitsCommand extends Command
                 '<fg=yellow;options=bold>[Warning] GeoLite2 database update failed. Proceeding with old version.</>'
             );
         }
+    }
+
+    protected function getLockConfig(): LockedCommandConfig
+    {
+        return new LockedCommandConfig($this->getName());
     }
 }
