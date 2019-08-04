@@ -10,8 +10,9 @@ use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Lock;
+use Symfony\Component\Console as SymfonyCli;
+use Symfony\Component\Lock\Factory as Locker;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
@@ -19,7 +20,9 @@ return [
 
     'dependencies' => [
         'factories' => [
-            Application::class => Factory\ApplicationFactory::class,
+            SymfonyCli\Application::class => Factory\ApplicationFactory::class,
+            SymfonyCli\Helper\ProcessHelper::class => Factory\ProcessHelperFactory::class,
+            PhpExecutableFinder::class => InvokableFactory::class,
 
             GeolocationDbUpdater::class => ConfigAbstractFactory::class,
 
@@ -44,11 +47,13 @@ return [
             Command\Tag\CreateTagCommand::class => ConfigAbstractFactory::class,
             Command\Tag\RenameTagCommand::class => ConfigAbstractFactory::class,
             Command\Tag\DeleteTagsCommand::class => ConfigAbstractFactory::class,
+
+            Command\Db\CreateDatabaseCommand::class => ConfigAbstractFactory::class,
         ],
     ],
 
     ConfigAbstractFactory::class => [
-        GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, Lock\Factory::class],
+        GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, Locker::class],
 
         Command\ShortUrl\GenerateShortUrlCommand::class => [Service\UrlShortener::class, 'config.url_shortener.domain'],
         Command\ShortUrl\ResolveUrlCommand::class => [Service\UrlShortener::class],
@@ -60,7 +65,7 @@ return [
         Command\Visit\LocateVisitsCommand::class => [
             Service\VisitService::class,
             IpLocationResolverInterface::class,
-            Lock\Factory::class,
+            Locker::class,
             GeolocationDbUpdater::class,
         ],
         Command\Visit\UpdateDbCommand::class => [DbUpdater::class],
@@ -73,6 +78,12 @@ return [
         Command\Tag\CreateTagCommand::class => [Service\Tag\TagService::class],
         Command\Tag\RenameTagCommand::class => [Service\Tag\TagService::class],
         Command\Tag\DeleteTagsCommand::class => [Service\Tag\TagService::class],
+
+        Command\Db\CreateDatabaseCommand::class => [
+            Locker::class,
+            SymfonyCli\Helper\ProcessHelper::class,
+            PhpExecutableFinder::class,
+        ],
     ],
 
 ];
