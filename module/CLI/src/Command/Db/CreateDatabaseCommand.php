@@ -9,6 +9,7 @@ use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Lock\Factory as Locker;
 use Symfony\Component\Process\PhpExecutableFinder;
 
@@ -41,17 +42,36 @@ class CreateDatabaseCommand extends AbstractLockedCommand
 
     protected function lockedExecute(InputInterface $input, OutputInterface $output): int
     {
-        $this->checkDbExists();
+        $io = new SymfonyStyle($input, $output);
 
+        if ($this->dbExistsAndIsPopulated()) {
+            $io->success('Database already exists.');
+            return ExitCodes::EXIT_SUCCESS;
+        }
+
+        if (! $this->schemaExists()) {
+            // TODO Create empty database
+        }
+
+        // Create database
+        $io->writeln('Creating database tables...');
         $command = [$this->phpBinary, self::DOCTRINE_HELPER_SCRIPT, self::DOCTRINE_HELPER_COMMAND];
         $this->processHelper->run($output, $command);
+        $io->success('Database properly created!');
 
         return ExitCodes::EXIT_SUCCESS;
     }
 
-    private function checkDbExists(): void
+    private function dbExistsAndIsPopulated(): bool
     {
-        // TODO
+        // TODO Implement
+        return false;
+    }
+
+    private function schemaExists(): bool
+    {
+        // TODO Implement
+        return true;
     }
 
     protected function getLockConfig(): LockedCommandConfig
