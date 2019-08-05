@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 
 return [
@@ -18,6 +19,7 @@ return [
     'dependencies' => [
         'factories' => [
             EntityManager::class => Doctrine\EntityManagerFactory::class,
+            Connection::class => Doctrine\ConnectionFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,

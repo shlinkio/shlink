@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI;
 
+use Doctrine\DBAL\Connection;
 use GeoIp2\Database\Reader;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdater;
@@ -83,6 +84,7 @@ return [
             Locker::class,
             SymfonyCli\Helper\ProcessHelper::class,
             PhpExecutableFinder::class,
+            Connection::class,
         ],
     ],
 

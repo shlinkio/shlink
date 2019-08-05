@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Db;
 
-use Shlinkio\Shlink\CLI\Command\Util\AbstractLockedCommand;
+use Doctrine\DBAL\Connection;
 use Shlinkio\Shlink\CLI\Command\Util\LockedCommandConfig;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Symfony\Component\Console\Helper\ProcessHelper;
@@ -13,22 +13,25 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Lock\Factory as Locker;
 use Symfony\Component\Process\PhpExecutableFinder;
 
-class CreateDatabaseCommand extends AbstractLockedCommand
+use function Functional\contains;
+
+class CreateDatabaseCommand extends AbstractDatabaseCommand
 {
     public const NAME = 'db:create';
     private const DOCTRINE_HELPER_SCRIPT = 'vendor/doctrine/orm/bin/doctrine.php';
     private const DOCTRINE_HELPER_COMMAND = 'orm:schema-tool:create';
 
-    /** @var ProcessHelper */
-    private $processHelper;
-    /** @var string */
-    private $phpBinary;
+    /** @var Connection */
+    private $conn;
 
-    public function __construct(Locker $locker, ProcessHelper $processHelper, PhpExecutableFinder $phpFinder)
-    {
-        parent::__construct($locker);
-        $this->processHelper = $processHelper;
-        $this->phpBinary = $phpFinder->find(false) ?: 'php';
+    public function __construct(
+        Locker $locker,
+        ProcessHelper $processHelper,
+        PhpExecutableFinder $phpFinder,
+        Connection $conn
+    ) {
+        parent::__construct($locker, $processHelper, $phpFinder);
+        $this->conn = $conn;
     }
 
     protected function configure(): void
@@ -44,34 +47,34 @@ class CreateDatabaseCommand extends AbstractLockedCommand
     {
         $io = new SymfonyStyle($input, $output);
 
-        if ($this->dbExistsAndIsPopulated()) {
+        $this->checkDbExists();
+
+        if ($this->schemaExists()) {
             $io->success('Database already exists.');
             return ExitCodes::EXIT_SUCCESS;
         }
 
-        if (! $this->schemaExists()) {
-            // TODO Create empty database
-        }
-
         // Create database
         $io->writeln('Creating database tables...');
-        $command = [$this->phpBinary, self::DOCTRINE_HELPER_SCRIPT, self::DOCTRINE_HELPER_COMMAND];
-        $this->processHelper->run($output, $command);
+        $this->runPhpCommand($output, [self::DOCTRINE_HELPER_SCRIPT, self::DOCTRINE_HELPER_COMMAND]);
         $io->success('Database properly created!');
 
         return ExitCodes::EXIT_SUCCESS;
     }
 
-    private function dbExistsAndIsPopulated(): bool
+    private function checkDbExists(): void
     {
-        // TODO Implement
-        return false;
+        $schemaManager = $this->conn->getSchemaManager();
+        $databases = $schemaManager->listDatabases();
+        if (! contains($databases, '')) {
+            $schemaManager->createDatabase($this->conn->getDatabase());
+        }
     }
 
     private function schemaExists(): bool
     {
         // TODO Implement
-        return true;
+        return false;
     }
 
     protected function getLockConfig(): LockedCommandConfig
