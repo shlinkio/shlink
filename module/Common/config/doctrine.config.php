@@ -20,6 +20,7 @@ return [
         'factories' => [
             EntityManager::class => Doctrine\EntityManagerFactory::class,
             Connection::class => Doctrine\ConnectionFactory::class,
+            Doctrine\NoDbNameConnectionFactory::SERVICE_NAME => Doctrine\NoDbNameConnectionFactory::class,
         ],
         'aliases' => [
             'em' => EntityManager::class,

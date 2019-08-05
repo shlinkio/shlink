@@ -23,15 +23,19 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
     /** @var Connection */
     private $conn;
+    /** @var Connection */
+    private $noDbNameConn;
 
     public function __construct(
         Locker $locker,
         ProcessHelper $processHelper,
         PhpExecutableFinder $phpFinder,
-        Connection $conn
+        Connection $conn,
+        Connection $noDbNameConn
     ) {
         parent::__construct($locker, $processHelper, $phpFinder);
         $this->conn = $conn;
+        $this->noDbNameConn = $noDbNameConn;
     }
 
     protected function configure(): void
@@ -50,12 +54,12 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
         $this->checkDbExists();
 
         if ($this->schemaExists()) {
-            $io->success('Database already exists.');
+            $io->success('Database already exists. Run "db:migrate" command to make sure it is up to date.');
             return ExitCodes::EXIT_SUCCESS;
         }
 
         // Create database
-        $io->writeln('Creating database tables...');
+        $io->writeln('<fg=blue>Creating database tables...</>');
         $this->runPhpCommand($output, [self::DOCTRINE_HELPER_SCRIPT, self::DOCTRINE_HELPER_COMMAND]);
         $io->success('Database properly created!');
 
@@ -64,9 +68,9 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
     private function checkDbExists(): void
     {
-        $schemaManager = $this->conn->getSchemaManager();
-        $databases = $schemaManager->listDatabases();
         $shlinkDatabase = $this->conn->getDatabase();
+        $schemaManager = $this->noDbNameConn->getSchemaManager();
+        $databases = $schemaManager->listDatabases();
 
         if (! contains($databases, $shlinkDatabase)) {
             $schemaManager->createDatabase($shlinkDatabase);

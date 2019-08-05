@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI;
 use Doctrine\DBAL\Connection;
 use GeoIp2\Database\Reader;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
+use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
@@ -85,6 +86,7 @@ return [
             SymfonyCli\Helper\ProcessHelper::class,
             PhpExecutableFinder::class,
             Connection::class,
+            NoDbNameConnectionFactory::SERVICE_NAME,
         ],
     ],
 
