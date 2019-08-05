@@ -66,15 +66,19 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     {
         $schemaManager = $this->conn->getSchemaManager();
         $databases = $schemaManager->listDatabases();
-        if (! contains($databases, '')) {
-            $schemaManager->createDatabase($this->conn->getDatabase());
+        $shlinkDatabase = $this->conn->getDatabase();
+
+        if (! contains($databases, $shlinkDatabase)) {
+            $schemaManager->createDatabase($shlinkDatabase);
         }
     }
 
     private function schemaExists(): bool
     {
-        // TODO Implement
-        return false;
+        // If at least one of the shlink tables exist, we will consider the database exists somehow.
+        // Any inconsistency will be taken care by the migrations
+        $schemaManager = $this->conn->getSchemaManager();
+        return ! empty($schemaManager->listTableNames());
     }
 
     protected function getLockConfig(): LockedCommandConfig
