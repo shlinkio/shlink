@@ -51,6 +51,7 @@ return [
             Command\Tag\DeleteTagsCommand::class => ConfigAbstractFactory::class,
 
             Command\Db\CreateDatabaseCommand::class => ConfigAbstractFactory::class,
+            Command\Db\MigrateDatabaseCommand::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -87,6 +88,11 @@ return [
             PhpExecutableFinder::class,
             Connection::class,
             NoDbNameConnectionFactory::SERVICE_NAME,
+        ],
+        Command\Db\MigrateDatabaseCommand::class => [
+            Locker::class,
+            SymfonyCli\Helper\ProcessHelper::class,
+            PhpExecutableFinder::class,
         ],
     ],
 
