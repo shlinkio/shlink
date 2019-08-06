@@ -270,6 +270,7 @@ Available commands:
   config:generate-secret      [DEPRECATED] Generates a random secret string that can be used for JWT token encryption
  db
   db:create                   Creates the database needed for shlink to work. It will do nothing if the database already exists
+  db:migrate                  Runs database migrations, which will ensure the shlink database is up to date.
  short-url
   short-url:delete            [short-code:delete] Deletes a short URL
   short-url:generate          [shortcode:generate|short-code:generate] Generates a short URL for provided long URL and returns it

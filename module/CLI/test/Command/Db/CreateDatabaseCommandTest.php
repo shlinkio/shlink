@@ -107,7 +107,7 @@ class CreateDatabaseCommandTest extends TestCase
     }
 
     /** @test */
-    public function tablesAreCreatedIfDatabaseIsEMpty(): void
+    public function tablesAreCreatedIfDatabaseIsEmpty(): void
     {
         $shlinkDatabase = 'shlink_database';
         $getDatabase = $this->regularConn->getDatabase()->willReturn($shlinkDatabase);
@@ -119,7 +119,7 @@ class CreateDatabaseCommandTest extends TestCase
             '/usr/local/bin/php',
             CreateDatabaseCommand::DOCTRINE_HELPER_SCRIPT,
             CreateDatabaseCommand::DOCTRINE_HELPER_COMMAND,
-        ]);
+        ], Argument::cetera());
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();

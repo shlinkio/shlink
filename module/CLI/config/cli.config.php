@@ -30,6 +30,7 @@ return [
             Command\Tag\DeleteTagsCommand::NAME => Command\Tag\DeleteTagsCommand::class,
 
             Command\Db\CreateDatabaseCommand::NAME => Command\Db\CreateDatabaseCommand::class,
+            Command\Db\MigrateDatabaseCommand::NAME => Command\Db\MigrateDatabaseCommand::class,
         ],
     ],
 

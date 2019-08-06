@@ -28,6 +28,6 @@ abstract class AbstractDatabaseCommand extends AbstractLockedCommand
     protected function runPhpCommand(OutputInterface $output, array $command): void
     {
         array_unshift($command, $this->phpBinary);
-        $this->processHelper->run($output, $command);
+        $this->processHelper->run($output, $command, null, null, $output->getVerbosity());
     }
 }
