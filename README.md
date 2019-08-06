@@ -268,6 +268,8 @@ Available commands:
  config
   config:generate-charset     [DEPRECATED] Generates a character set sample just by shuffling the default one, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ". Then it can be set in the SHORTCODE_CHARS environment variable
   config:generate-secret      [DEPRECATED] Generates a random secret string that can be used for JWT token encryption
+ db
+  db:create                   Creates the database needed for shlink to work. It will do nothing if the database already exists
  short-url
   short-url:delete            [short-code:delete] Deletes a short URL
   short-url:generate          [shortcode:generate|short-code:generate] Generates a short URL for provided long URL and returns it
