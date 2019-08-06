@@ -68,9 +68,11 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
     private function checkDbExists(): void
     {
-        $shlinkDatabase = $this->conn->getDatabase();
+        // In order to create the new database, we have to use a connection where the dbname was not set.
+        // Otherwise, it will fail to connect and will not be able to create the new database
         $schemaManager = $this->noDbNameConn->getSchemaManager();
         $databases = $schemaManager->listDatabases();
+        $shlinkDatabase = $this->conn->getDatabase();
 
         if (! contains($databases, $shlinkDatabase)) {
             $schemaManager->createDatabase($shlinkDatabase);
