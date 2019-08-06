@@ -28,6 +28,8 @@ return [
             Command\Tag\CreateTagCommand::NAME => Command\Tag\CreateTagCommand::class,
             Command\Tag\RenameTagCommand::NAME => Command\Tag\RenameTagCommand::class,
             Command\Tag\DeleteTagsCommand::NAME => Command\Tag\DeleteTagsCommand::class,
+
+            Command\Db\CreateDatabaseCommand::NAME => Command\Db\CreateDatabaseCommand::class,
         ],
     ],
 

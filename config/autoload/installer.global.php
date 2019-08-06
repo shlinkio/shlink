@@ -36,4 +36,13 @@ return [
         ],
     ],
 
+    'installation_commands' => [
+        'db_create_schema' => [
+            'command' => 'bin/cli db:create',
+        ],
+//        'db_migrate' => [
+//            'command' => 'bin/cli db:migrate',
+//        ],
+    ],
+
 ];
