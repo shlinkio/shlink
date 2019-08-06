@@ -41,13 +41,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * True-Client-IP
     * X-Real-IP
 
- * [#440](https://github.com/shlinkio/shlink/pull/440) Created `db:create` command, which improves how the shlink database is created, with these benefits:
+* [#440](https://github.com/shlinkio/shlink/pull/440) Created `db:create` command, which improves how the shlink database is created, with these benefits:
 
     * It sets up a lock which prevents the command to be run concurrently.
     * It checks of the database does not exist, and creates it in that case.
     * It checks if the database tables already exist, exiting gracefully in that case.
 
- * [#442](https://github.com/shlinkio/shlink/pull/442) Created `db:migrate` command, which improves doctrine's migrations command by generating a lock, preventing it to be run concurrently.
+* [#442](https://github.com/shlinkio/shlink/pull/442) Created `db:migrate` command, which improves doctrine's migrations command by generating a lock, preventing it to be run concurrently.
 
 #### Changed
 
