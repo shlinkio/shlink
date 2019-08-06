@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Db;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -29,6 +30,8 @@ class CreateDatabaseCommandTest extends TestCase
     private $noDbNameConn;
     /** @var ObjectProphecy */
     private $schemaManager;
+    /** @var ObjectProphecy */
+    private $databasePlatform;
 
     public function setUp(): void
     {
@@ -44,9 +47,11 @@ class CreateDatabaseCommandTest extends TestCase
 
         $this->processHelper = $this->prophesize(ProcessHelper::class);
         $this->schemaManager = $this->prophesize(AbstractSchemaManager::class);
+        $this->databasePlatform = $this->prophesize(AbstractPlatform::class);
 
         $this->regularConn = $this->prophesize(Connection::class);
         $this->regularConn->getSchemaManager()->willReturn($this->schemaManager->reveal());
+        $this->regularConn->getDatabasePlatform()->willReturn($this->databasePlatform->reveal());
         $this->noDbNameConn = $this->prophesize(Connection::class);
         $this->noDbNameConn->getSchemaManager()->willReturn($this->schemaManager->reveal());
 
@@ -126,5 +131,25 @@ class CreateDatabaseCommandTest extends TestCase
         $createDatabase->shouldNotHaveBeenCalled();
         $listTables->shouldHaveBeenCalledOnce();
         $runCommand->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
+    public function databaseCheckIsSkippedForSqlite(): void
+    {
+        $this->databasePlatform->getName()->willReturn('sqlite');
+
+        $shlinkDatabase = 'shlink_database';
+        $getDatabase = $this->regularConn->getDatabase()->willReturn($shlinkDatabase);
+        $listDatabases = $this->schemaManager->listDatabases()->willReturn(['foo', 'bar']);
+        $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function () {
+        });
+        $listTables = $this->schemaManager->listTableNames()->willReturn(['foo_table', 'bar_table']);
+
+        $this->commandTester->execute([]);
+
+        $getDatabase->shouldNotHaveBeenCalled();
+        $listDatabases->shouldNotHaveBeenCalled();
+        $createDatabase->shouldNotHaveBeenCalled();
+        $listTables->shouldHaveBeenCalledOnce();
     }
 }

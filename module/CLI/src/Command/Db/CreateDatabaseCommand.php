@@ -68,6 +68,10 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
     private function checkDbExists(): void
     {
+        if ($this->regularConn->getDatabasePlatform()->getName() === 'sqlite') {
+            return;
+        }
+
         // In order to create the new database, we have to use a connection where the dbname was not set.
         // Otherwise, it will fail to connect and will not be able to create the new database
         $schemaManager = $this->noDbNameConn->getSchemaManager();
