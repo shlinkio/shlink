@@ -41,6 +41,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * True-Client-IP
     * X-Real-IP
 
+ * [#440](https://github.com/shlinkio/shlink/pull/440) Created `db:create` command, which improves how the shlink database is created, with these benefits:
+
+    * It sets up a lock which prevents the command to be run multiple times.
+    * It checks of the database does not exist, and creates it in that case.
+    * It checks if the database tables already exist, exiting gracefully in that case.
+
 #### Changed
 
 * [#430](https://github.com/shlinkio/shlink/issues/430) Updated to [shlinkio/php-coding-standard](https://github.com/shlinkio/php-coding-standard) 1.2.2
