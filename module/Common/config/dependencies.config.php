@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common;
 
-use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache as DoctrineCache;
 use GeoIp2\Database\Reader;
 use GuzzleHttp\Client as GuzzleClient;
 use Monolog\Logger;
@@ -20,7 +20,7 @@ return [
     'dependencies' => [
         'factories' => [
             GuzzleClient::class => InvokableFactory::class,
-            Cache::class => Factory\CacheFactory::class,
+            DoctrineCache\Cache::class => Cache\CacheFactory::class,
             Filesystem::class => InvokableFactory::class,
             Reader::class => ConfigAbstractFactory::class,
 

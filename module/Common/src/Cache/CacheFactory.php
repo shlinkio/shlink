@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\Factory;
+namespace Shlinkio\Shlink\Common\Cache;
 
 use Doctrine\Common\Cache;
 use Interop\Container\ContainerInterface;
@@ -14,6 +14,8 @@ class CacheFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): Cache\Cache
     {
+        // TODO Make use of the redis cache via RedisFactory when possible
+
         $appOptions = $container->get(AppOptions::class);
         $adapter = env('APP_ENV', 'pro') === 'pro' ? new Cache\ApcuCache() : new Cache\ArrayCache();
         $adapter->setNamespace((string) $appOptions);

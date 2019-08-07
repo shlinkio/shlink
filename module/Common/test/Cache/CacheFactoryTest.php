@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\Factory;
+namespace ShlinkioTest\Shlink\Common\Cache;
 
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Common\Factory\CacheFactory;
+use Shlinkio\Shlink\Common\Cache\CacheFactory;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Zend\ServiceManager\ServiceManager;
 

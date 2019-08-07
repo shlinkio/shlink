@@ -58,8 +58,8 @@ return [
 
     'dependencies' => [
         'factories' => [
-            'Logger_Shlink' => Common\Factory\LoggerFactory::class,
-            'Logger_Access' => Common\Factory\LoggerFactory::class,
+            'Logger_Shlink' => Common\Logger\LoggerFactory::class,
+            'Logger_Access' => Common\Logger\LoggerFactory::class,
         ],
     ],
 

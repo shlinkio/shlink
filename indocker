@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Run docker containers if they are not up yet
-if ! [[ $(docker ps | grep shlink_php) ]]; then
+if ! [[ $(docker ps | grep shlink_swoole) ]]; then
     docker-compose up -d
 fi
 
-docker exec -it shlink_php /bin/sh -c "cd /home/shlink/www && $*"
+docker exec -it shlink_swoole /bin/sh -c "$*"
