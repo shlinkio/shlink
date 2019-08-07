@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use Shlinkio\Shlink\Common\Cache\RedisFactory;
+use Shlinkio\Shlink\Common\Lock\RetryLockStoreDelegatorFactory;
 use Symfony\Component\Lock;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 
@@ -21,6 +22,11 @@ return [
             // With this config, a user could alias 'lock_store' => 'redis_lock_store' to override the default
             'lock_store' => Lock\Store\FlockStore::class,
             'redis_lock_store' => Lock\Store\RedisStore::class,
+        ],
+        'delegators' => [
+            Lock\Store\RedisStore::class => [
+                RetryLockStoreDelegatorFactory::class,
+            ],
         ],
     ],
 
