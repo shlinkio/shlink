@@ -24,6 +24,7 @@ services:
         links:
             - shlink_db
             - shlink_db_postgres
+            - shlink_redis
 
     shlink_swoole:
         container_name: shlink_swoole
@@ -37,6 +38,7 @@ services:
         links:
             - shlink_db
             - shlink_db_postgres
+            - shlink_redis
 
     shlink_db:
         container_name: shlink_db
@@ -62,3 +64,9 @@ services:
             POSTGRES_PASSWORD: root
             POSTGRES_DB: shlink
             PGDATA: /var/lib/postgresql/data/pgdata
+
+    shlink_redis:
+        container_name: shlink_redis
+        image: redis:5.0-alpine
+        ports:
+            - "6380:6379"
