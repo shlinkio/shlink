@@ -11,7 +11,7 @@ use function array_key_exists;
 use function Functional\contains;
 use function Functional\reduce_left;
 
-class ConfigPostProcessor
+class SimplifiedConfigParser
 {
     private const SIMPLIFIED_CONFIG_MAPPING = [
         'disable_track_param' => ['app_options', 'disable_track_param'],
@@ -22,11 +22,21 @@ class ConfigPostProcessor
         'db_config' => ['entity_manager', 'connection'],
         'delete_short_url_threshold' => ['delete_short_urls', 'visits_threshold'],
         'locale' => ['translator', 'locale'],
-        'lock_store' => ['dependencies', 'aliases', 'lock_store'],
+        'redis_servers' => ['redis', 'servers'],
     ];
-    private const SIMPLIFIED_CONFIG_TOGGLES = [
-        'not_found_redirect_to' => ['url_shortener', 'not_found_short_url', 'enable_redirection'],
-        'delete_short_url_threshold' => ['delete_short_urls', 'check_visits_threshold'],
+    private const SIMPLIFIED_CONFIG_SIDE_EFFECTS = [
+        'not_found_redirect_to' => [
+            'path' => ['url_shortener', 'not_found_short_url', 'enable_redirection'],
+            'value' => true,
+        ],
+        'delete_short_url_threshold' => [
+            'path' => ['delete_short_urls', 'check_visits_threshold'],
+            'value' => true,
+        ],
+        'redis_servers' => [
+            'path' => ['dependencies', 'aliases', 'lock_store'],
+            'value' => 'redis_lock_store',
+        ],
     ];
     private const SIMPLIFIED_MERGEABLE_CONFIG = ['db_config'];
 
@@ -41,8 +51,9 @@ class ConfigPostProcessor
             }
 
             $collection->setValueInPath($value, $path);
-            if (array_key_exists($key, self::SIMPLIFIED_CONFIG_TOGGLES)) {
-                $collection->setValueInPath(true, self::SIMPLIFIED_CONFIG_TOGGLES[$key]);
+            if (array_key_exists($key, self::SIMPLIFIED_CONFIG_SIDE_EFFECTS)) {
+                ['path' => $sideEffectPath, 'value' => $sideEffectValue] = self::SIMPLIFIED_CONFIG_SIDE_EFFECTS[$key];
+                $collection->setValueInPath($sideEffectValue, $sideEffectPath);
             }
 
             return $collection;

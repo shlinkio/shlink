@@ -4,17 +4,17 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\ConfigPostProcessor;
+use Shlinkio\Shlink\Core\SimplifiedConfigParser;
 
 use function array_merge;
 
-class ConfigPostProcessorTest extends TestCase
+class SimplifiedConfigParserTest extends TestCase
 {
     private $postProcessor;
 
     public function setUp(): void
     {
-        $this->postProcessor = new ConfigPostProcessor();
+        $this->postProcessor = new SimplifiedConfigParser();
     }
 
     /** @test */
@@ -41,7 +41,10 @@ class ConfigPostProcessorTest extends TestCase
             'delete_short_url_threshold' => 50,
             'locale' => 'es',
             'not_found_redirect_to' => 'foobar.com',
-            'lock_store' => 'redis_lock_store',
+            'redis_servers' => [
+                'tcp://1.1.1.1:1111',
+                'tcp://1.2.2.2:2222',
+            ],
             'db_config' => [
                 'dbname' => 'shlink',
                 'user' => 'foo',
@@ -89,6 +92,13 @@ class ConfigPostProcessorTest extends TestCase
             'dependencies' => [
                 'aliases' => [
                     'lock_store' => 'redis_lock_store',
+                ],
+            ],
+
+            'redis' => [
+                'servers' => [
+                    'tcp://1.1.1.1:1111',
+                    'tcp://1.2.2.2:2222',
                 ],
             ],
         ];

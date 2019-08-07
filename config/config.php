@@ -26,5 +26,5 @@ return (new ConfigAggregator\ConfigAggregator([
         ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')
         : new ConfigAggregator\ZendConfigProvider('config/params/{generated_config.php,*.config.{php,json}}'),
 ], 'data/cache/app_config.php', [
-    Core\ConfigPostProcessor::class,
+    Core\SimplifiedConfigParser::class,
 ]))->getMergedConfig();
