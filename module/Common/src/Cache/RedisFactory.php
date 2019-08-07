@@ -18,13 +18,13 @@ class RedisFactory
     public function __invoke(ContainerInterface $container): PredisClient
     {
         $redisConfig = $container->get('config')['redis'] ?? [];
-        $servers = $redisConfig['servers'];
+        $servers = $redisConfig['servers'] ?? [];
 
         if (is_array($servers) && count($servers) === 1) {
             $servers = array_shift($servers);
         }
 
-        $options = is_string($servers) ? null : ['cluster' => 'redis'];
+        $options = is_string($servers) || count($servers) < 1 ? null : ['cluster' => 'redis'];
         return new PredisClient($servers, $options);
     }
 }

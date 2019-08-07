@@ -10,4 +10,11 @@ return [
 //        ],
     ],
 
+    'dependencies' => [
+        'aliases' => [
+            // With this config, a user could alias 'lock_store' => 'redis_lock_store' to override the default
+//            'lock_store' => 'redis_lock_store',
+        ],
+    ],
+
 ];
