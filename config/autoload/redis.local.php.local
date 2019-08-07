@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+
+return [
+
+    'redis' => [
+        'servers' => 'tcp://shlink_redis:6379',
+//        'servers' => [
+//            'tcp://shlink_redis:6379',
+//        ],
+    ],
+
+];
