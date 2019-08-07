@@ -54,5 +54,8 @@ class RedisFactoryTest extends TestCase
         yield 'empty cluster of servers' => [[
             'servers' => [],
         ], PredisCluster::class];
+        yield 'cluster of servers as string' => [[
+            'servers' => 'tcp://1.1.1.1:6379,tcp://2.2.2.2:6379',
+        ], RedisCluster::class];
     }
 }
