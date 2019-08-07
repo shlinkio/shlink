@@ -41,6 +41,7 @@ class ConfigPostProcessorTest extends TestCase
             'delete_short_url_threshold' => 50,
             'locale' => 'es',
             'not_found_redirect_to' => 'foobar.com',
+            'lock_store' => 'redis_lock_store',
             'db_config' => [
                 'dbname' => 'shlink',
                 'user' => 'foo',
@@ -83,6 +84,12 @@ class ConfigPostProcessorTest extends TestCase
             'delete_short_urls' => [
                 'visits_threshold' => 50,
                 'check_visits_threshold' => true,
+            ],
+
+            'dependencies' => [
+                'aliases' => [
+                    'lock_store' => 'redis_lock_store',
+                ],
             ],
         ];
 

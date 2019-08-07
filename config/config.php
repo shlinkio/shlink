@@ -22,10 +22,9 @@ return (new ConfigAggregator\ConfigAggregator([
     Rest\ConfigProvider::class,
     EventDispatcher\ConfigProvider::class,
     new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
-    new ConfigAggregator\ZendConfigProvider('config/params/{generated_config.php,*.config.{php,json}}'),
     env('APP_ENV') === 'test'
         ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')
-        : new ConfigAggregator\ArrayProvider([]),
+        : new ConfigAggregator\ZendConfigProvider('config/params/{generated_config.php,*.config.{php,json}}'),
 ], 'data/cache/app_config.php', [
     Core\ConfigPostProcessor::class,
 ]))->getMergedConfig();

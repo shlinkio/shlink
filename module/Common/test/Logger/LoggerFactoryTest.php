@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\Factory;
+namespace ShlinkioTest\Shlink\Common\Logger;
 
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Common\Factory\LoggerFactory;
+use Shlinkio\Shlink\Common\Logger\LoggerFactory;
 use Zend\ServiceManager\ServiceManager;
 
 class LoggerFactoryTest extends TestCase

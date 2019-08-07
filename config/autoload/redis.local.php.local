@@ -1,0 +1,20 @@
+<?php
+declare(strict_types=1);
+
+return [
+
+    'redis' => [
+        'servers' => 'tcp://shlink_redis:6379',
+//        'servers' => [
+//            'tcp://shlink_redis:6379',
+//        ],
+    ],
+
+    'dependencies' => [
+        'aliases' => [
+            // With this config, a user could alias 'lock_store' => 'redis_lock_store' to override the default
+//            'lock_store' => 'redis_lock_store',
+        ],
+    ],
+
+];

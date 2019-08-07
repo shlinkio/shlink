@@ -52,6 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Changed
 
 * [#430](https://github.com/shlinkio/shlink/issues/430) Updated to [shlinkio/php-coding-standard](https://github.com/shlinkio/php-coding-standard) 1.2.2
+* [#305](https://github.com/shlinkio/shlink/issues/305) Implemented changes which will allow Shlink to be truly clusterizable.
 
 ### Deprecated
 

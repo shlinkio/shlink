@@ -31,6 +31,7 @@
         "monolog/monolog": "^1.21",
         "ocramius/proxy-manager": "^2.0",
         "phly/phly-event-dispatcher": "^1.0",
+        "predis/predis": "^1.1",
         "shlinkio/shlink-installer": "^1.2.1",
         "symfony/console": "^4.3",
         "symfony/filesystem": "^4.3",

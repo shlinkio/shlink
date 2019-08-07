@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\Factory;
+namespace Shlinkio\Shlink\Common\Logger;
 
 use Cascade\Cascade;
 use Interop\Container\ContainerInterface;
