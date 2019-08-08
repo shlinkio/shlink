@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## 1.18.0 - 2019-08-08
 
 #### Added
 
@@ -53,6 +53,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#430](https://github.com/shlinkio/shlink/issues/430) Updated to [shlinkio/php-coding-standard](https://github.com/shlinkio/php-coding-standard) 1.2.2
 * [#305](https://github.com/shlinkio/shlink/issues/305) Implemented changes which will allow Shlink to be truly clusterizable.
+* [#262](https://github.com/shlinkio/shlink/issues/262) Increased mutation score to 75%.
 
 ### Deprecated
 
