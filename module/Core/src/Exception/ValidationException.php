@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Exception;
 use Throwable;
 use Zend\InputFilter\InputFilterInterface;
 
+use function Functional\reduce_left;
 use function is_array;
 use function print_r;
 use function sprintf;
@@ -27,21 +28,11 @@ class ValidationException extends RuntimeException
         parent::__construct($message, $code, $previous);
     }
 
-    /**
-     * @param InputFilterInterface $inputFilter
-     * @param \Throwable|null $prev
-     * @return ValidationException
-     */
     public static function fromInputFilter(InputFilterInterface $inputFilter, ?Throwable $prev = null): self
     {
         return static::fromArray($inputFilter->getMessages(), $prev);
     }
 
-    /**
-     * @param array $invalidData
-     * @param \Throwable|null $prev
-     * @return ValidationException
-     */
     private static function fromArray(array $invalidData, ?Throwable $prev = null): self
     {
         return new self(
@@ -57,23 +48,17 @@ class ValidationException extends RuntimeException
         );
     }
 
-    private static function formMessagesToString(array $messages = [])
+    private static function formMessagesToString(array $messages = []): string
     {
-        $text = '';
-        foreach ($messages as $name => $messageSet) {
-            $text .= sprintf(
-                "\n\t'%s' => %s",
+        return reduce_left($messages, function ($messageSet, $name, $_, string $acc) {
+            return $acc . sprintf(
+                "\n    '%s' => %s",
                 $name,
                 is_array($messageSet) ? print_r($messageSet, true) : $messageSet
             );
-        }
-
-        return $text;
+        }, '');
     }
 
-    /**
-     * @return array
-     */
     public function getInvalidElements(): array
     {
         return $this->invalidElements;
