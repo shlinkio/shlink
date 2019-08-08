@@ -29,7 +29,7 @@
         "lstrojny/functional-php": "^1.8",
         "mikehaertl/phpwkhtmltopdf": "^2.2",
         "monolog/monolog": "^1.21",
-        "ocramius/proxy-manager": "^2.0",
+        "ocramius/proxy-manager": "~2.2.2",
         "phly/phly-event-dispatcher": "^1.0",
         "predis/predis": "^1.1",
         "shlinkio/shlink-installer": "^1.2.1",

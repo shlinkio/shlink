@@ -20,8 +20,14 @@ rsync -av * "${builtcontent}" \
     --exclude=bin/test \
     --exclude=data/infra \
     --exclude=data/travis \
+    --exclude=data/cache/* \
+    --exclude=data/log/* \
+    --exclude=data/locks/* \
+    --exclude=data/proxies/* \
     --exclude=data/migrations_template.txt \
-    --exclude=data/GeoLite2-City.mmdb \
+    --exclude=data/GeoLite2-City.* \
+    --exclude=data/database.sqlite \
+    --exclude=data/shlink-tests.db \
     --exclude=**/.gitignore \
     --exclude=CHANGELOG.md \
     --exclude=composer.lock \
@@ -47,7 +53,6 @@ ${composerBin} install --no-dev --optimize-autoloader --apcu-autoloader --no-pro
 # Delete development files
 echo 'Deleting dev files...'
 rm composer.*
-rm -f data/database.sqlite
 
 # Update shlink version in config
 sed -i "s/%SHLINK_VERSION%/${version}/g" config/autoload/app_options.global.php
