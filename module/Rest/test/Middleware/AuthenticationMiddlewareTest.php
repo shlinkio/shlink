@@ -13,6 +13,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPlugin;
@@ -37,14 +38,19 @@ class AuthenticationMiddlewareTest extends TestCase
     private $middleware;
     /** @var ObjectProphecy */
     private $requestToPlugin;
-
-    /** @var callable */
-    private $dummyMiddleware;
+    /** @var ObjectProphecy */
+    private $logger;
 
     public function setUp(): void
     {
         $this->requestToPlugin = $this->prophesize(RequestToHttpAuthPluginInterface::class);
-        $this->middleware = new AuthenticationMiddleware($this->requestToPlugin->reveal(), [AuthenticateAction::class]);
+        $this->logger = $this->prophesize(LoggerInterface::class);
+
+        $this->middleware = new AuthenticationMiddleware(
+            $this->requestToPlugin->reveal(),
+            [AuthenticateAction::class],
+            $this->logger->reveal()
+        );
     }
 
     /**
@@ -97,6 +103,10 @@ class AuthenticationMiddlewareTest extends TestCase
             RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), [])
         );
         $fromRequest = $this->requestToPlugin->fromRequest(Argument::any())->willThrow($e);
+        $logWarning = $this->logger->warning('Invalid or no authentication provided. {e}', ['e' => $e])->will(
+            function () {
+            }
+        );
 
         /** @var Response\JsonResponse $response */
         $response = $this->middleware->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
@@ -108,6 +118,7 @@ class AuthenticationMiddlewareTest extends TestCase
             implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)
         ), $payload['message']);
         $fromRequest->shouldHaveBeenCalledOnce();
+        $logWarning->shouldHaveBeenCalledOnce();
     }
 
     public function provideExceptions(): iterable
@@ -124,12 +135,15 @@ class AuthenticationMiddlewareTest extends TestCase
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), [])
         );
+        $e = VerifyAuthenticationException::withError('the_error', 'the_message');
         $plugin = $this->prophesize(AuthenticationPluginInterface::class);
 
-        $verify = $plugin->verify($request)->willThrow(
-            VerifyAuthenticationException::withError('the_error', 'the_message')
-        );
+        $verify = $plugin->verify($request)->willThrow($e);
         $fromRequest = $this->requestToPlugin->fromRequest(Argument::any())->willReturn($plugin->reveal());
+        $logWarning = $this->logger->warning('Authentication verification failed. {e}', ['e' => $e])->will(
+            function () {
+            }
+        );
 
         /** @var Response\JsonResponse $response */
         $response = $this->middleware->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
@@ -139,6 +153,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->assertEquals('the_message', $payload['message']);
         $verify->shouldHaveBeenCalledOnce();
         $fromRequest->shouldHaveBeenCalledOnce();
+        $logWarning->shouldHaveBeenCalledOnce();
     }
 
     /** @test */

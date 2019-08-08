@@ -137,9 +137,9 @@
         ],
         "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage --order-by=random",
 
-        "infect": "infection --threads=4 --min-msi=70 --log-verbosity=default --only-covered",
-        "infect:ci": "infection --threads=4 --min-msi=70 --log-verbosity=default --only-covered --coverage=build",
-        "infect:show": "infection --threads=4 --min-msi=70 --log-verbosity=default --only-covered --show-mutations",
+        "infect": "infection --threads=4 --min-msi=75 --log-verbosity=default --only-covered",
+        "infect:ci": "infection --threads=4 --min-msi=75 --log-verbosity=default --only-covered --coverage=build",
+        "infect:show": "infection --threads=4 --min-msi=75 --log-verbosity=default --only-covered --show-mutations",
         "infect:test": [
             "@test:unit:ci",
             "@infect:ci"
