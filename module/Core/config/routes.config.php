@@ -36,14 +36,14 @@ return [
             ],
             'allowed_methods' => [RequestMethod::METHOD_GET],
         ],
+
+        // Deprecated routes
         [
             'name' => 'short-url-preview',
             'path' => '/{shortCode}/preview',
             'middleware' => Action\PreviewAction::class,
             'allowed_methods' => [RequestMethod::METHOD_GET],
         ],
-
-        // Old QR code route. Deprecated
         [
             'name' => 'short-url-qr-code-old',
             'path' => '/qr/{shortCode}[/{size:[0-9]+}]',

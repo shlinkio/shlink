@@ -11,6 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use function sprintf;
 use function urlencode;
 
+/** @deprecated */
 class PreviewGenerator implements PreviewGeneratorInterface
 {
     /** @var string */

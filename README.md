@@ -196,6 +196,8 @@ Those tasks can be performed using shlink's CLI, so it should be easy to schedul
 
     Running this will improve the performance of the `doma.in/abc123/preview` URLs, which return a preview of the site.
 
+    > **Important!** Generating previews is considered deprecated and the feature will be removed in Shlink v2.
+
 * **For shlink older than v1.17.0**: Update IP geolocation database: `/path/to/shlink/bin/cli visit:update-db`
 
     When shlink is installed it downloads a fresh [GeoLite2](https://dev.maxmind.com/geoip/geoip2/geolite2/) db file. Running this command will update this file.
@@ -276,7 +278,7 @@ Available commands:
   short-url:generate          [shortcode:generate|short-code:generate] Generates a short URL for provided long URL and returns it
   short-url:list              [shortcode:list|short-code:list] List all short URLs
   short-url:parse             [shortcode:parse|short-code:parse] Returns the long URL behind a short code
-  short-url:process-previews  [shortcode:process-previews|short-code:process-previews] Processes and generates the previews for every URL, improving performance for later web requests.
+  short-url:process-previews  [shortcode:process-previews|short-code:process-previews] [DEPRECATED] Processes and generates the previews for every URL, improving performance for later web requests.
   short-url:visits            [shortcode:visits|short-code:visits] Returns the detailed visits information for provided short code
  tag
   tag:create                  Creates one or more tags.

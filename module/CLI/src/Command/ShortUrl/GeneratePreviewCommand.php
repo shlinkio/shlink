@@ -14,6 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function sprintf;
 
+/** @deprecated */
 class GeneratePreviewCommand extends Command
 {
     public const NAME = 'short-url:process-previews';
@@ -37,7 +38,8 @@ class GeneratePreviewCommand extends Command
             ->setName(self::NAME)
             ->setAliases(self::ALIASES)
             ->setDescription(
-                'Processes and generates the previews for every URL, improving performance for later web requests.'
+                '[DEPRECATED] Processes and generates the previews for every URL, improving performance for later web '
+                . 'requests.'
             );
     }
 
