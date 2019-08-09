@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\Common\Exception;
 
 use function sprintf;
 
+/** @deprecated */
 class PreviewGenerationException extends RuntimeException
 {
     public static function fromImageError(string $error): self

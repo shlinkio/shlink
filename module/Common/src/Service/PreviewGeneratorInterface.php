@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\Common\Service;
 
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
 
+/** @deprecated */
 interface PreviewGeneratorInterface
 {
     /**

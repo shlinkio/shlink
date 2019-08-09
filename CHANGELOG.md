@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* [#428](https://github.com/shlinkio/shlink/issues/428) Deprecated preview-generation feature. It will keep working but it will be removed in Shlink v2.0.0
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* *Nothing*
+
+
 ## 1.18.0 - 2019-08-08
 
 #### Added
@@ -55,7 +78,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#305](https://github.com/shlinkio/shlink/issues/305) Implemented changes which will allow Shlink to be truly clusterizable.
 * [#262](https://github.com/shlinkio/shlink/issues/262) Increased mutation score to 75%.
 
-### Deprecated
+#### Deprecated
 
 * *Nothing*
 
@@ -86,7 +109,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#56](https://github.com/shlinkio/shlink/issues/56) Simplified supported cache, requiring APCu always.
 
-### Deprecated
+#### Deprecated
 
 * [#406](https://github.com/shlinkio/shlink/issues/406) Deprecated `PUT /short-urls/{shortCode}` REST endpoint in favor of `PATCH /short-urls/{shortCode}`.
 

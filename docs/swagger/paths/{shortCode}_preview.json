@@ -1,5 +1,6 @@
 {
     "get": {
+        "deprecated": true,
         "operationId": "shortUrlPreview",
         "tags": [
             "URL Shortener"

@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 
+/** @deprecated */
 class PreviewAction implements MiddlewareInterface
 {
     use ResponseUtilsTrait;
