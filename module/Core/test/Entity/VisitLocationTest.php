@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Entity;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocationTest extends TestCase
 {

@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\IpGeolocation;
+namespace ShlinkioTest\Shlink\IpGeolocation;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
-use Shlinkio\Shlink\Common\IpGeolocation\ChainIpLocationResolver;
-use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
-use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\IpGeolocation\ChainIpLocationResolver;
+use Shlinkio\Shlink\IpGeolocation\IpLocationResolverInterface;
+use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class ChainIpLocationResolverTest extends TestCase
 {

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common;
+namespace Shlinkio\Shlink\IpGeolocation;
 
 use Zend\Config\Factory;
 use Zend\Stdlib\Glob;

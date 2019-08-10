@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Entity;
 
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
-use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
+use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocation extends AbstractEntity implements VisitLocationInterface
 {

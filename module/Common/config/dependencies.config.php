@@ -31,13 +31,6 @@ return [
 
             Image\ImageBuilder::class => Image\ImageBuilderFactory::class,
 
-            IpGeolocation\IpApiLocationResolver::class => ConfigAbstractFactory::class,
-            IpGeolocation\GeoLite2LocationResolver::class => ConfigAbstractFactory::class,
-            IpGeolocation\EmptyIpLocationResolver::class => InvokableFactory::class,
-            IpGeolocation\ChainIpLocationResolver::class => ConfigAbstractFactory::class,
-            IpGeolocation\GeoLite2\GeoLite2Options::class => ConfigAbstractFactory::class,
-            IpGeolocation\GeoLite2\DbUpdater::class => ConfigAbstractFactory::class,
-
             Service\PreviewGenerator::class => ConfigAbstractFactory::class,
         ],
         'aliases' => [
@@ -47,8 +40,6 @@ return [
             'logger' => LoggerInterface::class,
             Logger::class => 'Logger_Shlink',
             LoggerInterface::class => 'Logger_Shlink',
-
-            IpGeolocation\IpLocationResolverInterface::class => IpGeolocation\ChainIpLocationResolver::class,
         ],
         'abstract_factories' => [
             Factory\DottedAccessConfigAbstractFactory::class,
@@ -74,20 +65,6 @@ return [
         Template\Extension\TranslatorExtension::class => ['translator'],
         Middleware\LocaleMiddleware::class => ['translator'],
         Middleware\CloseDbConnectionMiddleware::class => ['em'],
-
-        IpGeolocation\IpApiLocationResolver::class => ['httpClient'],
-        IpGeolocation\GeoLite2LocationResolver::class => [Reader::class],
-        IpGeolocation\ChainIpLocationResolver::class => [
-            IpGeolocation\GeoLite2LocationResolver::class,
-            IpGeolocation\IpApiLocationResolver::class,
-            IpGeolocation\EmptyIpLocationResolver::class,
-        ],
-        IpGeolocation\GeoLite2\GeoLite2Options::class => ['config.geolite2'],
-        IpGeolocation\GeoLite2\DbUpdater::class => [
-            GuzzleClient::class,
-            Filesystem::class,
-            IpGeolocation\GeoLite2\GeoLite2Options::class,
-        ],
 
         Service\PreviewGenerator::class => [
             Image\ImageBuilder::class,

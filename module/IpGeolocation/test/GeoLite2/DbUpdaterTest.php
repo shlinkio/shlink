@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\IpGeolocation\GeoLite2;
+namespace ShlinkioTest\Shlink\IpGeolocation\GeoLite2;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
@@ -9,8 +9,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\RuntimeException;
-use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\DbUpdater;
-use Shlinkio\Shlink\Common\IpGeolocation\GeoLite2\GeoLite2Options;
+use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
+use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
 use Symfony\Component\Filesystem\Exception as FilesystemException;
 use Symfony\Component\Filesystem\Filesystem;
 use Zend\Diactoros\Response;
@@ -31,7 +31,7 @@ class DbUpdaterTest extends TestCase
         $this->httpClient = $this->prophesize(ClientInterface::class);
         $this->filesystem = $this->prophesize(Filesystem::class);
         $this->options = new GeoLite2Options([
-            'temp_dir' => __DIR__ . '/../../../test-resources',
+            'temp_dir' => __DIR__ . '/../../test-resources',
             'db_location' => 'db_location',
             'download_from' => '',
         ]);

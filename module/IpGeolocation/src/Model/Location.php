@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\IpGeolocation\Model;
+namespace Shlinkio\Shlink\IpGeolocation\Model;
 
 final class Location
 {

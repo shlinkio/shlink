@@ -11,8 +11,6 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
-use Shlinkio\Shlink\Common\IpGeolocation\IpLocationResolverInterface;
-use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -21,6 +19,8 @@ use Shlinkio\Shlink\Core\EventDispatcher\LocateShortUrlVisit;
 use Shlinkio\Shlink\Core\EventDispatcher\ShortUrlVisited;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\UnknownVisitLocation;
+use Shlinkio\Shlink\IpGeolocation\IpLocationResolverInterface;
+use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class LocateShortUrlVisitTest extends TestCase
 {

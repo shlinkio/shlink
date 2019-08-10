@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\IpGeolocation;
+namespace ShlinkioTest\Shlink\IpGeolocation;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Common\IpGeolocation\EmptyIpLocationResolver;
-use Shlinkio\Shlink\Common\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
+use Shlinkio\Shlink\IpGeolocation\EmptyIpLocationResolver;
+use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use function Functional\map;
 use function range;

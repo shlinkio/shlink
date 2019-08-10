@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\IpGeolocation\GeoLite2;
+namespace Shlinkio\Shlink\IpGeolocation\GeoLite2;
 
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use GuzzleHttp\ClientInterface;
