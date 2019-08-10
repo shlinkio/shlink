@@ -21,6 +21,9 @@
         <testsuite name="EventDispatcher">
             <directory>./module/EventDispatcher/test</directory>
         </testsuite>
+        <testsuite name="IpGeolocation">
+            <directory>./module/IpGeolocation/test</directory>
+        </testsuite>
     </testsuites>
 
     <filter>
