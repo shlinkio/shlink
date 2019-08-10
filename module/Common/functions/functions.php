@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common;
 
+use Zend\Config\Factory;
+use Zend\Stdlib\Glob;
+
 use function getenv;
 use function json_decode as spl_json_decode;
 use function json_last_error;
@@ -58,4 +61,12 @@ function json_decode(string $json, int $depth = 512, int $options = 0): array
     }
 
     return $data;
+}
+
+/**
+ * Loads configuration files which match provided glob pattern, and returns the merged result as array
+ */
+function loadConfigFromGlob(string $globPattern): array
+{
+    return Factory::fromFiles(Glob::glob($globPattern, Glob::GLOB_BRACE));
 }

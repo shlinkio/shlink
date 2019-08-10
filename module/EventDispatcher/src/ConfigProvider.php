@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\EventDispatcher;
 
-use Zend\Config\Factory;
-use Zend\Stdlib\Glob;
+use function Shlinkio\Shlink\Common\loadConfigFromGlob;
 
 class ConfigProvider
 {
     public function __invoke()
     {
-        return Factory::fromFiles(Glob::glob(__DIR__ . '/../config/{,*.}config.php', Glob::GLOB_BRACE));
+        return loadConfigFromGlob(__DIR__ . '/../config/{,*.}config.php');
     }
 }
