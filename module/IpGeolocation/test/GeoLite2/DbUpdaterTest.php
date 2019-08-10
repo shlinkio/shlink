@@ -8,7 +8,7 @@ use GuzzleHttp\Exception\ClientException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Common\Exception\RuntimeException;
+use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
 use Symfony\Component\Filesystem\Exception as FilesystemException;

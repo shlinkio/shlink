@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\IpGeolocation\Exception;
 
-use Shlinkio\Shlink\Common\Exception\RuntimeException;
+use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
 use Throwable;
 
 use function sprintf;

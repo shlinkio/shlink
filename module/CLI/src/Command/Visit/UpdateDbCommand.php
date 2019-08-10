@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Shlinkio\Shlink\Common\Exception\RuntimeException;
+use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;

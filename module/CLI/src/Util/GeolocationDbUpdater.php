@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\CLI\Util;
 use Cake\Chronos\Chronos;
 use GeoIp2\Database\Reader;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
-use Shlinkio\Shlink\Common\Exception\RuntimeException;
+use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock\Factory as Locker;
 use Throwable;
