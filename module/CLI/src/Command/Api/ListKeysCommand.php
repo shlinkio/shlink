@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Shlinkio\Shlink\Common\Console\ShlinkTable;
+use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;

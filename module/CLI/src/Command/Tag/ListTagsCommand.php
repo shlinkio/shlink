@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Shlinkio\Shlink\Common\Console\ShlinkTable;
+use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
