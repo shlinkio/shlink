@@ -7,8 +7,8 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use PDO;
-use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
+use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 
 /**
  * Auto-generated Migration: Please modify to your needs!

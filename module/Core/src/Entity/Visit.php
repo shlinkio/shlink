@@ -6,11 +6,11 @@ namespace Shlinkio\Shlink\Core\Entity;
 use Cake\Chronos\Chronos;
 use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
-use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\UnknownVisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
+use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 
 class Visit extends AbstractEntity implements JsonSerializable
 {

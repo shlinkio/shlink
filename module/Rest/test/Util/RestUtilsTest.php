@@ -5,9 +5,9 @@ namespace ShlinkioTest\Shlink\Rest\Util;
 
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
-use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
+use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 
