@@ -3,48 +3,60 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Common\Cache;
 
-use Doctrine\Common\Cache\ApcuCache;
-use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache;
 use PHPUnit\Framework\TestCase;
+use Predis\ClientInterface;
+use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Container\ContainerInterface;
 use Shlinkio\Shlink\Common\Cache\CacheFactory;
-use Shlinkio\Shlink\Core\Options\AppOptions;
-use Zend\ServiceManager\ServiceManager;
-
-use function putenv;
+use Shlinkio\Shlink\Common\Cache\RedisFactory;
 
 class CacheFactoryTest extends TestCase
 {
-    /** @var CacheFactory */
-    private $factory;
-    /** @var ServiceManager */
-    private $sm;
+    /** @var ObjectProphecy */
+    private $container;
 
     public function setUp(): void
     {
-        $this->factory = new CacheFactory();
-        $this->sm = new ServiceManager(['services' => [
-            AppOptions::class => new AppOptions(),
-        ]]);
+        $this->container = $this->prophesize(ContainerInterface::class);
     }
 
-    public static function tearDownAfterClass(): void
-    {
-        putenv('APP_ENV');
+    /**
+     * @test
+     * @dataProvider provideCacheConfig
+     */
+    public function expectedCacheAdapterIsReturned(
+        array $config,
+        string $expectedAdapterClass,
+        string $expectedNamespace,
+        ?callable $apcuEnabled = null
+    ): void {
+        $factory = new CacheFactory($apcuEnabled);
+
+        $getConfig = $this->container->get('config')->willReturn($config);
+        $getRedis = $this->container->get(RedisFactory::SERVICE_NAME)->willReturn(
+            $this->prophesize(ClientInterface::class)->reveal()
+        );
+
+        $cache = $factory($this->container->reveal());
+
+        $this->assertInstanceOf($expectedAdapterClass, $cache);
+        $this->assertEquals($expectedNamespace, $cache->getNamespace());
+        $getConfig->shouldHaveBeenCalledOnce();
+        $getRedis->shouldHaveBeenCalledTimes($expectedAdapterClass === Cache\PredisCache::class ? 1 :0);
     }
 
-    /** @test */
-    public function productionReturnsApcAdapter(): void
+    public function provideCacheConfig(): iterable
     {
-        putenv('APP_ENV=pro');
-        $instance = ($this->factory)($this->sm, '');
-        $this->assertInstanceOf(ApcuCache::class, $instance);
-    }
-
-    /** @test */
-    public function developmentReturnsArrayAdapter(): void
-    {
-        putenv('APP_ENV=dev');
-        $instance = ($this->factory)($this->sm, '');
-        $this->assertInstanceOf(ArrayCache::class, $instance);
+        yield 'debug true' => [['debug' => true], Cache\ArrayCache::class, ''];
+        yield 'debug false' => [['debug' => false], Cache\ApcuCache::class, ''];
+        yield 'no debug' => [[], Cache\ApcuCache::class, ''];
+        yield 'with redis' => [['cache' => [
+            'namespace' => $namespace = 'some_namespace',
+            'redis' => [],
+        ]], Cache\PredisCache::class, $namespace];
+        yield 'debug false and no apcu' => [['debug' => false], Cache\ArrayCache::class, '', function () {
+            return false;
+        }];
     }
 }
