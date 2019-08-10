@@ -19,8 +19,8 @@ use Shlinkio\Shlink\Core\EventDispatcher\LocateShortUrlVisit;
 use Shlinkio\Shlink\Core\EventDispatcher\ShortUrlVisited;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\UnknownVisitLocation;
-use Shlinkio\Shlink\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 class LocateShortUrlVisitTest extends TestCase
 {

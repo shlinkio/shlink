@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\IpGeolocation;
+namespace ShlinkioTest\Shlink\IpGeolocation\Resolver;
 
 use GeoIp2\Database\Reader;
 use GeoIp2\Exception\AddressNotFoundException;
@@ -10,8 +10,8 @@ use MaxMind\Db\Reader\InvalidDatabaseException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2LocationResolver;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\IpGeolocation\Resolver\GeoLite2LocationResolver;
 
 class GeoLite2LocationResolverTest extends TestCase
 {

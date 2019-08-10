@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\IpGeolocation;
+namespace ShlinkioTest\Shlink\IpGeolocation\Resolver;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
@@ -9,8 +9,8 @@ use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
-use Shlinkio\Shlink\IpGeolocation\IpApiLocationResolver;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\IpGeolocation\Resolver\IpApiLocationResolver;
 
 use function json_encode;
 

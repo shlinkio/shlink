@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\IpGeolocation;
+namespace Shlinkio\Shlink\IpGeolocation\Resolver;
 
 use GeoIp2\Database\Reader;
 use GeoIp2\Exception\AddressNotFoundException;
@@ -9,6 +9,8 @@ use GeoIp2\Model\City;
 use GeoIp2\Record\Subdivision;
 use MaxMind\Db\Reader\InvalidDatabaseException;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
+use Shlinkio\Shlink\IpGeolocation\Model;
+use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 use function Functional\first;
 

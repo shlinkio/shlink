@@ -10,8 +10,8 @@ use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Common\Exception\WrongIpException;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
-use Shlinkio\Shlink\IpGeolocation\IpLocationResolverInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 use function sprintf;
 

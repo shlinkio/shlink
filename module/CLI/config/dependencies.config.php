@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
-use Shlinkio\Shlink\IpGeolocation\IpLocationResolverInterface;
+use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console as SymfonyCli;
 use Symfony\Component\Lock\Factory as Locker;
