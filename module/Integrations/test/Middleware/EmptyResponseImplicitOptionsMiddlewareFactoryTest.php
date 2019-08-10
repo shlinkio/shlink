@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\Factory;
+namespace ShlinkioTest\Shlink\Integrations\Middleware;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionObject;
-use Shlinkio\Shlink\Common\Factory\EmptyResponseImplicitOptionsMiddlewareFactory;
+use Shlinkio\Shlink\Integrations\Middleware\EmptyResponseImplicitOptionsMiddlewareFactory;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Expressive\Router\Middleware\ImplicitOptionsMiddleware;
-use Zend\ServiceManager\ServiceManager;
 
 class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
 {
@@ -21,16 +20,16 @@ class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
     }
 
     /** @test */
-    public function serviceIsCreated()
+    public function serviceIsCreated(): void
     {
-        $instance = $this->factory->__invoke(new ServiceManager(), '');
+        $instance = ($this->factory)();
         $this->assertInstanceOf(ImplicitOptionsMiddleware::class, $instance);
     }
 
     /** @test */
-    public function responsePrototypeIsEmptyResponse()
+    public function responsePrototypeIsEmptyResponse(): void
     {
-        $instance = $this->factory->__invoke(new ServiceManager(), '');
+        $instance = ($this->factory)();
 
         $ref = new ReflectionObject($instance);
         $prop = $ref->getProperty('responseFactory');

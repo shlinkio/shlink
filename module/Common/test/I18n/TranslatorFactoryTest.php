@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\Factory;
+namespace ShlinkioTest\Shlink\Common\I18n;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Common\Factory\TranslatorFactory;
+use Shlinkio\Shlink\Common\I18n\TranslatorFactory;
 use Zend\I18n\Translator\Translator;
 use Zend\ServiceManager\ServiceManager;
 
@@ -19,11 +19,11 @@ class TranslatorFactoryTest extends TestCase
     }
 
     /** @test */
-    public function serviceIsCreated()
+    public function serviceIsCreated(): void
     {
-        $instance = $this->factory->__invoke(new ServiceManager(['services' => [
+        $instance = ($this->factory)(new ServiceManager(['services' => [
             'config' => [],
-        ]]), '');
+        ]]));
         $this->assertInstanceOf(Translator::class, $instance);
     }
 }

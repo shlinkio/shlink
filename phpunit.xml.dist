@@ -24,6 +24,9 @@
         <testsuite name="IpGeolocation">
             <directory>./module/IpGeolocation/test</directory>
         </testsuite>
+        <testsuite name="Integrations">
+            <directory>./module/Integrations/test</directory>
+        </testsuite>
     </testsuites>
 
     <filter>
