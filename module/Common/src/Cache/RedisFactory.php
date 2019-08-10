@@ -16,7 +16,8 @@ class RedisFactory
 
     public function __invoke(ContainerInterface $container): PredisClient
     {
-        $redisConfig = $container->get('config')['redis'] ?? [];
+        $config = $container->get('config');
+        $redisConfig = $config['cache']['redis'] ?? $config['redis'] ?? [];
 
         $servers = $redisConfig['servers'] ?? [];
         $servers = is_string($servers) ? explode(',', $servers) : $servers;
