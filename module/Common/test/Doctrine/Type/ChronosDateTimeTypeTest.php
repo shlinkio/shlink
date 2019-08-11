@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\Type;
+namespace ShlinkioTest\Shlink\Common\Doctrine\Type;
 
 use Cake\Chronos\Chronos;
 use DateTime;
@@ -11,7 +11,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Common\Type\ChronosDateTimeType;
+use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use stdClass;
 
 class ChronosDateTimeTypeTest extends TestCase

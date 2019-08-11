@@ -5,7 +5,7 @@ namespace Shlinkio\Shlink\Core;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
-use Shlinkio\Shlink\Common\Type\ChronosDateTimeType;
+use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 
 /** @var $metadata ClassMetadata */
 $builder = new ClassMetadataBuilder($metadata);
