@@ -31,12 +31,6 @@ trait PaginatorUtilsTrait
         return $transformer === null ? $items : array_map([$transformer, 'transform'], $items);
     }
 
-    /**
-     * Checks if provided paginator is in last page
-     *
-     * @param Paginator $paginator
-     * @return bool
-     */
     private function isLastPage(Paginator $paginator): bool
     {
         return $paginator->getCurrentPageNumber() >= $paginator->count();

@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM;
-use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\FindShortCodeTrait;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
@@ -35,8 +35,8 @@ class ShortUrlService implements ShortUrlServiceInterface
     {
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        $paginator = new Paginator(new PaginableRepositoryAdapter($repo, $searchQuery, $tags, $orderBy));
-        $paginator->setItemCountPerPage(PaginableRepositoryAdapter::ITEMS_PER_PAGE)
+        $paginator = new Paginator(new ShortUrlRepositoryAdapter($repo, $searchQuery, $tags, $orderBy));
+        $paginator->setItemCountPerPage(ShortUrlRepositoryAdapter::ITEMS_PER_PAGE)
                   ->setCurrentPageNumber($page);
 
         return $paginator;

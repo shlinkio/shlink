@@ -1,20 +1,20 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\Paginator\Adapter;
+namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
-use Shlinkio\Shlink\Common\Repository\PaginableRepositoryInterface;
+use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
 use function strip_tags;
 use function trim;
 
-class PaginableRepositoryAdapter implements AdapterInterface
+class ShortUrlRepositoryAdapter implements AdapterInterface
 {
     public const ITEMS_PER_PAGE = 10;
 
-    /** @var PaginableRepositoryInterface */
-    private $paginableRepository;
+    /** @var ShortUrlRepositoryInterface */
+    private $repository;
     /** @var null|string */
     private $searchTerm;
     /** @var null|array|string */
@@ -23,12 +23,12 @@ class PaginableRepositoryAdapter implements AdapterInterface
     private $tags;
 
     public function __construct(
-        PaginableRepositoryInterface $paginableRepository,
+        ShortUrlRepositoryInterface $repository,
         $searchTerm = null,
         array $tags = [],
         $orderBy = null
     ) {
-        $this->paginableRepository = $paginableRepository;
+        $this->repository = $repository;
         $this->searchTerm = $searchTerm !== null ? trim(strip_tags($searchTerm)) : null;
         $this->orderBy = $orderBy;
         $this->tags = $tags;
@@ -43,7 +43,7 @@ class PaginableRepositoryAdapter implements AdapterInterface
      */
     public function getItems($offset, $itemCountPerPage): array
     {
-        return $this->paginableRepository->findList(
+        return $this->repository->findList(
             $itemCountPerPage,
             $offset,
             $this->searchTerm,
@@ -63,6 +63,6 @@ class PaginableRepositoryAdapter implements AdapterInterface
      */
     public function count(): int
     {
-        return $this->paginableRepository->countList($this->searchTerm, $this->tags);
+        return $this->repository->countList($this->searchTerm, $this->tags);
     }
 }
