@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink;
+namespace Shlinkio\Shlink;
 
 use GuzzleHttp\Client;
 use PDO;
@@ -84,7 +84,7 @@ return [
             ]),
         ],
         'factories' => [
-            Common\TestHelper::class => InvokableFactory::class,
+            TestUtils\Helper\TestHelper::class => InvokableFactory::class,
         ],
     ],
 

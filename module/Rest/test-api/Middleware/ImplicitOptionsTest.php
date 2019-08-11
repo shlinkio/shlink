@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioApiTest\Shlink\Rest\Action;
+namespace ShlinkioApiTest\Shlink\Rest\Middleware;
 
-use ShlinkioTest\Shlink\Common\ApiTest\ApiTestCase;
+use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function explode;
 
-class OptionsRequestTest extends ApiTestCase
+class ImplicitOptionsTest extends ApiTestCase
 {
     /** @test */
     public function optionsRequestsReturnEmptyResponse(): void

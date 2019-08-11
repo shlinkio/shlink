@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common;
+namespace Shlinkio\Shlink\TestUtils;
 
 use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
@@ -16,7 +16,7 @@ if (! file_exists('.env')) {
 
 /** @var ContainerInterface $container */
 $container = require __DIR__ . '/../container.php';
-$testHelper = $container->get(TestHelper::class);
+$testHelper = $container->get(Helper\TestHelper::class);
 $config = $container->get('config');
 $em = $container->get(EntityManager::class);
 

@@ -91,12 +91,10 @@
                 "module/Core/test",
                 "module/Core/test-db"
             ],
-            "ShlinkioTest\\Shlink\\Common\\": [
-                "module/Common/test",
-                "module/Common/test-db"
-            ],
+            "ShlinkioTest\\Shlink\\Common\\": "module/Common/test",
             "ShlinkioTest\\Shlink\\EventDispatcher\\": "module/EventDispatcher/test",
-            "ShlinkioTest\\Shlink\\IpGeolocation\\": "module/IpGeolocation/test"
+            "ShlinkioTest\\Shlink\\IpGeolocation\\": "module/IpGeolocation/test",
+            "Shlinkio\\Shlink\\TestUtils\\": "module/TestUtils/src"
         }
     },
     "scripts": {

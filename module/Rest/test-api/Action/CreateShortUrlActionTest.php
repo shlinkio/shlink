@@ -5,7 +5,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
-use ShlinkioTest\Shlink\Common\ApiTest\ApiTestCase;
+use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function Functional\map;
 use function range;
