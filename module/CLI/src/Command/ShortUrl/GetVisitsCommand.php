@@ -5,7 +5,7 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Shlinkio\Shlink\Common\Console\ShlinkTable;
+use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\VisitsParams;

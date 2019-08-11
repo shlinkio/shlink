@@ -5,6 +5,7 @@ namespace Shlinkio\Shlink\Common\Image;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
 
+/** @deprecated  */
 interface ImageBuilderInterface extends ServiceLocatorInterface
 {
 }

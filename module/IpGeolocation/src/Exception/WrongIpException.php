@@ -1,13 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\Exception;
+namespace Shlinkio\Shlink\IpGeolocation\Exception;
 
+use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
 use Throwable;
 
 use function sprintf;
 
-class WrongIpException extends RuntimeException
+class WrongIpException extends RuntimeException implements ExceptionInterface
 {
     public static function fromIpAddress($ipAddress, ?Throwable $prev = null): self
     {

@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\Console;
+namespace ShlinkioTest\Shlink\CLI\Util;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use ReflectionObject;
-use Shlinkio\Shlink\Common\Console\ShlinkTable;
+use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,7 +26,7 @@ class ShlinkTableTest extends TestCase
     }
 
     /** @test */
-    public function renderMakesTableToBeRenderedWithProvidedInfo()
+    public function renderMakesTableToBeRenderedWithProvidedInfo(): void
     {
         $headers = [];
         $rows = [[]];
@@ -53,7 +53,7 @@ class ShlinkTableTest extends TestCase
     }
 
     /** @test */
-    public function newTableIsCreatedForFactoryMethod()
+    public function newTableIsCreatedForFactoryMethod(): void
     {
         $instance = ShlinkTable::fromOutput($this->prophesize(OutputInterface::class)->reveal());
 

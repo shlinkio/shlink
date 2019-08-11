@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\IpGeolocation\GeoLite2;
 
-use Shlinkio\Shlink\Common\Exception\RuntimeException;
+use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
 
 interface DbUpdaterInterface
 {

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\Type;
+namespace Shlinkio\Shlink\Common\Doctrine\Type;
 
 use Cake\Chronos\Chronos;
 use DateTimeInterface;

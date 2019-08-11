@@ -3,16 +3,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
 abstract class AbstractEntity
 {
-    /**
-     * @var string
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(name="id", type="bigint", options={"unsigned"=true})
-     */
+    /** @var string */
     protected $id;
 
     public function getId(): string

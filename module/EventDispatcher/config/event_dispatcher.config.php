@@ -23,6 +23,8 @@ return [
             Psr\EventDispatcherInterface::class => Phly\EventDispatcher::class,
         ],
         'delegators' => [
+            // The listener provider has to be lazy, because it uses the Swoole server to generate AsyncEventListeners
+            // Without making this lazy, CLI commands which depend on the EventDispatcher fail
             Psr\ListenerProviderInterface::class => [
                 LazyServiceFactory::class,
             ],

@@ -11,7 +11,7 @@ return [
     'entity_manager' => [
         'orm' => [
             'types' => [
-                Type\ChronosDateTimeType::CHRONOS_DATETIME => Type\ChronosDateTimeType::class,
+                Doctrine\Type\ChronosDateTimeType::CHRONOS_DATETIME => Doctrine\Type\ChronosDateTimeType::class,
             ],
         ],
     ],

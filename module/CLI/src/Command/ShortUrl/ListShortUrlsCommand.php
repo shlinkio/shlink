@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Shlinkio\Shlink\Common\Console\ShlinkTable;
-use Shlinkio\Shlink\Common\Paginator\Adapter\PaginableRepositoryAdapter;
+use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
+use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Symfony\Component\Console\Command\Command;
@@ -62,7 +62,7 @@ class ListShortUrlsCommand extends Command
                 'page',
                 'p',
                 InputOption::VALUE_OPTIONAL,
-                sprintf('The first page to list (%s items per page)', PaginableRepositoryAdapter::ITEMS_PER_PAGE),
+                sprintf('The first page to list (%s items per page)', ShortUrlRepositoryAdapter::ITEMS_PER_PAGE),
                 '1'
             )
             ->addOption(

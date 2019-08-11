@@ -5,7 +5,7 @@ namespace ShlinkioTest\Shlink\IpGeolocation\Resolver;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Common\Exception\WrongIpException;
+use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\ChainIpLocationResolver;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;

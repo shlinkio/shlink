@@ -6,9 +6,8 @@ namespace Shlinkio\Shlink\IpGeolocation\Resolver;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
-use Shlinkio\Shlink\Common\Exception\WrongIpException;
+use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model;
-use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 use function Shlinkio\Shlink\Common\json_decode;
 use function sprintf;

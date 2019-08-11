@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\Util;
+namespace Shlinkio\Shlink\Common\Response;
 
 use Fig\Http\Message\StatusCodeInterface as StatusCode;
 use finfo;

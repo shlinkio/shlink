@@ -22,11 +22,9 @@ class DottedAccessConfigAbstractFactory implements AbstractFactoryInterface
     /**
      * Can the factory create an instance for the service?
      *
-     * @param  ContainerInterface $container
      * @param  string $requestedName
-     * @return bool
      */
-    public function canCreate(ContainerInterface $container, $requestedName)
+    public function canCreate(ContainerInterface $container, $requestedName): bool
     {
         return substr_count($requestedName, '.') > 0;
     }

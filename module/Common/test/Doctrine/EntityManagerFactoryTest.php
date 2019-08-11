@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\Common\Doctrine;
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Doctrine\EntityManagerFactory;
-use Shlinkio\Shlink\Common\Type\ChronosDateTimeType;
+use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Zend\ServiceManager\ServiceManager;
 
 class EntityManagerFactoryTest extends TestCase

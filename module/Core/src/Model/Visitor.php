@@ -4,11 +4,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Model;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 
 final class Visitor
 {
-    public const REMOTE_ADDRESS_ATTR = 'remote_address';
-
     /** @var string */
     private $userAgent;
     /** @var string */
@@ -28,7 +27,7 @@ final class Visitor
         return new self(
             $request->getHeaderLine('User-Agent'),
             $request->getHeaderLine('Referer'),
-            $request->getAttribute(self::REMOTE_ADDRESS_ATTR)
+            $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR)
         );
     }
 

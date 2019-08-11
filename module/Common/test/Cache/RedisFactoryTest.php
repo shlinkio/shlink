@@ -27,10 +27,28 @@ class RedisFactoryTest extends TestCase
      * @test
      * @dataProvider provideRedisConfig
      */
-    public function createsRedisClientBasedOnConfig(?array $config, string $expectedCluster): void
+    public function createsRedisClientBasedOnRedisConfig(?array $config, string $expectedCluster): void
     {
         $getConfig = $this->container->get('config')->willReturn([
             'redis' => $config,
+        ]);
+
+        $client = ($this->factory)($this->container->reveal());
+
+        $getConfig->shouldHaveBeenCalledOnce();
+        $this->assertInstanceOf($expectedCluster, $client->getOptions()->cluster);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideRedisConfig
+     */
+    public function createsRedisClientBasedOnCacheConfig(?array $config, string $expectedCluster): void
+    {
+        $getConfig = $this->container->get('config')->willReturn([
+            'cache' => [
+                'redis' => $config,
+            ],
         ]);
 
         $client = ($this->factory)($this->container->reveal());
