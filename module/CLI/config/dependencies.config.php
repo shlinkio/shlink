@@ -8,6 +8,7 @@ use GeoIp2\Database\Reader;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Service;
+use Shlinkio\Shlink\Installer\Factory\ProcessHelperFactory;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
@@ -23,7 +24,7 @@ return [
     'dependencies' => [
         'factories' => [
             SymfonyCli\Application::class => Factory\ApplicationFactory::class,
-            SymfonyCli\Helper\ProcessHelper::class => Factory\ProcessHelperFactory::class,
+            SymfonyCli\Helper\ProcessHelper::class => ProcessHelperFactory::class,
             PhpExecutableFinder::class => InvokableFactory::class,
 
             GeolocationDbUpdater::class => ConfigAbstractFactory::class,
