@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
-use ShlinkioTest\Shlink\Common\ApiTest\ApiTestCase;
+use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class ListShortUrlsTest extends ApiTestCase
 {

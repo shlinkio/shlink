@@ -5,7 +5,7 @@ namespace ShlinkioTest\Shlink\Core\Repository;
 
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
-use ShlinkioTest\Shlink\Common\DbTest\DatabaseTestCase;
+use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 class TagRepositoryTest extends DatabaseTestCase
 {

@@ -6,7 +6,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Middleware;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\ApiKeyHeaderPlugin;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPlugin;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
-use ShlinkioTest\Shlink\Common\ApiTest\ApiTestCase;
+use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function implode;
 use function sprintf;

@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
-use ShlinkioTest\Shlink\Common\DbTest\DatabaseTestCase;
+use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 use function count;
 

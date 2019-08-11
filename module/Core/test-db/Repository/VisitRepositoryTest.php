@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
-use ShlinkioTest\Shlink\Common\DbTest\DatabaseTestCase;
+use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 use function Functional\map;
 use function range;

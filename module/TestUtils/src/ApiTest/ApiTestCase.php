@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\ApiTest;
+namespace Shlinkio\Shlink\TestUtils\ApiTest;
 
 use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
@@ -19,7 +19,7 @@ abstract class ApiTestCase extends TestCase implements StatusCodeInterface, Requ
 
     /** @var ClientInterface */
     private static $client;
-    /** @var callable */
+    /** @var callable|null */
     private static $seedFixtures;
 
     public static function setApiClient(ClientInterface $client): void
@@ -34,7 +34,7 @@ abstract class ApiTestCase extends TestCase implements StatusCodeInterface, Requ
 
     public function setUp(): void
     {
-        if (self::$seedFixtures) {
+        if (self::$seedFixtures !== null) {
             (self::$seedFixtures)();
         }
     }
