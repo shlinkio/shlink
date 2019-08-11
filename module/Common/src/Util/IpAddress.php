@@ -3,11 +3,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Common\Util;
 
-use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
+use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 
 use function count;
 use function explode;
 use function implode;
+use function sprintf;
 use function trim;
 
 final class IpAddress
@@ -36,14 +37,14 @@ final class IpAddress
     /**
      * @param string $address
      * @return IpAddress
-     * @throws WrongIpException
+     * @throws InvalidArgumentException
      */
     public static function fromString(string $address): self
     {
         $address = trim($address);
         $parts = explode('.', $address);
         if (count($parts) !== self::IPV4_PARTS_COUNT) {
-            throw WrongIpException::fromIpAddress($address);
+            throw new InvalidArgumentException(sprintf('Provided IP "%s" is invalid', $address));
         }
 
         return new self(...$parts);

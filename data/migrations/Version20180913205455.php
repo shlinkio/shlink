@@ -7,8 +7,8 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use PDO;
+use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
-use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -60,7 +60,7 @@ final class Version20180913205455 extends AbstractMigration
 
         try {
             return (string) IpAddress::fromString($addr)->getObfuscatedCopy();
-        } catch (WrongIpException $e) {
+        } catch (InvalidArgumentException $e) {
             return null;
         }
     }

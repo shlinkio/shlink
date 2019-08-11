@@ -9,7 +9,6 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Shlinkio\Shlink\Rest\Authentication\Plugin\ApiKeyHeaderPlugin;
 
 use function Shlinkio\Shlink\Common\json_decode;
 use function sprintf;
@@ -48,7 +47,7 @@ abstract class ApiTestCase extends TestCase implements StatusCodeInterface, Requ
     protected function callApiWithKey(string $method, string $uri, array $options = []): ResponseInterface
     {
         $headers = $options[RequestOptions::HEADERS] ?? [];
-        $headers[ApiKeyHeaderPlugin::HEADER_NAME] = 'valid_api_key';
+        $headers['X-Api-Key'] = 'valid_api_key';
         $options[RequestOptions::HEADERS] = $headers;
 
         return $this->callApi($method, $uri, $options);
