@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
-use Shlinkio\Shlink\Common\Service\PreviewGeneratorInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
+use Shlinkio\Shlink\PreviewGenerator\Exception\PreviewGenerationException;
+use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGeneratorInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

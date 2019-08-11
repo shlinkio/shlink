@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\Image;
+namespace ShlinkioTest\Shlink\PreviewGenerator\Image;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Common\Image\ImageBuilder;
-use Shlinkio\Shlink\Common\Image\ImageBuilderFactory;
+use Shlinkio\Shlink\PreviewGenerator\Image\ImageBuilder;
+use Shlinkio\Shlink\PreviewGenerator\Image\ImageBuilderFactory;
 use Zend\ServiceManager\ServiceManager;
 
 class ImageBuilderFactoryTest extends TestCase

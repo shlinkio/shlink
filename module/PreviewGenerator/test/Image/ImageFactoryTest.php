@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\Image;
+namespace ShlinkioTest\Shlink\PreviewGenerator\Image;
 
 use mikehaertl\wkhtmlto\Image;
 use PHPUnit\Framework\TestCase;
 use ReflectionObject;
-use Shlinkio\Shlink\Common\Image\ImageFactory;
+use Shlinkio\Shlink\PreviewGenerator\Image\ImageFactory;
 use Zend\ServiceManager\ServiceManager;
 
 class ImageFactoryTest extends TestCase

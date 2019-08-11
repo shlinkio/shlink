@@ -5,8 +5,8 @@ namespace Shlinkio\Shlink\Core;
 
 use Doctrine\Common\Cache\Cache;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Shlinkio\Shlink\Common\Service\PreviewGenerator;
 use Shlinkio\Shlink\Core\Response\NotFoundHandler;
+use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Template\TemplateRendererInterface;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;

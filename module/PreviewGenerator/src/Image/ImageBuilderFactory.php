@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\Image;
+namespace Shlinkio\Shlink\PreviewGenerator\Image;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -11,7 +11,7 @@ use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 /** @deprecated  */
-class ImageFactory implements FactoryInterface
+class ImageBuilderFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -27,13 +27,8 @@ class ImageFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
-        $config = $container->get('config')['wkhtmltopdf'];
-        $image = new Image($config['images'] ?? null);
-
-        if ($options['url'] ?? null) {
-            $image->setPage($options['url']);
-        }
-
-        return $image;
+        return new ImageBuilder($container, ['factories' => [
+            Image::class => ImageFactory::class,
+        ]]);
     }
 }

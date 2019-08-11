@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Changed
 
 * [#450](https://github.com/shlinkio/shlink/issues/450) Added PHP 7.4 to the build matrix, as an allowed-to-fail env.
+* [#443](https://github.com/shlinkio/shlink/issues/443) Split some logic into independent modules.
 
 #### Deprecated
 
