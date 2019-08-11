@@ -7,7 +7,7 @@ use mikehaertl\wkhtmlto\Image;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
+use Shlinkio\Shlink\PreviewGenerator\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\PreviewGenerator\Image\ImageBuilder;
 use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
 use Symfony\Component\Filesystem\Filesystem;

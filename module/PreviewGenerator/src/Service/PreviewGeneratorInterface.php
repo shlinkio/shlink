@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\PreviewGenerator\Service;
 
-use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
+use Shlinkio\Shlink\PreviewGenerator\Exception\PreviewGenerationException;
 
 /** @deprecated */
 interface PreviewGeneratorInterface
