@@ -10,9 +10,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 use function str_replace;
 
+/** @deprecated */
 class ShortCodePathMiddleware implements MiddlewareInterface
 {
-    private const OLD_PATH_PREFIX = '/short-codes';
+    private const OLD_PATH_PREFIX = '/short-codes'; // Old path is deprecated. Remove this middleware on v2
     private const NEW_PATH_PREFIX = '/short-urls';
 
     /**

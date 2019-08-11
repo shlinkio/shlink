@@ -7,6 +7,7 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
+use Zend\Expressive\Router\Middleware\ImplicitOptionsMiddleware;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
@@ -32,6 +33,7 @@ return [
             Action\Tag\CreateTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\UpdateTagAction::class => ConfigAbstractFactory::class,
 
+            ImplicitOptionsMiddleware::class => Middleware\EmptyResponseImplicitOptionsMiddlewareFactory::class,
             Middleware\BodyParserMiddleware::class => InvokableFactory::class,
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
             Middleware\PathVersionMiddleware::class => InvokableFactory::class,
