@@ -18,7 +18,6 @@ return (new ConfigAggregator\ConfigAggregator([
     ExpressiveErrorHandler\ConfigProvider::class,
     Common\ConfigProvider::class,
     IpGeolocation\ConfigProvider::class,
-    Integrations\ConfigProvider::class,
     Core\ConfigProvider::class,
     CLI\ConfigProvider::class,
     Rest\ConfigProvider::class,

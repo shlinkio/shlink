@@ -2,9 +2,11 @@
 
 Shlink module with tools to geolocate an IP address using different strategies.
 
+Most of the elements it provides require a [PSR-11] container, and it's easy to integrate on [expressive] applications thanks to the `ConfigProvider` it includes.
+
 ## Install
 
-Install this library using composer
+Install this library using composer:
 
     composer require shlinkio/shlink-ip-geolocation
 

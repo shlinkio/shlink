@@ -6,7 +6,7 @@ Most of the elements it provides require a [PSR-11] container, and it's easy to 
 
 ## Install
 
-Install this library using composer
+Install this library using composer:
 
     composer require shlinkio/shlink-common
 

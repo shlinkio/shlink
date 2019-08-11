@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Integrations\Middleware;
+namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Expressive\Router\Middleware\ImplicitOptionsMiddleware;

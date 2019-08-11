@@ -75,8 +75,7 @@
             "Shlinkio\\Shlink\\Core\\": "module/Core/src",
             "Shlinkio\\Shlink\\Common\\": "module/Common/src",
             "Shlinkio\\Shlink\\EventDispatcher\\": "module/EventDispatcher/src",
-            "Shlinkio\\Shlink\\IpGeolocation\\": "module/IpGeolocation/src/",
-            "Shlinkio\\Shlink\\Integrations\\": "module/Integrations/src/"
+            "Shlinkio\\Shlink\\IpGeolocation\\": "module/IpGeolocation/src/"
         },
         "files": [
             "module/Common/functions/functions.php",
@@ -97,8 +96,7 @@
                 "module/Common/test-db"
             ],
             "ShlinkioTest\\Shlink\\EventDispatcher\\": "module/EventDispatcher/test",
-            "ShlinkioTest\\Shlink\\IpGeolocation\\": "module/IpGeolocation/test",
-            "ShlinkioTest\\Shlink\\Integrations\\": "module/Integrations/test"
+            "ShlinkioTest\\Shlink\\IpGeolocation\\": "module/IpGeolocation/test"
         }
     },
     "scripts": {

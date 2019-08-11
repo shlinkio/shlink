@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Integrations\Middleware;
+namespace ShlinkioTest\Shlink\Rest\Middleware;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionObject;
-use Shlinkio\Shlink\Integrations\Middleware\EmptyResponseImplicitOptionsMiddlewareFactory;
+use Shlinkio\Shlink\Rest\Middleware\EmptyResponseImplicitOptionsMiddlewareFactory;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Expressive\Router\Middleware\ImplicitOptionsMiddleware;
 
