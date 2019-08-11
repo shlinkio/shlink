@@ -24,6 +24,9 @@
         <testsuite name="IpGeolocation">
             <directory>./module/IpGeolocation/test</directory>
         </testsuite>
+        <testsuite name="PreviewGenerator">
+            <directory>./module/PreviewGenerator/test</directory>
+        </testsuite>
     </testsuites>
 
     <filter>
@@ -32,6 +35,7 @@
 
             <exclude>
                 <directory suffix=".php">./module/Core/src/Repository</directory>
+                <directory suffix=".php">./module/TestUtils</directory>
             </exclude>
         </whitelist>
     </filter>

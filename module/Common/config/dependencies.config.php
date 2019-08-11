@@ -25,10 +25,6 @@ return [
             Middleware\LocaleMiddleware::class => ConfigAbstractFactory::class,
             Middleware\CloseDbConnectionMiddleware::class => ConfigAbstractFactory::class,
             IpAddress::class => Middleware\IpAddressMiddlewareFactory::class,
-
-            Image\ImageBuilder::class => Image\ImageBuilderFactory::class,
-
-            Service\PreviewGenerator::class => ConfigAbstractFactory::class,
         ],
         'aliases' => [
             'httpClient' => GuzzleClient::class,
@@ -47,12 +43,6 @@ return [
         Template\Extension\TranslatorExtension::class => ['translator'],
         Middleware\LocaleMiddleware::class => ['translator'],
         Middleware\CloseDbConnectionMiddleware::class => ['em'],
-
-        Service\PreviewGenerator::class => [
-            Image\ImageBuilder::class,
-            Filesystem::class,
-            'config.preview_generation.files_location',
-        ],
     ],
 
 ];

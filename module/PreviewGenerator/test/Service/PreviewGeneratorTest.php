@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Common\Service;
+namespace ShlinkioTest\Shlink\PreviewGenerator\Service;
 
 use mikehaertl\wkhtmlto\Image;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
-use Shlinkio\Shlink\Common\Image\ImageBuilder;
-use Shlinkio\Shlink\Common\Service\PreviewGenerator;
+use Shlinkio\Shlink\PreviewGenerator\Image\ImageBuilder;
+use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
 use Symfony\Component\Filesystem\Filesystem;
 use Zend\ServiceManager\ServiceManager;
 

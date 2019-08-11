@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\Service;
+namespace Shlinkio\Shlink\PreviewGenerator\Service;
 
 use mikehaertl\wkhtmlto\Image;
 use Shlinkio\Shlink\Common\Exception\PreviewGenerationException;
-use Shlinkio\Shlink\Common\Image\ImageBuilderInterface;
+use Shlinkio\Shlink\PreviewGenerator\Image\ImageBuilderInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 use function sprintf;

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Common\Image;
+namespace Shlinkio\Shlink\PreviewGenerator\Image;
 
 use mikehaertl\wkhtmlto\Image;
 use Zend\ServiceManager\AbstractPluginManager;
