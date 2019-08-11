@@ -10,6 +10,7 @@ use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
+/** @deprecated  */
 class ImageBuilderFactory implements FactoryInterface
 {
     /**

@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\Common\Middleware;
 use PHPUnit\Framework\TestCase;
 use ReflectionObject;
 use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
-use Shlinkio\Shlink\Core\Model\Visitor;
 use Zend\ServiceManager\ServiceManager;
 
 class IpAddressMiddlewareFactoryTest extends TestCase
@@ -26,7 +25,7 @@ class IpAddressMiddlewareFactoryTest extends TestCase
     {
         $instance = ($this->factory)(new ServiceManager(['services' => [
             'config' => $config,
-        ]]), '');
+        ]]));
 
         $ref = new ReflectionObject($instance);
         $checkProxyHeaders = $ref->getProperty('checkProxyHeaders');
@@ -40,7 +39,7 @@ class IpAddressMiddlewareFactoryTest extends TestCase
 
         $this->assertTrue($checkProxyHeaders->getValue($instance));
         $this->assertEquals([], $trustedProxies->getValue($instance));
-        $this->assertEquals(Visitor::REMOTE_ADDRESS_ATTR, $attributeName->getValue($instance));
+        $this->assertEquals(IpAddressMiddlewareFactory::REQUEST_ATTR, $attributeName->getValue($instance));
         $this->assertEquals($expectedHeadersToInspect, $headersToInspect->getValue($instance));
     }
 

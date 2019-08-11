@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Common\Image;
 use mikehaertl\wkhtmlto\Image;
 use Zend\ServiceManager\AbstractPluginManager;
 
+/** @deprecated  */
 class ImageBuilder extends AbstractPluginManager implements ImageBuilderInterface
 {
     protected $instanceOf = Image::class;
