@@ -1,6 +1,16 @@
-#  IP Address Geolocation module
+# Shlink IP Address Geolocation module
 
-Shlink module with tools to locate an IP address suing different strategies.
+Shlink module with tools to geolocate an IP address using different strategies.
+
+## Install
+
+Install this library using composer
+
+    composer require shlinkio/shlink-ip-geolocation
+
+> This library is also an expressive module which provides its own `ConfigProvider`. Add it to your configuration to get everything automatically set up.
+
+## *TODO*
 
 ```php
 <?php

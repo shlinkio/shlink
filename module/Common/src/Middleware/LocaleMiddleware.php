@@ -24,8 +24,6 @@ class LocaleMiddleware implements MiddlewareInterface
         $this->translator = $translator;
     }
 
-
-
     /**
      * Process an incoming server request and return a response, optionally delegating
      * to the next middleware component to create the response.
