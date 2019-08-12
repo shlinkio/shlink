@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
-use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
@@ -43,7 +42,7 @@ class RedirectActionTest extends TestCase
     }
 
     /** @test */
-    public function redirectionIsPerformedToLongUrl()
+    public function redirectionIsPerformedToLongUrl(): void
     {
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
@@ -53,7 +52,7 @@ class RedirectActionTest extends TestCase
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
-        $response = $this->action->process($request, TestUtils::createReqHandlerMock()->reveal());
+        $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
 
         $this->assertInstanceOf(Response\RedirectResponse::class, $response);
         $this->assertEquals(302, $response->getStatusCode());
@@ -62,7 +61,7 @@ class RedirectActionTest extends TestCase
     }
 
     /** @test */
-    public function nextMiddlewareIsInvokedIfLongUrlIsNotFound()
+    public function nextMiddlewareIsInvokedIfLongUrlIsNotFound(): void
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
@@ -79,7 +78,7 @@ class RedirectActionTest extends TestCase
     }
 
     /** @test */
-    public function redirectToCustomUrlIsReturnedIfConfiguredSoAndShortUrlIsNotFound()
+    public function redirectToCustomUrlIsReturnedIfConfiguredSoAndShortUrlIsNotFound(): void
     {
         $shortCode = 'abc123';
         $shortCodeToUrl = $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(
@@ -102,7 +101,7 @@ class RedirectActionTest extends TestCase
     }
 
     /** @test */
-    public function visitIsNotTrackedIfDisableParamIsProvided()
+    public function visitIsNotTrackedIfDisableParamIsProvided(): void
     {
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
@@ -113,7 +112,7 @@ class RedirectActionTest extends TestCase
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)
                                                       ->withQueryParams(['foobar' => true]);
-        $response = $this->action->process($request, TestUtils::createReqHandlerMock()->reveal());
+        $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
 
         $this->assertInstanceOf(Response\RedirectResponse::class, $response);
         $this->assertEquals(302, $response->getStatusCode());

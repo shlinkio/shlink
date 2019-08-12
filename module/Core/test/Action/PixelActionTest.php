@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Action;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Response\PixelResponse;
 use Shlinkio\Shlink\Core\Action\PixelAction;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
@@ -13,7 +14,6 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
-use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\ServerRequest;
 
 class PixelActionTest extends TestCase
@@ -38,7 +38,7 @@ class PixelActionTest extends TestCase
     }
 
     /** @test */
-    public function imageIsReturned()
+    public function imageIsReturned(): void
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(
@@ -47,7 +47,7 @@ class PixelActionTest extends TestCase
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
-        $response = $this->action->process($request, TestUtils::createReqHandlerMock()->reveal());
+        $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
 
         $this->assertInstanceOf(PixelResponse::class, $response);
         $this->assertEquals(200, $response->getStatusCode());

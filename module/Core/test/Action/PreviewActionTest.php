@@ -14,7 +14,6 @@ use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
-use ShlinkioTest\Shlink\Common\Util\TestUtils;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
@@ -39,7 +38,7 @@ class PreviewActionTest extends TestCase
     }
 
     /** @test */
-    public function invalidShortCodeFallsBackToNextMiddleware()
+    public function invalidShortCodeFallsBackToNextMiddleware(): void
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
@@ -52,7 +51,7 @@ class PreviewActionTest extends TestCase
     }
 
     /** @test */
-    public function correctShortCodeReturnsImageResponse()
+    public function correctShortCodeReturnsImageResponse(): void
     {
         $shortCode = 'abc123';
         $url = 'foobar.com';
@@ -63,7 +62,7 @@ class PreviewActionTest extends TestCase
 
         $resp = $this->action->process(
             (new ServerRequest())->withAttribute('shortCode', $shortCode),
-            TestUtils::createReqHandlerMock()->reveal()
+            $this->prophesize(RequestHandlerInterface::class)->reveal()
         );
 
         $this->assertEquals(filesize($path), $resp->getHeaderLine('Content-length'));
@@ -71,7 +70,7 @@ class PreviewActionTest extends TestCase
     }
 
     /** @test */
-    public function invalidShortCodeExceptionFallsBackToNextMiddleware()
+    public function invalidShortCodeExceptionFallsBackToNextMiddleware(): void
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
