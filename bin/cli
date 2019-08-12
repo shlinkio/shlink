@@ -2,7 +2,7 @@
 <?php
 declare(strict_types=1);
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application as CliApp;
 
 /** @var ContainerInterface $container */

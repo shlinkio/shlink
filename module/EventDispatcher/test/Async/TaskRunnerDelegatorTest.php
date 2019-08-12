@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\EventDispatcher\Async;
 
-use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\EventDispatcher\Async\TaskRunner;
 use Shlinkio\Shlink\EventDispatcher\Async\TaskRunnerDelegator;

@@ -3,19 +3,15 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\EventDispatcher\Async;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Http\Server as HttpServer;
-use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
-class TaskRunnerDelegator implements DelegatorFactoryInterface
+class TaskRunnerDelegator
 {
-    public function __invoke(
-        ContainerInterface $container,
-        $name,
-        callable $callback,
-        ?array $options = null
-    ): HttpServer {
+    public function __invoke(ContainerInterface $container, $name, callable $callback): HttpServer
+    {
+        /** @var HttpServer $server */
         $server = $callback();
         $logger = $container->get(LoggerInterface::class);
 

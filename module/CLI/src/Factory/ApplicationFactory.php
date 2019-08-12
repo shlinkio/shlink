@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Factory;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Symfony\Component\Console\Application as CliApp;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\EventDispatcher\Listener;
 
-use Interop\Container\ContainerInterface;
 use Phly\EventDispatcher\ListenerProvider\AttachableListenerProvider;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use ReflectionObject;
 use Shlinkio\Shlink\EventDispatcher\Listener\ListenerProviderFactory;
 use Swoole\Http\Server as HttpServer;
