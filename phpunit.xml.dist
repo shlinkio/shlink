@@ -18,9 +18,6 @@
         <testsuite name="EventDispatcher">
             <directory>./module/EventDispatcher/test</directory>
         </testsuite>
-        <testsuite name="IpGeolocation">
-            <directory>./module/IpGeolocation/test</directory>
-        </testsuite>
         <testsuite name="PreviewGenerator">
             <directory>./module/PreviewGenerator/test</directory>
         </testsuite>
