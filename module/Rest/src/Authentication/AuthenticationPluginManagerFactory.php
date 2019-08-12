@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Authentication;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class AuthenticationPluginManagerFactory
 {
