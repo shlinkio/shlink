@@ -34,6 +34,7 @@
         "phly/phly-event-dispatcher": "^1.0",
         "predis/predis": "^1.1",
         "shlinkio/shlink-common": "^1.0",
+        "shlinkio/shlink-event-dispatcher": "^1.0",
         "shlinkio/shlink-installer": "^1.2.1",
         "shlinkio/shlink-ip-geolocation": "^1.0",
         "symfony/console": "^4.3",
@@ -76,12 +77,8 @@
             "Shlinkio\\Shlink\\CLI\\": "module/CLI/src",
             "Shlinkio\\Shlink\\Rest\\": "module/Rest/src",
             "Shlinkio\\Shlink\\Core\\": "module/Core/src",
-            "Shlinkio\\Shlink\\EventDispatcher\\": "module/EventDispatcher/src",
             "Shlinkio\\Shlink\\PreviewGenerator\\": "module/PreviewGenerator/src/"
-        },
-        "files": [
-            "module/EventDispatcher/functions/functions.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
@@ -92,7 +89,6 @@
                 "module/Core/test",
                 "module/Core/test-db"
             ],
-            "ShlinkioTest\\Shlink\\EventDispatcher\\": "module/EventDispatcher/test",
             "ShlinkioTest\\Shlink\\PreviewGenerator\\": "module/PreviewGenerator/test"
         }
     },
