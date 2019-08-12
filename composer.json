@@ -32,6 +32,7 @@
         "ocramius/proxy-manager": "~2.2.2",
         "phly/phly-event-dispatcher": "^1.0",
         "predis/predis": "^1.1",
+        "shlinkio/shlink-common": "^1.0",
         "shlinkio/shlink-installer": "^1.2.1",
         "symfony/console": "^4.3",
         "symfony/filesystem": "^4.3",
@@ -56,7 +57,7 @@
         "devster/ubench": "^2.0",
         "eaglewu/swoole-ide-helper": "dev-master",
         "filp/whoops": "^2.4",
-        "infection/infection": "^0.12.2",
+        "infection/infection": "^0.13.4",
         "phpstan/phpstan": "^0.11.2",
         "phpunit/phpcov": "^6.0",
         "phpunit/phpunit": "^8.3",
@@ -73,13 +74,11 @@
             "Shlinkio\\Shlink\\CLI\\": "module/CLI/src",
             "Shlinkio\\Shlink\\Rest\\": "module/Rest/src",
             "Shlinkio\\Shlink\\Core\\": "module/Core/src",
-            "Shlinkio\\Shlink\\Common\\": "module/Common/src",
             "Shlinkio\\Shlink\\EventDispatcher\\": "module/EventDispatcher/src",
             "Shlinkio\\Shlink\\IpGeolocation\\": "module/IpGeolocation/src/",
             "Shlinkio\\Shlink\\PreviewGenerator\\": "module/PreviewGenerator/src/"
         },
         "files": [
-            "module/Common/functions/functions.php",
             "module/EventDispatcher/functions/functions.php"
         ]
     },
@@ -92,7 +91,6 @@
                 "module/Core/test",
                 "module/Core/test-db"
             ],
-            "ShlinkioTest\\Shlink\\Common\\": "module/Common/test",
             "ShlinkioTest\\Shlink\\EventDispatcher\\": "module/EventDispatcher/test",
             "ShlinkioTest\\Shlink\\IpGeolocation\\": "module/IpGeolocation/test",
             "ShlinkioTest\\Shlink\\PreviewGenerator\\": "module/PreviewGenerator/test"

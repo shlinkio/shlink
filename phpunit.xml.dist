@@ -6,9 +6,6 @@
     colors="true"
 >
     <testsuites>
-        <testsuite name="Common">
-            <directory>./module/Common/test</directory>
-        </testsuite>
         <testsuite name="Core">
             <directory>./module/Core/test</directory>
         </testsuite>
