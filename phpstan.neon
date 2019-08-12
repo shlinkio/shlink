@@ -3,3 +3,5 @@ parameters:
 		- '#League\\Plates\\callback#'
 		- '#is not subtype of Throwable#'
 		- '#ObjectManager::flush()#'
+		- '#\$metadata ClassMetadata#'
+		- '#Undefined variable: \$metadata#'

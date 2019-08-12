@@ -25,10 +25,10 @@
         "endroid/qr-code": "^1.7",
         "firebase/php-jwt": "^4.0",
         "geoip2/geoip2": "^2.9",
-        "guzzlehttp/guzzle": "^6.2",
-        "lstrojny/functional-php": "^1.8",
+        "guzzlehttp/guzzle": "^6.3",
+        "lstrojny/functional-php": "^1.9",
         "mikehaertl/phpwkhtmltopdf": "^2.2",
-        "monolog/monolog": "^1.21",
+        "monolog/monolog": "^1.24",
         "ocramius/proxy-manager": "~2.2.2",
         "phly/phly-event-dispatcher": "^1.0",
         "predis/predis": "^1.1",
@@ -37,7 +37,7 @@
         "symfony/filesystem": "^4.3",
         "symfony/lock": "^4.3",
         "symfony/process": "^4.3",
-        "theorchard/monolog-cascade": "^0.4",
+        "theorchard/monolog-cascade": "^0.5",
         "zendframework/zend-config": "^3.3",
         "zendframework/zend-config-aggregator": "^1.1",
         "zendframework/zend-diactoros": "^2.1.3",
@@ -108,7 +108,7 @@
 
         "cs": "phpcs",
         "cs:fix": "phpcbf",
-        "stan": "phpstan analyse module/*/src/ --level=5 -c phpstan.neon",
+        "stan": "phpstan analyse module/*/src/ module/*/config config --level=5 -c phpstan.neon",
 
         "test": [
             "@test:unit",
