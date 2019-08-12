@@ -35,6 +35,7 @@
         "predis/predis": "^1.1",
         "shlinkio/shlink-common": "^1.0",
         "shlinkio/shlink-installer": "^1.2.1",
+        "shlinkio/shlink-ip-geolocation": "^1.0",
         "symfony/console": "^4.3",
         "symfony/filesystem": "^4.3",
         "symfony/lock": "^4.3",
@@ -76,7 +77,6 @@
             "Shlinkio\\Shlink\\Rest\\": "module/Rest/src",
             "Shlinkio\\Shlink\\Core\\": "module/Core/src",
             "Shlinkio\\Shlink\\EventDispatcher\\": "module/EventDispatcher/src",
-            "Shlinkio\\Shlink\\IpGeolocation\\": "module/IpGeolocation/src/",
             "Shlinkio\\Shlink\\PreviewGenerator\\": "module/PreviewGenerator/src/"
         },
         "files": [
@@ -93,7 +93,6 @@
                 "module/Core/test-db"
             ],
             "ShlinkioTest\\Shlink\\EventDispatcher\\": "module/EventDispatcher/test",
-            "ShlinkioTest\\Shlink\\IpGeolocation\\": "module/IpGeolocation/test",
             "ShlinkioTest\\Shlink\\PreviewGenerator\\": "module/PreviewGenerator/test"
         }
     },
