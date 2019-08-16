@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#450](https://github.com/shlinkio/shlink/issues/450) Added PHP 7.4 to the build matrix, as an allowed-to-fail env.
 * [#441](https://github.com/shlinkio/shlink/issues/441) and [#443](https://github.com/shlinkio/shlink/issues/443) Split some logic into independent modules.
 * [#451](https://github.com/shlinkio/shlink/issues/451) Updated to infection 0.13.
+* [#467](https://github.com/shlinkio/shlink/issues/467) Moved docker image config to this repo.
 
 #### Deprecated
 
@@ -22,7 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Removed
 
-* *Nothing*
+* [#468](https://github.com/shlinkio/shlink/issues/468) Removed APCu extension from docker image.
 
 #### Fixed
 

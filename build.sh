@@ -17,38 +17,15 @@ echo 'Copying project files...'
 rm -rf "${builtcontent}"
 mkdir -p "${builtcontent}"
 rsync -av * "${builtcontent}" \
-    --exclude=bin/test \
-    --exclude=data/infra \
-    --exclude=data/travis \
-    --exclude=data/cache/* \
-    --exclude=data/log/* \
-    --exclude=data/locks/* \
-    --exclude=data/proxies/* \
-    --exclude=data/migrations_template.txt \
-    --exclude=data/GeoLite2-City.* \
-    --exclude=data/database.sqlite \
-    --exclude=data/shlink-tests.db \
-    --exclude=**/.gitignore \
-    --exclude=CHANGELOG.md \
-    --exclude=composer.lock \
-    --exclude=vendor \
-    --exclude=docs \
-    --exclude=indocker \
-    --exclude=docker* \
-    --exclude=php* \
-    --exclude=infection.json \
-    --exclude=phpstan.neon \
-    --exclude=config/autoload/*local* \
-    --exclude=config/test \
-    --exclude=**/test* \
-    --exclude=build* \
-    --exclude=.github
+    --exclude=*docker* \
+    --exclude=Dockerfile \
+    --exclude-from=./.dockerignore
 cd "${builtcontent}"
 
 # Install dependencies
 echo "Installing dependencies with $composerBin..."
 ${composerBin} self-update
-${composerBin} install --no-dev --optimize-autoloader --apcu-autoloader --no-progress --no-interaction
+${composerBin} install --no-dev --optimize-autoloader --no-progress --no-interaction
 
 # Delete development files
 echo 'Deleting dev files...'

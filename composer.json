@@ -102,7 +102,7 @@
 
         "cs": "phpcs",
         "cs:fix": "phpcbf",
-        "stan": "phpstan analyse module/*/src/ module/*/config config --level=5 -c phpstan.neon",
+        "stan": "phpstan analyse module/*/src/ module/*/config config docker/config --level=5 -c phpstan.neon",
 
         "test": [
             "@test:unit",
