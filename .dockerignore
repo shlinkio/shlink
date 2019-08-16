@@ -21,3 +21,4 @@ phpstan.neon
 **/test*
 build*
 .github
+hooks

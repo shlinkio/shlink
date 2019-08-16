@@ -1,6 +1,8 @@
 FROM php:7.3.8-cli-alpine3.10
 LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 
+ARG SHLINK_VERSION=1.18.1
+ENV SHLINK_VERSION ${SHLINK_VERSION}
 ENV SWOOLE_VERSION 4.3.3
 ENV COMPOSER_VERSION 1.9.0
 
@@ -39,6 +41,7 @@ RUN rm -rf ./docker && \
 
 # Add shlink to the path to ease running it after container is created
 RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink
+RUN sed -i "s/%SHLINK_VERSION%/${SHLINK_VERSION}/g" config/autoload/app_options.global.php
 
 # Expose swoole port
 EXPOSE 8080
