@@ -35,7 +35,7 @@ before_script:
 
 script:
   - composer ci
-  - [[ ! -z "$DOCKERFILE_CHANGED" ]] && docker build -t shlink-docker-image:temp .
+  - if [[ ! -z "$DOCKERFILE_CHANGED" ]]; then docker build -t shlink-docker-image:temp . ; fi
 
 after_success:
   - rm -f build/clover.xml
