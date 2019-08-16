@@ -35,7 +35,7 @@ RUN rm -rf ./docker && \
     wget https://getcomposer.org/download/${COMPOSER_VERSION}/composer.phar && \
     php composer.phar install --no-dev --optimize-autoloader --no-progress --no-interaction && \
     php composer.phar clear-cache && \
-    rm composer.phar
+    rm composer.*
 
 # Add shlink to the path to ease running it after container is created
 RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink
