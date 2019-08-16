@@ -24,7 +24,7 @@ RUN \
 
 # Install swoole
 # First line fixes an error when installing pecl extensions. Found in https://github.com/docker-library/php/issues/233
-RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS && \
+RUN apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} && \
     pecl install swoole-${SWOOLE_VERSION} && \
     docker-php-ext-enable swoole && \
     apk del .phpize-deps
