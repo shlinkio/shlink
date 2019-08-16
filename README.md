@@ -225,7 +225,7 @@ Right now, it does not import cached info (like website previews), but it will. 
 
 ## Using a docker image
 
-Starting with version 1.15.0, an official docker image is provided. You can find the docs on how to use it [here](https://hub.docker.com/r/shlinkio/shlink/).
+Starting with version 1.15.0, an official docker image is provided. You can learn how to use it by reading [the docs](docker/README.md).
 
 The idea is that you can just generate a container using the image and provide custom config via env vars.
 

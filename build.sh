@@ -19,7 +19,6 @@ mkdir -p "${builtcontent}"
 rsync -av * "${builtcontent}" \
     --exclude=bin/test \
     --exclude=data/infra \
-    --exclude=data/travis \
     --exclude=data/cache/* \
     --exclude=data/log/* \
     --exclude=data/locks/* \
@@ -33,8 +32,7 @@ rsync -av * "${builtcontent}" \
     --exclude=composer.lock \
     --exclude=vendor \
     --exclude=docs \
-    --exclude=indocker \
-    --exclude=docker* \
+    --exclude=*docker* \
     --exclude=php* \
     --exclude=infection.json \
     --exclude=phpstan.neon \

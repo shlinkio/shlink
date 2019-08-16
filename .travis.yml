@@ -54,9 +54,3 @@ deploy:
     on:
       tags: true
       php: 7.2
-  - provider: script
-    script: bash data/travis/trigger_docker_build.sh
-    skip_cleanup: true
-    on:
-      tags: true
-      php: 7.2

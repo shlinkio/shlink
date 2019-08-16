@@ -14,6 +14,7 @@
     <file>module</file>
     <file>data/migrations</file>
     <file>config</file>
+    <file>docker/config</file>
     <file>public/index.php</file>
 
     <!-- Paths to exclude -->
