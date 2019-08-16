@@ -16,6 +16,7 @@ matrix:
 services:
   - mysql
   - postgresql
+  - docker
 
 before_install:
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -30,9 +31,11 @@ before_script:
   - mysql -e 'CREATE DATABASE shlink_test;'
   - psql -c 'create database shlink_test;' -U postgres
   - mkdir build
+  - export DOCKERFILE_CHANGED=$(git diff ${TRAVIS_COMMIT_RANGE:-origin/master} --name-only | grep Dockerfile)
 
 script:
   - composer ci
+  - [[ ! -z "$DOCKERFILE_CHANGED" ]] && docker build -t shlink-docker-image:temp .
 
 after_success:
   - rm -f build/clover.xml
@@ -53,4 +56,4 @@ deploy:
     skip_cleanup: true
     on:
       tags: true
-      php: 7.2
+      php: '7.2'
