@@ -35,7 +35,7 @@ RUN apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} && \
 COPY . .
 RUN rm -rf ./docker && \
     wget https://getcomposer.org/download/${COMPOSER_VERSION}/composer.phar && \
-    php composer.phar install --no-dev --optimize-autoloader --no-progress --no-interaction && \
+    php composer.phar install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction && \
     php composer.phar clear-cache && \
     rm composer.*
 
