@@ -4,7 +4,7 @@ set -ex
 if [[ ${SOURCE_BRANCH} == 'master' ]]; then
     SHLINK_RELEASE='latest'
 else
-    SHLINK_RELEASE=${SOURCE_BRANCH}
+    SHLINK_RELEASE=${SOURCE_BRANCH#?}
 fi
 
-docker build --build-arg SHLINK_VERSION=${SHLINK_RELEASE#?} -t ${IMAGE_NAME} .
+docker build --build-arg SHLINK_VERSION=${SHLINK_RELEASE} -t ${IMAGE_NAME} .
