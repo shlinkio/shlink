@@ -3,10 +3,10 @@
 /docs export-ignore
 /module/CLI/test export-ignore
 /module/CLI/test-resources export-ignore
-/module/Common/test export-ignore
-/module/Common/test-db export-ignore
 /module/Core/test export-ignore
 /module/Core/test-db export-ignore
+/module/PreviewGenerator/test export-ignore
+/module/PreviewGenerator/test-db export-ignore
 /module/Rest/test export-ignore
 /module/Rest/test-api export-ignore
 .env.dist export-ignore

@@ -114,14 +114,14 @@
             "@test:db",
             "@test:api"
         ],
-        "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov --testdox",
-        "test:unit:ci": "phpdbg -qrr vendor/bin/phpunit --order-by=random --coverage-php build/coverage-unit.cov --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/phpunit.junit.xml --testdox",
+        "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
+        "test:unit:ci": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/phpunit.junit.xml --testdox",
         "test:db": [
             "@test:db:sqlite",
             "@test:db:mysql",
             "@test:db:postgres"
         ],
-        "test:db:sqlite": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-db.xml --coverage-php build/coverage-db.cov --testdox",
+        "test:db:sqlite": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always -c phpunit-db.xml --coverage-php build/coverage-db.cov --testdox",
         "test:db:mysql": "DB_DRIVER=mysql composer test:db:sqlite",
         "test:db:postgres": "DB_DRIVER=postgres composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
@@ -130,7 +130,7 @@
             "@test",
             "phpdbg -qrr vendor/bin/phpcov merge build --html build/html"
         ],
-        "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage --order-by=random",
+        "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage",
 
         "infect": "infection --threads=4 --min-msi=75 --log-verbosity=default --only-covered",
         "infect:ci": "infection --threads=4 --min-msi=75 --log-verbosity=default --only-covered --coverage=build",
