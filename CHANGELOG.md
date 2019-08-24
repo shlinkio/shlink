@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## 1.18.1 - 2019-08-24
 
 #### Added
 
@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#450](https://github.com/shlinkio/shlink/issues/450) Added PHP 7.4 to the build matrix, as an allowed-to-fail env.
 * [#441](https://github.com/shlinkio/shlink/issues/441) and [#443](https://github.com/shlinkio/shlink/issues/443) Split some logic into independent modules.
 * [#451](https://github.com/shlinkio/shlink/issues/451) Updated to infection 0.13.
-* [#467](https://github.com/shlinkio/shlink/issues/467) Moved docker image config to this repo.
+* [#467](https://github.com/shlinkio/shlink/issues/467) Moved docker image config to main Shlink repo.
 
 #### Deprecated
 
@@ -27,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Fixed
 
-* *Nothing*
+* [#449](https://github.com/shlinkio/shlink/issues/449) Fixed error when trying to save too big referrers on PostgreSQL.
 
 
 ## 1.18.0 - 2019-08-08
