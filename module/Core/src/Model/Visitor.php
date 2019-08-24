@@ -6,8 +6,14 @@ namespace Shlinkio\Shlink\Core\Model;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 
+use function substr;
+
 final class Visitor
 {
+    public const USER_AGENT_MAX_LENGTH = 512;
+    public const REFERER_MAX_LENGTH = 1024;
+    public const REMOTE_ADDRESS_MAX_LENGTH = 256;
+
     /** @var string */
     private $userAgent;
     /** @var string */
@@ -17,9 +23,14 @@ final class Visitor
 
     public function __construct(string $userAgent, string $referer, ?string $remoteAddress)
     {
-        $this->userAgent = $userAgent;
-        $this->referer = $referer;
-        $this->remoteAddress = $remoteAddress;
+        $this->userAgent = $this->cropToLength($userAgent, self::USER_AGENT_MAX_LENGTH);
+        $this->referer = $this->cropToLength($referer, self::REFERER_MAX_LENGTH);
+        $this->remoteAddress = $this->cropToLength($remoteAddress, self::REMOTE_ADDRESS_MAX_LENGTH);
+    }
+
+    private function cropToLength(?string $value, int $length): ?string
+    {
+        return $value === null ? null : substr($value, 0, $length);
     }
 
     public static function fromRequest(ServerRequestInterface $request): self
