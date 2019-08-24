@@ -5,7 +5,9 @@ namespace Shlinkio\Shlink\Core;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
+use Doctrine\ORM\Mapping\ClassMetadata; // @codingStandardsIgnoreLine
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
+use Shlinkio\Shlink\Core\Model\Visitor;
 
 /** @var $metadata ClassMetadata */
 $builder = new ClassMetadataBuilder($metadata);
@@ -22,7 +24,7 @@ $builder->createField('id', Type::BIGINT)
 
 $builder->createField('referer', Type::STRING)
         ->nullable()
-        ->length(256)
+        ->length(Visitor::REFERER_MAX_LENGTH)
         ->build();
 
 $builder->createField('date', ChronosDateTimeType::CHRONOS_DATETIME)
@@ -31,13 +33,13 @@ $builder->createField('date', ChronosDateTimeType::CHRONOS_DATETIME)
 
 $builder->createField('remoteAddr', Type::STRING)
         ->columnName('remote_addr')
-        ->length(256)
+        ->length(Visitor::REMOTE_ADDRESS_MAX_LENGTH)
         ->nullable()
         ->build();
 
 $builder->createField('userAgent', Type::STRING)
         ->columnName('user_agent')
-        ->length(512)
+        ->length(Visitor::USER_AGENT_MAX_LENGTH)
         ->nullable()
         ->build();
 
