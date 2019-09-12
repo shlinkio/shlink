@@ -12,14 +12,14 @@
 <?php $this->end() ?>
 
 <?php $this->start('main') ?>
-  <h1><?= $this->translate('Oops!') ?></h1>
+  <h1>Oops!</h1>
   <hr>
 
   <?php if ($status !== 404): ?>
-    <p><?= sprintf($this->translate('We encountered a %s %s error.'), $status, $reason) ?></p>
+    <p><?= sprintf('We encountered a %s %s error.', $status, $reason) ?></p>
   <?php else: ?>
-    <p><?= $this->translate('This short URL doesn\'t seem to be valid.') ?></p>
-    <p><?= $this->translate('Make sure you included all the characters, with no extra punctuation.') ?></p>
+    <p>'This short URL doesn't seem to be valid.</p>
+    <p>'Make sure you included all the characters, with no extra punctuation.</p>
   <?php endif; ?>
 <?php $this->end() ?>
 

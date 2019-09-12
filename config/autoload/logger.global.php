@@ -7,6 +7,7 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor;
+use Psr\Log\LoggerInterface;
 
 use const PHP_EOL;
 
@@ -60,6 +61,11 @@ return [
         'factories' => [
             'Logger_Shlink' => Common\Logger\LoggerFactory::class,
             'Logger_Access' => Common\Logger\LoggerFactory::class,
+        ],
+        'aliases' => [
+            'logger' => 'Logger_Shlink',
+            Logger::class => 'Logger_Shlink',
+            LoggerInterface::class => 'Logger_Shlink',
         ],
     ],
 

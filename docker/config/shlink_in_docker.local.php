@@ -124,10 +124,6 @@ return [
         'visits_threshold' => (int) env('DELETE_SHORT_URL_THRESHOLD', 15),
     ],
 
-    'translator' => [
-        'locale' => env('LOCALE', 'en'),
-    ],
-
     'entity_manager' => [
         'connection' => $helper->getDbConfig(),
     ],

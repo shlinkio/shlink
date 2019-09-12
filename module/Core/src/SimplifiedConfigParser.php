@@ -21,7 +21,6 @@ class SimplifiedConfigParser
         'not_found_redirect_to' => ['url_shortener', 'not_found_short_url', 'redirect_to'],
         'db_config' => ['entity_manager', 'connection'],
         'delete_short_url_threshold' => ['delete_short_urls', 'visits_threshold'],
-        'locale' => ['translator', 'locale'],
         'redis_servers' => ['redis', 'servers'],
     ];
     private const SIMPLIFIED_CONFIG_SIDE_EFFECTS = [

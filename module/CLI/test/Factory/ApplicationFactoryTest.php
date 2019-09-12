@@ -12,8 +12,6 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Zend\ServiceManager\ServiceManager;
 
-use function array_merge;
-
 class ApplicationFactoryTest extends TestCase
 {
     /** @var ApplicationFactory */
@@ -49,7 +47,7 @@ class ApplicationFactoryTest extends TestCase
     {
         return new ServiceManager(['services' => [
             'config' => [
-                'cli' => array_merge($config, ['locale' => 'en']),
+                'cli' => $config,
             ],
             AppOptions::class => new AppOptions(),
         ]]);

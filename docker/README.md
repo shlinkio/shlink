@@ -101,7 +101,6 @@ This is the complete list of supported env vars:
 * `DB_PORT`: The port in which the database service is running when using an external database driver. Defaults to **3306**.
 * `DISABLE_TRACK_PARAM`: The name of a query param that can be used to visit short URLs avoiding the visit to be tracked. This feature won't be available if not value is provided.
 * `DELETE_SHORT_URL_THRESHOLD`: The amount of visits on short URLs which will not allow them to be deleted. Defaults to `15`.
-* `LOCALE`: Defines the default language for error pages when a user accesses a short URL which does not exist. Supported values are **es** and **en**. Defaults to **en**.
 * `VALIDATE_URLS`: Boolean which tells if shlink should validate a status 20x (after following redirects) is returned when trying to shorten a URL. Defaults to `true`.
 * `NOT_FOUND_REDIRECT_TO`: If a URL is provided here, when a user tries to access an invalid short URL, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
 * `REDIS_SERVERS`: A comma-separated list of redis servers where Shlink locks are stored (locks are used to prevent some operations to be run more than once in parallel).
@@ -128,7 +127,6 @@ docker run \
     -e DB_PORT=3306 \
     -e DISABLE_TRACK_PARAM="no-track" \
     -e DELETE_SHORT_URL_THRESHOLD=30 \
-    -e LOCALE=es \
     -e VALIDATE_URLS=false \
     -e "NOT_FOUND_REDIRECT_TO=https://www.google.com" \
     -e "REDIS_SERVERS=tcp://172.20.0.1:6379,tcp://172.20.0.2:6379" \
@@ -147,7 +145,6 @@ The whole configuration should have this format, but it can be split into multip
 {
     "disable_track_param": "my_param",
     "delete_short_url_threshold": 30,
-    "locale": "es",
     "short_domain_schema": "https",
     "short_domain_host": "doma.in",
     "validate_url": false,
