@@ -39,7 +39,6 @@ class SimplifiedConfigParserTest extends TestCase
             'short_domain_host' => 'doma.in',
             'validate_url' => false,
             'delete_short_url_threshold' => 50,
-            'locale' => 'es',
             'not_found_redirect_to' => 'foobar.com',
             'redis_servers' => [
                 'tcp://1.1.1.1:1111',
@@ -78,10 +77,6 @@ class SimplifiedConfigParserTest extends TestCase
                     'redirect_to' => 'foobar.com',
                     'enable_redirection' => true,
                 ],
-            ],
-
-            'translator' => [
-                'locale' => 'es',
             ],
 
             'delete_short_urls' => [
