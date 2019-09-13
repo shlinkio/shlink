@@ -43,12 +43,18 @@ class BasePathPrefixerTest extends TestCase
 
     public function provideConfig(): iterable
     {
-        yield 'without anything' => [[], [], [], ''];
+        $urlShortener = [
+            'domain' => [
+                'hostname' => null,
+            ],
+        ];
+
+        yield 'without anything' => [['url_shortener' => $urlShortener], [], [], ''];
         yield 'with empty options' => [
             [
                 'routes' => [],
                 'middleware_pipeline' => [],
-                'url_shortener' => [],
+                'url_shortener' => $urlShortener,
             ],
             [],
             [],
