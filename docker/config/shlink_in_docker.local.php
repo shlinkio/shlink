@@ -168,4 +168,8 @@ return [
         'servers' => env('REDIS_SERVERS'),
     ],
 
+    'router' => [
+        'base_path' => env('BASE_PATH', ''),
+    ],
+
 ];

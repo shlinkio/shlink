@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core;
+namespace Shlinkio\Shlink\Core\Config;
 
 use Shlinkio\Shlink\Installer\Util\PathCollection;
 use Zend\Stdlib\ArrayUtils;
@@ -22,6 +22,7 @@ class SimplifiedConfigParser
         'db_config' => ['entity_manager', 'connection'],
         'delete_short_url_threshold' => ['delete_short_urls', 'visits_threshold'],
         'redis_servers' => ['redis', 'servers'],
+        'base_path' => ['router', 'base_path'],
     ];
     private const SIMPLIFIED_CONFIG_SIDE_EFFECTS = [
         'not_found_redirect_to' => [

@@ -8,7 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Added
 
-* *Nothing*
+* [#482](https://github.com/shlinkio/shlink/issues/482) Added support to serve shlink under a sub path.
+
+    The `router.base_path` config option can be defined now to set the base path from which shlink is served.
+
+    ```php
+    return [
+        'router' => [
+            'base_path' => '/foo/bar',
+        ],
+    ];
+    ```
+
+    This option will also be available on shlink-installer 1.3.0, so the installer will ask for it. It can also be provided for the docker image as the `BASE_PATH` env var.
 
 #### Changed
 
