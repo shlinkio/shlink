@@ -7,33 +7,29 @@ use function Functional\map;
 
 class BasePathPrefixer
 {
+    private const ELEMENTS_WITH_PATH = ['routes', 'middleware_pipeline'];
+
     public function __invoke(array $config): array
     {
         $basePath = $config['router']['base_path'] ?? '';
-        $config['routes'] = $this->prefixRoutesWithBasePath($config, $basePath);
-        $config['middleware_pipeline'] = $this->prefixMiddlewarePathsWithBasePath($config, $basePath);
         $config['url_shortener']['domain']['hostname'] .= $basePath;
+
+        foreach (self::ELEMENTS_WITH_PATH as $configKey) {
+            $config[$configKey] = $this->prefixPathsWithBasePath($configKey, $config, $basePath);
+        }
 
         return $config;
     }
 
-    private function prefixRoutesWithBasePath(array $config, string $basePath): array
+    private function prefixPathsWithBasePath(string $configKey, array $config, string $basePath): array
     {
-        return map($config['routes'] ?? [], function (array $route) use ($basePath) {
-            $route['path'] = $basePath . $route['path'];
-            return $route;
-        });
-    }
-
-    private function prefixMiddlewarePathsWithBasePath(array $config, string $basePath): array
-    {
-        return map($config['middleware_pipeline'] ?? [], function (array $middleware) use ($basePath) {
-            if (! isset($middleware['path'])) {
-                return $middleware;
+        return map($config[$configKey] ?? [], function (array $element) use ($basePath) {
+            if (! isset($element['path'])) {
+                return $element;
             }
 
-            $middleware['path'] = $basePath . $middleware['path'];
-            return $middleware;
+            $element['path'] = $basePath . $element['path'];
+            return $element;
         });
     }
 }
