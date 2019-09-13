@@ -103,6 +103,7 @@ This is the complete list of supported env vars:
 * `DELETE_SHORT_URL_THRESHOLD`: The amount of visits on short URLs which will not allow them to be deleted. Defaults to `15`.
 * `VALIDATE_URLS`: Boolean which tells if shlink should validate a status 20x (after following redirects) is returned when trying to shorten a URL. Defaults to `true`.
 * `NOT_FOUND_REDIRECT_TO`: If a URL is provided here, when a user tries to access an invalid short URL, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
+* `BASE_PATH`: The base path from which you plan to serve shlink, in case you don't want to serve it from the root of the domain. Defaults to `''`.
 * `REDIS_SERVERS`: A comma-separated list of redis servers where Shlink locks are stored (locks are used to prevent some operations to be run more than once in parallel).
 
     This is important when running more than one Shlink instance ([Multi instance considerations](#multi-instance-considerations)). If not provided, Shlink stores locks on every instance separately.
@@ -130,6 +131,7 @@ docker run \
     -e VALIDATE_URLS=false \
     -e "NOT_FOUND_REDIRECT_TO=https://www.google.com" \
     -e "REDIS_SERVERS=tcp://172.20.0.1:6379,tcp://172.20.0.2:6379" \
+    -e "BASE_PATH=/my-campaign" \
     shlinkio/shlink
 ```
 
