@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core;
+namespace ShlinkioTest\Shlink\Core\Config;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\SimplifiedConfigParser;
+use Shlinkio\Shlink\Core\Config\SimplifiedConfigParser;
 
 use function array_merge;
 
@@ -50,6 +50,7 @@ class SimplifiedConfigParserTest extends TestCase
                 'password' => 'bar',
                 'port' => '1234',
             ],
+            'base_path' => '/foo/bar',
         ];
         $expected = [
             'app_options' => [
@@ -95,6 +96,10 @@ class SimplifiedConfigParserTest extends TestCase
                     'tcp://1.1.1.1:1111',
                     'tcp://1.2.2.2:2222',
                 ],
+            ],
+
+            'router' => [
+                'base_path' => '/foo/bar',
             ],
         ];
 
