@@ -13,12 +13,12 @@ Try to be polite, and understand it is impossible for a project to cover all use
 With that said, please fill in the information requested next. More information might be requested next (like logs or system configs).
 -->
 
-|    Q                    |   A
-|-------------------------|---------------------------------------------------------------------
-| Shlink Version          | x.y.z
-| PHP Version             | x.y.z
-| How do you serve Shlink | Self-hosted Apache/Self-hosted nginx/Self-hosted swoole/Docker image
-| Database engine used    | MySQL/PostgreSQL/SQLite (x.y.z)
+#### How Shlink is set-up
+
+* Shlink Version: x.y.z
+* PHP Version: x.y.z
+* How do you serve Shlink: Self-hosted Apache|Self-hosted nginx|Self-hosted swoole|Docker image
+* Database engine used: MySQL|PostgreSQL|SQLite (x.y.z)
 
 #### Summary
 
