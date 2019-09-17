@@ -20,5 +20,4 @@ infection.json
 phpstan.neon
 **/test*
 build*
-.github
 hooks
