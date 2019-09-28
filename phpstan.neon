@@ -4,3 +4,4 @@ parameters:
 		- '#ObjectManager::flush()#'
 		- '#\$metadata ClassMetadata#'
 		- '#Undefined variable: \$metadata#'
+		- '#AbstractQuery::setParameters()#'

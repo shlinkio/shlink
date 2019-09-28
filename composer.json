@@ -35,7 +35,7 @@
         "predis/predis": "^1.1",
         "shlinkio/shlink-common": "^2.0",
         "shlinkio/shlink-event-dispatcher": "^1.0",
-        "shlinkio/shlink-installer": "^1.2.1",
+        "shlinkio/shlink-installer": "^2.0",
         "shlinkio/shlink-ip-geolocation": "^1.0",
         "symfony/console": "^4.3",
         "symfony/filesystem": "^4.3",
