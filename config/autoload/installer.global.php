@@ -6,8 +6,6 @@ use Shlinkio\Shlink\Installer\Config\Plugin;
 return [
 
     'installer_plugins_expected_config' => [
-        Plugin\LanguageConfigCustomizer::class => [],
-
         Plugin\UrlShortenerConfigCustomizer::class => [
             Plugin\UrlShortenerConfigCustomizer::SCHEMA,
             Plugin\UrlShortenerConfigCustomizer::HOSTNAME,
@@ -22,6 +20,7 @@ return [
             Plugin\ApplicationConfigCustomizer::DISABLE_TRACK_PARAM,
             Plugin\ApplicationConfigCustomizer::CHECK_VISITS_THRESHOLD,
             Plugin\ApplicationConfigCustomizer::VISITS_THRESHOLD,
+            Plugin\ApplicationConfigCustomizer::BASE_PATH,
         ],
 
         Plugin\DatabaseConfigCustomizer::class => [
