@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Changed
 
-* *Nothing*
+* [#486](https://github.com/shlinkio/shlink/issues/486) Updated to [shlink-installer](https://github.com/shlinkio/shlink-installer) v2, which supports asking for base path in which shlink is served.
 
 #### Deprecated
 
