@@ -19,6 +19,8 @@ final class ShortUrlMeta
     private $maxVisits;
     /** @var bool|null */
     private $findIfExists;
+    /** @var string|null */
+    private $domain;
 
     // Force named constructors
     private function __construct()
@@ -47,6 +49,7 @@ final class ShortUrlMeta
      * @param string|null $customSlug
      * @param int|null $maxVisits
      * @param bool|null $findIfExists
+     * @param string|null $domain
      * @throws ValidationException
      */
     public static function createFromParams(
@@ -54,7 +57,8 @@ final class ShortUrlMeta
         $validUntil = null,
         $customSlug = null,
         $maxVisits = null,
-        $findIfExists = null
+        $findIfExists = null,
+        $domain = null
     ): self {
         // We do not type hint the arguments because that will be done by the validation process and we would get a
         // type error if any of them do not match
@@ -65,6 +69,7 @@ final class ShortUrlMeta
             ShortUrlMetaInputFilter::CUSTOM_SLUG => $customSlug,
             ShortUrlMetaInputFilter::MAX_VISITS => $maxVisits,
             ShortUrlMetaInputFilter::FIND_IF_EXISTS => $findIfExists,
+            ShortUrlMetaInputFilter::DOMAIN => $domain,
         ]);
         return $instance;
     }
@@ -86,6 +91,7 @@ final class ShortUrlMeta
         $this->maxVisits = $inputFilter->getValue(ShortUrlMetaInputFilter::MAX_VISITS);
         $this->maxVisits = $this->maxVisits !== null ? (int) $this->maxVisits : null;
         $this->findIfExists = $inputFilter->getValue(ShortUrlMetaInputFilter::FIND_IF_EXISTS);
+        $this->domain = $inputFilter->getValue(ShortUrlMetaInputFilter::DOMAIN);
     }
 
     /**
@@ -143,5 +149,15 @@ final class ShortUrlMeta
     public function findIfExists(): bool
     {
         return (bool) $this->findIfExists;
+    }
+
+    public function hasDomain(): bool
+    {
+        return $this->domain !== null;
+    }
+
+    public function getDomain(): ?string
+    {
+        return $this->domain;
     }
 }

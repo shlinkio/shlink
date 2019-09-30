@@ -29,6 +29,8 @@ class ShortUrl extends AbstractEntity
     private $validUntil;
     /** @var integer|null */
     private $maxVisits;
+    /** @var Domain|null */
+    private $domain;
 
     public function __construct(string $longUrl, ?ShortUrlMeta $meta = null)
     {
@@ -42,6 +44,7 @@ class ShortUrl extends AbstractEntity
         $this->validUntil = $meta->getValidUntil();
         $this->maxVisits = $meta->getMaxVisits();
         $this->shortCode = $meta->getCustomSlug() ?? ''; // TODO logic to calculate short code should be passed somehow
+        $this->domain = $meta->hasDomain() ? new Domain($meta->getDomain()) : null;
     }
 
     public function getLongUrl(): string
@@ -130,5 +133,14 @@ class ShortUrl extends AbstractEntity
     public function maxVisitsReached(): bool
     {
         return $this->maxVisits !== null && $this->getVisitsCount() >= $this->maxVisits;
+    }
+
+    public function domain(string $fallback = ''): string
+    {
+        if ($this->domain === null) {
+            return $fallback;
+        }
+
+        return $this->domain->getAuthority();
     }
 }

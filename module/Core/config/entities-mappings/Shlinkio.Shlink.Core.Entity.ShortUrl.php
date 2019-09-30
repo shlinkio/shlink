@@ -61,3 +61,7 @@ $builder->createManyToMany('tags', Entity\Tag::class)
         ->addInverseJoinColumn('tag_id', 'id', true, false, 'CASCADE')
         ->addJoinColumn('short_url_id', 'id', true, false, 'CASCADE')
         ->build();
+
+$builder->createManyToOne('domain', Entity\Domain::class)
+        ->addJoinColumn('domain_id', 'id', true, false, 'RESTRICT')
+        ->build();
