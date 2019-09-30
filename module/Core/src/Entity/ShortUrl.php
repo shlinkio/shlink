@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Zend\Diactoros\Uri;
 
 use function count;
 
@@ -135,7 +136,14 @@ class ShortUrl extends AbstractEntity
         return $this->maxVisits !== null && $this->getVisitsCount() >= $this->maxVisits;
     }
 
-    public function domain(string $fallback = ''): string
+    public function toString(array $domainConfig): string
+    {
+        return (string) (new Uri())->withPath($this->shortCode)
+                                   ->withScheme($domainConfig['schema'] ?? 'http')
+                                   ->withHost($this->resolveDomain($domainConfig['hostname'] ?? ''));
+    }
+
+    private function resolveDomain(string $fallback = ''): string
     {
         if ($this->domain === null) {
             return $fallback;
