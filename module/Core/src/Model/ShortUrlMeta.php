@@ -151,6 +151,11 @@ final class ShortUrlMeta
         return (bool) $this->findIfExists;
     }
 
+    public function hasDomain(): bool
+    {
+        return $this->domain !== null;
+    }
+
     public function getDomain(): ?string
     {
         return $this->domain;

@@ -53,12 +53,7 @@ class ShortUrl extends AbstractEntity
         $this->validUntil = $meta->getValidUntil();
         $this->maxVisits = $meta->getMaxVisits();
         $this->shortCode = $meta->getCustomSlug() ?? ''; // TODO logic to calculate short code should be passed somehow
-        $this->domain = $this->domainToEntity($meta->getDomain(), $domainResolver ?? new SimpleDomainResolver());
-    }
-
-    private function domainToEntity(?string $domain, DomainResolverInterface $domainResolver): ?Domain
-    {
-        return $domainResolver->resolveDomain($domain);
+        $this->domain = ($domainResolver ?? new SimpleDomainResolver())->resolveDomain($meta->getDomain());
     }
 
     public function getLongUrl(): string
@@ -168,6 +163,9 @@ class ShortUrl extends AbstractEntity
     public function matchesCriteria(ShortUrlMeta $meta, array $tags): bool
     {
         if ($meta->hasMaxVisits() && $meta->getMaxVisits() !== $this->maxVisits) {
+            return false;
+        }
+        if ($meta->hasDomain() && $meta->getDomain() !== $this->resolveDomain()) {
             return false;
         }
         if ($meta->hasValidSince() && ! $meta->getValidSince()->eq($this->validSince)) {
