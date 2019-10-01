@@ -9,6 +9,7 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\UriInterface;
+use Shlinkio\Shlink\Core\Domain\Resolver\PersistenceDomainResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
@@ -77,7 +78,7 @@ class UrlShortener implements UrlShortenerInterface
             $this->em->beginTransaction();
 
             // First, create the short URL with an empty short code
-            $shortUrl = new ShortUrl($url, $meta);
+            $shortUrl = new ShortUrl($url, $meta, new PersistenceDomainResolver($this->em));
             $this->em->persist($shortUrl);
             $this->em->flush();
 

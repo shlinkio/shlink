@@ -64,4 +64,5 @@ $builder->createManyToMany('tags', Entity\Tag::class)
 
 $builder->createManyToOne('domain', Entity\Domain::class)
         ->addJoinColumn('domain_id', 'id', true, false, 'RESTRICT')
+        ->cascadePersist()
         ->build();

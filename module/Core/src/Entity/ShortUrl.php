@@ -7,6 +7,8 @@ use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
+use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Zend\Diactoros\Uri;
 
@@ -33,8 +35,11 @@ class ShortUrl extends AbstractEntity
     /** @var Domain|null */
     private $domain;
 
-    public function __construct(string $longUrl, ?ShortUrlMeta $meta = null)
-    {
+    public function __construct(
+        string $longUrl,
+        ?ShortUrlMeta $meta = null,
+        ?DomainResolverInterface $domainResolver = null
+    ) {
         $meta = $meta ?? ShortUrlMeta::createEmpty();
 
         $this->longUrl = $longUrl;
@@ -45,7 +50,12 @@ class ShortUrl extends AbstractEntity
         $this->validUntil = $meta->getValidUntil();
         $this->maxVisits = $meta->getMaxVisits();
         $this->shortCode = $meta->getCustomSlug() ?? ''; // TODO logic to calculate short code should be passed somehow
-        $this->domain = $meta->hasDomain() ? new Domain($meta->getDomain()) : null;
+        $this->domain = $this->domainToEntity($meta->getDomain(), $domainResolver ?? new SimpleDomainResolver());
+    }
+
+    private function domainToEntity(?string $domain, DomainResolverInterface $domainResolver): ?Domain
+    {
+        return $domainResolver->resolveDomain($domain);
     }
 
     public function getLongUrl(): string
