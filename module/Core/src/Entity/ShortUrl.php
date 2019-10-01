@@ -12,7 +12,10 @@ use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Zend\Diactoros\Uri;
 
+use function array_reduce;
 use function count;
+use function Functional\contains;
+use function Functional\invoke;
 
 class ShortUrl extends AbstractEntity
 {
@@ -160,5 +163,29 @@ class ShortUrl extends AbstractEntity
         }
 
         return $this->domain->getAuthority();
+    }
+
+    public function matchesCriteria(ShortUrlMeta $meta, array $tags): bool
+    {
+        if ($meta->hasMaxVisits() && $meta->getMaxVisits() !== $this->maxVisits) {
+            return false;
+        }
+        if ($meta->hasValidSince() && ! $meta->getValidSince()->eq($this->validSince)) {
+            return false;
+        }
+        if ($meta->hasValidUntil() && ! $meta->getValidUntil()->eq($this->validUntil)) {
+            return false;
+        }
+
+        $shortUrlTags = invoke($this->getTags(), '__toString');
+        $hasAllTags = count($shortUrlTags) === count($tags) && array_reduce(
+            $tags,
+            function (bool $hasAllTags, string $tag) use ($shortUrlTags) {
+                return $hasAllTags && contains($shortUrlTags, $tag);
+            },
+            true
+        );
+
+        return $hasAllTags;
     }
 }

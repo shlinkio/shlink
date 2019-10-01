@@ -138,4 +138,25 @@ DQL;
         $result = $query->getOneOrNullResult();
         return $result === null || $result->maxVisitsReached() ? null : $result;
     }
+
+    public function slugIsInUse(string $slug, ?string $domain = null): bool
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('COUNT(DISTINCT s.id)')
+           ->from(ShortUrl::class, 's')
+           ->where($qb->expr()->isNotNull('s.shortCode'))
+           ->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
+           ->setParameter('slug', $slug);
+
+        if ($domain !== null) {
+            $qb->join('s.domain', 'd')
+               ->andWhere($qb->expr()->eq('d.authority', ':authority'))
+               ->setParameter('authority', $domain);
+        } else {
+            $qb->andWhere($qb->expr()->isNull('s.domain'));
+        }
+
+        $result = (int) $qb->getQuery()->getSingleScalarResult();
+        return $result > 0;
+    }
 }

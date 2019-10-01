@@ -22,6 +22,8 @@ class PersistenceDomainResolver implements DomainResolverInterface
             return null;
         }
 
-        return $this->em->getRepository(Domain::class)->findOneBy(['authority' => $domain]) ?? new Domain($domain);
+        /** @var Domain|null $existingDomain */
+        $existingDomain = $this->em->getRepository(Domain::class)->findOneBy(['authority' => $domain]);
+        return $existingDomain ?? new Domain($domain);
     }
 }

@@ -7,8 +7,13 @@ use function sprintf;
 
 class NonUniqueSlugException extends InvalidArgumentException
 {
-    public static function fromSlug(string $slug): self
+    public static function fromSlug(string $slug, ?string $domain): self
     {
-        return new self(sprintf('Provided slug "%s" is not unique.', $slug));
+        $suffix = '';
+        if ($domain !== null) {
+            $suffix = sprintf(' for domain "%s"', $domain);
+        }
+
+        return new self(sprintf('Provided slug "%s" is not unique%s.', $slug, $suffix));
     }
 }

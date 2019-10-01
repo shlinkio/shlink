@@ -5,6 +5,7 @@ namespace ShlinkioTest\Shlink\Core\Repository;
 
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
+use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -21,6 +22,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         Tag::class,
         Visit::class,
         ShortUrl::class,
+        Domain::class,
     ];
 
     /** @var ShortUrlRepository */
@@ -32,7 +34,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function findOneByShortCodeReturnsProperData()
+    public function findOneByShortCodeReturnsProperData(): void
     {
         $foo = new ShortUrl('foo');
         $foo->setShortCode('foo');
@@ -62,7 +64,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function countListReturnsProperNumberOfResults()
+    public function countListReturnsProperNumberOfResults(): void
     {
         $count = 5;
         for ($i = 0; $i < $count; $i++) {
@@ -76,7 +78,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function findListProperlyFiltersByTagAndSearchTerm()
+    public function findListProperlyFiltersByTagAndSearchTerm(): void
     {
         $tag = new Tag('bar');
         $this->getEntityManager()->persist($tag);
@@ -121,7 +123,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function findListProperlyMapsFieldNamesToColumnNamesWhenOrdering()
+    public function findListProperlyMapsFieldNamesToColumnNamesWhenOrdering(): void
     {
         $urls = ['a', 'z', 'c', 'b'];
         foreach ($urls as $url) {
@@ -139,5 +141,27 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->assertEquals('b', $result[1]->getLongUrl());
         $this->assertEquals('c', $result[2]->getLongUrl());
         $this->assertEquals('z', $result[3]->getLongUrl());
+    }
+
+    /** @test */
+    public function slugIsInUseLooksForShortUrlInProperSetOfTables(): void
+    {
+        $shortUrlWithoutDomain = (new ShortUrl('foo'))->setShortCode('my-cool-slug');
+        $this->getEntityManager()->persist($shortUrlWithoutDomain);
+
+        $shortUrlWithDomain = (new ShortUrl(
+            'foo',
+            ShortUrlMeta::createFromRawData(['domain' => 'doma.in'])
+        ))->setShortCode('another-slug');
+        $this->getEntityManager()->persist($shortUrlWithDomain);
+
+        $this->getEntityManager()->flush();
+
+        $this->assertTrue($this->repo->slugIsInUse('my-cool-slug'));
+        $this->assertFalse($this->repo->slugIsInUse('my-cool-slug', 'doma.in'));
+        $this->assertFalse($this->repo->slugIsInUse('slug-not-in-use'));
+        $this->assertFalse($this->repo->slugIsInUse('another-slug'));
+        $this->assertFalse($this->repo->slugIsInUse('another-slug', 'example.com'));
+        $this->assertTrue($this->repo->slugIsInUse('another-slug', 'doma.in'));
     }
 }
