@@ -63,13 +63,31 @@ class ListShortUrlsTest extends ApiTestCase
                         ],
                         'originalUrl' => 'https://shlink.io',
                     ],
+                    [
+                        'shortCode' => 'ghi789',
+                        'shortUrl' => 'http://example.com/ghi789',
+                        'longUrl' =>
+                            'https://blog.alejandrocelaya.com/2019/04/27'
+                            . '/considerations-to-properly-use-open-source-software-projects/',
+                        'dateCreated' => '2019-01-01T00:00:00+00:00',
+                        'visitsCount' => 0,
+                        'tags' => [],
+                        'meta' => [
+                            'validSince' => null,
+                            'validUntil' => null,
+                            'maxVisits' => null,
+                        ],
+                        'originalUrl' =>
+                            'https://blog.alejandrocelaya.com/2019/04/27'
+                            . '/considerations-to-properly-use-open-source-software-projects/',
+                    ],
                 ],
                 'pagination' => [
                     'currentPage' => 1,
                     'pagesCount' => 1,
                     'itemsPerPage' => 10,
-                    'itemsInCurrentPage' => 3,
-                    'totalItems' => 3,
+                    'itemsInCurrentPage' => 4,
+                    'totalItems' => 4,
                 ],
             ],
         ], $respPayload);

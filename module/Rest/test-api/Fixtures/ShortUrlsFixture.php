@@ -34,6 +34,12 @@ class ShortUrlsFixture extends AbstractFixture
         ));
         $manager->persist($customShortUrl);
 
+        $withDomainShortUrl = $this->setShortUrlDate(new ShortUrl(
+            'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-source-software-projects/',
+            ShortUrlMeta::createFromRawData(['domain' => 'example.com'])
+        ))->setShortCode('ghi789');
+        $manager->persist($withDomainShortUrl);
+
         $manager->flush();
 
         $this->addReference('abc123_short_url', $abcShortUrl);
