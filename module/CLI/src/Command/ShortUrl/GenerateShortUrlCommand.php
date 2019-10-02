@@ -84,6 +84,12 @@ class GenerateShortUrlCommand extends Command
                 'f',
                 InputOption::VALUE_NONE,
                 'This will force existing matching URL to be returned if found, instead of creating a new one.'
+            )
+            ->addOption(
+                'domain',
+                'd',
+                InputOption::VALUE_REQUIRED,
+                'The domain to which this short URL will be attached.'
             );
     }
 
@@ -124,7 +130,8 @@ class GenerateShortUrlCommand extends Command
                     $this->getOptionalDate($input, 'validUntil'),
                     $customSlug,
                     $maxVisits !== null ? (int) $maxVisits : null,
-                    $input->getOption('findIfExists')
+                    $input->getOption('findIfExists'),
+                    $input->getOption('domain')
                 )
             );
 
