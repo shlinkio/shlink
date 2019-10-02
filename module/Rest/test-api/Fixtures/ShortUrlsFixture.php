@@ -40,6 +40,12 @@ class ShortUrlsFixture extends AbstractFixture
         ))->setShortCode('ghi789');
         $manager->persist($withDomainShortUrl);
 
+        $withDomainAndSlugShortUrl = $this->setShortUrlDate(new ShortUrl(
+            'https://google.com',
+            ShortUrlMeta::createFromRawData(['domain' => 'some-domain.com'])
+        ))->setShortCode('custom-with-domain');
+        $manager->persist($withDomainAndSlugShortUrl);
+
         $manager->flush();
 
         $this->addReference('abc123_short_url', $abcShortUrl);

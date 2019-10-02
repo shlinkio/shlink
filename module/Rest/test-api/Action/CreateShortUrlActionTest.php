@@ -5,6 +5,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
+use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function Functional\map;
@@ -31,6 +32,18 @@ class CreateShortUrlActionTest extends ApiTestCase
 
         $this->assertEquals(self::STATUS_OK, $statusCode);
         $this->assertEquals('my-cool-slug', $payload['shortCode']);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideConflictingSlugs
+     */
+    public function failsToCreateShortUrlWithDuplicatedSlug(string $slug, ?string $domain): void
+    {
+        [$statusCode, $payload] = $this->createShortUrl(['customSlug' => $slug, 'domain' => $domain]);
+
+        $this->assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
+        $this->assertEquals(RestUtils::INVALID_SLUG_ERROR, $payload['error']);
     }
 
     /** @test */
@@ -126,20 +139,30 @@ class CreateShortUrlActionTest extends ApiTestCase
         ]];
     }
 
-    /** @test */
-    public function returnsErrorWhenRequestingReturnExistingButCustomSlugIsInUse(): void
+    /**
+     * @test
+     * @dataProvider provideConflictingSlugs
+     */
+    public function returnsErrorWhenRequestingReturnExistingButCustomSlugIsInUse(string $slug, ?string $domain): void
     {
         $longUrl = 'https://www.alejandrocelaya.com';
 
         [$firstStatusCode] = $this->createShortUrl(['longUrl' => $longUrl]);
         [$secondStatusCode] = $this->createShortUrl([
             'longUrl' => $longUrl,
-            'customSlug' => 'custom',
+            'customSlug' => $slug,
             'findIfExists' => true,
+            'domain' => $domain,
         ]);
 
         $this->assertEquals(self::STATUS_OK, $firstStatusCode);
         $this->assertEquals(self::STATUS_BAD_REQUEST, $secondStatusCode);
+    }
+
+    public function provideConflictingSlugs(): iterable
+    {
+        yield 'without domain' => ['custom', null];
+        yield 'with domain' => ['custom-with-domain', 'some-domain.com'];
     }
 
     /** @test */
