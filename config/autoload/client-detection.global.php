@@ -16,4 +16,11 @@ return [
         ],
     ],
 
+    'host_resolution' => [
+        'headers_to_inspect' => [
+            'Host',
+            'X-Forwarded-Host',
+        ],
+    ],
+
 ];

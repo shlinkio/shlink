@@ -15,6 +15,15 @@
                 "schema": {
                     "type": "string"
                 }
+            },
+            {
+                "name": "domain",
+                "in": "query",
+                "description": "The domain in which the short code should be searched for. Will fall back to default domain if not found.",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
             }
         ],
         "security": [

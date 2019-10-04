@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -35,7 +36,8 @@ class ResolveUrlCommand extends Command
             ->setName(self::NAME)
             ->setAliases(self::ALIASES)
             ->setDescription('Returns the long URL behind a short code')
-            ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code to parse');
+            ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code to parse')
+            ->addOption('domain', 'd', InputOption::VALUE_REQUIRED, 'The domain to which the short URL is attached.');
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void
@@ -56,9 +58,10 @@ class ResolveUrlCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $shortCode = $input->getArgument('shortCode');
+        $domain = $input->getOption('domain');
 
         try {
-            $url = $this->urlShortener->shortCodeToUrl($shortCode);
+            $url = $this->urlShortener->shortCodeToUrl($shortCode, $domain);
             $output->writeln(sprintf('Long URL: <info>%s</info>', $url->getLongUrl()));
             return ExitCodes::EXIT_SUCCESS;
         } catch (InvalidShortCodeException $e) {

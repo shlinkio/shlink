@@ -33,13 +33,13 @@ class ResolveUrlCommandTest extends TestCase
     }
 
     /** @test */
-    public function correctShortCodeResolvesUrl()
+    public function correctShortCodeResolvesUrl(): void
     {
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
         $shortUrl = new ShortUrl($expectedUrl);
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
-                                                       ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, null)->willReturn($shortUrl)
+                                                             ->shouldBeCalledOnce();
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
@@ -47,11 +47,11 @@ class ResolveUrlCommandTest extends TestCase
     }
 
     /** @test */
-    public function incorrectShortCodeOutputsErrorMessage()
+    public function incorrectShortCodeOutputsErrorMessage(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
-                                                       ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(EntityDoesNotExistException::class)
+                                                             ->shouldBeCalledOnce();
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
@@ -59,11 +59,11 @@ class ResolveUrlCommandTest extends TestCase
     }
 
     /** @test */
-    public function wrongShortCodeFormatOutputsErrorMessage()
+    public function wrongShortCodeFormatOutputsErrorMessage(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(new InvalidShortCodeException())
-                                                       ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(new InvalidShortCodeException())
+                                                             ->shouldBeCalledOnce();
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
