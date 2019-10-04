@@ -63,7 +63,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $withDomain->setShortCode('domain-short-code');
         $this->getEntityManager()->persist($withDomain);
 
-        $withDomainDuplicatingRegular = new ShortUrl('foo', ShortUrlMeta::createFromRawData([
+        $withDomainDuplicatingRegular = new ShortUrl('foo_with_domain', ShortUrlMeta::createFromRawData([
             'domain' => 'doma.in',
         ]));
         $withDomainDuplicatingRegular->setShortCode('foo');
