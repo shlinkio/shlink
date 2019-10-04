@@ -53,11 +53,12 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $shortCode = $request->getAttribute('shortCode', '');
+        $domain = $request->getUri()->getAuthority();
         $query = $request->getQueryParams();
         $disableTrackParam = $this->appOptions->getDisableTrackParam();
 
         try {
-            $url = $this->urlShortener->shortCodeToUrl($shortCode);
+            $url = $this->urlShortener->shortCodeToUrl($shortCode, $domain);
 
             // Track visit to this short code
             if ($disableTrackParam === null || ! array_key_exists($disableTrackParam, $query)) {
