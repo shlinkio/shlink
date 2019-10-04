@@ -26,5 +26,5 @@ interface UrlShortenerInterface
      * @throws InvalidShortCodeException
      * @throws EntityDoesNotExistException
      */
-    public function shortCodeToUrl(string $shortCode): ShortUrl;
+    public function shortCodeToUrl(string $shortCode, ?string $domain = null): ShortUrl;
 }

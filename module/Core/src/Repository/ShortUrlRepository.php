@@ -117,14 +117,17 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb;
     }
 
-    public function findOneByShortCode(string $shortCode): ?ShortUrl
+    public function findOneByShortCode(string $shortCode, ?string $domain = null): ?ShortUrl
     {
         $dql= <<<DQL
             SELECT s
               FROM Shlinkio\Shlink\Core\Entity\ShortUrl AS s
+         LEFT JOIN s.domain AS d
              WHERE s.shortCode = :shortCode
                AND (s.validSince <= :now OR s.validSince IS NULL)
                AND (s.validUntil >= :now OR s.validUntil IS NULL)
+               AND (s.domain IS NULL OR d.authority = :domain)
+          ORDER BY s.domain DESC
 DQL;
 
         $query = $this->getEntityManager()->createQuery($dql);
@@ -132,11 +135,18 @@ DQL;
               ->setParameters([
                   'shortCode' => $shortCode,
                   'now' => Chronos::now(),
+                  'domain' => $domain,
               ]);
 
-        /** @var ShortUrl|null $result */
-        $result = $query->getOneOrNullResult();
-        return $result === null || $result->maxVisitsReached() ? null : $result;
+        // Since we ordered by domain DESC, we will have first the URL matching the domain, followed
+        // by the one with no domain (if any), so it is safe to fetch 1 max result and we will get:
+        //  * The short URL matching both the short code and the domain, or
+        //  * The short URL matching the short code but without any domain, or
+        //  * No short URL at all
+
+        /** @var ShortUrl|null $shortUrl */
+        $shortUrl = $query->getOneOrNullResult();
+        return $shortUrl !== null && ! $shortUrl->maxVisitsReached() ? $shortUrl : null;
     }
 
     public function slugIsInUse(string $slug, ?string $domain = null): bool

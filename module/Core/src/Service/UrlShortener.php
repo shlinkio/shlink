@@ -175,7 +175,7 @@ class UrlShortener implements UrlShortenerInterface
      * @throws InvalidShortCodeException
      * @throws EntityDoesNotExistException
      */
-    public function shortCodeToUrl(string $shortCode): ShortUrl
+    public function shortCodeToUrl(string $shortCode, ?string $domain = null): ShortUrl
     {
         $chars = $this->options->getChars();
 
@@ -186,7 +186,7 @@ class UrlShortener implements UrlShortenerInterface
 
         /** @var ShortUrlRepository $shortUrlRepo */
         $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
-        $shortUrl = $shortUrlRepo->findOneByShortCode($shortCode);
+        $shortUrl = $shortUrlRepo->findOneByShortCode($shortCode, $domain);
         if ($shortUrl === null) {
             throw EntityDoesNotExistException::createFromEntityAndConditions(ShortUrl::class, [
                 'shortCode' => $shortCode,

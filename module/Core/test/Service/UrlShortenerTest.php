@@ -247,7 +247,7 @@ class UrlShortenerTest extends TestCase
         $shortUrl->setShortCode($shortCode);
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $repo->findOneByShortCode($shortCode)->willReturn($shortUrl);
+        $repo->findOneByShortCode($shortCode, null)->willReturn($shortUrl);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $url = $this->urlShortener->shortCodeToUrl($shortCode);
