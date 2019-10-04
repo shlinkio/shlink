@@ -17,6 +17,7 @@ class ShortUrlMetaInputFilter extends InputFilter
     public const CUSTOM_SLUG = 'customSlug';
     public const MAX_VISITS = 'maxVisits';
     public const FIND_IF_EXISTS = 'findIfExists';
+    public const DOMAIN = 'domain';
 
     public function __construct(?array $data = null)
     {
@@ -46,5 +47,11 @@ class ShortUrlMetaInputFilter extends InputFilter
         $this->add($maxVisits);
 
         $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
+
+        $domain = $this->createInput(self::DOMAIN, false);
+        $domain->getValidatorChain()->attach(new Validator\Hostname([
+            'allow' => Validator\Hostname::ALLOW_DNS | Validator\Hostname::ALLOW_LOCAL,
+        ]));
+        $this->add($domain);
     }
 }

@@ -216,6 +216,10 @@
                             "findIfExists": {
                                 "description": "Will force existing matching URL to be returned if found, instead of creating a new one",
                                 "type": "boolean"
+                            },
+                            "domain": {
+                                "description": "The domain to which the short URL will be attached",
+                                "type": "string"
                             }
                         }
                     }

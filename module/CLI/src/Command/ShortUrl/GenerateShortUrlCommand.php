@@ -9,7 +9,6 @@ use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
-use Shlinkio\Shlink\Core\Util\ShortUrlBuilderTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,8 +25,6 @@ use function sprintf;
 
 class GenerateShortUrlCommand extends Command
 {
-    use ShortUrlBuilderTrait;
-
     public const NAME = 'short-url:generate';
     private const ALIASES = ['shortcode:generate', 'short-code:generate'];
 
@@ -87,6 +84,12 @@ class GenerateShortUrlCommand extends Command
                 'f',
                 InputOption::VALUE_NONE,
                 'This will force existing matching URL to be returned if found, instead of creating a new one.'
+            )
+            ->addOption(
+                'domain',
+                'd',
+                InputOption::VALUE_REQUIRED,
+                'The domain to which this short URL will be attached.'
             );
     }
 
@@ -119,7 +122,7 @@ class GenerateShortUrlCommand extends Command
         $maxVisits = $input->getOption('maxVisits');
 
         try {
-            $shortCode = $this->urlShortener->urlToShortCode(
+            $shortUrl = $this->urlShortener->urlToShortCode(
                 new Uri($longUrl),
                 $tags,
                 ShortUrlMeta::createFromParams(
@@ -127,14 +130,14 @@ class GenerateShortUrlCommand extends Command
                     $this->getOptionalDate($input, 'validUntil'),
                     $customSlug,
                     $maxVisits !== null ? (int) $maxVisits : null,
-                    $input->getOption('findIfExists')
+                    $input->getOption('findIfExists'),
+                    $input->getOption('domain')
                 )
-            )->getShortCode();
-            $shortUrl = $this->buildShortUrl($this->domainConfig, $shortCode);
+            );
 
             $io->writeln([
                 sprintf('Processed long URL: <info>%s</info>', $longUrl),
-                sprintf('Generated short URL: <info>%s</info>', $shortUrl),
+                sprintf('Generated short URL: <info>%s</info>', $shortUrl->toString($this->domainConfig)),
             ]);
             return ExitCodes::EXIT_SUCCESS;
         } catch (InvalidUrlException $e) {

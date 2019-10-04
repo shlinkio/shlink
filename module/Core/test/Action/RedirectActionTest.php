@@ -47,8 +47,8 @@ class RedirectActionTest extends TestCase
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
         $shortUrl = new ShortUrl($expectedUrl);
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
-                                                       ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn($shortUrl)
+                                                           ->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
@@ -64,8 +64,8 @@ class RedirectActionTest extends TestCase
     public function nextMiddlewareIsInvokedIfLongUrlIsNotFound(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
-                                                       ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, '')->willThrow(EntityDoesNotExistException::class)
+                                                           ->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();
 
         $handler = $this->prophesize(RequestHandlerInterface::class);
@@ -81,7 +81,7 @@ class RedirectActionTest extends TestCase
     public function redirectToCustomUrlIsReturnedIfConfiguredSoAndShortUrlIsNotFound(): void
     {
         $shortCode = 'abc123';
-        $shortCodeToUrl = $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(
+        $shortCodeToUrl = $this->urlShortener->shortCodeToUrl($shortCode, '')->willThrow(
             EntityDoesNotExistException::class
         );
 
@@ -106,8 +106,8 @@ class RedirectActionTest extends TestCase
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
         $shortUrl = new ShortUrl($expectedUrl);
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn($shortUrl)
-                                                       ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn($shortUrl)
+                                                           ->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)

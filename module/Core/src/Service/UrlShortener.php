@@ -9,6 +9,7 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\UriInterface;
+use Shlinkio\Shlink\Core\Domain\Resolver\PersistenceDomainResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
@@ -22,11 +23,8 @@ use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Throwable;
 
 use function array_reduce;
-use function count;
 use function floor;
 use function fmod;
-use function Functional\contains;
-use function Functional\invoke;
 use function preg_match;
 use function strlen;
 
@@ -77,7 +75,7 @@ class UrlShortener implements UrlShortenerInterface
             $this->em->beginTransaction();
 
             // First, create the short URL with an empty short code
-            $shortUrl = new ShortUrl($url, $meta);
+            $shortUrl = new ShortUrl($url, $meta, new PersistenceDomainResolver($this->em));
             $this->em->persist($shortUrl);
             $this->em->flush();
 
@@ -120,30 +118,11 @@ class UrlShortener implements UrlShortenerInterface
 
         // Iterate short URLs until one that matches is found, or return null otherwise
         return array_reduce($shortUrls, function (?ShortUrl $found, ShortUrl $shortUrl) use ($tags, $meta) {
-            if ($found) {
+            if ($found !== null) {
                 return $found;
             }
 
-            if ($meta->hasMaxVisits() && $meta->getMaxVisits() !== $shortUrl->getMaxVisits()) {
-                return null;
-            }
-            if ($meta->hasValidSince() && ! $meta->getValidSince()->eq($shortUrl->getValidSince())) {
-                return null;
-            }
-            if ($meta->hasValidUntil() && ! $meta->getValidUntil()->eq($shortUrl->getValidUntil())) {
-                return null;
-            }
-
-            $shortUrlTags = invoke($shortUrl->getTags(), '__toString');
-            $hasAllTags = count($shortUrlTags) === count($tags) && array_reduce(
-                $tags,
-                function (bool $hasAllTags, string $tag) use ($shortUrlTags) {
-                    return $hasAllTags && contains($shortUrlTags, $tag);
-                },
-                true
-            );
-
-            return $hasAllTags ? $shortUrl : null;
+            return $shortUrl->matchesCriteria($meta, $tags) ? $shortUrl : null;
         });
     }
 
@@ -165,12 +144,13 @@ class UrlShortener implements UrlShortenerInterface
         }
 
         $customSlug = $meta->getCustomSlug();
+        $domain = $meta->getDomain();
 
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        $shortUrlsCount = $repo->count(['shortCode' => $customSlug]);
+        $shortUrlsCount = $repo->slugIsInUse($customSlug, $domain);
         if ($shortUrlsCount > 0) {
-            throw NonUniqueSlugException::fromSlug($customSlug);
+            throw NonUniqueSlugException::fromSlug($customSlug, $domain);
         }
     }
 
@@ -195,7 +175,7 @@ class UrlShortener implements UrlShortenerInterface
      * @throws InvalidShortCodeException
      * @throws EntityDoesNotExistException
      */
-    public function shortCodeToUrl(string $shortCode): ShortUrl
+    public function shortCodeToUrl(string $shortCode, ?string $domain = null): ShortUrl
     {
         $chars = $this->options->getChars();
 
@@ -206,7 +186,7 @@ class UrlShortener implements UrlShortenerInterface
 
         /** @var ShortUrlRepository $shortUrlRepo */
         $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
-        $shortUrl = $shortUrlRepo->findOneByShortCode($shortCode);
+        $shortUrl = $shortUrlRepo->findOneByShortCode($shortCode, $domain);
         if ($shortUrl === null) {
             throw EntityDoesNotExistException::createFromEntityAndConditions(ShortUrl::class, [
                 'shortCode' => $shortCode,

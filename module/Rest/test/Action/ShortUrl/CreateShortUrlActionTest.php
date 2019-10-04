@@ -36,14 +36,14 @@ class CreateShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function missingLongUrlParamReturnsError()
+    public function missingLongUrlParamReturnsError(): void
     {
         $response = $this->action->handle(new ServerRequest());
         $this->assertEquals(400, $response->getStatusCode());
     }
 
     /** @test */
-    public function properShortcodeConversionReturnsData()
+    public function properShortcodeConversionReturnsData(): void
     {
         $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
             ->willReturn(
@@ -60,7 +60,7 @@ class CreateShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function anInvalidUrlReturnsError()
+    public function anInvalidUrlReturnsError(): void
     {
         $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
             ->willThrow(InvalidUrlException::class)
@@ -75,7 +75,7 @@ class CreateShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function nonUniqueSlugReturnsError()
+    public function nonUniqueSlugReturnsError(): void
     {
         $this->urlShortener->urlToShortCode(
             Argument::type(Uri::class),
@@ -94,7 +94,7 @@ class CreateShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function aGenericExceptionWillReturnError()
+    public function aGenericExceptionWillReturnError(): void
     {
         $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
             ->willThrow(Exception::class)

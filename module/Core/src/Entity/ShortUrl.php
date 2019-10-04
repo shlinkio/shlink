@@ -7,9 +7,15 @@ use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
+use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Zend\Diactoros\Uri;
 
+use function array_reduce;
 use function count;
+use function Functional\contains;
+use function Functional\invoke;
 
 class ShortUrl extends AbstractEntity
 {
@@ -29,9 +35,14 @@ class ShortUrl extends AbstractEntity
     private $validUntil;
     /** @var integer|null */
     private $maxVisits;
+    /** @var Domain|null */
+    private $domain;
 
-    public function __construct(string $longUrl, ?ShortUrlMeta $meta = null)
-    {
+    public function __construct(
+        string $longUrl,
+        ?ShortUrlMeta $meta = null,
+        ?DomainResolverInterface $domainResolver = null
+    ) {
         $meta = $meta ?? ShortUrlMeta::createEmpty();
 
         $this->longUrl = $longUrl;
@@ -42,6 +53,7 @@ class ShortUrl extends AbstractEntity
         $this->validUntil = $meta->getValidUntil();
         $this->maxVisits = $meta->getMaxVisits();
         $this->shortCode = $meta->getCustomSlug() ?? ''; // TODO logic to calculate short code should be passed somehow
+        $this->domain = ($domainResolver ?? new SimpleDomainResolver())->resolveDomain($meta->getDomain());
     }
 
     public function getLongUrl(): string
@@ -130,5 +142,48 @@ class ShortUrl extends AbstractEntity
     public function maxVisitsReached(): bool
     {
         return $this->maxVisits !== null && $this->getVisitsCount() >= $this->maxVisits;
+    }
+
+    public function toString(array $domainConfig): string
+    {
+        return (string) (new Uri())->withPath($this->shortCode)
+                                   ->withScheme($domainConfig['schema'] ?? 'http')
+                                   ->withHost($this->resolveDomain($domainConfig['hostname'] ?? ''));
+    }
+
+    private function resolveDomain(string $fallback = ''): string
+    {
+        if ($this->domain === null) {
+            return $fallback;
+        }
+
+        return $this->domain->getAuthority();
+    }
+
+    public function matchesCriteria(ShortUrlMeta $meta, array $tags): bool
+    {
+        if ($meta->hasMaxVisits() && $meta->getMaxVisits() !== $this->maxVisits) {
+            return false;
+        }
+        if ($meta->hasDomain() && $meta->getDomain() !== $this->resolveDomain()) {
+            return false;
+        }
+        if ($meta->hasValidSince() && ! $meta->getValidSince()->eq($this->validSince)) {
+            return false;
+        }
+        if ($meta->hasValidUntil() && ! $meta->getValidUntil()->eq($this->validUntil)) {
+            return false;
+        }
+
+        $shortUrlTags = invoke($this->getTags(), '__toString');
+        $hasAllTags = count($shortUrlTags) === count($tags) && array_reduce(
+            $tags,
+            function (bool $hasAllTags, string $tag) use ($shortUrlTags) {
+                return $hasAllTags && contains($shortUrlTags, $tag);
+            },
+            true
+        );
+
+        return $hasAllTags;
     }
 }

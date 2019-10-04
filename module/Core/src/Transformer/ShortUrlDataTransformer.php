@@ -5,15 +5,12 @@ namespace Shlinkio\Shlink\Core\Transformer;
 
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Util\ShortUrlBuilderTrait;
 
 use function Functional\invoke;
 use function Functional\invoke_if;
 
 class ShortUrlDataTransformer implements DataTransformerInterface
 {
-    use ShortUrlBuilderTrait;
-
     /** @var array */
     private $domainConfig;
 
@@ -23,21 +20,20 @@ class ShortUrlDataTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param ShortUrl $value
+     * @param ShortUrl $shortUrl
      */
-    public function transform($value): array
+    public function transform($shortUrl): array
     {
-        $longUrl = $value->getLongUrl();
-        $shortCode = $value->getShortCode();
+        $longUrl = $shortUrl->getLongUrl();
 
         return [
-            'shortCode' => $shortCode,
-            'shortUrl' => $this->buildShortUrl($this->domainConfig, $shortCode),
+            'shortCode' => $shortUrl->getShortCode(),
+            'shortUrl' => $shortUrl->toString($this->domainConfig),
             'longUrl' => $longUrl,
-            'dateCreated' => $value->getDateCreated()->toAtomString(),
-            'visitsCount' => $value->getVisitsCount(),
-            'tags' => invoke($value->getTags(), '__toString'),
-            'meta' => $this->buildMeta($value),
+            'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
+            'visitsCount' => $shortUrl->getVisitsCount(),
+            'tags' => invoke($shortUrl->getTags(), '__toString'),
+            'meta' => $this->buildMeta($shortUrl),
 
             // Deprecated
             'originalUrl' => $longUrl,

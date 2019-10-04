@@ -55,7 +55,7 @@ class UrlShortenerTest extends TestCase
             $shortUrl->setId('10');
         });
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $repo->count(Argument::any())->willReturn(0);
+        $repo->slugIsInUse(Argument::cetera())->willReturn(false);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $this->setUrlShortener(false);
@@ -122,11 +122,11 @@ class UrlShortenerTest extends TestCase
     public function exceptionIsThrownWhenNonUniqueSlugIsProvided(): void
     {
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $countBySlug = $repo->count(['shortCode' => 'custom-slug'])->willReturn(1);
+        $slugIsInUse = $repo->slugIsInUse('custom-slug', null)->willReturn(true);
         $repo->findBy(Argument::cetera())->willReturn([]);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $countBySlug->shouldBeCalledOnce();
+        $slugIsInUse->shouldBeCalledOnce();
         $getRepo->shouldBeCalled();
         $this->expectException(NonUniqueSlugException::class);
 
@@ -247,7 +247,7 @@ class UrlShortenerTest extends TestCase
         $shortUrl->setShortCode($shortCode);
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $repo->findOneByShortCode($shortCode)->willReturn($shortUrl);
+        $repo->findOneByShortCode($shortCode, null)->willReturn($shortUrl);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $url = $this->urlShortener->shortCodeToUrl($shortCode);

@@ -117,14 +117,22 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb;
     }
 
-    public function findOneByShortCode(string $shortCode): ?ShortUrl
+    public function findOneByShortCode(string $shortCode, ?string $domain = null): ?ShortUrl
     {
+        // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
+        // the bottom
+        $dbPlatform = $this->getEntityManager()->getConnection()->getDatabasePlatform()->getName();
+        $ordering = $dbPlatform === 'postgresql' ? 'ASC' : 'DESC';
+
         $dql= <<<DQL
             SELECT s
               FROM Shlinkio\Shlink\Core\Entity\ShortUrl AS s
+         LEFT JOIN s.domain AS d
              WHERE s.shortCode = :shortCode
                AND (s.validSince <= :now OR s.validSince IS NULL)
                AND (s.validUntil >= :now OR s.validUntil IS NULL)
+               AND (s.domain IS NULL OR d.authority = :domain)
+          ORDER BY s.domain {$ordering}
 DQL;
 
         $query = $this->getEntityManager()->createQuery($dql);
@@ -132,10 +140,38 @@ DQL;
               ->setParameters([
                   'shortCode' => $shortCode,
                   'now' => Chronos::now(),
+                  'domain' => $domain,
               ]);
 
-        /** @var ShortUrl|null $result */
-        $result = $query->getOneOrNullResult();
-        return $result === null || $result->maxVisitsReached() ? null : $result;
+        // Since we ordered by domain, we will have first the URL matching provided domain, followed by the one
+        // with no domain (if any), so it is safe to fetch 1 max result and we will get:
+        //  * The short URL matching both the short code and the domain, or
+        //  * The short URL matching the short code but without any domain, or
+        //  * No short URL at all
+
+        /** @var ShortUrl|null $shortUrl */
+        $shortUrl = $query->getOneOrNullResult();
+        return $shortUrl !== null && ! $shortUrl->maxVisitsReached() ? $shortUrl : null;
+    }
+
+    public function slugIsInUse(string $slug, ?string $domain = null): bool
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('COUNT(DISTINCT s.id)')
+           ->from(ShortUrl::class, 's')
+           ->where($qb->expr()->isNotNull('s.shortCode'))
+           ->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
+           ->setParameter('slug', $slug);
+
+        if ($domain !== null) {
+            $qb->join('s.domain', 'd')
+               ->andWhere($qb->expr()->eq('d.authority', ':authority'))
+               ->setParameter('authority', $domain);
+        } else {
+            $qb->andWhere($qb->expr()->isNull('s.domain'));
+        }
+
+        $result = (int) $qb->getQuery()->getSingleScalarResult();
+        return $result > 0;
     }
 }

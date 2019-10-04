@@ -18,7 +18,7 @@ trait TagManagerTrait
      * @param string[] $tags
      * @return Collections\Collection|Tag[]
      */
-    private function tagNamesToEntities(EntityManagerInterface $em, array $tags)
+    private function tagNamesToEntities(EntityManagerInterface $em, array $tags): Collections\Collection
     {
         $entities = [];
         foreach ($tags as $tagName) {

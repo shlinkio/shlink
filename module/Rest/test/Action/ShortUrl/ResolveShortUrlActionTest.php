@@ -30,11 +30,11 @@ class ResolveShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function incorrectShortCodeReturnsError()
+    public function incorrectShortCodeReturnsError(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
-                                                       ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(EntityDoesNotExistException::class)
+                                                             ->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->handle($request);
@@ -43,10 +43,10 @@ class ResolveShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function correctShortCodeReturnsSuccess()
+    public function correctShortCodeReturnsSuccess(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(
+        $this->urlShortener->shortCodeToUrl($shortCode, null)->willReturn(
             new ShortUrl('http://domain.com/foo/bar')
         )->shouldBeCalledOnce();
 
@@ -57,11 +57,11 @@ class ResolveShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function invalidShortCodeExceptionReturnsError()
+    public function invalidShortCodeExceptionReturnsError(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
-                                                       ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(InvalidShortCodeException::class)
+                                                             ->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->handle($request);
@@ -70,11 +70,11 @@ class ResolveShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function unexpectedExceptionWillReturnError()
+    public function unexpectedExceptionWillReturnError(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(Exception::class)
-                                                       ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(Exception::class)
+                                                             ->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->handle($request);

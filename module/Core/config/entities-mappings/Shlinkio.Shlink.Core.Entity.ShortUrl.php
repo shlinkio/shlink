@@ -28,7 +28,6 @@ $builder->createField('longUrl', Type::STRING)
 
 $builder->createField('shortCode', Type::STRING)
         ->columnName('short_code')
-        ->unique()
         ->length(255)
         ->build();
 
@@ -61,3 +60,10 @@ $builder->createManyToMany('tags', Entity\Tag::class)
         ->addInverseJoinColumn('tag_id', 'id', true, false, 'CASCADE')
         ->addJoinColumn('short_url_id', 'id', true, false, 'CASCADE')
         ->build();
+
+$builder->createManyToOne('domain', Entity\Domain::class)
+        ->addJoinColumn('domain_id', 'id', true, false, 'RESTRICT')
+        ->cascadePersist()
+        ->build();
+
+$builder->addUniqueConstraint(['short_code', 'domain_id'], 'unique_short_code_plus_domain');

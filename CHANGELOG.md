@@ -22,6 +22,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     This option will also be available on shlink-installer 1.3.0, so the installer will ask for it. It can also be provided for the docker image as the `BASE_PATH` env var.
 
+* [#479](https://github.com/shlinkio/shlink/issues/479) Added preliminary support for multiple domains.
+
+    Endpoints and commands which create short URLs support providing the `domain` now (via query param or CLI flag). If not provided, the short URLs will still be "attached" to the default domain.
+
+    Custom slugs can be created on multiple domains, allowing to share links like `https://doma.in/my-compaign` and `https://example.com/my-campaign`, under the same shlink instance.
+
+    When resolving a short URL to redirect end users, the following rules are applied:
+
+    * If the domain used for the request plus the short code/slug are found, the user is redirected to that long URL and the visit is tracked.
+    * If the domain is not known but the short code/slug is defined for default domain, the user is redirected there and the visit is tracked.
+    * In any other case, no redirection happens and no visit is tracked (if a fall back redirection is configured for not-found URLs, it will still happen).
+
 #### Changed
 
 * [#486](https://github.com/shlinkio/shlink/issues/486) Updated to [shlink-installer](https://github.com/shlinkio/shlink-installer) v2, which supports asking for base path in which shlink is served.

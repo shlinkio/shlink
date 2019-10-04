@@ -41,7 +41,7 @@ class PixelActionTest extends TestCase
     public function imageIsReturned(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(
+        $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn(
             new ShortUrl('http://domain.com/foo/bar')
         )->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();

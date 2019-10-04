@@ -45,10 +45,11 @@ class ResolveShortUrlAction extends AbstractRestAction
     public function handle(Request $request): Response
     {
         $shortCode = $request->getAttribute('shortCode');
+        $domain = $request->getQueryParams()['domain'] ?? null;
         $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
         try {
-            $url = $this->urlShortener->shortCodeToUrl($shortCode);
+            $url = $this->urlShortener->shortCodeToUrl($shortCode, $domain);
             return new JsonResponse($transformer->transform($url));
         } catch (InvalidShortCodeException $e) {
             $this->logger->warning('Provided short code with invalid format. {e}', ['e' => $e]);
