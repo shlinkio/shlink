@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core;
@@ -7,7 +8,7 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata; // @codingStandardsIgnoreLine
 
-/** @var $metadata ClassMetadata */
+/** @var $metadata ClassMetadata */ // @codingStandardsIgnoreLine
 $builder = new ClassMetadataBuilder($metadata);
 
 $builder->setTable('visit_locations');

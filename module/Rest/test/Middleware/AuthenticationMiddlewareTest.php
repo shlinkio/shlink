@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Middleware;
@@ -123,8 +124,10 @@ class AuthenticationMiddlewareTest extends TestCase
 
     public function provideExceptions(): iterable
     {
-        yield 'container exception' => [new class extends Exception implements ContainerExceptionInterface {
-        }];
+        $containerException = new class extends Exception implements ContainerExceptionInterface {
+        };
+
+        yield 'container exception' => [$containerException];
         yield 'authentication exception' => [NoAuthenticationException::fromExpectedTypes([])];
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Middleware;
@@ -57,7 +58,8 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
     {
         /** @var RouteResult|null $routeResult */
         $routeResult = $request->getAttribute(RouteResult::class);
-        if ($routeResult === null
+        if (
+            $routeResult === null
             || $routeResult->isFailure()
             || $request->getMethod() === self::METHOD_OPTIONS
             || contains($this->routesWhitelist, $routeResult->getMatchedRouteName())

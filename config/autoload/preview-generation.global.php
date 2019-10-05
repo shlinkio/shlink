@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-/** @deprecated */
+/* @deprecated */
 return [
 
     'preview_generation' => [
