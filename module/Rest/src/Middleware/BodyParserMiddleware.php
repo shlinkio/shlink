@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Middleware;
@@ -33,11 +34,14 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
         $currentParams = $request->getParsedBody();
 
         // In requests that do not allow body or if the body has already been parsed, continue to next middleware
-        if (! empty($currentParams) || contains([
-            self::METHOD_GET,
-            self::METHOD_HEAD,
-            self::METHOD_OPTIONS,
-        ], $method)) {
+        if (
+            ! empty($currentParams)
+            || contains([
+                self::METHOD_GET,
+                self::METHOD_HEAD,
+                self::METHOD_OPTIONS,
+            ], $method)
+        ) {
             return $handler->handle($request);
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core;
@@ -9,7 +10,7 @@ use Doctrine\ORM\Mapping\ClassMetadata; // @codingStandardsIgnoreLine
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Core\Model\Visitor;
 
-/** @var $metadata ClassMetadata */
+/** @var $metadata ClassMetadata */ // @codingStandardsIgnoreLine
 $builder = new ClassMetadataBuilder($metadata);
 
 $builder->setTable('visits')

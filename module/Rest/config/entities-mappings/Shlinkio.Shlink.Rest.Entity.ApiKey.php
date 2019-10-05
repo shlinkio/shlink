@@ -1,13 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
+use Doctrine\ORM\Mapping\ClassMetadata; // @codingStandardsIgnoreLine
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 
-/** @var $metadata ClassMetadata */
+/** @var $metadata ClassMetadata */ // @codingStandardsIgnoreLine
 $builder = new ClassMetadataBuilder($metadata);
 
 $builder->setTable('api_keys');

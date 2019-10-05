@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Repository;
@@ -124,7 +125,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         $dbPlatform = $this->getEntityManager()->getConnection()->getDatabasePlatform()->getName();
         $ordering = $dbPlatform === 'postgresql' ? 'ASC' : 'DESC';
 
-        $dql= <<<DQL
+        $dql = <<<DQL
             SELECT s
               FROM Shlinkio\Shlink\Core\Entity\ShortUrl AS s
          LEFT JOIN s.domain AS d

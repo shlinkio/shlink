@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;

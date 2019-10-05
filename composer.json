@@ -64,7 +64,7 @@
         "phpunit/phpcov": "^6.0",
         "phpunit/phpunit": "^8.3",
         "roave/security-advisories": "dev-master",
-        "shlinkio/php-coding-standard": "~1.2.2",
+        "shlinkio/php-coding-standard": "~2.0.0",
         "shlinkio/shlink-test-utils": "^1.0",
         "symfony/dotenv": "^4.3",
         "symfony/var-dumper": "^4.3",

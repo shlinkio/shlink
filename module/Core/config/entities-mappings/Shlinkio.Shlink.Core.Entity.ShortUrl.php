@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core;
@@ -8,7 +9,7 @@ use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata; // @codingStandardsIgnoreLine
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 
-/** @var $metadata ClassMetadata */
+/** @var $metadata ClassMetadata */ // @codingStandardsIgnoreLine
 $builder = new ClassMetadataBuilder($metadata);
 
 $builder->setTable('short_urls')
