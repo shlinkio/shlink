@@ -56,16 +56,16 @@ docker exec -it shlink_container shlink
 
 The image comes with a working sqlite database, but in production you will probably want to usa a distributed database.
 
-It is possible to use a set of env vars to make this shlink instance interact with an external MySQL or PostgreSQL database.
+It is possible to use a set of env vars to make this shlink instance interact with an external MySQL, MariaDB or PostgreSQL database.
 
-* `DB_DRIVER`: **[Mandatory]**. Use the value **mysql** or **postgres** to prevent the sqlite database to be used.
+* `DB_DRIVER`: **[Mandatory]**. Use the value **mysql**, **maria** or **postgres** to prevent the sqlite database to be used.
 * `DB_NAME`: [Optional]. The database name to be used. Defaults to **shlink**.
 * `DB_USER`: **[Mandatory]**. The username credential for the database server.
 * `DB_PASSWORD`: **[Mandatory]**. The password credential for the database server.
 * `DB_HOST`: **[Mandatory]**. The host name of the server running the database engine.
 * `DB_PORT`: [Optional]. The port in which the database service is running.
     * Default value is based on the driver:
-        * **mysql** -> `3306`
+        * **mysql** or **maria** -> `3306`
         * **postgres** -> `5432`
 
 > PostgreSQL is supported since v1.16.1 of this image. Do not try to use it with previous versions.
@@ -93,7 +93,7 @@ This is the complete list of supported env vars:
 * `SHORT_DOMAIN_HOST`: The custom short domain used for this shlink instance. For example **doma.in**.
 * `SHORT_DOMAIN_SCHEMA`: Either **http** or **https**.
 * `SHORTCODE_CHARS`: A charset to use when building short codes. Only needed when using more than one shlink instance ([Multi instance considerations](#multi-instance-considerations)).
-* `DB_DRIVER`: **sqlite** (which is the default value), **mysql** or **postgres**.
+* `DB_DRIVER`: **sqlite** (which is the default value), **mysql**, **maria** or **postgres**.
 * `DB_NAME`: The database name to be used when using an external database driver. Defaults to **shlink**.
 * `DB_USER`: The username credential to be used when using an external database driver.
 * `DB_PASSWORD`: The password credential to be used when using an external database driver.
