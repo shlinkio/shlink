@@ -11,6 +11,7 @@ use function explode;
 use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
+use function Functional\contains;
 use function implode;
 use function Shlinkio\Shlink\Common\env;
 use function sprintf;
@@ -22,10 +23,12 @@ $helper = new class {
     private const BASE62 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     private const DB_DRIVERS_MAP = [
         'mysql' => 'pdo_mysql',
+        'maria' => 'pdo_mysql',
         'postgres' => 'pdo_pgsql',
     ];
     private const DB_PORTS_MAP = [
         'mysql' => '3306',
+        'maria' => '3306',
         'postgres' => '5432',
     ];
 
@@ -85,7 +88,7 @@ $helper = new class {
             ];
         }
 
-        $driverOptions = $driver !== 'mysql' ? [] : [
+        $driverOptions = ! contains(['maria', 'mysql'], $driver) ? [] : [
             // PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
             1002 => 'SET NAMES utf8',
         ];
