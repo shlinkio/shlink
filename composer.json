@@ -118,10 +118,12 @@
         "test:db": [
             "@test:db:sqlite",
             "@test:db:mysql",
+            "@test:db:maria",
             "@test:db:postgres"
         ],
         "test:db:sqlite": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always -c phpunit-db.xml --coverage-php build/coverage-db.cov --testdox",
         "test:db:mysql": "DB_DRIVER=mysql composer test:db:sqlite",
+        "test:db:maria": "DB_DRIVER=maria composer test:db:sqlite",
         "test:db:postgres": "DB_DRIVER=postgres composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
 

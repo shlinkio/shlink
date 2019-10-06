@@ -16,40 +16,41 @@ use function sys_get_temp_dir;
 $swooleTestingHost = '127.0.0.1';
 $swooleTestingPort = 9999;
 
-$buildDbConnection = function () {
+$buildDbConnection = function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
     $isCi = env('TRAVIS', false);
+    $getMysqlHost = function (string $driver) {
+        return sprintf('shlink_db%s', $driver === 'mysql' ? '' : '_maria');
+    };
 
-    switch ($driver) {
-        case 'sqlite':
-            return [
-                'driver' => 'pdo_sqlite',
-                'path' => sys_get_temp_dir() . '/shlink-tests.db',
-            ];
-        case 'mysql':
-            return [
-                'driver' => 'pdo_mysql',
-                'host' => $isCi ? '127.0.0.1' : 'shlink_db',
-                'user' => 'root',
-                'password' => $isCi ? '' : 'root',
-                'dbname' => 'shlink_test',
-                'charset' => 'utf8',
-                'driverOptions' => [
-                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
-                ],
-            ];
-        case 'postgres':
-            return [
-                'driver' => 'pdo_pgsql',
-                'host' => $isCi ? '127.0.0.1' : 'shlink_db_postgres',
-                'user' => 'postgres',
-                'password' => $isCi ? '' : 'root',
-                'dbname' => 'shlink_test',
-                'charset' => 'utf8',
-            ];
-        default:
-            return [];
-    }
+    $driverConfigMap = [
+        'sqlite' => [
+            'driver' => 'pdo_sqlite',
+            'path' => sys_get_temp_dir() . '/shlink-tests.db',
+        ],
+        'mysql' => [
+            'driver' => 'pdo_mysql',
+            'host' => $isCi ? '127.0.0.1' : $getMysqlHost($driver),
+            'user' => 'root',
+            'password' => $isCi ? '' : 'root',
+            'dbname' => 'shlink_test',
+            'charset' => 'utf8',
+            'driverOptions' => [
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+            ],
+        ],
+        'postgres' => [
+            'driver' => 'pdo_pgsql',
+            'host' => $isCi ? '127.0.0.1' : 'shlink_db_postgres',
+            'user' => 'postgres',
+            'password' => $isCi ? '' : 'root',
+            'dbname' => 'shlink_test',
+            'charset' => 'utf8',
+        ],
+    ];
+    $driverConfigMap['maria'] = $driverConfigMap['mysql'];
+
+    return $driverConfigMap[$driver] ?? [];
 };
 
 return [
