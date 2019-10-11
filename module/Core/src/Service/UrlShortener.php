@@ -16,7 +16,6 @@ use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
-use Shlinkio\Shlink\Core\Exception\RuntimeException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
@@ -47,7 +46,7 @@ class UrlShortener implements UrlShortenerInterface
      * @param string[] $tags
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
-     * @throws RuntimeException
+     * @throws Throwable
      */
     public function urlToShortCode(UriInterface $url, array $tags, ShortUrlMeta $meta): ShortUrl
     {
@@ -63,28 +62,26 @@ class UrlShortener implements UrlShortenerInterface
         if ($this->options->isUrlValidationEnabled()) {
             $this->checkUrlExists($url);
         }
-        $this->verifyCustomSlug($meta);
 
-        // Transactionally insert the short url, then generate the short code and finally update the short code
+        $this->em->beginTransaction();
+        $shortUrl = new ShortUrl($url, $meta, new PersistenceDomainResolver($this->em));
+        $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
+
         try {
-            $this->em->beginTransaction();
-
-            // First, create the short URL with an empty short code
-            $shortUrl = new ShortUrl($url, $meta, new PersistenceDomainResolver($this->em));
-            $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
+            $this->verifyShortCodeUniqueness($meta, $shortUrl);
             $this->em->persist($shortUrl);
             $this->em->flush();
-
             $this->em->commit();
-            return $shortUrl;
         } catch (Throwable $e) {
             if ($this->em->getConnection()->isTransactionActive()) {
                 $this->em->rollback();
                 $this->em->close();
             }
 
-            throw new RuntimeException('An error occurred while persisting the short URL', -1, $e);
+            throw $e;
         }
+
+        return $shortUrl;
     }
 
     private function findExistingShortUrlIfExists(string $url, array $tags, ShortUrlMeta $meta): ?ShortUrl
@@ -124,20 +121,22 @@ class UrlShortener implements UrlShortenerInterface
         }
     }
 
-    private function verifyCustomSlug(ShortUrlMeta $meta): void
+    private function verifyShortCodeUniqueness(ShortUrlMeta $meta, ShortUrl $shortUrlToBeCreated): void
     {
-        if (! $meta->hasCustomSlug()) {
-            return;
-        }
-
-        $customSlug = $meta->getCustomSlug();
+        $shortCode = $shortUrlToBeCreated->getShortCode();
         $domain = $meta->getDomain();
 
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        $shortUrlsCount = $repo->slugIsInUse($customSlug, $domain);
-        if ($shortUrlsCount > 0) {
-            throw NonUniqueSlugException::fromSlug($customSlug, $domain);
+        $otherShortUrlsExist = $repo->shortCodeIsInUse($shortCode, $domain);
+
+        if ($otherShortUrlsExist && $meta->hasCustomSlug()) {
+            throw NonUniqueSlugException::fromSlug($shortCode, $domain);
+        }
+
+        if ($otherShortUrlsExist) {
+            $shortUrlToBeCreated->regenerateShortCode();
+            $this->verifyShortCodeUniqueness($meta, $shortUrlToBeCreated);
         }
     }
 

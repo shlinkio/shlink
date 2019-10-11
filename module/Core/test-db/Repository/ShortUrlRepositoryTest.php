@@ -169,7 +169,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function slugIsInUseLooksForShortUrlInProperSetOfTables(): void
+    public function shortCodeIsInUseLooksForShortUrlInProperSetOfTables(): void
     {
         $shortUrlWithoutDomain = new ShortUrl('foo', ShortUrlMeta::createFromRawData(['customSlug' => 'my-cool-slug']));
         $this->getEntityManager()->persist($shortUrlWithoutDomain);
@@ -182,11 +182,11 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $this->assertTrue($this->repo->slugIsInUse('my-cool-slug'));
-        $this->assertFalse($this->repo->slugIsInUse('my-cool-slug', 'doma.in'));
-        $this->assertFalse($this->repo->slugIsInUse('slug-not-in-use'));
-        $this->assertFalse($this->repo->slugIsInUse('another-slug'));
-        $this->assertFalse($this->repo->slugIsInUse('another-slug', 'example.com'));
-        $this->assertTrue($this->repo->slugIsInUse('another-slug', 'doma.in'));
+        $this->assertTrue($this->repo->shortCodeIsInUse('my-cool-slug'));
+        $this->assertFalse($this->repo->shortCodeIsInUse('my-cool-slug', 'doma.in'));
+        $this->assertFalse($this->repo->shortCodeIsInUse('slug-not-in-use'));
+        $this->assertFalse($this->repo->shortCodeIsInUse('another-slug'));
+        $this->assertFalse($this->repo->shortCodeIsInUse('another-slug', 'example.com'));
+        $this->assertTrue($this->repo->shortCodeIsInUse('another-slug', 'doma.in'));
     }
 }

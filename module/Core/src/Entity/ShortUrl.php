@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
+use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Zend\Diactoros\Uri;
 
@@ -39,6 +40,8 @@ class ShortUrl extends AbstractEntity
     private $maxVisits;
     /** @var Domain|null */
     private $domain;
+    /** @var bool */
+    private $customSlugWasProvided;
 
     public function __construct(
         string $longUrl,
@@ -54,6 +57,7 @@ class ShortUrl extends AbstractEntity
         $this->validSince = $meta->getValidSince();
         $this->validUntil = $meta->getValidUntil();
         $this->maxVisits = $meta->getMaxVisits();
+        $this->customSlugWasProvided = $meta->hasCustomSlug();
         $this->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode();
         $this->domain = ($domainResolver ?? new SimpleDomainResolver())->resolveDomain($meta->getDomain());
     }
@@ -101,6 +105,25 @@ class ShortUrl extends AbstractEntity
         if ($shortCodeMeta->hasMaxVisits()) {
             $this->maxVisits = $shortCodeMeta->getMaxVisits();
         }
+    }
+
+    /**
+     * @throws ShortCodeCannotBeRegeneratedException
+     */
+    public function regenerateShortCode(): self
+    {
+        // In ShortUrls where a custom slug was provided, do nothing
+        if ($this->customSlugWasProvided) {
+            throw ShortCodeCannotBeRegeneratedException::forShortUrlWithCustomSlug();
+        }
+
+        // The short code can be regenerated only on ShortUrl which have not been persisted yet
+        if ($this->id !== null) {
+            throw ShortCodeCannotBeRegeneratedException::forShortUrlAlreadyPersisted();
+        }
+
+        $this->shortCode = generateRandomShortCode();
+        return $this;
     }
 
     public function getValidSince(): ?Chronos
