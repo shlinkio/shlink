@@ -155,7 +155,7 @@ DQL;
         return $shortUrl !== null && ! $shortUrl->maxVisitsReached() ? $shortUrl : null;
     }
 
-    public function slugIsInUse(string $slug, ?string $domain = null): bool
+    public function shortCodeIsInUse(string $slug, ?string $domain = null): bool
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('COUNT(DISTINCT s.id)')

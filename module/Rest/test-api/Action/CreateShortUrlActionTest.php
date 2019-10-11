@@ -90,7 +90,7 @@ class CreateShortUrlActionTest extends ApiTestCase
 
         $this->assertEquals(self::STATUS_OK, $statusCode);
 
-        // Request to the short URL will return a 404 since ist' not valid yet
+        // Request to the short URL will return a 404 since it's not valid yet
         $lastResp = $this->callShortUrl($shortCode);
         $this->assertEquals(self::STATUS_NOT_FOUND, $lastResp->getStatusCode());
     }

@@ -29,5 +29,5 @@ interface ShortUrlRepositoryInterface extends ObjectRepository
 
     public function findOneByShortCode(string $shortCode, ?string $domain = null): ?ShortUrl;
 
-    public function slugIsInUse(string $slug, ?string $domain): bool;
+    public function shortCodeIsInUse(string $slug, ?string $domain): bool;
 }

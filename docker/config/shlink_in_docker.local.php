@@ -33,16 +33,14 @@ $helper = new class {
     ];
 
     /** @var string */
-    private $charset;
-    /** @var string */
     private $secretKey;
 
     public function __construct()
     {
-        [$this->charset, $this->secretKey] = $this->initShlinkKeys();
+        [, $this->secretKey] = $this->initShlinkSecretKey();
     }
 
-    private function initShlinkKeys(): array
+    private function initShlinkSecretKey(): array
     {
         $keysFile = sprintf('%s/shlink.keys', sys_get_temp_dir());
         if (file_exists($keysFile)) {
@@ -50,27 +48,17 @@ $helper = new class {
         }
 
         $keys = [
-            env('SHORTCODE_CHARS', $this->generateShortcodeChars()),
-            env('SECRET_KEY', $this->generateSecretKey()),
+            '', // This was the SHORTCODE_CHARS. Kept as empty string for BC
+            env('SECRET_KEY', $this->generateSecretKey()), // Deprecated
         ];
 
         file_put_contents($keysFile, implode(',', $keys));
         return $keys;
     }
 
-    private function generateShortcodeChars(): string
-    {
-        return str_shuffle(self::BASE62);
-    }
-
     private function generateSecretKey(): string
     {
         return substr(str_shuffle(self::BASE62), 0, 32);
-    }
-
-    public function getShortcodeChars(): string
-    {
-        return $this->charset;
     }
 
     public function getSecretKey(): string
@@ -137,7 +125,6 @@ return [
             'schema' => env('SHORT_DOMAIN_SCHEMA', 'http'),
             'hostname' => env('SHORT_DOMAIN_HOST', ''),
         ],
-        'shortcode_chars' => $helper->getShortcodeChars(),
         'validate_url' => (bool) env('VALIDATE_URLS', true),
         'not_found_short_url' => $helper->getNotFoundConfig(),
     ],

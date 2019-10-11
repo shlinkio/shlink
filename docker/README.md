@@ -92,7 +92,6 @@ This is the complete list of supported env vars:
 
 * `SHORT_DOMAIN_HOST`: The custom short domain used for this shlink instance. For example **doma.in**.
 * `SHORT_DOMAIN_SCHEMA`: Either **http** or **https**.
-* `SHORTCODE_CHARS`: A charset to use when building short codes. Only needed when using more than one shlink instance ([Multi instance considerations](#multi-instance-considerations)).
 * `DB_DRIVER`: **sqlite** (which is the default value), **mysql**, **maria** or **postgres**.
 * `DB_NAME`: The database name to be used when using an external database driver. Defaults to **shlink**.
 * `DB_USER`: The username credential to be used when using an external database driver.
@@ -111,6 +110,8 @@ This is the complete list of supported env vars:
     If more than one server is provided, Shlink will expect them to be configured as a [redis cluster](https://redis.io/topics/cluster-tutorial).
 
     In the future, these redis servers could be used for other caching operations performed by shlink.
+
+* `SHORTCODE_CHARS`: **Ignored when using Shlink 1.20 or newer**. A charset to use when building short codes. Only needed when using more than one shlink instance ([Multi instance considerations](#multi-instance-considerations)).
 
 An example using all env vars could look like this:
 
@@ -178,19 +179,19 @@ docker run --name shlink -p 8080:8080 -v ${PWD}/my/config/dir:/etc/shlink/config
 
 These are some considerations to take into account when running multiple instances of shlink.
 
-* The first time shlink is run, it generates a charset used to generate short codes, which is a shuffled base62 charset.
+* Some operations performed by Shlink should never be run more than once at the same time (like creating the database for the first time, or downloading the GeoLite2 database). For this reason, Shlink uses a locking system.
+
+    However, these locks are locally scoped to each Shlink instance by default.
+
+    You can (and should) make the locks to be shared by all Shlink instances by using a redis server/cluster. Just define the `REDIS_SERVERS` env var with the list of servers.
+
+* **Ignore this if using Shlink 1.20 or newer**. The first time shlink is run, it generates a charset used to generate short codes, which is a shuffled base62 charset.
 
     If you are using several shlink instances, you will probably want all of them to use the same charset.
 
     You can get a shuffled base62 charset by going to [https://shlink.io/short-code-chars](https://shlink.io/short-code-chars), and then you just need to pass it to all shlink instances using the `SHORTCODE_CHARS` env var.
 
     If you don't do this, each shlink instance will use a different charset. However this shouldn't be a problem in practice, since the chances to get a collision will be very low.
-
-* Some operations performed by Shlink should never be run more than once at the same time (like creating the database for the first time, or downloading the GeoLite2 database). For this reason, Shlink uses a locking system.
-
-    However, these locks are locally scoped to each Shlink instance by default.
-
-    You can (and should) make the locks to be shared by all Shlink instances by using a redis server/cluster. Just define the `REDIS_SERVERS` env var with the list of servers.
 
 ## Versions
 

@@ -17,10 +17,8 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
-use Shlinkio\Shlink\Core\Exception\RuntimeException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
@@ -56,7 +54,7 @@ class UrlShortenerTest extends TestCase
             $shortUrl->setId('10');
         });
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $repo->slugIsInUse(Argument::cetera())->willReturn(false);
+        $repo->shortCodeIsInUse(Argument::cetera())->willReturn(false);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $this->setUrlShortener(false);
@@ -74,17 +72,43 @@ class UrlShortenerTest extends TestCase
     /** @test */
     public function urlIsProperlyShortened(): void
     {
-        // 10 -> 0Q1Y
         $shortUrl = $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
             ShortUrlMeta::createEmpty()
         );
-        $this->assertEquals('0Q1Y', $shortUrl->getShortCode());
+
+        $this->assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
     }
 
     /** @test */
-    public function exceptionIsThrownWhenOrmThrowsException(): void
+    public function shortCodeIsRegeneratedIfAlreadyInUse(): void
+    {
+        $callIndex = 0;
+        $expectedCalls = 3;
+        $repo = $this->prophesize(ShortUrlRepository::class);
+        $shortCodeIsInUse = $repo->shortCodeIsInUse(Argument::cetera())->will(
+            function () use (&$callIndex, $expectedCalls) {
+                $callIndex++;
+                return $callIndex < $expectedCalls;
+            }
+        );
+        $repo->findBy(Argument::cetera())->willReturn([]);
+        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
+
+        $shortUrl = $this->urlShortener->urlToShortCode(
+            new Uri('http://foobar.com/12345/hello?foo=bar'),
+            [],
+            ShortUrlMeta::createEmpty()
+        );
+
+        $this->assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
+        $getRepo->shouldBeCalledTimes($expectedCalls);
+        $shortCodeIsInUse->shouldBeCalledTimes($expectedCalls);
+    }
+
+    /** @test */
+    public function transactionIsRolledBackAndExceptionRethrownWhenExceptionIsThrown(): void
     {
         $conn = $this->prophesize(Connection::class);
         $conn->isTransactionActive()->willReturn(true);
@@ -94,7 +118,7 @@ class UrlShortenerTest extends TestCase
 
         $this->em->flush()->willThrow(new ORMException());
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(ORMException::class);
         $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
@@ -123,11 +147,11 @@ class UrlShortenerTest extends TestCase
     public function exceptionIsThrownWhenNonUniqueSlugIsProvided(): void
     {
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $slugIsInUse = $repo->slugIsInUse('custom-slug', null)->willReturn(true);
+        $shortCodeIsInUse = $repo->shortCodeIsInUse('custom-slug', null)->willReturn(true);
         $repo->findBy(Argument::cetera())->willReturn([]);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $slugIsInUse->shouldBeCalledOnce();
+        $shortCodeIsInUse->shouldBeCalledOnce();
         $getRepo->shouldBeCalled();
         $this->expectException(NonUniqueSlugException::class);
 
@@ -146,26 +170,24 @@ class UrlShortenerTest extends TestCase
         string $url,
         array $tags,
         ShortUrlMeta $meta,
-        ?ShortUrl $expected
+        ShortUrl $expected
     ): void {
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $findExisting = $repo->findBy(Argument::any())->willReturn($expected !== null ? [$expected] : []);
+        $findExisting = $repo->findBy(Argument::any())->willReturn([$expected]);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $result = $this->urlShortener->urlToShortCode(new Uri($url), $tags, $meta);
 
         $findExisting->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
-        if ($expected) {
-            $this->assertSame($expected, $result);
-        }
+        $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->assertSame($expected, $result);
     }
 
     public function provideExistingShortUrls(): iterable
     {
         $url = 'http://foo.com';
 
-        yield [$url, [], ShortUrlMeta::createFromRawData(['findIfExists' => true]), null];
         yield [$url, [], ShortUrlMeta::createFromRawData(['findIfExists' => true]), new ShortUrl($url)];
         yield [$url, [], ShortUrlMeta::createFromRawData(
             ['findIfExists' => true, 'customSlug' => 'foo']
@@ -193,6 +215,12 @@ class UrlShortenerTest extends TestCase
             [],
             ShortUrlMeta::createFromRawData(['findIfExists' => true, 'validUntil' => Chronos::parse('2017-01-01')]),
             new ShortUrl($url, ShortUrlMeta::createFromRawData(['validUntil' => Chronos::parse('2017-01-01')])),
+        ];
+        yield [
+            $url,
+            [],
+            ShortUrlMeta::createFromRawData(['findIfExists' => true, 'domain' => 'example.com']),
+            new ShortUrl($url, ShortUrlMeta::createFromRawData(['domain' => 'example.com'])),
         ];
         yield [
             $url,
@@ -243,9 +271,8 @@ class UrlShortenerTest extends TestCase
     /** @test */
     public function shortCodeIsProperlyParsed(): void
     {
-        $shortCode = '12C1c';
         $shortUrl = new ShortUrl('expected_url');
-        $shortUrl->setShortCode($shortCode);
+        $shortCode = $shortUrl->getShortCode();
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
         $repo->findOneByShortCode($shortCode, null)->willReturn($shortUrl);
@@ -253,12 +280,5 @@ class UrlShortenerTest extends TestCase
 
         $url = $this->urlShortener->shortCodeToUrl($shortCode);
         $this->assertSame($shortUrl, $url);
-    }
-
-    /** @test */
-    public function invalidCharSetThrowsException(): void
-    {
-        $this->expectException(InvalidShortCodeException::class);
-        $this->urlShortener->shortCodeToUrl('&/(');
     }
 }

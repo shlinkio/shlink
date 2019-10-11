@@ -8,7 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Added
 
-* *Nothing*
+* [#491](https://github.com/shlinkio/shlink/issues/491) Added improved short code generation logic.
+
+    Now, short codes are truly random, which removes the guessability factor existing in previous versions.
+
+    Generated short codes have 5 characters, and shlink makes sure they keep unique, while making it backwards-compatible.
 
 #### Changed
 
