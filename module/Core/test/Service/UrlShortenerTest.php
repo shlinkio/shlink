@@ -82,6 +82,32 @@ class UrlShortenerTest extends TestCase
     }
 
     /** @test */
+    public function shortCodeIsRegeneratedIfAlreadyInUse(): void
+    {
+        $callIndex = 0;
+        $expectedCalls = 3;
+        $repo = $this->prophesize(ShortUrlRepository::class);
+        $shortCodeIsInUse = $repo->shortCodeIsInUse(Argument::cetera())->will(
+            function () use (&$callIndex, $expectedCalls) {
+                $callIndex++;
+                return $callIndex < $expectedCalls;
+            }
+        );
+        $repo->findBy(Argument::cetera())->willReturn([]);
+        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
+
+        $shortUrl = $this->urlShortener->urlToShortCode(
+            new Uri('http://foobar.com/12345/hello?foo=bar'),
+            [],
+            ShortUrlMeta::createEmpty()
+        );
+
+        $this->assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
+        $getRepo->shouldBeCalledTimes($expectedCalls);
+        $shortCodeIsInUse->shouldBeCalledTimes($expectedCalls);
+    }
+
+    /** @test */
     public function transactionIsRolledBackAndExceptionRethrownWhenExceptionIsThrown(): void
     {
         $conn = $this->prophesize(Connection::class);
@@ -189,6 +215,12 @@ class UrlShortenerTest extends TestCase
             [],
             ShortUrlMeta::createFromRawData(['findIfExists' => true, 'validUntil' => Chronos::parse('2017-01-01')]),
             new ShortUrl($url, ShortUrlMeta::createFromRawData(['validUntil' => Chronos::parse('2017-01-01')])),
+        ];
+        yield [
+            $url,
+            [],
+            ShortUrlMeta::createFromRawData(['findIfExists' => true, 'domain' => 'example.com']),
+            new ShortUrl($url, ShortUrlMeta::createFromRawData(['domain' => 'example.com'])),
         ];
         yield [
             $url,
