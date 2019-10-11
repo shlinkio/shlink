@@ -24,16 +24,10 @@ use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Throwable;
 
 use function array_reduce;
-use function floor;
-use function fmod;
-use function preg_match;
-use function strlen;
 
 class UrlShortener implements UrlShortenerInterface
 {
     use TagManagerTrait;
-
-    private const ID_INCREMENT = 200000;
 
     /** @var ClientInterface */
     private $httpClient;
@@ -77,16 +71,8 @@ class UrlShortener implements UrlShortenerInterface
 
             // First, create the short URL with an empty short code
             $shortUrl = new ShortUrl($url, $meta, new PersistenceDomainResolver($this->em));
-            $this->em->persist($shortUrl);
-            $this->em->flush();
-
-            // Generate the short code and persist it if no custom slug was provided
-            if (! $meta->hasCustomSlug()) {
-                // TODO Somehow provide the logic to calculate the shortCode to avoid the need of a setter
-                $shortCode = $this->convertAutoincrementIdToShortCode((float) $shortUrl->getId());
-                $shortUrl->setShortCode($shortCode);
-            }
             $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
+            $this->em->persist($shortUrl);
             $this->em->flush();
 
             $this->em->commit();
@@ -155,36 +141,12 @@ class UrlShortener implements UrlShortenerInterface
         }
     }
 
-    private function convertAutoincrementIdToShortCode(float $id): string
-    {
-        $id += self::ID_INCREMENT; // Increment the Id so that the generated shortcode is not too short
-        $chars = $this->options->getChars();
-
-        $length = strlen($chars);
-        $code = '';
-
-        while ($id > 0) {
-            // Determine the value of the next higher character in the short code and prepend it
-            $code = $chars[(int) fmod($id, $length)] . $code;
-            $id = floor($id / $length);
-        }
-
-        return $chars[(int) $id] . $code;
-    }
-
     /**
      * @throws InvalidShortCodeException
      * @throws EntityDoesNotExistException
      */
     public function shortCodeToUrl(string $shortCode, ?string $domain = null): ShortUrl
     {
-        $chars = $this->options->getChars();
-
-        // Validate short code format
-        if (! preg_match('|[' . $chars . ']+|', $shortCode)) {
-            throw InvalidShortCodeException::fromCharset($shortCode, $chars);
-        }
-
         /** @var ShortUrlRepository $shortUrlRepo */
         $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
         $shortUrl = $shortUrlRepo->findOneByShortCode($shortCode, $domain);

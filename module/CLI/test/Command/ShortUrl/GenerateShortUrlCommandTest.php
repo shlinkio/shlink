@@ -20,6 +20,11 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class GenerateShortUrlCommandTest extends TestCase
 {
+    private const DOMAIN_CONFIG = [
+        'schema' => 'http',
+        'hostname' => 'foo.com',
+    ];
+
     /** @var CommandTester */
     private $commandTester;
     /** @var ObjectProphecy */
@@ -28,10 +33,7 @@ class GenerateShortUrlCommandTest extends TestCase
     public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $command = new GenerateShortUrlCommand($this->urlShortener->reveal(), [
-            'schema' => 'http',
-            'hostname' => 'foo.com',
-        ]);
+        $command = new GenerateShortUrlCommand($this->urlShortener->reveal(), self::DOMAIN_CONFIG);
         $app = new Application();
         $app->add($command);
         $this->commandTester = new CommandTester($command);
@@ -40,9 +42,8 @@ class GenerateShortUrlCommandTest extends TestCase
     /** @test */
     public function properShortCodeIsCreatedIfLongUrlIsCorrect(): void
     {
-        $urlToShortCode = $this->urlShortener->urlToShortCode(Argument::cetera())->willReturn(
-            (new ShortUrl(''))->setShortCode('abc123')
-        );
+        $shortUrl = new ShortUrl('');
+        $urlToShortCode = $this->urlShortener->urlToShortCode(Argument::cetera())->willReturn($shortUrl);
 
         $this->commandTester->execute([
             'longUrl' => 'http://domain.com/foo/bar',
@@ -51,7 +52,7 @@ class GenerateShortUrlCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         $this->assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
-        $this->assertStringContainsString('http://foo.com/abc123', $output);
+        $this->assertStringContainsString($shortUrl->toString(self::DOMAIN_CONFIG), $output);
         $urlToShortCode->shouldHaveBeenCalledOnce();
     }
 
@@ -86,6 +87,7 @@ class GenerateShortUrlCommandTest extends TestCase
     /** @test */
     public function properlyProcessesProvidedTags(): void
     {
+        $shortUrl = new ShortUrl('');
         $urlToShortCode = $this->urlShortener->urlToShortCode(
             Argument::type(UriInterface::class),
             Argument::that(function (array $tags) {
@@ -93,7 +95,7 @@ class GenerateShortUrlCommandTest extends TestCase
                 return $tags;
             }),
             Argument::cetera()
-        )->willReturn((new ShortUrl(''))->setShortCode('abc123'));
+        )->willReturn($shortUrl);
 
         $this->commandTester->execute([
             'longUrl' => 'http://domain.com/foo/bar',
@@ -102,7 +104,7 @@ class GenerateShortUrlCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         $this->assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
-        $this->assertStringContainsString('http://foo.com/abc123', $output);
+        $this->assertStringContainsString($shortUrl->toString(self::DOMAIN_CONFIG), $output);
         $urlToShortCode->shouldHaveBeenCalledOnce();
     }
 }

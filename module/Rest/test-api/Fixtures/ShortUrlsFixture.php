@@ -20,13 +20,15 @@ class ShortUrlsFixture extends AbstractFixture
      */
     public function load(ObjectManager $manager): void
     {
-        $abcShortUrl = $this->setShortUrlDate(new ShortUrl('https://shlink.io'))->setShortCode('abc123');
+        $abcShortUrl = $this->setShortUrlDate(
+            new ShortUrl('https://shlink.io', ShortUrlMeta::createFromRawData(['customSlug' => 'abc123']))
+        );
         $manager->persist($abcShortUrl);
 
         $defShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
-            ShortUrlMeta::createFromParams(Chronos::parse('2020-05-01'))
-        ))->setShortCode('def456');
+            ShortUrlMeta::createFromParams(Chronos::parse('2020-05-01'), null, 'def456')
+        ));
         $manager->persist($defShortUrl);
 
         $customShortUrl = $this->setShortUrlDate(new ShortUrl(
@@ -37,14 +39,14 @@ class ShortUrlsFixture extends AbstractFixture
 
         $withDomainShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-source-software-projects/',
-            ShortUrlMeta::createFromRawData(['domain' => 'example.com'])
-        ))->setShortCode('ghi789');
+            ShortUrlMeta::createFromRawData(['domain' => 'example.com', 'customSlug' => 'ghi789'])
+        ));
         $manager->persist($withDomainShortUrl);
 
         $withDomainAndSlugShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://google.com',
-            ShortUrlMeta::createFromRawData(['domain' => 'some-domain.com'])
-        ))->setShortCode('custom-with-domain');
+            ShortUrlMeta::createFromRawData(['domain' => 'some-domain.com', 'customSlug' => 'custom-with-domain'])
+        ));
         $manager->persist($withDomainAndSlugShortUrl);
 
         $manager->flush();

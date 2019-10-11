@@ -22,6 +22,11 @@ use function strpos;
 
 class CreateShortUrlActionTest extends TestCase
 {
+    private const DOMAIN_CONFIG = [
+        'schema' => 'http',
+        'hostname' => 'foo.com',
+    ];
+
     /** @var CreateShortUrlAction */
     private $action;
     /** @var ObjectProphecy */
@@ -30,10 +35,7 @@ class CreateShortUrlActionTest extends TestCase
     public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $this->action = new CreateShortUrlAction($this->urlShortener->reveal(), [
-            'schema' => 'http',
-            'hostname' => 'foo.com',
-        ]);
+        $this->action = new CreateShortUrlAction($this->urlShortener->reveal(), self::DOMAIN_CONFIG);
     }
 
     /** @test */
@@ -46,10 +48,9 @@ class CreateShortUrlActionTest extends TestCase
     /** @test */
     public function properShortcodeConversionReturnsData(): void
     {
+        $shortUrl = new ShortUrl('');
         $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
-            ->willReturn(
-                (new ShortUrl(''))->setShortCode('abc123')
-            )
+            ->willReturn($shortUrl)
             ->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withParsedBody([
@@ -57,7 +58,7 @@ class CreateShortUrlActionTest extends TestCase
         ]);
         $response = $this->action->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertTrue(strpos($response->getBody()->getContents(), 'http://foo.com/abc123') > 0);
+        $this->assertTrue(strpos($response->getBody()->getContents(), $shortUrl->toString(self::DOMAIN_CONFIG)) > 0);
     }
 
     /** @test */

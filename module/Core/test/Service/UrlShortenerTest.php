@@ -17,7 +17,6 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Exception\RuntimeException;
@@ -74,13 +73,13 @@ class UrlShortenerTest extends TestCase
     /** @test */
     public function urlIsProperlyShortened(): void
     {
-        // 10 -> 0Q1Y
         $shortUrl = $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
             ShortUrlMeta::createEmpty()
         );
-        $this->assertEquals('0Q1Y', $shortUrl->getShortCode());
+
+        $this->assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
     }
 
     /** @test */
@@ -243,9 +242,8 @@ class UrlShortenerTest extends TestCase
     /** @test */
     public function shortCodeIsProperlyParsed(): void
     {
-        $shortCode = '12C1c';
         $shortUrl = new ShortUrl('expected_url');
-        $shortUrl->setShortCode($shortCode);
+        $shortCode = $shortUrl->getShortCode();
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
         $repo->findOneByShortCode($shortCode, null)->willReturn($shortUrl);
@@ -253,12 +251,5 @@ class UrlShortenerTest extends TestCase
 
         $url = $this->urlShortener->shortCodeToUrl($shortCode);
         $this->assertSame($shortUrl, $url);
-    }
-
-    /** @test */
-    public function invalidCharSetThrowsException(): void
-    {
-        $this->expectException(InvalidShortCodeException::class);
-        $this->urlShortener->shortCodeToUrl('&/(');
     }
 }

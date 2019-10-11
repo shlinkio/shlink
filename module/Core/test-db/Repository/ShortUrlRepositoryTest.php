@@ -37,37 +37,41 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     /** @test */
     public function findOneByShortCodeReturnsProperData(): void
     {
-        $regularOne = new ShortUrl('foo');
-        $regularOne->setShortCode('foo');
+        $regularOne = new ShortUrl('foo', ShortUrlMeta::createFromParams(null, null, 'foo'));
         $this->getEntityManager()->persist($regularOne);
 
-        $notYetValid = new ShortUrl('bar', ShortUrlMeta::createFromParams(Chronos::now()->addMonth()));
-        $notYetValid->setShortCode('bar_very_long_text');
+        $notYetValid = new ShortUrl(
+            'bar',
+            ShortUrlMeta::createFromParams(Chronos::now()->addMonth(), null, 'bar_very_long_text')
+        );
         $this->getEntityManager()->persist($notYetValid);
 
-        $expired = new ShortUrl('expired', ShortUrlMeta::createFromParams(null, Chronos::now()->subMonth()));
-        $expired->setShortCode('expired');
+        $expired = new ShortUrl('expired', ShortUrlMeta::createFromParams(null, Chronos::now()->subMonth(), 'expired'));
         $this->getEntityManager()->persist($expired);
 
-        $allVisitsComplete = new ShortUrl('baz', ShortUrlMeta::createFromRawData(['maxVisits' => 3]));
+        $allVisitsComplete = new ShortUrl('baz', ShortUrlMeta::createFromRawData([
+            'maxVisits' => 3,
+            'customSlug' => 'baz',
+        ]));
         $visits = [];
         for ($i = 0; $i < 3; $i++) {
             $visit = new Visit($allVisitsComplete, Visitor::emptyInstance());
             $this->getEntityManager()->persist($visit);
             $visits[] = $visit;
         }
-        $allVisitsComplete->setShortCode('baz')
-                          ->setVisits(new ArrayCollection($visits));
+        $allVisitsComplete->setVisits(new ArrayCollection($visits));
         $this->getEntityManager()->persist($allVisitsComplete);
 
-        $withDomain = new ShortUrl('foo', ShortUrlMeta::createFromRawData(['domain' => 'example.com']));
-        $withDomain->setShortCode('domain-short-code');
+        $withDomain = new ShortUrl('foo', ShortUrlMeta::createFromRawData([
+            'domain' => 'example.com',
+            'customSlug' => 'domain-short-code',
+        ]));
         $this->getEntityManager()->persist($withDomain);
 
         $withDomainDuplicatingRegular = new ShortUrl('foo_with_domain', ShortUrlMeta::createFromRawData([
             'domain' => 'doma.in',
+            'customSlug' => 'foo',
         ]));
-        $withDomainDuplicatingRegular->setShortCode('foo');
         $this->getEntityManager()->persist($withDomainDuplicatingRegular);
 
         $this->getEntityManager()->flush();
@@ -96,9 +100,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     {
         $count = 5;
         for ($i = 0; $i < $count; $i++) {
-            $this->getEntityManager()->persist(
-                (new ShortUrl((string) $i))->setShortCode((string) $i)
-            );
+            $this->getEntityManager()->persist(new ShortUrl((string) $i));
         }
         $this->getEntityManager()->flush();
 
@@ -112,19 +114,16 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($tag);
 
         $foo = new ShortUrl('foo');
-        $foo->setShortCode('foo')
-            ->setTags(new ArrayCollection([$tag]));
+        $foo->setTags(new ArrayCollection([$tag]));
         $this->getEntityManager()->persist($foo);
 
         $bar = new ShortUrl('bar');
         $visit = new Visit($bar, Visitor::emptyInstance());
         $this->getEntityManager()->persist($visit);
-        $bar->setShortCode('bar_very_long_text')
-            ->setVisits(new ArrayCollection([$visit]));
+        $bar->setVisits(new ArrayCollection([$visit]));
         $this->getEntityManager()->persist($bar);
 
         $foo2 = new ShortUrl('foo_2');
-        $foo2->setShortCode('foo_2');
         $this->getEntityManager()->persist($foo2);
 
         $this->getEntityManager()->flush();
@@ -155,9 +154,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     {
         $urls = ['a', 'z', 'c', 'b'];
         foreach ($urls as $url) {
-            $this->getEntityManager()->persist(
-                (new ShortUrl($url))->setShortCode($url)
-            );
+            $this->getEntityManager()->persist(new ShortUrl($url));
         }
 
         $this->getEntityManager()->flush();
@@ -174,13 +171,13 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     /** @test */
     public function slugIsInUseLooksForShortUrlInProperSetOfTables(): void
     {
-        $shortUrlWithoutDomain = (new ShortUrl('foo'))->setShortCode('my-cool-slug');
+        $shortUrlWithoutDomain = new ShortUrl('foo', ShortUrlMeta::createFromRawData(['customSlug' => 'my-cool-slug']));
         $this->getEntityManager()->persist($shortUrlWithoutDomain);
 
-        $shortUrlWithDomain = (new ShortUrl(
+        $shortUrlWithDomain = new ShortUrl(
             'foo',
-            ShortUrlMeta::createFromRawData(['domain' => 'doma.in'])
-        ))->setShortCode('another-slug');
+            ShortUrlMeta::createFromRawData(['domain' => 'doma.in', 'customSlug' => 'another-slug'])
+        );
         $this->getEntityManager()->persist($shortUrlWithDomain);
 
         $this->getEntityManager()->flush();
