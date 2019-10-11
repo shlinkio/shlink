@@ -78,7 +78,10 @@
             "Shlinkio\\Shlink\\Rest\\": "module/Rest/src",
             "Shlinkio\\Shlink\\Core\\": "module/Core/src",
             "Shlinkio\\Shlink\\PreviewGenerator\\": "module/PreviewGenerator/src/"
-        }
+        },
+        "files": [
+            "module/Core/functions/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

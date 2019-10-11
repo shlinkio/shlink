@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Core\Entity;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use PUGX\Shortid\Factory as ShortIdFactory;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
@@ -18,11 +17,10 @@ use function array_reduce;
 use function count;
 use function Functional\contains;
 use function Functional\invoke;
+use function Shlinkio\Shlink\Core\generateRandomShortCode;
 
 class ShortUrl extends AbstractEntity
 {
-    private const BASE62 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
     /** @var string */
     private $longUrl;
     /** @var string */
@@ -56,13 +54,8 @@ class ShortUrl extends AbstractEntity
         $this->validSince = $meta->getValidSince();
         $this->validUntil = $meta->getValidUntil();
         $this->maxVisits = $meta->getMaxVisits();
-        $this->shortCode = $meta->getCustomSlug() ?? $this->generateShortCode();
+        $this->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode();
         $this->domain = ($domainResolver ?? new SimpleDomainResolver())->resolveDomain($meta->getDomain());
-    }
-
-    private function generateShortCode(): string
-    {
-        return (new ShortIdFactory())->generate(6, self::BASE62)->serialize();
     }
 
     public function getLongUrl(): string
