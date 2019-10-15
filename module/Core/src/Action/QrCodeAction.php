@@ -70,8 +70,8 @@ class QrCodeAction implements MiddlewareInterface
         $size = $this->getSizeParam($request);
 
         $qrCode = new QrCode((string) $request->getUri()->withPath($path)->withQuery(''));
-        $qrCode->setSize($size)
-               ->setPadding(0);
+        $qrCode->setSize($size);
+        $qrCode->setMargin(0);
         return new QrCodeResponse($qrCode);
     }
 
