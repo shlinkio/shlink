@@ -60,8 +60,8 @@
         "devster/ubench": "^2.0",
         "eaglewu/swoole-ide-helper": "dev-master",
         "filp/whoops": "^2.4",
-        "infection/infection": "^0.13.4",
-        "phpstan/phpstan": "^0.11.2",
+        "infection/infection": "^0.14.2",
+        "phpstan/phpstan": "^0.11.16",
         "phpunit/phpcov": "^6.0",
         "phpunit/phpunit": "^8.3",
         "roave/security-advisories": "dev-master",
@@ -151,7 +151,6 @@
         ]
     },
     "scripts-descriptions": {
-        "check": "<fg=blue;options=bold>Alias for \"cs\", \"stan\", \"test\" and \"infect\"</>",
         "ci": "<fg=blue;options=bold>Alias for \"cs\", \"stan\", \"test:ci\" and \"infect:ci\"</>",
         "cs": "<fg=blue;options=bold>Checks coding styles</>",
         "cs:fix": "<fg=blue;options=bold>Fixes coding styles, when possible</>",
