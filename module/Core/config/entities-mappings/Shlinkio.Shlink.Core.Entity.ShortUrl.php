@@ -24,7 +24,7 @@ $builder->createField('id', Type::BIGINT)
 
 $builder->createField('longUrl', Type::STRING)
         ->columnName('original_url')
-        ->length(1024)
+        ->length(2048)
         ->build();
 
 $builder->createField('shortCode', Type::STRING)
