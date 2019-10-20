@@ -28,7 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Fixed
 
-* *Nothing*
+* [#507](https://github.com/shlinkio/shlink/issues/507) Fixed error with too long original URLs by increasing size to the maximum value (2048) based on [the standard](https://stackoverflow.com/a/417184).
 
 
 ## 1.19.0 - 2019-10-05
