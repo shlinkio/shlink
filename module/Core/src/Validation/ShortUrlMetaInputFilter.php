@@ -50,9 +50,7 @@ class ShortUrlMetaInputFilter extends InputFilter
         $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
 
         $domain = $this->createInput(self::DOMAIN, false);
-        $domain->getValidatorChain()->attach(new Validator\Hostname([
-            'allow' => Validator\Hostname::ALLOW_DNS | Validator\Hostname::ALLOW_LOCAL,
-        ]));
+        $domain->getValidatorChain()->attach(new Validation\HostAndPortValidator());
         $this->add($domain);
     }
 }
