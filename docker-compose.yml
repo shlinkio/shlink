@@ -78,6 +78,7 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: shlink
+            MYSQL_INITDB_SKIP_TZINFO: 1
 
     shlink_redis:
         container_name: shlink_redis
