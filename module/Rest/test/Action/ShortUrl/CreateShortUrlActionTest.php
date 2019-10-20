@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
+use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
 
@@ -50,8 +51,8 @@ class CreateShortUrlActionTest extends TestCase
     {
         $shortUrl = new ShortUrl('');
         $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
-            ->willReturn($shortUrl)
-            ->shouldBeCalledOnce();
+             ->willReturn($shortUrl)
+             ->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
@@ -65,8 +66,8 @@ class CreateShortUrlActionTest extends TestCase
     public function anInvalidUrlReturnsError(): void
     {
         $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
-            ->willThrow(InvalidUrlException::class)
-            ->shouldBeCalledOnce();
+             ->willThrow(InvalidUrlException::class)
+             ->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
@@ -74,6 +75,35 @@ class CreateShortUrlActionTest extends TestCase
         $response = $this->action->handle($request);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::INVALID_URL_ERROR) > 0);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideInvalidDomains
+     */
+    public function anInvalidDomainReturnsError(string $domain): void
+    {
+        $shortUrl = new ShortUrl('');
+        $urlToShortCode = $this->urlShortener->urlToShortCode(Argument::cetera())->willReturn($shortUrl);
+
+        $request = (new ServerRequest())->withParsedBody([
+            'longUrl' => 'http://www.domain.com/foo/bar',
+            'domain' => $domain,
+        ]);
+        /** @var JsonResponse $response */
+        $response = $this->action->handle($request);
+        $payload = $response->getPayload();
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(RestUtils::INVALID_ARGUMENT_ERROR, $payload['error']);
+        $urlToShortCode->shouldNotHaveBeenCalled();
+    }
+
+    public function provideInvalidDomains(): iterable
+    {
+        yield ['localhost:80000'];
+        yield ['127.0.0.1'];
+        yield ['???/&%$&'];
     }
 
     /** @test */
