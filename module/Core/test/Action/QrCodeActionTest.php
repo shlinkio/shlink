@@ -36,11 +36,11 @@ class QrCodeActionTest extends TestCase
     }
 
     /** @test */
-    public function aNotFoundShortCodeWillDelegateIntoNextMiddleware()
+    public function aNotFoundShortCodeWillDelegateIntoNextMiddleware(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
-                                                       ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, '')->willThrow(EntityDoesNotExistException::class)
+                                                           ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
@@ -50,11 +50,11 @@ class QrCodeActionTest extends TestCase
     }
 
     /** @test */
-    public function anInvalidShortCodeWillReturnNotFoundResponse()
+    public function anInvalidShortCodeWillReturnNotFoundResponse(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
-                                                       ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, '')->willThrow(InvalidShortCodeException::class)
+                                                           ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
@@ -64,11 +64,11 @@ class QrCodeActionTest extends TestCase
     }
 
     /** @test */
-    public function aCorrectRequestReturnsTheQrCodeResponse()
+    public function aCorrectRequestReturnsTheQrCodeResponse(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willReturn(new ShortUrl(''))
-                                                       ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn(new ShortUrl(''))
+                                                           ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 
         $resp = $this->action->process(
