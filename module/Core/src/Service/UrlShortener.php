@@ -152,6 +152,7 @@ class UrlShortener implements UrlShortenerInterface
         if ($shortUrl === null) {
             throw EntityDoesNotExistException::createFromEntityAndConditions(ShortUrl::class, [
                 'shortCode' => $shortCode,
+                'domain' => $domain,
             ]);
         }
 
