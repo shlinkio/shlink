@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Service\VisitService;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
-use Shlinkio\Shlink\IpGeolocation\Resolver\IpApiLocationResolver;
+use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -45,7 +45,7 @@ class LocateVisitsCommandTest extends TestCase
     public function setUp(): void
     {
         $this->visitService = $this->prophesize(VisitService::class);
-        $this->ipResolver = $this->prophesize(IpApiLocationResolver::class);
+        $this->ipResolver = $this->prophesize(IpLocationResolverInterface::class);
         $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
 
         $this->locker = $this->prophesize(Lock\Factory::class);
