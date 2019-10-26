@@ -24,21 +24,20 @@ trait TagManagerTrait
         $entities = [];
         foreach ($tags as $tagName) {
             $tagName = $this->normalizeTagName($tagName);
-            $tag = $em->getRepository(Tag::class)->findOneBy(['name' => $tagName]) ?: new Tag($tagName);
-            $em->persist($tag);
+            $tag = $em->getRepository(Tag::class)->findOneBy(['name' => $tagName]) ?? new Tag($tagName);
+
+//            if (! $tag) {
+//                $tag = ;
+//                $em->persist($tag);
+//            }
+
             $entities[] = $tag;
         }
 
         return new Collections\ArrayCollection($entities);
     }
 
-    /**
-     * Tag names are trimmed, lower cased and spaces are replaced by dashes
-     *
-     * @param string $tagName
-     * @return string
-     */
-    private function normalizeTagName($tagName): string
+    private function normalizeTagName(string $tagName): string
     {
         return str_replace(' ', '-', strtolower(trim($tagName)));
     }
