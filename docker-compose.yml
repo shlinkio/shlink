@@ -34,6 +34,7 @@ services:
             dockerfile: ./data/infra/swoole.Dockerfile
         ports:
             - "8080:8080"
+            - "9001:9001"
         volumes:
             - ./:/home/shlink
         links:

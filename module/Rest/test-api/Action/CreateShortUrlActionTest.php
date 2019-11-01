@@ -50,10 +50,10 @@ class CreateShortUrlActionTest extends ApiTestCase
     /** @test */
     public function createsNewShortUrlWithTags(): void
     {
-        [$statusCode, $payload] = $this->createShortUrl(['tags' => ['foo', 'bar', 'baz']]);
+        [$statusCode, ['tags' => $tags]] = $this->createShortUrl(['tags' => ['foo', 'bar', 'baz']]);
 
         $this->assertEquals(self::STATUS_OK, $statusCode);
-        $this->assertEquals(['foo', 'bar', 'baz'], $payload['tags']);
+        $this->assertEquals(['foo', 'bar', 'baz'], $tags);
     }
 
     /**

@@ -3,7 +3,7 @@ LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 
 ARG SHLINK_VERSION=1.18.1
 ENV SHLINK_VERSION ${SHLINK_VERSION}
-ENV SWOOLE_VERSION 4.3.3
+ENV SWOOLE_VERSION 4.4.8
 ENV COMPOSER_VERSION 1.9.0
 
 WORKDIR /etc/shlink
