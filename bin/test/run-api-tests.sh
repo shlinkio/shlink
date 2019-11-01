@@ -10,5 +10,5 @@ echo 'Starting server...'
 vendor/bin/zend-expressive-swoole start -d
 sleep 2
 
-APP_ENV=test DB_DRIVER=mysql vendor/bin/phpunit --order-by=random -c phpunit-api.xml --testdox --colors=always
+vendor/bin/phpunit --order-by=random -c phpunit-api.xml --testdox --colors=always
 vendor/bin/zend-expressive-swoole stop
