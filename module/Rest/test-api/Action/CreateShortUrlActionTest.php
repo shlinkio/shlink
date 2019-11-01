@@ -76,7 +76,7 @@ class CreateShortUrlActionTest extends ApiTestCase
 
     public function provideMaxVisits(): array
     {
-        return map(range(1, 20), function (int $i) {
+        return map(range(10, 15), function (int $i) {
             return [$i];
         });
     }

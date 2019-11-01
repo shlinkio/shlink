@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
-set -e
-
 export APP_ENV=test
+export DB_DRIVER=mysql
 
 # Try to stop server just in case it hanged in last execution
 vendor/bin/zend-expressive-swoole stop

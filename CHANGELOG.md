@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#507](https://github.com/shlinkio/shlink/issues/507) Fixed error with too long original URLs by increasing size to the maximum value (2048) based on [the standard](https://stackoverflow.com/a/417184).
 * [#502](https://github.com/shlinkio/shlink/issues/502) Fixed error when providing the port as part of the domain on short URLs.
 * [#509](https://github.com/shlinkio/shlink/issues/509) Fixed error when trying to generate a QR code for a short URL which uses a custom domain.
+* [#522](https://github.com/shlinkio/shlink/issues/522) Highly mitigated errors thrown when lots of short URLs are created concurrently including new and existing tags.
 
 
 ## 1.19.0 - 2019-10-05
