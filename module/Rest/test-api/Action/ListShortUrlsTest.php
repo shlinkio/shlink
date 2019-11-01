@@ -40,7 +40,7 @@ class ListShortUrlsTest extends ApiTestCase
                             . '/acmailer-7-0-the-most-important-release-in-a-long-time/',
                         'dateCreated' => '2019-01-01T00:00:00+00:00',
                         'visitsCount' => 2,
-                        'tags' => ['foo', 'bar'],
+                        'tags' => ['bar', 'foo'],
                         'meta' => [
                             'validSince' => '2020-05-01T00:00:00+00:00',
                             'validUntil' => null,

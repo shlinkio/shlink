@@ -4,6 +4,7 @@ MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 ENV APCU_VERSION 5.1.16
 ENV APCU_BC_VERSION 1.0.4
 ENV INOTIFY_VERSION 2.0.0
+ENV SWOOLE_VERSION 4.4.8
 
 RUN apk update
 
@@ -66,7 +67,7 @@ RUN rm /tmp/inotify.tar.gz
 # Install swoole
 # First line fixes an error when installing pecl extensions. Found in https://github.com/docker-library/php/issues/233
 RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS && \
-    pecl install swoole && \
+    pecl install swoole-${SWOOLE_VERSION} && \
     docker-php-ext-enable swoole && \
     apk del .phpize-deps
 

@@ -8,6 +8,7 @@ use Doctrine\Common\Collections;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\Tag;
 
+use function Functional\map;
 use function str_replace;
 use function strtolower;
 use function trim;
@@ -21,24 +22,18 @@ trait TagManagerTrait
      */
     private function tagNamesToEntities(EntityManagerInterface $em, array $tags): Collections\Collection
     {
-        $entities = [];
-        foreach ($tags as $tagName) {
+        $entities = map($tags, function (string $tagName) use ($em) {
             $tagName = $this->normalizeTagName($tagName);
-            $tag = $em->getRepository(Tag::class)->findOneBy(['name' => $tagName]) ?: new Tag($tagName);
+            $tag = $em->getRepository(Tag::class)->findOneBy(['name' => $tagName]) ?? new Tag($tagName);
             $em->persist($tag);
-            $entities[] = $tag;
-        }
+
+            return $tag;
+        });
 
         return new Collections\ArrayCollection($entities);
     }
 
-    /**
-     * Tag names are trimmed, lower cased and spaces are replaced by dashes
-     *
-     * @param string $tagName
-     * @return string
-     */
-    private function normalizeTagName($tagName): string
+    private function normalizeTagName(string $tagName): string
     {
         return str_replace(' ', '-', strtolower(trim($tagName)));
     }
