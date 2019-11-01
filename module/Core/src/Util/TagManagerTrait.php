@@ -22,7 +22,7 @@ trait TagManagerTrait
      */
     private function tagNamesToEntities(EntityManagerInterface $em, array $tags): Collections\Collection
     {
-        $entities = map($tags, function (string $tagName) use ($em): Tag {
+        $entities = map($tags, function (string $tagName) use ($em) {
             $tagName = $this->normalizeTagName($tagName);
             $tag = $em->getRepository(Tag::class)->findOneBy(['name' => $tagName]) ?? new Tag($tagName);
             $em->persist($tag);
