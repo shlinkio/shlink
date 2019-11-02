@@ -21,8 +21,12 @@ class DeprecatedConfigParser
         }
 
         $oldRedirectEnabled = $config['url_shortener']['not_found_short_url']['enable_redirection'] ?? false;
+        if (! $oldRedirectEnabled) {
+            return $config;
+        }
+
         $oldRedirectValue = $config['url_shortener']['not_found_short_url']['redirect_to'] ?? null;
-        $config['not_found_redirects']['invalid_short_url'] = $oldRedirectEnabled ? $oldRedirectValue : null;
+        $config['not_found_redirects']['invalid_short_url'] = $oldRedirectValue;
 
         return $config;
     }
