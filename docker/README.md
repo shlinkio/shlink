@@ -102,7 +102,7 @@ This is the complete list of supported env vars:
 * `DELETE_SHORT_URL_THRESHOLD`: The amount of visits on short URLs which will not allow them to be deleted. Defaults to `15`.
 * `VALIDATE_URLS`: Boolean which tells if shlink should validate a status 20x (after following redirects) is returned when trying to shorten a URL. Defaults to `true`.
 * `INVALID_SHORT_URL_REDIRECT_TO`: If a URL is provided here, when a user tries to access an invalid short URL, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
-* `404_REDIRECT_TO`: If a URL is provided here, when a user tries to access a URL not matching any one supported by the router, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
+* `REGULAR_404_REDIRECT_TO`: If a URL is provided here, when a user tries to access a URL not matching any one supported by the router, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
 * `BASE_URL_REDIRECT_TO`: If a URL is provided here, when a user tries to access Shlink's base URL, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
 * `BASE_PATH`: The base path from which you plan to serve shlink, in case you don't want to serve it from the root of the domain. Defaults to `''`.
 * `REDIS_SERVERS`: A comma-separated list of redis servers where Shlink locks are stored (locks are used to prevent some operations to be run more than once in parallel).
@@ -155,7 +155,7 @@ The whole configuration should have this format, but it can be split into multip
     "short_domain_host": "doma.in",
     "validate_url": false,
     "invalid_short_url_redirect_to": "https://my-landing-page.com",
-    "404_redirect_to": "https://my-landing-page.com",
+    "regular_404_redirect_to": "https://my-landing-page.com",
     "base_url_redirect_to": "https://my-landing-page.com",
     "redis_servers": [
         "tcp://172.20.0.1:6379",
@@ -174,7 +174,7 @@ The whole configuration should have this format, but it can be split into multip
 ```
 
 > This is internally parsed to how shlink expects the config. If you are using a version previous to 1.17.0, this parser is not present and you need to provide a config structure like the one [documented previously](https://github.com/shlinkio/shlink-docker-image/tree/v1.16.3#provide-config-via-volumes).
-> The `not_found_redirect_to` option has been deprecated when `404_redirect_to` and `base_url_redirect_to` have been introduced. Use `invalid_short_url_redirect_to` instead (however, it will still work for backwards compatibility).
+> The `not_found_redirect_to` option has been deprecated when `regular_404_redirect_to` and `base_url_redirect_to` have been introduced. Use `invalid_short_url_redirect_to` instead (however, it will still work for backwards compatibility).
 
 Once created just run shlink with the volume:
 

@@ -95,7 +95,7 @@ $helper = new class {
     {
         return [
             'invalid_short_url' => env('INVALID_SHORT_URL_REDIRECT_TO', env('NOT_FOUND_REDIRECT_TO')),
-            '404' => env('404_REDIRECT_TO'),
+            'regular_404' => env('REGULAR_404_REDIRECT_TO'),
             'base_url' => env('BASE_URL_REDIRECT_TO'),
         ];
     }

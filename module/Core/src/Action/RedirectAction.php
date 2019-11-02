@@ -18,18 +18,18 @@ class RedirectAction extends AbstractTrackingAction
 {
     use ErrorResponseBuilderTrait;
 
-    /** @var Options\NotFoundShortUrlOptions */
-    private $notFoundOptions;
+    /** @var Options\NotFoundRedirectOptions */
+    private $redirectOptions;
 
     public function __construct(
         UrlShortenerInterface $urlShortener,
         VisitsTrackerInterface $visitTracker,
         Options\AppOptions $appOptions,
-        Options\NotFoundShortUrlOptions $notFoundOptions,
+        Options\NotFoundRedirectOptions $redirectOptions,
         ?LoggerInterface $logger = null
     ) {
         parent::__construct($urlShortener, $visitTracker, $appOptions, $logger);
-        $this->notFoundOptions = $notFoundOptions;
+        $this->redirectOptions = $redirectOptions;
     }
 
     protected function createSuccessResp(string $longUrl): Response
@@ -43,8 +43,8 @@ class RedirectAction extends AbstractTrackingAction
         ServerRequestInterface $request,
         RequestHandlerInterface $handler
     ): Response {
-        if ($this->notFoundOptions->isRedirectionEnabled()) {
-            return new RedirectResponse($this->notFoundOptions->getRedirectTo());
+        if ($this->redirectOptions->hasInvalidShortUrlRedirect()) {
+            return new RedirectResponse($this->redirectOptions->getInvalidShortUrlRedirect());
         }
 
         return $this->buildErrorResponse($request, $handler);

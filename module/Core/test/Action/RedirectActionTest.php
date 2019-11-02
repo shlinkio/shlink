@@ -25,20 +25,20 @@ class RedirectActionTest extends TestCase
     private $urlShortener;
     /** @var ObjectProphecy */
     private $visitTracker;
-    /** @var Options\NotFoundShortUrlOptions */
-    private $notFoundOptions;
+    /** @var Options\NotFoundRedirectOptions */
+    private $redirectOptions;
 
     public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
         $this->visitTracker = $this->prophesize(VisitsTracker::class);
-        $this->notFoundOptions = new Options\NotFoundShortUrlOptions();
+        $this->redirectOptions = new Options\NotFoundRedirectOptions();
 
         $this->action = new RedirectAction(
             $this->urlShortener->reveal(),
             $this->visitTracker->reveal(),
             new Options\AppOptions(['disableTrackParam' => 'foobar']),
-            $this->notFoundOptions
+            $this->redirectOptions
         );
     }
 
@@ -89,8 +89,7 @@ class RedirectActionTest extends TestCase
         $handler = $this->prophesize(RequestHandlerInterface::class);
         $handle = $handler->handle(Argument::any())->willReturn(new Response());
 
-        $this->notFoundOptions->enableRedirection = true;
-        $this->notFoundOptions->redirectTo = 'https://shlink.io';
+        $this->redirectOptions->invalidShortUrl = 'https://shlink.io';
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $resp = $this->action->process($request, $handler->reveal());

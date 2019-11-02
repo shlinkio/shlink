@@ -24,7 +24,7 @@ class SimplifiedConfigParser
         'validate_url' => ['url_shortener', 'validate_url'],
         'not_found_redirect_to' => ['not_found_redirects', 'invalid_short_url'], // Deprecated
         'invalid_short_url_redirect_to' => ['not_found_redirects', 'invalid_short_url'],
-        '404_redirect_to' => ['not_found_redirects', '404'],
+        'regular_404_redirect_to' => ['not_found_redirects', 'regular_404'],
         'base_url_redirect_to' => ['not_found_redirects', 'base_path'],
         'db_config' => ['entity_manager', 'connection'],
         'delete_short_url_threshold' => ['delete_short_urls', 'visits_threshold'],

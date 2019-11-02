@@ -20,7 +20,7 @@ return [
 
             Options\AppOptions::class => ConfigAbstractFactory::class,
             Options\DeleteShortUrlsOptions::class => ConfigAbstractFactory::class,
-            Options\NotFoundShortUrlOptions::class => ConfigAbstractFactory::class,
+            Options\NotFoundRedirectOptions::class => ConfigAbstractFactory::class,
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
 
             Service\UrlShortener::class => ConfigAbstractFactory::class,
@@ -44,7 +44,7 @@ return [
 
         Options\AppOptions::class => ['config.app_options'],
         Options\DeleteShortUrlsOptions::class => ['config.delete_short_urls'],
-        Options\NotFoundShortUrlOptions::class => ['config.url_shortener.not_found_short_url'],
+        Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
         Service\UrlShortener::class => ['httpClient', 'em', Options\UrlShortenerOptions::class],
@@ -58,7 +58,7 @@ return [
             Service\UrlShortener::class,
             Service\VisitsTracker::class,
             Options\AppOptions::class,
-            Options\NotFoundShortUrlOptions::class,
+            Options\NotFoundRedirectOptions::class,
             'Logger_Shlink',
         ],
         Action\PixelAction::class => [

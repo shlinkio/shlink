@@ -6,7 +6,7 @@ return [
 
     'not_found_redirects' => [
         'invalid_short_url' => null, // Formerly url_shortener.not_found_short_url.redirect_to
-        '404' => null,
+        'regular_404' => null,
         'base_url' => null,
     ],
 
