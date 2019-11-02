@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core;
 
 use Doctrine\Common\Cache\Cache;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
 use Zend\Expressive\Router\RouterInterface;
@@ -20,7 +21,7 @@ return [
 
             Options\AppOptions::class => ConfigAbstractFactory::class,
             Options\DeleteShortUrlsOptions::class => ConfigAbstractFactory::class,
-            Options\NotFoundShortUrlOptions::class => ConfigAbstractFactory::class,
+            Options\NotFoundRedirectOptions::class => ConfigAbstractFactory::class,
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
 
             Service\UrlShortener::class => ConfigAbstractFactory::class,
@@ -40,11 +41,15 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        NotFoundHandler::class => [TemplateRendererInterface::class],
+        NotFoundHandler::class => [
+            TemplateRendererInterface::class,
+            NotFoundRedirectOptions::class,
+            'config.router.base_path',
+        ],
 
         Options\AppOptions::class => ['config.app_options'],
         Options\DeleteShortUrlsOptions::class => ['config.delete_short_urls'],
-        Options\NotFoundShortUrlOptions::class => ['config.url_shortener.not_found_short_url'],
+        Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
         Service\UrlShortener::class => ['httpClient', 'em', Options\UrlShortenerOptions::class],
@@ -58,7 +63,6 @@ return [
             Service\UrlShortener::class,
             Service\VisitsTracker::class,
             Options\AppOptions::class,
-            Options\NotFoundShortUrlOptions::class,
             'Logger_Shlink',
         ],
         Action\PixelAction::class => [

@@ -12,7 +12,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
-use Shlinkio\Shlink\Core\Action\Util\ErrorResponseBuilderTrait;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
@@ -21,8 +20,6 @@ use Zend\Expressive\Router\RouterInterface;
 
 class QrCodeAction implements MiddlewareInterface
 {
-    use ErrorResponseBuilderTrait;
-
     private const DEFAULT_SIZE = 300;
     private const MIN_SIZE = 50;
     private const MAX_SIZE = 1000;
@@ -65,10 +62,10 @@ class QrCodeAction implements MiddlewareInterface
             $this->urlShortener->shortCodeToUrl($shortCode, $domain);
         } catch (InvalidShortCodeException | EntityDoesNotExistException $e) {
             $this->logger->warning('An error occurred while creating QR code. {e}', ['e' => $e]);
-            return $this->buildErrorResponse($request, $handler);
+            return $handler->handle($request);
         }
 
-        $path = $this->router->generateUri('long-url-redirect', ['shortCode' => $shortCode]);
+        $path = $this->router->generateUri(RedirectAction::class, ['shortCode' => $shortCode]);
         $size = $this->getSizeParam($request);
 
         $qrCode = new QrCode((string) $request->getUri()->withPath($path)->withQuery(''));

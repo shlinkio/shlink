@@ -11,7 +11,7 @@ return [
 
     'routes' => [
         [
-            'name' => 'long-url-redirect',
+            'name' => Action\RedirectAction::class,
             'path' => '/{shortCode}',
             'middleware' => [
                 IpAddress::class,
@@ -20,7 +20,7 @@ return [
             'allowed_methods' => [RequestMethod::METHOD_GET],
         ],
         [
-            'name' => 'pixel-tracking',
+            'name' => Action\PixelAction::class,
             'path' => '/{shortCode}/track',
             'middleware' => [
                 IpAddress::class,
@@ -29,7 +29,7 @@ return [
             'allowed_methods' => [RequestMethod::METHOD_GET],
         ],
         [
-            'name' => 'short-url-qr-code',
+            'name' => Action\QrCodeAction::class,
             'path' => '/{shortCode}/qr-code[/{size:[0-9]+}]',
             'middleware' => [
                 Middleware\QrCodeCacheMiddleware::class,
