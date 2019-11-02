@@ -68,7 +68,7 @@ class QrCodeAction implements MiddlewareInterface
             return $this->buildErrorResponse($request, $handler);
         }
 
-        $path = $this->router->generateUri('long-url-redirect', ['shortCode' => $shortCode]);
+        $path = $this->router->generateUri(RedirectAction::class, ['shortCode' => $shortCode]);
         $size = $this->getSizeParam($request);
 
         $qrCode = new QrCode((string) $request->getUri()->withPath($path)->withQuery(''));

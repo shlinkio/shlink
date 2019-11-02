@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Zend\Diactoros\Response;
 use Zend\Expressive\Router\RouteResult;
@@ -91,7 +92,7 @@ class NotFoundHandler implements RequestHandlerInterface
 
         if (
             $routeResult->isSuccess() &&
-            $routeResult->getMatchedRouteName() === 'long-url-redirect' &&
+            $routeResult->getMatchedRouteName() === RedirectAction::class &&
             $this->redirectOptions->hasInvalidShortUrlRedirect()
         ) {
             return new Response\RedirectResponse($this->redirectOptions->getInvalidShortUrlRedirect());

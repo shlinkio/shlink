@@ -9,6 +9,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Zend\Diactoros\Response;
@@ -101,7 +102,7 @@ class NotFoundHandlerTest extends TestCase
                             '',
                             $this->prophesize(MiddlewareInterface::class)->reveal(),
                             ['GET'],
-                            'long-url-redirect'
+                            RedirectAction::class
                         )
                     )
                 )
