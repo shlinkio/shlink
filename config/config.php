@@ -31,4 +31,5 @@ return (new ConfigAggregator\ConfigAggregator([
 ], 'data/cache/app_config.php', [
     Core\Config\SimplifiedConfigParser::class,
     Core\Config\BasePathPrefixer::class,
+    Core\Config\DeprecatedConfigParser::class,
 ]))->getMergedConfig();

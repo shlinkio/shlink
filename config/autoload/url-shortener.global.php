@@ -12,10 +12,6 @@ return [
             'hostname' => env('SHORTENED_URL_HOSTNAME'),
         ],
         'validate_url' => true,
-        'not_found_short_url' => [
-            'enable_redirection' => false,
-            'redirect_to' => null,
-        ],
     ],
 
 ];

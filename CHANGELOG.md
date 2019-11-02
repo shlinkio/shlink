@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Generated short codes have 5 characters, and shlink makes sure they keep unique, while making it backwards-compatible.
 
+* [#497](https://github.com/shlinkio/shlink/issues/497) Officially added support for MariaDB.
+
 #### Changed
 
 * [#458](https://github.com/shlinkio/shlink/issues/458) Updated coding styles to use [shlinkio/php-coding-standard](https://github.com/shlinkio/php-coding-standard) v2.0.0.

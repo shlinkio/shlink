@@ -77,7 +77,7 @@ $helper = new class {
         }
 
         $driverOptions = ! contains(['maria', 'mysql'], $driver) ? [] : [
-            // PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+            // 1002 -> PDO::MYSQL_ATTR_INIT_COMMAND
             1002 => 'SET NAMES utf8',
         ];
         return [
@@ -91,13 +91,12 @@ $helper = new class {
         ];
     }
 
-    public function getNotFoundConfig(): array
+    public function getNotFoundRedirectsConfig(): array
     {
-        $notFoundRedirectTo = env('NOT_FOUND_REDIRECT_TO');
-
         return [
-            'enable_redirection' => $notFoundRedirectTo !== null,
-            'redirect_to' => $notFoundRedirectTo,
+            'invalid_short_url' => env('INVALID_SHORT_URL_REDIRECT_TO', env('NOT_FOUND_REDIRECT_TO')),
+            '404' => env('404_REDIRECT_TO'),
+            'base_url' => env('BASE_URL_REDIRECT_TO'),
         ];
     }
 };
@@ -126,8 +125,9 @@ return [
             'hostname' => env('SHORT_DOMAIN_HOST', ''),
         ],
         'validate_url' => (bool) env('VALIDATE_URLS', true),
-        'not_found_short_url' => $helper->getNotFoundConfig(),
     ],
+
+    'not_found_redirects' => $helper->getNotFoundRedirectsConfig(),
 
     'logger' => [
         'handlers' => [

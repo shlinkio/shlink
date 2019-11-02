@@ -75,10 +75,6 @@ class SimplifiedConfigParserTest extends TestCase
                     'hostname' => 'doma.in',
                 ],
                 'validate_url' => false,
-                'not_found_short_url' => [
-                    'redirect_to' => 'foobar.com',
-                    'enable_redirection' => true,
-                ],
             ],
 
             'delete_short_urls' => [
@@ -102,10 +98,38 @@ class SimplifiedConfigParserTest extends TestCase
             'router' => [
                 'base_path' => '/foo/bar',
             ],
+
+            'not_found_redirects' => [
+                'invalid_short_url' => 'foobar.com',
+            ],
         ];
 
         $result = ($this->postProcessor)(array_merge($config, $simplified));
 
         $this->assertEquals(array_merge($expected, $simplified), $result);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideConfigWithDeprecates
+     */
+    public function properlyMapsDeprecatedConfigs(array $config, string $expected): void
+    {
+        $result = ($this->postProcessor)($config);
+        $this->assertEquals($expected, $result['not_found_redirects']['invalid_short_url']);
+    }
+
+    public function provideConfigWithDeprecates(): iterable
+    {
+        yield 'only deprecated config' => [['not_found_redirect_to' => 'old_value'], 'old_value'];
+        yield 'only new config' => [['invalid_short_url_redirect_to' => 'new_value'], 'new_value'];
+        yield 'both configs, new first' => [
+            ['invalid_short_url_redirect_to' => 'new_value', 'not_found_redirect_to' => 'old_value'],
+            'new_value',
+        ];
+        yield 'both configs, deprecated first' => [
+            ['not_found_redirect_to' => 'old_value', 'invalid_short_url_redirect_to' => 'new_value'],
+            'new_value',
+        ];
     }
 }
