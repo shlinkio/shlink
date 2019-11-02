@@ -7,14 +7,11 @@ namespace Shlinkio\Shlink\Core\Action;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Shlinkio\Shlink\Core\Action\Util\ErrorResponseBuilderTrait;
 use Shlinkio\Shlink\Core\Options;
 use Zend\Diactoros\Response\RedirectResponse;
 
 class RedirectAction extends AbstractTrackingAction
 {
-    use ErrorResponseBuilderTrait;
-
     /** @var Options\NotFoundRedirectOptions */
     private $redirectOptions;
 
@@ -27,6 +24,6 @@ class RedirectAction extends AbstractTrackingAction
 
     protected function createErrorResp(ServerRequestInterface $request, RequestHandlerInterface $handler): Response
     {
-        return $this->buildErrorResponse($request, $handler);
+        return $handler->handle($request);
     }
 }

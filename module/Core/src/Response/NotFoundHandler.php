@@ -8,6 +8,7 @@ use Fig\Http\Message\StatusCodeInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
@@ -22,12 +23,11 @@ use function rtrim;
 
 class NotFoundHandler implements RequestHandlerInterface
 {
-    public const NOT_FOUND_TEMPLATE = 'notFoundTemplate';
+    public const NOT_FOUND_ERROR_TEMPLATE = 'ShlinkCore::error/404';
+    public const INVALID_SHORT_CODE_ERROR_TEMPLATE = 'ShlinkCore::invalid-short-code';
 
     /** @var TemplateRendererInterface */
     private $renderer;
-    /** @var string */
-    private $defaultTemplate;
     /** @var NotFoundRedirectOptions */
     private $redirectOptions;
     /** @var string */
@@ -36,11 +36,9 @@ class NotFoundHandler implements RequestHandlerInterface
     public function __construct(
         TemplateRendererInterface $renderer,
         NotFoundRedirectOptions $redirectOptions,
-        string $shlinkBasePath,
-        string $defaultTemplate = 'ShlinkCore::error/404'
+        string $shlinkBasePath
     ) {
         $this->renderer = $renderer;
-        $this->defaultTemplate = $defaultTemplate;
         $this->redirectOptions = $redirectOptions;
         $this->shlinkBasePath = $shlinkBasePath;
     }
@@ -55,7 +53,9 @@ class NotFoundHandler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $redirectResponse = $this->createRedirectResponse($request);
+        /** @var RouteResult $routeResult */
+        $routeResult = $request->getAttribute(RouteResult::class, RouteResult::fromRouteFailure(null));
+        $redirectResponse = $this->createRedirectResponse($routeResult, $request->getUri());
         if ($redirectResponse !== null) {
             return $redirectResponse;
         }
@@ -72,15 +72,15 @@ class NotFoundHandler implements RequestHandlerInterface
             ], $status);
         }
 
-        $notFoundTemplate = $request->getAttribute(self::NOT_FOUND_TEMPLATE, $this->defaultTemplate);
+        $notFoundTemplate = $routeResult->isFailure()
+            ? self::NOT_FOUND_ERROR_TEMPLATE
+            : self::INVALID_SHORT_CODE_ERROR_TEMPLATE;
         return new Response\HtmlResponse($this->renderer->render($notFoundTemplate), $status);
     }
 
-    private function createRedirectResponse(ServerRequestInterface $request): ?ResponseInterface
+    private function createRedirectResponse(RouteResult $routeResult, UriInterface $uri): ?ResponseInterface
     {
-        /** @var RouteResult $routeResult */
-        $routeResult = $request->getAttribute(RouteResult::class, RouteResult::fromRouteFailure(null));
-        $isBaseUrl = rtrim($request->getUri()->getPath(), '/') === $this->shlinkBasePath;
+        $isBaseUrl = rtrim($uri->getPath(), '/') === $this->shlinkBasePath;
 
         if ($isBaseUrl && $this->redirectOptions->hasBaseUrlRedirect()) {
             return new Response\RedirectResponse($this->redirectOptions->getBaseUrlRedirect());

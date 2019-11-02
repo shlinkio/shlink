@@ -110,4 +110,33 @@ class NotFoundHandlerTest extends TestCase
             'invalidShortUrl',
         ];
     }
+
+    /**
+     * @test
+     * @dataProvider provideTemplates
+     */
+    public function properErrorTemplateIsRendered(ServerRequestInterface $request, string $expectedTemplate): void
+    {
+        $request = $request->withHeader('Accept', 'text/html');
+        $render = $this->renderer->render($expectedTemplate)->willReturn('');
+
+        $resp = $this->delegate->handle($request);
+
+        $this->assertInstanceOf(Response\HtmlResponse::class, $resp);
+        $render->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideTemplates(): iterable
+    {
+        $request = ServerRequestFactory::fromGlobals();
+
+        yield [$request, NotFoundHandler::NOT_FOUND_ERROR_TEMPLATE];
+        yield [
+            $request->withAttribute(
+                RouteResult::class,
+                RouteResult::fromRoute(new Route('', $this->prophesize(MiddlewareInterface::class)->reveal()))
+            ),
+            NotFoundHandler::INVALID_SHORT_CODE_ERROR_TEMPLATE,
+        ];
+    }
 }
