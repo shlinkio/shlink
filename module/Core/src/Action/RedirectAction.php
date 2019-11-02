@@ -7,11 +7,8 @@ namespace Shlinkio\Shlink\Core\Action;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Action\Util\ErrorResponseBuilderTrait;
 use Shlinkio\Shlink\Core\Options;
-use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
-use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Zend\Diactoros\Response\RedirectResponse;
 
 class RedirectAction extends AbstractTrackingAction
@@ -21,17 +18,6 @@ class RedirectAction extends AbstractTrackingAction
     /** @var Options\NotFoundRedirectOptions */
     private $redirectOptions;
 
-    public function __construct(
-        UrlShortenerInterface $urlShortener,
-        VisitsTrackerInterface $visitTracker,
-        Options\AppOptions $appOptions,
-        Options\NotFoundRedirectOptions $redirectOptions,
-        ?LoggerInterface $logger = null
-    ) {
-        parent::__construct($urlShortener, $visitTracker, $appOptions, $logger);
-        $this->redirectOptions = $redirectOptions;
-    }
-
     protected function createSuccessResp(string $longUrl): Response
     {
         // Return a redirect response to the long URL.
@@ -39,14 +25,8 @@ class RedirectAction extends AbstractTrackingAction
         return new RedirectResponse($longUrl);
     }
 
-    protected function createErrorResp(
-        ServerRequestInterface $request,
-        RequestHandlerInterface $handler
-    ): Response {
-        if ($this->redirectOptions->hasInvalidShortUrlRedirect()) {
-            return new RedirectResponse($this->redirectOptions->getInvalidShortUrlRedirect());
-        }
-
+    protected function createErrorResp(ServerRequestInterface $request, RequestHandlerInterface $handler): Response
+    {
         return $this->buildErrorResponse($request, $handler);
     }
 }

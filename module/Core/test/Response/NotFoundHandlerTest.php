@@ -7,9 +7,16 @@ namespace ShlinkioTest\Shlink\Core\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
+use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Uri;
+use Zend\Expressive\Router\Route;
+use Zend\Expressive\Router\RouteResult;
 use Zend\Expressive\Template\TemplateRendererInterface;
 
 class NotFoundHandlerTest extends TestCase
@@ -18,11 +25,15 @@ class NotFoundHandlerTest extends TestCase
     private $delegate;
     /** @var ObjectProphecy */
     private $renderer;
+    /** @var NotFoundRedirectOptions */
+    private $redirectOptions;
 
     public function setUp(): void
     {
         $this->renderer = $this->prophesize(TemplateRendererInterface::class);
-        $this->delegate = new NotFoundHandler($this->renderer->reveal());
+        $this->redirectOptions = new NotFoundRedirectOptions();
+
+        $this->delegate = new NotFoundHandler($this->renderer->reveal(), $this->redirectOptions, '');
     }
 
     /**
@@ -46,5 +57,56 @@ class NotFoundHandlerTest extends TestCase
         yield 'text/json' => [Response\JsonResponse::class, 'text/json', 0];
         yield 'application/x-json' => [Response\JsonResponse::class, 'application/x-json', 0];
         yield 'text/html' => [Response\HtmlResponse::class, 'text/html', 1];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideRedirects
+     */
+    public function expectedRedirectionIsReturnedDependingOnTheCase(
+        ServerRequestInterface $request,
+        string $expectedRedirectTo
+    ): void {
+        $this->redirectOptions->invalidShortUrl = 'invalidShortUrl';
+        $this->redirectOptions->regular404 = 'regular404';
+        $this->redirectOptions->baseUrl = 'baseUrl';
+
+        $resp = $this->delegate->handle($request);
+
+        $this->assertInstanceOf(Response\RedirectResponse::class, $resp);
+        $this->assertEquals($expectedRedirectTo, $resp->getHeaderLine('Location'));
+        $this->renderer->render(Argument::cetera())->shouldNotHaveBeenCalled();
+    }
+
+    public function provideRedirects(): iterable
+    {
+        yield 'base URL with trailing slash' => [
+            ServerRequestFactory::fromGlobals()->withUri(new Uri('/')),
+            'baseUrl',
+        ];
+        yield 'base URL without trailing slash' => [
+            ServerRequestFactory::fromGlobals()->withUri(new Uri('')),
+            'baseUrl',
+        ];
+        yield 'regular 404' => [
+            ServerRequestFactory::fromGlobals()->withUri(new Uri('/foo/bar')),
+            'regular404',
+        ];
+        yield 'invalid short URL' => [
+            ServerRequestFactory::fromGlobals()
+                ->withAttribute(
+                    RouteResult::class,
+                    RouteResult::fromRoute(
+                        new Route(
+                            '',
+                            $this->prophesize(MiddlewareInterface::class)->reveal(),
+                            ['GET'],
+                            'long-url-redirect'
+                        )
+                    )
+                )
+                ->withUri(new Uri('/abc123')),
+            'invalidShortUrl',
+        ];
     }
 }
