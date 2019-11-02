@@ -14,6 +14,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Generated short codes have 5 characters, and shlink makes sure they keep unique, while making it backwards-compatible.
 
+* [#418](https://github.com/shlinkio/shlink/issues/418) and [#419](https://github.com/shlinkio/shlink/issues/419) Added support to redirect any 404 error to a custom URL.
+
+    It was already possible to configure this but only for invalid short URLs. Shlink now also support configuring redirects for the base URL and any other kind of "not found" error.
+
+    The three URLs can be different, and it is already possible to pass them to the docker image via configuration or env vars.
+
+    The installer also asks for these two new configuration options.
+
 * [#497](https://github.com/shlinkio/shlink/issues/497) Officially added support for MariaDB.
 
 #### Changed
