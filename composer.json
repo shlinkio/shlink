@@ -36,7 +36,7 @@
         "pugx/shortid-php": "^0.5",
         "shlinkio/shlink-common": "^2.2.1",
         "shlinkio/shlink-event-dispatcher": "^1.0",
-        "shlinkio/shlink-installer": "^2.1",
+        "shlinkio/shlink-installer": "^3.0",
         "shlinkio/shlink-ip-geolocation": "^1.1",
         "symfony/console": "^4.3",
         "symfony/filesystem": "^4.3",

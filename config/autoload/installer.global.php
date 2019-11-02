@@ -12,8 +12,6 @@ return [
             Plugin\UrlShortenerConfigCustomizer::HOSTNAME,
             Plugin\UrlShortenerConfigCustomizer::CHARS,
             Plugin\UrlShortenerConfigCustomizer::VALIDATE_URL,
-            Plugin\UrlShortenerConfigCustomizer::ENABLE_NOT_FOUND_REDIRECTION,
-            Plugin\UrlShortenerConfigCustomizer::NOT_FOUND_REDIRECT_TO,
         ],
 
         Plugin\ApplicationConfigCustomizer::class => [
@@ -31,6 +29,12 @@ return [
             Plugin\DatabaseConfigCustomizer::PASSWORD,
             Plugin\DatabaseConfigCustomizer::HOST,
             Plugin\DatabaseConfigCustomizer::PORT,
+        ],
+
+        Plugin\RedirectsConfigCustomizer::class => [
+            Plugin\RedirectsConfigCustomizer::INVALID_SHORT_URL_REDIRECT_TO,
+            Plugin\RedirectsConfigCustomizer::REGULAR_404_REDIRECT_TO,
+            Plugin\RedirectsConfigCustomizer::BASE_URL_REDIRECT_TO,
         ],
     ],
 
