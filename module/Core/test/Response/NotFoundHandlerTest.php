@@ -130,13 +130,13 @@ class NotFoundHandlerTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
 
-        yield [$request, NotFoundHandler::NOT_FOUND_ERROR_TEMPLATE];
+        yield [$request, NotFoundHandler::NOT_FOUND_TEMPLATE];
         yield [
             $request->withAttribute(
                 RouteResult::class,
                 RouteResult::fromRoute(new Route('', $this->prophesize(MiddlewareInterface::class)->reveal()))
             ),
-            NotFoundHandler::INVALID_SHORT_CODE_ERROR_TEMPLATE,
+            NotFoundHandler::INVALID_SHORT_CODE_TEMPLATE,
         ];
     }
 }

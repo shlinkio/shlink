@@ -133,7 +133,9 @@ docker run \
     -e DISABLE_TRACK_PARAM="no-track" \
     -e DELETE_SHORT_URL_THRESHOLD=30 \
     -e VALIDATE_URLS=false \
-    -e "NOT_FOUND_REDIRECT_TO=https://www.google.com" \
+    -e "INVALID_SHORT_URL_REDIRECT_TO=https://my-landing-page.com" \
+    -e "REGULAR_404_REDIRECT_TO=https://my-landing-page.com" \
+    -e "BASE_URL_REDIRECT_TO=https://my-landing-page.com" \
     -e "REDIS_SERVERS=tcp://172.20.0.1:6379,tcp://172.20.0.2:6379" \
     -e "BASE_PATH=/my-campaign" \
     shlinkio/shlink

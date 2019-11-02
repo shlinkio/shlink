@@ -23,8 +23,8 @@ use function rtrim;
 
 class NotFoundHandler implements RequestHandlerInterface
 {
-    public const NOT_FOUND_ERROR_TEMPLATE = 'ShlinkCore::error/404';
-    public const INVALID_SHORT_CODE_ERROR_TEMPLATE = 'ShlinkCore::invalid-short-code';
+    public const NOT_FOUND_TEMPLATE = 'ShlinkCore::error/404';
+    public const INVALID_SHORT_CODE_TEMPLATE = 'ShlinkCore::invalid-short-code';
 
     /** @var TemplateRendererInterface */
     private $renderer;
@@ -72,10 +72,8 @@ class NotFoundHandler implements RequestHandlerInterface
             ], $status);
         }
 
-        $notFoundTemplate = $routeResult->isFailure()
-            ? self::NOT_FOUND_ERROR_TEMPLATE
-            : self::INVALID_SHORT_CODE_ERROR_TEMPLATE;
-        return new Response\HtmlResponse($this->renderer->render($notFoundTemplate), $status);
+        $template = $routeResult->isFailure() ? self::NOT_FOUND_TEMPLATE : self::INVALID_SHORT_CODE_TEMPLATE;
+        return new Response\HtmlResponse($this->renderer->render($template), $status);
     }
 
     private function createRedirectResponse(RouteResult $routeResult, UriInterface $uri): ?ResponseInterface
