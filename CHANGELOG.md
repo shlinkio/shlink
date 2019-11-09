@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+#### Added
+
+* [#519](https://github.com/shlinkio/shlink/issues/519) Documented how to customize web workers and task workers for the docker image.
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* *Nothing*
+
+
 ## 1.20.0 - 2019-11-02
 
 #### Added
@@ -34,7 +57,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Removed
 
-* * *Nothing*
+* *Nothing*
 
 #### Fixed
 

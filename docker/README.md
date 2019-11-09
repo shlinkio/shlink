@@ -64,7 +64,7 @@ It is possible to use a set of env vars to make this shlink instance interact wi
 * `DB_PASSWORD`: **[Mandatory]**. The password credential for the database server.
 * `DB_HOST`: **[Mandatory]**. The host name of the server running the database engine.
 * `DB_PORT`: [Optional]. The port in which the database service is running.
-    * Default value is based on the driver:
+    * Default value is based on the value provided for `DB_DRIVER`:
         * **mysql** or **maria** -> `3306`
         * **postgres** -> `5432`
 
@@ -97,7 +97,10 @@ This is the complete list of supported env vars:
 * `DB_USER`: The username credential to be used when using an external database driver.
 * `DB_PASSWORD`: The password credential to be used when using an external database driver.
 * `DB_HOST`: The host name of the database server  when using an external database driver.
-* `DB_PORT`: The port in which the database service is running when using an external database driver. Defaults to **3306**.
+* `DB_PORT`: The port in which the database service is running when using an external database driver.
+    * Default value is based on the value provided for `DB_DRIVER`:
+        * **mysql** or **maria** -> `3306`
+        * **postgres** -> `5432`
 * `DISABLE_TRACK_PARAM`: The name of a query param that can be used to visit short URLs avoiding the visit to be tracked. This feature won't be available if not value is provided.
 * `DELETE_SHORT_URL_THRESHOLD`: The amount of visits on short URLs which will not allow them to be deleted. Defaults to `15`.
 * `VALIDATE_URLS`: Boolean which tells if shlink should validate a status 20x (after following redirects) is returned when trying to shorten a URL. Defaults to `true`.
@@ -105,6 +108,8 @@ This is the complete list of supported env vars:
 * `REGULAR_404_REDIRECT_TO`: If a URL is provided here, when a user tries to access a URL not matching any one supported by the router, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
 * `BASE_URL_REDIRECT_TO`: If a URL is provided here, when a user tries to access Shlink's base URL, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
 * `BASE_PATH`: The base path from which you plan to serve shlink, in case you don't want to serve it from the root of the domain. Defaults to `''`.
+* `WEB_WORKER_NUM`: The amount of concurrent http requests this shlink instance will be able to server. Defaults to 16.
+* `TASK_WORKER_NUM`: The amount of concurrent background tasks this shlink instance will be able to execute. Defaults to 16.
 * `REDIS_SERVERS`: A comma-separated list of redis servers where Shlink locks are stored (locks are used to prevent some operations to be run more than once in parallel).
 
     This is important when running more than one Shlink instance ([Multi instance considerations](#multi-instance-considerations)). If not provided, Shlink stores locks on every instance separately.

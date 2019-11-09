@@ -163,4 +163,13 @@ return [
         'base_path' => env('BASE_PATH', ''),
     ],
 
+    'zend-expressive-swoole' => [
+        'swoole-http-server' => [
+            'options' => [
+                'worker_num' => (int) env('WEB_WORKER_NUM', 16),
+                'task_worker_num' => (int) env('TASK_WORKER_NUM', 16),
+            ],
+        ],
+    ],
+
 ];
