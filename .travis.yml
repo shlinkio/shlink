@@ -18,6 +18,10 @@ services:
   - postgresql
   - docker
 
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
 before_install:
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - yes | pecl install swoole
@@ -25,7 +29,7 @@ before_install:
 
 install:
   - composer self-update
-  - composer install --no-interaction
+  - composer install --no-interaction --prefer-dist
 
 before_script:
   - mysql -e 'CREATE DATABASE shlink_test;'

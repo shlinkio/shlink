@@ -10,4 +10,9 @@ vendor/bin/zend-expressive-swoole start -d
 sleep 2
 
 vendor/bin/phpunit --order-by=random -c phpunit-api.xml --testdox --colors=always
+testsExitCode=$?
+
 vendor/bin/zend-expressive-swoole stop
+
+# Exit this script with the same code as the tests. If tests failed, this script has to fail
+exit $testsExitCode
