@@ -143,6 +143,8 @@ docker run \
     -e "BASE_URL_REDIRECT_TO=https://my-landing-page.com" \
     -e "REDIS_SERVERS=tcp://172.20.0.1:6379,tcp://172.20.0.2:6379" \
     -e "BASE_PATH=/my-campaign" \
+    -e WEB_WORKER_NUM=64 \
+    -e TASK_WORKER_NUM=32 \
     shlinkio/shlink
 ```
 
@@ -164,6 +166,9 @@ The whole configuration should have this format, but it can be split into multip
     "invalid_short_url_redirect_to": "https://my-landing-page.com",
     "regular_404_redirect_to": "https://my-landing-page.com",
     "base_url_redirect_to": "https://my-landing-page.com",
+    "base_path": "/my-campaign",
+    "web_worker_num": 64,
+    "task_worker_num": 32,
     "redis_servers": [
         "tcp://172.20.0.1:6379",
         "tcp://172.20.0.2:6379"
