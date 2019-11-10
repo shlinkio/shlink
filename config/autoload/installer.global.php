@@ -10,7 +10,6 @@ return [
         Plugin\UrlShortenerConfigCustomizer::class => [
             Plugin\UrlShortenerConfigCustomizer::SCHEMA,
             Plugin\UrlShortenerConfigCustomizer::HOSTNAME,
-            Plugin\UrlShortenerConfigCustomizer::CHARS,
             Plugin\UrlShortenerConfigCustomizer::VALIDATE_URL,
         ],
 
@@ -20,6 +19,8 @@ return [
             Plugin\ApplicationConfigCustomizer::CHECK_VISITS_THRESHOLD,
             Plugin\ApplicationConfigCustomizer::VISITS_THRESHOLD,
             Plugin\ApplicationConfigCustomizer::BASE_PATH,
+            Plugin\ApplicationConfigCustomizer::WEB_WORKER_NUM,
+            Plugin\ApplicationConfigCustomizer::TASK_WORKER_NUM,
         ],
 
         Plugin\DatabaseConfigCustomizer::class => [
