@@ -52,6 +52,7 @@ class SimplifiedConfigParserTest extends TestCase
                 'port' => '1234',
             ],
             'base_path' => '/foo/bar',
+            'task_worker_num' => 50,
         ];
         $expected = [
             'app_options' => [
@@ -101,6 +102,14 @@ class SimplifiedConfigParserTest extends TestCase
 
             'not_found_redirects' => [
                 'invalid_short_url' => 'foobar.com',
+            ],
+
+            'zend-expressive-swoole' => [
+                'swoole-http-server' => [
+                    'options' => [
+                        'task_worker_num' => 50,
+                    ],
+                ],
             ],
         ];
 
