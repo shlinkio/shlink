@@ -186,7 +186,8 @@ The whole configuration should have this format, but it can be split into multip
 ```
 
 > This is internally parsed to how shlink expects the config. If you are using a version previous to 1.17.0, this parser is not present and you need to provide a config structure like the one [documented previously](https://github.com/shlinkio/shlink-docker-image/tree/v1.16.3#provide-config-via-volumes).
-> The `not_found_redirect_to` option has been deprecated when `regular_404_redirect_to` and `base_url_redirect_to` have been introduced. Use `invalid_short_url_redirect_to` instead (however, it will still work for backwards compatibility).
+
+> The `not_found_redirect_to` option has been deprecated in v1.20. Use `invalid_short_url_redirect_to` instead (however, it will still work for backwards compatibility).
 
 Once created just run shlink with the volume:
 
