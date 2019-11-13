@@ -17,6 +17,8 @@ use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
+use function array_key_exists;
+
 class RedirectActionTest extends TestCase
 {
     /** @var RedirectAction */
@@ -38,23 +40,36 @@ class RedirectActionTest extends TestCase
         );
     }
 
-    /** @test */
-    public function redirectionIsPerformedToLongUrl(): void
+    /**
+     * @test
+     * @dataProvider provideQueries
+     */
+    public function redirectionIsPerformedToLongUrl(string $expectedUrl, array $query): void
     {
         $shortCode = 'abc123';
-        $expectedUrl = 'http://domain.com/foo/bar';
-        $shortUrl = new ShortUrl($expectedUrl);
-        $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn($shortUrl)
-                                                           ->shouldBeCalledOnce();
-        $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();
+        $shortUrl = new ShortUrl('http://domain.com/foo/bar?some=thing');
+        $shortCodeToUrl = $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn($shortUrl);
+        $track = $this->visitTracker->track(Argument::cetera())->will(function () {
+        });
 
-        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)->withQueryParams($query);
         $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
 
         $this->assertInstanceOf(Response\RedirectResponse::class, $response);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertTrue($response->hasHeader('Location'));
         $this->assertEquals($expectedUrl, $response->getHeaderLine('Location'));
+        $shortCodeToUrl->shouldHaveBeenCalledOnce();
+        $track->shouldHaveBeenCalledTimes(array_key_exists('foobar', $query) ? 0 : 1);
+    }
+
+    public function provideQueries(): iterable
+    {
+        yield ['http://domain.com/foo/bar?some=thing', []];
+        yield ['http://domain.com/foo/bar?some=thing', ['foobar' => 'notrack']];
+        yield ['http://domain.com/foo/bar?some=thing&foo=bar', ['foo' => 'bar']];
+        yield ['http://domain.com/foo/bar?some=overwritten&foo=bar', ['foo' => 'bar', 'some' => 'overwritten']];
+        yield ['http://domain.com/foo/bar?some=overwritten', ['foobar' => 'notrack', 'some' => 'overwritten']];
     }
 
     /** @test */
@@ -72,25 +87,5 @@ class RedirectActionTest extends TestCase
         $this->action->process($request, $handler->reveal());
 
         $handle->shouldHaveBeenCalledOnce();
-    }
-
-    /** @test */
-    public function visitIsNotTrackedIfDisableParamIsProvided(): void
-    {
-        $shortCode = 'abc123';
-        $expectedUrl = 'http://domain.com/foo/bar';
-        $shortUrl = new ShortUrl($expectedUrl);
-        $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn($shortUrl)
-                                                           ->shouldBeCalledOnce();
-        $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();
-
-        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)
-                                                      ->withQueryParams(['foobar' => true]);
-        $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
-
-        $this->assertInstanceOf(Response\RedirectResponse::class, $response);
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertTrue($response->hasHeader('Location'));
-        $this->assertEquals($expectedUrl, $response->getHeaderLine('Location'));
     }
 }

@@ -10,14 +10,19 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
+use Zend\Diactoros\Uri;
 
 use function array_key_exists;
+use function array_merge;
+use function GuzzleHttp\Psr7\parse_query;
+use function http_build_query;
 
 abstract class AbstractTrackingAction implements MiddlewareInterface
 {
@@ -66,11 +71,23 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
                 $this->visitTracker->track($shortCode, Visitor::fromRequest($request));
             }
 
-            return $this->createSuccessResp($url->getLongUrl());
+            return $this->createSuccessResp($this->buildUrlToRedirectTo($url, $query, $disableTrackParam));
         } catch (InvalidShortCodeException | EntityDoesNotExistException $e) {
             $this->logger->warning('An error occurred while tracking short code. {e}', ['e' => $e]);
             return $this->createErrorResp($request, $handler);
         }
+    }
+
+    private function buildUrlToRedirectTo(ShortUrl $shortUrl, array $currentQuery, ?string $disableTrackParam): string
+    {
+        $uri = new Uri($shortUrl->getLongUrl());
+        $hardcodedQuery = parse_query($uri->getQuery());
+        if ($disableTrackParam !== null) {
+            unset($currentQuery[$disableTrackParam]);
+        }
+        $mergedQuery = array_merge($hardcodedQuery, $currentQuery);
+
+        return (string) $uri->withQuery(http_build_query($mergedQuery));
     }
 
     abstract protected function createSuccessResp(string $longUrl): ResponseInterface;
