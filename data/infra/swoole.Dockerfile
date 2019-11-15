@@ -1,10 +1,10 @@
-FROM php:7.3.1-cli-alpine3.8
+FROM php:7.3.11-alpine3.10
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
-ENV APCU_VERSION 5.1.16
-ENV APCU_BC_VERSION 1.0.4
+ENV APCU_VERSION 5.1.18
+ENV APCU_BC_VERSION 1.0.5
 ENV INOTIFY_VERSION 2.0.0
-ENV SWOOLE_VERSION 4.4.8
+ENV SWOOLE_VERSION 4.4.12
 
 RUN apk update
 
@@ -14,17 +14,16 @@ RUN docker-php-ext-install iconv
 RUN docker-php-ext-install mbstring
 RUN docker-php-ext-install calendar
 
-RUN apk add --no-cache --virtual sqlite-libs
-RUN apk add --no-cache --virtual sqlite-dev
+RUN apk add --no-cache sqlite-libs
+RUN apk add --no-cache sqlite-dev
 RUN docker-php-ext-install pdo_sqlite
 
-RUN apk add --no-cache --virtual icu-dev
-RUN docker-php-ext-install intl
+RUN apk add --no-cache icu-dev
 
-RUN apk add --no-cache --virtual libzip-dev zlib-dev
+RUN apk add --no-cache libzip-dev zlib-dev
 RUN docker-php-ext-install zip
 
-RUN apk add --no-cache --virtual libpng-dev
+RUN apk add --no-cache libpng-dev
 RUN docker-php-ext-install gd
 
 RUN apk add --no-cache postgresql-dev
