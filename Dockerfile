@@ -1,4 +1,4 @@
-FROM php:7.3-alpine
+FROM php:7.3.11-alpine
 LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 
 ARG SHLINK_VERSION=1.20.0
