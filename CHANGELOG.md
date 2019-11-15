@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Fixed
 
-* *Nothing*
+* [#512](https://github.com/shlinkio/shlink/issues/512) Fixed query params not being properly forwarded from short URL to long one.
 
 
 ## 1.20.0 - 2019-11-02

@@ -62,26 +62,26 @@ class ListShortUrlsCommand extends Command
             ->addOption(
                 'page',
                 'p',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 sprintf('The first page to list (%s items per page)', ShortUrlRepositoryAdapter::ITEMS_PER_PAGE),
                 '1'
             )
             ->addOption(
                 'searchTerm',
                 's',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'A query used to filter results by searching for it on the longUrl and shortCode fields'
             )
             ->addOption(
                 'tags',
                 't',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'A comma-separated list of tags to filter results'
             )
             ->addOption(
                 'orderBy',
                 'o',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'The field from which we want to order by. Pass ASC or DESC separated by a comma'
             )
             ->addOption('showTags', null, InputOption::VALUE_NONE, 'Whether to display the tags or not');
