@@ -84,7 +84,7 @@ class UrlValidatorTest extends TestCase
     public function provideUrls(): iterable
     {
         yield 'regular domain' => ['http://foobar.com', 'http://foobar.com'];
-        yield 'IDN' => ['https://cédric.laubacher.io/', 'https://xn--cdric-bsa.laubacher.io/'];
+        yield 'IDN' => ['https://tést.shlink.io', 'https://xn--tst-bma.shlink.io'];
     }
 
     /** @test */
