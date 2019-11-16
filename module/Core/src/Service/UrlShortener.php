@@ -5,10 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Fig\Http\Message\RequestMethodInterface;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver\PersistenceDomainResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -20,6 +16,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
+use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 use Throwable;
 
 use function array_reduce;
@@ -28,16 +25,19 @@ class UrlShortener implements UrlShortenerInterface
 {
     use TagManagerTrait;
 
-    /** @var ClientInterface */
-    private $httpClient;
     /** @var EntityManagerInterface */
     private $em;
     /** @var UrlShortenerOptions */
     private $options;
+    /** @var UrlValidatorInterface */
+    private $urlValidator;
 
-    public function __construct(ClientInterface $httpClient, EntityManagerInterface $em, UrlShortenerOptions $options)
-    {
-        $this->httpClient = $httpClient;
+    public function __construct(
+        UrlValidatorInterface $urlValidator,
+        EntityManagerInterface $em,
+        UrlShortenerOptions $options
+    ) {
+        $this->urlValidator = $urlValidator;
         $this->em = $em;
         $this->options = $options;
     }
@@ -60,7 +60,7 @@ class UrlShortener implements UrlShortenerInterface
 
         // If the URL validation is enabled, check that the URL actually exists
         if ($this->options->isUrlValidationEnabled()) {
-            $this->checkUrlExists($url);
+            $this->urlValidator->validateUrl($url);
         }
 
         $this->em->beginTransaction();
@@ -108,17 +108,6 @@ class UrlShortener implements UrlShortenerInterface
 
             return $shortUrl->matchesCriteria($meta, $tags) ? $shortUrl : null;
         });
-    }
-
-    private function checkUrlExists(string $url): void
-    {
-        try {
-            $this->httpClient->request(RequestMethodInterface::METHOD_GET, $url, [
-                RequestOptions::ALLOW_REDIRECTS => ['max' => 15],
-            ]);
-        } catch (GuzzleException $e) {
-            throw InvalidUrlException::fromUrl($url, $e);
-        }
     }
 
     private function verifyShortCodeUniqueness(ShortUrlMeta $meta, ShortUrl $shortUrlToBeCreated): void

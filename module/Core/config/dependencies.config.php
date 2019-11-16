@@ -31,6 +31,8 @@ return [
             Service\Tag\TagService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
 
+            Util\UrlValidator::class => ConfigAbstractFactory::class,
+
             Action\RedirectAction::class => ConfigAbstractFactory::class,
             Action\PixelAction::class => ConfigAbstractFactory::class,
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
@@ -52,12 +54,14 @@ return [
         Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
-        Service\UrlShortener::class => ['httpClient', 'em', Options\UrlShortenerOptions::class],
+        Service\UrlShortener::class => [Util\UrlValidator::class, 'em', Options\UrlShortenerOptions::class],
         Service\VisitsTracker::class => ['em', EventDispatcherInterface::class],
         Service\ShortUrlService::class => ['em'],
         Service\VisitService::class => ['em'],
         Service\Tag\TagService::class => ['em'],
         Service\ShortUrl\DeleteShortUrlService::class => ['em', Options\DeleteShortUrlsOptions::class],
+
+        Util\UrlValidator::class => ['httpClient'],
 
         Action\RedirectAction::class => [
             Service\UrlShortener::class,
