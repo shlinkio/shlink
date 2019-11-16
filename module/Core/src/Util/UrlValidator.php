@@ -16,7 +16,7 @@ use function idn_to_ascii;
 use const IDNA_DEFAULT;
 use const INTL_IDNA_VARIANT_UTS46;
 
-class UrlValidator implements UrlValidatorInterface
+class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
 {
     private const MAX_REDIRECTS = 15;
 
@@ -43,7 +43,7 @@ class UrlValidator implements UrlValidatorInterface
         }
 
         try {
-            $this->httpClient->request(RequestMethodInterface::METHOD_GET, (string) $uri, [
+            $this->httpClient->request(self::METHOD_GET, (string) $uri, [
                 RequestOptions::ALLOW_REDIRECTS => ['max' => self::MAX_REDIRECTS],
             ]);
         } catch (GuzzleException $e) {
