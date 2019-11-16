@@ -102,7 +102,7 @@ class GenerateShortUrlCommand extends Command
             return;
         }
 
-        $longUrl = $io->ask('A long URL was not provided. Which URL do you want to be shortened?');
+        $longUrl = $io->ask('Which URL do you want to shorten?');
         if (! empty($longUrl)) {
             $input->setArgument('longUrl', $longUrl);
         }
