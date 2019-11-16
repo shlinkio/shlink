@@ -182,14 +182,22 @@ class CreateShortUrlActionTest extends ApiTestCase
         $this->assertNotEquals($firstShortCode, $secondShortCode);
     }
 
-    /** @test */
-    public function createsNewShortUrlWithInternationalizedDomainName(): void
+    /**
+     * @test
+     * @dataProvider provideIdn
+     */
+    public function createsNewShortUrlWithInternationalizedDomainName(string $longUrl): void
     {
-        $longUrl = 'https://cédric.laubacher.io/';
         [$statusCode, ['longUrl' => $expectedLongUrl]] = $this->createShortUrl(['longUrl' => $longUrl]);
 
         $this->assertEquals(self::STATUS_OK, $statusCode);
         $this->assertEquals($expectedLongUrl, $longUrl);
+    }
+
+    public function provideIdn(): iterable
+    {
+        // TODO Create some shlink IDN domains to test this instead of using public ones
+        return [['https://cédric.laubacher.io/'], ['https://laubacher.io/']]; // Second one redirects to first
     }
 
     /**

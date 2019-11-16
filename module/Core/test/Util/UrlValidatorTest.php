@@ -13,6 +13,10 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Util\UrlValidator;
 use Zend\Diactoros\Request;
+use Zend\Diactoros\Response;
+
+use function Functional\map;
+use function range;
 
 class UrlValidatorTest extends TestCase
 {
@@ -27,17 +31,37 @@ class UrlValidatorTest extends TestCase
         $this->urlValidator = new UrlValidator($this->httpClient->reveal());
     }
 
-    /** @test */
-    public function exceptionIsThrownWhenUrlIsInvalid(): void
+    /**
+     * @test
+     * @dataProvider provideAttemptThatThrows
+     */
+    public function exceptionIsThrownWhenUrlIsInvalid(int $attemptThatThrows): void
     {
-        $request = $this->httpClient->request(Argument::cetera())->willThrow(
-            new ClientException('', $this->prophesize(Request::class)->reveal())
+        $callNum = 1;
+        $e = new ClientException('', $this->prophesize(Request::class)->reveal());
+
+        $request = $this->httpClient->request(Argument::cetera())->will(
+            function () use ($e, $attemptThatThrows, &$callNum) {
+                if ($callNum === $attemptThatThrows) {
+                    throw $e;
+                }
+
+                $callNum++;
+                return new Response('php://memory', 302, ['Location' => 'http://foo.com']);
+            }
         );
 
+        $request->shouldBeCalledTimes($attemptThatThrows);
         $this->expectException(InvalidUrlException::class);
-        $request->shouldBeCalledOnce();
 
         $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar');
+    }
+
+    public function provideAttemptThatThrows(): iterable
+    {
+        return map(range(1, 15), function (int $attempt) {
+            return [$attempt];
+        });
     }
 
     /**
@@ -50,8 +74,7 @@ class UrlValidatorTest extends TestCase
             RequestMethodInterface::METHOD_GET,
             $expectedUrl,
             Argument::cetera()
-        )->will(function () {
-        });
+        )->willReturn(new Response());
 
         $this->urlValidator->validateUrl($providedUrl);
 
@@ -62,5 +85,17 @@ class UrlValidatorTest extends TestCase
     {
         yield 'regular domain' => ['http://foobar.com', 'http://foobar.com'];
         yield 'IDN' => ['https://cédric.laubacher.io/', 'https://xn--cdric-bsa.laubacher.io/'];
+    }
+
+    /** @test */
+    public function considersUrlValidWhenTooManyRedirectsAreReturned(): void
+    {
+        $request = $this->httpClient->request(Argument::cetera())->willReturn(
+            new Response('php://memory', 302, ['Location' => 'http://foo.com'])
+        );
+
+        $this->urlValidator->validateUrl('http://foobar.com');
+
+        $request->shouldHaveBeenCalledTimes(15);
     }
 }
