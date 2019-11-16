@@ -18,6 +18,7 @@ RUN apk add --no-cache sqlite-dev
 RUN docker-php-ext-install pdo_sqlite
 
 RUN apk add --no-cache icu-dev
+RUN docker-php-ext-install intl
 
 RUN apk add --no-cache libzip-dev zlib-dev
 RUN docker-php-ext-install zip
