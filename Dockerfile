@@ -17,7 +17,9 @@ RUN \
     # Install postgres
     apk add --no-cache postgresql-dev && \
     docker-php-ext-install -j"$(nproc)" pdo_pgsql && \
+    # Install intl
     apk add --no-cache icu-dev && \
+    docker-php-ext-install -j"$(nproc)" intl && \
     # Install zip and gd
     apk add --no-cache libzip-dev zlib-dev libpng-dev && \
     docker-php-ext-install -j"$(nproc)" zip gd

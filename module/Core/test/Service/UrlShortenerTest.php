@@ -9,21 +9,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Psr7\Request;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 use Zend\Diactoros\Uri;
 
 use function array_map;
@@ -35,11 +32,11 @@ class UrlShortenerTest extends TestCase
     /** @var ObjectProphecy */
     private $em;
     /** @var ObjectProphecy */
-    private $httpClient;
+    private $urlValidator;
 
     public function setUp(): void
     {
-        $this->httpClient = $this->prophesize(ClientInterface::class);
+        $this->urlValidator = $this->prophesize(UrlValidatorInterface::class);
 
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $conn = $this->prophesize(Connection::class);
@@ -63,7 +60,7 @@ class UrlShortenerTest extends TestCase
     private function setUrlShortener(bool $urlValidationEnabled): void
     {
         $this->urlShortener = new UrlShortener(
-            $this->httpClient->reveal(),
+            $this->urlValidator->reveal(),
             $this->em->reveal(),
             new UrlShortenerOptions(['validate_url' => $urlValidationEnabled])
         );
@@ -127,20 +124,19 @@ class UrlShortenerTest extends TestCase
     }
 
     /** @test */
-    public function exceptionIsThrownWhenUrlDoesNotExist(): void
+    public function validatorIsCalledWhenUrlValidationIsEnabled(): void
     {
         $this->setUrlShortener(true);
+        $validateUrl = $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar')->will(function () {
+        });
 
-        $this->httpClient->request(Argument::cetera())->willThrow(
-            new ClientException('', $this->prophesize(Request::class)->reveal())
-        );
-
-        $this->expectException(InvalidUrlException::class);
         $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
             ShortUrlMeta::createEmpty()
         );
+
+        $validateUrl->shouldHaveBeenCalledOnce();
     }
 
     /** @test */

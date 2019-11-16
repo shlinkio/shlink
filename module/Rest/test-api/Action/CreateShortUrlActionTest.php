@@ -182,6 +182,16 @@ class CreateShortUrlActionTest extends ApiTestCase
         $this->assertNotEquals($firstShortCode, $secondShortCode);
     }
 
+    /** @test */
+    public function createsNewShortUrlWithInternationalizedDomainName(): void
+    {
+        $longUrl = 'https://cédric.laubacher.io/';
+        [$statusCode, ['longUrl' => $expectedLongUrl]] = $this->createShortUrl(['longUrl' => $longUrl]);
+
+        $this->assertEquals(self::STATUS_OK, $statusCode);
+        $this->assertEquals($expectedLongUrl, $longUrl);
+    }
+
     /**
      * @return array {
      *     @var int $statusCode
