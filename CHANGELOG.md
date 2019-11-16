@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Fixed
 
 * [#512](https://github.com/shlinkio/shlink/issues/512) Fixed query params not being properly forwarded from short URL to long one.
+* [#540](https://github.com/shlinkio/shlink/issues/540) Fixed errors thrown when creating short URLs if the original URL has an internationalized domain name and URL validation is enabled.
 
 
 ## 1.20.0 - 2019-11-02
