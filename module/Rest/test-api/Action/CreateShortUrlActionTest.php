@@ -188,16 +188,17 @@ class CreateShortUrlActionTest extends ApiTestCase
      */
     public function createsNewShortUrlWithInternationalizedDomainName(string $longUrl): void
     {
-        [$statusCode, ['longUrl' => $expectedLongUrl]] = $this->createShortUrl(['longUrl' => $longUrl]);
+        [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $longUrl]);
 
         $this->assertEquals(self::STATUS_OK, $statusCode);
-        $this->assertEquals($expectedLongUrl, $longUrl);
+        $this->assertEquals($payload['longUrl'], $longUrl);
     }
 
     public function provideIdn(): iterable
     {
-        // TODO Create some shlink IDN domains to test this instead of using public ones
-        return [['https://cédric.laubacher.io/'], ['https://laubacher.io/']]; // Second one redirects to first
+        yield ['http://tést.shlink.io']; // Redirects to https://shlink.io
+        yield ['http://test.shlink.io']; // Redirects to http://tést.shlink.io
+        yield ['http://téstb.shlink.io']; // Redirects to http://tést.shlink.io
     }
 
     /**
