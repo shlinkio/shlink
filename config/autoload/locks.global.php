@@ -8,6 +8,10 @@ use Shlinkio\Shlink\Common\Logger\LoggerAwareDelegatorFactory;
 use Symfony\Component\Lock;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 
+// This class alias tricks the ConfigAbstractFactory to return Lock\Factory instances even with a different service name
+$localLockFactory = 'Shlinkio\Shlink\LocalLockFactory';
+class_alias(Lock\Factory::class, $localLockFactory);
+
 return [
 
     'locks' => [
@@ -19,11 +23,14 @@ return [
             Lock\Store\FlockStore::class => ConfigAbstractFactory::class,
             Lock\Store\RedisStore::class => ConfigAbstractFactory::class,
             Lock\Factory::class => ConfigAbstractFactory::class,
+            $localLockFactory => ConfigAbstractFactory::class,
         ],
         'aliases' => [
             // With this config, a user could alias 'lock_store' => 'redis_lock_store' to override the default
-            'lock_store' => Lock\Store\FlockStore::class,
+            'lock_store' => 'local_lock_store',
+
             'redis_lock_store' => Lock\Store\RedisStore::class,
+            'local_lock_store' => Lock\Store\FlockStore::class,
         ],
         'delegators' => [
             Lock\Store\RedisStore::class => [
@@ -39,6 +46,7 @@ return [
         Lock\Store\FlockStore::class => ['config.locks.locks_dir'],
         Lock\Store\RedisStore::class => [RedisFactory::SERVICE_NAME],
         Lock\Factory::class => ['lock_store'],
+        $localLockFactory => ['local_lock_store'],
     ],
 
 ];
