@@ -116,10 +116,10 @@ class CreateDatabaseCommandTest extends TestCase
         $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function () {
         });
         $listTables = $this->schemaManager->listTableNames()->willReturn([]);
-        $runCommand = $this->processHelper->run(Argument::type(OutputInterface::class), [
+        $runCommand = $this->processHelper->mustRun(Argument::type(OutputInterface::class), [
             '/usr/local/bin/php',
-            CreateDatabaseCommand::DOCTRINE_HELPER_SCRIPT,
-            CreateDatabaseCommand::DOCTRINE_HELPER_COMMAND,
+            CreateDatabaseCommand::DOCTRINE_SCRIPT,
+            CreateDatabaseCommand::DOCTRINE_CREATE_SCHEMA_COMMAND,
         ], Argument::cetera());
 
         $this->commandTester->execute([]);

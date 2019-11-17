@@ -102,11 +102,9 @@
             "@test:ci",
             "@infect:ci"
         ],
-
         "cs": "phpcs",
         "cs:fix": "phpcbf",
         "stan": "phpstan analyse module/*/src/ module/*/config config docker/config --level=5 -c phpstan.neon",
-
         "test": [
             "@test:unit",
             "@test:db",
@@ -135,20 +133,19 @@
         "test:db:maria": "DB_DRIVER=maria composer test:db:sqlite",
         "test:db:postgres": "DB_DRIVER=postgres composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
-
         "test:pretty": [
             "@test",
             "phpdbg -qrr vendor/bin/phpcov merge build --html build/html"
         ],
         "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage",
-
         "infect": "infection --threads=4 --min-msi=75 --log-verbosity=default --only-covered",
         "infect:ci": "infection --threads=4 --min-msi=75 --log-verbosity=default --only-covered --coverage=build",
         "infect:show": "infection --threads=4 --min-msi=75 --log-verbosity=default --only-covered --show-mutations",
         "infect:test": [
             "@test:unit:ci",
             "@infect:ci"
-        ]
+        ],
+        "clean:dev": "rm -f data/database.sqlite && rm -f config/params/generated_config.php"
     },
     "scripts-descriptions": {
         "ci": "<fg=blue;options=bold>Alias for \"cs\", \"stan\", \"test:ci\" and \"infect:ci\"</>",
@@ -171,7 +168,8 @@
         "infect": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>",
         "infect:ci": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing with existing reports and logs</>",
         "infect:show": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing and shows applied mutators</>",
-        "infect:test": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>"
+        "infect:test": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>",
+        "clean:dev": "<fg=blue;options=bold>Deletes artifacts which are gitignored and could affect dev env</>"
     },
     "config": {
         "sort-packages": true

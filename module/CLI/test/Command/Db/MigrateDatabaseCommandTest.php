@@ -48,36 +48,20 @@ class MigrateDatabaseCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /**
-     * @test
-     * @dataProvider provideVerbosities
-     */
-    public function migrationsCommandIsRunWithProperVerbosity(int $verbosity): void
+    /** @test */
+    public function migrationsCommandIsRunWithProperVerbosity(): void
     {
-        $runCommand = $this->processHelper->run(Argument::type(OutputInterface::class), [
+        $runCommand = $this->processHelper->mustRun(Argument::type(OutputInterface::class), [
             '/usr/local/bin/php',
-            MigrateDatabaseCommand::DOCTRINE_HELPER_SCRIPT,
-            MigrateDatabaseCommand::DOCTRINE_HELPER_COMMAND,
-        ], null, null, $verbosity);
+            MigrateDatabaseCommand::DOCTRINE_MIGRATIONS_SCRIPT,
+            MigrateDatabaseCommand::DOCTRINE_MIGRATE_COMMAND,
+        ], Argument::cetera());
 
-        $this->commandTester->execute([], [
-            'verbosity' => $verbosity,
-        ]);
+        $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        if ($verbosity >= OutputInterface::VERBOSITY_VERBOSE) {
-            $this->assertStringContainsString('Migrating database...', $output);
-            $this->assertStringContainsString('Database properly migrated!', $output);
-        }
+        $this->assertStringContainsString('Migrating database...', $output);
+        $this->assertStringContainsString('Database properly migrated!', $output);
         $runCommand->shouldHaveBeenCalledOnce();
-    }
-
-    public function provideVerbosities(): iterable
-    {
-        yield 'debug' => [OutputInterface::VERBOSITY_DEBUG];
-        yield 'normal' => [OutputInterface::VERBOSITY_NORMAL];
-        yield 'quiet' => [OutputInterface::VERBOSITY_QUIET];
-        yield 'verbose' => [OutputInterface::VERBOSITY_VERBOSE];
-        yield 'very verbose' => [OutputInterface::VERBOSITY_VERY_VERBOSE];
     }
 }
