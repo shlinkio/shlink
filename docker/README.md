@@ -215,10 +215,10 @@ These are some considerations to take into account when running multiple instanc
 
 ## Versions
 
-Versions of this image match the shlink version it contains.
+Versioning on this docker image works as follows:
 
-For example, installing `shlinkio/shlink:1.15.0`, you will get an image containing shlink v1.15.0.
+* `X.X.X`:  when providing a specific version number, the image version will match the shlink version it contains. For example, installing `shlinkio/shlink:1.15.0`, you will get an image containing shlink v1.15.0.
+* `stable`: always holds the latest stable tag. For example, if latest shlink version is 1.20.0, installing `shlinkio/shlink:stable`, you will get an image containing shlink v1.20.0
+* `latest`: always holds the latest contents in master, and it's considered unstable and not suitable for production.
 
-The `latest` docker tag always holds the latest contents in master, and it's considered unestable and not suitable for production.
-
-> There are no official shlink images previous to v1.15.0.
+> **Important**: The docker image was introduced with shlink v1.15.0, so there are no official images previous to that versions.
