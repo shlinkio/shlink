@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Db;
 
 use Shlinkio\Shlink\CLI\Command\Util\AbstractLockedCommand;
+use Shlinkio\Shlink\CLI\Command\Util\LockedCommandConfig;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\Factory as Locker;
@@ -29,6 +30,11 @@ abstract class AbstractDatabaseCommand extends AbstractLockedCommand
     protected function runPhpCommand(OutputInterface $output, array $command): void
     {
         array_unshift($command, $this->phpBinary);
-        $this->processHelper->run($output, $command, null, null, $output->getVerbosity());
+        $this->processHelper->mustRun($output, $command);
+    }
+
+    protected function getLockConfig(): LockedCommandConfig
+    {
+        return new LockedCommandConfig($this->getName(), true);
     }
 }

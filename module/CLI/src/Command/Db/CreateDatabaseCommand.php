@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Db;
 
 use Doctrine\DBAL\Connection;
-use Shlinkio\Shlink\CLI\Command\Util\LockedCommandConfig;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,8 +18,8 @@ use function Functional\contains;
 class CreateDatabaseCommand extends AbstractDatabaseCommand
 {
     public const NAME = 'db:create';
-    public const DOCTRINE_HELPER_SCRIPT = 'vendor/doctrine/orm/bin/doctrine.php';
-    public const DOCTRINE_HELPER_COMMAND = 'orm:schema-tool:create';
+    public const DOCTRINE_SCRIPT = 'vendor/doctrine/orm/bin/doctrine.php';
+    public const DOCTRINE_CREATE_SCHEMA_COMMAND = 'orm:schema-tool:create';
 
     /** @var Connection */
     private $regularConn;
@@ -61,7 +60,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
         // Create database
         $io->writeln('<fg=blue>Creating database tables...</>');
-        $this->runPhpCommand($output, [self::DOCTRINE_HELPER_SCRIPT, self::DOCTRINE_HELPER_COMMAND]);
+        $this->runPhpCommand($output, [self::DOCTRINE_SCRIPT, self::DOCTRINE_CREATE_SCHEMA_COMMAND]);
         $io->success('Database properly created!');
 
         return ExitCodes::EXIT_SUCCESS;
@@ -87,13 +86,8 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     private function schemaExists(): bool
     {
         // If at least one of the shlink tables exist, we will consider the database exists somehow.
-        // Any inconsistency will be taken care by the migrations
+        // Any inconsistency should be taken care by the migrations
         $schemaManager = $this->regularConn->getSchemaManager();
         return ! empty($schemaManager->listTableNames());
-    }
-
-    protected function getLockConfig(): LockedCommandConfig
-    {
-        return new LockedCommandConfig($this->getName(), true);
     }
 }
