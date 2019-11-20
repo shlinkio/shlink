@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
-use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -123,20 +122,5 @@ class CreateShortUrlActionTest extends TestCase
         $response = $this->action->handle($request);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertStringContainsString(RestUtils::INVALID_SLUG_ERROR, (string) $response->getBody());
-    }
-
-    /** @test */
-    public function aGenericExceptionWillReturnError(): void
-    {
-        $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
-            ->willThrow(Exception::class)
-            ->shouldBeCalledOnce();
-
-        $request = (new ServerRequest())->withParsedBody([
-            'longUrl' => 'http://www.domain.com/foo/bar',
-        ]);
-        $response = $this->action->handle($request);
-        $this->assertEquals(500, $response->getStatusCode());
-        $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::UNKNOWN_ERROR) > 0);
     }
 }

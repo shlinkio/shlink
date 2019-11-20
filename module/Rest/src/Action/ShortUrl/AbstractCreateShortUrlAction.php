@@ -15,7 +15,6 @@ use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
-use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
 
 use function sprintf;
@@ -74,12 +73,6 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
                 'error' => RestUtils::getRestErrorCodeFromException($e),
                 'message' => sprintf('Provided slug %s is already in use. Try with a different one.', $customSlug),
             ], self::STATUS_BAD_REQUEST);
-        } catch (Throwable $e) {
-            $this->logger->error('Unexpected error creating short url. {e}', ['e' => $e]);
-            return new JsonResponse([
-                'error' => RestUtils::UNKNOWN_ERROR,
-                'message' => 'Unexpected error occurred',
-            ], self::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
 
