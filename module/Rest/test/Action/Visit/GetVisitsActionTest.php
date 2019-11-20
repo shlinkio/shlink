@@ -8,8 +8,8 @@ use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Rest\Action\Visit\GetVisitsAction;
@@ -31,7 +31,7 @@ class GetVisitsActionTest extends TestCase
     }
 
     /** @test */
-    public function providingCorrectShortCodeReturnsVisits()
+    public function providingCorrectShortCodeReturnsVisits(): void
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::type(VisitsParams::class))->willReturn(
@@ -43,11 +43,11 @@ class GetVisitsActionTest extends TestCase
     }
 
     /** @test */
-    public function providingInvalidShortCodeReturnsError()
+    public function providingInvalidShortCodeReturnsError(): void
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::type(VisitsParams::class))->willThrow(
-            InvalidArgumentException::class
+            InvalidShortCodeException::class
         )->shouldBeCalledOnce();
 
         $response = $this->action->handle((new ServerRequest())->withAttribute('shortCode', $shortCode));
@@ -55,7 +55,7 @@ class GetVisitsActionTest extends TestCase
     }
 
     /** @test */
-    public function paramsAreReadFromQuery()
+    public function paramsAreReadFromQuery(): void
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, new VisitsParams(
