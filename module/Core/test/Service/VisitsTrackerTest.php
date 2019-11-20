@@ -46,11 +46,11 @@ class VisitsTrackerTest extends TestCase
         $repo->findOneBy(['shortCode' => $shortCode])->willReturn(new ShortUrl(''));
 
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
-        $this->em->persist(Argument::any())->shouldBeCalledOnce();
-        $this->em->flush(Argument::that(function (Visit $visit) {
+        $this->em->persist(Argument::that(function (Visit $visit) {
             $visit->setId('1');
             return $visit;
         }))->shouldBeCalledOnce();
+        $this->em->flush()->shouldBeCalledOnce();
 
         $this->visitsTracker->track($shortCode, Visitor::emptyInstance());
 
@@ -69,11 +69,10 @@ class VisitsTrackerTest extends TestCase
             /** @var Visit $visit */
             $visit = $args[0];
             Assert::assertEquals('4.3.2.0', $visit->getRemoteAddr());
-        })->shouldBeCalledOnce();
-        $this->em->flush(Argument::that(function (Visit $visit) {
             $visit->setId('1');
             return $visit;
-        }))->shouldBeCalledOnce();
+        })->shouldBeCalledOnce();
+        $this->em->flush()->shouldBeCalledOnce();
 
         $this->visitsTracker->track($shortCode, new Visitor('', '', '4.3.2.1'));
 

@@ -1,7 +1,6 @@
 parameters:
 	ignoreErrors:
 		- '#is not subtype of Throwable#'
-		- '#ObjectManager::flush()#'
 		- '#Undefined variable: \$metadata#'
 		- '#AbstractQuery::setParameters()#'
 		- '#mustRun()#'

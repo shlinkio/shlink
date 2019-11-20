@@ -64,9 +64,7 @@ class ShortUrlService implements ShortUrlServiceInterface
         $shortUrl = $this->findByShortCode($this->em, $shortCode);
         $shortUrl->updateMeta($shortUrlMeta);
 
-        /** @var ORM\EntityManager $em */
-        $em = $this->em;
-        $em->flush($shortUrl);
+        $this->em->flush();
 
         return $shortUrl;
     }

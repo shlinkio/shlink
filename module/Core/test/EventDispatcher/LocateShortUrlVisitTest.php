@@ -61,7 +61,7 @@ class LocateShortUrlVisitTest extends TestCase
         ($this->locateVisit)($event);
 
         $findVisit->shouldHaveBeenCalledOnce();
-        $this->em->flush(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->em->flush()->shouldNotHaveBeenCalled();
         $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->shouldNotHaveBeenCalled();
         $logWarning->shouldHaveBeenCalled();
     }
@@ -86,7 +86,7 @@ class LocateShortUrlVisitTest extends TestCase
         $findVisit->shouldHaveBeenCalledOnce();
         $resolveLocation->shouldHaveBeenCalledOnce();
         $logWarning->shouldHaveBeenCalled();
-        $this->em->flush(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->em->flush()->shouldNotHaveBeenCalled();
     }
 
     /**
@@ -97,7 +97,7 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $event = new ShortUrlVisited('123');
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
-        $flush = $this->em->flush($visit)->will(function () {
+        $flush = $this->em->flush()->will(function () {
         });
         $resolveIp = $this->ipLocationResolver->resolveIpLocation(Argument::any());
 
@@ -128,7 +128,7 @@ class LocateShortUrlVisitTest extends TestCase
         $event = new ShortUrlVisited('123');
 
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
-        $flush = $this->em->flush($visit)->will(function () {
+        $flush = $this->em->flush()->will(function () {
         });
         $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
 
@@ -151,7 +151,7 @@ class LocateShortUrlVisitTest extends TestCase
         $event = new ShortUrlVisited('123');
 
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
-        $flush = $this->em->flush($visit)->will(function () {
+        $flush = $this->em->flush()->will(function () {
         });
         $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
         $checkUpdateDb = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willThrow($e);
@@ -179,7 +179,7 @@ class LocateShortUrlVisitTest extends TestCase
         $event = new ShortUrlVisited('123');
 
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
-        $flush = $this->em->flush($visit)->will(function () {
+        $flush = $this->em->flush()->will(function () {
         });
         $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
         $checkUpdateDb = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willThrow($e);

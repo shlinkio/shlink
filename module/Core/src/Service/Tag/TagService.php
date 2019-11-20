@@ -77,9 +77,7 @@ class TagService implements TagServiceInterface
 
         $tag->rename($newName);
 
-        /** @var ORM\EntityManager $em */
-        $em = $this->em;
-        $em->flush($tag);
+        $this->em->flush();
 
         return $tag;
     }
