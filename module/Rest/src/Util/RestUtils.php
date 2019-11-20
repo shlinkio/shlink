@@ -9,7 +9,6 @@ use Shlinkio\Shlink\Core\Exception as Core;
 use Shlinkio\Shlink\Rest\Exception as Rest;
 use Throwable;
 
-/** @deprecated */
 class RestUtils
 {
     public const INVALID_SHORTCODE_ERROR = 'INVALID_SHORTCODE';
