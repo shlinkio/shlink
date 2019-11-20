@@ -43,10 +43,8 @@ class VisitsTracker implements VisitsTrackerInterface
 
         $visit = new Visit($shortUrl, $visitor);
 
-        /** @var ORM\EntityManager $em */
-        $em = $this->em;
-        $em->persist($visit);
-        $em->flush($visit);
+        $this->em->persist($visit);
+        $this->em->flush();
 
         $this->eventDispatcher->dispatch(new ShortUrlVisited($visit->getId()));
     }

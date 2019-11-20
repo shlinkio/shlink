@@ -82,6 +82,6 @@ class LocateShortUrlVisit
         }
 
         $visit->locate(new VisitLocation($location));
-        $this->em->flush($visit);
+        $this->em->flush();
     }
 }
