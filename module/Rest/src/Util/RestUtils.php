@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Core\Exception as Core;
 use Shlinkio\Shlink\Rest\Exception as Rest;
 use Throwable;
 
+/** @deprecated */
 class RestUtils
 {
     public const INVALID_SHORTCODE_ERROR = 'INVALID_SHORTCODE';
@@ -24,7 +25,8 @@ class RestUtils
     public const NOT_FOUND_ERROR = 'NOT_FOUND';
     public const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
 
-    public static function getRestErrorCodeFromException(Throwable $e)
+    /** @deprecated */
+    public static function getRestErrorCodeFromException(Throwable $e): string
     {
         switch (true) {
             case $e instanceof Core\InvalidShortCodeException:
