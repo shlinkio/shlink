@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
-use GuzzleHttp\RequestOptions;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 

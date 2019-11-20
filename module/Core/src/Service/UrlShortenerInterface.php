@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Core\Service;
 use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Exception\RuntimeException;
@@ -24,7 +23,6 @@ interface UrlShortenerInterface
     public function urlToShortCode(UriInterface $url, array $tags, ShortUrlMeta $meta): ShortUrl;
 
     /**
-     * @throws InvalidShortCodeException
      * @throws EntityDoesNotExistException
      */
     public function shortCodeToUrl(string $shortCode, ?string $domain = null): ShortUrl;

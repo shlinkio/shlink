@@ -9,7 +9,6 @@ use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver\PersistenceDomainResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
@@ -130,7 +129,6 @@ class UrlShortener implements UrlShortenerInterface
     }
 
     /**
-     * @throws InvalidShortCodeException
      * @throws EntityDoesNotExistException
      */
     public function shortCodeToUrl(string $shortCode, ?string $domain = null): ShortUrl
