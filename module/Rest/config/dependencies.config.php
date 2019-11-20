@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest;
 
+use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service;
@@ -20,7 +21,7 @@ return [
             ApiKeyService::class => ConfigAbstractFactory::class,
 
             Action\AuthenticateAction::class => ConfigAbstractFactory::class,
-            Action\HealthAction::class => Action\HealthActionFactory::class,
+            Action\HealthAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\CreateShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\SingleStepCreateShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\EditShortUrlAction::class => ConfigAbstractFactory::class,
@@ -48,6 +49,7 @@ return [
         ApiKeyService::class => ['em'],
 
         Action\AuthenticateAction::class => [ApiKeyService::class, Authentication\JWTService::class, 'Logger_Shlink'],
+        Action\HealthAction::class => [Connection::class, AppOptions::class, 'Logger_Shlink'],
         Action\ShortUrl\CreateShortUrlAction::class => [
             Service\UrlShortener::class,
             'config.url_shortener.domain',
