@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
-use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
@@ -78,27 +77,5 @@ class ListShortUrlsActionTest extends TestCase
             'orderBy' => $orderBy = 'something',
             'tags' => $tags = ['one', 'two'],
         ], 2, null, $tags, $orderBy];
-    }
-
-    /** @test */
-    public function anExceptionReturnsErrorResponse(): void
-    {
-        $page = 3;
-        $e = new Exception();
-
-        $this->service->listShortUrls($page, null, [], null)->willThrow($e)
-                                                            ->shouldBeCalledOnce();
-        $logError = $this->logger->error(
-            'Unexpected error while listing short URLs. {e}',
-            ['e' => $e]
-        )->will(function () {
-        });
-
-        $response = $this->action->handle((new ServerRequest())->withQueryParams([
-            'page' => $page,
-        ]));
-
-        $this->assertEquals(500, $response->getStatusCode());
-        $logError->shouldHaveBeenCalledOnce();
     }
 }
