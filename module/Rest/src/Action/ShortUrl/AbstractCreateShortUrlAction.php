@@ -7,9 +7,9 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
@@ -44,7 +44,7 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
     {
         try {
             $shortUrlData = $this->buildShortUrlData($request);
-        } catch (InvalidArgumentException $e) {
+        } catch (ValidationException $e) {
             $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
             return new JsonResponse([
                 'error' => RestUtils::INVALID_ARGUMENT_ERROR,
@@ -79,7 +79,7 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
     /**
      * @param Request $request
      * @return CreateShortUrlData
-     * @throws InvalidArgumentException
+     * @throws ValidationException
      */
     abstract protected function buildShortUrlData(Request $request): CreateShortUrlData;
 }

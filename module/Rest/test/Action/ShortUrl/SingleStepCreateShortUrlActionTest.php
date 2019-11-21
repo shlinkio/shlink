@@ -42,7 +42,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function errorResponseIsReturnedIfInvalidApiKeyIsProvided()
+    public function errorResponseIsReturnedIfInvalidApiKeyIsProvided(): void
     {
         $request = (new ServerRequest())->withQueryParams(['apiKey' => 'abc123']);
         $findApiKey = $this->apiKeyService->check('abc123')->willReturn(false);
@@ -53,12 +53,12 @@ class SingleStepCreateShortUrlActionTest extends TestCase
 
         $this->assertEquals(400, $resp->getStatusCode());
         $this->assertEquals('INVALID_ARGUMENT', $payload['error']);
-        $this->assertEquals('No API key was provided or it is not valid', $payload['message']);
+        $this->assertEquals('Provided data is not valid', $payload['message']);
         $findApiKey->shouldHaveBeenCalled();
     }
 
     /** @test */
-    public function errorResponseIsReturnedIfNoUrlIsProvided()
+    public function errorResponseIsReturnedIfNoUrlIsProvided(): void
     {
         $request = (new ServerRequest())->withQueryParams(['apiKey' => 'abc123']);
         $findApiKey = $this->apiKeyService->check('abc123')->willReturn(true);
@@ -69,12 +69,12 @@ class SingleStepCreateShortUrlActionTest extends TestCase
 
         $this->assertEquals(400, $resp->getStatusCode());
         $this->assertEquals('INVALID_ARGUMENT', $payload['error']);
-        $this->assertEquals('A URL was not provided', $payload['message']);
+        $this->assertEquals('Provided data is not valid', $payload['message']);
         $findApiKey->shouldHaveBeenCalled();
     }
 
     /** @test */
-    public function properDataIsPassedWhenGeneratingShortCode()
+    public function properDataIsPassedWhenGeneratingShortCode(): void
     {
         $request = (new ServerRequest())->withQueryParams([
             'apiKey' => 'abc123',

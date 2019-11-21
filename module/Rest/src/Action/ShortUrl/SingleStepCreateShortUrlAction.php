@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
@@ -33,19 +33,22 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
     /**
      * @param Request $request
      * @return CreateShortUrlData
-     * @throws \InvalidArgumentException
-     * @throws InvalidArgumentException
+     * @throws ValidationException
      */
     protected function buildShortUrlData(Request $request): CreateShortUrlData
     {
         $query = $request->getQueryParams();
 
         if (! $this->apiKeyService->check($query['apiKey'] ?? '')) {
-            throw new InvalidArgumentException('No API key was provided or it is not valid');
+            throw ValidationException::fromArray([
+                'apiKey' => 'No API key was provided or it is not valid',
+            ]);
         }
 
         if (! isset($query['longUrl'])) {
-            throw new InvalidArgumentException('A URL was not provided');
+            throw ValidationException::fromArray([
+                'longUrl' => 'A URL was not provided',
+            ]);
         }
 
         return new CreateShortUrlData(new Uri($query['longUrl']));

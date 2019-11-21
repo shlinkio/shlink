@@ -34,34 +34,39 @@ class ValidationException extends RuntimeException
         return static::fromArray($inputFilter->getMessages(), $prev);
     }
 
-    private static function fromArray(array $invalidData, ?Throwable $prev = null): self
+    public static function fromArray(array $invalidData, ?Throwable $prev = null): self
     {
-        return new self(
-            sprintf(
-                'Provided data is not valid. These are the messages:%s%s%s',
-                PHP_EOL,
-                self::formMessagesToString($invalidData),
-                PHP_EOL
-            ),
-            $invalidData,
-            -1,
-            $prev
+        return new self('Provided data is not valid', $invalidData, -1, $prev);
+    }
+
+    public function getInvalidElements(): array
+    {
+        return $this->invalidElements;
+    }
+
+    public function __toString(): string
+    {
+        return sprintf(
+            '%s %s in %s:%s%s%sStack trace:%s%s',
+            __CLASS__,
+            $this->getMessage(),
+            $this->getFile(),
+            $this->getLine(),
+            $this->invalidElementsToString(),
+            PHP_EOL,
+            PHP_EOL,
+            $this->getTraceAsString()
         );
     }
 
-    private static function formMessagesToString(array $messages = []): string
+    private function invalidElementsToString(): string
     {
-        return reduce_left($messages, function ($messageSet, $name, $_, string $acc) {
+        return reduce_left($this->invalidElements, function ($messageSet, string $name, $_, string $acc) {
             return $acc . sprintf(
                 "\n    '%s' => %s",
                 $name,
                 is_array($messageSet) ? print_r($messageSet, true) : $messageSet
             );
         }, '');
-    }
-
-    public function getInvalidElements(): array
-    {
-        return $this->invalidElements;
     }
 }

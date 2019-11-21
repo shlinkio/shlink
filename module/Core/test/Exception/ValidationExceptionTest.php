@@ -55,12 +55,9 @@ class ValidationExceptionTest extends TestCase
             'something' => ['baz', 'foo'],
         ];
         $barValue = print_r(['baz', 'foo'], true);
-        $expectedMessage = <<<EOT
-Provided data is not valid. These are the messages:
-
+        $expectedStringRepresentation = <<<EOT
     'foo' => bar
     'something' => {$barValue}
-
 EOT;
 
         $inputFilter = $this->prophesize(InputFilterInterface::class);
@@ -69,9 +66,10 @@ EOT;
         $e = ValidationException::fromInputFilter($inputFilter->reveal());
 
         $this->assertEquals($invalidData, $e->getInvalidElements());
-        $this->assertEquals($expectedMessage, $e->getMessage());
+        $this->assertEquals('Provided data is not valid', $e->getMessage());
         $this->assertEquals(-1, $e->getCode());
         $this->assertEquals($prev, $e->getPrevious());
+        $this->assertStringContainsString($expectedStringRepresentation, (string) $e);
         $getMessages->shouldHaveBeenCalledOnce();
     }
 
