@@ -18,11 +18,10 @@ class ConfigProviderTest extends TestCase
     }
 
     /** @test */
-    public function properConfigIsReturned()
+    public function properConfigIsReturned(): void
     {
         $config = $this->configProvider->__invoke();
 
-        $this->assertArrayHasKey('error_handler', $config);
         $this->assertArrayHasKey('routes', $config);
         $this->assertArrayHasKey('dependencies', $config);
     }

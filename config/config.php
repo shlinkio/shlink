@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink;
 
-use Acelaya\ExpressiveErrorHandler;
 use Zend\ConfigAggregator;
 use Zend\Expressive;
 
@@ -16,7 +15,6 @@ return (new ConfigAggregator\ConfigAggregator([
     Expressive\Router\FastRouteRouter\ConfigProvider::class,
     Expressive\Plates\ConfigProvider::class,
     Expressive\Swoole\ConfigProvider::class,
-    ExpressiveErrorHandler\ConfigProvider::class,
     Common\ConfigProvider::class,
     IpGeolocation\ConfigProvider::class,
     Core\ConfigProvider::class,

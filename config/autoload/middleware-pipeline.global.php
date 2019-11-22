@@ -10,9 +10,20 @@ use Zend\Stratigility\Middleware\ErrorHandler;
 return [
 
     'middleware_pipeline' => [
-        'pre-routing' => [
+        'error-handler' => [
             'middleware' => [
                 ErrorHandler::class,
+            ],
+            'priority' => 15,
+        ],
+//        'error-handler-rest' => [
+//            'path' => '/rest',
+//            'middleware' => [],
+//            'priority' => 14,
+//        ],
+
+        'pre-routing' => [
+            'middleware' => [
                 Expressive\Helper\ContentLengthMiddleware::class,
                 Common\Middleware\CloseDbConnectionMiddleware::class,
             ],

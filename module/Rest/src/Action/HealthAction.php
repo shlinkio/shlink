@@ -15,8 +15,8 @@ use Zend\Diactoros\Response\JsonResponse;
 class HealthAction extends AbstractRestAction
 {
     private const HEALTH_CONTENT_TYPE = 'application/health+json';
-    private const PASS_STATUS = 'pass';
-    private const FAIL_STATUS = 'fail';
+    private const STATUS_PASS = 'pass';
+    private const STATUS_FAIL = 'fail';
 
     protected const ROUTE_PATH = '/health';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
@@ -48,7 +48,7 @@ class HealthAction extends AbstractRestAction
 
         $statusCode = $connected ? self::STATUS_OK : self::STATUS_SERVICE_UNAVAILABLE;
         return new JsonResponse([
-            'status' => $connected ? self::PASS_STATUS : self::FAIL_STATUS,
+            'status' => $connected ? self::STATUS_PASS : self::STATUS_FAIL,
             'version' => $this->options->getVersion(),
             'links' => [
                 'about' => 'https://shlink.io',
