@@ -58,7 +58,6 @@
     "require-dev": {
         "devster/ubench": "^2.0",
         "eaglewu/swoole-ide-helper": "dev-master",
-        "filp/whoops": "^2.4",
         "infection/infection": "^0.14.2",
         "phpstan/phpstan": "^0.11.16",
         "phpunit/phpcov": "^6.0",
