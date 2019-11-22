@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Uri;
 use Zend\Expressive\Router\Route;
@@ -35,29 +34,6 @@ class NotFoundHandlerTest extends TestCase
         $this->redirectOptions = new NotFoundRedirectOptions();
 
         $this->delegate = new NotFoundHandler($this->renderer->reveal(), $this->redirectOptions, '');
-    }
-
-    /**
-     * @test
-     * @dataProvider provideResponses
-     */
-    public function properResponseTypeIsReturned(string $expectedResponse, string $accept, int $renderCalls): void
-    {
-        $request = (new ServerRequest())->withHeader('Accept', $accept);
-        $render = $this->renderer->render(Argument::cetera())->willReturn('');
-
-        $resp = $this->delegate->handle($request);
-
-        $this->assertInstanceOf($expectedResponse, $resp);
-        $render->shouldHaveBeenCalledTimes($renderCalls);
-    }
-
-    public function provideResponses(): iterable
-    {
-        yield 'application/json' => [Response\JsonResponse::class, 'application/json', 0];
-        yield 'text/json' => [Response\JsonResponse::class, 'text/json', 0];
-        yield 'application/x-json' => [Response\JsonResponse::class, 'application/x-json', 0];
-        yield 'text/html' => [Response\HtmlResponse::class, 'text/html', 1];
     }
 
     /**

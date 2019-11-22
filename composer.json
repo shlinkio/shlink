@@ -33,7 +33,7 @@
         "phly/phly-event-dispatcher": "^1.0",
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.5",
-        "shlinkio/shlink-common": "^2.2.1",
+        "shlinkio/shlink-common": "^2.3",
         "shlinkio/shlink-event-dispatcher": "^1.0",
         "shlinkio/shlink-installer": "^3.1",
         "shlinkio/shlink-ip-geolocation": "^1.1",
@@ -52,6 +52,7 @@
         "zendframework/zend-expressive-swoole": "^2.4",
         "zendframework/zend-inputfilter": "^2.10",
         "zendframework/zend-paginator": "^2.8",
+        "zendframework/zend-problem-details": "^1.0",
         "zendframework/zend-servicemanager": "^3.4",
         "zendframework/zend-stdlib": "^3.2"
     },

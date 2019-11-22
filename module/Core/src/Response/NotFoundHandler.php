@@ -18,7 +18,6 @@ use Zend\Expressive\Template\TemplateRendererInterface;
 
 use function array_shift;
 use function explode;
-use function Functional\contains;
 use function rtrim;
 
 class NotFoundHandler implements RequestHandlerInterface
@@ -63,14 +62,6 @@ class NotFoundHandler implements RequestHandlerInterface
         $accepts = explode(',', $request->getHeaderLine('Accept'));
         $accept = array_shift($accepts);
         $status = StatusCodeInterface::STATUS_NOT_FOUND;
-
-        // If the first accepted type is json, return a json response
-        if (contains(['application/json', 'text/json', 'application/x-json'], $accept)) {
-            return new Response\JsonResponse([
-                'error' => 'NOT_FOUND',
-                'message' => 'Not found',
-            ], $status);
-        }
 
         $template = $routeResult->isFailure() ? self::NOT_FOUND_TEMPLATE : self::INVALID_SHORT_CODE_TEMPLATE;
         return new Response\HtmlResponse($this->renderer->render($template), $status);

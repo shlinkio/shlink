@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink;
 
 use Zend\Expressive;
+use Zend\ProblemDetails;
 use Zend\Stratigility\Middleware\ErrorHandler;
 
 return [
@@ -14,20 +15,19 @@ return [
             'middleware' => [
                 ErrorHandler::class,
             ],
-            'priority' => 15,
         ],
-//        'error-handler-rest' => [
-//            'path' => '/rest',
-//            'middleware' => [],
-//            'priority' => 14,
-//        ],
+        'error-handler-rest' => [
+            'path' => '/rest',
+            'middleware' => [
+                ProblemDetails\ProblemDetailsMiddleware::class,
+            ],
+        ],
 
         'pre-routing' => [
             'middleware' => [
                 Expressive\Helper\ContentLengthMiddleware::class,
                 Common\Middleware\CloseDbConnectionMiddleware::class,
             ],
-            'priority' => 12,
         ],
         'pre-routing-rest' => [
             'path' => '/rest',
@@ -35,14 +35,12 @@ return [
                 Rest\Middleware\PathVersionMiddleware::class,
                 Rest\Middleware\ShortUrl\ShortCodePathMiddleware::class,
             ],
-            'priority' => 11,
         ],
 
         'routing' => [
             'middleware' => [
                 Expressive\Router\Middleware\RouteMiddleware::class,
             ],
-            'priority' => 10,
         ],
 
         'rest' => [
@@ -53,15 +51,24 @@ return [
                 Rest\Middleware\BodyParserMiddleware::class,
                 Rest\Middleware\AuthenticationMiddleware::class,
             ],
-            'priority' => 5,
         ],
 
-        'post-routing' => [
+        'dispatch' => [
             'middleware' => [
                 Expressive\Router\Middleware\DispatchMiddleware::class,
+            ],
+        ],
+
+        'not-found-rest' => [
+            'path' => '/rest',
+            'middleware' => [
+                ProblemDetails\ProblemDetailsNotFoundHandler::class,
+            ],
+        ],
+        'not-found' => [
+            'middleware' => [
                 Core\Response\NotFoundHandler::class,
             ],
-            'priority' => 1,
         ],
     ],
 ];
