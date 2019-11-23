@@ -67,7 +67,8 @@ return [
         ],
         'not-found' => [
             'middleware' => [
-                Core\ErrorHandler\NotFoundHandler::class,
+                Core\ErrorHandler\NotFoundRedirectHandler::class,
+                Core\ErrorHandler\NotFoundTemplateHandler::class,
             ],
         ],
     ],

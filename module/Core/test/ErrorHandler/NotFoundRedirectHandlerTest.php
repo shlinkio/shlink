@@ -5,35 +5,29 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ErrorHandler;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
-use Shlinkio\Shlink\Core\ErrorHandler\NotFoundHandler;
+use Shlinkio\Shlink\Core\ErrorHandler\NotFoundRedirectHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Uri;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
-use Zend\Expressive\Template\TemplateRendererInterface;
 
-class NotFoundHandlerTest extends TestCase
+class NotFoundRedirectHandlerTest extends TestCase
 {
-    /** @var NotFoundHandler */
-    private $delegate;
-    /** @var ObjectProphecy */
-    private $renderer;
+    /** @var NotFoundRedirectHandler */
+    private $middleware;
     /** @var NotFoundRedirectOptions */
     private $redirectOptions;
 
     public function setUp(): void
     {
-        $this->renderer = $this->prophesize(TemplateRendererInterface::class);
         $this->redirectOptions = new NotFoundRedirectOptions();
-
-        $this->delegate = new NotFoundHandler($this->renderer->reveal(), $this->redirectOptions, '');
+        $this->middleware = new NotFoundRedirectHandler($this->redirectOptions, '');
     }
 
     /**
@@ -48,11 +42,10 @@ class NotFoundHandlerTest extends TestCase
         $this->redirectOptions->regular404 = 'regular404';
         $this->redirectOptions->baseUrl = 'baseUrl';
 
-        $resp = $this->delegate->handle($request);
+        $resp = $this->middleware->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
 
         $this->assertInstanceOf(Response\RedirectResponse::class, $resp);
         $this->assertEquals($expectedRedirectTo, $resp->getHeaderLine('Location'));
-        $this->renderer->render(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     public function provideRedirects(): iterable
@@ -84,35 +77,6 @@ class NotFoundHandlerTest extends TestCase
                 )
                 ->withUri(new Uri('/abc123')),
             'invalidShortUrl',
-        ];
-    }
-
-    /**
-     * @test
-     * @dataProvider provideTemplates
-     */
-    public function properErrorTemplateIsRendered(ServerRequestInterface $request, string $expectedTemplate): void
-    {
-        $request = $request->withHeader('Accept', 'text/html');
-        $render = $this->renderer->render($expectedTemplate)->willReturn('');
-
-        $resp = $this->delegate->handle($request);
-
-        $this->assertInstanceOf(Response\HtmlResponse::class, $resp);
-        $render->shouldHaveBeenCalledOnce();
-    }
-
-    public function provideTemplates(): iterable
-    {
-        $request = ServerRequestFactory::fromGlobals();
-
-        yield [$request, NotFoundHandler::NOT_FOUND_TEMPLATE];
-        yield [
-            $request->withAttribute(
-                RouteResult::class,
-                RouteResult::fromRoute(new Route('', $this->prophesize(MiddlewareInterface::class)->reveal()))
-            ),
-            NotFoundHandler::INVALID_SHORT_CODE_TEMPLATE,
         ];
     }
 }
