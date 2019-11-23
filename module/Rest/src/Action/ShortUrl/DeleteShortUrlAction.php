@@ -40,15 +40,6 @@ class DeleteShortUrlAction extends AbstractRestAction
         try {
             $this->deleteShortUrlService->deleteByShortCode($shortCode);
             return new EmptyResponse();
-        } catch (Exception\InvalidShortCodeException $e) {
-            $this->logger->warning(
-                'Provided short code {shortCode} does not belong to any URL. {e}',
-                ['e' => $e, 'shortCode' => $shortCode]
-            );
-            return new JsonResponse([
-                'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf('No URL found for short code "%s"', $shortCode),
-            ], self::STATUS_NOT_FOUND);
         } catch (Exception\DeleteShortUrlException $e) {
             $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
             $messagePlaceholder =

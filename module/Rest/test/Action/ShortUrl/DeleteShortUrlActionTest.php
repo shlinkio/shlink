@@ -59,7 +59,6 @@ class DeleteShortUrlActionTest extends TestCase
 
     public function provideExceptions(): iterable
     {
-        yield 'not found' => [new Exception\InvalidShortCodeException(), RestUtils::INVALID_SHORTCODE_ERROR, 404];
         yield 'bad request' => [
             new Exception\DeleteShortUrlException(5),
             RestUtils::INVALID_SHORTCODE_DELETION_ERROR,
