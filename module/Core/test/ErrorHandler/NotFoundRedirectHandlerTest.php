@@ -42,10 +42,14 @@ class NotFoundRedirectHandlerTest extends TestCase
         $this->redirectOptions->regular404 = 'regular404';
         $this->redirectOptions->baseUrl = 'baseUrl';
 
-        $resp = $this->middleware->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
+        $next = $this->prophesize(RequestHandlerInterface::class);
+        $handle = $next->handle($request)->willReturn(new Response());
+
+        $resp = $this->middleware->process($request, $next->reveal());
 
         $this->assertInstanceOf(Response\RedirectResponse::class, $resp);
         $this->assertEquals($expectedRedirectTo, $resp->getHeaderLine('Location'));
+        $handle->shouldNotHaveBeenCalled();
     }
 
     public function provideRedirects(): iterable
@@ -78,5 +82,20 @@ class NotFoundRedirectHandlerTest extends TestCase
                 ->withUri(new Uri('/abc123')),
             'invalidShortUrl',
         ];
+    }
+
+    /** @test */
+    public function nextMiddlewareIsInvokedWhenNotRedirectNeedsToOccur(): void
+    {
+        $req = ServerRequestFactory::fromGlobals();
+        $resp = new Response();
+
+        $next = $this->prophesize(RequestHandlerInterface::class);
+        $handle = $next->handle($req)->willReturn($resp);
+
+        $result = $this->middleware->process($req, $next->reveal());
+
+        $this->assertSame($resp, $result);
+        $handle->shouldHaveBeenCalledOnce();
     }
 }
