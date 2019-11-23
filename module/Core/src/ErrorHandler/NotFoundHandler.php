@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Response;
+namespace Shlinkio\Shlink\Core\ErrorHandler;
 
 use Fig\Http\Message\StatusCodeInterface;
 use InvalidArgumentException;

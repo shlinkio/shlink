@@ -6,8 +6,8 @@ namespace Shlinkio\Shlink\Core;
 
 use Doctrine\Common\Cache\Cache;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Shlinkio\Shlink\Core\ErrorHandler\NotFoundHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
-use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Template\TemplateRendererInterface;

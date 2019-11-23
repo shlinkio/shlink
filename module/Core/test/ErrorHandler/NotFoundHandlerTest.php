@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Response;
+namespace ShlinkioTest\Shlink\Core\ErrorHandler;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -10,8 +10,8 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
+use Shlinkio\Shlink\Core\ErrorHandler\NotFoundHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
-use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Uri;
