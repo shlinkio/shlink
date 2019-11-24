@@ -36,7 +36,6 @@ class BackwardsCompatibleProblemDetailsMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $resp = $handler->handle($request);
-
         if ($resp->getHeaderLine('Content-type') !== 'application/problem+json') {
             return $resp;
         }
@@ -70,9 +69,7 @@ class BackwardsCompatibleProblemDetailsMiddleware implements MiddlewareInterface
     /** @deprecated When Shlink 2 is released, do not chekc the version */
     private function isVersionOne(ServerRequestInterface $request): bool
     {
-        $uri = $request->getUri();
-        $path = $uri->getPath();
-
+        $path = $request->getUri()->getPath();
         return strpos($path, '/v') === false || strpos($path, '/v1') === 0;
     }
 
