@@ -20,7 +20,7 @@ class DeleteShortUrlActionTest extends ApiTestCase
     }
 
     /** @test */
-    public function badRequestIsReturnedWhenTryingToDeleteUrlWithTooManyVisits(): void
+    public function unprocessableEntityIsReturnedWhenTryingToDeleteUrlWithTooManyVisits(): void
     {
         // Generate visits first
         for ($i = 0; $i < 20; $i++) {
@@ -30,7 +30,7 @@ class DeleteShortUrlActionTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_DELETE, '/short-urls/abc123');
         ['error' => $error] = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
+        $this->assertEquals(self::STATUS_UNPROCESSABLE_ENTITY, $resp->getStatusCode());
         $this->assertEquals(RestUtils::INVALID_SHORTCODE_DELETION_ERROR, $error);
     }
 }

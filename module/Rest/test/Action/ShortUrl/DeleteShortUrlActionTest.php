@@ -7,12 +7,8 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\DeleteShortUrlAction;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
-use Throwable;
-use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequest;
 
 class DeleteShortUrlActionTest extends TestCase
@@ -38,31 +34,5 @@ class DeleteShortUrlActionTest extends TestCase
 
         $this->assertEquals(204, $resp->getStatusCode());
         $deleteByShortCode->shouldHaveBeenCalledOnce();
-    }
-
-    /**
-     * @test
-     * @dataProvider provideExceptions
-     */
-    public function returnsErrorResponseInCaseOfException(Throwable $e, string $error, int $statusCode): void
-    {
-        $deleteByShortCode = $this->service->deleteByShortCode(Argument::any())->willThrow($e);
-
-        /** @var JsonResponse $resp */
-        $resp = $this->action->handle(new ServerRequest());
-        $payload = $resp->getPayload();
-
-        $this->assertEquals($statusCode, $resp->getStatusCode());
-        $this->assertEquals($error, $payload['error']);
-        $deleteByShortCode->shouldHaveBeenCalledOnce();
-    }
-
-    public function provideExceptions(): iterable
-    {
-        yield 'bad request' => [
-            new Exception\DeleteShortUrlException(5),
-            RestUtils::INVALID_SHORTCODE_DELETION_ERROR,
-            400,
-        ];
     }
 }
