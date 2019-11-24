@@ -13,19 +13,20 @@ return [
     'middleware_pipeline' => [
         'error-handler' => [
             'middleware' => [
+                Expressive\Helper\ContentLengthMiddleware::class,
                 ErrorHandler::class,
             ],
         ],
         'error-handler-rest' => [
             'path' => '/rest',
             'middleware' => [
+                Rest\Middleware\BackwardsCompatibleProblemDetailsMiddleware::class,
                 ProblemDetails\ProblemDetailsMiddleware::class,
             ],
         ],
 
         'pre-routing' => [
             'middleware' => [
-                Expressive\Helper\ContentLengthMiddleware::class,
                 Common\Middleware\CloseDbConnectionMiddleware::class,
             ],
         ],

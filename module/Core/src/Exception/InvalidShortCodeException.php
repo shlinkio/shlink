@@ -14,20 +14,17 @@ class InvalidShortCodeException extends RuntimeException implements ProblemDetai
 {
     use CommonProblemDetailsExceptionTrait;
 
-    public const TITLE = 'Invalid short code';
+    private const TITLE = 'Invalid short code';
     public const TYPE = 'INVALID_SHORTCODE';
 
     public static function fromNotFoundShortCode(string $shortCode): self
     {
         $e = new self(sprintf('No URL found for short code "%s"', $shortCode));
+
         $e->detail = $e->getMessage();
         $e->title = self::TITLE;
         $e->type = self::TYPE;
         $e->status = StatusCodeInterface::STATUS_NOT_FOUND;
-        $e->additional = [
-            'error' => $e->type,
-            'message' => $e->detail,
-        ];
 
         return $e;
     }

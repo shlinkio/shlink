@@ -15,8 +15,6 @@ use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
-use function sprintf;
-
 class EditShortUrlAction extends AbstractRestAction
 {
     protected const ROUTE_PATH = '/short-urls/{shortCode}';
@@ -51,12 +49,6 @@ class EditShortUrlAction extends AbstractRestAction
                 ShortUrlMeta::createFromRawData($postData)
             );
             return new EmptyResponse();
-        } catch (Exception\InvalidShortCodeException $e) {
-            $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
-            return new JsonResponse([
-                'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf('No URL found for short code "%s"', $shortCode),
-            ], self::STATUS_NOT_FOUND);
         } catch (Exception\ValidationException $e) {
             $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
             return new JsonResponse([

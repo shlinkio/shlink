@@ -33,11 +33,6 @@ class GetVisitsAction extends AbstractRestAction
         $this->visitsTracker = $visitsTracker;
     }
 
-    /**
-     * @param Request $request
-     * @return Response
-     * @throws \InvalidArgumentException
-     */
     public function handle(Request $request): Response
     {
         $shortCode = $request->getAttribute('shortCode');

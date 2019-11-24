@@ -39,6 +39,7 @@ return [
             Middleware\BodyParserMiddleware::class => InvokableFactory::class,
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
             Middleware\PathVersionMiddleware::class => InvokableFactory::class,
+            Middleware\BackwardsCompatibleProblemDetailsMiddleware::class => ConfigAbstractFactory::class,
             Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class => InvokableFactory::class,
             Middleware\ShortUrl\ShortCodePathMiddleware::class => InvokableFactory::class,
         ],
@@ -75,6 +76,11 @@ return [
         Action\Tag\DeleteTagsAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
         Action\Tag\CreateTagsAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
         Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
+
+        Middleware\BackwardsCompatibleProblemDetailsMiddleware::class => [
+            'config.backwards_compatible_problem_details.default_type_fallbacks',
+            'config.backwards_compatible_problem_details.json_flags',
+        ],
     ],
 
 ];
