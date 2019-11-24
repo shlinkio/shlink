@@ -8,8 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
@@ -87,24 +85,5 @@ class CreateShortUrlActionTest extends TestCase
         yield ['localhost:80000'];
         yield ['127.0.0.1'];
         yield ['???/&%$&'];
-    }
-
-    /** @test */
-    public function nonUniqueSlugReturnsError(): void
-    {
-        $this->urlShortener->urlToShortCode(
-            Argument::type(Uri::class),
-            Argument::type('array'),
-            ShortUrlMeta::createFromRawData(['customSlug' => 'foo']),
-            Argument::cetera()
-        )->willThrow(NonUniqueSlugException::class)->shouldBeCalledOnce();
-
-        $request = (new ServerRequest())->withParsedBody([
-            'longUrl' => 'http://www.domain.com/foo/bar',
-            'customSlug' => 'foo',
-        ]);
-        $response = $this->action->handle($request);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertStringContainsString(RestUtils::INVALID_SLUG_ERROR, (string) $response->getBody());
     }
 }

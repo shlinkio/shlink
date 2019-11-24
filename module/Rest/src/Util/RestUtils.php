@@ -19,7 +19,8 @@ class RestUtils
     /** @deprecated */
     public const INVALID_URL_ERROR = Core\InvalidUrlException::TYPE;
     public const INVALID_ARGUMENT_ERROR = 'INVALID_ARGUMENT';
-    public const INVALID_SLUG_ERROR = 'INVALID_SLUG';
+    /** @deprecated */
+    public const INVALID_SLUG_ERROR = Core\NonUniqueSlugException::TYPE;
     public const INVALID_CREDENTIALS_ERROR = 'INVALID_CREDENTIALS';
     public const INVALID_AUTH_TOKEN_ERROR = 'INVALID_AUTH_TOKEN';
     public const INVALID_AUTHORIZATION_ERROR = 'INVALID_AUTHORIZATION';
