@@ -7,13 +7,10 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\EmptyResponse;
-use Zend\Diactoros\Response\JsonResponse;
 
 class EditShortUrlAction extends AbstractRestAction
 {
@@ -29,32 +26,12 @@ class EditShortUrlAction extends AbstractRestAction
         $this->shortUrlService = $shortUrlService;
     }
 
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * to the next middleware component to create the response.
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return ResponseInterface
-     * @throws \InvalidArgumentException
-     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $postData = (array) $request->getParsedBody();
         $shortCode = $request->getAttribute('shortCode', '');
 
-        try {
-            $this->shortUrlService->updateMetadataByShortCode(
-                $shortCode,
-                ShortUrlMeta::createFromRawData($postData)
-            );
-            return new EmptyResponse();
-        } catch (Exception\ValidationException $e) {
-            $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
-            return new JsonResponse([
-                'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => 'Provided data is invalid.',
-            ], self::STATUS_BAD_REQUEST);
-        }
+        $this->shortUrlService->updateMetadataByShortCode($shortCode, ShortUrlMeta::createFromRawData($postData));
+        return new EmptyResponse();
     }
 }

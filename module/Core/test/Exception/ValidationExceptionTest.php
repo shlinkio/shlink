@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Exception;
 
+use Fig\Http\Message\StatusCodeInterface;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -67,7 +68,7 @@ EOT;
 
         $this->assertEquals($invalidData, $e->getInvalidElements());
         $this->assertEquals('Provided data is not valid', $e->getMessage());
-        $this->assertEquals(-1, $e->getCode());
+        $this->assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getCode());
         $this->assertEquals($prev, $e->getPrevious());
         $this->assertStringContainsString($expectedStringRepresentation, (string) $e);
         $getMessages->shouldHaveBeenCalledOnce();

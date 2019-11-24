@@ -8,10 +8,9 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
-use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
 
@@ -38,8 +37,8 @@ class CreateShortUrlActionTest extends TestCase
     /** @test */
     public function missingLongUrlParamReturnsError(): void
     {
-        $response = $this->action->handle(new ServerRequest());
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->expectException(ValidationException::class);
+        $this->action->handle(new ServerRequest());
     }
 
     /** @test */
@@ -71,13 +70,11 @@ class CreateShortUrlActionTest extends TestCase
             'longUrl' => 'http://www.domain.com/foo/bar',
             'domain' => $domain,
         ]);
-        /** @var JsonResponse $response */
-        $response = $this->action->handle($request);
-        $payload = $response->getPayload();
 
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals(RestUtils::INVALID_ARGUMENT_ERROR, $payload['error']);
-        $urlToShortCode->shouldNotHaveBeenCalled();
+        $this->expectException(ValidationException::class);
+        $urlToShortCode->shouldNotBeCalled();
+
+        $this->action->handle($request);
     }
 
     public function provideInvalidDomains(): iterable

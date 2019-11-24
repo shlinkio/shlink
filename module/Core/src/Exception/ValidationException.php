@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Exception;
 
+use Fig\Http\Message\StatusCodeInterface;
 use Throwable;
 use Zend\InputFilter\InputFilterInterface;
+use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
+use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
 use function Functional\reduce_left;
 use function is_array;
@@ -14,8 +17,13 @@ use function sprintf;
 
 use const PHP_EOL;
 
-class ValidationException extends RuntimeException
+class ValidationException extends RuntimeException implements ProblemDetailsExceptionInterface
 {
+    use CommonProblemDetailsExceptionTrait;
+
+    private const TITLE = 'Invalid data';
+    public const TYPE = 'INVALID_ARGUMENT';
+
     /** @var array */
     private $invalidElements;
 
@@ -36,7 +44,18 @@ class ValidationException extends RuntimeException
 
     public static function fromArray(array $invalidData, ?Throwable $prev = null): self
     {
-        return new self('Provided data is not valid', $invalidData, -1, $prev);
+        $status = StatusCodeInterface::STATUS_BAD_REQUEST;
+        $e = new self('Provided data is not valid', $invalidData, $status, $prev);
+
+        $e->detail = $e->getMessage();
+        $e->title = self::TITLE;
+        $e->type = self::TYPE;
+        $e->status = StatusCodeInterface::STATUS_BAD_REQUEST;
+        $e->additional = [
+            'invalidElements' => $invalidData,
+        ];
+
+        return $e;
     }
 
     public function getInvalidElements(): array

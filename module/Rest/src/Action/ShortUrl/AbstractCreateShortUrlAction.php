@@ -12,7 +12,6 @@ use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 
 abstract class AbstractCreateShortUrlAction extends AbstractRestAction
@@ -32,22 +31,9 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
         $this->domainConfig = $domainConfig;
     }
 
-    /**
-     * @param Request $request
-     * @return Response
-     */
     public function handle(Request $request): Response
     {
-        try {
-            $shortUrlData = $this->buildShortUrlData($request);
-        } catch (ValidationException $e) {
-            $this->logger->warning('Provided data is invalid. {e}', ['e' => $e]);
-            return new JsonResponse([
-                'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' => $e->getMessage(),
-            ], self::STATUS_BAD_REQUEST);
-        }
-
+        $shortUrlData = $this->buildShortUrlData($request);
         $longUrl = $shortUrlData->getLongUrl();
         $tags = $shortUrlData->getTags();
         $shortUrlMeta = $shortUrlData->getMeta();

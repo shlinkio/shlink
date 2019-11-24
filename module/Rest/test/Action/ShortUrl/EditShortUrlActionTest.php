@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
@@ -28,19 +29,15 @@ class EditShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function invalidDataReturnsError(): void
+    public function invalidDataThrowsError(): void
     {
         $request = (new ServerRequest())->withParsedBody([
             'maxVisits' => 'invalid',
         ]);
 
-        /** @var JsonResponse $resp */
-        $resp = $this->action->handle($request);
-        $payload = $resp->getPayload();
+        $this->expectException(ValidationException::class);
 
-        $this->assertEquals(400, $resp->getStatusCode());
-        $this->assertEquals(RestUtils::INVALID_ARGUMENT_ERROR, $payload['error']);
-        $this->assertEquals('Provided data is invalid.', $payload['message']);
+        $this->action->handle($request);
     }
 
     /** @test */

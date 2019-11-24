@@ -6,19 +6,19 @@ namespace Shlinkio\Shlink\Rest\Util;
 
 use Shlinkio\Shlink\Common\Exception as Common;
 use Shlinkio\Shlink\Core\Exception as Core;
-use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Rest\Exception as Rest;
 use Throwable;
 
 class RestUtils
 {
     /** @deprecated */
-    public const INVALID_SHORTCODE_ERROR = ShortUrlNotFoundException::TYPE;
+    public const INVALID_SHORTCODE_ERROR = Core\ShortUrlNotFoundException::TYPE;
     // FIXME Should be INVALID_SHORT_URL_DELETION
     public const INVALID_SHORTCODE_DELETION_ERROR = 'INVALID_SHORTCODE_DELETION';
     /** @deprecated */
     public const INVALID_URL_ERROR = Core\InvalidUrlException::TYPE;
-    public const INVALID_ARGUMENT_ERROR = 'INVALID_ARGUMENT';
+    /** @deprecated */
+    public const INVALID_ARGUMENT_ERROR = Core\ValidationException::TYPE;
     /** @deprecated */
     public const INVALID_SLUG_ERROR = Core\NonUniqueSlugException::TYPE;
     public const INVALID_CREDENTIALS_ERROR = 'INVALID_CREDENTIALS';
