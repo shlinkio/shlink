@@ -16,7 +16,8 @@ class RestUtils
     public const INVALID_SHORTCODE_ERROR = ShortUrlNotFoundException::TYPE;
     // FIXME Should be INVALID_SHORT_URL_DELETION
     public const INVALID_SHORTCODE_DELETION_ERROR = 'INVALID_SHORTCODE_DELETION';
-    public const INVALID_URL_ERROR = 'INVALID_URL';
+    /** @deprecated */
+    public const INVALID_URL_ERROR = Core\InvalidUrlException::TYPE;
     public const INVALID_ARGUMENT_ERROR = 'INVALID_ARGUMENT';
     public const INVALID_SLUG_ERROR = 'INVALID_SLUG';
     public const INVALID_CREDENTIALS_ERROR = 'INVALID_CREDENTIALS';

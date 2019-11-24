@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
@@ -59,21 +58,6 @@ class CreateShortUrlActionTest extends TestCase
         $response = $this->action->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue(strpos($response->getBody()->getContents(), $shortUrl->toString(self::DOMAIN_CONFIG)) > 0);
-    }
-
-    /** @test */
-    public function anInvalidUrlReturnsError(): void
-    {
-        $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
-             ->willThrow(InvalidUrlException::class)
-             ->shouldBeCalledOnce();
-
-        $request = (new ServerRequest())->withParsedBody([
-            'longUrl' => 'http://www.domain.com/foo/bar',
-        ]);
-        $response = $this->action->handle($request);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::INVALID_URL_ERROR) > 0);
     }
 
     /**

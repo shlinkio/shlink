@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
@@ -60,12 +59,6 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
             $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
             return new JsonResponse($transformer->transform($shortUrl));
-        } catch (InvalidUrlException $e) {
-            $this->logger->warning('Provided Invalid URL. {e}', ['e' => $e]);
-            return new JsonResponse([
-                'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf('Provided URL %s is invalid. Try with a different one.', $longUrl),
-            ], self::STATUS_BAD_REQUEST);
         } catch (NonUniqueSlugException $e) {
             $customSlug = $shortUrlMeta->getCustomSlug();
             $this->logger->warning('Provided non-unique slug. {e}', ['e' => $e]);
