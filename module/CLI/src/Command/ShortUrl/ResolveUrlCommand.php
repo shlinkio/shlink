@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -65,7 +65,7 @@ class ResolveUrlCommand extends Command
             $url = $this->urlShortener->shortCodeToUrl($shortCode, $domain);
             $output->writeln(sprintf('Long URL: <info>%s</info>', $url->getLongUrl()));
             return ExitCodes::EXIT_SUCCESS;
-        } catch (InvalidShortCodeException $e) {
+        } catch (ShortUrlNotFoundException $e) {
             $io->error(sprintf('Provided short code "%s" has an invalid format.', $shortCode));
             return ExitCodes::EXIT_FAILURE;
         } catch (EntityDoesNotExistException $e) {

@@ -12,7 +12,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Response\ResponseUtilsTrait;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\PreviewGenerator\Exception\PreviewGenerationException;
 use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGeneratorInterface;
@@ -56,7 +56,7 @@ class PreviewAction implements MiddlewareInterface
             $url = $this->urlShortener->shortCodeToUrl($shortCode);
             $imagePath = $this->previewGenerator->generatePreview($url->getLongUrl());
             return $this->generateImageResponse($imagePath);
-        } catch (InvalidShortCodeException | EntityDoesNotExistException | PreviewGenerationException $e) {
+        } catch (ShortUrlNotFoundException | EntityDoesNotExistException | PreviewGenerationException $e) {
             $this->logger->warning('An error occurred while generating preview image. {e}', ['e' => $e]);
             return $handler->handle($request);
         }

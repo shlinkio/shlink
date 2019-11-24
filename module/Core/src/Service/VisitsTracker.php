@@ -9,7 +9,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\ShortUrlVisited;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
@@ -51,14 +51,14 @@ class VisitsTracker implements VisitsTrackerInterface
      * Returns the visits on certain short code
      *
      * @return Visit[]|Paginator
-     * @throws InvalidShortCodeException
+     * @throws ShortUrlNotFoundException
      */
     public function info(string $shortCode, VisitsParams $params): Paginator
     {
         /** @var ORM\EntityRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
         if ($repo->count(['shortCode' => $shortCode]) < 1) {
-            throw InvalidShortCodeException::fromNotFoundShortCode($shortCode);
+            throw ShortUrlNotFoundException::fromNotFoundShortCode($shortCode);
         }
 
         /** @var VisitRepository $repo */

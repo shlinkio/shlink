@@ -58,7 +58,7 @@ class DeleteShortUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $deleteByShortCode = $this->service->deleteByShortCode($shortCode, false)->willThrow(
-            Exception\InvalidShortCodeException::class
+            Exception\ShortUrlNotFoundException::class
         );
 
         $this->commandTester->execute(['shortCode' => $shortCode]);

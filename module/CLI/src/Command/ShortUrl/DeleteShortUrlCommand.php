@@ -55,7 +55,7 @@ class DeleteShortUrlCommand extends Command
         try {
             $this->runDelete($io, $shortCode, $ignoreThreshold);
             return ExitCodes::EXIT_SUCCESS;
-        } catch (Exception\InvalidShortCodeException $e) {
+        } catch (Exception\ShortUrlNotFoundException $e) {
             $io->error(sprintf('Provided short code "%s" could not be found.', $shortCode));
             return ExitCodes::EXIT_FAILURE;
         } catch (Exception\DeleteShortUrlException $e) {

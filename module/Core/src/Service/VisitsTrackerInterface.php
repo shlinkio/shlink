@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Shlinkio\Shlink\Core\Entity\Visit;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Zend\Paginator\Paginator;
@@ -21,7 +21,7 @@ interface VisitsTrackerInterface
      * Returns the visits on certain short code
      *
      * @return Visit[]|Paginator
-     * @throws InvalidShortCodeException
+     * @throws ShortUrlNotFoundException
      */
     public function info(string $shortCode, VisitsParams $params): Paginator;
 }

@@ -9,7 +9,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ResolveUrlCommand;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -63,7 +63,7 @@ class ResolveUrlCommandTest extends TestCase
     public function wrongShortCodeFormatOutputsErrorMessage(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(new InvalidShortCodeException())
+        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(new ShortUrlNotFoundException())
                                                              ->shouldBeCalledOnce();
 
         $this->commandTester->execute(['shortCode' => $shortCode]);

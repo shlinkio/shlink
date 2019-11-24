@@ -10,11 +10,11 @@ use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
 use function sprintf;
 
-class InvalidShortCodeException extends RuntimeException implements ProblemDetailsExceptionInterface
+class ShortUrlNotFoundException extends DomainException implements ProblemDetailsExceptionInterface
 {
     use CommonProblemDetailsExceptionTrait;
 
-    private const TITLE = 'Invalid short code';
+    private const TITLE = 'Short URL not found';
     public const TYPE = 'INVALID_SHORTCODE';
 
     public static function fromNotFoundShortCode(string $shortCode): self

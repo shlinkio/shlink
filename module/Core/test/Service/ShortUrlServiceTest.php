@@ -12,7 +12,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
@@ -62,7 +62,7 @@ class ShortUrlServiceTest extends TestCase
                                                      ->shouldBeCalledOnce();
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $this->expectException(InvalidShortCodeException::class);
+        $this->expectException(ShortUrlNotFoundException::class);
         $this->service->setTagsByShortCode($shortCode);
     }
 

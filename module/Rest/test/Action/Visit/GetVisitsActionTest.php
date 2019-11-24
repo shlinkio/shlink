@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Util\DateRange;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Rest\Action\Visit\GetVisitsAction;
@@ -47,7 +47,7 @@ class GetVisitsActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::type(VisitsParams::class))->willThrow(
-            InvalidShortCodeException::class
+            ShortUrlNotFoundException::class
         )->shouldBeCalledOnce();
 
         $response = $this->action->handle((new ServerRequest())->withAttribute('shortCode', $shortCode));

@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Action\QrCodeAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
@@ -53,7 +53,7 @@ class QrCodeActionTest extends TestCase
     public function anInvalidShortCodeWillReturnNotFoundResponse(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, '')->willThrow(InvalidShortCodeException::class)
+        $this->urlShortener->shortCodeToUrl($shortCode, '')->willThrow(ShortUrlNotFoundException::class)
                                                            ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle(Argument::any())->willReturn(new Response());

@@ -6,14 +6,14 @@ namespace Shlinkio\Shlink\Core\Service\ShortUrl;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 
 trait FindShortCodeTrait
 {
     /**
      * @param string $shortCode
      * @return ShortUrl
-     * @throws InvalidShortCodeException
+     * @throws ShortUrlNotFoundException
      */
     private function findByShortCode(EntityManagerInterface $em, string $shortCode): ShortUrl
     {
@@ -22,7 +22,7 @@ trait FindShortCodeTrait
             'shortCode' => $shortCode,
         ]);
         if ($shortUrl === null) {
-            throw InvalidShortCodeException::fromNotFoundShortCode($shortCode);
+            throw ShortUrlNotFoundException::fromNotFoundShortCode($shortCode);
         }
 
         return $shortUrl;

@@ -6,14 +6,14 @@ namespace Shlinkio\Shlink\Rest\Util;
 
 use Shlinkio\Shlink\Common\Exception as Common;
 use Shlinkio\Shlink\Core\Exception as Core;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Rest\Exception as Rest;
 use Throwable;
 
 class RestUtils
 {
     /** @deprecated */
-    public const INVALID_SHORTCODE_ERROR = InvalidShortCodeException::TYPE;
+    public const INVALID_SHORTCODE_ERROR = ShortUrlNotFoundException::TYPE;
     // FIXME Should be INVALID_SHORT_URL_DELETION
     public const INVALID_SHORTCODE_DELETION_ERROR = 'INVALID_SHORTCODE_DELETION';
     public const INVALID_URL_ERROR = 'INVALID_URL';
@@ -30,7 +30,7 @@ class RestUtils
     public static function getRestErrorCodeFromException(Throwable $e): string
     {
         switch (true) {
-            case $e instanceof Core\InvalidShortCodeException:
+            case $e instanceof Core\ShortUrlNotFoundException:
                 return self::INVALID_SHORTCODE_ERROR;
             case $e instanceof Core\InvalidUrlException:
                 return self::INVALID_URL_ERROR;

@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Util;
 
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
@@ -19,7 +19,7 @@ class RestUtilsTest extends TestCase
     {
         $this->assertEquals(
             RestUtils::INVALID_SHORTCODE_ERROR,
-            RestUtils::getRestErrorCodeFromException(new InvalidShortCodeException())
+            RestUtils::getRestErrorCodeFromException(new ShortUrlNotFoundException())
         );
         $this->assertEquals(
             RestUtils::INVALID_URL_ERROR,
