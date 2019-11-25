@@ -11,7 +11,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\AppOptions;
@@ -72,7 +71,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
             }
 
             return $this->createSuccessResp($this->buildUrlToRedirectTo($url, $query, $disableTrackParam));
-        } catch (ShortUrlNotFoundException | EntityDoesNotExistException $e) {
+        } catch (ShortUrlNotFoundException $e) {
             $this->logger->warning('An error occurred while tracking short code. {e}', ['e' => $e]);
             return $this->createErrorResp($request, $handler);
         }

@@ -8,11 +8,12 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ResolveUrlCommand;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+
+use function sprintf;
 
 use const PHP_EOL;
 
@@ -51,23 +52,11 @@ class ResolveUrlCommandTest extends TestCase
     public function incorrectShortCodeOutputsErrorMessage(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(EntityDoesNotExistException::class)
+        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(ShortUrlNotFoundException::class)
                                                              ->shouldBeCalledOnce();
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString('Provided short code "' . $shortCode . '" could not be found.', $output);
-    }
-
-    /** @test */
-    public function wrongShortCodeFormatOutputsErrorMessage(): void
-    {
-        $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(new ShortUrlNotFoundException())
-                                                             ->shouldBeCalledOnce();
-
-        $this->commandTester->execute(['shortCode' => $shortCode]);
-        $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString('Provided short code "' . $shortCode . '" has an invalid format.', $output);
+        $this->assertStringContainsString(sprintf('Provided short code "%s" could not be found', $shortCode), $output);
     }
 }

@@ -8,9 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver\PersistenceDomainResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
@@ -129,7 +129,7 @@ class UrlShortener implements UrlShortenerInterface
     }
 
     /**
-     * @throws EntityDoesNotExistException
+     * @throws ShortUrlNotFoundException
      */
     public function shortCodeToUrl(string $shortCode, ?string $domain = null): ShortUrl
     {
@@ -137,10 +137,7 @@ class UrlShortener implements UrlShortenerInterface
         $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
         $shortUrl = $shortUrlRepo->findOneByShortCode($shortCode, $domain);
         if ($shortUrl === null) {
-            throw EntityDoesNotExistException::createFromEntityAndConditions(ShortUrl::class, [
-                'shortCode' => $shortCode,
-                'domain' => $domain,
-            ]);
+            throw ShortUrlNotFoundException::fromNotFoundShortCode($shortCode, $domain);
         }
 
         return $shortUrl;

@@ -19,11 +19,7 @@ class NonUniqueSlugException extends InvalidArgumentException implements Problem
 
     public static function fromSlug(string $slug, ?string $domain): self
     {
-        $suffix = '';
-        if ($domain !== null) {
-            $suffix = sprintf(' for domain "%s"', $domain);
-        }
-
+        $suffix = $domain === null ? '' : sprintf(' for domain "%s"', $domain);
         $e = new self(sprintf('Provided slug "%s" is already in use%s.', $slug, $suffix));
 
         $e->detail = $e->getMessage();

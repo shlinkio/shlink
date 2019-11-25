@@ -17,9 +17,10 @@ class ShortUrlNotFoundException extends DomainException implements ProblemDetail
     private const TITLE = 'Short URL not found';
     public const TYPE = 'INVALID_SHORTCODE';
 
-    public static function fromNotFoundShortCode(string $shortCode): self
+    public static function fromNotFoundShortCode(string $shortCode, ?string $domain = null): self
     {
-        $e = new self(sprintf('No URL found for short code "%s"', $shortCode));
+        $suffix = $domain === null ? '' : sprintf(' for domain "%s"', $domain);
+        $e = new self(sprintf('No URL found with short code "%s"%s', $shortCode, $suffix));
 
         $e->detail = $e->getMessage();
         $e->title = self::TITLE;

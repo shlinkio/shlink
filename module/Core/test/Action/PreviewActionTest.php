@@ -11,7 +11,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\PreviewAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
@@ -36,19 +35,6 @@ class PreviewActionTest extends TestCase
         $this->previewGenerator = $this->prophesize(PreviewGenerator::class);
         $this->urlShortener = $this->prophesize(UrlShortener::class);
         $this->action = new PreviewAction($this->previewGenerator->reveal(), $this->urlShortener->reveal());
-    }
-
-    /** @test */
-    public function invalidShortCodeFallsBackToNextMiddleware(): void
-    {
-        $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
-                                                       ->shouldBeCalledOnce();
-        $delegate = $this->prophesize(RequestHandlerInterface::class);
-        $delegate->handle(Argument::cetera())->shouldBeCalledOnce()
-                                              ->willReturn(new Response());
-
-        $this->action->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate->reveal());
     }
 
     /** @test */
