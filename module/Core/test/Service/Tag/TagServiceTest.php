@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
+use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Service\Tag\TagService;
 
@@ -83,7 +83,7 @@ class TagServiceTest extends TestCase
 
         $find->shouldBeCalled();
         $getRepo->shouldBeCalled();
-        $this->expectException(EntityDoesNotExistException::class);
+        $this->expectException(TagNotFoundException::class);
 
         $this->service->renameTag('foo', 'bar');
     }

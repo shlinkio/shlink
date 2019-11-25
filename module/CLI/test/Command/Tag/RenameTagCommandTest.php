@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\RenameTagCommand;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
+use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -38,7 +38,7 @@ class RenameTagCommandTest extends TestCase
     {
         $oldName = 'foo';
         $newName = 'bar';
-        $renameTag = $this->tagService->renameTag($oldName, $newName)->willThrow(EntityDoesNotExistException::class);
+        $renameTag = $this->tagService->renameTag($oldName, $newName)->willThrow(TagNotFoundException::class);
 
         $this->commandTester->execute([
             'oldName' => $oldName,

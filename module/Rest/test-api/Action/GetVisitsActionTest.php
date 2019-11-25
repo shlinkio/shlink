@@ -16,6 +16,6 @@ class GetVisitsActionTest extends ApiTestCase
         ['error' => $error] = $this->getJsonResponsePayload($resp);
 
         $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
-        $this->assertEquals(RestUtils::INVALID_ARGUMENT_ERROR, $error);
+        $this->assertEquals(RestUtils::INVALID_SHORTCODE_ERROR, $error);
     }
 }

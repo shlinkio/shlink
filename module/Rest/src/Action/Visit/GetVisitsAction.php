@@ -8,14 +8,10 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
-use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
-
-use function sprintf;
 
 class GetVisitsAction extends AbstractRestAction
 {
@@ -36,19 +32,10 @@ class GetVisitsAction extends AbstractRestAction
     public function handle(Request $request): Response
     {
         $shortCode = $request->getAttribute('shortCode');
+        $visits = $this->visitsTracker->info($shortCode, VisitsParams::fromRawData($request->getQueryParams()));
 
-        try {
-            $visits = $this->visitsTracker->info($shortCode, VisitsParams::fromRawData($request->getQueryParams()));
-
-            return new JsonResponse([
-                'visits' => $this->serializePaginator($visits),
-            ]);
-        } catch (ShortUrlNotFoundException $e) {
-            $this->logger->warning('Provided nonexistent short code {e}', ['e' => $e]);
-            return new JsonResponse([
-                'error' => RestUtils::INVALID_ARGUMENT_ERROR, // FIXME Wrong code. Use correct one in "type"
-                'message' => sprintf('Provided short code %s does not exist', $shortCode),
-            ], self::STATUS_NOT_FOUND);
-        }
+        return new JsonResponse([
+            'visits' => $this->serializePaginator($visits),
+        ]);
     }
 }

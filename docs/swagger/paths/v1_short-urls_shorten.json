@@ -112,10 +112,10 @@
                 },
                 "examples": {
                     "application/json": {
-                        "error": "UNKNOWN_ERROR",
+                        "error": "INTERNAL_SERVER_ERROR",
                         "message": "Unexpected error occurred"
                     },
-                    "text/plain": "UNKNOWN_ERROR"
+                    "text/plain": "INTERNAL_SERVER_ERROR"
                 }
             }
         }

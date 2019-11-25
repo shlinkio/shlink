@@ -11,8 +11,6 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlAction;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
-use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequest;
 
 class EditShortUrlActionTest extends TestCase

@@ -7,7 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\UpdateTagAction;
 use Zend\Diactoros\ServerRequest;
@@ -32,9 +32,10 @@ class UpdateTagActionTest extends TestCase
     public function whenInvalidParamsAreProvidedAnErrorIsReturned(array $bodyParams): void
     {
         $request = (new ServerRequest())->withParsedBody($bodyParams);
-        $resp = $this->action->handle($request);
 
-        $this->assertEquals(400, $resp->getStatusCode());
+        $this->expectException(ValidationException::class);
+
+        $this->action->handle($request);
     }
 
     public function provideParams(): iterable
@@ -42,21 +43,6 @@ class UpdateTagActionTest extends TestCase
         yield 'old name only' => [['oldName' => 'foo']];
         yield 'new name only' => [['newName' => 'foo']];
         yield 'no params' => [[]];
-    }
-
-    /** @test */
-    public function requestingInvalidTagReturnsError(): void
-    {
-        $request = (new ServerRequest())->withParsedBody([
-            'oldName' => 'foo',
-            'newName' => 'bar',
-        ]);
-        $rename = $this->tagService->renameTag('foo', 'bar')->willThrow(EntityDoesNotExistException::class);
-
-        $resp = $this->action->handle($request);
-
-        $this->assertEquals(404, $resp->getStatusCode());
-        $rename->shouldHaveBeenCalled();
     }
 
     /** @test */
