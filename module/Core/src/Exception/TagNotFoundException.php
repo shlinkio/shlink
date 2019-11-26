@@ -15,7 +15,7 @@ class TagNotFoundException extends DomainException implements ProblemDetailsExce
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Tag not found';
-    public const TYPE = 'TAG_NOT_FOUND';
+    private const TYPE = 'TAG_NOT_FOUND';
 
     public static function fromTag(string $tag): self
     {

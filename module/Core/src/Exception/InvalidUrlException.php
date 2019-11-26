@@ -16,7 +16,7 @@ class InvalidUrlException extends DomainException implements ProblemDetailsExcep
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Invalid URL';
-    public const TYPE = 'INVALID_URL';
+    private const TYPE = 'INVALID_URL';
 
     public static function fromUrl(string $url, ?Throwable $previous = null): self
     {

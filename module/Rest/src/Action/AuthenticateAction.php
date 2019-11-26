@@ -10,7 +10,6 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Rest\Authentication\JWTServiceInterface;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 
 /** @deprecated */

@@ -15,7 +15,7 @@ class ShortUrlNotFoundException extends DomainException implements ProblemDetail
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Short URL not found';
-    public const TYPE = 'INVALID_SHORTCODE';
+    private const TYPE = 'INVALID_SHORTCODE';
 
     public static function fromNotFoundShortCode(string $shortCode, ?string $domain = null): self
     {

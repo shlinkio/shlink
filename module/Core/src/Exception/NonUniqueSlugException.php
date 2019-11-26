@@ -15,7 +15,7 @@ class NonUniqueSlugException extends InvalidArgumentException implements Problem
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Invalid custom slug';
-    public const TYPE = 'INVALID_SLUG';
+    private const TYPE = 'INVALID_SLUG';
 
     public static function fromSlug(string $slug, ?string $domain): self
     {
