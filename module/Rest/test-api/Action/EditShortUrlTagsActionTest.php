@@ -7,7 +7,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 use GuzzleHttp\RequestOptions;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
-class EditShortUrlActionTagsTest extends ApiTestCase
+class EditShortUrlTagsActionTest extends ApiTestCase
 {
     /** @test */
     public function notProvidingTagsReturnsBadRequest(): void

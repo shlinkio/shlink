@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlTagsAction;
 use Zend\Diactoros\ServerRequest;
@@ -27,8 +28,8 @@ class EditShortUrlTagsActionTest extends TestCase
     /** @test */
     public function notProvidingTagsReturnsError(): void
     {
-        $response = $this->action->handle((new ServerRequest())->withAttribute('shortCode', 'abc123'));
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->expectException(ValidationException::class);
+        $this->action->handle((new ServerRequest())->withAttribute('shortCode', 'abc123'));
     }
 
     /** @test */

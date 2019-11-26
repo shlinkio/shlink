@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Zend\Diactoros\Response\JsonResponse;
@@ -25,21 +26,15 @@ class EditShortUrlTagsAction extends AbstractRestAction
         $this->shortUrlService = $shortUrlService;
     }
 
-    /**
-     * @param Request $request
-     * @return Response
-     * @throws \InvalidArgumentException
-     */
     public function handle(Request $request): Response
     {
         $shortCode = $request->getAttribute('shortCode');
         $bodyParams = $request->getParsedBody();
 
         if (! isset($bodyParams['tags'])) {
-            return new JsonResponse([
-                'error' => 'INVALID_ARGUMENT',
-                'message' => 'A list of tags was not provided',
-            ], self::STATUS_BAD_REQUEST);
+            throw ValidationException::fromArray([
+                'tags' => 'List of tags has to be provided',
+            ]);
         }
         $tags = $bodyParams['tags'];
 
