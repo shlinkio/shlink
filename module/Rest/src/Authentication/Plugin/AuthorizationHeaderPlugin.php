@@ -16,6 +16,7 @@ use function explode;
 use function sprintf;
 use function strtolower;
 
+/** @deprecated */
 class AuthorizationHeaderPlugin implements AuthenticationPluginInterface
 {
     public const HEADER_NAME = 'Authorization';

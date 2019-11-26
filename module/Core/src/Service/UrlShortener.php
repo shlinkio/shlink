@@ -130,6 +130,7 @@ class UrlShortener implements UrlShortenerInterface
 
     /**
      * @throws ShortUrlNotFoundException
+     * @fixme Move this method to a different service
      */
     public function shortCodeToUrl(string $shortCode, ?string $domain = null): ShortUrl
     {

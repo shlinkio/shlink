@@ -22,14 +22,14 @@ class RestUtils
     /** @deprecated */
     public const INVALID_SLUG_ERROR = Core\NonUniqueSlugException::TYPE;
     /** @deprecated */
+    public const NOT_FOUND_ERROR = Core\TagNotFoundException::TYPE;
+    /** @deprecated */
+    public const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
+
     public const INVALID_CREDENTIALS_ERROR = 'INVALID_CREDENTIALS';
     public const INVALID_AUTH_TOKEN_ERROR = 'INVALID_AUTH_TOKEN';
     public const INVALID_AUTHORIZATION_ERROR = 'INVALID_AUTHORIZATION';
     public const INVALID_API_KEY_ERROR = 'INVALID_API_KEY';
-    /** @deprecated */
-    public const NOT_FOUND_ERROR = Core\TagNotFoundException::TYPE;
-    /** @deprecated */
-    public const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
 
     /** @deprecated */
     public static function getRestErrorCodeFromException(Throwable $e): string

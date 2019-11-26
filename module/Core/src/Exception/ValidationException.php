@@ -17,7 +17,7 @@ use function sprintf;
 
 use const PHP_EOL;
 
-class ValidationException extends RuntimeException implements ProblemDetailsExceptionInterface
+class ValidationException extends InvalidArgumentException implements ProblemDetailsExceptionInterface
 {
     use CommonProblemDetailsExceptionTrait;
 
