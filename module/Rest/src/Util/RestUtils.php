@@ -28,7 +28,8 @@ class RestUtils
 
     public const INVALID_CREDENTIALS_ERROR = 'INVALID_CREDENTIALS';
     public const INVALID_AUTH_TOKEN_ERROR = 'INVALID_AUTH_TOKEN';
-    public const INVALID_AUTHORIZATION_ERROR = 'INVALID_AUTHORIZATION';
+    /** @deprecated */
+    public const INVALID_AUTHORIZATION_ERROR = Rest\MissingAuthenticationException::TYPE;
     public const INVALID_API_KEY_ERROR = 'INVALID_API_KEY';
 
     /** @deprecated */

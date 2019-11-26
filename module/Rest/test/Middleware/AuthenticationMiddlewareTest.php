@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPlugin;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPluginInterface;
-use Shlinkio\Shlink\Rest\Exception\NoAuthenticationException;
+use Shlinkio\Shlink\Rest\Exception\MissingAuthenticationException;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
@@ -128,7 +128,7 @@ class AuthenticationMiddlewareTest extends TestCase
         };
 
         yield 'container exception' => [$containerException];
-        yield 'authentication exception' => [NoAuthenticationException::fromExpectedTypes([])];
+        yield 'authentication exception' => [MissingAuthenticationException::fromExpectedTypes([])];
     }
 
     /** @test */

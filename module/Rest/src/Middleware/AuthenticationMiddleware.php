@@ -6,24 +6,19 @@ namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPlugin;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPluginInterface;
-use Shlinkio\Shlink\Rest\Exception\NoAuthenticationException;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouteResult;
 
 use function Functional\contains;
-use function implode;
-use function sprintf;
 
 class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface, RequestMethodInterface
 {
@@ -44,16 +39,6 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
         $this->logger = $logger ?: new NullLogger();
     }
 
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * to the next middleware component to create the response.
-     *
-     * @param Request $request
-     * @param RequestHandlerInterface $handler
-     *
-     * @return Response
-     * @throws \InvalidArgumentException
-     */
     public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         /** @var RouteResult|null $routeResult */
@@ -67,15 +52,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
             return $handler->handle($request);
         }
 
-        try {
-            $plugin = $this->requestToAuthPlugin->fromRequest($request);
-        } catch (ContainerExceptionInterface | NoAuthenticationException $e) {
-            $this->logger->warning('Invalid or no authentication provided. {e}', ['e' => $e]);
-            return $this->createErrorResponse(sprintf(
-                'Expected one of the following authentication headers, but none were provided, ["%s"]',
-                implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)
-            ));
-        }
+        $plugin = $this->requestToAuthPlugin->fromRequest($request);
 
         try {
             $plugin->verify($request);
