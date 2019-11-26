@@ -200,6 +200,15 @@ class CreateShortUrlActionTest extends ApiTestCase
         yield ['http://téstb.shlink.io']; // Redirects to http://tést.shlink.io
     }
 
+    /** @test */
+    public function failsToCreateShortUrlWithInvalidOriginalUrl(): void
+    {
+        [$statusCode, $payload] = $this->createShortUrl(['longUrl' => 'https://this-has-to-be-invalid.com']);
+
+        $this->assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
+        $this->assertEquals('INVALID_URL', $payload['error']);
+    }
+
     /**
      * @return array {
      *     @var int $statusCode
