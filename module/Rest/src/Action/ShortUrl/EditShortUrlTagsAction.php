@@ -38,7 +38,7 @@ class EditShortUrlTagsAction extends AbstractRestAction
 
         if (! isset($bodyParams['tags'])) {
             return new JsonResponse([
-                'error' => RestUtils::INVALID_ARGUMENT_ERROR,
+                'error' => 'INVALID_ARGUMENT',
                 'message' => 'A list of tags was not provided',
             ], self::STATUS_BAD_REQUEST);
         }

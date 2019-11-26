@@ -8,7 +8,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 
 class ApiKeyHeaderPlugin implements AuthenticationPluginInterface
 {
@@ -28,14 +27,9 @@ class ApiKeyHeaderPlugin implements AuthenticationPluginInterface
     public function verify(ServerRequestInterface $request): void
     {
         $apiKey = $request->getHeaderLine(self::HEADER_NAME);
-        if ($this->apiKeyService->check($apiKey)) {
-            return;
+        if (! $this->apiKeyService->check($apiKey)) {
+            throw VerifyAuthenticationException::forInvalidApiKey();
         }
-
-        throw VerifyAuthenticationException::withError(
-            RestUtils::INVALID_API_KEY_ERROR,
-            'Provided API key does not exist or is invalid.'
-        );
     }
 
     public function update(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface

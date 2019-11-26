@@ -13,40 +13,10 @@ use Throwable;
 use function array_map;
 use function random_int;
 use function range;
-use function sprintf;
 
 class VerifyAuthenticationExceptionTest extends TestCase
 {
     use StringUtilsTrait;
-
-    /**
-     * @test
-     * @dataProvider provideExceptionData
-     */
-    public function withErrorCreatesExpectedException(string $code, string $message, ?Throwable $prev): void
-    {
-        $e = VerifyAuthenticationException::withError($code, $message, $prev);
-
-        $this->assertEquals(0, $e->getCode());
-        $this->assertEquals(
-            sprintf('Authentication verification failed with the public message "%s"', $message),
-            $e->getMessage()
-        );
-        $this->assertEquals($code, $e->getErrorCode());
-        $this->assertEquals($message, $e->getPublicMessage());
-        $this->assertEquals($prev, $e->getPrevious());
-    }
-
-    public function provideExceptionData(): iterable
-    {
-        return array_map(function () {
-            return [
-                $this->generateRandomString(),
-                $this->generateRandomString(50),
-                random_int(0, 1) === 1 ? new Exception('Prev') : null,
-            ];
-        }, range(1, 10));
-    }
 
     /**
      * @test

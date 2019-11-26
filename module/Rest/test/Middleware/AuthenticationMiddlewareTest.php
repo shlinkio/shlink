@@ -138,7 +138,7 @@ class AuthenticationMiddlewareTest extends TestCase
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), [])
         );
-        $e = VerifyAuthenticationException::withError('the_error', 'the_message');
+        $e = VerifyAuthenticationException::forInvalidApiKey();
         $plugin = $this->prophesize(AuthenticationPluginInterface::class);
 
         $verify = $plugin->verify($request)->willThrow($e);
