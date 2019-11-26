@@ -36,10 +36,7 @@ class RequestToHttpAuthPlugin implements RequestToHttpAuthPluginInterface
     public function fromRequest(ServerRequestInterface $request): Plugin\AuthenticationPluginInterface
     {
         if (! $this->hasAnySupportedHeader($request)) {
-            throw NoAuthenticationException::fromExpectedTypes([
-                Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-                Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
-            ]);
+            throw NoAuthenticationException::fromExpectedTypes(self::SUPPORTED_AUTH_HEADERS);
         }
 
         return $this->authPluginManager->get($this->getFirstAvailableHeader($request));

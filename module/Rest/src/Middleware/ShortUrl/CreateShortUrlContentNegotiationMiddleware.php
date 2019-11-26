@@ -21,12 +21,6 @@ class CreateShortUrlContentNegotiationMiddleware implements MiddlewareInterface
     private const PLAIN_TEXT = 'text';
     private const JSON = 'json';
 
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * response creation to a handler.
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
-     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);

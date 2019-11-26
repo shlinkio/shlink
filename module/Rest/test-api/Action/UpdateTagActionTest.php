@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use GuzzleHttp\RequestOptions;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class UpdateTagActionTest extends ApiTestCase
@@ -20,7 +19,7 @@ class UpdateTagActionTest extends ApiTestCase
         ['error' => $error] = $this->getJsonResponsePayload($resp);
 
         $this->assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
-        $this->assertEquals(RestUtils::INVALID_ARGUMENT_ERROR, $error);
+        $this->assertEquals('INVALID_ARGUMENT', $error);
     }
 
     public function provideInvalidBody(): iterable
@@ -40,6 +39,6 @@ class UpdateTagActionTest extends ApiTestCase
         ['error' => $error] = $this->getJsonResponsePayload($resp);
 
         $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
-        $this->assertEquals(RestUtils::NOT_FOUND_ERROR, $error);
+        $this->assertEquals('TAG_NOT_FOUND', $error);
     }
 }

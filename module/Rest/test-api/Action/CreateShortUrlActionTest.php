@@ -6,7 +6,6 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function Functional\map;
@@ -44,7 +43,7 @@ class CreateShortUrlActionTest extends ApiTestCase
         [$statusCode, $payload] = $this->createShortUrl(['customSlug' => $slug, 'domain' => $domain]);
 
         $this->assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
-        $this->assertEquals(RestUtils::INVALID_SLUG_ERROR, $payload['error']);
+        $this->assertEquals('INVALID_SLUG', $payload['error']);
     }
 
     /** @test */
