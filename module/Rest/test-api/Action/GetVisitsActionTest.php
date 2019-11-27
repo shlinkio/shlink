@@ -11,10 +11,18 @@ class GetVisitsActionTest extends ApiTestCase
     /** @test */
     public function tryingToGetVisitsForInvalidUrlReturnsNotFoundError(): void
     {
+        $expectedDetail = 'No URL found with short code "invalid"';
+
         $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls/invalid/visits');
-        ['error' => $error] = $this->getJsonResponsePayload($resp);
+        $payload = $this->getJsonResponsePayload($resp);
 
         $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
-        $this->assertEquals('INVALID_SHORTCODE', $error);
+        $this->assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
+        $this->assertEquals('INVALID_SHORTCODE', $payload['type']);
+        $this->assertEquals('INVALID_SHORTCODE', $payload['error']); // Deprecated
+        $this->assertEquals($expectedDetail, $payload['detail']);
+        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
+        $this->assertEquals('Short URL not found', $payload['title']);
+        $this->assertEquals('invalid', $payload['shortCode']);
     }
 }

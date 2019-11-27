@@ -15,11 +15,18 @@ class UpdateTagActionTest extends ApiTestCase
      */
     public function notProvidingTagsReturnsBadRequest(array $body): void
     {
+        $expectedDetail = 'Provided data is not valid';
+
         $resp = $this->callApiWithKey(self::METHOD_PUT, '/tags', [RequestOptions::JSON => $body]);
-        ['error' => $error] = $this->getJsonResponsePayload($resp);
+        $payload = $this->getJsonResponsePayload($resp);
 
         $this->assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
-        $this->assertEquals('INVALID_ARGUMENT', $error);
+        $this->assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
+        $this->assertEquals('INVALID_ARGUMENT', $payload['type']);
+        $this->assertEquals('INVALID_ARGUMENT', $payload['error']); // Deprecated
+        $this->assertEquals($expectedDetail, $payload['detail']);
+        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
+        $this->assertEquals('Invalid data', $payload['title']);
     }
 
     public function provideInvalidBody(): iterable
@@ -32,13 +39,20 @@ class UpdateTagActionTest extends ApiTestCase
     /** @test */
     public function tryingToRenameInvalidTagReturnsNotFound(): void
     {
+        $expectedDetail = 'Tag with name "invalid_tag" could not be found';
+
         $resp = $this->callApiWithKey(self::METHOD_PUT, '/tags', [RequestOptions::JSON => [
             'oldName' => 'invalid_tag',
             'newName' => 'foo',
         ]]);
-        ['error' => $error] = $this->getJsonResponsePayload($resp);
+        $payload = $this->getJsonResponsePayload($resp);
 
         $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
-        $this->assertEquals('TAG_NOT_FOUND', $error);
+        $this->assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
+        $this->assertEquals('TAG_NOT_FOUND', $payload['type']);
+        $this->assertEquals('TAG_NOT_FOUND', $payload['error']); // Deprecated
+        $this->assertEquals($expectedDetail, $payload['detail']);
+        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
+        $this->assertEquals('Tag not found', $payload['title']);
     }
 }

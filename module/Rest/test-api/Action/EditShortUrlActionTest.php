@@ -12,22 +12,37 @@ class EditShortUrlActionTest extends ApiTestCase
     /** @test */
     public function tryingToEditInvalidUrlReturnsNotFoundError(): void
     {
+        $expectedDetail = 'No URL found with short code "invalid"';
+
         $resp = $this->callApiWithKey(self::METHOD_PATCH, '/short-urls/invalid', [RequestOptions::JSON => []]);
-        ['error' => $error] = $this->getJsonResponsePayload($resp);
+        $payload = $this->getJsonResponsePayload($resp);
 
         $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
-        $this->assertEquals('INVALID_SHORTCODE', $error);
+        $this->assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
+        $this->assertEquals('INVALID_SHORTCODE', $payload['type']);
+        $this->assertEquals('INVALID_SHORTCODE', $payload['error']); // Deprecated
+        $this->assertEquals($expectedDetail, $payload['detail']);
+        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
+        $this->assertEquals('Short URL not found', $payload['title']);
+        $this->assertEquals('invalid', $payload['shortCode']);
     }
 
     /** @test */
     public function providingInvalidDataReturnsBadRequest(): void
     {
+        $expectedDetail = 'Provided data is not valid';
+
         $resp = $this->callApiWithKey(self::METHOD_PATCH, '/short-urls/invalid', [RequestOptions::JSON => [
             'maxVisits' => 'not_a_number',
         ]]);
-        ['error' => $error] = $this->getJsonResponsePayload($resp);
+        $payload = $this->getJsonResponsePayload($resp);
 
         $this->assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
-        $this->assertEquals('INVALID_ARGUMENT', $error);
+        $this->assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
+        $this->assertEquals('INVALID_ARGUMENT', $payload['type']);
+        $this->assertEquals('INVALID_ARGUMENT', $payload['error']); // Deprecated
+        $this->assertEquals($expectedDetail, $payload['detail']);
+        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
+        $this->assertEquals('Invalid data', $payload['title']);
     }
 }
