@@ -25,6 +25,7 @@ class TagNotFoundException extends DomainException implements ProblemDetailsExce
         $e->title = self::TITLE;
         $e->type = self::TYPE;
         $e->status = StatusCodeInterface::STATUS_NOT_FOUND;
+        $e->additional = ['tag' => $tag];
 
         return $e;
     }

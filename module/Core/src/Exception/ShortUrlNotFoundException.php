@@ -26,6 +26,11 @@ class ShortUrlNotFoundException extends DomainException implements ProblemDetail
         $e->title = self::TITLE;
         $e->type = self::TYPE;
         $e->status = StatusCodeInterface::STATUS_NOT_FOUND;
+        $e->additional = ['shortCode' => $shortCode];
+
+        if ($domain !== null) {
+            $e->additional['domain'] = $domain;
+        }
 
         return $e;
     }

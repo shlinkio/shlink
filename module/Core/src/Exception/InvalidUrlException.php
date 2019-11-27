@@ -27,6 +27,7 @@ class InvalidUrlException extends DomainException implements ProblemDetailsExcep
         $e->title = self::TITLE;
         $e->type = self::TYPE;
         $e->status = $status;
+        $e->additional = ['url' => $url];
 
         return $e;
     }

@@ -83,7 +83,7 @@ class DeleteShortUrlCommandTest extends TestCase
                 $ignoreThreshold = array_pop($args);
 
                 if (!$ignoreThreshold) {
-                    throw new Exception\DeleteShortUrlException(10);
+                    throw Exception\DeleteShortUrlException::fromVisitsThreshold(10, '');
                 }
             }
         );
@@ -112,7 +112,7 @@ class DeleteShortUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $deleteByShortCode = $this->service->deleteByShortCode($shortCode, false)->willThrow(
-            new Exception\DeleteShortUrlException(10)
+            Exception\DeleteShortUrlException::fromVisitsThreshold(10, '')
         );
         $this->commandTester->setInputs(['no']);
 

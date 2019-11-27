@@ -26,6 +26,11 @@ class NonUniqueSlugException extends InvalidArgumentException implements Problem
         $e->title = self::TITLE;
         $e->type = self::TYPE;
         $e->status = StatusCodeInterface::STATUS_BAD_REQUEST;
+        $e->additional = ['customSlug' => $slug];
+
+        if ($domain !== null) {
+            $e->additional['domain'] = $domain;
+        }
 
         return $e;
     }

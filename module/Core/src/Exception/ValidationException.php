@@ -24,19 +24,6 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
     private const TITLE = 'Invalid data';
     private const TYPE = 'INVALID_ARGUMENT';
 
-    /** @var array */
-    private $invalidElements;
-
-    public function __construct(
-        string $message = '',
-        array $invalidElements = [],
-        int $code = 0,
-        ?Throwable $previous = null
-    ) {
-        $this->invalidElements = $invalidElements;
-        parent::__construct($message, $code, $previous);
-    }
-
     public static function fromInputFilter(InputFilterInterface $inputFilter, ?Throwable $prev = null): self
     {
         return static::fromArray($inputFilter->getMessages(), $prev);
@@ -45,22 +32,20 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
     public static function fromArray(array $invalidData, ?Throwable $prev = null): self
     {
         $status = StatusCodeInterface::STATUS_BAD_REQUEST;
-        $e = new self('Provided data is not valid', $invalidData, $status, $prev);
+        $e = new self('Provided data is not valid', $status, $prev);
 
         $e->detail = $e->getMessage();
         $e->title = self::TITLE;
         $e->type = self::TYPE;
         $e->status = StatusCodeInterface::STATUS_BAD_REQUEST;
-        $e->additional = [
-            'invalidElements' => $invalidData,
-        ];
+        $e->additional = ['invalidElements' => $invalidData];
 
         return $e;
     }
 
     public function getInvalidElements(): array
     {
-        return $this->invalidElements;
+        return $this->additional['invalidElements'];
     }
 
     public function __toString(): string
@@ -80,7 +65,7 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
 
     private function invalidElementsToString(): string
     {
-        return reduce_left($this->invalidElements, function ($messageSet, string $name, $_, string $acc) {
+        return reduce_left($this->getInvalidElements(), function ($messageSet, string $name, $_, string $acc) {
             return $acc . sprintf(
                 "\n    '%s' => %s",
                 $name,

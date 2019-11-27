@@ -13,38 +13,9 @@ use Throwable;
 use Zend\InputFilter\InputFilterInterface;
 
 use function print_r;
-use function random_int;
 
 class ValidationExceptionTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideExceptionData
-     */
-    public function createsExceptionWrappingExpectedData(
-        array $args,
-        string $expectedMessage,
-        array $expectedInvalidElements,
-        int $expectedCode,
-        ?Throwable $expectedPrev
-    ): void {
-        $e = new ValidationException(...$args);
-
-        $this->assertEquals($expectedMessage, $e->getMessage());
-        $this->assertEquals($expectedInvalidElements, $e->getInvalidElements());
-        $this->assertEquals($expectedCode, $e->getCode());
-        $this->assertEquals($expectedPrev, $e->getPrevious());
-    }
-
-    public function provideExceptionData(): iterable
-    {
-        yield 'empty args' => [[], '', [], 0, null];
-        yield 'with message' => [['something'], 'something', [], 0, null];
-        yield 'with elements' => [['something_else', [1, 2, 3]], 'something_else', [1, 2, 3], 0, null];
-        yield 'with code' => [['foo', [], $foo = random_int(-100, 100)], 'foo', [], $foo, null];
-        yield 'with prev' => [['bar', [], 8, $e = new RuntimeException()], 'bar', [], 8, $e];
-    }
-
     /**
      * @test
      * @dataProvider provideExceptions
