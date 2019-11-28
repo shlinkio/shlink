@@ -34,11 +34,11 @@ class RenameTagCommandTest extends TestCase
     }
 
     /** @test */
-    public function errorIsPrintedIfExceptionIsThrown()
+    public function errorIsPrintedIfExceptionIsThrown(): void
     {
         $oldName = 'foo';
         $newName = 'bar';
-        $renameTag = $this->tagService->renameTag($oldName, $newName)->willThrow(TagNotFoundException::class);
+        $renameTag = $this->tagService->renameTag($oldName, $newName)->willThrow(TagNotFoundException::fromTag('foo'));
 
         $this->commandTester->execute([
             'oldName' => $oldName,
@@ -46,12 +46,12 @@ class RenameTagCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('A tag with name "foo" was not found', $output);
+        $this->assertStringContainsString('Tag with name "foo" could not be found', $output);
         $renameTag->shouldHaveBeenCalled();
     }
 
     /** @test */
-    public function successIsPrintedIfNoErrorOccurs()
+    public function successIsPrintedIfNoErrorOccurs(): void
     {
         $oldName = 'foo';
         $newName = 'bar';

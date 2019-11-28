@@ -58,13 +58,13 @@ class DeleteShortUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $deleteByShortCode = $this->service->deleteByShortCode($shortCode, false)->willThrow(
-            Exception\ShortUrlNotFoundException::class
+            Exception\ShortUrlNotFoundException::fromNotFoundShortCode($shortCode)
         );
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString(sprintf('Provided short code "%s" could not be found.', $shortCode), $output);
+        $this->assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
         $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 
@@ -79,11 +79,11 @@ class DeleteShortUrlCommandTest extends TestCase
     ): void {
         $shortCode = 'abc123';
         $deleteByShortCode = $this->service->deleteByShortCode($shortCode, Argument::type('bool'))->will(
-            function (array $args) {
+            function (array $args) use ($shortCode) {
                 $ignoreThreshold = array_pop($args);
 
                 if (!$ignoreThreshold) {
-                    throw Exception\DeleteShortUrlException::fromVisitsThreshold(10, '');
+                    throw Exception\DeleteShortUrlException::fromVisitsThreshold(10, $shortCode);
                 }
             }
         );
@@ -93,7 +93,7 @@ class DeleteShortUrlCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString(sprintf(
-            'It was not possible to delete the short URL with short code "%s" because it has more than 10 visits.',
+            'Impossible to delete short URL with short code "%s" since it has more than "10" visits.',
             $shortCode
         ), $output);
         $this->assertStringContainsString($expectedMessage, $output);
@@ -112,7 +112,7 @@ class DeleteShortUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $deleteByShortCode = $this->service->deleteByShortCode($shortCode, false)->willThrow(
-            Exception\DeleteShortUrlException::fromVisitsThreshold(10, '')
+            Exception\DeleteShortUrlException::fromVisitsThreshold(10, $shortCode)
         );
         $this->commandTester->setInputs(['no']);
 
@@ -120,7 +120,7 @@ class DeleteShortUrlCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString(sprintf(
-            'It was not possible to delete the short URL with short code "%s" because it has more than 10 visits.',
+            'Impossible to delete short URL with short code "%s" since it has more than "10" visits.',
             $shortCode
         ), $output);
         $this->assertStringContainsString('Short URL was not deleted.', $output);

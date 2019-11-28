@@ -52,11 +52,12 @@ class ResolveUrlCommandTest extends TestCase
     public function incorrectShortCodeOutputsErrorMessage(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(ShortUrlNotFoundException::class)
-                                                             ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, null)
+            ->willThrow(ShortUrlNotFoundException::fromNotFoundShortCode($shortCode))
+            ->shouldBeCalledOnce();
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString(sprintf('Provided short code "%s" could not be found', $shortCode), $output);
+        $this->assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
     }
 }

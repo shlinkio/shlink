@@ -59,21 +59,22 @@ class GenerateShortUrlCommandTest extends TestCase
     /** @test */
     public function exceptionWhileParsingLongUrlOutputsError(): void
     {
-        $this->urlShortener->urlToShortCode(Argument::cetera())->willThrow(new InvalidUrlException())
+        $url = 'http://domain.com/invalid';
+        $this->urlShortener->urlToShortCode(Argument::cetera())->willThrow(InvalidUrlException::fromUrl($url))
                                                                ->shouldBeCalledOnce();
 
-        $this->commandTester->execute(['longUrl' => 'http://domain.com/invalid']);
+        $this->commandTester->execute(['longUrl' => $url]);
         $output = $this->commandTester->getDisplay();
 
         $this->assertEquals(ExitCodes::EXIT_FAILURE, $this->commandTester->getStatusCode());
-        $this->assertStringContainsString('Provided URL "http://domain.com/invalid" is invalid.', $output);
+        $this->assertStringContainsString('Provided URL http://domain.com/invalid is invalid.', $output);
     }
 
     /** @test */
     public function providingNonUniqueSlugOutputsError(): void
     {
         $urlToShortCode = $this->urlShortener->urlToShortCode(Argument::cetera())->willThrow(
-            NonUniqueSlugException::class
+            NonUniqueSlugException::fromSlug('my-slug')
         );
 
         $this->commandTester->execute(['longUrl' => 'http://domain.com/invalid', '--customSlug' => 'my-slug']);

@@ -17,7 +17,7 @@ class NonUniqueSlugException extends InvalidArgumentException implements Problem
     private const TITLE = 'Invalid custom slug';
     private const TYPE = 'INVALID_SLUG';
 
-    public static function fromSlug(string $slug, ?string $domain): self
+    public static function fromSlug(string $slug, ?string $domain = null): self
     {
         $suffix = $domain === null ? '' : sprintf(' for domain "%s"', $domain);
         $e = new self(sprintf('Provided slug "%s" is already in use%s.', $slug, $suffix));

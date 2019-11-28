@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
-use InvalidArgumentException;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -45,7 +45,7 @@ class DisableKeyCommand extends Command
             $io->success(sprintf('API key "%s" properly disabled', $apiKey));
             return ExitCodes::EXIT_SUCCESS;
         } catch (InvalidArgumentException $e) {
-            $io->error(sprintf('API key "%s" does not exist.', $apiKey));
+            $io->error($e->getMessage());
             return ExitCodes::EXIT_FAILURE;
         }
     }

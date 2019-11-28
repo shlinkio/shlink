@@ -13,8 +13,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-use function sprintf;
-
 class RenameTagCommand extends Command
 {
     public const NAME = 'tag:rename';
@@ -48,7 +46,7 @@ class RenameTagCommand extends Command
             $io->success('Tag properly renamed.');
             return ExitCodes::EXIT_SUCCESS;
         } catch (TagNotFoundException $e) {
-            $io->error(sprintf('A tag with name "%s" was not found', $oldName));
+            $io->error($e->getMessage());
             return ExitCodes::EXIT_FAILURE;
         }
     }

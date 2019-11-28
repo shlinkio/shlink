@@ -141,13 +141,8 @@ class GenerateShortUrlCommand extends Command
                 sprintf('Generated short URL: <info>%s</info>', $shortUrl->toString($this->domainConfig)),
             ]);
             return ExitCodes::EXIT_SUCCESS;
-        } catch (InvalidUrlException $e) {
-            $io->error(sprintf('Provided URL "%s" is invalid. Try with a different one.', $longUrl));
-            return ExitCodes::EXIT_FAILURE;
-        } catch (NonUniqueSlugException $e) {
-            $io->error(
-                sprintf('Provided slug "%s" is already in use by another URL. Try with a different one.', $customSlug)
-            );
+        } catch (InvalidUrlException | NonUniqueSlugException $e) {
+            $io->error($e->getMessage());
             return ExitCodes::EXIT_FAILURE;
         }
     }

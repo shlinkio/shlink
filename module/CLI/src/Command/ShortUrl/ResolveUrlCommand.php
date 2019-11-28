@@ -65,7 +65,7 @@ class ResolveUrlCommand extends Command
             $output->writeln(sprintf('Long URL: <info>%s</info>', $url->getLongUrl()));
             return ExitCodes::EXIT_SUCCESS;
         } catch (ShortUrlNotFoundException $e) {
-            $io->error(sprintf('Provided short code "%s" could not be found.', $shortCode));
+            $io->error($e->getMessage());
             return ExitCodes::EXIT_FAILURE;
         }
     }
