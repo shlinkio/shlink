@@ -150,7 +150,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -256,11 +256,32 @@
                 }
             },
             "400": {
-                "description": "The long URL was not provided or is invalid.",
+                "description": "Some of provided data is invalid. Check extra fields to know exactly what.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
-                            "$ref": "../definitions/Error.json"
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "./Error.json"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "invalidElements": {
+                                            "$ref": "./InvalidShortUrlMeta.json"
+                                        },
+                                        "url": {
+                                            "type": "string",
+                                            "description": "A URL that could not be verified, if the error type is INVALID_URL"
+                                        },
+                                        "customSlug": {
+                                            "type": "string",
+                                            "description": "Provided custom slug when the error type is INVALID_SLUG"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -268,7 +289,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }

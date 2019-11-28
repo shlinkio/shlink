@@ -78,7 +78,7 @@
             "400": {
                 "description": "The request body does not contain a \"tags\" param with array type.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
