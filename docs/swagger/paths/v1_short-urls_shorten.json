@@ -8,6 +8,9 @@
         "description": "Creates a short URL in a single API call. Useful for third party integrations.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
         "parameters": [
             {
+                "$ref": "../parameters/version.json"
+            },
+            {
                 "name": "apiKey",
                 "in": "query",
                 "description": "The API key used to authenticate the request",

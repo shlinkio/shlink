@@ -71,24 +71,24 @@
     ],
 
     "paths": {
-        "/rest/v2/short-urls": {
+        "/rest/v{version}/short-urls": {
             "$ref": "paths/v1_short-urls.json"
         },
-        "/rest/v2/short-urls/shorten": {
+        "/rest/v{version}/short-urls/shorten": {
             "$ref": "paths/v1_short-urls_shorten.json"
         },
-        "/rest/v2/short-urls/{shortCode}": {
+        "/rest/v{version}/short-urls/{shortCode}": {
             "$ref": "paths/v1_short-urls_{shortCode}.json"
         },
-        "/rest/v2/short-urls/{shortCode}/tags": {
+        "/rest/v{version}/short-urls/{shortCode}/tags": {
             "$ref": "paths/v1_short-urls_{shortCode}_tags.json"
         },
 
-        "/rest/v2/tags": {
+        "/rest/v{version}/tags": {
             "$ref": "paths/v1_tags.json"
         },
 
-        "/rest/v2/short-urls/{shortCode}/visits": {
+        "/rest/v{version}/short-urls/{shortCode}/visits": {
             "$ref": "paths/v1_short-urls_{shortCode}_visits.json"
         },
 

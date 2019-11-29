@@ -14,6 +14,11 @@
                 "Bearer": []
             }
         ],
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            }
+        ],
         "responses": {
             "200": {
                 "description": "The list of tags",
@@ -76,6 +81,11 @@
             },
             {
                 "Bearer": []
+            }
+        ],
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
             }
         ],
         "requestBody": {
@@ -165,6 +175,11 @@
                 "Bearer": []
             }
         ],
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            }
+        ],
         "requestBody": {
             "description": "Request body.",
             "required": true,
@@ -235,6 +250,9 @@
         "summary": "Delete tags",
         "description": "Deletes provided list of tags",
         "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            },
             {
                 "name": "tags[]",
                 "in": "query",
