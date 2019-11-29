@@ -10,6 +10,7 @@ use Zend\InputFilter\InputFilterInterface;
 use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
+use function array_keys;
 use function Functional\reduce_left;
 use function is_array;
 use function print_r;
@@ -23,6 +24,9 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
 
     private const TITLE = 'Invalid data';
     private const TYPE = 'INVALID_ARGUMENT';
+
+    /** @var array */
+    private $invalidElements;
 
     public static function fromInputFilter(InputFilterInterface $inputFilter, ?Throwable $prev = null): self
     {
@@ -38,14 +42,15 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
         $e->title = self::TITLE;
         $e->type = self::TYPE;
         $e->status = StatusCodeInterface::STATUS_BAD_REQUEST;
-        $e->additional = ['invalidElements' => $invalidData];
+        $e->invalidElements = $invalidData;
+        $e->additional = ['invalidElements' => array_keys($invalidData)];
 
         return $e;
     }
 
     public function getInvalidElements(): array
     {
-        return $this->additional['invalidElements'];
+        return $this->invalidElements;
     }
 
     public function __toString(): string

@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Throwable;
 use Zend\InputFilter\InputFilterInterface;
 
+use function array_keys;
 use function print_r;
 
 class ValidationExceptionTest extends TestCase
@@ -38,6 +39,7 @@ EOT;
         $e = ValidationException::fromInputFilter($inputFilter->reveal());
 
         $this->assertEquals($invalidData, $e->getInvalidElements());
+        $this->assertEquals(['invalidElements' => array_keys($invalidData)], $e->getAdditionalData());
         $this->assertEquals('Provided data is not valid', $e->getMessage());
         $this->assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getCode());
         $this->assertEquals($prev, $e->getPrevious());
