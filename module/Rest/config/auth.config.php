@@ -48,7 +48,6 @@ return [
         Middleware\AuthenticationMiddleware::class => [
             Authentication\RequestToHttpAuthPlugin::class,
             'config.auth.routes_whitelist',
-            'Logger_Shlink',
         ],
     ],
 

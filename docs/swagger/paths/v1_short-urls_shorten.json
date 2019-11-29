@@ -8,6 +8,9 @@
         "description": "Creates a short URL in a single API call. Useful for third party integrations.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
         "parameters": [
             {
+                "$ref": "../parameters/version.json"
+            },
+            {
                 "name": "apiKey",
                 "in": "query",
                 "description": "The API key used to authenticate the request",
@@ -77,7 +80,7 @@
             "400": {
                 "description": "The long URL was not provided or is invalid.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -89,9 +92,12 @@
                     }
                 },
                 "examples": {
-                    "application/json": {
-                        "error": "INVALID_URL",
-                        "message": "Provided URL foo is invalid. Try with a different one."
+                    "application/problem+json": {
+                        "title": "Invalid URL",
+                        "type": "INVALID_URL",
+                        "detail": "Provided URL foo is invalid. Try with a different one.",
+                        "status": 400,
+                        "url": "https://invalid-url.com"
                     },
                     "text/plain": "INVALID_URL"
                 }
@@ -99,7 +105,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -111,11 +117,11 @@
                     }
                 },
                 "examples": {
-                    "application/json": {
-                        "error": "UNKNOWN_ERROR",
+                    "application/problem+json": {
+                        "error": "INTERNAL_SERVER_ERROR",
                         "message": "Unexpected error occurred"
                     },
-                    "text/plain": "UNKNOWN_ERROR"
+                    "text/plain": "INTERNAL_SERVER_ERROR"
                 }
             }
         }

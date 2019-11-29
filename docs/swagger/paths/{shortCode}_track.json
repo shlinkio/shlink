@@ -28,16 +28,6 @@
                         }
                     }
                 }
-            },
-            "500": {
-                "description": "Unexpected error.",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "$ref": "../definitions/Error.json"
-                        }
-                    }
-                }
             }
         }
     }

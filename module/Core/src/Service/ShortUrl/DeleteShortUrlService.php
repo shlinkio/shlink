@@ -25,7 +25,7 @@ class DeleteShortUrlService implements DeleteShortUrlServiceInterface
     }
 
     /**
-     * @throws Exception\InvalidShortCodeException
+     * @throws Exception\ShortUrlNotFoundException
      * @throws Exception\DeleteShortUrlException
      */
     public function deleteByShortCode(string $shortCode, bool $ignoreThreshold = false): void

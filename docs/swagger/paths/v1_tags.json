@@ -14,6 +14,11 @@
                 "Bearer": []
             }
         ],
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            }
+        ],
         "responses": {
             "200": {
                 "description": "The list of tags",
@@ -53,7 +58,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -76,6 +81,11 @@
             },
             {
                 "Bearer": []
+            }
+        ],
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
             }
         ],
         "requestBody": {
@@ -140,7 +150,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -163,6 +173,11 @@
             },
             {
                 "Bearer": []
+            }
+        ],
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
             }
         ],
         "requestBody": {
@@ -197,7 +212,7 @@
             "400": {
                 "description": "You have not provided either the oldName or the newName params.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -207,7 +222,7 @@
             "404": {
                 "description": "There's no tag found with the name provided in oldName param.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -217,7 +232,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -235,6 +250,9 @@
         "summary": "Delete tags",
         "description": "Deletes provided list of tags",
         "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            },
             {
                 "name": "tags[]",
                 "in": "query",
@@ -263,7 +281,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }

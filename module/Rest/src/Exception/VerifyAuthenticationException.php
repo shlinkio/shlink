@@ -4,47 +4,67 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Exception;
 
-use Throwable;
+use Fig\Http\Message\StatusCodeInterface;
+use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
+use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
 use function sprintf;
 
-class VerifyAuthenticationException extends RuntimeException
+class VerifyAuthenticationException extends RuntimeException implements ProblemDetailsExceptionInterface
 {
-    /** @var string */
-    private $errorCode;
-    /** @var string */
-    private $publicMessage;
+    use CommonProblemDetailsExceptionTrait;
 
-    public function __construct(
-        string $errorCode,
-        string $publicMessage,
-        string $message = '',
-        int $code = 0,
-        ?Throwable $previous = null
-    ) {
-        parent::__construct($message, $code, $previous);
-        $this->errorCode = $errorCode;
-        $this->publicMessage = $publicMessage;
+    public static function forInvalidApiKey(): self
+    {
+        $e = new self('Provided API key does not exist or is invalid.');
+
+        $e->detail = $e->getMessage();
+        $e->title = 'Invalid API key';
+        $e->type = 'INVALID_API_KEY';
+        $e->status = StatusCodeInterface::STATUS_UNAUTHORIZED;
+
+        return $e;
     }
 
-    public static function withError(string $errorCode, string $publicMessage, ?Throwable $prev = null): self
+    /** @deprecated */
+    public static function forInvalidAuthToken(): self
     {
-        return new self(
-            $errorCode,
-            $publicMessage,
-            sprintf('Authentication verification failed with the public message "%s"', $publicMessage),
-            0,
-            $prev
+        $e = new self(
+            'Missing or invalid auth token provided. Perform a new authentication request and send provided '
+            . 'token on every new request on the Authorization header'
         );
+
+        $e->detail = $e->getMessage();
+        $e->title = 'Invalid auth token';
+        $e->type = 'INVALID_AUTH_TOKEN';
+        $e->status = StatusCodeInterface::STATUS_UNAUTHORIZED;
+
+        return $e;
     }
 
-    public function getErrorCode(): string
+    /** @deprecated */
+    public static function forMissingAuthType(): self
     {
-        return $this->errorCode;
+        $e = new self('You need to provide the Bearer type in the Authorization header.');
+
+        $e->detail = $e->getMessage();
+        $e->title = 'Invalid authorization';
+        $e->type = 'INVALID_AUTHORIZATION';
+        $e->status = StatusCodeInterface::STATUS_UNAUTHORIZED;
+
+        return $e;
     }
 
-    public function getPublicMessage(): string
+    /** @deprecated */
+    public static function forInvalidAuthType(string $providedType): self
     {
-        return $this->publicMessage;
+        $e = new self(sprintf('Provided authorization type %s is not supported. Use Bearer instead.', $providedType));
+
+        $e->detail = $e->getMessage();
+        $e->title = 'Invalid authorization';
+        $e->type = 'INVALID_AUTHORIZATION';
+        $e->status = StatusCodeInterface::STATUS_UNAUTHORIZED;
+
+        return $e;
     }
 }

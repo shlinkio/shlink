@@ -10,7 +10,6 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Rest\Authentication\JWTServiceInterface;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 
 /** @deprecated */
@@ -44,7 +43,7 @@ class AuthenticateAction extends AbstractRestAction
         $authData = $request->getParsedBody();
         if (! isset($authData['apiKey'])) {
             return new JsonResponse([
-                'error' => RestUtils::INVALID_ARGUMENT_ERROR,
+                'error' => 'INVALID_ARGUMENT',
                 'message' => 'You have to provide a valid API key under the "apiKey" param name.',
             ], self::STATUS_BAD_REQUEST);
         }
@@ -53,7 +52,7 @@ class AuthenticateAction extends AbstractRestAction
         $apiKey = $this->apiKeyService->getByKey($authData['apiKey']);
         if ($apiKey === null || ! $apiKey->isValid()) {
             return new JsonResponse([
-                'error' => RestUtils::INVALID_API_KEY_ERROR,
+                'error' => 'INVALID_API_KEY',
                 'message' => 'Provided API key does not exist or is invalid.',
             ], self::STATUS_UNAUTHORIZED);
         }

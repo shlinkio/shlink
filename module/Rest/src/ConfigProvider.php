@@ -11,7 +11,7 @@ use function sprintf;
 
 class ConfigProvider
 {
-    private const ROUTES_PREFIX = '/rest/v{version:1}';
+    private const ROUTES_PREFIX = '/rest/v{version:1|2}';
 
     public function __invoke()
     {

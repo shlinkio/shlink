@@ -12,8 +12,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Zend\Expressive\Router\Exception\RuntimeException;
 use Zend\Expressive\Router\RouterInterface;
@@ -60,7 +59,7 @@ class QrCodeAction implements MiddlewareInterface
 
         try {
             $this->urlShortener->shortCodeToUrl($shortCode, $domain);
-        } catch (InvalidShortCodeException | EntityDoesNotExistException $e) {
+        } catch (ShortUrlNotFoundException $e) {
             $this->logger->warning('An error occurred while creating QR code. {e}', ['e' => $e]);
             return $handler->handle($request);
         }

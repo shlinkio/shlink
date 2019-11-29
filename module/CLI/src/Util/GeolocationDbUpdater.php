@@ -10,7 +10,6 @@ use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock\Factory as Locker;
-use Throwable;
 
 class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
 {
@@ -40,8 +39,6 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
 
         try {
             $this->downloadIfNeeded($mustBeUpdated, $handleProgress);
-        } catch (Throwable $e) {
-            throw $e;
         } finally {
             $lock->release();
         }

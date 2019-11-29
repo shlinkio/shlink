@@ -10,11 +10,11 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
-use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequest;
 
 class SingleStepCreateShortUrlActionTest extends TestCase
@@ -42,39 +42,31 @@ class SingleStepCreateShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function errorResponseIsReturnedIfInvalidApiKeyIsProvided()
+    public function errorResponseIsReturnedIfInvalidApiKeyIsProvided(): void
     {
         $request = (new ServerRequest())->withQueryParams(['apiKey' => 'abc123']);
         $findApiKey = $this->apiKeyService->check('abc123')->willReturn(false);
 
-        /** @var JsonResponse $resp */
-        $resp = $this->action->handle($request);
-        $payload = $resp->getPayload();
+        $this->expectException(ValidationException::class);
+        $findApiKey->shouldBeCalledOnce();
 
-        $this->assertEquals(400, $resp->getStatusCode());
-        $this->assertEquals('INVALID_ARGUMENT', $payload['error']);
-        $this->assertEquals('No API key was provided or it is not valid', $payload['message']);
-        $findApiKey->shouldHaveBeenCalled();
+        $this->action->handle($request);
     }
 
     /** @test */
-    public function errorResponseIsReturnedIfNoUrlIsProvided()
+    public function errorResponseIsReturnedIfNoUrlIsProvided(): void
     {
         $request = (new ServerRequest())->withQueryParams(['apiKey' => 'abc123']);
         $findApiKey = $this->apiKeyService->check('abc123')->willReturn(true);
 
-        /** @var JsonResponse $resp */
-        $resp = $this->action->handle($request);
-        $payload = $resp->getPayload();
+        $this->expectException(ValidationException::class);
+        $findApiKey->shouldBeCalledOnce();
 
-        $this->assertEquals(400, $resp->getStatusCode());
-        $this->assertEquals('INVALID_ARGUMENT', $payload['error']);
-        $this->assertEquals('A URL was not provided', $payload['message']);
-        $findApiKey->shouldHaveBeenCalled();
+        $this->action->handle($request);
     }
 
     /** @test */
-    public function properDataIsPassedWhenGeneratingShortCode()
+    public function properDataIsPassedWhenGeneratingShortCode(): void
     {
         $request = (new ServerRequest())->withQueryParams([
             'apiKey' => 'abc123',

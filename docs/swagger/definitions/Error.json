@@ -1,13 +1,32 @@
 {
     "type": "object",
+    "required": ["type", "title", "detail", "status"],
     "properties": {
-        "code": {
+        "type": {
             "type": "string",
             "description": "A machine unique code"
         },
+        "title": {
+            "type": "string",
+            "description": "A unique title"
+        },
+        "detail": {
+            "type": "string",
+            "description": "A human-friendly error description"
+        },
+        "status": {
+            "type": "number",
+            "description": "HTTP response status code"
+        },
+        "code": {
+            "type": "string",
+            "description": "**[Deprecated] Use type instead. Not returned for v2 of the REST API** A machine unique code",
+            "deprecated": true
+        },
         "message": {
             "type": "string",
-            "description": "A human-friendly error message"
+            "description": "**[Deprecated] Use detail instead. Not returned for v2 of the REST API** A human-friendly error message",
+            "deprecated": true
         }
     }
 }

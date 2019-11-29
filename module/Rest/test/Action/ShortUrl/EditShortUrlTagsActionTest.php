@@ -7,7 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlTagsAction;
 use Zend\Diactoros\ServerRequest;
@@ -26,28 +26,14 @@ class EditShortUrlTagsActionTest extends TestCase
     }
 
     /** @test */
-    public function notProvidingTagsReturnsError()
+    public function notProvidingTagsReturnsError(): void
     {
-        $response = $this->action->handle((new ServerRequest())->withAttribute('shortCode', 'abc123'));
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->expectException(ValidationException::class);
+        $this->action->handle((new ServerRequest())->withAttribute('shortCode', 'abc123'));
     }
 
     /** @test */
-    public function anInvalidShortCodeReturnsNotFound()
-    {
-        $shortCode = 'abc123';
-        $this->shortUrlService->setTagsByShortCode($shortCode, [])->willThrow(InvalidShortCodeException::class)
-                                                                  ->shouldBeCalledOnce();
-
-        $response = $this->action->handle(
-            (new ServerRequest())->withAttribute('shortCode', 'abc123')
-                                 ->withParsedBody(['tags' => []])
-        );
-        $this->assertEquals(404, $response->getStatusCode());
-    }
-
-    /** @test */
-    public function tagsListIsReturnedIfCorrectShortCodeIsProvided()
+    public function tagsListIsReturnedIfCorrectShortCodeIsProvided(): void
     {
         $shortCode = 'abc123';
         $this->shortUrlService->setTagsByShortCode($shortCode, [])->willReturn(new ShortUrl(''))

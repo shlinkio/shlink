@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
-use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
-use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
-use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
 
@@ -42,8 +37,8 @@ class CreateShortUrlActionTest extends TestCase
     /** @test */
     public function missingLongUrlParamReturnsError(): void
     {
-        $response = $this->action->handle(new ServerRequest());
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->expectException(ValidationException::class);
+        $this->action->handle(new ServerRequest());
     }
 
     /** @test */
@@ -62,21 +57,6 @@ class CreateShortUrlActionTest extends TestCase
         $this->assertTrue(strpos($response->getBody()->getContents(), $shortUrl->toString(self::DOMAIN_CONFIG)) > 0);
     }
 
-    /** @test */
-    public function anInvalidUrlReturnsError(): void
-    {
-        $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
-             ->willThrow(InvalidUrlException::class)
-             ->shouldBeCalledOnce();
-
-        $request = (new ServerRequest())->withParsedBody([
-            'longUrl' => 'http://www.domain.com/foo/bar',
-        ]);
-        $response = $this->action->handle($request);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::INVALID_URL_ERROR) > 0);
-    }
-
     /**
      * @test
      * @dataProvider provideInvalidDomains
@@ -90,13 +70,11 @@ class CreateShortUrlActionTest extends TestCase
             'longUrl' => 'http://www.domain.com/foo/bar',
             'domain' => $domain,
         ]);
-        /** @var JsonResponse $response */
-        $response = $this->action->handle($request);
-        $payload = $response->getPayload();
 
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals(RestUtils::INVALID_ARGUMENT_ERROR, $payload['error']);
-        $urlToShortCode->shouldNotHaveBeenCalled();
+        $this->expectException(ValidationException::class);
+        $urlToShortCode->shouldNotBeCalled();
+
+        $this->action->handle($request);
     }
 
     public function provideInvalidDomains(): iterable
@@ -104,39 +82,5 @@ class CreateShortUrlActionTest extends TestCase
         yield ['localhost:80000'];
         yield ['127.0.0.1'];
         yield ['???/&%$&'];
-    }
-
-    /** @test */
-    public function nonUniqueSlugReturnsError(): void
-    {
-        $this->urlShortener->urlToShortCode(
-            Argument::type(Uri::class),
-            Argument::type('array'),
-            ShortUrlMeta::createFromRawData(['customSlug' => 'foo']),
-            Argument::cetera()
-        )->willThrow(NonUniqueSlugException::class)->shouldBeCalledOnce();
-
-        $request = (new ServerRequest())->withParsedBody([
-            'longUrl' => 'http://www.domain.com/foo/bar',
-            'customSlug' => 'foo',
-        ]);
-        $response = $this->action->handle($request);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertStringContainsString(RestUtils::INVALID_SLUG_ERROR, (string) $response->getBody());
-    }
-
-    /** @test */
-    public function aGenericExceptionWillReturnError(): void
-    {
-        $this->urlShortener->urlToShortCode(Argument::type(Uri::class), Argument::type('array'), Argument::cetera())
-            ->willThrow(Exception::class)
-            ->shouldBeCalledOnce();
-
-        $request = (new ServerRequest())->withParsedBody([
-            'longUrl' => 'http://www.domain.com/foo/bar',
-        ]);
-        $response = $this->action->handle($request);
-        $this->assertEquals(500, $response->getStatusCode());
-        $this->assertTrue(strpos($response->getBody()->getContents(), RestUtils::UNKNOWN_ERROR) > 0);
     }
 }

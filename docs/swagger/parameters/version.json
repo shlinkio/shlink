@@ -1,0 +1,13 @@
+{
+    "name": "version",
+    "description": "The API version to be consumed",
+    "in": "path",
+    "required": true,
+    "schema": {
+        "type": "string",
+        "enum": [
+            "2",
+            "1"
+        ]
+    }
+}

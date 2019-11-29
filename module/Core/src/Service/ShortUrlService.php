@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
@@ -45,7 +45,7 @@ class ShortUrlService implements ShortUrlServiceInterface
 
     /**
      * @param string[] $tags
-     * @throws InvalidShortCodeException
+     * @throws ShortUrlNotFoundException
      */
     public function setTagsByShortCode(string $shortCode, array $tags = []): ShortUrl
     {
@@ -57,7 +57,7 @@ class ShortUrlService implements ShortUrlServiceInterface
     }
 
     /**
-     * @throws InvalidShortCodeException
+     * @throws ShortUrlNotFoundException
      */
     public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortUrlMeta): ShortUrl
     {

@@ -11,8 +11,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\PreviewAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
 use Zend\Diactoros\Response;
@@ -39,19 +38,6 @@ class PreviewActionTest extends TestCase
     }
 
     /** @test */
-    public function invalidShortCodeFallsBackToNextMiddleware(): void
-    {
-        $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(EntityDoesNotExistException::class)
-                                                       ->shouldBeCalledOnce();
-        $delegate = $this->prophesize(RequestHandlerInterface::class);
-        $delegate->handle(Argument::cetera())->shouldBeCalledOnce()
-                                              ->willReturn(new Response());
-
-        $this->action->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate->reveal());
-    }
-
-    /** @test */
     public function correctShortCodeReturnsImageResponse(): void
     {
         $shortCode = 'abc123';
@@ -74,7 +60,7 @@ class PreviewActionTest extends TestCase
     public function invalidShortCodeExceptionFallsBackToNextMiddleware(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(InvalidShortCodeException::class)
+        $this->urlShortener->shortCodeToUrl($shortCode)->willThrow(ShortUrlNotFoundException::class)
                                                        ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle(Argument::any())->willReturn(new Response());

@@ -22,12 +22,12 @@ class NonUniqueSlugExceptionTest extends TestCase
     public function provideMessages(): iterable
     {
         yield 'without domain' => [
-            'Provided slug "foo" is not unique.',
+            'Provided slug "foo" is already in use.',
             'foo',
             null,
         ];
         yield 'with domain' => [
-            'Provided slug "baz" is not unique for domain "bar".',
+            'Provided slug "baz" is already in use for domain "bar".',
             'baz',
             'bar',
         ];

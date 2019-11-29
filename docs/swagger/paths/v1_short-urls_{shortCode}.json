@@ -8,6 +8,9 @@
         "description": "Get the long URL behind a short URL's short code.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
         "parameters": [
             {
+                "$ref": "../parameters/version.json"
+            },
+            {
                 "name": "shortCode",
                 "in": "path",
                 "description": "The short code to resolve.",
@@ -62,20 +65,10 @@
                     }
                 }
             },
-            "400": {
-                "description": "Provided shortCode does not match the character set currently used by the app to generate short codes.",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "$ref": "../definitions/Error.json"
-                        }
-                    }
-                }
-            },
             "404": {
                 "description": "No URL was found for provided short code.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -85,7 +78,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -103,6 +96,9 @@
         "summary": "Edit short URL",
         "description": "Update certain meta arguments from an existing short URL.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
         "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            },
             {
                 "name": "shortCode",
                 "in": "path",
@@ -153,9 +149,31 @@
             "400": {
                 "description": "Provided meta arguments are invalid.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
-                            "$ref": "../definitions/Error.json"
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "../definitions/Error.json"
+                                },
+                                {
+                                    "type": "object",
+                                    "required": ["invalidElements"],
+                                    "properties": {
+                                        "invalidElements": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "validSince",
+                                                    "validUntil",
+                                                    "maxVisits"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -163,7 +181,7 @@
             "404": {
                 "description": "No short URL was found for provided short code.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -173,7 +191,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -193,6 +211,9 @@
         "description": "**[DEPRECATED]** Use [editShortUrl](#/Short_URLs/getShortUrl) instead",
         "parameters": [
             {
+                "$ref": "../parameters/version.json"
+            },
+            {
                 "name": "shortCode",
                 "in": "path",
                 "description": "The short code to edit.",
@@ -242,7 +263,7 @@
             "400": {
                 "description": "Provided meta arguments are invalid.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -252,7 +273,7 @@
             "404": {
                 "description": "No short URL was found for provided short code.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -262,7 +283,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -280,6 +301,9 @@
         "summary": "Delete short URL",
         "description": "Deletes the short URL for provided short code.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
         "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            },
             {
                 "name": "shortCode",
                 "in": "path",
@@ -302,26 +326,28 @@
             "204": {
                 "description": "The short URL has been properly deleted."
             },
-            "400": {
+            "422": {
                 "description": "The visits threshold in shlink does not allow this short URL to be deleted.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
                     }
                 },
                 "examples": {
-                    "application/json": {
-                        "error": "INVALID_SHORTCODE_DELETION",
-                        "message": "It is not possible to delete URL with short code \"abc123\" because it has reached more than \"15\" visits."
+                    "application/problem+json": {
+                        "title": "Cannot delete short URL",
+                        "type": "INVALID_SHORTCODE_DELETION",
+                        "detail": "It is not possible to delete URL with short code \"abc123\" because it has reached more than \"15\" visits.",
+                        "status": 422
                     }
                 }
             },
             "404": {
                 "description": "No short URL was found for provided short code.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -331,7 +357,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }

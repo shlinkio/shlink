@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
-use Exception;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -12,7 +12,6 @@ use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
 
 class ListShortUrlsAction extends AbstractRestAction
@@ -40,23 +39,15 @@ class ListShortUrlsAction extends AbstractRestAction
     /**
      * @param Request $request
      * @return Response
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function handle(Request $request): Response
     {
-        try {
-            $params = $this->queryToListParams($request->getQueryParams());
-            $shortUrls = $this->shortUrlService->listShortUrls(...$params);
-            return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls, new ShortUrlDataTransformer(
-                $this->domainConfig
-            ))]);
-        } catch (Exception $e) {
-            $this->logger->error('Unexpected error while listing short URLs. {e}', ['e' => $e]);
-            return new JsonResponse([
-                'error' => RestUtils::UNKNOWN_ERROR,
-                'message' => 'Unexpected error occurred',
-            ], self::STATUS_INTERNAL_SERVER_ERROR);
-        }
+        $params = $this->queryToListParams($request->getQueryParams());
+        $shortUrls = $this->shortUrlService->listShortUrls(...$params);
+        return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls, new ShortUrlDataTransformer(
+            $this->domainConfig
+        ))]);
     }
 
     /**

@@ -8,11 +8,12 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ResolveUrlCommand;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+
+use function sprintf;
 
 use const PHP_EOL;
 
@@ -51,23 +52,12 @@ class ResolveUrlCommandTest extends TestCase
     public function incorrectShortCodeOutputsErrorMessage(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(EntityDoesNotExistException::class)
-                                                             ->shouldBeCalledOnce();
+        $this->urlShortener->shortCodeToUrl($shortCode, null)
+            ->willThrow(ShortUrlNotFoundException::fromNotFoundShortCode($shortCode))
+            ->shouldBeCalledOnce();
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString('Provided short code "' . $shortCode . '" could not be found.', $output);
-    }
-
-    /** @test */
-    public function wrongShortCodeFormatOutputsErrorMessage(): void
-    {
-        $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, null)->willThrow(new InvalidShortCodeException())
-                                                             ->shouldBeCalledOnce();
-
-        $this->commandTester->execute(['shortCode' => $shortCode]);
-        $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString('Provided short code "' . $shortCode . '" has an invalid format.', $output);
+        $this->assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
     }
 }

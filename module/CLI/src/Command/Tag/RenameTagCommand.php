@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
+use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-
-use function sprintf;
 
 class RenameTagCommand extends Command
 {
@@ -47,8 +45,8 @@ class RenameTagCommand extends Command
             $this->tagService->renameTag($oldName, $newName);
             $io->success('Tag properly renamed.');
             return ExitCodes::EXIT_SUCCESS;
-        } catch (EntityDoesNotExistException $e) {
-            $io->error(sprintf('A tag with name "%s" was not found', $oldName));
+        } catch (TagNotFoundException $e) {
+            $io->error($e->getMessage());
             return ExitCodes::EXIT_FAILURE;
         }
     }

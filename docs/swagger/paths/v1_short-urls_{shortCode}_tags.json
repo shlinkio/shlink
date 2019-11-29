@@ -8,6 +8,9 @@
         "description": "Edit the tags on URL identified by provided short code.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
         "parameters": [
             {
+                "$ref": "../parameters/version.json"
+            },
+            {
                 "name": "shortCode",
                 "in": "path",
                 "description": "The short code for the short URL in which we want to edit tags.",
@@ -78,7 +81,7 @@
             "400": {
                 "description": "The request body does not contain a \"tags\" param with array type.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }

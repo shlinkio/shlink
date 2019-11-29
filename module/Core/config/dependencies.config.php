@@ -6,8 +6,8 @@ namespace Shlinkio\Shlink\Core;
 
 use Doctrine\Common\Cache\Cache;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
-use Shlinkio\Shlink\Core\Response\NotFoundHandler;
 use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Template\TemplateRendererInterface;
@@ -17,7 +17,8 @@ return [
 
     'dependencies' => [
         'factories' => [
-            NotFoundHandler::class => ConfigAbstractFactory::class,
+            ErrorHandler\NotFoundRedirectHandler::class => ConfigAbstractFactory::class,
+            ErrorHandler\NotFoundTemplateHandler::class => ConfigAbstractFactory::class,
 
             Options\AppOptions::class => ConfigAbstractFactory::class,
             Options\DeleteShortUrlsOptions::class => ConfigAbstractFactory::class,
@@ -43,11 +44,8 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        NotFoundHandler::class => [
-            TemplateRendererInterface::class,
-            NotFoundRedirectOptions::class,
-            'config.router.base_path',
-        ],
+        ErrorHandler\NotFoundRedirectHandler::class => [NotFoundRedirectOptions::class, 'config.router.base_path'],
+        ErrorHandler\NotFoundTemplateHandler::class => [TemplateRendererInterface::class],
 
         Options\AppOptions::class => ['config.app_options'],
         Options\DeleteShortUrlsOptions::class => ['config.delete_short_urls'],

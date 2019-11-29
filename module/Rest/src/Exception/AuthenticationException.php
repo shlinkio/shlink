@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Exception;
 
 use Throwable;
 
+/** @deprecated */
 class AuthenticationException extends RuntimeException
 {
     public static function expiredJWT(?Throwable $prev = null): self

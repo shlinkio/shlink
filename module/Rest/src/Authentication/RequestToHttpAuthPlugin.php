@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Authentication;
 
-use Psr\Container;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Rest\Exception\NoAuthenticationException;
+use Shlinkio\Shlink\Rest\Exception\MissingAuthenticationException;
 
 use function array_filter;
 use function array_reduce;
@@ -30,16 +29,12 @@ class RequestToHttpAuthPlugin implements RequestToHttpAuthPluginInterface
     }
 
     /**
-     * @throws Container\ContainerExceptionInterface
-     * @throws NoAuthenticationException
+     * @throws MissingAuthenticationException
      */
     public function fromRequest(ServerRequestInterface $request): Plugin\AuthenticationPluginInterface
     {
         if (! $this->hasAnySupportedHeader($request)) {
-            throw NoAuthenticationException::fromExpectedTypes([
-                Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-                Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
-            ]);
+            throw MissingAuthenticationException::fromExpectedTypes(self::SUPPORTED_AUTH_HEADERS);
         }
 
         return $this->authPluginManager->get($this->getFirstAvailableHeader($request));

@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
-use Exception;
 use Fig\Http\Message\RequestMethodInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -17,20 +15,13 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
-use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPlugin;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPluginInterface;
-use Shlinkio\Shlink\Rest\Exception\NoAuthenticationException;
-use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
-use Throwable;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
 
-use function implode;
-use function sprintf;
 use function Zend\Stratigility\middleware;
 
 class AuthenticationMiddlewareTest extends TestCase
@@ -91,72 +82,6 @@ class AuthenticationMiddlewareTest extends TestCase
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $dummyMiddleware), [])
         )->withMethod(RequestMethodInterface::METHOD_OPTIONS)];
-    }
-
-    /**
-     * @test
-     * @dataProvider provideExceptions
-     */
-    public function errorIsReturnedWhenNoValidAuthIsProvided(Throwable $e): void
-    {
-        $request = (new ServerRequest())->withAttribute(
-            RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), [])
-        );
-        $fromRequest = $this->requestToPlugin->fromRequest(Argument::any())->willThrow($e);
-        $logWarning = $this->logger->warning('Invalid or no authentication provided. {e}', ['e' => $e])->will(
-            function () {
-            }
-        );
-
-        /** @var Response\JsonResponse $response */
-        $response = $this->middleware->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
-        $payload = $response->getPayload();
-
-        $this->assertEquals(RestUtils::INVALID_AUTHORIZATION_ERROR, $payload['error']);
-        $this->assertEquals(sprintf(
-            'Expected one of the following authentication headers, but none were provided, ["%s"]',
-            implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)
-        ), $payload['message']);
-        $fromRequest->shouldHaveBeenCalledOnce();
-        $logWarning->shouldHaveBeenCalledOnce();
-    }
-
-    public function provideExceptions(): iterable
-    {
-        $containerException = new class extends Exception implements ContainerExceptionInterface {
-        };
-
-        yield 'container exception' => [$containerException];
-        yield 'authentication exception' => [NoAuthenticationException::fromExpectedTypes([])];
-    }
-
-    /** @test */
-    public function errorIsReturnedWhenVerificationFails(): void
-    {
-        $request = (new ServerRequest())->withAttribute(
-            RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), [])
-        );
-        $e = VerifyAuthenticationException::withError('the_error', 'the_message');
-        $plugin = $this->prophesize(AuthenticationPluginInterface::class);
-
-        $verify = $plugin->verify($request)->willThrow($e);
-        $fromRequest = $this->requestToPlugin->fromRequest(Argument::any())->willReturn($plugin->reveal());
-        $logWarning = $this->logger->warning('Authentication verification failed. {e}', ['e' => $e])->will(
-            function () {
-            }
-        );
-
-        /** @var Response\JsonResponse $response */
-        $response = $this->middleware->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
-        $payload = $response->getPayload();
-
-        $this->assertEquals('the_error', $payload['error']);
-        $this->assertEquals('the_message', $payload['message']);
-        $verify->shouldHaveBeenCalledOnce();
-        $fromRequest->shouldHaveBeenCalledOnce();
-        $logWarning->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
