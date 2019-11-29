@@ -271,7 +271,7 @@
                             "type": "object",
                             "allOf": [
                                 {
-                                    "$ref": "./Error.json"
+                                    "$ref": "../definitions/Error.json"
                                 },
                                 {
                                     "type": "object",

@@ -20,6 +20,7 @@ return [
         'error-handler-rest' => [
             'path' => '/rest',
             'middleware' => [
+                Rest\Middleware\CrossDomainMiddleware::class,
                 Rest\Middleware\BackwardsCompatibleProblemDetailsMiddleware::class,
                 ProblemDetails\ProblemDetailsMiddleware::class,
             ],
@@ -47,7 +48,6 @@ return [
         'rest' => [
             'path' => '/rest',
             'middleware' => [
-                Rest\Middleware\CrossDomainMiddleware::class,
                 Expressive\Router\Middleware\ImplicitOptionsMiddleware::class,
                 Rest\Middleware\BodyParserMiddleware::class,
                 Rest\Middleware\AuthenticationMiddleware::class,
