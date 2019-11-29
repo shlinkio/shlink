@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+#### Added
+
+* [#118](https://github.com/shlinkio/shlink/issues/118) API errors now implement the [problem details](https://tools.ietf.org/html/rfc7807) standard.
+
+    In order to make it backwards compatible, two things have been done:
+
+    * Both the old `error` and `message` properties have been kept on error response, containing the same values as the `type` and `detail` properties respectively.
+    * The API `v2` has been enabled. If an error occurs when calling the API with this version, the `error` and `message` properties will not be returned.
+
+    > After Shlink v2 is released, both API versions will behave like API v2.
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* *Nothing*
+
+
 ## 1.20.1 - 2019-11-17
 
 #### Added
