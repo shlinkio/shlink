@@ -48,7 +48,10 @@ return [
 
         'loggers' => [
             'Shlink' => [
-                'handlers' => ['shlink_rotating_handler'],
+                'handlers' => [
+                    // Using a key allows for this to be overwritten
+                    'shlink_handler' => 'shlink_rotating_handler',
+                ],
                 'processors' => ['exception_with_new_line', 'psr3'],
             ],
             'Access' => [

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use Monolog\Handler\StreamHandler;
@@ -9,9 +10,6 @@ $isSwoole = extension_loaded('swoole');
 // For swoole, send logs to standard output
 $logger = $isSwoole ? [
     'handlers' => [
-        'shlink_rotating_handler' => [
-            'level' => Logger::EMERGENCY, // This basically disables regular file logs
-        ],
         'shlink_stdout_handler' => [
             'class' => StreamHandler::class,
             'level' => Logger::DEBUG,
@@ -22,7 +20,9 @@ $logger = $isSwoole ? [
 
     'loggers' => [
         'Shlink' => [
-            'handlers' => ['shlink_stdout_handler'],
+            'handlers' => [
+                'shlink_handler' => 'shlink_stdout_handler',
+            ],
         ],
     ],
 ] : [

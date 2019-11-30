@@ -131,9 +131,6 @@ return [
 
     'logger' => [
         'handlers' => [
-            'shlink_rotating_handler' => [
-                'level' => Logger::EMERGENCY, // This basically disables regular file logs
-            ],
             'shlink_stdout_handler' => [
                 'class' => StreamHandler::class,
                 'level' => Logger::INFO,
@@ -144,7 +141,9 @@ return [
 
         'loggers' => [
             'Shlink' => [
-                'handlers' => ['shlink_stdout_handler'],
+                'handlers' => [
+                    'shlink_handler' => 'shlink_stdout_handler',
+                ],
             ],
         ],
     ],
