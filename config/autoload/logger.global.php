@@ -25,7 +25,7 @@ $formatter = [
     'name' => Formatter\LineFormatter::class,
     'params' => [
         'format' => '[%datetime%] %channel%.%level_name% - %message%' . PHP_EOL,
-        'include_stacktraces' => true,
+        'allow_inline_line_breaks' => true,
     ],
 ];
 
