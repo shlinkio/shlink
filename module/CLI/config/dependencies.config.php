@@ -15,7 +15,7 @@ use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console as SymfonyCli;
-use Symfony\Component\Lock\Factory as Locker;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\ServiceManager\Factory\InvokableFactory;
@@ -70,7 +70,7 @@ return [
         Command\Visit\LocateVisitsCommand::class => [
             Service\VisitService::class,
             IpLocationResolverInterface::class,
-            Locker::class,
+            LockFactory::class,
             GeolocationDbUpdater::class,
         ],
         Command\Visit\UpdateDbCommand::class => [DbUpdater::class],
@@ -85,14 +85,14 @@ return [
         Command\Tag\DeleteTagsCommand::class => [Service\Tag\TagService::class],
 
         Command\Db\CreateDatabaseCommand::class => [
-            Locker::class,
+            LockFactory::class,
             SymfonyCli\Helper\ProcessHelper::class,
             PhpExecutableFinder::class,
             Connection::class,
             NoDbNameConnectionFactory::SERVICE_NAME,
         ],
         Command\Db\MigrateDatabaseCommand::class => [
-            Locker::class,
+            LockFactory::class,
             SymfonyCli\Helper\ProcessHelper::class,
             PhpExecutableFinder::class,
         ],

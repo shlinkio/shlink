@@ -22,7 +22,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Lock\Factory as Locker;
+use Symfony\Component\Lock\LockFactory;
 use Throwable;
 
 use function sprintf;
@@ -47,7 +47,7 @@ class LocateVisitsCommand extends AbstractLockedCommand
     public function __construct(
         VisitServiceInterface $visitService,
         IpLocationResolverInterface $ipLocationResolver,
-        Locker $locker,
+        LockFactory $locker,
         GeolocationDbUpdaterInterface $dbUpdater
     ) {
         parent::__construct($locker);
@@ -87,7 +87,7 @@ class LocateVisitsCommand extends AbstractLockedCommand
         } catch (Throwable $e) {
             $this->io->error($e->getMessage());
             if ($e instanceof Exception && $this->io->isVerbose()) {
-                $this->getApplication()->renderException($e, $this->io);
+                $this->getApplication()->renderThrowable($e, $this->io);
             }
 
             return ExitCodes::EXIT_FAILURE;
@@ -116,7 +116,7 @@ class LocateVisitsCommand extends AbstractLockedCommand
         } catch (WrongIpException $e) {
             $this->io->writeln(' [<fg=red>An error occurred while locating IP. Skipped</>]');
             if ($this->io->isVerbose()) {
-                $this->getApplication()->renderException($e, $this->io);
+                $this->getApplication()->renderThrowable($e, $this->io);
             }
 
             throw IpCannotBeLocatedException::forError($e);

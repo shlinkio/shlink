@@ -10,7 +10,7 @@ use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Lock\Factory as Locker;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 
 use function Functional\contains;
@@ -27,7 +27,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     private $noDbNameConn;
 
     public function __construct(
-        Locker $locker,
+        LockFactory $locker,
         ProcessHelper $processHelper,
         PhpExecutableFinder $phpFinder,
         Connection $conn,

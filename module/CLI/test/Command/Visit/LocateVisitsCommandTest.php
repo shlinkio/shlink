@@ -48,7 +48,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->ipResolver = $this->prophesize(IpLocationResolverInterface::class);
         $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
 
-        $this->locker = $this->prophesize(Lock\Factory::class);
+        $this->locker = $this->prophesize(Lock\LockFactory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
         $this->lock->acquire(false)->willReturn(true);
         $this->lock->release()->will(function () {
