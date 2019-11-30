@@ -38,7 +38,7 @@ class GeolocationDbUpdaterTest extends TestCase
         $this->dbUpdater = $this->prophesize(DbUpdaterInterface::class);
         $this->geoLiteDbReader = $this->prophesize(Reader::class);
 
-        $this->locker = $this->prophesize(Lock\Factory::class);
+        $this->locker = $this->prophesize(Lock\LockFactory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
         $this->lock->acquire(true)->willReturn(true);
         $this->lock->release()->will(function () {

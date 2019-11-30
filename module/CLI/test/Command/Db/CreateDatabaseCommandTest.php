@@ -15,7 +15,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Lock\Factory as Locker;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 
@@ -36,7 +36,7 @@ class CreateDatabaseCommandTest extends TestCase
 
     public function setUp(): void
     {
-        $locker = $this->prophesize(Locker::class);
+        $locker = $this->prophesize(LockFactory::class);
         $lock = $this->prophesize(LockInterface::class);
         $lock->acquire(Argument::any())->willReturn(true);
         $lock->release()->will(function () {

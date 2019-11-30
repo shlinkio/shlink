@@ -130,19 +130,14 @@ return [
     'not_found_redirects' => $helper->getNotFoundRedirectsConfig(),
 
     'logger' => [
-        'handlers' => [
-            'shlink_stdout_handler' => [
-                'class' => StreamHandler::class,
-                'level' => Logger::INFO,
-                'stream' => 'php://stdout',
-                'formatter' => 'dashed',
-            ],
-        ],
-
-        'loggers' => [
-            'Shlink' => [
-                'handlers' => [
-                    'shlink_handler' => 'shlink_stdout_handler',
+        'Shlink' => [
+            'handlers' => [
+                'shlink_handler' => [
+                    'name' => StreamHandler::class,
+                    'params' => [
+                        'level' => Logger::INFO,
+                        'stream' => 'php://stdout',
+                    ],
                 ],
             ],
         ],

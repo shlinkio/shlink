@@ -8,33 +8,28 @@ use Monolog\Logger;
 $isSwoole = extension_loaded('swoole');
 
 // For swoole, send logs to standard output
-$logger = $isSwoole ? [
-    'handlers' => [
-        'shlink_stdout_handler' => [
-            'class' => StreamHandler::class,
+$handler = $isSwoole
+    ? [
+        'name' => StreamHandler::class,
+        'params' => [
             'level' => Logger::DEBUG,
             'stream' => 'php://stdout',
-            'formatter' => 'dashed',
         ],
-    ],
-
-    'loggers' => [
-        'Shlink' => [
-            'handlers' => [
-                'shlink_handler' => 'shlink_stdout_handler',
-            ],
-        ],
-    ],
-] : [
-    'handlers' => [
-        'shlink_rotating_handler' => [
+    ]
+    : [
+        'params' => [
             'level' => Logger::DEBUG,
         ],
-    ],
-];
+    ];
 
 return [
 
-    'logger' => $logger,
+    'logger' => [
+        'Shlink' => [
+            'handlers' => [
+                'shlink_handler' => $handler,
+            ],
+        ],
+    ],
 
 ];
