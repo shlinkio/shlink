@@ -8,7 +8,7 @@ use Shlinkio\Shlink\CLI\Command\Util\AbstractLockedCommand;
 use Shlinkio\Shlink\CLI\Command\Util\LockedCommandConfig;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Lock\Factory as Locker;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 
 use function array_unshift;
@@ -20,7 +20,7 @@ abstract class AbstractDatabaseCommand extends AbstractLockedCommand
     /** @var string */
     private $phpBinary;
 
-    public function __construct(Locker $locker, ProcessHelper $processHelper, PhpExecutableFinder $phpFinder)
+    public function __construct(LockFactory $locker, ProcessHelper $processHelper, PhpExecutableFinder $phpFinder)
     {
         parent::__construct($locker);
         $this->processHelper = $processHelper;

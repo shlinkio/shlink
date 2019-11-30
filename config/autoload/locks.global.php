@@ -10,7 +10,7 @@ use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 
 // This class alias tricks the ConfigAbstractFactory to return Lock\Factory instances even with a different service name
 $localLockFactory = 'Shlinkio\Shlink\LocalLockFactory';
-class_alias(Lock\Factory::class, $localLockFactory);
+class_alias(Lock\LockFactory::class, $localLockFactory);
 
 return [
 
@@ -22,7 +22,7 @@ return [
         'factories' => [
             Lock\Store\FlockStore::class => ConfigAbstractFactory::class,
             Lock\Store\RedisStore::class => ConfigAbstractFactory::class,
-            Lock\Factory::class => ConfigAbstractFactory::class,
+            Lock\LockFactory::class => ConfigAbstractFactory::class,
             $localLockFactory => ConfigAbstractFactory::class,
         ],
         'aliases' => [
@@ -36,7 +36,7 @@ return [
             Lock\Store\RedisStore::class => [
                 RetryLockStoreDelegatorFactory::class,
             ],
-            Lock\Factory::class => [
+            Lock\LockFactory::class => [
                 LoggerAwareDelegatorFactory::class,
             ],
         ],
@@ -45,7 +45,7 @@ return [
     ConfigAbstractFactory::class => [
         Lock\Store\FlockStore::class => ['config.locks.locks_dir'],
         Lock\Store\RedisStore::class => [RedisFactory::SERVICE_NAME],
-        Lock\Factory::class => ['lock_store'],
+        Lock\LockFactory::class => ['lock_store'],
         $localLockFactory => ['local_lock_store'],
     ],
 
