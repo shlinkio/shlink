@@ -10,6 +10,8 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Throwable;
 
+use function sprintf;
+
 class InvalidUrlExceptionTest extends TestCase
 {
     /**
@@ -18,10 +20,17 @@ class InvalidUrlExceptionTest extends TestCase
      */
     public function properlyCreatesExceptionFromUrl(?Throwable $prev): void
     {
-        $e = InvalidUrlException::fromUrl('http://the_url.com', $prev);
+        $url = 'http://the_url.com';
+        $expectedMessage = sprintf('Provided URL %s is invalid. Try with a different one.', $url);
+        $e = InvalidUrlException::fromUrl($url, $prev);
 
-        $this->assertEquals('Provided URL http://the_url.com is invalid. Try with a different one.', $e->getMessage());
+        $this->assertEquals($expectedMessage, $e->getMessage());
+        $this->assertEquals($expectedMessage, $e->getDetail());
+        $this->assertEquals('Invalid URL', $e->getTitle());
+        $this->assertEquals('INVALID_URL', $e->getType());
+        $this->assertEquals(['url' => $url], $e->getAdditionalData());
         $this->assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getCode());
+        $this->assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getStatus());
         $this->assertEquals($prev, $e->getPrevious());
     }
 

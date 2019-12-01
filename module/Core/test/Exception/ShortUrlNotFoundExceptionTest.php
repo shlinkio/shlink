@@ -18,8 +18,19 @@ class ShortUrlNotFoundExceptionTest extends TestCase
         string $shortCode,
         ?string $domain
     ): void {
+        $expectedAdditional = ['shortCode' => $shortCode];
+        if ($domain !== null) {
+            $expectedAdditional['domain'] = $domain;
+        }
+
         $e = ShortUrlNotFoundException::fromNotFoundShortCode($shortCode, $domain);
+
         $this->assertEquals($expectedMessage, $e->getMessage());
+        $this->assertEquals($expectedMessage, $e->getDetail());
+        $this->assertEquals('Short URL not found', $e->getTitle());
+        $this->assertEquals('INVALID_SHORTCODE', $e->getType());
+        $this->assertEquals(404, $e->getStatus());
+        $this->assertEquals($expectedAdditional, $e->getAdditionalData());
     }
 
     public function provideMessages(): iterable

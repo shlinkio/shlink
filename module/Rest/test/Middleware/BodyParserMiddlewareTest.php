@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
@@ -31,7 +32,10 @@ class BodyParserMiddlewareTest extends TestCase
      */
     public function requestsFromOtherMethodsJustFallbackToNextMiddleware(string $method): void
     {
-        $request = (new ServerRequest())->withMethod($method);
+        $request = $this->prophesize(ServerRequestInterface::class);
+        $request->getMethod()->willReturn($method);
+        $request->getParsedBody()->willReturn([]);
+
         $this->assertHandlingRequestJustFallsBackToNext($request);
     }
 
@@ -45,18 +49,25 @@ class BodyParserMiddlewareTest extends TestCase
     /** @test */
     public function requestsWithNonEmptyBodyJustFallbackToNextMiddleware(): void
     {
-        $request = (new ServerRequest())->withParsedBody(['foo' => 'bar'])->withMethod('POST');
+        $request = $this->prophesize(ServerRequestInterface::class);
+        $request->getMethod()->willReturn('POST');
+        $request->getParsedBody()->willReturn(['foo' => 'bar']);
+
         $this->assertHandlingRequestJustFallsBackToNext($request);
     }
 
-    private function assertHandlingRequestJustFallsBackToNext(ServerRequestInterface $request): void
+    private function assertHandlingRequestJustFallsBackToNext(ProphecyInterface $requestMock): void
     {
+        $getContentType = $requestMock->getHeaderLine('Content-type')->willReturn('');
+        $request = $requestMock->reveal();
+
         $nextHandler = $this->prophesize(RequestHandlerInterface::class);
         $handle = $nextHandler->handle($request)->willReturn(new Response());
 
         $this->middleware->process($request, $nextHandler->reveal());
 
         $handle->shouldHaveBeenCalledOnce();
+        $getContentType->shouldNotHaveBeenCalled();
     }
 
     /** @test */

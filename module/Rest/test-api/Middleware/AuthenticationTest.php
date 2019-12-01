@@ -17,7 +17,7 @@ class AuthenticationTest extends ApiTestCase
     public function authorizationErrorIsReturnedIfNoApiKeyIsSent(): void
     {
         $expectedDetail = sprintf(
-            'Expected one of the following authentication headers, but none were provided, ["%s"]',
+            'Expected one of the following authentication headers, ["%s"], but none were provided',
             implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)
         );
 
