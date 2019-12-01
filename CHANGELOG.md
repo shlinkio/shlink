@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Changed
 
 * [#492](https://github.com/shlinkio/shlink/issues/492) Updated to monolog 2, together with other dependencies, like Symfony 5 and infection-php.
+* [#527](https://github.com/shlinkio/shlink/issues/527) Increased minimum required mutation score for unit tests to 80%.
 
 #### Deprecated
 
