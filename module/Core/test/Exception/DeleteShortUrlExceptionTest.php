@@ -27,6 +27,14 @@ class DeleteShortUrlExceptionTest extends TestCase
 
         $this->assertEquals($threshold, $e->getVisitsThreshold());
         $this->assertEquals($expectedMessage, $e->getMessage());
+        $this->assertEquals($expectedMessage, $e->getDetail());
+        $this->assertEquals([
+            'shortCode' => $shortCode,
+            'threshold' => $threshold,
+        ], $e->getAdditionalData());
+        $this->assertEquals('Cannot delete short URL', $e->getTitle());
+        $this->assertEquals('INVALID_SHORTCODE_DELETION', $e->getType());
+        $this->assertEquals(422, $e->getStatus());
     }
 
     public function provideThresholds(): array

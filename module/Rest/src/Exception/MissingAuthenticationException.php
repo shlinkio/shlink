@@ -21,7 +21,7 @@ class MissingAuthenticationException extends RuntimeException implements Problem
     public static function fromExpectedTypes(array $expectedTypes): self
     {
         $e = new self(sprintf(
-            'Expected one of the following authentication headers, but none were provided, ["%s"]',
+            'Expected one of the following authentication headers, ["%s"], but none were provided',
             implode('", "', $expectedTypes)
         ));
 
