@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Service\Tag;
 use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
+use Shlinkio\Shlink\Core\Exception\TagConflictException;
 
 interface TagServiceInterface
 {
@@ -34,6 +35,7 @@ interface TagServiceInterface
      * @param string $newName
      * @return Tag
      * @throws EntityDoesNotExistException
+     * @throws TagConflictException
      */
     public function renameTag($oldName, $newName): Tag;
 }
