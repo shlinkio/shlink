@@ -229,6 +229,16 @@
                     }
                 }
             },
+            "409": {
+                "description": "The name provided in newName param is already in use for another tag.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            },
             "500": {
                 "description": "Unexpected error.",
                 "content": {
