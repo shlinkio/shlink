@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
+use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 
@@ -64,15 +65,24 @@ class TagService implements TagServiceInterface
      * @param string $newName
      * @return Tag
      * @throws EntityDoesNotExistException
+     * @throws TagConflictException
      * @throws ORM\OptimisticLockException
      */
     public function renameTag($oldName, $newName): Tag
     {
+        /** @var TagRepository $repo */
+        $repo = $this->em->getRepository(Tag::class);
         $criteria = ['name' => $oldName];
+
         /** @var Tag|null $tag */
-        $tag = $this->em->getRepository(Tag::class)->findOneBy($criteria);
+        $tag = $repo->findOneBy($criteria);
         if ($tag === null) {
             throw EntityDoesNotExistException::createFromEntityAndConditions(Tag::class, $criteria);
+        }
+
+        $newNameExists = $newName !== $oldName && $repo->count(['name' => $newName]) > 0;
+        if ($newNameExists) {
+            throw TagConflictException::fromExistingTag($oldName, $newName);
         }
 
         $tag->rename($newName);
