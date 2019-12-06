@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Model;
 
 use Cake\Chronos\Chronos;
+use DateTimeInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 
@@ -96,12 +97,16 @@ final class ShortUrlMeta
     }
 
     /**
-     * @param string|Chronos|null $date
+     * @param string|DateTimeInterface|Chronos|null $date
      */
     private function parseDateField($date): ?Chronos
     {
         if ($date === null || $date instanceof Chronos) {
             return $date;
+        }
+
+        if ($date instanceof DateTimeInterface) {
+            return Chronos::instance($date);
         }
 
         return Chronos::parse($date);

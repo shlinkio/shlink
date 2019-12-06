@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use stdClass;
 
 class ShortUrlMetaTest extends TestCase
 {
@@ -34,6 +35,17 @@ class ShortUrlMetaTest extends TestCase
         yield [[
             ShortUrlMetaInputFilter::VALID_SINCE => '2017',
             ShortUrlMetaInputFilter::MAX_VISITS => 5,
+        ]];
+        yield [[
+            ShortUrlMetaInputFilter::VALID_SINCE => new stdClass(),
+            ShortUrlMetaInputFilter::VALID_UNTIL => 'foo',
+        ]];
+        yield [[
+            ShortUrlMetaInputFilter::VALID_UNTIL => 500,
+        ]];
+        yield [[
+            ShortUrlMetaInputFilter::MAX_VISITS => new stdClass(),
+            ShortUrlMetaInputFilter::DOMAIN => 4,
         ]];
     }
 
