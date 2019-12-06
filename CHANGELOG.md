@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#561](https://github.com/shlinkio/shlink/issues/561) Fixed `db:migrate` command failing because yaml extension is not installed, which makes config file not to be readable.
+
+
 ## 1.20.1 - 2019-11-17
 
 #### Added
