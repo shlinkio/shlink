@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
+use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Util\RestUtils;
@@ -58,6 +59,15 @@ class UpdateTagAction extends AbstractRestAction
                 'error' => RestUtils::NOT_FOUND_ERROR,
                 'message' => sprintf('It was not possible to find a tag with name %s', $body['oldName']),
             ], self::STATUS_NOT_FOUND);
+        } catch (TagConflictException $e) {
+            return new JsonResponse([
+                'error' => 'TAG_CONFLICT',
+                'message' => sprintf(
+                    'You cannot rename tag %s to %s, because it already exists',
+                    $body['oldName'],
+                    $body['newName']
+                ),
+            ], self::STATUS_CONFLICT);
         }
     }
 }

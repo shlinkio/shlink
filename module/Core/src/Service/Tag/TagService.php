@@ -82,7 +82,7 @@ class TagService implements TagServiceInterface
 
         $newNameExists = $newName !== $oldName && $repo->count(['name' => $newName]) > 0;
         if ($newNameExists) {
-            throw TagConflictException::fromExistingTag($newName);
+            throw TagConflictException::fromExistingTag($oldName, $newName);
         }
 
         $tag->rename($newName);

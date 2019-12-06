@@ -8,8 +8,8 @@ use function sprintf;
 
 class TagConflictException extends RuntimeException
 {
-    public static function fromExistingTag(string $tag): self
+    public static function fromExistingTag(string $oldName, string $newName): self
     {
-        return new self(sprintf('Tag with name %s already exists', $tag));
+        return new self(sprintf('You cannot rename tag %s to %s, because it already exists', $oldName, $newName));
     }
 }
