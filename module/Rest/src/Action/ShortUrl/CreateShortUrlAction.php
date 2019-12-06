@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
-use Cake\Chronos\Chronos;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
@@ -31,8 +30,8 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
         }
 
         $meta = ShortUrlMeta::createFromParams(
-            $this->getOptionalDate($postData, 'validSince'),
-            $this->getOptionalDate($postData, 'validUntil'),
+            $postData['validSince'] ?? null,
+            $postData['validUntil'] ?? null,
             $postData['customSlug'] ?? null,
             $postData['maxVisits'] ?? null,
             $postData['findIfExists'] ?? null,
@@ -40,10 +39,5 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
         );
 
         return new CreateShortUrlData(new Uri($postData['longUrl']), (array) ($postData['tags'] ?? []), $meta);
-    }
-
-    private function getOptionalDate(array $postData, string $fieldName): ?Chronos
-    {
-        return isset($postData[$fieldName]) ? Chronos::parse($postData[$fieldName]) : null;
     }
 }

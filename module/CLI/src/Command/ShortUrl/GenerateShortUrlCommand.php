@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
@@ -127,8 +126,8 @@ class GenerateShortUrlCommand extends Command
                 new Uri($longUrl),
                 $tags,
                 ShortUrlMeta::createFromParams(
-                    $this->getOptionalDate($input, 'validSince'),
-                    $this->getOptionalDate($input, 'validUntil'),
+                    $input->getOption('validSince'),
+                    $input->getOption('validUntil'),
                     $customSlug,
                     $maxVisits !== null ? (int) $maxVisits : null,
                     $input->getOption('findIfExists'),
@@ -145,11 +144,5 @@ class GenerateShortUrlCommand extends Command
             $io->error($e->getMessage());
             return ExitCodes::EXIT_FAILURE;
         }
-    }
-
-    private function getOptionalDate(InputInterface $input, string $fieldName): ?Chronos
-    {
-        $since = $input->getOption($fieldName);
-        return $since !== null ? Chronos::parse($since) : null;
     }
 }

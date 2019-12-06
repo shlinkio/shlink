@@ -55,4 +55,35 @@ class UpdateTagActionTest extends ApiTestCase
         $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
         $this->assertEquals('Tag not found', $payload['title']);
     }
+
+    /** @test */
+    public function errorIsThrownWhenTryingToRenameTagToAnotherTagName(): void
+    {
+        $expectedDetail = 'You cannot rename tag foo to bar, because it already exists';
+
+        $resp = $this->callApiWithKey(self::METHOD_PUT, '/tags', [RequestOptions::JSON => [
+            'oldName' => 'foo',
+            'newName' => 'bar',
+        ]]);
+        $payload = $this->getJsonResponsePayload($resp);
+
+        $this->assertEquals(self::STATUS_CONFLICT, $resp->getStatusCode());
+        $this->assertEquals(self::STATUS_CONFLICT, $payload['status']);
+        $this->assertEquals('TAG_CONFLICT', $payload['type']);
+        $this->assertEquals('TAG_CONFLICT', $payload['error']); // Deprecated
+        $this->assertEquals($expectedDetail, $payload['detail']);
+        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
+        $this->assertEquals('Tag conflict', $payload['title']);
+    }
+
+    /** @test */
+    public function tagIsProperlyRenamedWhenRenamingToItself(): void
+    {
+        $resp = $this->callApiWithKey(self::METHOD_PUT, '/tags', [RequestOptions::JSON => [
+            'oldName' => 'foo',
+            'newName' => 'foo',
+        ]]);
+
+        $this->assertEquals(self::STATUS_NO_CONTENT, $resp->getStatusCode());
+    }
 }

@@ -35,6 +35,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 
+## 1.20.2 - 2019-12-06
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#561](https://github.com/shlinkio/shlink/issues/561) Fixed `db:migrate` command failing because yaml extension is not installed, which makes config file not to be readable.
+* [#562](https://github.com/shlinkio/shlink/issues/562) Fixed internal server error being returned when renaming a tag to another tag's name. Now a meaningful API error with status 409 is returned.
+* [#555](https://github.com/shlinkio/shlink/issues/555) Fixed internal server error being returned when invalid dates are provided for new short URLs. Now a 400 is returned, as intended.
+
+
 ## 1.20.1 - 2019-11-17
 
 #### Added

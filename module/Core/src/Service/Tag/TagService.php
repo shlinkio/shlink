@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Service\Tag;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
@@ -60,13 +61,22 @@ class TagService implements TagServiceInterface
 
     /**
      * @throws TagNotFoundException
+     * @throws TagConflictException
      */
     public function renameTag(string $oldName, string $newName): Tag
     {
+        /** @var TagRepository $repo */
+        $repo = $this->em->getRepository(Tag::class);
+
         /** @var Tag|null $tag */
-        $tag = $this->em->getRepository(Tag::class)->findOneBy(['name' => $oldName]);
+        $tag = $repo->findOneBy(['name' => $oldName]);
         if ($tag === null) {
             throw TagNotFoundException::fromTag($oldName);
+        }
+
+        $newNameExists = $newName !== $oldName && $repo->count(['name' => $newName]) > 0;
+        if ($newNameExists) {
+            throw TagConflictException::fromExistingTag($oldName, $newName);
         }
 
         $tag->rename($newName);

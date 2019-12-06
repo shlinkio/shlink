@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Service\Tag;
 
 use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 
 interface TagServiceInterface
@@ -28,6 +29,7 @@ interface TagServiceInterface
 
     /**
      * @throws TagNotFoundException
+     * @throws TagConflictException
      */
     public function renameTag(string $oldName, string $newName): Tag;
 }
