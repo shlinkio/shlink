@@ -42,9 +42,6 @@ class ShortUrlMetaTest extends TestCase
         ]];
         yield [[
             ShortUrlMetaInputFilter::VALID_UNTIL => 500,
-        ]];
-        yield [[
-            ShortUrlMetaInputFilter::MAX_VISITS => new stdClass(),
             ShortUrlMetaInputFilter::DOMAIN => 4,
         ]];
     }
