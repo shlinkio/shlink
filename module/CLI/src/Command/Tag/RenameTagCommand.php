@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\Tag;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
+use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -49,6 +50,11 @@ class RenameTagCommand extends Command
             return ExitCodes::EXIT_SUCCESS;
         } catch (EntityDoesNotExistException $e) {
             $io->error(sprintf('A tag with name "%s" was not found', $oldName));
+            return ExitCodes::EXIT_FAILURE;
+        } catch (TagConflictException $e) {
+            $io->error(
+                sprintf('A tag with name "%s" cannot be renamed to "%s" because it already exists', $oldName, $newName)
+            );
             return ExitCodes::EXIT_FAILURE;
         }
     }
