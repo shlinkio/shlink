@@ -10,13 +10,8 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
-use Zend\Diactoros\Uri;
 
 use function Functional\contains;
-use function idn_to_ascii;
-
-use const IDNA_DEFAULT;
-use const INTL_IDNA_VARIANT_UTS46;
 
 class UrlValidator implements UrlValidatorInterface, RequestMethodInterface, StatusCodeInterface
 {
@@ -43,17 +38,10 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface, Sta
      */
     private function doValidateUrl(string $url, int $redirectNum = 1): void
     {
-        // FIXME Guzzle is about to add support for this https://github.com/guzzle/guzzle/pull/2286
-        //       Remove custom implementation and manual redirect handling when Guzzle's PR is merged
-        $uri = new Uri($url);
-        $originalHost = $uri->getHost();
-        $normalizedHost = idn_to_ascii($originalHost, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-        if ($originalHost !== $normalizedHost) {
-            $uri = $uri->withHost($normalizedHost);
-        }
-
+        // TODO Guzzle does not properly handle IDNs on redirects, just on first request.
+        //      Because of that, we have to handle redirects manually.
         try {
-            $resp = $this->httpClient->request(self::METHOD_GET, (string) $uri, [
+            $resp = $this->httpClient->request(self::METHOD_GET, $url, [
 //                RequestOptions::ALLOW_REDIRECTS => ['max' => self::MAX_REDIRECTS],
                 RequestOptions::ALLOW_REDIRECTS => false,
             ]);
