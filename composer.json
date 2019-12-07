@@ -25,7 +25,7 @@
         "endroid/qr-code": "^3.6",
         "firebase/php-jwt": "^4.0",
         "geoip2/geoip2": "^2.9",
-        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/guzzle": "^6.5",
         "lstrojny/functional-php": "^1.9",
         "mikehaertl/phpwkhtmltopdf": "^2.2",
         "monolog/monolog": "^2.0",

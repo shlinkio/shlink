@@ -64,31 +64,24 @@ class UrlValidatorTest extends TestCase
         });
     }
 
-    /**
-     * @test
-     * @dataProvider provideUrls
-     */
-    public function expectedUrlIsCalledInOrderToVerifyProvidedUrl(string $providedUrl, string $expectedUrl): void
+    /** @test */
+    public function expectedUrlIsCalledWhenTryingToVerify(): void
     {
+        $expectedUrl = 'http://foobar.com';
+
         $request = $this->httpClient->request(
             RequestMethodInterface::METHOD_GET,
             $expectedUrl,
             Argument::cetera()
         )->willReturn(new Response());
 
-        $this->urlValidator->validateUrl($providedUrl);
+        $this->urlValidator->validateUrl($expectedUrl);
 
         $request->shouldHaveBeenCalledOnce();
     }
 
-    public function provideUrls(): iterable
-    {
-        yield 'regular domain' => ['http://foobar.com', 'http://foobar.com'];
-        yield 'IDN' => ['https://tést.shlink.io', 'https://xn--tst-bma.shlink.io'];
-    }
-
     /** @test */
-    public function considersUrlValidWhenTooManyRedirectsAreReturned(): void
+    public function urlIsConsideredValidWhenTooManyRedirectsAreReturned(): void
     {
         $request = $this->httpClient->request(Argument::cetera())->willReturn(
             new Response('php://memory', 302, ['Location' => 'http://foo.com'])
