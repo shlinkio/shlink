@@ -32,7 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Fixed
 
-* *Nothing*
+* [#570](https://github.com/shlinkio/shlink/issues/570) Fixed shlink version generated for docker images when building from `develop` branch.
 
 
 ## 1.20.2 - 2019-12-06
