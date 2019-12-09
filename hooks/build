@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ex
 
-if [[ ${SOURCE_BRANCH} == 'master' ]]; then
+if [[ ${SOURCE_BRANCH} == 'develop' ]]; then
     SHLINK_RELEASE='latest'
 else
     SHLINK_RELEASE=${SOURCE_BRANCH#?}
