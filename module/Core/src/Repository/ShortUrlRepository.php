@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Repository;
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 
 use function array_column;
@@ -27,7 +28,8 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         ?int $offset = null,
         ?string $searchTerm = null,
         array $tags = [],
-        $orderBy = null
+        $orderBy = null,
+        ?DateRange $dateRange = null
     ): array {
         $qb = $this->createListQueryBuilder($searchTerm, $tags);
         $qb->select('DISTINCT s');
@@ -38,6 +40,18 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         }
         if ($offset !== null) {
             $qb->setFirstResult($offset);
+        }
+
+        // Date filters
+        if ($dateRange !== null) {
+            if ($dateRange->getStartDate() !== null) {
+                $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
+                $qb->setParameter('startDate', $dateRange->getStartDate());
+            }
+            if ($dateRange->getEndDate() !== null) {
+                $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
+                $qb->setParameter('endDate', $dateRange->getEndDate());
+            }
         }
 
         // In case the ordering has been specified, the query could be more complex. Process it
