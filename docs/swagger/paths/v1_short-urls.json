@@ -54,6 +54,24 @@
                         "visits"
                     ]
                 }
+            },
+            {
+                "name": "startDate",
+                "in": "query",
+                "description": "The date (in ISO-8601 format) from which we want to get short URLs.",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "endDate",
+                "in": "query",
+                "description": "The date (in ISO-8601 format) until which we want to get short URLs.",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
             }
         ],
         "security": [
