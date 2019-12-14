@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\Common\Persistence\ObjectRepository;
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 
 interface ShortUrlRepositoryInterface extends ObjectRepository
@@ -19,7 +20,8 @@ interface ShortUrlRepositoryInterface extends ObjectRepository
         ?int $offset = null,
         ?string $searchTerm = null,
         array $tags = [],
-        $orderBy = null
+        $orderBy = null,
+        ?DateRange $dateRange = null
     ): array;
 
     /**
