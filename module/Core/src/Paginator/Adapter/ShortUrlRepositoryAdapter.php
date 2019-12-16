@@ -70,6 +70,6 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
      */
     public function count(): int
     {
-        return $this->repository->countList($this->searchTerm, $this->tags);
+        return $this->repository->countList($this->searchTerm, $this->tags, $this->dateRange);
     }
 }

@@ -31,7 +31,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         $orderBy = null,
         ?DateRange $dateRange = null
     ): array {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags);
+        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange);
         $qb->select('DISTINCT s');
 
         // Set limit and offset
@@ -40,18 +40,6 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         }
         if ($offset !== null) {
             $qb->setFirstResult($offset);
-        }
-
-        // Date filters
-        if ($dateRange !== null) {
-            if ($dateRange->getStartDate() !== null) {
-                $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
-                $qb->setParameter('startDate', $dateRange->getStartDate());
-            }
-            if ($dateRange->getEndDate() !== null) {
-                $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
-                $qb->setParameter('endDate', $dateRange->getEndDate());
-            }
         }
 
         // In case the ordering has been specified, the query could be more complex. Process it
@@ -91,7 +79,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb->getQuery()->getResult();
     }
 
-    public function countList(?string $searchTerm = null, array $tags = []): int
+    public function countList(?string $searchTerm = null, array $tags = [], ?DateRange $dateRange = null): int
     {
         $qb = $this->createListQueryBuilder($searchTerm, $tags);
         $qb->select('COUNT(DISTINCT s)');
@@ -99,11 +87,25 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    private function createListQueryBuilder(?string $searchTerm = null, array $tags = []): QueryBuilder
-    {
+    private function createListQueryBuilder(
+        ?string $searchTerm = null,
+        array $tags = [],
+        ?DateRange $dateRange = null
+    ): QueryBuilder {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's');
         $qb->where('1=1');
+
+        if ($dateRange !== null) {
+            if ($dateRange->getStartDate() !== null) {
+                $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
+                $qb->setParameter('startDate', $dateRange->getStartDate());
+            }
+            if ($dateRange->getEndDate() !== null) {
+                $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
+                $qb->setParameter('endDate', $dateRange->getEndDate());
+            }
+        }
 
         // Apply search term to every searchable field if not empty
         if (! empty($searchTerm)) {
