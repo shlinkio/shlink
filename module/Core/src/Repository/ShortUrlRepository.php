@@ -54,15 +54,9 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
 
     private function processOrderByForList(QueryBuilder $qb, $orderBy): array
     {
-        // Map public field names to column names
-        $fieldNameMap = [
-            'originalUrl' => 'longUrl',
-            'longUrl' => 'longUrl',
-            'shortCode' => 'shortCode',
-            'dateCreated' => 'dateCreated',
-        ];
-        $fieldName = is_array($orderBy) ? key($orderBy) : $orderBy;
-        $order = is_array($orderBy) ? $orderBy[$fieldName] : 'ASC';
+        $isArray = is_array($orderBy);
+        $fieldName = $isArray ? key($orderBy) : $orderBy;
+        $order = $isArray ? $orderBy[$fieldName] : 'ASC';
 
         if (contains(['visits', 'visitsCount', 'visitCount'], $fieldName)) {
             $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
@@ -73,6 +67,13 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
             return array_column($qb->getQuery()->getResult(), 0);
         }
 
+        // Map public field names to column names
+        $fieldNameMap = [
+            'originalUrl' => 'longUrl',
+            'longUrl' => 'longUrl',
+            'shortCode' => 'shortCode',
+            'dateCreated' => 'dateCreated',
+        ];
         if (array_key_exists($fieldName, $fieldNameMap)) {
             $qb->orderBy('s.' . $fieldNameMap[$fieldName], $order);
         }
