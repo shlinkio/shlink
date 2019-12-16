@@ -55,7 +55,7 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
             $this->searchTerm,
             $this->tags,
             $this->orderBy,
-            $this->dateRange,
+            $this->dateRange
         );
     }
 
