@@ -58,19 +58,20 @@ class ListShortUrlsAction extends AbstractRestAction
      */
     private function queryToListParams(array $query): array
     {
-        $dateRange = null;
-        $startDate = isset($query['startDate']) ? Chronos::parse($query['startDate']) : null;
-        $endDate = isset($query['endDate']) ? Chronos::parse($query['endDate']) : null;
-        if ($startDate !== null || $endDate !== null) {
-            $dateRange = new DateRange($startDate, $endDate);
-        }
-
         return [
             (int) ($query['page'] ?? 1),
             $query['searchTerm'] ?? null,
             $query['tags'] ?? [],
             $query['orderBy'] ?? null,
-            $dateRange,
+            $this->determineDateRangeFromQuery($query),
         ];
+    }
+
+    private function determineDateRangeFromQuery(array $query): DateRange
+    {
+        return new DateRange(
+            isset($query['startDate']) ? Chronos::parse($query['startDate']) : null,
+            isset($query['endDate']) ? Chronos::parse($query['endDate']) : null
+        );
     }
 }
