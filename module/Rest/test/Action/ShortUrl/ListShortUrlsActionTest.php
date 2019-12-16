@@ -49,7 +49,8 @@ class ListShortUrlsActionTest extends TestCase
             $expectedPage,
             $expectedSearchTerm,
             $expectedTags,
-            $expectedOrderBy
+            $expectedOrderBy,
+            null
         )->willReturn(new Paginator(new ArrayAdapter()));
 
         /** @var JsonResponse $response */

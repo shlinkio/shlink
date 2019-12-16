@@ -13,16 +13,18 @@ use Zend\Paginator\Paginator;
 interface ShortUrlServiceInterface
 {
     /**
-     * @param int $page
-     * @param string|null $searchQuery
      * @param string[] $tags
      * @param array|string|null $orderBy
-     * @return ShortUrl[]|Paginator
-     * @param DateRange|null $dateRange
      *
      * @return ShortUrl[]|Paginator
      */
-    public function listShortUrls(int $page = 1, ?string $searchQuery = null, array $tags = [], $orderBy = null, ?DateRange $dateRange = null);
+    public function listShortUrls(
+        int $page = 1,
+        ?string $searchQuery = null,
+        array $tags = [],
+        $orderBy = null,
+        ?DateRange $dateRange = null
+    );
 
     /**
      * @param string[] $tags

@@ -25,7 +25,7 @@ class ShortUrlRepositoryAdapterTest extends TestCase
     /** @test */
     public function getItemsFallbacksToFindList(): void
     {
-        $this->repo->findList(10, 5, 'search', ['foo', 'bar'], 'order')->shouldBeCalledOnce();
+        $this->repo->findList(10, 5, 'search', ['foo', 'bar'], 'order', null)->shouldBeCalledOnce();
         $this->adapter->getItems(5, 10);
     }
 

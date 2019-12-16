@@ -61,7 +61,7 @@ class ListShortUrlsAction extends AbstractRestAction
         $dateRange = null;
         $startDate = isset($query['startDate']) ? Chronos::parse($query['startDate']) : null;
         $endDate = isset($query['endDate']) ? Chronos::parse($query['endDate']) : null;
-        if ($startDate != null || $endDate != null) {
+        if ($startDate !== null || $endDate !== null) {
             $dateRange = new DateRange($startDate, $endDate);
         }
 
