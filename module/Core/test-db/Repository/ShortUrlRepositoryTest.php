@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Core\Repository;
 
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
+use ReflectionObject;
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -108,7 +110,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function findListProperlyFiltersByTagAndSearchTerm(): void
+    public function findListProperlyFiltersResult(): void
     {
         $tag = new Tag('bar');
         $this->getEntityManager()->persist($tag);
@@ -124,12 +126,17 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($bar);
 
         $foo2 = new ShortUrl('foo_2');
+        $ref = new ReflectionObject($foo2);
+        $dateProp = $ref->getProperty('dateCreated');
+        $dateProp->setAccessible(true);
+        $dateProp->setValue($foo2, Chronos::now()->subDays(5));
         $this->getEntityManager()->persist($foo2);
 
         $this->getEntityManager()->flush();
 
         $result = $this->repo->findList(null, null, 'foo', ['bar']);
         $this->assertCount(1, $result);
+        $this->assertEquals(1, $this->repo->countList('foo', ['bar']));
         $this->assertSame($foo, $result[0]);
 
         $result = $this->repo->findList();
@@ -141,12 +148,22 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $result = $this->repo->findList(2, 1);
         $this->assertCount(2, $result);
 
-        $result = $this->repo->findList(2, 2);
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $this->repo->findList(2, 2));
 
         $result = $this->repo->findList(null, null, null, [], ['visits' => 'DESC']);
         $this->assertCount(3, $result);
         $this->assertSame($bar, $result[0]);
+
+        $result = $this->repo->findList(null, null, null, [], null, new DateRange(null, Chronos::now()->subDays(2)));
+        $this->assertCount(1, $result);
+        $this->assertEquals(1, $this->repo->countList(null, [], new DateRange(null, Chronos::now()->subDays(2))));
+        $this->assertSame($foo2, $result[0]);
+
+        $this->assertCount(
+            2,
+            $this->repo->findList(null, null, null, [], null, new DateRange(Chronos::now()->subDays(2)))
+        );
+        $this->assertEquals(2, $this->repo->countList(null, [], new DateRange(Chronos::now()->subDays(2))));
     }
 
     /** @test */

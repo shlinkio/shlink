@@ -81,7 +81,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
 
     public function countList(?string $searchTerm = null, array $tags = [], ?DateRange $dateRange = null): int
     {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags);
+        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange);
         $qb->select('COUNT(DISTINCT s)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
@@ -96,15 +96,13 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         $qb->from(ShortUrl::class, 's');
         $qb->where('1=1');
 
-        if ($dateRange !== null) {
-            if ($dateRange->getStartDate() !== null) {
-                $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
-                $qb->setParameter('startDate', $dateRange->getStartDate());
-            }
-            if ($dateRange->getEndDate() !== null) {
-                $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
-                $qb->setParameter('endDate', $dateRange->getEndDate());
-            }
+        if ($dateRange !== null && $dateRange->getStartDate() !== null) {
+            $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
+            $qb->setParameter('startDate', $dateRange->getStartDate());
+        }
+        if ($dateRange !== null && $dateRange->getEndDate() !== null) {
+            $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
+            $qb->setParameter('endDate', $dateRange->getEndDate());
         }
 
         // Apply search term to every searchable field if not empty
@@ -114,14 +112,12 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
                 $qb->leftJoin('s.tags', 't');
             }
 
-            $conditions = [
+            // Apply search conditions
+            $qb->andWhere($qb->expr()->orX(
                 $qb->expr()->like('s.longUrl', ':searchPattern'),
                 $qb->expr()->like('s.shortCode', ':searchPattern'),
-                $qb->expr()->like('t.name', ':searchPattern'),
-            ];
-
-            // Unpack and apply search conditions
-            $qb->andWhere($qb->expr()->orX(...$conditions));
+                $qb->expr()->like('t.name', ':searchPattern')
+            ));
             $qb->setParameter('searchPattern', '%' . $searchTerm . '%');
         }
 
