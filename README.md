@@ -1,3 +1,7 @@
+<p align="center">
+    <img width="200" height="200" margin-right="100%" src="https://raw.githubusercontent.com/shlinkio/shlink-art/master/shlink-logo-blue.png">
+</p>
+
 # Shlink
 
 [![Build Status](https://img.shields.io/travis/shlinkio/shlink.svg?style=flat-square)](https://travis-ci.org/shlinkio/shlink)
