@@ -9,7 +9,6 @@ use Shlinkio\Shlink\CLI\Command\Util\AbstractWithDateRangeCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
-use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
@@ -45,14 +44,14 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
 
     /** @var ShortUrlServiceInterface */
     private $shortUrlService;
-    /** @var array */
-    private $domainConfig;
+    /** @var ShortUrlDataTransformer */
+    private $transformer;
 
     public function __construct(ShortUrlServiceInterface $shortUrlService, array $domainConfig)
     {
         parent::__construct();
         $this->shortUrlService = $shortUrlService;
-        $this->domainConfig = $domainConfig;
+        $this->transformer = new ShortUrlDataTransformer($domainConfig);
     }
 
     protected function doConfigure(): void
@@ -102,6 +101,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
+
         $page = (int) $input->getOption('page');
         $searchTerm = $input->getOption('searchTerm');
         $tags = $input->getOption('tags');
@@ -111,20 +111,8 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $endDate = $this->getDateOption($input, $output, 'endDate');
         $orderBy = $this->processOrderBy($input);
 
-        $transformer = new ShortUrlDataTransformer($this->domainConfig);
-
         do {
-            $result = $this->renderPage(
-                $output,
-                $page,
-                $searchTerm,
-                $tags,
-                $showTags,
-                $startDate,
-                $endDate,
-                $orderBy,
-                $transformer
-            );
+            $result = $this->renderPage($output, $page, $searchTerm, $tags, $showTags, $startDate, $endDate, $orderBy);
             $page++;
 
             $continue = $this->isLastPage($result)
@@ -146,8 +134,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         bool $showTags,
         ?Chronos $startDate,
         ?Chronos $endDate,
-        $orderBy,
-        DataTransformerInterface $transformer
+        $orderBy
     ): Paginator {
         $result = $this->shortUrlService->listShortUrls(
             $page,
@@ -164,7 +151,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
 
         $rows = [];
         foreach ($result as $row) {
-            $shortUrl = $transformer->transform($row);
+            $shortUrl = $this->transformer->transform($row);
             if ($showTags) {
                 $shortUrl['tags'] = implode(', ', $shortUrl['tags']);
             } else {
