@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
+use Cake\Chronos\Chronos;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -61,6 +63,15 @@ class ListShortUrlsAction extends AbstractRestAction
             $query['searchTerm'] ?? null,
             $query['tags'] ?? [],
             $query['orderBy'] ?? null,
+            $this->determineDateRangeFromQuery($query),
         ];
+    }
+
+    private function determineDateRangeFromQuery(array $query): DateRange
+    {
+        return new DateRange(
+            isset($query['startDate']) ? Chronos::parse($query['startDate']) : null,
+            isset($query['endDate']) ? Chronos::parse($query['endDate']) : null
+        );
     }
 }

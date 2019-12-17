@@ -6,7 +6,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Fixtures;
 
 use Cake\Chronos\Chronos;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use ReflectionObject;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 

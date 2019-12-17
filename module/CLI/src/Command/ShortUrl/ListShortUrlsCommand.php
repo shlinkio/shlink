@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use Cake\Chronos\Chronos;
+use Shlinkio\Shlink\CLI\Command\Util\AbstractWithDateRangeCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
-use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,7 +27,7 @@ use function explode;
 use function implode;
 use function sprintf;
 
-class ListShortUrlsCommand extends Command
+class ListShortUrlsCommand extends AbstractWithDateRangeCommand
 {
     use PaginatorUtilsTrait;
 
@@ -43,17 +44,17 @@ class ListShortUrlsCommand extends Command
 
     /** @var ShortUrlServiceInterface */
     private $shortUrlService;
-    /** @var array */
-    private $domainConfig;
+    /** @var ShortUrlDataTransformer */
+    private $transformer;
 
     public function __construct(ShortUrlServiceInterface $shortUrlService, array $domainConfig)
     {
         parent::__construct();
         $this->shortUrlService = $shortUrlService;
-        $this->domainConfig = $domainConfig;
+        $this->transformer = new ShortUrlDataTransformer($domainConfig);
     }
 
-    protected function configure(): void
+    protected function doConfigure(): void
     {
         $this
             ->setName(self::NAME)
@@ -68,7 +69,7 @@ class ListShortUrlsCommand extends Command
             )
             ->addOption(
                 'searchTerm',
-                's',
+                'st',
                 InputOption::VALUE_REQUIRED,
                 'A query used to filter results by searching for it on the longUrl and shortCode fields'
             )
@@ -87,18 +88,31 @@ class ListShortUrlsCommand extends Command
             ->addOption('showTags', null, InputOption::VALUE_NONE, 'Whether to display the tags or not');
     }
 
+    protected function getStartDateDesc(): string
+    {
+        return 'Allows to filter short URLs, returning only those created after "startDate"';
+    }
+
+    protected function getEndDateDesc(): string
+    {
+        return 'Allows to filter short URLs, returning only those created before "endDate"';
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
+
         $page = (int) $input->getOption('page');
         $searchTerm = $input->getOption('searchTerm');
         $tags = $input->getOption('tags');
         $tags = ! empty($tags) ? explode(',', $tags) : [];
         $showTags = (bool) $input->getOption('showTags');
-        $transformer = new ShortUrlDataTransformer($this->domainConfig);
+        $startDate = $this->getDateOption($input, $output, 'startDate');
+        $endDate = $this->getDateOption($input, $output, 'endDate');
+        $orderBy = $this->processOrderBy($input);
 
         do {
-            $result = $this->renderPage($input, $output, $page, $searchTerm, $tags, $showTags, $transformer);
+            $result = $this->renderPage($output, $page, $searchTerm, $tags, $showTags, $startDate, $endDate, $orderBy);
             $page++;
 
             $continue = $this->isLastPage($result)
@@ -108,19 +122,27 @@ class ListShortUrlsCommand extends Command
 
         $io->newLine();
         $io->success('Short URLs properly listed');
+
         return ExitCodes::EXIT_SUCCESS;
     }
 
     private function renderPage(
-        InputInterface $input,
         OutputInterface $output,
         int $page,
         ?string $searchTerm,
         array $tags,
         bool $showTags,
-        DataTransformerInterface $transformer
+        ?Chronos $startDate,
+        ?Chronos $endDate,
+        $orderBy
     ): Paginator {
-        $result = $this->shortUrlService->listShortUrls($page, $searchTerm, $tags, $this->processOrderBy($input));
+        $result = $this->shortUrlService->listShortUrls(
+            $page,
+            $searchTerm,
+            $tags,
+            $orderBy,
+            new DateRange($startDate, $endDate)
+        );
 
         $headers = ['Short code', 'Short URL', 'Long URL', 'Date created', 'Visits count'];
         if ($showTags) {
@@ -129,7 +151,7 @@ class ListShortUrlsCommand extends Command
 
         $rows = [];
         foreach ($result as $row) {
-            $shortUrl = $transformer->transform($row);
+            $shortUrl = $this->transformer->transform($row);
             if ($showTags) {
                 $shortUrl['tags'] = implode(', ', $shortUrl['tags']);
             } else {
@@ -143,9 +165,13 @@ class ListShortUrlsCommand extends Command
             $result,
             'Page %s of %s'
         ));
+
         return $result;
     }
 
+    /**
+     * @return array|string|null
+     */
     private function processOrderBy(InputInterface $input)
     {
         $orderBy = $input->getOption('orderBy');

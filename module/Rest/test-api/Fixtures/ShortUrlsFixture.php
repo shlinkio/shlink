@@ -6,7 +6,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Fixtures;
 
 use Cake\Chronos\Chronos;
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use ReflectionObject;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
@@ -21,7 +21,8 @@ class ShortUrlsFixture extends AbstractFixture
     public function load(ObjectManager $manager): void
     {
         $abcShortUrl = $this->setShortUrlDate(
-            new ShortUrl('https://shlink.io', ShortUrlMeta::createFromRawData(['customSlug' => 'abc123']))
+            new ShortUrl('https://shlink.io', ShortUrlMeta::createFromRawData(['customSlug' => 'abc123'])),
+            Chronos::parse('2018-05-01')
         );
         $manager->persist($abcShortUrl);
 
@@ -46,7 +47,7 @@ class ShortUrlsFixture extends AbstractFixture
         $withDomainAndSlugShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://google.com',
             ShortUrlMeta::createFromRawData(['domain' => 'some-domain.com', 'customSlug' => 'custom-with-domain'])
-        ));
+        ), Chronos::parse('2018-10-20'));
         $manager->persist($withDomainAndSlugShortUrl);
 
         $manager->flush();
@@ -55,12 +56,12 @@ class ShortUrlsFixture extends AbstractFixture
         $this->addReference('def456_short_url', $defShortUrl);
     }
 
-    private function setShortUrlDate(ShortUrl $shortUrl): ShortUrl
+    private function setShortUrlDate(ShortUrl $shortUrl, ?Chronos $date = null): ShortUrl
     {
         $ref = new ReflectionObject($shortUrl);
         $dateProp = $ref->getProperty('dateCreated');
         $dateProp->setAccessible(true);
-        $dateProp->setValue($shortUrl, Chronos::create(2019, 1, 1, 0, 0, 0));
+        $dateProp->setValue($shortUrl, $date ?? Chronos::parse('2019-01-01'));
 
         return $shortUrl;
     }

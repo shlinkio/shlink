@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Domain\Resolver;
 
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Domain\Resolver\PersistenceDomainResolver;

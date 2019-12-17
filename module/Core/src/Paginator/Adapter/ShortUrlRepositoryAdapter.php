@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
@@ -22,17 +23,21 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
     private $orderBy;
     /** @var array */
     private $tags;
+    /** @var DateRange|null */
+    private $dateRange;
 
     public function __construct(
         ShortUrlRepositoryInterface $repository,
         $searchTerm = null,
         array $tags = [],
-        $orderBy = null
+        $orderBy = null,
+        ?DateRange $dateRange = null
     ) {
         $this->repository = $repository;
         $this->searchTerm = $searchTerm !== null ? trim(strip_tags($searchTerm)) : null;
         $this->orderBy = $orderBy;
         $this->tags = $tags;
+        $this->dateRange = $dateRange;
     }
 
     /**
@@ -49,7 +54,8 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
             $offset,
             $this->searchTerm,
             $this->tags,
-            $this->orderBy
+            $this->orderBy,
+            $this->dateRange
         );
     }
 
@@ -64,6 +70,6 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
      */
     public function count(): int
     {
-        return $this->repository->countList($this->searchTerm, $this->tags);
+        return $this->repository->countList($this->searchTerm, $this->tags, $this->dateRange);
     }
 }
