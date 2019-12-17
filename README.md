@@ -29,7 +29,7 @@ A PHP-based self-hosted URL shortener that can be used to serve shortened URLs u
 
 First, make sure the host where you are going to run shlink fulfills these requirements:
 
-* PHP 7.2 or greater with JSON, APCu, intl, curl, PDO and gd extensions enabled.
+* PHP 7.4 or greater with JSON, APCu, intl, curl, PDO and gd extensions enabled.
 * MySQL, MariaDB, PostgreSQL or SQLite.
 * The web server of your choice with PHP integration (Apache or Nginx recommended).
 
