@@ -162,4 +162,27 @@ class ListShortUrlsCommandTest extends TestCase
             new DateRange(Chronos::parse($startDate), Chronos::parse($endDate)),
         ];
     }
+
+    /**
+     * @test
+     * @dataProvider provideOrderBy
+     */
+    public function orderByIsProperlyComputed(array $commandArgs, $expectedOrderBy): void
+    {
+        $listShortUrls = $this->shortUrlService->listShortUrls(1, null, [], $expectedOrderBy, new DateRange())
+            ->willReturn(new Paginator(new ArrayAdapter()));
+
+        $this->commandTester->setInputs(['n']);
+        $this->commandTester->execute($commandArgs);
+
+        $listShortUrls->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideOrderBy(): iterable
+    {
+        yield [[], null];
+        yield [['--orderBy' => 'foo'], 'foo'];
+        yield [['--orderBy' => 'foo,ASC'], ['foo' => 'ASC']];
+        yield [['--orderBy' => 'bar,DESC'], ['bar' => 'DESC']];
+    }
 }

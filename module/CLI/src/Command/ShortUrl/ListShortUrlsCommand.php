@@ -109,12 +109,12 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $showTags = (bool) $input->getOption('showTags');
         $startDate = $this->getDateOption($input, $output, 'startDate');
         $endDate = $this->getDateOption($input, $output, 'endDate');
+        $orderBy = $this->processOrderBy($input);
 
         $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
         do {
             $result = $this->renderPage(
-                $input,
                 $output,
                 $page,
                 $searchTerm,
@@ -122,6 +122,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
                 $showTags,
                 $startDate,
                 $endDate,
+                $orderBy,
                 $transformer
             );
             $page++;
@@ -138,7 +139,6 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
     }
 
     private function renderPage(
-        InputInterface $input,
         OutputInterface $output,
         int $page,
         ?string $searchTerm,
@@ -146,13 +146,14 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         bool $showTags,
         ?Chronos $startDate,
         ?Chronos $endDate,
+        $orderBy,
         DataTransformerInterface $transformer
     ): Paginator {
         $result = $this->shortUrlService->listShortUrls(
             $page,
             $searchTerm,
             $tags,
-            $this->processOrderBy($input),
+            $orderBy,
             new DateRange($startDate, $endDate)
         );
 
@@ -181,6 +182,9 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         return $result;
     }
 
+    /**
+     * @return array|string|null
+     */
     private function processOrderBy(InputInterface $input)
     {
         $orderBy = $input->getOption('orderBy');
