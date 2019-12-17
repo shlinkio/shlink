@@ -22,6 +22,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 
+use function sprintf;
+
 class GetVisitsCommandTest extends TestCase
 {
     /** @var CommandTester */
@@ -39,7 +41,7 @@ class GetVisitsCommandTest extends TestCase
     }
 
     /** @test */
-    public function noDateFlagsTriesToListWithoutDateRange()
+    public function noDateFlagsTriesToListWithoutDateRange(): void
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange(null, null)))->willReturn(
@@ -50,7 +52,7 @@ class GetVisitsCommandTest extends TestCase
     }
 
     /** @test */
-    public function providingDateFlagsTheListGetsFiltered()
+    public function providingDateFlagsTheListGetsFiltered(): void
     {
         $shortCode = 'abc123';
         $startDate = '2016-01-01';
@@ -67,6 +69,27 @@ class GetVisitsCommandTest extends TestCase
             '--startDate' => $startDate,
             '--endDate' => $endDate,
         ]);
+    }
+
+    /** @test */
+    public function providingInvalidDatesPrintsWarning(): void
+    {
+        $shortCode = 'abc123';
+        $startDate = 'foo';
+        $info = $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange()))
+            ->willReturn(new Paginator(new ArrayAdapter([])));
+
+        $this->commandTester->execute([
+            'shortCode' => $shortCode,
+            '--startDate' => $startDate,
+        ]);
+        $output = $this->commandTester->getDisplay();
+
+        $info->shouldHaveBeenCalledOnce();
+        $this->assertStringContainsString(
+            sprintf('Ignored provided "startDate" since its value "%s" is not a valid date', $startDate),
+            $output
+        );
     }
 
     /** @test */

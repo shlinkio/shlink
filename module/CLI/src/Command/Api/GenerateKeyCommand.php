@@ -36,7 +36,7 @@ class GenerateKeyCommand extends Command
             ->addOption(
                 'expirationDate',
                 'e',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'The date in which the API key should expire. Use any valid PHP format.'
             );
     }
