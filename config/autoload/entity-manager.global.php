@@ -11,9 +11,9 @@ return [
             'proxies_dir' => 'data/proxies',
         ],
         'connection' => [
-            'user' => env('DB_USER'),
-            'password' => env('DB_PASSWORD'),
-            'dbname' => env('DB_NAME', 'shlink'),
+            'user' => '',
+            'password' => '',
+            'dbname' => 'shlink',
             'charset' => 'utf8',
         ],
     ],

@@ -6,10 +6,9 @@ return [
 
     'url_shortener' => [
         'domain' => [
-            'schema' => 'https',
+            'schema' => 'http',
             'hostname' => '',
         ],
-        'validate_url' => true,
     ],
 
 ];

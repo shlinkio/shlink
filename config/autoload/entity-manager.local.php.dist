@@ -1,8 +1,13 @@
 <?php
+
+declare(strict_types=1);
+
 return [
 
     'entity_manager' => [
         'connection' => [
+            'user' => 'root',
+            'password' => 'root',
             'driver' => 'pdo_mysql',
             'host' => 'shlink_db',
             'driverOptions' => [
