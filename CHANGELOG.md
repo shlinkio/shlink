@@ -17,6 +17,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     > After Shlink v2 is released, both API versions will behave like API v2.
 
+* [#575](https://github.com/shlinkio/shlink/issues/575) Added support to filter short URL lists by date ranges.
+
+    * The `GET /short-urls` endpoint now accepts the `startDate` and `endDate` query params.
+    * The `short-urls:list` command now allows `--startDate` and `--endDate` flags to be optionally provided.
+
 #### Changed
 
 * [#492](https://github.com/shlinkio/shlink/issues/492) Updated to monolog 2, together with other dependencies, like Symfony 5 and infection-php.
