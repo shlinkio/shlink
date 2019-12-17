@@ -1,8 +1,4 @@
-<p align="center">
-    <img width="200" height="200" margin-right="100%" src="https://raw.githubusercontent.com/shlinkio/shlink-art/master/shlink-logo-blue.png">
-</p>
-
-# Shlink
+![Shlink](https://raw.githubusercontent.com/shlinkio/shlink.io/master/public/images/shlink-hero.png)
 
 [![Build Status](https://img.shields.io/travis/shlinkio/shlink.svg?style=flat-square)](https://travis-ci.org/shlinkio/shlink)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/shlinkio/shlink.svg?style=flat-square)](https://scrutinizer-ci.com/g/shlinkio/shlink/?branch=master)
