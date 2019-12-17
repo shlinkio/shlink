@@ -1,17 +1,19 @@
-FROM php:7.3.11-fpm-alpine3.10
+FROM php:7.4.0-fpm-alpine3.10
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.18
 ENV APCU_BC_VERSION 1.0.5
-ENV XDEBUG_VERSION 2.8.0
+ENV XDEBUG_VERSION 2.9.0
 
 RUN apk update
 
 # Install common php extensions
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install iconv
-RUN docker-php-ext-install mbstring
 RUN docker-php-ext-install calendar
+
+RUN apk add --no-cache oniguruma-dev
+RUN docker-php-ext-install mbstring
 
 RUN apk add --no-cache sqlite-libs
 RUN apk add --no-cache sqlite-dev
