@@ -1,7 +1,7 @@
 FROM php:7.3.11-alpine3.10
 LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 
-ARG SHLINK_VERSION=1.20.0
+ARG SHLINK_VERSION=1.20.2
 ENV SHLINK_VERSION ${SHLINK_VERSION}
 ENV SWOOLE_VERSION 4.4.12
 ENV COMPOSER_VERSION 1.9.1
@@ -52,5 +52,6 @@ VOLUME /etc/shlink/config/params
 # Copy config specific for the image
 COPY docker/docker-entrypoint.sh docker-entrypoint.sh
 COPY docker/config/shlink_in_docker.local.php config/autoload/shlink_in_docker.local.php
+COPY docker/config/php.ini ${PHP_INI_DIR}/conf.d/
 
 ENTRYPOINT ["/bin/sh", "./docker-entrypoint.sh"]
