@@ -7,7 +7,7 @@ return [
     'url_shortener' => [
         'domain' => [
             'schema' => 'http',
-            'hostname' => '',
+            'hostname' => 'localhost:8080',
         ],
     ],
 
