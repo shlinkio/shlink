@@ -46,7 +46,7 @@ class ListShortUrlsTest extends ApiTestCase
         'longUrl' =>
             'https://blog.alejandrocelaya.com/2017/12/09'
             . '/acmailer-7-0-the-most-important-release-in-a-long-time/',
-        'dateCreated' => '2019-01-01T00:00:00+00:00',
+        'dateCreated' => '2019-01-01T00:00:10+00:00',
         'visitsCount' => 2,
         'tags' => ['bar', 'foo'],
         'meta' => [
@@ -62,7 +62,7 @@ class ListShortUrlsTest extends ApiTestCase
         'shortCode' => 'custom',
         'shortUrl' => 'http://doma.in/custom',
         'longUrl' => 'https://shlink.io',
-        'dateCreated' => '2019-01-01T00:00:00+00:00',
+        'dateCreated' => '2019-01-01T00:00:20+00:00',
         'visitsCount' => 0,
         'tags' => [],
         'meta' => [
@@ -78,7 +78,7 @@ class ListShortUrlsTest extends ApiTestCase
         'longUrl' =>
             'https://blog.alejandrocelaya.com/2019/04/27'
             . '/considerations-to-properly-use-open-source-software-projects/',
-        'dateCreated' => '2019-01-01T00:00:00+00:00',
+        'dateCreated' => '2019-01-01T00:00:30+00:00',
         'visitsCount' => 0,
         'tags' => [],
         'meta' => [
