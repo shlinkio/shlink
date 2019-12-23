@@ -18,8 +18,10 @@ if (class_exists(Dotenv::class)) {
     $dotenv->load(__DIR__ . '/../.env');
 }
 
-// Build container
+// This class alias tricks the ConfigAbstractFactory to return Lock\Factory instances even with a different service name
 class_alias(Lock\Factory::class, 'Shlinkio\Shlink\LocalLockFactory');
+
+// Build container
 $config = require __DIR__ . '/config.php';
 $container = new ServiceManager($config['dependencies']);
 $container->setService('config', $config);
