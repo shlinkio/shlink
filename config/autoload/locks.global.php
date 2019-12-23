@@ -8,9 +8,7 @@ use Shlinkio\Shlink\Common\Logger\LoggerAwareDelegatorFactory;
 use Symfony\Component\Lock;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 
-// This class alias tricks the ConfigAbstractFactory to return Lock\Factory instances even with a different service name
 $localLockFactory = 'Shlinkio\Shlink\LocalLockFactory';
-class_alias(Lock\LockFactory::class, $localLockFactory);
 
 return [
 

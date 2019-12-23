@@ -41,6 +41,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#570](https://github.com/shlinkio/shlink/issues/570) Fixed shlink version generated for docker images when building from `develop` branch.
 
 
+## 1.20.3 - 2019-12-23
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#585](https://github.com/shlinkio/shlink/issues/585) Fixed `PHP Fatal error: Uncaught Error: Class 'Shlinkio\Shlink\LocalLockFactory' not found` happening when running some CLI commands.
+
+
 ## 1.20.2 - 2019-12-06
 
 #### Added
