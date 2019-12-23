@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\Lock;
 use Zend\ServiceManager\ServiceManager;
 
 chdir(dirname(__DIR__));
@@ -18,6 +19,7 @@ if (class_exists(Dotenv::class)) {
 }
 
 // Build container
+class_alias(Lock\Factory::class, 'Shlinkio\Shlink\LocalLockFactory');
 $config = require __DIR__ . '/config.php';
 $container = new ServiceManager($config['dependencies']);
 $container->setService('config', $config);
