@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## 1.20.3 - 2019-12-23
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#585](https://github.com/shlinkio/shlink/issues/585) Fixed `PHP Fatal error: Uncaught Error: Class 'Shlinkio\Shlink\LocalLockFactory' not found` happening when running some CLI commands.
+
+
 ## 1.20.2 - 2019-12-06
 
 #### Added
