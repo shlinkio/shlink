@@ -10,6 +10,7 @@ return [
             'hostname' => '',
         ],
         'validate_url' => true,
+        'visits_webhooks' => [],
     ],
 
 ];

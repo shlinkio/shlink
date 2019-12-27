@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core;
 
+use GuzzleHttp\ClientInterface;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
@@ -15,6 +16,9 @@ return [
         'async' => [
             EventDispatcher\ShortUrlVisited::class => [
                 EventDispatcher\LocateShortUrlVisit::class,
+            ],
+            EventDispatcher\ShortUrlLocated::class => [
+                EventDispatcher\NotifyVisitToWebHooks::class,
             ],
         ],
     ],
@@ -31,6 +35,12 @@ return [
             'em',
             'Logger_Shlink',
             GeolocationDbUpdater::class,
+        ],
+        EventDispatcher\NotifyVisitToWebHooks::class => [
+            'httpClient',
+            'em',
+            'Logger_Shlink',
+            'config.url_shortener.visits_webhooks',
         ],
     ],
 
