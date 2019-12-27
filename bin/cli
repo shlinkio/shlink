@@ -1,10 +1,7 @@
 #!/usr/bin/env php
 <?php
+
 declare(strict_types=1);
 
-use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Application as CliApp;
-
-/** @var ContainerInterface $container */
-$container = include __DIR__ . '/../config/container.php';
-$container->get(CliApp::class)->run();
+$run = require __DIR__ . '/../config/run.php';
+$run(true);

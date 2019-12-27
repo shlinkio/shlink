@@ -10,10 +10,15 @@ chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
 
 // This class alias tricks the ConfigAbstractFactory to return Lock\Factory instances even with a different service name
-class_alias(Lock\LockFactory::class, 'Shlinkio\Shlink\LocalLockFactory');
+if (! class_exists('Shlinkio\Shlink\LocalLockFactory')) {
+    class_alias(Lock\LockFactory::class, 'Shlinkio\Shlink\LocalLockFactory');
+}
 
 // Build container
-$config = require __DIR__ . '/config.php';
-$container = new ServiceManager($config['dependencies']);
-$container->setService('config', $config);
-return $container;
+return (function () {
+    $config = require __DIR__ . '/config.php';
+    $container = new ServiceManager($config['dependencies']);
+    $container->setService('config', $config);
+
+    return $container;
+})();
