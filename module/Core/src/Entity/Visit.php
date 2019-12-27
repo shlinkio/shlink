@@ -61,6 +61,11 @@ class Visit extends AbstractEntity implements JsonSerializable
         return ! empty($this->remoteAddr);
     }
 
+    public function getShortUrl(): ShortUrl
+    {
+        return $this->shortUrl;
+    }
+
     public function getVisitLocation(): VisitLocationInterface
     {
         return $this->visitLocation ?? new UnknownVisitLocation();

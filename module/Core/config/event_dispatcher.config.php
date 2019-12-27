@@ -40,6 +40,7 @@ return [
             'em',
             'Logger_Shlink',
             'config.url_shortener.visits_webhooks',
+            'config.url_shortener.domain',
         ],
     ],
 
