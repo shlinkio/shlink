@@ -46,7 +46,9 @@ class LocateShortUrlVisit
         /** @var Visit|null $visit */
         $visit = $this->em->find(Visit::class, $visitId);
         if ($visit === null) {
-            $this->logger->warning(sprintf('Tried to locate visit with id "%s", but it does not exist.', $visitId));
+            $this->logger->warning('Tried to locate visit with id "{visitId}", but it does not exist.', [
+                'visitId' => $visitId,
+            ]);
             return;
         }
 
@@ -57,11 +59,8 @@ class LocateShortUrlVisit
         } catch (GeolocationDbUpdateFailedException $e) {
             if (! $e->olderDbExists()) {
                 $this->logger->error(
-                    sprintf(
-                        'GeoLite2 database download failed. It is not possible to locate visit with id %s. {e}',
-                        $visitId
-                    ),
-                    ['e' => $e]
+                    'GeoLite2 database download failed. It is not possible to locate visit with id {visitId}. {e}',
+                    ['e' => $e, 'visitId' => $visitId]
                 );
                 return;
             }
@@ -75,8 +74,8 @@ class LocateShortUrlVisit
                 : Location::emptyInstance();
         } catch (WrongIpException $e) {
             $this->logger->warning(
-                sprintf('Tried to locate visit with id "%s", but its address seems to be wrong. {e}', $visitId),
-                ['e' => $e]
+                'Tried to locate visit with id "{visitId}", but its address seems to be wrong. {e}',
+                ['e' => $e, 'visitId' => $visitId]
             );
             return;
         }

@@ -56,7 +56,9 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $event = new ShortUrlVisited('123');
         $findVisit = $this->em->find(Visit::class, '123')->willReturn(null);
-        $logWarning = $this->logger->warning('Tried to locate visit with id "123", but it does not exist.');
+        $logWarning = $this->logger->warning('Tried to locate visit with id "{visitId}", but it does not exist.', [
+            'visitId' => 123,
+        ]);
 
         ($this->locateVisit)($event);
 
@@ -77,7 +79,7 @@ class LocateShortUrlVisitTest extends TestCase
             WrongIpException::class
         );
         $logWarning = $this->logger->warning(
-            Argument::containingString('Tried to locate visit with id "123", but its address seems to be wrong.'),
+            Argument::containingString('Tried to locate visit with id "{visitId}", but its address seems to be wrong.'),
             Argument::type('array')
         );
 
@@ -142,7 +144,7 @@ class LocateShortUrlVisitTest extends TestCase
     }
 
     /** @test */
-    public function errorWhenUpdatingGeoliteWithExistingCopyLogsWarning(): void
+    public function errorWhenUpdatingGeoLiteWithExistingCopyLogsWarning(): void
     {
         $e = GeolocationDbUpdateFailedException::create(true);
         $ipAddr = '1.2.3.0';
@@ -170,7 +172,7 @@ class LocateShortUrlVisitTest extends TestCase
     }
 
     /** @test */
-    public function errorWhenDownloadingGeoliteCancelsLocation(): void
+    public function errorWhenDownloadingGeoLiteCancelsLocation(): void
     {
         $e = GeolocationDbUpdateFailedException::create(false);
         $ipAddr = '1.2.3.0';
@@ -184,8 +186,8 @@ class LocateShortUrlVisitTest extends TestCase
         $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
         $checkUpdateDb = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willThrow($e);
         $logError = $this->logger->error(
-            'GeoLite2 database download failed. It is not possible to locate visit with id 123. {e}',
-            ['e' => $e]
+            'GeoLite2 database download failed. It is not possible to locate visit with id {visitId}. {e}',
+            ['e' => $e, 'visitId' => 123]
         );
 
         ($this->locateVisit)($event);
