@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
@@ -17,6 +18,7 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\EventDispatcher\LocateShortUrlVisit;
 use Shlinkio\Shlink\Core\EventDispatcher\ShortUrlVisited;
+use Shlinkio\Shlink\Core\EventDispatcher\VisitLocated;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\UnknownVisitLocation;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
@@ -35,6 +37,8 @@ class LocateShortUrlVisitTest extends TestCase
     private $logger;
     /** @var ObjectProphecy */
     private $dbUpdater;
+    /** @var ObjectProphecy */
+    private $eventDispatcher;
 
     public function setUp(): void
     {
@@ -42,12 +46,14 @@ class LocateShortUrlVisitTest extends TestCase
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
         $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
+        $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
 
         $this->locateVisit = new LocateShortUrlVisit(
             $this->ipLocationResolver->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),
-            $this->dbUpdater->reveal()
+            $this->dbUpdater->reveal(),
+            $this->eventDispatcher->reveal()
         );
     }
 
@@ -59,6 +65,8 @@ class LocateShortUrlVisitTest extends TestCase
         $logWarning = $this->logger->warning('Tried to locate visit with id "{visitId}", but it does not exist.', [
             'visitId' => 123,
         ]);
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function () {
+        });
 
         ($this->locateVisit)($event);
 
@@ -66,6 +74,7 @@ class LocateShortUrlVisitTest extends TestCase
         $this->em->flush()->shouldNotHaveBeenCalled();
         $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->shouldNotHaveBeenCalled();
         $logWarning->shouldHaveBeenCalled();
+        $dispatch->shouldNotHaveBeenCalled();
     }
 
     /** @test */
@@ -82,6 +91,8 @@ class LocateShortUrlVisitTest extends TestCase
             Argument::containingString('Tried to locate visit with id "{visitId}", but its address seems to be wrong.'),
             Argument::type('array')
         );
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function () {
+        });
 
         ($this->locateVisit)($event);
 
@@ -89,6 +100,7 @@ class LocateShortUrlVisitTest extends TestCase
         $resolveLocation->shouldHaveBeenCalledOnce();
         $logWarning->shouldHaveBeenCalled();
         $this->em->flush()->shouldNotHaveBeenCalled();
+        $dispatch->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -102,6 +114,8 @@ class LocateShortUrlVisitTest extends TestCase
         $flush = $this->em->flush()->will(function () {
         });
         $resolveIp = $this->ipLocationResolver->resolveIpLocation(Argument::any());
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function () {
+        });
 
         ($this->locateVisit)($event);
 
@@ -110,6 +124,7 @@ class LocateShortUrlVisitTest extends TestCase
         $flush->shouldHaveBeenCalledOnce();
         $resolveIp->shouldNotHaveBeenCalled();
         $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
+        $dispatch->shouldHaveBeenCalledOnce();
     }
 
     public function provideNonLocatableVisits(): iterable
@@ -133,6 +148,8 @@ class LocateShortUrlVisitTest extends TestCase
         $flush = $this->em->flush()->will(function () {
         });
         $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function () {
+        });
 
         ($this->locateVisit)($event);
 
@@ -141,6 +158,7 @@ class LocateShortUrlVisitTest extends TestCase
         $flush->shouldHaveBeenCalledOnce();
         $resolveIp->shouldHaveBeenCalledOnce();
         $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
+        $dispatch->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
@@ -157,6 +175,8 @@ class LocateShortUrlVisitTest extends TestCase
         });
         $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
         $checkUpdateDb = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willThrow($e);
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function () {
+        });
 
         ($this->locateVisit)($event);
 
@@ -169,6 +189,7 @@ class LocateShortUrlVisitTest extends TestCase
             'GeoLite2 database update failed. Proceeding with old version. {e}',
             ['e' => $e]
         )->shouldHaveBeenCalledOnce();
+        $dispatch->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
@@ -189,6 +210,8 @@ class LocateShortUrlVisitTest extends TestCase
             'GeoLite2 database download failed. It is not possible to locate visit with id {visitId}. {e}',
             ['e' => $e, 'visitId' => 123]
         );
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function () {
+        });
 
         ($this->locateVisit)($event);
 
@@ -198,5 +221,6 @@ class LocateShortUrlVisitTest extends TestCase
         $resolveIp->shouldNotHaveBeenCalled();
         $checkUpdateDb->shouldHaveBeenCalledOnce();
         $logError->shouldHaveBeenCalledOnce();
+        $dispatch->shouldHaveBeenCalledOnce();
     }
 }

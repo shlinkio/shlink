@@ -51,7 +51,7 @@ class NotifyVisitToWebHooks
         $this->appOptions = $appOptions;
     }
 
-    public function __invoke(ShortUrlLocated $shortUrlLocated): void
+    public function __invoke(VisitLocated $shortUrlLocated): void
     {
         if (empty($this->webhooks)) {
             return;

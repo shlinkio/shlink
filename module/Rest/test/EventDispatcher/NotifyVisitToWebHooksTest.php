@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\NotifyVisitToWebHooks;
-use Shlinkio\Shlink\Core\EventDispatcher\ShortUrlLocated;
+use Shlinkio\Shlink\Core\EventDispatcher\VisitLocated;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 
@@ -47,7 +47,7 @@ class NotifyVisitToWebHooksTest extends TestCase
     {
         $find = $this->em->find(Visit::class, '1')->willReturn(null);
 
-        $this->createListener([])(new ShortUrlLocated('1'));
+        $this->createListener([])(new VisitLocated('1'));
 
         $find->shouldNotHaveBeenCalled();
     }
@@ -66,7 +66,7 @@ class NotifyVisitToWebHooksTest extends TestCase
             ['visitId' => '1']
         );
 
-        $this->createListener(['foo', 'bar'])(new ShortUrlLocated('1'));
+        $this->createListener(['foo', 'bar'])(new VisitLocated('1'));
 
         $find->shouldHaveBeenCalledOnce();
         $logWarning->shouldHaveBeenCalledOnce();
@@ -111,7 +111,7 @@ class NotifyVisitToWebHooksTest extends TestCase
             })
         );
 
-        $this->createListener($webhooks)(new ShortUrlLocated('1'));
+        $this->createListener($webhooks)(new VisitLocated('1'));
 
         $find->shouldHaveBeenCalledOnce();
         $requestAsync->shouldHaveBeenCalledTimes(count($webhooks));

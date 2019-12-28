@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\EventDispatcher;
 
 use JsonSerializable;
 
-final class ShortUrlLocated implements JsonSerializable
+final class VisitLocated implements JsonSerializable
 {
     /** @var string */
     private $visitId;
