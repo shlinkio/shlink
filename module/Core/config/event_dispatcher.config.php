@@ -12,13 +12,14 @@ use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 return [
 
     'events' => [
-        'regular' => [],
+        'regular' => [
+            EventDispatcher\VisitLocated::class => [
+                EventDispatcher\NotifyVisitToWebHooks::class,
+            ],
+        ],
         'async' => [
             EventDispatcher\ShortUrlVisited::class => [
                 EventDispatcher\LocateShortUrlVisit::class,
-            ],
-            EventDispatcher\VisitLocated::class => [
-                EventDispatcher\NotifyVisitToWebHooks::class,
             ],
         ],
     ],
@@ -26,6 +27,7 @@ return [
     'dependencies' => [
         'factories' => [
             EventDispatcher\LocateShortUrlVisit::class => ConfigAbstractFactory::class,
+            EventDispatcher\NotifyVisitToWebHooks::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -43,6 +45,7 @@ return [
             'Logger_Shlink',
             'config.url_shortener.visits_webhooks',
             'config.url_shortener.domain',
+            Options\AppOptions::class,
         ],
     ],
 
