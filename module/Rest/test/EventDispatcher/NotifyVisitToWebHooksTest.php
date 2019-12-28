@@ -10,6 +10,8 @@ use Fig\Http\Message\RequestMethodInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Promise\RejectedPromise;
+use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -81,7 +83,17 @@ class NotifyVisitToWebHooksTest extends TestCase
         $requestAsync = $this->httpClient->requestAsync(
             RequestMethodInterface::METHOD_POST,
             Argument::type('string'),
-            Argument::type('array')
+            Argument::that(function (array $requestOptions) {
+                Assert::assertArrayHasKey(RequestOptions::HEADERS, $requestOptions);
+                Assert::assertArrayHasKey(RequestOptions::JSON, $requestOptions);
+                Assert::assertArrayHasKey(RequestOptions::TIMEOUT, $requestOptions);
+                Assert::assertEquals($requestOptions[RequestOptions::TIMEOUT], 10);
+                Assert::assertEquals($requestOptions[RequestOptions::HEADERS], ['User-Agent' => 'Shlink:v1.2.3']);
+                Assert::assertArrayHasKey('shortUrl', $requestOptions[RequestOptions::JSON]);
+                Assert::assertArrayHasKey('visit', $requestOptions[RequestOptions::JSON]);
+
+                return $requestOptions;
+            })
         )->will(function (array $args) use ($invalidWebhooks) {
             [, $webhook] = $args;
             $e = new Exception('');
@@ -90,7 +102,13 @@ class NotifyVisitToWebHooksTest extends TestCase
         });
         $logWarning = $this->logger->warning(
             'Failed to notify visit with id "{visitId}" to webhook "{webhook}". {e}',
-            Argument::type('array')
+            Argument::that(function (array $extra) {
+                Assert::assertArrayHasKey('webhook', $extra);
+                Assert::assertArrayHasKey('visitId', $extra);
+                Assert::assertArrayHasKey('e', $extra);
+
+                return $extra;
+            })
         );
 
         $this->createListener($webhooks)(new ShortUrlLocated('1'));
@@ -108,7 +126,7 @@ class NotifyVisitToWebHooksTest extends TestCase
             $this->logger->reveal(),
             $webhooks,
             [],
-            new AppOptions()
+            new AppOptions(['name' => 'Shlink', 'version' => '1.2.3'])
         );
     }
 }
