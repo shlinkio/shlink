@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest;
 
+use Closure;
+
 use function Shlinkio\Shlink\Common\loadConfigFromGlob;
 use function sprintf;
 
@@ -11,14 +13,11 @@ class ConfigProvider
 {
     private const ROUTES_PREFIX = '/rest/v{version:1|2}';
 
-    /** @var callable */
-    private $loadConfig;
+    private Closure $loadConfig;
 
     public function __construct(?callable $loadConfig = null)
     {
-        $this->loadConfig = $loadConfig ?? function (string $glob) {
-            return loadConfigFromGlob($glob);
-        };
+        $this->loadConfig = Closure::fromCallable($loadConfig ?? fn (string $glob) => loadConfigFromGlob($glob));
     }
 
     public function __invoke()

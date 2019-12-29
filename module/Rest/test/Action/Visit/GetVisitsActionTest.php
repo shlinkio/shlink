@@ -18,10 +18,8 @@ use Zend\Paginator\Paginator;
 
 class GetVisitsActionTest extends TestCase
 {
-    /** @var GetVisitsAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $visitsTracker;
+    private GetVisitsAction $action;
+    private ObjectProphecy $visitsTracker;
 
     public function setUp(): void
     {

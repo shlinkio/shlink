@@ -26,10 +26,8 @@ class CreateShortUrlActionTest extends TestCase
         'hostname' => 'foo.com',
     ];
 
-    /** @var CreateShortUrlAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $urlShortener;
+    private CreateShortUrlAction $action;
+    private ObjectProphecy $urlShortener;
 
     public function setUp(): void
     {

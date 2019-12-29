@@ -16,10 +16,8 @@ use Zend\Diactoros\Response\JsonResponse;
 
 abstract class AbstractCreateShortUrlAction extends AbstractRestAction
 {
-    /** @var UrlShortenerInterface */
-    private $urlShortener;
-    /** @var array */
-    private $domainConfig;
+    private UrlShortenerInterface $urlShortener;
+    private array $domainConfig;
 
     public function __construct(
         UrlShortenerInterface $urlShortener,

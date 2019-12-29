@@ -13,10 +13,8 @@ use Shlinkio\Shlink\Core\Entity\Domain;
 
 class PersistenceDomainResolverTest extends TestCase
 {
-    /** @var PersistenceDomainResolver */
-    private $domainResolver;
-    /** @var ObjectProphecy */
-    private $em;
+    private PersistenceDomainResolver $domainResolver;
+    private ObjectProphecy $em;
 
     public function setUp(): void
     {

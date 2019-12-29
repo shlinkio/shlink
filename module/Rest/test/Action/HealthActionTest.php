@@ -15,10 +15,8 @@ use Zend\Diactoros\ServerRequest;
 
 class HealthActionTest extends TestCase
 {
-    /** @var HealthAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $conn;
+    private HealthAction $action;
+    private ObjectProphecy $conn;
 
     public function setUp(): void
     {

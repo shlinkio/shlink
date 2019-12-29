@@ -22,10 +22,8 @@ class BackwardsCompatibleProblemDetailsMiddleware implements MiddlewareInterface
         'message' => 'detail',
     ];
 
-    /** @var array */
-    private $defaultTypeFallbacks;
-    /** @var int */
-    private $jsonFlags;
+    private array $defaultTypeFallbacks;
+    private int $jsonFlags;
 
     public function __construct(array $defaultTypeFallbacks, int $jsonFlags)
     {

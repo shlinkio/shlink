@@ -17,10 +17,8 @@ use Zend\Diactoros\Response;
 
 class UrlValidatorTest extends TestCase
 {
-    /** @var UrlValidator */
-    private $urlValidator;
-    /** @var ObjectProphecy */
-    private $httpClient;
+    private UrlValidator $urlValidator;
+    private ObjectProphecy $httpClient;
 
     public function setUp(): void
     {

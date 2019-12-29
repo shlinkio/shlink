@@ -19,12 +19,9 @@ use Zend\Diactoros\ServerRequest;
 
 class SingleStepCreateShortUrlActionTest extends TestCase
 {
-    /** @var SingleStepCreateShortUrlAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $urlShortener;
-    /** @var ObjectProphecy */
-    private $apiKeyService;
+    private SingleStepCreateShortUrlAction $action;
+    private ObjectProphecy $urlShortener;
+    private ObjectProphecy $apiKeyService;
 
     public function setUp(): void
     {

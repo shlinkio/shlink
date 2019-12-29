@@ -10,8 +10,7 @@ use Shlinkio\Shlink\Core\Entity\Domain;
 
 class SimpleDomainResolverTest extends TestCase
 {
-    /** @var SimpleDomainResolver */
-    private $domainResolver;
+    private SimpleDomainResolver $domainResolver;
 
     public function setUp(): void
     {

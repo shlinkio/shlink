@@ -18,8 +18,7 @@ use function array_shift;
 
 class BodyParserMiddlewareTest extends TestCase
 {
-    /** @var BodyParserMiddleware */
-    private $middleware;
+    private BodyParserMiddleware $middleware;
 
     public function setUp(): void
     {

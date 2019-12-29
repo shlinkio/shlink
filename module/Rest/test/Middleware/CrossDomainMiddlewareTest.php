@@ -20,10 +20,8 @@ use function Zend\Stratigility\middleware;
 
 class CrossDomainMiddlewareTest extends TestCase
 {
-    /** @var CrossDomainMiddleware */
-    private $middleware;
-    /** @var ObjectProphecy */
-    private $handler;
+    private CrossDomainMiddleware $middleware;
+    private ObjectProphecy $handler;
 
     public function setUp(): void
     {

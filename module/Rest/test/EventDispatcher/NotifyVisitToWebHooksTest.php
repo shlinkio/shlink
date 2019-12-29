@@ -28,12 +28,9 @@ use function Functional\contains;
 
 class NotifyVisitToWebHooksTest extends TestCase
 {
-    /** @var ObjectProphecy */
-    private $httpClient;
-    /** @var ObjectProphecy */
-    private $em;
-    /** @var ObjectProphecy */
-    private $logger;
+    private ObjectProphecy $httpClient;
+    private ObjectProphecy $em;
+    private ObjectProphecy $logger;
 
     public function setUp(): void
     {

@@ -27,12 +27,9 @@ use function array_map;
 
 class UrlShortenerTest extends TestCase
 {
-    /** @var UrlShortener */
-    private $urlShortener;
-    /** @var ObjectProphecy */
-    private $em;
-    /** @var ObjectProphecy */
-    private $urlValidator;
+    private UrlShortener $urlShortener;
+    private ObjectProphecy $em;
+    private ObjectProphecy $urlValidator;
 
     public function setUp(): void
     {

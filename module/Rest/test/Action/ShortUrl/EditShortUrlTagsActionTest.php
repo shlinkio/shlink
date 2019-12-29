@@ -14,10 +14,8 @@ use Zend\Diactoros\ServerRequest;
 
 class EditShortUrlTagsActionTest extends TestCase
 {
-    /** @var EditShortUrlTagsAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $shortUrlService;
+    private EditShortUrlTagsAction $action;
+    private ObjectProphecy $shortUrlService;
 
     public function setUp(): void
     {

@@ -26,12 +26,9 @@ use function Zend\Stratigility\middleware;
 
 class AuthenticationMiddlewareTest extends TestCase
 {
-    /** @var AuthenticationMiddleware */
-    private $middleware;
-    /** @var ObjectProphecy */
-    private $requestToPlugin;
-    /** @var ObjectProphecy */
-    private $logger;
+    private AuthenticationMiddleware $middleware;
+    private ObjectProphecy $requestToPlugin;
+    private ObjectProphecy $logger;
 
     public function setUp(): void
     {

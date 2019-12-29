@@ -28,10 +28,8 @@ use function sprintf;
 
 class VisitServiceTest extends TestCase
 {
-    /** @var VisitService */
-    private $visitService;
-    /** @var ObjectProphecy */
-    private $em;
+    private VisitService $visitService;
+    private ObjectProphecy $em;
 
     public function setUp(): void
     {

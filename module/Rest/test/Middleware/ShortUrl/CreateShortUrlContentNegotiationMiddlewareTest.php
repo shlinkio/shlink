@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware;
@@ -15,10 +16,8 @@ use Zend\Diactoros\ServerRequest;
 
 class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 {
-    /** @var CreateShortUrlContentNegotiationMiddleware */
-    private $middleware;
-    /** @var RequestHandlerInterface */
-    private $requestHandler;
+    private CreateShortUrlContentNegotiationMiddleware $middleware;
+    private ObjectProphecy $requestHandler;
 
     public function setUp(): void
     {

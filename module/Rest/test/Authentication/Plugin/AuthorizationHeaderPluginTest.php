@@ -14,6 +14,7 @@ use Zend\Diactoros\ServerRequest;
 
 use function sprintf;
 
+/** @deprecated */
 class AuthorizationHeaderPluginTest extends TestCase
 {
     /** @var AuthorizationHeaderPlugin */

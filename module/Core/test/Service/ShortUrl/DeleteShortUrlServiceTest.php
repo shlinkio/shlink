@@ -23,10 +23,8 @@ use function sprintf;
 
 class DeleteShortUrlServiceTest extends TestCase
 {
-    /** @var ObjectProphecy */
-    private $em;
-    /** @var string */
-    private $shortCode;
+    private ObjectProphecy $em;
+    private string $shortCode;
 
     public function setUp(): void
     {

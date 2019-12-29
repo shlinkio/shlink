@@ -14,8 +14,7 @@ use function random_int;
 
 class ShortUrlDataTransformerTest extends TestCase
 {
-    /** @var ShortUrlDataTransformer */
-    private $transformer;
+    private ShortUrlDataTransformer $transformer;
 
     public function setUp(): void
     {

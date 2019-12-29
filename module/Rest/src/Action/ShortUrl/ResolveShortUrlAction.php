@@ -18,10 +18,8 @@ class ResolveShortUrlAction extends AbstractRestAction
     protected const ROUTE_PATH = '/short-urls/{shortCode}';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    /** @var UrlShortenerInterface */
-    private $urlShortener;
-    /** @var array */
-    private $domainConfig;
+    private UrlShortenerInterface $urlShortener;
+    private array $domainConfig;
 
     public function __construct(
         UrlShortenerInterface $urlShortener,

@@ -17,10 +17,8 @@ use function Functional\contains;
 
 class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface, RequestMethodInterface
 {
-    /** @var array */
-    private $routesWhitelist;
-    /** @var RequestToHttpAuthPluginInterface */
-    private $requestToAuthPlugin;
+    private array $routesWhitelist;
+    private RequestToHttpAuthPluginInterface $requestToAuthPlugin;
 
     public function __construct(RequestToHttpAuthPluginInterface $requestToAuthPlugin, array $routesWhitelist)
     {

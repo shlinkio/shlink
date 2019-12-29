@@ -23,12 +23,9 @@ use Zend\Stdlib\ArrayUtils;
 
 class VisitsTrackerTest extends TestCase
 {
-    /** @var VisitsTracker */
-    private $visitsTracker;
-    /** @var ObjectProphecy */
-    private $em;
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
+    private VisitsTracker $visitsTracker;
+    private ObjectProphecy $em;
+    private ObjectProphecy $eventDispatcher;
 
     public function setUp(): void
     {

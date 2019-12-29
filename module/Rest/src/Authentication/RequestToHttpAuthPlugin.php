@@ -20,8 +20,7 @@ class RequestToHttpAuthPlugin implements RequestToHttpAuthPluginInterface
         Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
     ];
 
-    /** @var AuthenticationPluginManagerInterface */
-    private $authPluginManager;
+    private AuthenticationPluginManagerInterface $authPluginManager;
 
     public function __construct(AuthenticationPluginManagerInterface $authPluginManager)
     {

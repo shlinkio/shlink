@@ -21,10 +21,8 @@ class HealthAction extends AbstractRestAction
     protected const ROUTE_PATH = '/health';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    /** @var AppOptions */
-    private $options;
-    /** @var Connection */
-    private $conn;
+    private AppOptions $options;
+    private Connection $conn;
 
     public function __construct(Connection $conn, AppOptions $options, ?LoggerInterface $logger = null)
     {

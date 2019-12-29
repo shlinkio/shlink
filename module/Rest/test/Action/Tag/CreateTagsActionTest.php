@@ -13,10 +13,8 @@ use Zend\Diactoros\ServerRequest;
 
 class CreateTagsActionTest extends TestCase
 {
-    /** @var CreateTagsAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $tagService;
+    private CreateTagsAction $action;
+    private ObjectProphecy $tagService;
 
     public function setUp(): void
     {

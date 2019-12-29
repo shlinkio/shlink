@@ -11,8 +11,7 @@ use function array_merge;
 
 class DeprecatedConfigParserTest extends TestCase
 {
-    /** @var DeprecatedConfigParser */
-    private $postProcessor;
+    private DeprecatedConfigParser $postProcessor;
 
     public function setUp(): void
     {
