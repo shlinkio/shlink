@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## 1.21.0 - 2019-12-29
 
 #### Added
 
@@ -21,6 +21,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     * The `GET /short-urls` endpoint now accepts the `startDate` and `endDate` query params.
     * The `short-urls:list` command now allows `--startDate` and `--endDate` flags to be optionally provided.
+
+* [#338](https://github.com/shlinkio/shlink/issues/338) Added support to asynchronously notify external services via webhook, only when shlink is served with swoole.
+
+    Configured webhooks will receive a POST request every time a URL receives a visit, including information about the short URL and the visit.
+
+    The payload will look like this:
+
+    ```json
+    {
+      "shortUrl": {},
+      "visit": {}
+    }
+    ```
+
+    > The `shortUrl` and `visit` props have the same shape as it is defined in the [API spec](https://api-spec.shlink.io).
 
 #### Changed
 
