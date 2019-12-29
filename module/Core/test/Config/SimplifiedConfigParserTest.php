@@ -53,6 +53,10 @@ class SimplifiedConfigParserTest extends TestCase
             ],
             'base_path' => '/foo/bar',
             'task_worker_num' => 50,
+            'visits_webhooks' => [
+                'http://my-api.com/api/v2.3/notify',
+                'https://third-party.io/foo',
+            ],
         ];
         $expected = [
             'app_options' => [
@@ -76,6 +80,10 @@ class SimplifiedConfigParserTest extends TestCase
                     'hostname' => 'doma.in',
                 ],
                 'validate_url' => false,
+                'visits_webhooks' => [
+                    'http://my-api.com/api/v2.3/notify',
+                    'https://third-party.io/foo',
+                ],
             ],
 
             'delete_short_urls' => [

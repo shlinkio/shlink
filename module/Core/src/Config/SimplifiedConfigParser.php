@@ -32,6 +32,7 @@ class SimplifiedConfigParser
         'base_path' => ['router', 'base_path'],
         'web_worker_num' => ['zend-expressive-swoole', 'swoole-http-server', 'options', 'worker_num'],
         'task_worker_num' => ['zend-expressive-swoole', 'swoole-http-server', 'options', 'task_worker_num'],
+        'visits_webhooks' => ['url_shortener', 'visits_webhooks'],
     ];
     private const SIMPLIFIED_CONFIG_SIDE_EFFECTS = [
         'delete_short_url_threshold' => [

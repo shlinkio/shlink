@@ -99,6 +99,12 @@ $helper = new class {
             'base_url' => env('BASE_URL_REDIRECT_TO'),
         ];
     }
+
+    public function getVisitsWebhooks(): array
+    {
+        $webhooks = env('VISITS_WEBHOOKS');
+        return $webhooks === null ? [] : explode(',', $webhooks);
+    }
 };
 
 return [
@@ -125,6 +131,7 @@ return [
             'hostname' => env('SHORT_DOMAIN_HOST', ''),
         ],
         'validate_url' => (bool) env('VALIDATE_URLS', true),
+        'visits_webhooks' => $helper->getVisitsWebhooks(),
     ],
 
     'not_found_redirects' => $helper->getNotFoundRedirectsConfig(),

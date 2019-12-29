@@ -110,6 +110,7 @@ This is the complete list of supported env vars:
 * `BASE_PATH`: The base path from which you plan to serve shlink, in case you don't want to serve it from the root of the domain. Defaults to `''`.
 * `WEB_WORKER_NUM`: The amount of concurrent http requests this shlink instance will be able to server. Defaults to 16.
 * `TASK_WORKER_NUM`: The amount of concurrent background tasks this shlink instance will be able to execute. Defaults to 16.
+* `VISITS_WEBHOOKS`: A comma-separated list of URLs that will receive a `POST` request when a short URL receives a visit.
 * `REDIS_SERVERS`: A comma-separated list of redis servers where Shlink locks are stored (locks are used to prevent some operations to be run more than once in parallel).
 
     This is important when running more than one Shlink instance ([Multi instance considerations](#multi-instance-considerations)). If not provided, Shlink stores locks on every instance separately.
@@ -145,6 +146,7 @@ docker run \
     -e "BASE_PATH=/my-campaign" \
     -e WEB_WORKER_NUM=64 \
     -e TASK_WORKER_NUM=32 \
+    -e "VISITS_WEBHOOKS=http://my-api.com/api/v2.3/notify,https://third-party.io/foo" \
     shlinkio/shlink:stable
 ```
 
@@ -172,6 +174,10 @@ The whole configuration should have this format, but it can be split into multip
     "redis_servers": [
         "tcp://172.20.0.1:6379",
         "tcp://172.20.0.2:6379"
+    ],
+    "visits_webhooks": [
+        "http://my-api.com/api/v2.3/notify",
+        "https://third-party.io/foo"
     ],
     "db_config": {
         "driver": "pdo_mysql",
