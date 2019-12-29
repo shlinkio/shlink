@@ -87,7 +87,7 @@ class Visit extends AbstractEntity implements JsonSerializable
     {
         return [
             'referer' => $this->referer,
-            'date' => $this->date !== null ? $this->date->toAtomString() : null,
+            'date' => $this->date->toAtomString(),
             'userAgent' => $this->userAgent,
             'visitLocation' => $this->visitLocation,
 
