@@ -3,7 +3,7 @@ version: '3'
 services:
     shlink_nginx:
         container_name: shlink_nginx
-        image: nginx:1.15.9-alpine
+        image: nginx:1.17.6-alpine
         ports:
             - "8000:80"
         volumes:
@@ -37,6 +37,7 @@ services:
             - "9001:9001"
         volumes:
             - ./:/home/shlink
+            - ./data/infra/php.ini:/usr/local/etc/php/php.ini
         links:
             - shlink_db
             - shlink_db_postgres

@@ -7,11 +7,11 @@ branches:
 php:
   - '7.2'
   - '7.3'
-  - '7.4snapshot'
+  - '7.4'
 
 matrix:
   allow_failures:
-    - php: '7.4snapshot'
+    - php: '7.4'
 
 services:
   - mysql
@@ -43,7 +43,8 @@ script:
 
 after_success:
   - rm -f build/clover.xml
-  - phpdbg -qrr vendor/bin/phpcov merge build --clover build/clover.xml
+  - wget https://phar.phpunit.de/phpcov-6.0.1.phar
+  - phpdbg -qrr phpcov-6.0.1.phar merge build --clover build/clover.xml
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml
 

@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Repository;
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 
 use function array_column;
@@ -27,9 +28,10 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         ?int $offset = null,
         ?string $searchTerm = null,
         array $tags = [],
-        $orderBy = null
+        $orderBy = null,
+        ?DateRange $dateRange = null
     ): array {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags);
+        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange);
         $qb->select('DISTINCT s');
 
         // Set limit and offset
@@ -52,15 +54,9 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
 
     private function processOrderByForList(QueryBuilder $qb, $orderBy): array
     {
-        // Map public field names to column names
-        $fieldNameMap = [
-            'originalUrl' => 'longUrl',
-            'longUrl' => 'longUrl',
-            'shortCode' => 'shortCode',
-            'dateCreated' => 'dateCreated',
-        ];
-        $fieldName = is_array($orderBy) ? key($orderBy) : $orderBy;
-        $order = is_array($orderBy) ? $orderBy[$fieldName] : 'ASC';
+        $isArray = is_array($orderBy);
+        $fieldName = $isArray ? key($orderBy) : $orderBy;
+        $order = $isArray ? $orderBy[$fieldName] : 'ASC';
 
         if (contains(['visits', 'visitsCount', 'visitCount'], $fieldName)) {
             $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
@@ -71,25 +67,44 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
             return array_column($qb->getQuery()->getResult(), 0);
         }
 
+        // Map public field names to column names
+        $fieldNameMap = [
+            'originalUrl' => 'longUrl',
+            'longUrl' => 'longUrl',
+            'shortCode' => 'shortCode',
+            'dateCreated' => 'dateCreated',
+        ];
         if (array_key_exists($fieldName, $fieldNameMap)) {
             $qb->orderBy('s.' . $fieldNameMap[$fieldName], $order);
         }
         return $qb->getQuery()->getResult();
     }
 
-    public function countList(?string $searchTerm = null, array $tags = []): int
+    public function countList(?string $searchTerm = null, array $tags = [], ?DateRange $dateRange = null): int
     {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags);
+        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange);
         $qb->select('COUNT(DISTINCT s)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    private function createListQueryBuilder(?string $searchTerm = null, array $tags = []): QueryBuilder
-    {
+    private function createListQueryBuilder(
+        ?string $searchTerm = null,
+        array $tags = [],
+        ?DateRange $dateRange = null
+    ): QueryBuilder {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's');
         $qb->where('1=1');
+
+        if ($dateRange !== null && $dateRange->getStartDate() !== null) {
+            $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
+            $qb->setParameter('startDate', $dateRange->getStartDate());
+        }
+        if ($dateRange !== null && $dateRange->getEndDate() !== null) {
+            $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
+            $qb->setParameter('endDate', $dateRange->getEndDate());
+        }
 
         // Apply search term to every searchable field if not empty
         if (! empty($searchTerm)) {
@@ -98,14 +113,12 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
                 $qb->leftJoin('s.tags', 't');
             }
 
-            $conditions = [
+            // Apply search conditions
+            $qb->andWhere($qb->expr()->orX(
                 $qb->expr()->like('s.longUrl', ':searchPattern'),
                 $qb->expr()->like('s.shortCode', ':searchPattern'),
-                $qb->expr()->like('t.name', ':searchPattern'),
-            ];
-
-            // Unpack and apply search conditions
-            $qb->andWhere($qb->expr()->orX(...$conditions));
+                $qb->expr()->like('t.name', ':searchPattern')
+            ));
             $qb->setParameter('searchPattern', '%' . $searchTerm . '%');
         }
 

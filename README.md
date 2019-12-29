@@ -1,4 +1,4 @@
-# Shlink
+![Shlink](https://raw.githubusercontent.com/shlinkio/shlink.io/master/public/images/shlink-hero.png)
 
 [![Build Status](https://img.shields.io/travis/shlinkio/shlink.svg?style=flat-square)](https://travis-ci.org/shlinkio/shlink)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/shlinkio/shlink.svg?style=flat-square)](https://scrutinizer-ci.com/g/shlinkio/shlink/?branch=master)
@@ -12,26 +12,36 @@ A PHP-based self-hosted URL shortener that can be used to serve shortened URLs u
 ## Table of Contents
 
 - [Installation](#installation)
+    - [Download](#download)
+    - [Configure](#configure)
+    - [Serve](#serve)
+    - [Bonus](#bonus)
 - [Update to new version](#update-to-new-version)
 - [Using a docker image](#using-a-docker-image)
 - [Using shlink](#using-shlink)
-  - [Shlink CLI Help](#shlink-cli-help)
+    - [Shlink CLI Help](#shlink-cli-help)
 
 ## Installation
 
-First make sure the host where you are going to run shlink fulfills these requirements:
+> These are the steps needed to install Shlink if you plan to manually host it. 
+>
+> Alternatively, you can use the official docker image. If that's your intention, jump directly to [Using a docker image](#using-a-docker-image)
+
+First, make sure the host where you are going to run shlink fulfills these requirements:
 
 * PHP 7.2 or greater with JSON, APCu, intl, curl, PDO and gd extensions enabled.
 * MySQL, MariaDB, PostgreSQL or SQLite.
 * The web server of your choice with PHP integration (Apache or Nginx recommended).
 
-Then, you will need a built version of the project. There are a few ways to get it.
+### Download
+
+In order to run Shlink, you will need a built version of the project. There are two ways to get it.
 
 * **Using a dist file**
 
     The easiest way to install shlink is by using one of the pre-bundled distributable packages.
 
-    Just go to the [latest version](https://github.com/shlinkio/shlink/releases/latest) and download the `shlink_X.X.X_dist.zip` file you will find there.
+    Go to the [latest version](https://github.com/shlinkio/shlink/releases/latest) and download the `shlink_x.x.x_dist.zip` file you will find there.
 
     Finally, decompress the file in the location of your choice.
 
@@ -43,158 +53,159 @@ Then, you will need a built version of the project. There are a few ways to get 
     * Download the [Composer](https://getcomposer.org/download/) PHP package manager inside the project folder.
     * Run `./build.sh 1.0.0`, replacing the version with the version number you are going to build (the version number is only used for the generated dist file).
 
-    After that, you will have a `shlink_x.x.x_dist.zip` dist file inside the `build` directory.
+    After that, you will have a `shlink_x.x.x_dist.zip` dist file inside the `build` directory, that you need to decompress in the location fo your choice.
 
-    This is the process used when releasing new shlink versions. After tagging the new version with git, the Github release is automatically created by [travis](https://travis-ci.org/shlinkio/shlink), attaching generated dist file to it.
+    > This is the process used when releasing new shlink versions. After tagging the new version with git, the Github release is automatically created by [travis](https://travis-ci.org/shlinkio/shlink), attaching the generated dist file to it.
 
-Despite how you built the project, you are going to need to install it now, by following these steps:
+### Configure
+
+Despite how you built the project, you now need to configure it, by following these steps:
 
 * If you are going to use MySQL, MariaDB or PostgreSQL, create an empty database with the name of your choice.
 * Recursively grant write permissions to the `data` directory. Shlink uses it to cache some information.
 * Setup the application by running the `bin/install` script. It is a command line tool that will guide you through the installation process. **Take into account that this tool has to be run directly on the server where you plan to host Shlink. Do not run it before uploading/moving it there.**
-* Expose shlink to the web, either by using a traditional web server + fast CGI approach, or by using a [swoole](https://www.swoole.co.uk/) non-blocking server.
-
-    * **Using a web server:**
-
-        For example, assuming your domain is doma.in and shlink is in the `/path/to/shlink` folder, these would be the basic configurations for Nginx and Apache.
-
-        *Nginx:*
-
-        ```nginx
-        server {
-            server_name doma.in;
-            listen 80;
-            root /path/to/shlink/public;
-            index index.php;
-            charset utf-8;
-
-            location / {
-                try_files $uri $uri/ /index.php$is_args$args;
-            }
-
-            location ~ \.php$ {
-                fastcgi_split_path_info ^(.+\.php)(/.+)$;
-                fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
-                fastcgi_index index.php;
-                include fastcgi.conf;
-            }
-
-            location ~ /\.ht {
-                deny all;
-            }
-        }
-        ```
-
-        *Apache:*
-
-        ```apache
-        <VirtualHost *:80>
-            ServerName doma.in
-            DocumentRoot "/path/to/shlink/public"
-
-            <Directory "/path/to/shlink/public">
-                Options FollowSymLinks Includes ExecCGI
-                AllowOverride all
-                Order allow,deny
-                Allow from all
-            </Directory>
-        </VirtualHost>
-        ```
-
-    * **Using swoole:**
-
-        First you need to install the swoole PHP extension with [pecl](https://pecl.php.net/package/swoole), `pecl install swoole`.
-
-        Once installed, it's actually pretty easy to get shlink up and running with swoole. Just run `./vendor/bin/zend-expressive-swoole start -d` and you will get shlink running on port 8080.
-
-        However, by doing it this way, you are loosing all the access logs, and the service won't be automatically run if the server has to be restarted.
-
-        For that reason, you should create a daemon script, in `/etc/init.d/shlink_swoole`, like this one, replacing `/path/to/shlink` by the path to your shlink installation:
-
-        ```bash
-        #!/bin/bash
-        ### BEGIN INIT INFO
-        # Provides:          shlink_swoole
-        # Required-Start:    $local_fs $network $named $time $syslog
-        # Required-Stop:     $local_fs $network $named $time $syslog
-        # Default-Start:     2 3 4 5
-        # Default-Stop:      0 1 6
-        # Description:       Shlink non-blocking server with swoole
-        ### END INIT INFO
-
-        SCRIPT=/path/to/shlink/vendor/bin/zend-expressive-swoole\ start
-        RUNAS=root
-
-        PIDFILE=/var/run/shlink_swoole.pid
-        LOGDIR=/var/log/shlink
-        LOGFILE=${LOGDIR}/shlink_swoole.log
-
-        start() {
-          if [[ -f "$PIDFILE" ]] && kill -0 $(cat "$PIDFILE"); then
-            echo 'Shlink with swoole already running' >&2
-            return 1
-          fi
-          echo 'Starting shlink with swoole' >&2
-          mkdir -p "$LOGDIR"
-          touch "$LOGFILE"
-          local CMD="$SCRIPT &> \"$LOGFILE\" & echo \$!"
-          su -c "$CMD" $RUNAS > "$PIDFILE"
-          echo 'Shlink started' >&2
-        }
-
-        stop() {
-          if [[ ! -f "$PIDFILE" ]] || ! kill -0 $(cat "$PIDFILE"); then
-            echo 'Shlink with swoole not running' >&2
-            return 1
-          fi
-          echo 'Stopping shlink with swoole' >&2
-          kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
-          echo 'Shlink stopped' >&2
-        }
-
-        case "$1" in
-          start)
-            start
-            ;;
-          stop)
-            stop
-            ;;
-          restart)
-            stop
-            start
-            ;;
-          *)
-            echo "Usage: $0 {start|stop|restart}"
-        esac
-        ```
-
-        Then run these commands to enable the service and start it:
-
-        * `sudo chmod +x /etc/init.d/shlink_swoole`
-        * `sudo update-rc.d shlink_swoole defaults`
-        * `sudo update-rc.d shlink_swoole enable`
-        * `/etc/init.d/shlink_swoole start`
-
-        Now again, you can access shlink on port 8080, but this time the service will be automatically run at system start-up, and all access logs will be written in `/var/log/shlink/shlink_swoole.log` (you will probably want to [rotate those logs](https://www.digitalocean.com/community/tutorials/how-to-manage-logfiles-with-logrotate-on-ubuntu-16-04). You can find an example logrotate config file [here](data/infra/examples/shlink-daemon-logrotate.conf)).
-
 * Generate your first API key by running `bin/cli api-key:generate`. You will need the key in order to interact with shlink's API.
-* Finally access to [https://app.shlink.io](https://app.shlink.io) and configure your server to start creating short URLs.
 
-**Bonus**
+### Serve
 
-There are a couple of time-consuming tasks that shlink expects you to do manually, or at least it is recommended, since it will improve runtime performance.
+Once Shlink is configured, you need to expose it to the web, either by using a traditional web server + fast CGI approach, or by using a [swoole](https://www.swoole.co.uk/) non-blocking server.
 
-Those tasks can be performed using shlink's CLI, so it should be easy to schedule them to be run in the background (for example, using cron jobs):
+* **Using a web server:**
 
-* **For shlink older than 1.18.0 or not using swoole as the web server**: Resolve IP address locations: `/path/to/shlink/bin/cli visit:locate`
+    For example, assuming your domain is doma.in and shlink is in the `/path/to/shlink` folder, these would be the basic configurations for Nginx and Apache.
+
+    *Nginx:*
+
+    ```nginx
+    server {
+        server_name doma.in;
+        listen 80;
+        root /path/to/shlink/public;
+        index index.php;
+        charset utf-8;
+
+        location / {
+            try_files $uri $uri/ /index.php$is_args$args;
+        }
+
+        location ~ \.php$ {
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+            fastcgi_index index.php;
+            include fastcgi.conf;
+        }
+
+        location ~ /\.ht {
+            deny all;
+        }
+    }
+    ```
+
+    *Apache:*
+
+    ```apache
+    <VirtualHost *:80>
+        ServerName doma.in
+        DocumentRoot "/path/to/shlink/public"
+
+        <Directory "/path/to/shlink/public">
+            Options FollowSymLinks Includes ExecCGI
+            AllowOverride all
+            Order allow,deny
+            Allow from all
+        </Directory>
+    </VirtualHost>
+    ```
+
+* **Using swoole:**
+
+    First you need to install the swoole PHP extension with [pecl](https://pecl.php.net/package/swoole), `pecl install swoole`.
+
+    Once installed, it's actually pretty easy to get shlink up and running with swoole. Run `./vendor/bin/zend-expressive-swoole start -d` and you will get shlink running on port 8080.
+
+    However, by doing it this way, you are loosing all the access logs, and the service won't be automatically run if the server has to be restarted.
+
+    For that reason, you should create a daemon script, in `/etc/init.d/shlink_swoole`, like this one, replacing `/path/to/shlink` by the path to your shlink installation:
+
+    ```bash
+    #!/bin/bash
+    ### BEGIN INIT INFO
+    # Provides:          shlink_swoole
+    # Required-Start:    $local_fs $network $named $time $syslog
+    # Required-Stop:     $local_fs $network $named $time $syslog
+    # Default-Start:     2 3 4 5
+    # Default-Stop:      0 1 6
+    # Description:       Shlink non-blocking server with swoole
+    ### END INIT INFO
+
+    SCRIPT=/path/to/shlink/vendor/bin/zend-expressive-swoole\ start
+    RUNAS=root
+
+    PIDFILE=/var/run/shlink_swoole.pid
+    LOGDIR=/var/log/shlink
+    LOGFILE=${LOGDIR}/shlink_swoole.log
+
+    start() {
+      if [[ -f "$PIDFILE" ]] && kill -0 $(cat "$PIDFILE"); then
+        echo 'Shlink with swoole already running' >&2
+        return 1
+      fi
+      echo 'Starting shlink with swoole' >&2
+      mkdir -p "$LOGDIR"
+      touch "$LOGFILE"
+      local CMD="$SCRIPT &> \"$LOGFILE\" & echo \$!"
+      su -c "$CMD" $RUNAS > "$PIDFILE"
+      echo 'Shlink started' >&2
+    }
+
+    stop() {
+      if [[ ! -f "$PIDFILE" ]] || ! kill -0 $(cat "$PIDFILE"); then
+        echo 'Shlink with swoole not running' >&2
+        return 1
+      fi
+      echo 'Stopping shlink with swoole' >&2
+      kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
+      echo 'Shlink stopped' >&2
+    }
+
+    case "$1" in
+      start)
+        start
+        ;;
+      stop)
+        stop
+        ;;
+      restart)
+        stop
+        start
+        ;;
+      *)
+        echo "Usage: $0 {start|stop|restart}"
+    esac
+    ```
+
+    Then run these commands to enable the service and start it:
+
+    * `sudo chmod +x /etc/init.d/shlink_swoole`
+    * `sudo update-rc.d shlink_swoole defaults`
+    * `sudo update-rc.d shlink_swoole enable`
+    * `/etc/init.d/shlink_swoole start`
+
+    Now again, you can access shlink on port 8080, but this time the service will be automatically run at system start-up, and all access logs will be written in `/var/log/shlink/shlink_swoole.log` (you will probably want to [rotate those logs](https://www.digitalocean.com/community/tutorials/how-to-manage-logfiles-with-logrotate-on-ubuntu-16-04). You can find an example logrotate config file [here](data/infra/examples/shlink-daemon-logrotate.conf)).
+
+Finally access to [https://app.shlink.io](https://app.shlink.io) and configure your server to start creating short URLs.
+
+### Bonus
+
+Depending on the shlink version you installed and how you serve it, there are a couple of time-consuming tasks that shlink expects you to do manually, or at least it is recommended, since it will improve runtime performance.
+
+Those tasks can be performed using shlink's CLI tool, so it should be easy to schedule them to be run in the background (for example, using cron jobs):
+
+* **For shlink older than 1.18.0 or not using swoole to serve it**: Resolve IP address locations: `/path/to/shlink/bin/cli visit:locate`
 
     If you don't run this command regularly, the stats will say all visits come from *unknown* locations.
 
-* Generate website previews: `/path/to/shlink/bin/cli short-url:process-previews`
-
-    Running this will improve the performance of the `doma.in/abc123/preview` URLs, which return a preview of the site.
-
-    > **Important!** Generating previews is considered deprecated and the feature will be removed in Shlink v2.
+    > If you serve Shlink with swoole and use v1.18.0 at least, visit location is automatically scheduled by Shlink just after the visit occurs, using swoole's task system.
 
 * **For shlink older than v1.17.0**: Update IP geolocation database: `/path/to/shlink/bin/cli visit:update-db`
 
@@ -202,24 +213,28 @@ Those tasks can be performed using shlink's CLI, so it should be easy to schedul
 
     The file is updated the first Tuesday of every month, so it should be enough running this command the first Wednesday.
 
-*Any of these commands accept the `-q` flag, which makes it not display any output. This is recommended when configuring the commands as cron jobs.*
+    > You don't need this if you use Shlink v1.17.0 or newer, since now it downloads/updates the geolocation database automatically just before trying to use it.
 
-> In future versions, it is planed that, when using **swoole** to serve shlink, some of these tasks are automatically run without blocking the request and also, without having to configure cron jobs. Probably resolving IP locations and generating previews.
+* Generate website previews: `/path/to/shlink/bin/cli short-url:process-previews`
+
+    Running this will improve the performance of the `doma.in/abc123/preview` URLs, which return a preview of the site.
+
+    > **Important!** Generating previews is considered deprecated and the feature will be removed in Shlink v2.
+
+*Any of these commands accept the `-q` flag, which makes it not display any output. This is recommended when configuring the commands as cron jobs.*
 
 ## Update to new version
 
-When a new Shlink version is available, you don't need to repeat the entire process yourself. Instead, follow these steps:
+When a new Shlink version is available, you don't need to repeat the entire process. Instead, follow these steps:
 
 1. Rename your existing Shlink directory to something else (ie. `shlink` ---> `shlink-old`).
-2. Download and extract the new version of Shlink, and set the directories name to that of the old version. (ie. `shlink`).
-3. Run the `bin/update` script in the new version's directory to migrate your configuration over.
+2. Download and extract the new version of Shlink, and set the directory name to that of the old version (ie. `shlink`).
+3. Run the `bin/update` script in the new version's directory to migrate your configuration over. You will be asked to provide the path to the old instance (ie. `shlink-old`).
 4. If you are using shlink with swoole, restart the service by running `/etc/init.d/shlink_swoole restart`.
 
-The `bin/update` script will ask you for the location from previous shlink version, and use it in order to import the configuration. It will then update the database and generate some assets shlink needs to work.
+The `bin/update` will use the location from previous shlink version to import the configuration. It will then update the database and generate some assets shlink needs to work.
 
-Right now, it does not import cached info (like website previews), but it will. For now you will need to regenerate them again.
-
-**Important!** It is recommended that you don't skip any version when using this process. The update gets better on every version, but older versions might make assumptions.
+**Important!** It is recommended that you don't skip any version when using this process. The update tool gets better on every version, but older versions might make assumptions.
 
 ## Using a docker image
 
@@ -237,7 +252,7 @@ Once shlink is installed, there are two main ways to interact with it:
 
     It is probably a good idea to symlink the CLI entry point (`bin/cli`) to somewhere in your path, so that you can run shlink from any directory.
 
-* **The REST API**. The complete docs on how to use the API can be found [here](https://shlink.io/api-docs), and a sandbox which also documents every endpoint can be found [here](https://shlink.io/swagger-ui/index.html).
+* **The REST API**. The complete docs on how to use the API can be found [here](https://shlink.io/api-docs), and a sandbox which also documents every endpoint can be found in the [API Spec](https://api-spec.shlink.io/) portal.
 
     However, you probably don't want to consume the raw API yourself. That's why a nice [web client](https://github.com/shlinkio/shlink-web-client) is provided that can be directly used from [https://app.shlink.io](https://app.shlink.io), or you can host it yourself too.
 

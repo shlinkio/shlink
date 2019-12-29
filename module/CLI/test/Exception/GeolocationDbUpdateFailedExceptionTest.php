@@ -14,47 +14,6 @@ class GeolocationDbUpdateFailedExceptionTest extends TestCase
 {
     /**
      * @test
-     * @dataProvider provideOlderDbExists
-     */
-    public function constructCreatesExceptionWithDefaultArgs(bool $olderDbExists): void
-    {
-        $e = new GeolocationDbUpdateFailedException($olderDbExists);
-
-        $this->assertEquals($olderDbExists, $e->olderDbExists());
-        $this->assertEquals('', $e->getMessage());
-        $this->assertEquals(0, $e->getCode());
-        $this->assertNull($e->getPrevious());
-    }
-
-    public function provideOlderDbExists(): iterable
-    {
-        yield 'with older DB' => [true];
-        yield 'without older DB' => [false];
-    }
-
-    /**
-     * @test
-     * @dataProvider provideConstructorArgs
-     */
-    public function constructCreatesException(bool $olderDbExists, string $message, int $code, ?Throwable $prev): void
-    {
-        $e = new GeolocationDbUpdateFailedException($olderDbExists, $message, $code, $prev);
-
-        $this->assertEquals($olderDbExists, $e->olderDbExists());
-        $this->assertEquals($message, $e->getMessage());
-        $this->assertEquals($code, $e->getCode());
-        $this->assertEquals($prev, $e->getPrevious());
-    }
-
-    public function provideConstructorArgs(): iterable
-    {
-        yield [true, 'This is a nice error message', 99, new Exception('prev')];
-        yield [false, 'Another message', 0, new RuntimeException('prev')];
-        yield [true, 'An yet another message', -50, null];
-    }
-
-    /**
-     * @test
      * @dataProvider provideCreateArgs
      */
     public function createBuildsException(bool $olderDbExists, ?Throwable $prev): void

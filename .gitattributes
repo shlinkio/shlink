@@ -9,7 +9,6 @@
 /module/PreviewGenerator/test-db export-ignore
 /module/Rest/test export-ignore
 /module/Rest/test-api export-ignore
-.env.dist export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
 .phpstorm.meta.php export-ignore

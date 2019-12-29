@@ -10,8 +10,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
+use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Service\Tag\TagService;
 
@@ -29,7 +29,7 @@ class TagServiceTest extends TestCase
     }
 
     /** @test */
-    public function listTagsDelegatesOnRepository()
+    public function listTagsDelegatesOnRepository(): void
     {
         $expected = [new Tag('foo'), new Tag('bar')];
 
@@ -45,7 +45,7 @@ class TagServiceTest extends TestCase
     }
 
     /** @test */
-    public function deleteTagsDelegatesOnRepository()
+    public function deleteTagsDelegatesOnRepository(): void
     {
         $repo = $this->prophesize(TagRepository::class);
         $delete = $repo->deleteByName(['foo', 'bar'])->willReturn(4);
@@ -58,7 +58,7 @@ class TagServiceTest extends TestCase
     }
 
     /** @test */
-    public function createTagsPersistsEntities()
+    public function createTagsPersistsEntities(): void
     {
         $repo = $this->prophesize(TagRepository::class);
         $find = $repo->findOneBy(Argument::cetera())->willReturn(new Tag('foo'));
@@ -76,7 +76,7 @@ class TagServiceTest extends TestCase
     }
 
     /** @test */
-    public function renameInvalidTagThrowsException()
+    public function renameInvalidTagThrowsException(): void
     {
         $repo = $this->prophesize(TagRepository::class);
         $find = $repo->findOneBy(Argument::cetera())->willReturn(null);
@@ -84,7 +84,7 @@ class TagServiceTest extends TestCase
 
         $find->shouldBeCalled();
         $getRepo->shouldBeCalled();
-        $this->expectException(EntityDoesNotExistException::class);
+        $this->expectException(TagNotFoundException::class);
 
         $this->service->renameTag('foo', 'bar');
     }
@@ -101,7 +101,7 @@ class TagServiceTest extends TestCase
         $find = $repo->findOneBy(Argument::cetera())->willReturn($expected);
         $countTags = $repo->count(Argument::cetera())->willReturn($count);
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
-        $flush = $this->em->flush($expected)->willReturn(null);
+        $flush = $this->em->flush()->willReturn(null);
 
         $tag = $this->service->renameTag($oldName, $newName);
 

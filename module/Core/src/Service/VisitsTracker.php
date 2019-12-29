@@ -9,14 +9,12 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\ShortUrlVisited;
-use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Zend\Paginator\Paginator;
-
-use function sprintf;
 
 class VisitsTracker implements VisitsTrackerInterface
 {
@@ -43,10 +41,8 @@ class VisitsTracker implements VisitsTrackerInterface
 
         $visit = new Visit($shortUrl, $visitor);
 
-        /** @var ORM\EntityManager $em */
-        $em = $this->em;
-        $em->persist($visit);
-        $em->flush($visit);
+        $this->em->persist($visit);
+        $this->em->flush();
 
         $this->eventDispatcher->dispatch(new ShortUrlVisited($visit->getId()));
     }
@@ -55,14 +51,14 @@ class VisitsTracker implements VisitsTrackerInterface
      * Returns the visits on certain short code
      *
      * @return Visit[]|Paginator
-     * @throws InvalidArgumentException
+     * @throws ShortUrlNotFoundException
      */
     public function info(string $shortCode, VisitsParams $params): Paginator
     {
         /** @var ORM\EntityRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
         if ($repo->count(['shortCode' => $shortCode]) < 1) {
-            throw new InvalidArgumentException(sprintf('Short code "%s" not found', $shortCode));
+            throw ShortUrlNotFoundException::fromNotFoundShortCode($shortCode);
         }
 
         /** @var VisitRepository $repo */

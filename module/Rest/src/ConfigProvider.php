@@ -4,19 +4,26 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest;
 
-use Zend\Config\Factory;
-use Zend\Stdlib\Glob;
-
+use function Shlinkio\Shlink\Common\loadConfigFromGlob;
 use function sprintf;
 
 class ConfigProvider
 {
-    private const ROUTES_PREFIX = '/rest/v{version:1}';
+    private const ROUTES_PREFIX = '/rest/v{version:1|2}';
+
+    /** @var callable */
+    private $loadConfig;
+
+    public function __construct(?callable $loadConfig = null)
+    {
+        $this->loadConfig = $loadConfig ?? function (string $glob) {
+            return loadConfigFromGlob($glob);
+        };
+    }
 
     public function __invoke()
     {
-        /** @var array $config */
-        $config = Factory::fromFiles(Glob::glob(__DIR__ . '/../config/{,*.}config.php', Glob::GLOB_BRACE));
+        $config = ($this->loadConfig)(__DIR__ . '/../config/{,*.}config.php');
         return $this->applyRoutesPrefix($config);
     }
 

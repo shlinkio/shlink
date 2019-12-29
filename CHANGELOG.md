@@ -4,6 +4,58 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## 1.21.0 - 2019-12-29
+
+#### Added
+
+* [#118](https://github.com/shlinkio/shlink/issues/118) API errors now implement the [problem details](https://tools.ietf.org/html/rfc7807) standard.
+
+    In order to make it backwards compatible, two things have been done:
+
+    * Both the old `error` and `message` properties have been kept on error response, containing the same values as the `type` and `detail` properties respectively.
+    * The API `v2` has been enabled. If an error occurs when calling the API with this version, the `error` and `message` properties will not be returned.
+
+    > After Shlink v2 is released, both API versions will behave like API v2.
+
+* [#575](https://github.com/shlinkio/shlink/issues/575) Added support to filter short URL lists by date ranges.
+
+    * The `GET /short-urls` endpoint now accepts the `startDate` and `endDate` query params.
+    * The `short-urls:list` command now allows `--startDate` and `--endDate` flags to be optionally provided.
+
+* [#338](https://github.com/shlinkio/shlink/issues/338) Added support to asynchronously notify external services via webhook, only when shlink is served with swoole.
+
+    Configured webhooks will receive a POST request every time a URL receives a visit, including information about the short URL and the visit.
+
+    The payload will look like this:
+
+    ```json
+    {
+      "shortUrl": {},
+      "visit": {}
+    }
+    ```
+
+    > The `shortUrl` and `visit` props have the same shape as it is defined in the [API spec](https://api-spec.shlink.io).
+
+#### Changed
+
+* [#492](https://github.com/shlinkio/shlink/issues/492) Updated to monolog 2, together with other dependencies, like Symfony 5 and infection-php.
+* [#527](https://github.com/shlinkio/shlink/issues/527) Increased minimum required mutation score for unit tests to 80%.
+* [#557](https://github.com/shlinkio/shlink/issues/557) Added a few php.ini configs for development and production docker images.
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#570](https://github.com/shlinkio/shlink/issues/570) Fixed shlink version generated for docker images when building from `develop` branch.
+
+
 ## 1.20.3 - 2019-12-23
 
 #### Added

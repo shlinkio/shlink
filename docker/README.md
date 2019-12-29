@@ -19,7 +19,7 @@ It also expects these two env vars to be provided, in order to properly generate
 So based on this, to run shlink on a local docker service, you should run a command like this:
 
 ```bash
-docker run --name shlink -p 8080:8080 -e SHORT_DOMAIN_HOST=doma.in -e SHORT_DOMAIN_SCHEMA=https shlinkio/shlink
+docker run --name shlink -p 8080:8080 -e SHORT_DOMAIN_HOST=doma.in -e SHORT_DOMAIN_SCHEMA=https shlinkio/shlink:stable
 ```
 
 ### Interact with shlink's CLI on a running container.
@@ -73,13 +73,13 @@ It is possible to use a set of env vars to make this shlink instance interact wi
 Taking this into account, you could run shlink on a local docker service like this:
 
 ```bash
-docker run --name shlink -p 8080:8080 -e SHORT_DOMAIN_HOST=doma.in -e SHORT_DOMAIN_SCHEMA=https -e DB_DRIVER=mysql -e DB_USER=root -e DB_PASSWORD=123abc -e DB_HOST=something.rds.amazonaws.com shlinkio/shlink
+docker run --name shlink -p 8080:8080 -e SHORT_DOMAIN_HOST=doma.in -e SHORT_DOMAIN_SCHEMA=https -e DB_DRIVER=mysql -e DB_USER=root -e DB_PASSWORD=123abc -e DB_HOST=something.rds.amazonaws.com shlinkio/shlink:stable
 ```
 
 You could even link to a local database running on a different container:
 
 ```bash
-docker run --name shlink -p 8080:8080 [...] -e DB_HOST=some_mysql_container --link some_mysql_container shlinkio/shlink
+docker run --name shlink -p 8080:8080 [...] -e DB_HOST=some_mysql_container --link some_mysql_container shlinkio/shlink:stable
 ```
 
 > If you have considered using SQLite but sharing the database file with a volume, read [this issue](https://github.com/shlinkio/shlink-docker-image/issues/40) first.
@@ -110,6 +110,7 @@ This is the complete list of supported env vars:
 * `BASE_PATH`: The base path from which you plan to serve shlink, in case you don't want to serve it from the root of the domain. Defaults to `''`.
 * `WEB_WORKER_NUM`: The amount of concurrent http requests this shlink instance will be able to server. Defaults to 16.
 * `TASK_WORKER_NUM`: The amount of concurrent background tasks this shlink instance will be able to execute. Defaults to 16.
+* `VISITS_WEBHOOKS`: A comma-separated list of URLs that will receive a `POST` request when a short URL receives a visit.
 * `REDIS_SERVERS`: A comma-separated list of redis servers where Shlink locks are stored (locks are used to prevent some operations to be run more than once in parallel).
 
     This is important when running more than one Shlink instance ([Multi instance considerations](#multi-instance-considerations)). If not provided, Shlink stores locks on every instance separately.
@@ -145,7 +146,8 @@ docker run \
     -e "BASE_PATH=/my-campaign" \
     -e WEB_WORKER_NUM=64 \
     -e TASK_WORKER_NUM=32 \
-    shlinkio/shlink
+    -e "VISITS_WEBHOOKS=http://my-api.com/api/v2.3/notify,https://third-party.io/foo" \
+    shlinkio/shlink:stable
 ```
 
 ## Provide config via volumes
@@ -173,6 +175,10 @@ The whole configuration should have this format, but it can be split into multip
         "tcp://172.20.0.1:6379",
         "tcp://172.20.0.2:6379"
     ],
+    "visits_webhooks": [
+        "http://my-api.com/api/v2.3/notify",
+        "https://third-party.io/foo"
+    ],
     "db_config": {
         "driver": "pdo_mysql",
         "dbname": "shlink",
@@ -192,7 +198,7 @@ The whole configuration should have this format, but it can be split into multip
 Once created just run shlink with the volume:
 
 ```bash
-docker run --name shlink -p 8080:8080 -v ${PWD}/my/config/dir:/etc/shlink/config/params shlinkio/shlink
+docker run --name shlink -p 8080:8080 -v ${PWD}/my/config/dir:/etc/shlink/config/params shlinkio/shlink:stable
 ```
 
 ## Multi instance considerations

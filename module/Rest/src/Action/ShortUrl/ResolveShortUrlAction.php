@@ -4,19 +4,14 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
-use Exception;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\JsonResponse;
-
-use function sprintf;
 
 class ResolveShortUrlAction extends AbstractRestAction
 {
@@ -41,7 +36,7 @@ class ResolveShortUrlAction extends AbstractRestAction
     /**
      * @param Request $request
      * @return Response
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function handle(Request $request): Response
     {
@@ -49,27 +44,7 @@ class ResolveShortUrlAction extends AbstractRestAction
         $domain = $request->getQueryParams()['domain'] ?? null;
         $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
-        try {
-            $url = $this->urlShortener->shortCodeToUrl($shortCode, $domain);
-            return new JsonResponse($transformer->transform($url));
-        } catch (InvalidShortCodeException $e) {
-            $this->logger->warning('Provided short code with invalid format. {e}', ['e' => $e]);
-            return new JsonResponse([
-                'error' => RestUtils::getRestErrorCodeFromException($e),
-                'message' => sprintf('Provided short code "%s" has an invalid format', $shortCode),
-            ], self::STATUS_BAD_REQUEST);
-        } catch (EntityDoesNotExistException $e) {
-            $this->logger->warning('Provided short code couldn\'t be found. {e}', ['e' => $e]);
-            return new JsonResponse([
-                'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' => sprintf('No URL found for short code "%s"', $shortCode),
-            ], self::STATUS_NOT_FOUND);
-        } catch (Exception $e) {
-            $this->logger->error('Unexpected error while resolving the URL behind a short code. {e}', ['e' => $e]);
-            return new JsonResponse([
-                'error' => RestUtils::UNKNOWN_ERROR,
-                'message' => 'Unexpected error occurred',
-            ], self::STATUS_INTERNAL_SERVER_ERROR);
-        }
+        $url = $this->urlShortener->shortCodeToUrl($shortCode, $domain);
+        return new JsonResponse($transformer->transform($url));
     }
 }

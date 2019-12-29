@@ -10,7 +10,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
@@ -76,7 +76,7 @@ class RedirectActionTest extends TestCase
     public function nextMiddlewareIsInvokedIfLongUrlIsNotFound(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, '')->willThrow(EntityDoesNotExistException::class)
+        $this->urlShortener->shortCodeToUrl($shortCode, '')->willThrow(ShortUrlNotFoundException::class)
                                                            ->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();
 

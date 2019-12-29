@@ -5,18 +5,31 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink;
 
 use Zend\Expressive;
+use Zend\ProblemDetails;
 use Zend\Stratigility\Middleware\ErrorHandler;
 
 return [
 
     'middleware_pipeline' => [
+        'error-handler' => [
+            'middleware' => [
+                Expressive\Helper\ContentLengthMiddleware::class,
+                ErrorHandler::class,
+            ],
+        ],
+        'error-handler-rest' => [
+            'path' => '/rest',
+            'middleware' => [
+                Rest\Middleware\CrossDomainMiddleware::class,
+                Rest\Middleware\BackwardsCompatibleProblemDetailsMiddleware::class,
+                ProblemDetails\ProblemDetailsMiddleware::class,
+            ],
+        ],
+
         'pre-routing' => [
             'middleware' => [
-                ErrorHandler::class,
-                Expressive\Helper\ContentLengthMiddleware::class,
                 Common\Middleware\CloseDbConnectionMiddleware::class,
             ],
-            'priority' => 12,
         ],
         'pre-routing-rest' => [
             'path' => '/rest',
@@ -24,33 +37,40 @@ return [
                 Rest\Middleware\PathVersionMiddleware::class,
                 Rest\Middleware\ShortUrl\ShortCodePathMiddleware::class,
             ],
-            'priority' => 11,
         ],
 
         'routing' => [
             'middleware' => [
                 Expressive\Router\Middleware\RouteMiddleware::class,
             ],
-            'priority' => 10,
         ],
 
         'rest' => [
             'path' => '/rest',
             'middleware' => [
-                Rest\Middleware\CrossDomainMiddleware::class,
                 Expressive\Router\Middleware\ImplicitOptionsMiddleware::class,
                 Rest\Middleware\BodyParserMiddleware::class,
                 Rest\Middleware\AuthenticationMiddleware::class,
             ],
-            'priority' => 5,
         ],
 
-        'post-routing' => [
+        'dispatch' => [
             'middleware' => [
                 Expressive\Router\Middleware\DispatchMiddleware::class,
-                Core\Response\NotFoundHandler::class,
             ],
-            'priority' => 1,
+        ],
+
+        'not-found-rest' => [
+            'path' => '/rest',
+            'middleware' => [
+                ProblemDetails\ProblemDetailsNotFoundHandler::class,
+            ],
+        ],
+        'not-found' => [
+            'middleware' => [
+                Core\ErrorHandler\NotFoundRedirectHandler::class,
+                Core\ErrorHandler\NotFoundTemplateHandler::class,
+            ],
         ],
     ],
 ];

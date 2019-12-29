@@ -69,7 +69,7 @@ class GeneratePreviewCommand extends Command
         } catch (PreviewGenerationException $e) {
             $output->writeln(' <error>Error</error>');
             if ($output->isVerbose()) {
-                $this->getApplication()->renderException($e, $output);
+                $this->getApplication()->renderThrowable($e, $output);
             }
         }
     }

@@ -8,16 +8,16 @@ use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Lock\Factory as Locker;
+use Symfony\Component\Lock\LockFactory;
 
 use function sprintf;
 
 abstract class AbstractLockedCommand extends Command
 {
-    /** @var Locker */
+    /** @var LockFactory */
     private $locker;
 
-    public function __construct(Locker $locker)
+    public function __construct(LockFactory $locker)
     {
         parent::__construct();
         $this->locker = $locker;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest;
 
+use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service;
@@ -20,15 +21,15 @@ return [
             ApiKeyService::class => ConfigAbstractFactory::class,
 
             Action\AuthenticateAction::class => ConfigAbstractFactory::class,
-            Action\HealthAction::class => Action\HealthActionFactory::class,
+            Action\HealthAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\CreateShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\SingleStepCreateShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\EditShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\DeleteShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\ResolveShortUrlAction::class => ConfigAbstractFactory::class,
-            Action\Visit\GetVisitsAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\ListShortUrlsAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\EditShortUrlTagsAction::class => ConfigAbstractFactory::class,
+            Action\Visit\GetVisitsAction::class => ConfigAbstractFactory::class,
             Action\Tag\ListTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\DeleteTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\CreateTagsAction::class => ConfigAbstractFactory::class,
@@ -38,6 +39,7 @@ return [
             Middleware\BodyParserMiddleware::class => InvokableFactory::class,
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
             Middleware\PathVersionMiddleware::class => InvokableFactory::class,
+            Middleware\BackwardsCompatibleProblemDetailsMiddleware::class => ConfigAbstractFactory::class,
             Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class => InvokableFactory::class,
             Middleware\ShortUrl\ShortCodePathMiddleware::class => InvokableFactory::class,
         ],
@@ -48,6 +50,7 @@ return [
         ApiKeyService::class => ['em'],
 
         Action\AuthenticateAction::class => [ApiKeyService::class, Authentication\JWTService::class, 'Logger_Shlink'],
+        Action\HealthAction::class => [Connection::class, AppOptions::class, 'Logger_Shlink'],
         Action\ShortUrl\CreateShortUrlAction::class => [
             Service\UrlShortener::class,
             'config.url_shortener.domain',
@@ -73,6 +76,11 @@ return [
         Action\Tag\DeleteTagsAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
         Action\Tag\CreateTagsAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
         Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
+
+        Middleware\BackwardsCompatibleProblemDetailsMiddleware::class => [
+            'config.backwards_compatible_problem_details.default_type_fallbacks',
+            'config.backwards_compatible_problem_details.json_flags',
+        ],
     ],
 
 ];

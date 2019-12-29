@@ -7,8 +7,8 @@ namespace Shlinkio\Shlink\Core\Service\Tag;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
+use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 
@@ -36,8 +36,7 @@ class TagService implements TagServiceInterface
     }
 
     /**
-     * @param array $tagNames
-     * @return void
+     * @param string[] $tagNames
      */
     public function deleteTags(array $tagNames): void
     {
@@ -61,23 +60,18 @@ class TagService implements TagServiceInterface
     }
 
     /**
-     * @param string $oldName
-     * @param string $newName
-     * @return Tag
-     * @throws EntityDoesNotExistException
+     * @throws TagNotFoundException
      * @throws TagConflictException
-     * @throws ORM\OptimisticLockException
      */
-    public function renameTag($oldName, $newName): Tag
+    public function renameTag(string $oldName, string $newName): Tag
     {
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
-        $criteria = ['name' => $oldName];
 
         /** @var Tag|null $tag */
-        $tag = $repo->findOneBy($criteria);
+        $tag = $repo->findOneBy(['name' => $oldName]);
         if ($tag === null) {
-            throw EntityDoesNotExistException::createFromEntityAndConditions(Tag::class, $criteria);
+            throw TagNotFoundException::fromTag($oldName);
         }
 
         $newNameExists = $newName !== $oldName && $repo->count(['name' => $newName]) > 0;
@@ -86,10 +80,7 @@ class TagService implements TagServiceInterface
         }
 
         $tag->rename($newName);
-
-        /** @var ORM\EntityManager $em */
-        $em = $this->em;
-        $em->flush($tag);
+        $this->em->flush();
 
         return $tag;
     }

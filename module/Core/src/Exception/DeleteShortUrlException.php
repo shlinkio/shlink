@@ -4,32 +4,41 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Exception;
 
-use Throwable;
+use Fig\Http\Message\StatusCodeInterface;
+use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
+use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
 use function sprintf;
 
-class DeleteShortUrlException extends RuntimeException
+class DeleteShortUrlException extends DomainException implements ProblemDetailsExceptionInterface
 {
-    /** @var int */
-    private $visitsThreshold;
+    use CommonProblemDetailsExceptionTrait;
 
-    public function __construct(int $visitsThreshold, string $message = '', int $code = 0, ?Throwable $previous = null)
-    {
-        $this->visitsThreshold = $visitsThreshold;
-        parent::__construct($message, $code, $previous);
-    }
+    private const TITLE = 'Cannot delete short URL';
+    private const TYPE = 'INVALID_SHORTCODE_DELETION'; // FIXME Should be INVALID_SHORT_URL_DELETION
 
     public static function fromVisitsThreshold(int $threshold, string $shortCode): self
     {
-        return new self($threshold, sprintf(
+        $e = new self(sprintf(
             'Impossible to delete short URL with short code "%s" since it has more than "%s" visits.',
             $shortCode,
             $threshold
         ));
+
+        $e->detail = $e->getMessage();
+        $e->title = self::TITLE;
+        $e->type = self::TYPE;
+        $e->status = StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY;
+        $e->additional = [
+            'shortCode' => $shortCode,
+            'threshold' => $threshold,
+        ];
+
+        return $e;
     }
 
     public function getVisitsThreshold(): int
     {
-        return $this->visitsThreshold;
+        return $this->additional['threshold'];
     }
 }

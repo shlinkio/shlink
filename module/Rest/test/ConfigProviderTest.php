@@ -18,12 +18,33 @@ class ConfigProviderTest extends TestCase
     }
 
     /** @test */
-    public function properConfigIsReturned()
+    public function properConfigIsReturned(): void
     {
-        $config = $this->configProvider->__invoke();
+        $config = ($this->configProvider)();
 
-        $this->assertArrayHasKey('error_handler', $config);
         $this->assertArrayHasKey('routes', $config);
         $this->assertArrayHasKey('dependencies', $config);
+    }
+
+    /** @test */
+    public function routesAreProperlyPrefixed(): void
+    {
+        $configProvider = new ConfigProvider(function () {
+            return [
+                'routes' => [
+                    ['path' => '/foo'],
+                    ['path' => '/bar'],
+                    ['path' => '/baz/foo'],
+                ],
+            ];
+        });
+
+        $config = $configProvider();
+
+        $this->assertEquals([
+            ['path' => '/rest/v{version:1|2}/foo'],
+            ['path' => '/rest/v{version:1|2}/bar'],
+            ['path' => '/rest/v{version:1|2}/baz/foo'],
+        ], $config['routes']);
     }
 }

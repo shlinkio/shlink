@@ -6,11 +6,11 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function Functional\map;
 use function range;
+use function sprintf;
 
 class CreateShortUrlActionTest extends ApiTestCase
 {
@@ -41,10 +41,25 @@ class CreateShortUrlActionTest extends ApiTestCase
      */
     public function failsToCreateShortUrlWithDuplicatedSlug(string $slug, ?string $domain): void
     {
+        $suffix = $domain === null ? '' : sprintf(' for domain "%s"', $domain);
+        $detail = sprintf('Provided slug "%s" is already in use%s.', $slug, $suffix);
+
         [$statusCode, $payload] = $this->createShortUrl(['customSlug' => $slug, 'domain' => $domain]);
 
         $this->assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
-        $this->assertEquals(RestUtils::INVALID_SLUG_ERROR, $payload['error']);
+        $this->assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
+        $this->assertEquals($detail, $payload['detail']);
+        $this->assertEquals($detail, $payload['message']); // Deprecated
+        $this->assertEquals('INVALID_SLUG', $payload['type']);
+        $this->assertEquals('INVALID_SLUG', $payload['error']); // Deprecated
+        $this->assertEquals('Invalid custom slug', $payload['title']);
+        $this->assertEquals($slug, $payload['customSlug']);
+
+        if ($domain !== null) {
+            $this->assertEquals($domain, $payload['domain']);
+        } else {
+            $this->assertArrayNotHasKey('domain', $payload);
+        }
     }
 
     /** @test */
@@ -199,6 +214,24 @@ class CreateShortUrlActionTest extends ApiTestCase
         yield ['http://tést.shlink.io']; // Redirects to https://shlink.io
         yield ['http://test.shlink.io']; // Redirects to http://tést.shlink.io
         yield ['http://téstb.shlink.io']; // Redirects to http://tést.shlink.io
+    }
+
+    /** @test */
+    public function failsToCreateShortUrlWithInvalidOriginalUrl(): void
+    {
+        $url = 'https://this-has-to-be-invalid.com';
+        $expectedDetail = sprintf('Provided URL %s is invalid. Try with a different one.', $url);
+
+        [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $url]);
+
+        $this->assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
+        $this->assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
+        $this->assertEquals('INVALID_URL', $payload['type']);
+        $this->assertEquals('INVALID_URL', $payload['error']); // Deprecated
+        $this->assertEquals($expectedDetail, $payload['detail']);
+        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
+        $this->assertEquals('Invalid URL', $payload['title']);
+        $this->assertEquals($url, $payload['url']);
     }
 
     /**

@@ -7,15 +7,10 @@ namespace Shlinkio\Shlink\Rest\Action\Tag;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Core\Exception\EntityDoesNotExistException;
-use Shlinkio\Shlink\Core\Exception\TagConflictException;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Zend\Diactoros\Response\EmptyResponse;
-use Zend\Diactoros\Response\JsonResponse;
-
-use function sprintf;
 
 class UpdateTagAction extends AbstractRestAction
 {
@@ -44,30 +39,13 @@ class UpdateTagAction extends AbstractRestAction
     {
         $body = $request->getParsedBody();
         if (! isset($body['oldName'], $body['newName'])) {
-            return new JsonResponse([
-                'error' => RestUtils::INVALID_ARGUMENT_ERROR,
-                'message' =>
-                    'You have to provide both \'oldName\' and \'newName\' params in order to properly rename the tag',
-            ], self::STATUS_BAD_REQUEST);
+            throw ValidationException::fromArray([
+                'oldName' => 'oldName is required',
+                'newName' => 'newName is required',
+            ]);
         }
 
-        try {
-            $this->tagService->renameTag($body['oldName'], $body['newName']);
-            return new EmptyResponse();
-        } catch (EntityDoesNotExistException $e) {
-            return new JsonResponse([
-                'error' => RestUtils::NOT_FOUND_ERROR,
-                'message' => sprintf('It was not possible to find a tag with name %s', $body['oldName']),
-            ], self::STATUS_NOT_FOUND);
-        } catch (TagConflictException $e) {
-            return new JsonResponse([
-                'error' => 'TAG_CONFLICT',
-                'message' => sprintf(
-                    'You cannot rename tag %s to %s, because it already exists',
-                    $body['oldName'],
-                    $body['newName']
-                ),
-            ], self::STATUS_CONFLICT);
-        }
+        $this->tagService->renameTag($body['oldName'], $body['newName']);
+        return new EmptyResponse();
     }
 }

@@ -8,12 +8,14 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Rest\Authentication;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
 
+use function implode;
 use function Zend\Stratigility\middleware;
 
 class CrossDomainMiddlewareTest extends TestCase
@@ -39,6 +41,7 @@ class CrossDomainMiddlewareTest extends TestCase
         $this->assertSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
+
         $this->assertArrayNotHasKey('Access-Control-Allow-Origin', $headers);
         $this->assertArrayNotHasKey('Access-Control-Expose-Headers', $headers);
         $this->assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
@@ -59,8 +62,12 @@ class CrossDomainMiddlewareTest extends TestCase
         $this->assertNotSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
-        $this->assertArrayHasKey('Access-Control-Allow-Origin', $headers);
-        $this->assertArrayHasKey('Access-Control-Expose-Headers', $headers);
+
+        $this->assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
+        $this->assertEquals(implode(', ', [
+            Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
+            Authentication\Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
+        ]), $response->getHeaderLine('Access-Control-Expose-Headers'));
         $this->assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
         $this->assertArrayNotHasKey('Access-Control-Max-Age', $headers);
         $this->assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
@@ -70,18 +77,25 @@ class CrossDomainMiddlewareTest extends TestCase
     public function optionsRequestIncludesMoreHeaders(): void
     {
         $originalResponse = new Response();
-        $request = (new ServerRequest())->withMethod('OPTIONS')->withHeader('Origin', 'local');
+        $request = (new ServerRequest())
+            ->withMethod('OPTIONS')
+            ->withHeader('Origin', 'local')
+            ->withHeader('Access-Control-Request-Headers', 'foo, bar, baz');
         $this->handler->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
 
         $response = $this->middleware->process($request, $this->handler->reveal());
         $this->assertNotSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
-        $this->assertArrayHasKey('Access-Control-Allow-Origin', $headers);
-        $this->assertArrayHasKey('Access-Control-Expose-Headers', $headers);
+
+        $this->assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
+        $this->assertEquals(implode(', ', [
+            Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
+            Authentication\Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
+        ]), $response->getHeaderLine('Access-Control-Expose-Headers'));
         $this->assertArrayHasKey('Access-Control-Allow-Methods', $headers);
-        $this->assertArrayHasKey('Access-Control-Max-Age', $headers);
-        $this->assertArrayHasKey('Access-Control-Allow-Headers', $headers);
+        $this->assertEquals('1000', $response->getHeaderLine('Access-Control-Max-Age'));
+        $this->assertEquals('foo, bar, baz', $response->getHeaderLine('Access-Control-Allow-Headers'));
     }
 
     /**

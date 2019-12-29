@@ -84,7 +84,7 @@ class UpdateDbCommand extends Command
 
         $io->error($baseErrorMsg);
         if ($io->isVerbose()) {
-            $this->getApplication()->renderException($e, $io);
+            $this->getApplication()->renderThrowable($e, $io);
         }
         return ExitCodes::EXIT_FAILURE;
     }

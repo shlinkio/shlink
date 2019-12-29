@@ -9,8 +9,7 @@ use GeoIp2\Database\Reader;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
-use Symfony\Component\Lock\Factory as Locker;
-use Throwable;
+use Symfony\Component\Lock\LockFactory;
 
 class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
 {
@@ -20,10 +19,10 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     private $dbUpdater;
     /** @var Reader */
     private $geoLiteDbReader;
-    /** @var Locker */
+    /** @var LockFactory */
     private $locker;
 
-    public function __construct(DbUpdaterInterface $dbUpdater, Reader $geoLiteDbReader, Locker $locker)
+    public function __construct(DbUpdaterInterface $dbUpdater, Reader $geoLiteDbReader, LockFactory $locker)
     {
         $this->dbUpdater = $dbUpdater;
         $this->geoLiteDbReader = $geoLiteDbReader;
@@ -40,8 +39,6 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
 
         try {
             $this->downloadIfNeeded($mustBeUpdated, $handleProgress);
-        } catch (Throwable $e) {
-            throw $e;
         } finally {
             $lock->release();
         }

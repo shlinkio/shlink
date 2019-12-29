@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM;
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
@@ -30,13 +31,19 @@ class ShortUrlService implements ShortUrlServiceInterface
     /**
      * @param string[] $tags
      * @param array|string|null $orderBy
+     *
      * @return ShortUrl[]|Paginator
      */
-    public function listShortUrls(int $page = 1, ?string $searchQuery = null, array $tags = [], $orderBy = null)
-    {
+    public function listShortUrls(
+        int $page = 1,
+        ?string $searchQuery = null,
+        array $tags = [],
+        $orderBy = null,
+        ?DateRange $dateRange = null
+    ) {
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        $paginator = new Paginator(new ShortUrlRepositoryAdapter($repo, $searchQuery, $tags, $orderBy));
+        $paginator = new Paginator(new ShortUrlRepositoryAdapter($repo, $searchQuery, $tags, $orderBy, $dateRange));
         $paginator->setItemCountPerPage(ShortUrlRepositoryAdapter::ITEMS_PER_PAGE)
                   ->setCurrentPageNumber($page);
 
@@ -45,7 +52,7 @@ class ShortUrlService implements ShortUrlServiceInterface
 
     /**
      * @param string[] $tags
-     * @throws InvalidShortCodeException
+     * @throws ShortUrlNotFoundException
      */
     public function setTagsByShortCode(string $shortCode, array $tags = []): ShortUrl
     {
@@ -57,16 +64,14 @@ class ShortUrlService implements ShortUrlServiceInterface
     }
 
     /**
-     * @throws InvalidShortCodeException
+     * @throws ShortUrlNotFoundException
      */
     public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortUrlMeta): ShortUrl
     {
         $shortUrl = $this->findByShortCode($this->em, $shortCode);
         $shortUrl->updateMeta($shortUrlMeta);
 
-        /** @var ORM\EntityManager $em */
-        $em = $this->em;
-        $em->flush($shortUrl);
+        $this->em->flush();
 
         return $shortUrl;
     }

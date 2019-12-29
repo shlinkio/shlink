@@ -99,6 +99,12 @@ $helper = new class {
             'base_url' => env('BASE_URL_REDIRECT_TO'),
         ];
     }
+
+    public function getVisitsWebhooks(): array
+    {
+        $webhooks = env('VISITS_WEBHOOKS');
+        return $webhooks === null ? [] : explode(',', $webhooks);
+    }
 };
 
 return [
@@ -125,26 +131,21 @@ return [
             'hostname' => env('SHORT_DOMAIN_HOST', ''),
         ],
         'validate_url' => (bool) env('VALIDATE_URLS', true),
+        'visits_webhooks' => $helper->getVisitsWebhooks(),
     ],
 
     'not_found_redirects' => $helper->getNotFoundRedirectsConfig(),
 
     'logger' => [
-        'handlers' => [
-            'shlink_rotating_handler' => [
-                'level' => Logger::EMERGENCY, // This basically disables regular file logs
-            ],
-            'shlink_stdout_handler' => [
-                'class' => StreamHandler::class,
-                'level' => Logger::INFO,
-                'stream' => 'php://stdout',
-                'formatter' => 'dashed',
-            ],
-        ],
-
-        'loggers' => [
-            'Shlink' => [
-                'handlers' => ['shlink_stdout_handler'],
+        'Shlink' => [
+            'handlers' => [
+                'shlink_handler' => [
+                    'name' => StreamHandler::class,
+                    'params' => [
+                        'level' => Logger::INFO,
+                        'stream' => 'php://stdout',
+                    ],
+                ],
             ],
         ],
     ],

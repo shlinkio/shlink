@@ -8,7 +8,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Rest\Authentication\JWTServiceInterface;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
-use Shlinkio\Shlink\Rest\Util\RestUtils;
 use Throwable;
 
 use function count;
@@ -16,6 +15,7 @@ use function explode;
 use function sprintf;
 use function strtolower;
 
+/** @deprecated */
 class AuthorizationHeaderPlugin implements AuthenticationPluginInterface
 {
     public const HEADER_NAME = 'Authorization';
@@ -37,19 +37,13 @@ class AuthorizationHeaderPlugin implements AuthenticationPluginInterface
         $authToken = $request->getHeaderLine(self::HEADER_NAME);
         $authTokenParts = explode(' ', $authToken);
         if (count($authTokenParts) === 1) {
-            throw VerifyAuthenticationException::withError(
-                RestUtils::INVALID_AUTHORIZATION_ERROR,
-                sprintf('You need to provide the Bearer type in the %s header.', self::HEADER_NAME)
-            );
+            throw VerifyAuthenticationException::forMissingAuthType();
         }
 
         // Make sure the authorization type is Bearer
         [$authType, $jwt] = $authTokenParts;
         if (strtolower($authType) !== 'bearer') {
-            throw VerifyAuthenticationException::withError(
-                RestUtils::INVALID_AUTHORIZATION_ERROR,
-                sprintf('Provided authorization type %s is not supported. Use Bearer instead.', $authType)
-            );
+            throw VerifyAuthenticationException::forInvalidAuthType($authType);
         }
 
         try {
@@ -57,21 +51,13 @@ class AuthorizationHeaderPlugin implements AuthenticationPluginInterface
                 throw $this->createInvalidTokenError();
             }
         } catch (Throwable $e) {
-            throw $this->createInvalidTokenError($e);
+            throw $this->createInvalidTokenError();
         }
     }
 
-    private function createInvalidTokenError(?Throwable $prev = null): VerifyAuthenticationException
+    private function createInvalidTokenError(): VerifyAuthenticationException
     {
-        return VerifyAuthenticationException::withError(
-            RestUtils::INVALID_AUTH_TOKEN_ERROR,
-            sprintf(
-                'Missing or invalid auth token provided. Perform a new authentication request and send provided '
-                . 'token on every new request on the %s header',
-                self::HEADER_NAME
-            ),
-            $prev
-        );
+        return VerifyAuthenticationException::forInvalidAuthToken();
     }
 
     public function update(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface

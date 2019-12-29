@@ -12,6 +12,7 @@ use UnexpectedValueException;
 
 use function time;
 
+/** @deprecated */
 class JWTService implements JWTServiceInterface
 {
     /** @var AppOptions */

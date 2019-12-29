@@ -12,7 +12,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Exception\InvalidShortCodeException;
+use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
@@ -35,7 +35,7 @@ class ShortUrlServiceTest extends TestCase
     }
 
     /** @test */
-    public function listedUrlsAreReturnedFromEntityManager()
+    public function listedUrlsAreReturnedFromEntityManager(): void
     {
         $list = [
             new ShortUrl(''),
@@ -54,7 +54,7 @@ class ShortUrlServiceTest extends TestCase
     }
 
     /** @test */
-    public function exceptionIsThrownWhenSettingTagsOnInvalidShortcode()
+    public function exceptionIsThrownWhenSettingTagsOnInvalidShortcode(): void
     {
         $shortCode = 'abc123';
         $repo = $this->prophesize(ShortUrlRepository::class);
@@ -62,12 +62,12 @@ class ShortUrlServiceTest extends TestCase
                                                      ->shouldBeCalledOnce();
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $this->expectException(InvalidShortCodeException::class);
+        $this->expectException(ShortUrlNotFoundException::class);
         $this->service->setTagsByShortCode($shortCode);
     }
 
     /** @test */
-    public function providedTagsAreGetFromRepoAndSetToTheShortUrl()
+    public function providedTagsAreGetFromRepoAndSetToTheShortUrl(): void
     {
         $shortUrl = $this->prophesize(ShortUrl::class);
         $shortUrl->setTags(Argument::any())->shouldBeCalledOnce();
@@ -86,14 +86,14 @@ class ShortUrlServiceTest extends TestCase
     }
 
     /** @test */
-    public function updateMetadataByShortCodeUpdatesProvidedData()
+    public function updateMetadataByShortCodeUpdatesProvidedData(): void
     {
         $shortUrl = new ShortUrl('');
 
         $repo = $this->prophesize(ShortUrlRepository::class);
         $findShortUrl = $repo->findOneBy(['shortCode' => 'abc123'])->willReturn($shortUrl);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
-        $flush = $this->em->flush($shortUrl)->willReturn(null);
+        $flush = $this->em->flush()->willReturn(null);
 
         $result = $this->service->updateMetadataByShortCode('abc123', ShortUrlMeta::createFromParams(
             Chronos::parse('2017-01-01 00:00:00')->toAtomString(),

@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Rest\Authentication\Plugin\ApiKeyHeaderPlugin;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthorizationHeaderPlugin;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPlugin;
-use Shlinkio\Shlink\Rest\Exception\NoAuthenticationException;
+use Shlinkio\Shlink\Rest\Exception\MissingAuthenticationException;
 use Zend\Diactoros\ServerRequest;
 
 use function implode;
@@ -35,9 +35,9 @@ class RequestToAuthPluginTest extends TestCase
     {
         $request = new ServerRequest();
 
-        $this->expectException(NoAuthenticationException::class);
+        $this->expectException(MissingAuthenticationException::class);
         $this->expectExceptionMessage(sprintf(
-            'None of the valid authentication mechanisms where provided. Expected one of ["%s"]',
+            'Expected one of the following authentication headers, ["%s"], but none were provided',
             implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)
         ));
 

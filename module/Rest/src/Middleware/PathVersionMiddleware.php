@@ -15,23 +15,12 @@ class PathVersionMiddleware implements MiddlewareInterface
 {
     // TODO The /health endpoint needs this middleware in order to work without the version.
     //      Take it into account if this middleware is ever removed.
-
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * to the next middleware component to create the response.
-     *
-     * @param Request $request
-     * @param RequestHandlerInterface $handler
-     *
-     * @return Response
-     * @throws \InvalidArgumentException
-     */
     public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         $uri = $request->getUri();
         $path = $uri->getPath();
 
-        // If the path does not begin with the version number, prepend v1 by default for BC compatibility purposes
+        // If the path does not begin with the version number, prepend v1 by default for BC purposes
         if (strpos($path, '/v') !== 0) {
             $request = $request->withUri($uri->withPath('/v1' . $uri->getPath()));
         }

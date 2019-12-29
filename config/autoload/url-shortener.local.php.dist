@@ -1,0 +1,14 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+
+    'url_shortener' => [
+        'domain' => [
+            'schema' => 'http',
+            'hostname' => 'localhost:8080',
+        ],
+    ],
+
+];

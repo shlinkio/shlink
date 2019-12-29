@@ -8,6 +8,9 @@
         "description": "Returns the list of short URLs.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
         "parameters": [
             {
+                "$ref": "../parameters/version.json"
+            },
+            {
                 "name": "page",
                 "in": "query",
                 "description": "The page to be displayed. Defaults to 1",
@@ -50,6 +53,24 @@
                         "dateCreated",
                         "visits"
                     ]
+                }
+            },
+            {
+                "name": "startDate",
+                "in": "query",
+                "description": "The date (in ISO-8601 format) from which we want to get short URLs.",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "endDate",
+                "in": "query",
+                "description": "The date (in ISO-8601 format) until which we want to get short URLs.",
+                "required": false,
+                "schema": {
+                    "type": "string"
                 }
             }
         ],
@@ -150,7 +171,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
@@ -173,6 +194,11 @@
             },
             {
                 "Bearer": []
+            }
+        ],
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
             }
         ],
         "requestBody": {
@@ -256,11 +282,43 @@
                 }
             },
             "400": {
-                "description": "The long URL was not provided or is invalid.",
+                "description": "Some of provided data is invalid. Check extra fields to know exactly what.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
-                            "$ref": "../definitions/Error.json"
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "../definitions/Error.json"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "invalidElements": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "validSince",
+                                                    "validUntil",
+                                                    "customSlug",
+                                                    "maxVisits",
+                                                    "findIfExists",
+                                                    "domain"
+                                                ]
+                                            }
+                                        },
+                                        "url": {
+                                            "type": "string",
+                                            "description": "A URL that could not be verified, if the error type is INVALID_URL"
+                                        },
+                                        "customSlug": {
+                                            "type": "string",
+                                            "description": "Provided custom slug when the error type is INVALID_SLUG"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -268,7 +326,7 @@
             "500": {
                 "description": "Unexpected error.",
                 "content": {
-                    "application/json": {
+                    "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         }
