@@ -21,12 +21,9 @@ use function array_key_exists;
 
 class RedirectActionTest extends TestCase
 {
-    /** @var RedirectAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $urlShortener;
-    /** @var ObjectProphecy */
-    private $visitTracker;
+    private RedirectAction $action;
+    private ObjectProphecy $urlShortener;
+    private ObjectProphecy $visitTracker;
 
     public function setUp(): void
     {

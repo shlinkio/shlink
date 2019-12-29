@@ -8,20 +8,18 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Api\DisableKeyCommand;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
-use Shlinkio\Shlink\Rest\Service\ApiKeyService;
+use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class DisableKeyCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $apiKeyService;
+    private CommandTester $commandTester;
+    private ObjectProphecy $apiKeyService;
 
     public function setUp(): void
     {
-        $this->apiKeyService = $this->prophesize(ApiKeyService::class);
+        $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
         $command = new DisableKeyCommand($this->apiKeyService->reveal());
         $app = new Application();
         $app->add($command);

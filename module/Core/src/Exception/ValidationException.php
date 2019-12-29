@@ -25,8 +25,7 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
     private const TITLE = 'Invalid data';
     private const TYPE = 'INVALID_ARGUMENT';
 
-    /** @var array */
-    private $invalidElements;
+    private array $invalidElements;
 
     public static function fromInputFilter(InputFilterInterface $inputFilter, ?Throwable $prev = null): self
     {

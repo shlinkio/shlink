@@ -25,14 +25,10 @@ use function http_build_query;
 
 abstract class AbstractTrackingAction implements MiddlewareInterface
 {
-    /** @var UrlShortenerInterface */
-    private $urlShortener;
-    /** @var VisitsTrackerInterface */
-    private $visitTracker;
-    /** @var AppOptions */
-    private $appOptions;
-    /** @var LoggerInterface */
-    private $logger;
+    private UrlShortenerInterface $urlShortener;
+    private VisitsTrackerInterface $visitTracker;
+    private AppOptions $appOptions;
+    private LoggerInterface $logger;
 
     public function __construct(
         UrlShortenerInterface $urlShortener,

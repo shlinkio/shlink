@@ -21,6 +21,7 @@ use function filesize;
 
 use const FILEINFO_MIME;
 
+/** @deprecated */
 class PreviewActionTest extends TestCase
 {
     /** @var PreviewAction */

@@ -15,8 +15,7 @@ use Zend\ServiceManager\ServiceManager;
 
 class ApplicationFactoryTest extends TestCase
 {
-    /** @var ApplicationFactory */
-    private $factory;
+    private ApplicationFactory $factory;
 
     public function setUp(): void
     {
@@ -36,7 +35,6 @@ class ApplicationFactoryTest extends TestCase
         $sm->setService('foo', $this->createCommandMock('foo')->reveal());
         $sm->setService('bar', $this->createCommandMock('bar')->reveal());
 
-        /** @var Application $instance */
         $instance = ($this->factory)($sm);
 
         $this->assertTrue($instance->has('foo'));

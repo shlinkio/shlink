@@ -21,10 +21,8 @@ use function explode;
 
 class ListShortUrlsCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $shortUrlService;
+    private CommandTester $commandTester;
+    private ObjectProphecy $shortUrlService;
 
     public function setUp(): void
     {

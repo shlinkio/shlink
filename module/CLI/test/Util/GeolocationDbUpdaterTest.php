@@ -22,16 +22,11 @@ use function range;
 
 class GeolocationDbUpdaterTest extends TestCase
 {
-    /** @var GeolocationDbUpdater */
-    private $geolocationDbUpdater;
-    /** @var ObjectProphecy */
-    private $dbUpdater;
-    /** @var ObjectProphecy */
-    private $geoLiteDbReader;
-    /** @var ObjectProphecy */
-    private $locker;
-    /** @var ObjectProphecy */
-    private $lock;
+    private GeolocationDbUpdater $geolocationDbUpdater;
+    private ObjectProphecy $dbUpdater;
+    private ObjectProphecy $geoLiteDbReader;
+    private ObjectProphecy $locker;
+    private ObjectProphecy $lock;
 
     public function setUp(): void
     {

@@ -18,8 +18,7 @@ class ListTagsCommand extends Command
 {
     public const NAME = 'tag:list';
 
-    /** @var TagServiceInterface */
-    private $tagService;
+    private TagServiceInterface $tagService;
 
     public function __construct(TagServiceInterface $tagService)
     {

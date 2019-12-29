@@ -15,16 +15,12 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
 {
     public const ITEMS_PER_PAGE = 10;
 
-    /** @var ShortUrlRepositoryInterface */
-    private $repository;
-    /** @var null|string */
-    private $searchTerm;
+    private ShortUrlRepositoryInterface $repository;
+    private ?string $searchTerm;
     /** @var null|array|string */
     private $orderBy;
-    /** @var array */
-    private $tags;
-    /** @var DateRange|null */
-    private $dateRange;
+    private array $tags;
+    private ?DateRange $dateRange;
 
     public function __construct(
         ShortUrlRepositoryInterface $repository,

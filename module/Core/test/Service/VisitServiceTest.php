@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManager;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -94,7 +95,9 @@ class VisitServiceTest extends TestCase
         });
 
         $this->visitService->locateUnlocatedVisits(function () use ($isNonLocatableAddress) {
-            throw new IpCannotBeLocatedException($isNonLocatableAddress, 'Cannot be located');
+            throw $isNonLocatableAddress
+                ? new IpCannotBeLocatedException('Cannot be located')
+                : IpCannotBeLocatedException::forError(new Exception(''));
         });
 
         $findUnlocatedVisits->shouldHaveBeenCalledOnce();

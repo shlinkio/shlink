@@ -14,8 +14,7 @@ use function sprintf;
 
 abstract class AbstractLockedCommand extends Command
 {
-    /** @var LockFactory */
-    private $locker;
+    private LockFactory $locker;
 
     public function __construct(LockFactory $locker)
     {

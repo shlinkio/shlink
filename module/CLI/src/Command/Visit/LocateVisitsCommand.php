@@ -32,17 +32,12 @@ class LocateVisitsCommand extends AbstractLockedCommand
     public const NAME = 'visit:locate';
     public const ALIASES = ['visit:process'];
 
-    /** @var VisitServiceInterface */
-    private $visitService;
-    /** @var IpLocationResolverInterface */
-    private $ipLocationResolver;
-    /** @var GeolocationDbUpdaterInterface */
-    private $dbUpdater;
+    private VisitServiceInterface $visitService;
+    private IpLocationResolverInterface $ipLocationResolver;
+    private GeolocationDbUpdaterInterface $dbUpdater;
 
-    /** @var SymfonyStyle */
-    private $io;
-    /** @var ProgressBar */
-    private $progressBar;
+    private SymfonyStyle $io;
+    private ?ProgressBar $progressBar = null;
 
     public function __construct(
         VisitServiceInterface $visitService,

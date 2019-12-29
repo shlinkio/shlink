@@ -8,8 +8,7 @@ use JsonSerializable;
 
 final class ShortUrlVisited implements JsonSerializable
 {
-    /** @var string */
-    private $visitId;
+    private string $visitId;
 
     public function __construct(string $visitId)
     {

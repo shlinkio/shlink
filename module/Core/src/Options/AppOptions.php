@@ -13,17 +13,11 @@ class AppOptions extends AbstractOptions
 {
     use StringUtilsTrait;
 
-    /** @var string */
-    private $name = '';
-    /** @var string */
-    private $version = '1.0';
-    /**
-     * @var string
-     * @deprecated
-     */
-    private $secretKey = '';
-    /** @var string|null */
-    private $disableTrackParam;
+    private string $name = '';
+    private string $version = '1.0';
+    /** @deprecated */
+    private string $secretKey = '';
+    private ?string $disableTrackParam = null;
 
     public function getName(): string
     {

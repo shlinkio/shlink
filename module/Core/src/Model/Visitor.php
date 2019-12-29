@@ -15,12 +15,9 @@ final class Visitor
     public const REFERER_MAX_LENGTH = 1024;
     public const REMOTE_ADDRESS_MAX_LENGTH = 256;
 
-    /** @var string */
-    private $userAgent;
-    /** @var string */
-    private $referer;
-    /** @var string|null */
-    private $remoteAddress;
+    private string $userAgent;
+    private string $referer;
+    private ?string $remoteAddress;
 
     public function __construct(string $userAgent, string $referer, ?string $remoteAddress)
     {

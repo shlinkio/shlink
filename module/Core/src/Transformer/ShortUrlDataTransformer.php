@@ -12,8 +12,7 @@ use function Functional\invoke_if;
 
 class ShortUrlDataTransformer implements DataTransformerInterface
 {
-    /** @var array */
-    private $domainConfig;
+    private array $domainConfig;
 
     public function __construct(array $domainConfig)
     {

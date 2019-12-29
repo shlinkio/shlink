@@ -8,12 +8,9 @@ use Zend\Stdlib\AbstractOptions;
 
 class NotFoundRedirectOptions extends AbstractOptions
 {
-    /** @var string|null */
-    private $invalidShortUrl;
-    /** @var string|null */
-    private $regular404;
-    /** @var string|null */
-    private $baseUrl;
+    private ?string $invalidShortUrl = null;
+    private ?string $regular404 = null;
+    private ?string $baseUrl = null;
 
     public function getInvalidShortUrlRedirect(): ?string
     {

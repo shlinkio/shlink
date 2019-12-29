@@ -25,8 +25,7 @@ class ListKeysCommand extends Command
 
     public const NAME = 'api-key:list';
 
-    /** @var ApiKeyServiceInterface */
-    private $apiKeyService;
+    private ApiKeyServiceInterface $apiKeyService;
 
     public function __construct(ApiKeyServiceInterface $apiKeyService)
     {

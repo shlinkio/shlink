@@ -13,8 +13,7 @@ use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitService implements VisitServiceInterface
 {
-    /** @var EntityManagerInterface */
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em)
     {

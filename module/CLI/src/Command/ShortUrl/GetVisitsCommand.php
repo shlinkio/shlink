@@ -24,8 +24,7 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
     public const NAME = 'short-url:visits';
     private const ALIASES = ['shortcode:visits', 'short-code:visits'];
 
-    /** @var VisitsTrackerInterface */
-    private $visitsTracker;
+    private VisitsTrackerInterface $visitsTracker;
 
     public function __construct(VisitsTrackerInterface $visitsTracker)
     {

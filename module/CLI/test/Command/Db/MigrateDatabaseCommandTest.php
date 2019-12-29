@@ -18,10 +18,8 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class MigrateDatabaseCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $processHelper;
+    private CommandTester $commandTester;
+    private ObjectProphecy $processHelper;
 
     public function setUp(): void
     {

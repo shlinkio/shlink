@@ -22,18 +22,13 @@ use function GuzzleHttp\Promise\settle;
 
 class NotifyVisitToWebHooks
 {
-    /** @var ClientInterface */
-    private $httpClient;
-    /** @var EntityManagerInterface */
-    private $em;
-    /** @var LoggerInterface */
-    private $logger;
-    /** @var array */
-    private $webhooks;
-    /** @var ShortUrlDataTransformer */
-    private $transformer;
-    /** @var AppOptions */
-    private $appOptions;
+    private ClientInterface $httpClient;
+    private EntityManagerInterface $em;
+    private LoggerInterface $logger;
+    /** @var string[] */
+    private array $webhooks;
+    private ShortUrlDataTransformer $transformer;
+    private AppOptions $appOptions;
 
     public function __construct(
         ClientInterface $httpClient,

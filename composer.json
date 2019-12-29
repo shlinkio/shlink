@@ -60,7 +60,7 @@
         "devster/ubench": "^2.0",
         "eaglewu/swoole-ide-helper": "dev-master",
         "infection/infection": "^0.15.0",
-        "phpstan/phpstan-shim": "^0.11.16",
+        "phpstan/phpstan": "^0.12.3",
         "phpunit/phpunit": "^8.3",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.0.0",

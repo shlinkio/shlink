@@ -9,8 +9,7 @@ use Shlinkio\Shlink\Core\Entity\Domain;
 
 class PersistenceDomainResolver implements DomainResolverInterface
 {
-    /** @var EntityManagerInterface */
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em)
     {

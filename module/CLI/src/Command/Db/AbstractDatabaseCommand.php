@@ -15,10 +15,8 @@ use function array_unshift;
 
 abstract class AbstractDatabaseCommand extends AbstractLockedCommand
 {
-    /** @var ProcessHelper */
-    private $processHelper;
-    /** @var string */
-    private $phpBinary;
+    private ProcessHelper $processHelper;
+    private string $phpBinary;
 
     public function __construct(LockFactory $locker, ProcessHelper $processHelper, PhpExecutableFinder $phpFinder)
     {

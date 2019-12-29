@@ -20,10 +20,8 @@ use const PHP_EOL;
 
 class DeleteShortUrlCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $service;
+    private CommandTester $commandTester;
+    private ObjectProphecy $service;
 
     public function setUp(): void
     {

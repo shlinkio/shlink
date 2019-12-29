@@ -14,12 +14,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ListTagsCommandTest extends TestCase
 {
-    /** @var ListTagsCommand */
-    private $command;
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $tagService;
+    private CommandTester $commandTester;
+    private ObjectProphecy $tagService;
 
     public function setUp(): void
     {
@@ -33,7 +29,7 @@ class ListTagsCommandTest extends TestCase
     }
 
     /** @test */
-    public function noTagsPrintsEmptyMessage()
+    public function noTagsPrintsEmptyMessage(): void
     {
         $listTags = $this->tagService->listTags()->willReturn([]);
 
@@ -45,7 +41,7 @@ class ListTagsCommandTest extends TestCase
     }
 
     /** @test */
-    public function listOfTagsIsPrinted()
+    public function listOfTagsIsPrinted(): void
     {
         $listTags = $this->tagService->listTags()->willReturn([
             new Tag('foo'),
