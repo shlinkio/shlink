@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+#### Added
+
+* [#429](https://github.com/shlinkio/shlink/issues/429) Added support for PHP 7.4
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* [#429](https://github.com/shlinkio/shlink/issues/429) Dropped support for PHP 7.2 and 7.3
+
+#### Fixed
+
+* *Nothing*
+
+
 ## 1.21.0 - 2019-12-29
 
 #### Added
