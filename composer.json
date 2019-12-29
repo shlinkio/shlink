@@ -36,7 +36,7 @@
         "pugx/shortid-php": "^0.5",
         "shlinkio/shlink-common": "^2.4",
         "shlinkio/shlink-event-dispatcher": "^1.1",
-        "shlinkio/shlink-installer": "^3.2",
+        "shlinkio/shlink-installer": "^3.3",
         "shlinkio/shlink-ip-geolocation": "^1.2",
         "symfony/console": "^5.0",
         "symfony/filesystem": "^5.0",
@@ -111,7 +111,7 @@
             "@test:api"
         ],
         "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
-        "test:unit:ci": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/junit.xml --testdox",
+        "test:unit:ci": "@test:unit --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/junit.xml",
         "test:db": [
             "@test:db:sqlite",
             "@test:db:mysql",
@@ -123,15 +123,15 @@
             "@test:db:mysql",
             "@test:db:postgres"
         ],
-        "test:db:sqlite": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always -c phpunit-db.xml --coverage-php build/coverage-db.cov --testdox",
+        "test:db:sqlite": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-db.cov --testdox -c phpunit-db.xml",
         "test:db:mysql": "DB_DRIVER=mysql composer test:db:sqlite",
         "test:db:maria": "DB_DRIVER=maria composer test:db:sqlite",
         "test:db:postgres": "DB_DRIVER=postgres composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
         "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage",
         "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
-        "infect:ci": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered --coverage=build",
-        "infect:show": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered --show-mutations",
+        "infect:ci": "@infect --coverage=build",
+        "infect:show": "@infect --show-mutations",
         "infect:test": [
             "@test:unit:ci",
             "@infect:ci"

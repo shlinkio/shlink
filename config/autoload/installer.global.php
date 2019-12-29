@@ -11,6 +11,8 @@ return [
             Plugin\UrlShortenerConfigCustomizer::SCHEMA,
             Plugin\UrlShortenerConfigCustomizer::HOSTNAME,
             Plugin\UrlShortenerConfigCustomizer::VALIDATE_URL,
+            Plugin\UrlShortenerConfigCustomizer::NOTIFY_VISITS_WEBHOOKS,
+            Plugin\UrlShortenerConfigCustomizer::VISITS_WEBHOOKS,
         ],
 
         Plugin\ApplicationConfigCustomizer::class => [
