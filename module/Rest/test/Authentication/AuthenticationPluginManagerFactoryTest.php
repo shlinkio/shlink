@@ -34,9 +34,7 @@ class AuthenticationPluginManagerFactoryTest extends TestCase
 
     private function getPlugins(AuthenticationPluginManager $pluginManager): array
     {
-        return (function () {
-            return $this->services;
-        })->call($pluginManager);
+        return (fn () => $this->services)->call($pluginManager);
     }
 
     public function provideConfigs(): iterable

@@ -46,8 +46,6 @@ class ListTagsCommand extends Command
             return [['No tags yet']];
         }
 
-        return map($tags, function (Tag $tag) {
-            return [(string) $tag];
-        });
+        return map($tags, fn (Tag $tag) => [(string) $tag]);
     }
 }

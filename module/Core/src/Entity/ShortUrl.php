@@ -188,9 +188,7 @@ class ShortUrl extends AbstractEntity
         $shortUrlTags = invoke($this->getTags(), '__toString');
         $hasAllTags = count($shortUrlTags) === count($tags) && array_reduce(
             $tags,
-            function (bool $hasAllTags, string $tag) use ($shortUrlTags) {
-                return $hasAllTags && contains($shortUrlTags, $tag);
-            },
+            fn (bool $hasAllTags, string $tag) => $hasAllTags && contains($shortUrlTags, $tag),
             true
         );
 

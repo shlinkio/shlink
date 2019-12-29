@@ -50,9 +50,7 @@ class GeolocationDbUpdaterTest extends TestCase
     /** @test */
     public function exceptionIsThrownWhenOlderDbDoesNotExistAndDownloadFails(): void
     {
-        $mustBeUpdated = function () {
-            $this->assertTrue(true);
-        };
+        $mustBeUpdated = fn () => $this->assertTrue(true);
         $prev = new RuntimeException('');
 
         $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(false);
@@ -148,8 +146,6 @@ class GeolocationDbUpdaterTest extends TestCase
 
     public function provideSmallDays(): iterable
     {
-        return map(range(0, 34), function (int $days) {
-            return [$days];
-        });
+        return map(range(0, 34), fn (int $days) => [$days]);
     }
 }

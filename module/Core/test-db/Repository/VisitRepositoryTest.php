@@ -66,9 +66,7 @@ class VisitRepositoryTest extends DatabaseTestCase
 
     public function provideBlockSize(): iterable
     {
-        return map(range(1, 5), function (int $value) {
-            return [$value];
-        });
+        return map(range(1, 5), fn (int $value) => [$value]);
     }
 
     /** @test */

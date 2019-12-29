@@ -28,9 +28,9 @@ class DeleteShortUrlServiceTest extends TestCase
 
     public function setUp(): void
     {
-        $shortUrl = (new ShortUrl(''))->setVisits(new ArrayCollection(map(range(0, 10), function () {
-            return new Visit(new ShortUrl(''), Visitor::emptyInstance());
-        })));
+        $shortUrl = (new ShortUrl(''))->setVisits(
+            new ArrayCollection(map(range(0, 10), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance())))
+        );
         $this->shortCode = $shortUrl->getShortCode();
 
         $this->em = $this->prophesize(EntityManagerInterface::class);

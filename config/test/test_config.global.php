@@ -19,9 +19,7 @@ $swooleTestingPort = 9999;
 $buildDbConnection = function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
     $isCi = env('TRAVIS', false);
-    $getMysqlHost = function (string $driver) {
-        return sprintf('shlink_db%s', $driver === 'mysql' ? '' : '_maria');
-    };
+    $getMysqlHost = fn (string $driver) => sprintf('shlink_db%s', $driver === 'mysql' ? '' : '_maria');
 
     $driverConfigMap = [
         'sqlite' => [

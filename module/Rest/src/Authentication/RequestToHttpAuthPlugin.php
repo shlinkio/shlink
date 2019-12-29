@@ -43,9 +43,7 @@ class RequestToHttpAuthPlugin implements RequestToHttpAuthPluginInterface
     {
         return array_reduce(
             self::SUPPORTED_AUTH_HEADERS,
-            function (bool $carry, string $header) use ($request) {
-                return $carry || $request->hasHeader($header);
-            },
+            fn (bool $carry, string $header) => $carry || $request->hasHeader($header),
             false
         );
     }

@@ -109,8 +109,6 @@ class AuthenticationMiddlewareTest extends TestCase
 
     private function getDummyMiddleware(): MiddlewareInterface
     {
-        return middleware(function () {
-            return new Response\EmptyResponse();
-        });
+        return middleware(fn () => new Response\EmptyResponse());
     }
 }
