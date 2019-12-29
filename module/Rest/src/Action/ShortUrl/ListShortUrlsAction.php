@@ -23,10 +23,8 @@ class ListShortUrlsAction extends AbstractRestAction
     protected const ROUTE_PATH = '/short-urls';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    /** @var ShortUrlServiceInterface */
-    private $shortUrlService;
-    /** @var array */
-    private $domainConfig;
+    private ShortUrlServiceInterface $shortUrlService;
+    private array $domainConfig;
 
     public function __construct(
         ShortUrlServiceInterface $shortUrlService,

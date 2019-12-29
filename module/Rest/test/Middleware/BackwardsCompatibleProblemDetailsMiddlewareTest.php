@@ -14,10 +14,8 @@ use Zend\Diactoros\Uri;
 
 class BackwardsCompatibleProblemDetailsMiddlewareTest extends TestCase
 {
-    /** @var BackwardsCompatibleProblemDetailsMiddleware */
-    private $middleware;
-    /** @var ObjectProphecy */
-    private $handler;
+    private BackwardsCompatibleProblemDetailsMiddleware $middleware;
+    private ObjectProphecy $handler;
 
     public function setUp(): void
     {

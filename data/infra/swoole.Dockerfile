@@ -1,4 +1,4 @@
-FROM php:7.3.11-alpine3.10
+FROM php:7.4.1-alpine3.10
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.18
@@ -11,8 +11,10 @@ RUN apk update
 # Install common php extensions
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install iconv
-RUN docker-php-ext-install mbstring
 RUN docker-php-ext-install calendar
+
+RUN apk add --no-cache oniguruma-dev
+RUN docker-php-ext-install mbstring
 
 RUN apk add --no-cache sqlite-libs
 RUN apk add --no-cache sqlite-dev

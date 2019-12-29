@@ -14,10 +14,8 @@ use Zend\Diactoros\ServerRequest;
 
 class UpdateTagActionTest extends TestCase
 {
-    /** @var UpdateTagAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $tagService;
+    private UpdateTagAction $action;
+    private ObjectProphecy $tagService;
 
     public function setUp(): void
     {

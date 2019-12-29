@@ -9,8 +9,7 @@ use Throwable;
 
 class GeolocationDbUpdateFailedException extends RuntimeException implements ExceptionInterface
 {
-    /** @var bool */
-    private $olderDbExists;
+    private bool $olderDbExists;
 
     public static function create(bool $olderDbExists, ?Throwable $prev = null): self
     {

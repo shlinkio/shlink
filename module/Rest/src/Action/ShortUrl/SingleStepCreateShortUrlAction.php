@@ -17,8 +17,7 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
     protected const ROUTE_PATH = '/short-urls/shorten';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    /** @var ApiKeyServiceInterface */
-    private $apiKeyService;
+    private ApiKeyServiceInterface $apiKeyService;
 
     public function __construct(
         UrlShortenerInterface $urlShortener,

@@ -21,10 +21,8 @@ use function count;
 
 class ShortUrlServiceTest extends TestCase
 {
-    /** @var ShortUrlService */
-    private $service;
-    /** @var ObjectProphecy|EntityManagerInterface */
-    private $em;
+    private ShortUrlService $service;
+    private ObjectProphecy $em;
 
     public function setUp(): void
     {

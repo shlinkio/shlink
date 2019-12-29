@@ -13,8 +13,7 @@ use Zend\Diactoros\Response as DiactResp;
 
 class QrCodeCacheMiddleware implements MiddlewareInterface
 {
-    /** @var Cache */
-    private $cache;
+    private Cache $cache;
 
     public function __construct(Cache $cache)
     {

@@ -18,10 +18,8 @@ use Zend\Paginator\Paginator;
 
 class VisitsTracker implements VisitsTrackerInterface
 {
-    /** @var ORM\EntityManagerInterface */
-    private $em;
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
+    private ORM\EntityManagerInterface $em;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(ORM\EntityManagerInterface $em, EventDispatcherInterface $eventDispatcher)
     {

@@ -26,10 +26,8 @@ use function sprintf;
 
 class GetVisitsCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $visitsTracker;
+    private CommandTester $commandTester;
+    private ObjectProphecy $visitsTracker;
 
     public function setUp(): void
     {

@@ -11,8 +11,6 @@ class EmptyResponseImplicitOptionsMiddlewareFactory
 {
     public function __invoke()
     {
-        return new ImplicitOptionsMiddleware(function () {
-            return new EmptyResponse();
-        });
+        return new ImplicitOptionsMiddleware(fn () => new EmptyResponse());
     }
 }

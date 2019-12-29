@@ -18,8 +18,7 @@ class ListTagsCommand extends Command
 {
     public const NAME = 'tag:list';
 
-    /** @var TagServiceInterface */
-    private $tagService;
+    private TagServiceInterface $tagService;
 
     public function __construct(TagServiceInterface $tagService)
     {
@@ -47,8 +46,6 @@ class ListTagsCommand extends Command
             return [['No tags yet']];
         }
 
-        return map($tags, function (Tag $tag) {
-            return [(string) $tag];
-        });
+        return map($tags, fn (Tag $tag) => [(string) $tag]);
     }
 }

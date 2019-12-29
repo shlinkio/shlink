@@ -8,32 +8,24 @@ use Throwable;
 
 class IpCannotBeLocatedException extends RuntimeException
 {
-    /** @var bool */
-    private $isNonLocatableAddress;
-
-    public function __construct(
-        bool $isNonLocatableAddress,
-        string $message,
-        int $code = 0,
-        ?Throwable $previous = null
-    ) {
-        $this->isNonLocatableAddress = $isNonLocatableAddress;
-        parent::__construct($message, $code, $previous);
-    }
+    private bool $isNonLocatableAddress = true;
 
     public static function forEmptyAddress(): self
     {
-        return new self(true, 'Ignored visit with no IP address');
+        return new self('Ignored visit with no IP address');
     }
 
     public static function forLocalhost(): self
     {
-        return new self(true, 'Ignored localhost address');
+        return new self('Ignored localhost address');
     }
 
     public static function forError(Throwable $e): self
     {
-        return new self(false, 'An error occurred while locating IP', $e->getCode(), $e);
+        $e = new self('An error occurred while locating IP', $e->getCode(), $e);
+        $e->isNonLocatableAddress = false;
+
+        return $e;
     }
 
     /**

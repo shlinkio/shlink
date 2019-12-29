@@ -19,10 +19,8 @@ use Zend\Expressive\Router\RouteResult;
 
 class NotFoundRedirectHandlerTest extends TestCase
 {
-    /** @var NotFoundRedirectHandler */
-    private $middleware;
-    /** @var NotFoundRedirectOptions */
-    private $redirectOptions;
+    private NotFoundRedirectHandler $middleware;
+    private NotFoundRedirectOptions $redirectOptions;
 
     public function setUp(): void
     {

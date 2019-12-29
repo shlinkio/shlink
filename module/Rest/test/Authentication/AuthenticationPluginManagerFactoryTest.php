@@ -12,8 +12,7 @@ use Zend\ServiceManager\ServiceManager;
 
 class AuthenticationPluginManagerFactoryTest extends TestCase
 {
-    /** @var AuthenticationPluginManagerFactory */
-    private $factory;
+    private AuthenticationPluginManagerFactory $factory;
 
     public function setUp(): void
     {
@@ -35,9 +34,7 @@ class AuthenticationPluginManagerFactoryTest extends TestCase
 
     private function getPlugins(AuthenticationPluginManager $pluginManager): array
     {
-        return (function () {
-            return $this->services;
-        })->call($pluginManager);
+        return (fn () => $this->services)->call($pluginManager);
     }
 
     public function provideConfigs(): iterable

@@ -22,12 +22,9 @@ use function substr_count;
 
 class GeneratePreviewCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $previewGenerator;
-    /** @var ObjectProphecy */
-    private $shortUrlService;
+    private CommandTester $commandTester;
+    private ObjectProphecy $previewGenerator;
+    private ObjectProphecy $shortUrlService;
 
     public function setUp(): void
     {

@@ -18,8 +18,7 @@ use function array_shift;
 
 class PathVersionMiddlewareTest extends TestCase
 {
-    /** @var PathVersionMiddleware */
-    private $middleware;
+    private PathVersionMiddleware $middleware;
 
     public function setUp(): void
     {
@@ -27,7 +26,7 @@ class PathVersionMiddlewareTest extends TestCase
     }
 
     /** @test */
-    public function whenVersionIsProvidedRequestRemainsUnchanged()
+    public function whenVersionIsProvidedRequestRemainsUnchanged(): void
     {
         $request = (new ServerRequest())->withUri(new Uri('/v2/foo'));
 
@@ -40,7 +39,7 @@ class PathVersionMiddlewareTest extends TestCase
     }
 
     /** @test */
-    public function versionOneIsPrependedWhenNoVersionIsDefined()
+    public function versionOneIsPrependedWhenNoVersionIsDefined(): void
     {
         $request = (new ServerRequest())->withUri(new Uri('/bar/baz'));
 

@@ -15,18 +15,12 @@ use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
 
 class Visit extends AbstractEntity implements JsonSerializable
 {
-    /** @var string */
-    private $referer;
-    /** @var Chronos */
-    private $date;
-    /** @var string|null */
-    private $remoteAddr;
-    /** @var string */
-    private $userAgent;
-    /** @var ShortUrl */
-    private $shortUrl;
-    /** @var VisitLocation */
-    private $visitLocation;
+    private string $referer;
+    private Chronos $date;
+    private ?string $remoteAddr;
+    private string $userAgent;
+    private ShortUrl $shortUrl;
+    private ?VisitLocation $visitLocation = null;
 
     public function __construct(ShortUrl $shortUrl, Visitor $visitor, ?Chronos $date = null)
     {
@@ -93,7 +87,7 @@ class Visit extends AbstractEntity implements JsonSerializable
     {
         return [
             'referer' => $this->referer,
-            'date' => $this->date !== null ? $this->date->toAtomString() : null,
+            'date' => $this->date->toAtomString(),
             'userAgent' => $this->userAgent,
             'visitLocation' => $this->visitLocation,
 

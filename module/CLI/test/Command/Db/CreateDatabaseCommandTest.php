@@ -21,18 +21,12 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class CreateDatabaseCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $processHelper;
-    /** @var ObjectProphecy */
-    private $regularConn;
-    /** @var ObjectProphecy */
-    private $noDbNameConn;
-    /** @var ObjectProphecy */
-    private $schemaManager;
-    /** @var ObjectProphecy */
-    private $databasePlatform;
+    private CommandTester $commandTester;
+    private ObjectProphecy $processHelper;
+    private ObjectProphecy $regularConn;
+    private ObjectProphecy $noDbNameConn;
+    private ObjectProphecy $schemaManager;
+    private ObjectProphecy $databasePlatform;
 
     public function setUp(): void
     {

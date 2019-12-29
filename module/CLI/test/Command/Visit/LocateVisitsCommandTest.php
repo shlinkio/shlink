@@ -29,18 +29,12 @@ use function sprintf;
 
 class LocateVisitsCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $visitService;
-    /** @var ObjectProphecy */
-    private $ipResolver;
-    /** @var ObjectProphecy */
-    private $locker;
-    /** @var ObjectProphecy */
-    private $lock;
-    /** @var ObjectProphecy */
-    private $dbUpdater;
+    private CommandTester $commandTester;
+    private ObjectProphecy $visitService;
+    private ObjectProphecy $ipResolver;
+    private ObjectProphecy $locker;
+    private ObjectProphecy $lock;
+    private ObjectProphecy $dbUpdater;
 
     public function setUp(): void
     {

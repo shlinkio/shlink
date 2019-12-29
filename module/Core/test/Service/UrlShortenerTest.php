@@ -27,12 +27,9 @@ use function array_map;
 
 class UrlShortenerTest extends TestCase
 {
-    /** @var UrlShortener */
-    private $urlShortener;
-    /** @var ObjectProphecy */
-    private $em;
-    /** @var ObjectProphecy */
-    private $urlValidator;
+    private UrlShortener $urlShortener;
+    private ObjectProphecy $em;
+    private ObjectProphecy $urlValidator;
 
     public function setUp(): void
     {
@@ -47,7 +44,7 @@ class UrlShortenerTest extends TestCase
         $this->em->beginTransaction()->willReturn(null);
         $this->em->persist(Argument::any())->will(function ($arguments) {
             /** @var ShortUrl $shortUrl */
-            $shortUrl = $arguments[0];
+            [$shortUrl] = $arguments;
             $shortUrl->setId('10');
         });
         $repo = $this->prophesize(ShortUrlRepository::class);
@@ -243,9 +240,7 @@ class UrlShortenerTest extends TestCase
             'validUntil' => Chronos::parse('2017-01-01'),
             'maxVisits' => 4,
         ]);
-        $tagsCollection = new ArrayCollection(array_map(function (string $tag) {
-            return new Tag($tag);
-        }, $tags));
+        $tagsCollection = new ArrayCollection(array_map(fn (string $tag) => new Tag($tag), $tags));
         $expected = (new ShortUrl($url, $meta))->setTags($tagsCollection);
 
         $repo = $this->prophesize(ShortUrlRepository::class);

@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Rest\Exception\AuthenticationException;
 
 use function time;
 
+/** @deprecated */
 class JWTServiceTest extends TestCase
 {
     /** @var JWTService */

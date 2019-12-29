@@ -75,9 +75,10 @@ class SimplifiedConfigParser
         // This mainly allows deprecating keys and defining new ones that will replace the older and always take
         // preference, while the old one keeps working for backwards compatibility if the new one is not provided.
         $simplifiedConfigOrder = array_flip(array_keys(self::SIMPLIFIED_CONFIG_MAPPING));
-        uksort($configForExistingKeys, function (string $a, string $b) use ($simplifiedConfigOrder): int {
-            return $simplifiedConfigOrder[$a] - $simplifiedConfigOrder[$b];
-        });
+        uksort(
+            $configForExistingKeys,
+            fn (string $a, string $b): int => $simplifiedConfigOrder[$a] - $simplifiedConfigOrder[$b]
+        );
 
         return $configForExistingKeys;
     }

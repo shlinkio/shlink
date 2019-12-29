@@ -16,10 +16,8 @@ use Zend\Diactoros\Uri;
 
 class QrCodeCacheMiddlewareTest extends TestCase
 {
-    /** @var QrCodeCacheMiddleware */
-    private $middleware;
-    /** @var Cache */
-    private $cache;
+    private QrCodeCacheMiddleware $middleware;
+    private Cache $cache;
 
     public function setUp(): void
     {

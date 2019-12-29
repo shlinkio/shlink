@@ -17,10 +17,8 @@ use Zend\Expressive\Template\TemplateRendererInterface;
 
 class NotFoundTemplateHandlerTest extends TestCase
 {
-    /** @var NotFoundTemplateHandler */
-    private $handler;
-    /** @var ObjectProphecy */
-    private $renderer;
+    private NotFoundTemplateHandler $handler;
+    private ObjectProphecy $renderer;
 
     public function setUp(): void
     {

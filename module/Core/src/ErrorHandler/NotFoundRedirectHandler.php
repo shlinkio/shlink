@@ -18,10 +18,8 @@ use function rtrim;
 
 class NotFoundRedirectHandler implements MiddlewareInterface
 {
-    /** @var NotFoundRedirectOptions */
-    private $redirectOptions;
-    /** @var string */
-    private $shlinkBasePath;
+    private NotFoundRedirectOptions $redirectOptions;
+    private string $shlinkBasePath;
 
     public function __construct(NotFoundRedirectOptions $redirectOptions, string $shlinkBasePath)
     {

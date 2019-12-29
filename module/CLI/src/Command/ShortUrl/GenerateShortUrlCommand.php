@@ -28,10 +28,8 @@ class GenerateShortUrlCommand extends Command
     public const NAME = 'short-url:generate';
     private const ALIASES = ['shortcode:generate', 'short-code:generate'];
 
-    /** @var UrlShortenerInterface */
-    private $urlShortener;
-    /** @var array */
-    private $domainConfig;
+    private UrlShortenerInterface $urlShortener;
+    private array $domainConfig;
 
     public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig)
     {

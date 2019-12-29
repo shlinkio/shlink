@@ -15,12 +15,9 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
 {
     private const LOCK_NAME = 'geolocation-db-update';
 
-    /** @var DbUpdaterInterface */
-    private $dbUpdater;
-    /** @var Reader */
-    private $geoLiteDbReader;
-    /** @var LockFactory */
-    private $locker;
+    private DbUpdaterInterface $dbUpdater;
+    private Reader $geoLiteDbReader;
+    private LockFactory $locker;
 
     public function __construct(DbUpdaterInterface $dbUpdater, Reader $geoLiteDbReader, LockFactory $locker)
     {

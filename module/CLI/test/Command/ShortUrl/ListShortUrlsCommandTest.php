@@ -21,10 +21,8 @@ use function explode;
 
 class ListShortUrlsCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $shortUrlService;
+    private CommandTester $commandTester;
+    private ObjectProphecy $shortUrlService;
 
     public function setUp(): void
     {
@@ -44,9 +42,9 @@ class ListShortUrlsCommandTest extends TestCase
             $data[] = new ShortUrl('url_' . $i);
         }
 
-        $this->shortUrlService->listShortUrls(Argument::cetera())->will(function () use (&$data) {
-            return new Paginator(new ArrayAdapter($data));
-        })->shouldBeCalledTimes(3);
+        $this->shortUrlService->listShortUrls(Argument::cetera())
+            ->will(fn () => new Paginator(new ArrayAdapter($data)))
+            ->shouldBeCalledTimes(3);
 
         $this->commandTester->setInputs(['y', 'y', 'n']);
         $this->commandTester->execute([]);

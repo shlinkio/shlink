@@ -10,20 +10,13 @@ use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocation extends AbstractEntity implements VisitLocationInterface
 {
-    /** @var string */
-    private $countryCode;
-    /** @var string */
-    private $countryName;
-    /** @var string */
-    private $regionName;
-    /** @var string */
-    private $cityName;
-    /** @var string */
-    private $latitude;
-    /** @var string */
-    private $longitude;
-    /** @var string */
-    private $timezone;
+    private string $countryCode;
+    private string $countryName;
+    private string $regionName;
+    private string $cityName;
+    private string $latitude; // FIXME Should be float
+    private string $longitude; // FIXME Should be float
+    private string $timezone;
 
     public function __construct(Location $location)
     {

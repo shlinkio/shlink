@@ -23,12 +23,9 @@ class QrCodeAction implements MiddlewareInterface
     private const MIN_SIZE = 50;
     private const MAX_SIZE = 1000;
 
-    /** @var RouterInterface */
-    private $router;
-    /** @var UrlShortenerInterface */
-    private $urlShortener;
-    /** @var LoggerInterface */
-    private $logger;
+    private RouterInterface $router;
+    private UrlShortenerInterface $urlShortener;
+    private LoggerInterface $logger;
 
     public function __construct(
         RouterInterface $router,

@@ -12,12 +12,9 @@ class ApiKey extends AbstractEntity
 {
     use StringUtilsTrait;
 
-    /** @var string */
-    private $key;
-    /** @var Chronos|null */
-    private $expirationDate;
-    /** @var bool */
-    private $enabled;
+    private string $key;
+    private ?Chronos $expirationDate;
+    private bool $enabled;
 
     public function __construct(?Chronos $expirationDate = null)
     {

@@ -15,10 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ShlinkTableTest extends TestCase
 {
-    /** @var ShlinkTable */
-    private $shlinkTable;
-    /** @var ObjectProphecy */
-    private $baseTable;
+    private ShlinkTable $shlinkTable;
+    private ObjectProphecy $baseTable;
 
     public function setUp(): void
     {

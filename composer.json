@@ -12,7 +12,7 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.4",
         "ext-json": "*",
         "ext-pdo": "*",
         "akrabat/ip-address-middleware": "^1.0",
@@ -30,7 +30,7 @@
         "mikehaertl/phpwkhtmltopdf": "^2.2",
         "monolog/monolog": "^2.0",
         "nikolaposa/monolog-factory": "^3.0",
-        "ocramius/proxy-manager": "~2.2.2",
+        "ocramius/proxy-manager": "^2.5.1",
         "phly/phly-event-dispatcher": "^1.0",
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.5",
@@ -60,7 +60,7 @@
         "devster/ubench": "^2.0",
         "eaglewu/swoole-ide-helper": "dev-master",
         "infection/infection": "^0.15.0",
-        "phpstan/phpstan-shim": "^0.11.16",
+        "phpstan/phpstan": "^0.12.3",
         "phpunit/phpunit": "^8.3",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.0.0",

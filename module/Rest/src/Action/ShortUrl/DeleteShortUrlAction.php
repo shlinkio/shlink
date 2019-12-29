@@ -16,8 +16,7 @@ class DeleteShortUrlAction extends AbstractRestAction
     protected const ROUTE_PATH = '/short-urls/{shortCode}';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_DELETE];
 
-    /** @var DeleteShortUrlServiceInterface */
-    private $deleteShortUrlService;
+    private DeleteShortUrlServiceInterface $deleteShortUrlService;
 
     public function __construct(DeleteShortUrlServiceInterface $deleteShortUrlService, ?LoggerInterface $logger = null)
     {

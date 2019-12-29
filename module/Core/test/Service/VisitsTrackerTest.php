@@ -23,12 +23,9 @@ use Zend\Stdlib\ArrayUtils;
 
 class VisitsTrackerTest extends TestCase
 {
-    /** @var VisitsTracker */
-    private $visitsTracker;
-    /** @var ObjectProphecy */
-    private $em;
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
+    private VisitsTracker $visitsTracker;
+    private ObjectProphecy $em;
+    private ObjectProphecy $eventDispatcher;
 
     public function setUp(): void
     {
@@ -46,10 +43,7 @@ class VisitsTrackerTest extends TestCase
         $repo->findOneBy(['shortCode' => $shortCode])->willReturn(new ShortUrl(''));
 
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
-        $this->em->persist(Argument::that(function (Visit $visit) {
-            $visit->setId('1');
-            return $visit;
-        }))->shouldBeCalledOnce();
+        $this->em->persist(Argument::that(fn (Visit $visit) => $visit->setId('1')))->shouldBeCalledOnce();
         $this->em->flush()->shouldBeCalledOnce();
 
         $this->visitsTracker->track($shortCode, Visitor::emptyInstance());

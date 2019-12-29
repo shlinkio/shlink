@@ -10,7 +10,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Response\PixelResponse;
 use Shlinkio\Shlink\Core\Action\PixelAction;
-use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
@@ -19,12 +18,9 @@ use Zend\Diactoros\ServerRequest;
 
 class PixelActionTest extends TestCase
 {
-    /** @var RedirectAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $urlShortener;
-    /** @var ObjectProphecy */
-    private $visitTracker;
+    private PixelAction $action;
+    private ObjectProphecy $urlShortener;
+    private ObjectProphecy $visitTracker;
 
     public function setUp(): void
     {

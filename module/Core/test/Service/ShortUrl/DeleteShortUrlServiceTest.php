@@ -23,16 +23,14 @@ use function sprintf;
 
 class DeleteShortUrlServiceTest extends TestCase
 {
-    /** @var ObjectProphecy */
-    private $em;
-    /** @var string */
-    private $shortCode;
+    private ObjectProphecy $em;
+    private string $shortCode;
 
     public function setUp(): void
     {
-        $shortUrl = (new ShortUrl(''))->setVisits(new ArrayCollection(map(range(0, 10), function () {
-            return new Visit(new ShortUrl(''), Visitor::emptyInstance());
-        })));
+        $shortUrl = (new ShortUrl(''))->setVisits(
+            new ArrayCollection(map(range(0, 10), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance())))
+        );
         $this->shortCode = $shortUrl->getShortCode();
 
         $this->em = $this->prophesize(EntityManagerInterface::class);

@@ -25,8 +25,7 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
     private const TITLE = 'Invalid data';
     private const TYPE = 'INVALID_ARGUMENT';
 
-    /** @var array */
-    private $invalidElements;
+    private array $invalidElements;
 
     public static function fromInputFilter(InputFilterInterface $inputFilter, ?Throwable $prev = null): self
     {
@@ -70,12 +69,10 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
 
     private function invalidElementsToString(): string
     {
-        return reduce_left($this->getInvalidElements(), function ($messageSet, string $name, $_, string $acc) {
-            return $acc . sprintf(
-                "\n    '%s' => %s",
-                $name,
-                is_array($messageSet) ? print_r($messageSet, true) : $messageSet
-            );
-        }, '');
+        return reduce_left($this->getInvalidElements(), fn ($messages, string $name, $_, string $acc) => $acc . sprintf(
+            "\n    '%s' => %s",
+            $name,
+            is_array($messages) ? print_r($messages, true) : $messages
+        ), '');
     }
 }

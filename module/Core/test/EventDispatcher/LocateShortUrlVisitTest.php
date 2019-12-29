@@ -27,18 +27,12 @@ use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 class LocateShortUrlVisitTest extends TestCase
 {
-    /** @var LocateShortUrlVisit */
-    private $locateVisit;
-    /** @var ObjectProphecy */
-    private $ipLocationResolver;
-    /** @var ObjectProphecy */
-    private $em;
-    /** @var ObjectProphecy */
-    private $logger;
-    /** @var ObjectProphecy */
-    private $dbUpdater;
-    /** @var ObjectProphecy */
-    private $eventDispatcher;
+    private LocateShortUrlVisit $locateVisit;
+    private ObjectProphecy $ipLocationResolver;
+    private ObjectProphecy $em;
+    private ObjectProphecy $logger;
+    private ObjectProphecy $dbUpdater;
+    private ObjectProphecy $eventDispatcher;
 
     public function setUp(): void
     {

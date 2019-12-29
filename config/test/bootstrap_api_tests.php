@@ -15,6 +15,4 @@ $em = $container->get(EntityManager::class);
 
 $testHelper->createTestDb();
 ApiTest\ApiTestCase::setApiClient($container->get('shlink_test_api_client'));
-ApiTest\ApiTestCase::setSeedFixturesCallback(function () use ($testHelper, $em, $config) {
-    $testHelper->seedFixtures($em, $config['data_fixtures'] ?? []);
-});
+ApiTest\ApiTestCase::setSeedFixturesCallback(fn () => $testHelper->seedFixtures($em, $config['data_fixtures'] ?? []));

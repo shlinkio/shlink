@@ -12,8 +12,7 @@ use Zend\Expressive\Router\Middleware\ImplicitOptionsMiddleware;
 
 class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
 {
-    /** @var EmptyResponseImplicitOptionsMiddlewareFactory */
-    private $factory;
+    private EmptyResponseImplicitOptionsMiddlewareFactory $factory;
 
     public function setUp(): void
     {

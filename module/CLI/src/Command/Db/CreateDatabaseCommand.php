@@ -21,10 +21,8 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     public const DOCTRINE_SCRIPT = 'vendor/doctrine/orm/bin/doctrine.php';
     public const DOCTRINE_CREATE_SCHEMA_COMMAND = 'orm:schema-tool:create';
 
-    /** @var Connection */
-    private $regularConn;
-    /** @var Connection */
-    private $noDbNameConn;
+    private Connection $regularConn;
+    private Connection $noDbNameConn;
 
     public function __construct(
         LockFactory $locker,

@@ -25,10 +25,8 @@ class GenerateShortUrlCommandTest extends TestCase
         'hostname' => 'foo.com',
     ];
 
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $urlShortener;
+    private CommandTester $commandTester;
+    private ObjectProphecy $urlShortener;
 
     public function setUp(): void
     {

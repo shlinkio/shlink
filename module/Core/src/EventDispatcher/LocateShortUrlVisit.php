@@ -19,16 +19,11 @@ use function sprintf;
 
 class LocateShortUrlVisit
 {
-    /** @var IpLocationResolverInterface */
-    private $ipLocationResolver;
-    /** @var EntityManagerInterface */
-    private $em;
-    /** @var LoggerInterface */
-    private $logger;
-    /** @var GeolocationDbUpdaterInterface */
-    private $dbUpdater;
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
+    private IpLocationResolverInterface $ipLocationResolver;
+    private EntityManagerInterface $em;
+    private LoggerInterface $logger;
+    private GeolocationDbUpdaterInterface $dbUpdater;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         IpLocationResolverInterface $ipLocationResolver,

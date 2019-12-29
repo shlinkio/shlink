@@ -42,10 +42,8 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         'tags',
     ];
 
-    /** @var ShortUrlServiceInterface */
-    private $shortUrlService;
-    /** @var ShortUrlDataTransformer */
-    private $transformer;
+    private ShortUrlServiceInterface $shortUrlService;
+    private ShortUrlDataTransformer $transformer;
 
     public function __construct(ShortUrlServiceInterface $shortUrlService, array $domainConfig)
     {

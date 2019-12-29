@@ -13,10 +13,8 @@ use Zend\Diactoros\ServerRequest;
 
 class DeleteShortUrlActionTest extends TestCase
 {
-    /** @var DeleteShortUrlAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $service;
+    private DeleteShortUrlAction $action;
+    private ObjectProphecy $service;
 
     public function setUp(): void
     {

@@ -18,8 +18,7 @@ class NotFoundTemplateHandler implements RequestHandlerInterface
     public const NOT_FOUND_TEMPLATE = 'ShlinkCore::error/404';
     public const INVALID_SHORT_CODE_TEMPLATE = 'ShlinkCore::invalid-short-code';
 
-    /** @var TemplateRendererInterface */
-    private $renderer;
+    private TemplateRendererInterface $renderer;
 
     public function __construct(TemplateRendererInterface $renderer)
     {

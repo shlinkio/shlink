@@ -20,8 +20,7 @@ class GetVisitsAction extends AbstractRestAction
     protected const ROUTE_PATH = '/short-urls/{shortCode}/visits';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    /** @var VisitsTrackerInterface */
-    private $visitsTracker;
+    private VisitsTrackerInterface $visitsTracker;
 
     public function __construct(VisitsTrackerInterface $visitsTracker, ?LoggerInterface $logger = null)
     {

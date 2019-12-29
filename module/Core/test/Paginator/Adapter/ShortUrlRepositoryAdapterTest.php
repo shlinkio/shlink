@@ -13,8 +13,7 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 
 class ShortUrlRepositoryAdapterTest extends TestCase
 {
-    /** @var ObjectProphecy */
-    private $repo;
+    private ObjectProphecy $repo;
 
     public function setUp(): void
     {

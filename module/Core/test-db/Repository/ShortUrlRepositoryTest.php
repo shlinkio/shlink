@@ -28,8 +28,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         Domain::class,
     ];
 
-    /** @var ShortUrlRepository */
-    private $repo;
+    private ShortUrlRepository $repo;
 
     public function setUp(): void
     {

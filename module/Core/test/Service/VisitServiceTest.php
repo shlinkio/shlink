@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManager;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -27,10 +28,8 @@ use function sprintf;
 
 class VisitServiceTest extends TestCase
 {
-    /** @var VisitService */
-    private $visitService;
-    /** @var ObjectProphecy */
-    private $em;
+    private VisitService $visitService;
+    private ObjectProphecy $em;
 
     public function setUp(): void
     {
@@ -41,9 +40,10 @@ class VisitServiceTest extends TestCase
     /** @test */
     public function locateVisitsIteratesAndLocatesUnlocatedVisits(): void
     {
-        $unlocatedVisits = map(range(1, 200), function (int $i) {
-            return new Visit(new ShortUrl(sprintf('short_code_%s', $i)), Visitor::emptyInstance());
-        });
+        $unlocatedVisits = map(
+            range(1, 200),
+            fn (int $i) => new Visit(new ShortUrl(sprintf('short_code_%s', $i)), Visitor::emptyInstance())
+        );
 
         $repo = $this->prophesize(VisitRepository::class);
         $findUnlocatedVisits = $repo->findUnlocatedVisits(false)->willReturn($unlocatedVisits);
@@ -56,9 +56,7 @@ class VisitServiceTest extends TestCase
         $clear = $this->em->clear()->will(function () {
         });
 
-        $this->visitService->locateUnlocatedVisits(function () {
-            return Location::emptyInstance();
-        }, function () {
+        $this->visitService->locateUnlocatedVisits(fn () => Location::emptyInstance(), function () {
             $args = func_get_args();
 
             $this->assertInstanceOf(VisitLocation::class, array_shift($args));
@@ -94,7 +92,9 @@ class VisitServiceTest extends TestCase
         });
 
         $this->visitService->locateUnlocatedVisits(function () use ($isNonLocatableAddress) {
-            throw new IpCannotBeLocatedException($isNonLocatableAddress, 'Cannot be located');
+            throw $isNonLocatableAddress
+                ? new IpCannotBeLocatedException('Cannot be located')
+                : IpCannotBeLocatedException::forError(new Exception(''));
         });
 
         $findUnlocatedVisits->shouldHaveBeenCalledOnce();

@@ -12,10 +12,8 @@ use Zend\Diactoros\ServerRequest;
 
 class DeleteTagsActionTest extends TestCase
 {
-    /** @var DeleteTagsAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $tagService;
+    private DeleteTagsAction $action;
+    private ObjectProphecy $tagService;
 
     public function setUp(): void
     {

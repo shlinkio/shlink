@@ -15,6 +15,7 @@ use Zend\Diactoros\ServerRequest;
 
 use function strpos;
 
+/** @deprecated */
 class AuthenticateActionTest extends TestCase
 {
     /** @var AuthenticateAction */

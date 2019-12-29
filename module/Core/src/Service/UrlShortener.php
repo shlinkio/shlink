@@ -24,12 +24,9 @@ class UrlShortener implements UrlShortenerInterface
 {
     use TagManagerTrait;
 
-    /** @var EntityManagerInterface */
-    private $em;
-    /** @var UrlShortenerOptions */
-    private $options;
-    /** @var UrlValidatorInterface */
-    private $urlValidator;
+    private EntityManagerInterface $em;
+    private UrlShortenerOptions $options;
+    private UrlValidatorInterface $urlValidator;
 
     public function __construct(
         UrlValidatorInterface $urlValidator,

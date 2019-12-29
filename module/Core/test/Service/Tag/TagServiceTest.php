@@ -17,10 +17,8 @@ use Shlinkio\Shlink\Core\Service\Tag\TagService;
 
 class TagServiceTest extends TestCase
 {
-    /** @var TagService */
-    private $service;
-    /** @var ObjectProphecy */
-    private $em;
+    private TagService $service;
+    private ObjectProphecy $em;
 
     public function setUp(): void
     {

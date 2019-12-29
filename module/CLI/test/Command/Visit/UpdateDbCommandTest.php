@@ -16,10 +16,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class UpdateDbCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $dbUpdater;
+    private CommandTester $commandTester;
+    private ObjectProphecy $dbUpdater;
 
     public function setUp(): void
     {

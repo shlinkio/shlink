@@ -10,12 +10,9 @@ use Zend\Paginator\Adapter\AdapterInterface;
 
 class VisitsPaginatorAdapter implements AdapterInterface
 {
-    /** @var VisitRepositoryInterface */
-    private $visitRepository;
-    /** @var string */
-    private $shortCode;
-    /** @var VisitsParams */
-    private $params;
+    private VisitRepositoryInterface $visitRepository;
+    private string $shortCode;
+    private VisitsParams $params;
 
     public function __construct(VisitRepositoryInterface $visitRepository, string $shortCode, VisitsParams $params)
     {

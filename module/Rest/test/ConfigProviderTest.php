@@ -9,8 +9,7 @@ use Shlinkio\Shlink\Rest\ConfigProvider;
 
 class ConfigProviderTest extends TestCase
 {
-    /** @var ConfigProvider */
-    private $configProvider;
+    private ConfigProvider $configProvider;
 
     public function setUp(): void
     {
@@ -29,15 +28,13 @@ class ConfigProviderTest extends TestCase
     /** @test */
     public function routesAreProperlyPrefixed(): void
     {
-        $configProvider = new ConfigProvider(function () {
-            return [
-                'routes' => [
-                    ['path' => '/foo'],
-                    ['path' => '/bar'],
-                    ['path' => '/baz/foo'],
-                ],
-            ];
-        });
+        $configProvider = new ConfigProvider(fn () => [
+            'routes' => [
+                ['path' => '/foo'],
+                ['path' => '/bar'],
+                ['path' => '/baz/foo'],
+            ],
+        ]);
 
         $config = $configProvider();
 

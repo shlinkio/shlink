@@ -19,8 +19,7 @@ class GenerateKeyCommand extends Command
 {
     public const NAME = 'api-key:generate';
 
-    /** @var ApiKeyServiceInterface */
-    private $apiKeyService;
+    private ApiKeyServiceInterface $apiKeyService;
 
     public function __construct(ApiKeyServiceInterface $apiKeyService)
     {
