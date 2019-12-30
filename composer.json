@@ -52,7 +52,7 @@
         "zendframework/zend-expressive-swoole": "^2.4",
         "zendframework/zend-inputfilter": "^2.10",
         "zendframework/zend-paginator": "^2.8",
-        "zendframework/zend-problem-details": "^1.0",
+        "zendframework/zend-problem-details": "^1.1",
         "zendframework/zend-servicemanager": "^3.4",
         "zendframework/zend-stdlib": "^3.2"
     },

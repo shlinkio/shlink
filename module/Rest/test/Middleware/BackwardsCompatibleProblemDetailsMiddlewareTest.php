@@ -9,6 +9,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\BackwardsCompatibleProblemDetailsMiddleware;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Uri;
 
@@ -20,20 +21,18 @@ class BackwardsCompatibleProblemDetailsMiddlewareTest extends TestCase
     public function setUp(): void
     {
         $this->handler = $this->prophesize(RequestHandlerInterface::class);
-        $this->middleware = new BackwardsCompatibleProblemDetailsMiddleware([
-            404 => 'NOT_FOUND',
-            500 => 'INTERNAL_SERVER_ERROR',
-        ], 0);
+        $this->middleware = new BackwardsCompatibleProblemDetailsMiddleware(0);
     }
 
     /**
      * @test
      * @dataProvider provideNonProcessableResponses
      */
-    public function nonProblemDetailsOrInvalidResponsesAreReturnedAsTheyAre(Response $response): void
-    {
-        $request = ServerRequestFactory::fromGlobals();
-        $response = new Response();
+    public function nonProblemDetailsOrInvalidResponsesAreReturnedAsTheyAre(
+        Response $response,
+        ?ServerRequest $request = null
+    ): void {
+        $request = $request ?? ServerRequestFactory::fromGlobals();
         $handle = $this->handler->handle($request)->willReturn($response);
 
         $result = $this->middleware->process($request, $this->handler->reveal());
@@ -49,35 +48,10 @@ class BackwardsCompatibleProblemDetailsMiddlewareTest extends TestCase
             'Content-Type',
             'application/problem+json'
         )];
-    }
-
-    /**
-     * @test
-     * @dataProvider provideStatusAndTypes
-     */
-    public function properlyMapsTypesBasedOnResponseStatus(Response\JsonResponse $response, string $expectedType): void
-    {
-        $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/v2/something'));
-        $handle = $this->handler->handle($request)->willReturn($response);
-
-        /** @var Response\JsonResponse $result */
-        $result = $this->middleware->process($request, $this->handler->reveal());
-        $payload = $result->getPayload();
-
-        $this->assertEquals($expectedType, $payload['type']);
-        $this->assertArrayNotHasKey('error', $payload);
-        $this->assertArrayNotHasKey('message', $payload);
-        $handle->shouldHaveBeenCalledOnce();
-    }
-
-    public function provideStatusAndTypes(): iterable
-    {
-        yield [$this->jsonResponse(['type' => 'https://httpstatus.es/404'], 404), 'NOT_FOUND'];
-        yield [$this->jsonResponse(['type' => 'https://httpstatus.es/500'], 500), 'INTERNAL_SERVER_ERROR'];
-        yield [$this->jsonResponse(['type' => 'https://httpstatus.es/504'], 504), 'https://httpstatus.es/504'];
-        yield [$this->jsonResponse(['type' => 'something_else'], 404), 'something_else'];
-        yield [$this->jsonResponse(['type' => 'something_else'], 500), 'something_else'];
-        yield [$this->jsonResponse(['type' => 'something_else'], 504), 'something_else'];
+        yield 'version 2' => [
+            (new Response())->withHeader('Content-type', 'application/problem+json'),
+            ServerRequestFactory::fromGlobals()->withUri(new Uri('/v2/something')),
+        ];
     }
 
     /**
