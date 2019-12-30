@@ -78,7 +78,6 @@ return [
         Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
 
         Middleware\BackwardsCompatibleProblemDetailsMiddleware::class => [
-            'config.backwards_compatible_problem_details.default_type_fallbacks',
             'config.backwards_compatible_problem_details.json_flags',
         ],
     ],
