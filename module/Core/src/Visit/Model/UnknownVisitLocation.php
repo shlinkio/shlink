@@ -11,14 +11,14 @@ final class UnknownVisitLocation implements VisitLocationInterface
         return 'Unknown';
     }
 
-    public function getLatitude(): string
+    public function getLatitude(): float
     {
-        return '0.0';
+        return 0.0;
     }
 
-    public function getLongitude(): string
+    public function getLongitude(): float
     {
-        return '0.0';
+        return 0.0;
     }
 
     public function getCityName(): string
@@ -33,8 +33,8 @@ final class UnknownVisitLocation implements VisitLocationInterface
             'countryName' => 'Unknown',
             'regionName' => 'Unknown',
             'cityName' => 'Unknown',
-            'latitude' => '0.0',
-            'longitude' => '0.0',
+            'latitude' => 0.0,
+            'longitude' => 0.0,
             'timezone' => 'Unknown',
         ];
     }

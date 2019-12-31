@@ -105,8 +105,8 @@
                                         "cityName": "Cupertino",
                                         "countryCode": "US",
                                         "countryName": "United States",
-                                        "latitude": "37.3042",
-                                        "longitude": "-122.0946",
+                                        "latitude": 37.3042,
+                                        "longitude": -122.0946,
                                         "regionName": "California",
                                         "timezone": "America/Los_Angeles"
                                     }
