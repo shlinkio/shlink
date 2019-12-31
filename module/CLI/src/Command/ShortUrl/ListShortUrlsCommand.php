@@ -32,7 +32,6 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
     use PaginatorUtilsTrait;
 
     public const NAME = 'short-url:list';
-    private const ALIASES = ['shortcode:list', 'short-code:list'];
     private const COLUMNS_WHITELIST = [
         'shortCode',
         'shortUrl',
@@ -56,7 +55,6 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
     {
         $this
             ->setName(self::NAME)
-            ->setAliases(self::ALIASES)
             ->setDescription('List all short URLs')
             ->addOption(
                 'page',

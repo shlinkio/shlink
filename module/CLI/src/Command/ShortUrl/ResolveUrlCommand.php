@@ -19,7 +19,6 @@ use function sprintf;
 class ResolveUrlCommand extends Command
 {
     public const NAME = 'short-url:parse';
-    private const ALIASES = ['shortcode:parse', 'short-code:parse'];
 
     private UrlShortenerInterface $urlShortener;
 
@@ -33,7 +32,6 @@ class ResolveUrlCommand extends Command
     {
         $this
             ->setName(self::NAME)
-            ->setAliases(self::ALIASES)
             ->setDescription('Returns the long URL behind a short code')
             ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code to parse')
             ->addOption('domain', 'd', InputOption::VALUE_REQUIRED, 'The domain to which the short URL is attached.');

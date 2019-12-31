@@ -30,7 +30,6 @@ use function sprintf;
 class LocateVisitsCommand extends AbstractLockedCommand
 {
     public const NAME = 'visit:locate';
-    public const ALIASES = ['visit:process'];
 
     private VisitServiceInterface $visitService;
     private IpLocationResolverInterface $ipLocationResolver;
@@ -55,7 +54,6 @@ class LocateVisitsCommand extends AbstractLockedCommand
     {
         $this
             ->setName(self::NAME)
-            ->setAliases(self::ALIASES)
             ->setDescription('Resolves visits origin locations.');
     }
 
