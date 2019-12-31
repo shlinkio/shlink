@@ -15,8 +15,6 @@ class AppOptions extends AbstractOptions
 
     private string $name = '';
     private string $version = '1.0';
-    /** @deprecated */
-    private string $secretKey = '';
     private ?string $disableTrackParam = null;
 
     public function getName(): string
@@ -38,23 +36,6 @@ class AppOptions extends AbstractOptions
     protected function setVersion(string $version): self
     {
         $this->version = $version;
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     */
-    public function getSecretKey(): string
-    {
-        return $this->secretKey;
-    }
-
-    /**
-     * @deprecated
-     */
-    protected function setSecretKey(string $secretKey): self
-    {
-        $this->secretKey = $secretKey;
         return $this;
     }
 

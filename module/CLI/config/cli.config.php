@@ -15,10 +15,6 @@ return [
             Command\ShortUrl\DeleteShortUrlCommand::NAME => Command\ShortUrl\DeleteShortUrlCommand::class,
 
             Command\Visit\LocateVisitsCommand::NAME => Command\Visit\LocateVisitsCommand::class,
-            Command\Visit\UpdateDbCommand::NAME => Command\Visit\UpdateDbCommand::class,
-
-            Command\Config\GenerateCharsetCommand::NAME => Command\Config\GenerateCharsetCommand::class,
-            Command\Config\GenerateSecretCommand::NAME => Command\Config\GenerateSecretCommand::class,
 
             Command\Api\GenerateKeyCommand::NAME => Command\Api\GenerateKeyCommand::class,
             Command\Api\DisableKeyCommand::NAME => Command\Api\DisableKeyCommand::class,

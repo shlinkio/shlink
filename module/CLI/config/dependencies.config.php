@@ -36,10 +36,6 @@ return [
             Command\ShortUrl\DeleteShortUrlCommand::class => ConfigAbstractFactory::class,
 
             Command\Visit\LocateVisitsCommand::class => ConfigAbstractFactory::class,
-            Command\Visit\UpdateDbCommand::class => ConfigAbstractFactory::class,
-
-            Command\Config\GenerateCharsetCommand::class => InvokableFactory::class,
-            Command\Config\GenerateSecretCommand::class => InvokableFactory::class,
 
             Command\Api\GenerateKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\DisableKeyCommand::class => ConfigAbstractFactory::class,
@@ -70,7 +66,6 @@ return [
             LockFactory::class,
             GeolocationDbUpdater::class,
         ],
-        Command\Visit\UpdateDbCommand::class => [DbUpdater::class],
 
         Command\Api\GenerateKeyCommand::class => [ApiKeyService::class],
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class],

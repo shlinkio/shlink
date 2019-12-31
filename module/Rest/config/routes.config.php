@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Rest;
 return [
 
     'routes' => [
-        Action\AuthenticateAction::getRouteDef(),
         Action\HealthAction::getRouteDef(),
 
         // Short codes

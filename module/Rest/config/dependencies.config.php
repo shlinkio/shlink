@@ -20,7 +20,6 @@ return [
             Authentication\JWTService::class => ConfigAbstractFactory::class,
             ApiKeyService::class => ConfigAbstractFactory::class,
 
-            Action\AuthenticateAction::class => ConfigAbstractFactory::class,
             Action\HealthAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\CreateShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\SingleStepCreateShortUrlAction::class => ConfigAbstractFactory::class,
@@ -39,9 +38,7 @@ return [
             Middleware\BodyParserMiddleware::class => InvokableFactory::class,
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
             Middleware\PathVersionMiddleware::class => InvokableFactory::class,
-            Middleware\BackwardsCompatibleProblemDetailsMiddleware::class => ConfigAbstractFactory::class,
             Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class => InvokableFactory::class,
-            Middleware\ShortUrl\ShortCodePathMiddleware::class => InvokableFactory::class,
         ],
     ],
 
@@ -49,7 +46,6 @@ return [
         Authentication\JWTService::class => [AppOptions::class],
         ApiKeyService::class => ['em'],
 
-        Action\AuthenticateAction::class => [ApiKeyService::class, Authentication\JWTService::class, 'Logger_Shlink'],
         Action\HealthAction::class => [Connection::class, AppOptions::class, 'Logger_Shlink'],
         Action\ShortUrl\CreateShortUrlAction::class => [
             Service\UrlShortener::class,
@@ -76,10 +72,6 @@ return [
         Action\Tag\DeleteTagsAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
         Action\Tag\CreateTagsAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
         Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
-
-        Middleware\BackwardsCompatibleProblemDetailsMiddleware::class => [
-            'config.backwards_compatible_problem_details.json_flags',
-        ],
     ],
 
 ];

@@ -21,7 +21,6 @@ return [
             'path' => '/rest',
             'middleware' => [
                 Rest\Middleware\CrossDomainMiddleware::class,
-                Rest\Middleware\BackwardsCompatibleProblemDetailsMiddleware::class,
                 ProblemDetails\ProblemDetailsMiddleware::class,
             ],
         ],
@@ -35,7 +34,6 @@ return [
             'path' => '/rest',
             'middleware' => [
                 Rest\Middleware\PathVersionMiddleware::class,
-                Rest\Middleware\ShortUrl\ShortCodePathMiddleware::class,
             ],
         ],
 

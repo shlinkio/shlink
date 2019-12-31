@@ -8,19 +8,10 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
 use function explode;
-use function file_exists;
-use function file_get_contents;
-use function file_put_contents;
 use function Functional\contains;
-use function implode;
 use function Shlinkio\Shlink\Common\env;
-use function sprintf;
-use function str_shuffle;
-use function substr;
-use function sys_get_temp_dir;
 
 $helper = new class {
-    private const BASE62 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     private const DB_DRIVERS_MAP = [
         'mysql' => 'pdo_mysql',
         'maria' => 'pdo_mysql',
@@ -31,40 +22,6 @@ $helper = new class {
         'maria' => '3306',
         'postgres' => '5432',
     ];
-
-    /** @var string */
-    private $secretKey;
-
-    public function __construct()
-    {
-        [, $this->secretKey] = $this->initShlinkSecretKey();
-    }
-
-    private function initShlinkSecretKey(): array
-    {
-        $keysFile = sprintf('%s/shlink.keys', sys_get_temp_dir());
-        if (file_exists($keysFile)) {
-            return explode(',', file_get_contents($keysFile));
-        }
-
-        $keys = [
-            '', // This was the SHORTCODE_CHARS. Kept as empty string for BC
-            env('SECRET_KEY', $this->generateSecretKey()), // Deprecated
-        ];
-
-        file_put_contents($keysFile, implode(',', $keys));
-        return $keys;
-    }
-
-    private function generateSecretKey(): string
-    {
-        return substr(str_shuffle(self::BASE62), 0, 32);
-    }
-
-    public function getSecretKey(): string
-    {
-        return $this->secretKey;
-    }
 
     public function getDbConfig(): array
     {
@@ -94,7 +51,7 @@ $helper = new class {
     public function getNotFoundRedirectsConfig(): array
     {
         return [
-            'invalid_short_url' => env('INVALID_SHORT_URL_REDIRECT_TO', env('NOT_FOUND_REDIRECT_TO')),
+            'invalid_short_url' => env('INVALID_SHORT_URL_REDIRECT_TO'),
             'regular_404' => env('REGULAR_404_REDIRECT_TO'),
             'base_url' => env('BASE_URL_REDIRECT_TO'),
         ];
@@ -112,7 +69,6 @@ return [
     'config_cache_enabled' => false,
 
     'app_options' => [
-        'secret_key' => $helper->getSecretKey(),
         'disable_track_param' => env('DISABLE_TRACK_PARAM'),
     ],
 

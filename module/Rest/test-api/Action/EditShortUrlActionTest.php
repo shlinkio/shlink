@@ -20,9 +20,7 @@ class EditShortUrlActionTest extends ApiTestCase
         $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
         $this->assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
         $this->assertEquals('INVALID_SHORTCODE', $payload['type']);
-        $this->assertEquals('INVALID_SHORTCODE', $payload['error']); // Deprecated
         $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
         $this->assertEquals('Short URL not found', $payload['title']);
         $this->assertEquals('invalid', $payload['shortCode']);
     }
@@ -40,9 +38,7 @@ class EditShortUrlActionTest extends ApiTestCase
         $this->assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
         $this->assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
         $this->assertEquals('INVALID_ARGUMENT', $payload['type']);
-        $this->assertEquals('INVALID_ARGUMENT', $payload['error']); // Deprecated
         $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
         $this->assertEquals('Invalid data', $payload['title']);
     }
 }

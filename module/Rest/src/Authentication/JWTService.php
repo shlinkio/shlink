@@ -97,7 +97,7 @@ class JWTService implements JWTServiceInterface
      */
     private function encode(array $data): string
     {
-        return JWT::encode($data, $this->appOptions->getSecretKey(), self::DEFAULT_ENCRYPTION_ALG);
+        return JWT::encode($data, '', self::DEFAULT_ENCRYPTION_ALG);
     }
 
     /**
@@ -106,6 +106,6 @@ class JWTService implements JWTServiceInterface
      */
     private function decode(string $jwt): array
     {
-        return (array) JWT::decode($jwt, $this->appOptions->getSecretKey(), [self::DEFAULT_ENCRYPTION_ALG]);
+        return (array) JWT::decode($jwt, '', [self::DEFAULT_ENCRYPTION_ALG]);
     }
 }

@@ -78,7 +78,7 @@ class NotifyVisitToWebHooks
                 'User-Agent' => (string) $this->appOptions,
             ],
             RequestOptions::JSON => [
-                'shortUrl' => $this->transformer->transform($visit->getShortUrl(), false),
+                'shortUrl' => $this->transformer->transform($visit->getShortUrl()),
                 'visit' => $visit->jsonSerialize(),
             ],
         ];

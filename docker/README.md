@@ -119,7 +119,6 @@ This is the complete list of supported env vars:
 
     In the future, these redis servers could be used for other caching operations performed by shlink.
 
-* `NOT_FOUND_REDIRECT_TO`: **Deprecated since v1.20 in favor of `INVALID_SHORT_URL_REDIRECT_TO`** If a URL is provided here, when a user tries to access an invalid short URL, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
 * `SHORTCODE_CHARS`: **Ignored when using Shlink 1.20 or newer**. A charset to use when building short codes. Only needed when using more than one shlink instance ([Multi instance considerations](#multi-instance-considerations)).
 
 An example using all env vars could look like this:
@@ -186,14 +185,11 @@ The whole configuration should have this format, but it can be split into multip
         "password": "123abc",
         "host": "something.rds.amazonaws.com",
         "port": "3306"
-    },
-    "not_found_redirect_to": "https://my-landing-page.com"
+    }
 }
 ```
 
 > This is internally parsed to how shlink expects the config. If you are using a version previous to 1.17.0, this parser is not present and you need to provide a config structure like the one [documented previously](https://github.com/shlinkio/shlink-docker-image/tree/v1.16.3#provide-config-via-volumes).
-
-> The `not_found_redirect_to` option has been deprecated in v1.20. Use `invalid_short_url_redirect_to` instead (however, it will still work for backwards compatibility).
 
 Once created just run shlink with the volume:
 

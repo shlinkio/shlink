@@ -90,9 +90,6 @@ class Visit extends AbstractEntity implements JsonSerializable
             'date' => $this->date->toAtomString(),
             'userAgent' => $this->userAgent,
             'visitLocation' => $this->visitLocation,
-
-            // Deprecated
-            'remoteAddr' => null,
         ];
     }
 

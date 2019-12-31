@@ -21,15 +21,13 @@ class AuthenticationTest extends ApiTestCase
             implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)
         );
 
-        $resp = $this->callApi(self::METHOD_GET, '/short-codes');
+        $resp = $this->callApi(self::METHOD_GET, '/short-urls');
         $payload = $this->getJsonResponsePayload($resp);
 
         $this->assertEquals(self::STATUS_UNAUTHORIZED, $resp->getStatusCode());
         $this->assertEquals(self::STATUS_UNAUTHORIZED, $payload['status']);
         $this->assertEquals('INVALID_AUTHORIZATION', $payload['type']);
-        $this->assertEquals('INVALID_AUTHORIZATION', $payload['error']); // Deprecated
         $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
         $this->assertEquals('Invalid authorization', $payload['title']);
     }
 
@@ -41,7 +39,7 @@ class AuthenticationTest extends ApiTestCase
     {
         $expectedDetail = 'Provided API key does not exist or is invalid.';
 
-        $resp = $this->callApi(self::METHOD_GET, '/short-codes', [
+        $resp = $this->callApi(self::METHOD_GET, '/short-urls', [
             'headers' => [
                 Plugin\ApiKeyHeaderPlugin::HEADER_NAME => $apiKey,
             ],
@@ -51,9 +49,7 @@ class AuthenticationTest extends ApiTestCase
         $this->assertEquals(self::STATUS_UNAUTHORIZED, $resp->getStatusCode());
         $this->assertEquals(self::STATUS_UNAUTHORIZED, $payload['status']);
         $this->assertEquals('INVALID_API_KEY', $payload['type']);
-        $this->assertEquals('INVALID_API_KEY', $payload['error']); // Deprecated
         $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
         $this->assertEquals('Invalid API key', $payload['title']);
     }
 
@@ -74,7 +70,7 @@ class AuthenticationTest extends ApiTestCase
         string $expectedType,
         string $expectedTitle
     ): void {
-        $resp = $this->callApi(self::METHOD_GET, '/short-codes', [
+        $resp = $this->callApi(self::METHOD_GET, '/short-urls', [
             'headers' => [
                 Plugin\AuthorizationHeaderPlugin::HEADER_NAME => $authValue,
             ],
@@ -84,9 +80,7 @@ class AuthenticationTest extends ApiTestCase
         $this->assertEquals(self::STATUS_UNAUTHORIZED, $resp->getStatusCode());
         $this->assertEquals(self::STATUS_UNAUTHORIZED, $payload['status']);
         $this->assertEquals($expectedType, $payload['type']);
-        $this->assertEquals($expectedType, $payload['error']); // Deprecated
         $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
         $this->assertEquals($expectedTitle, $payload['title']);
     }
 
