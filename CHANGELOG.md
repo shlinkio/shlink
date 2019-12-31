@@ -22,6 +22,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#429](https://github.com/shlinkio/shlink/issues/429) Dropped support for PHP 7.2 and 7.3
 
+* [#229](https://github.com/shlinkio/shlink/issues/229) Remove everything which was deprecated, including:
+
+    * Preview generation feature completely removed.
+    * Authentication against REST API using JWT is no longer supported.
+
+    See [UPGRADING doc](UPGRADING.md) in order to get details on how to migrate to this version.
+
 #### Fixed
 
 * *Nothing*
