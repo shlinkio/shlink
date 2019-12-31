@@ -105,9 +105,6 @@
         "/{shortCode}/qr-code": {
             "$ref": "paths/{shortCode}_qr-code.json"
         },
-        "/{shortCode}/preview": {
-            "$ref": "paths/{shortCode}_preview.json"
-        },
 
         "/rest/v1/authenticate": {
             "$ref": "paths/v1_authenticate.json"

@@ -15,9 +15,6 @@
         <testsuite name="CLI">
             <directory>./module/CLI/test</directory>
         </testsuite>
-        <testsuite name="PreviewGenerator">
-            <directory>./module/PreviewGenerator/test</directory>
-        </testsuite>
     </testsuites>
 
     <filter>

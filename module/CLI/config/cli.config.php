@@ -12,7 +12,6 @@ return [
             Command\ShortUrl\ResolveUrlCommand::NAME => Command\ShortUrl\ResolveUrlCommand::class,
             Command\ShortUrl\ListShortUrlsCommand::NAME => Command\ShortUrl\ListShortUrlsCommand::class,
             Command\ShortUrl\GetVisitsCommand::NAME => Command\ShortUrl\GetVisitsCommand::class,
-            Command\ShortUrl\GeneratePreviewCommand::NAME => Command\ShortUrl\GeneratePreviewCommand::class,
             Command\ShortUrl\DeleteShortUrlCommand::NAME => Command\ShortUrl\DeleteShortUrlCommand::class,
 
             Command\Visit\LocateVisitsCommand::NAME => Command\Visit\LocateVisitsCommand::class,

@@ -71,8 +71,7 @@
         "psr-4": {
             "Shlinkio\\Shlink\\CLI\\": "module/CLI/src",
             "Shlinkio\\Shlink\\Rest\\": "module/Rest/src",
-            "Shlinkio\\Shlink\\Core\\": "module/Core/src",
-            "Shlinkio\\Shlink\\PreviewGenerator\\": "module/PreviewGenerator/src/"
+            "Shlinkio\\Shlink\\Core\\": "module/Core/src"
         },
         "files": [
             "module/Core/functions/functions.php"
@@ -86,8 +85,7 @@
             "ShlinkioTest\\Shlink\\Core\\": [
                 "module/Core/test",
                 "module/Core/test-db"
-            ],
-            "ShlinkioTest\\Shlink\\PreviewGenerator\\": "module/PreviewGenerator/test"
+            ]
         }
     },
     "scripts": {
