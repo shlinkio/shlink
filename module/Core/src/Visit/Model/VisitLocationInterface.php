@@ -10,9 +10,9 @@ interface VisitLocationInterface extends JsonSerializable
 {
     public function getCountryName(): string;
 
-    public function getLatitude(): string;
+    public function getLatitude(): float;
 
-    public function getLongitude(): string;
+    public function getLongitude(): float;
 
     public function getCityName(): string;
 }

@@ -23,9 +23,7 @@ class UpdateTagActionTest extends ApiTestCase
         $this->assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
         $this->assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
         $this->assertEquals('INVALID_ARGUMENT', $payload['type']);
-        $this->assertEquals('INVALID_ARGUMENT', $payload['error']); // Deprecated
         $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
         $this->assertEquals('Invalid data', $payload['title']);
     }
 
@@ -50,9 +48,7 @@ class UpdateTagActionTest extends ApiTestCase
         $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
         $this->assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
         $this->assertEquals('TAG_NOT_FOUND', $payload['type']);
-        $this->assertEquals('TAG_NOT_FOUND', $payload['error']); // Deprecated
         $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
         $this->assertEquals('Tag not found', $payload['title']);
     }
 
@@ -70,9 +66,7 @@ class UpdateTagActionTest extends ApiTestCase
         $this->assertEquals(self::STATUS_CONFLICT, $resp->getStatusCode());
         $this->assertEquals(self::STATUS_CONFLICT, $payload['status']);
         $this->assertEquals('TAG_CONFLICT', $payload['type']);
-        $this->assertEquals('TAG_CONFLICT', $payload['error']); // Deprecated
         $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
         $this->assertEquals('Tag conflict', $payload['title']);
     }
 

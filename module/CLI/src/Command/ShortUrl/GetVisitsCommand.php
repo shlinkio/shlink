@@ -22,7 +22,6 @@ use function Functional\select_keys;
 class GetVisitsCommand extends AbstractWithDateRangeCommand
 {
     public const NAME = 'short-url:visits';
-    private const ALIASES = ['shortcode:visits', 'short-code:visits'];
 
     private VisitsTrackerInterface $visitsTracker;
 
@@ -36,7 +35,6 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
     {
         $this
             ->setName(self::NAME)
-            ->setAliases(self::ALIASES)
             ->setDescription('Returns the detailed visits information for provided short code')
             ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code which visits we want to get');
     }

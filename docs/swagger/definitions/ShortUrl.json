@@ -31,11 +31,6 @@
         },
         "meta": {
             "$ref": "./ShortUrlMeta.json"
-        },
-        "originalUrl": {
-            "deprecated": true,
-            "type": "string",
-            "description": "The original long URL. [DEPRECATED. Use longUrl instead]"
         }
     }
 }

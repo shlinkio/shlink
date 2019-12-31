@@ -11,7 +11,7 @@ use function array_merge;
 
 class SimplifiedConfigParserTest extends TestCase
 {
-    private $postProcessor;
+    private SimplifiedConfigParser $postProcessor;
 
     public function setUp(): void
     {
@@ -38,9 +38,9 @@ class SimplifiedConfigParserTest extends TestCase
             'disable_track_param' => 'bar',
             'short_domain_schema' => 'https',
             'short_domain_host' => 'doma.in',
-            'validate_url' => false,
+            'validate_url' => true,
             'delete_short_url_threshold' => 50,
-            'not_found_redirect_to' => 'foobar.com',
+            'invalid_short_url_redirect_to' => 'foobar.com',
             'redis_servers' => [
                 'tcp://1.1.1.1:1111',
                 'tcp://1.2.2.2:2222',
@@ -79,7 +79,7 @@ class SimplifiedConfigParserTest extends TestCase
                     'schema' => 'https',
                     'hostname' => 'doma.in',
                 ],
-                'validate_url' => false,
+                'validate_url' => true,
                 'visits_webhooks' => [
                     'http://my-api.com/api/v2.3/notify',
                     'https://third-party.io/foo',
@@ -124,29 +124,5 @@ class SimplifiedConfigParserTest extends TestCase
         $result = ($this->postProcessor)(array_merge($config, $simplified));
 
         $this->assertEquals(array_merge($expected, $simplified), $result);
-    }
-
-    /**
-     * @test
-     * @dataProvider provideConfigWithDeprecates
-     */
-    public function properlyMapsDeprecatedConfigs(array $config, string $expected): void
-    {
-        $result = ($this->postProcessor)($config);
-        $this->assertEquals($expected, $result['not_found_redirects']['invalid_short_url']);
-    }
-
-    public function provideConfigWithDeprecates(): iterable
-    {
-        yield 'only deprecated config' => [['not_found_redirect_to' => 'old_value'], 'old_value'];
-        yield 'only new config' => [['invalid_short_url_redirect_to' => 'new_value'], 'new_value'];
-        yield 'both configs, new first' => [
-            ['invalid_short_url_redirect_to' => 'new_value', 'not_found_redirect_to' => 'old_value'],
-            'new_value',
-        ];
-        yield 'both configs, deprecated first' => [
-            ['not_found_redirect_to' => 'old_value', 'invalid_short_url_redirect_to' => 'new_value'],
-            'new_value',
-        ];
     }
 }

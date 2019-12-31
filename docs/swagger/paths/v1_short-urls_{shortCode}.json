@@ -5,7 +5,7 @@
             "Short URLs"
         ],
         "summary": "Parse short code",
-        "description": "Get the long URL behind a short URL's short code.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
+        "description": "Get the long URL behind a short URL's short code.",
         "parameters": [
             {
                 "$ref": "../parameters/version.json"
@@ -32,9 +32,6 @@
         "security": [
             {
                 "ApiKey": []
-            },
-            {
-                "Bearer": []
             }
         ],
         "responses": {
@@ -94,7 +91,7 @@
             "Short URLs"
         ],
         "summary": "Edit short URL",
-        "description": "Update certain meta arguments from an existing short URL.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
+        "description": "Update certain meta arguments from an existing short URL.",
         "parameters": [
             {
                 "$ref": "../parameters/version.json"
@@ -137,9 +134,6 @@
         "security": [
             {
                 "ApiKey": []
-            },
-            {
-                "Bearer": []
             }
         ],
         "responses": {
@@ -201,105 +195,13 @@
         }
     },
 
-    "put": {
-        "deprecated": true,
-        "operationId": "editShortUrlPut",
-        "tags": [
-            "Short URLs"
-        ],
-        "summary": "[DEPRECATED] Edit short URL",
-        "description": "**[DEPRECATED]** Use [editShortUrl](#/Short_URLs/getShortUrl) instead",
-        "parameters": [
-            {
-                "$ref": "../parameters/version.json"
-            },
-            {
-                "name": "shortCode",
-                "in": "path",
-                "description": "The short code to edit.",
-                "required": true,
-                "schema": {
-                    "type": "string"
-                }
-            }
-        ],
-        "requestBody": {
-            "description": "Request body.",
-            "required": true,
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "validSince": {
-                                "description": "The date (in ISO-8601 format) from which this short code will be valid",
-                                "type": "string"
-                            },
-                            "validUntil": {
-                                "description": "The date (in ISO-8601 format) until which this short code will be valid",
-                                "type": "string"
-                            },
-                            "maxVisits": {
-                                "description": "The maximum number of allowed visits for this short code",
-                                "type": "number"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "security": [
-            {
-                "ApiKey": []
-            },
-            {
-                "Bearer": []
-            }
-        ],
-        "responses": {
-            "204": {
-                "description": "The short code has been properly updated."
-            },
-            "400": {
-                "description": "Provided meta arguments are invalid.",
-                "content": {
-                    "application/problem+json": {
-                        "schema": {
-                            "$ref": "../definitions/Error.json"
-                        }
-                    }
-                }
-            },
-            "404": {
-                "description": "No short URL was found for provided short code.",
-                "content": {
-                    "application/problem+json": {
-                        "schema": {
-                            "$ref": "../definitions/Error.json"
-                        }
-                    }
-                }
-            },
-            "500": {
-                "description": "Unexpected error.",
-                "content": {
-                    "application/problem+json": {
-                        "schema": {
-                            "$ref": "../definitions/Error.json"
-                        }
-                    }
-                }
-            }
-        }
-    },
-
     "delete": {
         "operationId": "deleteShortUrl",
         "tags": [
             "Short URLs"
         ],
         "summary": "Delete short URL",
-        "description": "Deletes the short URL for provided short code.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
+        "description": "Deletes the short URL for provided short code.",
         "parameters": [
             {
                 "$ref": "../parameters/version.json"
@@ -317,9 +219,6 @@
         "security": [
             {
                 "ApiKey": []
-            },
-            {
-                "Bearer": []
             }
         ],
         "responses": {

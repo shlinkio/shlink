@@ -27,7 +27,6 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
         $response = $response->withHeader('Access-Control-Allow-Origin', $request->getHeader('Origin'))
                              ->withHeader('Access-Control-Expose-Headers', implode(', ', [
                                  Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-                                 Authentication\Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
                              ]));
         if ($request->getMethod() !== self::METHOD_OPTIONS) {
             return $response;

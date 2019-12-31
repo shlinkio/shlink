@@ -49,9 +49,7 @@ class CreateShortUrlActionTest extends ApiTestCase
         $this->assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
         $this->assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
         $this->assertEquals($detail, $payload['detail']);
-        $this->assertEquals($detail, $payload['message']); // Deprecated
         $this->assertEquals('INVALID_SLUG', $payload['type']);
-        $this->assertEquals('INVALID_SLUG', $payload['error']); // Deprecated
         $this->assertEquals('Invalid custom slug', $payload['title']);
         $this->assertEquals($slug, $payload['customSlug']);
 
@@ -215,7 +213,7 @@ class CreateShortUrlActionTest extends ApiTestCase
     }
 
     /** @test */
-    public function failsToCreateShortUrlWithInvalidOriginalUrl(): void
+    public function failsToCreateShortUrlWithInvalidLongUrl(): void
     {
         $url = 'https://this-has-to-be-invalid.com';
         $expectedDetail = sprintf('Provided URL %s is invalid. Try with a different one.', $url);
@@ -225,9 +223,7 @@ class CreateShortUrlActionTest extends ApiTestCase
         $this->assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
         $this->assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
         $this->assertEquals('INVALID_URL', $payload['type']);
-        $this->assertEquals('INVALID_URL', $payload['error']); // Deprecated
         $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals($expectedDetail, $payload['message']); // Deprecated
         $this->assertEquals('Invalid URL', $payload['title']);
         $this->assertEquals($url, $payload['url']);
     }

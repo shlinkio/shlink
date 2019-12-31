@@ -215,12 +215,6 @@ Those tasks can be performed using shlink's CLI tool, so it should be easy to sc
 
     > You don't need this if you use Shlink v1.17.0 or newer, since now it downloads/updates the geolocation database automatically just before trying to use it.
 
-* Generate website previews: `/path/to/shlink/bin/cli short-url:process-previews`
-
-    Running this will improve the performance of the `doma.in/abc123/preview` URLs, which return a preview of the site.
-
-    > **Important!** Generating previews is considered deprecated and the feature will be removed in Shlink v2.
-
 *Any of these commands accept the `-q` flag, which makes it not display any output. This is recommended when configuring the commands as cron jobs.*
 
 ## Update to new version
@@ -274,33 +268,28 @@ Options:
   -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
 
 Available commands:
-  help                        Displays help for a command
-  list                        Lists commands
+  help                Displays help for a command
+  list                Lists commands
  api-key
-  api-key:disable             Disables an API key.
-  api-key:generate            Generates a new valid API key.
-  api-key:list                Lists all the available API keys.
- config
-  config:generate-charset     [DEPRECATED] Generates a character set sample just by shuffling the default one, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ". Then it can be set in the SHORTCODE_CHARS environment variable
-  config:generate-secret      [DEPRECATED] Generates a random secret string that can be used for JWT token encryption
+  api-key:disable     Disables an API key.
+  api-key:generate    Generates a new valid API key.
+  api-key:list        Lists all the available API keys.
  db
-  db:create                   Creates the database needed for shlink to work. It will do nothing if the database already exists
-  db:migrate                  Runs database migrations, which will ensure the shlink database is up to date.
+  db:create           Creates the database needed for shlink to work. It will do nothing if the database already exists
+  db:migrate          Runs database migrations, which will ensure the shlink database is up to date.
  short-url
-  short-url:delete            [short-code:delete] Deletes a short URL
-  short-url:generate          [shortcode:generate|short-code:generate] Generates a short URL for provided long URL and returns it
-  short-url:list              [shortcode:list|short-code:list] List all short URLs
-  short-url:parse             [shortcode:parse|short-code:parse] Returns the long URL behind a short code
-  short-url:process-previews  [shortcode:process-previews|short-code:process-previews] [DEPRECATED] Processes and generates the previews for every URL, improving performance for later web requests.
-  short-url:visits            [shortcode:visits|short-code:visits] Returns the detailed visits information for provided short code
+  short-url:delete    Deletes a short URL
+  short-url:generate  Generates a short URL for provided long URL and returns it
+  short-url:list      List all short URLs
+  short-url:parse     Returns the long URL behind a short code
+  short-url:visits    Returns the detailed visits information for provided short code
  tag
-  tag:create                  Creates one or more tags.
-  tag:delete                  Deletes one or more tags.
-  tag:list                    Lists existing tags.
-  tag:rename                  Renames one existing tag.
+  tag:create          Creates one or more tags.
+  tag:delete          Deletes one or more tags.
+  tag:list            Lists existing tags.
+  tag:rename          Renames one existing tag.
  visit
-  visit:locate                [visit:process] Resolves visits origin locations.
-  visit:update-db             [DEPRECATED] Updates the GeoLite2 database file used to geolocate IP addresses
+  visit:locate        Resolves visits origin locations.
 ```
 
 > This product includes GeoLite2 data created by MaxMind, available from [https://www.maxmind.com](https://www.maxmind.com)

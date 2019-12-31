@@ -15,10 +15,6 @@ return [
         ],
     ],
 
-    'backwards_compatible_problem_details' => [
-        'json_flags' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION,
-    ],
-
     'error_handler' => [
         'listeners' => [Logger\ErrorLogger::class],
     ],

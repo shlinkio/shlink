@@ -8,7 +8,6 @@ use Doctrine\Common\Cache\Cache;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
-use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Template\TemplateRendererInterface;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
@@ -37,7 +36,6 @@ return [
             Action\RedirectAction::class => ConfigAbstractFactory::class,
             Action\PixelAction::class => ConfigAbstractFactory::class,
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
-            Action\PreviewAction::class => ConfigAbstractFactory::class,
 
             Middleware\QrCodeCacheMiddleware::class => ConfigAbstractFactory::class,
         ],
@@ -74,7 +72,6 @@ return [
             'Logger_Shlink',
         ],
         Action\QrCodeAction::class => [RouterInterface::class, Service\UrlShortener::class, 'Logger_Shlink'],
-        Action\PreviewAction::class => [PreviewGenerator::class, Service\UrlShortener::class, 'Logger_Shlink'],
 
         Middleware\QrCodeCacheMiddleware::class => [Cache::class],
     ],

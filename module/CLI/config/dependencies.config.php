@@ -12,7 +12,6 @@ use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Installer\Factory\ProcessHelperFactory;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
-use Shlinkio\Shlink\PreviewGenerator\Service\PreviewGenerator;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console as SymfonyCli;
 use Symfony\Component\Lock\LockFactory;
@@ -34,14 +33,9 @@ return [
             Command\ShortUrl\ResolveUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ListShortUrlsCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\GetVisitsCommand::class => ConfigAbstractFactory::class,
-            Command\ShortUrl\GeneratePreviewCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\DeleteShortUrlCommand::class => ConfigAbstractFactory::class,
 
             Command\Visit\LocateVisitsCommand::class => ConfigAbstractFactory::class,
-            Command\Visit\UpdateDbCommand::class => ConfigAbstractFactory::class,
-
-            Command\Config\GenerateCharsetCommand::class => InvokableFactory::class,
-            Command\Config\GenerateSecretCommand::class => InvokableFactory::class,
 
             Command\Api\GenerateKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\DisableKeyCommand::class => ConfigAbstractFactory::class,
@@ -64,7 +58,6 @@ return [
         Command\ShortUrl\ResolveUrlCommand::class => [Service\UrlShortener::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
         Command\ShortUrl\GetVisitsCommand::class => [Service\VisitsTracker::class],
-        Command\ShortUrl\GeneratePreviewCommand::class => [Service\ShortUrlService::class, PreviewGenerator::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
 
         Command\Visit\LocateVisitsCommand::class => [
@@ -73,7 +66,6 @@ return [
             LockFactory::class,
             GeolocationDbUpdater::class,
         ],
-        Command\Visit\UpdateDbCommand::class => [DbUpdater::class],
 
         Command\Api\GenerateKeyCommand::class => [ApiKeyService::class],
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class],

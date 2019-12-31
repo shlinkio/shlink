@@ -5,7 +5,7 @@
             "Visits"
         ],
         "summary": "List visits for short URL",
-        "description": "Get the list of visits on the short URL behind provided short code.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
+        "description": "Get the list of visits on the short URL behind provided short code.",
         "parameters": [
             {
                 "$ref": "../parameters/version.json"
@@ -59,9 +59,6 @@
         "security": [
             {
                 "ApiKey": []
-            },
-            {
-                "Bearer": []
             }
         ],
         "responses": {
@@ -108,8 +105,8 @@
                                         "cityName": "Cupertino",
                                         "countryCode": "US",
                                         "countryName": "United States",
-                                        "latitude": "37.3042",
-                                        "longitude": "-122.0946",
+                                        "latitude": 37.3042,
+                                        "longitude": -122.0946,
                                         "regionName": "California",
                                         "timezone": "America/Los_Angeles"
                                     }

@@ -21,7 +21,6 @@ return [
             'path' => '/rest',
             'middleware' => [
                 Rest\Middleware\CrossDomainMiddleware::class,
-                Rest\Middleware\BackwardsCompatibleProblemDetailsMiddleware::class,
                 ProblemDetails\ProblemDetailsMiddleware::class,
             ],
         ],
@@ -29,13 +28,6 @@ return [
         'pre-routing' => [
             'middleware' => [
                 Common\Middleware\CloseDbConnectionMiddleware::class,
-            ],
-        ],
-        'pre-routing-rest' => [
-            'path' => '/rest',
-            'middleware' => [
-                Rest\Middleware\PathVersionMiddleware::class,
-                Rest\Middleware\ShortUrl\ShortCodePathMiddleware::class,
             ],
         ],
 

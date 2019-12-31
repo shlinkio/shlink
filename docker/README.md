@@ -103,7 +103,7 @@ This is the complete list of supported env vars:
         * **postgres** -> `5432`
 * `DISABLE_TRACK_PARAM`: The name of a query param that can be used to visit short URLs avoiding the visit to be tracked. This feature won't be available if not value is provided.
 * `DELETE_SHORT_URL_THRESHOLD`: The amount of visits on short URLs which will not allow them to be deleted. Defaults to `15`.
-* `VALIDATE_URLS`: Boolean which tells if shlink should validate a status 20x (after following redirects) is returned when trying to shorten a URL. Defaults to `true`.
+* `VALIDATE_URLS`: Boolean which tells if shlink should validate a status 20x is returned (after following redirects) when trying to shorten a URL. Defaults to `false`.
 * `INVALID_SHORT_URL_REDIRECT_TO`: If a URL is provided here, when a user tries to access an invalid short URL, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
 * `REGULAR_404_REDIRECT_TO`: If a URL is provided here, when a user tries to access a URL not matching any one supported by the router, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
 * `BASE_URL_REDIRECT_TO`: If a URL is provided here, when a user tries to access Shlink's base URL, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
@@ -119,7 +119,6 @@ This is the complete list of supported env vars:
 
     In the future, these redis servers could be used for other caching operations performed by shlink.
 
-* `NOT_FOUND_REDIRECT_TO`: **Deprecated since v1.20 in favor of `INVALID_SHORT_URL_REDIRECT_TO`** If a URL is provided here, when a user tries to access an invalid short URL, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
 * `SHORTCODE_CHARS`: **Ignored when using Shlink 1.20 or newer**. A charset to use when building short codes. Only needed when using more than one shlink instance ([Multi instance considerations](#multi-instance-considerations)).
 
 An example using all env vars could look like this:
@@ -138,7 +137,7 @@ docker run \
     -e DB_PORT=3306 \
     -e DISABLE_TRACK_PARAM="no-track" \
     -e DELETE_SHORT_URL_THRESHOLD=30 \
-    -e VALIDATE_URLS=false \
+    -e VALIDATE_URLS=true \
     -e "INVALID_SHORT_URL_REDIRECT_TO=https://my-landing-page.com" \
     -e "REGULAR_404_REDIRECT_TO=https://my-landing-page.com" \
     -e "BASE_URL_REDIRECT_TO=https://my-landing-page.com" \
@@ -164,7 +163,7 @@ The whole configuration should have this format, but it can be split into multip
     "delete_short_url_threshold": 30,
     "short_domain_schema": "https",
     "short_domain_host": "doma.in",
-    "validate_url": false,
+    "validate_url": true,
     "invalid_short_url_redirect_to": "https://my-landing-page.com",
     "regular_404_redirect_to": "https://my-landing-page.com",
     "base_url_redirect_to": "https://my-landing-page.com",
@@ -186,14 +185,11 @@ The whole configuration should have this format, but it can be split into multip
         "password": "123abc",
         "host": "something.rds.amazonaws.com",
         "port": "3306"
-    },
-    "not_found_redirect_to": "https://my-landing-page.com"
+    }
 }
 ```
 
 > This is internally parsed to how shlink expects the config. If you are using a version previous to 1.17.0, this parser is not present and you need to provide a config structure like the one [documented previously](https://github.com/shlinkio/shlink-docker-image/tree/v1.16.3#provide-config-via-volumes).
-
-> The `not_found_redirect_to` option has been deprecated in v1.20. Use `invalid_short_url_redirect_to` instead (however, it will still work for backwards compatibility).
 
 Once created just run shlink with the volume:
 

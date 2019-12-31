@@ -19,7 +19,6 @@ use function sprintf;
 class DeleteShortUrlCommand extends Command
 {
     public const NAME = 'short-url:delete';
-    private const ALIASES = ['short-code:delete'];
 
     private DeleteShortUrlServiceInterface $deleteShortUrlService;
 
@@ -33,7 +32,6 @@ class DeleteShortUrlCommand extends Command
     {
         $this
             ->setName(self::NAME)
-            ->setAliases(self::ALIASES)
             ->setDescription('Deletes a short URL')
             ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code for the short URL to be deleted')
             ->addOption(

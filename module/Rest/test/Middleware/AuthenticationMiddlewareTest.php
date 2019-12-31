@@ -13,7 +13,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
+use Shlinkio\Shlink\Rest\Action\HealthAction;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPluginInterface;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
@@ -37,7 +37,7 @@ class AuthenticationMiddlewareTest extends TestCase
 
         $this->middleware = new AuthenticationMiddleware(
             $this->requestToPlugin->reveal(),
-            [AuthenticateAction::class],
+            [HealthAction::class],
             $this->logger->reveal()
         );
     }
@@ -72,7 +72,7 @@ class AuthenticationMiddlewareTest extends TestCase
         yield 'with whitelisted route' => [(new ServerRequest())->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(
-                new Route('foo', $dummyMiddleware, Route::HTTP_METHOD_ANY, AuthenticateAction::class)
+                new Route('foo', $dummyMiddleware, Route::HTTP_METHOD_ANY, HealthAction::class)
             )
         )];
         yield 'with OPTIONS method' => [(new ServerRequest())->withAttribute(

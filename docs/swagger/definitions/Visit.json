@@ -16,11 +16,6 @@
         },
         "visitLocation": {
             "$ref": "./VisitLocation.json"
-        },
-        "remoteAddr": {
-            "type": "string",
-            "description": "This value is deprecated and will always be null",
-            "deprecated": true
         }
     }
 }

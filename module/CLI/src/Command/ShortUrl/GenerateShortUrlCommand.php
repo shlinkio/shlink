@@ -26,7 +26,6 @@ use function sprintf;
 class GenerateShortUrlCommand extends Command
 {
     public const NAME = 'short-url:generate';
-    private const ALIASES = ['shortcode:generate', 'short-code:generate'];
 
     private UrlShortenerInterface $urlShortener;
     private array $domainConfig;
@@ -42,7 +41,6 @@ class GenerateShortUrlCommand extends Command
     {
         $this
             ->setName(self::NAME)
-            ->setAliases(self::ALIASES)
             ->setDescription('Generates a short URL for provided long URL and returns it')
             ->addArgument('longUrl', InputArgument::REQUIRED, 'The long URL to parse')
             ->addOption(

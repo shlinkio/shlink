@@ -61,6 +61,7 @@ return [
             'schema' => 'http',
             'hostname' => 'doma.in',
         ],
+        'validate_url' => true,
     ],
 
     'zend-expressive-swoole' => [

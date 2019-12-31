@@ -22,7 +22,6 @@ class SimplifiedConfigParser
         'short_domain_schema' => ['url_shortener', 'domain', 'schema'],
         'short_domain_host' => ['url_shortener', 'domain', 'hostname'],
         'validate_url' => ['url_shortener', 'validate_url'],
-        'not_found_redirect_to' => ['not_found_redirects', 'invalid_short_url'], // Deprecated
         'invalid_short_url_redirect_to' => ['not_found_redirects', 'invalid_short_url'],
         'regular_404_redirect_to' => ['not_found_redirects', 'regular_404'],
         'base_url_redirect_to' => ['not_found_redirects', 'base_path'],

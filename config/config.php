@@ -23,7 +23,6 @@ return (new ConfigAggregator\ConfigAggregator([
     CLI\ConfigProvider::class,
     Rest\ConfigProvider::class,
     EventDispatcher\ConfigProvider::class,
-    PreviewGenerator\ConfigProvider::class,
     new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
     env('APP_ENV') === 'test'
         ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')

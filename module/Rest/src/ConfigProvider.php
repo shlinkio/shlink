@@ -12,6 +12,7 @@ use function sprintf;
 class ConfigProvider
 {
     private const ROUTES_PREFIX = '/rest/v{version:1|2}';
+    private const UNVERSIONED_ROUTES_PREFIX = '/rest';
 
     private Closure $loadConfig;
 
@@ -33,7 +34,11 @@ class ConfigProvider
         // Prepend the routes prefix to every path
         foreach ($routes as $key => $route) {
             ['path' => $path] = $route;
-            $routes[$key]['path'] = sprintf('%s%s', self::ROUTES_PREFIX, $path);
+            $routes[$key]['path'] = sprintf(
+                '%s%s',
+                $path === '/health' ? self::UNVERSIONED_ROUTES_PREFIX : self::ROUTES_PREFIX,
+                $path,
+            );
         }
 
         return $config;
