@@ -17,7 +17,6 @@ class RequestToHttpAuthPlugin implements RequestToHttpAuthPluginInterface
     // When more than one is matched, the first one to be found will take precedence.
     public const SUPPORTED_AUTH_HEADERS = [
         Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-        Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
     ];
 
     private AuthenticationPluginManagerInterface $authPluginManager;

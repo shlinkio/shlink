@@ -15,7 +15,6 @@ use Zend\Diactoros\ServerRequest;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
 
-use function implode;
 use function Zend\Stratigility\middleware;
 
 class CrossDomainMiddlewareTest extends TestCase
@@ -62,10 +61,10 @@ class CrossDomainMiddlewareTest extends TestCase
         $headers = $response->getHeaders();
 
         $this->assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertEquals(implode(', ', [
+        $this->assertEquals(
             Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-            Authentication\Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
-        ]), $response->getHeaderLine('Access-Control-Expose-Headers'));
+            $response->getHeaderLine('Access-Control-Expose-Headers')
+        );
         $this->assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
         $this->assertArrayNotHasKey('Access-Control-Max-Age', $headers);
         $this->assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
@@ -87,10 +86,10 @@ class CrossDomainMiddlewareTest extends TestCase
         $headers = $response->getHeaders();
 
         $this->assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertEquals(implode(', ', [
+        $this->assertEquals(
             Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-            Authentication\Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
-        ]), $response->getHeaderLine('Access-Control-Expose-Headers'));
+            $response->getHeaderLine('Access-Control-Expose-Headers')
+        );
         $this->assertArrayHasKey('Access-Control-Allow-Methods', $headers);
         $this->assertEquals('1000', $response->getHeaderLine('Access-Control-Max-Age'));
         $this->assertEquals('foo, bar, baz', $response->getHeaderLine('Access-Control-Allow-Headers'));

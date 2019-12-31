@@ -17,7 +17,6 @@ return [
 
     'dependencies' => [
         'factories' => [
-            Authentication\JWTService::class => ConfigAbstractFactory::class,
             ApiKeyService::class => ConfigAbstractFactory::class,
 
             Action\HealthAction::class => ConfigAbstractFactory::class,
@@ -43,7 +42,6 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        Authentication\JWTService::class => [AppOptions::class],
         ApiKeyService::class => ['em'],
 
         Action\HealthAction::class => [Connection::class, AppOptions::class, 'Logger_Shlink'],

@@ -8,8 +8,6 @@ use Fig\Http\Message\StatusCodeInterface;
 use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
-use function sprintf;
-
 class VerifyAuthenticationException extends RuntimeException implements ProblemDetailsExceptionInterface
 {
     use CommonProblemDetailsExceptionTrait;
@@ -21,48 +19,6 @@ class VerifyAuthenticationException extends RuntimeException implements ProblemD
         $e->detail = $e->getMessage();
         $e->title = 'Invalid API key';
         $e->type = 'INVALID_API_KEY';
-        $e->status = StatusCodeInterface::STATUS_UNAUTHORIZED;
-
-        return $e;
-    }
-
-    /** @deprecated */
-    public static function forInvalidAuthToken(): self
-    {
-        $e = new self(
-            'Missing or invalid auth token provided. Perform a new authentication request and send provided '
-            . 'token on every new request on the Authorization header'
-        );
-
-        $e->detail = $e->getMessage();
-        $e->title = 'Invalid auth token';
-        $e->type = 'INVALID_AUTH_TOKEN';
-        $e->status = StatusCodeInterface::STATUS_UNAUTHORIZED;
-
-        return $e;
-    }
-
-    /** @deprecated */
-    public static function forMissingAuthType(): self
-    {
-        $e = new self('You need to provide the Bearer type in the Authorization header.');
-
-        $e->detail = $e->getMessage();
-        $e->title = 'Invalid authorization';
-        $e->type = 'INVALID_AUTHORIZATION';
-        $e->status = StatusCodeInterface::STATUS_UNAUTHORIZED;
-
-        return $e;
-    }
-
-    /** @deprecated */
-    public static function forInvalidAuthType(string $providedType): self
-    {
-        $e = new self(sprintf('Provided authorization type %s is not supported. Use Bearer instead.', $providedType));
-
-        $e->detail = $e->getMessage();
-        $e->title = 'Invalid authorization';
-        $e->type = 'INVALID_AUTHORIZATION';
         $e->status = StatusCodeInterface::STATUS_UNAUTHORIZED;
 
         return $e;

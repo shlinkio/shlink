@@ -9,7 +9,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Rest\Authentication\AuthenticationPluginManagerInterface;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\ApiKeyHeaderPlugin;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
-use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthorizationHeaderPlugin;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPlugin;
 use Shlinkio\Shlink\Rest\Exception\MissingAuthenticationException;
 use Zend\Diactoros\ServerRequest;
@@ -63,14 +62,7 @@ class RequestToAuthPluginTest extends TestCase
 
     public function provideHeaders(): iterable
     {
-        yield 'API key header only' => [[
-            ApiKeyHeaderPlugin::HEADER_NAME => 'foobar',
-        ], ApiKeyHeaderPlugin::HEADER_NAME];
-        yield 'Authorization header only' => [[
-            AuthorizationHeaderPlugin::HEADER_NAME => 'foobar',
-        ], AuthorizationHeaderPlugin::HEADER_NAME];
-        yield 'Both headers' => [[
-            AuthorizationHeaderPlugin::HEADER_NAME => 'foobar',
+        yield 'API key header' => [[
             ApiKeyHeaderPlugin::HEADER_NAME => 'foobar',
         ], ApiKeyHeaderPlugin::HEADER_NAME];
     }

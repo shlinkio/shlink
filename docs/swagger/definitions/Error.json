@@ -17,16 +17,6 @@
         "status": {
             "type": "number",
             "description": "HTTP response status code"
-        },
-        "code": {
-            "type": "string",
-            "description": "**[Deprecated] Use type instead. Not returned for v2 of the REST API** A machine unique code",
-            "deprecated": true
-        },
-        "message": {
-            "type": "string",
-            "description": "**[Deprecated] Use detail instead. Not returned for v2 of the REST API** A human-friendly error message",
-            "deprecated": true
         }
     }
 }
