@@ -30,12 +30,6 @@ return [
                 Common\Middleware\CloseDbConnectionMiddleware::class,
             ],
         ],
-        'pre-routing-rest' => [
-            'path' => '/rest',
-            'middleware' => [
-                Rest\Middleware\PathVersionMiddleware::class,
-            ],
-        ],
 
         'routing' => [
             'middleware' => [

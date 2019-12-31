@@ -33,6 +33,7 @@ class ConfigProviderTest extends TestCase
                 ['path' => '/foo'],
                 ['path' => '/bar'],
                 ['path' => '/baz/foo'],
+                ['path' => '/health'],
             ],
         ]);
 
@@ -42,6 +43,7 @@ class ConfigProviderTest extends TestCase
             ['path' => '/rest/v{version:1|2}/foo'],
             ['path' => '/rest/v{version:1|2}/bar'],
             ['path' => '/rest/v{version:1|2}/baz/foo'],
+            ['path' => '/rest/health'],
         ], $config['routes']);
     }
 }
