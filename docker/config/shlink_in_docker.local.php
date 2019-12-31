@@ -86,7 +86,7 @@ return [
             'schema' => env('SHORT_DOMAIN_SCHEMA', 'http'),
             'hostname' => env('SHORT_DOMAIN_HOST', ''),
         ],
-        'validate_url' => (bool) env('VALIDATE_URLS', true),
+        'validate_url' => (bool) env('VALIDATE_URLS', false),
         'visits_webhooks' => $helper->getVisitsWebhooks(),
     ],
 

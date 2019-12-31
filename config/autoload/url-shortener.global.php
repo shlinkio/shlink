@@ -9,7 +9,7 @@ return [
             'schema' => 'https',
             'hostname' => '',
         ],
-        'validate_url' => true,
+        'validate_url' => false,
         'visits_webhooks' => [],
     ],
 

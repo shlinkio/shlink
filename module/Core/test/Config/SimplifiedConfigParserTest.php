@@ -38,7 +38,7 @@ class SimplifiedConfigParserTest extends TestCase
             'disable_track_param' => 'bar',
             'short_domain_schema' => 'https',
             'short_domain_host' => 'doma.in',
-            'validate_url' => false,
+            'validate_url' => true,
             'delete_short_url_threshold' => 50,
             'invalid_short_url_redirect_to' => 'foobar.com',
             'redis_servers' => [
@@ -79,7 +79,7 @@ class SimplifiedConfigParserTest extends TestCase
                     'schema' => 'https',
                     'hostname' => 'doma.in',
                 ],
-                'validate_url' => false,
+                'validate_url' => true,
                 'visits_webhooks' => [
                     'http://my-api.com/api/v2.3/notify',
                     'https://third-party.io/foo',
