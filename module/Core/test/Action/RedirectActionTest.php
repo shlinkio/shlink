@@ -33,7 +33,7 @@ class RedirectActionTest extends TestCase
         $this->action = new RedirectAction(
             $this->urlShortener->reveal(),
             $this->visitTracker->reveal(),
-            new Options\AppOptions(['disableTrackParam' => 'foobar'])
+            new Options\AppOptions(['disableTrackParam' => 'foobar']),
         );
     }
 
@@ -46,7 +46,7 @@ class RedirectActionTest extends TestCase
         $shortCode = 'abc123';
         $shortUrl = new ShortUrl('http://domain.com/foo/bar?some=thing');
         $shortCodeToUrl = $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn($shortUrl);
-        $track = $this->visitTracker->track(Argument::cetera())->will(function () {
+        $track = $this->visitTracker->track(Argument::cetera())->will(function (): void {
         });
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)->withQueryParams($query);

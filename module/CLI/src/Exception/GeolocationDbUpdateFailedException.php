@@ -16,7 +16,7 @@ class GeolocationDbUpdateFailedException extends RuntimeException implements Exc
         $e = new self(
             'An error occurred while updating geolocation database, and an older version could not be found',
             0,
-            $prev
+            $prev,
         );
         $e->olderDbExists = $olderDbExists;
 

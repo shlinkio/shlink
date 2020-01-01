@@ -42,7 +42,7 @@ class UrlShortenerTest extends TestCase
         $this->em->flush()->willReturn(null);
         $this->em->commit()->willReturn(null);
         $this->em->beginTransaction()->willReturn(null);
-        $this->em->persist(Argument::any())->will(function ($arguments) {
+        $this->em->persist(Argument::any())->will(function ($arguments): void {
             /** @var ShortUrl $shortUrl */
             [$shortUrl] = $arguments;
             $shortUrl->setId('10');
@@ -59,7 +59,7 @@ class UrlShortenerTest extends TestCase
         $this->urlShortener = new UrlShortener(
             $this->urlValidator->reveal(),
             $this->em->reveal(),
-            new UrlShortenerOptions(['validate_url' => $urlValidationEnabled])
+            new UrlShortenerOptions(['validate_url' => $urlValidationEnabled]),
         );
     }
 
@@ -69,7 +69,7 @@ class UrlShortenerTest extends TestCase
         $shortUrl = $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
-            ShortUrlMeta::createEmpty()
+            ShortUrlMeta::createEmpty(),
         );
 
         $this->assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
@@ -85,7 +85,7 @@ class UrlShortenerTest extends TestCase
             function () use (&$callIndex, $expectedCalls) {
                 $callIndex++;
                 return $callIndex < $expectedCalls;
-            }
+            },
         );
         $repo->findBy(Argument::cetera())->willReturn([]);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
@@ -93,7 +93,7 @@ class UrlShortenerTest extends TestCase
         $shortUrl = $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
-            ShortUrlMeta::createEmpty()
+            ShortUrlMeta::createEmpty(),
         );
 
         $this->assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
@@ -116,7 +116,7 @@ class UrlShortenerTest extends TestCase
         $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
-            ShortUrlMeta::createEmpty()
+            ShortUrlMeta::createEmpty(),
         );
     }
 
@@ -124,13 +124,15 @@ class UrlShortenerTest extends TestCase
     public function validatorIsCalledWhenUrlValidationIsEnabled(): void
     {
         $this->setUrlShortener(true);
-        $validateUrl = $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar')->will(function () {
-        });
+        $validateUrl = $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar')->will(
+            function (): void {
+            },
+        );
 
         $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
-            ShortUrlMeta::createEmpty()
+            ShortUrlMeta::createEmpty(),
         );
 
         $validateUrl->shouldHaveBeenCalledOnce();
@@ -151,7 +153,7 @@ class UrlShortenerTest extends TestCase
         $this->urlShortener->urlToShortCode(
             new Uri('http://foobar.com/12345/hello?foo=bar'),
             [],
-            ShortUrlMeta::createFromRawData(['customSlug' => 'custom-slug'])
+            ShortUrlMeta::createFromRawData(['customSlug' => 'custom-slug']),
         );
     }
 
@@ -183,7 +185,7 @@ class UrlShortenerTest extends TestCase
 
         yield [$url, [], ShortUrlMeta::createFromRawData(['findIfExists' => true]), new ShortUrl($url)];
         yield [$url, [], ShortUrlMeta::createFromRawData(
-            ['findIfExists' => true, 'customSlug' => 'foo']
+            ['findIfExists' => true, 'customSlug' => 'foo'],
         ), new ShortUrl($url)];
         yield [
             $url,

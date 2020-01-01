@@ -52,6 +52,9 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @param string|array|null $orderBy
+     */
     private function processOrderByForList(QueryBuilder $qb, $orderBy): array
     {
         $isArray = is_array($orderBy);
@@ -117,7 +120,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
             $qb->andWhere($qb->expr()->orX(
                 $qb->expr()->like('s.longUrl', ':searchPattern'),
                 $qb->expr()->like('s.shortCode', ':searchPattern'),
-                $qb->expr()->like('t.name', ':searchPattern')
+                $qb->expr()->like('t.name', ':searchPattern'),
             ));
             $qb->setParameter('searchPattern', '%' . $searchTerm . '%');
         }

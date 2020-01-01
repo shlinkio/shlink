@@ -21,13 +21,13 @@ class VisitsPaginatorAdapter implements AdapterInterface
         $this->params = $params;
     }
 
-    public function getItems($offset, $itemCountPerPage): array
+    public function getItems($offset, $itemCountPerPage): array // phpcs:ignore
     {
         return $this->visitRepository->findVisitsByShortCode(
             $this->shortCode,
             $this->params->getDateRange(),
             $itemCountPerPage,
-            $offset
+            $offset,
         );
     }
 

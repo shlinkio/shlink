@@ -37,8 +37,6 @@ class ListShortUrlsAction extends AbstractRestAction
     }
 
     /**
-     * @param Request $request
-     * @return Response
      * @throws InvalidArgumentException
      */
     public function handle(Request $request): Response
@@ -46,7 +44,7 @@ class ListShortUrlsAction extends AbstractRestAction
         $params = $this->queryToListParams($request->getQueryParams());
         $shortUrls = $this->shortUrlService->listShortUrls(...$params);
         return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls, new ShortUrlDataTransformer(
-            $this->domainConfig
+            $this->domainConfig,
         ))]);
     }
 
@@ -69,7 +67,7 @@ class ListShortUrlsAction extends AbstractRestAction
     {
         return new DateRange(
             isset($query['startDate']) ? Chronos::parse($query['startDate']) : null,
-            isset($query['endDate']) ? Chronos::parse($query['endDate']) : null
+            isset($query['endDate']) ? Chronos::parse($query['endDate']) : null,
         );
     }
 }

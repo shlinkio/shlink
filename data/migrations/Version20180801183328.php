@@ -17,7 +17,6 @@ final class Version20180801183328 extends AbstractMigration
     private const OLD_SIZE = 10;
 
     /**
-     * @param Schema $schema
      * @throws SchemaException
      */
     public function up(Schema $schema): void
@@ -26,7 +25,6 @@ final class Version20180801183328 extends AbstractMigration
     }
 
     /**
-     * @param Schema $schema
      * @throws SchemaException
      */
     public function down(Schema $schema): void
@@ -35,8 +33,6 @@ final class Version20180801183328 extends AbstractMigration
     }
 
     /**
-     * @param Schema $schema
-     * @param int $size
      * @throws SchemaException
      */
     private function setSize(Schema $schema, int $size): void

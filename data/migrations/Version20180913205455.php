@@ -17,7 +17,6 @@ use Shlinkio\Shlink\Common\Util\IpAddress;
 final class Version20180913205455 extends AbstractMigration
 {
     /**
-     * @param Schema $schema
      */
     public function up(Schema $schema): void
     {
@@ -25,7 +24,6 @@ final class Version20180913205455 extends AbstractMigration
     }
 
     /**
-     * @param Schema $schema
      * @throws DBALException
      */
     public function postUp(Schema $schema): void
@@ -67,7 +65,6 @@ final class Version20180913205455 extends AbstractMigration
     }
 
     /**
-     * @param Schema $schema
      */
     public function down(Schema $schema): void
     {

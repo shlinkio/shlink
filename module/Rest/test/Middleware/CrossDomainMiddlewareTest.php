@@ -54,7 +54,7 @@ class CrossDomainMiddlewareTest extends TestCase
 
         $response = $this->middleware->process(
             (new ServerRequest())->withHeader('Origin', 'local'),
-            $this->handler->reveal()
+            $this->handler->reveal(),
         );
         $this->assertNotSame($originalResponse, $response);
 
@@ -63,7 +63,7 @@ class CrossDomainMiddlewareTest extends TestCase
         $this->assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
         $this->assertEquals(
             Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-            $response->getHeaderLine('Access-Control-Expose-Headers')
+            $response->getHeaderLine('Access-Control-Expose-Headers'),
         );
         $this->assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
         $this->assertArrayNotHasKey('Access-Control-Max-Age', $headers);
@@ -88,7 +88,7 @@ class CrossDomainMiddlewareTest extends TestCase
         $this->assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
         $this->assertEquals(
             Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-            $response->getHeaderLine('Access-Control-Expose-Headers')
+            $response->getHeaderLine('Access-Control-Expose-Headers'),
         );
         $this->assertArrayHasKey('Access-Control-Allow-Methods', $headers);
         $this->assertEquals('1000', $response->getHeaderLine('Access-Control-Max-Age'));
@@ -120,8 +120,8 @@ class CrossDomainMiddlewareTest extends TestCase
         yield 'with failed route result' => [RouteResult::fromRouteFailure(['POST', 'GET']), 'POST,GET'];
         yield 'with success route result' => [
             RouteResult::fromRoute(
-                new Route('/', middleware(function () {
-                }), ['DELETE', 'PATCH', 'PUT'])
+                new Route('/', middleware(function (): void {
+                }), ['DELETE', 'PATCH', 'PUT']),
             ),
             'DELETE,PATCH,PUT',
         ];

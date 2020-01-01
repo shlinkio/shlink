@@ -59,7 +59,7 @@ class ApplicationFactoryTest extends TestCase
         $command->getDefinition()->willReturn($name);
         $command->isEnabled()->willReturn(true);
         $command->getAliases()->willReturn([]);
-        $command->setApplication(Argument::type(Application::class))->willReturn(function () {
+        $command->setApplication(Argument::type(Application::class))->willReturn(function (): void {
         });
 
         return $command;

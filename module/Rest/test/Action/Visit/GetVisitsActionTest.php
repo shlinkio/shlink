@@ -32,7 +32,7 @@ class GetVisitsActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, Argument::type(VisitsParams::class))->willReturn(
-            new Paginator(new ArrayAdapter([]))
+            new Paginator(new ArrayAdapter([])),
         )->shouldBeCalledOnce();
 
         $response = $this->action->handle((new ServerRequest())->withAttribute('shortCode', $shortCode));
@@ -46,7 +46,7 @@ class GetVisitsActionTest extends TestCase
         $this->visitsTracker->info($shortCode, new VisitsParams(
             new DateRange(null, Chronos::parse('2016-01-01 00:00:00')),
             3,
-            10
+            10,
         ))
             ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
@@ -57,7 +57,7 @@ class GetVisitsActionTest extends TestCase
                                      'endDate' => '2016-01-01 00:00:00',
                                      'page' => '3',
                                      'itemsPerPage' => '10',
-                                 ])
+                                 ]),
         );
         $this->assertEquals(200, $response->getStatusCode());
     }

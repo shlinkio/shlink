@@ -25,7 +25,7 @@ class ListTagsActionTest extends TestCase
     }
 
     /** @test */
-    public function returnsDataFromService()
+    public function returnsDataFromService(): void
     {
         $listTags = $this->tagService->listTags()->willReturn([new Tag('foo'), new Tag('bar')]);
 

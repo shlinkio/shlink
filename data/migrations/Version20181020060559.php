@@ -24,7 +24,6 @@ final class Version20181020060559 extends AbstractMigration
     ];
 
     /**
-     * @param Schema $schema
      * @throws SchemaException
      */
     public function up(Schema $schema): void

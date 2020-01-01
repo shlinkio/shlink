@@ -29,7 +29,7 @@ class DeleteShortUrlServiceTest extends TestCase
     public function setUp(): void
     {
         $shortUrl = (new ShortUrl(''))->setVisits(
-            new ArrayCollection(map(range(0, 10), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance())))
+            new ArrayCollection(map(range(0, 10), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance()))),
         );
         $this->shortCode = $shortUrl->getShortCode();
 
@@ -48,7 +48,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $this->expectException(DeleteShortUrlException::class);
         $this->expectExceptionMessage(sprintf(
             'Impossible to delete short URL with short code "%s" since it has more than "5" visits.',
-            $this->shortCode
+            $this->shortCode,
         ));
 
         $service->deleteByShortCode($this->shortCode);

@@ -22,7 +22,7 @@ class DeleteShortUrlException extends DomainException implements ProblemDetailsE
         $e = new self(sprintf(
             'Impossible to delete short URL with short code "%s" since it has more than "%s" visits.',
             $shortCode,
-            $threshold
+            $threshold,
         ));
 
         $e->detail = $e->getMessage();

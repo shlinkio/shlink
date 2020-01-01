@@ -40,7 +40,7 @@ final class VisitsParams
         return new self(
             new DateRange($startDate, $endDate),
             (int) ($query['page'] ?? 1),
-            isset($query['itemsPerPage']) ? (int) $query['itemsPerPage'] : null
+            isset($query['itemsPerPage']) ? (int) $query['itemsPerPage'] : null,
         );
     }
 

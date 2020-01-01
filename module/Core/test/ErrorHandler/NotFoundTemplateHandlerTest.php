@@ -49,7 +49,7 @@ class NotFoundTemplateHandlerTest extends TestCase
         yield [
             $request->withAttribute(
                 RouteResult::class,
-                RouteResult::fromRoute(new Route('', $this->prophesize(MiddlewareInterface::class)->reveal()))
+                RouteResult::fromRoute(new Route('', $this->prophesize(MiddlewareInterface::class)->reveal())),
             ),
             NotFoundTemplateHandler::INVALID_SHORT_CODE_TEMPLATE,
         ];

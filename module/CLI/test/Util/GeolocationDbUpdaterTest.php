@@ -36,14 +36,14 @@ class GeolocationDbUpdaterTest extends TestCase
         $this->locker = $this->prophesize(Lock\LockFactory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
         $this->lock->acquire(true)->willReturn(true);
-        $this->lock->release()->will(function () {
+        $this->lock->release()->will(function (): void {
         });
         $this->locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
 
         $this->geolocationDbUpdater = new GeolocationDbUpdater(
             $this->dbUpdater->reveal(),
             $this->geoLiteDbReader->reveal(),
-            $this->locker->reveal()
+            $this->locker->reveal(),
         );
     }
 
@@ -134,7 +134,7 @@ class GeolocationDbUpdaterTest extends TestCase
             'node_count' => 1,
             'record_size' => 4,
         ]));
-        $download = $this->dbUpdater->downloadFreshCopy(null)->will(function () {
+        $download = $this->dbUpdater->downloadFreshCopy(null)->will(function (): void {
         });
 
         $this->geolocationDbUpdater->checkDbUpdate();

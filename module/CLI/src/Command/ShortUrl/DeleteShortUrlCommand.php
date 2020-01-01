@@ -39,7 +39,7 @@ class DeleteShortUrlCommand extends Command
                 'i',
                 InputOption::VALUE_NONE,
                 'Ignores the safety visits threshold check, which could make short URLs with many visits to be '
-                . 'accidentally deleted'
+                . 'accidentally deleted',
             );
     }
 

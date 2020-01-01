@@ -45,7 +45,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->locker = $this->prophesize(Lock\LockFactory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
         $this->lock->acquire(false)->willReturn(true);
-        $this->lock->release()->will(function () {
+        $this->lock->release()->will(function (): void {
         });
         $this->locker->createLock(Argument::type('string'), 90.0, false)->willReturn($this->lock->reveal());
 
@@ -53,7 +53,7 @@ class LocateVisitsCommandTest extends TestCase
             $this->visitService->reveal(),
             $this->ipResolver->reveal(),
             $this->locker->reveal(),
-            $this->dbUpdater->reveal()
+            $this->dbUpdater->reveal(),
         );
         $app = new Application();
         $app->add($command);
@@ -68,16 +68,16 @@ class LocateVisitsCommandTest extends TestCase
         $location = new VisitLocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
-            function (array $args) use ($visit, $location) {
+            function (array $args) use ($visit, $location): void {
                 $firstCallback = array_shift($args);
                 $firstCallback($visit);
 
                 $secondCallback = array_shift($args);
                 $secondCallback($location, $visit);
-            }
+            },
         );
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn(
-            Location::emptyInstance()
+            Location::emptyInstance(),
         );
 
         $this->commandTester->execute([]);
@@ -98,16 +98,16 @@ class LocateVisitsCommandTest extends TestCase
         $location = new VisitLocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
-            function (array $args) use ($visit, $location) {
+            function (array $args) use ($visit, $location): void {
                 $firstCallback = array_shift($args);
                 $firstCallback($visit);
 
                 $secondCallback = array_shift($args);
                 $secondCallback($location, $visit);
-            }
+            },
         );
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn(
-            Location::emptyInstance()
+            Location::emptyInstance(),
         );
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
@@ -137,13 +137,13 @@ class LocateVisitsCommandTest extends TestCase
         $location = new VisitLocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
-            function (array $args) use ($visit, $location) {
+            function (array $args) use ($visit, $location): void {
                 $firstCallback = array_shift($args);
                 $firstCallback($visit);
 
                 $secondCallback = array_shift($args);
                 $secondCallback($location, $visit);
-            }
+            },
         );
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willThrow(WrongIpException::class);
 
@@ -161,7 +161,7 @@ class LocateVisitsCommandTest extends TestCase
     {
         $this->lock->acquire(false)->willReturn(false);
 
-        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(function () {
+        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(function (): void {
         });
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([]);
 
@@ -170,7 +170,7 @@ class LocateVisitsCommandTest extends TestCase
 
         $this->assertStringContainsString(
             sprintf('Command "%s" is already in progress. Skipping.', LocateVisitsCommand::NAME),
-            $output
+            $output,
         );
         $locateVisits->shouldNotHaveBeenCalled();
         $resolveIpLocation->shouldNotHaveBeenCalled();
@@ -182,17 +182,17 @@ class LocateVisitsCommandTest extends TestCase
      */
     public function showsProperMessageWhenGeoLiteUpdateFails(bool $olderDbExists, string $expectedMessage): void
     {
-        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(function () {
+        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(function (): void {
         });
         $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
-            function (array $args) use ($olderDbExists) {
+            function (array $args) use ($olderDbExists): void {
                 [$mustBeUpdated, $handleProgress] = $args;
 
                 $mustBeUpdated($olderDbExists);
                 $handleProgress(100, 50);
 
                 throw GeolocationDbUpdateFailedException::create($olderDbExists);
-            }
+            },
         );
 
         $this->commandTester->execute([]);
@@ -200,7 +200,7 @@ class LocateVisitsCommandTest extends TestCase
 
         $this->assertStringContainsString(
             sprintf('%s GeoLite2 database...', $olderDbExists ? 'Updating' : 'Downloading'),
-            $output
+            $output,
         );
         $this->assertStringContainsString($expectedMessage, $output);
         $locateVisits->shouldHaveBeenCalledTimes((int) $olderDbExists);

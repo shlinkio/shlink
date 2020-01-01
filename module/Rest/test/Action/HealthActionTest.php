@@ -25,7 +25,7 @@ class HealthActionTest extends TestCase
     }
 
     /** @test */
-    public function passResponseIsReturnedWhenConnectionSucceeds()
+    public function passResponseIsReturnedWhenConnectionSucceeds(): void
     {
         $ping = $this->conn->ping()->willReturn(true);
 
@@ -45,7 +45,7 @@ class HealthActionTest extends TestCase
     }
 
     /** @test */
-    public function failResponseIsReturnedWhenConnectionFails()
+    public function failResponseIsReturnedWhenConnectionFails(): void
     {
         $ping = $this->conn->ping()->willReturn(false);
 
@@ -65,7 +65,7 @@ class HealthActionTest extends TestCase
     }
 
     /** @test */
-    public function failResponseIsReturnedWhenConnectionThrowsException()
+    public function failResponseIsReturnedWhenConnectionThrowsException(): void
     {
         $ping = $this->conn->ping()->willThrow(Exception::class);
 

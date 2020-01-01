@@ -22,9 +22,12 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
     private array $tags;
     private ?DateRange $dateRange;
 
+    /**
+     * @param string|array|null $orderBy
+     */
     public function __construct(
         ShortUrlRepositoryInterface $repository,
-        $searchTerm = null,
+        ?string $searchTerm = null,
         array $tags = [],
         $orderBy = null,
         ?DateRange $dateRange = null
@@ -41,9 +44,8 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
      *
      * @param  int $offset Page offset
      * @param  int $itemCountPerPage Number of items per page
-     * @return array
      */
-    public function getItems($offset, $itemCountPerPage): array
+    public function getItems($offset, $itemCountPerPage): array // phpcs:ignore
     {
         return $this->repository->findList(
             $itemCountPerPage,
@@ -51,7 +53,7 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
             $this->searchTerm,
             $this->tags,
             $this->orderBy,
-            $this->dateRange
+            $this->dateRange,
         );
     }
 

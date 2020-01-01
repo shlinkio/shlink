@@ -9,7 +9,7 @@ use Zend\Expressive\Router\Middleware\ImplicitOptionsMiddleware;
 
 class EmptyResponseImplicitOptionsMiddlewareFactory
 {
-    public function __invoke()
+    public function __invoke(): ImplicitOptionsMiddleware
     {
         return new ImplicitOptionsMiddleware(fn () => new EmptyResponse());
     }

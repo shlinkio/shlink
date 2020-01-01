@@ -23,7 +23,7 @@ class GeolocationDbUpdateFailedExceptionTest extends TestCase
         $this->assertEquals($olderDbExists, $e->olderDbExists());
         $this->assertEquals(
             'An error occurred while updating geolocation database, and an older version could not be found',
-            $e->getMessage()
+            $e->getMessage(),
         );
         $this->assertEquals(0, $e->getCode());
         $this->assertEquals($prev, $e->getPrevious());

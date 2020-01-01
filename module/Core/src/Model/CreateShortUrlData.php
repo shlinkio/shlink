@@ -23,7 +23,6 @@ final class CreateShortUrlData
     }
 
     /**
-     * @return UriInterface
      */
     public function getLongUrl(): UriInterface
     {
@@ -39,7 +38,6 @@ final class CreateShortUrlData
     }
 
     /**
-     * @return ShortUrlMeta
      */
     public function getMeta(): ShortUrlMeta
     {

@@ -25,7 +25,7 @@ class DeleteShortUrlActionTest extends TestCase
     /** @test */
     public function emptyResponseIsReturnedIfProperlyDeleted(): void
     {
-        $deleteByShortCode = $this->service->deleteByShortCode(Argument::any())->will(function () {
+        $deleteByShortCode = $this->service->deleteByShortCode(Argument::any())->will(function (): void {
         });
 
         $resp = $this->action->handle(new ServerRequest());

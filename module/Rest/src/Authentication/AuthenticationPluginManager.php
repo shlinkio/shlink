@@ -8,5 +8,5 @@ use Zend\ServiceManager\AbstractPluginManager;
 
 class AuthenticationPluginManager extends AbstractPluginManager implements AuthenticationPluginManagerInterface
 {
-    protected $instanceOf = Plugin\AuthenticationPluginInterface::class;
+    protected $instanceOf = Plugin\AuthenticationPluginInterface::class; // phpcs:ignore
 }

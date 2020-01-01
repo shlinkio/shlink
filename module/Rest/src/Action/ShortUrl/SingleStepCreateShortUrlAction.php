@@ -30,8 +30,6 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
     }
 
     /**
-     * @param Request $request
-     * @return CreateShortUrlData
      * @throws ValidationException
      */
     protected function buildShortUrlData(Request $request): CreateShortUrlData

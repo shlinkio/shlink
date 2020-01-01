@@ -92,7 +92,7 @@ class NotifyVisitToWebHooks
         return map($this->webhooks, function (string $webhook) use ($requestOptions, $visitId) {
             $promise = $this->httpClient->requestAsync(RequestMethodInterface::METHOD_POST, $webhook, $requestOptions);
             return $promise->otherwise(
-                partial_left(Closure::fromCallable([$this, 'logWebhookFailure']), $webhook, $visitId)
+                partial_left(Closure::fromCallable([$this, 'logWebhookFailure']), $webhook, $visitId),
             );
         });
     }

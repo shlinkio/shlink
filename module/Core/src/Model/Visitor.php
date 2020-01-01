@@ -36,7 +36,7 @@ final class Visitor
         return new self(
             $request->getHeaderLine('User-Agent'),
             $request->getHeaderLine('Referer'),
-            $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR)
+            $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR),
         );
     }
 

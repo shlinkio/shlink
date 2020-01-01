@@ -48,7 +48,7 @@ final class ShortUrlMeta
      * @param string|null $domain
      * @throws ValidationException
      */
-    public static function createFromParams(
+    public static function createFromParams( // phpcs:ignore
         $validSince = null,
         $validUntil = null,
         $customSlug = null,

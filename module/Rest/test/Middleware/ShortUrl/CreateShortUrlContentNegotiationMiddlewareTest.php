@@ -49,7 +49,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
         }
 
         $handle = $this->requestHandler->handle(Argument::type(ServerRequestInterface::class))->willReturn(
-            new JsonResponse(['shortUrl' => 'http://doma.in/foo'])
+            new JsonResponse(['shortUrl' => 'http://doma.in/foo']),
         );
 
         $response = $this->middleware->process($request, $this->requestHandler->reveal());
@@ -80,7 +80,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
         $request = (new ServerRequest())->withQueryParams(['format' => 'txt']);
 
         $handle = $this->requestHandler->handle(Argument::type(ServerRequestInterface::class))->willReturn(
-            new JsonResponse($json)
+            new JsonResponse($json),
         );
 
         $response = $this->middleware->process($request, $this->requestHandler->reveal());

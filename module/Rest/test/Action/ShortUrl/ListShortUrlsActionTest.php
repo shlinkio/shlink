@@ -50,7 +50,7 @@ class ListShortUrlsActionTest extends TestCase
             $expectedSearchTerm,
             $expectedTags,
             $expectedOrderBy,
-            $expectedDateRange
+            $expectedDateRange,
         )->willReturn(new Paginator(new ArrayAdapter()));
 
         /** @var JsonResponse $response */

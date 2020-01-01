@@ -43,7 +43,7 @@ class DeleteShortUrlExceptionTest extends TestCase
             return [$number, $shortCode = generateRandomShortCode(6), sprintf(
                 'Impossible to delete short URL with short code "%s" since it has more than "%s" visits.',
                 $shortCode,
-                $number
+                $number,
             )];
         });
     }

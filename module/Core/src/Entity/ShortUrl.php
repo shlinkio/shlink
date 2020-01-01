@@ -189,7 +189,7 @@ class ShortUrl extends AbstractEntity
         $hasAllTags = count($shortUrlTags) === count($tags) && array_reduce(
             $tags,
             fn (bool $hasAllTags, string $tag) => $hasAllTags && contains($shortUrlTags, $tag),
-            true
+            true,
         );
 
         return $hasAllTags;
