@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 return [
 
-    'zend-expressive-swoole' => [
+    'mezzio-swoole' => [
         'enable_coroutine' => true,
 
         'swoole-http-server' => [

@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\RequestMethodInterface;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -17,12 +21,8 @@ use Shlinkio\Shlink\Rest\Action\HealthAction;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPluginInterface;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Expressive\Router\Route;
-use Zend\Expressive\Router\RouteResult;
 
-use function Zend\Stratigility\middleware;
+use function Laminas\Stratigility\middleware;
 
 class AuthenticationMiddlewareTest extends TestCase
 {

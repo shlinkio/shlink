@@ -112,7 +112,7 @@ class SimplifiedConfigParserTest extends TestCase
                 'invalid_short_url' => 'foobar.com',
             ],
 
-            'zend-expressive-swoole' => [
+            'mezzio-swoole' => [
                 'swoole-http-server' => [
                     'options' => [
                         'task_worker_num' => 50,

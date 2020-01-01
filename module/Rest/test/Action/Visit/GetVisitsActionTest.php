@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use Cake\Chronos\Chronos;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Paginator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -12,9 +15,6 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Rest\Action\Visit\GetVisitsAction;
-use Zend\Diactoros\ServerRequest;
-use Zend\Paginator\Adapter\ArrayAdapter;
-use Zend\Paginator\Paginator;
 
 class GetVisitsActionTest extends TestCase
 {

@@ -2,7 +2,7 @@
 namespace PHPSTORM_META;
 
 use Psr\Container\ContainerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 /**
  * PhpStorm Container Interop code completion

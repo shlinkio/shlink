@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink;
 
 use GuzzleHttp\Client;
+use Laminas\ConfigAggregator\ConfigAggregator;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use PDO;
-use Zend\ConfigAggregator\ConfigAggregator;
-use Zend\ServiceManager\Factory\InvokableFactory;
 
 use function Shlinkio\Shlink\Common\env;
 use function sprintf;
@@ -64,7 +64,7 @@ return [
         'validate_url' => true,
     ],
 
-    'zend-expressive-swoole' => [
+    'mezzio-swoole' => [
         'enable_coroutine' => false,
         'swoole-http-server' => [
             'host' => $swooleTestingHost,

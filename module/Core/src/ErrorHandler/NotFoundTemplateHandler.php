@@ -6,12 +6,12 @@ namespace Shlinkio\Shlink\Core\ErrorHandler;
 
 use Fig\Http\Message\StatusCodeInterface;
 use InvalidArgumentException;
+use Laminas\Diactoros\Response;
+use Mezzio\Router\RouteResult;
+use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response;
-use Zend\Expressive\Router\RouteResult;
-use Zend\Expressive\Template\TemplateRendererInterface;
 
 class NotFoundTemplateHandler implements RequestHandlerInterface
 {

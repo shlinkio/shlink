@@ -6,13 +6,13 @@ namespace ShlinkioTest\Shlink\Core\Middleware;
 
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Middleware\QrCodeCacheMiddleware;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Uri;
 
 class QrCodeCacheMiddlewareTest extends TestCase
 {

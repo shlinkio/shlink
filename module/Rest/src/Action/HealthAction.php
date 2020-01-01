@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Action;
 
 use Doctrine\DBAL\Connection;
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Throwable;
-use Zend\Diactoros\Response\JsonResponse;
 
 class HealthAction extends AbstractRestAction
 {

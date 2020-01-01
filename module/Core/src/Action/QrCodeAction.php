@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Action;
 
 use Endroid\QrCode\QrCode;
+use Mezzio\Router\Exception\RuntimeException;
+use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
@@ -14,8 +16,6 @@ use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
-use Zend\Expressive\Router\Exception\RuntimeException;
-use Zend\Expressive\Router\RouterInterface;
 
 class QrCodeAction implements MiddlewareInterface
 {

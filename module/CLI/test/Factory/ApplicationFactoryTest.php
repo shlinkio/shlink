@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Factory;
 
+use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -11,7 +12,6 @@ use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
-use Zend\ServiceManager\ServiceManager;
 
 class ApplicationFactoryTest extends TestCase
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Zend\Expressive\Router\FastRouteRouter;
+use Mezzio\Router\FastRouteRouter;
 
 return [
 

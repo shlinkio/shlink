@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Authentication\Plugin;
 
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\ApiKeyHeaderPlugin;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
 
 class ApiKeyHeaderPluginTest extends TestCase
 {
