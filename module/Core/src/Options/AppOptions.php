@@ -40,7 +40,6 @@ class AppOptions extends AbstractOptions
     }
 
     /**
-     * @return string|null
      */
     public function getDisableTrackParam(): ?string
     {

@@ -61,25 +61,25 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
                 'p',
                 InputOption::VALUE_REQUIRED,
                 sprintf('The first page to list (%s items per page)', ShortUrlRepositoryAdapter::ITEMS_PER_PAGE),
-                '1'
+                '1',
             )
             ->addOption(
                 'searchTerm',
                 'st',
                 InputOption::VALUE_REQUIRED,
-                'A query used to filter results by searching for it on the longUrl and shortCode fields'
+                'A query used to filter results by searching for it on the longUrl and shortCode fields',
             )
             ->addOption(
                 'tags',
                 't',
                 InputOption::VALUE_REQUIRED,
-                'A comma-separated list of tags to filter results'
+                'A comma-separated list of tags to filter results',
             )
             ->addOption(
                 'orderBy',
                 'o',
                 InputOption::VALUE_REQUIRED,
-                'The field from which we want to order by. Pass ASC or DESC separated by a comma'
+                'The field from which we want to order by. Pass ASC or DESC separated by a comma',
             )
             ->addOption('showTags', null, InputOption::VALUE_NONE, 'Whether to display the tags or not');
     }
@@ -122,6 +122,9 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         return ExitCodes::EXIT_SUCCESS;
     }
 
+    /**
+     * @param string|array|null $orderBy
+     */
     private function renderPage(
         OutputInterface $output,
         int $page,
@@ -137,7 +140,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
             $searchTerm,
             $tags,
             $orderBy,
-            new DateRange($startDate, $endDate)
+            new DateRange($startDate, $endDate),
         );
 
         $headers = ['Short code', 'Short URL', 'Long URL', 'Date created', 'Visits count'];
@@ -159,7 +162,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
 
         ShlinkTable::fromOutput($output)->render($headers, $rows, $this->formatCurrentPageMessage(
             $result,
-            'Page %s of %s'
+            'Page %s of %s',
         ));
 
         return $result;

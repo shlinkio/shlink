@@ -56,11 +56,11 @@ class NotifyVisitToWebHooksTest extends TestCase
         $requestAsync = $this->httpClient->requestAsync(
             RequestMethodInterface::METHOD_POST,
             Argument::type('string'),
-            Argument::type('array')
+            Argument::type('array'),
         )->willReturn(new FulfilledPromise(''));
         $logWarning = $this->logger->warning(
             'Tried to notify webhooks for visit with id "{visitId}", but it does not exist.',
-            ['visitId' => '1']
+            ['visitId' => '1'],
         );
 
         $this->createListener(['foo', 'bar'])(new VisitLocated('1'));
@@ -90,7 +90,7 @@ class NotifyVisitToWebHooksTest extends TestCase
                 Assert::assertArrayHasKey('visit', $requestOptions[RequestOptions::JSON]);
 
                 return $requestOptions;
-            })
+            }),
         )->will(function (array $args) use ($invalidWebhooks) {
             [, $webhook] = $args;
             $e = new Exception('');
@@ -105,7 +105,7 @@ class NotifyVisitToWebHooksTest extends TestCase
                 Assert::assertArrayHasKey('e', $extra);
 
                 return $extra;
-            })
+            }),
         );
 
         $this->createListener($webhooks)(new VisitLocated('1'));
@@ -123,7 +123,7 @@ class NotifyVisitToWebHooksTest extends TestCase
             $this->logger->reveal(),
             $webhooks,
             [],
-            new AppOptions(['name' => 'Shlink', 'version' => '1.2.3'])
+            new AppOptions(['name' => 'Shlink', 'version' => '1.2.3']),
         );
     }
 }

@@ -52,7 +52,7 @@ class CreateShortUrlActionTest extends TestCase
         $shorten = $this->urlShortener->urlToShortCode(
             Argument::type(Uri::class),
             Argument::type('array'),
-            $expectedMeta
+            $expectedMeta,
         )->willReturn($shortUrl);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);

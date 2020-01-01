@@ -33,7 +33,7 @@ class DeleteTagsCommand extends Command
                 'name',
                 't',
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'The name of the tags to delete'
+                'The name of the tags to delete',
             );
     }
 

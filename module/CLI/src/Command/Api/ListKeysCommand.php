@@ -42,7 +42,7 @@ class ListKeysCommand extends Command
                 'enabledOnly',
                 'e',
                 InputOption::VALUE_NONE,
-                'Tells if only enabled API keys should be returned.'
+                'Tells if only enabled API keys should be returned.',
             );
     }
 
@@ -81,8 +81,6 @@ class ListKeysCommand extends Command
     }
 
     /**
-     * @param ApiKey $apiKey
-     * @return string
      */
     private function getEnabledSymbol(ApiKey $apiKey): string
     {

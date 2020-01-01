@@ -35,7 +35,7 @@ class RequestToAuthPluginTest extends TestCase
         $this->expectException(MissingAuthenticationException::class);
         $this->expectExceptionMessage(sprintf(
             'Expected one of the following authentication headers, ["%s"], but none were provided',
-            implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)
+            implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS),
         ));
 
         $this->requestToPlugin->fromRequest($request);

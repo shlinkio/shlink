@@ -30,7 +30,7 @@ class PixelActionTest extends TestCase
         $this->action = new PixelAction(
             $this->urlShortener->reveal(),
             $this->visitTracker->reveal(),
-            new AppOptions()
+            new AppOptions(),
         );
     }
 
@@ -39,7 +39,7 @@ class PixelActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn(
-            new ShortUrl('http://domain.com/foo/bar')
+            new ShortUrl('http://domain.com/foo/bar'),
         )->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();
 

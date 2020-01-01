@@ -29,7 +29,7 @@ abstract class AbstractLockedCommand extends Command
 
         if (! $lock->acquire($lockConfig->isBlocking())) {
             $output->writeln(
-                sprintf('<comment>Command "%s" is already in progress. Skipping.</comment>', $lockConfig->lockName())
+                sprintf('<comment>Command "%s" is already in progress. Skipping.</comment>', $lockConfig->lockName()),
             );
             return ExitCodes::EXIT_WARNING;
         }

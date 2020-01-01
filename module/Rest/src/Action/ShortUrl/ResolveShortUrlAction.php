@@ -32,8 +32,6 @@ class ResolveShortUrlAction extends AbstractRestAction
     }
 
     /**
-     * @param Request $request
-     * @return Response
      * @throws InvalidArgumentException
      */
     public function handle(Request $request): Response

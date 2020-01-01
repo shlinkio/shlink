@@ -29,9 +29,7 @@ class UpdateTagAction extends AbstractRestAction
      * Process an incoming server request and return a response, optionally delegating
      * to the next middleware component to create the response.
      *
-     * @param ServerRequestInterface $request
      *
-     * @return ResponseInterface
      * @throws \InvalidArgumentException
      */
     public function handle(ServerRequestInterface $request): ResponseInterface

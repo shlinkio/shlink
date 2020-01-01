@@ -70,7 +70,7 @@ class QrCodeActionTest extends TestCase
 
         $resp = $this->action->process(
             (new ServerRequest())->withAttribute('shortCode', $shortCode),
-            $delegate->reveal()
+            $delegate->reveal(),
         );
 
         $this->assertInstanceOf(QrCodeResponse::class, $resp);

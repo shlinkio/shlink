@@ -76,7 +76,7 @@ class SimplifiedConfigParser
         $simplifiedConfigOrder = array_flip(array_keys(self::SIMPLIFIED_CONFIG_MAPPING));
         uksort(
             $configForExistingKeys,
-            fn (string $a, string $b): int => $simplifiedConfigOrder[$a] - $simplifiedConfigOrder[$b]
+            fn (string $a, string $b): int => $simplifiedConfigOrder[$a] - $simplifiedConfigOrder[$b],
         );
 
         return $configForExistingKeys;

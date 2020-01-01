@@ -21,7 +21,7 @@ class ConfigProvider
         $this->loadConfig = Closure::fromCallable($loadConfig ?? fn (string $glob) => loadConfigFromGlob($glob));
     }
 
-    public function __invoke()
+    public function __invoke(): array
     {
         $config = ($this->loadConfig)(__DIR__ . '/../config/{,*.}config.php');
         return $this->applyRoutesPrefix($config);

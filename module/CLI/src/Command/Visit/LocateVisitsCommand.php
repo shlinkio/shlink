@@ -66,13 +66,13 @@ class LocateVisitsCommand extends AbstractLockedCommand
 
             $this->visitService->locateUnlocatedVisits(
                 [$this, 'getGeolocationDataForVisit'],
-                static function (VisitLocation $location) use ($output) {
+                static function (VisitLocation $location) use ($output): void {
                     if (!$location->isEmpty()) {
                         $output->writeln(
-                            sprintf(' [<info>Address located at "%s"</info>]', $location->getCountryName())
+                            sprintf(' [<info>Address located at "%s"</info>]', $location->getCountryName()),
                         );
                     }
-                }
+                },
             );
 
             $this->io->success('Finished processing all IPs');
@@ -92,7 +92,7 @@ class LocateVisitsCommand extends AbstractLockedCommand
         if (! $visit->hasRemoteAddr()) {
             $this->io->writeln(
                 '<comment>Ignored visit with no IP address</comment>',
-                OutputInterface::VERBOSITY_VERBOSE
+                OutputInterface::VERBOSITY_VERBOSE,
             );
             throw IpCannotBeLocatedException::forEmptyAddress();
         }
@@ -119,12 +119,12 @@ class LocateVisitsCommand extends AbstractLockedCommand
     private function checkDbUpdate(): void
     {
         try {
-            $this->dbUpdater->checkDbUpdate(function (bool $olderDbExists) {
+            $this->dbUpdater->checkDbUpdate(function (bool $olderDbExists): void {
                 $this->io->writeln(
-                    sprintf('<fg=blue>%s GeoLite2 database...</>', $olderDbExists ? 'Updating' : 'Downloading')
+                    sprintf('<fg=blue>%s GeoLite2 database...</>', $olderDbExists ? 'Updating' : 'Downloading'),
                 );
                 $this->progressBar = new ProgressBar($this->io);
-            }, function (int $total, int $downloaded) {
+            }, function (int $total, int $downloaded): void {
                 $this->progressBar->setMaxSteps($total);
                 $this->progressBar->setProgress($downloaded);
             });
@@ -141,7 +141,7 @@ class LocateVisitsCommand extends AbstractLockedCommand
 
             $this->io->newLine();
             $this->io->writeln(
-                '<fg=yellow;options=bold>[Warning] GeoLite2 database update failed. Proceeding with old version.</>'
+                '<fg=yellow;options=bold>[Warning] GeoLite2 database update failed. Proceeding with old version.</>',
             );
         }
     }

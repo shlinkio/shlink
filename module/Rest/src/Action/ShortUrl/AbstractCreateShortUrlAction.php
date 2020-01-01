@@ -43,8 +43,6 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
     }
 
     /**
-     * @param Request $request
-     * @return CreateShortUrlData
      * @throws ValidationException
      */
     abstract protected function buildShortUrlData(Request $request): CreateShortUrlData;

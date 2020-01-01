@@ -11,8 +11,6 @@ use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 trait FindShortCodeTrait
 {
     /**
-     * @param string $shortCode
-     * @return ShortUrl
      * @throws ShortUrlNotFoundException
      */
     private function findByShortCode(EntityManagerInterface $em, string $shortCode): ShortUrl

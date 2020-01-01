@@ -90,7 +90,7 @@ class BodyParserMiddlewareTest extends TestCase
                 ], $req->getParsedBody());
 
                 return new Response();
-            }
+            },
         );
 
         $this->middleware->process($request, $delegate->reveal());
@@ -118,7 +118,7 @@ class BodyParserMiddlewareTest extends TestCase
                 ], $req->getParsedBody());
 
                 return new Response();
-            }
+            },
         );
 
         $this->middleware->process($request, $delegate->reveal());

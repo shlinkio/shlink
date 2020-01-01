@@ -29,7 +29,7 @@ class ResolveShortUrlActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode, null)->willReturn(
-            new ShortUrl('http://domain.com/foo/bar')
+            new ShortUrl('http://domain.com/foo/bar'),
         )->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);

@@ -22,7 +22,7 @@ class ShortUrlDataTransformer implements DataTransformerInterface
     /**
      * @param ShortUrl $shortUrl
      */
-    public function transform($shortUrl): array
+    public function transform($shortUrl): array // phpcs:ignore
     {
         $longUrl = $shortUrl->getLongUrl();
 

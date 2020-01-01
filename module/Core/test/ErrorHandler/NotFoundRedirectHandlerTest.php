@@ -73,9 +73,9 @@ class NotFoundRedirectHandlerTest extends TestCase
                             '',
                             $this->prophesize(MiddlewareInterface::class)->reveal(),
                             ['GET'],
-                            RedirectAction::class
-                        )
-                    )
+                            RedirectAction::class,
+                        ),
+                    ),
                 )
                 ->withUri(new Uri('/abc123')),
             'invalidShortUrl',

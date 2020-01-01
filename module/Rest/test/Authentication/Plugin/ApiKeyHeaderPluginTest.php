@@ -25,7 +25,7 @@ class ApiKeyHeaderPluginTest extends TestCase
     }
 
     /** @test */
-    public function verifyThrowsExceptionWhenApiKeyIsNotValid()
+    public function verifyThrowsExceptionWhenApiKeyIsNotValid(): void
     {
         $apiKey = 'abc-ABC';
         $check = $this->apiKeyService->check($apiKey)->willReturn(false);
@@ -38,7 +38,7 @@ class ApiKeyHeaderPluginTest extends TestCase
     }
 
     /** @test */
-    public function verifyDoesNotThrowExceptionWhenApiKeyIsValid()
+    public function verifyDoesNotThrowExceptionWhenApiKeyIsValid(): void
     {
         $apiKey = 'abc-ABC';
         $check = $this->apiKeyService->check($apiKey)->willReturn(true);
@@ -49,7 +49,7 @@ class ApiKeyHeaderPluginTest extends TestCase
     }
 
     /** @test */
-    public function updateReturnsResponseAsIs()
+    public function updateReturnsResponseAsIs(): void
     {
         $apiKey = 'abc-ABC';
         $response = new Response();

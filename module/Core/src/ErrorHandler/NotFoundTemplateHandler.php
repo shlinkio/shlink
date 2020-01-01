@@ -28,9 +28,7 @@ class NotFoundTemplateHandler implements RequestHandlerInterface
     /**
      * Dispatch the next available middleware and return the response.
      *
-     * @param ServerRequestInterface $request
      *
-     * @return ResponseInterface
      * @throws InvalidArgumentException
      */
     public function handle(ServerRequestInterface $request): ResponseInterface

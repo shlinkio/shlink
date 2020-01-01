@@ -16,7 +16,6 @@ use function trim;
 trait TagManagerTrait
 {
     /**
-     * @param EntityManagerInterface $em
      * @param string[] $tags
      * @return Collections\Collection|Tag[]
      */

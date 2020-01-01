@@ -18,7 +18,7 @@ class AuthenticationTest extends ApiTestCase
     {
         $expectedDetail = sprintf(
             'Expected one of the following authentication headers, ["%s"], but none were provided',
-            implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)
+            implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS),
         );
 
         $resp = $this->callApi(self::METHOD_GET, '/short-urls');

@@ -33,7 +33,7 @@ class CreateTagCommand extends Command
                 'name',
                 't',
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'The name of the tags to create'
+                'The name of the tags to create',
             );
     }
 

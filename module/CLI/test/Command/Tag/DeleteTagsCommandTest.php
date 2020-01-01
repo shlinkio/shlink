@@ -40,7 +40,7 @@ class DeleteTagsCommandTest extends TestCase
     public function serviceIsInvokedOnSuccess(): void
     {
         $tagNames = ['foo', 'bar'];
-        $deleteTags = $this->tagService->deleteTags($tagNames)->will(function () {
+        $deleteTags = $this->tagService->deleteTags($tagNames)->will(function (): void {
         });
 
         $this->commandTester->execute([

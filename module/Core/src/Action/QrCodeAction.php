@@ -41,10 +41,7 @@ class QrCodeAction implements MiddlewareInterface
      * Process an incoming server request and return a response, optionally delegating
      * to the next middleware component to create the response.
      *
-     * @param Request $request
-     * @param RequestHandlerInterface $handler
      *
-     * @return Response
      * @throws \InvalidArgumentException
      * @throws RuntimeException
      */
@@ -71,8 +68,6 @@ class QrCodeAction implements MiddlewareInterface
     }
 
     /**
-     * @param Request $request
-     * @return int
      */
     private function getSizeParam(Request $request): int
     {

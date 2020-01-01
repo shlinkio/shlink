@@ -162,6 +162,7 @@ class ListShortUrlsCommandTest extends TestCase
     }
 
     /**
+     * @param string|array|null $expectedOrderBy
      * @test
      * @dataProvider provideOrderBy
      */

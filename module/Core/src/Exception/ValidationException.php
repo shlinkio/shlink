@@ -63,7 +63,7 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
             $this->invalidElementsToString(),
             PHP_EOL,
             PHP_EOL,
-            $this->getTraceAsString()
+            $this->getTraceAsString(),
         );
     }
 
@@ -72,7 +72,7 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
         return reduce_left($this->getInvalidElements(), fn ($messages, string $name, $_, string $acc) => $acc . sprintf(
             "\n    '%s' => %s",
             $name,
-            is_array($messages) ? print_r($messages, true) : $messages
+            is_array($messages) ? print_r($messages, true) : $messages,
         ), '');
     }
 }

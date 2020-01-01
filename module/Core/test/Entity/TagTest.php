@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 class TagTest extends TestCase
 {
     /** @test */
-    public function jsonSerializationOfTagsReturnsItsStringRepresentation()
+    public function jsonSerializationOfTagsReturnsItsStringRepresentation(): void
     {
         $tag = new Tag('This is my name');
         $this->assertEquals((string) $tag, $tag->jsonSerialize());

@@ -34,7 +34,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
             [
                 'schema' => 'http',
                 'hostname' => 'foo.com',
-            ]
+            ],
         );
     }
 
@@ -76,7 +76,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
                 return $argument;
             }),
             [],
-            ShortUrlMeta::createEmpty()
+            ShortUrlMeta::createEmpty(),
         )->willReturn(new ShortUrl(''));
 
         $resp = $this->action->handle($request);

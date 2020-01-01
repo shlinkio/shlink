@@ -26,7 +26,7 @@ class QrCodeCacheMiddlewareTest extends TestCase
     }
 
     /** @test */
-    public function noCachedPathFallsBackToNextMiddleware()
+    public function noCachedPathFallsBackToNextMiddleware(): void
     {
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $delegate->handle(Argument::any())->willReturn(new Response())->shouldBeCalledOnce();
@@ -37,7 +37,7 @@ class QrCodeCacheMiddlewareTest extends TestCase
     }
 
     /** @test */
-    public function cachedPathReturnsCacheContent()
+    public function cachedPathReturnsCacheContent(): void
     {
         $isCalled = false;
         $uri = (new Uri())->withPath('/foo');

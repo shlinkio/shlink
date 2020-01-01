@@ -41,7 +41,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
         $this
             ->setName(self::NAME)
             ->setDescription(
-                'Creates the database needed for shlink to work. It will do nothing if the database already exists'
+                'Creates the database needed for shlink to work. It will do nothing if the database already exists',
             );
     }
 

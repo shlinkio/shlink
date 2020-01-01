@@ -38,7 +38,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->middleware = new AuthenticationMiddleware(
             $this->requestToPlugin->reveal(),
             [HealthAction::class],
-            $this->logger->reveal()
+            $this->logger->reveal(),
         );
     }
 
@@ -51,7 +51,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $handler = $this->prophesize(RequestHandlerInterface::class);
         $handle = $handler->handle($request)->willReturn(new Response());
         $fromRequest = $this->requestToPlugin->fromRequest(Argument::any())->willReturn(
-            $this->prophesize(AuthenticationPluginInterface::class)->reveal()
+            $this->prophesize(AuthenticationPluginInterface::class)->reveal(),
         );
 
         $this->middleware->process($request, $handler->reveal());
@@ -67,17 +67,17 @@ class AuthenticationMiddlewareTest extends TestCase
         yield 'with no route result' => [new ServerRequest()];
         yield 'with failure route result' => [(new ServerRequest())->withAttribute(
             RouteResult::class,
-            RouteResult::fromRouteFailure([RequestMethodInterface::METHOD_GET])
+            RouteResult::fromRouteFailure([RequestMethodInterface::METHOD_GET]),
         )];
         yield 'with whitelisted route' => [(new ServerRequest())->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(
-                new Route('foo', $dummyMiddleware, Route::HTTP_METHOD_ANY, HealthAction::class)
-            )
+                new Route('foo', $dummyMiddleware, Route::HTTP_METHOD_ANY, HealthAction::class),
+            ),
         )];
         yield 'with OPTIONS method' => [(new ServerRequest())->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', $dummyMiddleware), [])
+            RouteResult::fromRoute(new Route('bar', $dummyMiddleware), []),
         )->withMethod(RequestMethodInterface::METHOD_OPTIONS)];
     }
 
@@ -87,11 +87,11 @@ class AuthenticationMiddlewareTest extends TestCase
         $newResponse = new Response();
         $request = (new ServerRequest())->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), [])
+            RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), []),
         );
         $plugin = $this->prophesize(AuthenticationPluginInterface::class);
 
-        $verify = $plugin->verify($request)->will(function () {
+        $verify = $plugin->verify($request)->will(function (): void {
         });
         $update = $plugin->update($request, Argument::type(ResponseInterface::class))->willReturn($newResponse);
         $fromRequest = $this->requestToPlugin->fromRequest(Argument::any())->willReturn($plugin->reveal());
