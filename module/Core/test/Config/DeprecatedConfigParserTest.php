@@ -91,4 +91,21 @@ class DeprecatedConfigParserTest extends TestCase
 
         $this->assertEquals($expected, $result);
     }
+
+    /** @test */
+    public function removesTheOldSecretKey(): void
+    {
+        $config = [
+            'app_options' => [
+                'secret_key' => 'foobar',
+            ],
+        ];
+        $expected = [
+            'app_options' => [],
+        ];
+
+        $result = ($this->postProcessor)($config);
+
+        $this->assertEquals($expected, $result);
+    }
 }
