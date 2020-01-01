@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config;
 
+use Laminas\Stdlib\ArrayUtils;
 use Shlinkio\Shlink\Installer\Util\PathCollection;
-use Zend\Stdlib\ArrayUtils;
 
 use function array_flip;
 use function array_intersect_key;
@@ -29,8 +29,8 @@ class SimplifiedConfigParser
         'delete_short_url_threshold' => ['delete_short_urls', 'visits_threshold'],
         'redis_servers' => ['redis', 'servers'],
         'base_path' => ['router', 'base_path'],
-        'web_worker_num' => ['zend-expressive-swoole', 'swoole-http-server', 'options', 'worker_num'],
-        'task_worker_num' => ['zend-expressive-swoole', 'swoole-http-server', 'options', 'task_worker_num'],
+        'web_worker_num' => ['mezzio-swoole', 'swoole-http-server', 'options', 'worker_num'],
+        'task_worker_num' => ['mezzio-swoole', 'swoole-http-server', 'options', 'task_worker_num'],
         'visits_webhooks' => ['url_shortener', 'visits_webhooks'],
     ];
     private const SIMPLIFIED_CONFIG_SIDE_EFFECTS = [

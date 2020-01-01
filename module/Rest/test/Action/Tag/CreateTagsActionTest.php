@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\CreateTagsAction;
-use Zend\Diactoros\ServerRequest;
 
 class CreateTagsActionTest extends TestCase
 {

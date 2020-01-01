@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
-use Zend\Paginator\Adapter\AdapterInterface;
 
 class VisitsPaginatorAdapter implements AdapterInterface
 {

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\Tag;
 
+use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Zend\Diactoros\Response\EmptyResponse;
 
 class UpdateTagAction extends AbstractRestAction
 {

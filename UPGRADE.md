@@ -60,3 +60,11 @@ Shlink can verify provided long URLs are valid before trying to shorten them. St
 The `not_found_redirect_to` config option and the `NOT_FOUND_REDIRECT_TO` env var are no longer taken into consideration for the docker image.
 
 Instead, use `invalid_short_url_redirect_to` and `INVALID_SHORT_URL_REDIRECT_TO` respectively.
+
+### Migrated to Laminas
+
+The project has been using Zend Framework components since the beginning. Since it has been re-branded as [Laminas](https://getlaminas.org/), this version updates to the new set of components.
+
+Updating to Laminas components has these implications:
+
+* If you were manually serving Shlink with swoole, the entry script has to be changed from `/path/to/shlink/vendor/bin/zend-expressive-swoole` to `/path/to/shlink/vendor/bin/mezzio-swoole`

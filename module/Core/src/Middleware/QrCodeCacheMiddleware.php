@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Middleware;
 
 use Doctrine\Common\Cache\Cache;
+use Laminas\Diactoros\Response as DiactResp;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response as DiactResp;
 
 class QrCodeCacheMiddleware implements MiddlewareInterface
 {

@@ -24,6 +24,6 @@ class ConfigProviderTest extends TestCase
         $this->assertArrayHasKey('routes', $config);
         $this->assertArrayHasKey('dependencies', $config);
         $this->assertArrayHasKey('templates', $config);
-        $this->assertArrayHasKey('zend-expressive', $config);
+        $this->assertArrayHasKey('mezzio', $config);
     }
 }

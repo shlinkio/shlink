@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Authentication;
 
-use Zend\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\AbstractPluginManager;
 
 class AuthenticationPluginManager extends AbstractPluginManager implements AuthenticationPluginManagerInterface
 {

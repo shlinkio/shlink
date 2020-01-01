@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use Laminas\Stratigility\Middleware\ErrorHandler;
+use Mezzio\ProblemDetails\ProblemDetailsMiddleware;
 use Shlinkio\Shlink\Common\Logger;
-use Zend\ProblemDetails\ProblemDetailsMiddleware;
-use Zend\Stratigility\Middleware\ErrorHandler;
 
 return [
 

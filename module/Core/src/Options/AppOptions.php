@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Options;
 
+use Laminas\Stdlib\AbstractOptions;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
-use Zend\Stdlib\AbstractOptions;
 
 use function sprintf;
 

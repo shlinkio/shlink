@@ -14,4 +14,4 @@ php vendor/doctrine/orm/bin/doctrine.php orm:generate-proxies -n -q
 
 # When restarting the container, swoole might think it is already in execution
 # This forces the app to be started every second until the exit code is 0
-until php vendor/zendframework/zend-expressive-swoole/bin/zend-expressive-swoole start; do sleep 1 ; done
+until php vendor/mezzio/mezzio-swoole/bin/mezzio-swoole start; do sleep 1 ; done

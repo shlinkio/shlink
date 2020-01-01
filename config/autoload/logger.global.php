@@ -75,7 +75,7 @@ return [
         ],
     ],
 
-    'zend-expressive-swoole' => [
+    'mezzio-swoole' => [
         'swoole-http-server' => [
             'logger' => [
                 'logger-name' => 'Logger_Access',

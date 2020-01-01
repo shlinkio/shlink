@@ -120,7 +120,7 @@ return [
         'base_path' => env('BASE_PATH', ''),
     ],
 
-    'zend-expressive-swoole' => [
+    'mezzio-swoole' => [
         'swoole-http-server' => [
             'options' => [
                 'worker_num' => (int) env('WEB_WORKER_NUM', 16),

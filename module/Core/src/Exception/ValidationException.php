@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Exception;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Laminas\InputFilter\InputFilterInterface;
+use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
+use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 use Throwable;
-use Zend\InputFilter\InputFilterInterface;
-use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
-use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
 use function array_keys;
 use function Functional\reduce_left;

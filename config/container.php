@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use Laminas\ServiceManager\ServiceManager;
 use Symfony\Component\Lock;
-use Zend\ServiceManager\ServiceManager;
 
 chdir(dirname(__DIR__));
 

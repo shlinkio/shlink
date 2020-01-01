@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink;
 
-use Zend\Expressive;
-use Zend\ProblemDetails;
-use Zend\Stratigility\Middleware\ErrorHandler;
+use Laminas\Stratigility\Middleware\ErrorHandler;
+use Mezzio;
+use Mezzio\ProblemDetails;
 
 return [
 
     'middleware_pipeline' => [
         'error-handler' => [
             'middleware' => [
-                Expressive\Helper\ContentLengthMiddleware::class,
+                Mezzio\Helper\ContentLengthMiddleware::class,
                 ErrorHandler::class,
             ],
         ],
@@ -33,14 +33,14 @@ return [
 
         'routing' => [
             'middleware' => [
-                Expressive\Router\Middleware\RouteMiddleware::class,
+                Mezzio\Router\Middleware\RouteMiddleware::class,
             ],
         ],
 
         'rest' => [
             'path' => '/rest',
             'middleware' => [
-                Expressive\Router\Middleware\ImplicitOptionsMiddleware::class,
+                Mezzio\Router\Middleware\ImplicitOptionsMiddleware::class,
                 Rest\Middleware\BodyParserMiddleware::class,
                 Rest\Middleware\AuthenticationMiddleware::class,
             ],
@@ -48,7 +48,7 @@ return [
 
         'dispatch' => [
             'middleware' => [
-                Expressive\Router\Middleware\DispatchMiddleware::class,
+                Mezzio\Router\Middleware\DispatchMiddleware::class,
             ],
         ],
 

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core;
 
 use Doctrine\Common\Cache\Cache;
+use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
+use Mezzio\Router\RouterInterface;
+use Mezzio\Template\TemplateRendererInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
-use Zend\Expressive\Router\RouterInterface;
-use Zend\Expressive\Template\TemplateRendererInterface;
-use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 
 return [
 

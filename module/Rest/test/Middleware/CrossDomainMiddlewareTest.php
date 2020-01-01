@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Authentication;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Expressive\Router\Route;
-use Zend\Expressive\Router\RouteResult;
 
-use function Zend\Stratigility\middleware;
+use function Laminas\Stratigility\middleware;
 
 class CrossDomainMiddlewareTest extends TestCase
 {

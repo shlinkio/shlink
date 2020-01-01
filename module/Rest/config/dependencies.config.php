@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest;
 
 use Doctrine\DBAL\Connection;
+use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
+use Laminas\ServiceManager\Factory\InvokableFactory;
+use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
-use Zend\Expressive\Router\Middleware\ImplicitOptionsMiddleware;
-use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
-use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
 

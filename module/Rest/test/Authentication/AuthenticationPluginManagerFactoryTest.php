@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Authentication;
 
+use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Rest\Authentication\AuthenticationPluginManager;
 use Shlinkio\Shlink\Rest\Authentication\AuthenticationPluginManagerFactory;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
-use Zend\ServiceManager\ServiceManager;
 
 class AuthenticationPluginManagerFactoryTest extends TestCase
 {

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ErrorHandler;
 
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequestFactory;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouteResult;
+use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Shlinkio\Shlink\Core\ErrorHandler\NotFoundTemplateHandler;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\Expressive\Router\Route;
-use Zend\Expressive\Router\RouteResult;
-use Zend\Expressive\Template\TemplateRendererInterface;
 
 class NotFoundTemplateHandlerTest extends TestCase
 {

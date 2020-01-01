@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Validation;
 
 use DateTime;
+use Laminas\InputFilter\InputFilter;
+use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
-use Zend\InputFilter\InputFilter;
-use Zend\Validator;
 
 class ShortUrlMetaInputFilter extends InputFilter
 {

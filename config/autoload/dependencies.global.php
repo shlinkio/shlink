@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-use Zend\Expressive;
-use Zend\Expressive\Container;
+use Mezzio\Container;
 
 return [
 
     'dependencies' => [
         'delegators' => [
-            Expressive\Application::class => [
+            Mezzio\Application::class => [
                 Container\ApplicationConfigInjectionDelegator::class,
             ],
         ],

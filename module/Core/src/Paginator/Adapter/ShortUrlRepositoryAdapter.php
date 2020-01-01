@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
-use Zend\Paginator\Adapter\AdapterInterface;
 
 use function strip_tags;
 use function trim;
