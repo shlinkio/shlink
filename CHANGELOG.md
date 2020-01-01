@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Added
 
 * [#429](https://github.com/shlinkio/shlink/issues/429) Added support for PHP 7.4
+* [#529](https://github.com/shlinkio/shlink/issues/529) Created an UPGRADING.md file explaining how to upgrade from v1.x to v2.x
 
 #### Changed
 
