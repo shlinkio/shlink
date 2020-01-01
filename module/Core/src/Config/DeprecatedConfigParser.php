@@ -10,7 +10,7 @@ class DeprecatedConfigParser
 {
     public function __invoke(array $config): array
     {
-        return compose([$this, 'parseNotFoundRedirect'])($config);
+        return compose([$this, 'parseNotFoundRedirect'], [$this, 'removeSecretKey'])($config);
     }
 
     public function parseNotFoundRedirect(array $config): array
@@ -28,6 +28,13 @@ class DeprecatedConfigParser
         $oldRedirectValue = $config['url_shortener']['not_found_short_url']['redirect_to'] ?? null;
         $config['not_found_redirects']['invalid_short_url'] = $oldRedirectValue;
 
+        return $config;
+    }
+
+    public function removeSecretKey(array $config): array
+    {
+        // Removing secret_key from any generated config will prevent the AppOptions object from crashing
+        unset($config['app_options']['secret_key']);
         return $config;
     }
 }
