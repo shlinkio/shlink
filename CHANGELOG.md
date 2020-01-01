@@ -27,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * Preview generation feature completely removed.
     * Authentication against REST API using JWT is no longer supported.
 
-    See [UPGRADING doc](UPGRADING.md) in order to get details on how to migrate to this version.
+    See [UPGRADE doc](UPGRADE.md) in order to get details on how to migrate to this version.
 
 #### Fixed
 

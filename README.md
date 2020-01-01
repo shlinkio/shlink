@@ -9,6 +9,8 @@
 
 A PHP-based self-hosted URL shortener that can be used to serve shortened URLs under your own custom domain.
 
+> This document references Shlink 2.x. If you are using an older version and want to upgrade, follow the [UPGRADE](UPGRADE.md) doc.
+
 ## Table of Contents
 
 - [Installation](#installation)
@@ -197,25 +199,11 @@ Finally access to [https://app.shlink.io](https://app.shlink.io) and configure y
 
 ### Bonus
 
-Depending on the shlink version you installed and how you serve it, there are a couple of time-consuming tasks that shlink expects you to do manually, or at least it is recommended, since it will improve runtime performance.
+Geo-locating visits to your short links is a time-consuming task. When serving Shlink with swoole, the geo-location task is automatically run asynchronously just after a visit to a short URL happens.
 
-Those tasks can be performed using shlink's CLI tool, so it should be easy to schedule them to be run in the background (for example, using cron jobs):
+However, if you are not serving Shlink with swoole, you will have to schedule the geo-location task to be run regularly in the background (for example, using cron jobs):
 
-* **For shlink older than 1.18.0 or not using swoole to serve it**: Resolve IP address locations: `/path/to/shlink/bin/cli visit:locate`
-
-    If you don't run this command regularly, the stats will say all visits come from *unknown* locations.
-
-    > If you serve Shlink with swoole and use v1.18.0 at least, visit location is automatically scheduled by Shlink just after the visit occurs, using swoole's task system.
-
-* **For shlink older than v1.17.0**: Update IP geolocation database: `/path/to/shlink/bin/cli visit:update-db`
-
-    When shlink is installed it downloads a fresh [GeoLite2](https://dev.maxmind.com/geoip/geoip2/geolite2/) db file. Running this command will update this file.
-
-    The file is updated the first Tuesday of every month, so it should be enough running this command the first Wednesday.
-
-    > You don't need this if you use Shlink v1.17.0 or newer, since now it downloads/updates the geolocation database automatically just before trying to use it.
-
-*Any of these commands accept the `-q` flag, which makes it not display any output. This is recommended when configuring the commands as cron jobs.*
+The command you need to run is `/path/to/shlink/bin/cli visit:locate`, and you can optionally provide the `-q` flag to remove any output and avoid your cron logs to be polluted.
 
 ## Update to new version
 
