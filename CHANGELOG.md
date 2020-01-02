@@ -29,11 +29,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * Preview generation feature completely removed.
     * Authentication against REST API using JWT is no longer supported.
 
-    See [UPGRADE doc](UPGRADE.md) in order to get details on how to migrate to this version.
+    See [UPGRADE](UPGRADE.md) doc in order to get details on how to migrate to this version.
 
 #### Fixed
 
 * *Nothing*
+
+
+## 1.21.1 - 2020-01-02
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#596](https://github.com/shlinkio/shlink/issues/596) Fixed error when trying to download GeoLite2 database due to changes on how to get the database files.
 
 
 ## 1.21.0 - 2019-12-29
