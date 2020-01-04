@@ -2,51 +2,42 @@
 
 declare(strict_types=1);
 
-use Shlinkio\Shlink\Installer\Config\Plugin;
+use Shlinkio\Shlink\Installer\Config\Option;
 
 return [
 
-    'installer_plugins_expected_config' => [
-        Plugin\UrlShortenerConfigCustomizer::class => [
-            Plugin\UrlShortenerConfigCustomizer::SCHEMA,
-            Plugin\UrlShortenerConfigCustomizer::HOSTNAME,
-            Plugin\UrlShortenerConfigCustomizer::VALIDATE_URL,
-            Plugin\UrlShortenerConfigCustomizer::NOTIFY_VISITS_WEBHOOKS,
-            Plugin\UrlShortenerConfigCustomizer::VISITS_WEBHOOKS,
+    'installer' => [
+        'enabled_options' => [
+            Option\DatabaseDriverConfigOption::class,
+            Option\DatabaseNameConfigOption::class,
+            Option\DatabaseHostConfigOption::class,
+            Option\DatabasePortConfigOption::class,
+            Option\DatabaseUserConfigOption::class,
+            Option\DatabasePasswordConfigOption::class,
+            Option\DatabaseSqlitePathConfigOption::class,
+            Option\DatabaseMySqlOptionsConfigOption::class,
+            Option\ShortDomainHostConfigOption::class,
+            Option\ShortDomainSchemaConfigOption::class,
+            Option\ValidateUrlConfigOption::class,
+            Option\VisitsWebhooksConfigOption::class,
+            Option\BaseUrlRedirectConfigOption::class,
+            Option\InvalidShortUrlRedirectConfigOption::class,
+            Option\Regular404RedirectConfigOption::class,
+            Option\DisableTrackParamConfigOption::class,
+            Option\CheckVisitsThresholdConfigOption::class,
+            Option\VisitsThresholdConfigOption::class,
+            Option\BasePathConfigOption::class,
+            Option\TaskWorkerNumConfigOption::class,
+            Option\WebWorkerNumConfigOption::class,
         ],
 
-        Plugin\ApplicationConfigCustomizer::class => [
-            Plugin\ApplicationConfigCustomizer::SECRET,
-            Plugin\ApplicationConfigCustomizer::DISABLE_TRACK_PARAM,
-            Plugin\ApplicationConfigCustomizer::CHECK_VISITS_THRESHOLD,
-            Plugin\ApplicationConfigCustomizer::VISITS_THRESHOLD,
-            Plugin\ApplicationConfigCustomizer::BASE_PATH,
-            Plugin\ApplicationConfigCustomizer::WEB_WORKER_NUM,
-            Plugin\ApplicationConfigCustomizer::TASK_WORKER_NUM,
-        ],
-
-        Plugin\DatabaseConfigCustomizer::class => [
-            Plugin\DatabaseConfigCustomizer::DRIVER,
-            Plugin\DatabaseConfigCustomizer::NAME,
-            Plugin\DatabaseConfigCustomizer::USER,
-            Plugin\DatabaseConfigCustomizer::PASSWORD,
-            Plugin\DatabaseConfigCustomizer::HOST,
-            Plugin\DatabaseConfigCustomizer::PORT,
-        ],
-
-        Plugin\RedirectsConfigCustomizer::class => [
-            Plugin\RedirectsConfigCustomizer::INVALID_SHORT_URL_REDIRECT_TO,
-            Plugin\RedirectsConfigCustomizer::REGULAR_404_REDIRECT_TO,
-            Plugin\RedirectsConfigCustomizer::BASE_URL_REDIRECT_TO,
-        ],
-    ],
-
-    'installation_commands' => [
-        'db_create_schema' => [
-            'command' => 'bin/cli db:create',
-        ],
-        'db_migrate' => [
-            'command' => 'bin/cli db:migrate',
+        'installation_commands' => [
+            'db_create_schema' => [
+                'command' => 'bin/cli db:create',
+            ],
+            'db_migrate' => [
+                'command' => 'bin/cli db:migrate',
+            ],
         ],
     ],
 
