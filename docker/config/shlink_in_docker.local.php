@@ -62,6 +62,12 @@ $helper = new class {
         $webhooks = env('VISITS_WEBHOOKS');
         return $webhooks === null ? [] : explode(',', $webhooks);
     }
+
+    public function getRedisConfig(): ?array
+    {
+        $redisServers = env('REDIS_SERVERS');
+        return $redisServers === null ? null : ['servers' => $redisServers];
+    }
 };
 
 return [
@@ -112,8 +118,8 @@ return [
         ],
     ],
 
-    'redis' => [
-        'servers' => env('REDIS_SERVERS'),
+    'cache' => [
+        'redis' => $helper->getRedisConfig(),
     ],
 
     'router' => [

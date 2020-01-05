@@ -97,10 +97,12 @@ class SimplifiedConfigParserTest extends TestCase
                 ],
             ],
 
-            'redis' => [
-                'servers' => [
-                    'tcp://1.1.1.1:1111',
-                    'tcp://1.2.2.2:2222',
+            'cache' => [
+                'redis' => [
+                    'servers' => [
+                        'tcp://1.1.1.1:1111',
+                        'tcp://1.2.2.2:2222',
+                    ],
                 ],
             ],
 
