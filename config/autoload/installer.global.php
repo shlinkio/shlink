@@ -29,6 +29,7 @@ return [
             Option\BasePathConfigOption::class,
             Option\TaskWorkerNumConfigOption::class,
             Option\WebWorkerNumConfigOption::class,
+            Option\RedisServersConfigOption::class,
         ],
 
         'installation_commands' => [
