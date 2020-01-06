@@ -43,7 +43,8 @@ class ConfigProviderTest extends TestCase
             ['path' => '/rest/v{version:1|2}/foo'],
             ['path' => '/rest/v{version:1|2}/bar'],
             ['path' => '/rest/v{version:1|2}/baz/foo'],
-            ['path' => '/rest/health'],
+            ['path' => '/rest/v{version:1|2}/health'],
+            ['path' => '/rest/health', 'name' => ConfigProvider::UNVERSIONED_HEALTH_ENDPOINT_NAME],
         ], $config['routes']);
     }
 }

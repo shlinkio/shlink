@@ -13,6 +13,7 @@ class ConfigProvider
 {
     private const ROUTES_PREFIX = '/rest/v{version:1|2}';
     private const UNVERSIONED_ROUTES_PREFIX = '/rest';
+    public const UNVERSIONED_HEALTH_ENDPOINT_NAME = 'unversioned_health';
 
     private Closure $loadConfig;
 
@@ -34,11 +35,14 @@ class ConfigProvider
         // Prepend the routes prefix to every path
         foreach ($routes as $key => $route) {
             ['path' => $path] = $route;
-            $routes[$key]['path'] = sprintf(
-                '%s%s',
-                $path === '/health' ? self::UNVERSIONED_ROUTES_PREFIX : self::ROUTES_PREFIX,
-                $path,
-            );
+            $routes[$key]['path'] = sprintf('%s%s', self::ROUTES_PREFIX, $path);
+
+            // Also append the health route so that it works without version
+            if ($path === '/health') {
+                $route['path'] = sprintf('%s%s', self::UNVERSIONED_ROUTES_PREFIX, $path);
+                $route['name'] = self::UNVERSIONED_HEALTH_ENDPOINT_NAME;
+                $routes[] = $route;
+            }
         }
 
         return $config;
