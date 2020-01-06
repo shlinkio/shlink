@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ShlinkMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
@@ -30,12 +30,12 @@ class Version20160820191203 extends AbstractMigration
     private function createTagsTable(Schema $schema): void
     {
         $table = $schema->createTable('tags');
-        $table->addColumn('id', Type::BIGINT, [
+        $table->addColumn('id', Types::BIGINT, [
             'unsigned' => true,
             'autoincrement' => true,
             'notnull' => true,
         ]);
-        $table->addColumn('name', Type::STRING, [
+        $table->addColumn('name', Types::STRING, [
             'length' => 255,
             'notnull' => true,
         ]);
@@ -47,11 +47,11 @@ class Version20160820191203 extends AbstractMigration
     private function createShortUrlsInTagsTable(Schema $schema): void
     {
         $table = $schema->createTable('short_urls_in_tags');
-        $table->addColumn('short_url_id', Type::BIGINT, [
+        $table->addColumn('short_url_id', Types::BIGINT, [
             'unsigned' => true,
             'notnull' => true,
         ]);
-        $table->addColumn('tag_id', Type::BIGINT, [
+        $table->addColumn('tag_id', Types::BIGINT, [
             'unsigned' => true,
             'notnull' => true,
         ]);

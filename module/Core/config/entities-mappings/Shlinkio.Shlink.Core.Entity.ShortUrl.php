@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata; // @codingStandardsIgnoreLine
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
@@ -15,19 +15,19 @@ $builder = new ClassMetadataBuilder($metadata);
 $builder->setTable('short_urls')
         ->setCustomRepositoryClass(Repository\ShortUrlRepository::class);
 
-$builder->createField('id', Type::BIGINT)
+$builder->createField('id', Types::BIGINT)
         ->columnName('id')
         ->makePrimaryKey()
         ->generatedValue('IDENTITY')
         ->option('unsigned', true)
         ->build();
 
-$builder->createField('longUrl', Type::STRING)
+$builder->createField('longUrl', Types::STRING)
         ->columnName('original_url')
         ->length(2048)
         ->build();
 
-$builder->createField('shortCode', Type::STRING)
+$builder->createField('shortCode', Types::STRING)
         ->columnName('short_code')
         ->length(255)
         ->build();
@@ -46,7 +46,7 @@ $builder->createField('validUntil', ChronosDateTimeType::CHRONOS_DATETIME)
         ->nullable()
         ->build();
 
-$builder->createField('maxVisits', Type::INTEGER)
+$builder->createField('maxVisits', Types::INTEGER)
         ->columnName('max_visits')
         ->nullable()
         ->build();

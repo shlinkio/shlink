@@ -8,7 +8,7 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
@@ -35,7 +35,7 @@ final class Version20181020060559 extends AbstractMigration
     {
         foreach ($columnNames as $name) {
             if (! $visitLocations->hasColumn($name)) {
-                $visitLocations->addColumn($name, Type::STRING, ['notnull' => false]);
+                $visitLocations->addColumn($name, Types::STRING, ['notnull' => false]);
             }
         }
     }

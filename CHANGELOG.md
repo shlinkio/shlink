@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#429](https://github.com/shlinkio/shlink/issues/429) Added support for PHP 7.4
 * [#529](https://github.com/shlinkio/shlink/issues/529) Created an UPGRADING.md file explaining how to upgrade from v1.x to v2.x
+* [#594](https://github.com/shlinkio/shlink/issues/594) Updated external shlink packages, including installer v4.0, which adds the option to ask for the redis cluster config.
 
 #### Changed
 
