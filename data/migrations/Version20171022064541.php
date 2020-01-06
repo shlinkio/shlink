@@ -6,7 +6,7 @@ namespace ShlinkMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
@@ -24,7 +24,7 @@ class Version20171022064541 extends AbstractMigration
             return;
         }
 
-        $shortUrls->addColumn('max_visits', Type::INTEGER, [
+        $shortUrls->addColumn('max_visits', Types::INTEGER, [
             'unsigned' => true,
             'notnull' => false,
         ]);

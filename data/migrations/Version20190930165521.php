@@ -6,7 +6,7 @@ namespace ShlinkMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
 
 final class Version20190930165521 extends AbstractMigration
@@ -22,19 +22,19 @@ final class Version20190930165521 extends AbstractMigration
         }
 
         $domains = $schema->createTable('domains');
-        $domains->addColumn('id', Type::BIGINT, [
+        $domains->addColumn('id', Types::BIGINT, [
             'unsigned' => true,
             'autoincrement' => true,
             'notnull' => true,
         ]);
-        $domains->addColumn('authority', Type::STRING, [
+        $domains->addColumn('authority', Types::STRING, [
             'length' => 512,
             'notnull' => true,
         ]);
         $domains->addUniqueIndex(['authority']);
         $domains->setPrimaryKey(['id']);
 
-        $shortUrls->addColumn('domain_id', Type::BIGINT, [
+        $shortUrls->addColumn('domain_id', Types::BIGINT, [
             'unsigned' => true,
             'notnull' => false,
         ]);
