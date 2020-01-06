@@ -25,14 +25,22 @@ $columns = [
     'country_name' => 'countryName',
     'region_name' => 'regionName',
     'city_name' => 'cityName',
-    'latitude' => 'latitude',
-    'longitude' => 'longitude',
     'timezone' => 'timezone',
 ];
 
 foreach ($columns as $columnName => $fieldName) {
     $builder->createField($fieldName, Type::STRING)
-        ->columnName($columnName)
+            ->columnName($columnName)
+            ->nullable()
+            ->build();
+}
+
+$builder->createField('latitude', Type::FLOAT)
+        ->columnName('latitude')
         ->nullable()
         ->build();
-}
+
+$builder->createField('longitude', Type::FLOAT)
+        ->columnName('longitude')
+        ->nullable()
+        ->build();
