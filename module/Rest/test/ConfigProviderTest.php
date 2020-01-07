@@ -25,26 +25,47 @@ class ConfigProviderTest extends TestCase
         $this->assertArrayHasKey('dependencies', $config);
     }
 
-    /** @test */
-    public function routesAreProperlyPrefixed(): void
+    /**
+     * @test
+     * @dataProvider provideRoutesConfig
+     */
+    public function routesAreProperlyPrefixed(array $routes, array $expected): void
     {
-        $configProvider = new ConfigProvider(fn () => [
-            'routes' => [
+        $configProvider = new ConfigProvider(fn () => ['routes' => $routes]);
+
+        $config = $configProvider();
+
+        $this->assertEquals($expected, $config['routes']);
+    }
+
+    public function provideRoutesConfig(): iterable
+    {
+        yield 'health action present' => [
+            [
                 ['path' => '/foo'],
                 ['path' => '/bar'],
                 ['path' => '/baz/foo'],
                 ['path' => '/health'],
             ],
-        ]);
-
-        $config = $configProvider();
-
-        $this->assertEquals([
-            ['path' => '/rest/v{version:1|2}/foo'],
-            ['path' => '/rest/v{version:1|2}/bar'],
-            ['path' => '/rest/v{version:1|2}/baz/foo'],
-            ['path' => '/rest/v{version:1|2}/health'],
-            ['path' => '/rest/health', 'name' => ConfigProvider::UNVERSIONED_HEALTH_ENDPOINT_NAME],
-        ], $config['routes']);
+            [
+                ['path' => '/rest/v{version:1|2}/foo'],
+                ['path' => '/rest/v{version:1|2}/bar'],
+                ['path' => '/rest/v{version:1|2}/baz/foo'],
+                ['path' => '/rest/v{version:1|2}/health'],
+                ['path' => '/rest/health', 'name' => ConfigProvider::UNVERSIONED_HEALTH_ENDPOINT_NAME],
+            ],
+        ];
+        yield 'health action not present' => [
+            [
+                ['path' => '/foo'],
+                ['path' => '/bar'],
+                ['path' => '/baz/foo'],
+            ],
+            [
+                ['path' => '/rest/v{version:1|2}/foo'],
+                ['path' => '/rest/v{version:1|2}/bar'],
+                ['path' => '/rest/v{version:1|2}/baz/foo'],
+            ],
+        ];
     }
 }
