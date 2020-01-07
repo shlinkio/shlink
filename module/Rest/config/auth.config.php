@@ -12,6 +12,7 @@ return [
         'routes_whitelist' => [
             Action\HealthAction::class,
             Action\ShortUrl\SingleStepCreateShortUrlAction::class,
+            ConfigProvider::UNVERSIONED_HEALTH_ENDPOINT_NAME,
         ],
 
         'plugins' => [
