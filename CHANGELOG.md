@@ -34,7 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Fixed
 
-* *Nothing*
+* [#600](https://github.com/shlinkio/shlink/issues/600) Fixed health action so that it works with and without version in the path.
 
 
 ## 1.21.1 - 2020-01-02
