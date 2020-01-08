@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Action;
 
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -14,19 +16,14 @@ use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
 
 use function array_key_exists;
 
 class RedirectActionTest extends TestCase
 {
-    /** @var RedirectAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $urlShortener;
-    /** @var ObjectProphecy */
-    private $visitTracker;
+    private RedirectAction $action;
+    private ObjectProphecy $urlShortener;
+    private ObjectProphecy $visitTracker;
 
     public function setUp(): void
     {
@@ -36,7 +33,7 @@ class RedirectActionTest extends TestCase
         $this->action = new RedirectAction(
             $this->urlShortener->reveal(),
             $this->visitTracker->reveal(),
-            new Options\AppOptions(['disableTrackParam' => 'foobar'])
+            new Options\AppOptions(['disableTrackParam' => 'foobar']),
         );
     }
 
@@ -49,7 +46,7 @@ class RedirectActionTest extends TestCase
         $shortCode = 'abc123';
         $shortUrl = new ShortUrl('http://domain.com/foo/bar?some=thing');
         $shortCodeToUrl = $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn($shortUrl);
-        $track = $this->visitTracker->track(Argument::cetera())->will(function () {
+        $track = $this->visitTracker->track(Argument::cetera())->will(function (): void {
         });
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)->withQueryParams($query);

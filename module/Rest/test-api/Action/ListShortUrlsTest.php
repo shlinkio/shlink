@@ -24,7 +24,6 @@ class ListShortUrlsTest extends ApiTestCase
             'validUntil' => null,
             'maxVisits' => null,
         ],
-        'originalUrl' => 'https://shlink.io',
     ];
     private const SHORT_URL_CUSTOM_SLUG_AND_DOMAIN = [
         'shortCode' => 'custom-with-domain',
@@ -38,7 +37,6 @@ class ListShortUrlsTest extends ApiTestCase
             'validUntil' => null,
             'maxVisits' => null,
         ],
-        'originalUrl' => 'https://google.com',
     ];
     private const SHORT_URL_META = [
         'shortCode' => 'def456',
@@ -54,9 +52,6 @@ class ListShortUrlsTest extends ApiTestCase
             'validUntil' => null,
             'maxVisits' => null,
         ],
-        'originalUrl' =>
-            'https://blog.alejandrocelaya.com/2017/12/09'
-            . '/acmailer-7-0-the-most-important-release-in-a-long-time/',
     ];
     private const SHORT_URL_CUSTOM_SLUG = [
         'shortCode' => 'custom',
@@ -70,7 +65,6 @@ class ListShortUrlsTest extends ApiTestCase
             'validUntil' => null,
             'maxVisits' => 2,
         ],
-        'originalUrl' => 'https://shlink.io',
     ];
     private const SHORT_URL_CUSTOM_DOMAIN = [
         'shortCode' => 'ghi789',
@@ -86,9 +80,6 @@ class ListShortUrlsTest extends ApiTestCase
             'validUntil' => null,
             'maxVisits' => null,
         ],
-        'originalUrl' =>
-            'https://blog.alejandrocelaya.com/2019/04/27'
-            . '/considerations-to-properly-use-open-source-software-projects/',
     ];
 
     /**

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Exception;
 
 use Fig\Http\Message\StatusCodeInterface;
-use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
-use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
+use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
+use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
 use function sprintf;
 
@@ -22,7 +22,7 @@ class DeleteShortUrlException extends DomainException implements ProblemDetailsE
         $e = new self(sprintf(
             'Impossible to delete short URL with short code "%s" since it has more than "%s" visits.',
             $shortCode,
-            $threshold
+            $threshold,
         ));
 
         $e->detail = $e->getMessage();

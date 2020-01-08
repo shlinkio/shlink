@@ -9,8 +9,7 @@ use Shlinkio\Shlink\Core\Config\BasePathPrefixer;
 
 class BasePathPrefixerTest extends TestCase
 {
-    /** @var BasePathPrefixer */
-    private $prefixer;
+    private BasePathPrefixer $prefixer;
 
     public function setUp(): void
     {

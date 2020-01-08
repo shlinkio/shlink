@@ -14,8 +14,7 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
 {
     private const MAX_REDIRECTS = 15;
 
-    /** @var ClientInterface */
-    private $httpClient;
+    private ClientInterface $httpClient;
 
     public function __construct(ClientInterface $httpClient)
     {

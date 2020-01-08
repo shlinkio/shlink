@@ -6,19 +6,17 @@ namespace ShlinkioTest\Shlink\Rest\Action;
 
 use Doctrine\DBAL\Connection;
 use Exception;
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Rest\Action\HealthAction;
-use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\ServerRequest;
 
 class HealthActionTest extends TestCase
 {
-    /** @var HealthAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $conn;
+    private HealthAction $action;
+    private ObjectProphecy $conn;
 
     public function setUp(): void
     {
@@ -27,7 +25,7 @@ class HealthActionTest extends TestCase
     }
 
     /** @test */
-    public function passResponseIsReturnedWhenConnectionSucceeds()
+    public function passResponseIsReturnedWhenConnectionSucceeds(): void
     {
         $ping = $this->conn->ping()->willReturn(true);
 
@@ -47,7 +45,7 @@ class HealthActionTest extends TestCase
     }
 
     /** @test */
-    public function failResponseIsReturnedWhenConnectionFails()
+    public function failResponseIsReturnedWhenConnectionFails(): void
     {
         $ping = $this->conn->ping()->willReturn(false);
 
@@ -67,7 +65,7 @@ class HealthActionTest extends TestCase
     }
 
     /** @test */
-    public function failResponseIsReturnedWhenConnectionThrowsException()
+    public function failResponseIsReturnedWhenConnectionThrowsException(): void
     {
         $ping = $this->conn->ping()->willThrow(Exception::class);
 

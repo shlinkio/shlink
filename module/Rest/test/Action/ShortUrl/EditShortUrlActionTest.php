@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -11,14 +12,11 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlAction;
-use Zend\Diactoros\ServerRequest;
 
 class EditShortUrlActionTest extends TestCase
 {
-    /** @var EditShortUrlAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $shortUrlService;
+    private EditShortUrlAction $action;
+    private ObjectProphecy $shortUrlService;
 
     public function setUp(): void
     {
@@ -46,7 +44,7 @@ class EditShortUrlActionTest extends TestCase
                                             'maxVisits' => 5,
                                         ]);
         $updateMeta = $this->shortUrlService->updateMetadataByShortCode(Argument::cetera())->willReturn(
-            new ShortUrl('')
+            new ShortUrl(''),
         );
 
         $resp = $this->action->handle($request);

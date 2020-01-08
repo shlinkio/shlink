@@ -11,8 +11,7 @@ use function array_merge;
 
 class DeprecatedConfigParserTest extends TestCase
 {
-    /** @var DeprecatedConfigParser */
-    private $postProcessor;
+    private DeprecatedConfigParser $postProcessor;
 
     public function setUp(): void
     {
@@ -87,6 +86,23 @@ class DeprecatedConfigParserTest extends TestCase
                 'invalid_short_url' => null,
             ],
         ]);
+
+        $result = ($this->postProcessor)($config);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test */
+    public function removesTheOldSecretKey(): void
+    {
+        $config = [
+            'app_options' => [
+                'secret_key' => 'foobar',
+            ],
+        ];
+        $expected = [
+            'app_options' => [],
+        ];
 
         $result = ($this->postProcessor)($config);
 

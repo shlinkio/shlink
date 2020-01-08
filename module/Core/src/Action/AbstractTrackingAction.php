@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Action;
 
+use Laminas\Diactoros\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -16,7 +17,6 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
-use Zend\Diactoros\Uri;
 
 use function array_key_exists;
 use function array_merge;
@@ -25,14 +25,10 @@ use function http_build_query;
 
 abstract class AbstractTrackingAction implements MiddlewareInterface
 {
-    /** @var UrlShortenerInterface */
-    private $urlShortener;
-    /** @var VisitsTrackerInterface */
-    private $visitTracker;
-    /** @var AppOptions */
-    private $appOptions;
-    /** @var LoggerInterface */
-    private $logger;
+    private UrlShortenerInterface $urlShortener;
+    private VisitsTrackerInterface $visitTracker;
+    private AppOptions $appOptions;
+    private LoggerInterface $logger;
 
     public function __construct(
         UrlShortenerInterface $urlShortener,
@@ -50,10 +46,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
      * Process an incoming server request and return a response, optionally delegating
      * to the next middleware component to create the response.
      *
-     * @param ServerRequestInterface $request
-     * @param RequestHandlerInterface $handler
      *
-     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

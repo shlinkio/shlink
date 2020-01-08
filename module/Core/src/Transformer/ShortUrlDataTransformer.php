@@ -12,8 +12,7 @@ use function Functional\invoke_if;
 
 class ShortUrlDataTransformer implements DataTransformerInterface
 {
-    /** @var array */
-    private $domainConfig;
+    private array $domainConfig;
 
     public function __construct(array $domainConfig)
     {
@@ -23,11 +22,11 @@ class ShortUrlDataTransformer implements DataTransformerInterface
     /**
      * @param ShortUrl $shortUrl
      */
-    public function transform($shortUrl, bool $includeDeprecated = true): array
+    public function transform($shortUrl): array // phpcs:ignore
     {
         $longUrl = $shortUrl->getLongUrl();
 
-        $rawData = [
+        return [
             'shortCode' => $shortUrl->getShortCode(),
             'shortUrl' => $shortUrl->toString($this->domainConfig),
             'longUrl' => $longUrl,
@@ -36,12 +35,6 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             'tags' => invoke($shortUrl->getTags(), '__toString'),
             'meta' => $this->buildMeta($shortUrl),
         ];
-
-        if ($includeDeprecated) {
-            $rawData['originalUrl'] = $longUrl;
-        }
-
-        return $rawData;
     }
 
     private function buildMeta(ShortUrl $shortUrl): array

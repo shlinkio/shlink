@@ -26,8 +26,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         ShortUrl::class,
     ];
 
-    /** @var VisitRepository */
-    private $repo;
+    private VisitRepository $repo;
 
     protected function setUp(): void
     {
@@ -67,9 +66,7 @@ class VisitRepositoryTest extends DatabaseTestCase
 
     public function provideBlockSize(): iterable
     {
-        return map(range(1, 5), function (int $value) {
-            return [$value];
-        });
+        return map(range(1, 5), fn (int $value) => [$value]);
     }
 
     /** @test */
@@ -88,10 +85,10 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->assertCount(6, $this->repo->findVisitsByShortCode($shortUrl->getShortCode()));
         $this->assertCount(2, $this->repo->findVisitsByShortCode($shortUrl->getShortCode(), new DateRange(
             Chronos::parse('2016-01-02'),
-            Chronos::parse('2016-01-03')
+            Chronos::parse('2016-01-03'),
         )));
         $this->assertCount(4, $this->repo->findVisitsByShortCode($shortUrl->getShortCode(), new DateRange(
-            Chronos::parse('2016-01-03')
+            Chronos::parse('2016-01-03'),
         )));
         $this->assertCount(3, $this->repo->findVisitsByShortCode($shortUrl->getShortCode(), null, 3, 2));
         $this->assertCount(2, $this->repo->findVisitsByShortCode($shortUrl->getShortCode(), null, 5, 4));
@@ -113,10 +110,10 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->assertEquals(6, $this->repo->countVisitsByShortCode($shortUrl->getShortCode()));
         $this->assertEquals(2, $this->repo->countVisitsByShortCode($shortUrl->getShortCode(), new DateRange(
             Chronos::parse('2016-01-02'),
-            Chronos::parse('2016-01-03')
+            Chronos::parse('2016-01-03'),
         )));
         $this->assertEquals(4, $this->repo->countVisitsByShortCode($shortUrl->getShortCode(), new DateRange(
-            Chronos::parse('2016-01-03')
+            Chronos::parse('2016-01-03'),
         )));
     }
 }

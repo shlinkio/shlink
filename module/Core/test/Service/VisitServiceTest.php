@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManager;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -27,10 +28,8 @@ use function sprintf;
 
 class VisitServiceTest extends TestCase
 {
-    /** @var VisitService */
-    private $visitService;
-    /** @var ObjectProphecy */
-    private $em;
+    private VisitService $visitService;
+    private ObjectProphecy $em;
 
     public function setUp(): void
     {
@@ -41,24 +40,23 @@ class VisitServiceTest extends TestCase
     /** @test */
     public function locateVisitsIteratesAndLocatesUnlocatedVisits(): void
     {
-        $unlocatedVisits = map(range(1, 200), function (int $i) {
-            return new Visit(new ShortUrl(sprintf('short_code_%s', $i)), Visitor::emptyInstance());
-        });
+        $unlocatedVisits = map(
+            range(1, 200),
+            fn (int $i) => new Visit(new ShortUrl(sprintf('short_code_%s', $i)), Visitor::emptyInstance()),
+        );
 
         $repo = $this->prophesize(VisitRepository::class);
         $findUnlocatedVisits = $repo->findUnlocatedVisits(false)->willReturn($unlocatedVisits);
         $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
 
-        $persist = $this->em->persist(Argument::type(Visit::class))->will(function () {
+        $persist = $this->em->persist(Argument::type(Visit::class))->will(function (): void {
         });
-        $flush = $this->em->flush()->will(function () {
+        $flush = $this->em->flush()->will(function (): void {
         });
-        $clear = $this->em->clear()->will(function () {
+        $clear = $this->em->clear()->will(function (): void {
         });
 
-        $this->visitService->locateUnlocatedVisits(function () {
-            return Location::emptyInstance();
-        }, function () {
+        $this->visitService->locateUnlocatedVisits(fn () => Location::emptyInstance(), function (): void {
             $args = func_get_args();
 
             $this->assertInstanceOf(VisitLocation::class, array_shift($args));
@@ -86,15 +84,17 @@ class VisitServiceTest extends TestCase
         $findUnlocatedVisits = $repo->findUnlocatedVisits(false)->willReturn($unlocatedVisits);
         $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
 
-        $persist = $this->em->persist(Argument::type(Visit::class))->will(function () {
+        $persist = $this->em->persist(Argument::type(Visit::class))->will(function (): void {
         });
-        $flush = $this->em->flush()->will(function () {
+        $flush = $this->em->flush()->will(function (): void {
         });
-        $clear = $this->em->clear()->will(function () {
+        $clear = $this->em->clear()->will(function (): void {
         });
 
-        $this->visitService->locateUnlocatedVisits(function () use ($isNonLocatableAddress) {
-            throw new IpCannotBeLocatedException($isNonLocatableAddress, 'Cannot be located');
+        $this->visitService->locateUnlocatedVisits(function () use ($isNonLocatableAddress): void {
+            throw $isNonLocatableAddress
+                ? new IpCannotBeLocatedException('Cannot be located')
+                : IpCannotBeLocatedException::forError(new Exception(''));
         });
 
         $findUnlocatedVisits->shouldHaveBeenCalledOnce();

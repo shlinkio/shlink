@@ -27,18 +27,12 @@ use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 class LocateShortUrlVisitTest extends TestCase
 {
-    /** @var LocateShortUrlVisit */
-    private $locateVisit;
-    /** @var ObjectProphecy */
-    private $ipLocationResolver;
-    /** @var ObjectProphecy */
-    private $em;
-    /** @var ObjectProphecy */
-    private $logger;
-    /** @var ObjectProphecy */
-    private $dbUpdater;
-    /** @var ObjectProphecy */
-    private $eventDispatcher;
+    private LocateShortUrlVisit $locateVisit;
+    private ObjectProphecy $ipLocationResolver;
+    private ObjectProphecy $em;
+    private ObjectProphecy $logger;
+    private ObjectProphecy $dbUpdater;
+    private ObjectProphecy $eventDispatcher;
 
     public function setUp(): void
     {
@@ -53,7 +47,7 @@ class LocateShortUrlVisitTest extends TestCase
             $this->em->reveal(),
             $this->logger->reveal(),
             $this->dbUpdater->reveal(),
-            $this->eventDispatcher->reveal()
+            $this->eventDispatcher->reveal(),
         );
     }
 
@@ -65,7 +59,7 @@ class LocateShortUrlVisitTest extends TestCase
         $logWarning = $this->logger->warning('Tried to locate visit with id "{visitId}", but it does not exist.', [
             'visitId' => 123,
         ]);
-        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function () {
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
         });
 
         ($this->locateVisit)($event);
@@ -82,16 +76,16 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $event = new ShortUrlVisited('123');
         $findVisit = $this->em->find(Visit::class, '123')->willReturn(
-            new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4'))
+            new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4')),
         );
         $resolveLocation = $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->willThrow(
-            WrongIpException::class
+            WrongIpException::class,
         );
         $logWarning = $this->logger->warning(
             Argument::containingString('Tried to locate visit with id "{visitId}", but its address seems to be wrong.'),
-            Argument::type('array')
+            Argument::type('array'),
         );
-        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function () {
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
         });
 
         ($this->locateVisit)($event);
@@ -111,10 +105,10 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $event = new ShortUrlVisited('123');
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
-        $flush = $this->em->flush()->will(function () {
+        $flush = $this->em->flush()->will(function (): void {
         });
         $resolveIp = $this->ipLocationResolver->resolveIpLocation(Argument::any());
-        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function () {
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
         });
 
         ($this->locateVisit)($event);
@@ -145,10 +139,10 @@ class LocateShortUrlVisitTest extends TestCase
         $event = new ShortUrlVisited('123');
 
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
-        $flush = $this->em->flush()->will(function () {
+        $flush = $this->em->flush()->will(function (): void {
         });
         $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
-        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function () {
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
         });
 
         ($this->locateVisit)($event);
@@ -171,11 +165,11 @@ class LocateShortUrlVisitTest extends TestCase
         $event = new ShortUrlVisited('123');
 
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
-        $flush = $this->em->flush()->will(function () {
+        $flush = $this->em->flush()->will(function (): void {
         });
         $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
         $checkUpdateDb = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willThrow($e);
-        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function () {
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
         });
 
         ($this->locateVisit)($event);
@@ -187,7 +181,7 @@ class LocateShortUrlVisitTest extends TestCase
         $checkUpdateDb->shouldHaveBeenCalledOnce();
         $this->logger->warning(
             'GeoLite2 database update failed. Proceeding with old version. {e}',
-            ['e' => $e]
+            ['e' => $e],
         )->shouldHaveBeenCalledOnce();
         $dispatch->shouldHaveBeenCalledOnce();
     }
@@ -202,15 +196,15 @@ class LocateShortUrlVisitTest extends TestCase
         $event = new ShortUrlVisited('123');
 
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
-        $flush = $this->em->flush()->will(function () {
+        $flush = $this->em->flush()->will(function (): void {
         });
         $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
         $checkUpdateDb = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willThrow($e);
         $logError = $this->logger->error(
             'GeoLite2 database download failed. It is not possible to locate visit with id {visitId}. {e}',
-            ['e' => $e, 'visitId' => 123]
+            ['e' => $e, 'visitId' => 123],
         );
-        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function () {
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
         });
 
         ($this->locateVisit)($event);

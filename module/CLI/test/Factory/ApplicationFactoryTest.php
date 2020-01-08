@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Factory;
 
+use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -11,12 +12,10 @@ use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
-use Zend\ServiceManager\ServiceManager;
 
 class ApplicationFactoryTest extends TestCase
 {
-    /** @var ApplicationFactory */
-    private $factory;
+    private ApplicationFactory $factory;
 
     public function setUp(): void
     {
@@ -36,7 +35,6 @@ class ApplicationFactoryTest extends TestCase
         $sm->setService('foo', $this->createCommandMock('foo')->reveal());
         $sm->setService('bar', $this->createCommandMock('bar')->reveal());
 
-        /** @var Application $instance */
         $instance = ($this->factory)($sm);
 
         $this->assertTrue($instance->has('foo'));
@@ -61,7 +59,7 @@ class ApplicationFactoryTest extends TestCase
         $command->getDefinition()->willReturn($name);
         $command->isEnabled()->willReturn(true);
         $command->getAliases()->willReturn([]);
-        $command->setApplication(Argument::type(Application::class))->willReturn(function () {
+        $command->setApplication(Argument::type(Application::class))->willReturn(function (): void {
         });
 
         return $command;

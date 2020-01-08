@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Zend\Diactoros\Response\JsonResponse;
 
 class EditShortUrlTagsAction extends AbstractRestAction
 {
     protected const ROUTE_PATH = '/short-urls/{shortCode}/tags';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PUT];
 
-    /** @var ShortUrlServiceInterface */
-    private $shortUrlService;
+    private ShortUrlServiceInterface $shortUrlService;
 
     public function __construct(ShortUrlServiceInterface $shortUrlService, ?LoggerInterface $logger = null)
     {

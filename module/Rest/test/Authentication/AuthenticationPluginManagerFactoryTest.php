@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Authentication;
 
+use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Rest\Authentication\AuthenticationPluginManager;
 use Shlinkio\Shlink\Rest\Authentication\AuthenticationPluginManagerFactory;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
-use Zend\ServiceManager\ServiceManager;
 
 class AuthenticationPluginManagerFactoryTest extends TestCase
 {
-    /** @var AuthenticationPluginManagerFactory */
-    private $factory;
+    private AuthenticationPluginManagerFactory $factory;
 
     public function setUp(): void
     {
@@ -35,9 +34,7 @@ class AuthenticationPluginManagerFactoryTest extends TestCase
 
     private function getPlugins(AuthenticationPluginManager $pluginManager): array
     {
-        return (function () {
-            return $this->services;
-        })->call($pluginManager);
+        return (fn () => $this->services)->call($pluginManager);
     }
 
     public function provideConfigs(): iterable

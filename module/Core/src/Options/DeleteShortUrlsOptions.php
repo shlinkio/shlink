@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Options;
 
-use Zend\Stdlib\AbstractOptions;
+use Laminas\Stdlib\AbstractOptions;
 
 class DeleteShortUrlsOptions extends AbstractOptions
 {
-    private $visitsThreshold = 15;
-    private $checkVisitsThreshold = true;
+    private int $visitsThreshold = 15;
+    private bool $checkVisitsThreshold = true;
 
     public function getVisitsThreshold(): int
     {

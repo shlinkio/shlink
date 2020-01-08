@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM;
+use Laminas\Paginator\Paginator;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -14,14 +15,11 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
-use Zend\Paginator\Paginator;
 
 class VisitsTracker implements VisitsTrackerInterface
 {
-    /** @var ORM\EntityManagerInterface */
-    private $em;
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
+    private ORM\EntityManagerInterface $em;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(ORM\EntityManagerInterface $em, EventDispatcherInterface $eventDispatcher)
     {

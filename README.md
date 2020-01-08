@@ -9,6 +9,8 @@
 
 A PHP-based self-hosted URL shortener that can be used to serve shortened URLs under your own custom domain.
 
+> This document references Shlink 2.x. If you are using an older version and want to upgrade, follow the [UPGRADE](UPGRADE.md) doc.
+
 ## Table of Contents
 
 - [Installation](#installation)
@@ -29,7 +31,7 @@ A PHP-based self-hosted URL shortener that can be used to serve shortened URLs u
 
 First, make sure the host where you are going to run shlink fulfills these requirements:
 
-* PHP 7.2 or greater with JSON, APCu, intl, curl, PDO and gd extensions enabled.
+* PHP 7.4 or greater with JSON, APCu, intl, curl, PDO and gd extensions enabled.
 * MySQL, MariaDB, PostgreSQL or SQLite.
 * The web server of your choice with PHP integration (Apache or Nginx recommended).
 
@@ -121,7 +123,7 @@ Once Shlink is configured, you need to expose it to the web, either by using a t
 
     First you need to install the swoole PHP extension with [pecl](https://pecl.php.net/package/swoole), `pecl install swoole`.
 
-    Once installed, it's actually pretty easy to get shlink up and running with swoole. Run `./vendor/bin/zend-expressive-swoole start -d` and you will get shlink running on port 8080.
+    Once installed, it's actually pretty easy to get shlink up and running with swoole. Run `./vendor/bin/mezzio-swoole start -d` and you will get shlink running on port 8080.
 
     However, by doing it this way, you are loosing all the access logs, and the service won't be automatically run if the server has to be restarted.
 
@@ -138,7 +140,7 @@ Once Shlink is configured, you need to expose it to the web, either by using a t
     # Description:       Shlink non-blocking server with swoole
     ### END INIT INFO
 
-    SCRIPT=/path/to/shlink/vendor/bin/zend-expressive-swoole\ start
+    SCRIPT=/path/to/shlink/vendor/bin/mezzio-swoole\ start
     RUNAS=root
 
     PIDFILE=/var/run/shlink_swoole.pid
@@ -197,31 +199,11 @@ Finally access to [https://app.shlink.io](https://app.shlink.io) and configure y
 
 ### Bonus
 
-Depending on the shlink version you installed and how you serve it, there are a couple of time-consuming tasks that shlink expects you to do manually, or at least it is recommended, since it will improve runtime performance.
+Geo-locating visits to your short links is a time-consuming task. When serving Shlink with swoole, the geo-location task is automatically run asynchronously just after a visit to a short URL happens.
 
-Those tasks can be performed using shlink's CLI tool, so it should be easy to schedule them to be run in the background (for example, using cron jobs):
+However, if you are not serving Shlink with swoole, you will have to schedule the geo-location task to be run regularly in the background (for example, using cron jobs):
 
-* **For shlink older than 1.18.0 or not using swoole to serve it**: Resolve IP address locations: `/path/to/shlink/bin/cli visit:locate`
-
-    If you don't run this command regularly, the stats will say all visits come from *unknown* locations.
-
-    > If you serve Shlink with swoole and use v1.18.0 at least, visit location is automatically scheduled by Shlink just after the visit occurs, using swoole's task system.
-
-* **For shlink older than v1.17.0**: Update IP geolocation database: `/path/to/shlink/bin/cli visit:update-db`
-
-    When shlink is installed it downloads a fresh [GeoLite2](https://dev.maxmind.com/geoip/geoip2/geolite2/) db file. Running this command will update this file.
-
-    The file is updated the first Tuesday of every month, so it should be enough running this command the first Wednesday.
-
-    > You don't need this if you use Shlink v1.17.0 or newer, since now it downloads/updates the geolocation database automatically just before trying to use it.
-
-* Generate website previews: `/path/to/shlink/bin/cli short-url:process-previews`
-
-    Running this will improve the performance of the `doma.in/abc123/preview` URLs, which return a preview of the site.
-
-    > **Important!** Generating previews is considered deprecated and the feature will be removed in Shlink v2.
-
-*Any of these commands accept the `-q` flag, which makes it not display any output. This is recommended when configuring the commands as cron jobs.*
+The command you need to run is `/path/to/shlink/bin/cli visit:locate`, and you can optionally provide the `-q` flag to remove any output and avoid your cron logs to be polluted.
 
 ## Update to new version
 
@@ -274,33 +256,28 @@ Options:
   -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
 
 Available commands:
-  help                        Displays help for a command
-  list                        Lists commands
+  help                Displays help for a command
+  list                Lists commands
  api-key
-  api-key:disable             Disables an API key.
-  api-key:generate            Generates a new valid API key.
-  api-key:list                Lists all the available API keys.
- config
-  config:generate-charset     [DEPRECATED] Generates a character set sample just by shuffling the default one, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ". Then it can be set in the SHORTCODE_CHARS environment variable
-  config:generate-secret      [DEPRECATED] Generates a random secret string that can be used for JWT token encryption
+  api-key:disable     Disables an API key.
+  api-key:generate    Generates a new valid API key.
+  api-key:list        Lists all the available API keys.
  db
-  db:create                   Creates the database needed for shlink to work. It will do nothing if the database already exists
-  db:migrate                  Runs database migrations, which will ensure the shlink database is up to date.
+  db:create           Creates the database needed for shlink to work. It will do nothing if the database already exists
+  db:migrate          Runs database migrations, which will ensure the shlink database is up to date.
  short-url
-  short-url:delete            [short-code:delete] Deletes a short URL
-  short-url:generate          [shortcode:generate|short-code:generate] Generates a short URL for provided long URL and returns it
-  short-url:list              [shortcode:list|short-code:list] List all short URLs
-  short-url:parse             [shortcode:parse|short-code:parse] Returns the long URL behind a short code
-  short-url:process-previews  [shortcode:process-previews|short-code:process-previews] [DEPRECATED] Processes and generates the previews for every URL, improving performance for later web requests.
-  short-url:visits            [shortcode:visits|short-code:visits] Returns the detailed visits information for provided short code
+  short-url:delete    Deletes a short URL
+  short-url:generate  Generates a short URL for provided long URL and returns it
+  short-url:list      List all short URLs
+  short-url:parse     Returns the long URL behind a short code
+  short-url:visits    Returns the detailed visits information for provided short code
  tag
-  tag:create                  Creates one or more tags.
-  tag:delete                  Deletes one or more tags.
-  tag:list                    Lists existing tags.
-  tag:rename                  Renames one existing tag.
+  tag:create          Creates one or more tags.
+  tag:delete          Deletes one or more tags.
+  tag:list            Lists existing tags.
+  tag:rename          Renames one existing tag.
  visit
-  visit:locate                [visit:process] Resolves visits origin locations.
-  visit:update-db             [DEPRECATED] Updates the GeoLite2 database file used to geolocate IP addresses
+  visit:locate        Resolves visits origin locations.
 ```
 
 > This product includes GeoLite2 data created by MaxMind, available from [https://www.maxmind.com](https://www.maxmind.com)

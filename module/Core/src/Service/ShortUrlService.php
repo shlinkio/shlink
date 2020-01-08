@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM;
+use Laminas\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
@@ -13,15 +14,13 @@ use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\FindShortCodeTrait;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
-use Zend\Paginator\Paginator;
 
 class ShortUrlService implements ShortUrlServiceInterface
 {
     use FindShortCodeTrait;
     use TagManagerTrait;
 
-    /** @var ORM\EntityManagerInterface */
-    private $em;
+    private ORM\EntityManagerInterface $em;
 
     public function __construct(ORM\EntityManagerInterface $em)
     {

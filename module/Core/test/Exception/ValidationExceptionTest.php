@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Exception;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Laminas\InputFilter\InputFilterInterface;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Throwable;
-use Zend\InputFilter\InputFilterInterface;
 
 use function array_keys;
 use function print_r;

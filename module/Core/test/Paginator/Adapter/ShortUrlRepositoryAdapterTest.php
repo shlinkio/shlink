@@ -13,8 +13,7 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 
 class ShortUrlRepositoryAdapterTest extends TestCase
 {
-    /** @var ObjectProphecy */
-    private $repo;
+    private ObjectProphecy $repo;
 
     public function setUp(): void
     {
@@ -22,11 +21,12 @@ class ShortUrlRepositoryAdapterTest extends TestCase
     }
 
     /**
+     * @param string|array|null $orderBy
      * @test
      * @dataProvider provideFilteringArgs
      */
     public function getItemsFallsBackToFindList(
-        $searchTerm = null,
+        ?string $searchTerm = null,
         array $tags = [],
         ?DateRange $dateRange = null,
         $orderBy = null
@@ -41,8 +41,11 @@ class ShortUrlRepositoryAdapterTest extends TestCase
      * @test
      * @dataProvider provideFilteringArgs
      */
-    public function countFallsBackToCountList($searchTerm = null, array $tags = [], ?DateRange $dateRange = null): void
-    {
+    public function countFallsBackToCountList(
+        ?string $searchTerm = null,
+        array $tags = [],
+        ?DateRange $dateRange = null
+    ): void {
         $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $searchTerm, $tags, null, $dateRange);
 
         $this->repo->countList($searchTerm, $tags, $dateRange)->shouldBeCalledOnce();

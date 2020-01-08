@@ -16,8 +16,7 @@ class CreateTagCommand extends Command
 {
     public const NAME = 'tag:create';
 
-    /** @var TagServiceInterface */
-    private $tagService;
+    private TagServiceInterface $tagService;
 
     public function __construct(TagServiceInterface $tagService)
     {
@@ -34,7 +33,7 @@ class CreateTagCommand extends Command
                 'name',
                 't',
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'The name of the tags to create'
+                'The name of the tags to create',
             );
     }
 

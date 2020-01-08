@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config;
 
+use Laminas\Stdlib\ArrayUtils;
 use Shlinkio\Shlink\Installer\Util\PathCollection;
-use Zend\Stdlib\ArrayUtils;
 
 use function array_flip;
 use function array_intersect_key;
@@ -22,16 +22,15 @@ class SimplifiedConfigParser
         'short_domain_schema' => ['url_shortener', 'domain', 'schema'],
         'short_domain_host' => ['url_shortener', 'domain', 'hostname'],
         'validate_url' => ['url_shortener', 'validate_url'],
-        'not_found_redirect_to' => ['not_found_redirects', 'invalid_short_url'], // Deprecated
         'invalid_short_url_redirect_to' => ['not_found_redirects', 'invalid_short_url'],
         'regular_404_redirect_to' => ['not_found_redirects', 'regular_404'],
         'base_url_redirect_to' => ['not_found_redirects', 'base_path'],
         'db_config' => ['entity_manager', 'connection'],
         'delete_short_url_threshold' => ['delete_short_urls', 'visits_threshold'],
-        'redis_servers' => ['redis', 'servers'],
+        'redis_servers' => ['cache', 'redis', 'servers'],
         'base_path' => ['router', 'base_path'],
-        'web_worker_num' => ['zend-expressive-swoole', 'swoole-http-server', 'options', 'worker_num'],
-        'task_worker_num' => ['zend-expressive-swoole', 'swoole-http-server', 'options', 'task_worker_num'],
+        'web_worker_num' => ['mezzio-swoole', 'swoole-http-server', 'options', 'worker_num'],
+        'task_worker_num' => ['mezzio-swoole', 'swoole-http-server', 'options', 'task_worker_num'],
         'visits_webhooks' => ['url_shortener', 'visits_webhooks'],
     ];
     private const SIMPLIFIED_CONFIG_SIDE_EFFECTS = [
@@ -75,9 +74,10 @@ class SimplifiedConfigParser
         // This mainly allows deprecating keys and defining new ones that will replace the older and always take
         // preference, while the old one keeps working for backwards compatibility if the new one is not provided.
         $simplifiedConfigOrder = array_flip(array_keys(self::SIMPLIFIED_CONFIG_MAPPING));
-        uksort($configForExistingKeys, function (string $a, string $b) use ($simplifiedConfigOrder): int {
-            return $simplifiedConfigOrder[$a] - $simplifiedConfigOrder[$b];
-        });
+        uksort(
+            $configForExistingKeys,
+            fn (string $a, string $b): int => $simplifiedConfigOrder[$a] - $simplifiedConfigOrder[$b],
+        );
 
         return $configForExistingKeys;
     }

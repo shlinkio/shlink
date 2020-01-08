@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\DeleteShortUrlAction;
-use Zend\Diactoros\ServerRequest;
 
 class DeleteShortUrlActionTest extends TestCase
 {
-    /** @var DeleteShortUrlAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $service;
+    private DeleteShortUrlAction $action;
+    private ObjectProphecy $service;
 
     public function setUp(): void
     {
@@ -27,7 +25,7 @@ class DeleteShortUrlActionTest extends TestCase
     /** @test */
     public function emptyResponseIsReturnedIfProperlyDeleted(): void
     {
-        $deleteByShortCode = $this->service->deleteByShortCode(Argument::any())->will(function () {
+        $deleteByShortCode = $this->service->deleteByShortCode(Argument::any())->will(function (): void {
         });
 
         $resp = $this->action->handle(new ServerRequest());

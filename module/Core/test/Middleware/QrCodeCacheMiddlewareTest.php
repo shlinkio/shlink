@@ -6,20 +6,18 @@ namespace ShlinkioTest\Shlink\Core\Middleware;
 
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Middleware\QrCodeCacheMiddleware;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Uri;
 
 class QrCodeCacheMiddlewareTest extends TestCase
 {
-    /** @var QrCodeCacheMiddleware */
-    private $middleware;
-    /** @var Cache */
-    private $cache;
+    private QrCodeCacheMiddleware $middleware;
+    private Cache $cache;
 
     public function setUp(): void
     {
@@ -28,7 +26,7 @@ class QrCodeCacheMiddlewareTest extends TestCase
     }
 
     /** @test */
-    public function noCachedPathFallsBackToNextMiddleware()
+    public function noCachedPathFallsBackToNextMiddleware(): void
     {
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $delegate->handle(Argument::any())->willReturn(new Response())->shouldBeCalledOnce();
@@ -39,7 +37,7 @@ class QrCodeCacheMiddlewareTest extends TestCase
     }
 
     /** @test */
-    public function cachedPathReturnsCacheContent()
+    public function cachedPathReturnsCacheContent(): void
     {
         $isCalled = false;
         $uri = (new Uri())->withPath('/foo');

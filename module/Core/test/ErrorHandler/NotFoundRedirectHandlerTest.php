@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ErrorHandler;
 
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\Uri;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -11,18 +16,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\ErrorHandler\NotFoundRedirectHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\Uri;
-use Zend\Expressive\Router\Route;
-use Zend\Expressive\Router\RouteResult;
 
 class NotFoundRedirectHandlerTest extends TestCase
 {
-    /** @var NotFoundRedirectHandler */
-    private $middleware;
-    /** @var NotFoundRedirectOptions */
-    private $redirectOptions;
+    private NotFoundRedirectHandler $middleware;
+    private NotFoundRedirectOptions $redirectOptions;
 
     public function setUp(): void
     {
@@ -75,9 +73,9 @@ class NotFoundRedirectHandlerTest extends TestCase
                             '',
                             $this->prophesize(MiddlewareInterface::class)->reveal(),
                             ['GET'],
-                            RedirectAction::class
-                        )
-                    )
+                            RedirectAction::class,
+                        ),
+                    ),
                 )
                 ->withUri(new Uri('/abc123')),
             'invalidShortUrl',

@@ -21,10 +21,8 @@ use function count;
 
 class ShortUrlServiceTest extends TestCase
 {
-    /** @var ShortUrlService */
-    private $service;
-    /** @var ObjectProphecy|EntityManagerInterface */
-    private $em;
+    private ShortUrlService $service;
+    private ObjectProphecy $em;
 
     public function setUp(): void
     {
@@ -99,7 +97,7 @@ class ShortUrlServiceTest extends TestCase
             Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
             Chronos::parse('2017-01-05 00:00:00')->toAtomString(),
             null,
-            5
+            5,
         ));
 
         $this->assertSame($shortUrl, $result);

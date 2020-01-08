@@ -4,6 +4,39 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## 2.0.0 - 2020-01-08
+
+#### Added
+
+* [#429](https://github.com/shlinkio/shlink/issues/429) Added support for PHP 7.4
+* [#529](https://github.com/shlinkio/shlink/issues/529) Created an UPGRADING.md file explaining how to upgrade from v1.x to v2.x
+* [#594](https://github.com/shlinkio/shlink/issues/594) Updated external shlink packages, including installer v4.0, which adds the option to ask for the redis cluster config.
+
+#### Changed
+
+* [#592](https://github.com/shlinkio/shlink/issues/592) Updated coding styles to use [shlinkio/php-coding-standard](https://github.com/shlinkio/php-coding-standard) v2.1.0.
+* [#530](https://github.com/shlinkio/shlink/issues/530) Migrated project from deprecated `zendframework` components to the new `laminas` and `mezzio` ones.
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* [#429](https://github.com/shlinkio/shlink/issues/429) Dropped support for PHP 7.2 and 7.3
+
+* [#229](https://github.com/shlinkio/shlink/issues/229) Remove everything which was deprecated, including:
+
+    * Preview generation feature completely removed.
+    * Authentication against REST API using JWT is no longer supported.
+
+    See [UPGRADE](UPGRADE.md) doc in order to get details on how to migrate to this version.
+
+#### Fixed
+
+* [#600](https://github.com/shlinkio/shlink/issues/600) Fixed health action so that it works with and without version in the path.
+
+
 ## 1.21.1 - 2020-01-02
 
 #### Added

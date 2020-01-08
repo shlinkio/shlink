@@ -9,8 +9,7 @@ use Shlinkio\Shlink\Core\ConfigProvider;
 
 class ConfigProviderTest extends TestCase
 {
-    /** @var ConfigProvider */
-    private $configProvider;
+    private ConfigProvider $configProvider;
 
     public function setUp(): void
     {
@@ -18,13 +17,13 @@ class ConfigProviderTest extends TestCase
     }
 
     /** @test */
-    public function properConfigIsReturned()
+    public function properConfigIsReturned(): void
     {
         $config = $this->configProvider->__invoke();
 
         $this->assertArrayHasKey('routes', $config);
         $this->assertArrayHasKey('dependencies', $config);
         $this->assertArrayHasKey('templates', $config);
-        $this->assertArrayHasKey('zend-expressive', $config);
+        $this->assertArrayHasKey('mezzio', $config);
     }
 }

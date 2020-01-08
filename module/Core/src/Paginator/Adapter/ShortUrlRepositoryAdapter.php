@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
-use Zend\Paginator\Adapter\AdapterInterface;
 
 use function strip_tags;
 use function trim;
@@ -15,20 +15,19 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
 {
     public const ITEMS_PER_PAGE = 10;
 
-    /** @var ShortUrlRepositoryInterface */
-    private $repository;
-    /** @var null|string */
-    private $searchTerm;
+    private ShortUrlRepositoryInterface $repository;
+    private ?string $searchTerm;
     /** @var null|array|string */
     private $orderBy;
-    /** @var array */
-    private $tags;
-    /** @var DateRange|null */
-    private $dateRange;
+    private array $tags;
+    private ?DateRange $dateRange;
 
+    /**
+     * @param string|array|null $orderBy
+     */
     public function __construct(
         ShortUrlRepositoryInterface $repository,
-        $searchTerm = null,
+        ?string $searchTerm = null,
         array $tags = [],
         $orderBy = null,
         ?DateRange $dateRange = null
@@ -45,9 +44,8 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
      *
      * @param  int $offset Page offset
      * @param  int $itemCountPerPage Number of items per page
-     * @return array
      */
-    public function getItems($offset, $itemCountPerPage): array
+    public function getItems($offset, $itemCountPerPage): array // phpcs:ignore
     {
         return $this->repository->findList(
             $itemCountPerPage,
@@ -55,7 +53,7 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
             $this->searchTerm,
             $this->tags,
             $this->orderBy,
-            $this->dateRange
+            $this->dateRange,
         );
     }
 

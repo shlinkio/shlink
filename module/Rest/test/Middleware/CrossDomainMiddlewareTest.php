@@ -4,26 +4,23 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Authentication;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Expressive\Router\Route;
-use Zend\Expressive\Router\RouteResult;
 
-use function implode;
-use function Zend\Stratigility\middleware;
+use function Laminas\Stratigility\middleware;
 
 class CrossDomainMiddlewareTest extends TestCase
 {
-    /** @var CrossDomainMiddleware */
-    private $middleware;
-    /** @var ObjectProphecy */
-    private $handler;
+    private CrossDomainMiddleware $middleware;
+    private ObjectProphecy $handler;
 
     public function setUp(): void
     {
@@ -57,17 +54,17 @@ class CrossDomainMiddlewareTest extends TestCase
 
         $response = $this->middleware->process(
             (new ServerRequest())->withHeader('Origin', 'local'),
-            $this->handler->reveal()
+            $this->handler->reveal(),
         );
         $this->assertNotSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
 
         $this->assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertEquals(implode(', ', [
+        $this->assertEquals(
             Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-            Authentication\Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
-        ]), $response->getHeaderLine('Access-Control-Expose-Headers'));
+            $response->getHeaderLine('Access-Control-Expose-Headers'),
+        );
         $this->assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
         $this->assertArrayNotHasKey('Access-Control-Max-Age', $headers);
         $this->assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
@@ -89,10 +86,10 @@ class CrossDomainMiddlewareTest extends TestCase
         $headers = $response->getHeaders();
 
         $this->assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertEquals(implode(', ', [
+        $this->assertEquals(
             Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-            Authentication\Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
-        ]), $response->getHeaderLine('Access-Control-Expose-Headers'));
+            $response->getHeaderLine('Access-Control-Expose-Headers'),
+        );
         $this->assertArrayHasKey('Access-Control-Allow-Methods', $headers);
         $this->assertEquals('1000', $response->getHeaderLine('Access-Control-Max-Age'));
         $this->assertEquals('foo, bar, baz', $response->getHeaderLine('Access-Control-Allow-Headers'));
@@ -123,8 +120,8 @@ class CrossDomainMiddlewareTest extends TestCase
         yield 'with failed route result' => [RouteResult::fromRouteFailure(['POST', 'GET']), 'POST,GET'];
         yield 'with success route result' => [
             RouteResult::fromRoute(
-                new Route('/', middleware(function () {
-                }), ['DELETE', 'PATCH', 'PUT'])
+                new Route('/', middleware(function (): void {
+                }), ['DELETE', 'PATCH', 'PUT']),
             ),
             'DELETE,PATCH,PUT',
         ];

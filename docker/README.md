@@ -103,7 +103,7 @@ This is the complete list of supported env vars:
         * **postgres** -> `5432`
 * `DISABLE_TRACK_PARAM`: The name of a query param that can be used to visit short URLs avoiding the visit to be tracked. This feature won't be available if not value is provided.
 * `DELETE_SHORT_URL_THRESHOLD`: The amount of visits on short URLs which will not allow them to be deleted. Defaults to `15`.
-* `VALIDATE_URLS`: Boolean which tells if shlink should validate a status 20x (after following redirects) is returned when trying to shorten a URL. Defaults to `true`.
+* `VALIDATE_URLS`: Boolean which tells if shlink should validate a status 20x is returned (after following redirects) when trying to shorten a URL. Defaults to `false`.
 * `INVALID_SHORT_URL_REDIRECT_TO`: If a URL is provided here, when a user tries to access an invalid short URL, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
 * `REGULAR_404_REDIRECT_TO`: If a URL is provided here, when a user tries to access a URL not matching any one supported by the router, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
 * `BASE_URL_REDIRECT_TO`: If a URL is provided here, when a user tries to access Shlink's base URL, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
@@ -118,9 +118,6 @@ This is the complete list of supported env vars:
     If more than one server is provided, Shlink will expect them to be configured as a [redis cluster](https://redis.io/topics/cluster-tutorial).
 
     In the future, these redis servers could be used for other caching operations performed by shlink.
-
-* `NOT_FOUND_REDIRECT_TO`: **Deprecated since v1.20 in favor of `INVALID_SHORT_URL_REDIRECT_TO`** If a URL is provided here, when a user tries to access an invalid short URL, he/she will be redirected to this value. If this env var is not provided, the user will see a generic `404 - not found` page.
-* `SHORTCODE_CHARS`: **Ignored when using Shlink 1.20 or newer**. A charset to use when building short codes. Only needed when using more than one shlink instance ([Multi instance considerations](#multi-instance-considerations)).
 
 An example using all env vars could look like this:
 
@@ -138,7 +135,7 @@ docker run \
     -e DB_PORT=3306 \
     -e DISABLE_TRACK_PARAM="no-track" \
     -e DELETE_SHORT_URL_THRESHOLD=30 \
-    -e VALIDATE_URLS=false \
+    -e VALIDATE_URLS=true \
     -e "INVALID_SHORT_URL_REDIRECT_TO=https://my-landing-page.com" \
     -e "REGULAR_404_REDIRECT_TO=https://my-landing-page.com" \
     -e "BASE_URL_REDIRECT_TO=https://my-landing-page.com" \
@@ -164,7 +161,7 @@ The whole configuration should have this format, but it can be split into multip
     "delete_short_url_threshold": 30,
     "short_domain_schema": "https",
     "short_domain_host": "doma.in",
-    "validate_url": false,
+    "validate_url": true,
     "invalid_short_url_redirect_to": "https://my-landing-page.com",
     "regular_404_redirect_to": "https://my-landing-page.com",
     "base_url_redirect_to": "https://my-landing-page.com",
@@ -186,14 +183,11 @@ The whole configuration should have this format, but it can be split into multip
         "password": "123abc",
         "host": "something.rds.amazonaws.com",
         "port": "3306"
-    },
-    "not_found_redirect_to": "https://my-landing-page.com"
+    }
 }
 ```
 
 > This is internally parsed to how shlink expects the config. If you are using a version previous to 1.17.0, this parser is not present and you need to provide a config structure like the one [documented previously](https://github.com/shlinkio/shlink-docker-image/tree/v1.16.3#provide-config-via-volumes).
-
-> The `not_found_redirect_to` option has been deprecated in v1.20. Use `invalid_short_url_redirect_to` instead (however, it will still work for backwards compatibility).
 
 Once created just run shlink with the volume:
 
@@ -211,20 +205,12 @@ These are some considerations to take into account when running multiple instanc
 
     You can (and should) make the locks to be shared by all Shlink instances by using a redis server/cluster. Just define the `REDIS_SERVERS` env var with the list of servers.
 
-* **Ignore this if using Shlink 1.20 or newer**. The first time shlink is run, it generates a charset used to generate short codes, which is a shuffled base62 charset.
-
-    If you are using several shlink instances, you will probably want all of them to use the same charset.
-
-    You can get a shuffled base62 charset by going to [https://shlink.io/short-code-chars](https://shlink.io/short-code-chars), and then you just need to pass it to all shlink instances using the `SHORTCODE_CHARS` env var.
-
-    If you don't do this, each shlink instance will use a different charset. However this shouldn't be a problem in practice, since the chances to get a collision will be very low.
-
 ## Versions
 
 Versioning on this docker image works as follows:
 
 * `X.X.X`:  when providing a specific version number, the image version will match the shlink version it contains. For example, installing `shlinkio/shlink:1.15.0`, you will get an image containing shlink v1.15.0.
-* `stable`: always holds the latest stable tag. For example, if latest shlink version is 1.20.0, installing `shlinkio/shlink:stable`, you will get an image containing shlink v1.20.0
+* `stable`: always holds the latest stable tag. For example, if latest shlink version is 2.0.0, installing `shlinkio/shlink:stable`, you will get an image containing shlink v2.0.0
 * `latest`: always holds the latest contents in master, and it's considered unstable and not suitable for production.
 
 > **Important**: The docker image was introduced with shlink v1.15.0, so there are no official images previous to that versions.

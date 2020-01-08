@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Cake\Chronos\Chronos;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -13,9 +16,6 @@ use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\Uri;
 
 use function strpos;
 
@@ -26,10 +26,8 @@ class CreateShortUrlActionTest extends TestCase
         'hostname' => 'foo.com',
     ];
 
-    /** @var CreateShortUrlAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $urlShortener;
+    private CreateShortUrlAction $action;
+    private ObjectProphecy $urlShortener;
 
     public function setUp(): void
     {
@@ -54,7 +52,7 @@ class CreateShortUrlActionTest extends TestCase
         $shorten = $this->urlShortener->urlToShortCode(
             Argument::type(Uri::class),
             Argument::type('array'),
-            $expectedMeta
+            $expectedMeta,
         )->willReturn($shortUrl);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);

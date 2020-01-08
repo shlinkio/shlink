@@ -22,16 +22,11 @@ use function range;
 
 class GeolocationDbUpdaterTest extends TestCase
 {
-    /** @var GeolocationDbUpdater */
-    private $geolocationDbUpdater;
-    /** @var ObjectProphecy */
-    private $dbUpdater;
-    /** @var ObjectProphecy */
-    private $geoLiteDbReader;
-    /** @var ObjectProphecy */
-    private $locker;
-    /** @var ObjectProphecy */
-    private $lock;
+    private GeolocationDbUpdater $geolocationDbUpdater;
+    private ObjectProphecy $dbUpdater;
+    private ObjectProphecy $geoLiteDbReader;
+    private ObjectProphecy $locker;
+    private ObjectProphecy $lock;
 
     public function setUp(): void
     {
@@ -41,23 +36,21 @@ class GeolocationDbUpdaterTest extends TestCase
         $this->locker = $this->prophesize(Lock\LockFactory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
         $this->lock->acquire(true)->willReturn(true);
-        $this->lock->release()->will(function () {
+        $this->lock->release()->will(function (): void {
         });
         $this->locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
 
         $this->geolocationDbUpdater = new GeolocationDbUpdater(
             $this->dbUpdater->reveal(),
             $this->geoLiteDbReader->reveal(),
-            $this->locker->reveal()
+            $this->locker->reveal(),
         );
     }
 
     /** @test */
     public function exceptionIsThrownWhenOlderDbDoesNotExistAndDownloadFails(): void
     {
-        $mustBeUpdated = function () {
-            $this->assertTrue(true);
-        };
+        $mustBeUpdated = fn () => $this->assertTrue(true);
         $prev = new RuntimeException('');
 
         $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(false);
@@ -141,7 +134,7 @@ class GeolocationDbUpdaterTest extends TestCase
             'node_count' => 1,
             'record_size' => 4,
         ]));
-        $download = $this->dbUpdater->downloadFreshCopy(null)->will(function () {
+        $download = $this->dbUpdater->downloadFreshCopy(null)->will(function (): void {
         });
 
         $this->geolocationDbUpdater->checkDbUpdate();
@@ -153,8 +146,6 @@ class GeolocationDbUpdaterTest extends TestCase
 
     public function provideSmallDays(): iterable
     {
-        return map(range(0, 34), function (int $days) {
-            return [$days];
-        });
+        return map(range(0, 34), fn (int $days) => [$days]);
     }
 }

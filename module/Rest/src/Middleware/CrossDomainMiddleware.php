@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\RequestMethodInterface;
+use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Authentication;
-use Zend\Expressive\Router\RouteResult;
 
 use function implode;
 
@@ -27,7 +27,6 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
         $response = $response->withHeader('Access-Control-Allow-Origin', $request->getHeader('Origin'))
                              ->withHeader('Access-Control-Expose-Headers', implode(', ', [
                                  Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-                                 Authentication\Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
                              ]));
         if ($request->getMethod() !== self::METHOD_OPTIONS) {
             return $response;

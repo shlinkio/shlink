@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -15,16 +16,12 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
-use Zend\Diactoros\ServerRequest;
 
 class SingleStepCreateShortUrlActionTest extends TestCase
 {
-    /** @var SingleStepCreateShortUrlAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $urlShortener;
-    /** @var ObjectProphecy */
-    private $apiKeyService;
+    private SingleStepCreateShortUrlAction $action;
+    private ObjectProphecy $urlShortener;
+    private ObjectProphecy $apiKeyService;
 
     public function setUp(): void
     {
@@ -37,7 +34,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
             [
                 'schema' => 'http',
                 'hostname' => 'foo.com',
-            ]
+            ],
         );
     }
 
@@ -79,7 +76,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
                 return $argument;
             }),
             [],
-            ShortUrlMeta::createEmpty()
+            ShortUrlMeta::createEmpty(),
         )->willReturn(new ShortUrl(''));
 
         $resp = $this->action->handle($request);

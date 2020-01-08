@@ -5,25 +5,22 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Cake\Chronos\Chronos;
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Paginator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ListShortUrlsAction;
-use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\ServerRequest;
-use Zend\Paginator\Adapter\ArrayAdapter;
-use Zend\Paginator\Paginator;
 
 class ListShortUrlsActionTest extends TestCase
 {
-    /** @var ListShortUrlsAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $service;
-    /** @var ObjectProphecy */
-    private $logger;
+    private ListShortUrlsAction $action;
+    private ObjectProphecy $service;
+    private ObjectProphecy $logger;
 
     public function setUp(): void
     {
@@ -53,7 +50,7 @@ class ListShortUrlsActionTest extends TestCase
             $expectedSearchTerm,
             $expectedTags,
             $expectedOrderBy,
-            $expectedDateRange
+            $expectedDateRange,
         )->willReturn(new Paginator(new ArrayAdapter()));
 
         /** @var JsonResponse $response */

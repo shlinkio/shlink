@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Action;
 
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Mezzio\Router\RouterInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -13,16 +16,11 @@ use Shlinkio\Shlink\Core\Action\QrCodeAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Expressive\Router\RouterInterface;
 
 class QrCodeActionTest extends TestCase
 {
-    /** @var QrCodeAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $urlShortener;
+    private QrCodeAction $action;
+    private ObjectProphecy $urlShortener;
 
     public function setUp(): void
     {
@@ -72,7 +70,7 @@ class QrCodeActionTest extends TestCase
 
         $resp = $this->action->process(
             (new ServerRequest())->withAttribute('shortCode', $shortCode),
-            $delegate->reveal()
+            $delegate->reveal(),
         );
 
         $this->assertInstanceOf(QrCodeResponse::class, $resp);

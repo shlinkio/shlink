@@ -33,12 +33,6 @@
                 "type": "apiKey",
                 "in": "header",
                 "name": "X-Api-Key"
-            },
-            "Bearer": {
-                "description": "**[DEPRECATED]** The JWT identifying a previously authenticated API key",
-                "type": "http",
-                "scheme": "bearer",
-                "bearerFormat": "JWT"
             }
         }
     },
@@ -63,10 +57,6 @@
         {
             "name": "URL Shortener",
             "description": "Non-rest endpoints, used to be publicly exposed"
-        },
-        {
-            "name": "Authentication",
-            "description": "**[DEPRECATED]** Authentication-related endpoints"
         }
     ],
 
@@ -104,13 +94,6 @@
         },
         "/{shortCode}/qr-code": {
             "$ref": "paths/{shortCode}_qr-code.json"
-        },
-        "/{shortCode}/preview": {
-            "$ref": "paths/{shortCode}_preview.json"
-        },
-
-        "/rest/v1/authenticate": {
-            "$ref": "paths/v1_authenticate.json"
         }
     }
 }

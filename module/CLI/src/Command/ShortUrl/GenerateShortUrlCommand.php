@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use Laminas\Diactoros\Uri;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
@@ -15,7 +16,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Zend\Diactoros\Uri;
 
 use function array_map;
 use function Functional\curry;
@@ -26,12 +26,9 @@ use function sprintf;
 class GenerateShortUrlCommand extends Command
 {
     public const NAME = 'short-url:generate';
-    private const ALIASES = ['shortcode:generate', 'short-code:generate'];
 
-    /** @var UrlShortenerInterface */
-    private $urlShortener;
-    /** @var array */
-    private $domainConfig;
+    private UrlShortenerInterface $urlShortener;
+    private array $domainConfig;
 
     public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig)
     {
@@ -44,52 +41,51 @@ class GenerateShortUrlCommand extends Command
     {
         $this
             ->setName(self::NAME)
-            ->setAliases(self::ALIASES)
             ->setDescription('Generates a short URL for provided long URL and returns it')
             ->addArgument('longUrl', InputArgument::REQUIRED, 'The long URL to parse')
             ->addOption(
                 'tags',
                 't',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-                'Tags to apply to the new short URL'
+                'Tags to apply to the new short URL',
             )
             ->addOption(
                 'validSince',
                 's',
                 InputOption::VALUE_REQUIRED,
                 'The date from which this short URL will be valid. '
-                . 'If someone tries to access it before this date, it will not be found.'
+                . 'If someone tries to access it before this date, it will not be found.',
             )
             ->addOption(
                 'validUntil',
                 'u',
                 InputOption::VALUE_REQUIRED,
                 'The date until which this short URL will be valid. '
-                . 'If someone tries to access it after this date, it will not be found.'
+                . 'If someone tries to access it after this date, it will not be found.',
             )
             ->addOption(
                 'customSlug',
                 'c',
                 InputOption::VALUE_REQUIRED,
-                'If provided, this slug will be used instead of generating a short code'
+                'If provided, this slug will be used instead of generating a short code',
             )
             ->addOption(
                 'maxVisits',
                 'm',
                 InputOption::VALUE_REQUIRED,
-                'This will limit the number of visits for this short URL.'
+                'This will limit the number of visits for this short URL.',
             )
             ->addOption(
                 'findIfExists',
                 'f',
                 InputOption::VALUE_NONE,
-                'This will force existing matching URL to be returned if found, instead of creating a new one.'
+                'This will force existing matching URL to be returned if found, instead of creating a new one.',
             )
             ->addOption(
                 'domain',
                 'd',
                 InputOption::VALUE_REQUIRED,
-                'The domain to which this short URL will be attached.'
+                'The domain to which this short URL will be attached.',
             );
     }
 
@@ -131,8 +127,8 @@ class GenerateShortUrlCommand extends Command
                     $customSlug,
                     $maxVisits !== null ? (int) $maxVisits : null,
                     $input->getOption('findIfExists'),
-                    $input->getOption('domain')
-                )
+                    $input->getOption('domain'),
+                ),
             );
 
             $io->writeln([

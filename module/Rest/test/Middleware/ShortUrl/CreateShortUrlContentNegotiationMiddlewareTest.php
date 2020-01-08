@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\ServerRequest;
 
 class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 {
-    /** @var CreateShortUrlContentNegotiationMiddleware */
-    private $middleware;
-    /** @var RequestHandlerInterface */
-    private $requestHandler;
+    private CreateShortUrlContentNegotiationMiddleware $middleware;
+    private ObjectProphecy $requestHandler;
 
     public function setUp(): void
     {
@@ -50,7 +49,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
         }
 
         $handle = $this->requestHandler->handle(Argument::type(ServerRequestInterface::class))->willReturn(
-            new JsonResponse(['shortUrl' => 'http://doma.in/foo'])
+            new JsonResponse(['shortUrl' => 'http://doma.in/foo']),
         );
 
         $response = $this->middleware->process($request, $this->requestHandler->reveal());
@@ -81,7 +80,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
         $request = (new ServerRequest())->withQueryParams(['format' => 'txt']);
 
         $handle = $this->requestHandler->handle(Argument::type(ServerRequestInterface::class))->willReturn(
-            new JsonResponse($json)
+            new JsonResponse($json),
         );
 
         $response = $this->middleware->process($request, $this->requestHandler->reveal());

@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\Stream;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Stream;
 
 use function array_shift;
 
 class BodyParserMiddlewareTest extends TestCase
 {
-    /** @var BodyParserMiddleware */
-    private $middleware;
+    private BodyParserMiddleware $middleware;
 
     public function setUp(): void
     {
@@ -91,7 +90,7 @@ class BodyParserMiddlewareTest extends TestCase
                 ], $req->getParsedBody());
 
                 return new Response();
-            }
+            },
         );
 
         $this->middleware->process($request, $delegate->reveal());
@@ -119,7 +118,7 @@ class BodyParserMiddlewareTest extends TestCase
                 ], $req->getParsedBody());
 
                 return new Response();
-            }
+            },
         );
 
         $this->middleware->process($request, $delegate->reveal());

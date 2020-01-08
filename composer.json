@@ -12,7 +12,7 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.4",
         "ext-json": "*",
         "ext-pdo": "*",
         "akrabat/ip-address-middleware": "^1.0",
@@ -26,53 +26,52 @@
         "firebase/php-jwt": "^4.0",
         "geoip2/geoip2": "^2.9",
         "guzzlehttp/guzzle": "^6.5.1",
+        "laminas/laminas-config": "^3.3",
+        "laminas/laminas-config-aggregator": "^1.1",
+        "laminas/laminas-dependency-plugin": "^1.0",
+        "laminas/laminas-diactoros": "^2.1.3",
+        "laminas/laminas-inputfilter": "^2.10",
+        "laminas/laminas-paginator": "^2.8",
+        "laminas/laminas-servicemanager": "^3.4",
+        "laminas/laminas-stdlib": "^3.2",
         "lstrojny/functional-php": "^1.9",
-        "mikehaertl/phpwkhtmltopdf": "^2.2",
+        "mezzio/mezzio": "^3.2",
+        "mezzio/mezzio-fastroute": "^3.0",
+        "mezzio/mezzio-helpers": "^5.3",
+        "mezzio/mezzio-platesrenderer": "^2.1",
+        "mezzio/mezzio-problem-details": "^1.1",
+        "mezzio/mezzio-swoole": "^2.4",
         "monolog/monolog": "^2.0",
         "nikolaposa/monolog-factory": "^3.0",
-        "ocramius/proxy-manager": "~2.2.2",
+        "ocramius/proxy-manager": "^2.6.0",
         "phly/phly-event-dispatcher": "^1.0",
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.5",
-        "shlinkio/shlink-common": "^2.4",
-        "shlinkio/shlink-event-dispatcher": "^1.1",
-        "shlinkio/shlink-installer": "^3.3",
-        "shlinkio/shlink-ip-geolocation": "^1.2",
+        "shlinkio/shlink-common": "^2.5",
+        "shlinkio/shlink-event-dispatcher": "^1.3",
+        "shlinkio/shlink-installer": "^4.0",
+        "shlinkio/shlink-ip-geolocation": "^1.3",
         "symfony/console": "^5.0",
         "symfony/filesystem": "^5.0",
         "symfony/lock": "^5.0",
-        "symfony/process": "^5.0",
-        "zendframework/zend-config": "^3.3",
-        "zendframework/zend-config-aggregator": "^1.1",
-        "zendframework/zend-diactoros": "^2.1.3",
-        "zendframework/zend-expressive": "^3.2",
-        "zendframework/zend-expressive-fastroute": "^3.0",
-        "zendframework/zend-expressive-helpers": "^5.3",
-        "zendframework/zend-expressive-platesrenderer": "^2.1",
-        "zendframework/zend-expressive-swoole": "^2.4",
-        "zendframework/zend-inputfilter": "^2.10",
-        "zendframework/zend-paginator": "^2.8",
-        "zendframework/zend-problem-details": "^1.0",
-        "zendframework/zend-servicemanager": "^3.4",
-        "zendframework/zend-stdlib": "^3.2"
+        "symfony/process": "^5.0"
     },
     "require-dev": {
         "devster/ubench": "^2.0",
         "eaglewu/swoole-ide-helper": "dev-master",
         "infection/infection": "^0.15.0",
-        "phpstan/phpstan-shim": "^0.11.16",
+        "phpstan/phpstan": "^0.12.3",
         "phpunit/phpunit": "^8.3",
         "roave/security-advisories": "dev-master",
-        "shlinkio/php-coding-standard": "~2.0.0",
-        "shlinkio/shlink-test-utils": "^1.2",
+        "shlinkio/php-coding-standard": "~2.1.0",
+        "shlinkio/shlink-test-utils": "^1.3",
         "symfony/var-dumper": "^5.0"
     },
     "autoload": {
         "psr-4": {
             "Shlinkio\\Shlink\\CLI\\": "module/CLI/src",
             "Shlinkio\\Shlink\\Rest\\": "module/Rest/src",
-            "Shlinkio\\Shlink\\Core\\": "module/Core/src",
-            "Shlinkio\\Shlink\\PreviewGenerator\\": "module/PreviewGenerator/src/"
+            "Shlinkio\\Shlink\\Core\\": "module/Core/src"
         },
         "files": [
             "module/Core/functions/functions.php"
@@ -86,8 +85,7 @@
             "ShlinkioTest\\Shlink\\Core\\": [
                 "module/Core/test",
                 "module/Core/test-db"
-            ],
-            "ShlinkioTest\\Shlink\\PreviewGenerator\\": "module/PreviewGenerator/test"
+            ]
         }
     },
     "scripts": {

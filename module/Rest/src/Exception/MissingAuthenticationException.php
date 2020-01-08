@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Exception;
 
 use Fig\Http\Message\StatusCodeInterface;
-use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
-use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
+use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
+use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
 use function implode;
 use function sprintf;
@@ -22,7 +22,7 @@ class MissingAuthenticationException extends RuntimeException implements Problem
     {
         $e = new self(sprintf(
             'Expected one of the following authentication headers, ["%s"], but none were provided',
-            implode('", "', $expectedTypes)
+            implode('", "', $expectedTypes),
         ));
 
         $e->detail = $e->getMessage();

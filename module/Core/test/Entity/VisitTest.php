@@ -25,9 +25,6 @@ class VisitTest extends TestCase
             'date' => ($date ?? $visit->getDate())->toAtomString(),
             'userAgent' => 'Chrome',
             'visitLocation' => null,
-
-            // Deprecated
-            'remoteAddr' => null,
         ], $visit->jsonSerialize());
     }
 

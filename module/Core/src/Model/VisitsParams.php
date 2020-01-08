@@ -12,12 +12,9 @@ final class VisitsParams
     private const FIRST_PAGE = 1;
     private const ALL_ITEMS = -1;
 
-    /** @var null|DateRange */
-    private $dateRange;
-    /** @var int */
-    private $page;
-    /** @var int */
-    private $itemsPerPage;
+    private ?DateRange $dateRange;
+    private int $page;
+    private int $itemsPerPage;
 
     public function __construct(?DateRange $dateRange = null, int $page = self::FIRST_PAGE, ?int $itemsPerPage = null)
     {
@@ -43,7 +40,7 @@ final class VisitsParams
         return new self(
             new DateRange($startDate, $endDate),
             (int) ($query['page'] ?? 1),
-            isset($query['itemsPerPage']) ? (int) $query['itemsPerPage'] : null
+            isset($query['itemsPerPage']) ? (int) $query['itemsPerPage'] : null,
         );
     }
 

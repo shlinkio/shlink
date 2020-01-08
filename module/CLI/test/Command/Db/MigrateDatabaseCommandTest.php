@@ -18,17 +18,15 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class MigrateDatabaseCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $processHelper;
+    private CommandTester $commandTester;
+    private ObjectProphecy $processHelper;
 
     public function setUp(): void
     {
         $locker = $this->prophesize(LockFactory::class);
         $lock = $this->prophesize(LockInterface::class);
         $lock->acquire(Argument::any())->willReturn(true);
-        $lock->release()->will(function () {
+        $lock->release()->will(function (): void {
         });
         $locker->createLock(Argument::cetera())->willReturn($lock->reveal());
 
@@ -40,7 +38,7 @@ class MigrateDatabaseCommandTest extends TestCase
         $command = new MigrateDatabaseCommand(
             $locker->reveal(),
             $this->processHelper->reveal(),
-            $phpExecutableFinder->reveal()
+            $phpExecutableFinder->reveal(),
         );
         $app = new Application();
         $app->add($command);

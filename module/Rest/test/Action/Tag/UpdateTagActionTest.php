@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\UpdateTagAction;
-use Zend\Diactoros\ServerRequest;
 
 class UpdateTagActionTest extends TestCase
 {
-    /** @var UpdateTagAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $tagService;
+    private UpdateTagAction $action;
+    private ObjectProphecy $tagService;
 
     public function setUp(): void
     {

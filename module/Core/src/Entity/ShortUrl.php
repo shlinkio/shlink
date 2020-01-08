@@ -7,12 +7,12 @@ namespace Shlinkio\Shlink\Core\Entity;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Laminas\Diactoros\Uri;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Zend\Diactoros\Uri;
 
 use function array_reduce;
 use function count;
@@ -22,26 +22,18 @@ use function Shlinkio\Shlink\Core\generateRandomShortCode;
 
 class ShortUrl extends AbstractEntity
 {
-    /** @var string */
-    private $longUrl;
-    /** @var string */
-    private $shortCode;
-    /** @var Chronos */
-    private $dateCreated;
+    private string $longUrl;
+    private string $shortCode;
+    private Chronos $dateCreated;
     /** @var Collection|Visit[] */
-    private $visits;
+    private Collection $visits;
     /** @var Collection|Tag[] */
-    private $tags;
-    /** @var Chronos|null */
-    private $validSince;
-    /** @var Chronos|null */
-    private $validUntil;
-    /** @var integer|null */
-    private $maxVisits;
-    /** @var Domain|null */
-    private $domain;
-    /** @var bool */
-    private $customSlugWasProvided;
+    private Collection $tags;
+    private ?Chronos $validSince;
+    private ?Chronos $validUntil;
+    private ?int $maxVisits;
+    private ?Domain $domain;
+    private bool $customSlugWasProvided;
 
     public function __construct(
         string $longUrl,
@@ -196,10 +188,8 @@ class ShortUrl extends AbstractEntity
         $shortUrlTags = invoke($this->getTags(), '__toString');
         $hasAllTags = count($shortUrlTags) === count($tags) && array_reduce(
             $tags,
-            function (bool $hasAllTags, string $tag) use ($shortUrlTags) {
-                return $hasAllTags && contains($shortUrlTags, $tag);
-            },
-            true
+            fn (bool $hasAllTags, string $tag) => $hasAllTags && contains($shortUrlTags, $tag),
+            true,
         );
 
         return $hasAllTags;

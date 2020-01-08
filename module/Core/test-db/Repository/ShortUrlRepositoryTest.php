@@ -28,8 +28,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         Domain::class,
     ];
 
-    /** @var ShortUrlRepository */
-    private $repo;
+    private ShortUrlRepository $repo;
 
     public function setUp(): void
     {
@@ -44,7 +43,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $notYetValid = new ShortUrl(
             'bar',
-            ShortUrlMeta::createFromParams(Chronos::now()->addMonth(), null, 'bar_very_long_text')
+            ShortUrlMeta::createFromParams(Chronos::now()->addMonth(), null, 'bar_very_long_text'),
         );
         $this->getEntityManager()->persist($notYetValid);
 
@@ -83,11 +82,11 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->assertSame($withDomain, $this->repo->findOneByShortCode($withDomain->getShortCode(), 'example.com'));
         $this->assertSame(
             $withDomainDuplicatingRegular,
-            $this->repo->findOneByShortCode($withDomainDuplicatingRegular->getShortCode(), 'doma.in')
+            $this->repo->findOneByShortCode($withDomainDuplicatingRegular->getShortCode(), 'doma.in'),
         );
         $this->assertSame(
             $regularOne,
-            $this->repo->findOneByShortCode($withDomainDuplicatingRegular->getShortCode(), 'other-domain.com')
+            $this->repo->findOneByShortCode($withDomainDuplicatingRegular->getShortCode(), 'other-domain.com'),
         );
         $this->assertNull($this->repo->findOneByShortCode('invalid'));
         $this->assertNull($this->repo->findOneByShortCode($withDomain->getShortCode()));
@@ -161,7 +160,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->assertCount(
             2,
-            $this->repo->findList(null, null, null, [], null, new DateRange(Chronos::now()->subDays(2)))
+            $this->repo->findList(null, null, null, [], null, new DateRange(Chronos::now()->subDays(2))),
         );
         $this->assertEquals(2, $this->repo->countList(null, [], new DateRange(Chronos::now()->subDays(2))));
     }
@@ -193,7 +192,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $shortUrlWithDomain = new ShortUrl(
             'foo',
-            ShortUrlMeta::createFromRawData(['domain' => 'doma.in', 'customSlug' => 'another-slug'])
+            ShortUrlMeta::createFromRawData(['domain' => 'doma.in', 'customSlug' => 'another-slug']),
         );
         $this->getEntityManager()->persist($shortUrlWithDomain);
 

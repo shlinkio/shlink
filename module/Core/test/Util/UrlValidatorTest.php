@@ -8,19 +8,17 @@ use Fig\Http\Message\RequestMethodInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\RequestOptions;
+use Laminas\Diactoros\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Util\UrlValidator;
-use Zend\Diactoros\Response;
 
 class UrlValidatorTest extends TestCase
 {
-    /** @var UrlValidator */
-    private $urlValidator;
-    /** @var ObjectProphecy */
-    private $httpClient;
+    private UrlValidator $urlValidator;
+    private ObjectProphecy $httpClient;
 
     public function setUp(): void
     {
@@ -47,7 +45,7 @@ class UrlValidatorTest extends TestCase
         $request = $this->httpClient->request(
             RequestMethodInterface::METHOD_GET,
             $expectedUrl,
-            [RequestOptions::ALLOW_REDIRECTS => ['max' => 15]]
+            [RequestOptions::ALLOW_REDIRECTS => ['max' => 15]],
         )->willReturn(new Response());
 
         $this->urlValidator->validateUrl($expectedUrl);

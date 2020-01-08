@@ -5,7 +5,7 @@
             "Short URLs"
         ],
         "summary": "List short URLs",
-        "description": "Returns the list of short URLs.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.",
+        "description": "Returns the list of short URLs.",
         "parameters": [
             {
                 "$ref": "../parameters/version.json"
@@ -77,9 +77,6 @@
         "security": [
             {
                 "ApiKey": []
-            },
-            {
-                "Bearer": []
             }
         ],
         "responses": {
@@ -187,13 +184,10 @@
             "Short URLs"
         ],
         "summary": "Create short URL",
-        "description": "Creates a new short URL.<br><br>**Important note**: Before shlink v1.13, this endpoint used to use the `/short-codes` path instead of `/short-urls`. Both of them will keep working, while the first one is considered deprecated.<br></br>**Param findIfExists:**: Starting with v1.16, this new param allows to force shlink to return existing short URLs when found based on provided params, instead of creating a new one. However, it might add complexity and have unexpected outputs.\n\nThese are the use cases:\n* Only the long URL is provided: It will return the newest match or create a new short URL if none is found.\n* Long url and custom slug are provided: It will return the short URL when both params match, return an error when the slug is in use for another long URL, or create a new short URL otherwise.\n* Any of the above but including other params (tags, validSince, validUntil, maxVisits): It will behave the same as the previous two cases, but it will try to exactly match existing results using all the params. If any of them does not match, it will try to create a new short URL.",
+        "description": "Creates a new short URL.<br></br>**Param findIfExists:**: Starting with v1.16, this new param allows to force shlink to return existing short URLs when found based on provided params, instead of creating a new one. However, it might add complexity and have unexpected outputs.\n\nThese are the use cases:\n* Only the long URL is provided: It will return the newest match or create a new short URL if none is found.\n* Long url and custom slug are provided: It will return the short URL when both params match, return an error when the slug is in use for another long URL, or create a new short URL otherwise.\n* Any of the above but including other params (tags, validSince, validUntil, maxVisits): It will behave the same as the previous two cases, but it will try to exactly match existing results using all the params. If any of them does not match, it will try to create a new short URL.",
         "security": [
             {
                 "ApiKey": []
-            },
-            {
-                "Bearer": []
             }
         ],
         "parameters": [

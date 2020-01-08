@@ -10,20 +10,13 @@ use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocation extends AbstractEntity implements VisitLocationInterface
 {
-    /** @var string */
-    private $countryCode;
-    /** @var string */
-    private $countryName;
-    /** @var string */
-    private $regionName;
-    /** @var string */
-    private $cityName;
-    /** @var string */
-    private $latitude;
-    /** @var string */
-    private $longitude;
-    /** @var string */
-    private $timezone;
+    private string $countryCode;
+    private string $countryName;
+    private string $regionName;
+    private string $cityName;
+    private float $latitude;
+    private float $longitude;
+    private string $timezone;
 
     public function __construct(Location $location)
     {
@@ -32,22 +25,22 @@ class VisitLocation extends AbstractEntity implements VisitLocationInterface
 
     public function getCountryName(): string
     {
-        return $this->countryName ?? '';
+        return $this->countryName;
     }
 
-    public function getLatitude(): string
+    public function getLatitude(): float
     {
-        return $this->latitude ?? '';
+        return $this->latitude;
     }
 
-    public function getLongitude(): string
+    public function getLongitude(): float
     {
-        return $this->longitude ?? '';
+        return $this->longitude;
     }
 
     public function getCityName(): string
     {
-        return $this->cityName ?? '';
+        return $this->cityName;
     }
 
     private function exchangeLocationInfo(Location $info): void
@@ -56,8 +49,8 @@ class VisitLocation extends AbstractEntity implements VisitLocationInterface
         $this->countryName = $info->countryName();
         $this->regionName = $info->regionName();
         $this->cityName = $info->city();
-        $this->latitude = (string) $info->latitude();
-        $this->longitude = (string) $info->longitude();
+        $this->latitude = $info->latitude();
+        $this->longitude = $info->longitude();
         $this->timezone = $info->timeZone();
     }
 
@@ -81,8 +74,8 @@ class VisitLocation extends AbstractEntity implements VisitLocationInterface
             $this->countryName === '' &&
             $this->regionName === '' &&
             $this->cityName === '' &&
-            ((float) $this->latitude) === 0.0 &&
-            ((float) $this->longitude) === 0.0 &&
+            $this->latitude === 0.0 &&
+            $this->longitude === 0.0 &&
             $this->timezone === '';
     }
 }

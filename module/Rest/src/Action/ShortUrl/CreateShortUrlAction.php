@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
+use Laminas\Diactoros\Uri;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Zend\Diactoros\Uri;
 
 class CreateShortUrlAction extends AbstractCreateShortUrlAction
 {
@@ -16,8 +16,6 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_POST];
 
     /**
-     * @param Request $request
-     * @return CreateShortUrlData
      * @throws ValidationException
      */
     protected function buildShortUrlData(Request $request): CreateShortUrlData
@@ -35,7 +33,7 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
             $postData['customSlug'] ?? null,
             $postData['maxVisits'] ?? null,
             $postData['findIfExists'] ?? null,
-            $postData['domain'] ?? null
+            $postData['domain'] ?? null,
         );
 
         return new CreateShortUrlData(new Uri($postData['longUrl']), (array) ($postData['tags'] ?? []), $meta);

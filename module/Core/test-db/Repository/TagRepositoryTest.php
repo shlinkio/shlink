@@ -14,8 +14,7 @@ class TagRepositoryTest extends DatabaseTestCase
         Tag::class,
     ];
 
-    /** @var TagRepository */
-    private $repo;
+    private TagRepository $repo;
 
     protected function setUp(): void
     {
@@ -23,13 +22,13 @@ class TagRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function deleteByNameDoesNothingWhenEmptyListIsProvided()
+    public function deleteByNameDoesNothingWhenEmptyListIsProvided(): void
     {
         $this->assertEquals(0, $this->repo->deleteByName([]));
     }
 
     /** @test */
-    public function allTagsWhichMatchNameAreDeleted()
+    public function allTagsWhichMatchNameAreDeleted(): void
     {
         $names = ['foo', 'bar', 'baz'];
         $toDelete = ['foo', 'baz'];

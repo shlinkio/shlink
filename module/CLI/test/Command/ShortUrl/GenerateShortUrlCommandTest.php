@@ -25,10 +25,8 @@ class GenerateShortUrlCommandTest extends TestCase
         'hostname' => 'foo.com',
     ];
 
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $urlShortener;
+    private CommandTester $commandTester;
+    private ObjectProphecy $urlShortener;
 
     public function setUp(): void
     {
@@ -74,7 +72,7 @@ class GenerateShortUrlCommandTest extends TestCase
     public function providingNonUniqueSlugOutputsError(): void
     {
         $urlToShortCode = $this->urlShortener->urlToShortCode(Argument::cetera())->willThrow(
-            NonUniqueSlugException::fromSlug('my-slug')
+            NonUniqueSlugException::fromSlug('my-slug'),
         );
 
         $this->commandTester->execute(['longUrl' => 'http://domain.com/invalid', '--customSlug' => 'my-slug']);
@@ -95,7 +93,7 @@ class GenerateShortUrlCommandTest extends TestCase
                 Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $tags);
                 return $tags;
             }),
-            Argument::cetera()
+            Argument::cetera(),
         )->willReturn($shortUrl);
 
         $this->commandTester->execute([

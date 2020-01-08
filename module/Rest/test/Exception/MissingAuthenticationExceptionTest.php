@@ -20,7 +20,7 @@ class MissingAuthenticationExceptionTest extends TestCase
     {
         $expectedMessage = sprintf(
             'Expected one of the following authentication headers, ["%s"], but none were provided',
-            implode('", "', $expectedTypes)
+            implode('", "', $expectedTypes),
         );
 
         $e = MissingAuthenticationException::fromExpectedTypes($expectedTypes);

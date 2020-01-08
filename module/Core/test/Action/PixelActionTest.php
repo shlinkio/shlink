@@ -4,27 +4,23 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Action;
 
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Response\PixelResponse;
 use Shlinkio\Shlink\Core\Action\PixelAction;
-use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
-use Zend\Diactoros\ServerRequest;
 
 class PixelActionTest extends TestCase
 {
-    /** @var RedirectAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $urlShortener;
-    /** @var ObjectProphecy */
-    private $visitTracker;
+    private PixelAction $action;
+    private ObjectProphecy $urlShortener;
+    private ObjectProphecy $visitTracker;
 
     public function setUp(): void
     {
@@ -34,7 +30,7 @@ class PixelActionTest extends TestCase
         $this->action = new PixelAction(
             $this->urlShortener->reveal(),
             $this->visitTracker->reveal(),
-            new AppOptions()
+            new AppOptions(),
         );
     }
 
@@ -43,7 +39,7 @@ class PixelActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn(
-            new ShortUrl('http://domain.com/foo/bar')
+            new ShortUrl('http://domain.com/foo/bar'),
         )->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();
 

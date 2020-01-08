@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ErrorHandler;
 
+use Laminas\Diactoros\Response;
+use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -11,17 +13,13 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
-use Zend\Diactoros\Response;
-use Zend\Expressive\Router\RouteResult;
 
 use function rtrim;
 
 class NotFoundRedirectHandler implements MiddlewareInterface
 {
-    /** @var NotFoundRedirectOptions */
-    private $redirectOptions;
-    /** @var string */
-    private $shlinkBasePath;
+    private NotFoundRedirectOptions $redirectOptions;
+    private string $shlinkBasePath;
 
     public function __construct(NotFoundRedirectOptions $redirectOptions, string $shlinkBasePath)
     {

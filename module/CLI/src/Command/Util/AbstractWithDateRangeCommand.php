@@ -36,7 +36,7 @@ abstract class AbstractWithDateRangeCommand extends Command
             $output->writeln(sprintf(
                 '<comment>> Ignored provided "%s" since its value "%s" is not a valid date. <</comment>',
                 $key,
-                $value
+                $value,
             ));
 
             if ($output->isVeryVerbose()) {

@@ -9,15 +9,14 @@ use Throwable;
 
 class GeolocationDbUpdateFailedException extends RuntimeException implements ExceptionInterface
 {
-    /** @var bool */
-    private $olderDbExists;
+    private bool $olderDbExists;
 
     public static function create(bool $olderDbExists, ?Throwable $prev = null): self
     {
         $e = new self(
             'An error occurred while updating geolocation database, and an older version could not be found',
             0,
-            $prev
+            $prev,
         );
         $e->olderDbExists = $olderDbExists;
 

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Action;
 
 use Endroid\QrCode\QrCode;
+use Mezzio\Router\Exception\RuntimeException;
+use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
@@ -14,8 +16,6 @@ use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
-use Zend\Expressive\Router\Exception\RuntimeException;
-use Zend\Expressive\Router\RouterInterface;
 
 class QrCodeAction implements MiddlewareInterface
 {
@@ -23,12 +23,9 @@ class QrCodeAction implements MiddlewareInterface
     private const MIN_SIZE = 50;
     private const MAX_SIZE = 1000;
 
-    /** @var RouterInterface */
-    private $router;
-    /** @var UrlShortenerInterface */
-    private $urlShortener;
-    /** @var LoggerInterface */
-    private $logger;
+    private RouterInterface $router;
+    private UrlShortenerInterface $urlShortener;
+    private LoggerInterface $logger;
 
     public function __construct(
         RouterInterface $router,
@@ -44,10 +41,7 @@ class QrCodeAction implements MiddlewareInterface
      * Process an incoming server request and return a response, optionally delegating
      * to the next middleware component to create the response.
      *
-     * @param Request $request
-     * @param RequestHandlerInterface $handler
      *
-     * @return Response
      * @throws \InvalidArgumentException
      * @throws RuntimeException
      */
@@ -74,8 +68,6 @@ class QrCodeAction implements MiddlewareInterface
     }
 
     /**
-     * @param Request $request
-     * @return int
      */
     private function getSizeParam(Request $request): int
     {

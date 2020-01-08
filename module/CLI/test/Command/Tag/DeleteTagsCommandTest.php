@@ -13,12 +13,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class DeleteTagsCommandTest extends TestCase
 {
-    /** @var DeleteTagsCommand */
-    private $command;
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $tagService;
+    private CommandTester $commandTester;
+    private ObjectProphecy $tagService;
 
     public function setUp(): void
     {
@@ -32,7 +28,7 @@ class DeleteTagsCommandTest extends TestCase
     }
 
     /** @test */
-    public function errorIsReturnedWhenNoTagsAreProvided()
+    public function errorIsReturnedWhenNoTagsAreProvided(): void
     {
         $this->commandTester->execute([]);
 
@@ -41,10 +37,10 @@ class DeleteTagsCommandTest extends TestCase
     }
 
     /** @test */
-    public function serviceIsInvokedOnSuccess()
+    public function serviceIsInvokedOnSuccess(): void
     {
         $tagNames = ['foo', 'bar'];
-        $deleteTags = $this->tagService->deleteTags($tagNames)->will(function () {
+        $deleteTags = $this->tagService->deleteTags($tagNames)->will(function (): void {
         });
 
         $this->commandTester->execute([

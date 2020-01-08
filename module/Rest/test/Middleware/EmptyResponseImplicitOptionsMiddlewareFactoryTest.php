@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
+use Laminas\Diactoros\Response\EmptyResponse;
+use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
 use PHPUnit\Framework\TestCase;
 use ReflectionObject;
 use Shlinkio\Shlink\Rest\Middleware\EmptyResponseImplicitOptionsMiddlewareFactory;
-use Zend\Diactoros\Response\EmptyResponse;
-use Zend\Expressive\Router\Middleware\ImplicitOptionsMiddleware;
 
 class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
 {
-    /** @var EmptyResponseImplicitOptionsMiddlewareFactory */
-    private $factory;
+    private EmptyResponseImplicitOptionsMiddlewareFactory $factory;
 
     public function setUp(): void
     {

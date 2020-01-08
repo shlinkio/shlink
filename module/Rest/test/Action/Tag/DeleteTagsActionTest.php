@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\DeleteTagsAction;
-use Zend\Diactoros\ServerRequest;
 
 class DeleteTagsActionTest extends TestCase
 {
-    /** @var DeleteTagsAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $tagService;
+    private DeleteTagsAction $action;
+    private ObjectProphecy $tagService;
 
     public function setUp(): void
     {

@@ -9,8 +9,7 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 
 class Tag extends AbstractEntity implements JsonSerializable
 {
-    /** @var string */
-    private $name;
+    private string $name;
 
     public function __construct(string $name)
     {

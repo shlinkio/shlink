@@ -10,16 +10,6 @@ use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocationTest extends TestCase
 {
-    /** @test */
-    public function valuesFoundWhenExchangingArrayAreCastToString(): void
-    {
-        $payload = new Location('', '', '', '', 1000.7, -2000.4, '');
-        $location = new VisitLocation($payload);
-
-        $this->assertSame('1000.7', $location->getLatitude());
-        $this->assertSame('-2000.4', $location->getLongitude());
-    }
-
     /**
      * @test
      * @dataProvider provideArgs

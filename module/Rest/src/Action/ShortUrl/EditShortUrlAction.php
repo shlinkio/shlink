@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
+use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Zend\Diactoros\Response\EmptyResponse;
 
 class EditShortUrlAction extends AbstractRestAction
 {
     protected const ROUTE_PATH = '/short-urls/{shortCode}';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PATCH, self::METHOD_PUT];
 
-    /** @var ShortUrlServiceInterface */
-    private $shortUrlService;
+    private ShortUrlServiceInterface $shortUrlService;
 
     public function __construct(ShortUrlServiceInterface $shortUrlService, ?LoggerInterface $logger = null)
     {

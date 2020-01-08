@@ -9,9 +9,6 @@
         "security": [
             {
                 "ApiKey": []
-            },
-            {
-                "Bearer": []
             }
         ],
         "parameters": [
@@ -78,9 +75,6 @@
         "security": [
             {
                 "ApiKey": []
-            },
-            {
-                "Bearer": []
             }
         ],
         "parameters": [
@@ -170,9 +164,6 @@
         "security": [
             {
                 "ApiKey": []
-            },
-            {
-                "Bearer": []
             }
         ],
         "parameters": [
@@ -279,9 +270,6 @@
         "security": [
             {
                 "ApiKey": []
-            },
-            {
-                "Bearer": []
             }
         ],
         "responses": {

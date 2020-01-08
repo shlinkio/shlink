@@ -1,5 +1,5 @@
 <?php
-use Zend\Expressive\Router\FastRouteRouter;
+use Mezzio\Router\FastRouteRouter;
 
 return [
 

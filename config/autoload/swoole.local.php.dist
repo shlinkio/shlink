@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-use Zend\Expressive\Swoole\HotCodeReload\FileWatcher\InotifyFileWatcher;
-use Zend\ServiceManager\Factory\InvokableFactory;
+use Mezzio\Swoole\HotCodeReload\FileWatcher\InotifyFileWatcher;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 
 return [
 
-    'zend-expressive-swoole' => [
+    'mezzio-swoole' => [
         'hot-code-reload' => [
             'enable' => true,
         ],

@@ -16,37 +16,36 @@ class ShortUrlsFixture extends AbstractFixture
     /**
      * Load data fixtures with the passed EntityManager
      *
-     * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager): void
     {
         $abcShortUrl = $this->setShortUrlDate(
             new ShortUrl('https://shlink.io', ShortUrlMeta::createFromRawData(['customSlug' => 'abc123'])),
-            '2018-05-01'
+            '2018-05-01',
         );
         $manager->persist($abcShortUrl);
 
         $defShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
-            ShortUrlMeta::createFromParams(Chronos::parse('2020-05-01'), null, 'def456')
+            ShortUrlMeta::createFromParams(Chronos::parse('2020-05-01'), null, 'def456'),
         ), '2019-01-01 00:00:10');
         $manager->persist($defShortUrl);
 
         $customShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://shlink.io',
-            ShortUrlMeta::createFromParams(null, null, 'custom', 2)
+            ShortUrlMeta::createFromParams(null, null, 'custom', 2),
         ), '2019-01-01 00:00:20');
         $manager->persist($customShortUrl);
 
         $withDomainShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-source-software-projects/',
-            ShortUrlMeta::createFromRawData(['domain' => 'example.com', 'customSlug' => 'ghi789'])
+            ShortUrlMeta::createFromRawData(['domain' => 'example.com', 'customSlug' => 'ghi789']),
         ), '2019-01-01 00:00:30');
         $manager->persist($withDomainShortUrl);
 
         $withDomainAndSlugShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://google.com',
-            ShortUrlMeta::createFromRawData(['domain' => 'some-domain.com', 'customSlug' => 'custom-with-domain'])
+            ShortUrlMeta::createFromRawData(['domain' => 'some-domain.com', 'customSlug' => 'custom-with-domain']),
         ), '2018-10-20');
         $manager->persist($withDomainAndSlugShortUrl);
 

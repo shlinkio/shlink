@@ -17,8 +17,7 @@ abstract class AbstractRestAction implements RequestHandlerInterface, RequestMet
     protected const ROUTE_PATH = '';
     protected const ROUTE_ALLOWED_METHODS = [];
 
-    /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     public function __construct(?LoggerInterface $logger = null)
     {

@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
+use Laminas\Diactoros\Uri;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
-use Zend\Diactoros\Uri;
 
 class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
 {
     protected const ROUTE_PATH = '/short-urls/shorten';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    /** @var ApiKeyServiceInterface */
-    private $apiKeyService;
+    private ApiKeyServiceInterface $apiKeyService;
 
     public function __construct(
         UrlShortenerInterface $urlShortener,
@@ -31,8 +30,6 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
     }
 
     /**
-     * @param Request $request
-     * @return CreateShortUrlData
      * @throws ValidationException
      */
     protected function buildShortUrlData(Request $request): CreateShortUrlData

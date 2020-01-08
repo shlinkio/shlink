@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ResolveShortUrlAction;
-use Zend\Diactoros\ServerRequest;
 
 use function strpos;
 
 class ResolveShortUrlActionTest extends TestCase
 {
-    /** @var ResolveShortUrlAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $urlShortener;
+    private ResolveShortUrlAction $action;
+    private ObjectProphecy $urlShortener;
 
     public function setUp(): void
     {
@@ -31,7 +29,7 @@ class ResolveShortUrlActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlShortener->shortCodeToUrl($shortCode, null)->willReturn(
-            new ShortUrl('http://domain.com/foo/bar')
+            new ShortUrl('http://domain.com/foo/bar'),
         )->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);

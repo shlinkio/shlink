@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use InvalidArgumentException;
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -14,7 +15,6 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Zend\Diactoros\Response\JsonResponse;
 
 class ListShortUrlsAction extends AbstractRestAction
 {
@@ -23,10 +23,8 @@ class ListShortUrlsAction extends AbstractRestAction
     protected const ROUTE_PATH = '/short-urls';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    /** @var ShortUrlServiceInterface */
-    private $shortUrlService;
-    /** @var array */
-    private $domainConfig;
+    private ShortUrlServiceInterface $shortUrlService;
+    private array $domainConfig;
 
     public function __construct(
         ShortUrlServiceInterface $shortUrlService,
@@ -39,8 +37,6 @@ class ListShortUrlsAction extends AbstractRestAction
     }
 
     /**
-     * @param Request $request
-     * @return Response
      * @throws InvalidArgumentException
      */
     public function handle(Request $request): Response
@@ -48,7 +44,7 @@ class ListShortUrlsAction extends AbstractRestAction
         $params = $this->queryToListParams($request->getQueryParams());
         $shortUrls = $this->shortUrlService->listShortUrls(...$params);
         return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls, new ShortUrlDataTransformer(
-            $this->domainConfig
+            $this->domainConfig,
         ))]);
     }
 
@@ -71,7 +67,7 @@ class ListShortUrlsAction extends AbstractRestAction
     {
         return new DateRange(
             isset($query['startDate']) ? Chronos::parse($query['startDate']) : null,
-            isset($query['endDate']) ? Chronos::parse($query['endDate']) : null
+            isset($query['endDate']) ? Chronos::parse($query['endDate']) : null,
         );
     }
 }

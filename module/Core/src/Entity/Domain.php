@@ -8,8 +8,7 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 
 class Domain extends AbstractEntity
 {
-    /** @var string */
-    private $authority;
+    private string $authority;
 
     public function __construct(string $authority)
     {

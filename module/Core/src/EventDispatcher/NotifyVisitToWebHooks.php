@@ -22,18 +22,13 @@ use function GuzzleHttp\Promise\settle;
 
 class NotifyVisitToWebHooks
 {
-    /** @var ClientInterface */
-    private $httpClient;
-    /** @var EntityManagerInterface */
-    private $em;
-    /** @var LoggerInterface */
-    private $logger;
-    /** @var array */
-    private $webhooks;
-    /** @var ShortUrlDataTransformer */
-    private $transformer;
-    /** @var AppOptions */
-    private $appOptions;
+    private ClientInterface $httpClient;
+    private EntityManagerInterface $em;
+    private LoggerInterface $logger;
+    /** @var string[] */
+    private array $webhooks;
+    private ShortUrlDataTransformer $transformer;
+    private AppOptions $appOptions;
 
     public function __construct(
         ClientInterface $httpClient,
@@ -83,7 +78,7 @@ class NotifyVisitToWebHooks
                 'User-Agent' => (string) $this->appOptions,
             ],
             RequestOptions::JSON => [
-                'shortUrl' => $this->transformer->transform($visit->getShortUrl(), false),
+                'shortUrl' => $this->transformer->transform($visit->getShortUrl()),
                 'visit' => $visit->jsonSerialize(),
             ],
         ];
@@ -97,7 +92,7 @@ class NotifyVisitToWebHooks
         return map($this->webhooks, function (string $webhook) use ($requestOptions, $visitId) {
             $promise = $this->httpClient->requestAsync(RequestMethodInterface::METHOD_POST, $webhook, $requestOptions);
             return $promise->otherwise(
-                partial_left(Closure::fromCallable([$this, 'logWebhookFailure']), $webhook, $visitId)
+                partial_left(Closure::fromCallable([$this, 'logWebhookFailure']), $webhook, $visitId),
             );
         });
     }

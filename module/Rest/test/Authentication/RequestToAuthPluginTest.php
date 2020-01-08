@@ -4,25 +4,22 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Authentication;
 
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Rest\Authentication\AuthenticationPluginManagerInterface;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\ApiKeyHeaderPlugin;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
-use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthorizationHeaderPlugin;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPlugin;
 use Shlinkio\Shlink\Rest\Exception\MissingAuthenticationException;
-use Zend\Diactoros\ServerRequest;
 
 use function implode;
 use function sprintf;
 
 class RequestToAuthPluginTest extends TestCase
 {
-    /** @var RequestToHttpAuthPlugin */
-    private $requestToPlugin;
-    /** @var ObjectProphecy */
-    private $pluginManager;
+    private RequestToHttpAuthPlugin $requestToPlugin;
+    private ObjectProphecy $pluginManager;
 
     public function setUp(): void
     {
@@ -38,7 +35,7 @@ class RequestToAuthPluginTest extends TestCase
         $this->expectException(MissingAuthenticationException::class);
         $this->expectExceptionMessage(sprintf(
             'Expected one of the following authentication headers, ["%s"], but none were provided',
-            implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS)
+            implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS),
         ));
 
         $this->requestToPlugin->fromRequest($request);
@@ -65,14 +62,7 @@ class RequestToAuthPluginTest extends TestCase
 
     public function provideHeaders(): iterable
     {
-        yield 'API key header only' => [[
-            ApiKeyHeaderPlugin::HEADER_NAME => 'foobar',
-        ], ApiKeyHeaderPlugin::HEADER_NAME];
-        yield 'Authorization header only' => [[
-            AuthorizationHeaderPlugin::HEADER_NAME => 'foobar',
-        ], AuthorizationHeaderPlugin::HEADER_NAME];
-        yield 'Both headers' => [[
-            AuthorizationHeaderPlugin::HEADER_NAME => 'foobar',
+        yield 'API key header' => [[
             ApiKeyHeaderPlugin::HEADER_NAME => 'foobar',
         ], ApiKeyHeaderPlugin::HEADER_NAME];
     }

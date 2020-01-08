@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
+use Laminas\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Paginator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -14,17 +16,13 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\Paginator\Adapter\ArrayAdapter;
-use Zend\Paginator\Paginator;
 
 use function explode;
 
 class ListShortUrlsCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $shortUrlService;
+    private CommandTester $commandTester;
+    private ObjectProphecy $shortUrlService;
 
     public function setUp(): void
     {
@@ -44,9 +42,9 @@ class ListShortUrlsCommandTest extends TestCase
             $data[] = new ShortUrl('url_' . $i);
         }
 
-        $this->shortUrlService->listShortUrls(Argument::cetera())->will(function () use (&$data) {
-            return new Paginator(new ArrayAdapter($data));
-        })->shouldBeCalledTimes(3);
+        $this->shortUrlService->listShortUrls(Argument::cetera())
+            ->will(fn () => new Paginator(new ArrayAdapter($data)))
+            ->shouldBeCalledTimes(3);
 
         $this->commandTester->setInputs(['y', 'y', 'n']);
         $this->commandTester->execute([]);
@@ -164,6 +162,7 @@ class ListShortUrlsCommandTest extends TestCase
     }
 
     /**
+     * @param string|array|null $expectedOrderBy
      * @test
      * @dataProvider provideOrderBy
      */

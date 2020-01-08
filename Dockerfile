@@ -1,7 +1,7 @@
-FROM php:7.3.11-alpine3.10
+FROM php:7.4.1-alpine3.10
 LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 
-ARG SHLINK_VERSION=1.20.2
+ARG SHLINK_VERSION=2.0.0
 ENV SHLINK_VERSION ${SHLINK_VERSION}
 ENV SWOOLE_VERSION 4.4.12
 ENV COMPOSER_VERSION 1.9.1

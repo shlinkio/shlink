@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Options;
 
+use Laminas\Stdlib\AbstractOptions;
 use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
-use Zend\Stdlib\AbstractOptions;
 
 use function sprintf;
 
@@ -13,17 +13,9 @@ class AppOptions extends AbstractOptions
 {
     use StringUtilsTrait;
 
-    /** @var string */
-    private $name = '';
-    /** @var string */
-    private $version = '1.0';
-    /**
-     * @var string
-     * @deprecated
-     */
-    private $secretKey = '';
-    /** @var string|null */
-    private $disableTrackParam;
+    private string $name = '';
+    private string $version = '1.0';
+    private ?string $disableTrackParam = null;
 
     public function getName(): string
     {
@@ -48,24 +40,6 @@ class AppOptions extends AbstractOptions
     }
 
     /**
-     * @deprecated
-     */
-    public function getSecretKey(): string
-    {
-        return $this->secretKey;
-    }
-
-    /**
-     * @deprecated
-     */
-    protected function setSecretKey(string $secretKey): self
-    {
-        $this->secretKey = $secretKey;
-        return $this;
-    }
-
-    /**
-     * @return string|null
      */
     public function getDisableTrackParam(): ?string
     {

@@ -19,7 +19,6 @@ final class Version20180915110857 extends AbstractMigration
     ];
 
     /**
-     * @param Schema $schema
      * @throws SchemaException
      */
     public function up(Schema $schema): void
@@ -39,7 +38,7 @@ final class Version20180915110857 extends AbstractMigration
                 [
                     'onDelete' => self::ON_DELETE_MAP[$foreignTable],
                     'onUpdate' => 'RESTRICT',
-                ]
+                ],
             );
         }
     }

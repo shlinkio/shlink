@@ -9,8 +9,7 @@ use Shlinkio\Shlink\CLI\ConfigProvider;
 
 class ConfigProviderTest extends TestCase
 {
-    /** @var ConfigProvider */
-    private $configProvider;
+    private ConfigProvider $configProvider;
 
     public function setUp(): void
     {
@@ -18,7 +17,7 @@ class ConfigProviderTest extends TestCase
     }
 
     /** @test */
-    public function confiIsProperlyReturned()
+    public function confiIsProperlyReturned(): void
     {
         $config = ($this->configProvider)();
 

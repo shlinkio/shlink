@@ -5,23 +5,21 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use InvalidArgumentException;
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Zend\Diactoros\Response\JsonResponse;
 
 class ResolveShortUrlAction extends AbstractRestAction
 {
     protected const ROUTE_PATH = '/short-urls/{shortCode}';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    /** @var UrlShortenerInterface */
-    private $urlShortener;
-    /** @var array */
-    private $domainConfig;
+    private UrlShortenerInterface $urlShortener;
+    private array $domainConfig;
 
     public function __construct(
         UrlShortenerInterface $urlShortener,
@@ -34,8 +32,6 @@ class ResolveShortUrlAction extends AbstractRestAction
     }
 
     /**
-     * @param Request $request
-     * @return Response
      * @throws InvalidArgumentException
      */
     public function handle(Request $request): Response

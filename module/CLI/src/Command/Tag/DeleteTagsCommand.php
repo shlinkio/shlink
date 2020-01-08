@@ -16,8 +16,7 @@ class DeleteTagsCommand extends Command
 {
     public const NAME = 'tag:delete';
 
-    /** @var TagServiceInterface */
-    private $tagService;
+    private TagServiceInterface $tagService;
 
     public function __construct(TagServiceInterface $tagService)
     {
@@ -34,7 +33,7 @@ class DeleteTagsCommand extends Command
                 'name',
                 't',
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'The name of the tags to delete'
+                'The name of the tags to delete',
             );
     }
 

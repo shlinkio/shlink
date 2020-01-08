@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\RequestMethodInterface;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -13,25 +17,18 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Rest\Action\AuthenticateAction;
+use Shlinkio\Shlink\Rest\Action\HealthAction;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPluginInterface;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Expressive\Router\Route;
-use Zend\Expressive\Router\RouteResult;
 
-use function Zend\Stratigility\middleware;
+use function Laminas\Stratigility\middleware;
 
 class AuthenticationMiddlewareTest extends TestCase
 {
-    /** @var AuthenticationMiddleware */
-    private $middleware;
-    /** @var ObjectProphecy */
-    private $requestToPlugin;
-    /** @var ObjectProphecy */
-    private $logger;
+    private AuthenticationMiddleware $middleware;
+    private ObjectProphecy $requestToPlugin;
+    private ObjectProphecy $logger;
 
     public function setUp(): void
     {
@@ -40,8 +37,8 @@ class AuthenticationMiddlewareTest extends TestCase
 
         $this->middleware = new AuthenticationMiddleware(
             $this->requestToPlugin->reveal(),
-            [AuthenticateAction::class],
-            $this->logger->reveal()
+            [HealthAction::class],
+            $this->logger->reveal(),
         );
     }
 
@@ -54,7 +51,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $handler = $this->prophesize(RequestHandlerInterface::class);
         $handle = $handler->handle($request)->willReturn(new Response());
         $fromRequest = $this->requestToPlugin->fromRequest(Argument::any())->willReturn(
-            $this->prophesize(AuthenticationPluginInterface::class)->reveal()
+            $this->prophesize(AuthenticationPluginInterface::class)->reveal(),
         );
 
         $this->middleware->process($request, $handler->reveal());
@@ -70,17 +67,17 @@ class AuthenticationMiddlewareTest extends TestCase
         yield 'with no route result' => [new ServerRequest()];
         yield 'with failure route result' => [(new ServerRequest())->withAttribute(
             RouteResult::class,
-            RouteResult::fromRouteFailure([RequestMethodInterface::METHOD_GET])
+            RouteResult::fromRouteFailure([RequestMethodInterface::METHOD_GET]),
         )];
         yield 'with whitelisted route' => [(new ServerRequest())->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(
-                new Route('foo', $dummyMiddleware, Route::HTTP_METHOD_ANY, AuthenticateAction::class)
-            )
+                new Route('foo', $dummyMiddleware, Route::HTTP_METHOD_ANY, HealthAction::class),
+            ),
         )];
         yield 'with OPTIONS method' => [(new ServerRequest())->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', $dummyMiddleware), [])
+            RouteResult::fromRoute(new Route('bar', $dummyMiddleware), []),
         )->withMethod(RequestMethodInterface::METHOD_OPTIONS)];
     }
 
@@ -90,11 +87,11 @@ class AuthenticationMiddlewareTest extends TestCase
         $newResponse = new Response();
         $request = (new ServerRequest())->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), [])
+            RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), []),
         );
         $plugin = $this->prophesize(AuthenticationPluginInterface::class);
 
-        $verify = $plugin->verify($request)->will(function () {
+        $verify = $plugin->verify($request)->will(function (): void {
         });
         $update = $plugin->update($request, Argument::type(ResponseInterface::class))->willReturn($newResponse);
         $fromRequest = $this->requestToPlugin->fromRequest(Argument::any())->willReturn($plugin->reveal());
@@ -112,8 +109,6 @@ class AuthenticationMiddlewareTest extends TestCase
 
     private function getDummyMiddleware(): MiddlewareInterface
     {
-        return middleware(function () {
-            return new Response\EmptyResponse();
-        });
+        return middleware(fn () => new Response\EmptyResponse());
     }
 }

@@ -23,10 +23,7 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
      * Process an incoming server request and return a response, optionally delegating
      * to the next middleware component to create the response.
      *
-     * @param Request $request
-     * @param RequestHandlerInterface $handler
      *
-     * @return Response
      */
     public function process(Request $request, RequestHandlerInterface $handler): Response
     {
@@ -55,8 +52,6 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
     }
 
     /**
-     * @param Request $request
-     * @return string
      */
     private function getRequestContentType(Request $request): string
     {
@@ -66,8 +61,6 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
     }
 
     /**
-     * @param Request $request
-     * @return Request
      */
     private function parseFromJson(Request $request): Request
     {
@@ -81,8 +74,6 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
     }
 
     /**
-     * @param Request $request
-     * @return Request
      */
     private function parseFromUrlEncoded(Request $request): Request
     {

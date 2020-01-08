@@ -19,8 +19,7 @@ class GenerateKeyCommand extends Command
 {
     public const NAME = 'api-key:generate';
 
-    /** @var ApiKeyServiceInterface */
-    private $apiKeyService;
+    private ApiKeyServiceInterface $apiKeyService;
 
     public function __construct(ApiKeyServiceInterface $apiKeyService)
     {
@@ -37,7 +36,7 @@ class GenerateKeyCommand extends Command
                 'expirationDate',
                 'e',
                 InputOption::VALUE_REQUIRED,
-                'The date in which the API key should expire. Use any valid PHP format.'
+                'The date in which the API key should expire. Use any valid PHP format.',
             );
     }
 

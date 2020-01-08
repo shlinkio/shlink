@@ -14,10 +14,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class CreateTagCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $tagService;
+    private CommandTester $commandTester;
+    private ObjectProphecy $tagService;
 
     public function setUp(): void
     {
@@ -31,7 +29,7 @@ class CreateTagCommandTest extends TestCase
     }
 
     /** @test */
-    public function errorIsReturnedWhenNoTagsAreProvided()
+    public function errorIsReturnedWhenNoTagsAreProvided(): void
     {
         $this->commandTester->execute([]);
 
@@ -40,7 +38,7 @@ class CreateTagCommandTest extends TestCase
     }
 
     /** @test */
-    public function serviceIsInvokedOnSuccess()
+    public function serviceIsInvokedOnSuccess(): void
     {
         $tagNames = ['foo', 'bar'];
         $createTags = $this->tagService->createTags($tagNames)->willReturn(new ArrayCollection());

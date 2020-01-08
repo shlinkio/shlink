@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
+use Laminas\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Paginator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -19,17 +21,13 @@ use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Zend\Paginator\Adapter\ArrayAdapter;
-use Zend\Paginator\Paginator;
 
 use function sprintf;
 
 class GetVisitsCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $visitsTracker;
+    private CommandTester $commandTester;
+    private ObjectProphecy $visitsTracker;
 
     public function setUp(): void
     {
@@ -45,7 +43,7 @@ class GetVisitsCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange(null, null)))->willReturn(
-            new Paginator(new ArrayAdapter([]))
+            new Paginator(new ArrayAdapter([])),
         )->shouldBeCalledOnce();
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
@@ -59,7 +57,7 @@ class GetVisitsCommandTest extends TestCase
         $endDate = '2016-02-01';
         $this->visitsTracker->info(
             $shortCode,
-            new VisitsParams(new DateRange(Chronos::parse($startDate), Chronos::parse($endDate)))
+            new VisitsParams(new DateRange(Chronos::parse($startDate), Chronos::parse($endDate))),
         )
             ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
@@ -88,7 +86,7 @@ class GetVisitsCommandTest extends TestCase
         $info->shouldHaveBeenCalledOnce();
         $this->assertStringContainsString(
             sprintf('Ignored provided "startDate" since its value "%s" is not a valid date', $startDate),
-            $output
+            $output,
         );
     }
 
@@ -99,9 +97,9 @@ class GetVisitsCommandTest extends TestCase
         $this->visitsTracker->info($shortCode, Argument::any())->willReturn(
             new Paginator(new ArrayAdapter([
                 (new Visit(new ShortUrl(''), new Visitor('bar', 'foo', '')))->locate(
-                    new VisitLocation(new Location('', 'Spain', '', '', 0, 0, ''))
+                    new VisitLocation(new Location('', 'Spain', '', '', 0, 0, '')),
                 ),
-            ]))
+            ])),
         )->shouldBeCalledOnce();
 
         $this->commandTester->execute(['shortCode' => $shortCode]);

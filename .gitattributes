@@ -5,8 +5,6 @@
 /module/CLI/test-resources export-ignore
 /module/Core/test export-ignore
 /module/Core/test-db export-ignore
-/module/PreviewGenerator/test export-ignore
-/module/PreviewGenerator/test-db export-ignore
 /module/Rest/test export-ignore
 /module/Rest/test-api export-ignore
 .gitattributes export-ignore

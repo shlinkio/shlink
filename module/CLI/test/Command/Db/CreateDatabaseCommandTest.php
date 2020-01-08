@@ -21,25 +21,19 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class CreateDatabaseCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $processHelper;
-    /** @var ObjectProphecy */
-    private $regularConn;
-    /** @var ObjectProphecy */
-    private $noDbNameConn;
-    /** @var ObjectProphecy */
-    private $schemaManager;
-    /** @var ObjectProphecy */
-    private $databasePlatform;
+    private CommandTester $commandTester;
+    private ObjectProphecy $processHelper;
+    private ObjectProphecy $regularConn;
+    private ObjectProphecy $noDbNameConn;
+    private ObjectProphecy $schemaManager;
+    private ObjectProphecy $databasePlatform;
 
     public function setUp(): void
     {
         $locker = $this->prophesize(LockFactory::class);
         $lock = $this->prophesize(LockInterface::class);
         $lock->acquire(Argument::any())->willReturn(true);
-        $lock->release()->will(function () {
+        $lock->release()->will(function (): void {
         });
         $locker->createLock(Argument::cetera())->willReturn($lock->reveal());
 
@@ -61,7 +55,7 @@ class CreateDatabaseCommandTest extends TestCase
             $this->processHelper->reveal(),
             $phpExecutableFinder->reveal(),
             $this->regularConn->reveal(),
-            $this->noDbNameConn->reveal()
+            $this->noDbNameConn->reveal(),
         );
         $app = new Application();
         $app->add($command);
@@ -75,7 +69,7 @@ class CreateDatabaseCommandTest extends TestCase
         $shlinkDatabase = 'shlink_database';
         $getDatabase = $this->regularConn->getDatabase()->willReturn($shlinkDatabase);
         $listDatabases = $this->schemaManager->listDatabases()->willReturn(['foo', $shlinkDatabase, 'bar']);
-        $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function () {
+        $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function (): void {
         });
         $listTables = $this->schemaManager->listTableNames()->willReturn(['foo_table', 'bar_table']);
 
@@ -95,7 +89,7 @@ class CreateDatabaseCommandTest extends TestCase
         $shlinkDatabase = 'shlink_database';
         $getDatabase = $this->regularConn->getDatabase()->willReturn($shlinkDatabase);
         $listDatabases = $this->schemaManager->listDatabases()->willReturn(['foo', 'bar']);
-        $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function () {
+        $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function (): void {
         });
         $listTables = $this->schemaManager->listTableNames()->willReturn(['foo_table', 'bar_table']);
 
@@ -113,7 +107,7 @@ class CreateDatabaseCommandTest extends TestCase
         $shlinkDatabase = 'shlink_database';
         $getDatabase = $this->regularConn->getDatabase()->willReturn($shlinkDatabase);
         $listDatabases = $this->schemaManager->listDatabases()->willReturn(['foo', $shlinkDatabase, 'bar']);
-        $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function () {
+        $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function (): void {
         });
         $listTables = $this->schemaManager->listTableNames()->willReturn([]);
         $runCommand = $this->processHelper->mustRun(Argument::type(OutputInterface::class), [
@@ -142,7 +136,7 @@ class CreateDatabaseCommandTest extends TestCase
         $shlinkDatabase = 'shlink_database';
         $getDatabase = $this->regularConn->getDatabase()->willReturn($shlinkDatabase);
         $listDatabases = $this->schemaManager->listDatabases()->willReturn(['foo', 'bar']);
-        $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function () {
+        $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function (): void {
         });
         $listTables = $this->schemaManager->listTableNames()->willReturn(['foo_table', 'bar_table']);
 

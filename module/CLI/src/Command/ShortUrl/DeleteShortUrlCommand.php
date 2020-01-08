@@ -19,10 +19,8 @@ use function sprintf;
 class DeleteShortUrlCommand extends Command
 {
     public const NAME = 'short-url:delete';
-    private const ALIASES = ['short-code:delete'];
 
-    /** @var DeleteShortUrlServiceInterface */
-    private $deleteShortUrlService;
+    private DeleteShortUrlServiceInterface $deleteShortUrlService;
 
     public function __construct(DeleteShortUrlServiceInterface $deleteShortUrlService)
     {
@@ -34,7 +32,6 @@ class DeleteShortUrlCommand extends Command
     {
         $this
             ->setName(self::NAME)
-            ->setAliases(self::ALIASES)
             ->setDescription('Deletes a short URL')
             ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code for the short URL to be deleted')
             ->addOption(
@@ -42,7 +39,7 @@ class DeleteShortUrlCommand extends Command
                 'i',
                 InputOption::VALUE_NONE,
                 'Ignores the safety visits threshold check, which could make short URLs with many visits to be '
-                . 'accidentally deleted'
+                . 'accidentally deleted',
             );
     }
 

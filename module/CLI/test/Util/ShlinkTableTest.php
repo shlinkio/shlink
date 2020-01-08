@@ -15,10 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ShlinkTableTest extends TestCase
 {
-    /** @var ShlinkTable */
-    private $shlinkTable;
-    /** @var ObjectProphecy */
-    private $baseTable;
+    private ShlinkTable $shlinkTable;
+    private ObjectProphecy $baseTable;
 
     public function setUp(): void
     {
@@ -35,7 +33,7 @@ class ShlinkTableTest extends TestCase
         $footerTitle = 'Footer';
 
         $setStyle = $this->baseTable->setStyle(Argument::type(TableStyle::class))->willReturn(
-            $this->baseTable->reveal()
+            $this->baseTable->reveal(),
         );
         $setHeaders = $this->baseTable->setHeaders($headers)->willReturn($this->baseTable->reveal());
         $setRows = $this->baseTable->setRows($rows)->willReturn($this->baseTable->reveal());

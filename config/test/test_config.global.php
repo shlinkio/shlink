@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink;
 
 use GuzzleHttp\Client;
+use Laminas\ConfigAggregator\ConfigAggregator;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use PDO;
-use Zend\ConfigAggregator\ConfigAggregator;
-use Zend\ServiceManager\Factory\InvokableFactory;
 
 use function Shlinkio\Shlink\Common\env;
 use function sprintf;
@@ -19,9 +19,7 @@ $swooleTestingPort = 9999;
 $buildDbConnection = function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
     $isCi = env('TRAVIS', false);
-    $getMysqlHost = function (string $driver) {
-        return sprintf('shlink_db%s', $driver === 'mysql' ? '' : '_maria');
-    };
+    $getMysqlHost = fn (string $driver) => sprintf('shlink_db%s', $driver === 'mysql' ? '' : '_maria');
 
     $driverConfigMap = [
         'sqlite' => [
@@ -63,9 +61,10 @@ return [
             'schema' => 'http',
             'hostname' => 'doma.in',
         ],
+        'validate_url' => true,
     ],
 
-    'zend-expressive-swoole' => [
+    'mezzio-swoole' => [
         'enable_coroutine' => false,
         'swoole-http-server' => [
             'host' => $swooleTestingHost,

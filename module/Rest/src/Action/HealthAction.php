@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Action;
 
 use Doctrine\DBAL\Connection;
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Throwable;
-use Zend\Diactoros\Response\JsonResponse;
 
 class HealthAction extends AbstractRestAction
 {
@@ -21,10 +21,8 @@ class HealthAction extends AbstractRestAction
     protected const ROUTE_PATH = '/health';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    /** @var AppOptions */
-    private $options;
-    /** @var Connection */
-    private $conn;
+    private AppOptions $options;
+    private Connection $conn;
 
     public function __construct(Connection $conn, AppOptions $options, ?LoggerInterface $logger = null)
     {

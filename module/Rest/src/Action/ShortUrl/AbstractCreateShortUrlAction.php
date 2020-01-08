@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -12,14 +13,11 @@ use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Zend\Diactoros\Response\JsonResponse;
 
 abstract class AbstractCreateShortUrlAction extends AbstractRestAction
 {
-    /** @var UrlShortenerInterface */
-    private $urlShortener;
-    /** @var array */
-    private $domainConfig;
+    private UrlShortenerInterface $urlShortener;
+    private array $domainConfig;
 
     public function __construct(
         UrlShortenerInterface $urlShortener,
@@ -45,8 +43,6 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
     }
 
     /**
-     * @param Request $request
-     * @return CreateShortUrlData
      * @throws ValidationException
      */
     abstract protected function buildShortUrlData(Request $request): CreateShortUrlData;

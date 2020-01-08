@@ -6,7 +6,7 @@ namespace ShlinkMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
@@ -24,10 +24,10 @@ class Version20171021093246 extends AbstractMigration
             return;
         }
 
-        $shortUrls->addColumn('valid_since', Type::DATETIME, [
+        $shortUrls->addColumn('valid_since', Types::DATETIME, [
             'notnull' => false,
         ]);
-        $shortUrls->addColumn('valid_until', Type::DATETIME, [
+        $shortUrls->addColumn('valid_until', Types::DATETIME, [
             'notnull' => false,
         ]);
     }

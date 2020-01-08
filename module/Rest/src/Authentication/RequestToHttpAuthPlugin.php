@@ -17,11 +17,9 @@ class RequestToHttpAuthPlugin implements RequestToHttpAuthPluginInterface
     // When more than one is matched, the first one to be found will take precedence.
     public const SUPPORTED_AUTH_HEADERS = [
         Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-        Plugin\AuthorizationHeaderPlugin::HEADER_NAME,
     ];
 
-    /** @var AuthenticationPluginManagerInterface */
-    private $authPluginManager;
+    private AuthenticationPluginManagerInterface $authPluginManager;
 
     public function __construct(AuthenticationPluginManagerInterface $authPluginManager)
     {
@@ -44,10 +42,8 @@ class RequestToHttpAuthPlugin implements RequestToHttpAuthPluginInterface
     {
         return array_reduce(
             self::SUPPORTED_AUTH_HEADERS,
-            function (bool $carry, string $header) use ($request) {
-                return $carry || $request->hasHeader($header);
-            },
-            false
+            fn (bool $carry, string $header) => $carry || $request->hasHeader($header),
+            false,
         );
     }
 

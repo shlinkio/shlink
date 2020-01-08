@@ -11,18 +11,12 @@ use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 
 final class ShortUrlMeta
 {
-    /** @var Chronos|null */
-    private $validSince;
-    /** @var Chronos|null */
-    private $validUntil;
-    /** @var string|null */
-    private $customSlug;
-    /** @var int|null */
-    private $maxVisits;
-    /** @var bool|null */
-    private $findIfExists;
-    /** @var string|null */
-    private $domain;
+    private ?Chronos $validSince = null;
+    private ?Chronos $validUntil = null;
+    private ?string $customSlug = null;
+    private ?int $maxVisits = null;
+    private ?bool $findIfExists = null;
+    private ?string $domain = null;
 
     // Force named constructors
     private function __construct()
@@ -54,7 +48,7 @@ final class ShortUrlMeta
      * @param string|null $domain
      * @throws ValidationException
      */
-    public static function createFromParams(
+    public static function createFromParams( // phpcs:ignore
         $validSince = null,
         $validUntil = null,
         $customSlug = null,
@@ -90,8 +84,8 @@ final class ShortUrlMeta
         $this->validSince = $this->parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
         $this->validUntil = $this->parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
-        $this->maxVisits = $inputFilter->getValue(ShortUrlMetaInputFilter::MAX_VISITS);
-        $this->maxVisits = $this->maxVisits !== null ? (int) $this->maxVisits : null;
+        $maxVisits = $inputFilter->getValue(ShortUrlMetaInputFilter::MAX_VISITS);
+        $this->maxVisits = $maxVisits !== null ? (int) $maxVisits : null;
         $this->findIfExists = $inputFilter->getValue(ShortUrlMetaInputFilter::FIND_IF_EXISTS);
         $this->domain = $inputFilter->getValue(ShortUrlMetaInputFilter::DOMAIN);
     }

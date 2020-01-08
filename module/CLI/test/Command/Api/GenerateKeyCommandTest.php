@@ -10,20 +10,18 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Api\GenerateKeyCommand;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
-use Shlinkio\Shlink\Rest\Service\ApiKeyService;
+use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class GenerateKeyCommandTest extends TestCase
 {
-    /** @var CommandTester */
-    private $commandTester;
-    /** @var ObjectProphecy */
-    private $apiKeyService;
+    private CommandTester $commandTester;
+    private ObjectProphecy $apiKeyService;
 
     public function setUp(): void
     {
-        $this->apiKeyService = $this->prophesize(ApiKeyService::class);
+        $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
         $command = new GenerateKeyCommand($this->apiKeyService->reveal());
         $app = new Application();
         $app->add($command);
@@ -31,7 +29,7 @@ class GenerateKeyCommandTest extends TestCase
     }
 
     /** @test */
-    public function noExpirationDateIsDefinedIfNotProvided()
+    public function noExpirationDateIsDefinedIfNotProvided(): void
     {
         $create = $this->apiKeyService->create(null)->willReturn(new ApiKey());
 
@@ -43,7 +41,7 @@ class GenerateKeyCommandTest extends TestCase
     }
 
     /** @test */
-    public function expirationDateIsDefinedIfProvided()
+    public function expirationDateIsDefinedIfProvided(): void
     {
         $this->apiKeyService->create(Argument::type(Chronos::class))->shouldBeCalledOnce()
                                                                     ->willReturn(new ApiKey());

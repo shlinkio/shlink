@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Shlinkio\Shlink\Common\Cache\RedisFactory;
 use Shlinkio\Shlink\Common\Lock\RetryLockStoreDelegatorFactory;
 use Shlinkio\Shlink\Common\Logger\LoggerAwareDelegatorFactory;
 use Symfony\Component\Lock;
-use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 
 $localLockFactory = 'Shlinkio\Shlink\LocalLockFactory';
 

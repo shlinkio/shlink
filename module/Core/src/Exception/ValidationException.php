@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Exception;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Laminas\InputFilter\InputFilterInterface;
+use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
+use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 use Throwable;
-use Zend\InputFilter\InputFilterInterface;
-use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
-use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
 use function array_keys;
 use function Functional\reduce_left;
@@ -25,8 +25,7 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
     private const TITLE = 'Invalid data';
     private const TYPE = 'INVALID_ARGUMENT';
 
-    /** @var array */
-    private $invalidElements;
+    private array $invalidElements;
 
     public static function fromInputFilter(InputFilterInterface $inputFilter, ?Throwable $prev = null): self
     {
@@ -64,18 +63,16 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
             $this->invalidElementsToString(),
             PHP_EOL,
             PHP_EOL,
-            $this->getTraceAsString()
+            $this->getTraceAsString(),
         );
     }
 
     private function invalidElementsToString(): string
     {
-        return reduce_left($this->getInvalidElements(), function ($messageSet, string $name, $_, string $acc) {
-            return $acc . sprintf(
-                "\n    '%s' => %s",
-                $name,
-                is_array($messageSet) ? print_r($messageSet, true) : $messageSet
-            );
-        }, '');
+        return reduce_left($this->getInvalidElements(), fn ($messages, string $name, $_, string $acc) => $acc . sprintf(
+            "\n    '%s' => %s",
+            $name,
+            is_array($messages) ? print_r($messages, true) : $messages,
+        ), '');
     }
 }

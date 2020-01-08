@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\ListTagsAction;
-use Zend\Diactoros\ServerRequest;
 
 use function Shlinkio\Shlink\Common\json_decode;
 
 class ListTagsActionTest extends TestCase
 {
-    /** @var ListTagsAction */
-    private $action;
-    /** @var ObjectProphecy */
-    private $tagService;
+    private ListTagsAction $action;
+    private ObjectProphecy $tagService;
 
     public function setUp(): void
     {
@@ -27,7 +25,7 @@ class ListTagsActionTest extends TestCase
     }
 
     /** @test */
-    public function returnsDataFromService()
+    public function returnsDataFromService(): void
     {
         $listTags = $this->tagService->listTags()->willReturn([new Tag('foo'), new Tag('bar')]);
 

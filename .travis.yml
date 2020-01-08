@@ -5,13 +5,7 @@ branches:
     - /.*/
 
 php:
-  - '7.2'
-  - '7.3'
   - '7.4'
-
-matrix:
-  allow_failures:
-    - php: '7.4'
 
 services:
   - mysql
@@ -39,7 +33,7 @@ before_script:
 
 script:
   - composer ci
-  - if [[ ! -z "$DOCKERFILE_CHANGED" && "${TRAVIS_PHP_VERSION}" == "7.2" ]]; then docker build -t shlink-docker-image:temp . ; fi
+  - if [[ ! -z "$DOCKERFILE_CHANGED" && "${TRAVIS_PHP_VERSION}" == "7.4" ]]; then docker build -t shlink-docker-image:temp . ; fi
 
 after_success:
   - rm -f build/clover.xml
@@ -61,4 +55,4 @@ deploy:
     skip_cleanup: true
     on:
       tags: true
-      php: '7.2'
+      php: '7.4'
