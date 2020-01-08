@@ -119,8 +119,6 @@ This is the complete list of supported env vars:
 
     In the future, these redis servers could be used for other caching operations performed by shlink.
 
-* `SHORTCODE_CHARS`: **Ignored when using Shlink 1.20 or newer**. A charset to use when building short codes. Only needed when using more than one shlink instance ([Multi instance considerations](#multi-instance-considerations)).
-
 An example using all env vars could look like this:
 
 ```bash
@@ -207,20 +205,12 @@ These are some considerations to take into account when running multiple instanc
 
     You can (and should) make the locks to be shared by all Shlink instances by using a redis server/cluster. Just define the `REDIS_SERVERS` env var with the list of servers.
 
-* **Ignore this if using Shlink 1.20 or newer**. The first time shlink is run, it generates a charset used to generate short codes, which is a shuffled base62 charset.
-
-    If you are using several shlink instances, you will probably want all of them to use the same charset.
-
-    You can get a shuffled base62 charset by going to [https://shlink.io/short-code-chars](https://shlink.io/short-code-chars), and then you just need to pass it to all shlink instances using the `SHORTCODE_CHARS` env var.
-
-    If you don't do this, each shlink instance will use a different charset. However this shouldn't be a problem in practice, since the chances to get a collision will be very low.
-
 ## Versions
 
 Versioning on this docker image works as follows:
 
 * `X.X.X`:  when providing a specific version number, the image version will match the shlink version it contains. For example, installing `shlinkio/shlink:1.15.0`, you will get an image containing shlink v1.15.0.
-* `stable`: always holds the latest stable tag. For example, if latest shlink version is 1.20.0, installing `shlinkio/shlink:stable`, you will get an image containing shlink v1.20.0
+* `stable`: always holds the latest stable tag. For example, if latest shlink version is 2.0.0, installing `shlinkio/shlink:stable`, you will get an image containing shlink v2.0.0
 * `latest`: always holds the latest contents in master, and it's considered unstable and not suitable for production.
 
 > **Important**: The docker image was introduced with shlink v1.15.0, so there are no official images previous to that versions.
