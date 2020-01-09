@@ -2,6 +2,14 @@
 
 ## From v1.x to v2.x
 
+### PHP 7.4 required
+
+This new version takes advantage of several new features introduced in PHP 7.4.
+
+Thanks to that, the code is more reliable and robust, and easier to maintain and improve.
+
+However, that means that any previous PHP version is no longer supported.
+
 ### Preview generation
 
 The ability to generate website previews has been completely removed and has no replacement.
@@ -42,6 +50,16 @@ Removing this feature has these implications:
 Endpoints need to provide a version in the path now. Previously, not providing a version used to fall back to v1. Now, it will return a 404 status, as no route will match.
 
 The only exception is the `/rest/health` endpoint, which will continue working without the version.
+
+### API errors
+
+Shlink v1.21.0 introduced support for API errors using the Problem Details format, as well as the v2 of the API.
+
+For backwards compatibility reasons, requests performed to v1 continued to return the old `error` and `message` properties.
+
+Starting with Shlink v2.0.0, both versions of the API will no longer return those two properties.
+
+As a replacement, use `type` instead of `error`, and `detail` instead of `message`.
 
 ### Changes in models
 
