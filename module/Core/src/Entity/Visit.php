@@ -15,10 +15,10 @@ use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
 
 class Visit extends AbstractEntity implements JsonSerializable
 {
-    private string $referer = '';
+    private string $referer;
     private Chronos $date;
     private ?string $remoteAddr = null;
-    private string $userAgent = '';
+    private string $userAgent;
     private ShortUrl $shortUrl;
     private ?VisitLocation $visitLocation = null;
 
