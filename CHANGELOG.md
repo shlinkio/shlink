@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## 2.0.1 - 2020-01-10
 
 #### Added
 
@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#607](https://github.com/shlinkio/shlink/issues/607) Added missing info on UPGRADE.md doc.
 * [#610](https://github.com/shlinkio/shlink/issues/610) Fixed use of hardcoded quotes on a database migration which makes it fail on postgres.
+* [#605](https://github.com/shlinkio/shlink/issues/605) Fixed crashes occurring when migrating from old Shlink versions with nullable DB columns that are assigned to non-nullable entity typed props.
 
 
 ## 2.0.0 - 2020-01-08
