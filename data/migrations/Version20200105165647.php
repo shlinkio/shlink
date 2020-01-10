@@ -9,18 +9,35 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
 
+use function Functional\some;
+
 final class Version20200105165647 extends AbstractMigration
 {
     private const COLUMNS = ['lat' => 'latitude', 'lon' => 'longitude'];
 
+    /**
+     * @throws DBALException
+     */
     public function preUp(Schema $schema): void
     {
+        $visitLocations = $schema->getTable('visit_locations');
+        $this->skipIf(some(
+            self::COLUMNS,
+            fn (string $v, string $newColName) => $visitLocations->hasColumn($newColName),
+        ), 'New columns already exist');
+
         foreach (self::COLUMNS as $columnName) {
             $qb = $this->connection->createQueryBuilder();
             $qb->update('visit_locations')
-               ->set($columnName, '"0"')
-               ->where($columnName . '=""')
-               ->orWhere($columnName . ' IS NULL')
+               ->set($columnName, ':zeroValue')
+               ->where($qb->expr()->orX(
+                   $qb->expr()->eq($columnName, ':emptyString'),
+                   $qb->expr()->isNull($columnName),
+               ))
+               ->setParameters([
+                   'zeroValue' => '0',
+                   'emptyString' => '',
+               ])
                ->execute();
         }
     }
@@ -33,7 +50,9 @@ final class Version20200105165647 extends AbstractMigration
         $visitLocations = $schema->getTable('visit_locations');
 
         foreach (self::COLUMNS as $newName => $oldName) {
-            $visitLocations->addColumn($newName, Types::FLOAT);
+            $visitLocations->addColumn($newName, Types::FLOAT, [
+                'default' => '0.0',
+            ]);
         }
     }
 
@@ -42,7 +61,7 @@ final class Version20200105165647 extends AbstractMigration
         foreach (self::COLUMNS as $newName => $oldName) {
             $qb = $this->connection->createQueryBuilder();
             $qb->update('visit_locations')
-               ->set($newName, $oldName)
+               ->set($newName, 'CAST(' . $oldName . ' AS DOUBLE PRECISION)')
                ->execute();
         }
     }

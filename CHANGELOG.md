@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Fixed
 
 * [#607](https://github.com/shlinkio/shlink/issues/607) Added missing info on UPGRADE.md doc.
+* [#610](https://github.com/shlinkio/shlink/issues/610) Fixed use of hardcoded quotes on a database migration which makes it fail on postgres.
 
 
 ## 2.0.0 - 2020-01-08
