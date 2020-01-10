@@ -56,12 +56,18 @@ final class Version20200105165647 extends AbstractMigration
         }
     }
 
+    /**
+     * @throws DBALException
+     */
     public function postUp(Schema $schema): void
     {
+        $platformName = $this->connection->getDatabasePlatform()->getName();
+        $castType = $platformName === 'postgres' ? 'DOUBLE PRECISION' : 'DECIMAL(9,2)';
+
         foreach (self::COLUMNS as $newName => $oldName) {
             $qb = $this->connection->createQueryBuilder();
             $qb->update('visit_locations')
-               ->set($newName, 'CAST(' . $oldName . ' AS DOUBLE PRECISION)')
+               ->set($newName, 'CAST(' . $oldName . ' AS ' . $castType . ')')
                ->execute();
         }
     }
