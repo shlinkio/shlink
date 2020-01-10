@@ -29,9 +29,9 @@ class ShortUrl extends AbstractEntity
     private Collection $visits;
     /** @var Collection|Tag[] */
     private Collection $tags;
-    private ?Chronos $validSince;
-    private ?Chronos $validUntil;
-    private ?int $maxVisits;
+    private ?Chronos $validSince = null;
+    private ?Chronos $validUntil = null;
+    private ?int $maxVisits = null;
     private ?Domain $domain;
     private bool $customSlugWasProvided;
 
