@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\RequestMethodInterface;
+use Laminas\Diactoros\Response\EmptyResponse;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,6 +13,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Authentication;
 
+use function array_merge;
 use function implode;
 
 class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterface
@@ -53,10 +55,7 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
             'Access-Control-Allow-Headers' => $request->getHeaderLine('Access-Control-Request-Headers'),
         ];
 
-        foreach ($corsHeaders as $key => $value) {
-            $response = $response->withHeader($key, $value);
-        }
-
-        return $response;
+        // Options requests should always be empty and have a 204 status code
+        return EmptyResponse::withHeaders(array_merge($response->getHeaders(), $corsHeaders));
     }
 }
