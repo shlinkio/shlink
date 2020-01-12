@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Authentication;
-use Zend\Diactoros\Response\EmptyResponse;;
+use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Expressive\Router\RouteResult;
 
 use function array_merge;
