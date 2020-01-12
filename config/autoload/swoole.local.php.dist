@@ -1,8 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
-use Mezzio\Swoole\HotCodeReload\FileWatcher\InotifyFileWatcher;
 use Laminas\ServiceManager\Factory\InvokableFactory;
+use Mezzio\Swoole\HotCodeReload\FileWatcher\InotifyFileWatcher;
 
 return [
 
