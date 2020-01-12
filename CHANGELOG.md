@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## 2.0.2 - 2020-01-12
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#614](https://github.com/shlinkio/shlink/issues/614) Fixed `OPTIONS` requests including the `Origin` header not always returning an empty body with status 2xx.
+* [#615](https://github.com/shlinkio/shlink/issues/615) Fixed query args with no value being lost from the long URL when users are redirected.
+
+
 ## 2.0.1 - 2020-01-10
 
 #### Added

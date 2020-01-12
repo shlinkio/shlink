@@ -64,6 +64,7 @@ class RedirectActionTest extends TestCase
     {
         yield ['http://domain.com/foo/bar?some=thing', []];
         yield ['http://domain.com/foo/bar?some=thing', ['foobar' => 'notrack']];
+        yield ['http://domain.com/foo/bar?some=thing&else', ['else' => null]];
         yield ['http://domain.com/foo/bar?some=thing&foo=bar', ['foo' => 'bar']];
         yield ['http://domain.com/foo/bar?some=overwritten&foo=bar', ['foo' => 'bar', 'some' => 'overwritten']];
         yield ['http://domain.com/foo/bar?some=overwritten', ['foobar' => 'notrack', 'some' => 'overwritten']];
