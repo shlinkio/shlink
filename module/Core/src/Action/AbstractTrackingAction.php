@@ -20,8 +20,8 @@ use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 
 use function array_key_exists;
 use function array_merge;
+use function GuzzleHttp\Psr7\build_query;
 use function GuzzleHttp\Psr7\parse_query;
-use function http_build_query;
 
 abstract class AbstractTrackingAction implements MiddlewareInterface
 {
@@ -42,12 +42,6 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
         $this->logger = $logger ?: new NullLogger();
     }
 
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * to the next middleware component to create the response.
-     *
-     *
-     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $shortCode = $request->getAttribute('shortCode', '');
@@ -79,7 +73,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
         }
         $mergedQuery = array_merge($hardcodedQuery, $currentQuery);
 
-        return (string) $uri->withQuery(http_build_query($mergedQuery));
+        return (string) $uri->withQuery(build_query($mergedQuery));
     }
 
     abstract protected function createSuccessResp(string $longUrl): ResponseInterface;
