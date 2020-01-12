@@ -10,8 +10,10 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Authentication;
+use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Expressive\Router\RouteResult;
 
+use function array_merge;
 use function implode;
 
 class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterface
@@ -54,10 +56,7 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
             'Access-Control-Allow-Headers' => $request->getHeaderLine('Access-Control-Request-Headers'),
         ];
 
-        foreach ($corsHeaders as $key => $value) {
-            $response = $response->withHeader($key, $value);
-        }
-
-        return $response;
+        // Options requests should always be empty and have a 204 status code
+        return EmptyResponse::withHeaders(array_merge($response->getHeaders(), $corsHeaders));
     }
 }
