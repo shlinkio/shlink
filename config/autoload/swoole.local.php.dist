@@ -7,7 +7,7 @@ use Mezzio\Swoole\HotCodeReload\FileWatcher\InotifyFileWatcher;
 
 return [
 
-    'expressive-swoole' => [
+    'mezzio-swoole' => [
         'hot-code-reload' => [
             'enable' => true,
         ],
