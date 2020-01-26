@@ -8,7 +8,7 @@ use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ResolveShortUrlAction;
 
 use function strpos;
@@ -16,19 +16,19 @@ use function strpos;
 class ResolveShortUrlActionTest extends TestCase
 {
     private ResolveShortUrlAction $action;
-    private ObjectProphecy $urlShortener;
+    private ObjectProphecy $urlResolver;
 
     public function setUp(): void
     {
-        $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $this->action = new ResolveShortUrlAction($this->urlShortener->reveal(), []);
+        $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
+        $this->action = new ResolveShortUrlAction($this->urlResolver->reveal(), []);
     }
 
     /** @test */
     public function correctShortCodeReturnsSuccess(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, null)->willReturn(
+        $this->urlResolver->shortCodeToShortUrl($shortCode, null)->willReturn(
             new ShortUrl('http://domain.com/foo/bar'),
         )->shouldBeCalledOnce();
 

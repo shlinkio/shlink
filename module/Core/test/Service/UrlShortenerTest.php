@@ -19,7 +19,6 @@ use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
-use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 
@@ -259,19 +258,5 @@ class UrlShortenerTest extends TestCase
         $this->assertSame($expected, $result);
         $findExisting->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
-    }
-
-    /** @test */
-    public function shortCodeIsProperlyParsed(): void
-    {
-        $shortUrl = new ShortUrl('expected_url');
-        $shortCode = $shortUrl->getShortCode();
-
-        $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $repo->findOneByShortCode($shortCode, null)->willReturn($shortUrl);
-        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
-
-        $url = $this->urlShortener->shortCodeToUrl($shortCode);
-        $this->assertSame($shortUrl, $url);
     }
 }

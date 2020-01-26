@@ -41,26 +41,6 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $regularOne = new ShortUrl('foo', ShortUrlMeta::fromRawData(['customSlug' => 'foo']));
         $this->getEntityManager()->persist($regularOne);
 
-        $notYetValid = new ShortUrl('bar', ShortUrlMeta::fromRawData(
-            ['validSince' => Chronos::now()->addMonth(), 'customSlug' => 'bar_very_long_text'],
-        ));
-        $this->getEntityManager()->persist($notYetValid);
-
-        $expired = new ShortUrl('expired', ShortUrlMeta::fromRawData(
-            ['validUntil' => Chronos::now()->subMonth(), 'customSlug' => 'expired'],
-        ));
-        $this->getEntityManager()->persist($expired);
-
-        $allVisitsComplete = new ShortUrl('baz', ShortUrlMeta::fromRawData(['maxVisits' => 3, 'customSlug' => 'baz']));
-        $visits = [];
-        for ($i = 0; $i < 3; $i++) {
-            $visit = new Visit($allVisitsComplete, Visitor::emptyInstance());
-            $this->getEntityManager()->persist($visit);
-            $visits[] = $visit;
-        }
-        $allVisitsComplete->setVisits(new ArrayCollection($visits));
-        $this->getEntityManager()->persist($allVisitsComplete);
-
         $withDomain = new ShortUrl('foo', ShortUrlMeta::fromRawData(
             ['domain' => 'example.com', 'customSlug' => 'domain-short-code'],
         ));
@@ -87,9 +67,6 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->assertNull($this->repo->findOneByShortCode('invalid'));
         $this->assertNull($this->repo->findOneByShortCode($withDomain->getShortCode()));
         $this->assertNull($this->repo->findOneByShortCode($withDomain->getShortCode(), 'other-domain.com'));
-        $this->assertNull($this->repo->findOneByShortCode($notYetValid->getShortCode()));
-        $this->assertNull($this->repo->findOneByShortCode($expired->getShortCode()));
-        $this->assertNull($this->repo->findOneByShortCode($allVisitsComplete->getShortCode()));
     }
 
     /** @test */

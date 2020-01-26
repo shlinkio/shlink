@@ -18,7 +18,7 @@ class EditShortUrlActionTest extends ApiTestCase
 
     /**
      * @test
-     * @dataProvider provideDisablingMeta
+     * @dataProvider provideMeta
      */
     public function metadataCanBeReset(array $meta): void
     {
@@ -30,11 +30,9 @@ class EditShortUrlActionTest extends ApiTestCase
             'maxVisits' => null,
         ];
 
-        // Setting meta that disables the URL should not let it be visited
         $editWithProvidedMeta = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => $meta]);
         $metaAfterEditing = $this->findShortUrlMetaByShortCode($shortCode);
 
-        // Resetting all meta should allow the URL to be visitable again
         $editWithResetMeta = $this->callApiWithKey(self::METHOD_PATCH, $url, [
             RequestOptions::JSON => $resetMeta,
         ]);
@@ -46,7 +44,7 @@ class EditShortUrlActionTest extends ApiTestCase
         self::assertArraySubset($meta, $metaAfterEditing);
     }
 
-    public function provideDisablingMeta(): iterable
+    public function provideMeta(): iterable
     {
         $now = Chronos::now();
 

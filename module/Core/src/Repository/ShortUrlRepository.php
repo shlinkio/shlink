@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Repository;
 
-use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Common\Util\DateRange;
@@ -146,8 +145,6 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
               FROM Shlinkio\Shlink\Core\Entity\ShortUrl AS s
          LEFT JOIN s.domain AS d
              WHERE s.shortCode = :shortCode
-               AND (s.validSince <= :now OR s.validSince IS NULL)
-               AND (s.validUntil >= :now OR s.validUntil IS NULL)
                AND (s.domain IS NULL OR d.authority = :domain)
           ORDER BY s.domain {$ordering}
 DQL;
@@ -156,7 +153,6 @@ DQL;
         $query->setMaxResults(1)
               ->setParameters([
                   'shortCode' => $shortCode,
-                  'now' => Chronos::now(),
                   'domain' => $domain,
               ]);
 
@@ -166,9 +162,7 @@ DQL;
         //  * The short URL matching the short code but without any domain, or
         //  * No short URL at all
 
-        /** @var ShortUrl|null $shortUrl */
-        $shortUrl = $query->getOneOrNullResult();
-        return $shortUrl !== null && ! $shortUrl->maxVisitsReached() ? $shortUrl : null;
+        return $query->getOneOrNullResult();
     }
 
     public function shortCodeIsInUse(string $slug, ?string $domain = null): bool

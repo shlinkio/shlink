@@ -15,29 +15,29 @@ use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Action\QrCodeAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 
 class QrCodeActionTest extends TestCase
 {
     private QrCodeAction $action;
-    private ObjectProphecy $urlShortener;
+    private ObjectProphecy $urlResolver;
 
     public function setUp(): void
     {
         $router = $this->prophesize(RouterInterface::class);
         $router->generateUri(Argument::cetera())->willReturn('/foo/bar');
 
-        $this->urlShortener = $this->prophesize(UrlShortener::class);
+        $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
 
-        $this->action = new QrCodeAction($router->reveal(), $this->urlShortener->reveal());
+        $this->action = new QrCodeAction($router->reveal(), $this->urlResolver->reveal());
     }
 
     /** @test */
     public function aNotFoundShortCodeWillDelegateIntoNextMiddleware(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, '')->willThrow(ShortUrlNotFoundException::class)
-                                                           ->shouldBeCalledOnce();
+        $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, '')->willThrow(ShortUrlNotFoundException::class)
+                                                                      ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
@@ -50,8 +50,8 @@ class QrCodeActionTest extends TestCase
     public function anInvalidShortCodeWillReturnNotFoundResponse(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, '')->willThrow(ShortUrlNotFoundException::class)
-                                                           ->shouldBeCalledOnce();
+        $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, '')->willThrow(ShortUrlNotFoundException::class)
+                                                                      ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
@@ -64,8 +64,8 @@ class QrCodeActionTest extends TestCase
     public function aCorrectRequestReturnsTheQrCodeResponse(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn(new ShortUrl(''))
-                                                           ->shouldBeCalledOnce();
+        $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, '')->willReturn(new ShortUrl(''))
+                                                                      ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 
         $resp = $this->action->process(
