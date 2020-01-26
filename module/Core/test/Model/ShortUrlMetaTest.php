@@ -21,7 +21,7 @@ class ShortUrlMetaTest extends TestCase
     public function exceptionIsThrownIfProvidedDataIsInvalid(array $data): void
     {
         $this->expectException(ValidationException::class);
-        ShortUrlMeta::createFromRawData($data);
+        ShortUrlMeta::fromRawData($data);
     }
 
     public function provideInvalidData(): iterable
@@ -49,7 +49,9 @@ class ShortUrlMetaTest extends TestCase
     /** @test */
     public function properlyCreatedInstanceReturnsValues(): void
     {
-        $meta = ShortUrlMeta::createFromParams(Chronos::parse('2015-01-01')->toAtomString(), null, 'foobar');
+        $meta = ShortUrlMeta::fromRawData(
+            ['validSince' => Chronos::parse('2015-01-01')->toAtomString(), 'customSlug' => 'foobar'],
+        );
 
         $this->assertTrue($meta->hasValidSince());
         $this->assertEquals(Chronos::parse('2015-01-01'), $meta->getValidSince());

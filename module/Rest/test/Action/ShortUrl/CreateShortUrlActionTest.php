@@ -76,7 +76,7 @@ class CreateShortUrlActionTest extends TestCase
         ];
 
         yield [['longUrl' => 'http://www.domain.com/foo/bar'], ShortUrlMeta::createEmpty()];
-        yield [$fullMeta, ShortUrlMeta::createFromRawData($fullMeta)];
+        yield [$fullMeta, ShortUrlMeta::fromRawData($fullMeta)];
     }
 
     /**

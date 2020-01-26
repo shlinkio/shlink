@@ -28,7 +28,7 @@ class ShortUrlTest extends TestCase
     public function provideInvalidShortUrls(): iterable
     {
         yield 'with custom slug' => [
-            new ShortUrl('', ShortUrlMeta::createFromRawData(['customSlug' => 'custom-slug'])),
+            new ShortUrl('', ShortUrlMeta::fromRawData(['customSlug' => 'custom-slug'])),
             'The short code cannot be regenerated on ShortUrls where a custom slug was provided.',
         ];
         yield 'already persisted' => [

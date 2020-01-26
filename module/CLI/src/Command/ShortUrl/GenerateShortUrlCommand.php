@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
+use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -121,14 +122,14 @@ class GenerateShortUrlCommand extends Command
             $shortUrl = $this->urlShortener->urlToShortCode(
                 new Uri($longUrl),
                 $tags,
-                ShortUrlMeta::createFromParams(
-                    $input->getOption('validSince'),
-                    $input->getOption('validUntil'),
-                    $customSlug,
-                    $maxVisits !== null ? (int) $maxVisits : null,
-                    $input->getOption('findIfExists'),
-                    $input->getOption('domain'),
-                ),
+                ShortUrlMeta::fromRawData([
+                    ShortUrlMetaInputFilter::VALID_SINCE => $input->getOption('validSince'),
+                    ShortUrlMetaInputFilter::VALID_UNTIL => $input->getOption('validUntil'),
+                    ShortUrlMetaInputFilter::CUSTOM_SLUG => $customSlug,
+                    ShortUrlMetaInputFilter::MAX_VISITS => $maxVisits !== null ? (int) $maxVisits : null,
+                    ShortUrlMetaInputFilter::FIND_IF_EXISTS => $input->getOption('findIfExists'),
+                    ShortUrlMetaInputFilter::DOMAIN => $input->getOption('domain'),
+                ]),
             );
 
             $io->writeln([

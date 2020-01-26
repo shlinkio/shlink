@@ -20,32 +20,32 @@ class ShortUrlsFixture extends AbstractFixture
     public function load(ObjectManager $manager): void
     {
         $abcShortUrl = $this->setShortUrlDate(
-            new ShortUrl('https://shlink.io', ShortUrlMeta::createFromRawData(['customSlug' => 'abc123'])),
+            new ShortUrl('https://shlink.io', ShortUrlMeta::fromRawData(['customSlug' => 'abc123'])),
             '2018-05-01',
         );
         $manager->persist($abcShortUrl);
 
         $defShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
-            ShortUrlMeta::createFromParams(Chronos::parse('2020-05-01'), null, 'def456'),
+            ShortUrlMeta::fromRawData(['validSince' => Chronos::parse('2020-05-01'), 'customSlug' => 'def456']),
         ), '2019-01-01 00:00:10');
         $manager->persist($defShortUrl);
 
         $customShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://shlink.io',
-            ShortUrlMeta::createFromParams(null, null, 'custom', 2),
+            ShortUrlMeta::fromRawData(['customSlug' => 'custom', 'maxVisits' => 2]),
         ), '2019-01-01 00:00:20');
         $manager->persist($customShortUrl);
 
         $withDomainShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-source-software-projects/',
-            ShortUrlMeta::createFromRawData(['domain' => 'example.com', 'customSlug' => 'ghi789']),
+            ShortUrlMeta::fromRawData(['domain' => 'example.com', 'customSlug' => 'ghi789']),
         ), '2019-01-01 00:00:30');
         $manager->persist($withDomainShortUrl);
 
         $withDomainAndSlugShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://google.com',
-            ShortUrlMeta::createFromRawData(['domain' => 'some-domain.com', 'customSlug' => 'custom-with-domain']),
+            ShortUrlMeta::fromRawData(['domain' => 'some-domain.com', 'customSlug' => 'custom-with-domain']),
         ), '2018-10-20');
         $manager->persist($withDomainAndSlugShortUrl);
 

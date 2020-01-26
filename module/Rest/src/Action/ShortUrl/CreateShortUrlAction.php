@@ -27,15 +27,7 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
             ]);
         }
 
-        $meta = ShortUrlMeta::createFromParams(
-            $postData['validSince'] ?? null,
-            $postData['validUntil'] ?? null,
-            $postData['customSlug'] ?? null,
-            $postData['maxVisits'] ?? null,
-            $postData['findIfExists'] ?? null,
-            $postData['domain'] ?? null,
-        );
-
+        $meta = ShortUrlMeta::fromRawData($postData);
         return new CreateShortUrlData(new Uri($postData['longUrl']), (array) ($postData['tags'] ?? []), $meta);
     }
 }
