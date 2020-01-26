@@ -13,12 +13,12 @@ use function array_key_exists;
 
 final class ShortUrlMeta
 {
-    private bool $hasValidSince = false;
+    private bool $validSincePropWasProvided = false;
     private ?Chronos $validSince = null;
-    private bool $hasValidUntil = false;
+    private bool $validUntilPropWasProvided = false;
     private ?Chronos $validUntil = null;
     private ?string $customSlug = null;
-    private bool $hasMaxVisits = false;
+    private bool $maxVisitsPropWasProvided = false;
     private ?int $maxVisits = null;
     private ?bool $findIfExists = null;
     private ?string $domain = null;
@@ -56,11 +56,13 @@ final class ShortUrlMeta
         }
 
         $this->validSince = $this->parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
-        $this->hasValidSince = array_key_exists(ShortUrlMetaInputFilter::VALID_SINCE, $data);
+        $this->validSincePropWasProvided = array_key_exists(ShortUrlMetaInputFilter::VALID_SINCE, $data);
         $this->validUntil = $this->parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
+        $this->validUntilPropWasProvided = array_key_exists(ShortUrlMetaInputFilter::VALID_UNTIL, $data);
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
         $maxVisits = $inputFilter->getValue(ShortUrlMetaInputFilter::MAX_VISITS);
         $this->maxVisits = $maxVisits !== null ? (int) $maxVisits : null;
+        $this->maxVisitsPropWasProvided = array_key_exists(ShortUrlMetaInputFilter::MAX_VISITS, $data);
         $this->findIfExists = $inputFilter->getValue(ShortUrlMetaInputFilter::FIND_IF_EXISTS);
         $this->domain = $inputFilter->getValue(ShortUrlMetaInputFilter::DOMAIN);
     }
@@ -88,7 +90,7 @@ final class ShortUrlMeta
 
     public function hasValidSince(): bool
     {
-        return $this->validSince !== null;
+        return $this->validSincePropWasProvided;
     }
 
     public function getValidUntil(): ?Chronos
@@ -98,7 +100,7 @@ final class ShortUrlMeta
 
     public function hasValidUntil(): bool
     {
-        return $this->validUntil !== null;
+        return $this->validUntilPropWasProvided;
     }
 
     public function getCustomSlug(): ?string
@@ -118,7 +120,7 @@ final class ShortUrlMeta
 
     public function hasMaxVisits(): bool
     {
-        return $this->maxVisits !== null;
+        return $this->maxVisitsPropWasProvided;
     }
 
     public function findIfExists(): bool

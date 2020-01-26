@@ -4,11 +4,73 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
+use Cake\Chronos\Chronos;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use GuzzleHttp\RequestOptions;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
+use function Functional\first;
+use function sprintf;
+
 class EditShortUrlActionTest extends ApiTestCase
 {
+    use ArraySubsetAsserts;
+
+    /**
+     * @test
+     * @dataProvider provideDisablingMeta
+     */
+    public function metadataCanBeReset(array $meta): void
+    {
+        $shortCode = 'abc123';
+        $url = sprintf('/short-urls/%s', $shortCode);
+        $resetMeta = [
+            'validSince' => null,
+            'validUntil' => null,
+            'maxVisits' => null,
+        ];
+
+        // Setting meta that disables the URL should not let it be visited
+        $editWithProvidedMeta = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => $meta]);
+        $metaAfterEditing = $this->findShortUrlMetaByShortCode($shortCode);
+
+        // Resetting all meta should allow the URL to be visitable again
+        $editWithResetMeta = $this->callApiWithKey(self::METHOD_PATCH, $url, [
+            RequestOptions::JSON => $resetMeta,
+        ]);
+        $metaAfterResetting = $this->findShortUrlMetaByShortCode($shortCode);
+
+        $this->assertEquals(self::STATUS_NO_CONTENT, $editWithProvidedMeta->getStatusCode());
+        $this->assertEquals(self::STATUS_NO_CONTENT, $editWithResetMeta->getStatusCode());
+        $this->assertEquals($resetMeta, $metaAfterResetting);
+        self::assertArraySubset($meta, $metaAfterEditing);
+    }
+
+    public function provideDisablingMeta(): iterable
+    {
+        $now = Chronos::now();
+
+        yield [['validSince' => $now->addMonth()->toAtomString()]];
+        yield [['validUntil' => $now->subMonth()->toAtomString()]];
+        yield [['maxVisits' => 20]];
+        yield [['validUntil' => $now->addYear()->toAtomString(), 'maxVisits' => 100]];
+        yield [[
+            'validSince' => $now->subYear()->toAtomString(),
+            'validUntil' => $now->addYear()->toAtomString(),
+            'maxVisits' => 100,
+        ]];
+    }
+
+    private function findShortUrlMetaByShortCode(string $shortCode): ?array
+    {
+        // FIXME Call GET /short-urls/{shortCode} once issue https://github.com/shlinkio/shlink/issues/628 is fixed
+        $allShortUrls = $this->getJsonResponsePayload($this->callApiWithKey(self::METHOD_GET, '/short-urls'));
+        $list = $allShortUrls['shortUrls']['data'] ?? [];
+        $matchingShortUrl = first($list, fn (array $shortUrl) => $shortUrl['shortCode'] ?? '' === $shortCode);
+
+        return $matchingShortUrl['meta'] ?? null;
+    }
+
     /** @test */
     public function tryingToEditInvalidUrlReturnsNotFoundError(): void
     {

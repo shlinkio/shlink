@@ -58,6 +58,7 @@
     },
     "require-dev": {
         "devster/ubench": "^2.0",
+        "dms/phpunit-arraysubset-asserts": "^0.1.0",
         "eaglewu/swoole-ide-helper": "dev-master",
         "infection/infection": "^0.15.0",
         "phpstan/phpstan": "^0.12.3",
