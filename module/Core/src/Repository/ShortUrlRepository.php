@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Repository;
 
-use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Common\Util\DateRange;
