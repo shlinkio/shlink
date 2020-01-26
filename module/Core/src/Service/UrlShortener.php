@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Core\Domain\Resolver\PersistenceDomainResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
-use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
@@ -123,21 +122,5 @@ class UrlShortener implements UrlShortenerInterface
             $shortUrlToBeCreated->regenerateShortCode();
             $this->verifyShortCodeUniqueness($meta, $shortUrlToBeCreated);
         }
-    }
-
-    /**
-     * @throws ShortUrlNotFoundException
-     * @fixme Move this method to a different service
-     */
-    public function shortCodeToUrl(string $shortCode, ?string $domain = null): ShortUrl
-    {
-        /** @var ShortUrlRepository $shortUrlRepo */
-        $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
-        $shortUrl = $shortUrlRepo->findOneByShortCode($shortCode, $domain);
-        if ($shortUrl === null) {
-            throw ShortUrlNotFoundException::fromNotFoundShortCode($shortCode, $domain);
-        }
-
-        return $shortUrl;
     }
 }

@@ -135,7 +135,6 @@ class ShortUrl extends AbstractEntity
 
     /**
      * @param Collection|Visit[] $visits
-     * @return ShortUrl
      * @internal
      */
     public function setVisits(Collection $visits): self
