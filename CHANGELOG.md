@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#624](https://github.com/shlinkio/shlink/issues/624) Fixed order in which headers for remote IP detection are inspected.
 * [#623](https://github.com/shlinkio/shlink/issues/623) Fixed short URLs metadata being impossible to reset.
+* [#628](https://github.com/shlinkio/shlink/issues/628) Fixed `GET /short-urls/{shortCode}` REST endpoint returning a 404 for short URLs which are not enabled.
 
 
 ## 2.0.2 - 2020-01-12
