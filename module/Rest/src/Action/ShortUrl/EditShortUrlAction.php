@@ -30,7 +30,7 @@ class EditShortUrlAction extends AbstractRestAction
         $postData = (array) $request->getParsedBody();
         $shortCode = $request->getAttribute('shortCode', '');
 
-        $this->shortUrlService->updateMetadataByShortCode($shortCode, ShortUrlMeta::createFromRawData($postData));
+        $this->shortUrlService->updateMetadataByShortCode($shortCode, ShortUrlMeta::fromRawData($postData));
         return new EmptyResponse();
     }
 }

@@ -9,11 +9,16 @@ use DateTimeInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 
+use function array_key_exists;
+
 final class ShortUrlMeta
 {
+    private bool $hasValidSince = false;
     private ?Chronos $validSince = null;
+    private bool $hasValidUntil = false;
     private ?Chronos $validUntil = null;
     private ?string $customSlug = null;
+    private bool $hasMaxVisits = false;
     private ?int $maxVisits = null;
     private ?bool $findIfExists = null;
     private ?string $domain = null;
@@ -32,41 +37,10 @@ final class ShortUrlMeta
      * @param array $data
      * @throws ValidationException
      */
-    public static function createFromRawData(array $data): self
+    public static function fromRawData(array $data): self
     {
         $instance = new self();
         $instance->validate($data);
-        return $instance;
-    }
-
-    /**
-     * @param string|Chronos|null $validSince
-     * @param string|Chronos|null $validUntil
-     * @param string|null $customSlug
-     * @param int|null $maxVisits
-     * @param bool|null $findIfExists
-     * @param string|null $domain
-     * @throws ValidationException
-     */
-    public static function createFromParams( // phpcs:ignore
-        $validSince = null,
-        $validUntil = null,
-        $customSlug = null,
-        $maxVisits = null,
-        $findIfExists = null,
-        $domain = null
-    ): self {
-        // We do not type hint the arguments because that will be done by the validation process and we would get a
-        // type error if any of them do not match
-        $instance = new self();
-        $instance->validate([
-            ShortUrlMetaInputFilter::VALID_SINCE => $validSince,
-            ShortUrlMetaInputFilter::VALID_UNTIL => $validUntil,
-            ShortUrlMetaInputFilter::CUSTOM_SLUG => $customSlug,
-            ShortUrlMetaInputFilter::MAX_VISITS => $maxVisits,
-            ShortUrlMetaInputFilter::FIND_IF_EXISTS => $findIfExists,
-            ShortUrlMetaInputFilter::DOMAIN => $domain,
-        ]);
         return $instance;
     }
 
@@ -82,6 +56,7 @@ final class ShortUrlMeta
         }
 
         $this->validSince = $this->parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
+        $this->hasValidSince = array_key_exists(ShortUrlMetaInputFilter::VALID_SINCE, $data);
         $this->validUntil = $this->parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
         $maxVisits = $inputFilter->getValue(ShortUrlMetaInputFilter::MAX_VISITS);
