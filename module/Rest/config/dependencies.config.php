@@ -57,7 +57,10 @@ return [
         ],
         Action\ShortUrl\EditShortUrlAction::class => [Service\ShortUrlService::class, 'Logger_Shlink'],
         Action\ShortUrl\DeleteShortUrlAction::class => [Service\ShortUrl\DeleteShortUrlService::class, 'Logger_Shlink'],
-        Action\ShortUrl\ResolveShortUrlAction::class => [Service\UrlShortener::class, 'config.url_shortener.domain'],
+        Action\ShortUrl\ResolveShortUrlAction::class => [
+            Service\ShortUrl\ShortUrlResolver::class,
+            'config.url_shortener.domain',
+        ],
         Action\Visit\GetVisitsAction::class => [Service\VisitsTracker::class, 'Logger_Shlink'],
         Action\ShortUrl\ListShortUrlsAction::class => [
             Service\ShortUrlService::class,

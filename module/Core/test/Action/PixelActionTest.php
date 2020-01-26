@@ -13,22 +13,22 @@ use Shlinkio\Shlink\Common\Response\PixelResponse;
 use Shlinkio\Shlink\Core\Action\PixelAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Options\AppOptions;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 
 class PixelActionTest extends TestCase
 {
     private PixelAction $action;
-    private ObjectProphecy $urlShortener;
+    private ObjectProphecy $urlResolver;
     private ObjectProphecy $visitTracker;
 
     public function setUp(): void
     {
-        $this->urlShortener = $this->prophesize(UrlShortener::class);
+        $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
         $this->visitTracker = $this->prophesize(VisitsTracker::class);
 
         $this->action = new PixelAction(
-            $this->urlShortener->reveal(),
+            $this->urlResolver->reveal(),
             $this->visitTracker->reveal(),
             new AppOptions(),
         );
@@ -38,7 +38,7 @@ class PixelActionTest extends TestCase
     public function imageIsReturned(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn(
+        $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, '')->willReturn(
             new ShortUrl('http://domain.com/foo/bar'),
         )->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();

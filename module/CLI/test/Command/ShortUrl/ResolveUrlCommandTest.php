@@ -9,7 +9,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ResolveUrlCommand;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -20,12 +20,12 @@ use const PHP_EOL;
 class ResolveUrlCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private ObjectProphecy $urlShortener;
+    private ObjectProphecy $urlResolver;
 
     public function setUp(): void
     {
-        $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $command = new ResolveUrlCommand($this->urlShortener->reveal());
+        $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
+        $command = new ResolveUrlCommand($this->urlResolver->reveal());
         $app = new Application();
         $app->add($command);
 
@@ -38,8 +38,8 @@ class ResolveUrlCommandTest extends TestCase
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
         $shortUrl = new ShortUrl($expectedUrl);
-        $this->urlShortener->shortCodeToUrl($shortCode, null)->willReturn($shortUrl)
-                                                             ->shouldBeCalledOnce();
+        $this->urlResolver->shortCodeToShortUrl($shortCode, null)->willReturn($shortUrl)
+                                                                 ->shouldBeCalledOnce();
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
@@ -50,7 +50,7 @@ class ResolveUrlCommandTest extends TestCase
     public function incorrectShortCodeOutputsErrorMessage(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, null)
+        $this->urlResolver->shortCodeToShortUrl($shortCode, null)
             ->willThrow(ShortUrlNotFoundException::fromNotFoundShortCode($shortCode))
             ->shouldBeCalledOnce();
 

@@ -149,9 +149,25 @@ class ShortUrl extends AbstractEntity
         return $this->maxVisits;
     }
 
-    public function maxVisitsReached(): bool
+    public function isEnabled(): bool
     {
-        return $this->maxVisits !== null && $this->getVisitsCount() >= $this->maxVisits;
+        $maxVisitsReached = $this->maxVisits !== null && $this->getVisitsCount() >= $this->maxVisits;
+        if ($maxVisitsReached) {
+            return false;
+        }
+
+        $now = Chronos::now();
+        $beforeValidSince = $this->validSince !== null && $this->validSince->gt($now);
+        if ($beforeValidSince) {
+            return false;
+        }
+
+        $afterValidUntil = $this->validUntil !== null && $this->validUntil->lt($now);
+        if ($afterValidUntil) {
+            return false;
+        }
+
+        return true;
     }
 
     public function toString(array $domainConfig): string
@@ -186,12 +202,10 @@ class ShortUrl extends AbstractEntity
         }
 
         $shortUrlTags = invoke($this->getTags(), '__toString');
-        $hasAllTags = count($shortUrlTags) === count($tags) && array_reduce(
+        return count($shortUrlTags) === count($tags) && array_reduce(
             $tags,
             fn (bool $hasAllTags, string $tag) => $hasAllTags && contains($shortUrlTags, $tag),
             true,
         );
-
-        return $hasAllTags;
     }
 }

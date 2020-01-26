@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Action;
 
 use Endroid\QrCode\QrCode;
-use Mezzio\Router\Exception\RuntimeException;
 use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -15,7 +14,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
-use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 
 class QrCodeAction implements MiddlewareInterface
 {
@@ -24,27 +23,19 @@ class QrCodeAction implements MiddlewareInterface
     private const MAX_SIZE = 1000;
 
     private RouterInterface $router;
-    private UrlShortenerInterface $urlShortener;
+    private ShortUrlResolverInterface $urlResolver;
     private LoggerInterface $logger;
 
     public function __construct(
         RouterInterface $router,
-        UrlShortenerInterface $urlShortener,
+        ShortUrlResolverInterface $urlResolver,
         ?LoggerInterface $logger = null
     ) {
         $this->router = $router;
-        $this->urlShortener = $urlShortener;
+        $this->urlResolver = $urlResolver;
         $this->logger = $logger ?: new NullLogger();
     }
 
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * to the next middleware component to create the response.
-     *
-     *
-     * @throws \InvalidArgumentException
-     * @throws RuntimeException
-     */
     public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         // Make sure the short URL exists for this short code
@@ -52,7 +43,7 @@ class QrCodeAction implements MiddlewareInterface
         $domain = $request->getUri()->getAuthority();
 
         try {
-            $this->urlShortener->shortCodeToUrl($shortCode, $domain);
+            $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, $domain);
         } catch (ShortUrlNotFoundException $e) {
             $this->logger->warning('An error occurred while creating QR code. {e}', ['e' => $e]);
             return $handler->handle($request);
