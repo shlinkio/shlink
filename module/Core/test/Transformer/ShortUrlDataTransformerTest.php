@@ -42,13 +42,13 @@ class ShortUrlDataTransformerTest extends TestCase
             'validUntil' => null,
             'maxVisits' => null,
         ]];
-        yield 'max visits only' => [new ShortUrl('', ShortUrlMeta::createFromParams(null, null, null, $maxVisits)), [
+        yield 'max visits only' => [new ShortUrl('', ShortUrlMeta::fromRawData(['maxVisits' => $maxVisits])), [
             'validSince' => null,
             'validUntil' => null,
             'maxVisits' => $maxVisits,
         ]];
         yield 'max visits and valid since' => [
-            new ShortUrl('', ShortUrlMeta::createFromParams($now, null, null, $maxVisits)),
+            new ShortUrl('', ShortUrlMeta::fromRawData(['validSince' => $now, 'maxVisits' => $maxVisits])),
             [
                 'validSince' => $now->toAtomString(),
                 'validUntil' => null,
@@ -56,7 +56,9 @@ class ShortUrlDataTransformerTest extends TestCase
             ],
         ];
         yield 'both dates' => [
-            new ShortUrl('', ShortUrlMeta::createFromParams($now, $now->subDays(10))),
+            new ShortUrl('', ShortUrlMeta::fromRawData(
+                ['validSince' => $now, 'validUntil' => $now->subDays(10)],
+            )),
             [
                 'validSince' => $now->toAtomString(),
                 'validUntil' => $now->subDays(10)->toAtomString(),
@@ -64,7 +66,9 @@ class ShortUrlDataTransformerTest extends TestCase
             ],
         ];
         yield 'everything' => [
-            new ShortUrl('', ShortUrlMeta::createFromParams($now, $now->subDays(5), null, $maxVisits)),
+            new ShortUrl('', ShortUrlMeta::fromRawData(
+                ['validSince' => $now, 'validUntil' => $now->subDays(5), 'maxVisits' => $maxVisits],
+            )),
             [
                 'validSince' => $now->toAtomString(),
                 'validUntil' => $now->subDays(5)->toAtomString(),

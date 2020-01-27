@@ -30,6 +30,7 @@ return [
             Service\VisitService::class => ConfigAbstractFactory::class,
             Service\Tag\TagService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
+            Service\ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
 
             Util\UrlValidator::class => ConfigAbstractFactory::class,
 
@@ -56,22 +57,27 @@ return [
         Service\VisitService::class => ['em'],
         Service\Tag\TagService::class => ['em'],
         Service\ShortUrl\DeleteShortUrlService::class => ['em', Options\DeleteShortUrlsOptions::class],
+        Service\ShortUrl\ShortUrlResolver::class => ['em'],
 
         Util\UrlValidator::class => ['httpClient'],
 
         Action\RedirectAction::class => [
-            Service\UrlShortener::class,
+            Service\ShortUrl\ShortUrlResolver::class,
             Service\VisitsTracker::class,
             Options\AppOptions::class,
             'Logger_Shlink',
         ],
         Action\PixelAction::class => [
-            Service\UrlShortener::class,
+            Service\ShortUrl\ShortUrlResolver::class,
             Service\VisitsTracker::class,
             Options\AppOptions::class,
             'Logger_Shlink',
         ],
-        Action\QrCodeAction::class => [RouterInterface::class, Service\UrlShortener::class, 'Logger_Shlink'],
+        Action\QrCodeAction::class => [
+            RouterInterface::class,
+            Service\ShortUrl\ShortUrlResolver::class,
+            'Logger_Shlink',
+        ],
 
         Middleware\QrCodeCacheMiddleware::class => [Cache::class],
     ],

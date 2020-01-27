@@ -93,12 +93,11 @@ class ShortUrlServiceTest extends TestCase
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
         $flush = $this->em->flush()->willReturn(null);
 
-        $result = $this->service->updateMetadataByShortCode('abc123', ShortUrlMeta::createFromParams(
-            Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
-            Chronos::parse('2017-01-05 00:00:00')->toAtomString(),
-            null,
-            5,
-        ));
+        $result = $this->service->updateMetadataByShortCode('abc123', ShortUrlMeta::fromRawData([
+            'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
+            'validUntil' => Chronos::parse('2017-01-05 00:00:00')->toAtomString(),
+            'maxVisits' => 5,
+        ]));
 
         $this->assertSame($shortUrl, $result);
         $this->assertEquals(Chronos::parse('2017-01-01 00:00:00'), $shortUrl->getValidSince());

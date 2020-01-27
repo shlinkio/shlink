@@ -14,24 +14,24 @@ use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Options;
-use Shlinkio\Shlink\Core\Service\UrlShortener;
-use Shlinkio\Shlink\Core\Service\VisitsTracker;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
+use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 
 use function array_key_exists;
 
 class RedirectActionTest extends TestCase
 {
     private RedirectAction $action;
-    private ObjectProphecy $urlShortener;
+    private ObjectProphecy $urlResolver;
     private ObjectProphecy $visitTracker;
 
     public function setUp(): void
     {
-        $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $this->visitTracker = $this->prophesize(VisitsTracker::class);
+        $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
+        $this->visitTracker = $this->prophesize(VisitsTrackerInterface::class);
 
         $this->action = new RedirectAction(
-            $this->urlShortener->reveal(),
+            $this->urlResolver->reveal(),
             $this->visitTracker->reveal(),
             new Options\AppOptions(['disableTrackParam' => 'foobar']),
         );
@@ -45,7 +45,7 @@ class RedirectActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $shortUrl = new ShortUrl('http://domain.com/foo/bar?some=thing');
-        $shortCodeToUrl = $this->urlShortener->shortCodeToUrl($shortCode, '')->willReturn($shortUrl);
+        $shortCodeToUrl = $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, '')->willReturn($shortUrl);
         $track = $this->visitTracker->track(Argument::cetera())->will(function (): void {
         });
 
@@ -74,8 +74,8 @@ class RedirectActionTest extends TestCase
     public function nextMiddlewareIsInvokedIfLongUrlIsNotFound(): void
     {
         $shortCode = 'abc123';
-        $this->urlShortener->shortCodeToUrl($shortCode, '')->willThrow(ShortUrlNotFoundException::class)
-                                                           ->shouldBeCalledOnce();
+        $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, '')->willThrow(ShortUrlNotFoundException::class)
+                                                                      ->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();
 
         $handler = $this->prophesize(RequestHandlerInterface::class);

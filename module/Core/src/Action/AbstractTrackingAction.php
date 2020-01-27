@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\AppOptions;
-use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 
 use function array_key_exists;
@@ -25,18 +25,18 @@ use function GuzzleHttp\Psr7\parse_query;
 
 abstract class AbstractTrackingAction implements MiddlewareInterface
 {
-    private UrlShortenerInterface $urlShortener;
+    private ShortUrlResolverInterface $urlResolver;
     private VisitsTrackerInterface $visitTracker;
     private AppOptions $appOptions;
     private LoggerInterface $logger;
 
     public function __construct(
-        UrlShortenerInterface $urlShortener,
+        ShortUrlResolverInterface $urlResolver,
         VisitsTrackerInterface $visitTracker,
         AppOptions $appOptions,
         ?LoggerInterface $logger = null
     ) {
-        $this->urlShortener = $urlShortener;
+        $this->urlResolver = $urlResolver;
         $this->visitTracker = $visitTracker;
         $this->appOptions = $appOptions;
         $this->logger = $logger ?: new NullLogger();
@@ -50,7 +50,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
         $disableTrackParam = $this->appOptions->getDisableTrackParam();
 
         try {
-            $url = $this->urlShortener->shortCodeToUrl($shortCode, $domain);
+            $url = $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, $domain);
 
             // Track visit to this short code
             if ($disableTrackParam === null || ! array_key_exists($disableTrackParam, $query)) {
