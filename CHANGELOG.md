@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## 2.0.3 - 2020-01-27
 
 #### Added
 
@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#624](https://github.com/shlinkio/shlink/issues/624) Fixed order in which headers for remote IP detection are inspected.
 * [#623](https://github.com/shlinkio/shlink/issues/623) Fixed short URLs metadata being impossible to reset.
 * [#628](https://github.com/shlinkio/shlink/issues/628) Fixed `GET /short-urls/{shortCode}` REST endpoint returning a 404 for short URLs which are not enabled.
+* [#621](https://github.com/shlinkio/shlink/issues/621) Fixed permission denied error when updating same GeoLite file version more than once.
 
 
 ## 2.0.2 - 2020-01-12
