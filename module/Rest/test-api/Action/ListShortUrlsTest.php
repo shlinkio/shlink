@@ -116,6 +116,13 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_DOMAIN,
         ]];
+        yield [['orderBy' => ['shortCode' => 'DESC']], [
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_SHLINK,
+        ]];
         yield [['startDate' => Chronos::parse('2018-12-01')->toAtomString()], [
             self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_SLUG,
