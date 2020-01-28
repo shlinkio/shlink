@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Cake\Chronos\Chronos;
-use InvalidArgumentException;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -36,9 +35,6 @@ class ListShortUrlsAction extends AbstractRestAction
         $this->domainConfig = $domainConfig;
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function handle(Request $request): Response
     {
         $params = $this->queryToListParams($request->getQueryParams());
@@ -48,10 +44,6 @@ class ListShortUrlsAction extends AbstractRestAction
         ))]);
     }
 
-    /**
-     * @param array $query
-     * @return array
-     */
     private function queryToListParams(array $query): array
     {
         return [
