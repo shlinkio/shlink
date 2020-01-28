@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Model;
 
 use Cake\Chronos\Chronos;
-use DateTimeInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 
 use function array_key_exists;
+use function Shlinkio\Shlink\Core\parseDateField;
 
 final class ShortUrlMeta
 {
@@ -34,30 +34,28 @@ final class ShortUrlMeta
     }
 
     /**
-     * @param array $data
      * @throws ValidationException
      */
     public static function fromRawData(array $data): self
     {
         $instance = new self();
-        $instance->validate($data);
+        $instance->validateAndInit($data);
         return $instance;
     }
 
     /**
-     * @param array $data
      * @throws ValidationException
      */
-    private function validate(array $data): void
+    private function validateAndInit(array $data): void
     {
         $inputFilter = new ShortUrlMetaInputFilter($data);
         if (! $inputFilter->isValid()) {
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
-        $this->validSince = $this->parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
+        $this->validSince = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
         $this->validSincePropWasProvided = array_key_exists(ShortUrlMetaInputFilter::VALID_SINCE, $data);
-        $this->validUntil = $this->parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
+        $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
         $this->validUntilPropWasProvided = array_key_exists(ShortUrlMetaInputFilter::VALID_UNTIL, $data);
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
         $maxVisits = $inputFilter->getValue(ShortUrlMetaInputFilter::MAX_VISITS);
@@ -65,22 +63,6 @@ final class ShortUrlMeta
         $this->maxVisitsPropWasProvided = array_key_exists(ShortUrlMetaInputFilter::MAX_VISITS, $data);
         $this->findIfExists = $inputFilter->getValue(ShortUrlMetaInputFilter::FIND_IF_EXISTS);
         $this->domain = $inputFilter->getValue(ShortUrlMetaInputFilter::DOMAIN);
-    }
-
-    /**
-     * @param string|DateTimeInterface|Chronos|null $date
-     */
-    private function parseDateField($date): ?Chronos
-    {
-        if ($date === null || $date instanceof Chronos) {
-            return $date;
-        }
-
-        if ($date instanceof DateTimeInterface) {
-            return Chronos::instance($date);
-        }
-
-        return Chronos::parse($date);
     }
 
     public function getValidSince(): ?Chronos

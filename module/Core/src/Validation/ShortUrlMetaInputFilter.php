@@ -20,12 +20,10 @@ class ShortUrlMetaInputFilter extends InputFilter
     public const FIND_IF_EXISTS = 'findIfExists';
     public const DOMAIN = 'domain';
 
-    public function __construct(?array $data = null)
+    public function __construct(array $data)
     {
         $this->initialize();
-        if ($data !== null) {
-            $this->setData($data);
-        }
+        $this->setData($data);
     }
 
     private function initialize(): void

@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Cake\Chronos\Chronos;
 use Laminas\Paginator\Paginator;
 use Shlinkio\Shlink\CLI\Command\Util\AbstractWithDateRangeCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
-use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
+use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
+use Shlinkio\Shlink\Core\Validation\ShortUrlsParamsInputFilter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -108,7 +109,14 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $orderBy = $this->processOrderBy($input);
 
         do {
-            $result = $this->renderPage($output, $page, $searchTerm, $tags, $showTags, $startDate, $endDate, $orderBy);
+            $result = $this->renderPage($output, $showTags, ShortUrlsParams::fromRawData([
+                ShortUrlsParamsInputFilter::PAGE => $page,
+                ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
+                ShortUrlsParamsInputFilter::TAGS => $tags,
+                ShortUrlsOrdering::ORDER_BY => $orderBy,
+                ShortUrlsParamsInputFilter::START_DATE => $startDate !== null ? $startDate->toAtomString() : null,
+                ShortUrlsParamsInputFilter::END_DATE => $endDate !== null ? $endDate->toAtomString() : null,
+            ]));
             $page++;
 
             $continue = $this->isLastPage($result)
@@ -122,26 +130,9 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         return ExitCodes::EXIT_SUCCESS;
     }
 
-    /**
-     * @param string|array|null $orderBy
-     */
-    private function renderPage(
-        OutputInterface $output,
-        int $page,
-        ?string $searchTerm,
-        array $tags,
-        bool $showTags,
-        ?Chronos $startDate,
-        ?Chronos $endDate,
-        $orderBy
-    ): Paginator {
-        $result = $this->shortUrlService->listShortUrls(
-            $page,
-            $searchTerm,
-            $tags,
-            $orderBy,
-            new DateRange($startDate, $endDate),
-        );
+    private function renderPage(OutputInterface $output, bool $showTags, ShortUrlsParams $params): Paginator
+    {
+        $result = $this->shortUrlService->listShortUrls($params);
 
         $headers = ['Short code', 'Short URL', 'Long URL', 'Date created', 'Visits count'];
         if ($showTags) {

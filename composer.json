@@ -47,7 +47,7 @@
         "phly/phly-event-dispatcher": "^1.0",
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.5",
-        "shlinkio/shlink-common": "^2.5",
+        "shlinkio/shlink-common": "dev-master#e6658205370260df72f295df15364ac569ff702c as 2.6.0",
         "shlinkio/shlink-event-dispatcher": "^1.3",
         "shlinkio/shlink-installer": "^4.0.1",
         "shlinkio/shlink-ip-geolocation": "^1.3.1",

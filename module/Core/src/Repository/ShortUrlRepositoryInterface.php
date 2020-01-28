@@ -7,18 +7,16 @@ namespace Shlinkio\Shlink\Core\Repository;
 use Doctrine\Persistence\ObjectRepository;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 
 interface ShortUrlRepositoryInterface extends ObjectRepository
 {
-    /**
-     * @param string|array|null $orderBy
-     */
     public function findList(
         ?int $limit = null,
         ?int $offset = null,
         ?string $searchTerm = null,
         array $tags = [],
-        $orderBy = null,
+        ?ShortUrlsOrdering $orderBy = null,
         ?DateRange $dateRange = null
     ): array;
 
