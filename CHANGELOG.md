@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Changed
 
 * [#577](https://github.com/shlinkio/shlink/issues/577) Wrapped params used to customize short URL lists into a DTO with implicit validation.
+* [#620](https://github.com/shlinkio/shlink/issues/620) "Controlled" errors (like validation errors and such) will no longer be logged with error level, preventing logs to be polluted.
 
 #### Deprecated
 
