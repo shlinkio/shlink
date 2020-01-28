@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 
@@ -47,7 +48,7 @@ class ShortUrlServiceTest extends TestCase
         $repo->countList(Argument::cetera())->willReturn(count($list))->shouldBeCalledOnce();
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $list = $this->service->listShortUrls();
+        $list = $this->service->listShortUrls(ShortUrlsParams::emptyInstance());
         $this->assertEquals(4, $list->getCurrentItemCount());
     }
 

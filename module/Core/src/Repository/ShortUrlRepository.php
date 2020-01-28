@@ -8,18 +8,16 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 
 use function array_column;
 use function array_key_exists;
 use function Functional\contains;
-use function is_array;
-use function key;
 
 class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryInterface
 {
     /**
      * @param string[] $tags
-     * @param string|array|null $orderBy
      * @return ShortUrl[]
      */
     public function findList(
@@ -27,7 +25,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         ?int $offset = null,
         ?string $searchTerm = null,
         array $tags = [],
-        $orderBy = null,
+        ?ShortUrlsOrdering $orderBy = null,
         ?DateRange $dateRange = null
     ): array {
         $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange);
@@ -51,14 +49,10 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param string|array|null $orderBy
-     */
-    private function processOrderByForList(QueryBuilder $qb, $orderBy): array
+    private function processOrderByForList(QueryBuilder $qb, ShortUrlsOrdering $orderBy): array
     {
-        $isArray = is_array($orderBy);
-        $fieldName = $isArray ? key($orderBy) : $orderBy;
-        $order = $isArray ? $orderBy[$fieldName] : 'ASC';
+        $fieldName = $orderBy->orderField();
+        $order = $orderBy->orderDirection();
 
         if (contains(['visits', 'visitsCount', 'visitCount'], $fieldName)) {
             $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
