@@ -60,4 +60,9 @@ final class ShortUrlsOrdering
     {
         return $this->orderDirection;
     }
+
+    public function hasOrderField(): bool
+    {
+        return $this->orderField !== null;
+    }
 }

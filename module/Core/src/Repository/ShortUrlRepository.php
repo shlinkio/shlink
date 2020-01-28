@@ -40,7 +40,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         }
 
         // In case the ordering has been specified, the query could be more complex. Process it
-        if ($orderBy !== null) {
+        if ($orderBy !== null && $orderBy->hasOrderField()) {
             return $this->processOrderByForList($qb, $orderBy);
         }
 
