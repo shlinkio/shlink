@@ -8,10 +8,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
-return static function (ClassMetadata $metadata): void {
+return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable('domains');
+    $builder->setTable(determineTableName('domains', $emConfig));
 
     $builder->createField('id', Types::BIGINT)
             ->columnName('id')

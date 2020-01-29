@@ -8,10 +8,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
-return static function (ClassMetadata $metadata): void {
+return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable('tags')
+    $builder->setTable(determineTableName('tags', $emConfig))
             ->setCustomRepositoryClass(Repository\TagRepository::class);
 
     $builder->createField('id', Types::BIGINT)

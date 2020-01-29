@@ -10,10 +10,10 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Core\Model\Visitor;
 
-return static function (ClassMetadata $metadata): void {
+return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable('visits')
+    $builder->setTable(determineTableName('visits', $emConfig))
             ->setCustomRepositoryClass(Repository\VisitRepository::class);
 
     $builder->createField('id', Types::BIGINT)

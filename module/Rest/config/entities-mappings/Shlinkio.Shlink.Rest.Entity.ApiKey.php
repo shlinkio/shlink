@@ -9,10 +9,12 @@ use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 
-return static function (ClassMetadata $metadata): void {
+use function Shlinkio\Shlink\Core\determineTableName;
+
+return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable('api_keys');
+    $builder->setTable(determineTableName('api_keys', $emConfig));
 
     $builder->createField('id', Types::BIGINT)
             ->makePrimaryKey()
@@ -31,5 +33,5 @@ return static function (ClassMetadata $metadata): void {
             ->build();
 
     $builder->createField('enabled', Types::BOOLEAN)
-          ->build();
+            ->build();
 };

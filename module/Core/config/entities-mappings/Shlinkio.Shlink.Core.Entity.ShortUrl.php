@@ -9,10 +9,10 @@ use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 
-return static function (ClassMetadata $metadata): void {
+return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable('short_urls')
+    $builder->setTable(determineTableName('short_urls', $emConfig))
             ->setCustomRepositoryClass(Repository\ShortUrlRepository::class);
 
     $builder->createField('id', Types::BIGINT)
@@ -57,7 +57,7 @@ return static function (ClassMetadata $metadata): void {
             ->build();
 
     $builder->createManyToMany('tags', Entity\Tag::class)
-            ->setJoinTable('short_urls_in_tags')
+            ->setJoinTable(determineTableName('short_urls_in_tags', $emConfig))
             ->addInverseJoinColumn('tag_id', 'id', true, false, 'CASCADE')
             ->addJoinColumn('short_url_id', 'id', true, false, 'CASCADE')
             ->build();

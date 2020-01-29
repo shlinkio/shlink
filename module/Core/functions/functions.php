@@ -8,6 +8,8 @@ use Cake\Chronos\Chronos;
 use DateTimeInterface;
 use PUGX\Shortid\Factory as ShortIdFactory;
 
+use function sprintf;
+
 function generateRandomShortCode(int $length = 5): string
 {
     static $shortIdFactory;
@@ -38,4 +40,16 @@ function parseDateField($date): ?Chronos
     }
 
     return Chronos::parse($date);
+}
+
+function determineTableName(string $tableName, array $emConfig = []): string
+{
+    $schema = $emConfig['connection']['schema'] ?? null;
+//    $tablePrefix = $emConfig['connection']['table_prefix'] ?? null; // TODO
+
+    if ($schema === null) {
+        return $tableName;
+    }
+
+    return sprintf('%s.%s', $schema, $tableName);
 }
