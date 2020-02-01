@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Service;
 use Laminas\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 
@@ -26,5 +27,5 @@ interface ShortUrlServiceInterface
     /**
      * @throws ShortUrlNotFoundException
      */
-    public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortUrlMeta): ShortUrl;
+    public function updateMetadataByShortCode(ShortUrlIdentifier $identifier, ShortUrlMeta $shortUrlMeta): ShortUrl;
 }
