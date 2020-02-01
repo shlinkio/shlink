@@ -9,6 +9,7 @@ use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -65,11 +66,11 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $shortCode = $input->getArgument('shortCode');
+        $identifier = ShortUrlIdentifier::fromCli($input);
         $startDate = $this->getDateOption($input, $output, 'startDate');
         $endDate = $this->getDateOption($input, $output, 'endDate');
 
-        $paginator = $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange($startDate, $endDate)));
+        $paginator = $this->visitsTracker->info($identifier, new VisitsParams(new DateRange($startDate, $endDate)));
 
         $rows = map($paginator->getCurrentItems(), function (Visit $visit) {
             $rowData = $visit->jsonSerialize();

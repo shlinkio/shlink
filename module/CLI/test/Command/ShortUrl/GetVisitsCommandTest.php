@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
@@ -42,9 +43,12 @@ class GetVisitsCommandTest extends TestCase
     public function noDateFlagsTriesToListWithoutDateRange(): void
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange(null, null)))->willReturn(
-            new Paginator(new ArrayAdapter([])),
-        )->shouldBeCalledOnce();
+        $this->visitsTracker->info(
+            new ShortUrlIdentifier($shortCode),
+            new VisitsParams(new DateRange(null, null)),
+        )
+            ->willReturn(new Paginator(new ArrayAdapter([])))
+            ->shouldBeCalledOnce();
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
     }
@@ -56,7 +60,7 @@ class GetVisitsCommandTest extends TestCase
         $startDate = '2016-01-01';
         $endDate = '2016-02-01';
         $this->visitsTracker->info(
-            $shortCode,
+            new ShortUrlIdentifier($shortCode),
             new VisitsParams(new DateRange(Chronos::parse($startDate), Chronos::parse($endDate))),
         )
             ->willReturn(new Paginator(new ArrayAdapter([])))
@@ -74,7 +78,7 @@ class GetVisitsCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $startDate = 'foo';
-        $info = $this->visitsTracker->info($shortCode, new VisitsParams(new DateRange()))
+        $info = $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), new VisitsParams(new DateRange()))
             ->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute([
@@ -94,7 +98,7 @@ class GetVisitsCommandTest extends TestCase
     public function outputIsProperlyGenerated(): void
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info($shortCode, Argument::any())->willReturn(
+        $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), Argument::any())->willReturn(
             new Paginator(new ArrayAdapter([
                 (new Visit(new ShortUrl(''), new Visitor('bar', 'foo', '')))->locate(
                     new VisitLocation(new Location('', 'Spain', '', '', 0, 0, '')),

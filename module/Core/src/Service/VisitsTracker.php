@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
+use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 
 class VisitsTracker implements VisitsTrackerInterface
@@ -47,17 +48,17 @@ class VisitsTracker implements VisitsTrackerInterface
      * @return Visit[]|Paginator
      * @throws ShortUrlNotFoundException
      */
-    public function info(string $shortCode, VisitsParams $params): Paginator
+    public function info(ShortUrlIdentifier $identifier, VisitsParams $params): Paginator
     {
-        /** @var ORM\EntityRepository $repo */
+        /** @var ShortUrlRepositoryInterface $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        if ($repo->count(['shortCode' => $shortCode]) < 1) {
-            throw ShortUrlNotFoundException::fromNotFound(new ShortUrlIdentifier($shortCode)); // FIXME
+        if (! $repo->shortCodeIsInUse($identifier->shortCode(), $identifier->domain())) {
+            throw ShortUrlNotFoundException::fromNotFound($identifier);
         }
 
         /** @var VisitRepository $repo */
         $repo = $this->em->getRepository(Visit::class);
-        $paginator = new Paginator(new VisitsPaginatorAdapter($repo, $shortCode, $params));
+        $paginator = new Paginator(new VisitsPaginatorAdapter($repo, $identifier, $params));
         $paginator->setItemCountPerPage($params->getItemsPerPage())
                   ->setCurrentPageNumber($params->getPage());
 

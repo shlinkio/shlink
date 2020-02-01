@@ -8,6 +8,7 @@ use Laminas\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 
@@ -24,5 +25,5 @@ interface VisitsTrackerInterface
      * @return Visit[]|Paginator
      * @throws ShortUrlNotFoundException
      */
-    public function info(string $shortCode, VisitsParams $params): Paginator; // FIXME
+    public function info(ShortUrlIdentifier $identifier, VisitsParams $params): Paginator; // FIXME
 }

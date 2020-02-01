@@ -36,8 +36,8 @@ final class ShortUrlIdentifier
 
     public static function fromCli(InputInterface $input): self
     {
-        $shortCode = $input->getArgument('shortCode');
-        $domain = $input->getOption('domain');
+        $shortCode = $input->getArguments()['shortCode'] ?? '';
+        $domain = $input->getOptions()['domain'] ?? null;
 
         return new self($shortCode, $domain);
     }
