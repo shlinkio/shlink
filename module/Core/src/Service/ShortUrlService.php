@@ -47,9 +47,9 @@ class ShortUrlService implements ShortUrlServiceInterface
      * @param string[] $tags
      * @throws ShortUrlNotFoundException
      */
-    public function setTagsByShortCode(string $shortCode, array $tags = []): ShortUrl
+    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags = []): ShortUrl
     {
-        $shortUrl = $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode));
+        $shortUrl = $this->urlResolver->resolveShortUrl($identifier);
         $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
 
         $this->em->flush();

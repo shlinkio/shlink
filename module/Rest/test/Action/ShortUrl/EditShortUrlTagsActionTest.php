@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlTagsAction;
 
@@ -34,8 +35,8 @@ class EditShortUrlTagsActionTest extends TestCase
     public function tagsListIsReturnedIfCorrectShortCodeIsProvided(): void
     {
         $shortCode = 'abc123';
-        $this->shortUrlService->setTagsByShortCode($shortCode, [])->willReturn(new ShortUrl(''))
-                                                                  ->shouldBeCalledOnce();
+        $this->shortUrlService->setTagsByShortCode(new ShortUrlIdentifier($shortCode), [])->willReturn(new ShortUrl(''))
+                                                                                          ->shouldBeCalledOnce();
 
         $response = $this->action->handle(
             (new ServerRequest())->withAttribute('shortCode', 'abc123')

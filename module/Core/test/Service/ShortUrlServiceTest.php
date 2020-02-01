@@ -71,7 +71,7 @@ class ShortUrlServiceTest extends TestCase
         $tagRepo->findOneBy(['name' => 'bar'])->willReturn(null)->shouldBeCalledOnce();
         $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
 
-        $this->service->setTagsByShortCode($shortCode, ['foo', 'bar']);
+        $this->service->setTagsByShortCode(new ShortUrlIdentifier($shortCode), ['foo', 'bar']);
     }
 
     /** @test */
