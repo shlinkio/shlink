@@ -34,7 +34,7 @@ class ResolveShortUrlAction extends AbstractRestAction
     public function handle(Request $request): Response
     {
         $transformer = new ShortUrlDataTransformer($this->domainConfig);
-        $url = $this->urlResolver->resolveShortUrl(ShortUrlIdentifier::fromRequest($request));
+        $url = $this->urlResolver->resolveShortUrl(ShortUrlIdentifier::fromApiRequest($request));
 
         return new JsonResponse($transformer->transform($url));
     }

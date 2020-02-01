@@ -39,7 +39,7 @@ class QrCodeAction implements MiddlewareInterface
 
     public function process(Request $request, RequestHandlerInterface $handler): Response
     {
-        $identifier = ShortUrlIdentifier::fromRequest($request);
+        $identifier = ShortUrlIdentifier::fromRedirectRequest($request);
 
         try {
             $this->urlResolver->resolveEnabledShortUrl($identifier);

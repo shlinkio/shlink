@@ -18,10 +18,18 @@ final class ShortUrlIdentifier
         $this->domain = $domain;
     }
 
-    public static function fromRequest(ServerRequestInterface $request): self
+    public static function fromApiRequest(ServerRequestInterface $request): self
     {
         $shortCode = $request->getAttribute('shortCode', '');
         $domain = $request->getQueryParams()['domain'] ?? null;
+
+        return new self($shortCode, $domain);
+    }
+
+    public static function fromRedirectRequest(ServerRequestInterface $request): self
+    {
+        $shortCode = $request->getAttribute('shortCode', '');
+        $domain = $request->getUri()->getAuthority();
 
         return new self($shortCode, $domain);
     }
