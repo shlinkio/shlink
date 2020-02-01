@@ -39,14 +39,11 @@ class VisitsTrackerTest extends TestCase
     public function trackPersistsVisit(): void
     {
         $shortCode = '123ABC';
-        $repo = $this->prophesize(EntityRepository::class);
-        $repo->findOneBy(['shortCode' => $shortCode])->willReturn(new ShortUrl(''));
 
-        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
         $this->em->persist(Argument::that(fn (Visit $visit) => $visit->setId('1')))->shouldBeCalledOnce();
         $this->em->flush()->shouldBeCalledOnce();
 
-        $this->visitsTracker->track($shortCode, Visitor::emptyInstance());
+        $this->visitsTracker->track(new ShortUrl($shortCode), Visitor::emptyInstance());
 
         $this->eventDispatcher->dispatch(Argument::type(ShortUrlVisited::class))->shouldHaveBeenCalled();
     }
@@ -55,10 +52,7 @@ class VisitsTrackerTest extends TestCase
     public function trackedIpAddressGetsObfuscated(): void
     {
         $shortCode = '123ABC';
-        $repo = $this->prophesize(EntityRepository::class);
-        $repo->findOneBy(['shortCode' => $shortCode])->willReturn(new ShortUrl(''));
 
-        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
         $this->em->persist(Argument::any())->will(function ($args) {
             /** @var Visit $visit */
             $visit = $args[0];
@@ -68,7 +62,7 @@ class VisitsTrackerTest extends TestCase
         })->shouldBeCalledOnce();
         $this->em->flush()->shouldBeCalledOnce();
 
-        $this->visitsTracker->track($shortCode, new Visitor('', '', '4.3.2.1'));
+        $this->visitsTracker->track(new ShortUrl($shortCode), new Visitor('', '', '4.3.2.1'));
 
         $this->eventDispatcher->dispatch(Argument::type(ShortUrlVisited::class))->shouldHaveBeenCalled();
     }

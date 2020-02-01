@@ -31,13 +31,8 @@ class VisitsTracker implements VisitsTrackerInterface
     /**
      * Tracks a new visit to provided short code from provided visitor
      */
-    public function track(string $shortCode, Visitor $visitor): void
+    public function track(ShortUrl $shortUrl, Visitor $visitor): void
     {
-        /** @var ShortUrl $shortUrl */
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->findOneBy([
-            'shortCode' => $shortCode,
-        ]);
-
         $visit = new Visit($shortUrl, $visitor);
 
         $this->em->persist($visit);
