@@ -12,6 +12,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
@@ -41,7 +42,7 @@ class ShortUrlResolverTest extends TestCase
         $findOneByShortCode = $repo->findOneByShortCode($shortCode, null)->willReturn($shortUrl);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $result = $this->urlResolver->shortCodeToShortUrl($shortCode);
+        $result = $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode));
 
         $this->assertSame($shortUrl, $result);
         $findOneByShortCode->shouldHaveBeenCalledOnce();
@@ -61,7 +62,7 @@ class ShortUrlResolverTest extends TestCase
         $findOneByShortCode->shouldBeCalledOnce();
         $getRepo->shouldBeCalledOnce();
 
-        $this->urlResolver->shortCodeToShortUrl($shortCode);
+        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode));
     }
 
     /** @test */
@@ -74,7 +75,7 @@ class ShortUrlResolverTest extends TestCase
         $findOneByShortCode = $repo->findOneByShortCode($shortCode, null)->willReturn($shortUrl);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $result = $this->urlResolver->shortCodeToEnabledShortUrl($shortCode);
+        $result = $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode));
 
         $this->assertSame($shortUrl, $result);
         $findOneByShortCode->shouldHaveBeenCalledOnce();
@@ -97,7 +98,7 @@ class ShortUrlResolverTest extends TestCase
         $findOneByShortCode->shouldBeCalledOnce();
         $getRepo->shouldBeCalledOnce();
 
-        $this->urlResolver->shortCodeToEnabledShortUrl($shortCode);
+        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode));
     }
 
     public function provideDisabledShortUrls(): iterable

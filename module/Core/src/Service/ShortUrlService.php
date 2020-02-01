@@ -8,6 +8,7 @@ use Doctrine\ORM;
 use Laminas\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
@@ -47,7 +48,7 @@ class ShortUrlService implements ShortUrlServiceInterface
      */
     public function setTagsByShortCode(string $shortCode, array $tags = []): ShortUrl
     {
-        $shortUrl = $this->findByShortCode($this->em, $shortCode);
+        $shortUrl = $this->findByShortCode($this->em, new ShortUrlIdentifier($shortCode));
         $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
         $this->em->flush();
 
@@ -59,7 +60,7 @@ class ShortUrlService implements ShortUrlServiceInterface
      */
     public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortUrlMeta): ShortUrl
     {
-        $shortUrl = $this->findByShortCode($this->em, $shortCode);
+        $shortUrl = $this->findByShortCode($this->em, new ShortUrlIdentifier($shortCode));
         $shortUrl->updateMeta($shortUrlMeta);
 
         $this->em->flush();

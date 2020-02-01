@@ -15,7 +15,7 @@ interface VisitsTrackerInterface
     /**
      * Tracks a new visit to provided short code from provided visitor
      */
-    public function track(string $shortCode, Visitor $visitor): void;
+    public function track(string $shortCode, Visitor $visitor): void; // FIXME
 
     /**
      * Returns the visits on certain short code
@@ -23,5 +23,5 @@ interface VisitsTrackerInterface
      * @return Visit[]|Paginator
      * @throws ShortUrlNotFoundException
      */
-    public function info(string $shortCode, VisitsParams $params): Paginator;
+    public function info(string $shortCode, VisitsParams $params): Paginator; // FIXME
 }

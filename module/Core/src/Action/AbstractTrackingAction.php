@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
@@ -45,12 +46,12 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $shortCode = $request->getAttribute('shortCode', '');
-        $domain = $request->getUri()->getAuthority();
+        $identifier = ShortUrlIdentifier::fromRequest($request);
         $query = $request->getQueryParams();
         $disableTrackParam = $this->appOptions->getDisableTrackParam();
 
         try {
-            $url = $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, $domain);
+            $url = $this->urlResolver->resolveEnabledShortUrl($identifier);
 
             // Track visit to this short code
             if ($disableTrackParam === null || ! array_key_exists($disableTrackParam, $query)) {

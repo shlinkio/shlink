@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Exception;
 
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 
 class ShortUrlNotFoundExceptionTest extends TestCase
 {
@@ -23,7 +24,7 @@ class ShortUrlNotFoundExceptionTest extends TestCase
             $expectedAdditional['domain'] = $domain;
         }
 
-        $e = ShortUrlNotFoundException::fromNotFoundShortCode($shortCode, $domain);
+        $e = ShortUrlNotFoundException::fromNotFound(new ShortUrlIdentifier($shortCode, $domain));
 
         $this->assertEquals($expectedMessage, $e->getMessage());
         $this->assertEquals($expectedMessage, $e->getDetail());

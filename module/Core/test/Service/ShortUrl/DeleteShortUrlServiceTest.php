@@ -28,15 +28,15 @@ class DeleteShortUrlServiceTest extends TestCase
 
     public function setUp(): void
     {
-        $shortUrl = (new ShortUrl(''))->setVisits(
-            new ArrayCollection(map(range(0, 10), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance()))),
-        );
+        $shortUrl = (new ShortUrl(''))->setVisits(new ArrayCollection(
+            map(range(0, 10), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance())),
+        ));
         $this->shortCode = $shortUrl->getShortCode();
 
         $this->em = $this->prophesize(EntityManagerInterface::class);
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $repo->findOneBy(Argument::type('array'))->willReturn($shortUrl);
+        $repo->findOneByShortCode(Argument::cetera())->willReturn($shortUrl);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
     }
 

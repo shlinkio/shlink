@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -54,11 +55,9 @@ class ResolveUrlCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
-        $shortCode = $input->getArgument('shortCode');
-        $domain = $input->getOption('domain');
 
         try {
-            $url = $this->urlResolver->shortCodeToShortUrl($shortCode, $domain);
+            $url = $this->urlResolver->resolveShortUrl(ShortUrlIdentifier::fromCli($input));
             $output->writeln(sprintf('Long URL: <info>%s</info>', $url->getLongUrl()));
             return ExitCodes::EXIT_SUCCESS;
         } catch (ShortUrlNotFoundException $e) {

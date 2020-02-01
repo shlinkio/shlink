@@ -12,6 +12,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Response\PixelResponse;
 use Shlinkio\Shlink\Core\Action\PixelAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
@@ -38,7 +39,7 @@ class PixelActionTest extends TestCase
     public function imageIsReturned(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, '')->willReturn(
+        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))->willReturn(
             new ShortUrl('http://domain.com/foo/bar'),
         )->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();

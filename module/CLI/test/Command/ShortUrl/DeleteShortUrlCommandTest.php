@@ -9,6 +9,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\DeleteShortUrlCommand;
 use Shlinkio\Shlink\Core\Exception;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -56,7 +57,7 @@ class DeleteShortUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $deleteByShortCode = $this->service->deleteByShortCode($shortCode, false)->willThrow(
-            Exception\ShortUrlNotFoundException::fromNotFoundShortCode($shortCode),
+            Exception\ShortUrlNotFoundException::fromNotFound(new ShortUrlIdentifier($shortCode)),
         );
 
         $this->commandTester->execute(['shortCode' => $shortCode]);

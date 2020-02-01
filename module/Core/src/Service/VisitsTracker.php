@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\ShortUrlVisited;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
@@ -56,7 +57,7 @@ class VisitsTracker implements VisitsTrackerInterface
         /** @var ORM\EntityRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
         if ($repo->count(['shortCode' => $shortCode]) < 1) {
-            throw ShortUrlNotFoundException::fromNotFoundShortCode($shortCode);
+            throw ShortUrlNotFoundException::fromNotFound(new ShortUrlIdentifier($shortCode)); // FIXME
         }
 
         /** @var VisitRepository $repo */

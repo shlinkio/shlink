@@ -57,8 +57,8 @@ class ShortUrlServiceTest extends TestCase
     {
         $shortCode = 'abc123';
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $repo->findOneBy(['shortCode' => $shortCode])->willReturn(null)
-                                                     ->shouldBeCalledOnce();
+        $repo->findOneByShortCode($shortCode, null)->willReturn(null)
+                                                   ->shouldBeCalledOnce();
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $this->expectException(ShortUrlNotFoundException::class);
@@ -72,8 +72,8 @@ class ShortUrlServiceTest extends TestCase
         $shortUrl->setTags(Argument::any())->shouldBeCalledOnce();
         $shortCode = 'abc123';
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $repo->findOneBy(['shortCode' => $shortCode])->willReturn($shortUrl->reveal())
-                                                     ->shouldBeCalledOnce();
+        $repo->findOneByShortCode($shortCode, null)->willReturn($shortUrl->reveal())
+                                                  ->shouldBeCalledOnce();
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $tagRepo = $this->prophesize(EntityRepository::class);
@@ -90,7 +90,7 @@ class ShortUrlServiceTest extends TestCase
         $shortUrl = new ShortUrl('');
 
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $findShortUrl = $repo->findOneBy(['shortCode' => 'abc123'])->willReturn($shortUrl);
+        $findShortUrl = $repo->findOneByShortCode('abc123', null)->willReturn($shortUrl);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
         $flush = $this->em->flush()->willReturn(null);
 
