@@ -27,9 +27,9 @@ class DeleteShortUrlService implements DeleteShortUrlServiceInterface
      * @throws Exception\ShortUrlNotFoundException
      * @throws Exception\DeleteShortUrlException
      */
-    public function deleteByShortCode(string $shortCode, bool $ignoreThreshold = false): void
+    public function deleteByShortCode(ShortUrlIdentifier $identifier, bool $ignoreThreshold = false): void
     {
-        $shortUrl = $this->findByShortCode($this->em, new ShortUrlIdentifier($shortCode));
+        $shortUrl = $this->findByShortCode($this->em, $identifier);
         if (! $ignoreThreshold && $this->isThresholdReached($shortUrl)) {
             throw Exception\DeleteShortUrlException::fromVisitsThreshold(
                 $this->deleteShortUrlsOptions->getVisitsThreshold(),

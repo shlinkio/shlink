@@ -12,6 +12,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\DeleteShortUrlsOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
@@ -51,7 +52,7 @@ class DeleteShortUrlServiceTest extends TestCase
             $this->shortCode,
         ));
 
-        $service->deleteByShortCode($this->shortCode);
+        $service->deleteByShortCode(new ShortUrlIdentifier($this->shortCode));
     }
 
     /** @test */
@@ -62,7 +63,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
         $flush = $this->em->flush()->willReturn(null);
 
-        $service->deleteByShortCode($this->shortCode, true);
+        $service->deleteByShortCode(new ShortUrlIdentifier($this->shortCode), true);
 
         $remove->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
@@ -76,7 +77,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
         $flush = $this->em->flush()->willReturn(null);
 
-        $service->deleteByShortCode($this->shortCode);
+        $service->deleteByShortCode(new ShortUrlIdentifier($this->shortCode));
 
         $remove->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
@@ -90,7 +91,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
         $flush = $this->em->flush()->willReturn(null);
 
-        $service->deleteByShortCode($this->shortCode);
+        $service->deleteByShortCode(new ShortUrlIdentifier($this->shortCode));
 
         $remove->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
