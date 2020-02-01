@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -37,7 +38,8 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
         $this
             ->setName(self::NAME)
             ->setDescription('Returns the detailed visits information for provided short code')
-            ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code which visits we want to get');
+            ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code which visits we want to get')
+            ->addOption('domain', 'd', InputOption::VALUE_REQUIRED, 'The domain for the short code');
     }
 
     protected function getStartDateDesc(): string
