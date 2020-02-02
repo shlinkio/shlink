@@ -9,8 +9,8 @@ use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Uri;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
-
 use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
+
 use function GuzzleHttp\Psr7\build_query;
 use function sprintf;
 
