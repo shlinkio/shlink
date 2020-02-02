@@ -10,12 +10,14 @@ use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Uri;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
+use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
 use function GuzzleHttp\Psr7\build_query;
 use function sprintf;
 
 class EditShortUrlActionTest extends ApiTestCase
 {
     use ArraySubsetAsserts;
+    use NotFoundUrlHelpersTrait;
 
     /**
      * @test
@@ -69,12 +71,17 @@ class EditShortUrlActionTest extends ApiTestCase
         return $matchingShortUrl['meta'] ?? null;
     }
 
-    /** @test */
-    public function tryingToEditInvalidUrlReturnsNotFoundError(): void
-    {
-        $expectedDetail = 'No URL found with short code "invalid"';
-
-        $resp = $this->callApiWithKey(self::METHOD_PATCH, '/short-urls/invalid', [RequestOptions::JSON => []]);
+    /**
+     * @test
+     * @dataProvider provideInvalidUrls
+     */
+    public function tryingToEditInvalidUrlReturnsNotFoundError(
+        string $shortCode,
+        ?string $domain,
+        string $expectedDetail
+    ): void {
+        $url = $this->buildShortUrlPath($shortCode, $domain);
+        $resp = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => []]);
         $payload = $this->getJsonResponsePayload($resp);
 
         $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
@@ -82,7 +89,8 @@ class EditShortUrlActionTest extends ApiTestCase
         $this->assertEquals('INVALID_SHORTCODE', $payload['type']);
         $this->assertEquals($expectedDetail, $payload['detail']);
         $this->assertEquals('Short URL not found', $payload['title']);
-        $this->assertEquals('invalid', $payload['shortCode']);
+        $this->assertEquals($shortCode, $payload['shortCode']);
+        $this->assertEquals($domain, $payload['domain'] ?? null);
     }
 
     /** @test */
