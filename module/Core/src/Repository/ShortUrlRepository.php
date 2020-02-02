@@ -110,12 +110,14 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
             }
 
             // Apply search conditions
-            $qb->andWhere($qb->expr()->orX(
-                $qb->expr()->like('s.longUrl', ':searchPattern'),
-                $qb->expr()->like('s.shortCode', ':searchPattern'),
-                $qb->expr()->like('t.name', ':searchPattern'),
-            ));
-            $qb->setParameter('searchPattern', '%' . $searchTerm . '%');
+            $qb->leftJoin('s.domain', 'd')
+               ->andWhere($qb->expr()->orX(
+                   $qb->expr()->like('s.longUrl', ':searchPattern'),
+                   $qb->expr()->like('s.shortCode', ':searchPattern'),
+                   $qb->expr()->like('t.name', ':searchPattern'),
+                   $qb->expr()->like('d.authority', ':searchPattern'),
+               ))
+               ->setParameter('searchPattern', '%' . $searchTerm . '%');
         }
 
         // Filter by tags if provided
