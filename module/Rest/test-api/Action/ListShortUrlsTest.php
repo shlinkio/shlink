@@ -31,7 +31,7 @@ class ListShortUrlsTest extends ApiTestCase
         'shortUrl' => 'http://doma.in/ghi789',
         'longUrl' => 'https://shlink.io/documentation/',
         'dateCreated' => '2018-05-01T00:00:00+00:00',
-        'visitsCount' => 0,
+        'visitsCount' => 2,
         'tags' => [],
         'meta' => [
             'validSince' => null,

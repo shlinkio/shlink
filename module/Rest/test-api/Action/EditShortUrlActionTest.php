@@ -128,10 +128,10 @@ class EditShortUrlActionTest extends ApiTestCase
 
     public function provideDomains(): iterable
     {
-        yield 'domain' => [null, 'https://shlink.io/documentation/'];
-        yield 'no domain' => [
+        yield 'domain' => [
             'example.com',
             'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-source-software-projects/',
         ];
+        yield 'no domain' => [null, 'https://shlink.io/documentation/'];
     }
 }
