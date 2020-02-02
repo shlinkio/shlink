@@ -14,10 +14,15 @@ trait NotFoundUrlHelpersTrait
     public function provideInvalidUrls(): iterable
     {
         yield 'invalid shortcode' => ['invalid', null, 'No URL found with short code "invalid"'];
-        yield 'invalid shortcode + domain' => [
+        yield 'invalid shortcode without domain' => [
             'abc123',
             'example.com',
             'No URL found with short code "abc123" for domain "example.com"',
+        ];
+        yield 'invalid shortcode + domain' => [
+            'custom-with-domain',
+            'example.com',
+            'No URL found with short code "custom-with-domain" for domain "example.com"',
         ];
     }
 
