@@ -2,6 +2,5 @@ parameters:
 	checkMissingIterableValueType: false
 	checkGenericClassInNonGenericObjectType: false
 	ignoreErrors:
-		- '#Undefined variable: \$metadata#'
 		- '#AbstractQuery::setParameters()#'
 		- '#mustRun()#'

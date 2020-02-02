@@ -24,6 +24,21 @@ class ListShortUrlsTest extends ApiTestCase
             'validUntil' => null,
             'maxVisits' => null,
         ],
+        'domain' => null,
+    ];
+    private const SHORT_URL_DOCS = [
+        'shortCode' => 'ghi789',
+        'shortUrl' => 'http://doma.in/ghi789',
+        'longUrl' => 'https://shlink.io/documentation/',
+        'dateCreated' => '2018-05-01T00:00:00+00:00',
+        'visitsCount' => 2,
+        'tags' => [],
+        'meta' => [
+            'validSince' => null,
+            'validUntil' => null,
+            'maxVisits' => null,
+        ],
+        'domain' => null,
     ];
     private const SHORT_URL_CUSTOM_SLUG_AND_DOMAIN = [
         'shortCode' => 'custom-with-domain',
@@ -37,6 +52,7 @@ class ListShortUrlsTest extends ApiTestCase
             'validUntil' => null,
             'maxVisits' => null,
         ],
+        'domain' => 'some-domain.com',
     ];
     private const SHORT_URL_META = [
         'shortCode' => 'def456',
@@ -52,6 +68,7 @@ class ListShortUrlsTest extends ApiTestCase
             'validUntil' => null,
             'maxVisits' => null,
         ],
+        'domain' => null,
     ];
     private const SHORT_URL_CUSTOM_SLUG = [
         'shortCode' => 'custom',
@@ -65,6 +82,7 @@ class ListShortUrlsTest extends ApiTestCase
             'validUntil' => null,
             'maxVisits' => 2,
         ],
+        'domain' => null,
     ];
     private const SHORT_URL_CUSTOM_DOMAIN = [
         'shortCode' => 'ghi789',
@@ -80,6 +98,7 @@ class ListShortUrlsTest extends ApiTestCase
             'validUntil' => null,
             'maxVisits' => null,
         ],
+        'domain' => 'example.com',
     ];
 
     /**
@@ -104,6 +123,7 @@ class ListShortUrlsTest extends ApiTestCase
     {
         yield [[], [
             self::SHORT_URL_SHLINK,
+            self::SHORT_URL_DOCS,
             self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
             self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_SLUG,
@@ -114,7 +134,16 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_CUSTOM_SLUG,
             self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
             self::SHORT_URL_META,
+            self::SHORT_URL_DOCS,
             self::SHORT_URL_CUSTOM_DOMAIN,
+        ]];
+        yield [['orderBy' => ['shortCode' => 'DESC']], [
+            self::SHORT_URL_DOCS,
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_SHLINK,
         ]];
         yield [['startDate' => Chronos::parse('2018-12-01')->toAtomString()], [
             self::SHORT_URL_META,
@@ -123,6 +152,7 @@ class ListShortUrlsTest extends ApiTestCase
         ]];
         yield [['endDate' => Chronos::parse('2018-12-01')->toAtomString()], [
             self::SHORT_URL_SHLINK,
+            self::SHORT_URL_DOCS,
             self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
         ]];
         yield [['tags' => ['foo']], [
@@ -137,6 +167,9 @@ class ListShortUrlsTest extends ApiTestCase
         ]];
         yield [['searchTerm' => 'alejandro'], [
             self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_DOMAIN,
+        ]];
+        yield [['searchTerm' => 'example.com'], [
             self::SHORT_URL_CUSTOM_DOMAIN,
         ]];
     }

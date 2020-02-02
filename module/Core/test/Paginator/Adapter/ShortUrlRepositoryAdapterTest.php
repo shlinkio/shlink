@@ -7,7 +7,7 @@ namespace ShlinkioTest\Shlink\Core\Paginator\Adapter;
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 
@@ -21,17 +21,26 @@ class ShortUrlRepositoryAdapterTest extends TestCase
     }
 
     /**
-     * @param string|array|null $orderBy
      * @test
      * @dataProvider provideFilteringArgs
      */
     public function getItemsFallsBackToFindList(
         ?string $searchTerm = null,
         array $tags = [],
-        ?DateRange $dateRange = null,
-        $orderBy = null
+        ?string $startDate = null,
+        ?string $endDate = null,
+        ?string $orderBy = null
     ): void {
-        $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $searchTerm, $tags, $orderBy, $dateRange);
+        $params = ShortUrlsParams::fromRawData([
+            'searchTerm' => $searchTerm,
+            'tags' => $tags,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'orderBy' => $orderBy,
+        ]);
+        $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $params);
+        $orderBy = $params->orderBy();
+        $dateRange = $params->dateRange();
 
         $this->repo->findList(10, 5, $searchTerm, $tags, $orderBy, $dateRange)->shouldBeCalledOnce();
         $adapter->getItems(5, 10);
@@ -44,9 +53,17 @@ class ShortUrlRepositoryAdapterTest extends TestCase
     public function countFallsBackToCountList(
         ?string $searchTerm = null,
         array $tags = [],
-        ?DateRange $dateRange = null
+        ?string $startDate = null,
+        ?string $endDate = null
     ): void {
-        $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $searchTerm, $tags, null, $dateRange);
+        $params = ShortUrlsParams::fromRawData([
+            'searchTerm' => $searchTerm,
+            'tags' => $tags,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ]);
+        $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $params);
+        $dateRange = $params->dateRange();
 
         $this->repo->countList($searchTerm, $tags, $dateRange)->shouldBeCalledOnce();
         $adapter->count();
@@ -58,12 +75,12 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         yield ['search'];
         yield ['search', []];
         yield ['search', ['foo', 'bar']];
-        yield ['search', ['foo', 'bar'], null, 'order'];
-        yield ['search', ['foo', 'bar'], new DateRange(), 'order'];
-        yield ['search', ['foo', 'bar'], new DateRange(Chronos::now()), 'order'];
-        yield ['search', ['foo', 'bar'], new DateRange(null, Chronos::now()), 'order'];
-        yield ['search', ['foo', 'bar'], new DateRange(Chronos::now(), Chronos::now()), 'order'];
-        yield ['search', ['foo', 'bar'], new DateRange(Chronos::now())];
-        yield [null, ['foo', 'bar'], new DateRange(Chronos::now(), Chronos::now())];
+        yield ['search', ['foo', 'bar'], null, null, 'order'];
+        yield ['search', ['foo', 'bar'], Chronos::now()->toAtomString(), null, 'order'];
+        yield ['search', ['foo', 'bar'], null, Chronos::now()->toAtomString(), 'order'];
+        yield ['search', ['foo', 'bar'], Chronos::now()->toAtomString(), Chronos::now()->toAtomString(), 'order'];
+        yield [null, ['foo', 'bar'], Chronos::now()->toAtomString(), null, 'order'];
+        yield [null, ['foo', 'bar'], Chronos::now()->toAtomString()];
+        yield [null, ['foo', 'bar'], Chronos::now()->toAtomString(), Chronos::now()->toAtomString()];
     }
 }

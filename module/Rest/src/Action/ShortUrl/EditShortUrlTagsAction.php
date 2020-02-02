@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
@@ -27,7 +28,6 @@ class EditShortUrlTagsAction extends AbstractRestAction
 
     public function handle(Request $request): Response
     {
-        $shortCode = $request->getAttribute('shortCode');
         $bodyParams = $request->getParsedBody();
 
         if (! isset($bodyParams['tags'])) {
@@ -35,9 +35,10 @@ class EditShortUrlTagsAction extends AbstractRestAction
                 'tags' => 'List of tags has to be provided',
             ]);
         }
-        $tags = $bodyParams['tags'];
+        ['tags' => $tags] = $bodyParams;
+        $identifier = ShortUrlIdentifier::fromApiRequest($request);
 
-        $shortUrl = $this->shortUrlService->setTagsByShortCode($shortCode, $tags);
+        $shortUrl = $this->shortUrlService->setTagsByShortCode($identifier, $tags);
         return new JsonResponse(['tags' => $shortUrl->getTags()->toArray()]);
     }
 }

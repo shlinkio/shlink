@@ -8,6 +8,7 @@ use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ResolveShortUrlAction;
 
@@ -28,7 +29,7 @@ class ResolveShortUrlActionTest extends TestCase
     public function correctShortCodeReturnsSuccess(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->shortCodeToShortUrl($shortCode, null)->willReturn(
+        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode))->willReturn(
             new ShortUrl('http://domain.com/foo/bar'),
         )->shouldBeCalledOnce();
 

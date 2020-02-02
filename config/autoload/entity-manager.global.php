@@ -9,6 +9,7 @@ return [
     'entity_manager' => [
         'orm' => [
             'proxies_dir' => 'data/proxies',
+            'load_mappings_using_functional_style' => true,
         ],
         'connection' => [
             'user' => '',

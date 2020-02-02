@@ -28,10 +28,15 @@ interface VisitRepositoryInterface extends ObjectRepository
      */
     public function findVisitsByShortCode(
         string $shortCode,
+        ?string $domain = null,
         ?DateRange $dateRange = null,
         ?int $limit = null,
         ?int $offset = null
     ): array;
 
-    public function countVisitsByShortCode(string $shortCode, ?DateRange $dateRange = null): int;
+    public function countVisitsByShortCode(
+        string $shortCode,
+        ?string $domain = null,
+        ?DateRange $dateRange = null
+    ): int;
 }

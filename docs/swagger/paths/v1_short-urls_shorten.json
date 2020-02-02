@@ -72,7 +72,8 @@
                             "validSince": "2017-01-21T00:00:00+02:00",
                             "validUntil": null,
                             "maxVisits": 100
-                        }
+                        },
+                        "domain": null
                     },
                     "text/plain": "https://doma.in/abc123"
                 }

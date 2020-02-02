@@ -6,16 +6,17 @@ namespace Shlinkio\Shlink\Core\Service\ShortUrl;
 
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 
 interface ShortUrlResolverInterface
 {
     /**
      * @throws ShortUrlNotFoundException
      */
-    public function shortCodeToShortUrl(string $shortCode, ?string $domain = null): ShortUrl;
+    public function resolveShortUrl(ShortUrlIdentifier $identifier): ShortUrl;
 
     /**
      * @throws ShortUrlNotFoundException
      */
-    public function shortCodeToEnabledShortUrl(string $shortCode, ?string $domain = null): ShortUrl;
+    public function resolveEnabledShortUrl(ShortUrlIdentifier $identifier): ShortUrl;
 }

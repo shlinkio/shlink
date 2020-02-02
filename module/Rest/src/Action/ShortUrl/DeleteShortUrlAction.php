@@ -8,6 +8,7 @@ use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
@@ -26,8 +27,8 @@ class DeleteShortUrlAction extends AbstractRestAction
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $shortCode = $request->getAttribute('shortCode', '');
-        $this->deleteShortUrlService->deleteByShortCode($shortCode);
+        $identifier = ShortUrlIdentifier::fromApiRequest($request);
+        $this->deleteShortUrlService->deleteByShortCode($identifier);
         return new EmptyResponse();
     }
 }

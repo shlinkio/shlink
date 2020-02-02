@@ -6,41 +6,42 @@ namespace Shlinkio\Shlink\Core;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
-use Doctrine\ORM\Mapping\ClassMetadata; // @codingStandardsIgnoreLine
+use Doctrine\ORM\Mapping\ClassMetadata;
 
-/** @var $metadata ClassMetadata */ // @codingStandardsIgnoreLine
-$builder = new ClassMetadataBuilder($metadata);
+return static function (ClassMetadata $metadata, array $emConfig): void {
+    $builder = new ClassMetadataBuilder($metadata);
 
-$builder->setTable('visit_locations');
+    $builder->setTable(determineTableName('visit_locations', $emConfig));
 
-$builder->createField('id', Types::BIGINT)
-        ->columnName('id')
-        ->makePrimaryKey()
-        ->generatedValue('IDENTITY')
-        ->option('unsigned', true)
-        ->build();
-
-$columns = [
-    'country_code' => 'countryCode',
-    'country_name' => 'countryName',
-    'region_name' => 'regionName',
-    'city_name' => 'cityName',
-    'timezone' => 'timezone',
-];
-
-foreach ($columns as $columnName => $fieldName) {
-    $builder->createField($fieldName, Types::STRING)
-            ->columnName($columnName)
-            ->nullable()
+    $builder->createField('id', Types::BIGINT)
+            ->columnName('id')
+            ->makePrimaryKey()
+            ->generatedValue('IDENTITY')
+            ->option('unsigned', true)
             ->build();
-}
 
-$builder->createField('latitude', Types::FLOAT)
-        ->columnName('lat')
-        ->nullable(false)
-        ->build();
+    $columns = [
+        'country_code' => 'countryCode',
+        'country_name' => 'countryName',
+        'region_name' => 'regionName',
+        'city_name' => 'cityName',
+        'timezone' => 'timezone',
+    ];
 
-$builder->createField('longitude', Types::FLOAT)
-        ->columnName('lon')
-        ->nullable(false)
-        ->build();
+    foreach ($columns as $columnName => $fieldName) {
+        $builder->createField($fieldName, Types::STRING)
+                ->columnName($columnName)
+                ->nullable()
+                ->build();
+    }
+
+    $builder->createField('latitude', Types::FLOAT)
+            ->columnName('lat')
+            ->nullable(false)
+            ->build();
+
+    $builder->createField('longitude', Types::FLOAT)
+            ->columnName('lon')
+            ->nullable(false)
+            ->build();
+};

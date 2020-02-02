@@ -5,38 +5,20 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
 use Laminas\Paginator\Adapter\AdapterInterface;
-use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
-
-use function strip_tags;
-use function trim;
 
 class ShortUrlRepositoryAdapter implements AdapterInterface
 {
     public const ITEMS_PER_PAGE = 10;
 
     private ShortUrlRepositoryInterface $repository;
-    private ?string $searchTerm;
-    /** @var null|array|string */
-    private $orderBy;
-    private array $tags;
-    private ?DateRange $dateRange;
+    private ShortUrlsParams $params;
 
-    /**
-     * @param string|array|null $orderBy
-     */
-    public function __construct(
-        ShortUrlRepositoryInterface $repository,
-        ?string $searchTerm = null,
-        array $tags = [],
-        $orderBy = null,
-        ?DateRange $dateRange = null
-    ) {
+    public function __construct(ShortUrlRepositoryInterface $repository, ShortUrlsParams $params)
+    {
         $this->repository = $repository;
-        $this->searchTerm = $searchTerm !== null ? trim(strip_tags($searchTerm)) : null;
-        $this->orderBy = $orderBy;
-        $this->tags = $tags;
-        $this->dateRange = $dateRange;
+        $this->params = $params;
     }
 
     /**
@@ -50,10 +32,10 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
         return $this->repository->findList(
             $itemCountPerPage,
             $offset,
-            $this->searchTerm,
-            $this->tags,
-            $this->orderBy,
-            $this->dateRange,
+            $this->params->searchTerm(),
+            $this->params->tags(),
+            $this->params->orderBy(),
+            $this->params->dateRange(),
         );
     }
 
@@ -68,6 +50,10 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
      */
     public function count(): int
     {
-        return $this->repository->countList($this->searchTerm, $this->tags, $this->dateRange);
+        return $this->repository->countList(
+            $this->params->searchTerm(),
+            $this->params->tags(),
+            $this->params->dateRange(),
+        );
     }
 }

@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Rest\Action\Visit\GetVisitsAction;
@@ -31,7 +32,7 @@ class GetVisitsActionTest extends TestCase
     public function providingCorrectShortCodeReturnsVisits(): void
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info($shortCode, Argument::type(VisitsParams::class))->willReturn(
+        $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), Argument::type(VisitsParams::class))->willReturn(
             new Paginator(new ArrayAdapter([])),
         )->shouldBeCalledOnce();
 
@@ -43,7 +44,7 @@ class GetVisitsActionTest extends TestCase
     public function paramsAreReadFromQuery(): void
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info($shortCode, new VisitsParams(
+        $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), new VisitsParams(
             new DateRange(null, Chronos::parse('2016-01-01 00:00:00')),
             3,
             10,

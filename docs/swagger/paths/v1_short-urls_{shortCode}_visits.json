@@ -20,6 +20,9 @@
                 }
             },
             {
+                "$ref": "../parameters/domain.json"
+            },
+            {
                 "name": "startDate",
                 "in": "query",
                 "description": "The date (in ISO-8601 format) from which we want to get visits.",

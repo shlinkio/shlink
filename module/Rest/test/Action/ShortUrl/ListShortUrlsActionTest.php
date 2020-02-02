@@ -12,7 +12,7 @@ use Laminas\Paginator\Paginator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ListShortUrlsAction;
 
@@ -43,15 +43,17 @@ class ListShortUrlsActionTest extends TestCase
         ?string $expectedSearchTerm,
         array $expectedTags,
         ?string $expectedOrderBy,
-        DateRange $expectedDateRange
+        ?string $startDate = null,
+        ?string $endDate = null
     ): void {
-        $listShortUrls = $this->service->listShortUrls(
-            $expectedPage,
-            $expectedSearchTerm,
-            $expectedTags,
-            $expectedOrderBy,
-            $expectedDateRange,
-        )->willReturn(new Paginator(new ArrayAdapter()));
+        $listShortUrls = $this->service->listShortUrls(ShortUrlsParams::fromRawData([
+            'page' => $expectedPage,
+            'searchTerm' => $expectedSearchTerm,
+            'tags' => $expectedTags,
+            'orderBy' => $expectedOrderBy,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ]))->willReturn(new Paginator(new ArrayAdapter()));
 
         /** @var JsonResponse $response */
         $response = $this->action->handle((new ServerRequest())->withQueryParams($query));
@@ -66,25 +68,25 @@ class ListShortUrlsActionTest extends TestCase
 
     public function provideFilteringData(): iterable
     {
-        yield [[], 1, null, [], null, new DateRange()];
-        yield [['page' => 10], 10, null, [], null, new DateRange()];
-        yield [['page' => null], 1, null, [], null, new DateRange()];
-        yield [['page' => '8'], 8, null, [], null, new DateRange()];
-        yield [['searchTerm' => $searchTerm = 'foo'], 1, $searchTerm, [], null, new DateRange()];
-        yield [['tags' => $tags = ['foo','bar']], 1, null, $tags, null, new DateRange()];
-        yield [['orderBy' => $orderBy = 'something'], 1, null, [], $orderBy, new DateRange()];
+        yield [[], 1, null, [], null];
+        yield [['page' => 10], 10, null, [], null];
+        yield [['page' => null], 1, null, [], null];
+        yield [['page' => '8'], 8, null, [], null];
+        yield [['searchTerm' => $searchTerm = 'foo'], 1, $searchTerm, [], null];
+        yield [['tags' => $tags = ['foo','bar']], 1, null, $tags, null];
+        yield [['orderBy' => $orderBy = 'something'], 1, null, [], $orderBy];
         yield [[
             'page' => '2',
             'orderBy' => $orderBy = 'something',
             'tags' => $tags = ['one', 'two'],
-        ], 2, null, $tags, $orderBy, new DateRange()];
+        ], 2, null, $tags, $orderBy];
         yield [
             ['startDate' => $date = Chronos::now()->toAtomString()],
             1,
             null,
             [],
             null,
-            new DateRange(Chronos::parse($date)),
+            $date,
         ];
         yield [
             ['endDate' => $date = Chronos::now()->toAtomString()],
@@ -92,7 +94,8 @@ class ListShortUrlsActionTest extends TestCase
             null,
             [],
             null,
-            new DateRange(null, Chronos::parse($date)),
+            null,
+            $date,
         ];
         yield [
             [
@@ -103,7 +106,8 @@ class ListShortUrlsActionTest extends TestCase
             null,
             [],
             null,
-            new DateRange(Chronos::parse($startDate), Chronos::parse($endDate)),
+            $startDate,
+            $endDate,
         ];
     }
 }

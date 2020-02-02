@@ -7,14 +7,17 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 use Cake\Chronos\Chronos;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use GuzzleHttp\RequestOptions;
+use Laminas\Diactoros\Uri;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
+use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
 
-use function Functional\first;
+use function GuzzleHttp\Psr7\build_query;
 use function sprintf;
 
 class EditShortUrlActionTest extends ApiTestCase
 {
     use ArraySubsetAsserts;
+    use NotFoundUrlHelpersTrait;
 
     /**
      * @test
@@ -61,20 +64,24 @@ class EditShortUrlActionTest extends ApiTestCase
 
     private function findShortUrlMetaByShortCode(string $shortCode): ?array
     {
-        // FIXME Call GET /short-urls/{shortCode} once issue https://github.com/shlinkio/shlink/issues/628 is fixed
-        $allShortUrls = $this->getJsonResponsePayload($this->callApiWithKey(self::METHOD_GET, '/short-urls'));
-        $list = $allShortUrls['shortUrls']['data'] ?? [];
-        $matchingShortUrl = first($list, fn (array $shortUrl) => $shortUrl['shortCode'] ?? '' === $shortCode);
+        $matchingShortUrl = $this->getJsonResponsePayload(
+            $this->callApiWithKey(self::METHOD_GET, '/short-urls/' . $shortCode),
+        );
 
         return $matchingShortUrl['meta'] ?? null;
     }
 
-    /** @test */
-    public function tryingToEditInvalidUrlReturnsNotFoundError(): void
-    {
-        $expectedDetail = 'No URL found with short code "invalid"';
-
-        $resp = $this->callApiWithKey(self::METHOD_PATCH, '/short-urls/invalid', [RequestOptions::JSON => []]);
+    /**
+     * @test
+     * @dataProvider provideInvalidUrls
+     */
+    public function tryingToEditInvalidUrlReturnsNotFoundError(
+        string $shortCode,
+        ?string $domain,
+        string $expectedDetail
+    ): void {
+        $url = $this->buildShortUrlPath($shortCode, $domain);
+        $resp = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => []]);
         $payload = $this->getJsonResponsePayload($resp);
 
         $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
@@ -82,7 +89,8 @@ class EditShortUrlActionTest extends ApiTestCase
         $this->assertEquals('INVALID_SHORTCODE', $payload['type']);
         $this->assertEquals($expectedDetail, $payload['detail']);
         $this->assertEquals('Short URL not found', $payload['title']);
-        $this->assertEquals('invalid', $payload['shortCode']);
+        $this->assertEquals($shortCode, $payload['shortCode']);
+        $this->assertEquals($domain, $payload['domain'] ?? null);
     }
 
     /** @test */
@@ -100,5 +108,38 @@ class EditShortUrlActionTest extends ApiTestCase
         $this->assertEquals('INVALID_ARGUMENT', $payload['type']);
         $this->assertEquals($expectedDetail, $payload['detail']);
         $this->assertEquals('Invalid data', $payload['title']);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideDomains
+     */
+    public function metadataIsEditedOnProperShortUrlBasedOnDomain(?string $domain, string $expectedUrl): void
+    {
+        $shortCode = 'ghi789';
+        $url = new Uri(sprintf('/short-urls/%s', $shortCode));
+
+        if ($domain !== null) {
+            $url = $url->withQuery(build_query(['domain' => $domain]));
+        }
+
+        $editResp = $this->callApiWithKey(self::METHOD_PATCH, (string) $url, [RequestOptions::JSON => [
+            'maxVisits' => 100,
+        ]]);
+        $editedShortUrl = $this->getJsonResponsePayload($this->callApiWithKey(self::METHOD_GET, (string) $url));
+
+        $this->assertEquals(self::STATUS_NO_CONTENT, $editResp->getStatusCode());
+        $this->assertEquals($domain, $editedShortUrl['domain']);
+        $this->assertEquals($expectedUrl, $editedShortUrl['longUrl']);
+        $this->assertEquals(100, $editedShortUrl['meta']['maxVisits'] ?? null);
+    }
+
+    public function provideDomains(): iterable
+    {
+        yield 'domain' => [
+            'example.com',
+            'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-source-software-projects/',
+        ];
+        yield 'no domain' => [null, 'https://shlink.io/documentation/'];
     }
 }

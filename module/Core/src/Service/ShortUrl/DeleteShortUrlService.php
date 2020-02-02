@@ -7,28 +7,32 @@ namespace Shlinkio\Shlink\Core\Service\ShortUrl;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Options\DeleteShortUrlsOptions;
 
 class DeleteShortUrlService implements DeleteShortUrlServiceInterface
 {
-    use FindShortCodeTrait;
-
     private EntityManagerInterface $em;
     private DeleteShortUrlsOptions $deleteShortUrlsOptions;
+    private ShortUrlResolverInterface $urlResolver;
 
-    public function __construct(EntityManagerInterface $em, DeleteShortUrlsOptions $deleteShortUrlsOptions)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        DeleteShortUrlsOptions $deleteShortUrlsOptions,
+        ShortUrlResolverInterface $urlResolver
+    ) {
         $this->em = $em;
         $this->deleteShortUrlsOptions = $deleteShortUrlsOptions;
+        $this->urlResolver = $urlResolver;
     }
 
     /**
      * @throws Exception\ShortUrlNotFoundException
      * @throws Exception\DeleteShortUrlException
      */
-    public function deleteByShortCode(string $shortCode, bool $ignoreThreshold = false): void
+    public function deleteByShortCode(ShortUrlIdentifier $identifier, bool $ignoreThreshold = false): void
     {
-        $shortUrl = $this->findByShortCode($this->em, $shortCode);
+        $shortUrl = $this->urlResolver->resolveShortUrl($identifier);
         if (! $ignoreThreshold && $this->isThresholdReached($shortUrl)) {
             throw Exception\DeleteShortUrlException::fromVisitsThreshold(
                 $this->deleteShortUrlsOptions->getVisitsThreshold(),

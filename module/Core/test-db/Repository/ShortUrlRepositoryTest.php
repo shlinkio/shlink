@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
@@ -36,7 +37,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function findOneByShortCodeReturnsProperData(): void
+    public function findOneWithDomainFallbackReturnsProperData(): void
     {
         $regularOne = new ShortUrl('foo', ShortUrlMeta::fromRawData(['customSlug' => 'foo']));
         $this->getEntityManager()->persist($regularOne);
@@ -53,20 +54,25 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $this->assertSame($regularOne, $this->repo->findOneByShortCode($regularOne->getShortCode()));
-        $this->assertSame($regularOne, $this->repo->findOneByShortCode($withDomainDuplicatingRegular->getShortCode()));
-        $this->assertSame($withDomain, $this->repo->findOneByShortCode($withDomain->getShortCode(), 'example.com'));
+        $this->assertSame($regularOne, $this->repo->findOneWithDomainFallback($regularOne->getShortCode()));
+        $this->assertSame($regularOne, $this->repo->findOneWithDomainFallback(
+            $withDomainDuplicatingRegular->getShortCode(),
+        ));
+        $this->assertSame($withDomain, $this->repo->findOneWithDomainFallback(
+            $withDomain->getShortCode(),
+            'example.com',
+        ));
         $this->assertSame(
             $withDomainDuplicatingRegular,
-            $this->repo->findOneByShortCode($withDomainDuplicatingRegular->getShortCode(), 'doma.in'),
+            $this->repo->findOneWithDomainFallback($withDomainDuplicatingRegular->getShortCode(), 'doma.in'),
         );
         $this->assertSame(
             $regularOne,
-            $this->repo->findOneByShortCode($withDomainDuplicatingRegular->getShortCode(), 'other-domain.com'),
+            $this->repo->findOneWithDomainFallback($withDomainDuplicatingRegular->getShortCode(), 'other-domain.com'),
         );
-        $this->assertNull($this->repo->findOneByShortCode('invalid'));
-        $this->assertNull($this->repo->findOneByShortCode($withDomain->getShortCode()));
-        $this->assertNull($this->repo->findOneByShortCode($withDomain->getShortCode(), 'other-domain.com'));
+        $this->assertNull($this->repo->findOneWithDomainFallback('invalid'));
+        $this->assertNull($this->repo->findOneWithDomainFallback($withDomain->getShortCode()));
+        $this->assertNull($this->repo->findOneWithDomainFallback($withDomain->getShortCode(), 'other-domain.com'));
     }
 
     /** @test */
@@ -122,7 +128,9 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->assertCount(1, $this->repo->findList(2, 2));
 
-        $result = $this->repo->findList(null, null, null, [], ['visits' => 'DESC']);
+        $result = $this->repo->findList(null, null, null, [], ShortUrlsOrdering::fromRawData([
+            'orderBy' => ['visits' => 'DESC'],
+        ]));
         $this->assertCount(3, $result);
         $this->assertSame($bar, $result[0]);
 
@@ -148,7 +156,9 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $result = $this->repo->findList(null, null, null, [], ['longUrl' => 'ASC']);
+        $result = $this->repo->findList(null, null, null, [], ShortUrlsOrdering::fromRawData([
+            'orderBy' => ['longUrl' => 'ASC'],
+        ]));
 
         $this->assertCount(count($urls), $result);
         $this->assertEquals('a', $result[0]->getLongUrl());
@@ -177,5 +187,27 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->assertFalse($this->repo->shortCodeIsInUse('another-slug'));
         $this->assertFalse($this->repo->shortCodeIsInUse('another-slug', 'example.com'));
         $this->assertTrue($this->repo->shortCodeIsInUse('another-slug', 'doma.in'));
+    }
+
+    /** @test */
+    public function findOneLooksForShortUrlInProperSetOfTables(): void
+    {
+        $shortUrlWithoutDomain = new ShortUrl('foo', ShortUrlMeta::fromRawData(['customSlug' => 'my-cool-slug']));
+        $this->getEntityManager()->persist($shortUrlWithoutDomain);
+
+        $shortUrlWithDomain = new ShortUrl(
+            'foo',
+            ShortUrlMeta::fromRawData(['domain' => 'doma.in', 'customSlug' => 'another-slug']),
+        );
+        $this->getEntityManager()->persist($shortUrlWithDomain);
+
+        $this->getEntityManager()->flush();
+
+        $this->assertNotNull($this->repo->findOne('my-cool-slug'));
+        $this->assertNull($this->repo->findOne('my-cool-slug', 'doma.in'));
+        $this->assertNull($this->repo->findOne('slug-not-in-use'));
+        $this->assertNull($this->repo->findOne('another-slug'));
+        $this->assertNull($this->repo->findOne('another-slug', 'example.com'));
+        $this->assertNotNull($this->repo->findOne('another-slug', 'doma.in'));
     }
 }

@@ -13,6 +13,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
@@ -45,7 +46,8 @@ class RedirectActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $shortUrl = new ShortUrl('http://domain.com/foo/bar?some=thing');
-        $shortCodeToUrl = $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, '')->willReturn($shortUrl);
+        $shortCodeToUrl = $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))
+            ->willReturn($shortUrl);
         $track = $this->visitTracker->track(Argument::cetera())->will(function (): void {
         });
 
@@ -74,8 +76,9 @@ class RedirectActionTest extends TestCase
     public function nextMiddlewareIsInvokedIfLongUrlIsNotFound(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, '')->willThrow(ShortUrlNotFoundException::class)
-                                                                      ->shouldBeCalledOnce();
+        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))
+            ->willThrow(ShortUrlNotFoundException::class)
+            ->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldNotBeCalled();
 
         $handler = $this->prophesize(RequestHandlerInterface::class);

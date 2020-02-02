@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Model;
 
-use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Common\Util\DateRange;
+
+use function Shlinkio\Shlink\Core\parseDateFromQuery;
 
 final class VisitsParams
 {
@@ -34,19 +35,11 @@ final class VisitsParams
 
     public static function fromRawData(array $query): self
     {
-        $startDate = self::getDateQueryParam($query, 'startDate');
-        $endDate = self::getDateQueryParam($query, 'endDate');
-
         return new self(
-            new DateRange($startDate, $endDate),
+            new DateRange(parseDateFromQuery($query, 'startDate'), parseDateFromQuery($query, 'endDate')),
             (int) ($query['page'] ?? 1),
             isset($query['itemsPerPage']) ? (int) $query['itemsPerPage'] : null,
         );
-    }
-
-    private static function getDateQueryParam(array $query, string $key): ?Chronos
-    {
-        return ! isset($query[$key]) || empty($query[$key]) ? null : Chronos::parse($query[$key]);
     }
 
     public function getDateRange(): DateRange

@@ -9,6 +9,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\DeleteShortUrlCommand;
 use Shlinkio\Shlink\Core\Exception;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -38,8 +39,10 @@ class DeleteShortUrlCommandTest extends TestCase
     public function successMessageIsPrintedIfUrlIsProperlyDeleted(): void
     {
         $shortCode = 'abc123';
-        $deleteByShortCode = $this->service->deleteByShortCode($shortCode, false)->will(function (): void {
-        });
+        $deleteByShortCode = $this->service->deleteByShortCode(new ShortUrlIdentifier($shortCode), false)->will(
+            function (): void {
+            },
+        );
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
@@ -55,8 +58,9 @@ class DeleteShortUrlCommandTest extends TestCase
     public function invalidShortCodePrintsMessage(): void
     {
         $shortCode = 'abc123';
-        $deleteByShortCode = $this->service->deleteByShortCode($shortCode, false)->willThrow(
-            Exception\ShortUrlNotFoundException::fromNotFoundShortCode($shortCode),
+        $identifier = new ShortUrlIdentifier($shortCode);
+        $deleteByShortCode = $this->service->deleteByShortCode($identifier, false)->willThrow(
+            Exception\ShortUrlNotFoundException::fromNotFound($identifier),
         );
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
@@ -76,7 +80,8 @@ class DeleteShortUrlCommandTest extends TestCase
         string $expectedMessage
     ): void {
         $shortCode = 'abc123';
-        $deleteByShortCode = $this->service->deleteByShortCode($shortCode, Argument::type('bool'))->will(
+        $identifier = new ShortUrlIdentifier($shortCode);
+        $deleteByShortCode = $this->service->deleteByShortCode($identifier, Argument::type('bool'))->will(
             function (array $args) use ($shortCode): void {
                 $ignoreThreshold = array_pop($args);
 
@@ -109,7 +114,7 @@ class DeleteShortUrlCommandTest extends TestCase
     public function deleteIsNotRetriedWhenThresholdIsReachedAndQuestionIsDeclined(): void
     {
         $shortCode = 'abc123';
-        $deleteByShortCode = $this->service->deleteByShortCode($shortCode, false)->willThrow(
+        $deleteByShortCode = $this->service->deleteByShortCode(new ShortUrlIdentifier($shortCode), false)->willThrow(
             Exception\DeleteShortUrlException::fromVisitsThreshold(10, $shortCode),
         );
         $this->commandTester->setInputs(['no']);

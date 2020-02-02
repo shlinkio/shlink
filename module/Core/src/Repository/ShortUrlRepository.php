@@ -8,18 +8,16 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 
 use function array_column;
 use function array_key_exists;
 use function Functional\contains;
-use function is_array;
-use function key;
 
 class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryInterface
 {
     /**
      * @param string[] $tags
-     * @param string|array|null $orderBy
      * @return ShortUrl[]
      */
     public function findList(
@@ -27,7 +25,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         ?int $offset = null,
         ?string $searchTerm = null,
         array $tags = [],
-        $orderBy = null,
+        ?ShortUrlsOrdering $orderBy = null,
         ?DateRange $dateRange = null
     ): array {
         $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange);
@@ -42,7 +40,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         }
 
         // In case the ordering has been specified, the query could be more complex. Process it
-        if ($orderBy !== null) {
+        if ($orderBy !== null && $orderBy->hasOrderField()) {
             return $this->processOrderByForList($qb, $orderBy);
         }
 
@@ -51,14 +49,10 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param string|array|null $orderBy
-     */
-    private function processOrderByForList(QueryBuilder $qb, $orderBy): array
+    private function processOrderByForList(QueryBuilder $qb, ShortUrlsOrdering $orderBy): array
     {
-        $isArray = is_array($orderBy);
-        $fieldName = $isArray ? key($orderBy) : $orderBy;
-        $order = $isArray ? $orderBy[$fieldName] : 'ASC';
+        $fieldName = $orderBy->orderField();
+        $order = $orderBy->orderDirection();
 
         if (contains(['visits', 'visitsCount', 'visitCount'], $fieldName)) {
             $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
@@ -96,8 +90,8 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         ?DateRange $dateRange = null
     ): QueryBuilder {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from(ShortUrl::class, 's');
-        $qb->where('1=1');
+        $qb->from(ShortUrl::class, 's')
+           ->where('1=1');
 
         if ($dateRange !== null && $dateRange->getStartDate() !== null) {
             $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
@@ -116,12 +110,14 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
             }
 
             // Apply search conditions
-            $qb->andWhere($qb->expr()->orX(
-                $qb->expr()->like('s.longUrl', ':searchPattern'),
-                $qb->expr()->like('s.shortCode', ':searchPattern'),
-                $qb->expr()->like('t.name', ':searchPattern'),
-            ));
-            $qb->setParameter('searchPattern', '%' . $searchTerm . '%');
+            $qb->leftJoin('s.domain', 'd')
+               ->andWhere($qb->expr()->orX(
+                   $qb->expr()->like('s.longUrl', ':searchPattern'),
+                   $qb->expr()->like('s.shortCode', ':searchPattern'),
+                   $qb->expr()->like('t.name', ':searchPattern'),
+                   $qb->expr()->like('d.authority', ':searchPattern'),
+               ))
+               ->setParameter('searchPattern', '%' . $searchTerm . '%');
         }
 
         // Filter by tags if provided
@@ -133,7 +129,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb;
     }
 
-    public function findOneByShortCode(string $shortCode, ?string $domain = null): ?ShortUrl
+    public function findOneWithDomainFallback(string $shortCode, ?string $domain = null): ?ShortUrl
     {
         // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
         // the bottom
@@ -165,14 +161,30 @@ DQL;
         return $query->getOneOrNullResult();
     }
 
+    public function findOne(string $shortCode, ?string $domain = null): ?ShortUrl
+    {
+        $qb = $this->createFindOneQueryBuilder($shortCode, $domain);
+        $qb->select('s');
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
     public function shortCodeIsInUse(string $slug, ?string $domain = null): bool
     {
+        $qb = $this->createFindOneQueryBuilder($slug, $domain);
+        $qb->select('COUNT(DISTINCT s.id)');
+
+        return ((int) $qb->getQuery()->getSingleScalarResult()) > 0;
+    }
+
+    private function createFindOneQueryBuilder(string $slug, ?string $domain = null): QueryBuilder
+    {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('COUNT(DISTINCT s.id)')
-           ->from(ShortUrl::class, 's')
+        $qb->from(ShortUrl::class, 's')
            ->where($qb->expr()->isNotNull('s.shortCode'))
            ->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
-           ->setParameter('slug', $slug);
+           ->setParameter('slug', $slug)
+           ->setMaxResults(1);
 
         if ($domain !== null) {
             $qb->join('s.domain', 'd')
@@ -182,7 +194,6 @@ DQL;
             $qb->andWhere($qb->expr()->isNull('s.domain'));
         }
 
-        $result = (int) $qb->getQuery()->getSingleScalarResult();
-        return $result > 0;
+        return $qb;
     }
 }
