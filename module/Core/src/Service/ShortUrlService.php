@@ -8,23 +8,25 @@ use Doctrine\ORM;
 use Laminas\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
-use Shlinkio\Shlink\Core\Service\ShortUrl\FindShortCodeTrait;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 
 class ShortUrlService implements ShortUrlServiceInterface
 {
-    use FindShortCodeTrait;
     use TagManagerTrait;
 
     private ORM\EntityManagerInterface $em;
+    private ShortUrlResolverInterface $urlResolver;
 
-    public function __construct(ORM\EntityManagerInterface $em)
+    public function __construct(ORM\EntityManagerInterface $em, ShortUrlResolverInterface $urlResolver)
     {
         $this->em = $em;
+        $this->urlResolver = $urlResolver;
     }
 
     /**
@@ -45,10 +47,11 @@ class ShortUrlService implements ShortUrlServiceInterface
      * @param string[] $tags
      * @throws ShortUrlNotFoundException
      */
-    public function setTagsByShortCode(string $shortCode, array $tags = []): ShortUrl
+    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags = []): ShortUrl
     {
-        $shortUrl = $this->findByShortCode($this->em, $shortCode);
+        $shortUrl = $this->urlResolver->resolveShortUrl($identifier);
         $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
+
         $this->em->flush();
 
         return $shortUrl;
@@ -57,9 +60,9 @@ class ShortUrlService implements ShortUrlServiceInterface
     /**
      * @throws ShortUrlNotFoundException
      */
-    public function updateMetadataByShortCode(string $shortCode, ShortUrlMeta $shortUrlMeta): ShortUrl
+    public function updateMetadataByShortCode(ShortUrlIdentifier $identifier, ShortUrlMeta $shortUrlMeta): ShortUrl
     {
-        $shortUrl = $this->findByShortCode($this->em, $shortCode);
+        $shortUrl = $this->urlResolver->resolveShortUrl($identifier);
         $shortUrl->updateMeta($shortUrlMeta);
 
         $this->em->flush();

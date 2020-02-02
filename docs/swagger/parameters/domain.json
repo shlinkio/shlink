@@ -1,0 +1,9 @@
+{
+    "name": "domain",
+    "description": "The domain in which the short code should be searched for.",
+    "in": "query",
+    "required": false,
+    "schema": {
+        "type": "string"
+    }
+}

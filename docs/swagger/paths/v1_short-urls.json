@@ -123,7 +123,8 @@
                                         "validSince": "2017-01-21T00:00:00+02:00",
                                         "validUntil": null,
                                         "maxVisits": 100
-                                    }
+                                    },
+                                    "domain": null
                                 },
                                 {
                                     "shortCode": "12Kb3",
@@ -138,11 +139,12 @@
                                         "validSince": null,
                                         "validUntil": null,
                                         "maxVisits": null
-                                    }
+                                    },
+                                    "domain":  null
                                 },
                                 {
                                     "shortCode": "123bA",
-                                    "shortUrl": "https://doma.in/123bA",
+                                    "shortUrl": "https://example.com/123bA",
                                     "longUrl": "https://www.google.com",
                                     "dateCreated": "2015-10-01T20:34:16+02:00",
                                     "visitsCount": 25,
@@ -151,7 +153,8 @@
                                         "validSince": "2017-01-21T00:00:00+02:00",
                                         "validUntil": null,
                                         "maxVisits": null
-                                    }
+                                    },
+                                    "domain":  "example.com"
                                 }
                             ],
                             "pagination": {
@@ -271,7 +274,8 @@
                             "validSince": "2017-01-21T00:00:00+02:00",
                             "validUntil": null,
                             "maxVisits": 500
-                        }
+                        },
+                        "domain": null
                     }
                 }
             },

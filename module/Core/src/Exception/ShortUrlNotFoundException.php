@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Exception;
 use Fig\Http\Message\StatusCodeInterface;
 use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 
 use function sprintf;
 
@@ -17,8 +18,10 @@ class ShortUrlNotFoundException extends DomainException implements ProblemDetail
     private const TITLE = 'Short URL not found';
     private const TYPE = 'INVALID_SHORTCODE';
 
-    public static function fromNotFoundShortCode(string $shortCode, ?string $domain = null): self
+    public static function fromNotFound(ShortUrlIdentifier $identifier): self
     {
+        $shortCode = $identifier->shortCode();
+        $domain = $identifier->domain();
         $suffix = $domain === null ? '' : sprintf(' for domain "%s"', $domain);
         $e = new self(sprintf('No URL found with short code "%s"%s', $shortCode, $suffix));
 

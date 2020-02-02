@@ -20,13 +20,7 @@
                 }
             },
             {
-                "name": "domain",
-                "in": "query",
-                "description": "The domain in which the short code should be searched for. Will fall back to default domain if not found.",
-                "required": false,
-                "schema": {
-                    "type": "string"
-                }
+                "$ref": "../parameters/domain.json"
             }
         ],
         "security": [
@@ -58,7 +52,8 @@
                             "validSince": "2017-01-21T00:00:00+02:00",
                             "validUntil": null,
                             "maxVisits": 100
-                        }
+                        },
+                        "domain": null
                     }
                 }
             },
@@ -104,6 +99,9 @@
                 "schema": {
                     "type": "string"
                 }
+            },
+            {
+                "$ref": "../parameters/domain.json"
             }
         ],
         "requestBody": {
@@ -214,6 +212,9 @@
                 "schema": {
                     "type": "string"
                 }
+            },
+            {
+                "$ref": "../parameters/domain.json"
             }
         ],
         "security": [

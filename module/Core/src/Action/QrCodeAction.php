@@ -14,6 +14,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 
 class QrCodeAction implements MiddlewareInterface
@@ -38,18 +39,16 @@ class QrCodeAction implements MiddlewareInterface
 
     public function process(Request $request, RequestHandlerInterface $handler): Response
     {
-        // Make sure the short URL exists for this short code
-        $shortCode = $request->getAttribute('shortCode');
-        $domain = $request->getUri()->getAuthority();
+        $identifier = ShortUrlIdentifier::fromRedirectRequest($request);
 
         try {
-            $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, $domain);
+            $this->urlResolver->resolveEnabledShortUrl($identifier);
         } catch (ShortUrlNotFoundException $e) {
             $this->logger->warning('An error occurred while creating QR code. {e}', ['e' => $e]);
             return $handler->handle($request);
         }
 
-        $path = $this->router->generateUri(RedirectAction::class, ['shortCode' => $shortCode]);
+        $path = $this->router->generateUri(RedirectAction::class, ['shortCode' => $identifier->shortCode()]);
         $size = $this->getSizeParam($request);
 
         $qrCode = new QrCode((string) $request->getUri()->withPath($path)->withQuery(''));

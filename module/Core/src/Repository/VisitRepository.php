@@ -46,11 +46,12 @@ DQL;
      */
     public function findVisitsByShortCode(
         string $shortCode,
+        ?string $domain = null,
         ?DateRange $dateRange = null,
         ?int $limit = null,
         ?int $offset = null
     ): array {
-        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $dateRange);
+        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
         $qb->select('v')
            ->orderBy('v.date', 'DESC');
 
@@ -64,21 +65,33 @@ DQL;
         return $qb->getQuery()->getResult();
     }
 
-    public function countVisitsByShortCode(string $shortCode, ?DateRange $dateRange = null): int
+    public function countVisitsByShortCode(string $shortCode, ?string $domain = null, ?DateRange $dateRange = null): int
     {
-        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $dateRange);
+        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
         $qb->select('COUNT(DISTINCT v.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    private function createVisitsByShortCodeQueryBuilder(string $shortCode, ?DateRange $dateRange = null): QueryBuilder
-    {
+    private function createVisitsByShortCodeQueryBuilder(
+        string $shortCode,
+        ?string $domain,
+        ?DateRange $dateRange
+    ): QueryBuilder {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
            ->join('v.shortUrl', 'su')
            ->where($qb->expr()->eq('su.shortCode', ':shortCode'))
            ->setParameter('shortCode', $shortCode);
+
+        // Apply domain filtering
+        if ($domain !== null) {
+            $qb->join('su.domain', 'd')
+               ->andWhere($qb->expr()->eq('d.authority', ':domain'))
+               ->setParameter('domain', $domain);
+        } else {
+            $qb->andWhere($qb->expr()->isNull('su.domain'));
+        }
 
         // Apply date range filtering
         if ($dateRange !== null && $dateRange->getStartDate() !== null) {

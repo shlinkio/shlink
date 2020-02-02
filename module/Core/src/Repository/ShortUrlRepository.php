@@ -90,8 +90,8 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         ?DateRange $dateRange = null
     ): QueryBuilder {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from(ShortUrl::class, 's');
-        $qb->where('1=1');
+        $qb->from(ShortUrl::class, 's')
+           ->where('1=1');
 
         if ($dateRange !== null && $dateRange->getStartDate() !== null) {
             $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
@@ -127,7 +127,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb;
     }
 
-    public function findOneByShortCode(string $shortCode, ?string $domain = null): ?ShortUrl
+    public function findOneWithDomainFallback(string $shortCode, ?string $domain = null): ?ShortUrl
     {
         // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
         // the bottom
@@ -159,14 +159,30 @@ DQL;
         return $query->getOneOrNullResult();
     }
 
+    public function findOne(string $shortCode, ?string $domain = null): ?ShortUrl
+    {
+        $qb = $this->createFindOneQueryBuilder($shortCode, $domain);
+        $qb->select('s');
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
     public function shortCodeIsInUse(string $slug, ?string $domain = null): bool
     {
+        $qb = $this->createFindOneQueryBuilder($slug, $domain);
+        $qb->select('COUNT(DISTINCT s.id)');
+
+        return ((int) $qb->getQuery()->getSingleScalarResult()) > 0;
+    }
+
+    private function createFindOneQueryBuilder(string $slug, ?string $domain = null): QueryBuilder
+    {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('COUNT(DISTINCT s.id)')
-           ->from(ShortUrl::class, 's')
+        $qb->from(ShortUrl::class, 's')
            ->where($qb->expr()->isNotNull('s.shortCode'))
            ->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
-           ->setParameter('slug', $slug);
+           ->setParameter('slug', $slug)
+           ->setMaxResults(1);
 
         if ($domain !== null) {
             $qb->join('s.domain', 'd')
@@ -176,7 +192,6 @@ DQL;
             $qb->andWhere($qb->expr()->isNull('s.domain'));
         }
 
-        $result = (int) $qb->getQuery()->getSingleScalarResult();
-        return $result > 0;
+        return $qb;
     }
 }

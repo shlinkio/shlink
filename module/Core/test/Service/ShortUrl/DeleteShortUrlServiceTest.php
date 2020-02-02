@@ -12,10 +12,11 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\DeleteShortUrlsOptions;
-use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlService;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 
 use function Functional\map;
 use function range;
@@ -24,20 +25,20 @@ use function sprintf;
 class DeleteShortUrlServiceTest extends TestCase
 {
     private ObjectProphecy $em;
+    private ObjectProphecy $urlResolver;
     private string $shortCode;
 
     public function setUp(): void
     {
-        $shortUrl = (new ShortUrl(''))->setVisits(
-            new ArrayCollection(map(range(0, 10), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance()))),
-        );
+        $shortUrl = (new ShortUrl(''))->setVisits(new ArrayCollection(
+            map(range(0, 10), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance())),
+        ));
         $this->shortCode = $shortUrl->getShortCode();
 
         $this->em = $this->prophesize(EntityManagerInterface::class);
 
-        $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $repo->findOneBy(Argument::type('array'))->willReturn($shortUrl);
-        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
+        $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
+        $this->urlResolver->resolveShortUrl(Argument::cetera())->willReturn($shortUrl);
     }
 
     /** @test */
@@ -51,7 +52,7 @@ class DeleteShortUrlServiceTest extends TestCase
             $this->shortCode,
         ));
 
-        $service->deleteByShortCode($this->shortCode);
+        $service->deleteByShortCode(new ShortUrlIdentifier($this->shortCode));
     }
 
     /** @test */
@@ -62,7 +63,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
         $flush = $this->em->flush()->willReturn(null);
 
-        $service->deleteByShortCode($this->shortCode, true);
+        $service->deleteByShortCode(new ShortUrlIdentifier($this->shortCode), true);
 
         $remove->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
@@ -76,7 +77,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
         $flush = $this->em->flush()->willReturn(null);
 
-        $service->deleteByShortCode($this->shortCode);
+        $service->deleteByShortCode(new ShortUrlIdentifier($this->shortCode));
 
         $remove->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
@@ -90,7 +91,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
         $flush = $this->em->flush()->willReturn(null);
 
-        $service->deleteByShortCode($this->shortCode);
+        $service->deleteByShortCode(new ShortUrlIdentifier($this->shortCode));
 
         $remove->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
@@ -101,6 +102,6 @@ class DeleteShortUrlServiceTest extends TestCase
         return new DeleteShortUrlService($this->em->reveal(), new DeleteShortUrlsOptions([
             'visitsThreshold' => $visitsThreshold,
             'checkVisitsThreshold' => $checkVisitsThreshold,
-        ]));
+        ]), $this->urlResolver->reveal());
     }
 }

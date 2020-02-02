@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Action\QrCodeAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 
 class QrCodeActionTest extends TestCase
@@ -36,8 +37,9 @@ class QrCodeActionTest extends TestCase
     public function aNotFoundShortCodeWillDelegateIntoNextMiddleware(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, '')->willThrow(ShortUrlNotFoundException::class)
-                                                                      ->shouldBeCalledOnce();
+        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))
+            ->willThrow(ShortUrlNotFoundException::class)
+            ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
@@ -50,8 +52,9 @@ class QrCodeActionTest extends TestCase
     public function anInvalidShortCodeWillReturnNotFoundResponse(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, '')->willThrow(ShortUrlNotFoundException::class)
-                                                                      ->shouldBeCalledOnce();
+        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))
+            ->willThrow(ShortUrlNotFoundException::class)
+            ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
@@ -64,8 +67,9 @@ class QrCodeActionTest extends TestCase
     public function aCorrectRequestReturnsTheQrCodeResponse(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->shortCodeToEnabledShortUrl($shortCode, '')->willReturn(new ShortUrl(''))
-                                                                      ->shouldBeCalledOnce();
+        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))
+            ->willReturn(new ShortUrl(''))
+            ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 
         $resp = $this->action->process(

@@ -37,11 +37,17 @@ class ShortUrlsFixture extends AbstractFixture
         ), '2019-01-01 00:00:20');
         $manager->persist($customShortUrl);
 
-        $withDomainShortUrl = $this->setShortUrlDate(new ShortUrl(
+        $ghiShortUrl = $this->setShortUrlDate(
+            new ShortUrl('https://shlink.io/documentation/', ShortUrlMeta::fromRawData(['customSlug' => 'ghi789'])),
+            '2018-05-01',
+        );
+        $manager->persist($ghiShortUrl);
+
+        $withDomainDuplicatingShortCode = $this->setShortUrlDate(new ShortUrl(
             'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-source-software-projects/',
             ShortUrlMeta::fromRawData(['domain' => 'example.com', 'customSlug' => 'ghi789']),
         ), '2019-01-01 00:00:30');
-        $manager->persist($withDomainShortUrl);
+        $manager->persist($withDomainDuplicatingShortCode);
 
         $withDomainAndSlugShortUrl = $this->setShortUrlDate(new ShortUrl(
             'https://google.com',
@@ -53,6 +59,7 @@ class ShortUrlsFixture extends AbstractFixture
 
         $this->addReference('abc123_short_url', $abcShortUrl);
         $this->addReference('def456_short_url', $defShortUrl);
+        $this->addReference('ghi789_short_url', $ghiShortUrl);
     }
 
     private function setShortUrlDate(ShortUrl $shortUrl, string $date): ShortUrl

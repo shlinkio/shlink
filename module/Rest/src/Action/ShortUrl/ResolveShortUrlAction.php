@@ -8,6 +8,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -32,11 +33,9 @@ class ResolveShortUrlAction extends AbstractRestAction
 
     public function handle(Request $request): Response
     {
-        $shortCode = $request->getAttribute('shortCode');
-        $domain = $request->getQueryParams()['domain'] ?? null;
         $transformer = new ShortUrlDataTransformer($this->domainConfig);
+        $url = $this->urlResolver->resolveShortUrl(ShortUrlIdentifier::fromApiRequest($request));
 
-        $url = $this->urlResolver->shortCodeToShortUrl($shortCode, $domain);
         return new JsonResponse($transformer->transform($url));
     }
 }

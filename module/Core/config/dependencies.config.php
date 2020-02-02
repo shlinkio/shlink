@@ -53,10 +53,14 @@ return [
 
         Service\UrlShortener::class => [Util\UrlValidator::class, 'em', Options\UrlShortenerOptions::class],
         Service\VisitsTracker::class => ['em', EventDispatcherInterface::class],
-        Service\ShortUrlService::class => ['em'],
+        Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class],
         Service\VisitService::class => ['em'],
         Service\Tag\TagService::class => ['em'],
-        Service\ShortUrl\DeleteShortUrlService::class => ['em', Options\DeleteShortUrlsOptions::class],
+        Service\ShortUrl\DeleteShortUrlService::class => [
+            'em',
+            Options\DeleteShortUrlsOptions::class,
+            Service\ShortUrl\ShortUrlResolver::class,
+        ],
         Service\ShortUrl\ShortUrlResolver::class => ['em'],
 
         Util\UrlValidator::class => ['httpClient'],

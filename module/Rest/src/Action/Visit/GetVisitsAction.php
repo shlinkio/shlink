@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -30,8 +31,8 @@ class GetVisitsAction extends AbstractRestAction
 
     public function handle(Request $request): Response
     {
-        $shortCode = $request->getAttribute('shortCode');
-        $visits = $this->visitsTracker->info($shortCode, VisitsParams::fromRawData($request->getQueryParams()));
+        $identifier = ShortUrlIdentifier::fromApiRequest($request);
+        $visits = $this->visitsTracker->info($identifier, VisitsParams::fromRawData($request->getQueryParams()));
 
         return new JsonResponse([
             'visits' => $this->serializePaginator($visits),

@@ -69,6 +69,11 @@ class ShortUrl extends AbstractEntity
         return $this->dateCreated;
     }
 
+    public function getDomain(): ?Domain
+    {
+        return $this->domain;
+    }
+
     /**
      * @return Collection|Tag[]
      */
