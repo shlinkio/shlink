@@ -31,6 +31,10 @@
         },
         "meta": {
             "$ref": "./ShortUrlMeta.json"
+        },
+        "domain": {
+            "type": "string",
+            "description": "The domain in which the short URL was created. Null if it belongs to default domain."
         }
     }
 }

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Entity;
 
+use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 
-class Domain extends AbstractEntity
+class Domain extends AbstractEntity implements JsonSerializable
 {
     private string $authority;
 
@@ -18,5 +19,10 @@ class Domain extends AbstractEntity
     public function getAuthority(): string
     {
         return $this->authority;
+    }
+
+    public function jsonSerialize(): string
+    {
+        return $this->getAuthority();
     }
 }

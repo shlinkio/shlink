@@ -24,16 +24,15 @@ class ShortUrlDataTransformer implements DataTransformerInterface
      */
     public function transform($shortUrl): array // phpcs:ignore
     {
-        $longUrl = $shortUrl->getLongUrl();
-
         return [
             'shortCode' => $shortUrl->getShortCode(),
             'shortUrl' => $shortUrl->toString($this->domainConfig),
-            'longUrl' => $longUrl,
+            'longUrl' => $shortUrl->getLongUrl(),
             'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
             'visitsCount' => $shortUrl->getVisitsCount(),
             'tags' => invoke($shortUrl->getTags(), '__toString'),
             'meta' => $this->buildMeta($shortUrl),
+            'domain' => $shortUrl->getDomain(),
         ];
     }
 
