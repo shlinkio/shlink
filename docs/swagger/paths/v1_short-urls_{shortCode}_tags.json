@@ -18,6 +18,9 @@
                 "schema": {
                     "type": "string"
                 }
+            },
+            {
+                "$ref": "../parameters/domain.json"
             }
         ],
         "requestBody": {
