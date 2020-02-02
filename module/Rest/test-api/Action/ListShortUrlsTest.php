@@ -169,6 +169,9 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_DOMAIN,
         ]];
+        yield [['searchTerm' => 'example.com'], [
+            self::SHORT_URL_CUSTOM_DOMAIN,
+        ]];
     }
 
     private function buildPagination(int $itemsCount): array
