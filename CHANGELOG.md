@@ -25,6 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Fixed
 
 * [#620](https://github.com/shlinkio/shlink/issues/620) Ensured "controlled" errors (like validation errors and such) won't be logged with error level, preventing logs to be polluted.
+* [#637](https://github.com/shlinkio/shlink/issues/637) Fixed several work flows in which short URLs with domain are handled form the API.
+* [#644](https://github.com/shlinkio/shlink/issues/644) Fixed visits to short URL on non-default domain being linked to the URL on default domain with the same short code.
 
 
 ## 2.0.3 - 2020-01-27
