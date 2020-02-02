@@ -42,4 +42,29 @@ class DeleteShortUrlActionTest extends ApiTestCase
         $this->assertEquals($expectedDetail, $payload['detail']);
         $this->assertEquals('Cannot delete short URL', $payload['title']);
     }
+
+    /** @test */
+    public function properShortUrlIsDeletedWhenDomainIsProvided(): void
+    {
+        $fetchWithDomainBefore = $this->getJsonResponsePayload(
+            $this->callApiWithKey(self::METHOD_GET, '/short-urls/ghi789?domain=example.com'),
+        );
+        $fetchWithoutDomainBefore = $this->getJsonResponsePayload(
+            $this->callApiWithKey(self::METHOD_GET, '/short-urls/ghi789'),
+        );
+        $deleteResp = $this->callApiWithKey(self::METHOD_DELETE, '/short-urls/ghi789?domain=example.com');
+        $fetchWithDomainAfter = $this->getJsonResponsePayload(
+            $this->callApiWithKey(self::METHOD_GET, '/short-urls/ghi789?domain=example.com'),
+        );
+        $fetchWithoutDomainAfter = $this->getJsonResponsePayload(
+            $this->callApiWithKey(self::METHOD_GET, '/short-urls/ghi789'),
+        );
+
+        $this->assertEquals('example.com', $fetchWithDomainBefore['domain']);
+        $this->assertEquals(null, $fetchWithoutDomainBefore['domain']);
+        $this->assertEquals(self::STATUS_NO_CONTENT, $deleteResp->getStatusCode());
+        // Falls back to the one without domain, since the other one has been deleted
+        $this->assertEquals(null, $fetchWithDomainAfter['domain']);
+        $this->assertEquals(null, $fetchWithoutDomainAfter['domain']);
+    }
 }
