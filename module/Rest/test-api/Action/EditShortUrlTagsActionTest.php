@@ -41,4 +41,25 @@ class EditShortUrlTagsActionTest extends ApiTestCase
         $this->assertEquals('Short URL not found', $payload['title']);
         $this->assertEquals('invalid', $payload['shortCode']);
     }
+
+    /** @test */
+    public function tagsAreSetOnProperShortUrlBasedOnProvidedDomain(): void
+    {
+        $urlWithoutDomain = '/short-urls/ghi789/tags';
+        $urlWithDomain = $urlWithoutDomain . '?domain=example.com';
+
+        $setTagsWithDomain = $this->callApiWithKey(self::METHOD_PUT, $urlWithDomain, [RequestOptions::JSON => [
+            'tags' => ['foo', 'bar'],
+        ]]);
+        $fetchWithoutDomain = $this->getJsonResponsePayload(
+            $this->callApiWithKey(self::METHOD_GET, '/short-urls/ghi789'),
+        );
+        $fetchWithDomain = $this->getJsonResponsePayload(
+            $this->callApiWithKey(self::METHOD_GET, '/short-urls/ghi789?domain=example.com'),
+        );
+
+        $this->assertEquals(self::STATUS_OK, $setTagsWithDomain->getStatusCode());
+        $this->assertEquals([], $fetchWithoutDomain['tags']);
+        $this->assertEquals(['bar', 'foo'], $fetchWithDomain['tags']);
+    }
 }
