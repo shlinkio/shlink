@@ -26,7 +26,7 @@ class ShortUrlResolver implements ShortUrlResolverInterface
     {
         /** @var ShortUrlRepository $shortUrlRepo */
         $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
-        $shortUrl = $shortUrlRepo->findOneWithDomainFallback($identifier->shortCode(), $identifier->domain());
+        $shortUrl = $shortUrlRepo->findOne($identifier->shortCode(), $identifier->domain());
         if ($shortUrl === null) {
             throw ShortUrlNotFoundException::fromNotFound($identifier);
         }
@@ -39,8 +39,10 @@ class ShortUrlResolver implements ShortUrlResolverInterface
      */
     public function resolveEnabledShortUrl(ShortUrlIdentifier $identifier): ShortUrl
     {
-        $shortUrl = $this->resolveShortUrl($identifier);
-        if (! $shortUrl->isEnabled()) {
+        /** @var ShortUrlRepository $shortUrlRepo */
+        $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
+        $shortUrl = $shortUrlRepo->findOneWithDomainFallback($identifier->shortCode(), $identifier->domain());
+        if ($shortUrl === null || ! $shortUrl->isEnabled()) {
             throw ShortUrlNotFoundException::fromNotFound($identifier);
         }
 

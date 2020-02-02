@@ -39,13 +39,13 @@ class ShortUrlResolverTest extends TestCase
         $shortCode = $shortUrl->getShortCode();
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $findOneByShortCode = $repo->findOneWithDomainFallback($shortCode, null)->willReturn($shortUrl);
+        $findOne = $repo->findOne($shortCode, null)->willReturn($shortUrl);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $result = $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode));
 
         $this->assertSame($shortUrl, $result);
-        $findOneByShortCode->shouldHaveBeenCalledOnce();
+        $findOne->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
     }
 
@@ -55,11 +55,11 @@ class ShortUrlResolverTest extends TestCase
         $shortCode = 'abc123';
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $findOneByShortCode = $repo->findOneWithDomainFallback($shortCode, null)->willReturn(null);
+        $findOne = $repo->findOne($shortCode, null)->willReturn(null);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $this->expectException(ShortUrlNotFoundException::class);
-        $findOneByShortCode->shouldBeCalledOnce();
+        $findOne->shouldBeCalledOnce();
         $getRepo->shouldBeCalledOnce();
 
         $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode));
