@@ -25,6 +25,7 @@ services:
             - shlink_db
             - shlink_db_postgres
             - shlink_db_maria
+            - shlink_db_ms
             - shlink_redis
 
     shlink_swoole:
@@ -42,7 +43,12 @@ services:
             - shlink_db
             - shlink_db_postgres
             - shlink_db_maria
+            - shlink_db_ms
             - shlink_redis
+        environment:
+            LANG: en_US.UTF-8
+            LANGUAGE: en_US.UTF-8
+            LC_ALL: C
 
     shlink_db:
         container_name: shlink_db
@@ -81,6 +87,15 @@ services:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: shlink
             MYSQL_INITDB_SKIP_TZINFO: 1
+
+    shlink_db_ms:
+        container_name: shlink_db_ms
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+            - "1433:1433"
+        environment:
+            ACCEPT_EULA: Y
+            SA_PASSWORD: "Passw0rd!"
 
     shlink_redis:
         container_name: shlink_redis
