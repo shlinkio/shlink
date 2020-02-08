@@ -228,6 +228,22 @@ class CreateShortUrlActionTest extends ApiTestCase
         $this->assertEquals($url, $payload['url']);
     }
 
+    /** @test */
+    public function defaultDomainIsDroppedIfProvided(): void
+    {
+        [$createStatusCode, ['shortCode' => $shortCode]] = $this->createShortUrl([
+            'longUrl' => 'https://www.alejandrocelaya.com',
+            'domain' => 'doma.in',
+        ]);
+        $getResp = $this->callApiWithKey(self::METHOD_GET, '/short-urls/' . $shortCode);
+        $payload = $this->getJsonResponsePayload($getResp);
+
+        $this->assertEquals(self::STATUS_OK, $createStatusCode);
+        $this->assertEquals(self::STATUS_OK, $getResp->getStatusCode());
+        $this->assertArrayHasKey('domain', $payload);
+        $this->assertNull($payload['domain']);
+    }
+
     /**
      * @return array {
      *     @var int $statusCode
