@@ -37,7 +37,7 @@ return [
             Middleware\BodyParserMiddleware::class => InvokableFactory::class,
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
             Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class => InvokableFactory::class,
-            Middleware\ShortUrl\DropDefaultDomainFromQueryMiddleware::class => ConfigAbstractFactory::class,
+            Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -74,7 +74,7 @@ return [
         Action\Tag\CreateTagsAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
         Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
 
-        Middleware\ShortUrl\DropDefaultDomainFromQueryMiddleware::class => ['config.url_shortener.domain.hostname'],
+        Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ['config.url_shortener.domain.hostname'],
     ],
 
 ];

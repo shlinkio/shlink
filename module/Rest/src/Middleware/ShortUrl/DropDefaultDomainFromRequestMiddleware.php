@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class DropDefaultDomainFromQueryMiddleware implements MiddlewareInterface
+class DropDefaultDomainFromRequestMiddleware implements MiddlewareInterface
 {
     private string $defaultDomain;
 
@@ -20,12 +20,18 @@ class DropDefaultDomainFromQueryMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $query = $request->getQueryParams();
-        if (isset($query['domain']) && $query['domain'] === $this->defaultDomain) {
-            unset($query['domain']);
-            $request = $request->withQueryParams($query);
-        }
+        $request = $request->withQueryParams($this->sanitizeDomainFromPayload($request->getQueryParams()))
+                           ->withParsedBody($this->sanitizeDomainFromPayload($request->getParsedBody()));
 
         return $handler->handle($request);
+    }
+
+    private function sanitizeDomainFromPayload(array $payload): array
+    {
+        if (isset($payload['domain']) && $payload['domain'] === $this->defaultDomain) {
+            unset($payload['domain']);
+        }
+
+        return $payload;
     }
 }
