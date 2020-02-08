@@ -12,29 +12,30 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Shlinkio\Shlink\Rest\Middleware\ShortUrl\DropDefaultDomainFromQueryMiddleware;
+use Shlinkio\Shlink\Rest\Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware;
 
-class DropDefaultDomainFromQueryMiddlewareTest extends TestCase
+class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
 {
-    private DropDefaultDomainFromQueryMiddleware $middleware;
+    private DropDefaultDomainFromRequestMiddleware $middleware;
     private ObjectProphecy $next;
 
     public function setUp(): void
     {
         $this->next = $this->prophesize(RequestHandlerInterface::class);
-        $this->middleware = new DropDefaultDomainFromQueryMiddleware('doma.in');
+        $this->middleware = new DropDefaultDomainFromRequestMiddleware('doma.in');
     }
 
     /**
      * @test
      * @dataProvider provideQueryParams
      */
-    public function domainIsDroppedWhenDefaultOneIsProvided(array $providedQuery, array $expectedQuery): void
+    public function domainIsDroppedWhenDefaultOneIsProvided(array $providedPayload, array $expectedPayload): void
     {
-        $req = ServerRequestFactory::fromGlobals()->withQueryParams($providedQuery);
+        $req = ServerRequestFactory::fromGlobals()->withQueryParams($providedPayload)->withParsedBody($providedPayload);
 
-        $handle = $this->next->handle(Argument::that(function (ServerRequestInterface $request) use ($expectedQuery) {
-            Assert::assertEquals($expectedQuery, $request->getQueryParams());
+        $handle = $this->next->handle(Argument::that(function (ServerRequestInterface $request) use ($expectedPayload) {
+            Assert::assertEquals($expectedPayload, $request->getQueryParams());
+            Assert::assertEquals($expectedPayload, $request->getParsedBody());
             return $request;
         }))->willReturn(new Response());
 
