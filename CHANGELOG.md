@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Added
 
-* *Nothing*
+* [#651](https://github.com/shlinkio/shlink/issues/651) Documented how Shlink behaves when using multiple domains.
 
 #### Changed
 

@@ -22,6 +22,10 @@ A PHP-based self-hosted URL shortener that can be used to serve shortened URLs u
 - [Using a docker image](#using-a-docker-image)
 - [Using shlink](#using-shlink)
     - [Shlink CLI Help](#shlink-cli-help)
+- [Multiple domains](#multiple-domains)
+    - [Management](#management)
+    - [Visits](#visits)
+    - [Special redirects](#special-redirects)
 
 ## Installation
 
@@ -279,5 +283,65 @@ Available commands:
  visit
   visit:locate        Resolves visits origin locations.
 ```
+
+## Multiple domains
+
+While in many cases you will just have one short domain and you'll want all your short URLs to be served from it, there are some cases in which you might want to have multiple short domains served from the same Shlink instance.
+
+If that's the case, you need to understand how Shlink will behave when managing your short URLs or any of them is visited.
+
+### Management
+
+When you create a short URL it is possible to optionally pass a `domain` param. If you don't pass it, the short URL will be created for the default domain (the one provided during Shlink's installation or in the `SHORT_DOMAIN_HOST` env var when using the docker image).
+
+However, if you pass it, the short URL will be "linked" to that domain.
+
+> Note that, if the default domain is passed, Shlink will ignore it and will behave as if no `domain` param was provided.
+
+The main benefit of being able to pass the domain is that Shlink will allow the same custom slug to be used in multiple short URLs, as long as the domain is different (like `example.com/my-compaign`, `another.com/my-compaign` and `foo.com/my-compaign`).
+
+Then, each short URL will be tracked separately and you will be able to define specific tags and metadata for each one of them.
+
+However, this has a side effect. When you try to interact with an existing short URL (editing tags, editing meta, resolving it or deleting it), either from the REST API or the CLI tool, you will have to provide the domain appropriately.
+
+Let's imagine this situation. Shlink's default domain is `example.com`, and you have the next short URLs:
+
+* `https://example.com/abc123` -> a regular short URL where no domain was provided.
+* `https://example.com/my-campaign` -> a regular short URL where no domain was provided, but it has a custom slug.
+* `https://another.com/my-campaign` -> a short URL where the `another.com` domain was provided, and it has a custom slug.
+* `https://another.com/def456` -> a short URL where the `another.com` domain was provided.
+
+These are some of the results you will get when trying to interact with them, depending on the params you provide:
+
+* Providing just the `abc123` short code -> the first URL will be matched.
+* Providing just the `my-campaign` short code -> the second URL will be matched, since you did not specify a domain, therefor, Shlink looks for the one with the short code/slug `my-campaign` which is also linked to default domain (or not linked to any domain, to be more accurate).
+* Providing the `my-campaign` short code and the `another.com` domain -> The third one will be matched.
+* Providing just the `def456` short code -> Shlink will fail/not find any short URL, since there's none with the short code `def456` linked to default domain.
+* Providing the `def456` short code and the `another.com` domain -> The fourth short URL will be matched.
+* Providing any short code and the `foo.com` domain -> Again, no short URL will be found, as there's none linked to `foo.com` domain.
+
+### Visits
+
+Before adding support for multiple domains, you could point as many domains as you wanted to Shlink, and they would have always worked for existing short codes/slugs.
+
+In order to keep backwards compatibility, Shlink's behavior when a short URL is visited is slightly different, getting to fallback in some cases.
+
+Let's continue with previous example, and also consider we have three domains that will resolve to our Shlink instance, which are `example.com`, `another.com` and `foo.com`.
+
+With that in mind, this is how Shlink will behave when the next short URLs are visited:
+
+* `https://another.com/abc123` -> There was no short URL specifically defined for domain `another.com` and short code `abc123`, but it exists for default domain (`example.com`), so it will fall back to it and redirect to where `example.com/abc123` is configured to redirect.
+* `https://example.com/def456` -> The fall-back does not happen from default domain to specific ones, only the other way around (like in previous case). Because of that, this one will result in a not-found URL, even though the `def456` short code exists for `another.com` domain.
+* `https://foo.com/abc123` -> This will also fall-back to `example.com/abc123`, like in the first case.
+* `https://another.com/non-existing` -> The combination of `another.com` domain with the `non-existing` slug does not exist, so Shlink will try to fall-back to the same but for default domain (`example.com`). However, since that combination does not exist either, it will result in a not-found URL.
+* Any other short URL visited exactly as it was configured will, of course, resolve as expected.
+
+### Special redirects
+
+It is currently possible to configure some special redirects when the base domain is visited, a URL does not match, or an invalid/disabled short URL is visited.
+
+Those are configured during Shlink's installation or via env vars when using the docker image.
+
+Currently those are all shared for all domains serving the same Shlink instance, but the plan is to update that and allow specific ones for every existing domain.
 
 > This product includes GeoLite2 data created by MaxMind, available from [https://www.maxmind.com](https://www.maxmind.com)
