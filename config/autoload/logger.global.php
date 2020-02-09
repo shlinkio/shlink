@@ -41,6 +41,7 @@ return [
                         'level' => Logger::INFO,
                         'filename' => 'data/log/shlink_log.log',
                         'max_files' => 30,
+                        'file_permission' => 0666,
                     ],
                     'formatter' => $formatter,
                 ],

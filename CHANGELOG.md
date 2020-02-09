@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## 2.0.5 - 2020-02-09
+
+#### Added
+
+* [#651](https://github.com/shlinkio/shlink/issues/651) Documented how Shlink behaves when using multiple domains.
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#648](https://github.com/shlinkio/shlink/issues/648) Ensured any user can write in log files, in case shlink is run by several system users.
+* [#650](https://github.com/shlinkio/shlink/issues/650) Ensured default domain is ignored when trying to create a short URL.
+
+
 ## 2.0.4 - 2020-02-02
 
 #### Added
