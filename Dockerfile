@@ -4,6 +4,7 @@ LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 ARG SHLINK_VERSION=2.0.5
 ENV SHLINK_VERSION ${SHLINK_VERSION}
 ENV SWOOLE_VERSION 4.4.15
+ENV LC_ALL "C"
 
 WORKDIR /etc/shlink
 
