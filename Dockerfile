@@ -1,10 +1,9 @@
-FROM php:7.4.1-alpine3.10
+FROM php:7.4.2-alpine3.11
 LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 
-ARG SHLINK_VERSION=2.0.0
+ARG SHLINK_VERSION=2.0.5
 ENV SHLINK_VERSION ${SHLINK_VERSION}
-ENV SWOOLE_VERSION 4.4.12
-ENV COMPOSER_VERSION 1.9.1
+ENV SWOOLE_VERSION 4.4.15
 
 WORKDIR /etc/shlink
 
@@ -24,17 +23,22 @@ RUN \
     apk add --no-cache libzip-dev zlib-dev libpng-dev && \
     docker-php-ext-install -j"$(nproc)" zip gd
 
-# Install swoole
-# First line fixes an error when installing pecl extensions. Found in https://github.com/docker-library/php/issues/233
-RUN apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} && \
-    pecl install swoole-${SWOOLE_VERSION} && \
-    docker-php-ext-enable swoole && \
-    apk del .phpize-deps
+# Install swoole and sqlsrv driver
+RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.5.1.1-1_amd64.apk && \
+    wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/mssql-tools_17.5.1.1-1_amd64.apk && \
+    apk add --allow-untrusted msodbcsql17_17.5.1.1-1_amd64.apk && \
+    apk add --allow-untrusted mssql-tools_17.5.1.1-1_amd64.apk && \
+    apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
+    pecl install swoole-${SWOOLE_VERSION} pdo_sqlsrv && \
+    docker-php-ext-enable swoole pdo_sqlsrv && \
+    apk del .phpize-deps && \
+    rm msodbcsql17_17.5.1.1-1_amd64.apk && \
+    rm mssql-tools_17.5.1.1-1_amd64.apk
 
 # Install shlink
 COPY . .
+COPY --from=composer:1.9.3 /usr/bin/composer ./composer.phar
 RUN rm -rf ./docker && \
-    wget https://getcomposer.org/download/${COMPOSER_VERSION}/composer.phar && \
     php composer.phar install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction && \
     php composer.phar clear-cache && \
     rm composer.*
