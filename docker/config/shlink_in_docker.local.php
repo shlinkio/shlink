@@ -16,11 +16,13 @@ $helper = new class {
         'mysql' => 'pdo_mysql',
         'maria' => 'pdo_mysql',
         'postgres' => 'pdo_pgsql',
+        'mssql' => 'pdo_sqlsrv',
     ];
     private const DB_PORTS_MAP = [
         'mysql' => '3306',
         'maria' => '3306',
         'postgres' => '5432',
+        'mssql' => '1433',
     ];
 
     public function getDbConfig(): array
