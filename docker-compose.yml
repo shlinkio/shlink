@@ -27,6 +27,8 @@ services:
             - shlink_db_maria
             - shlink_db_ms
             - shlink_redis
+        environment:
+            LC_ALL: C
 
     shlink_swoole:
         container_name: shlink_swoole
@@ -46,8 +48,6 @@ services:
             - shlink_db_ms
             - shlink_redis
         environment:
-            LANG: en_US.UTF-8
-            LANGUAGE: en_US.UTF-8
             LC_ALL: C
 
     shlink_db:
