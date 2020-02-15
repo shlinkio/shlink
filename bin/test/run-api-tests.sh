@@ -9,7 +9,7 @@ echo 'Starting server...'
 vendor/bin/mezzio-swoole start -d
 sleep 2
 
-vendor/bin/phpunit --order-by=random -c phpunit-api.xml --testdox --colors=always $*
+phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-api.xml --testdox --colors=always $*
 testsExitCode=$?
 
 vendor/bin/mezzio-swoole stop
