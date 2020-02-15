@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Changed
 
-* *Nothing*
+* [#656](https://github.com/shlinkio/shlink/issues/656) Updated to PHPUnit 9.
 
 #### Deprecated
 
