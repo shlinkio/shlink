@@ -35,8 +35,8 @@ A PHP-based self-hosted URL shortener that can be used to serve shortened URLs u
 
 First, make sure the host where you are going to run shlink fulfills these requirements:
 
-* PHP 7.4 or greater with JSON, APCu, intl, curl, PDO and gd extensions enabled.
-* MySQL, MariaDB, PostgreSQL or SQLite.
+* PHP 7.4 or greater with JSON, curl, PDO and gd extensions enabled.
+* MySQL, MariaDB, PostgreSQL, Microsoft SQL Server or SQLite.
 * The web server of your choice with PHP integration (Apache or Nginx recommended).
 
 ### Download
@@ -67,7 +67,7 @@ In order to run Shlink, you will need a built version of the project. There are 
 
 Despite how you built the project, you now need to configure it, by following these steps:
 
-* If you are going to use MySQL, MariaDB or PostgreSQL, create an empty database with the name of your choice.
+* If you are going to use MySQL, MariaDB, PostgreSQL or Microsoft SQL Server, create an empty database with the name of your choice.
 * Recursively grant write permissions to the `data` directory. Shlink uses it to cache some information.
 * Setup the application by running the `bin/install` script. It is a command line tool that will guide you through the installation process. **Take into account that this tool has to be run directly on the server where you plan to host Shlink. Do not run it before uploading/moving it there.**
 * Generate your first API key by running `bin/cli api-key:generate`. You will need the key in order to interact with shlink's API.

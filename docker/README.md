@@ -56,9 +56,9 @@ docker exec -it shlink_container shlink
 
 The image comes with a working sqlite database, but in production you will probably want to usa a distributed database.
 
-It is possible to use a set of env vars to make this shlink instance interact with an external MySQL, MariaDB or PostgreSQL database.
+It is possible to use a set of env vars to make this shlink instance interact with an external MySQL, MariaDB, PostgreSQL or Microsoft SQL Server database.
 
-* `DB_DRIVER`: **[Mandatory]**. Use the value **mysql**, **maria** or **postgres** to prevent the sqlite database to be used.
+* `DB_DRIVER`: **[Mandatory]**. Use the value **mysql**, **maria**, **postgres** or **mssql** to prevent the sqlite database to be used.
 * `DB_NAME`: [Optional]. The database name to be used. Defaults to **shlink**.
 * `DB_USER`: **[Mandatory]**. The username credential for the database server.
 * `DB_PASSWORD`: **[Mandatory]**. The password credential for the database server.
@@ -67,8 +67,9 @@ It is possible to use a set of env vars to make this shlink instance interact wi
     * Default value is based on the value provided for `DB_DRIVER`:
         * **mysql** or **maria** -> `3306`
         * **postgres** -> `5432`
+        * **mssql** -> `1433`
 
-> PostgreSQL is supported since v1.16.1 of this image. Do not try to use it with previous versions.
+> PostgreSQL is supported since v1.16.1 and Microsoft SQL server since v2.1.0. Do not try to use them with previous versions.
 
 Taking this into account, you could run shlink on a local docker service like this:
 
@@ -92,7 +93,7 @@ This is the complete list of supported env vars:
 
 * `SHORT_DOMAIN_HOST`: The custom short domain used for this shlink instance. For example **doma.in**.
 * `SHORT_DOMAIN_SCHEMA`: Either **http** or **https**.
-* `DB_DRIVER`: **sqlite** (which is the default value), **mysql**, **maria** or **postgres**.
+* `DB_DRIVER`: **sqlite** (which is the default value), **mysql**, **maria**, **postgres** or **mssql**.
 * `DB_NAME`: The database name to be used when using an external database driver. Defaults to **shlink**.
 * `DB_USER`: The username credential to be used when using an external database driver.
 * `DB_PASSWORD`: The password credential to be used when using an external database driver.
@@ -101,6 +102,7 @@ This is the complete list of supported env vars:
     * Default value is based on the value provided for `DB_DRIVER`:
         * **mysql** or **maria** -> `3306`
         * **postgres** -> `5432`
+        * **mssql** -> `1433`
 * `DISABLE_TRACK_PARAM`: The name of a query param that can be used to visit short URLs avoiding the visit to be tracked. This feature won't be available if not value is provided.
 * `DELETE_SHORT_URL_THRESHOLD`: The amount of visits on short URLs which will not allow them to be deleted. Defaults to `15`.
 * `VALIDATE_URLS`: Boolean which tells if shlink should validate a status 20x is returned (after following redirects) when trying to shorten a URL. Defaults to `false`.
