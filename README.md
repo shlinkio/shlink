@@ -344,4 +344,6 @@ Those are configured during Shlink's installation or via env vars when using the
 
 Currently those are all shared for all domains serving the same Shlink instance, but the plan is to update that and allow specific ones for every existing domain.
 
+---
+
 > This product includes GeoLite2 data created by MaxMind, available from [https://www.maxmind.com](https://www.maxmind.com)
