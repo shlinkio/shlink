@@ -30,12 +30,14 @@ class GenerateShortUrlCommand extends Command
 
     private UrlShortenerInterface $urlShortener;
     private array $domainConfig;
+    private int $defaultShortCodeLength;
 
-    public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig)
+    public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig, int $defaultShortCodeLength)
     {
         parent::__construct();
         $this->urlShortener = $urlShortener;
         $this->domainConfig = $domainConfig;
+        $this->defaultShortCodeLength = $defaultShortCodeLength;
     }
 
     protected function configure(): void
@@ -87,6 +89,12 @@ class GenerateShortUrlCommand extends Command
                 'd',
                 InputOption::VALUE_REQUIRED,
                 'The domain to which this short URL will be attached.',
+            )
+            ->addOption(
+                'shortCodeLength',
+                'l',
+                InputOption::VALUE_REQUIRED,
+                'The length for generated short code (it will be ignored if --customSlug was provided).',
             );
     }
 
@@ -117,6 +125,7 @@ class GenerateShortUrlCommand extends Command
         $tags = unique(flatten(array_map($explodeWithComma, $input->getOption('tags'))));
         $customSlug = $input->getOption('customSlug');
         $maxVisits = $input->getOption('maxVisits');
+        $shortCodeLength = $input->getOption('shortCodeLength') ?? $this->defaultShortCodeLength;
 
         try {
             $shortUrl = $this->urlShortener->urlToShortCode(
@@ -129,6 +138,7 @@ class GenerateShortUrlCommand extends Command
                     ShortUrlMetaInputFilter::MAX_VISITS => $maxVisits !== null ? (int) $maxVisits : null,
                     ShortUrlMetaInputFilter::FIND_IF_EXISTS => $input->getOption('findIfExists'),
                     ShortUrlMetaInputFilter::DOMAIN => $input->getOption('domain'),
+                    ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
                 ]),
             );
 

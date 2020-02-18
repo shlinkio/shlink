@@ -11,6 +11,8 @@ use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 use function array_key_exists;
 use function Shlinkio\Shlink\Core\parseDateField;
 
+use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
+
 final class ShortUrlMeta
 {
     private bool $validSincePropWasProvided = false;
@@ -22,6 +24,7 @@ final class ShortUrlMeta
     private ?int $maxVisits = null;
     private ?bool $findIfExists = null;
     private ?string $domain = null;
+    private int $shortCodeLength = 5;
 
     // Force named constructors
     private function __construct()
@@ -58,11 +61,20 @@ final class ShortUrlMeta
         $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
         $this->validUntilPropWasProvided = array_key_exists(ShortUrlMetaInputFilter::VALID_UNTIL, $data);
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
-        $maxVisits = $inputFilter->getValue(ShortUrlMetaInputFilter::MAX_VISITS);
-        $this->maxVisits = $maxVisits !== null ? (int) $maxVisits : null;
+        $this->maxVisits = $this->getOptionalIntFromInputFilter($inputFilter, ShortUrlMetaInputFilter::MAX_VISITS);
         $this->maxVisitsPropWasProvided = array_key_exists(ShortUrlMetaInputFilter::MAX_VISITS, $data);
         $this->findIfExists = $inputFilter->getValue(ShortUrlMetaInputFilter::FIND_IF_EXISTS);
         $this->domain = $inputFilter->getValue(ShortUrlMetaInputFilter::DOMAIN);
+        $this->shortCodeLength = $this->getOptionalIntFromInputFilter(
+            $inputFilter,
+            ShortUrlMetaInputFilter::SHORT_CODE_LENGTH,
+        ) ?? DEFAULT_SHORT_CODES_LENGTH;
+    }
+
+    private function getOptionalIntFromInputFilter(ShortUrlMetaInputFilter $inputFilter, string $fieldName): ?int
+    {
+        $value = $inputFilter->getValue($fieldName);
+        return $value !== null ? (int) $value : null;
     }
 
     public function getValidSince(): ?Chronos
@@ -118,5 +130,10 @@ final class ShortUrlMeta
     public function getDomain(): ?string
     {
         return $this->domain;
+    }
+
+    public function getShortCodeLength(): int
+    {
+        return $this->shortCodeLength;
     }
 }

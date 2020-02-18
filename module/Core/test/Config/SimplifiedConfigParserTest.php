@@ -57,6 +57,7 @@ class SimplifiedConfigParserTest extends TestCase
                 'http://my-api.com/api/v2.3/notify',
                 'https://third-party.io/foo',
             ],
+            'default_short_codes_length' => 8,
         ];
         $expected = [
             'app_options' => [
@@ -84,6 +85,7 @@ class SimplifiedConfigParserTest extends TestCase
                     'http://my-api.com/api/v2.3/notify',
                     'https://third-party.io/foo',
                 ],
+                'default_short_codes_length' => 8,
             ],
 
             'delete_short_urls' => [

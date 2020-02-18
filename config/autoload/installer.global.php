@@ -30,6 +30,7 @@ return [
             Option\TaskWorkerNumConfigOption::class,
             Option\WebWorkerNumConfigOption::class,
             Option\RedisServersConfigOption::class,
+            Option\ShortCodeLengthOption::class,
         ],
 
         'installation_commands' => [
