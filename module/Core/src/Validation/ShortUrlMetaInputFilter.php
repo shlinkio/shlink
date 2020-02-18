@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Validation;
 
 use DateTime;
+use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
@@ -19,6 +20,7 @@ class ShortUrlMetaInputFilter extends InputFilter
     public const MAX_VISITS = 'maxVisits';
     public const FIND_IF_EXISTS = 'findIfExists';
     public const DOMAIN = 'domain';
+    public const SHORT_CODE_LENGTH = 'shortCodeLength';
 
     public function __construct(array $data)
     {
@@ -40,15 +42,22 @@ class ShortUrlMetaInputFilter extends InputFilter
         $customSlug->getFilterChain()->attach(new Validation\SluggerFilter());
         $this->add($customSlug);
 
-        $maxVisits = $this->createInput(self::MAX_VISITS, false);
-        $maxVisits->getValidatorChain()->attach(new Validator\Digits())
-                                       ->attach(new Validator\GreaterThan(['min' => 1, 'inclusive' => true]));
-        $this->add($maxVisits);
+        $this->add($this->createPositiveNumberInput(self::MAX_VISITS));
+        $this->add($this->createPositiveNumberInput(self::SHORT_CODE_LENGTH));
 
         $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
 
         $domain = $this->createInput(self::DOMAIN, false);
         $domain->getValidatorChain()->attach(new Validation\HostAndPortValidator());
         $this->add($domain);
+    }
+
+    private function createPositiveNumberInput(string $name): Input
+    {
+        $input = $this->createInput($name, false);
+        $input->getValidatorChain()->attach(new Validator\Digits())
+              ->attach(new Validator\GreaterThan(['min' => 1, 'inclusive' => true]));
+
+        return $input;
     }
 }

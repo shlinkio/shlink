@@ -10,7 +10,9 @@ use PUGX\Shortid\Factory as ShortIdFactory;
 
 use function sprintf;
 
-function generateRandomShortCode(int $length = 5): string
+const DEFAULT_SHORT_CODES_LENGTH = 5;
+
+function generateRandomShortCode(int $length): string
 {
     static $shortIdFactory;
     if ($shortIdFactory === null) {

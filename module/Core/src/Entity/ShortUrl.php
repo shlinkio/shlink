@@ -34,6 +34,7 @@ class ShortUrl extends AbstractEntity
     private ?int $maxVisits = null;
     private ?Domain $domain;
     private bool $customSlugWasProvided;
+    private int $shortCodeLength;
 
     public function __construct(
         string $longUrl,
@@ -50,7 +51,8 @@ class ShortUrl extends AbstractEntity
         $this->validUntil = $meta->getValidUntil();
         $this->maxVisits = $meta->getMaxVisits();
         $this->customSlugWasProvided = $meta->hasCustomSlug();
-        $this->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode();
+        $this->shortCodeLength = $meta->getShortCodeLength();
+        $this->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode($this->shortCodeLength);
         $this->domain = ($domainResolver ?? new SimpleDomainResolver())->resolveDomain($meta->getDomain());
     }
 
@@ -119,7 +121,7 @@ class ShortUrl extends AbstractEntity
             throw ShortCodeCannotBeRegeneratedException::forShortUrlAlreadyPersisted();
         }
 
-        $this->shortCode = generateRandomShortCode();
+        $this->shortCode = generateRandomShortCode($this->shortCodeLength);
         return $this;
     }
 
