@@ -113,6 +113,7 @@ This is the complete list of supported env vars:
 * `WEB_WORKER_NUM`: The amount of concurrent http requests this shlink instance will be able to server. Defaults to 16.
 * `TASK_WORKER_NUM`: The amount of concurrent background tasks this shlink instance will be able to execute. Defaults to 16.
 * `VISITS_WEBHOOKS`: A comma-separated list of URLs that will receive a `POST` request when a short URL receives a visit.
+* `DEFAULT_SHORT_CODES_LENGTH`: The length you want generated short codes to have. It defaults to 5 and has to be at least 4, so any value smaller than that will fall back to 4.
 * `REDIS_SERVERS`: A comma-separated list of redis servers where Shlink locks are stored (locks are used to prevent some operations to be run more than once in parallel).
 
     This is important when running more than one Shlink instance ([Multi instance considerations](#multi-instance-considerations)). If not provided, Shlink stores locks on every instance separately.
@@ -146,6 +147,7 @@ docker run \
     -e WEB_WORKER_NUM=64 \
     -e TASK_WORKER_NUM=32 \
     -e "VISITS_WEBHOOKS=http://my-api.com/api/v2.3/notify,https://third-party.io/foo" \
+    -e DEFAULT_SHORT_CODES_LENGTH=6 \
     shlinkio/shlink:stable
 ```
 
@@ -170,6 +172,7 @@ The whole configuration should have this format, but it can be split into multip
     "base_path": "/my-campaign",
     "web_worker_num": 64,
     "task_worker_num": 32,
+    "default_short_codes_length": 6,
     "redis_servers": [
         "tcp://172.20.0.1:6379",
         "tcp://172.20.0.2:6379"

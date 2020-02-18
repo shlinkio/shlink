@@ -11,6 +11,7 @@ use PUGX\Shortid\Factory as ShortIdFactory;
 use function sprintf;
 
 const DEFAULT_SHORT_CODES_LENGTH = 5;
+const MIN_SHORT_CODES_LENGTH = 4;
 
 function generateRandomShortCode(int $length): string
 {

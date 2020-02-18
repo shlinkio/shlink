@@ -10,6 +10,8 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
 
+use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
+
 class ShortUrlMetaInputFilter extends InputFilter
 {
     use Validation\InputFactoryTrait;
@@ -43,7 +45,7 @@ class ShortUrlMetaInputFilter extends InputFilter
         $this->add($customSlug);
 
         $this->add($this->createPositiveNumberInput(self::MAX_VISITS));
-        $this->add($this->createPositiveNumberInput(self::SHORT_CODE_LENGTH, 4));
+        $this->add($this->createPositiveNumberInput(self::SHORT_CODE_LENGTH, MIN_SHORT_CODES_LENGTH));
 
         $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
 
