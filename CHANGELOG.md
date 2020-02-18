@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Added
 
 * [#626](https://github.com/shlinkio/shlink/issues/626) Added support for Microsoft SQL Server.
+* [#556](https://github.com/shlinkio/shlink/issues/556) Short code lengths can now be customized, both globally and on a per-short URL basis.
 
 #### Changed
 
