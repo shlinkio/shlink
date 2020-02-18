@@ -38,6 +38,7 @@ return [
             Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
             Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class => InvokableFactory::class,
             Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ConfigAbstractFactory::class,
+            Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -75,6 +76,9 @@ return [
         Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
 
         Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ['config.url_shortener.domain.hostname'],
+        Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => [
+            'config.url_shortener.default_short_codes_length',
+        ],
     ],
 
 ];
