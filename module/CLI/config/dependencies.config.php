@@ -54,7 +54,11 @@ return [
     ConfigAbstractFactory::class => [
         GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, 'Shlinkio\Shlink\LocalLockFactory'],
 
-        Command\ShortUrl\GenerateShortUrlCommand::class => [Service\UrlShortener::class, 'config.url_shortener.domain'],
+        Command\ShortUrl\GenerateShortUrlCommand::class => [
+            Service\UrlShortener::class,
+            'config.url_shortener.domain',
+            'config.url_shortener.default_short_codes_length',
+        ],
         Command\ShortUrl\ResolveUrlCommand::class => [Service\ShortUrl\ShortUrlResolver::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
         Command\ShortUrl\GetVisitsCommand::class => [Service\VisitsTracker::class],

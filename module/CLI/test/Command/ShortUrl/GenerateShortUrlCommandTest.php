@@ -31,7 +31,7 @@ class GenerateShortUrlCommandTest extends TestCase
     public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $command = new GenerateShortUrlCommand($this->urlShortener->reveal(), self::DOMAIN_CONFIG);
+        $command = new GenerateShortUrlCommand($this->urlShortener->reveal(), self::DOMAIN_CONFIG, 5);
         $app = new Application();
         $app->add($command);
         $this->commandTester = new CommandTester($command);
