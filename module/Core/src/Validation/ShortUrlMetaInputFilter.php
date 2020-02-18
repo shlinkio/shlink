@@ -43,7 +43,7 @@ class ShortUrlMetaInputFilter extends InputFilter
         $this->add($customSlug);
 
         $this->add($this->createPositiveNumberInput(self::MAX_VISITS));
-        $this->add($this->createPositiveNumberInput(self::SHORT_CODE_LENGTH));
+        $this->add($this->createPositiveNumberInput(self::SHORT_CODE_LENGTH, 4));
 
         $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
 
@@ -52,11 +52,11 @@ class ShortUrlMetaInputFilter extends InputFilter
         $this->add($domain);
     }
 
-    private function createPositiveNumberInput(string $name): Input
+    private function createPositiveNumberInput(string $name, int $min = 1): Input
     {
         $input = $this->createInput($name, false);
         $input->getValidatorChain()->attach(new Validator\Digits())
-              ->attach(new Validator\GreaterThan(['min' => 1, 'inclusive' => true]));
+              ->attach(new Validator\GreaterThan(['min' => $min, 'inclusive' => true]));
 
         return $input;
     }

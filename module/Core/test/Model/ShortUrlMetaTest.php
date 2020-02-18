@@ -44,6 +44,9 @@ class ShortUrlMetaTest extends TestCase
             ShortUrlMetaInputFilter::VALID_UNTIL => 500,
             ShortUrlMetaInputFilter::DOMAIN => 4,
         ]];
+        yield [[
+            ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => 3,
+        ]];
     }
 
     /** @test */
