@@ -9,6 +9,7 @@ use Monolog\Handler;
 use Monolog\Logger;
 use Monolog\Processor;
 use MonologFactory\DiContainerLoggerFactory;
+use PhpMiddleware\RequestId;
 use Psr\Log\LoggerInterface;
 
 use const PHP_EOL;
@@ -20,11 +21,12 @@ $processors = [
     'psr3' => [
         'name' => Processor\PsrLogMessageProcessor::class,
     ],
+    'request_id' => RequestId\MonologProcessor::class,
 ];
 $formatter = [
     'name' => Formatter\LineFormatter::class,
     'params' => [
-        'format' => '[%datetime%] %channel%.%level_name% - %message%' . PHP_EOL,
+        'format' => '[%datetime%] [%extra.request_id%] %channel%.%level_name% - %message%' . PHP_EOL,
         'allow_inline_line_breaks' => true,
     ],
 ];

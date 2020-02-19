@@ -18,6 +18,7 @@ return [
             RequestId\Generator\RamseyUuid4StaticGenerator::class => InvokableFactory::class,
             RequestId\RequestIdProviderFactory::class => ConfigAbstractFactory::class,
             RequestId\RequestIdMiddleware::class => ConfigAbstractFactory::class,
+            RequestId\MonologProcessor::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -28,6 +29,7 @@ return [
             'config.request_id.header_name',
         ],
         RequestId\RequestIdMiddleware::class => [RequestId\RequestIdProviderFactory::class],
+        RequestId\MonologProcessor::class => [RequestId\RequestIdMiddleware::class],
     ],
 
 ];
