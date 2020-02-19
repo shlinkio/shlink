@@ -5,20 +5,18 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Entity;
 
 use Cake\Chronos\Chronos;
+use Ramsey\Uuid\Uuid;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
-use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 
 class ApiKey extends AbstractEntity
 {
-    use StringUtilsTrait;
-
     private string $key;
     private ?Chronos $expirationDate;
     private bool $enabled;
 
     public function __construct(?Chronos $expirationDate = null)
     {
-        $this->key = $this->generateV4Uuid();
+        $this->key = Uuid::uuid4()->toString();
         $this->expirationDate = $expirationDate;
         $this->enabled = true;
     }
@@ -30,11 +28,7 @@ class ApiKey extends AbstractEntity
 
     public function isExpired(): bool
     {
-        if ($this->expirationDate === null) {
-            return false;
-        }
-
-        return $this->expirationDate->lt(Chronos::now());
+        return $this->expirationDate !== null && $this->expirationDate->lt(Chronos::now());
     }
 
     public function isEnabled(): bool

@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Options;
 
 use Laminas\Stdlib\AbstractOptions;
-use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 
 use function sprintf;
 
 class AppOptions extends AbstractOptions
 {
-    use StringUtilsTrait;
-
     private string $name = '';
     private string $version = '1.0';
     private ?string $disableTrackParam = null;
