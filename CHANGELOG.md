@@ -26,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Fixed
 
-* *Nothing*
+* [#665](https://github.com/shlinkio/shlink/issues/665) Fixed `base_url_redirect_to` simplified config option not being properly parsed.
 
 
 ## 2.0.5 - 2020-02-09
