@@ -24,7 +24,7 @@ class SimplifiedConfigParser
         'validate_url' => ['url_shortener', 'validate_url'],
         'invalid_short_url_redirect_to' => ['not_found_redirects', 'invalid_short_url'],
         'regular_404_redirect_to' => ['not_found_redirects', 'regular_404'],
-        'base_url_redirect_to' => ['not_found_redirects', 'base_path'],
+        'base_url_redirect_to' => ['not_found_redirects', 'base_url'],
         'db_config' => ['entity_manager', 'connection'],
         'delete_short_url_threshold' => ['delete_short_urls', 'visits_threshold'],
         'redis_servers' => ['cache', 'redis', 'servers'],
