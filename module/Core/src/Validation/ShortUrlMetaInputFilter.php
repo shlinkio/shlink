@@ -40,8 +40,11 @@ class ShortUrlMetaInputFilter extends InputFilter
         $validUntil->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));
         $this->add($validUntil);
 
-        $customSlug = $this->createInput(self::CUSTOM_SLUG, false);
+        // FIXME The only way to enforce the NotEmpty validator to be evaluated when the value is provided but it's
+        //       empty, is by using the deprecated setContinueIfEmpty
+        $customSlug = $this->createInput(self::CUSTOM_SLUG, false)->setContinueIfEmpty(true);
         $customSlug->getFilterChain()->attach(new Validation\SluggerFilter());
+        $customSlug->getValidatorChain()->attach(new Validator\NotEmpty());
         $this->add($customSlug);
 
         $this->add($this->createPositiveNumberInput(self::MAX_VISITS));
@@ -58,7 +61,7 @@ class ShortUrlMetaInputFilter extends InputFilter
     {
         $input = $this->createInput($name, false);
         $input->getValidatorChain()->attach(new Validator\Digits())
-              ->attach(new Validator\GreaterThan(['min' => $min, 'inclusive' => true]));
+                                   ->attach(new Validator\GreaterThan(['min' => $min, 'inclusive' => true]));
 
         return $input;
     }
