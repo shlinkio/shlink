@@ -47,6 +47,15 @@ class ShortUrlMetaTest extends TestCase
         yield [[
             ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => 3,
         ]];
+        yield [[
+            ShortUrlMetaInputFilter::CUSTOM_SLUG => '/',
+        ]];
+        yield [[
+            ShortUrlMetaInputFilter::CUSTOM_SLUG => '',
+        ]];
+        yield [[
+            ShortUrlMetaInputFilter::CUSTOM_SLUG => '   ',
+        ]];
     }
 
     /** @test */

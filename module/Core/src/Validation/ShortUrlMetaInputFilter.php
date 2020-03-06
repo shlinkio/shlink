@@ -44,7 +44,10 @@ class ShortUrlMetaInputFilter extends InputFilter
         //       empty, is by using the deprecated setContinueIfEmpty
         $customSlug = $this->createInput(self::CUSTOM_SLUG, false)->setContinueIfEmpty(true);
         $customSlug->getFilterChain()->attach(new Validation\SluggerFilter());
-        $customSlug->getValidatorChain()->attach(new Validator\NotEmpty(Validator\NotEmpty::STRING));
+        $customSlug->getValidatorChain()->attach(new Validator\NotEmpty([
+            Validator\NotEmpty::STRING,
+            Validator\NotEmpty::SPACE,
+        ]));
         $this->add($customSlug);
 
         $this->add($this->createPositiveNumberInput(self::MAX_VISITS));
