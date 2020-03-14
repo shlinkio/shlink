@@ -57,6 +57,7 @@
         "symfony/console": "^5.0",
         "symfony/filesystem": "^5.0",
         "symfony/lock": "^5.0",
+        "symfony/mercure": "^0.3.0",
         "symfony/process": "^5.0"
     },
     "require-dev": {
