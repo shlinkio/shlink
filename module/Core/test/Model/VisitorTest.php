@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Model;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Common\Util\StringUtilsTrait;
 use Shlinkio\Shlink\Core\Model\Visitor;
 
+use function random_int;
 use function str_repeat;
+use function strlen;
 use function substr;
 
 class VisitorTest extends TestCase
 {
-    use StringUtilsTrait;
-
     /**
      * @test
      * @dataProvider provideParams
@@ -59,5 +58,16 @@ class VisitorTest extends TestCase
                 'remoteAddress' => null,
             ],
         ];
+    }
+
+    private function generateRandomString(int $length): string
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }
