@@ -34,6 +34,7 @@
         "laminas/laminas-paginator": "^2.8",
         "laminas/laminas-servicemanager": "^3.4",
         "laminas/laminas-stdlib": "^3.2",
+        "lcobucci/jwt": "^4.0@alpha",
         "lstrojny/functional-php": "^1.9",
         "mezzio/mezzio": "^3.2",
         "mezzio/mezzio-fastroute": "^3.0",
