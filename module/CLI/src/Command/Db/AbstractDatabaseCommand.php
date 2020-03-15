@@ -11,8 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 
-use function array_unshift;
-
 abstract class AbstractDatabaseCommand extends AbstractLockedCommand
 {
     private ProcessHelper $processHelper;
@@ -27,7 +25,7 @@ abstract class AbstractDatabaseCommand extends AbstractLockedCommand
 
     protected function runPhpCommand(OutputInterface $output, array $command): void
     {
-        array_unshift($command, $this->phpBinary);
+        $command = [$this->phpBinary, ...$command, '--no-interaction'];
         $this->processHelper->mustRun($output, $command);
     }
 

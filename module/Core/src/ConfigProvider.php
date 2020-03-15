@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core;
 
-use function Shlinkio\Shlink\Common\loadConfigFromGlob;
+use function Shlinkio\Shlink\Config\loadConfigFromGlob;
 
 class ConfigProvider
 {

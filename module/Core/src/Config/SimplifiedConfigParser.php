@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Config;
 
 use Laminas\Stdlib\ArrayUtils;
-use Shlinkio\Shlink\Installer\Util\PathCollection;
+use Shlinkio\Shlink\Config\Collection\PathCollection;
 
 use function array_flip;
 use function array_intersect_key;

@@ -8,7 +8,7 @@ use Closure;
 
 use function Functional\first;
 use function Functional\map;
-use function Shlinkio\Shlink\Common\loadConfigFromGlob;
+use function Shlinkio\Shlink\Config\loadConfigFromGlob;
 use function sprintf;
 
 class ConfigProvider
