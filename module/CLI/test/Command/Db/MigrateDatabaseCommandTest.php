@@ -15,6 +15,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\Process;
 
 class MigrateDatabaseCommandTest extends TestCase
 {
@@ -53,7 +54,8 @@ class MigrateDatabaseCommandTest extends TestCase
             '/usr/local/bin/php',
             MigrateDatabaseCommand::DOCTRINE_MIGRATIONS_SCRIPT,
             MigrateDatabaseCommand::DOCTRINE_MIGRATE_COMMAND,
-        ], Argument::cetera());
+            '--no-interaction',
+        ], Argument::cetera())->willReturn(new Process([]));
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
