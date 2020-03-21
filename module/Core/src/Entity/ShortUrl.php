@@ -32,7 +32,7 @@ class ShortUrl extends AbstractEntity
     private ?Chronos $validSince = null;
     private ?Chronos $validUntil = null;
     private ?int $maxVisits = null;
-    private ?Domain $domain;
+    private ?Domain $domain = null;
     private bool $customSlugWasProvided;
     private int $shortCodeLength;
 

@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 class ApiKey extends AbstractEntity
 {
     private string $key;
-    private ?Chronos $expirationDate;
+    private ?Chronos $expirationDate = null;
     private bool $enabled;
 
     public function __construct(?Chronos $expirationDate = null)
