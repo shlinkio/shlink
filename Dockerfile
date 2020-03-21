@@ -9,7 +9,7 @@ ENV LC_ALL "C"
 WORKDIR /etc/shlink
 
 RUN \
-    # Install mysl and calendar
+    # Install mysql and calendar
     docker-php-ext-install -j"$(nproc)" pdo_mysql calendar && \
     # Install sqlite
     apk add --no-cache sqlite-libs sqlite-dev && \
