@@ -1,6 +1,5 @@
 # Shlink Docker image
 
-[![Docker build status](https://img.shields.io/docker/build/shlinkio/shlink.svg?style=flat-square)](https://hub.docker.com/r/shlinkio/shlink/)
 [![Docker pulls](https://img.shields.io/docker/pulls/shlinkio/shlink.svg?style=flat-square)](https://hub.docker.com/r/shlinkio/shlink/)
 
 This image provides an easy way to set up [shlink](https://shlink.io) on a container-based runtime.

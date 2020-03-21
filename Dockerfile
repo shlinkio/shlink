@@ -1,5 +1,4 @@
-FROM php:7.4.2-alpine3.11
-LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
+FROM php:7.4.2-alpine3.11 as base
 
 ARG SHLINK_VERSION=2.0.5
 ENV SHLINK_VERSION ${SHLINK_VERSION}
@@ -9,7 +8,7 @@ ENV LC_ALL "C"
 WORKDIR /etc/shlink
 
 RUN \
-    # Install mysl and calendar
+    # Install mysql and calendar
     docker-php-ext-install -j"$(nproc)" pdo_mysql calendar && \
     # Install sqlite
     apk add --no-cache sqlite-libs sqlite-dev && \
@@ -36,17 +35,21 @@ RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8
     rm msodbcsql17_17.5.1.1-1_amd64.apk && \
     rm mssql-tools_17.5.1.1-1_amd64.apk
 
-# Install shlink
-COPY . .
-COPY --from=composer:1.9.3 /usr/bin/composer ./composer.phar
-RUN rm -rf ./docker && \
-    php composer.phar install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction && \
-    php composer.phar clear-cache && \
-    rm composer.*
 
-# Add shlink to the path to ease running it after container is created
+# Install shlink
+FROM base as builder
+COPY . .
+COPY --from=composer:1.10.1 /usr/bin/composer ./composer.phar
+RUN php composer.phar install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction && \
+    sed -i "s/%SHLINK_VERSION%/${SHLINK_VERSION}/g" config/autoload/app_options.global.php
+
+
+# Prepare final image
+FROM base
+LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
+
+COPY --from=builder /etc/shlink .
 RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink
-RUN sed -i "s/%SHLINK_VERSION%/${SHLINK_VERSION}/g" config/autoload/app_options.global.php
 
 # Expose swoole port
 EXPOSE 8080

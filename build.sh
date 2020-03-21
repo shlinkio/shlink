@@ -25,7 +25,7 @@ cd "${builtcontent}"
 # Install dependencies
 echo "Installing dependencies with $composerBin..."
 ${composerBin} self-update
-${composerBin} install --no-dev --optimize-autoloader --no-progress --no-interaction
+${composerBin} install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction
 
 # Delete development files
 echo 'Deleting dev files...'
