@@ -18,7 +18,7 @@ cache:
 
 before_install:
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - yes | pecl install swoole
+  - yes | pecl install swoole-4.4.15
   - phpenv config-rm xdebug.ini || return 0
 
 install:
