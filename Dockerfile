@@ -41,6 +41,8 @@ FROM base as builder
 COPY . .
 COPY --from=composer:1.10.1 /usr/bin/composer ./composer.phar
 RUN php composer.phar install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction && \
+    php composer.phar clear-cache && \
+    rm composer.* && \
     sed -i "s/%SHLINK_VERSION%/${SHLINK_VERSION}/g" config/autoload/app_options.global.php
 
 
