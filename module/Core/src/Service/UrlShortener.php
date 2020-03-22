@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\UriInterface;
-use Shlinkio\Shlink\Core\Domain\Resolver\PersistenceDomainResolver;
+use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
@@ -24,13 +24,16 @@ class UrlShortener implements UrlShortenerInterface
 
     private EntityManagerInterface $em;
     private UrlValidatorInterface $urlValidator;
+    private DomainResolverInterface $domainResolver;
 
     public function __construct(
         UrlValidatorInterface $urlValidator,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        DomainResolverInterface $domainResolver
     ) {
         $this->urlValidator = $urlValidator;
         $this->em = $em;
+        $this->domainResolver = $domainResolver;
     }
 
     /**
@@ -51,7 +54,7 @@ class UrlShortener implements UrlShortenerInterface
 
         $this->urlValidator->validateUrl($url);
         $this->em->beginTransaction();
-        $shortUrl = new ShortUrl($url, $meta, new PersistenceDomainResolver($this->em));
+        $shortUrl = new ShortUrl($url, $meta, $this->domainResolver);
         $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
 
         try {

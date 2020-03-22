@@ -9,6 +9,7 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Shlinkio\Shlink\Core\Domain\Resolver;
 use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 
@@ -39,6 +40,8 @@ return [
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
 
             Middleware\QrCodeCacheMiddleware::class => ConfigAbstractFactory::class,
+
+            Resolver\PersistenceDomainResolver::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -51,7 +54,7 @@ return [
         Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
-        Service\UrlShortener::class => [Util\UrlValidator::class, 'em'],
+        Service\UrlShortener::class => [Util\UrlValidator::class, 'em', Resolver\PersistenceDomainResolver::class],
         Service\VisitsTracker::class => ['em', EventDispatcherInterface::class],
         Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class],
         Service\VisitService::class => ['em'],
@@ -84,6 +87,8 @@ return [
         ],
 
         Middleware\QrCodeCacheMiddleware::class => [Cache::class],
+
+        Resolver\PersistenceDomainResolver::class => ['em'],
     ],
 
 ];

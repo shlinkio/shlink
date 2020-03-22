@@ -13,6 +13,7 @@ use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
@@ -53,7 +54,11 @@ class UrlShortenerTest extends TestCase
         $repo->shortCodeIsInUse(Argument::cetera())->willReturn(false);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $this->urlShortener = new UrlShortener($this->urlValidator->reveal(), $this->em->reveal());
+        $this->urlShortener = new UrlShortener(
+            $this->urlValidator->reveal(),
+            $this->em->reveal(),
+            new SimpleDomainResolver(),
+        );
     }
 
     /** @test */
