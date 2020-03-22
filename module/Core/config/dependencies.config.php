@@ -51,7 +51,7 @@ return [
         Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
-        Service\UrlShortener::class => [Util\UrlValidator::class, 'em', Options\UrlShortenerOptions::class],
+        Service\UrlShortener::class => [Util\UrlValidator::class, 'em'],
         Service\VisitsTracker::class => ['em', EventDispatcherInterface::class],
         Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class],
         Service\VisitService::class => ['em'],
@@ -63,7 +63,7 @@ return [
         ],
         Service\ShortUrl\ShortUrlResolver::class => ['em'],
 
-        Util\UrlValidator::class => ['httpClient'],
+        Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
 
         Action\RedirectAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,

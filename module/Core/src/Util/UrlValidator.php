@@ -9,16 +9,19 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 
 class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
 {
     private const MAX_REDIRECTS = 15;
 
     private ClientInterface $httpClient;
+    private UrlShortenerOptions $options;
 
-    public function __construct(ClientInterface $httpClient)
+    public function __construct(ClientInterface $httpClient, UrlShortenerOptions $options)
     {
         $this->httpClient = $httpClient;
+        $this->options = $options;
     }
 
     /**
@@ -26,6 +29,11 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
      */
     public function validateUrl(string $url): void
     {
+        // If the URL validation is not enabled, skip check
+        if (! $this->options->isUrlValidationEnabled()) {
+            return;
+        }
+
         try {
             $this->httpClient->request(self::METHOD_GET, $url, [
                 RequestOptions::ALLOW_REDIRECTS => ['max' => self::MAX_REDIRECTS],

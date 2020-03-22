@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
@@ -24,17 +23,14 @@ class UrlShortener implements UrlShortenerInterface
     use TagManagerTrait;
 
     private EntityManagerInterface $em;
-    private UrlShortenerOptions $options;
     private UrlValidatorInterface $urlValidator;
 
     public function __construct(
         UrlValidatorInterface $urlValidator,
-        EntityManagerInterface $em,
-        UrlShortenerOptions $options
+        EntityManagerInterface $em
     ) {
         $this->urlValidator = $urlValidator;
         $this->em = $em;
-        $this->options = $options;
     }
 
     /**
@@ -53,11 +49,7 @@ class UrlShortener implements UrlShortenerInterface
             return $existingShortUrl;
         }
 
-        // If the URL validation is enabled, check that the URL actually exists
-        if ($this->options->isUrlValidationEnabled()) {
-            $this->urlValidator->validateUrl($url);
-        }
-
+        $this->urlValidator->validateUrl($url);
         $this->em->beginTransaction();
         $shortUrl = new ShortUrl($url, $meta, new PersistenceDomainResolver($this->em));
         $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
