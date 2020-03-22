@@ -53,7 +53,7 @@ class LocateShortUrlVisit
         }
 
         if ($this->downloadOrUpdateGeoLiteDb($visitId)) {
-            $this->locateVisit($visitId, $visit);
+            $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress(), $visit);
         }
 
         $this->eventDispatcher->dispatch(new VisitLocated($visitId));
@@ -80,12 +80,13 @@ class LocateShortUrlVisit
         return true;
     }
 
-    private function locateVisit(string $visitId, Visit $visit): void
+    private function locateVisit(string $visitId, ?string $originalIpAddress, Visit $visit): void
     {
+        $isLocatable = $originalIpAddress !== null || $visit->isLocatable();
+        $addr = $originalIpAddress ?? $visit->getRemoteAddr();
+
         try {
-            $location = $visit->isLocatable()
-                ? $this->ipLocationResolver->resolveIpLocation($visit->getRemoteAddr())
-                : Location::emptyInstance();
+            $location = $isLocatable ? $this->ipLocationResolver->resolveIpLocation($addr) : Location::emptyInstance();
 
             $visit->locate(new VisitLocation($location));
             $this->em->flush();
