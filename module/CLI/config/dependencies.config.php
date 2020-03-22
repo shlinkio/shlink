@@ -19,6 +19,8 @@ use Symfony\Component\Console as SymfonyCli;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 
+use const Shlinkio\Shlink\Core\LOCAL_LOCK_FACTORY;
+
 return [
 
     'dependencies' => [
@@ -52,7 +54,7 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, 'Shlinkio\Shlink\LocalLockFactory'],
+        GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, LOCAL_LOCK_FACTORY],
 
         Command\ShortUrl\GenerateShortUrlCommand::class => [
             Service\UrlShortener::class,
