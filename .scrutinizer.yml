@@ -6,6 +6,9 @@ checks:
     code_rating: true
     duplication: true
 build:
+  dependencies:
+    override:
+      - composer install --no-interaction --no-scripts --ignore-platform-reqs
   nodes:
     analysis:
       tests:
