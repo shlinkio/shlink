@@ -8,28 +8,23 @@ use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 
+use function array_key_exists;
 use function Shlinkio\Shlink\Core\parseDateField;
 
-use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
-
-final class ShortUrlMeta
+final class ShortUrlEdit
 {
+    private bool $longUrlPropWasProvided = false;
+    private ?string $longUrl = null;
+    private bool $validSincePropWasProvided = false;
     private ?Chronos $validSince = null;
+    private bool $validUntilPropWasProvided = false;
     private ?Chronos $validUntil = null;
-    private ?string $customSlug = null;
+    private bool $maxVisitsPropWasProvided = false;
     private ?int $maxVisits = null;
-    private ?bool $findIfExists = null;
-    private ?string $domain = null;
-    private int $shortCodeLength = 5;
 
     // Enforce named constructors
     private function __construct()
     {
-    }
-
-    public static function createEmpty(): self
-    {
-        return new self();
     }
 
     /**
@@ -52,16 +47,15 @@ final class ShortUrlMeta
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
+        $this->longUrlPropWasProvided = array_key_exists(ShortUrlMetaInputFilter::LONG_URL, $data);
+        $this->validSincePropWasProvided = array_key_exists(ShortUrlMetaInputFilter::VALID_SINCE, $data);
+        $this->validUntilPropWasProvided = array_key_exists(ShortUrlMetaInputFilter::VALID_UNTIL, $data);
+        $this->maxVisitsPropWasProvided = array_key_exists(ShortUrlMetaInputFilter::MAX_VISITS, $data);
+
+        $this->longUrl = $inputFilter->getValue(ShortUrlMetaInputFilter::LONG_URL);
         $this->validSince = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
         $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
-        $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
         $this->maxVisits = $this->getOptionalIntFromInputFilter($inputFilter, ShortUrlMetaInputFilter::MAX_VISITS);
-        $this->findIfExists = $inputFilter->getValue(ShortUrlMetaInputFilter::FIND_IF_EXISTS);
-        $this->domain = $inputFilter->getValue(ShortUrlMetaInputFilter::DOMAIN);
-        $this->shortCodeLength = $this->getOptionalIntFromInputFilter(
-            $inputFilter,
-            ShortUrlMetaInputFilter::SHORT_CODE_LENGTH,
-        ) ?? DEFAULT_SHORT_CODES_LENGTH;
     }
 
     private function getOptionalIntFromInputFilter(ShortUrlMetaInputFilter $inputFilter, string $fieldName): ?int
@@ -70,63 +64,43 @@ final class ShortUrlMeta
         return $value !== null ? (int) $value : null;
     }
 
-    public function getValidSince(): ?Chronos
+    public function longUrl(): ?string
+    {
+        return $this->longUrl;
+    }
+
+    public function hasLongUrl(): bool
+    {
+        return $this->longUrlPropWasProvided && $this->longUrl !== null;
+    }
+
+    public function validSince(): ?Chronos
     {
         return $this->validSince;
     }
 
     public function hasValidSince(): bool
     {
-        return $this->validSince !== null;
+        return $this->validSincePropWasProvided;
     }
 
-    public function getValidUntil(): ?Chronos
+    public function validUntil(): ?Chronos
     {
         return $this->validUntil;
     }
 
     public function hasValidUntil(): bool
     {
-        return $this->validUntil !== null;
+        return $this->validUntilPropWasProvided;
     }
 
-    public function getCustomSlug(): ?string
-    {
-        return $this->customSlug;
-    }
-
-    public function hasCustomSlug(): bool
-    {
-        return $this->customSlug !== null;
-    }
-
-    public function getMaxVisits(): ?int
+    public function maxVisits(): ?int
     {
         return $this->maxVisits;
     }
 
     public function hasMaxVisits(): bool
     {
-        return $this->maxVisits !== null;
-    }
-
-    public function findIfExists(): bool
-    {
-        return (bool) $this->findIfExists;
-    }
-
-    public function hasDomain(): bool
-    {
-        return $this->domain !== null;
-    }
-
-    public function getDomain(): ?string
-    {
-        return $this->domain;
-    }
-
-    public function getShortCodeLength(): int
-    {
-        return $this->shortCodeLength;
+        return $this->maxVisitsPropWasProvided;
     }
 }

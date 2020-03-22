@@ -13,17 +13,20 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Util\UrlValidator;
 
 class UrlValidatorTest extends TestCase
 {
     private UrlValidator $urlValidator;
     private ObjectProphecy $httpClient;
+    private UrlShortenerOptions $options;
 
     public function setUp(): void
     {
         $this->httpClient = $this->prophesize(ClientInterface::class);
-        $this->urlValidator = new UrlValidator($this->httpClient->reveal());
+        $this->options = new UrlShortenerOptions(['validate_url' => true]);
+        $this->urlValidator = new UrlValidator($this->httpClient->reveal(), $this->options);
     }
 
     /** @test */
@@ -51,5 +54,16 @@ class UrlValidatorTest extends TestCase
         $this->urlValidator->validateUrl($expectedUrl);
 
         $request->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
+    public function noCheckIsPerformedWhenUrlValidationIsDisabled(): void
+    {
+        $request = $this->httpClient->request(Argument::cetera())->willReturn(new Response());
+        $this->options->validateUrl = false;
+
+        $this->urlValidator->validateUrl('');
+
+        $request->shouldNotHaveBeenCalled();
     }
 }

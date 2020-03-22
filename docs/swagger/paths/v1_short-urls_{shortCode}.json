@@ -112,6 +112,10 @@
                     "schema": {
                         "type": "object",
                         "properties": {
+                            "longUrl": {
+                                "description": "The long URL this short URL will redirect to",
+                                "type": "string"
+                            },
                             "validSince": {
                                 "description": "The date (in ISO-8601 format) from which this short code will be valid",
                                 "type": "string"
@@ -157,6 +161,7 @@
                                             "items": {
                                                 "type": "string",
                                                 "enum": [
+                                                    "longUrl",
                                                     "validSince",
                                                     "validUntil",
                                                     "maxVisits"
