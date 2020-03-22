@@ -16,6 +16,7 @@ docs
 indocker
 docker-*
 phpstan.neon
+php*xml*
 infection.json
 **/test*
 build*
