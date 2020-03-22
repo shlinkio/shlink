@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#556](https://github.com/shlinkio/shlink/issues/556) Short code lengths can now be customized, both globally and on a per-short URL basis.
 * [#541](https://github.com/shlinkio/shlink/issues/541) Added a request ID that is returned on `X-Request-Id` header, can be provided from outside and is set in log entries.
 * [#642](https://github.com/shlinkio/shlink/issues/642) IP geolocation is now performed over the non-anonymized IP address when using swoole.
+* [#521](https://github.com/shlinkio/shlink/issues/521) The long URL for any existing short URL can now be edited using the `PATCH /short-urls/{shortCode}` endpoint.
 
 #### Changed
 
