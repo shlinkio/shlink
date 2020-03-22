@@ -18,6 +18,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
+use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 
 use function count;
 
@@ -26,6 +27,7 @@ class ShortUrlServiceTest extends TestCase
     private ShortUrlService $service;
     private ObjectProphecy $em;
     private ObjectProphecy $urlResolver;
+    private ObjectProphecy $urlValidator;
 
     public function setUp(): void
     {
@@ -34,8 +36,13 @@ class ShortUrlServiceTest extends TestCase
         $this->em->flush()->willReturn(null);
 
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
+        $this->urlValidator = $this->prophesize(UrlValidatorInterface::class);
 
-        $this->service = new ShortUrlService($this->em->reveal(), $this->urlResolver->reveal());
+        $this->service = new ShortUrlService(
+            $this->em->reveal(),
+            $this->urlResolver->reveal(),
+            $this->urlValidator->reveal(),
+        );
     }
 
     /** @test */
@@ -74,27 +81,47 @@ class ShortUrlServiceTest extends TestCase
         $this->service->setTagsByShortCode(new ShortUrlIdentifier($shortCode), ['foo', 'bar']);
     }
 
-    /** @test */
-    public function updateMetadataByShortCodeUpdatesProvidedData(): void
-    {
-        $shortUrl = new ShortUrl('');
+    /**
+     * @test
+     * @dataProvider provideShortUrlEdits
+     */
+    public function updateMetadataByShortCodeUpdatesProvidedData(
+        int $expectedValidateCalls,
+        ShortUrlEdit $shortUrlEdit
+    ): void {
+        $originalLongUrl = 'originalLongUrl';
+        $shortUrl = new ShortUrl($originalLongUrl);
 
         $findShortUrl = $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier('abc123'))->willReturn($shortUrl);
         $flush = $this->em->flush()->willReturn(null);
 
-        $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), ShortUrlEdit::fromRawData(
+        $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), $shortUrlEdit);
+
+        $this->assertSame($shortUrl, $result);
+        $this->assertEquals($shortUrlEdit->validSince(), $shortUrl->getValidSince());
+        $this->assertEquals($shortUrlEdit->validUntil(), $shortUrl->getValidUntil());
+        $this->assertEquals($shortUrlEdit->maxVisits(), $shortUrl->getMaxVisits());
+        $this->assertEquals($shortUrlEdit->longUrl() ?? $originalLongUrl, $shortUrl->getLongUrl());
+        $findShortUrl->shouldHaveBeenCalled();
+        $flush->shouldHaveBeenCalled();
+        $this->urlValidator->validateUrl($shortUrlEdit->longUrl())->shouldHaveBeenCalledTimes($expectedValidateCalls);
+    }
+
+    public function provideShortUrlEdits(): iterable
+    {
+        yield 'no long URL' => [0, ShortUrlEdit::fromRawData(
             [
                 'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
                 'validUntil' => Chronos::parse('2017-01-05 00:00:00')->toAtomString(),
                 'maxVisits' => 5,
             ],
-        ));
-
-        $this->assertSame($shortUrl, $result);
-        $this->assertEquals(Chronos::parse('2017-01-01 00:00:00'), $shortUrl->getValidSince());
-        $this->assertEquals(Chronos::parse('2017-01-05 00:00:00'), $shortUrl->getValidUntil());
-        $this->assertEquals(5, $shortUrl->getMaxVisits());
-        $findShortUrl->shouldHaveBeenCalled();
-        $flush->shouldHaveBeenCalled();
+        )];
+        yield 'long URL' => [1, ShortUrlEdit::fromRawData(
+            [
+                'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
+                'maxVisits' => 10,
+                'longUrl' => 'modifiedLongUrl',
+            ],
+        )];
     }
 }

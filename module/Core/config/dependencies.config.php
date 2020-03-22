@@ -56,7 +56,7 @@ return [
 
         Service\UrlShortener::class => [Util\UrlValidator::class, 'em', Resolver\PersistenceDomainResolver::class],
         Service\VisitsTracker::class => ['em', EventDispatcherInterface::class],
-        Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class],
+        Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class, Util\UrlValidator::class],
         Service\VisitService::class => ['em'],
         Service\Tag\TagService::class => ['em'],
         Service\ShortUrl\DeleteShortUrlService::class => [

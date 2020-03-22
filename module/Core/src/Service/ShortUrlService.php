@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Service;
 use Doctrine\ORM;
 use Laminas\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
@@ -15,6 +16,7 @@ use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
+use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 
 class ShortUrlService implements ShortUrlServiceInterface
 {
@@ -22,11 +24,16 @@ class ShortUrlService implements ShortUrlServiceInterface
 
     private ORM\EntityManagerInterface $em;
     private ShortUrlResolverInterface $urlResolver;
+    private UrlValidatorInterface $urlValidator;
 
-    public function __construct(ORM\EntityManagerInterface $em, ShortUrlResolverInterface $urlResolver)
-    {
+    public function __construct(
+        ORM\EntityManagerInterface $em,
+        ShortUrlResolverInterface $urlResolver,
+        UrlValidatorInterface $urlValidator
+    ) {
         $this->em = $em;
         $this->urlResolver = $urlResolver;
+        $this->urlValidator = $urlValidator;
     }
 
     /**
@@ -59,9 +66,14 @@ class ShortUrlService implements ShortUrlServiceInterface
 
     /**
      * @throws ShortUrlNotFoundException
+     * @throws InvalidUrlException
      */
     public function updateMetadataByShortCode(ShortUrlIdentifier $identifier, ShortUrlEdit $shortUrlEdit): ShortUrl
     {
+        if ($shortUrlEdit->hasLongUrl()) {
+            $this->urlValidator->validateUrl($shortUrlEdit->longUrl());
+        }
+
         $shortUrl = $this->urlResolver->resolveShortUrl($identifier);
         $shortUrl->update($shortUrlEdit);
 
