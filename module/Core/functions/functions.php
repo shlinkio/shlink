@@ -12,6 +12,7 @@ use function sprintf;
 
 const DEFAULT_SHORT_CODES_LENGTH = 5;
 const MIN_SHORT_CODES_LENGTH = 4;
+const LOCAL_LOCK_FACTORY = 'Shlinkio\Shlink\LocalLockFactory';
 
 function generateRandomShortCode(int $length): string
 {
