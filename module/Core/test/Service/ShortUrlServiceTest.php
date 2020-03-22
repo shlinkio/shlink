@@ -12,8 +12,8 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
@@ -82,7 +82,7 @@ class ShortUrlServiceTest extends TestCase
         $findShortUrl = $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier('abc123'))->willReturn($shortUrl);
         $flush = $this->em->flush()->willReturn(null);
 
-        $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), ShortUrlMeta::fromRawData(
+        $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), ShortUrlEdit::fromRawData(
             [
                 'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
                 'validUntil' => Chronos::parse('2017-01-05 00:00:00')->toAtomString(),

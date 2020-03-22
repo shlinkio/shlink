@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
+use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 
 use function array_reduce;
@@ -93,16 +94,19 @@ class ShortUrl extends AbstractEntity
         return $this;
     }
 
-    public function updateMeta(ShortUrlMeta $shortCodeMeta): void
+    public function update(ShortUrlEdit $shortUrlEdit): void
     {
-        if ($shortCodeMeta->hasValidSince()) {
-            $this->validSince = $shortCodeMeta->getValidSince();
+        if ($shortUrlEdit->hasValidSince()) {
+            $this->validSince = $shortUrlEdit->validSince();
         }
-        if ($shortCodeMeta->hasValidUntil()) {
-            $this->validUntil = $shortCodeMeta->getValidUntil();
+        if ($shortUrlEdit->hasValidUntil()) {
+            $this->validUntil = $shortUrlEdit->validUntil();
         }
-        if ($shortCodeMeta->hasMaxVisits()) {
-            $this->maxVisits = $shortCodeMeta->getMaxVisits();
+        if ($shortUrlEdit->hasMaxVisits()) {
+            $this->maxVisits = $shortUrlEdit->maxVisits();
+        }
+        if ($shortUrlEdit->hasLongUrl()) {
+            $this->longUrl = $shortUrlEdit->longUrl();
         }
     }
 

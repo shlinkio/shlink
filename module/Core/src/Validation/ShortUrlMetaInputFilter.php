@@ -23,6 +23,7 @@ class ShortUrlMetaInputFilter extends InputFilter
     public const FIND_IF_EXISTS = 'findIfExists';
     public const DOMAIN = 'domain';
     public const SHORT_CODE_LENGTH = 'shortCodeLength';
+    public const LONG_URL = 'longUrl';
 
     public function __construct(array $data)
     {
@@ -32,6 +33,8 @@ class ShortUrlMetaInputFilter extends InputFilter
 
     private function initialize(): void
     {
+        $this->add($this->createInput(self::LONG_URL, false));
+
         $validSince = $this->createInput(self::VALID_SINCE, false);
         $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));
         $this->add($validSince);
