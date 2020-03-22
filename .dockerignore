@@ -15,11 +15,9 @@ vendor
 docs
 indocker
 docker-*
-php*
-.php*
+phpstan.neon
+php*xml*
 infection.json
 **/test*
 build*
-.git*
-.scrutinizer.yml
-.travis.yml
+**/.*

@@ -40,9 +40,10 @@ RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8
 FROM base as builder
 COPY . .
 COPY --from=composer:1.10.1 /usr/bin/composer ./composer.phar
-RUN php composer.phar install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction && \
+RUN apk add --no-cache git && \
+    php composer.phar install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction && \
     php composer.phar clear-cache && \
-    rm composer.* && \
+    rm -r docker composer.* && \
     sed -i "s/%SHLINK_VERSION%/${SHLINK_VERSION}/g" config/autoload/app_options.global.php
 
 

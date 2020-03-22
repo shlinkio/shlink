@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#626](https://github.com/shlinkio/shlink/issues/626) Added support for Microsoft SQL Server.
 * [#556](https://github.com/shlinkio/shlink/issues/556) Short code lengths can now be customized, both globally and on a per-short URL basis.
 * [#541](https://github.com/shlinkio/shlink/issues/541) Added a request ID that is returned on `X-Request-Id` header, can be provided from outside and is set in log entries.
+* [#642](https://github.com/shlinkio/shlink/issues/642) IP geolocation is now performed over the non-anonymized IP address when using swoole.
 
 #### Changed
 
