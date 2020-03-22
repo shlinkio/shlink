@@ -73,6 +73,32 @@ class EditShortUrlActionTest extends ApiTestCase
 
     /**
      * @test
+     * @dataProvider provideLongUrls
+     */
+    public function longUrlCanBeEditedIfItIsValid(string $longUrl, int $expectedStatus, ?string $expectedError): void
+    {
+        $shortCode = 'abc123';
+        $url = sprintf('/short-urls/%s', $shortCode);
+
+        $resp = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => [
+            'longUrl' => $longUrl,
+        ]]);
+
+        $this->assertEquals($expectedStatus, $resp->getStatusCode());
+        if ($expectedError !== null) {
+            $payload = $this->getJsonResponsePayload($resp);
+            $this->assertEquals($expectedError, $payload['type']);
+        }
+    }
+
+    public function provideLongUrls(): iterable
+    {
+        yield 'valid URL' => ['https://shlink.io', self::STATUS_NO_CONTENT, null];
+        yield 'invalid URL' => ['htt:foo', self::STATUS_BAD_REQUEST, 'INVALID_URL'];
+    }
+
+    /**
+     * @test
      * @dataProvider provideInvalidUrls
      */
     public function tryingToEditInvalidUrlReturnsNotFoundError(
