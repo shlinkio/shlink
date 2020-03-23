@@ -44,4 +44,10 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->columnName('lon')
             ->nullable(false)
             ->build();
+
+    $builder->createField('isEmpty', Types::BOOLEAN)
+            ->columnName('is_empty')
+            ->option('default', false)
+            ->nullable(false)
+            ->build();
 };
