@@ -97,7 +97,7 @@ Once Shlink is configured, you need to expose it to the web, either by using a t
 
         location ~ \.php$ {
             fastcgi_split_path_info ^(.+\.php)(/.+)$;
-            fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+            fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
             fastcgi_index index.php;
             include fastcgi.conf;
         }
