@@ -36,19 +36,24 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->repo = $this->getEntityManager()->getRepository(Visit::class);
     }
 
-    /**
-     * @test
-     * @dataProvider provideBlockSize
-     */
-    public function findUnlocatedVisitsReturnsProperVisits(int $blockSize): void
+    /** @test */
+    public function findVisitsReturnsProperVisits(): void
     {
         $shortUrl = new ShortUrl('');
         $this->getEntityManager()->persist($shortUrl);
+        $countIterable = function (iterable $results): int {
+            $resultsCount = 0;
+            foreach ($results as $value) {
+                $resultsCount++;
+            }
+
+            return $resultsCount;
+        };
 
         for ($i = 0; $i < 6; $i++) {
             $visit = new Visit($shortUrl, Visitor::emptyInstance());
 
-            if ($i % 2 === 0) {
+            if ($i >= 2) {
                 $location = new VisitLocation(Location::emptyInstance());
                 $this->getEntityManager()->persist($location);
                 $visit->locate($location);
@@ -58,18 +63,13 @@ class VisitRepositoryTest extends DatabaseTestCase
         }
         $this->getEntityManager()->flush();
 
-        $resultsCount = 0;
-        $results = $this->repo->findUnlocatedVisits(true, $blockSize);
-        foreach ($results as $value) {
-            $resultsCount++;
-        }
+        $withEmptyLocation = $this->repo->findVisitsWithEmptyLocation();
+        $unlocated = $this->repo->findUnlocatedVisits();
 
-        $this->assertEquals(3, $resultsCount);
-    }
-
-    public function provideBlockSize(): iterable
-    {
-        return map(range(1, 5), fn (int $value) => [$value]);
+        // Important! assertCount will not work here, as this iterable object loads data dynamically and counts to
+        // 0 if not iterated
+        $this->assertEquals(2, $countIterable($unlocated));
+        $this->assertEquals(4, $countIterable($withEmptyLocation));
     }
 
     /** @test */

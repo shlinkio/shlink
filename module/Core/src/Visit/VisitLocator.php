@@ -29,7 +29,9 @@ class VisitLocator implements VisitLocatorInterface
 
     public function locateVisitsWithEmptyLocation(callable $geolocateVisit, callable $notifyVisitWithLocation): void
     {
-        $this->locateVisits([], $geolocateVisit, $notifyVisitWithLocation);
+        /** @var VisitRepository $repo */
+        $repo = $this->em->getRepository(Visit::class);
+        $this->locateVisits($repo->findVisitsWithEmptyLocation(false), $geolocateVisit, $notifyVisitWithLocation);
     }
 
     /**

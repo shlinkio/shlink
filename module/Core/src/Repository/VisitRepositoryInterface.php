@@ -10,18 +10,29 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 
 interface VisitRepositoryInterface extends ObjectRepository
 {
-    public const DEFAULT_BLOCK_SIZE = 10000;
+    /**
+     * This method will allow you to iterate the whole list of unlocated visits, but loading them into memory in
+     * smaller blocks of a specific size.
+     * This will have side effects if you update those rows while you iterate them, in a way that they are no longer
+     * unlocated.
+     * If you plan to do so, pass the first argument as false in order to disable applying offsets while slicing the
+     * dataset.
+     *
+     * @return iterable|Visit[]
+     */
+    public function findUnlocatedVisits(bool $applyOffset = true): iterable;
 
     /**
      * This method will allow you to iterate the whole list of unlocated visits, but loading them into memory in
      * smaller blocks of a specific size.
-     * This will have side effects if you update those rows while you iterate them.
+     * This will have side effects if you update those rows while you iterate them, in a way that they are no longer
+     * unlocated.
      * If you plan to do so, pass the first argument as false in order to disable applying offsets while slicing the
-     * dataset
+     * dataset.
      *
      * @return iterable|Visit[]
      */
-    public function findUnlocatedVisits(bool $applyOffset = true, int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
+    public function findVisitsWithEmptyLocation(bool $applyOffset = true): iterable;
 
     /**
      * @return Visit[]
