@@ -28,7 +28,7 @@ return [
             Service\UrlShortener::class => ConfigAbstractFactory::class,
             Service\VisitsTracker::class => ConfigAbstractFactory::class,
             Service\ShortUrlService::class => ConfigAbstractFactory::class,
-            Service\VisitService::class => ConfigAbstractFactory::class,
+            Visit\VisitLocator::class => ConfigAbstractFactory::class,
             Service\Tag\TagService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
@@ -57,7 +57,7 @@ return [
         Service\UrlShortener::class => [Util\UrlValidator::class, 'em', Resolver\PersistenceDomainResolver::class],
         Service\VisitsTracker::class => ['em', EventDispatcherInterface::class],
         Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class, Util\UrlValidator::class],
-        Service\VisitService::class => ['em'],
+        Visit\VisitLocator::class => ['em'],
         Service\Tag\TagService::class => ['em'],
         Service\ShortUrl\DeleteShortUrlService::class => [
             'em',

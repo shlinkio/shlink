@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
-use Exception;
 use Shlinkio\Shlink\CLI\Command\Util\AbstractLockedCommand;
 use Shlinkio\Shlink\CLI\Command\Util\LockedCommandConfig;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
@@ -14,12 +13,13 @@ use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
-use Shlinkio\Shlink\Core\Service\VisitServiceInterface;
+use Shlinkio\Shlink\Core\Visit\VisitLocatorInterface;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Lock\LockFactory;
@@ -31,7 +31,7 @@ class LocateVisitsCommand extends AbstractLockedCommand
 {
     public const NAME = 'visit:locate';
 
-    private VisitServiceInterface $visitService;
+    private VisitLocatorInterface $visitLocator;
     private IpLocationResolverInterface $ipLocationResolver;
     private GeolocationDbUpdaterInterface $dbUpdater;
 
@@ -39,13 +39,13 @@ class LocateVisitsCommand extends AbstractLockedCommand
     private ?ProgressBar $progressBar = null;
 
     public function __construct(
-        VisitServiceInterface $visitService,
+        VisitLocatorInterface $visitLocator,
         IpLocationResolverInterface $ipLocationResolver,
         LockFactory $locker,
         GeolocationDbUpdaterInterface $dbUpdater
     ) {
         parent::__construct($locker);
-        $this->visitService = $visitService;
+        $this->visitLocator = $visitLocator;
         $this->ipLocationResolver = $ipLocationResolver;
         $this->dbUpdater = $dbUpdater;
     }
@@ -54,32 +54,46 @@ class LocateVisitsCommand extends AbstractLockedCommand
     {
         $this
             ->setName(self::NAME)
-            ->setDescription('Resolves visits origin locations.');
+            ->setDescription('Resolves visits origin locations.')
+            ->addOption(
+                'retry',
+                'r',
+                InputOption::VALUE_NONE,
+                'Will retry visits that were located with an empty location, in case it was a temporal issue.',
+            )
+            ->addOption(
+                'all',
+                'a',
+                InputOption::VALUE_NONE,
+                'Will locate all visits, ignoring if they have already been located.',
+            );
     }
 
     protected function lockedExecute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
+        $retry = $input->getOption('retry');
+        $geolocateVisit = [$this, 'getGeolocationDataForVisit'];
+        $notifyVisitWithLocation = static function (VisitLocation $location) use ($output): void {
+            $message = ! $location->isEmpty()
+                ? sprintf(' [<info>Address located in "%s"</info>]', $location->getCountryName())
+                : ' [<comment>Address not found</comment>]';
+            $output->writeln($message);
+        };
 
         try {
             $this->checkDbUpdate();
 
-            $this->visitService->locateUnlocatedVisits(
-                [$this, 'getGeolocationDataForVisit'],
-                static function (VisitLocation $location) use ($output): void {
-                    if (!$location->isEmpty()) {
-                        $output->writeln(
-                            sprintf(' [<info>Address located at "%s"</info>]', $location->getCountryName()),
-                        );
-                    }
-                },
-            );
+            $this->visitLocator->locateUnlocatedVisits($geolocateVisit, $notifyVisitWithLocation);
+            if ($retry) {
+                $this->visitLocator->locateVisitsWithEmptyLocation($geolocateVisit, $notifyVisitWithLocation);
+            }
 
             $this->io->success('Finished processing all IPs');
             return ExitCodes::EXIT_SUCCESS;
         } catch (Throwable $e) {
             $this->io->error($e->getMessage());
-            if ($e instanceof Exception && $this->io->isVerbose()) {
+            if ($e instanceof Throwable && $this->io->isVerbose()) {
                 $this->getApplication()->renderThrowable($e, $this->io);
             }
 

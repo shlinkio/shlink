@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\Visitor;
-use Shlinkio\Shlink\Core\Service\VisitService;
+use Shlinkio\Shlink\Core\Visit\VisitLocator;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
@@ -38,7 +38,7 @@ class LocateVisitsCommandTest extends TestCase
 
     public function setUp(): void
     {
-        $this->visitService = $this->prophesize(VisitService::class);
+        $this->visitService = $this->prophesize(VisitLocator::class);
         $this->ipResolver = $this->prophesize(IpLocationResolverInterface::class);
         $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
 

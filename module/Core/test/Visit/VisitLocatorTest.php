@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Service;
+namespace ShlinkioTest\Shlink\Core\Visit;
 
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
-use Shlinkio\Shlink\Core\Service\VisitService;
+use Shlinkio\Shlink\Core\Visit\VisitLocator;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use function array_shift;
@@ -26,15 +26,15 @@ use function Functional\map;
 use function range;
 use function sprintf;
 
-class VisitServiceTest extends TestCase
+class VisitLocatorTest extends TestCase
 {
-    private VisitService $visitService;
+    private VisitLocator $visitService;
     private ObjectProphecy $em;
 
     public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManager::class);
-        $this->visitService = new VisitService($this->em->reveal());
+        $this->visitService = new VisitLocator($this->em->reveal());
     }
 
     /** @test */
@@ -95,6 +95,7 @@ class VisitServiceTest extends TestCase
             throw $isNonLocatableAddress
                 ? new IpCannotBeLocatedException('Cannot be located')
                 : IpCannotBeLocatedException::forError(new Exception(''));
+        }, static function (): void {
         });
 
         $findUnlocatedVisits->shouldHaveBeenCalledOnce();
