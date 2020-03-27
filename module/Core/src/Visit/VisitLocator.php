@@ -24,14 +24,14 @@ class VisitLocator implements VisitLocatorInterface
     {
         /** @var VisitRepository $repo */
         $repo = $this->em->getRepository(Visit::class);
-        $this->locateVisits($repo->findUnlocatedVisits(false), $geolocateVisit, $notifyVisitWithLocation);
+        $this->locateVisits($repo->findUnlocatedVisits(), $geolocateVisit, $notifyVisitWithLocation);
     }
 
     public function locateVisitsWithEmptyLocation(callable $geolocateVisit, callable $notifyVisitWithLocation): void
     {
         /** @var VisitRepository $repo */
         $repo = $this->em->getRepository(Visit::class);
-        $this->locateVisits($repo->findVisitsWithEmptyLocation(false), $geolocateVisit, $notifyVisitWithLocation);
+        $this->locateVisits($repo->findVisitsWithEmptyLocation(), $geolocateVisit, $notifyVisitWithLocation);
     }
 
     /**

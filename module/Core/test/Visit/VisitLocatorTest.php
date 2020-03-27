@@ -46,7 +46,7 @@ class VisitLocatorTest extends TestCase
         );
 
         $repo = $this->prophesize(VisitRepository::class);
-        $findUnlocatedVisits = $repo->findUnlocatedVisits(false)->willReturn($unlocatedVisits);
+        $findUnlocatedVisits = $repo->findUnlocatedVisits()->willReturn($unlocatedVisits);
         $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
 
         $persist = $this->em->persist(Argument::type(Visit::class))->will(function (): void {
@@ -81,7 +81,7 @@ class VisitLocatorTest extends TestCase
         ];
 
         $repo = $this->prophesize(VisitRepository::class);
-        $findUnlocatedVisits = $repo->findUnlocatedVisits(false)->willReturn($unlocatedVisits);
+        $findUnlocatedVisits = $repo->findUnlocatedVisits()->willReturn($unlocatedVisits);
         $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
 
         $persist = $this->em->persist(Argument::type(Visit::class))->will(function (): void {

@@ -5,79 +5,61 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
 
 class VisitRepository extends EntityRepository implements VisitRepositoryInterface
 {
-    private const DEFAULT_BLOCK_SIZE = 10000;
-
     /**
-     * This method will allow you to iterate the whole list of unlocated visits, but loading them into memory in
-     * smaller blocks of a specific size.
-     * This will have side effects if you update those rows while you iterate them, in a way that they are no longer
-     * unlocated.
-     * If you plan to do so, pass the first argument as false in order to disable applying offsets while slicing the
-     * dataset.
-     *
      * @return iterable|Visit[]
      */
-    public function findUnlocatedVisits(bool $applyOffset = true): iterable
+    public function findUnlocatedVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
-        $dql = <<<DQL
-            SELECT v FROM Shlinkio\Shlink\Core\Entity\Visit AS v WHERE v.visitLocation IS NULL
-        DQL;
-        $query = $this->getEntityManager()->createQuery($dql);
-        $remainingVisitsToProcess = $this->count(['visitLocation' => null]);
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('v')
+           ->from(Visit::class, 'v')
+           ->where($qb->expr()->isNull('v.visitLocation'));
 
-        return $this->findVisitsForQuery($query, $remainingVisitsToProcess, $applyOffset);
+        return $this->findVisitsForQuery($qb, $blockSize);
     }
 
     /**
-     * This method will allow you to iterate the whole list of unlocated visits, but loading them into memory in
-     * smaller blocks of a specific size.
-     * This will have side effects if you update those rows while you iterate them, in a way that they are no longer
-     * unlocated.
-     * If you plan to do so, pass the first argument as false in order to disable applying offsets while slicing the
-     * dataset.
-     *
      * @return iterable|Visit[]
      */
-    public function findVisitsWithEmptyLocation(bool $applyOffset = true): iterable
+    public function findVisitsWithEmptyLocation(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from(Visit::class, 'v')
+        $qb->select('v')
+           ->from(Visit::class, 'v')
            ->join('v.visitLocation', 'vl')
            ->where($qb->expr()->isNotNull('v.visitLocation'))
            ->andWhere($qb->expr()->eq('vl.isEmpty', ':isEmpty'))
            ->setParameter('isEmpty', true);
-        $countQb = clone $qb;
 
-        $query = $qb->select('v')->getQuery();
-        $remainingVisitsToProcess = (int) $countQb->select('COUNT(DISTINCT v.id)')->getQuery()->getSingleScalarResult();
-
-        return $this->findVisitsForQuery($query, $remainingVisitsToProcess, $applyOffset);
+        return $this->findVisitsForQuery($qb, $blockSize);
     }
 
-    private function findVisitsForQuery(Query $query, int $remainingVisitsToProcess, bool $applyOffset = true): iterable
+    private function findVisitsForQuery(QueryBuilder $qb, int $blockSize): iterable
     {
-        $blockSize = self::DEFAULT_BLOCK_SIZE;
-        $query = $query->setMaxResults($blockSize);
-        $offset = 0;
+        $originalQueryBuilder = $qb->setMaxResults($blockSize)
+                                   ->orderBy('v.id', 'ASC');
+        $lastId = '0';
 
-        // FIXME Do not use the $applyOffset workaround. Instead, always start with first result, but skip already
-        //       processed results. That should work both if any entry is edited or not
-        while ($remainingVisitsToProcess > 0) {
-            $iterator = $query->setFirstResult($applyOffset ? $offset : null)->iterate();
-            foreach ($iterator as $key => [$value]) {
-                yield $key => $value;
+        do {
+            $qb = (clone $originalQueryBuilder)->andWhere($qb->expr()->gt('v.id', $lastId));
+            $iterator = $qb->getQuery()->iterate();
+            $resultsFound = false;
+
+            /** @var Visit $visit */
+            foreach ($iterator as $key => [$visit]) {
+                $resultsFound = true;
+                yield $key => $visit;
             }
 
-            $remainingVisitsToProcess -= $blockSize;
-            $offset += $blockSize;
-        }
+            // As the query is ordered by ID, we can take the last one every time in order to exclude the whole list
+            $lastId = isset($visit) ? $visit->getId() : $lastId;
+        } while ($resultsFound);
     }
 
     /**
