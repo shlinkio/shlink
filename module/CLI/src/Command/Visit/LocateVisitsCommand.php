@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
+use Shlinkio\Shlink\Core\Visit\VisitGeolocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\VisitLocatorInterface;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
@@ -27,7 +28,7 @@ use Throwable;
 
 use function sprintf;
 
-class LocateVisitsCommand extends AbstractLockedCommand
+class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocationHelperInterface
 {
     public const NAME = 'visit:locate';
 
@@ -73,20 +74,13 @@ class LocateVisitsCommand extends AbstractLockedCommand
     {
         $this->io = new SymfonyStyle($input, $output);
         $retry = $input->getOption('retry');
-        $geolocateVisit = [$this, 'getGeolocationDataForVisit'];
-        $notifyVisitWithLocation = static function (VisitLocation $location) use ($output): void {
-            $message = ! $location->isEmpty()
-                ? sprintf(' [<info>Address located in "%s"</info>]', $location->getCountryName())
-                : ' [<comment>Address not found</comment>]';
-            $output->writeln($message);
-        };
 
         try {
             $this->checkDbUpdate();
 
-            $this->visitLocator->locateUnlocatedVisits($geolocateVisit, $notifyVisitWithLocation);
+            $this->visitLocator->locateUnlocatedVisits($this);
             if ($retry) {
-                $this->visitLocator->locateVisitsWithEmptyLocation($geolocateVisit, $notifyVisitWithLocation);
+                $this->visitLocator->locateVisitsWithEmptyLocation($this);
             }
 
             $this->io->success('Finished processing all IPs');
@@ -101,7 +95,10 @@ class LocateVisitsCommand extends AbstractLockedCommand
         }
     }
 
-    public function getGeolocationDataForVisit(Visit $visit): Location
+    /**
+     * @throws IpCannotBeLocatedException
+     */
+    public function geolocateVisit(Visit $visit): Location
     {
         if (! $visit->hasRemoteAddr()) {
             $this->io->writeln(
@@ -128,6 +125,14 @@ class LocateVisitsCommand extends AbstractLockedCommand
 
             throw IpCannotBeLocatedException::forError($e);
         }
+    }
+
+    public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void
+    {
+        $message = ! $visitLocation->isEmpty()
+            ? sprintf(' [<info>Address located in "%s"</info>]', $visitLocation->getCountryName())
+            : ' [<comment>Address not found</comment>]';
+        $this->io->writeln($message);
     }
 
     private function checkDbUpdate(): void

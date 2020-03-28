@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Visit\VisitGeolocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\VisitLocator;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
@@ -24,7 +25,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock;
 
-use function array_shift;
 use function sprintf;
 
 class LocateVisitsCommandTest extends TestCase
@@ -68,13 +68,7 @@ class LocateVisitsCommandTest extends TestCase
         $location = new VisitLocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
-            function (array $args) use ($visit, $location): void {
-                $firstCallback = array_shift($args);
-                $firstCallback($visit);
-
-                $secondCallback = array_shift($args);
-                $secondCallback($location, $visit);
-            },
+            $this->invokeHelperMethods($visit, $location),
         );
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn(
             Location::emptyInstance(),
@@ -98,13 +92,7 @@ class LocateVisitsCommandTest extends TestCase
         $location = new VisitLocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
-            function (array $args) use ($visit, $location): void {
-                $firstCallback = array_shift($args);
-                $firstCallback($visit);
-
-                $secondCallback = array_shift($args);
-                $secondCallback($location, $visit);
-            },
+            $this->invokeHelperMethods($visit, $location),
         );
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn(
             Location::emptyInstance(),
@@ -137,13 +125,7 @@ class LocateVisitsCommandTest extends TestCase
         $location = new VisitLocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
-            function (array $args) use ($visit, $location): void {
-                $firstCallback = array_shift($args);
-                $firstCallback($visit);
-
-                $secondCallback = array_shift($args);
-                $secondCallback($location, $visit);
-            },
+            $this->invokeHelperMethods($visit, $location),
         );
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willThrow(WrongIpException::class);
 
@@ -154,6 +136,17 @@ class LocateVisitsCommandTest extends TestCase
         $this->assertStringContainsString('An error occurred while locating IP. Skipped', $output);
         $locateVisits->shouldHaveBeenCalledOnce();
         $resolveIpLocation->shouldHaveBeenCalledOnce();
+    }
+
+    private function invokeHelperMethods(Visit $visit, VisitLocation $location): callable
+    {
+        return function (array $args) use ($visit, $location): void {
+            /** @var VisitGeolocationHelperInterface $helper */
+            [$helper] = $args;
+
+            $helper->geolocateVisit($visit);
+            $helper->onVisitLocated($location, $visit);
+        };
     }
 
     /** @test */

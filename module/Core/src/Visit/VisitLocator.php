@@ -8,36 +8,37 @@ use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
-use Shlinkio\Shlink\Core\Repository\VisitRepository;
+use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocator implements VisitLocatorInterface
 {
     private EntityManagerInterface $em;
+    private VisitRepositoryInterface $repo;
 
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+
+        /** @var VisitRepositoryInterface $repo */
+        $repo = $em->getRepository(Visit::class);
+        $this->repo = $repo;
     }
 
-    public function locateUnlocatedVisits(callable $geolocateVisit, callable $notifyVisitWithLocation): void
+    public function locateUnlocatedVisits(VisitGeolocationHelperInterface $helper): void
     {
-        /** @var VisitRepository $repo */
-        $repo = $this->em->getRepository(Visit::class);
-        $this->locateVisits($repo->findUnlocatedVisits(), $geolocateVisit, $notifyVisitWithLocation);
+        $this->locateVisits($this->repo->findUnlocatedVisits(), $helper);
     }
 
-    public function locateVisitsWithEmptyLocation(callable $geolocateVisit, callable $notifyVisitWithLocation): void
+    public function locateVisitsWithEmptyLocation(VisitGeolocationHelperInterface $helper): void
     {
-        /** @var VisitRepository $repo */
-        $repo = $this->em->getRepository(Visit::class);
-        $this->locateVisits($repo->findVisitsWithEmptyLocation(), $geolocateVisit, $notifyVisitWithLocation);
+        $this->locateVisits($this->repo->findVisitsWithEmptyLocation(), $helper);
     }
 
     /**
      * @param iterable|Visit[] $results
      */
-    private function locateVisits(iterable $results, callable $geolocateVisit, callable $notifyVisitWithLocation): void
+    private function locateVisits(iterable $results, VisitGeolocationHelperInterface $helper): void
     {
         $count = 0;
         $persistBlock = 200;
@@ -46,8 +47,7 @@ class VisitLocator implements VisitLocatorInterface
             $count++;
 
             try {
-                /** @var Location $location */
-                $location = $geolocateVisit($visit);
+                $location = $helper->geolocateVisit($visit);
             } catch (IpCannotBeLocatedException $e) {
                 if (! $e->isNonLocatableAddress()) {
                     // Skip if the visit's IP could not be located because of an error
@@ -59,7 +59,7 @@ class VisitLocator implements VisitLocatorInterface
             }
 
             $location = new VisitLocation($location);
-            $this->locateVisit($visit, $location, $notifyVisitWithLocation);
+            $this->locateVisit($visit, $location, $helper);
 
             // Flush and clear after X iterations
             if ($count % $persistBlock === 0) {
@@ -72,11 +72,11 @@ class VisitLocator implements VisitLocatorInterface
         $this->em->clear();
     }
 
-    private function locateVisit(Visit $visit, VisitLocation $location, callable $notifyVisitWithLocation): void
+    private function locateVisit(Visit $visit, VisitLocation $location, VisitGeolocationHelperInterface $helper): void
     {
         $visit->locate($location);
         $this->em->persist($visit);
 
-        $notifyVisitWithLocation($location, $visit);
+        $helper->onVisitLocated($location, $visit);
     }
 }
