@@ -35,6 +35,11 @@ class VisitLocator implements VisitLocatorInterface
         $this->locateVisits($this->repo->findVisitsWithEmptyLocation(), $helper);
     }
 
+    public function locateAllVisits(VisitGeolocationHelperInterface $helper): void
+    {
+        $this->locateVisits($this->repo->findAllVisits(), $helper);
+    }
+
     /**
      * @param iterable|Visit[] $results
      */

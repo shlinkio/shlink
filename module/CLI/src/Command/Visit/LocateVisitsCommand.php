@@ -18,6 +18,7 @@ use Shlinkio\Shlink\Core\Visit\VisitLocatorInterface;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -60,30 +61,66 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
                 'retry',
                 'r',
                 InputOption::VALUE_NONE,
-                'Will retry visits that were located with an empty location, in case it was a temporal issue.',
+                'Will retry the location of visits that were located with a not-found location, in case it was due to '
+                . 'a temporal issue.',
             )
             ->addOption(
                 'all',
                 'a',
                 InputOption::VALUE_NONE,
-                'Will locate all visits, ignoring if they have already been located.',
+                'When provided together with --retry, will locate all existing visits, regardless the fact that they '
+                . 'have already been located.',
             );
+    }
+
+    protected function interact(InputInterface $input, OutputInterface $output): void
+    {
+        $this->io = new SymfonyStyle($input, $output);
+        $retry = $input->getOption('retry');
+        $all = $input->getOption('all');
+
+        if ($all && !$retry) {
+            $this->io->writeln(
+                '<comment>The <fg=yellow;options=bold>--all</> flag has no effect on its own. You have to provide it '
+                . 'together with <fg=yellow;options=bold>--retry</>.</comment>',
+            );
+        }
+
+        if ($all && $retry && ! $this->warnAndVerifyContinue()) {
+            throw new RuntimeException('Execution aborted');
+        }
+    }
+
+    private function warnAndVerifyContinue(): bool
+    {
+        $this->io->warning([
+            'You are about to process the location of all existing visits your short URLs received.',
+            'Since shlink saves visitors IP addresses anonymized, you could end up losing precision on some of '
+            . 'your visits.',
+            'Also, if you have a large amount of visits, this can be a very time consuming process. '
+            . 'Continue at your own risk.',
+        ]);
+        return $this->io->confirm('Do you want to proceed?', false);
     }
 
     protected function lockedExecute(InputInterface $input, OutputInterface $output): int
     {
-        $this->io = new SymfonyStyle($input, $output);
         $retry = $input->getOption('retry');
+        $all = $retry && $input->getOption('all');
 
         try {
             $this->checkDbUpdate();
 
-            $this->visitLocator->locateUnlocatedVisits($this);
-            if ($retry) {
-                $this->visitLocator->locateVisitsWithEmptyLocation($this);
+            if ($all) {
+                $this->visitLocator->locateAllVisits($this);
+            } else {
+                $this->visitLocator->locateUnlocatedVisits($this);
+                if ($retry) {
+                    $this->visitLocator->locateVisitsWithEmptyLocation($this);
+                }
             }
 
-            $this->io->success('Finished processing all IPs');
+            $this->io->success('Finished locating visits');
             return ExitCodes::EXIT_SUCCESS;
         } catch (Throwable $e) {
             $this->io->error($e->getMessage());

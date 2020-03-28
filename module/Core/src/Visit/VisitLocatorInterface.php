@@ -9,4 +9,6 @@ interface VisitLocatorInterface
     public function locateUnlocatedVisits(VisitGeolocationHelperInterface $helper): void;
 
     public function locateVisitsWithEmptyLocation(VisitGeolocationHelperInterface $helper): void;
+
+    public function locateAllVisits(VisitGeolocationHelperInterface $helper): void;
 }

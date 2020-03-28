@@ -15,12 +15,17 @@ interface VisitRepositoryInterface extends ObjectRepository
     /**
      * @return iterable|Visit[]
      */
-    public function findUnlocatedVisits(int $defaultBlockSize = self::DEFAULT_BLOCK_SIZE): iterable;
+    public function findUnlocatedVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
 
     /**
      * @return iterable|Visit[]
      */
-    public function findVisitsWithEmptyLocation(int $defaultBlockSize = self::DEFAULT_BLOCK_SIZE): iterable;
+    public function findVisitsWithEmptyLocation(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
+
+    /**
+     * @return iterable|Visit[]
+     */
+    public function findAllVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
 
     /**
      * @return Visit[]

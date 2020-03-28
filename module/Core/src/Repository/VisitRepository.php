@@ -40,6 +40,15 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         return $this->findVisitsForQuery($qb, $blockSize);
     }
 
+    public function findAllVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('v')
+           ->from(Visit::class, 'v');
+
+        return $this->findVisitsForQuery($qb, $blockSize);
+    }
+
     private function findVisitsForQuery(QueryBuilder $qb, int $blockSize): iterable
     {
         $originalQueryBuilder = $qb->setMaxResults($blockSize)

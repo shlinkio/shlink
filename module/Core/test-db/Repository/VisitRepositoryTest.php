@@ -68,11 +68,13 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $withEmptyLocation = $this->repo->findVisitsWithEmptyLocation($blockSize);
         $unlocated = $this->repo->findUnlocatedVisits($blockSize);
+        $all = $this->repo->findAllVisits($blockSize);
 
-        // Important! assertCount will not work here, as this iterable object loads data dynamically and counts to
-        // 0 if not iterated
+        // Important! assertCount will not work here, as this iterable object loads data dynamically and the count
+        // is 0 if not iterated
         $this->assertEquals(2, $countIterable($unlocated));
         $this->assertEquals(4, $countIterable($withEmptyLocation));
+        $this->assertEquals(6, $countIterable($all));
     }
 
     public function provideBlockSize(): iterable
