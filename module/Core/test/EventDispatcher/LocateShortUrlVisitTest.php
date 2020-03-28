@@ -20,7 +20,6 @@ use Shlinkio\Shlink\Core\EventDispatcher\LocateShortUrlVisit;
 use Shlinkio\Shlink\Core\EventDispatcher\ShortUrlVisited;
 use Shlinkio\Shlink\Core\EventDispatcher\VisitLocated;
 use Shlinkio\Shlink\Core\Model\Visitor;
-use Shlinkio\Shlink\Core\Visit\Model\UnknownVisitLocation;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
@@ -130,13 +129,16 @@ class LocateShortUrlVisitTest extends TestCase
         yield 'localhost' => [new Visit($shortUrl, new Visitor('', '', IpAddress::LOCALHOST))];
     }
 
-    /** @test */
-    public function locatableVisitsResolveToLocation(): void
+    /**
+     * @test
+     * @dataProvider provideIpAddresses
+     */
+    public function locatableVisitsResolveToLocation(string $anonymizedIpAddress, ?string $originalIpAddress): void
     {
-        $ipAddr = '1.2.3.0';
+        $ipAddr = $originalIpAddress ?? $anonymizedIpAddress;
         $visit = new Visit(new ShortUrl(''), new Visitor('', '', $ipAddr));
         $location = new Location('', '', '', '', 0.0, 0.0, '');
-        $event = new ShortUrlVisited('123');
+        $event = new ShortUrlVisited('123', $originalIpAddress);
 
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
         $flush = $this->em->flush()->will(function (): void {
@@ -153,6 +155,12 @@ class LocateShortUrlVisitTest extends TestCase
         $resolveIp->shouldHaveBeenCalledOnce();
         $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
         $dispatch->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideIpAddresses(): iterable
+    {
+        yield 'no original IP address' => ['1.2.3.0', null];
+        yield 'original IP address' => ['1.2.3.0', '1.2.3.4'];
     }
 
     /** @test */
@@ -209,7 +217,7 @@ class LocateShortUrlVisitTest extends TestCase
 
         ($this->locateVisit)($event);
 
-        $this->assertEquals($visit->getVisitLocation(), new UnknownVisitLocation());
+        $this->assertNull($visit->getVisitLocation());
         $findVisit->shouldHaveBeenCalledOnce();
         $flush->shouldNotHaveBeenCalled();
         $resolveIp->shouldNotHaveBeenCalled();

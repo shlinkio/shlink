@@ -17,6 +17,7 @@ class VisitLocation extends AbstractEntity implements VisitLocationInterface
     private float $latitude;
     private float $longitude;
     private string $timezone;
+    private bool $isEmpty;
 
     public function __construct(Location $location)
     {
@@ -43,6 +44,11 @@ class VisitLocation extends AbstractEntity implements VisitLocationInterface
         return $this->cityName;
     }
 
+    public function isEmpty(): bool
+    {
+        return $this->isEmpty;
+    }
+
     private function exchangeLocationInfo(Location $info): void
     {
         $this->countryCode = $info->countryCode();
@@ -52,6 +58,15 @@ class VisitLocation extends AbstractEntity implements VisitLocationInterface
         $this->latitude = $info->latitude();
         $this->longitude = $info->longitude();
         $this->timezone = $info->timeZone();
+        $this->isEmpty = (
+            $this->countryCode === '' &&
+            $this->countryName === '' &&
+            $this->regionName === '' &&
+            $this->cityName === '' &&
+            $this->latitude === 0.0 &&
+            $this->longitude === 0.0 &&
+            $this->timezone === ''
+        );
     }
 
     public function jsonSerialize(): array
@@ -64,18 +79,7 @@ class VisitLocation extends AbstractEntity implements VisitLocationInterface
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'timezone' => $this->timezone,
+            'isEmpty' => $this->isEmpty,
         ];
-    }
-
-    public function isEmpty(): bool
-    {
-        return
-            $this->countryCode === '' &&
-            $this->countryName === '' &&
-            $this->regionName === '' &&
-            $this->cityName === '' &&
-            $this->latitude === 0.0 &&
-            $this->longitude === 0.0 &&
-            $this->timezone === '';
     }
 }

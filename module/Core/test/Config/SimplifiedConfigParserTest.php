@@ -41,6 +41,8 @@ class SimplifiedConfigParserTest extends TestCase
             'validate_url' => true,
             'delete_short_url_threshold' => 50,
             'invalid_short_url_redirect_to' => 'foobar.com',
+            'regular_404_redirect_to' => 'bar.com',
+            'base_url_redirect_to' => 'foo.com',
             'redis_servers' => [
                 'tcp://1.1.1.1:1111',
                 'tcp://1.2.2.2:2222',
@@ -57,6 +59,7 @@ class SimplifiedConfigParserTest extends TestCase
                 'http://my-api.com/api/v2.3/notify',
                 'https://third-party.io/foo',
             ],
+            'default_short_codes_length' => 8,
         ];
         $expected = [
             'app_options' => [
@@ -84,6 +87,7 @@ class SimplifiedConfigParserTest extends TestCase
                     'http://my-api.com/api/v2.3/notify',
                     'https://third-party.io/foo',
                 ],
+                'default_short_codes_length' => 8,
             ],
 
             'delete_short_urls' => [
@@ -112,6 +116,8 @@ class SimplifiedConfigParserTest extends TestCase
 
             'not_found_redirects' => [
                 'invalid_short_url' => 'foobar.com',
+                'regular_404' => 'bar.com',
+                'base_url' => 'foo.com',
             ],
 
             'mezzio-swoole' => [

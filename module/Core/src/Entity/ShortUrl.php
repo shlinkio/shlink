@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
+use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 
 use function array_reduce;
@@ -32,8 +33,9 @@ class ShortUrl extends AbstractEntity
     private ?Chronos $validSince = null;
     private ?Chronos $validUntil = null;
     private ?int $maxVisits = null;
-    private ?Domain $domain;
+    private ?Domain $domain = null;
     private bool $customSlugWasProvided;
+    private int $shortCodeLength;
 
     public function __construct(
         string $longUrl,
@@ -50,7 +52,8 @@ class ShortUrl extends AbstractEntity
         $this->validUntil = $meta->getValidUntil();
         $this->maxVisits = $meta->getMaxVisits();
         $this->customSlugWasProvided = $meta->hasCustomSlug();
-        $this->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode();
+        $this->shortCodeLength = $meta->getShortCodeLength();
+        $this->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode($this->shortCodeLength);
         $this->domain = ($domainResolver ?? new SimpleDomainResolver())->resolveDomain($meta->getDomain());
     }
 
@@ -91,16 +94,19 @@ class ShortUrl extends AbstractEntity
         return $this;
     }
 
-    public function updateMeta(ShortUrlMeta $shortCodeMeta): void
+    public function update(ShortUrlEdit $shortUrlEdit): void
     {
-        if ($shortCodeMeta->hasValidSince()) {
-            $this->validSince = $shortCodeMeta->getValidSince();
+        if ($shortUrlEdit->hasValidSince()) {
+            $this->validSince = $shortUrlEdit->validSince();
         }
-        if ($shortCodeMeta->hasValidUntil()) {
-            $this->validUntil = $shortCodeMeta->getValidUntil();
+        if ($shortUrlEdit->hasValidUntil()) {
+            $this->validUntil = $shortUrlEdit->validUntil();
         }
-        if ($shortCodeMeta->hasMaxVisits()) {
-            $this->maxVisits = $shortCodeMeta->getMaxVisits();
+        if ($shortUrlEdit->hasMaxVisits()) {
+            $this->maxVisits = $shortUrlEdit->maxVisits();
+        }
+        if ($shortUrlEdit->hasLongUrl()) {
+            $this->longUrl = $shortUrlEdit->longUrl();
         }
     }
 
@@ -119,7 +125,7 @@ class ShortUrl extends AbstractEntity
             throw ShortCodeCannotBeRegeneratedException::forShortUrlAlreadyPersisted();
         }
 
-        $this->shortCode = generateRandomShortCode();
+        $this->shortCode = generateRandomShortCode($this->shortCodeLength);
         return $this;
     }
 

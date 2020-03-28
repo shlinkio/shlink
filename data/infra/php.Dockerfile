@@ -1,4 +1,4 @@
-FROM php:7.4.1-fpm-alpine3.10
+FROM php:7.4.2-fpm-alpine3.11
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.18
@@ -64,6 +64,18 @@ RUN docker-php-ext-configure xdebug\
   && docker-php-ext-install xdebug
 # cleanup
 RUN rm /tmp/xdebug.tar.gz
+
+# Install sqlsrv driver
+RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.5.1.1-1_amd64.apk && \
+    wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/mssql-tools_17.5.1.1-1_amd64.apk && \
+    apk add --allow-untrusted msodbcsql17_17.5.1.1-1_amd64.apk && \
+    apk add --allow-untrusted mssql-tools_17.5.1.1-1_amd64.apk && \
+    apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
+    pecl install pdo_sqlsrv && \
+    docker-php-ext-enable pdo_sqlsrv && \
+    apk del .phpize-deps && \
+    rm msodbcsql17_17.5.1.1-1_amd64.apk && \
+    rm mssql-tools_17.5.1.1-1_amd64.apk
 
 # Install composer
 RUN php -r "readfile('https://getcomposer.org/installer');" | php

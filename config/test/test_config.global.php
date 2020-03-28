@@ -45,6 +45,13 @@ $buildDbConnection = function (): array {
             'dbname' => 'shlink_test',
             'charset' => 'utf8',
         ],
+        'mssql' => [
+            'driver' => 'pdo_sqlsrv',
+            'host' => $isCi ? '127.0.0.1' : 'shlink_db_ms',
+            'user' => 'sa',
+            'password' => $isCi ? '' : 'Passw0rd!',
+            'dbname' => 'shlink_test',
+        ],
     ];
     $driverConfigMap['maria'] = $driverConfigMap['mysql'];
 

@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Validation;
 
 use DateTime;
+use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
+
+use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
 
 class ShortUrlMetaInputFilter extends InputFilter
 {
@@ -19,6 +22,8 @@ class ShortUrlMetaInputFilter extends InputFilter
     public const MAX_VISITS = 'maxVisits';
     public const FIND_IF_EXISTS = 'findIfExists';
     public const DOMAIN = 'domain';
+    public const SHORT_CODE_LENGTH = 'shortCodeLength';
+    public const LONG_URL = 'longUrl';
 
     public function __construct(array $data)
     {
@@ -28,6 +33,8 @@ class ShortUrlMetaInputFilter extends InputFilter
 
     private function initialize(): void
     {
+        $this->add($this->createInput(self::LONG_URL, false));
+
         $validSince = $this->createInput(self::VALID_SINCE, false);
         $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));
         $this->add($validSince);
@@ -36,19 +43,32 @@ class ShortUrlMetaInputFilter extends InputFilter
         $validUntil->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));
         $this->add($validUntil);
 
-        $customSlug = $this->createInput(self::CUSTOM_SLUG, false);
+        // FIXME The only way to enforce the NotEmpty validator to be evaluated when the value is provided but it's
+        //       empty, is by using the deprecated setContinueIfEmpty
+        $customSlug = $this->createInput(self::CUSTOM_SLUG, false)->setContinueIfEmpty(true);
         $customSlug->getFilterChain()->attach(new Validation\SluggerFilter());
+        $customSlug->getValidatorChain()->attach(new Validator\NotEmpty([
+            Validator\NotEmpty::STRING,
+            Validator\NotEmpty::SPACE,
+        ]));
         $this->add($customSlug);
 
-        $maxVisits = $this->createInput(self::MAX_VISITS, false);
-        $maxVisits->getValidatorChain()->attach(new Validator\Digits())
-                                       ->attach(new Validator\GreaterThan(['min' => 1, 'inclusive' => true]));
-        $this->add($maxVisits);
+        $this->add($this->createPositiveNumberInput(self::MAX_VISITS));
+        $this->add($this->createPositiveNumberInput(self::SHORT_CODE_LENGTH, MIN_SHORT_CODES_LENGTH));
 
         $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
 
         $domain = $this->createInput(self::DOMAIN, false);
         $domain->getValidatorChain()->attach(new Validation\HostAndPortValidator());
         $this->add($domain);
+    }
+
+    private function createPositiveNumberInput(string $name, int $min = 1): Input
+    {
+        $input = $this->createInput($name, false);
+        $input->getValidatorChain()->attach(new Validator\Digits())
+                                   ->attach(new Validator\GreaterThan(['min' => $min, 'inclusive' => true]));
+
+        return $input;
     }
 }

@@ -11,6 +11,7 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Service;
+use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Installer\Factory\ProcessHelperFactory;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
@@ -18,6 +19,8 @@ use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console as SymfonyCli;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
+
+use const Shlinkio\Shlink\Core\LOCAL_LOCK_FACTORY;
 
 return [
 
@@ -52,16 +55,20 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, 'Shlinkio\Shlink\LocalLockFactory'],
+        GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, LOCAL_LOCK_FACTORY],
 
-        Command\ShortUrl\GenerateShortUrlCommand::class => [Service\UrlShortener::class, 'config.url_shortener.domain'],
+        Command\ShortUrl\GenerateShortUrlCommand::class => [
+            Service\UrlShortener::class,
+            'config.url_shortener.domain',
+            'config.url_shortener.default_short_codes_length',
+        ],
         Command\ShortUrl\ResolveUrlCommand::class => [Service\ShortUrl\ShortUrlResolver::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
         Command\ShortUrl\GetVisitsCommand::class => [Service\VisitsTracker::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
 
         Command\Visit\LocateVisitsCommand::class => [
-            Service\VisitService::class,
+            Visit\VisitLocator::class,
             IpLocationResolverInterface::class,
             LockFactory::class,
             GeolocationDbUpdater::class,

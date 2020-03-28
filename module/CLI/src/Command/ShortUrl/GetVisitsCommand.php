@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
+use Shlinkio\Shlink\Core\Visit\Model\UnknownVisitLocation;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -76,7 +77,7 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
 
         $rows = map($paginator->getCurrentItems(), function (Visit $visit) {
             $rowData = $visit->jsonSerialize();
-            $rowData['country'] = $visit->getVisitLocation()->getCountryName();
+            $rowData['country'] = ($visit->getVisitLocation() ?? new UnknownVisitLocation())->getCountryName();
             return select_keys($rowData, ['referer', 'date', 'userAgent', 'country']);
         });
         ShlinkTable::fromOutput($output)->render(['Referer', 'Date', 'User agent', 'Country'], $rows);

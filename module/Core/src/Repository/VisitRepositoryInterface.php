@@ -13,15 +13,19 @@ interface VisitRepositoryInterface extends ObjectRepository
     public const DEFAULT_BLOCK_SIZE = 10000;
 
     /**
-     * This method will allow you to iterate the whole list of unlocated visits, but loading them into memory in
-     * smaller blocks of a specific size.
-     * This will have side effects if you update those rows while you iterate them.
-     * If you plan to do so, pass the first argument as false in order to disable applying offsets while slicing the
-     * dataset
-     *
      * @return iterable|Visit[]
      */
-    public function findUnlocatedVisits(bool $applyOffset = true, int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
+    public function findUnlocatedVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
+
+    /**
+     * @return iterable|Visit[]
+     */
+    public function findVisitsWithEmptyLocation(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
+
+    /**
+     * @return iterable|Visit[]
+     */
+    public function findAllVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
 
     /**
      * @return Visit[]

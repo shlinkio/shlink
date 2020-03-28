@@ -13,11 +13,11 @@ use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
@@ -33,6 +33,10 @@ class UrlShortenerTest extends TestCase
     public function setUp(): void
     {
         $this->urlValidator = $this->prophesize(UrlValidatorInterface::class);
+        $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar')->will(
+            function (): void {
+            },
+        );
 
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $conn = $this->prophesize(Connection::class);
@@ -50,15 +54,10 @@ class UrlShortenerTest extends TestCase
         $repo->shortCodeIsInUse(Argument::cetera())->willReturn(false);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $this->setUrlShortener(false);
-    }
-
-    private function setUrlShortener(bool $urlValidationEnabled): void
-    {
         $this->urlShortener = new UrlShortener(
             $this->urlValidator->reveal(),
             $this->em->reveal(),
-            new UrlShortenerOptions(['validate_url' => $urlValidationEnabled]),
+            new SimpleDomainResolver(),
         );
     }
 
@@ -120,24 +119,6 @@ class UrlShortenerTest extends TestCase
     }
 
     /** @test */
-    public function validatorIsCalledWhenUrlValidationIsEnabled(): void
-    {
-        $this->setUrlShortener(true);
-        $validateUrl = $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar')->will(
-            function (): void {
-            },
-        );
-
-        $this->urlShortener->urlToShortCode(
-            new Uri('http://foobar.com/12345/hello?foo=bar'),
-            [],
-            ShortUrlMeta::createEmpty(),
-        );
-
-        $validateUrl->shouldHaveBeenCalledOnce();
-    }
-
-    /** @test */
     public function exceptionIsThrownWhenNonUniqueSlugIsProvided(): void
     {
         $repo = $this->prophesize(ShortUrlRepository::class);
@@ -175,6 +156,7 @@ class UrlShortenerTest extends TestCase
         $findExisting->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
         $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->urlValidator->validateUrl(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->assertSame($expected, $result);
     }
 

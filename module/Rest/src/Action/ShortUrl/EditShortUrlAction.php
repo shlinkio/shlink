@@ -8,8 +8,8 @@ use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
@@ -28,10 +28,10 @@ class EditShortUrlAction extends AbstractRestAction
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $postData = (array) $request->getParsedBody();
+        $shortUrlEdit = ShortUrlEdit::fromRawData((array) $request->getParsedBody());
         $identifier = ShortUrlIdentifier::fromApiRequest($request);
 
-        $this->shortUrlService->updateMetadataByShortCode($identifier, ShortUrlMeta::fromRawData($postData));
+        $this->shortUrlService->updateMetadataByShortCode($identifier, $shortUrlEdit);
         return new EmptyResponse();
     }
 }

@@ -4,8 +4,9 @@
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/shlinkio/shlink.svg?style=flat-square)](https://scrutinizer-ci.com/g/shlinkio/shlink/?branch=master)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/shlinkio/shlink.svg?style=flat-square)](https://scrutinizer-ci.com/g/shlinkio/shlink/?branch=master)
 [![Latest Stable Version](https://img.shields.io/github/release/shlinkio/shlink.svg?style=flat-square)](https://packagist.org/packages/shlinkio/shlink)
+[![Docker pulls](https://img.shields.io/docker/pulls/shlinkio/shlink.svg?style=flat-square)](https://hub.docker.com/r/shlinkio/shlink/)
 [![License](https://img.shields.io/github/license/shlinkio/shlink.svg?style=flat-square)](https://github.com/shlinkio/shlink/blob/master/LICENSE)
-[![Paypal donate](https://img.shields.io/badge/Donate-paypal-blue.svg?style=flat-square&logo=paypal&colorA=aaaaaa)](https://acel.me/donate)
+[![Paypal donate](https://img.shields.io/badge/Donate-paypal-blue.svg?style=flat-square&logo=paypal&colorA=aaaaaa)](https://slnk.to/donate)
 
 A PHP-based self-hosted URL shortener that can be used to serve shortened URLs under your own custom domain.
 
@@ -35,8 +36,8 @@ A PHP-based self-hosted URL shortener that can be used to serve shortened URLs u
 
 First, make sure the host where you are going to run shlink fulfills these requirements:
 
-* PHP 7.4 or greater with JSON, APCu, intl, curl, PDO and gd extensions enabled.
-* MySQL, MariaDB, PostgreSQL or SQLite.
+* PHP 7.4 or greater with JSON, curl, PDO and gd extensions enabled.
+* MySQL, MariaDB, PostgreSQL, Microsoft SQL Server or SQLite.
 * The web server of your choice with PHP integration (Apache or Nginx recommended).
 
 ### Download
@@ -67,7 +68,7 @@ In order to run Shlink, you will need a built version of the project. There are 
 
 Despite how you built the project, you now need to configure it, by following these steps:
 
-* If you are going to use MySQL, MariaDB or PostgreSQL, create an empty database with the name of your choice.
+* If you are going to use MySQL, MariaDB, PostgreSQL or Microsoft SQL Server, create an empty database with the name of your choice.
 * Recursively grant write permissions to the `data` directory. Shlink uses it to cache some information.
 * Setup the application by running the `bin/install` script. It is a command line tool that will guide you through the installation process. **Take into account that this tool has to be run directly on the server where you plan to host Shlink. Do not run it before uploading/moving it there.**
 * Generate your first API key by running `bin/cli api-key:generate`. You will need the key in order to interact with shlink's API.
@@ -96,7 +97,7 @@ Once Shlink is configured, you need to expose it to the web, either by using a t
 
         location ~ \.php$ {
             fastcgi_split_path_info ^(.+\.php)(/.+)$;
-            fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+            fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
             fastcgi_index index.php;
             include fastcgi.conf;
         }
@@ -238,7 +239,7 @@ Once shlink is installed, there are two main ways to interact with it:
 
     It is probably a good idea to symlink the CLI entry point (`bin/cli`) to somewhere in your path, so that you can run shlink from any directory.
 
-* **The REST API**. The complete docs on how to use the API can be found [here](https://shlink.io/api-docs), and a sandbox which also documents every endpoint can be found in the [API Spec](https://api-spec.shlink.io/) portal.
+* **The REST API**. The complete docs on how to use the API can be found [here](https://shlink.io/documentation/api-docs), and a sandbox which also documents every endpoint can be found in the [API Spec](https://api-spec.shlink.io/) portal.
 
     However, you probably don't want to consume the raw API yourself. That's why a nice [web client](https://github.com/shlinkio/shlink-web-client) is provided that can be directly used from [https://app.shlink.io](https://app.shlink.io), or you can host it yourself too.
 
@@ -343,5 +344,7 @@ It is currently possible to configure some special redirects when the base domai
 Those are configured during Shlink's installation or via env vars when using the docker image.
 
 Currently those are all shared for all domains serving the same Shlink instance, but the plan is to update that and allow specific ones for every existing domain.
+
+---
 
 > This product includes GeoLite2 data created by MaxMind, available from [https://www.maxmind.com](https://www.maxmind.com)

@@ -40,17 +40,20 @@
         "mezzio/mezzio-helpers": "^5.3",
         "mezzio/mezzio-platesrenderer": "^2.1",
         "mezzio/mezzio-problem-details": "^1.1",
-        "mezzio/mezzio-swoole": "^2.4",
+        "mezzio/mezzio-swoole": "^2.6",
         "monolog/monolog": "^2.0",
         "nikolaposa/monolog-factory": "^3.0",
-        "ocramius/proxy-manager": "^2.6.0",
+        "ocramius/proxy-manager": "^2.7.0",
         "phly/phly-event-dispatcher": "^1.0",
+        "php-middleware/request-id": "^4.0",
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.5",
-        "shlinkio/shlink-common": "^2.7.0",
-        "shlinkio/shlink-event-dispatcher": "^1.3",
-        "shlinkio/shlink-installer": "^4.0.1",
-        "shlinkio/shlink-ip-geolocation": "^1.3.1",
+        "ramsey/uuid": "^3.9",
+        "shlinkio/shlink-common": "^3.0",
+        "shlinkio/shlink-config": "^1.0",
+        "shlinkio/shlink-event-dispatcher": "^1.4",
+        "shlinkio/shlink-installer": "^4.3.1",
+        "shlinkio/shlink-ip-geolocation": "^1.4",
         "symfony/console": "^5.0",
         "symfony/filesystem": "^5.0",
         "symfony/lock": "^5.0",
@@ -58,14 +61,14 @@
     },
     "require-dev": {
         "devster/ubench": "^2.0",
-        "dms/phpunit-arraysubset-asserts": "^0.1.0",
+        "dms/phpunit-arraysubset-asserts": "^0.2.0",
         "eaglewu/swoole-ide-helper": "dev-master",
         "infection/infection": "^0.15.0",
         "phpstan/phpstan": "^0.12.3",
-        "phpunit/phpunit": "^8.3",
+        "phpunit/phpunit": "^9.0.1",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.1.0",
-        "shlinkio/shlink-test-utils": "^1.3",
+        "shlinkio/shlink-test-utils": "^1.4",
         "symfony/var-dumper": "^5.0"
     },
     "autoload": {
@@ -107,7 +110,7 @@
         "test:ci": [
             "@test:unit:ci",
             "@test:db:ci",
-            "@test:api"
+            "@test:api:ci"
         ],
         "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
         "test:unit:ci": "@test:unit --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/junit.xml",
@@ -115,7 +118,8 @@
             "@test:db:sqlite",
             "@test:db:mysql",
             "@test:db:maria",
-            "@test:db:postgres"
+            "@test:db:postgres",
+            "@test:db:ms"
         ],
         "test:db:ci": [
             "@test:db:sqlite",
@@ -126,7 +130,9 @@
         "test:db:mysql": "DB_DRIVER=mysql composer test:db:sqlite",
         "test:db:maria": "DB_DRIVER=maria composer test:db:sqlite",
         "test:db:postgres": "DB_DRIVER=postgres composer test:db:sqlite",
+        "test:db:ms": "DB_DRIVER=mssql composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
+        "test:api:ci": "@test:api --coverage-php build/coverage-api.cov",
         "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage",
         "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
         "infect:ci": "@infect --coverage=build",

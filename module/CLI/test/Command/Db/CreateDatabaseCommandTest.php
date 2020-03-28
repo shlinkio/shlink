@@ -18,6 +18,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\Process;
 
 class CreateDatabaseCommandTest extends TestCase
 {
@@ -114,7 +115,8 @@ class CreateDatabaseCommandTest extends TestCase
             '/usr/local/bin/php',
             CreateDatabaseCommand::DOCTRINE_SCRIPT,
             CreateDatabaseCommand::DOCTRINE_CREATE_SCHEMA_COMMAND,
-        ], Argument::cetera());
+            '--no-interaction',
+        ], Argument::cetera())->willReturn(new Process([]));
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();

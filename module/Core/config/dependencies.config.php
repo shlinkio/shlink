@@ -9,6 +9,7 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Shlinkio\Shlink\Core\Domain\Resolver;
 use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 
@@ -27,7 +28,7 @@ return [
             Service\UrlShortener::class => ConfigAbstractFactory::class,
             Service\VisitsTracker::class => ConfigAbstractFactory::class,
             Service\ShortUrlService::class => ConfigAbstractFactory::class,
-            Service\VisitService::class => ConfigAbstractFactory::class,
+            Visit\VisitLocator::class => ConfigAbstractFactory::class,
             Service\Tag\TagService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
@@ -39,6 +40,8 @@ return [
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
 
             Middleware\QrCodeCacheMiddleware::class => ConfigAbstractFactory::class,
+
+            Resolver\PersistenceDomainResolver::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -51,10 +54,10 @@ return [
         Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
-        Service\UrlShortener::class => [Util\UrlValidator::class, 'em', Options\UrlShortenerOptions::class],
+        Service\UrlShortener::class => [Util\UrlValidator::class, 'em', Resolver\PersistenceDomainResolver::class],
         Service\VisitsTracker::class => ['em', EventDispatcherInterface::class],
-        Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class],
-        Service\VisitService::class => ['em'],
+        Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class, Util\UrlValidator::class],
+        Visit\VisitLocator::class => ['em'],
         Service\Tag\TagService::class => ['em'],
         Service\ShortUrl\DeleteShortUrlService::class => [
             'em',
@@ -63,7 +66,7 @@ return [
         ],
         Service\ShortUrl\ShortUrlResolver::class => ['em'],
 
-        Util\UrlValidator::class => ['httpClient'],
+        Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
 
         Action\RedirectAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
@@ -84,6 +87,8 @@ return [
         ],
 
         Middleware\QrCodeCacheMiddleware::class => [Cache::class],
+
+        Resolver\PersistenceDomainResolver::class => ['em'],
     ],
 
 ];

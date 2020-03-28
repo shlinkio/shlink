@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink;
 use Laminas\Stratigility\Middleware\ErrorHandler;
 use Mezzio;
 use Mezzio\ProblemDetails;
+use PhpMiddleware\RequestId\RequestIdMiddleware;
 
 return [
 
@@ -21,6 +22,7 @@ return [
             'path' => '/rest',
             'middleware' => [
                 Rest\Middleware\CrossDomainMiddleware::class,
+                RequestIdMiddleware::class,
                 ProblemDetails\ProblemDetailsMiddleware::class,
             ],
         ],

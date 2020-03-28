@@ -12,33 +12,63 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 class VisitRepository extends EntityRepository implements VisitRepositoryInterface
 {
     /**
-     * This method will allow you to iterate the whole list of unlocated visits, but loading them into memory in
-     * smaller blocks of a specific size.
-     * This will have side effects if you update those rows while you iterate them.
-     * If you plan to do so, pass the first argument as false in order to disable applying offsets while slicing the
-     * dataset
-     *
      * @return iterable|Visit[]
      */
-    public function findUnlocatedVisits(bool $applyOffset = true, int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
+    public function findUnlocatedVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
-        $dql = <<<DQL
-SELECT v FROM Shlinkio\Shlink\Core\Entity\Visit AS v WHERE v.visitLocation IS NULL
-DQL;
-        $query = $this->getEntityManager()->createQuery($dql)
-                                          ->setMaxResults($blockSize);
-        $remainingVisitsToProcess = $this->count(['visitLocation' => null]);
-        $offset = 0;
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('v')
+           ->from(Visit::class, 'v')
+           ->where($qb->expr()->isNull('v.visitLocation'));
 
-        while ($remainingVisitsToProcess > 0) {
-            $iterator = $query->setFirstResult($applyOffset ? $offset : null)->iterate();
-            foreach ($iterator as $key => [$value]) {
-                yield $key => $value;
+        return $this->findVisitsForQuery($qb, $blockSize);
+    }
+
+    /**
+     * @return iterable|Visit[]
+     */
+    public function findVisitsWithEmptyLocation(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('v')
+           ->from(Visit::class, 'v')
+           ->join('v.visitLocation', 'vl')
+           ->where($qb->expr()->isNotNull('v.visitLocation'))
+           ->andWhere($qb->expr()->eq('vl.isEmpty', ':isEmpty'))
+           ->setParameter('isEmpty', true);
+
+        return $this->findVisitsForQuery($qb, $blockSize);
+    }
+
+    public function findAllVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('v')
+           ->from(Visit::class, 'v');
+
+        return $this->findVisitsForQuery($qb, $blockSize);
+    }
+
+    private function findVisitsForQuery(QueryBuilder $qb, int $blockSize): iterable
+    {
+        $originalQueryBuilder = $qb->setMaxResults($blockSize)
+                                   ->orderBy('v.id', 'ASC');
+        $lastId = '0';
+
+        do {
+            $qb = (clone $originalQueryBuilder)->andWhere($qb->expr()->gt('v.id', $lastId));
+            $iterator = $qb->getQuery()->iterate();
+            $resultsFound = false;
+
+            /** @var Visit $visit */
+            foreach ($iterator as $key => [$visit]) {
+                $resultsFound = true;
+                yield $key => $visit;
             }
 
-            $remainingVisitsToProcess -= $blockSize;
-            $offset += $blockSize;
-        }
+            // As the query is ordered by ID, we can take the last one every time in order to exclude the whole list
+            $lastId = isset($visit) ? $visit->getId() : $lastId;
+        } while ($resultsFound);
     }
 
     /**

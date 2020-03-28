@@ -11,16 +11,21 @@ use function explode;
 use function Functional\contains;
 use function Shlinkio\Shlink\Common\env;
 
+use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
+use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
+
 $helper = new class {
     private const DB_DRIVERS_MAP = [
         'mysql' => 'pdo_mysql',
         'maria' => 'pdo_mysql',
         'postgres' => 'pdo_pgsql',
+        'mssql' => 'pdo_sqlsrv',
     ];
     private const DB_PORTS_MAP = [
         'mysql' => '3306',
         'maria' => '3306',
         'postgres' => '5432',
+        'mssql' => '1433',
     ];
 
     public function getDbConfig(): array
@@ -68,6 +73,12 @@ $helper = new class {
         $redisServers = env('REDIS_SERVERS');
         return $redisServers === null ? null : ['servers' => $redisServers];
     }
+
+    public function getDefaultShortCodesLength(): int
+    {
+        $value = (int) env('DEFAULT_SHORT_CODES_LENGTH', DEFAULT_SHORT_CODES_LENGTH);
+        return $value < MIN_SHORT_CODES_LENGTH ? MIN_SHORT_CODES_LENGTH : $value;
+    }
 };
 
 return [
@@ -94,6 +105,7 @@ return [
         ],
         'validate_url' => (bool) env('VALIDATE_URLS', false),
         'visits_webhooks' => $helper->getVisitsWebhooks(),
+        'default_short_codes_length' => $helper->getDefaultShortCodesLength(),
     ],
 
     'not_found_redirects' => $helper->getNotFoundRedirectsConfig(),

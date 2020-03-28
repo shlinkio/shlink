@@ -243,6 +243,10 @@
                             "domain": {
                                 "description": "The domain to which the short URL will be attached",
                                 "type": "string"
+                            },
+                            "shortCodeLength": {
+                                "description": "The length for generated short code. It has to be at least 4 and defaults to 5. It will be ignored when customSlug is provided",
+                                "type": "number"
                             }
                         }
                     }

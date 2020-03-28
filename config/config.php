@@ -19,11 +19,12 @@ return (new ConfigAggregator\ConfigAggregator([
     Mezzio\Swoole\ConfigProvider::class,
     ProblemDetails\ConfigProvider::class,
     Common\ConfigProvider::class,
+    Config\ConfigProvider::class,
     IpGeolocation\ConfigProvider::class,
+    EventDispatcher\ConfigProvider::class,
     Core\ConfigProvider::class,
     CLI\ConfigProvider::class,
     Rest\ConfigProvider::class,
-    EventDispatcher\ConfigProvider::class,
     new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
     env('APP_ENV') === 'test'
         ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')

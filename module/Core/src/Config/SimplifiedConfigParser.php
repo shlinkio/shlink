@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Config;
 
 use Laminas\Stdlib\ArrayUtils;
-use Shlinkio\Shlink\Installer\Util\PathCollection;
+use Shlinkio\Shlink\Config\Collection\PathCollection;
 
 use function array_flip;
 use function array_intersect_key;
@@ -24,7 +24,7 @@ class SimplifiedConfigParser
         'validate_url' => ['url_shortener', 'validate_url'],
         'invalid_short_url_redirect_to' => ['not_found_redirects', 'invalid_short_url'],
         'regular_404_redirect_to' => ['not_found_redirects', 'regular_404'],
-        'base_url_redirect_to' => ['not_found_redirects', 'base_path'],
+        'base_url_redirect_to' => ['not_found_redirects', 'base_url'],
         'db_config' => ['entity_manager', 'connection'],
         'delete_short_url_threshold' => ['delete_short_urls', 'visits_threshold'],
         'redis_servers' => ['cache', 'redis', 'servers'],
@@ -32,6 +32,7 @@ class SimplifiedConfigParser
         'web_worker_num' => ['mezzio-swoole', 'swoole-http-server', 'options', 'worker_num'],
         'task_worker_num' => ['mezzio-swoole', 'swoole-http-server', 'options', 'task_worker_num'],
         'visits_webhooks' => ['url_shortener', 'visits_webhooks'],
+        'default_short_codes_length' => ['url_shortener', 'default_short_codes_length'],
     ];
     private const SIMPLIFIED_CONFIG_SIDE_EFFECTS = [
         'delete_short_url_threshold' => [

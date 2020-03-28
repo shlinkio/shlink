@@ -13,7 +13,11 @@ return [
         Action\HealthAction::getRouteDef(),
 
         // Short codes
-        Action\ShortUrl\CreateShortUrlAction::getRouteDef([$contentNegotiationMiddleware, $dropDomainMiddleware]),
+        Action\ShortUrl\CreateShortUrlAction::getRouteDef([
+            $contentNegotiationMiddleware,
+            $dropDomainMiddleware,
+            Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class,
+        ]),
         Action\ShortUrl\SingleStepCreateShortUrlAction::getRouteDef([$contentNegotiationMiddleware]),
         Action\ShortUrl\EditShortUrlAction::getRouteDef([$dropDomainMiddleware]),
         Action\ShortUrl\DeleteShortUrlAction::getRouteDef([$dropDomainMiddleware]),

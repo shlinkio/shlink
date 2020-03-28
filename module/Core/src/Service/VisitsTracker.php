@@ -39,7 +39,7 @@ class VisitsTracker implements VisitsTrackerInterface
         $this->em->persist($visit);
         $this->em->flush();
 
-        $this->eventDispatcher->dispatch(new ShortUrlVisited($visit->getId()));
+        $this->eventDispatcher->dispatch(new ShortUrlVisited($visit->getId(), $visitor->getRemoteAddress()));
     }
 
     /**
