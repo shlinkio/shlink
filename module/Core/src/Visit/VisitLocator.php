@@ -79,8 +79,15 @@ class VisitLocator implements VisitLocatorInterface
 
     private function locateVisit(Visit $visit, VisitLocation $location, VisitGeolocationHelperInterface $helper): void
     {
+        $prevLocation = $visit->getVisitLocation();
+
         $visit->locate($location);
         $this->em->persist($visit);
+
+        // In order to avoid leaving orphan locations, remove the previous one
+        if ($prevLocation !== null) {
+            $this->em->remove($prevLocation);
+        }
 
         $helper->onVisitLocated($location, $visit);
     }
