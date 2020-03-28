@@ -73,9 +73,13 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
             );
     }
 
-    protected function interact(InputInterface $input, OutputInterface $output): void
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->io = new SymfonyStyle($input, $output);
+    }
+
+    protected function interact(InputInterface $input, OutputInterface $output): void
+    {
         $retry = $input->getOption('retry');
         $all = $input->getOption('all');
 
