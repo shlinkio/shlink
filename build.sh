@@ -19,6 +19,7 @@ mkdir -p "${builtcontent}"
 rsync -av * "${builtcontent}" \
     --exclude=*docker* \
     --exclude=Dockerfile \
+    --include=.htaccess \
     --exclude-from=./.dockerignore
 cd "${builtcontent}"
 

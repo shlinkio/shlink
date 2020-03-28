@@ -48,12 +48,6 @@ before_deploy:
   - if [[ ! -z $TRAVIS_TAG && "${TRAVIS_PHP_VERSION}" == "7.4" ]]; then ./build.sh ${TRAVIS_TAG#?} ; fi
 
 deploy:
-  - provider: script
-    script: bash ./docker/build
-    on:
-      all_branches: true
-      condition: $TRAVIS_PULL_REQUEST == 'false'
-      php: '7.4'
   - provider: releases
     api_key:
       secure: a9dbZchocqeuOViwUeNH54bQR5Sz7rEYXx5b9WPFtnFn9LGKKUaLbA2U91UQ9QKPrcTpsALubUYbw2CnNmvCwzaY+R8lCD3gkU4ohsEnbpnw3deOeixI74sqBHJAuCH9FSaRDGILoBMtUKx2xlzIymFxkIsgIukkGbdkWHDlRWY3oTUUuw1SQ2Xk9KDsbJQtjIc1+G/O6gHaV4qv/R9W8NPmJExKTNDrAZbC1vIUnxqp4UpVo1hst8qPd1at94CndDYM5rG+7imGbdtxTxzamt819qdTO1OfvtctKawNAm7YXZrrWft6c7gI6j6SI4hxd+ZrrPBqbaRFHkZHjnNssO/yn4SaOHFFzccmu0MzvpPCf0qWZwd3sGHVYer1MnR2mHYqU84QPlW3nrHwJjkrpq3+q0JcBY6GsJs+RskHNtkMTKV05Iz6QUI5YZGwTpuXaRm036SmavjGc4IDlMaYCk/NmbB9BKpthJxLdUpczOHpnjXXHziotWD6cfEnbjU3byfD8HY5WrxSjsNT7SKmXN3hRof7bk985ewQVjGT42O3NbnfnqjQQWr/B7/zFTpLR4f526Bkq12CdCyf5lvrbq+POkLVdJ+uFfR7ds248Ue/jBQy6kM1tWmKF9QiwisFlA84eQ4CW3I93Rp97URv+AQa9zmbD0Ve3Udp+g6nF5I=
@@ -61,4 +55,10 @@ deploy:
     skip_cleanup: true
     on:
       tags: true
+      php: '7.4'
+  - provider: script
+    script: bash ./docker/build
+    on:
+      all_branches: true
+      condition: $TRAVIS_PULL_REQUEST == 'false'
       php: '7.4'
