@@ -9,6 +9,7 @@ use Exception;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -43,15 +44,20 @@ class VisitLocatorTest extends TestCase
         $this->visitService = new VisitLocator($this->em->reveal());
     }
 
-    /** @test */
-    public function locateVisitsIteratesAndLocatesUnlocatedVisits(): void
-    {
+    /**
+     * @test
+     * @dataProvider provideMethodNames
+     */
+    public function locateVisitsIteratesAndLocatesExpectedVisits(
+        string $serviceMethodName,
+        string $expectedRepoMethodName
+    ): void {
         $unlocatedVisits = map(
             range(1, 200),
             fn (int $i) => new Visit(new ShortUrl(sprintf('short_code_%s', $i)), Visitor::emptyInstance()),
         );
 
-        $findUnlocatedVisits = $this->repo->findUnlocatedVisits()->willReturn($unlocatedVisits);
+        $findVisits = $this->mockRepoMethod($expectedRepoMethodName)->willReturn($unlocatedVisits);
 
         $persist = $this->em->persist(Argument::type(Visit::class))->will(function (): void {
         });
@@ -60,7 +66,7 @@ class VisitLocatorTest extends TestCase
         $clear = $this->em->clear()->will(function (): void {
         });
 
-        $this->visitService->locateUnlocatedVisits(new class implements VisitGeolocationHelperInterface {
+        $this->visitService->{$serviceMethodName}(new class implements VisitGeolocationHelperInterface {
             public function geolocateVisit(Visit $visit): Location
             {
                 return Location::emptyInstance();
@@ -75,23 +81,33 @@ class VisitLocatorTest extends TestCase
             }
         });
 
-        $findUnlocatedVisits->shouldHaveBeenCalledOnce();
+        $findVisits->shouldHaveBeenCalledOnce();
         $persist->shouldHaveBeenCalledTimes(count($unlocatedVisits));
         $flush->shouldHaveBeenCalledTimes(floor(count($unlocatedVisits) / 200) + 1);
         $clear->shouldHaveBeenCalledTimes(floor(count($unlocatedVisits) / 200) + 1);
+    }
+
+    public function provideMethodNames(): iterable
+    {
+        yield 'locateUnlocatedVisits' => ['locateUnlocatedVisits', 'findUnlocatedVisits'];
+        yield 'locateVisitsWithEmptyLocation' => ['locateVisitsWithEmptyLocation', 'findVisitsWithEmptyLocation'];
+        yield 'locateAllVisits' => ['locateAllVisits', 'findAllVisits'];
     }
 
     /**
      * @test
      * @dataProvider provideIsNonLocatableAddress
      */
-    public function visitsWhichCannotBeLocatedAreIgnoredOrLocatedAsEmpty(bool $isNonLocatableAddress): void
-    {
+    public function visitsWhichCannotBeLocatedAreIgnoredOrLocatedAsEmpty(
+        string $serviceMethodName,
+        string $expectedRepoMethodName,
+        bool $isNonLocatableAddress
+    ): void {
         $unlocatedVisits = [
             new Visit(new ShortUrl('foo'), Visitor::emptyInstance()),
         ];
 
-        $findUnlocatedVisits = $this->repo->findUnlocatedVisits()->willReturn($unlocatedVisits);
+        $findVisits = $this->mockRepoMethod($expectedRepoMethodName)->willReturn($unlocatedVisits);
 
         $persist = $this->em->persist(Argument::type(Visit::class))->will(function (): void {
         });
@@ -100,7 +116,7 @@ class VisitLocatorTest extends TestCase
         $clear = $this->em->clear()->will(function (): void {
         });
 
-        $this->visitService->locateUnlocatedVisits(
+        $this->visitService->{$serviceMethodName}(
             new class ($isNonLocatableAddress) implements VisitGeolocationHelperInterface {
                 private bool $isNonLocatableAddress;
 
@@ -122,7 +138,7 @@ class VisitLocatorTest extends TestCase
             },
         );
 
-        $findUnlocatedVisits->shouldHaveBeenCalledOnce();
+        $findVisits->shouldHaveBeenCalledOnce();
         $persist->shouldHaveBeenCalledTimes($isNonLocatableAddress ? 1 : 0);
         $flush->shouldHaveBeenCalledOnce();
         $clear->shouldHaveBeenCalledOnce();
@@ -130,7 +146,24 @@ class VisitLocatorTest extends TestCase
 
     public function provideIsNonLocatableAddress(): iterable
     {
-        yield 'The address is locatable' => [false];
-        yield 'The address is non-locatable' => [true];
+        yield 'locateUnlocatedVisits - locatable address' => ['locateUnlocatedVisits', 'findUnlocatedVisits', false];
+        yield 'locateUnlocatedVisits - non-locatable address' => ['locateUnlocatedVisits', 'findUnlocatedVisits', true];
+        yield 'locateVisitsWithEmptyLocation - locatable address' => [
+            'locateVisitsWithEmptyLocation',
+            'findVisitsWithEmptyLocation',
+            false,
+        ];
+        yield 'locateVisitsWithEmptyLocation - non-locatable address' => [
+            'locateVisitsWithEmptyLocation',
+            'findVisitsWithEmptyLocation',
+            true,
+        ];
+        yield 'locateAllVisits - locatable address' => ['locateAllVisits', 'findAllVisits', false];
+        yield 'locateAllVisits - non-locatable address' => ['locateAllVisits', 'findAllVisits', true];
+    }
+
+    private function mockRepoMethod(string $methodName): MethodProphecy
+    {
+        return (new MethodProphecy($this->repo, $methodName, new Argument\ArgumentsWildcard([])));
     }
 }
