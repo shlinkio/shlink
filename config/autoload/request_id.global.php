@@ -28,7 +28,10 @@ return [
             'config.request_id.allow_override',
             'config.request_id.header_name',
         ],
-        RequestId\RequestIdMiddleware::class => [RequestId\RequestIdProviderFactory::class],
+        RequestId\RequestIdMiddleware::class => [
+            RequestId\RequestIdProviderFactory::class,
+            'config.request_id.header_name',
+        ],
         RequestId\MonologProcessor::class => [RequestId\RequestIdMiddleware::class],
     ],
 

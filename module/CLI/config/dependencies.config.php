@@ -11,6 +11,7 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Service;
+use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Installer\Factory\ProcessHelperFactory;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
@@ -67,7 +68,7 @@ return [
         Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
 
         Command\Visit\LocateVisitsCommand::class => [
-            Service\VisitService::class,
+            Visit\VisitLocator::class,
             IpLocationResolverInterface::class,
             LockFactory::class,
             GeolocationDbUpdater::class,

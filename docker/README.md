@@ -37,10 +37,10 @@ Or you can list all tags with:
 docker exec -it shlink_container shlink tag:list
 ```
 
-Or process remaining visits with:
+Or locate remaining visits with:
 
 ```bash
-docker exec -it shlink_container shlink visit:process
+docker exec -it shlink_container shlink visit:locate
 ```
 
 All shlink commands will work the same way.

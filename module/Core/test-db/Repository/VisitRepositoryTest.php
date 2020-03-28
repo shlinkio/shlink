@@ -40,15 +40,23 @@ class VisitRepositoryTest extends DatabaseTestCase
      * @test
      * @dataProvider provideBlockSize
      */
-    public function findUnlocatedVisitsReturnsProperVisits(int $blockSize): void
+    public function findVisitsReturnsProperVisits(int $blockSize): void
     {
         $shortUrl = new ShortUrl('');
         $this->getEntityManager()->persist($shortUrl);
+        $countIterable = function (iterable $results): int {
+            $resultsCount = 0;
+            foreach ($results as $value) {
+                $resultsCount++;
+            }
+
+            return $resultsCount;
+        };
 
         for ($i = 0; $i < 6; $i++) {
             $visit = new Visit($shortUrl, Visitor::emptyInstance());
 
-            if ($i % 2 === 0) {
+            if ($i >= 2) {
                 $location = new VisitLocation(Location::emptyInstance());
                 $this->getEntityManager()->persist($location);
                 $visit->locate($location);
@@ -58,18 +66,20 @@ class VisitRepositoryTest extends DatabaseTestCase
         }
         $this->getEntityManager()->flush();
 
-        $resultsCount = 0;
-        $results = $this->repo->findUnlocatedVisits(true, $blockSize);
-        foreach ($results as $value) {
-            $resultsCount++;
-        }
+        $withEmptyLocation = $this->repo->findVisitsWithEmptyLocation($blockSize);
+        $unlocated = $this->repo->findUnlocatedVisits($blockSize);
+        $all = $this->repo->findAllVisits($blockSize);
 
-        $this->assertEquals(3, $resultsCount);
+        // Important! assertCount will not work here, as this iterable object loads data dynamically and the count
+        // is 0 if not iterated
+        $this->assertEquals(2, $countIterable($unlocated));
+        $this->assertEquals(4, $countIterable($withEmptyLocation));
+        $this->assertEquals(6, $countIterable($all));
     }
 
     public function provideBlockSize(): iterable
     {
-        return map(range(1, 5), fn (int $value) => [$value]);
+        return map(range(1, 10), fn (int $value) => [$value]);
     }
 
     /** @test */

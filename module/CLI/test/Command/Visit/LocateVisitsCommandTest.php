@@ -15,17 +15,20 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\Visitor;
-use Shlinkio\Shlink\Core\Service\VisitService;
+use Shlinkio\Shlink\Core\Visit\VisitGeolocationHelperInterface;
+use Shlinkio\Shlink\Core\Visit\VisitLocator;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock;
 
-use function array_shift;
 use function sprintf;
+
+use const PHP_EOL;
 
 class LocateVisitsCommandTest extends TestCase
 {
@@ -38,7 +41,7 @@ class LocateVisitsCommandTest extends TestCase
 
     public function setUp(): void
     {
-        $this->visitService = $this->prophesize(VisitService::class);
+        $this->visitService = $this->prophesize(VisitLocator::class);
         $this->ipResolver = $this->prophesize(IpLocationResolverInterface::class);
         $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
 
@@ -61,31 +64,53 @@ class LocateVisitsCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /** @test */
-    public function allPendingVisitsAreProcessed(): void
-    {
+    /**
+     * @test
+     * @dataProvider provideArgs
+     */
+    public function expectedSetOfVisitsIsProcessedBasedOnArgs(
+        int $expectedUnlocatedCalls,
+        int $expectedEmptyCalls,
+        int $expectedAllCalls,
+        bool $expectWarningPrint,
+        array $args
+    ): void {
         $visit = new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4'));
         $location = new VisitLocation(Location::emptyInstance());
+        $mockMethodBehavior = $this->invokeHelperMethods($visit, $location);
 
-        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
-            function (array $args) use ($visit, $location): void {
-                $firstCallback = array_shift($args);
-                $firstCallback($visit);
-
-                $secondCallback = array_shift($args);
-                $secondCallback($location, $visit);
-            },
+        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will($mockMethodBehavior);
+        $locateEmptyVisits = $this->visitService->locateVisitsWithEmptyLocation(Argument::cetera())->will(
+            $mockMethodBehavior,
         );
+        $locateAllVisits = $this->visitService->locateAllVisits(Argument::cetera())->will($mockMethodBehavior);
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn(
             Location::emptyInstance(),
         );
 
-        $this->commandTester->execute([]);
+        $this->commandTester->setInputs(['y']);
+        $this->commandTester->execute($args);
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringContainsString('Processing IP 1.2.3.0', $output);
-        $locateVisits->shouldHaveBeenCalledOnce();
-        $resolveIpLocation->shouldHaveBeenCalledOnce();
+        if ($expectWarningPrint) {
+            $this->assertStringContainsString('Continue at your own risk', $output);
+        } else {
+            $this->assertStringNotContainsString('Continue at your own risk', $output);
+        }
+        $locateVisits->shouldHaveBeenCalledTimes($expectedUnlocatedCalls);
+        $locateEmptyVisits->shouldHaveBeenCalledTimes($expectedEmptyCalls);
+        $locateAllVisits->shouldHaveBeenCalledTimes($expectedAllCalls);
+        $resolveIpLocation->shouldHaveBeenCalledTimes(
+            $expectedUnlocatedCalls + $expectedEmptyCalls + $expectedAllCalls,
+        );
+    }
+
+    public function provideArgs(): iterable
+    {
+        yield 'no args' => [1, 0, 0, false, []];
+        yield 'retry' => [1, 1, 0, false, ['--retry' => true]];
+        yield 'all' => [0, 0, 1, true, ['--retry' => true, '--all' => true]];
     }
 
     /**
@@ -98,13 +123,7 @@ class LocateVisitsCommandTest extends TestCase
         $location = new VisitLocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
-            function (array $args) use ($visit, $location): void {
-                $firstCallback = array_shift($args);
-                $firstCallback($visit);
-
-                $secondCallback = array_shift($args);
-                $secondCallback($location, $visit);
-            },
+            $this->invokeHelperMethods($visit, $location),
         );
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn(
             Location::emptyInstance(),
@@ -137,13 +156,7 @@ class LocateVisitsCommandTest extends TestCase
         $location = new VisitLocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
-            function (array $args) use ($visit, $location): void {
-                $firstCallback = array_shift($args);
-                $firstCallback($visit);
-
-                $secondCallback = array_shift($args);
-                $secondCallback($location, $visit);
-            },
+            $this->invokeHelperMethods($visit, $location),
         );
         $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willThrow(WrongIpException::class);
 
@@ -154,6 +167,17 @@ class LocateVisitsCommandTest extends TestCase
         $this->assertStringContainsString('An error occurred while locating IP. Skipped', $output);
         $locateVisits->shouldHaveBeenCalledOnce();
         $resolveIpLocation->shouldHaveBeenCalledOnce();
+    }
+
+    private function invokeHelperMethods(Visit $visit, VisitLocation $location): callable
+    {
+        return function (array $args) use ($visit, $location): void {
+            /** @var VisitGeolocationHelperInterface $helper */
+            [$helper] = $args;
+
+            $helper->geolocateVisit($visit);
+            $helper->onVisitLocated($location, $visit);
+        };
     }
 
     /** @test */
@@ -211,5 +235,34 @@ class LocateVisitsCommandTest extends TestCase
     {
         yield [true, '[Warning] GeoLite2 database update failed. Proceeding with old version.'];
         yield [false, 'GeoLite2 database download failed. It is not possible to locate visits.'];
+    }
+
+    /** @test */
+    public function providingAllFlagOnItsOwnDisplaysNotice(): void
+    {
+        $this->commandTester->execute(['--all' => true]);
+        $output = $this->commandTester->getDisplay();
+
+        $this->assertStringContainsString('The --all flag has no effect on its own', $output);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideAbortInputs
+     */
+    public function processingAllCancelsCommandIfUserDoesNotActivelyAgreeToConfirmation(array $inputs): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Execution aborted');
+
+        $this->commandTester->setInputs($inputs);
+        $this->commandTester->execute(['--all' => true, '--retry' => true]);
+    }
+
+    public function provideAbortInputs(): iterable
+    {
+        yield 'n' => [['n']];
+        yield 'no' => [['no']];
+        yield 'default' => [[PHP_EOL]];
     }
 }
