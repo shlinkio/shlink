@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## 2.1.0 - 2020-03-28
 
 #### Added
 
@@ -17,6 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Changed
 
 * [#656](https://github.com/shlinkio/shlink/issues/656) Updated to PHPUnit 9.
+* [#641](https://github.com/shlinkio/shlink/issues/641) Added two new flags to the `visit:locate` command, `--retry` and `--all`.
+
+    * When `--retry` is provided, it will try to re-locate visits which IP address was originally considered not found, in case it was a temporal issue.
+    * When `--all` is provided together with `--retry`, it will try to re-locate all existing visits. A warning and confirmation are displayed, as this can have side effects.
 
 #### Deprecated
 
