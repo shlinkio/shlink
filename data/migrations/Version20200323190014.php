@@ -22,15 +22,16 @@ final class Version20200323190014 extends AbstractMigration
     {
         $qb = $this->connection->createQueryBuilder();
         $qb->update('visit_locations')
-           ->set('is_empty', true)
-           ->where($qb->expr()->eq('country_code', ':empty'))
-           ->andWhere($qb->expr()->eq('country_name', ':empty'))
-           ->andWhere($qb->expr()->eq('region_name', ':empty'))
-           ->andWhere($qb->expr()->eq('city_name', ':empty'))
-           ->andWhere($qb->expr()->eq('timezone', ':empty'))
+           ->set('is_empty', ':isEmpty')
+           ->where($qb->expr()->eq('country_code', ':emptyString'))
+           ->andWhere($qb->expr()->eq('country_name', ':emptyString'))
+           ->andWhere($qb->expr()->eq('region_name', ':emptyString'))
+           ->andWhere($qb->expr()->eq('city_name', ':emptyString'))
+           ->andWhere($qb->expr()->eq('timezone', ':emptyString'))
            ->andWhere($qb->expr()->eq('lat', 0))
            ->andWhere($qb->expr()->eq('lon', 0))
-           ->setParameter('empty', '')
+           ->setParameter('isEmpty', true)
+           ->setParameter('emptyString', '')
            ->execute();
     }
 
