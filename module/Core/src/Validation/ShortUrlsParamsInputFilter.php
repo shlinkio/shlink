@@ -39,7 +39,7 @@ class ShortUrlsParamsInputFilter extends InputFilter
 
         $tags = $this->createArrayInput(self::TAGS, false);
         $tags->getFilterChain()->attach(new Filter\StringToLower())
-                               ->attach(new Validation\SluggerFilter());
+                               ->attach(new Filter\PregReplace(['pattern' => '/ /', 'replacement' => '-']));
         $this->add($tags);
     }
 }

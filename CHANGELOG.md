@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## 2.1.2 - 2020-03-29
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* [#696](https://github.com/shlinkio/shlink/issues/696) Updated to infection v0.16.
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#700](https://github.com/shlinkio/shlink/issues/700) Fixed migration not working with postgres.
+* [#690](https://github.com/shlinkio/shlink/issues/690) Fixed tags being incorrectly sluggified when filtering short URL lists, making results not be the expected.
+
+
 ## 2.1.1 - 2020-03-28
 
 #### Added
