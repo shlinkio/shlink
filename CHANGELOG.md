@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Fixed
 
 * [#700](https://github.com/shlinkio/shlink/issues/700) Fixed migration not working with postgres.
+* [#690](https://github.com/shlinkio/shlink/issues/690) Fixed tags being incorrectly sluggified when filtering short URL lists, making results not be the expected.
 
 
 ## 2.1.1 - 2020-03-28
