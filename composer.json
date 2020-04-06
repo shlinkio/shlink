@@ -52,7 +52,7 @@
         "shlinkio/shlink-common": "^3.0",
         "shlinkio/shlink-config": "^1.0",
         "shlinkio/shlink-event-dispatcher": "^1.4",
-        "shlinkio/shlink-installer": "4.3.2",
+        "shlinkio/shlink-installer": "^4.3.2",
         "shlinkio/shlink-ip-geolocation": "^1.4",
         "symfony/console": "^5.0",
         "symfony/filesystem": "^5.0",
