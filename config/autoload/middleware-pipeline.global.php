@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink;
 
 use Laminas\Stratigility\Middleware\ErrorHandler;
-use Mezzio;
+use Mezzio\Helper;
 use Mezzio\ProblemDetails;
+use Mezzio\Router;
 use PhpMiddleware\RequestId\RequestIdMiddleware;
 
 return [
@@ -14,7 +15,7 @@ return [
     'middleware_pipeline' => [
         'error-handler' => [
             'middleware' => [
-                Mezzio\Helper\ContentLengthMiddleware::class,
+                Helper\ContentLengthMiddleware::class,
                 ErrorHandler::class,
             ],
         ],
@@ -35,14 +36,15 @@ return [
 
         'routing' => [
             'middleware' => [
-                Mezzio\Router\Middleware\RouteMiddleware::class,
+                Router\Middleware\RouteMiddleware::class,
+                Router\Middleware\ImplicitHeadMiddleware::class,
             ],
         ],
 
         'rest' => [
             'path' => '/rest',
             'middleware' => [
-                Mezzio\Router\Middleware\ImplicitOptionsMiddleware::class,
+                Router\Middleware\ImplicitOptionsMiddleware::class,
                 Rest\Middleware\BodyParserMiddleware::class,
                 Rest\Middleware\AuthenticationMiddleware::class,
             ],
@@ -50,7 +52,7 @@ return [
 
         'dispatch' => [
             'middleware' => [
-                Mezzio\Router\Middleware\DispatchMiddleware::class,
+                Router\Middleware\DispatchMiddleware::class,
             ],
         ],
 
@@ -67,4 +69,11 @@ return [
             ],
         ],
     ],
+
+    'dependencies' => [
+        'factories' => [
+            Router\Middleware\ImplicitHeadMiddleware::class => Router\Middleware\ImplicitHeadMiddlewareFactory::class,
+        ],
+    ],
+
 ];
