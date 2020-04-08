@@ -70,10 +70,4 @@ return [
         ],
     ],
 
-    'dependencies' => [
-        'factories' => [
-            Router\Middleware\ImplicitHeadMiddleware::class => Router\Middleware\ImplicitHeadMiddlewareFactory::class,
-        ],
-    ],
-
 ];
