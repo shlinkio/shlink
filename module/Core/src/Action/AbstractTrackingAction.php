@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Action;
 
+use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Uri;
+use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -24,7 +26,7 @@ use function array_merge;
 use function GuzzleHttp\Psr7\build_query;
 use function GuzzleHttp\Psr7\parse_query;
 
-abstract class AbstractTrackingAction implements MiddlewareInterface
+abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMethodInterface
 {
     private ShortUrlResolverInterface $urlResolver;
     private VisitsTrackerInterface $visitTracker;
@@ -50,14 +52,13 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
         $disableTrackParam = $this->appOptions->getDisableTrackParam();
 
         try {
-            $url = $this->urlResolver->resolveEnabledShortUrl($identifier);
+            $shortUrl = $this->urlResolver->resolveEnabledShortUrl($identifier);
 
-            // Track visit to this short code
-            if ($disableTrackParam === null || ! array_key_exists($disableTrackParam, $query)) {
-                $this->visitTracker->track($url, Visitor::fromRequest($request));
+            if ($this->shouldTrackRequest($request, $query, $disableTrackParam)) {
+                $this->visitTracker->track($shortUrl, Visitor::fromRequest($request));
             }
 
-            return $this->createSuccessResp($this->buildUrlToRedirectTo($url, $query, $disableTrackParam));
+            return $this->createSuccessResp($this->buildUrlToRedirectTo($shortUrl, $query, $disableTrackParam));
         } catch (ShortUrlNotFoundException $e) {
             $this->logger->warning('An error occurred while tracking short code. {e}', ['e' => $e]);
             return $this->createErrorResp($request, $handler);
@@ -74,6 +75,16 @@ abstract class AbstractTrackingAction implements MiddlewareInterface
         $mergedQuery = array_merge($hardcodedQuery, $currentQuery);
 
         return (string) $uri->withQuery(build_query($mergedQuery));
+    }
+
+    private function shouldTrackRequest(ServerRequestInterface $request, array $query, ?string $disableTrackParam): bool
+    {
+        $forwardedMethod = $request->getAttribute(ImplicitHeadMiddleware::FORWARDED_HTTP_METHOD_ATTRIBUTE);
+        if ($forwardedMethod === self::METHOD_HEAD) {
+            return false;
+        }
+
+        return $disableTrackParam === null || ! array_key_exists($disableTrackParam, $query);
     }
 
     abstract protected function createSuccessResp(string $longUrl): ResponseInterface;
