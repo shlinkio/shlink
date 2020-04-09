@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Action;
 
 use Endroid\QrCode\QrCode;
-use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
@@ -23,17 +22,17 @@ class QrCodeAction implements MiddlewareInterface
     private const MIN_SIZE = 50;
     private const MAX_SIZE = 1000;
 
-    private RouterInterface $router;
     private ShortUrlResolverInterface $urlResolver;
+    private array $domainConfig;
     private LoggerInterface $logger;
 
     public function __construct(
-        RouterInterface $router,
         ShortUrlResolverInterface $urlResolver,
+        array $domainConfig,
         ?LoggerInterface $logger = null
     ) {
-        $this->router = $router;
         $this->urlResolver = $urlResolver;
+        $this->domainConfig = $domainConfig;
         $this->logger = $logger ?: new NullLogger();
     }
 
@@ -42,23 +41,19 @@ class QrCodeAction implements MiddlewareInterface
         $identifier = ShortUrlIdentifier::fromRedirectRequest($request);
 
         try {
-            $this->urlResolver->resolveEnabledShortUrl($identifier);
+            $shortUrl = $this->urlResolver->resolveEnabledShortUrl($identifier);
         } catch (ShortUrlNotFoundException $e) {
             $this->logger->warning('An error occurred while creating QR code. {e}', ['e' => $e]);
             return $handler->handle($request);
         }
 
-        $path = $this->router->generateUri(RedirectAction::class, ['shortCode' => $identifier->shortCode()]);
-        $size = $this->getSizeParam($request);
-
-        $qrCode = new QrCode((string) $request->getUri()->withPath($path)->withQuery(''));
-        $qrCode->setSize($size);
+        $qrCode = new QrCode($shortUrl->toString($this->domainConfig));
+        $qrCode->setSize($this->getSizeParam($request));
         $qrCode->setMargin(0);
+
         return new QrCodeResponse($qrCode);
     }
 
-    /**
-     */
     private function getSizeParam(Request $request): int
     {
         $size = (int) $request->getAttribute('size', self::DEFAULT_SIZE);
