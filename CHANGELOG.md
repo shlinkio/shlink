@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#712](https://github.com/shlinkio/shlink/issues/712) Fixed app set-up not clearing entities metadata cache.
 * [#711](https://github.com/shlinkio/shlink/issues/711) Fixed `HEAD` requests returning a duplicated `Content-Length` header.
 * [#716](https://github.com/shlinkio/shlink/issues/716) Fixed Twitter not properly displaying preview for final long URL.
+* [#717](https://github.com/shlinkio/shlink/issues/717) Fixed DB connection expiring on task workers when using swoole.
 
 
 ## 2.1.2 - 2020-03-29

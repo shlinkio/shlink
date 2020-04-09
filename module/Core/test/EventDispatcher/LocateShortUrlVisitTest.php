@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -37,6 +38,10 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $this->ipLocationResolver = $this->prophesize(IpLocationResolverInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
+        $conn = $this->prophesize(Connection::class);
+        $this->em->getConnection()->willReturn($conn->reveal());
+        $this->em->clear()->will(function (): void {
+        });
         $this->logger = $this->prophesize(LoggerInterface::class);
         $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
