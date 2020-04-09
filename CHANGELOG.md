@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## 2.1.3 - 2020-04-09
 
 #### Added
 
@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#711](https://github.com/shlinkio/shlink/issues/711) Fixed `HEAD` requests returning a duplicated `Content-Length` header.
 * [#716](https://github.com/shlinkio/shlink/issues/716) Fixed Twitter not properly displaying preview for final long URL.
 * [#717](https://github.com/shlinkio/shlink/issues/717) Fixed DB connection expiring on task workers when using swoole.
+* [#705](https://github.com/shlinkio/shlink/issues/705) Fixed how the short URL domain is inferred when generating QR codes, making sure the configured domain is respected even if the request is performed using a different one, and only when a custom domain is used, then that one is used instead.
 
 
 ## 2.1.2 - 2020-03-29
