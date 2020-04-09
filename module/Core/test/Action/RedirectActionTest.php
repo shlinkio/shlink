@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Action;
 
+use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -88,5 +90,24 @@ class RedirectActionTest extends TestCase
         $this->action->process($request, $handler->reveal());
 
         $handle->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
+    public function trackingIsDisabledWhenRequestIsForwardedFromHead(): void
+    {
+        $shortCode = 'abc123';
+        $shortUrl = new ShortUrl('http://domain.com/foo/bar?some=thing');
+        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))->willReturn($shortUrl);
+        $track = $this->visitTracker->track(Argument::cetera())->will(function (): void {
+        });
+
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)
+                                        ->withAttribute(
+                                            ImplicitHeadMiddleware::FORWARDED_HTTP_METHOD_ATTRIBUTE,
+                                            RequestMethodInterface::METHOD_HEAD,
+                                        );
+        $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
+
+        $track->shouldNotHaveBeenCalled();
     }
 }

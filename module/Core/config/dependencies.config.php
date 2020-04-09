@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core;
 
-use Doctrine\Common\Cache\Cache;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
-use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver;
@@ -38,8 +36,6 @@ return [
             Action\RedirectAction::class => ConfigAbstractFactory::class,
             Action\PixelAction::class => ConfigAbstractFactory::class,
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
-
-            Middleware\QrCodeCacheMiddleware::class => ConfigAbstractFactory::class,
 
             Resolver\PersistenceDomainResolver::class => ConfigAbstractFactory::class,
         ],
@@ -81,12 +77,10 @@ return [
             'Logger_Shlink',
         ],
         Action\QrCodeAction::class => [
-            RouterInterface::class,
             Service\ShortUrl\ShortUrlResolver::class,
+            'config.url_shortener.domain',
             'Logger_Shlink',
         ],
-
-        Middleware\QrCodeCacheMiddleware::class => [Cache::class],
 
         Resolver\PersistenceDomainResolver::class => ['em'],
     ],

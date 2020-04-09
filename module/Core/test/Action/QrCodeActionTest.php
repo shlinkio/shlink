@@ -30,7 +30,7 @@ class QrCodeActionTest extends TestCase
 
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
 
-        $this->action = new QrCodeAction($router->reveal(), $this->urlResolver->reveal());
+        $this->action = new QrCodeAction($this->urlResolver->reveal(), ['domain' => 'doma.in']);
     }
 
     /** @test */

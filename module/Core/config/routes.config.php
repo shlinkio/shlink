@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use RKA\Middleware\IpAddress;
 use Shlinkio\Shlink\Core\Action;
-use Shlinkio\Shlink\Core\Middleware;
 
 return [
 
@@ -32,7 +31,6 @@ return [
             'name' => Action\QrCodeAction::class,
             'path' => '/{shortCode}/qr-code[/{size:[0-9]+}]',
             'middleware' => [
-                Middleware\QrCodeCacheMiddleware::class,
                 Action\QrCodeAction::class,
             ],
             'allowed_methods' => [RequestMethod::METHOD_GET],
