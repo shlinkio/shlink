@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\EventDispatcher;
+namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;

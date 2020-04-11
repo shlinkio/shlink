@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Fig\Http\Message\RequestMethodInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Promise\Promise;
+use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\RequestOptions;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -89,12 +90,14 @@ class NotifyVisitToWebHooks
      */
     private function performRequests(array $requestOptions, string $visitId): array
     {
-        return map($this->webhooks, function (string $webhook) use ($requestOptions, $visitId) {
-            $promise = $this->httpClient->requestAsync(RequestMethodInterface::METHOD_POST, $webhook, $requestOptions);
-            return $promise->otherwise(
-                partial_left(Closure::fromCallable([$this, 'logWebhookFailure']), $webhook, $visitId),
-            );
-        });
+        $logWebhookFailure = Closure::fromCallable([$this, 'logWebhookFailure']);
+
+        return map(
+            $this->webhooks,
+            fn (string $webhook): PromiseInterface => $this->httpClient
+                ->requestAsync(RequestMethodInterface::METHOD_POST, $webhook, $requestOptions)
+                ->otherwise(partial_left($logWebhookFailure, $webhook, $visitId)),
+        );
     }
 
     private function logWebhookFailure(string $webhook, string $visitId, Throwable $e): void
