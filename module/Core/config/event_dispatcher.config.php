@@ -29,6 +29,12 @@ return [
             EventDispatcher\LocateShortUrlVisit::class => ConfigAbstractFactory::class,
             EventDispatcher\NotifyVisitToWebHooks::class => ConfigAbstractFactory::class,
         ],
+
+        'delegators' => [
+            EventDispatcher\LocateShortUrlVisit::class => [
+                EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
+            ],
+        ],
     ],
 
     ConfigAbstractFactory::class => [
