@@ -112,4 +112,4 @@ services:
             - "3080:80"
         environment:
             CORS_ALLOWED_ORIGINS: "*"
-            JWT_KEY: "super_secret_key"
+            JWT_KEY: "mercure_jwt_key"
