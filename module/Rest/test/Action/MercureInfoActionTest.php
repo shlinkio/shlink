@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioApiTest\Shlink\Rest\Action;
+namespace ShlinkioTest\Shlink\Rest\Action;
 
 use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;

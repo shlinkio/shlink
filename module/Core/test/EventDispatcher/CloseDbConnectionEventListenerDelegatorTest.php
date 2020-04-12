@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioApiTest\Shlink\Rest\EventDispatcher;
+namespace ShlinkioTest\Shlink\Rest\EventDispatcher;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
