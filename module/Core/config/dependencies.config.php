@@ -38,6 +38,8 @@ return [
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
 
             Resolver\PersistenceDomainResolver::class => ConfigAbstractFactory::class,
+
+            Mercure\MercureUpdatesGenerator::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -83,6 +85,8 @@ return [
         ],
 
         Resolver\PersistenceDomainResolver::class => ['em'],
+
+        Mercure\MercureUpdatesGenerator::class => ['config.url_shortener.domain'],
     ],
 
 ];

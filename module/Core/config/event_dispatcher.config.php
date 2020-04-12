@@ -8,12 +8,14 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
+use Symfony\Component\Mercure\Publisher;
 
 return [
 
     'events' => [
         'regular' => [
             EventDispatcher\VisitLocated::class => [
+                EventDispatcher\NotifyVisitToMercure::class,
                 EventDispatcher\NotifyVisitToWebHooks::class,
             ],
         ],
@@ -28,6 +30,7 @@ return [
         'factories' => [
             EventDispatcher\LocateShortUrlVisit::class => ConfigAbstractFactory::class,
             EventDispatcher\NotifyVisitToWebHooks::class => ConfigAbstractFactory::class,
+            EventDispatcher\NotifyVisitToMercure::class => ConfigAbstractFactory::class,
         ],
 
         'delegators' => [
@@ -52,6 +55,12 @@ return [
             'config.url_shortener.visits_webhooks',
             'config.url_shortener.domain',
             Options\AppOptions::class,
+        ],
+        EventDispatcher\NotifyVisitToMercure::class => [
+            Publisher::class,
+            Mercure\MercureUpdatesGenerator::class,
+            'em',
+            'Logger_Shlink',
         ],
     ],
 
