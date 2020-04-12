@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Common\Mercure\JwtProviderInterface;
 use Shlinkio\Shlink\Rest\Exception\MercureException;
 use Throwable;
 
-class MercureAction extends AbstractRestAction
+class MercureInfoAction extends AbstractRestAction
 {
     protected const ROUTE_PATH = '/mercure-info';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];

@@ -34,7 +34,7 @@ return [
         Action\Tag\CreateTagsAction::getRouteDef(),
         Action\Tag\UpdateTagAction::getRouteDef(),
 
-        Action\MercureAction::getRouteDef(),
+        Action\MercureInfoAction::getRouteDef(),
     ],
 
 ];

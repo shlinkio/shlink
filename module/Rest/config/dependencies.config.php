@@ -21,7 +21,7 @@ return [
             ApiKeyService::class => ConfigAbstractFactory::class,
 
             Action\HealthAction::class => ConfigAbstractFactory::class,
-            Action\MercureAction::class => ConfigAbstractFactory::class,
+            Action\MercureInfoAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\CreateShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\SingleStepCreateShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\EditShortUrlAction::class => ConfigAbstractFactory::class,
@@ -48,7 +48,7 @@ return [
         ApiKeyService::class => ['em'],
 
         Action\HealthAction::class => [Connection::class, AppOptions::class, 'Logger_Shlink'],
-        Action\MercureAction::class => [LcobucciJwtProvider::class, 'config.mercure', 'Logger_Shlink'],
+        Action\MercureInfoAction::class => [LcobucciJwtProvider::class, 'config.mercure', 'Logger_Shlink'],
         Action\ShortUrl\CreateShortUrlAction::class => [
             Service\UrlShortener::class,
             'config.url_shortener.domain',
