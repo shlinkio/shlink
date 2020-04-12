@@ -89,7 +89,7 @@ class MercureInfoActionTest extends TestCase
         $payload = $resp->getPayload();
 
         $this->assertArrayHasKey('mercureHubUrl', $payload);
-        $this->assertEquals('http://foobar.com', $payload['mercureHubUrl']);
+        $this->assertEquals('http://foobar.com/.well-known/mercure', $payload['mercureHubUrl']);
         $this->assertArrayHasKey('token', $payload);
         $this->assertArrayHasKey('jwtExpiration', $payload);
         $this->assertEquals(

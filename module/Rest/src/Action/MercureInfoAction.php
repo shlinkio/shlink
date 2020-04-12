@@ -13,6 +13,8 @@ use Shlinkio\Shlink\Common\Mercure\JwtProviderInterface;
 use Shlinkio\Shlink\Rest\Exception\MercureException;
 use Throwable;
 
+use function sprintf;
+
 class MercureInfoAction extends AbstractRestAction
 {
     protected const ROUTE_PATH = '/mercure-info';
@@ -48,7 +50,7 @@ class MercureInfoAction extends AbstractRestAction
         }
 
         return new JsonResponse([
-            'mercureHubUrl' => $hubUrl,
+            'mercureHubUrl' => sprintf('%s/.well-known/mercure', $hubUrl),
             'token' => $jwt,
             'jwtExpiration' => $expiresAt->toAtomString(),
         ]);
