@@ -1,0 +1,18 @@
+{
+    "type": "object",
+    "required": ["mercureHubUrl", "jwt", "jwtExpiration"],
+    "properties": {
+        "mercureHubUrl": {
+            "type": "string",
+            "description": "The public URL of the mercure hub that can be used to get real-time updates published by Shlink"
+        },
+        "jwt": {
+            "type": "string",
+            "description": "A JWT with subscribe permissions which is valid with the mercure hub"
+        },
+        "jwtExpiration": {
+            "type": "string",
+            "description": "The date (in ISO-8601 format) in which the JWT will expire"
+        }
+    }
+}
