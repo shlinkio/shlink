@@ -121,8 +121,8 @@ If you do that, Shlink will publish updates and other clients can subscribe to t
 
 There are three env vars you need to provide if you want to enable this:
 
-* `MERCURE_HUB_PUBLIC_URL`: **[Mandatory]**. The public URL of a mercure hub server to which Shlink will sent updates. This URL will also be served to consumers that want to subscribe to those updates.
-* `MERCURE_HUB_INTERNAL_URL`: **[Optional]**. An internal URL for a mercure hub. Will be used only when publishing updates to mercure, and does not need to be public. If this is not provided, the `MERCURE_HUB_PUBLIC_URL` one will be used to publish updates.
+* `MERCURE_PUBLIC_HUB_URL`: **[Mandatory]**. The public URL of a mercure hub server to which Shlink will sent updates. This URL will also be served to consumers that want to subscribe to those updates.
+* `MERCURE_INTERNAL_HUB_URL`: **[Optional]**. An internal URL for a mercure hub. Will be used only when publishing updates to mercure, and does not need to be public. If this is not provided, the `MERCURE_PUBLIC_HUB_URL` one will be used to publish updates.
 * `MERCURE_JWT_SECRET`: **[Mandatory]**. The secret key that was provided to the mercure hub server, in order to be able to generate valid JWTs for publishing/subscribing to that server.
 
 So in order to run shlink with mercure integration, you would do it like this:
@@ -133,8 +133,8 @@ docker run \
     -p 8080:8080 \
     -e SHORT_DOMAIN_HOST=doma.in \
     -e SHORT_DOMAIN_SCHEMA=https \
-    -e "MERCURE_HUB_PUBLIC_URL=https://example.com"
-    -e "MERCURE_HUB_INTERNAL_URL=http://my-mercure-hub.prod.svc.cluster.local"
+    -e "MERCURE_PUBLIC_HUB_URL=https://example.com"
+    -e "MERCURE_INTERNAL_HUB_URL=http://my-mercure-hub.prod.svc.cluster.local"
     -e MERCURE_JWT_SECRET=super_secret_key
     shlinkio/shlink:stable
 ```
@@ -169,8 +169,8 @@ This is the complete list of supported env vars:
 * `VISITS_WEBHOOKS`: A comma-separated list of URLs that will receive a `POST` request when a short URL receives a visit.
 * `DEFAULT_SHORT_CODES_LENGTH`: The length you want generated short codes to have. It defaults to 5 and has to be at least 4, so any value smaller than that will fall back to 4.
 * `REDIS_SERVERS`: A comma-separated list of redis servers where Shlink locks are stored (locks are used to prevent some operations to be run more than once in parallel).
-* `MERCURE_HUB_PUBLIC_URL`: The public URL of a mercure hub server to which Shlink will sent updates. This URL will also be served to consumers that want to subscribe to those updates.
-* `MERCURE_HUB_INTERNAL_URL`: An internal URL for a mercure hub. Will be used only when publishing updates to mercure, and does not need to be public. If this is not provided but `MERCURE_HUB_PUBLIC_URL` was, the former one will be used to publish updates.
+* `MERCURE_PUBLIC_HUB_URL`: The public URL of a mercure hub server to which Shlink will sent updates. This URL will also be served to consumers that want to subscribe to those updates.
+* `MERCURE_INTERNAL_HUB_URL`: An internal URL for a mercure hub. Will be used only when publishing updates to mercure, and does not need to be public. If this is not provided but `MERCURE_PUBLIC_HUB_URL` was, the former one will be used to publish updates.
 * `MERCURE_JWT_SECRET`: The secret key that was provided to the mercure hub server, in order to be able to generate valid JWTs for publishing/subscribing to that server.
 
 An example using all env vars could look like this:
@@ -199,8 +199,8 @@ docker run \
     -e TASK_WORKER_NUM=32 \
     -e "VISITS_WEBHOOKS=http://my-api.com/api/v2.3/notify,https://third-party.io/foo" \
     -e DEFAULT_SHORT_CODES_LENGTH=6 \
-    -e "MERCURE_HUB_PUBLIC_URL=https://example.com"
-    -e "MERCURE_HUB_INTERNAL_URL=http://my-mercure-hub.prod.svc.cluster.local"
+    -e "MERCURE_PUBLIC_HUB_URL=https://example.com"
+    -e "MERCURE_INTERNAL_HUB_URL=http://my-mercure-hub.prod.svc.cluster.local"
     -e MERCURE_JWT_SECRET=super_secret_key
     shlinkio/shlink:stable
 ```
@@ -243,8 +243,8 @@ The whole configuration should have this format, but it can be split into multip
         "host": "something.rds.amazonaws.com",
         "port": "3306"
     },
-    "mercure_hub_public_url": "https://example.com",
-    "mercure_hub_internal_url": "http://my-mercure-hub.prod.svc.cluster.local",
+    "mercure_public_hub_url": "https://example.com",
+    "mercure_internal_hub_url": "http://my-mercure-hub.prod.svc.cluster.local",
     "mercure_jwt_secret": "super_secret_key"
 }
 ```
