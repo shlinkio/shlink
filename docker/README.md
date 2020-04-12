@@ -73,18 +73,73 @@ It is possible to use a set of env vars to make this shlink instance interact wi
 Taking this into account, you could run shlink on a local docker service like this:
 
 ```bash
-docker run --name shlink -p 8080:8080 -e SHORT_DOMAIN_HOST=doma.in -e SHORT_DOMAIN_SCHEMA=https -e DB_DRIVER=mysql -e DB_USER=root -e DB_PASSWORD=123abc -e DB_HOST=something.rds.amazonaws.com shlinkio/shlink:stable
+docker run \
+    --name shlink \
+    -p 8080:8080 \
+    -e SHORT_DOMAIN_HOST=doma.in \
+    -e SHORT_DOMAIN_SCHEMA=https \
+    -e DB_DRIVER=mysql \
+    -e DB_USER=root \
+    -e DB_PASSWORD=123abc \
+    -e DB_HOST=something.rds.amazonaws.com \
+    shlinkio/shlink:stable
 ```
 
 You could even link to a local database running on a different container:
 
 ```bash
-docker run --name shlink -p 8080:8080 [...] -e DB_HOST=some_mysql_container --link some_mysql_container shlinkio/shlink:stable
+docker run \
+    --name shlink \
+    -p 8080:8080 \
+    [...] \
+    -e DB_HOST=some_mysql_container \
+    --link some_mysql_container \
+    shlinkio/shlink:stable
 ```
 
 > If you have considered using SQLite but sharing the database file with a volume, read [this issue](https://github.com/shlinkio/shlink-docker-image/issues/40) first.
 
-## Supported env vars
+## Other integrations
+
+### Use an external redis server
+
+If you plan to run more than one Shlink instance, there are some resources that should be shared ([Multi instance considerations](#multi-instance-considerations)).
+
+One of those resources are the locks Shlink generates to prevent some operations to be run more than once in parallel (in the future, these redis servers could be used for other caching operations).
+
+In order to share those locks, you should use an external redis server (or a cluster of redis servers), by providing the `REDIS_SERVERS` env var.
+
+It can be either one server name or a comma-separated list of servers.
+
+> If more than one redis server is provided, Shlink will expect them to be configured as a [redis cluster](https://redis.io/topics/cluster-tutorial).
+
+### Integrate with a mercure hub server
+
+One way to get real time updates when certain events happen in Shlink is by integrating it with a [mercure hub](https://mercure.rocks/) server.
+
+If you do that, Shlink will publish updates and other clients can subscribe to those.
+
+There are three env vars you need to provide if you want to enable this:
+
+* `MERCURE_HUB_PUBLIC_URL`: **[Mandatory]**. The public URL of a mercure hub server to which Shlink will sent updates. This URL will also be served to consumers that want to subscribe to those updates.
+* `MERCURE_HUB_INTERNAL_URL`: **[Optional]**. An internal URL for a mercure hub. Will be used only when publishing updates to mercure, and does not need to be public. If this is not provided, the `MERCURE_HUB_PUBLIC_URL` one will be used to publish updates.
+* `MERCURE_JWT_SECRET`: **[Mandatory]**. The secret key that was provided to the mercure hub server, in order to be able to generate valid JWTs for publishing/subscribing to that server.
+
+So in order to run shlink with mercure integration, you would do it like this:
+
+```bash
+docker run \
+    --name shlink \
+    -p 8080:8080 \
+    -e SHORT_DOMAIN_HOST=doma.in \
+    -e SHORT_DOMAIN_SCHEMA=https \
+    -e "MERCURE_HUB_PUBLIC_URL=https://example.com"
+    -e "MERCURE_HUB_INTERNAL_URL=http://my-mercure-hub.prod.svc.cluster.local"
+    -e MERCURE_JWT_SECRET=super_secret_key
+    shlinkio/shlink:stable
+```
+
+## All supported env vars
 
 A few env vars have been already used in previous examples, but this image supports others that can be used to customize its behavior.
 
@@ -114,12 +169,9 @@ This is the complete list of supported env vars:
 * `VISITS_WEBHOOKS`: A comma-separated list of URLs that will receive a `POST` request when a short URL receives a visit.
 * `DEFAULT_SHORT_CODES_LENGTH`: The length you want generated short codes to have. It defaults to 5 and has to be at least 4, so any value smaller than that will fall back to 4.
 * `REDIS_SERVERS`: A comma-separated list of redis servers where Shlink locks are stored (locks are used to prevent some operations to be run more than once in parallel).
-
-    This is important when running more than one Shlink instance ([Multi instance considerations](#multi-instance-considerations)). If not provided, Shlink stores locks on every instance separately.
-
-    If more than one server is provided, Shlink will expect them to be configured as a [redis cluster](https://redis.io/topics/cluster-tutorial).
-
-    In the future, these redis servers could be used for other caching operations performed by shlink.
+* `MERCURE_HUB_PUBLIC_URL`: The public URL of a mercure hub server to which Shlink will sent updates. This URL will also be served to consumers that want to subscribe to those updates.
+* `MERCURE_HUB_INTERNAL_URL`: An internal URL for a mercure hub. Will be used only when publishing updates to mercure, and does not need to be public. If this is not provided but `MERCURE_HUB_PUBLIC_URL` was, the former one will be used to publish updates.
+* `MERCURE_JWT_SECRET`: The secret key that was provided to the mercure hub server, in order to be able to generate valid JWTs for publishing/subscribing to that server.
 
 An example using all env vars could look like this:
 
@@ -147,6 +199,9 @@ docker run \
     -e TASK_WORKER_NUM=32 \
     -e "VISITS_WEBHOOKS=http://my-api.com/api/v2.3/notify,https://third-party.io/foo" \
     -e DEFAULT_SHORT_CODES_LENGTH=6 \
+    -e "MERCURE_HUB_PUBLIC_URL=https://example.com"
+    -e "MERCURE_HUB_INTERNAL_URL=http://my-mercure-hub.prod.svc.cluster.local"
+    -e MERCURE_JWT_SECRET=super_secret_key
     shlinkio/shlink:stable
 ```
 
@@ -187,7 +242,10 @@ The whole configuration should have this format, but it can be split into multip
         "password": "123abc",
         "host": "something.rds.amazonaws.com",
         "port": "3306"
-    }
+    },
+    "mercure_hub_public_url": "https://example.com",
+    "mercure_hub_internal_url": "http://my-mercure-hub.prod.svc.cluster.local",
+    "mercure_jwt_secret": "super_secret_key"
 }
 ```
 
