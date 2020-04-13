@@ -60,6 +60,9 @@ class SimplifiedConfigParserTest extends TestCase
                 'https://third-party.io/foo',
             ],
             'default_short_codes_length' => 8,
+            'mercure_public_hub_url' => 'public_url',
+            'mercure_internal_hub_url' => 'internal_url',
+            'mercure_jwt_secret' => 'super_secret_value',
         ];
         $expected = [
             'app_options' => [
@@ -126,6 +129,12 @@ class SimplifiedConfigParserTest extends TestCase
                         'task_worker_num' => 50,
                     ],
                 ],
+            ],
+
+            'mercure' => [
+                'public_hub_url' => 'public_url',
+                'internal_hub_url' => 'internal_url',
+                'jwt_secret' => 'super_secret_value',
             ],
         ];
 

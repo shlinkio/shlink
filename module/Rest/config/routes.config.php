@@ -33,6 +33,8 @@ return [
         Action\Tag\DeleteTagsAction::getRouteDef(),
         Action\Tag\CreateTagsAction::getRouteDef(),
         Action\Tag\UpdateTagAction::getRouteDef(),
+
+        Action\MercureInfoAction::getRouteDef(),
     ],
 
 ];

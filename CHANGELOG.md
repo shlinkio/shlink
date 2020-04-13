@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+#### Added
+
+* [#712](https://github.com/shlinkio/shlink/issues/712) Added support to integrate Shlink with a [mercure hub](https://mercure.rocks/) server.
+
+    Thanks to that, Shlink will be able to publish events that can be consumed in real time.
+
+    For now, only one topic (event) is published, identified by `https://shlink.io/new_visit`, which includes a payload with the visit and the shortUrl, every time a new visit occurs.
+
+    The updates are only published when serving Shlink with swoole.
+
+    Also, Shlink exposes a new endpoint `GET /rest/v2/mercure-info`, which returns the public URL of the mercure hub, and a valid JWT that can be used to subsribe to updates.
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* *Nothing*
+
+
 ## 2.1.3 - 2020-04-09
 
 #### Added

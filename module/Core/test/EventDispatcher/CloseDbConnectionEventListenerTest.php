@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioApiTest\Shlink\Core\EventDispatcher;
+namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;

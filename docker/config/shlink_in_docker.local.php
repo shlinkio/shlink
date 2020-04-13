@@ -79,6 +79,17 @@ $helper = new class {
         $value = (int) env('DEFAULT_SHORT_CODES_LENGTH', DEFAULT_SHORT_CODES_LENGTH);
         return $value < MIN_SHORT_CODES_LENGTH ? MIN_SHORT_CODES_LENGTH : $value;
     }
+
+    public function getMercureConfig(): array
+    {
+        $publicUrl = env('MERCURE_PUBLIC_HUB_URL');
+
+        return [
+            'public_hub_url' => $publicUrl,
+            'internal_hub_url' => env('MERCURE_INTERNAL_HUB_URL', $publicUrl),
+            'jwt_secret' => env('MERCURE_JWT_SECRET'),
+        ];
+    }
 };
 
 return [
@@ -146,5 +157,7 @@ return [
             ],
         ],
     ],
+
+    'mercure' => $helper->getMercureConfig(),
 
 ];

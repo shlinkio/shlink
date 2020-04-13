@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink;
 
 use Laminas\ConfigAggregator;
-use Laminas\ZendFrameworkBridge;
 use Mezzio;
 use Mezzio\ProblemDetails;
 
@@ -30,7 +29,6 @@ return (new ConfigAggregator\ConfigAggregator([
         ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')
         : new ConfigAggregator\LaminasConfigProvider('config/params/{generated_config.php,*.config.{php,json}}'),
 ], 'data/cache/app_config.php', [
-    ZendFrameworkBridge\ConfigPostProcessor::class,
     Core\Config\SimplifiedConfigParser::class,
     Core\Config\BasePathPrefixer::class,
     Core\Config\DeprecatedConfigParser::class,

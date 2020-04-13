@@ -82,6 +82,10 @@
             "$ref": "paths/v1_short-urls_{shortCode}_visits.json"
         },
 
+        "/rest/v{version}/mercure-info": {
+            "$ref": "paths/v2_mercure-info.json"
+        },
+
         "/rest/health": {
             "$ref": "paths/health.json"
         },

@@ -27,6 +27,7 @@ services:
             - shlink_db_maria
             - shlink_db_ms
             - shlink_redis
+            - shlink_mercure
         environment:
             LC_ALL: C
 
@@ -47,6 +48,7 @@ services:
             - shlink_db_maria
             - shlink_db_ms
             - shlink_redis
+            - shlink_mercure
         environment:
             LC_ALL: C
 
@@ -102,3 +104,12 @@ services:
         image: redis:5.0-alpine
         ports:
             - "6380:6379"
+
+    shlink_mercure:
+        container_name: shlink_mercure
+        image: dunglas/mercure:v0.8
+        ports:
+            - "3080:80"
+        environment:
+            CORS_ALLOWED_ORIGINS: "*"
+            JWT_KEY: "mercure_jwt_key"
