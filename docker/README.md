@@ -199,9 +199,9 @@ docker run \
     -e TASK_WORKER_NUM=32 \
     -e "VISITS_WEBHOOKS=http://my-api.com/api/v2.3/notify,https://third-party.io/foo" \
     -e DEFAULT_SHORT_CODES_LENGTH=6 \
-    -e "MERCURE_PUBLIC_HUB_URL=https://example.com"
-    -e "MERCURE_INTERNAL_HUB_URL=http://my-mercure-hub.prod.svc.cluster.local"
-    -e MERCURE_JWT_SECRET=super_secret_key
+    -e "MERCURE_PUBLIC_HUB_URL=https://example.com" \
+    -e "MERCURE_INTERNAL_HUB_URL=http://my-mercure-hub.prod.svc.cluster.local" \
+    -e MERCURE_JWT_SECRET=super_secret_key \
     shlinkio/shlink:stable
 ```
 
