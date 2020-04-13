@@ -31,6 +31,10 @@ return [
             Option\WebWorkerNumConfigOption::class,
             Option\RedisServersConfigOption::class,
             Option\ShortCodeLengthOption::class,
+            Option\Mercure\EnableMercureConfigOption::class,
+            Option\Mercure\MercurePublicUrlConfigOption::class,
+            Option\Mercure\MercureInternalUrlConfigOption::class,
+            Option\Mercure\MercureJwtSecretConfigOption::class,
         ],
 
         'installation_commands' => [
