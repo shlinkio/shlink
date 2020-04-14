@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGenerator;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 
 use function Shlinkio\Shlink\Common\json_decode;
@@ -21,15 +22,18 @@ class MercureUpdatesGeneratorTest extends TestCase
         $this->generator = new MercureUpdatesGenerator([]);
     }
 
-    /** @test */
-    public function visitIsProperlySerializedIntoUpdate(): void
+    /**
+     * @test
+     * @dataProvider provideMethod
+     */
+    public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic): void
     {
-        $shortUrl = new ShortUrl('');
+        $shortUrl = new ShortUrl('', ShortUrlMeta::fromRawData(['customSlug' => 'foo']));
         $visit = new Visit($shortUrl, Visitor::emptyInstance());
 
-        $update = $this->generator->newVisitUpdate($visit);
+        $update = $this->generator->{$method}($visit);
 
-        $this->assertEquals(['https://shlink.io/new_visit'], $update->getTopics());
+        $this->assertEquals([$expectedTopic], $update->getTopics());
         $this->assertEquals([
             'shortUrl' => [
                 'shortCode' => $shortUrl->getShortCode(),
@@ -52,5 +56,11 @@ class MercureUpdatesGeneratorTest extends TestCase
                 'date' => $visit->getDate()->toAtomString(),
             ],
         ], json_decode($update->getData()));
+    }
+
+    public function provideMethod(): iterable
+    {
+        yield 'newVisitUpdate' => ['newVisitUpdate', 'https://shlink.io/new_visit'];
+        yield 'newShortUrlVisitUpdate' => ['newShortUrlVisitUpdate', 'https://shlink.io/new_visit/foo'];
     }
 }
