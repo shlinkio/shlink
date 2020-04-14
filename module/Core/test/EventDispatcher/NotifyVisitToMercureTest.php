@@ -43,7 +43,7 @@ class NotifyVisitToMercureTest extends TestCase
     }
 
     /** @test */
-    public function notificationIsNotSentWhenVisitCannotBeFound(): void
+    public function notificationsAreNotSentWhenVisitCannotBeFound(): void
     {
         $visitId = '123';
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn(null);
@@ -52,6 +52,9 @@ class NotifyVisitToMercureTest extends TestCase
             ['visitId' => $visitId],
         );
         $logDebug = $this->logger->debug(Argument::cetera());
+        $buildNewShortUrlVisitUpdate = $this->updatesGenerator->newShortUrlVisitUpdate(
+            Argument::type(Visit::class),
+        )->willReturn(new Update('', ''));
         $buildNewVisitUpdate = $this->updatesGenerator->newVisitUpdate(Argument::type(Visit::class))->willReturn(
             new Update('', ''),
         );
@@ -62,12 +65,13 @@ class NotifyVisitToMercureTest extends TestCase
         $findVisit->shouldHaveBeenCalledOnce();
         $logWarning->shouldHaveBeenCalledOnce();
         $logDebug->shouldNotHaveBeenCalled();
+        $buildNewShortUrlVisitUpdate->shouldNotHaveBeenCalled();
         $buildNewVisitUpdate->shouldNotHaveBeenCalled();
         $publish->shouldNotHaveBeenCalled();
     }
 
     /** @test */
-    public function notificationIsSentWhenVisitIsFound(): void
+    public function notificationsAreSentWhenVisitIsFound(): void
     {
         $visitId = '123';
         $visit = new Visit(new ShortUrl(''), Visitor::emptyInstance());
@@ -76,6 +80,7 @@ class NotifyVisitToMercureTest extends TestCase
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn($visit);
         $logWarning = $this->logger->warning(Argument::cetera());
         $logDebug = $this->logger->debug(Argument::cetera());
+        $buildNewShortUrlVisitUpdate = $this->updatesGenerator->newShortUrlVisitUpdate($visit)->willReturn($update);
         $buildNewVisitUpdate = $this->updatesGenerator->newVisitUpdate($visit)->willReturn($update);
         $publish = $this->publisher->__invoke($update);
 
@@ -84,8 +89,9 @@ class NotifyVisitToMercureTest extends TestCase
         $findVisit->shouldHaveBeenCalledOnce();
         $logWarning->shouldNotHaveBeenCalled();
         $logDebug->shouldNotHaveBeenCalled();
+        $buildNewShortUrlVisitUpdate->shouldHaveBeenCalledOnce();
         $buildNewVisitUpdate->shouldHaveBeenCalledOnce();
-        $publish->shouldHaveBeenCalledOnce();
+        $publish->shouldHaveBeenCalledTimes(2);
     }
 
     /** @test */
@@ -101,6 +107,7 @@ class NotifyVisitToMercureTest extends TestCase
         $logDebug = $this->logger->debug('Error while trying to notify mercure hub with new visit. {e}', [
             'e' => $e,
         ]);
+        $buildNewShortUrlVisitUpdate = $this->updatesGenerator->newShortUrlVisitUpdate($visit)->willReturn($update);
         $buildNewVisitUpdate = $this->updatesGenerator->newVisitUpdate($visit)->willReturn($update);
         $publish = $this->publisher->__invoke($update)->willThrow($e);
 
@@ -109,7 +116,8 @@ class NotifyVisitToMercureTest extends TestCase
         $findVisit->shouldHaveBeenCalledOnce();
         $logWarning->shouldNotHaveBeenCalled();
         $logDebug->shouldHaveBeenCalledOnce();
-        $buildNewVisitUpdate->shouldHaveBeenCalledOnce();
+        $buildNewShortUrlVisitUpdate->shouldHaveBeenCalledOnce();
+        $buildNewVisitUpdate->shouldNotHaveBeenCalled();
         $publish->shouldHaveBeenCalledOnce();
     }
 }

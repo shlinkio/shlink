@@ -44,6 +44,7 @@ class NotifyVisitToMercure
         }
 
         try {
+            ($this->publisher)($this->updatesGenerator->newShortUrlVisitUpdate($visit));
             ($this->publisher)($this->updatesGenerator->newVisitUpdate($visit));
         } catch (Throwable $e) {
             $this->logger->debug('Error while trying to notify mercure hub with new visit. {e}', [

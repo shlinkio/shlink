@@ -10,4 +10,6 @@ use Symfony\Component\Mercure\Update;
 interface MercureUpdatesGeneratorInterface
 {
     public function newVisitUpdate(Visit $visit): Update;
+
+    public function newShortUrlVisitUpdate(Visit $visit): Update;
 }
