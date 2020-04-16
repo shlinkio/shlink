@@ -15,7 +15,7 @@ use const JSON_THROW_ON_ERROR;
 
 final class MercureUpdatesGenerator implements MercureUpdatesGeneratorInterface
 {
-    private const NEW_VISIT_TOPIC = 'https://shlink.io/new_visit';
+    private const NEW_VISIT_TOPIC = 'https://shlink.io/new-visit';
 
     private ShortUrlDataTransformer $transformer;
 

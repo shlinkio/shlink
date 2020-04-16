@@ -60,7 +60,7 @@ class MercureUpdatesGeneratorTest extends TestCase
 
     public function provideMethod(): iterable
     {
-        yield 'newVisitUpdate' => ['newVisitUpdate', 'https://shlink.io/new_visit'];
-        yield 'newShortUrlVisitUpdate' => ['newShortUrlVisitUpdate', 'https://shlink.io/new_visit/foo'];
+        yield 'newVisitUpdate' => ['newVisitUpdate', 'https://shlink.io/new-visit'];
+        yield 'newShortUrlVisitUpdate' => ['newShortUrlVisitUpdate', 'https://shlink.io/new-visit/foo'];
     }
 }

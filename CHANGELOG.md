@@ -12,7 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Thanks to that, Shlink will be able to publish events that can be consumed in real time.
 
-    For now, only one topic (event) is published, identified by `https://shlink.io/new_visit`, which includes a payload with the visit and the shortUrl, every time a new visit occurs.
+    For now, two topics (events) are published, when new visits occur. Both include a payload with the visit and the shortUrl:
+
+        * A visit occurs on any short URL: `https://shlink.io/new-visit`.
+        * A visit occurs on short URLs with a specific short code: `https://shlink.io/new-visit/{shortCode}`.
 
     The updates are only published when serving Shlink with swoole.
 
