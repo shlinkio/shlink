@@ -92,7 +92,7 @@ class MercureInfoActionTest extends TestCase
         $this->assertArrayHasKey('token', $payload);
         $this->assertArrayHasKey('jwtExpiration', $payload);
         $this->assertEquals(
-            Chronos::now()->addDays($days ?? 3)->startOfDay(),
+            Chronos::now()->addDays($days ?? 1)->startOfDay(),
             Chronos::parse($payload['jwtExpiration'])->startOfDay(),
         );
         $buildToken->shouldHaveBeenCalledOnce();

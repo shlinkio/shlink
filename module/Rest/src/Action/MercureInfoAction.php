@@ -40,7 +40,7 @@ class MercureInfoAction extends AbstractRestAction
             throw MercureException::mercureNotConfigured();
         }
 
-        $days = $this->mercureConfig['jwt_days_duration'] ?? 3;
+        $days = $this->mercureConfig['jwt_days_duration'] ?? 1;
         $expiresAt = Chronos::now()->addDays($days);
 
         try {
