@@ -41,6 +41,8 @@ $helper = new class {
         $driverOptions = ! contains(['maria', 'mysql'], $driver) ? [] : [
             // 1002 -> PDO::MYSQL_ATTR_INIT_COMMAND
             1002 => 'SET NAMES utf8',
+            // 1000 -> PDO::MYSQL_ATTR_USE_BUFFERED_QUERY
+            1000 => true,
         ];
         return [
             'driver' => self::DB_DRIVERS_MAP[$driver],
