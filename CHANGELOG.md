@@ -35,7 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Fixed
 
-* *Nothing*
+* [#729](https://github.com/shlinkio/shlink/issues/729) Fixed weird error when fetching multiple visits result sets concurrently using mariadb or mysql.
 
 
 ## 2.1.3 - 2020-04-09
