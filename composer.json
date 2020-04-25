@@ -51,7 +51,7 @@
         "shlinkio/shlink-common": "dev-master#e659cf9d9b5b3b131419e2f55f2e595f562baafc as 3.1.0",
         "shlinkio/shlink-config": "^1.0",
         "shlinkio/shlink-event-dispatcher": "^1.4",
-        "shlinkio/shlink-installer": "dev-master#508652c895fb88512b8685198be1e2cfca59f4ce as 5.0.0",
+        "shlinkio/shlink-installer": "dev-master#f51a2186cf474fb5773b0ef74b8533878de9dd1e as 5.0.0",
         "shlinkio/shlink-ip-geolocation": "^1.4",
         "symfony/console": "^5.0",
         "symfony/filesystem": "^5.0",
