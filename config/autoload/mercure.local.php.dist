@@ -5,8 +5,8 @@ declare(strict_types=1);
 return [
 
     'mercure' => [
-        'public_hub_url' => 'http://localhost:3080',
-        'internal_hub_url' => 'http://shlink_mercure',
+        'public_hub_url' => 'http://localhost:8001',
+        'internal_hub_url' => 'http://shlink_mercure_proxy',
         'jwt_secret' => 'mercure_jwt_key',
     ],
 

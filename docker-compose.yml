@@ -3,7 +3,7 @@ version: '3'
 services:
     shlink_nginx:
         container_name: shlink_nginx
-        image: nginx:1.17.6-alpine
+        image: nginx:1.17.10-alpine
         ports:
             - "8000:80"
         volumes:
@@ -28,6 +28,7 @@ services:
             - shlink_db_ms
             - shlink_redis
             - shlink_mercure
+            - shlink_mercure_proxy
         environment:
             LC_ALL: C
 
@@ -49,6 +50,7 @@ services:
             - shlink_db_ms
             - shlink_redis
             - shlink_mercure
+            - shlink_mercure_proxy
         environment:
             LC_ALL: C
 
@@ -105,6 +107,17 @@ services:
         ports:
             - "6380:6379"
 
+    shlink_mercure_proxy:
+        container_name: shlink_mercure_proxy
+        image: nginx:1.17.10-alpine
+        ports:
+            - "8001:80"
+        volumes:
+            - ./:/home/shlink/www
+            - ./data/infra/mercure_proxy_vhost.conf:/etc/nginx/conf.d/default.conf
+        links:
+            - shlink_mercure
+
     shlink_mercure:
         container_name: shlink_mercure
         image: dunglas/mercure:v0.8
@@ -113,3 +126,4 @@ services:
         environment:
             CORS_ALLOWED_ORIGINS: "*"
             JWT_KEY: "mercure_jwt_key"
+            USE_FORWARDED_HEADERS: "1"
