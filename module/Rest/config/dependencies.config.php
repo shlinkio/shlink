@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest;
 
-use Doctrine\DBAL\Connection;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
@@ -47,7 +46,7 @@ return [
     ConfigAbstractFactory::class => [
         ApiKeyService::class => ['em'],
 
-        Action\HealthAction::class => [Connection::class, AppOptions::class, 'Logger_Shlink'],
+        Action\HealthAction::class => ['em', AppOptions::class, 'Logger_Shlink'],
         Action\MercureInfoAction::class => [LcobucciJwtProvider::class, 'config.mercure', 'Logger_Shlink'],
         Action\ShortUrl\CreateShortUrlAction::class => [
             Service\UrlShortener::class,
