@@ -31,6 +31,7 @@ return [
             Option\WebWorkerNumConfigOption::class,
             Option\RedisServersConfigOption::class,
             Option\ShortCodeLengthOption::class,
+            Option\GeoLiteLicenseKeyConfigOption::class,
         ],
 
         'installation_commands' => [
