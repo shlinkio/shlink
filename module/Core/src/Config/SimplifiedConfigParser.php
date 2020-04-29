@@ -33,6 +33,7 @@ class SimplifiedConfigParser
         'task_worker_num' => ['mezzio-swoole', 'swoole-http-server', 'options', 'task_worker_num'],
         'visits_webhooks' => ['url_shortener', 'visits_webhooks'],
         'default_short_codes_length' => ['url_shortener', 'default_short_codes_length'],
+        'geolite_license_key' => ['geolite2', 'license_key'],
     ];
     private const SIMPLIFIED_CONFIG_SIDE_EFFECTS = [
         'delete_short_url_threshold' => [

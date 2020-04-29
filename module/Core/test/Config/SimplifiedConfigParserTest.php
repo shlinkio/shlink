@@ -60,6 +60,7 @@ class SimplifiedConfigParserTest extends TestCase
                 'https://third-party.io/foo',
             ],
             'default_short_codes_length' => 8,
+            'geolite_license_key' => 'kjh23ljkbndskj345',
         ];
         $expected = [
             'app_options' => [
@@ -126,6 +127,10 @@ class SimplifiedConfigParserTest extends TestCase
                         'task_worker_num' => 50,
                     ],
                 ],
+            ],
+
+            'geolite2' => [
+                'license_key' => 'kjh23ljkbndskj345',
             ],
         ];
 
