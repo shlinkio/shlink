@@ -18,7 +18,7 @@ It also expects these two env vars to be provided, in order to properly generate
 So based on this, to run shlink on a local docker service, you should run a command like this:
 
 ```bash
-docker run --name shlink -p 8080:8080 -e SHORT_DOMAIN_HOST=doma.in -e SHORT_DOMAIN_SCHEMA=https shlinkio/shlink:stable
+docker run --name shlink -p 8080:8080 -e SHORT_DOMAIN_HOST=doma.in -e SHORT_DOMAIN_SCHEMA=https -e GEOLITE_LICENSE_KEY=kjh23ljkbndskj345 shlinkio/shlink:stable
 ```
 
 ### Interact with shlink's CLI on a running container.
