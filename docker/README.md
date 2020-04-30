@@ -18,7 +18,7 @@ It also expects these two env vars to be provided, in order to properly generate
 So based on this, to run shlink on a local docker service, you should run a command like this:
 
 ```bash
-docker run --name shlink -p 8080:8080 -e SHORT_DOMAIN_HOST=doma.in -e SHORT_DOMAIN_SCHEMA=https shlinkio/shlink:stable
+docker run --name shlink -p 8080:8080 -e SHORT_DOMAIN_HOST=doma.in -e SHORT_DOMAIN_SCHEMA=https -e GEOLITE_LICENSE_KEY=kjh23ljkbndskj345 shlinkio/shlink:stable
 ```
 
 ### Interact with shlink's CLI on a running container.
@@ -121,6 +121,8 @@ This is the complete list of supported env vars:
 
     In the future, these redis servers could be used for other caching operations performed by shlink.
 
+* `GEOLITE_LICENSE_KEY`: The license key used to download new GeoLite2 database files. This is not mandatory, as a default license key is provided, but it is **strongly recommended** that you provide your own. Go to [https://shlink.io/documentation/geolite-license-key](https://shlink.io/documentation/geolite-license-key) to know how to generate it.
+
 An example using all env vars could look like this:
 
 ```bash
@@ -147,6 +149,7 @@ docker run \
     -e TASK_WORKER_NUM=32 \
     -e "VISITS_WEBHOOKS=http://my-api.com/api/v2.3/notify,https://third-party.io/foo" \
     -e DEFAULT_SHORT_CODES_LENGTH=6 \
+    -e GEOLITE_LICENSE_KEY=kjh23ljkbndskj345 \
     shlinkio/shlink:stable
 ```
 
@@ -187,7 +190,8 @@ The whole configuration should have this format, but it can be split into multip
         "password": "123abc",
         "host": "something.rds.amazonaws.com",
         "port": "3306"
-    }
+    },
+    "geolite_license_key": "kjh23ljkbndskj345"
 }
 ```
 

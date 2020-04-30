@@ -147,4 +147,8 @@ return [
         ],
     ],
 
+    'geolite2' => [
+        'license_key' => env('GEOLITE_LICENSE_KEY', 'G4Lm0C60yJsnkdPi'),
+    ],
+
 ];
