@@ -35,6 +35,7 @@ return [
             Option\Mercure\MercurePublicUrlConfigOption::class,
             Option\Mercure\MercureInternalUrlConfigOption::class,
             Option\Mercure\MercureJwtSecretConfigOption::class,
+            Option\UrlShortener\GeoLiteLicenseKeyConfigOption::class,
         ],
 
         'installation_commands' => [

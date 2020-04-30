@@ -60,6 +60,7 @@ class SimplifiedConfigParserTest extends TestCase
                 'https://third-party.io/foo',
             ],
             'default_short_codes_length' => 8,
+            'geolite_license_key' => 'kjh23ljkbndskj345',
             'mercure_public_hub_url' => 'public_url',
             'mercure_internal_hub_url' => 'internal_url',
             'mercure_jwt_secret' => 'super_secret_value',
@@ -129,6 +130,10 @@ class SimplifiedConfigParserTest extends TestCase
                         'task_worker_num' => 50,
                     ],
                 ],
+            ],
+
+            'geolite2' => [
+                'license_key' => 'kjh23ljkbndskj345',
             ],
 
             'mercure' => [

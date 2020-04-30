@@ -40,6 +40,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#677](https://github.com/shlinkio/shlink/issues/677) Fixed `/health` endpoint returning `503` fail responses when the database connection has expired.
 
 
+## 2.1.4 - 2020-04-30
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#742](https://github.com/shlinkio/shlink/issues/742) Allowed a custom GeoLite2 license key to be provided, in order to avoid download limits.
+
+
 ## 2.1.3 - 2020-04-09
 
 #### Added

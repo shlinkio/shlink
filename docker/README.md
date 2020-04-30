@@ -18,7 +18,7 @@ It also expects these two env vars to be provided, in order to properly generate
 So based on this, to run shlink on a local docker service, you should run a command like this:
 
 ```bash
-docker run --name shlink -p 8080:8080 -e SHORT_DOMAIN_HOST=doma.in -e SHORT_DOMAIN_SCHEMA=https shlinkio/shlink:stable
+docker run --name shlink -p 8080:8080 -e SHORT_DOMAIN_HOST=doma.in -e SHORT_DOMAIN_SCHEMA=https -e GEOLITE_LICENSE_KEY=kjh23ljkbndskj345 shlinkio/shlink:stable
 ```
 
 ### Interact with shlink's CLI on a running container.
@@ -173,6 +173,8 @@ This is the complete list of supported env vars:
 * `MERCURE_INTERNAL_HUB_URL`: An internal URL for a mercure hub. Will be used only when publishing updates to mercure, and does not need to be public. If this is not provided but `MERCURE_PUBLIC_HUB_URL` was, the former one will be used to publish updates.
 * `MERCURE_JWT_SECRET`: The secret key that was provided to the mercure hub server, in order to be able to generate valid JWTs for publishing/subscribing to that server.
 
+* `GEOLITE_LICENSE_KEY`: The license key used to download new GeoLite2 database files. This is not mandatory, as a default license key is provided, but it is **strongly recommended** that you provide your own. Go to [https://shlink.io/documentation/geolite-license-key](https://shlink.io/documentation/geolite-license-key) to know how to generate it.
+
 An example using all env vars could look like this:
 
 ```bash
@@ -199,6 +201,7 @@ docker run \
     -e TASK_WORKER_NUM=32 \
     -e "VISITS_WEBHOOKS=http://my-api.com/api/v2.3/notify,https://third-party.io/foo" \
     -e DEFAULT_SHORT_CODES_LENGTH=6 \
+    -e GEOLITE_LICENSE_KEY=kjh23ljkbndskj345 \
     -e "MERCURE_PUBLIC_HUB_URL=https://example.com" \
     -e "MERCURE_INTERNAL_HUB_URL=http://my-mercure-hub.prod.svc.cluster.local" \
     -e MERCURE_JWT_SECRET=super_secret_key \
@@ -243,6 +246,7 @@ The whole configuration should have this format, but it can be split into multip
         "host": "something.rds.amazonaws.com",
         "port": "3306"
     },
+    "geolite_license_key": "kjh23ljkbndskj345",
     "mercure_public_hub_url": "https://example.com",
     "mercure_internal_hub_url": "http://my-mercure-hub.prod.svc.cluster.local",
     "mercure_jwt_secret": "super_secret_key"

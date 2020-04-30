@@ -33,6 +33,7 @@ class SimplifiedConfigParser
         'task_worker_num' => ['mezzio-swoole', 'swoole-http-server', 'options', 'task_worker_num'],
         'visits_webhooks' => ['url_shortener', 'visits_webhooks'],
         'default_short_codes_length' => ['url_shortener', 'default_short_codes_length'],
+        'geolite_license_key' => ['geolite2', 'license_key'],
         'mercure_public_hub_url' => ['mercure', 'public_hub_url'],
         'mercure_internal_hub_url' => ['mercure', 'internal_hub_url'],
         'mercure_jwt_secret' => ['mercure', 'jwt_secret'],
