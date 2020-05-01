@@ -26,7 +26,7 @@ return [
         Action\ShortUrl\EditShortUrlTagsAction::getRouteDef([$dropDomainMiddleware]),
 
         // Visits
-        Action\Visit\GetVisitsAction::getRouteDef([$dropDomainMiddleware]),
+        Action\Visit\ShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
 
         // Tags
         Action\Tag\ListTagsAction::getRouteDef(),

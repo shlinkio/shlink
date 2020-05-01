@@ -28,7 +28,7 @@ return [
             Action\ShortUrl\ResolveShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\ListShortUrlsAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\EditShortUrlTagsAction::class => ConfigAbstractFactory::class,
-            Action\Visit\GetVisitsAction::class => ConfigAbstractFactory::class,
+            Action\Visit\ShortUrlVisitsAction::class => ConfigAbstractFactory::class,
             Action\Tag\ListTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\DeleteTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\CreateTagsAction::class => ConfigAbstractFactory::class,
@@ -65,7 +65,7 @@ return [
             Service\ShortUrl\ShortUrlResolver::class,
             'config.url_shortener.domain',
         ],
-        Action\Visit\GetVisitsAction::class => [Service\VisitsTracker::class, 'Logger_Shlink'],
+        Action\Visit\ShortUrlVisitsAction::class => [Service\VisitsTracker::class, 'Logger_Shlink'],
         Action\ShortUrl\ListShortUrlsAction::class => [
             Service\ShortUrlService::class,
             'config.url_shortener.domain',

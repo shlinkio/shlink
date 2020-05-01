@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
-class GetVisitsAction extends AbstractRestAction
+class ShortUrlVisitsAction extends AbstractRestAction
 {
     use PaginatorUtilsTrait;
 
