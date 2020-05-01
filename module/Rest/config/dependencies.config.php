@@ -11,6 +11,7 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service;
+use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
 return [
@@ -29,6 +30,7 @@ return [
             Action\ShortUrl\ListShortUrlsAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\EditShortUrlTagsAction::class => ConfigAbstractFactory::class,
             Action\Visit\ShortUrlVisitsAction::class => ConfigAbstractFactory::class,
+            Action\Visit\GlobalVisitsAction::class => ConfigAbstractFactory::class,
             Action\Tag\ListTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\DeleteTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\CreateTagsAction::class => ConfigAbstractFactory::class,
@@ -66,6 +68,7 @@ return [
             'config.url_shortener.domain',
         ],
         Action\Visit\ShortUrlVisitsAction::class => [Service\VisitsTracker::class, 'Logger_Shlink'],
+        Action\Visit\GlobalVisitsAction::class => [Visit\VisitsStatsHelper::class, 'Logger_Shlink'],
         Action\ShortUrl\ListShortUrlsAction::class => [
             Service\ShortUrlService::class,
             'config.url_shortener.domain',
