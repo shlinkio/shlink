@@ -8,7 +8,6 @@ use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Mercure\JwtProviderInterface;
 use Shlinkio\Shlink\Rest\Exception\MercureException;
 use Throwable;
@@ -23,12 +22,8 @@ class MercureInfoAction extends AbstractRestAction
     private JwtProviderInterface $jwtProvider;
     private array $mercureConfig;
 
-    public function __construct(
-        JwtProviderInterface $jwtProvider,
-        array $mercureConfig,
-        ?LoggerInterface $logger = null
-    ) {
-        parent::__construct($logger);
+    public function __construct(JwtProviderInterface $jwtProvider, array $mercureConfig)
+    {
         $this->jwtProvider = $jwtProvider;
         $this->mercureConfig = $mercureConfig;
     }

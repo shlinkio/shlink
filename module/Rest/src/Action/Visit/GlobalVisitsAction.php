@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Rest\Action\Visit;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
@@ -18,9 +17,8 @@ class GlobalVisitsAction extends AbstractRestAction
 
     private VisitsStatsHelperInterface $statsHelper;
 
-    public function __construct(VisitsStatsHelperInterface $statsHelper, ?LoggerInterface $logger = null)
+    public function __construct(VisitsStatsHelperInterface $statsHelper)
     {
-        parent::__construct($logger);
         $this->statsHelper = $statsHelper;
     }
 

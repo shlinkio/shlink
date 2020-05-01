@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Throwable;
 
@@ -24,9 +23,8 @@ class HealthAction extends AbstractRestAction
     private EntityManagerInterface $em;
     private AppOptions $options;
 
-    public function __construct(EntityManagerInterface $em, AppOptions $options, ?LoggerInterface $logger = null)
+    public function __construct(EntityManagerInterface $em, AppOptions $options)
     {
-        parent::__construct($logger);
         $this->em = $em;
         $this->options = $options;
     }

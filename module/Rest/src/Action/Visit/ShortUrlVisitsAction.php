@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Rest\Action\Visit;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
@@ -23,9 +22,8 @@ class ShortUrlVisitsAction extends AbstractRestAction
 
     private VisitsTrackerInterface $visitsTracker;
 
-    public function __construct(VisitsTrackerInterface $visitsTracker, ?LoggerInterface $logger = null)
+    public function __construct(VisitsTrackerInterface $visitsTracker)
     {
-        parent::__construct($logger);
         $this->visitsTracker = $visitsTracker;
     }
 

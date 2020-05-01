@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -19,9 +18,8 @@ class DeleteShortUrlAction extends AbstractRestAction
 
     private DeleteShortUrlServiceInterface $deleteShortUrlService;
 
-    public function __construct(DeleteShortUrlServiceInterface $deleteShortUrlService, ?LoggerInterface $logger = null)
+    public function __construct(DeleteShortUrlServiceInterface $deleteShortUrlService)
     {
-        parent::__construct($logger);
         $this->deleteShortUrlService = $deleteShortUrlService;
     }
 
