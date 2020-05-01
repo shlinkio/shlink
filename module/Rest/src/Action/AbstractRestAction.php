@@ -21,7 +21,7 @@ abstract class AbstractRestAction implements RequestHandlerInterface, RequestMet
 
     public function __construct(?LoggerInterface $logger = null)
     {
-        $this->logger = $logger ?: new NullLogger();
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public static function getRouteDef(array $prevMiddleware = [], array $postMiddleware = []): array
