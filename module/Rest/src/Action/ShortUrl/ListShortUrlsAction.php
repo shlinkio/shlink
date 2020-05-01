@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
@@ -24,12 +23,8 @@ class ListShortUrlsAction extends AbstractRestAction
     private ShortUrlServiceInterface $shortUrlService;
     private array $domainConfig;
 
-    public function __construct(
-        ShortUrlServiceInterface $shortUrlService,
-        array $domainConfig,
-        ?LoggerInterface $logger = null
-    ) {
-        parent::__construct($logger);
+    public function __construct(ShortUrlServiceInterface $shortUrlService, array $domainConfig)
+    {
         $this->shortUrlService = $shortUrlService;
         $this->domainConfig = $domainConfig;
     }

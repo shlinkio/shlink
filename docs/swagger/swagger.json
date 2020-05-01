@@ -78,6 +78,9 @@
             "$ref": "paths/v1_tags.json"
         },
 
+        "/rest/v{version}/visits": {
+            "$ref": "paths/v2_visits.json"
+        },
         "/rest/v{version}/short-urls/{shortCode}/visits": {
             "$ref": "paths/v1_short-urls_{shortCode}_visits.json"
         },

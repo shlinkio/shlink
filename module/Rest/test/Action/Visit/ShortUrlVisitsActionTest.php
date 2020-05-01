@@ -15,17 +15,17 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
-use Shlinkio\Shlink\Rest\Action\Visit\GetVisitsAction;
+use Shlinkio\Shlink\Rest\Action\Visit\ShortUrlVisitsAction;
 
-class GetVisitsActionTest extends TestCase
+class ShortUrlVisitsActionTest extends TestCase
 {
-    private GetVisitsAction $action;
+    private ShortUrlVisitsAction $action;
     private ObjectProphecy $visitsTracker;
 
     public function setUp(): void
     {
         $this->visitsTracker = $this->prophesize(VisitsTracker::class);
-        $this->action = new GetVisitsAction($this->visitsTracker->reveal());
+        $this->action = new ShortUrlVisitsAction($this->visitsTracker->reveal());
     }
 
     /** @test */

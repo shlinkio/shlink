@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
@@ -20,9 +19,8 @@ class EditShortUrlTagsAction extends AbstractRestAction
 
     private ShortUrlServiceInterface $shortUrlService;
 
-    public function __construct(ShortUrlServiceInterface $shortUrlService, ?LoggerInterface $logger = null)
+    public function __construct(ShortUrlServiceInterface $shortUrlService)
     {
-        parent::__construct($logger);
         $this->shortUrlService = $shortUrlService;
     }
 

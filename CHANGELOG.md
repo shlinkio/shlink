@@ -21,6 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Also, Shlink exposes a new endpoint `GET /rest/v2/mercure-info`, which returns the public URL of the mercure hub, and a valid JWT that can be used to subsribe to updates.
 
+* [#673](https://github.com/shlinkio/shlink/issues/673) Added new `[GET /visits]` rest endpoint which returns basic visits stats.
+
 #### Changed
 
 * *Nothing*

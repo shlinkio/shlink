@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
@@ -19,12 +18,8 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
     private UrlShortenerInterface $urlShortener;
     private array $domainConfig;
 
-    public function __construct(
-        UrlShortenerInterface $urlShortener,
-        array $domainConfig,
-        ?LoggerInterface $logger = null
-    ) {
-        parent::__construct($logger);
+    public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig)
+    {
         $this->urlShortener = $urlShortener;
         $this->domainConfig = $domainConfig;
     }

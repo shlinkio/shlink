@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Rest\Action\Tag;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
@@ -18,9 +17,8 @@ class DeleteTagsAction extends AbstractRestAction
 
     private TagServiceInterface $tagService;
 
-    public function __construct(TagServiceInterface $tagService, ?LoggerInterface $logger = null)
+    public function __construct(TagServiceInterface $tagService)
     {
-        parent::__construct($logger);
         $this->tagService = $tagService;
     }
 

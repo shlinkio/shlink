@@ -7,10 +7,10 @@ namespace Shlinkio\Shlink\Rest;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service;
+use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
 return [
@@ -28,7 +28,8 @@ return [
             Action\ShortUrl\ResolveShortUrlAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\ListShortUrlsAction::class => ConfigAbstractFactory::class,
             Action\ShortUrl\EditShortUrlTagsAction::class => ConfigAbstractFactory::class,
-            Action\Visit\GetVisitsAction::class => ConfigAbstractFactory::class,
+            Action\Visit\ShortUrlVisitsAction::class => ConfigAbstractFactory::class,
+            Action\Visit\GlobalVisitsAction::class => ConfigAbstractFactory::class,
             Action\Tag\ListTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\DeleteTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\CreateTagsAction::class => ConfigAbstractFactory::class,
@@ -46,36 +47,28 @@ return [
     ConfigAbstractFactory::class => [
         ApiKeyService::class => ['em'],
 
-        Action\HealthAction::class => ['em', AppOptions::class, 'Logger_Shlink'],
-        Action\MercureInfoAction::class => [LcobucciJwtProvider::class, 'config.mercure', 'Logger_Shlink'],
-        Action\ShortUrl\CreateShortUrlAction::class => [
-            Service\UrlShortener::class,
-            'config.url_shortener.domain',
-            'Logger_Shlink',
-        ],
+        Action\HealthAction::class => ['em', AppOptions::class],
+        Action\MercureInfoAction::class => [LcobucciJwtProvider::class, 'config.mercure'],
+        Action\ShortUrl\CreateShortUrlAction::class => [Service\UrlShortener::class, 'config.url_shortener.domain'],
         Action\ShortUrl\SingleStepCreateShortUrlAction::class => [
             Service\UrlShortener::class,
             ApiKeyService::class,
             'config.url_shortener.domain',
-            'Logger_Shlink',
         ],
-        Action\ShortUrl\EditShortUrlAction::class => [Service\ShortUrlService::class, 'Logger_Shlink'],
-        Action\ShortUrl\DeleteShortUrlAction::class => [Service\ShortUrl\DeleteShortUrlService::class, 'Logger_Shlink'],
+        Action\ShortUrl\EditShortUrlAction::class => [Service\ShortUrlService::class],
+        Action\ShortUrl\DeleteShortUrlAction::class => [Service\ShortUrl\DeleteShortUrlService::class],
         Action\ShortUrl\ResolveShortUrlAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
             'config.url_shortener.domain',
         ],
-        Action\Visit\GetVisitsAction::class => [Service\VisitsTracker::class, 'Logger_Shlink'],
-        Action\ShortUrl\ListShortUrlsAction::class => [
-            Service\ShortUrlService::class,
-            'config.url_shortener.domain',
-            'Logger_Shlink',
-        ],
-        Action\ShortUrl\EditShortUrlTagsAction::class => [Service\ShortUrlService::class, 'Logger_Shlink'],
-        Action\Tag\ListTagsAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
-        Action\Tag\DeleteTagsAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
-        Action\Tag\CreateTagsAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
-        Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class, LoggerInterface::class],
+        Action\Visit\ShortUrlVisitsAction::class => [Service\VisitsTracker::class],
+        Action\Visit\GlobalVisitsAction::class => [Visit\VisitsStatsHelper::class],
+        Action\ShortUrl\ListShortUrlsAction::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
+        Action\ShortUrl\EditShortUrlTagsAction::class => [Service\ShortUrlService::class],
+        Action\Tag\ListTagsAction::class => [Service\Tag\TagService::class],
+        Action\Tag\DeleteTagsAction::class => [Service\Tag\TagService::class],
+        Action\Tag\CreateTagsAction::class => [Service\Tag\TagService::class],
+        Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class],
 
         Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ['config.url_shortener.domain.hostname'],
         Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => [
