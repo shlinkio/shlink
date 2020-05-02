@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 
 class VisitRepository extends EntityRepository implements VisitRepositoryInterface
@@ -82,15 +83,11 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         ?int $offset = null
     ): array {
         $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
-        $qb->select('v')
-           ->orderBy('v.date', 'DESC');
-
-        if ($limit !== null) {
-            $qb->setMaxResults($limit);
-        }
-        if ($offset !== null) {
-            $qb->setFirstResult($offset);
-        }
+        $qb->select('v', 'vl')
+           ->leftJoin('v.visitLocation', 'vl')
+           ->orderBy('v.id', 'DESC')
+           ->setMaxResults($limit)
+           ->setFirstResult($offset);
 
         return $qb->getQuery()->getResult();
     }
@@ -108,20 +105,14 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         ?string $domain,
         ?DateRange $dateRange
     ): QueryBuilder {
+        /** @var ShortUrlRepositoryInterface $shortUrlRepo */
+        $shortUrlRepo = $this->getEntityManager()->getRepository(ShortUrl::class);
+        $shortUrl = $shortUrlRepo->findOne($shortCode, $domain) ?? -1;
+
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
-           ->join('v.shortUrl', 'su')
-           ->where($qb->expr()->eq('su.shortCode', ':shortCode'))
-           ->setParameter('shortCode', $shortCode);
-
-        // Apply domain filtering
-        if ($domain !== null) {
-            $qb->join('su.domain', 'd')
-               ->andWhere($qb->expr()->eq('d.authority', ':domain'))
-               ->setParameter('domain', $domain);
-        } else {
-            $qb->andWhere($qb->expr()->isNull('su.domain'));
-        }
+           ->where($qb->expr()->eq('v.shortUrl', ':shortUrl'))
+           ->setParameter('shortUrl', $shortUrl);
 
         // Apply date range filtering
         if ($dateRange !== null && $dateRange->getStartDate() !== null) {
