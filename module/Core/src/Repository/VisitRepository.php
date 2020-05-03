@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\ORM\QueryBuilder;
+use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -123,7 +124,7 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         $nativeQb = $this->getEntityManager()->getConnection()->createQueryBuilder();
         $nativeQb->select('v.*', 'vl.*')
                  ->from('visits', 'v')
-                 ->join('v', '(' . $subQuery . ')', 'o', $nativeQb->expr()->eq('o.id_0', 'v.id'))
+                 ->join('v', '(' . $subQuery . ')', 'sq', $nativeQb->expr()->eq('sq.id_0', 'v.id'))
                  ->leftJoin('v', 'visit_locations', 'vl', $nativeQb->expr()->eq('v.visit_location_id', 'vl.id'))
                  ->orderBy('v.id', 'DESC');
 
@@ -164,11 +165,11 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         // Apply date range filtering
         if ($dateRange !== null && $dateRange->getStartDate() !== null) {
             $qb->andWhere($qb->expr()->gte('v.date', ':startDate'))
-               ->setParameter('startDate', $dateRange->getStartDate());
+               ->setParameter('startDate', $dateRange->getStartDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
         if ($dateRange !== null && $dateRange->getEndDate() !== null) {
             $qb->andWhere($qb->expr()->lte('v.date', ':endDate'))
-               ->setParameter('endDate', $dateRange->getEndDate());
+               ->setParameter('endDate', $dateRange->getEndDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
 
         return [$qb, $shortUrl];
