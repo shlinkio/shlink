@@ -95,7 +95,7 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
     public function countVisitsByShortCode(string $shortCode, ?string $domain = null, ?DateRange $dateRange = null): int
     {
         $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
-        $qb->select('COUNT(DISTINCT v.id)');
+        $qb->select('COUNT(v.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
