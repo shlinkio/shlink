@@ -104,8 +104,7 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         // FIXME Crappy way to resolve the params into the query. Best option would be to inject the sub-query with
         //       placeholders and then pass params to the main query
         $shortUrlId = $shortUrl instanceof ShortUrl ? $shortUrl->getId() : $shortUrl;
-        $subQuery = $qb->getQuery()->getSQL();
-        $subQuery = preg_replace('/\?/', $shortUrlId, $subQuery, 1);
+        $subQuery = preg_replace('/\?/', $shortUrlId, $qb->getQuery()->getSQL(), 1);
         if ($dateRange !== null && $dateRange->getStartDate() !== null) {
             $subQuery = preg_replace(
                 '/\?/',
@@ -120,16 +119,16 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
 
         // A native query builder needs to be used here because DQL and ORM query builders do not accept
         // sub-queries at "from" and "join" level.
-        // If no sub-query is used, then the performance drops dramatically while the "offset" grows.
+        // If no sub-query is used, then performance drops dramatically while the "offset" grows.
         $nativeQb = $this->getEntityManager()->getConnection()->createQueryBuilder();
-        $nativeQb->select('v.*', 'vl.*')
+        $nativeQb->select('v.id AS visit_id', 'v.*', 'vl.*')
                  ->from('visits', 'v')
                  ->join('v', '(' . $subQuery . ')', 'sq', $nativeQb->expr()->eq('sq.id_0', 'v.id'))
                  ->leftJoin('v', 'visit_locations', 'vl', $nativeQb->expr()->eq('v.visit_location_id', 'vl.id'))
                  ->orderBy('v.id', 'DESC');
 
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-        $rsm->addRootEntityFromClassMetadata(Visit::class, 'v');
+        $rsm->addRootEntityFromClassMetadata(Visit::class, 'v', ['id' => 'visit_id']);
         $rsm->addJoinedEntityFromClassMetadata(VisitLocation::class, 'vl', 'v', 'visitLocation', [
             'id' => 'visit_location_id',
         ]);
