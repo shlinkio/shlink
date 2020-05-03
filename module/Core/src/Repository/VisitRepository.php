@@ -5,9 +5,17 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\ORM\QueryBuilder;
+use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Entity\VisitLocation;
+
+use function preg_replace;
+
+use const PHP_INT_MAX;
 
 class VisitRepository extends EntityRepository implements VisitRepositoryInterface
 {
@@ -81,24 +89,60 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         ?int $limit = null,
         ?int $offset = null
     ): array {
-        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
-        $qb->select('v')
-           ->orderBy('v.date', 'DESC');
+        /**
+         * @var QueryBuilder $qb
+         * @var ShortUrl|int $shortUrl
+         */
+        [$qb, $shortUrl] = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
+        $qb->select('v.id')
+           ->orderBy('v.id', 'DESC')
+           // Falling back to values that will behave as no limit/offset, but will workaround MS SQL not allowing
+           // order on sub-queries without offset
+           ->setMaxResults($limit ?? PHP_INT_MAX)
+           ->setFirstResult($offset ?? 0);
 
-        if ($limit !== null) {
-            $qb->setMaxResults($limit);
+        // FIXME Crappy way to resolve the params into the query. Best option would be to inject the sub-query with
+        //       placeholders and then pass params to the main query
+        $shortUrlId = $shortUrl instanceof ShortUrl ? $shortUrl->getId() : $shortUrl;
+        $subQuery = preg_replace('/\?/', $shortUrlId, $qb->getQuery()->getSQL(), 1);
+        if ($dateRange !== null && $dateRange->getStartDate() !== null) {
+            $subQuery = preg_replace(
+                '/\?/',
+                '\'' . $dateRange->getStartDate()->toDateTimeString() . '\'',
+                $subQuery,
+                1,
+            );
         }
-        if ($offset !== null) {
-            $qb->setFirstResult($offset);
+        if ($dateRange !== null && $dateRange->getEndDate() !== null) {
+            $subQuery = preg_replace('/\?/', '\'' . $dateRange->getEndDate()->toDateTimeString() . '\'', $subQuery, 1);
         }
 
-        return $qb->getQuery()->getResult();
+        // A native query builder needs to be used here because DQL and ORM query builders do not accept
+        // sub-queries at "from" and "join" level.
+        // If no sub-query is used, then performance drops dramatically while the "offset" grows.
+        $nativeQb = $this->getEntityManager()->getConnection()->createQueryBuilder();
+        $nativeQb->select('v.id AS visit_id', 'v.*', 'vl.*')
+                 ->from('visits', 'v')
+                 ->join('v', '(' . $subQuery . ')', 'sq', $nativeQb->expr()->eq('sq.id_0', 'v.id'))
+                 ->leftJoin('v', 'visit_locations', 'vl', $nativeQb->expr()->eq('v.visit_location_id', 'vl.id'))
+                 ->orderBy('v.id', 'DESC');
+
+        $rsm = new ResultSetMappingBuilder($this->getEntityManager());
+        $rsm->addRootEntityFromClassMetadata(Visit::class, 'v', ['id' => 'visit_id']);
+        $rsm->addJoinedEntityFromClassMetadata(VisitLocation::class, 'vl', 'v', 'visitLocation', [
+            'id' => 'visit_location_id',
+        ]);
+
+        $query = $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm);
+
+        return $query->getResult();
     }
 
     public function countVisitsByShortCode(string $shortCode, ?string $domain = null, ?DateRange $dateRange = null): int
     {
-        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
-        $qb->select('COUNT(DISTINCT v.id)');
+        /** @var QueryBuilder $qb */
+        [$qb] = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
+        $qb->select('COUNT(v.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
@@ -107,32 +151,26 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         string $shortCode,
         ?string $domain,
         ?DateRange $dateRange
-    ): QueryBuilder {
+    ): array {
+        /** @var ShortUrlRepositoryInterface $shortUrlRepo */
+        $shortUrlRepo = $this->getEntityManager()->getRepository(ShortUrl::class);
+        $shortUrl = $shortUrlRepo->findOne($shortCode, $domain) ?? -1;
+
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
-           ->join('v.shortUrl', 'su')
-           ->where($qb->expr()->eq('su.shortCode', ':shortCode'))
-           ->setParameter('shortCode', $shortCode);
-
-        // Apply domain filtering
-        if ($domain !== null) {
-            $qb->join('su.domain', 'd')
-               ->andWhere($qb->expr()->eq('d.authority', ':domain'))
-               ->setParameter('domain', $domain);
-        } else {
-            $qb->andWhere($qb->expr()->isNull('su.domain'));
-        }
+           ->where($qb->expr()->eq('v.shortUrl', ':shortUrl'))
+           ->setParameter('shortUrl', $shortUrl);
 
         // Apply date range filtering
         if ($dateRange !== null && $dateRange->getStartDate() !== null) {
             $qb->andWhere($qb->expr()->gte('v.date', ':startDate'))
-               ->setParameter('startDate', $dateRange->getStartDate());
+               ->setParameter('startDate', $dateRange->getStartDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
         if ($dateRange !== null && $dateRange->getEndDate() !== null) {
             $qb->andWhere($qb->expr()->lte('v.date', ':endDate'))
-               ->setParameter('endDate', $dateRange->getEndDate());
+               ->setParameter('endDate', $dateRange->getEndDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
 
-        return $qb;
+        return [$qb, $shortUrl];
     }
 }

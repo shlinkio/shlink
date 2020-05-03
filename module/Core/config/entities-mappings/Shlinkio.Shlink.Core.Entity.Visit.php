@@ -32,6 +32,8 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->columnName('`date`')
             ->build();
 
+    $builder->addIndex(['date'], 'IDX_visits_date');
+
     $builder->createField('remoteAddr', Types::STRING)
             ->columnName('remote_addr')
             ->length(Visitor::REMOTE_ADDRESS_MAX_LENGTH)

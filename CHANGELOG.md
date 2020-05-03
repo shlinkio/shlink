@@ -25,7 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Changed
 
-* *Nothing*
+* [#692](https://github.com/shlinkio/shlink/issues/692) Drastically improved performance when loading visits. Specially noticeable when loading big result sets.
 
 #### Deprecated
 
