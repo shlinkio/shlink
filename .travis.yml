@@ -17,7 +17,10 @@ cache:
 before_install:
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_ms shlink_db shlink_db_postgres shlink_db_maria
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - yes | pecl install swoole-4.4.15 pdo_sqlsrv
+  - curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+  - curl https://packages.microsoft.com/config/ubuntu/18.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
+  - sudo ACCEPT_EULA=Y apt-get install msodbcsql17
+  - yes | pecl install pdo_sqlsrv swoole-4.4.15
   - phpenv config-rm xdebug.ini || return 0
 
 install:
