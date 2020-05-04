@@ -15,15 +15,11 @@ cache:
     - $HOME/.composer/cache/files
 
 before_install:
-  - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - sudo su
-  - curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-  - curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
-  - exit
-  - sudo apt-get update
-  - sudo ACCEPT_EULA=Y apt-get install msodbcsql17
+  - sudo ./data/infra/ci/install-ms-odbc.sh
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_ms shlink_db shlink_db_postgres shlink_db_maria
   - yes | pecl install pdo_sqlsrv swoole-4.4.15
+  - echo 'extension = pdo_sqlsrv.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - phpenv config-rm xdebug.ini || return 0
 
 install:
