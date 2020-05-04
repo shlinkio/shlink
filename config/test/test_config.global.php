@@ -20,6 +20,7 @@ $buildDbConnection = function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
     $isCi = env('TRAVIS', false);
     $getMysqlHost = fn (string $driver) => sprintf('shlink_db%s', $driver === 'mysql' ? '' : '_maria');
+    $getCiMysqlPort = fn (string $driver) => $driver === 'mysql' ? '3307' : '3308';
 
     $driverConfigMap = [
         'sqlite' => [
@@ -29,8 +30,9 @@ $buildDbConnection = function (): array {
         'mysql' => [
             'driver' => 'pdo_mysql',
             'host' => $isCi ? '127.0.0.1' : $getMysqlHost($driver),
+            'port' => $isCi ? $getCiMysqlPort($driver) : '3306',
             'user' => 'root',
-            'password' => $isCi ? '' : 'root',
+            'password' => 'root',
             'dbname' => 'shlink_test',
             'charset' => 'utf8',
             'driverOptions' => [
@@ -41,8 +43,9 @@ $buildDbConnection = function (): array {
         'postgres' => [
             'driver' => 'pdo_pgsql',
             'host' => $isCi ? '127.0.0.1' : 'shlink_db_postgres',
+            'port' => $isCi ? '5433' : '5432',
             'user' => 'postgres',
-            'password' => $isCi ? '' : 'root',
+            'password' => 'root',
             'dbname' => 'shlink_test',
             'charset' => 'utf8',
         ],
@@ -50,7 +53,7 @@ $buildDbConnection = function (): array {
             'driver' => 'pdo_sqlsrv',
             'host' => $isCi ? '127.0.0.1' : 'shlink_db_ms',
             'user' => 'sa',
-            'password' => $isCi ? '' : 'Passw0rd!',
+            'password' => 'Passw0rd!',
             'dbname' => 'shlink_test',
         ],
     ];

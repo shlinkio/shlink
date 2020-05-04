@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Changed
 
 * [#692](https://github.com/shlinkio/shlink/issues/692) Drastically improved performance when loading visits. Specially noticeable when loading big result sets.
+* [#657](https://github.com/shlinkio/shlink/issues/657) Updated how DB tests are run in travis by using docker containers which allow all engines to be covered.
 
 #### Deprecated
 
