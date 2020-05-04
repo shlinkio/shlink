@@ -24,7 +24,7 @@ install:
   - composer install --no-interaction --prefer-dist
 
 before_script:
-  - docker-compose up shlink_db shlink_db_postgres shlink_db_maria shlink_db_ms -d
+  - docker-compose up -d shlink_db shlink_db_postgres shlink_db_maria shlink_db_ms
   - mkdir build
   - export DOCKERFILE_CHANGED=$(git diff ${TRAVIS_COMMIT_RANGE:-origin/master} --name-only | grep Dockerfile)
 
