@@ -8,8 +8,6 @@ php:
   - '7.4'
 
 services:
-  - mysql
-  - postgresql
   - docker
 
 cache:
@@ -26,8 +24,7 @@ install:
   - composer install --no-interaction --prefer-dist
 
 before_script:
-  - mysql -e 'CREATE DATABASE shlink_test;'
-  - psql -c 'create database shlink_test;' -U postgres
+  - docker-compose up shlink_db shlink_db_postgres shlink_db_maria shlink_db_ms -d
   - mkdir build
   - export DOCKERFILE_CHANGED=$(git diff ${TRAVIS_COMMIT_RANGE:-origin/master} --name-only | grep Dockerfile)
 
