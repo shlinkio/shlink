@@ -25,6 +25,10 @@ install:
 
 before_script:
   - docker-compose up -d shlink_db shlink_db_postgres shlink_db_maria shlink_db_ms
+  - docker-compose exec shlink_db mysql -u root -proot -e "CREATE DATABASE shlink_test"
+  - docker-compose exec -e PGPASSWORD=root shlink_db_postgres psql -U postgres -c 'create database shlink_test;'
+  - docker-compose exec shlink_db_maria mysql -u root -proot -e "CREATE DATABASE shlink_test"
+  - docker-compose exec shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
   - mkdir build
   - export DOCKERFILE_CHANGED=$(git diff ${TRAVIS_COMMIT_RANGE:-origin/master} --name-only | grep Dockerfile)
 
