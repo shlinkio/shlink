@@ -39,7 +39,7 @@
         "mezzio/mezzio-helpers": "^5.3",
         "mezzio/mezzio-platesrenderer": "^2.1",
         "mezzio/mezzio-problem-details": "^1.1",
-        "mezzio/mezzio-swoole": "^2.6",
+        "mezzio/mezzio-swoole": "^2.6.4",
         "monolog/monolog": "^2.0",
         "nikolaposa/monolog-factory": "^3.0",
         "ocramius/proxy-manager": "^2.7.0",

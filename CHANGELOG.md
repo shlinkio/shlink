@@ -41,6 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#729](https://github.com/shlinkio/shlink/issues/729) Fixed weird error when fetching multiple visits result sets concurrently using mariadb or mysql.
 * [#735](https://github.com/shlinkio/shlink/issues/735) Fixed error when cleaning metadata cache during installation when APCu is enabled.
 * [#677](https://github.com/shlinkio/shlink/issues/677) Fixed `/health` endpoint returning `503` fail responses when the database connection has expired.
+* [#732](https://github.com/shlinkio/shlink/issues/732) Fixed wrong client IP in access logs when serving app with swoole behind load balancer.
 
 
 ## 2.1.4 - 2020-04-30
