@@ -1,15 +1,26 @@
 #!/bin/bash
 set -e
 
+BUILDX_VER=v0.4.1
+export DOCKER_CLI_EXPERIMENTAL=enabled
+
+mkdir -vp ~/.docker/cli-plugins/ ~/dockercache
+curl --silent -L "https://github.com/docker/buildx/releases/download/${BUILDX_VER}/buildx-${BUILDX_VER}.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+chmod a+x ~/.docker/cli-plugins/docker-buildx
+
+docker buildx create --use
+
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 # If there is a tag, regardless the branch, build that docker tag and also "stable"
 if [[ ! -z $TRAVIS_TAG ]]; then
-  docker build --build-arg SHLINK_VERSION=${TRAVIS_TAG#?} -t shlinkio/shlink:${TRAVIS_TAG#?} -t shlinkio/shlink:stable .
-  docker push shlinkio/shlink:${TRAVIS_TAG#?}
-  docker push shlinkio/shlink:stable
+  docker buildx build --push \
+		--build-arg SHLINK_VERSION=${TRAVIS_TAG#?} \
+		--platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
+		-t shlinkio/shlink:${TRAVIS_TAG#?} -t shlinkio/shlink:stable .
 # If build branch is develop, build latest (on master, when there's no tag, do not build anything)
 elif [[ "$TRAVIS_BRANCH" == 'develop' ]]; then
-  docker build -t shlinkio/shlink:latest .
-  docker push shlinkio/shlink:latest
+  docker buildx build --push \
+		--platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
+		-t shlinkio/shlink:latest .
 fi
