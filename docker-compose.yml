@@ -79,7 +79,7 @@ services:
 
     shlink_db_postgres:
         container_name: shlink_db_postgres
-        image: postgres:10.7-alpine
+        image: postgres:12.2-alpine
         ports:
             - "5433:5432"
         volumes:
@@ -92,7 +92,7 @@ services:
 
     shlink_db_maria:
         container_name: shlink_db_maria
-        image: mariadb:10.2
+        image: mariadb:10.5
         ports:
             - "3308:3306"
         volumes:
@@ -114,7 +114,7 @@ services:
 
     shlink_redis:
         container_name: shlink_redis
-        image: redis:5.0-alpine
+        image: redis:6.0-alpine
         ports:
             - "6380:6379"
 
@@ -131,7 +131,7 @@ services:
 
     shlink_mercure:
         container_name: shlink_mercure
-        image: dunglas/mercure:v0.8
+        image: dunglas/mercure:v0.9
         ports:
             - "3080:80"
         environment:
