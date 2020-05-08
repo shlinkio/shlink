@@ -36,6 +36,7 @@ return [
             Option\Mercure\MercureInternalUrlConfigOption::class,
             Option\Mercure\MercureJwtSecretConfigOption::class,
             Option\UrlShortener\GeoLiteLicenseKeyConfigOption::class,
+            Option\UrlShortener\IpAnonymizationConfigOption::class,
         ],
 
         'installation_commands' => [
