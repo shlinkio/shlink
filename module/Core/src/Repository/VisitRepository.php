@@ -149,11 +149,14 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
            ->where($qb->expr()->eq('t.name', ':tag'))
            ->setParameter('tag', $tag);
 
+        $shortUrlIds = array_column($qb->getQuery()->getArrayResult(), 'id');
+        $shortUrlIds[] = '-1'; // Add an invalid ID, in case the list is empty
+
         // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later
         // Since they are not strictly provided by the caller, it's reasonably safe
         $qb2 = $this->getEntityManager()->createQueryBuilder();
         $qb2->from(Visit::class, 'v')
-            ->where($qb2->expr()->in('v.shortUrl', array_column($qb->getQuery()->getArrayResult(), 'id')));
+            ->where($qb2->expr()->in('v.shortUrl', $shortUrlIds));
 
         // Apply date range filtering
         $this->applyDatesInline($qb2, $dateRange);
