@@ -139,13 +139,19 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($shortUrlWithDomain);
 
         for ($i = 0; $i < 6; $i++) {
-            $visit = new Visit($shortUrl, Visitor::emptyInstance(), Chronos::parse(sprintf('2016-01-0%s', $i + 1)));
+            $visit = new Visit(
+                $shortUrl,
+                Visitor::emptyInstance(),
+                true,
+                Chronos::parse(sprintf('2016-01-0%s', $i + 1)),
+            );
             $this->getEntityManager()->persist($visit);
         }
         for ($i = 0; $i < 3; $i++) {
             $visit = new Visit(
                 $shortUrlWithDomain,
                 Visitor::emptyInstance(),
+                true,
                 Chronos::parse(sprintf('2016-01-0%s', $i + 1)),
             );
             $this->getEntityManager()->persist($visit);
