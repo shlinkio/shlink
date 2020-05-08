@@ -16,7 +16,7 @@ class UpdateTagAction extends AbstractRestAction
     protected const ROUTE_PATH = '/tags';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PUT];
 
-    private \Shlinkio\Shlink\Core\Tag\TagServiceInterface $tagService;
+    private TagServiceInterface $tagService;
 
     public function __construct(TagServiceInterface $tagService)
     {

@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Repository;
 use Doctrine\ORM\EntityRepository;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+
 use function Functional\map;
 
 class TagRepository extends EntityRepository implements TagRepositoryInterface

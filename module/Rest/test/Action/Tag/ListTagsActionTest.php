@@ -20,7 +20,7 @@ class ListTagsActionTest extends TestCase
 
     public function setUp(): void
     {
-        $this->tagService = $this->prophesize(\Shlinkio\Shlink\Core\Tag\TagServiceInterface::class);
+        $this->tagService = $this->prophesize(TagServiceInterface::class);
         $this->action = new ListTagsAction($this->tagService->reveal());
     }
 

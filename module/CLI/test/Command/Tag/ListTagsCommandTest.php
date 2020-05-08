@@ -19,7 +19,7 @@ class ListTagsCommandTest extends TestCase
 
     public function setUp(): void
     {
-        $this->tagService = $this->prophesize(\Shlinkio\Shlink\Core\Tag\TagServiceInterface::class);
+        $this->tagService = $this->prophesize(TagServiceInterface::class);
 
         $command = new ListTagsCommand($this->tagService->reveal());
         $app = new Application();

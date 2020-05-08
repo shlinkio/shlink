@@ -16,9 +16,9 @@ class DeleteTagsCommand extends Command
 {
     public const NAME = 'tag:delete';
 
-    private \Shlinkio\Shlink\Core\Tag\TagServiceInterface $tagService;
+    private TagServiceInterface $tagService;
 
-    public function __construct(\Shlinkio\Shlink\Core\Tag\TagServiceInterface $tagService)
+    public function __construct(TagServiceInterface $tagService)
     {
         parent::__construct();
         $this->tagService = $tagService;

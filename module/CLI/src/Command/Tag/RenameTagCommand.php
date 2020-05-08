@@ -20,7 +20,7 @@ class RenameTagCommand extends Command
 
     private TagServiceInterface $tagService;
 
-    public function __construct(\Shlinkio\Shlink\Core\Tag\TagServiceInterface $tagService)
+    public function __construct(TagServiceInterface $tagService)
     {
         parent::__construct();
         $this->tagService = $tagService;

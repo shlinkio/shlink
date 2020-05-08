@@ -17,7 +17,7 @@ class DeleteTagsAction extends AbstractRestAction
 
     private TagServiceInterface $tagService;
 
-    public function __construct(\Shlinkio\Shlink\Core\Tag\TagServiceInterface $tagService)
+    public function __construct(TagServiceInterface $tagService)
     {
         $this->tagService = $tagService;
     }
