@@ -35,7 +35,7 @@ class TagRepository extends EntityRepository implements TagRepositoryInterface
             FROM Shlinkio\Shlink\Core\Entity\Tag t
             LEFT JOIN t.shortUrls s
             LEFT JOIN s.visits v
-            GROUP BY tag
+            GROUP BY t
             ORDER BY t.name ASC
         DQL;
         $query = $this->getEntityManager()->createQuery($dql);
