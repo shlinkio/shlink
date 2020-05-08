@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Service\Tag;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -13,16 +12,21 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
+use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\TagService;
 
 class TagServiceTest extends TestCase
 {
     private TagService $service;
     private ObjectProphecy $em;
+    private ObjectProphecy $repo;
 
     public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
+        $this->repo = $this->prophesize(TagRepository::class);
+        $this->em->getRepository(Tag::class)->willReturn($this->repo->reveal())->shouldBeCalled();
+
         $this->service = new TagService($this->em->reveal());
     }
 
@@ -31,36 +35,41 @@ class TagServiceTest extends TestCase
     {
         $expected = [new Tag('foo'), new Tag('bar')];
 
-        $repo = $this->prophesize(EntityRepository::class);
-        $find = $repo->findBy(Argument::cetera())->willReturn($expected);
-        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+        $find = $this->repo->findBy(Argument::cetera())->willReturn($expected);
 
         $result = $this->service->listTags();
 
         $this->assertEquals($expected, $result);
         $find->shouldHaveBeenCalled();
-        $getRepo->shouldHaveBeenCalled();
+    }
+
+    /** @test */
+    public function tagsInfoDelegatesOnRepository(): void
+    {
+        $expected = [new TagInfo(new Tag('foo'), 1, 1), new TagInfo(new Tag('bar'), 3, 10)];
+
+        $find = $this->repo->findTagsWithInfo()->willReturn($expected);
+
+        $result = $this->service->tagsInfo();
+
+        $this->assertEquals($expected, $result);
+        $find->shouldHaveBeenCalled();
     }
 
     /** @test */
     public function deleteTagsDelegatesOnRepository(): void
     {
-        $repo = $this->prophesize(TagRepository::class);
-        $delete = $repo->deleteByName(['foo', 'bar'])->willReturn(4);
-        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+        $delete = $this->repo->deleteByName(['foo', 'bar'])->willReturn(4);
 
         $this->service->deleteTags(['foo', 'bar']);
 
         $delete->shouldHaveBeenCalled();
-        $getRepo->shouldHaveBeenCalled();
     }
 
     /** @test */
     public function createTagsPersistsEntities(): void
     {
-        $repo = $this->prophesize(TagRepository::class);
-        $find = $repo->findOneBy(Argument::cetera())->willReturn(new Tag('foo'));
-        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+        $find = $this->repo->findOneBy(Argument::cetera())->willReturn(new Tag('foo'));
         $persist = $this->em->persist(Argument::type(Tag::class))->willReturn(null);
         $flush = $this->em->flush()->willReturn(null);
 
@@ -68,7 +77,6 @@ class TagServiceTest extends TestCase
 
         $this->assertCount(2, $result);
         $find->shouldHaveBeenCalled();
-        $getRepo->shouldHaveBeenCalled();
         $persist->shouldHaveBeenCalledTimes(2);
         $flush->shouldHaveBeenCalled();
     }
@@ -76,12 +84,9 @@ class TagServiceTest extends TestCase
     /** @test */
     public function renameInvalidTagThrowsException(): void
     {
-        $repo = $this->prophesize(TagRepository::class);
-        $find = $repo->findOneBy(Argument::cetera())->willReturn(null);
-        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+        $find = $this->repo->findOneBy(Argument::cetera())->willReturn(null);
 
         $find->shouldBeCalled();
-        $getRepo->shouldBeCalled();
         $this->expectException(TagNotFoundException::class);
 
         $this->service->renameTag('foo', 'bar');
@@ -95,10 +100,8 @@ class TagServiceTest extends TestCase
     {
         $expected = new Tag('foo');
 
-        $repo = $this->prophesize(TagRepository::class);
-        $find = $repo->findOneBy(Argument::cetera())->willReturn($expected);
-        $countTags = $repo->count(Argument::cetera())->willReturn($count);
-        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+        $find = $this->repo->findOneBy(Argument::cetera())->willReturn($expected);
+        $countTags = $this->repo->count(Argument::cetera())->willReturn($count);
         $flush = $this->em->flush()->willReturn(null);
 
         $tag = $this->service->renameTag($oldName, $newName);
@@ -106,7 +109,6 @@ class TagServiceTest extends TestCase
         $this->assertSame($expected, $tag);
         $this->assertEquals($newName, (string) $tag);
         $find->shouldHaveBeenCalled();
-        $getRepo->shouldHaveBeenCalled();
         $flush->shouldHaveBeenCalled();
         $countTags->shouldHaveBeenCalledTimes($count > 0 ? 0 : 1);
     }
@@ -120,14 +122,11 @@ class TagServiceTest extends TestCase
     /** @test */
     public function renameTagToAnExistingNameThrowsException(): void
     {
-        $repo = $this->prophesize(TagRepository::class);
-        $find = $repo->findOneBy(Argument::cetera())->willReturn(new Tag('foo'));
-        $countTags = $repo->count(Argument::cetera())->willReturn(1);
-        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+        $find = $this->repo->findOneBy(Argument::cetera())->willReturn(new Tag('foo'));
+        $countTags = $this->repo->count(Argument::cetera())->willReturn(1);
         $flush = $this->em->flush(Argument::any())->willReturn(null);
 
         $find->shouldBeCalled();
-        $getRepo->shouldBeCalled();
         $countTags->shouldBeCalled();
         $flush->shouldNotBeCalled();
         $this->expectException(TagConflictException::class);
