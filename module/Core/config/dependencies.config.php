@@ -54,7 +54,11 @@ return [
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
         Service\UrlShortener::class => [Util\UrlValidator::class, 'em', Resolver\PersistenceDomainResolver::class],
-        Service\VisitsTracker::class => ['em', EventDispatcherInterface::class],
+        Service\VisitsTracker::class => [
+            'em',
+            EventDispatcherInterface::class,
+            'config.url_shortener.obfuscate_remote_addr',
+        ],
         Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class, Util\UrlValidator::class],
         Visit\VisitLocator::class => ['em'],
         Visit\VisitsStatsHelper::class => ['em'],

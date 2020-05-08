@@ -37,7 +37,7 @@ class VisitsTrackerTest extends TestCase
         $this->em = $this->prophesize(EntityManager::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
 
-        $this->visitsTracker  = new VisitsTracker($this->em->reveal(), $this->eventDispatcher->reveal());
+        $this->visitsTracker  = new VisitsTracker($this->em->reveal(), $this->eventDispatcher->reveal(), true);
     }
 
     /** @test */
