@@ -12,6 +12,8 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 
+use function array_column;
+
 use const PHP_INT_MAX;
 
 class VisitRepository extends EntityRepository implements VisitRepositoryInterface
@@ -87,33 +89,7 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         ?int $offset = null
     ): array {
         $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
-        $qb->select('v.id')
-           ->orderBy('v.id', 'DESC')
-           // Falling back to values that will behave as no limit/offset, but will workaround MS SQL not allowing
-           // order on sub-queries without offset
-           ->setMaxResults($limit ?? PHP_INT_MAX)
-           ->setFirstResult($offset ?? 0);
-        $subQuery = $qb->getQuery()->getSQL();
-
-        // A native query builder needs to be used here because DQL and ORM query builders do not accept
-        // sub-queries at "from" and "join" level.
-        // If no sub-query is used, then performance drops dramatically while the "offset" grows.
-        $nativeQb = $this->getEntityManager()->getConnection()->createQueryBuilder();
-        $nativeQb->select('v.id AS visit_id', 'v.*', 'vl.*')
-                 ->from('visits', 'v')
-                 ->join('v', '(' . $subQuery . ')', 'sq', $nativeQb->expr()->eq('sq.id_0', 'v.id'))
-                 ->leftJoin('v', 'visit_locations', 'vl', $nativeQb->expr()->eq('v.visit_location_id', 'vl.id'))
-                 ->orderBy('v.id', 'DESC');
-
-        $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-        $rsm->addRootEntityFromClassMetadata(Visit::class, 'v', ['id' => 'visit_id']);
-        $rsm->addJoinedEntityFromClassMetadata(VisitLocation::class, 'vl', 'v', 'visitLocation', [
-            'id' => 'visit_location_id',
-        ]);
-
-        $query = $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm);
-
-        return $query->getResult();
+        return $this->resolveVisitsWithNativeQuery($qb, $limit, $offset);
     }
 
     public function countVisitsByShortCode(string $shortCode, ?string $domain = null, ?DateRange $dateRange = null): int
@@ -141,12 +117,7 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
            ->where($qb->expr()->eq('v.shortUrl', $shortUrlId));
 
         // Apply date range filtering
-        if ($dateRange !== null && $dateRange->getStartDate() !== null) {
-            $qb->andWhere($qb->expr()->gte('v.date', '\'' . $dateRange->getStartDate()->toDateTimeString() . '\''));
-        }
-        if ($dateRange !== null && $dateRange->getEndDate() !== null) {
-            $qb->andWhere($qb->expr()->lte('v.date', '\'' . $dateRange->getEndDate()->toDateTimeString() . '\''));
-        }
+        $this->applyDatesInline($qb, $dateRange);
 
         return $qb;
     }
@@ -157,11 +128,77 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         ?int $limit = null,
         ?int $offset = null
     ): array {
-        return [];
+        $qb = $this->createVisitsByTagQueryBuilder($tag, $dateRange);
+        return $this->resolveVisitsWithNativeQuery($qb, $limit, $offset);
     }
 
     public function countVisitsByTag(string $tag, ?DateRange $dateRange = null): int
     {
-        return 0;
+        $qb = $this->createVisitsByTagQueryBuilder($tag, $dateRange);
+        $qb->select('COUNT(v.id)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    private function createVisitsByTagQueryBuilder(string $tag, ?DateRange $dateRange = null): QueryBuilder
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('s.id')
+           ->from(ShortUrl::class, 's')
+           ->join('s.tags', 't')
+           ->where($qb->expr()->eq('t.name', ':tag'))
+           ->setParameter('tag', $tag);
+
+        // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later
+        // Since they are not strictly provided by the caller, it's reasonably safe
+        $qb2 = $this->getEntityManager()->createQueryBuilder();
+        $qb2->from(Visit::class, 'v')
+            ->where($qb2->expr()->in('v.shortUrl', array_column($qb->getQuery()->getArrayResult(), 'id')));
+
+        // Apply date range filtering
+        $this->applyDatesInline($qb2, $dateRange);
+
+        return $qb2;
+    }
+
+    private function applyDatesInline(QueryBuilder $qb, ?DateRange $dateRange): void
+    {
+        if ($dateRange !== null && $dateRange->getStartDate() !== null) {
+            $qb->andWhere($qb->expr()->gte('v.date', '\'' . $dateRange->getStartDate()->toDateTimeString() . '\''));
+        }
+        if ($dateRange !== null && $dateRange->getEndDate() !== null) {
+            $qb->andWhere($qb->expr()->lte('v.date', '\'' . $dateRange->getEndDate()->toDateTimeString() . '\''));
+        }
+    }
+
+    private function resolveVisitsWithNativeQuery(QueryBuilder $qb, ?int $limit, ?int $offset): array
+    {
+        $qb->select('v.id')
+           ->orderBy('v.id', 'DESC')
+           // Falling back to values that will behave as no limit/offset, but will workaround MS SQL not allowing
+           // order on sub-queries without offset
+           ->setMaxResults($limit ?? PHP_INT_MAX)
+           ->setFirstResult($offset ?? 0);
+        $subQuery = $qb->getQuery()->getSQL();
+
+        // A native query builder needs to be used here because DQL and ORM query builders do not accept
+        // sub-queries at "from" and "join" level.
+        // If no sub-query is used, then performance drops dramatically while the "offset" grows.
+        $nativeQb = $this->getEntityManager()->getConnection()->createQueryBuilder();
+        $nativeQb->select('v.id AS visit_id', 'v.*', 'vl.*')
+                 ->from('visits', 'v')
+                 ->join('v', '(' . $subQuery . ')', 'sq', $nativeQb->expr()->eq('sq.id_0', 'v.id'))
+                 ->leftJoin('v', 'visit_locations', 'vl', $nativeQb->expr()->eq('v.visit_location_id', 'vl.id'))
+                 ->orderBy('v.id', 'DESC');
+
+        $rsm = new ResultSetMappingBuilder($this->getEntityManager());
+        $rsm->addRootEntityFromClassMetadata(Visit::class, 'v', ['id' => 'visit_id']);
+        $rsm->addJoinedEntityFromClassMetadata(VisitLocation::class, 'vl', 'v', 'visitLocation', [
+            'id' => 'visit_location_id',
+        ]);
+
+        $query = $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm);
+
+        return $query->getResult();
     }
 }
