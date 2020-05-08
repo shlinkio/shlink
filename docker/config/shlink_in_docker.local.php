@@ -117,6 +117,7 @@ return [
             'hostname' => env('SHORT_DOMAIN_HOST', ''),
         ],
         'validate_url' => (bool) env('VALIDATE_URLS', false),
+        'obfuscate_remote_addr' => (bool) env('OBFUSCATE_REMOTE_ADDR', true),
         'visits_webhooks' => $helper->getVisitsWebhooks(),
         'default_short_codes_length' => $helper->getDefaultShortCodesLength(),
     ],
