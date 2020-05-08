@@ -22,6 +22,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     Also, Shlink exposes a new endpoint `GET /rest/v2/mercure-info`, which returns the public URL of the mercure hub, and a valid JWT that can be used to subsribe to updates.
 
 * [#673](https://github.com/shlinkio/shlink/issues/673) Added new `[GET /visits]` rest endpoint which returns basic visits stats.
+* [#672](https://github.com/shlinkio/shlink/issues/672) Enhanced `[GET /tags]` rest endpoint so that it is possible to get basic stats info for every tag.
+
+    Now, if the `withStats=true` query param is provided, the response payload will include a new `stats` property which is a list with the amount of short URLs and visits for every tag.
 
 #### Changed
 

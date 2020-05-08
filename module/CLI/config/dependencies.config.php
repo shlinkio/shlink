@@ -11,6 +11,7 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Service;
+use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Installer\Factory\ProcessHelperFactory;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
@@ -78,10 +79,10 @@ return [
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class],
         Command\Api\ListKeysCommand::class => [ApiKeyService::class],
 
-        Command\Tag\ListTagsCommand::class => [Service\Tag\TagService::class],
-        Command\Tag\CreateTagCommand::class => [Service\Tag\TagService::class],
-        Command\Tag\RenameTagCommand::class => [Service\Tag\TagService::class],
-        Command\Tag\DeleteTagsCommand::class => [Service\Tag\TagService::class],
+        Command\Tag\ListTagsCommand::class => [TagService::class],
+        Command\Tag\CreateTagCommand::class => [TagService::class],
+        Command\Tag\RenameTagCommand::class => [TagService::class],
+        Command\Tag\DeleteTagsCommand::class => [TagService::class],
 
         Command\Db\CreateDatabaseCommand::class => [
             LockFactory::class,

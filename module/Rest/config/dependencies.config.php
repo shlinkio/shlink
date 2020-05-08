@@ -10,6 +10,7 @@ use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
 use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service;
+use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
@@ -65,10 +66,10 @@ return [
         Action\Visit\GlobalVisitsAction::class => [Visit\VisitsStatsHelper::class],
         Action\ShortUrl\ListShortUrlsAction::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
         Action\ShortUrl\EditShortUrlTagsAction::class => [Service\ShortUrlService::class],
-        Action\Tag\ListTagsAction::class => [Service\Tag\TagService::class],
-        Action\Tag\DeleteTagsAction::class => [Service\Tag\TagService::class],
-        Action\Tag\CreateTagsAction::class => [Service\Tag\TagService::class],
-        Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class],
+        Action\Tag\ListTagsAction::class => [TagService::class],
+        Action\Tag\DeleteTagsAction::class => [TagService::class],
+        Action\Tag\CreateTagsAction::class => [TagService::class],
+        Action\Tag\UpdateTagAction::class => [TagService::class],
 
         Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ['config.url_shortener.domain.hostname'],
         Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => [

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Service\Tag;
+namespace Shlinkio\Shlink\Core\Tag;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM;
@@ -10,6 +10,8 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
+use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
+use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 
 class TagService implements TagServiceInterface
@@ -25,13 +27,22 @@ class TagService implements TagServiceInterface
 
     /**
      * @return Tag[]
-     * @throws \UnexpectedValueException
      */
     public function listTags(): array
     {
         /** @var Tag[] $tags */
         $tags = $this->em->getRepository(Tag::class)->findBy([], ['name' => 'ASC']);
         return $tags;
+    }
+
+    /**
+     * @return TagInfo[]
+     */
+    public function tagsInfo(): array
+    {
+        /** @var TagRepositoryInterface $repo */
+        $repo = $this->em->getRepository(Tag::class);
+        return $repo->findTagsWithInfo();
     }
 
     /**

@@ -60,6 +60,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->setJoinTable(determineTableName('short_urls_in_tags', $emConfig))
             ->addInverseJoinColumn('tag_id', 'id', true, false, 'CASCADE')
             ->addJoinColumn('short_url_id', 'id', true, false, 'CASCADE')
+            ->setOrderBy(['name' => 'ASC'])
             ->build();
 
     $builder->createManyToOne('domain', Entity\Domain::class)

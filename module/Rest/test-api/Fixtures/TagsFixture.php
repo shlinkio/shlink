@@ -24,6 +24,7 @@ class TagsFixture extends AbstractFixture implements DependentFixtureInterface
         $manager->persist($fooTag);
         $barTag = new Tag('bar');
         $manager->persist($barTag);
+        $manager->persist(new Tag('baz'));
 
         /** @var ShortUrl $abcShortUrl */
         $abcShortUrl = $this->getReference('abc123_short_url');
