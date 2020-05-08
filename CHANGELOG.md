@@ -26,6 +26,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Now, if the `withStats=true` query param is provided, the response payload will include a new `stats` property which is a list with the amount of short URLs and visits for every tag.
 
+* [#640](https://github.com/shlinkio/shlink/issues/640) Allowed to optionally disable visitors' IP address anonymization. This will make Shlink no longer be GDPR-compliant, but it's OK if you only plan to share your URLs in countries without this regulation.
+
 #### Changed
 
 * [#692](https://github.com/shlinkio/shlink/issues/692) Drastically improved performance when loading visits. Specially noticeable when loading big result sets.
