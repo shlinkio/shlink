@@ -7,13 +7,10 @@ namespace Shlinkio\Shlink\Core\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\ORM\QueryBuilder;
-use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
-
-use function preg_replace;
 
 use const PHP_INT_MAX;
 
@@ -29,7 +26,7 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
            ->from(Visit::class, 'v')
            ->where($qb->expr()->isNull('v.visitLocation'));
 
-        return $this->findVisitsForQuery($qb, $blockSize);
+        return $this->visitsIterableForQuery($qb, $blockSize);
     }
 
     /**
@@ -45,7 +42,7 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
            ->andWhere($qb->expr()->eq('vl.isEmpty', ':isEmpty'))
            ->setParameter('isEmpty', true);
 
-        return $this->findVisitsForQuery($qb, $blockSize);
+        return $this->visitsIterableForQuery($qb, $blockSize);
     }
 
     public function findAllVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
@@ -54,10 +51,10 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         $qb->select('v')
            ->from(Visit::class, 'v');
 
-        return $this->findVisitsForQuery($qb, $blockSize);
+        return $this->visitsIterableForQuery($qb, $blockSize);
     }
 
-    private function findVisitsForQuery(QueryBuilder $qb, int $blockSize): iterable
+    private function visitsIterableForQuery(QueryBuilder $qb, int $blockSize): iterable
     {
         $originalQueryBuilder = $qb->setMaxResults($blockSize)
                                    ->orderBy('v.id', 'ASC');
@@ -89,33 +86,14 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         ?int $limit = null,
         ?int $offset = null
     ): array {
-        /**
-         * @var QueryBuilder $qb
-         * @var ShortUrl|int $shortUrl
-         */
-        [$qb, $shortUrl] = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
+        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
         $qb->select('v.id')
            ->orderBy('v.id', 'DESC')
            // Falling back to values that will behave as no limit/offset, but will workaround MS SQL not allowing
            // order on sub-queries without offset
            ->setMaxResults($limit ?? PHP_INT_MAX)
            ->setFirstResult($offset ?? 0);
-
-        // FIXME Crappy way to resolve the params into the query. Best option would be to inject the sub-query with
-        //       placeholders and then pass params to the main query
-        $shortUrlId = $shortUrl instanceof ShortUrl ? $shortUrl->getId() : $shortUrl;
-        $subQuery = preg_replace('/\?/', $shortUrlId, $qb->getQuery()->getSQL(), 1);
-        if ($dateRange !== null && $dateRange->getStartDate() !== null) {
-            $subQuery = preg_replace(
-                '/\?/',
-                '\'' . $dateRange->getStartDate()->toDateTimeString() . '\'',
-                $subQuery,
-                1,
-            );
-        }
-        if ($dateRange !== null && $dateRange->getEndDate() !== null) {
-            $subQuery = preg_replace('/\?/', '\'' . $dateRange->getEndDate()->toDateTimeString() . '\'', $subQuery, 1);
-        }
+        $subQuery = $qb->getQuery()->getSQL();
 
         // A native query builder needs to be used here because DQL and ORM query builders do not accept
         // sub-queries at "from" and "join" level.
@@ -140,8 +118,7 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
 
     public function countVisitsByShortCode(string $shortCode, ?string $domain = null, ?DateRange $dateRange = null): int
     {
-        /** @var QueryBuilder $qb */
-        [$qb] = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
+        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
         $qb->select('COUNT(v.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
@@ -151,26 +128,40 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         string $shortCode,
         ?string $domain,
         ?DateRange $dateRange
-    ): array {
+    ): QueryBuilder {
         /** @var ShortUrlRepositoryInterface $shortUrlRepo */
         $shortUrlRepo = $this->getEntityManager()->getRepository(ShortUrl::class);
-        $shortUrl = $shortUrlRepo->findOne($shortCode, $domain) ?? -1;
+        $shortUrl = $shortUrlRepo->findOne($shortCode, $domain);
+        $shortUrlId = $shortUrl !== null ? $shortUrl->getId() : -1;
 
+        // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later
+        // Since they are not strictly provided by the caller, it's reasonably safe
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
-           ->where($qb->expr()->eq('v.shortUrl', ':shortUrl'))
-           ->setParameter('shortUrl', $shortUrl);
+           ->where($qb->expr()->eq('v.shortUrl', $shortUrlId));
 
         // Apply date range filtering
         if ($dateRange !== null && $dateRange->getStartDate() !== null) {
-            $qb->andWhere($qb->expr()->gte('v.date', ':startDate'))
-               ->setParameter('startDate', $dateRange->getStartDate(), ChronosDateTimeType::CHRONOS_DATETIME);
+            $qb->andWhere($qb->expr()->gte('v.date', '\'' . $dateRange->getStartDate()->toDateTimeString() . '\''));
         }
         if ($dateRange !== null && $dateRange->getEndDate() !== null) {
-            $qb->andWhere($qb->expr()->lte('v.date', ':endDate'))
-               ->setParameter('endDate', $dateRange->getEndDate(), ChronosDateTimeType::CHRONOS_DATETIME);
+            $qb->andWhere($qb->expr()->lte('v.date', '\'' . $dateRange->getEndDate()->toDateTimeString() . '\''));
         }
 
-        return [$qb, $shortUrl];
+        return $qb;
+    }
+
+    public function findVisitsByTag(
+        string $tag,
+        ?DateRange $dateRange = null,
+        ?int $limit = null,
+        ?int $offset = null
+    ): array {
+        return [];
+    }
+
+    public function countVisitsByTag(string $tag, ?DateRange $dateRange = null): int
+    {
+        return 0;
     }
 }
