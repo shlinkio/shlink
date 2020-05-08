@@ -21,19 +21,19 @@ class Visit extends AbstractEntity implements JsonSerializable
     private ShortUrl $shortUrl;
     private ?VisitLocation $visitLocation = null;
 
-    public function __construct(ShortUrl $shortUrl, Visitor $visitor, ?Chronos $date = null)
+    public function __construct(ShortUrl $shortUrl, Visitor $visitor, bool $obfuscate = true, ?Chronos $date = null)
     {
         $this->shortUrl = $shortUrl;
         $this->date = $date ?? Chronos::now();
         $this->userAgent = $visitor->getUserAgent();
         $this->referer = $visitor->getReferer();
-        $this->remoteAddr = $this->obfuscateAddress($visitor->getRemoteAddress());
+        $this->remoteAddr = $this->processAddress($obfuscate, $visitor->getRemoteAddress());
     }
 
-    private function obfuscateAddress(?string $address): ?string
+    private function processAddress(bool $obfuscate, ?string $address): ?string
     {
         // Localhost addresses do not need to be obfuscated
-        if ($address === null || $address === IpAddress::LOCALHOST) {
+        if (! $obfuscate || $address === null || $address === IpAddress::LOCALHOST) {
             return $address;
         }
 
