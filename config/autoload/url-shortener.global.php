@@ -12,7 +12,7 @@ return [
             'hostname' => '',
         ],
         'validate_url' => false,
-        'obfuscate_remote_addr' => true,
+        'anonymize_remote_addr' => true,
         'visits_webhooks' => [],
         'default_short_codes_length' => DEFAULT_SHORT_CODES_LENGTH,
     ],

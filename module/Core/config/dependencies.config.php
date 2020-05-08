@@ -57,7 +57,7 @@ return [
         Service\VisitsTracker::class => [
             'em',
             EventDispatcherInterface::class,
-            'config.url_shortener.obfuscate_remote_addr',
+            'config.url_shortener.anonymize_remote_addr',
         ],
         Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class, Util\UrlValidator::class],
         Visit\VisitLocator::class => ['em'],

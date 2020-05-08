@@ -39,20 +39,20 @@ class VisitTest extends TestCase
      * @test
      * @dataProvider provideAddresses
      */
-    public function addressIsObfuscatedWhenRequested(bool $obfuscate, ?string $address, ?string $expectedAddress): void
+    public function addressIsAnonymizedWhenRequested(bool $anonymize, ?string $address, ?string $expectedAddress): void
     {
-        $visit = new Visit(new ShortUrl(''), new Visitor('Chrome', 'some site', $address), $obfuscate);
+        $visit = new Visit(new ShortUrl(''), new Visitor('Chrome', 'some site', $address), $anonymize);
 
         $this->assertEquals($expectedAddress, $visit->getRemoteAddr());
     }
 
     public function provideAddresses(): iterable
     {
-        yield 'obfuscated null address' => [true, null, null];
-        yield 'non-obfuscated null address' => [false, null, null];
-        yield 'obfuscated localhost' => [true, IpAddress::LOCALHOST, IpAddress::LOCALHOST];
-        yield 'non-obfuscated localhost' => [false, IpAddress::LOCALHOST, IpAddress::LOCALHOST];
-        yield 'obfuscated regular address' => [true, '1.2.3.4', '1.2.3.0'];
-        yield 'non-obfuscated regular address' => [false, '1.2.3.4', '1.2.3.4'];
+        yield 'anonymized null address' => [true, null, null];
+        yield 'non-anonymized null address' => [false, null, null];
+        yield 'anonymized localhost' => [true, IpAddress::LOCALHOST, IpAddress::LOCALHOST];
+        yield 'non-anonymized localhost' => [false, IpAddress::LOCALHOST, IpAddress::LOCALHOST];
+        yield 'anonymized regular address' => [true, '1.2.3.4', '1.2.3.0'];
+        yield 'non-anonymized regular address' => [false, '1.2.3.4', '1.2.3.4'];
     }
 }

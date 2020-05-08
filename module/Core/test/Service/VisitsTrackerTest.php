@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManager;
 use Laminas\Stdlib\ArrayUtils;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -49,25 +48,6 @@ class VisitsTrackerTest extends TestCase
         $this->em->flush()->shouldBeCalledOnce();
 
         $this->visitsTracker->track(new ShortUrl($shortCode), Visitor::emptyInstance());
-
-        $this->eventDispatcher->dispatch(Argument::type(ShortUrlVisited::class))->shouldHaveBeenCalled();
-    }
-
-    /** @test */
-    public function trackedIpAddressGetsObfuscated(): void
-    {
-        $shortCode = '123ABC';
-
-        $this->em->persist(Argument::any())->will(function ($args) {
-            /** @var Visit $visit */
-            $visit = $args[0];
-            Assert::assertEquals('4.3.2.0', $visit->getRemoteAddr());
-            $visit->setId('1');
-            return $visit;
-        })->shouldBeCalledOnce();
-        $this->em->flush()->shouldBeCalledOnce();
-
-        $this->visitsTracker->track(new ShortUrl($shortCode), new Visitor('', '', '4.3.2.1'));
 
         $this->eventDispatcher->dispatch(Argument::type(ShortUrlVisited::class))->shouldHaveBeenCalled();
     }

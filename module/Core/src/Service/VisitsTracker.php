@@ -22,16 +22,16 @@ class VisitsTracker implements VisitsTrackerInterface
 {
     private ORM\EntityManagerInterface $em;
     private EventDispatcherInterface $eventDispatcher;
-    private bool $obfuscateRemoteAddr;
+    private bool $anonymizeRemoteAddr;
 
     public function __construct(
         ORM\EntityManagerInterface $em,
         EventDispatcherInterface $eventDispatcher,
-        bool $obfuscateRemoteAddr
+        bool $anonymizeRemoteAddr
     ) {
         $this->em = $em;
         $this->eventDispatcher = $eventDispatcher;
-        $this->obfuscateRemoteAddr = $obfuscateRemoteAddr;
+        $this->anonymizeRemoteAddr = $anonymizeRemoteAddr;
     }
 
     /**
@@ -39,7 +39,7 @@ class VisitsTracker implements VisitsTrackerInterface
      */
     public function track(ShortUrl $shortUrl, Visitor $visitor): void
     {
-        $visit = new Visit($shortUrl, $visitor, $this->obfuscateRemoteAddr);
+        $visit = new Visit($shortUrl, $visitor, $this->anonymizeRemoteAddr);
 
         $this->em->persist($visit);
         $this->em->flush();
