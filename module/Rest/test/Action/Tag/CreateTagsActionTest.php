@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
+use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\CreateTagsAction;
 
 class CreateTagsActionTest extends TestCase

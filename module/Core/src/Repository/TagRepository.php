@@ -6,6 +6,8 @@ namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use function Functional\map;
 
 class TagRepository extends EntityRepository implements TagRepositoryInterface
 {
@@ -20,5 +22,26 @@ class TagRepository extends EntityRepository implements TagRepositoryInterface
            ->where($qb->expr()->in('t.name', $names));
 
         return $qb->getQuery()->execute();
+    }
+
+    /**
+     * @return TagInfo[]
+     */
+    public function findTagsWithInfo(): array
+    {
+        $dql = <<<DQL
+            SELECT t AS tag, COUNT(DISTINCT s.id) AS shortUrlsCount, COUNT(DISTINCT v.id) AS visitsCount
+            FROM Shlinkio\Shlink\Core\Entity\Tag t
+            LEFT JOIN t.shortUrls s
+            LEFT JOIN s.visits v
+            GROUP BY tag
+            ORDER BY t.name ASC
+        DQL;
+        $query = $this->getEntityManager()->createQuery($dql);
+
+        return map(
+            $query->getResult(),
+            fn (array $row) => new TagInfo($row['tag'], (int) $row['shortUrlsCount'], (int) $row['visitsCount']),
+        );
     }
 }

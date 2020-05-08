@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\CLI\Command\Tag;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
-use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
+use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,7 +20,7 @@ class RenameTagCommand extends Command
 
     private TagServiceInterface $tagService;
 
-    public function __construct(TagServiceInterface $tagService)
+    public function __construct(\Shlinkio\Shlink\Core\Tag\TagServiceInterface $tagService)
     {
         parent::__construct();
         $this->tagService = $tagService;

@@ -8,7 +8,7 @@ use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
-use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
+use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
 class UpdateTagAction extends AbstractRestAction
@@ -16,7 +16,7 @@ class UpdateTagAction extends AbstractRestAction
     protected const ROUTE_PATH = '/tags';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PUT];
 
-    private TagServiceInterface $tagService;
+    private \Shlinkio\Shlink\Core\Tag\TagServiceInterface $tagService;
 
     public function __construct(TagServiceInterface $tagService)
     {

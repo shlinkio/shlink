@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
-use Shlinkio\Shlink\Core\Service\Tag\TagService;
+use Shlinkio\Shlink\Core\Tag\TagService;
 
 class TagServiceTest extends TestCase
 {

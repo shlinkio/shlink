@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
-use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
+use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\UpdateTagAction;
 
 class UpdateTagActionTest extends TestCase
@@ -19,7 +19,7 @@ class UpdateTagActionTest extends TestCase
 
     public function setUp(): void
     {
-        $this->tagService = $this->prophesize(TagServiceInterface::class);
+        $this->tagService = $this->prophesize(\Shlinkio\Shlink\Core\Tag\TagServiceInterface::class);
         $this->action = new UpdateTagAction($this->tagService->reveal());
     }
 

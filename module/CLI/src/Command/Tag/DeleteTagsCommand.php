@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
+use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -16,9 +16,9 @@ class DeleteTagsCommand extends Command
 {
     public const NAME = 'tag:delete';
 
-    private TagServiceInterface $tagService;
+    private \Shlinkio\Shlink\Core\Tag\TagServiceInterface $tagService;
 
-    public function __construct(TagServiceInterface $tagService)
+    public function __construct(\Shlinkio\Shlink\Core\Tag\TagServiceInterface $tagService)
     {
         parent::__construct();
         $this->tagService = $tagService;

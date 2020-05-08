@@ -7,8 +7,11 @@ namespace Shlinkio\Shlink\Rest\Action\Tag;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
+use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+
+use function Functional\map;
 
 class ListTagsAction extends AbstractRestAction
 {
@@ -22,18 +25,26 @@ class ListTagsAction extends AbstractRestAction
         $this->tagService = $tagService;
     }
 
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * to the next middleware component to create the response.
-     *
-     *
-     * @throws \InvalidArgumentException
-     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $query = $request->getQueryParams();
+        $withStats = ($query['withStats'] ?? null) === 'true';
+
+        if (! $withStats) {
+            return new JsonResponse([
+                'tags' => [
+                    'data' => $this->tagService->listTags(),
+                ],
+            ]);
+        }
+
+        $tagsInfo = $this->tagService->tagsInfo();
+        $data = map($tagsInfo, fn (TagInfo $info) => (string) $info->tag());
+
         return new JsonResponse([
             'tags' => [
-                'data' => $this->tagService->listTags(),
+                'data' => $data,
+                'stats' => $tagsInfo,
             ],
         ]);
     }

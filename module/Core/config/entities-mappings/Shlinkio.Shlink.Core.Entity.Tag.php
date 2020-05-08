@@ -24,4 +24,10 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder->createField('name', Types::STRING)
             ->unique()
             ->build();
+
+    $builder->createManyToMany('shortUrls', Entity\ShortUrl::class)
+            ->setJoinTable(determineTableName('short_urls_in_tags', $emConfig))
+            ->addInverseJoinColumn('short_url_id', 'id', true, false, 'CASCADE')
+            ->addJoinColumn('tag_id', 'id', true, false, 'CASCADE')
+            ->build();
 };

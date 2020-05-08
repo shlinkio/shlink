@@ -8,7 +8,7 @@ use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
+use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\ListTagsAction;
 
 use function Shlinkio\Shlink\Common\json_decode;
@@ -20,7 +20,7 @@ class ListTagsActionTest extends TestCase
 
     public function setUp(): void
     {
-        $this->tagService = $this->prophesize(TagServiceInterface::class);
+        $this->tagService = $this->prophesize(\Shlinkio\Shlink\Core\Tag\TagServiceInterface::class);
         $this->action = new ListTagsAction($this->tagService->reveal());
     }
 

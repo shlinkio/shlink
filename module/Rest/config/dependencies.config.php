@@ -65,10 +65,10 @@ return [
         Action\Visit\GlobalVisitsAction::class => [Visit\VisitsStatsHelper::class],
         Action\ShortUrl\ListShortUrlsAction::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
         Action\ShortUrl\EditShortUrlTagsAction::class => [Service\ShortUrlService::class],
-        Action\Tag\ListTagsAction::class => [Service\Tag\TagService::class],
-        Action\Tag\DeleteTagsAction::class => [Service\Tag\TagService::class],
-        Action\Tag\CreateTagsAction::class => [Service\Tag\TagService::class],
-        Action\Tag\UpdateTagAction::class => [Service\Tag\TagService::class],
+        Action\Tag\ListTagsAction::class => [\Shlinkio\Shlink\Core\Tag\TagService::class],
+        Action\Tag\DeleteTagsAction::class => [\Shlinkio\Shlink\Core\Tag\TagService::class],
+        Action\Tag\CreateTagsAction::class => [\Shlinkio\Shlink\Core\Tag\TagService::class],
+        Action\Tag\UpdateTagAction::class => [\Shlinkio\Shlink\Core\Tag\TagService::class],
 
         Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ['config.url_shortener.domain.hostname'],
         Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => [

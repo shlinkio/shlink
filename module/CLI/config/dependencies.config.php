@@ -78,10 +78,10 @@ return [
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class],
         Command\Api\ListKeysCommand::class => [ApiKeyService::class],
 
-        Command\Tag\ListTagsCommand::class => [Service\Tag\TagService::class],
-        Command\Tag\CreateTagCommand::class => [Service\Tag\TagService::class],
-        Command\Tag\RenameTagCommand::class => [Service\Tag\TagService::class],
-        Command\Tag\DeleteTagsCommand::class => [Service\Tag\TagService::class],
+        Command\Tag\ListTagsCommand::class => [\Shlinkio\Shlink\Core\Tag\TagService::class],
+        Command\Tag\CreateTagCommand::class => [\Shlinkio\Shlink\Core\Tag\TagService::class],
+        Command\Tag\RenameTagCommand::class => [\Shlinkio\Shlink\Core\Tag\TagService::class],
+        Command\Tag\DeleteTagsCommand::class => [\Shlinkio\Shlink\Core\Tag\TagService::class],
 
         Command\Db\CreateDatabaseCommand::class => [
             LockFactory::class,
