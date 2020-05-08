@@ -25,16 +25,6 @@ final class TagInfo implements JsonSerializable
         return $this->tag;
     }
 
-    public function shortUrlsCount(): int
-    {
-        return $this->shortUrlsCount;
-    }
-
-    public function visitsCount(): int
-    {
-        return $this->visitsCount;
-    }
-
     public function jsonSerialize(): array
     {
         return [
