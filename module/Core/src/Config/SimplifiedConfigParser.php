@@ -37,6 +37,7 @@ class SimplifiedConfigParser
         'mercure_public_hub_url' => ['mercure', 'public_hub_url'],
         'mercure_internal_hub_url' => ['mercure', 'internal_hub_url'],
         'mercure_jwt_secret' => ['mercure', 'jwt_secret'],
+        'obfuscate_remote_addr' => ['url_shortener', 'obfuscate_remote_addr'],
     ];
     private const SIMPLIFIED_CONFIG_SIDE_EFFECTS = [
         'delete_short_url_threshold' => [
