@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\Tag;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
-use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -35,17 +35,20 @@ class ListTagsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        ShlinkTable::fromOutput($output)->render(['Name'], $this->getTagsRows());
+        ShlinkTable::fromOutput($output)->render(['Name', 'URLs amount', 'Visits amount'], $this->getTagsRows());
         return ExitCodes::EXIT_SUCCESS;
     }
 
     private function getTagsRows(): array
     {
-        $tags = $this->tagService->listTags();
+        $tags = $this->tagService->tagsInfo();
         if (empty($tags)) {
-            return [['No tags yet']];
+            return [['No tags found', '-', '-']];
         }
 
-        return map($tags, fn (Tag $tag) => [(string) $tag]);
+        return map(
+            $tags,
+            fn (TagInfo $tagInfo) => [(string) $tagInfo->tag(), $tagInfo->shortUrlsCount(), $tagInfo->visitsCount()],
+        );
     }
 }
