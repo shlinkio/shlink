@@ -7,9 +7,8 @@ namespace Shlinkio\Shlink\Rest\Action\Tag;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
-use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
+use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
 class UpdateTagAction extends AbstractRestAction
@@ -19,9 +18,8 @@ class UpdateTagAction extends AbstractRestAction
 
     private TagServiceInterface $tagService;
 
-    public function __construct(TagServiceInterface $tagService, ?LoggerInterface $logger = null)
+    public function __construct(TagServiceInterface $tagService)
     {
-        parent::__construct($logger);
         $this->tagService = $tagService;
     }
 

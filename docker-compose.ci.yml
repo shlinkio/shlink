@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+    shlink_db:
+        environment:
+            MYSQL_DATABASE: shlink_test
+
+    shlink_db_postgres:
+        environment:
+            POSTGRES_DB: shlink_test
+
+    shlink_db_maria:
+        environment:
+            MYSQL_DATABASE: shlink_test

@@ -24,4 +24,6 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder->createField('name', Types::STRING)
             ->unique()
             ->build();
+
+    $builder->addInverseManyToMany('shortUrls', Entity\ShortUrl::class, 'tags');
 };

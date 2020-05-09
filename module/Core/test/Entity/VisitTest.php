@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Entity;
 
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\Visitor;
@@ -18,7 +19,7 @@ class VisitTest extends TestCase
      */
     public function isProperlyJsonSerialized(?Chronos $date): void
     {
-        $visit = new Visit(new ShortUrl(''), new Visitor('Chrome', 'some site', '1.2.3.4'), $date);
+        $visit = new Visit(new ShortUrl(''), new Visitor('Chrome', 'some site', '1.2.3.4'), true, $date);
 
         $this->assertEquals([
             'referer' => 'some site',
@@ -32,5 +33,26 @@ class VisitTest extends TestCase
     {
         yield 'null date' => [null];
         yield 'not null date' => [Chronos::now()->subDays(10)];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideAddresses
+     */
+    public function addressIsAnonymizedWhenRequested(bool $anonymize, ?string $address, ?string $expectedAddress): void
+    {
+        $visit = new Visit(new ShortUrl(''), new Visitor('Chrome', 'some site', $address), $anonymize);
+
+        $this->assertEquals($expectedAddress, $visit->getRemoteAddr());
+    }
+
+    public function provideAddresses(): iterable
+    {
+        yield 'anonymized null address' => [true, null, null];
+        yield 'non-anonymized null address' => [false, null, null];
+        yield 'anonymized localhost' => [true, IpAddress::LOCALHOST, IpAddress::LOCALHOST];
+        yield 'non-anonymized localhost' => [false, IpAddress::LOCALHOST, IpAddress::LOCALHOST];
+        yield 'anonymized regular address' => [true, '1.2.3.4', '1.2.3.0'];
+        yield 'non-anonymized regular address' => [false, '1.2.3.4', '1.2.3.4'];
     }
 }

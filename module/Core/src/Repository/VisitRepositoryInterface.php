@@ -43,4 +43,16 @@ interface VisitRepositoryInterface extends ObjectRepository
         ?string $domain = null,
         ?DateRange $dateRange = null
     ): int;
+
+    /**
+     * @return Visit[]
+     */
+    public function findVisitsByTag(
+        string $tag,
+        ?DateRange $dateRange = null,
+        ?int $limit = null,
+        ?int $offset = null
+    ): array;
+
+    public function countVisitsByTag(string $tag, ?DateRange $dateRange = null): int;
 }

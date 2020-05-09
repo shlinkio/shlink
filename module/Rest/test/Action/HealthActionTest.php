@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -21,7 +22,10 @@ class HealthActionTest extends TestCase
     public function setUp(): void
     {
         $this->conn = $this->prophesize(Connection::class);
-        $this->action = new HealthAction($this->conn->reveal(), new AppOptions(['version' => '1.2.3']));
+        $em = $this->prophesize(EntityManagerInterface::class);
+        $em->getConnection()->willReturn($this->conn->reveal());
+
+        $this->action = new HealthAction($em->reveal(), new AppOptions(['version' => '1.2.3']));
     }
 
     /** @test */

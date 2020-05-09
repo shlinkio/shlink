@@ -20,6 +20,7 @@ $buildDbConnection = function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
     $isCi = env('TRAVIS', false);
     $getMysqlHost = fn (string $driver) => sprintf('shlink_db%s', $driver === 'mysql' ? '' : '_maria');
+    $getCiMysqlPort = fn (string $driver) => $driver === 'mysql' ? '3307' : '3308';
 
     $driverConfigMap = [
         'sqlite' => [
@@ -29,19 +30,22 @@ $buildDbConnection = function (): array {
         'mysql' => [
             'driver' => 'pdo_mysql',
             'host' => $isCi ? '127.0.0.1' : $getMysqlHost($driver),
+            'port' => $isCi ? $getCiMysqlPort($driver) : '3306',
             'user' => 'root',
-            'password' => $isCi ? '' : 'root',
+            'password' => 'root',
             'dbname' => 'shlink_test',
             'charset' => 'utf8',
             'driverOptions' => [
                 PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
             ],
         ],
         'postgres' => [
             'driver' => 'pdo_pgsql',
             'host' => $isCi ? '127.0.0.1' : 'shlink_db_postgres',
+            'port' => $isCi ? '5433' : '5432',
             'user' => 'postgres',
-            'password' => $isCi ? '' : 'root',
+            'password' => 'root',
             'dbname' => 'shlink_test',
             'charset' => 'utf8',
         ],
@@ -49,7 +53,7 @@ $buildDbConnection = function (): array {
             'driver' => 'pdo_sqlsrv',
             'host' => $isCi ? '127.0.0.1' : 'shlink_db_ms',
             'user' => 'sa',
-            'password' => $isCi ? '' : 'Passw0rd!',
+            'password' => 'Passw0rd!',
             'dbname' => 'shlink_test',
         ],
     ];
@@ -79,11 +83,15 @@ return [
             'process-name' => 'shlink_test',
             'options' => [
                 'pid_file' => sys_get_temp_dir() . '/shlink-test-swoole.pid',
-                'worker_num' => 1,
-                'task_worker_num' => 1,
                 'enable_coroutine' => false,
             ],
         ],
+    ],
+
+    'mercure' => [
+        'public_hub_url' => null,
+        'internal_hub_url' => null,
+        'jwt_secret' => null,
     ],
 
     'dependencies' => [

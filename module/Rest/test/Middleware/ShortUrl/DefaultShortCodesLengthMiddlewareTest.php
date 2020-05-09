@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioApiTest\Shlink\Rest\Middleware\ShortUrl;
+namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;

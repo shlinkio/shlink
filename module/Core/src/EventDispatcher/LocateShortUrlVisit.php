@@ -9,7 +9,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
-use Shlinkio\Shlink\Common\Doctrine\ReopeningEntityManager;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
@@ -42,35 +41,22 @@ class LocateShortUrlVisit
 
     public function __invoke(ShortUrlVisited $shortUrlVisited): void
     {
-        // FIXME Temporarily handling DB connection reset here to fix https://github.com/shlinkio/shlink/issues/717
-        //       Remove when https://github.com/shlinkio/shlink-event-dispatcher/issues/23 is implemented
-        if ($this->em instanceof ReopeningEntityManager) {
-            $this->em->open();
-        }
-
         $visitId = $shortUrlVisited->visitId();
 
-        try {
-            /** @var Visit|null $visit */
-            $visit = $this->em->find(Visit::class, $visitId);
-            if ($visit === null) {
-                $this->logger->warning('Tried to locate visit with id "{visitId}", but it does not exist.', [
-                    'visitId' => $visitId,
-                ]);
-                return;
-            }
-
-            if ($this->downloadOrUpdateGeoLiteDb($visitId)) {
-                $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress(), $visit);
-            }
-
-            $this->eventDispatcher->dispatch(new VisitLocated($visitId));
-        } finally {
-            // FIXME Temporarily handling DB connection reset here to fix https://github.com/shlinkio/shlink/issues/717
-            //       Remove when https://github.com/shlinkio/shlink-event-dispatcher/issues/23 is implemented
-            $this->em->getConnection()->close();
-            $this->em->clear();
+        /** @var Visit|null $visit */
+        $visit = $this->em->find(Visit::class, $visitId);
+        if ($visit === null) {
+            $this->logger->warning('Tried to locate visit with id "{visitId}", but it does not exist.', [
+                'visitId' => $visitId,
+            ]);
+            return;
         }
+
+        if ($this->downloadOrUpdateGeoLiteDb($visitId)) {
+            $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress(), $visit);
+        }
+
+        $this->eventDispatcher->dispatch(new VisitLocated($visitId));
     }
 
     private function downloadOrUpdateGeoLiteDb(string $visitId): bool

@@ -1,8 +1,8 @@
-FROM php:7.4.2-alpine3.11 as base
+FROM php:7.4.5-alpine3.11 as base
 
-ARG SHLINK_VERSION=2.0.5
+ARG SHLINK_VERSION=2.1.4
 ENV SHLINK_VERSION ${SHLINK_VERSION}
-ENV SWOOLE_VERSION 4.4.15
+ENV SWOOLE_VERSION 4.4.18
 ENV LC_ALL "C"
 
 WORKDIR /etc/shlink
@@ -25,15 +25,12 @@ RUN \
 
 # Install swoole and sqlsrv driver
 RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.5.1.1-1_amd64.apk && \
-    wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/mssql-tools_17.5.1.1-1_amd64.apk && \
     apk add --allow-untrusted msodbcsql17_17.5.1.1-1_amd64.apk && \
-    apk add --allow-untrusted mssql-tools_17.5.1.1-1_amd64.apk && \
     apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
     pecl install swoole-${SWOOLE_VERSION} pdo_sqlsrv && \
     docker-php-ext-enable swoole pdo_sqlsrv && \
     apk del .phpize-deps && \
-    rm msodbcsql17_17.5.1.1-1_amd64.apk && \
-    rm mssql-tools_17.5.1.1-1_amd64.apk
+    rm msodbcsql17_17.5.1.1-1_amd64.apk
 
 
 # Install shlink

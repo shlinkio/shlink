@@ -1,0 +1,67 @@
+{
+    "get": {
+        "operationId": "mercureInfo",
+        "tags": [
+            "Integrations"
+        ],
+        "summary": "Get mercure integration info",
+        "description": "Returns information to consume updates published by Shlink on a mercure hub. https://mercure.rocks/",
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            }
+        ],
+        "security": [
+            {
+                "ApiKey": []
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The mercure integration info",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/MercureInfo.json"
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "mercureHubUrl": "https://example.com/.well-known/mercure",
+                        "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJTaGxpbmsiLCJpYXQiOjE1ODY2ODY3MzIsImV4cCI6MTU4Njk0NTkzMiwibWVyY3VyZSI6eyJzdWJzY3JpYmUiOltdfX0.P-519lgU7dFz0bbNlRG1CXyqugGbaHon4kw6fu4QBdQ",
+                        "jwtExpiration":  "2020-04-15T12:18:52+02:00"
+                    }
+                }
+            },
+            "501": {
+                "description": "This Shlink instance is not integrated with a mercure hub",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "title": "Mercure integration not configured",
+                        "type": "MERCURE_NOT_CONFIGURED",
+                        "detail": "This Shlink instance is not integrated with a mercure hub.",
+                        "status": 501
+                    }
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

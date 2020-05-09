@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 
-class VisitsPaginatorAdapter implements AdapterInterface
+class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
     private VisitRepositoryInterface $visitRepository;
     private ShortUrlIdentifier $identifier;
@@ -36,7 +35,7 @@ class VisitsPaginatorAdapter implements AdapterInterface
         );
     }
 
-    public function count(): int
+    protected function doCount(): int
     {
         return $this->visitRepository->countVisitsByShortCode(
             $this->identifier->shortCode(),

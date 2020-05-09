@@ -27,7 +27,8 @@ return [
             Service\VisitsTracker::class => ConfigAbstractFactory::class,
             Service\ShortUrlService::class => ConfigAbstractFactory::class,
             Visit\VisitLocator::class => ConfigAbstractFactory::class,
-            Service\Tag\TagService::class => ConfigAbstractFactory::class,
+            Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
+            Tag\TagService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
 
@@ -38,6 +39,8 @@ return [
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
 
             Resolver\PersistenceDomainResolver::class => ConfigAbstractFactory::class,
+
+            Mercure\MercureUpdatesGenerator::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -51,10 +54,15 @@ return [
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
         Service\UrlShortener::class => [Util\UrlValidator::class, 'em', Resolver\PersistenceDomainResolver::class],
-        Service\VisitsTracker::class => ['em', EventDispatcherInterface::class],
+        Service\VisitsTracker::class => [
+            'em',
+            EventDispatcherInterface::class,
+            'config.url_shortener.anonymize_remote_addr',
+        ],
         Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class, Util\UrlValidator::class],
         Visit\VisitLocator::class => ['em'],
-        Service\Tag\TagService::class => ['em'],
+        Visit\VisitsStatsHelper::class => ['em'],
+        Tag\TagService::class => ['em'],
         Service\ShortUrl\DeleteShortUrlService::class => [
             'em',
             Options\DeleteShortUrlsOptions::class,
@@ -83,6 +91,8 @@ return [
         ],
 
         Resolver\PersistenceDomainResolver::class => ['em'],
+
+        Mercure\MercureUpdatesGenerator::class => ['config.url_shortener.domain'],
     ],
 
 ];

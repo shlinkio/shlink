@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Throwable;
 
@@ -21,13 +20,12 @@ class HealthAction extends AbstractRestAction
     protected const ROUTE_PATH = '/health';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
+    private EntityManagerInterface $em;
     private AppOptions $options;
-    private Connection $conn;
 
-    public function __construct(Connection $conn, AppOptions $options, ?LoggerInterface $logger = null)
+    public function __construct(EntityManagerInterface $em, AppOptions $options)
     {
-        parent::__construct($logger);
-        $this->conn = $conn;
+        $this->em = $em;
         $this->options = $options;
     }
 
@@ -39,7 +37,7 @@ class HealthAction extends AbstractRestAction
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         try {
-            $connected = $this->conn->ping();
+            $connected = $this->em->getConnection()->ping();
         } catch (Throwable $e) {
             $connected = false;
         }

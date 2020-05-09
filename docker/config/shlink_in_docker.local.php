@@ -41,6 +41,8 @@ $helper = new class {
         $driverOptions = ! contains(['maria', 'mysql'], $driver) ? [] : [
             // 1002 -> PDO::MYSQL_ATTR_INIT_COMMAND
             1002 => 'SET NAMES utf8',
+            // 1000 -> PDO::MYSQL_ATTR_USE_BUFFERED_QUERY
+            1000 => true,
         ];
         return [
             'driver' => self::DB_DRIVERS_MAP[$driver],
@@ -79,6 +81,17 @@ $helper = new class {
         $value = (int) env('DEFAULT_SHORT_CODES_LENGTH', DEFAULT_SHORT_CODES_LENGTH);
         return $value < MIN_SHORT_CODES_LENGTH ? MIN_SHORT_CODES_LENGTH : $value;
     }
+
+    public function getMercureConfig(): array
+    {
+        $publicUrl = env('MERCURE_PUBLIC_HUB_URL');
+
+        return [
+            'public_hub_url' => $publicUrl,
+            'internal_hub_url' => env('MERCURE_INTERNAL_HUB_URL', $publicUrl),
+            'jwt_secret' => env('MERCURE_JWT_SECRET'),
+        ];
+    }
 };
 
 return [
@@ -104,6 +117,7 @@ return [
             'hostname' => env('SHORT_DOMAIN_HOST', ''),
         ],
         'validate_url' => (bool) env('VALIDATE_URLS', false),
+        'anonymize_remote_addr' => (bool) env('ANONYMIZE_REMOTE_ADDR', true),
         'visits_webhooks' => $helper->getVisitsWebhooks(),
         'default_short_codes_length' => $helper->getDefaultShortCodesLength(),
     ],
@@ -150,5 +164,7 @@ return [
     'geolite2' => [
         'license_key' => env('GEOLITE_LICENSE_KEY', 'G4Lm0C60yJsnkdPi'),
     ],
+
+    'mercure' => $helper->getMercureConfig(),
 
 ];

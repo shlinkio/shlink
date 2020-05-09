@@ -4,6 +4,58 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## 2.2.0 - 2020-05-09
+
+#### Added
+
+* [#712](https://github.com/shlinkio/shlink/issues/712) Added support to integrate Shlink with a [mercure hub](https://mercure.rocks/) server.
+
+    Thanks to that, Shlink will be able to publish events that can be consumed in real time.
+
+    For now, two topics (events) are published, when new visits occur. Both include a payload with the visit and the shortUrl:
+
+        * A visit occurs on any short URL: `https://shlink.io/new-visit`.
+        * A visit occurs on short URLs with a specific short code: `https://shlink.io/new-visit/{shortCode}`.
+
+    The updates are only published when serving Shlink with swoole.
+
+    Also, Shlink exposes a new endpoint `GET /rest/v2/mercure-info`, which returns the public URL of the mercure hub, and a valid JWT that can be used to subscribe to updates.
+
+* [#673](https://github.com/shlinkio/shlink/issues/673) Added new `[GET /visits]` rest endpoint which returns basic visits stats.
+* [#674](https://github.com/shlinkio/shlink/issues/674) Added new `[GET /tags/{tag}/visits]` rest endpoint which returns visits by tag.
+
+    It works in the same way as the `[GET /short-urls/{shortCode}/visits]` one, returning the same response payload, and supporting the same query params, but the response is the list of visits in all short URLs which have provided tag.
+
+* [#672](https://github.com/shlinkio/shlink/issues/672) Enhanced `[GET /tags]` rest endpoint so that it is possible to get basic stats info for every tag.
+
+    Now, if the `withStats=true` query param is provided, the response payload will include a new `stats` property which is a list with the amount of short URLs and visits for every tag.
+
+    Also, the `tag:list` CLI command has been changed and it always behaves like this.
+
+* [#640](https://github.com/shlinkio/shlink/issues/640) Allowed to optionally disable visitors' IP address anonymization. This will make Shlink no longer be GDPR-compliant, but it's OK if you only plan to share your URLs in countries without this regulation.
+
+#### Changed
+
+* [#692](https://github.com/shlinkio/shlink/issues/692) Drastically improved performance when loading visits. Specially noticeable when loading big result sets.
+* [#657](https://github.com/shlinkio/shlink/issues/657) Updated how DB tests are run in travis by using docker containers which allow all engines to be covered.
+* [#751](https://github.com/shlinkio/shlink/issues/751) Updated PHP and swoole versions used in docker image, and removed mssql-tools, as they are not needed.
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#729](https://github.com/shlinkio/shlink/issues/729) Fixed weird error when fetching multiple visits result sets concurrently using mariadb or mysql.
+* [#735](https://github.com/shlinkio/shlink/issues/735) Fixed error when cleaning metadata cache during installation when APCu is enabled.
+* [#677](https://github.com/shlinkio/shlink/issues/677) Fixed `/health` endpoint returning `503` fail responses when the database connection has expired.
+* [#732](https://github.com/shlinkio/shlink/issues/732) Fixed wrong client IP in access logs when serving app with swoole behind load balancer.
+
+
 ## 2.1.4 - 2020-04-30
 
 #### Added

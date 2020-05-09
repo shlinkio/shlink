@@ -6,20 +6,22 @@ namespace ShlinkioTest\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManager;
 use Laminas\Stdlib\ArrayUtils;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\ShortUrlVisited;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 
@@ -37,7 +39,7 @@ class VisitsTrackerTest extends TestCase
         $this->em = $this->prophesize(EntityManager::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
 
-        $this->visitsTracker  = new VisitsTracker($this->em->reveal(), $this->eventDispatcher->reveal());
+        $this->visitsTracker  = new VisitsTracker($this->em->reveal(), $this->eventDispatcher->reveal(), true);
     }
 
     /** @test */
@@ -49,25 +51,6 @@ class VisitsTrackerTest extends TestCase
         $this->em->flush()->shouldBeCalledOnce();
 
         $this->visitsTracker->track(new ShortUrl($shortCode), Visitor::emptyInstance());
-
-        $this->eventDispatcher->dispatch(Argument::type(ShortUrlVisited::class))->shouldHaveBeenCalled();
-    }
-
-    /** @test */
-    public function trackedIpAddressGetsObfuscated(): void
-    {
-        $shortCode = '123ABC';
-
-        $this->em->persist(Argument::any())->will(function ($args) {
-            /** @var Visit $visit */
-            $visit = $args[0];
-            Assert::assertEquals('4.3.2.0', $visit->getRemoteAddr());
-            $visit->setId('1');
-            return $visit;
-        })->shouldBeCalledOnce();
-        $this->em->flush()->shouldBeCalledOnce();
-
-        $this->visitsTracker->track(new ShortUrl($shortCode), new Visitor('', '', '4.3.2.1'));
 
         $this->eventDispatcher->dispatch(Argument::type(ShortUrlVisited::class))->shouldHaveBeenCalled();
     }
@@ -104,5 +87,41 @@ class VisitsTrackerTest extends TestCase
         $count->shouldBeCalledOnce();
 
         $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), new VisitsParams());
+    }
+
+    /** @test */
+    public function throwsExceptionWhenRequestingVisitsForInvalidTag(): void
+    {
+        $tag = 'foo';
+        $repo = $this->prophesize(TagRepository::class);
+        $count = $repo->count(['name' => $tag])->willReturn(0);
+        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+
+        $this->expectException(TagNotFoundException::class);
+        $count->shouldBeCalledOnce();
+        $getRepo->shouldBeCalledOnce();
+
+        $this->visitsTracker->visitsForTag($tag, new VisitsParams());
+    }
+
+    /** @test */
+    public function visitsForTagAreReturnedAsExpected(): void
+    {
+        $tag = 'foo';
+        $repo = $this->prophesize(TagRepository::class);
+        $count = $repo->count(['name' => $tag])->willReturn(1);
+        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+
+        $list = map(range(0, 1), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance()));
+        $repo2 = $this->prophesize(VisitRepository::class);
+        $repo2->findVisitsByTag($tag, Argument::type(DateRange::class), 1, 0)->willReturn($list);
+        $repo2->countVisitsByTag($tag, Argument::type(DateRange::class))->willReturn(1);
+        $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
+
+        $paginator = $this->visitsTracker->visitsForTag($tag, new VisitsParams());
+
+        $this->assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentItems()));
+        $count->shouldHaveBeenCalledOnce();
+        $getRepo->shouldHaveBeenCalledOnce();
     }
 }

@@ -1,0 +1,54 @@
+{
+    "get": {
+        "operationId": "getGlobalVisits",
+        "tags": [
+            "Visits"
+        ],
+        "summary": "Get general visits stats",
+        "description": "Get general visits stats not linked to one specific short URL.",
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            }
+        ],
+        "security": [
+            {
+                "ApiKey": []
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "Visits stats.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "visits": {
+                                    "$ref": "../definitions/VisitStats.json"
+                                }
+                            }
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "visits": {
+                            "visitsCount": 1569874
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
