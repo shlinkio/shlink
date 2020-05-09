@@ -12,13 +12,16 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\ShortUrlVisited;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 
@@ -84,5 +87,41 @@ class VisitsTrackerTest extends TestCase
         $count->shouldBeCalledOnce();
 
         $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), new VisitsParams());
+    }
+
+    /** @test */
+    public function throwsExceptionWhenRequestingVisitsForInvalidTag(): void
+    {
+        $tag = 'foo';
+        $repo = $this->prophesize(TagRepository::class);
+        $count = $repo->count(['name' => $tag])->willReturn(0);
+        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+
+        $this->expectException(TagNotFoundException::class);
+        $count->shouldBeCalledOnce();
+        $getRepo->shouldBeCalledOnce();
+
+        $this->visitsTracker->visitsForTag($tag, new VisitsParams());
+    }
+
+    /** @test */
+    public function visitsForTagAreReturnedAsExpected(): void
+    {
+        $tag = 'foo';
+        $repo = $this->prophesize(TagRepository::class);
+        $count = $repo->count(['name' => $tag])->willReturn(1);
+        $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
+
+        $list = map(range(0, 1), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance()));
+        $repo2 = $this->prophesize(VisitRepository::class);
+        $repo2->findVisitsByTag($tag, Argument::type(DateRange::class), 1, 0)->willReturn($list);
+        $repo2->countVisitsByTag($tag, Argument::type(DateRange::class))->willReturn(1);
+        $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
+
+        $paginator = $this->visitsTracker->visitsForTag($tag, new VisitsParams());
+
+        $this->assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentItems()));
+        $count->shouldHaveBeenCalledOnce();
+        $getRepo->shouldHaveBeenCalledOnce();
     }
 }
