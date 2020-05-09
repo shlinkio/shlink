@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## 2.2.0 - 2020-05-09
 
 #### Added
 
@@ -19,12 +19,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     The updates are only published when serving Shlink with swoole.
 
-    Also, Shlink exposes a new endpoint `GET /rest/v2/mercure-info`, which returns the public URL of the mercure hub, and a valid JWT that can be used to subsribe to updates.
+    Also, Shlink exposes a new endpoint `GET /rest/v2/mercure-info`, which returns the public URL of the mercure hub, and a valid JWT that can be used to subscribe to updates.
 
 * [#673](https://github.com/shlinkio/shlink/issues/673) Added new `[GET /visits]` rest endpoint which returns basic visits stats.
+* [#674](https://github.com/shlinkio/shlink/issues/674) Added new `[GET /tags/{tag}/visits]` rest endpoint which returns visits by tag.
+
+    It works in the same way as the `[GET /short-urls/{shortCode}/visits]` one, returning the same response payload, and supporting the same query params, but the response is the list of visits in all short URLs which have provided tag.
+
 * [#672](https://github.com/shlinkio/shlink/issues/672) Enhanced `[GET /tags]` rest endpoint so that it is possible to get basic stats info for every tag.
 
     Now, if the `withStats=true` query param is provided, the response payload will include a new `stats` property which is a list with the amount of short URLs and visits for every tag.
+
+    Also, the `tag:list` CLI command has been changed and it always behaves like this.
 
 * [#640](https://github.com/shlinkio/shlink/issues/640) Allowed to optionally disable visitors' IP address anonymization. This will make Shlink no longer be GDPR-compliant, but it's OK if you only plan to share your URLs in countries without this regulation.
 
