@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## 2.2.1 - 2020-05-11
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#764](https://github.com/shlinkio/shlink/issues/764) Fixed error when trying to match an existing short URL which does not have `validSince` and/or `validUntil`, but you are providing either one of them for the new one.
+
+
 ## 2.2.0 - 2020-05-09
 
 #### Added

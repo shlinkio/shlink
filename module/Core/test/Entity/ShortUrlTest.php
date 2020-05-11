@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Entity;
 
+use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
@@ -73,5 +74,39 @@ class ShortUrlTest extends TestCase
     {
         yield [null, DEFAULT_SHORT_CODES_LENGTH];
         yield from map(range(4, 10), fn (int $value) => [$value, $value]);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideCriteriaToMatch
+     */
+    public function criteriaIsMatchedWhenDatesMatch(ShortUrl $shortUrl, ShortUrlMeta $meta, bool $expected): void
+    {
+        $this->assertEquals($expected, $shortUrl->matchesCriteria($meta, []));
+    }
+
+    public function provideCriteriaToMatch(): iterable
+    {
+        $start = Chronos::parse('2020-03-05 20:18:30');
+        $end = Chronos::parse('2021-03-05 20:18:30');
+
+        yield [new ShortUrl('foo'), ShortUrlMeta::fromRawData(['validSince' => $start]), false];
+        yield [new ShortUrl('foo'), ShortUrlMeta::fromRawData(['validUntil' => $end]), false];
+        yield [new ShortUrl('foo'), ShortUrlMeta::fromRawData(['validSince' => $start, 'validUntil' => $end]), false];
+        yield [
+            new ShortUrl('foo', ShortUrlMeta::fromRawData(['validSince' => $start])),
+            ShortUrlMeta::fromRawData(['validSince' => $start]),
+            true,
+        ];
+        yield [
+            new ShortUrl('foo', ShortUrlMeta::fromRawData(['validUntil' => $end])),
+            ShortUrlMeta::fromRawData(['validUntil' => $end]),
+            true,
+        ];
+        yield [
+            new ShortUrl('foo', ShortUrlMeta::fromRawData(['validUntil' => $end, 'validSince' => $start])),
+            ShortUrlMeta::fromRawData(['validUntil' => $end, 'validSince' => $start]),
+            true,
+        ];
     }
 }
