@@ -204,10 +204,10 @@ class ShortUrl extends AbstractEntity
         if ($meta->hasDomain() && $meta->getDomain() !== $this->resolveDomain()) {
             return false;
         }
-        if ($meta->hasValidSince() && ! $meta->getValidSince()->eq($this->validSince)) {
+        if ($meta->hasValidSince() && ($this->validSince === null || ! $meta->getValidSince()->eq($this->validSince))) {
             return false;
         }
-        if ($meta->hasValidUntil() && ! $meta->getValidUntil()->eq($this->validUntil)) {
+        if ($meta->hasValidUntil() && ($this->validUntil === null || ! $meta->getValidUntil()->eq($this->validUntil))) {
             return false;
         }
 
