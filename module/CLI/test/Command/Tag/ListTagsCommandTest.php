@@ -8,7 +8,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\ListTagsCommand;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Service\Tag\TagServiceInterface;
+use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -31,28 +32,32 @@ class ListTagsCommandTest extends TestCase
     /** @test */
     public function noTagsPrintsEmptyMessage(): void
     {
-        $listTags = $this->tagService->listTags()->willReturn([]);
+        $tagsInfo = $this->tagService->tagsInfo()->willReturn([]);
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('No tags yet', $output);
-        $listTags->shouldHaveBeenCalled();
+        $this->assertStringContainsString('No tags found', $output);
+        $tagsInfo->shouldHaveBeenCalled();
     }
 
     /** @test */
     public function listOfTagsIsPrinted(): void
     {
-        $listTags = $this->tagService->listTags()->willReturn([
-            new Tag('foo'),
-            new Tag('bar'),
+        $tagsInfo = $this->tagService->tagsInfo()->willReturn([
+            new TagInfo(new Tag('foo'), 10, 2),
+            new TagInfo(new Tag('bar'), 7, 32),
         ]);
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('foo', $output);
-        $this->assertStringContainsString('bar', $output);
-        $listTags->shouldHaveBeenCalled();
+        $this->assertStringContainsString('| foo', $output);
+        $this->assertStringContainsString('| bar', $output);
+        $this->assertStringContainsString('| 10 ', $output);
+        $this->assertStringContainsString('| 2 ', $output);
+        $this->assertStringContainsString('| 7 ', $output);
+        $this->assertStringContainsString('| 32 ', $output);
+        $tagsInfo->shouldHaveBeenCalled();
     }
 }

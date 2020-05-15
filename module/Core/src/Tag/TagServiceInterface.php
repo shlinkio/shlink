@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Service\Tag;
+namespace Shlinkio\Shlink\Core\Tag;
 
 use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
+use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 
 interface TagServiceInterface
 {
@@ -15,6 +16,11 @@ interface TagServiceInterface
      * @return Tag[]
      */
     public function listTags(): array;
+
+    /**
+     * @return TagInfo[]
+     */
+    public function tagsInfo(): array;
 
     /**
      * @param string[] $tagNames

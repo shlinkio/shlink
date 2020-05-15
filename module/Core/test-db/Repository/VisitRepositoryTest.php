@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Repository;
 
 use Cake\Chronos\Chronos;
+use Doctrine\Common\Collections\ArrayCollection;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
@@ -27,6 +29,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         Visit::class,
         ShortUrl::class,
         Domain::class,
+        Tag::class,
     ];
 
     private VisitRepository $repo;
@@ -125,33 +128,99 @@ class VisitRepositoryTest extends DatabaseTestCase
         )));
     }
 
-    private function createShortUrlsAndVisits(): array
+    /** @test */
+    public function findVisitsByTagReturnsProperData(): void
+    {
+        $foo = new Tag('foo');
+        $this->getEntityManager()->persist($foo);
+
+        /** @var ShortUrl $shortUrl */
+        [,, $shortUrl] = $this->createShortUrlsAndVisits(false);
+        /** @var ShortUrl $shortUrl2 */
+        [,, $shortUrl2] = $this->createShortUrlsAndVisits(false);
+        /** @var ShortUrl $shortUrl3 */
+        [,, $shortUrl3] = $this->createShortUrlsAndVisits(false);
+
+        $shortUrl->setTags(new ArrayCollection([$foo]));
+        $shortUrl2->setTags(new ArrayCollection([$foo]));
+        $shortUrl3->setTags(new ArrayCollection([$foo]));
+
+        $this->getEntityManager()->flush();
+
+        $this->assertCount(0, $this->repo->findVisitsByTag('invalid'));
+        $this->assertCount(18, $this->repo->findVisitsByTag((string) $foo));
+        $this->assertCount(6, $this->repo->findVisitsByTag((string) $foo, new DateRange(
+            Chronos::parse('2016-01-02'),
+            Chronos::parse('2016-01-03'),
+        )));
+        $this->assertCount(12, $this->repo->findVisitsByTag((string) $foo, new DateRange(
+            Chronos::parse('2016-01-03'),
+        )));
+    }
+
+    /** @test */
+    public function countVisitsByTagReturnsProperData(): void
+    {
+        $foo = new Tag('foo');
+        $this->getEntityManager()->persist($foo);
+
+        /** @var ShortUrl $shortUrl */
+        [,, $shortUrl] = $this->createShortUrlsAndVisits(false);
+        /** @var ShortUrl $shortUrl2 */
+        [,, $shortUrl2] = $this->createShortUrlsAndVisits(false);
+
+        $shortUrl->setTags(new ArrayCollection([$foo]));
+        $shortUrl2->setTags(new ArrayCollection([$foo]));
+
+        $this->getEntityManager()->flush();
+
+        $this->assertEquals(0, $this->repo->countVisitsByTag('invalid'));
+        $this->assertEquals(12, $this->repo->countVisitsByTag((string) $foo));
+        $this->assertEquals(4, $this->repo->countVisitsByTag((string) $foo, new DateRange(
+            Chronos::parse('2016-01-02'),
+            Chronos::parse('2016-01-03'),
+        )));
+        $this->assertEquals(8, $this->repo->countVisitsByTag((string) $foo, new DateRange(
+            Chronos::parse('2016-01-03'),
+        )));
+    }
+
+    private function createShortUrlsAndVisits(bool $withDomain = true): array
     {
         $shortUrl = new ShortUrl('');
         $domain = 'example.com';
         $shortCode = $shortUrl->getShortCode();
-        $shortUrlWithDomain = new ShortUrl('', ShortUrlMeta::fromRawData([
-            'customSlug' => $shortCode,
-            'domain' => $domain,
-        ]));
-
         $this->getEntityManager()->persist($shortUrl);
-        $this->getEntityManager()->persist($shortUrlWithDomain);
 
         for ($i = 0; $i < 6; $i++) {
-            $visit = new Visit($shortUrl, Visitor::emptyInstance(), Chronos::parse(sprintf('2016-01-0%s', $i + 1)));
-            $this->getEntityManager()->persist($visit);
-        }
-        for ($i = 0; $i < 3; $i++) {
             $visit = new Visit(
-                $shortUrlWithDomain,
+                $shortUrl,
                 Visitor::emptyInstance(),
+                true,
                 Chronos::parse(sprintf('2016-01-0%s', $i + 1)),
             );
             $this->getEntityManager()->persist($visit);
         }
-        $this->getEntityManager()->flush();
 
-        return [$shortCode, $domain];
+        if ($withDomain) {
+            $shortUrlWithDomain = new ShortUrl('', ShortUrlMeta::fromRawData([
+                'customSlug' => $shortCode,
+                'domain' => $domain,
+            ]));
+            $this->getEntityManager()->persist($shortUrlWithDomain);
+
+            for ($i = 0; $i < 3; $i++) {
+                $visit = new Visit(
+                    $shortUrlWithDomain,
+                    Visitor::emptyInstance(),
+                    true,
+                    Chronos::parse(sprintf('2016-01-0%s', $i + 1)),
+                );
+                $this->getEntityManager()->persist($visit);
+            }
+            $this->getEntityManager()->flush();
+        }
+
+        return [$shortCode, $domain, $shortUrl];
     }
 }

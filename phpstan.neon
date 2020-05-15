@@ -4,3 +4,4 @@ parameters:
 	ignoreErrors:
 		- '#AbstractQuery::setParameters()#'
 		- '#mustRun()#'
+		- '#AssociationBuilder::setOrderBy#'

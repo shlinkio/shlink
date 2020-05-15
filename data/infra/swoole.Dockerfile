@@ -1,10 +1,10 @@
-FROM php:7.4.2-alpine3.11
+FROM php:7.4.5-alpine3.11
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.18
 ENV APCU_BC_VERSION 1.0.5
 ENV INOTIFY_VERSION 2.0.0
-ENV SWOOLE_VERSION 4.4.15
+ENV SWOOLE_VERSION 4.4.18
 
 RUN apk update
 
@@ -68,15 +68,12 @@ RUN rm /tmp/inotify.tar.gz
 
 # Install swoole and mssql driver
 RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.5.1.1-1_amd64.apk && \
-    wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/mssql-tools_17.5.1.1-1_amd64.apk && \
     apk add --allow-untrusted msodbcsql17_17.5.1.1-1_amd64.apk && \
-    apk add --allow-untrusted mssql-tools_17.5.1.1-1_amd64.apk && \
     apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
     pecl install swoole-${SWOOLE_VERSION} pdo_sqlsrv && \
     docker-php-ext-enable swoole pdo_sqlsrv && \
     apk del .phpize-deps && \
-    rm msodbcsql17_17.5.1.1-1_amd64.apk && \
-    rm mssql-tools_17.5.1.1-1_amd64.apk
+    rm msodbcsql17_17.5.1.1-1_amd64.apk
 
 # Install composer
 RUN php -r "readfile('https://getcomposer.org/installer');" | php

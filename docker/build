@@ -14,10 +14,15 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 # If there is a tag, regardless the branch, build that docker tag and also "stable"
 if [[ ! -z $TRAVIS_TAG ]]; then
+  TAGS="-t shlinkio/shlink:${TRAVIS_TAG#?}"
+  # Push stable tag only if this is not an alpha or beta tag
+  [[ $TRAVIS_TAG != *"alpha"* && $TRAVIS_TAG != *"beta"* ]] && TAGS="${TAGS} -t shlinkio/shlink:stable"
+
   docker buildx build --push \
 		--build-arg SHLINK_VERSION=${TRAVIS_TAG#?} \
 		--platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
-		-t shlinkio/shlink:${TRAVIS_TAG#?} -t shlinkio/shlink:stable .
+    ${TAGS} .
+
 # If build branch is develop, build latest (on master, when there's no tag, do not build anything)
 elif [[ "$TRAVIS_BRANCH" == 'develop' ]]; then
   docker buildx build --push \

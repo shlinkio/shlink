@@ -1,0 +1,17 @@
+{
+    "type": "object",
+    "properties": {
+        "tag": {
+            "type": "string",
+            "description": "The unique tag name"
+        },
+        "shortUrlsCount": {
+            "type": "number",
+            "description": "The amount of short URLs using this tag"
+        },
+        "userAgent": {
+            "type": "number",
+            "description": "The combined amount of visits received by short URLs with this tag"
+        }
+    }
+}

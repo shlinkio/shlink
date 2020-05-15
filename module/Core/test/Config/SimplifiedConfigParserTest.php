@@ -64,6 +64,7 @@ class SimplifiedConfigParserTest extends TestCase
             'mercure_public_hub_url' => 'public_url',
             'mercure_internal_hub_url' => 'internal_url',
             'mercure_jwt_secret' => 'super_secret_value',
+            'anonymize_remote_addr' => false,
         ];
         $expected = [
             'app_options' => [
@@ -92,6 +93,7 @@ class SimplifiedConfigParserTest extends TestCase
                     'https://third-party.io/foo',
                 ],
                 'default_short_codes_length' => 8,
+                'anonymize_remote_addr' => false,
             ],
 
             'delete_short_urls' => [
