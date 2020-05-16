@@ -28,7 +28,7 @@ cache:
 before_install:
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - phpenv config-rm xdebug.ini || return 0
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then sudo ./data/infra/ci/install-docker.sh ; fi
+  - if [[ "${DOCKER_PUBLISH}" == 'true' ]]; then sudo ./data/infra/ci/install-docker.sh ; fi
   - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then sudo ./data/infra/ci/install-ms-odbc.sh ; fi
   - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_ms shlink_db shlink_db_postgres shlink_db_maria ; fi
   - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then yes | pecl install pdo_sqlsrv swoole-4.4.18 ; fi
