@@ -35,7 +35,7 @@ before_script:
 
 script:
   - composer ci
-  - if [[ ! -z "$DOCKERFILE_CHANGED" && "${TRAVIS_PHP_VERSION}" == "7.4" ]]; then docker build -t shlink-docker-image:temp . ; fi
+  - if [[ ! -z "${DOCKERFILE_CHANGED}" && "${TRAVIS_PHP_VERSION}" == "7.4" && "${TRAVIS_PULL_REQUEST}" != 'false' ]]; then docker build -t shlink-docker-image:temp . ; fi
 
 after_success:
   - rm -f build/clover.xml
@@ -47,7 +47,7 @@ after_success:
 # Before deploying, build dist file for current travis tag
 before_deploy:
   - rm -f ocular.phar
-  - if [[ ! -z $TRAVIS_TAG && "${TRAVIS_PHP_VERSION}" == "7.4" ]]; then ./build.sh ${TRAVIS_TAG#?} ; fi
+  - if [[ ! -z ${TRAVIS_TAG} && "${TRAVIS_PHP_VERSION}" == "7.4" ]]; then ./build.sh ${TRAVIS_TAG#?} ; fi
 
 deploy:
   - provider: releases
@@ -62,5 +62,5 @@ deploy:
     script: bash ./docker/build
     on:
       all_branches: true
-      condition: $TRAVIS_PULL_REQUEST == 'false'
+      condition: "${TRAVIS_PULL_REQUEST}" == 'false'
       php: '7.4'
