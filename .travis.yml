@@ -66,6 +66,7 @@ deploy:
     file: "./build/shlink_${TRAVIS_TAG#?}_dist.zip"
     skip_cleanup: true
     on:
-      condition: "${DOCKER_PUBLISH}" == 'false'
+      all_branches: true
+      condition: ${DOCKER_PUBLISH} == 'false'
       tags: true
       php: '7.4'
