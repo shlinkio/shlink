@@ -40,6 +40,7 @@ RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS && \
     docker-php-ext-enable swoole && \
     apk del .phpize-deps
 
+
 # Install shlink
 FROM base as builder
 COPY . .
