@@ -8,11 +8,24 @@ branches:
 
 jobs:
   include:
-    - name: "Docker publish"
+    - name: "Docker publish - linux/arm/v7"
       php: '7.4'
       if: NOT type = pull_request
       env:
         - DOCKER_PUBLISH="true"
+        - PLATFORM="linux/arm/v7"
+    - name: "Docker publish - linux/arm64/v8"
+      php: '7.4'
+      if: NOT type = pull_request
+      env:
+        - DOCKER_PUBLISH="true"
+        - PLATFORM="linux/arm64/v8"
+    - name: "Docker publish - linux/amd64"
+      php: '7.4'
+      if: NOT type = pull_request
+      env:
+        - DOCKER_PUBLISH="true"
+        - PLATFORM="linux/amd64"
     - name: "CI"
       php: '7.4'
       env:
