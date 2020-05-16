@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 BUILDX_VER=v0.4.1
