@@ -263,7 +263,13 @@ Once created just run shlink with the volume:
 docker run --name shlink -p 8080:8080 -v ${PWD}/my/config/dir:/etc/shlink/config/params shlinkio/shlink:stable
 ```
 
-## Multi instance considerations
+## Multi-architecture
+
+Starting on v2.3.0, Shlink's docker image is built for multiple architectures.
+
+The only limitation is that images for architectures other than `amd64` will not have support for Microsoft SQL databases, since there are no official binaries.
+
+## Multi-instance considerations
 
 These are some considerations to take into account when running multiple instances of shlink.
 
