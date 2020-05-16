@@ -10,7 +10,7 @@ jobs:
   include:
     - name: "Docker publish"
       php: '7.4'
-      if: env(TRAVIS_PULL_REQUEST) = 'false'
+      if: NOT type = pull_request
       env:
         - DOCKER_PUBLISH="true"
     - name: "CI"
