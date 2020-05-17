@@ -2,6 +2,8 @@
 
 set -e
 
+# PLATFORMS="linux/arm/v7,linux/arm64/v8,linux/amd64"
+PLATFORMS="linux/amd64"
 BUILDX_VER=v0.4.1
 export DOCKER_CLI_EXPERIMENTAL=enabled
 
@@ -21,12 +23,12 @@ if [[ ! -z $TRAVIS_TAG ]]; then
 
   docker buildx build --push \
     --build-arg SHLINK_VERSION=${TRAVIS_TAG#?} \
-    --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
+    --platform ${PLATFORMS} \
     ${TAGS} .
 
 # If build branch is develop, build latest (on master, when there's no tag, do not build anything)
 elif [[ "$TRAVIS_BRANCH" == 'develop' ]]; then
   docker buildx build --push \
-    --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
+    --platform ${PLATFORMS} \
     -t shlinkio/shlink:latest .
 fi
