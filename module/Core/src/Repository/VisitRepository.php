@@ -12,8 +12,6 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 
-use function array_column;
-
 use const PHP_INT_MAX;
 
 class VisitRepository extends EntityRepository implements VisitRepositoryInterface
