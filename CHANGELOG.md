@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Changed
 
-* *Nothing*
+* [#508](https://github.com/shlinkio/shlink/issues/508) Added mutation checks to database tests.
 
 #### Deprecated
 
