@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Fixed
 
 * [#769](https://github.com/shlinkio/shlink/issues/769) Fixed custom slugs not allowing valid URL characters, like `.`, `_` or `~`.
+* [#781](https://github.com/shlinkio/shlink/issues/781) Fixed memory leak when loading visits for a tag which is used for big amounts of short URLs.
 
 
 ## 2.2.1 - 2020-05-11

@@ -58,7 +58,7 @@
         "symfony/filesystem": "^5.1",
         "symfony/lock": "^5.1",
         "symfony/mercure": "^0.3.0",
-        "symfony/process": "~5.0.9",
+        "symfony/process": "^5.1",
         "symfony/string": "^5.1",
         "symfony/translation-contracts": "^2.1"
     },
@@ -112,8 +112,7 @@
         ],
         "test:ci": [
             "@test:unit:ci",
-            "@test:db",
-            "@test:api:ci"
+            "@test:db"
         ],
         "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
         "test:unit:ci": "@test:unit --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/junit.xml",

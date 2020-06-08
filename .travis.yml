@@ -46,7 +46,7 @@ before_script:
   - export DOCKERFILE_CHANGED=$(git diff ${TRAVIS_COMMIT_RANGE:-origin/master} --name-only | grep Dockerfile)
 
 script:
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then composer ci ; fi
+  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then bin/test/run-api-tests.sh --coverage-php build/coverage-api.cov && composer ci ; fi
   - if [[ ! -z "${DOCKERFILE_CHANGED}" && "${TRAVIS_PHP_VERSION}" == "7.4" && "${DOCKER_PUBLISH}" == "false" ]]; then docker build -t shlink-docker-image:temp . ; fi
   - if [[ "${DOCKER_PUBLISH}" == 'true' ]]; then bash ./docker/build ; fi
 
