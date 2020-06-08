@@ -12,8 +12,6 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 
-use function array_column;
-
 use const PHP_INT_MAX;
 
 class VisitRepository extends EntityRepository implements VisitRepositoryInterface
@@ -142,26 +140,18 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
 
     private function createVisitsByTagQueryBuilder(string $tag, ?DateRange $dateRange = null): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('s.id')
-           ->from(ShortUrl::class, 's')
-           ->join('s.tags', 't')
-           ->where($qb->expr()->eq('t.name', ':tag'))
-           ->setParameter('tag', $tag);
-
-        $shortUrlIds = array_column($qb->getQuery()->getArrayResult(), 'id');
-        $shortUrlIds[] = '-1'; // Add an invalid ID, in case the list is empty
-
         // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later
         // Since they are not strictly provided by the caller, it's reasonably safe
-        $qb2 = $this->getEntityManager()->createQueryBuilder();
-        $qb2->from(Visit::class, 'v')
-            ->where($qb2->expr()->in('v.shortUrl', $shortUrlIds));
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(Visit::class, 'v')
+           ->join('v.shortUrl', 's')
+           ->join('s.tags', 't')
+           ->where($qb->expr()->eq('t.name', '\'' . $tag . '\''));
 
         // Apply date range filtering
-        $this->applyDatesInline($qb2, $dateRange);
+        $this->applyDatesInline($qb, $dateRange);
 
-        return $qb2;
+        return $qb;
     }
 
     private function applyDatesInline(QueryBuilder $qb, ?DateRange $dateRange): void

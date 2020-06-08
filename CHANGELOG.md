@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## 2.2.2 - 2020-06-08
+
+#### Added
+
+* [#709](https://github.com/shlinkio/shlink/issues/709) Added multi-architecture builds for the docker image.
+
+#### Changed
+
+* *Nothing*
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* [#769](https://github.com/shlinkio/shlink/issues/769) Fixed custom slugs not allowing valid URL characters, like `.`, `_` or `~`.
+* [#781](https://github.com/shlinkio/shlink/issues/781) Fixed memory leak when loading visits for a tag which is used for big amounts of short URLs.
+
+
 ## 2.2.1 - 2020-05-11
 
 #### Added
