@@ -17,6 +17,7 @@
         "ext-pdo": "*",
         "akrabat/ip-address-middleware": "^1.0",
         "cakephp/chronos": "^1.2",
+        "cocur/slugify": "^4.0",
         "doctrine/cache": "^1.9",
         "doctrine/dbal": "^2.10",
         "doctrine/migrations": "^2.2",
@@ -53,11 +54,13 @@
         "shlinkio/shlink-event-dispatcher": "^1.4",
         "shlinkio/shlink-installer": "^5.0.0",
         "shlinkio/shlink-ip-geolocation": "^1.4",
-        "symfony/console": "^5.0",
-        "symfony/filesystem": "^5.0",
-        "symfony/lock": "^5.0",
+        "symfony/console": "^5.1",
+        "symfony/filesystem": "^5.1",
+        "symfony/lock": "^5.1",
         "symfony/mercure": "^0.3.0",
-        "symfony/process": "^5.0"
+        "symfony/process": "~5.0.9",
+        "symfony/string": "^5.1",
+        "symfony/translation-contracts": "^2.1"
     },
     "require-dev": {
         "devster/ubench": "^2.0",
