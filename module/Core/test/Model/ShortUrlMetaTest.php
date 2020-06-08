@@ -58,11 +58,14 @@ class ShortUrlMetaTest extends TestCase
         ]];
     }
 
-    /** @test */
-    public function properlyCreatedInstanceReturnsValues(): void
+    /**
+     * @test
+     * @dataProvider provideCustomSlugs
+     */
+    public function properlyCreatedInstanceReturnsValues(string $customSlug, string $expectedSlug): void
     {
         $meta = ShortUrlMeta::fromRawData(
-            ['validSince' => Chronos::parse('2015-01-01')->toAtomString(), 'customSlug' => 'foobar'],
+            ['validSince' => Chronos::parse('2015-01-01')->toAtomString(), 'customSlug' => $customSlug],
         );
 
         $this->assertTrue($meta->hasValidSince());
@@ -72,9 +75,18 @@ class ShortUrlMetaTest extends TestCase
         $this->assertNull($meta->getValidUntil());
 
         $this->assertTrue($meta->hasCustomSlug());
-        $this->assertEquals('foobar', $meta->getCustomSlug());
+        $this->assertEquals($expectedSlug, $meta->getCustomSlug());
 
         $this->assertFalse($meta->hasMaxVisits());
         $this->assertNull($meta->getMaxVisits());
+    }
+
+    public function provideCustomSlugs(): iterable
+    {
+        yield ['foobar', 'foobar'];
+        yield ['foo bar', 'foo-bar'];
+        yield ['wp-admin.php', 'wp-admin.php'];
+        yield ['UPPER_lower', 'UPPER_lower'];
+        yield ['more~url_special.chars', 'more~url_special.chars'];
     }
 }

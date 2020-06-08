@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Validation;
 
+use Cocur\Slugify\Slugify;
 use DateTime;
 use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
+use Shlinkio\Shlink\Core\Util\CocurSymfonySluggerBridge;
 
 use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
 
@@ -46,7 +48,10 @@ class ShortUrlMetaInputFilter extends InputFilter
         // FIXME The only way to enforce the NotEmpty validator to be evaluated when the value is provided but it's
         //       empty, is by using the deprecated setContinueIfEmpty
         $customSlug = $this->createInput(self::CUSTOM_SLUG, false)->setContinueIfEmpty(true);
-        $customSlug->getFilterChain()->attach(new Validation\SluggerFilter());
+        $customSlug->getFilterChain()->attach(new Validation\SluggerFilter(new CocurSymfonySluggerBridge(new Slugify([
+            'regexp' => '/[^A-Za-z0-9._~]+/',
+            'lowercase' => false,
+        ]))));
         $customSlug->getValidatorChain()->attach(new Validator\NotEmpty([
             Validator\NotEmpty::STRING,
             Validator\NotEmpty::SPACE,

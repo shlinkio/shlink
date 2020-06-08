@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Fixed
 
-* *Nothing*
+* [#769](https://github.com/shlinkio/shlink/issues/769) Fixed custom slugs not allowing valid URL characters, like `.`, `_` or `~`.
 
 
 ## 2.2.1 - 2020-05-11
