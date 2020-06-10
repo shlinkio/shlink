@@ -29,7 +29,7 @@ jobs:
       # Deploy release only on smallest supported PHP version
       before_deploy:
         - rm -f ocular.phar
-        - if [[ ! -z ${TRAVIS_TAG} && "${TRAVIS_PHP_VERSION}" == "7.4" ]]; then ./build.sh ${TRAVIS_TAG#?} ; fi
+        - ./build.sh ${TRAVIS_TAG#?}
       deploy:
         - provider: releases
           api_key:
