@@ -76,6 +76,7 @@ return [
             Service\ShortUrl\ShortUrlResolver::class,
             Service\VisitsTracker::class,
             Options\AppOptions::class,
+            Options\UrlShortenerOptions::class,
             'Logger_Shlink',
         ],
         Action\PixelAction::class => [
