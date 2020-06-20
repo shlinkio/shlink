@@ -6,9 +6,11 @@ namespace Shlinkio\Shlink\Core\Options;
 
 use Laminas\Stdlib\AbstractOptions;
 
+use const Shlinkio\Shlink\Core\DEFAULT_DELETE_SHORT_URL_THRESHOLD;
+
 class DeleteShortUrlsOptions extends AbstractOptions
 {
-    private int $visitsThreshold = 15;
+    private int $visitsThreshold = DEFAULT_DELETE_SHORT_URL_THRESHOLD;
     private bool $checkVisitsThreshold = true;
 
     public function getVisitsThreshold(): int

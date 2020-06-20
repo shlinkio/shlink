@@ -27,16 +27,19 @@ class RedirectActionTest extends TestCase
     private RedirectAction $action;
     private ObjectProphecy $urlResolver;
     private ObjectProphecy $visitTracker;
+    private Options\UrlShortenerOptions $shortenerOpts;
 
     public function setUp(): void
     {
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
         $this->visitTracker = $this->prophesize(VisitsTrackerInterface::class);
+        $this->shortenerOpts = new Options\UrlShortenerOptions();
 
         $this->action = new RedirectAction(
             $this->urlResolver->reveal(),
             $this->visitTracker->reveal(),
             new Options\AppOptions(['disableTrackParam' => 'foobar']),
+            $this->shortenerOpts,
         );
     }
 
@@ -48,8 +51,9 @@ class RedirectActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $shortUrl = new ShortUrl('http://domain.com/foo/bar?some=thing');
-        $shortCodeToUrl = $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))
-            ->willReturn($shortUrl);
+        $shortCodeToUrl = $this->urlResolver->resolveEnabledShortUrl(
+            new ShortUrlIdentifier($shortCode, ''),
+        )->willReturn($shortUrl);
         $track = $this->visitTracker->track(Argument::cetera())->will(function (): void {
         });
 
@@ -109,5 +113,41 @@ class RedirectActionTest extends TestCase
         $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
 
         $track->shouldNotHaveBeenCalled();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideRedirectConfigs
+     */
+    public function expectedStatusCodeAndCacheIsReturnedBasedOnConfig(
+        int $configuredStatus,
+        int $configuredLifetime,
+        int $expectedStatus,
+        ?string $expectedCacheControl
+    ): void {
+        $this->shortenerOpts->redirectStatusCode = $configuredStatus;
+        $this->shortenerOpts->redirectCacheLifetime = $configuredLifetime;
+
+        $shortUrl = new ShortUrl('http://domain.com/foo/bar');
+        $shortCode = $shortUrl->getShortCode();
+        $this->urlResolver->resolveEnabledShortUrl(Argument::cetera())->willReturn($shortUrl);
+
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
+        $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
+
+        $this->assertInstanceOf(Response\RedirectResponse::class, $response);
+        $this->assertEquals($expectedStatus, $response->getStatusCode());
+        $this->assertEquals($response->hasHeader('Cache-Control'), $expectedCacheControl !== null);
+        $this->assertEquals($response->getHeaderLine('Cache-Control'), $expectedCacheControl ?? '');
+    }
+
+    public function provideRedirectConfigs(): iterable
+    {
+        yield 'status 302' => [302, 20, 302, null];
+        yield 'status over 302' => [400, 20, 302, null];
+        yield 'status below 301' => [201, 20, 302, null];
+        yield 'status 301 with valid expiration' => [301, 20, 301, 'private,max-age=20'];
+        yield 'status 301 with zero expiration' => [301, 0, 301, 'private,max-age=30'];
+        yield 'status 301 with negative expiration' => [301, -20, 301, 'private,max-age=30'];
     }
 }

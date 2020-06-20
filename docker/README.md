@@ -174,6 +174,8 @@ This is the complete list of supported env vars:
 * `MERCURE_INTERNAL_HUB_URL`: An internal URL for a mercure hub. Will be used only when publishing updates to mercure, and does not need to be public. If this is not provided but `MERCURE_PUBLIC_HUB_URL` was, the former one will be used to publish updates.
 * `MERCURE_JWT_SECRET`: The secret key that was provided to the mercure hub server, in order to be able to generate valid JWTs for publishing/subscribing to that server.
 * `ANONYMIZE_REMOTE_ADDR`: Tells if IP addresses from visitors should be obfuscated before storing them in the database. Default value is `true`. **Careful!** Setting this to `false` will make your Shlink instance no longer be in compliance with the GDPR and other similar data protection regulations. 
+* `REDIRECT_STATUS_CODE`: Either **301** or **302**. Used to determine if redirects from short to long URLs should be used with a 301 or 302 status. Defaults to 302.
+* `REDIRECT_CACHE_LIFETIME`: Allows to set the amount of seconds that redirects should be cached when redirect status is 301. Default values is 30. 
 
 An example using all env vars could look like this:
 
@@ -206,6 +208,8 @@ docker run \
     -e "MERCURE_INTERNAL_HUB_URL=http://my-mercure-hub.prod.svc.cluster.local" \
     -e MERCURE_JWT_SECRET=super_secret_key \
     -e ANONYMIZE_REMOTE_ADDR=false \
+    -e REDIRECT_STATUS_CODE=301 \
+    -e REDIRECT_CACHE_LIFETIME=90 \
     shlinkio/shlink:stable
 ```
 
@@ -251,7 +255,9 @@ The whole configuration should have this format, but it can be split into multip
     "mercure_public_hub_url": "https://example.com",
     "mercure_internal_hub_url": "http://my-mercure-hub.prod.svc.cluster.local",
     "mercure_jwt_secret": "super_secret_key",
-    "anonymize_remote_addr": false
+    "anonymize_remote_addr": false,
+    "redirect_status_code": 301,
+    "redirect_cache_lifetime": 90
 }
 ```
 
