@@ -2,20 +2,11 @@
 
 declare(strict_types=1);
 
-use Laminas\ServiceManager\Factory\InvokableFactory;
-use Mezzio\Swoole\HotCodeReload\FileWatcher\InotifyFileWatcher;
-
 return [
 
     'mezzio-swoole' => [
         'hot-code-reload' => [
             'enable' => true,
-        ],
-    ],
-
-    'dependencies' => [
-        'factories' => [
-            InotifyFileWatcher::class => InvokableFactory::class,
         ],
     ],
 
