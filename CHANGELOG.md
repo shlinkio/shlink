@@ -8,7 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Added
 
-* *Nothing*
+* [#746](https://github.com/shlinkio/shlink/issues/746) Allowed to configure the kind of redirect you want to use for your short URLs. You can either set:
+
+    * `302` redirects: Default behavior. Visitors always hit the server.
+    * `301` redirects: Better for SEO. Visitors hit the server the first time and then cache the redirect.
+
+    When selecting 301 redirects, you can also configure the time redirects are cached, to mitigate deviations in stats.
+
+* [#709](https://github.com/shlinkio/shlink/issues/709) Added multi-architecture builds for the docker image.
 
 #### Changed
 
@@ -31,7 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Added
 
-* [#709](https://github.com/shlinkio/shlink/issues/709) Added multi-architecture builds for the docker image.
+* *Nothing*
 
 #### Changed
 
