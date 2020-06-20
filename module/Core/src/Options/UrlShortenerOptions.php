@@ -8,6 +8,7 @@ use Laminas\Stdlib\AbstractOptions;
 
 use function Functional\contains;
 
+use const Shlinkio\Shlink\Core\DEFAULT_REDIRECT_CACHE_LIFETIME;
 use const Shlinkio\Shlink\Core\DEFAULT_REDIRECT_STATUS_CODE;
 
 class UrlShortenerOptions extends AbstractOptions
@@ -16,7 +17,7 @@ class UrlShortenerOptions extends AbstractOptions
 
     private bool $validateUrl = true;
     private int $redirectStatusCode = DEFAULT_REDIRECT_STATUS_CODE;
-    private int $redirectCacheLifetime = 30;
+    private int $redirectCacheLifetime = DEFAULT_REDIRECT_CACHE_LIFETIME;
 
     public function isUrlValidationEnabled(): bool
     {
@@ -40,7 +41,7 @@ class UrlShortenerOptions extends AbstractOptions
 
     private function normalizeRedirectStatusCode(int $statusCode): int
     {
-        return contains([301, 302], $statusCode) ? $statusCode : 302;
+        return contains([301, 302], $statusCode) ? $statusCode : DEFAULT_REDIRECT_STATUS_CODE;
     }
 
     public function redirectCacheLifetime(): int
@@ -50,6 +51,8 @@ class UrlShortenerOptions extends AbstractOptions
 
     protected function setRedirectCacheLifetime(int $redirectCacheLifetime): void
     {
-        $this->redirectCacheLifetime = $redirectCacheLifetime;
+        $this->redirectCacheLifetime = $redirectCacheLifetime > 0
+            ? $redirectCacheLifetime
+            : DEFAULT_REDIRECT_CACHE_LIFETIME;
     }
 }

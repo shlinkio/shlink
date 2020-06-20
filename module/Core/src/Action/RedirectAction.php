@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
+
 use function sprintf;
 
 class RedirectAction extends AbstractTrackingAction implements StatusCodeInterface
