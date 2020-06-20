@@ -65,6 +65,8 @@ class SimplifiedConfigParserTest extends TestCase
             'mercure_internal_hub_url' => 'internal_url',
             'mercure_jwt_secret' => 'super_secret_value',
             'anonymize_remote_addr' => false,
+            'redirect_status_code' => 301,
+            'redirect_cache_lifetime' => 90,
         ];
         $expected = [
             'app_options' => [
@@ -94,6 +96,8 @@ class SimplifiedConfigParserTest extends TestCase
                 ],
                 'default_short_codes_length' => 8,
                 'anonymize_remote_addr' => false,
+                'redirect_status_code' => 301,
+                'redirect_cache_lifetime' => 90,
             ],
 
             'delete_short_urls' => [

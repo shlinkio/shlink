@@ -11,6 +11,7 @@ use PUGX\Shortid\Factory as ShortIdFactory;
 
 use function sprintf;
 
+const DEFAULT_DELETE_SHORT_URL_THRESHOLD = 15;
 const DEFAULT_SHORT_CODES_LENGTH = 5;
 const MIN_SHORT_CODES_LENGTH = 4;
 const DEFAULT_REDIRECT_STATUS_CODE = StatusCodeInterface::STATUS_FOUND;
