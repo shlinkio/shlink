@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 return [
-    'name' => 'ShlinkMigrations',
+
+//    'name' => 'ShlinkMigrations',
     'migrations_paths' => [
         'ShlinkMigrations' => 'data/migrations',
     ],
@@ -11,4 +12,5 @@ return [
         'table_name' => 'migrations',
     ],
     'custom_template' => 'data/migrations_template.txt',
+
 ];
