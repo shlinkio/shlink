@@ -20,7 +20,7 @@
         "cocur/slugify": "^4.0",
         "doctrine/cache": "^1.9",
         "doctrine/dbal": "^2.10",
-        "doctrine/migrations": "^2.2",
+        "doctrine/migrations": "^3.0.1",
         "doctrine/orm": "^2.7",
         "endroid/qr-code": "^3.6",
         "geoip2/geoip2": "^2.9",
