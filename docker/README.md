@@ -291,6 +291,6 @@ Versioning on this docker image works as follows:
 
 * `X.X.X`:  when providing a specific version number, the image version will match the shlink version it contains. For example, installing `shlinkio/shlink:1.15.0`, you will get an image containing shlink v1.15.0.
 * `stable`: always holds the latest stable tag. For example, if latest shlink version is 2.0.0, installing `shlinkio/shlink:stable`, you will get an image containing shlink v2.0.0
-* `latest`: always holds the latest contents in master, and it's considered unstable and not suitable for production.
+* `latest`: always holds the latest contents, and it's considered unstable and not suitable for production.
 
 > **Important**: The docker image was introduced with shlink v1.15.0, so there are no official images previous to that versions.

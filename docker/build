@@ -27,7 +27,7 @@ if [[ ! -z $TRAVIS_TAG ]]; then
     --platform ${PLATFORMS} \
     ${TAGS} .
 
-# If build branch is develop, build latest (on master, when there's no tag, do not build anything)
+# If build branch is develop, build latest (on main branch, when there's no tag, do not build anything)
 elif [[ "$TRAVIS_BRANCH" == 'develop' ]]; then
   docker buildx build --push \
     --platform ${PLATFORMS} \
