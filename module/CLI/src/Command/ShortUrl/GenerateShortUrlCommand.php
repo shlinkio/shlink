@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Laminas\Diactoros\Uri;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
@@ -128,19 +127,15 @@ class GenerateShortUrlCommand extends Command
         $shortCodeLength = $input->getOption('shortCodeLength') ?? $this->defaultShortCodeLength;
 
         try {
-            $shortUrl = $this->urlShortener->urlToShortCode(
-                new Uri($longUrl),
-                $tags,
-                ShortUrlMeta::fromRawData([
-                    ShortUrlMetaInputFilter::VALID_SINCE => $input->getOption('validSince'),
-                    ShortUrlMetaInputFilter::VALID_UNTIL => $input->getOption('validUntil'),
-                    ShortUrlMetaInputFilter::CUSTOM_SLUG => $customSlug,
-                    ShortUrlMetaInputFilter::MAX_VISITS => $maxVisits !== null ? (int) $maxVisits : null,
-                    ShortUrlMetaInputFilter::FIND_IF_EXISTS => $input->getOption('findIfExists'),
-                    ShortUrlMetaInputFilter::DOMAIN => $input->getOption('domain'),
-                    ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
-                ]),
-            );
+            $shortUrl = $this->urlShortener->urlToShortCode($longUrl, $tags, ShortUrlMeta::fromRawData([
+                ShortUrlMetaInputFilter::VALID_SINCE => $input->getOption('validSince'),
+                ShortUrlMetaInputFilter::VALID_UNTIL => $input->getOption('validUntil'),
+                ShortUrlMetaInputFilter::CUSTOM_SLUG => $customSlug,
+                ShortUrlMetaInputFilter::MAX_VISITS => $maxVisits !== null ? (int) $maxVisits : null,
+                ShortUrlMetaInputFilter::FIND_IF_EXISTS => $input->getOption('findIfExists'),
+                ShortUrlMetaInputFilter::DOMAIN => $input->getOption('domain'),
+                ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
+            ]));
 
             $io->writeln([
                 sprintf('Processed long URL: <info>%s</info>', $longUrl),

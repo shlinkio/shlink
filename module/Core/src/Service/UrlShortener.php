@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
@@ -42,10 +41,8 @@ class UrlShortener implements UrlShortenerInterface
      * @throws InvalidUrlException
      * @throws Throwable
      */
-    public function urlToShortCode(UriInterface $url, array $tags, ShortUrlMeta $meta): ShortUrl
+    public function urlToShortCode(string $url, array $tags, ShortUrlMeta $meta): ShortUrl
     {
-        $url = (string) $url;
-
         // First, check if a short URL exists for all provided params
         $existingShortUrl = $this->findExistingShortUrlIfExists($url, $tags, $meta);
         if ($existingShortUrl !== null) {

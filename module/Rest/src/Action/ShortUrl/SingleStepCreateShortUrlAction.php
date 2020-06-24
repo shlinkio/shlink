@@ -46,6 +46,6 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
             ]);
         }
 
-        return new CreateShortUrlData(new Uri($query['longUrl']));
+        return new CreateShortUrlData($query['longUrl']);
     }
 }
