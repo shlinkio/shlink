@@ -8,7 +8,6 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GenerateShortUrlCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -88,7 +87,7 @@ class GenerateShortUrlCommandTest extends TestCase
     {
         $shortUrl = new ShortUrl('');
         $urlToShortCode = $this->urlShortener->urlToShortCode(
-            Argument::type(UriInterface::class),
+            Argument::type('string'),
             Argument::that(function (array $tags) {
                 Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $tags);
                 return $tags;
