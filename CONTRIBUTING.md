@@ -49,6 +49,7 @@ Once you finish this, you will have the project exposed in ports `8080` through 
 
 * Run `./indocker composer test:api` to run API E2E tests. For these, the MySQL database engine is used.
 * Run `./indocker composer infect:test` ti run both unit and database tests (over sqlite) and then apply mutations to them with [infection](https://infection.github.io/).
+* Run `./indocker composer ci` to run all previous commands together. This command is run during the project's continuous integration.
 
 > Note: Due to some limitations in the tooling used by shlink, the testing databases need to exist beforehand, both for db and api tests (except sqlite).
 >
@@ -58,4 +59,8 @@ Once you finish this, you will have the project exposed in ports `8080` through 
 
 ## Pull request process
 
+In order to provide pull requests to this project, you should always start by creating a new branch, where you will make all desired changes.
 
+The base branch should always be `develop`, and the target branch for the pull request should also be `develop`.
+
+Before your branch can be merged, all the checks described in [Running code checks](#running-code-checks) have to be passing. You can verify that manually by running `./indocker composer ci`, or wait for the build to be run automatically after the pull request is created.
