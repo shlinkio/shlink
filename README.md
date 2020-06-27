@@ -12,6 +12,8 @@ A PHP-based self-hosted URL shortener that can be used to serve shortened URLs u
 
 > This document references Shlink 2.x. If you are using an older version and want to upgrade, follow the [UPGRADE](UPGRADE.md) doc.
 
+> If you are trying to find out how to run the project in development mode or how to provide contributions, read the [CONTRIBUTING](CONTRIBUTING.md) doc.
+
 ## Table of Contents
 
 - [Installation](#installation)
