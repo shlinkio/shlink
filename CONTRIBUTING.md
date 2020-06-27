@@ -31,7 +31,7 @@ Then you will have to follow these steps:
 * Run `./indocker bin/cli db:migrate` to get database migrations up to date.
 * Run `./indocker bin/cli api-key:generate` to get your first API key generated.
 
-Once you finish this, you will have the project exposed in ports `8080` through nginx+php-fpm and `8000` through swoole.
+Once you finish this, you will have the project exposed in ports `8000` through nginx+php-fpm and `8080` through swoole.
 
 > Note: The `indocker` shell script is a helper used to run commands inside the main docker container.
 
