@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     When selecting 301 redirects, you can also configure the time redirects are cached, to mitigate deviations in stats.
 
+* [#734](https://github.com/shlinkio/shlink/issues/734) Added support to redirect to deeplinks and other links with schemas different from `http` and `https`.
 * [#709](https://github.com/shlinkio/shlink/issues/709) Added multi-architecture builds for the docker image.
 
 #### Changed

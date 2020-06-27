@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
-use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -65,7 +64,7 @@ class UrlShortenerTest extends TestCase
     public function urlIsProperlyShortened(): void
     {
         $shortUrl = $this->urlShortener->urlToShortCode(
-            new Uri('http://foobar.com/12345/hello?foo=bar'),
+            'http://foobar.com/12345/hello?foo=bar',
             [],
             ShortUrlMeta::createEmpty(),
         );
@@ -89,7 +88,7 @@ class UrlShortenerTest extends TestCase
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $shortUrl = $this->urlShortener->urlToShortCode(
-            new Uri('http://foobar.com/12345/hello?foo=bar'),
+            'http://foobar.com/12345/hello?foo=bar',
             [],
             ShortUrlMeta::createEmpty(),
         );
@@ -112,7 +111,7 @@ class UrlShortenerTest extends TestCase
 
         $this->expectException(ORMException::class);
         $this->urlShortener->urlToShortCode(
-            new Uri('http://foobar.com/12345/hello?foo=bar'),
+            'http://foobar.com/12345/hello?foo=bar',
             [],
             ShortUrlMeta::createEmpty(),
         );
@@ -131,7 +130,7 @@ class UrlShortenerTest extends TestCase
         $this->expectException(NonUniqueSlugException::class);
 
         $this->urlShortener->urlToShortCode(
-            new Uri('http://foobar.com/12345/hello?foo=bar'),
+            'http://foobar.com/12345/hello?foo=bar',
             [],
             ShortUrlMeta::fromRawData(['customSlug' => 'custom-slug']),
         );
@@ -151,7 +150,7 @@ class UrlShortenerTest extends TestCase
         $findExisting = $repo->findBy(Argument::any())->willReturn([$expected]);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $result = $this->urlShortener->urlToShortCode(new Uri($url), $tags, $meta);
+        $result = $this->urlShortener->urlToShortCode($url, $tags, $meta);
 
         $findExisting->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
@@ -235,7 +234,7 @@ class UrlShortenerTest extends TestCase
         ]);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $result = $this->urlShortener->urlToShortCode(new Uri($url), $tags, $meta);
+        $result = $this->urlShortener->urlToShortCode($url, $tags, $meta);
 
         $this->assertSame($expected, $result);
         $findExisting->shouldHaveBeenCalledOnce();

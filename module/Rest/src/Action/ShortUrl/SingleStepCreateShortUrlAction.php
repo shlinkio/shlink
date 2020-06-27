@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
-use Laminas\Diactoros\Uri;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
@@ -46,6 +45,6 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
             ]);
         }
 
-        return new CreateShortUrlData(new Uri($query['longUrl']));
+        return new CreateShortUrlData($query['longUrl']);
     }
 }
