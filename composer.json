@@ -24,7 +24,7 @@
         "doctrine/orm": "^2.7",
         "endroid/qr-code": "^3.6",
         "geoip2/geoip2": "^2.9",
-        "guzzlehttp/guzzle": "^6.5.1",
+        "guzzlehttp/guzzle": "^7.0",
         "laminas/laminas-config": "^3.3",
         "laminas/laminas-config-aggregator": "^1.1",
         "laminas/laminas-dependency-plugin": "^1.0",
@@ -50,18 +50,17 @@
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.5",
         "ramsey/uuid": "^3.9",
-        "shlinkio/shlink-common": "^3.1.0",
+        "shlinkio/shlink-common": "^3.2.0",
         "shlinkio/shlink-config": "^1.0",
         "shlinkio/shlink-event-dispatcher": "^1.4",
         "shlinkio/shlink-installer": "^5.1.0",
-        "shlinkio/shlink-ip-geolocation": "^1.4",
+        "shlinkio/shlink-ip-geolocation": "^1.5",
         "symfony/console": "^5.1",
         "symfony/filesystem": "^5.1",
         "symfony/lock": "^5.1",
         "symfony/mercure": "^0.3.0",
         "symfony/process": "^5.1",
-        "symfony/string": "^5.1",
-        "symfony/translation-contracts": "^2.1"
+        "symfony/string": "^5.1"
     },
     "require-dev": {
         "devster/ubench": "^2.0",
@@ -72,7 +71,7 @@
         "phpunit/phpunit": "~9.0.1",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.1.0",
-        "shlinkio/shlink-test-utils": "^1.4",
+        "shlinkio/shlink-test-utils": "^1.5",
         "symfony/var-dumper": "^5.0"
     },
     "autoload": {
