@@ -35,6 +35,28 @@ Once you finish this, you will have the project exposed in ports `8000` through 
 
 > Note: The `indocker` shell script is a helper used to run commands inside the main docker container.
 
+## Project tests
+
+In order to ensure stability and no regressions are introduced while developing new features, this project has three types of tests.
+
+* **Unit tests**: These are the simplest to run, and usually test individual pieces of code, replacing any external dependency by mocks.
+
+    The code coverage of unit tests is pretty high, and only entity repositories are excluded because of their nature.
+
+* **Database tests**: These are integration tests that run against a real database, and only cover entity repositories.
+
+    Its purpose is to verify all the database queries behave as expected and return what's expected.
+
+    The project provides some tooling to run them against any of the supported database engines.
+
+* **API tests**: These are E2E tests that spin up an instance of the app and test it from the outside, by interacting with the REST API.
+
+    These are the best tests to catch regressions, and to verify everything interacts as expected.
+
+* **CLI tests**: *TBD. Once included, its purpose will be the same as API tests, but running through the command line*
+
+Depending on the kind of contribution, maybe not all kinds of tests are needed, but the more you provide, the better.
+
 ## Running code checks
 
 * Run `./indocker composer cs` to check coding styles are fulfilled.
