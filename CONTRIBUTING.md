@@ -37,7 +37,7 @@ Once you finish this, you will have the project exposed in ports `8000` through 
 
 ## Project tests
 
-In order to ensure stability and no regressions are introduced while developing new features, this project has three types of tests.
+In order to ensure stability and no regressions are introduced while developing new features, this project has different types of tests.
 
 * **Unit tests**: These are the simplest to run, and usually test individual pieces of code, replacing any external dependency by mocks.
 
@@ -52,6 +52,8 @@ In order to ensure stability and no regressions are introduced while developing 
 * **API tests**: These are E2E tests that spin up an instance of the app and test it from the outside, by interacting with the REST API.
 
     These are the best tests to catch regressions, and to verify everything interacts as expected.
+
+    They use MySQL as the database engine, and include some fixtures that ensure the same data exists at the beginning of the execution.
 
 * **CLI tests**: *TBD. Once included, its purpose will be the same as API tests, but running through the command line*
 
