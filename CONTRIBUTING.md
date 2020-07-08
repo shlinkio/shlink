@@ -35,6 +35,52 @@ Once you finish this, you will have the project exposed in ports `8000` through 
 
 > Note: The `indocker` shell script is a helper used to run commands inside the main docker container.
 
+## Project structure
+
+This project is structured as a modular application, using [laminas/laminas-config-aggregator](https://github.com/laminas/laminas-config-aggregator) to merge the configuration provided by every module.
+
+All modules are inside the `module` folder, and each one has its own `src`, `test` and `config` folders, with the source code, tests and configuration. They also have their own `ConfigProvider` class, which is consumed by the config aggregator.
+
+This is a simplified version of the project structure:
+
+```
+shlink
+├── bin
+│   ├── cli
+│   ├── install
+│   └── update
+├── config
+│   ├── autoload
+│   ├── params
+│   ├── config.php
+│   └── container.php
+├── data
+│   ├── cache
+│   ├── locks
+│   ├── log
+│   ├── migrations
+│   └── proxies
+├── docs
+│   ├── async-api
+│   └── swagger
+├── module
+│   ├── CLI
+│   ├── Core
+│   └── Rest
+├── public
+├── composer.json
+└── README.md
+```
+
+The purposes of every folder are:
+
+* `bin`: It contains the CLI tools. The `cli` one is the main entry point to run shlink from the command line, while `install` and `update` are helper tools used to install and update shlink when not using the docker image.
+* `config`: Contains application-wide configurations, which are later merged with the ones provided by every module.
+* `data`: Common runtime-generated git-ignored assets, like logs, caches, etc.
+* `docs`: Any project documentation is stored here, like API spec definitions.
+* `module`: Contains a subfolder for every module in the project. Modules contain the source code, tests and configurations for every context in the project.
+* `public`: Few assets (like `favicon.ico` or `robots.txt`) and the web entry point are stored here. This web entry point is not used when serving the app with swoole.
+
 ## Project tests
 
 In order to ensure stability and no regressions are introduced while developing new features, this project has different types of tests.
