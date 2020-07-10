@@ -68,13 +68,13 @@ abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMet
     private function buildUrlToRedirectTo(ShortUrl $shortUrl, array $currentQuery, ?string $disableTrackParam): string
     {
         $uri = Uri::createFromString($shortUrl->getLongUrl());
-        $hardcodedQuery = parse_query($uri->getQuery());
+        $hardcodedQuery = parse_query($uri->getQuery() ?? '');
         if ($disableTrackParam !== null) {
             unset($currentQuery[$disableTrackParam]);
         }
         $mergedQuery = array_merge($hardcodedQuery, $currentQuery);
 
-        return (string) $uri->withQuery(build_query($mergedQuery));
+        return (string) (empty($mergedQuery) ? $uri : $uri->withQuery(build_query($mergedQuery)));
     }
 
     private function shouldTrackRequest(ServerRequestInterface $request, array $query, ?string $disableTrackParam): bool
