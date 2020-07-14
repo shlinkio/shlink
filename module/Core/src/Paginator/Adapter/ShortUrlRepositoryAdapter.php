@@ -10,8 +10,6 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 
 class ShortUrlRepositoryAdapter implements AdapterInterface
 {
-    public const ITEMS_PER_PAGE = 10;
-
     private ShortUrlRepositoryInterface $repository;
     private ShortUrlsParams $params;
 
