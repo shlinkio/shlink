@@ -192,4 +192,22 @@ class ListShortUrlsCommandTest extends TestCase
         yield [['--orderBy' => 'foo,ASC'], ['foo' => 'ASC']];
         yield [['--orderBy' => 'bar,DESC'], ['bar' => 'DESC']];
     }
+
+    /** @test */
+    public function requestingAllElementsWillSetItemsPerPage(): void
+    {
+        $listShortUrls = $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData([
+            'page' => 1,
+            'searchTerm' => null,
+            'tags' => [],
+            'startDate' => null,
+            'endDate' => null,
+            'orderBy' => null,
+            'itemsPerPage' => -1,
+        ]))->willReturn(new Paginator(new ArrayAdapter()));
+
+        $this->commandTester->execute(['--all' => true]);
+
+        $listShortUrls->shouldHaveBeenCalledOnce();
+    }
 }
