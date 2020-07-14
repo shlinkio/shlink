@@ -82,7 +82,13 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
                 'The field from which we want to order by. Pass ASC or DESC separated by a comma',
             )
             ->addOption('showTags', null, InputOption::VALUE_NONE, 'Whether to display the tags or not')
-            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Disables pagination and just displays all existing URLs');
+            ->addOption(
+                'all',
+                'a',
+                InputOption::VALUE_NONE,
+                'Disables pagination and just displays all existing URLs. Caution! If the amount of short URLs is big,'
+                . ' this may end up failing due to memory usage.',
+            );
     }
 
     protected function getStartDateDesc(): string
