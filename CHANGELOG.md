@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#734](https://github.com/shlinkio/shlink/issues/734) Added support to redirect to deeplinks and other links with schemas different from `http` and `https`.
 * [#709](https://github.com/shlinkio/shlink/issues/709) Added multi-architecture builds for the docker image.
 
+* [#707](https://github.com/shlinkio/shlink/issues/707) Added `--all` flag to `short-urls:list` command, which will print all existing URLs in one go, with no pagination.
+
+    It has one limitation, though. Because of the way the CLI tooling works, all rows in the table must be loaded in memory. If the amount of URLs is too high, the command may fail due to too much memory usage.
+
 #### Changed
 
 * [#508](https://github.com/shlinkio/shlink/issues/508) Added mutation checks to database tests.
