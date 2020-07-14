@@ -110,7 +110,6 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $orderBy = $this->processOrderBy($input);
 
         $data = [
-            ShortUrlsParamsInputFilter::PAGE => $page,
             ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
             ShortUrlsParamsInputFilter::TAGS => $tags,
             ShortUrlsOrdering::ORDER_BY => $orderBy,
@@ -123,7 +122,8 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         }
 
         do {
-            $result = $this->renderPage($output, $showTags, ShortUrlsParams::fromRawData($data));
+            $data[ShortUrlsParamsInputFilter::PAGE] = $page;
+            $result = $this->renderPage($output, $showTags, ShortUrlsParams::fromRawData($data), $all);
             $page++;
 
             $continue = ! $this->isLastPage($result) && $io->confirm(
@@ -138,7 +138,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         return ExitCodes::EXIT_SUCCESS;
     }
 
-    private function renderPage(OutputInterface $output, bool $showTags, ShortUrlsParams $params): Paginator
+    private function renderPage(OutputInterface $output, bool $showTags, ShortUrlsParams $params, bool $all): Paginator
     {
         $result = $this->shortUrlService->listShortUrls($params);
 
@@ -159,7 +159,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
             $rows[] = array_values(array_intersect_key($shortUrl, array_flip(self::COLUMNS_WHITELIST)));
         }
 
-        ShlinkTable::fromOutput($output)->render($headers, $rows, $this->formatCurrentPageMessage(
+        ShlinkTable::fromOutput($output)->render($headers, $rows, $all ? null : $this->formatCurrentPageMessage(
             $result,
             'Page %s of %s',
         ));
