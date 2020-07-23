@@ -15,6 +15,8 @@ cache:
 
 jobs:
   fast_finish: true
+  allow_failures:
+    - php: 'nightly'
   include:
     - name: "Docker publish"
       if: NOT type = pull_request
@@ -24,8 +26,14 @@ jobs:
       before_script: echo "Before script"
       script: bash ./docker/build
       after_success: echo "After success"
-    - name: "CI"
+    - name: "CI - 8.0"
+      php: 'nightly'
+      env:
+        - COMPOSER_FLAGS='--ignore-platform-reqs'
+    - name: "CI - 7.4"
       php: '7.4'
+      env:
+        - COMPOSER_FLAGS=''
       # Deploy release only on smallest supported PHP version
       before_deploy:
         - rm -f ocular.phar
@@ -49,7 +57,7 @@ before_install:
 
 install:
   - composer self-update
-  - composer install --no-interaction --prefer-dist
+  - composer install --no-interaction --prefer-dist $COMPOSER_FLAGS
 
 before_script:
   - docker-compose exec shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
