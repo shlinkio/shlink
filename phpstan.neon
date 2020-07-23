@@ -2,6 +2,6 @@ parameters:
 	checkMissingIterableValueType: false
 	checkGenericClassInNonGenericObjectType: false
 	ignoreErrors:
-		- '#AbstractQuery::setParameters()#'
-		- '#mustRun()#'
+		- '#AbstractQuery::setParameters\(\)#'
+		- '#mustRun\(\)#'
 		- '#AssociationBuilder::setOrderBy#'
