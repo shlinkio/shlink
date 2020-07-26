@@ -2,7 +2,7 @@
 
 This file will guide you through the process of getting to project up and running, in case you want to provide coding contributions.
 
-You will also see how to ensure the code fulfills the expected code checks, and how to creating a pull request.
+You will also see how to ensure the code fulfills the expected code checks, and how to create a pull request.
 
 ## System dependencies
 
