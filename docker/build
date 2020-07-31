@@ -4,7 +4,7 @@ set -e
 
 PLATFORMS="linux/arm/v7,linux/arm64/v8,linux/amd64"
 # PLATFORMS="linux/amd64"
-DOCKER_IMAGE="shlinkio/shlink"
+DOCKER_IMAGE="shlinkio/lab"
 
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 echo "Building version $GITHUB_REF"
