@@ -6,8 +6,6 @@ PLATFORMS="linux/arm/v7,linux/arm64/v8,linux/amd64"
 # PLATFORMS="linux/amd64"
 DOCKER_IMAGE="shlinkio/lab"
 
-echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-
 # If ref is not develop, then this is a tag. Build that docker tag and also "stable"
 if [[ "$GITHUB_REF" != *"develop"* ]]; then
   TAGS="-t ${DOCKER_IMAGE}:${GITHUB_REF#?}"
