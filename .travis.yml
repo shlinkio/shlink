@@ -18,14 +18,6 @@ jobs:
   allow_failures:
     - php: 'nightly'
   include:
-    - name: "Docker publish"
-      if: NOT type = pull_request
-      # Overwrite all common steps that have to be different
-      before_install: echo "Before install"
-      install: sudo ./data/infra/ci/install-docker.sh
-      before_script: echo "Before script"
-      script: bash ./docker/build
-      after_success: echo "After success"
     - name: "CI - 8.0"
       php: 'nightly'
       env:
@@ -47,7 +39,6 @@ jobs:
           on:
             tags: true
 
-# Common steps for all jobs
 before_install:
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - phpenv config-rm xdebug.ini || return 0
