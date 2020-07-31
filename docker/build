@@ -1,10 +1,9 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 PLATFORMS="linux/arm/v7,linux/arm64/v8,linux/amd64"
-# PLATFORMS="linux/amd64"
-DOCKER_IMAGE="shlinkio/lab"
+DOCKER_IMAGE="shlinkio/shlink"
 
 # If ref is not develop, then this is a tag. Build that docker tag and also "stable"
 if [[ "$GITHUB_REF" != *"develop"* ]]; then
