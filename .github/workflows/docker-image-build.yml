@@ -1,0 +1,22 @@
+name: Build docker image
+
+on:
+  push:
+    branches:
+      - develop
+    tags:
+      - *
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          version: latest
+      - name: Build the image
+        run: bash ./docker/build
