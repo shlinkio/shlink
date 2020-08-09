@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#508](https://github.com/shlinkio/shlink/issues/508) Added mutation checks to database tests.
 * [#790](https://github.com/shlinkio/shlink/issues/790) Updated to doctrine/migrations v3.
 * [#798](https://github.com/shlinkio/shlink/issues/798) Updated to guzzlehttp/guzzle v7.
+* [#822](https://github.com/shlinkio/shlink/issues/822) Updated docker image to use PHP 7.4.9 with Alpine 3.12 and swoole 4.5.2.
 
 #### Deprecated
 
