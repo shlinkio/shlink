@@ -11,6 +11,9 @@ use function explode;
 use function Functional\contains;
 use function Shlinkio\Shlink\Common\env;
 
+use const Shlinkio\Shlink\Core\DEFAULT_DELETE_SHORT_URL_THRESHOLD;
+use const Shlinkio\Shlink\Core\DEFAULT_REDIRECT_CACHE_LIFETIME;
+use const Shlinkio\Shlink\Core\DEFAULT_REDIRECT_STATUS_CODE;
 use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
 use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
 
@@ -104,7 +107,7 @@ return [
 
     'delete_short_urls' => [
         'check_visits_threshold' => true,
-        'visits_threshold' => (int) env('DELETE_SHORT_URL_THRESHOLD', 15),
+        'visits_threshold' => (int) env('DELETE_SHORT_URL_THRESHOLD', DEFAULT_DELETE_SHORT_URL_THRESHOLD),
     ],
 
     'entity_manager' => [
@@ -120,6 +123,8 @@ return [
         'anonymize_remote_addr' => (bool) env('ANONYMIZE_REMOTE_ADDR', true),
         'visits_webhooks' => $helper->getVisitsWebhooks(),
         'default_short_codes_length' => $helper->getDefaultShortCodesLength(),
+        'redirect_status_code' => (int) env('REDIRECT_STATUS_CODE', DEFAULT_REDIRECT_STATUS_CODE),
+        'redirect_cache_lifetime' => (int) env('REDIRECT_CACHE_LIFETIME', DEFAULT_REDIRECT_CACHE_LIFETIME),
     ],
 
     'not_found_redirects' => $helper->getNotFoundRedirectsConfig(),

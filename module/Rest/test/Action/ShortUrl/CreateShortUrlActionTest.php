@@ -7,7 +7,6 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 use Cake\Chronos\Chronos;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
-use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -50,7 +49,7 @@ class CreateShortUrlActionTest extends TestCase
     {
         $shortUrl = new ShortUrl('');
         $shorten = $this->urlShortener->urlToShortCode(
-            Argument::type(Uri::class),
+            Argument::type('string'),
             Argument::type('array'),
             $expectedMeta,
         )->willReturn($shortUrl);

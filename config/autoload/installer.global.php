@@ -37,6 +37,8 @@ return [
             Option\Mercure\MercureJwtSecretConfigOption::class,
             Option\UrlShortener\GeoLiteLicenseKeyConfigOption::class,
             Option\UrlShortener\IpAnonymizationConfigOption::class,
+            Option\UrlShortener\RedirectStatusCodeConfigOption::class,
+            Option\UrlShortener\RedirectCacheLifeTimeConfigOption::class,
         ],
 
         'installation_commands' => [

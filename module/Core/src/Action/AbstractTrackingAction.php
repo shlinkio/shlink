@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Action;
 
 use Fig\Http\Message\RequestMethodInterface;
-use Laminas\Diactoros\Uri;
+use League\Uri\Uri;
 use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -67,14 +67,14 @@ abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMet
 
     private function buildUrlToRedirectTo(ShortUrl $shortUrl, array $currentQuery, ?string $disableTrackParam): string
     {
-        $uri = new Uri($shortUrl->getLongUrl());
-        $hardcodedQuery = parse_query($uri->getQuery());
+        $uri = Uri::createFromString($shortUrl->getLongUrl());
+        $hardcodedQuery = parse_query($uri->getQuery() ?? '');
         if ($disableTrackParam !== null) {
             unset($currentQuery[$disableTrackParam]);
         }
         $mergedQuery = array_merge($hardcodedQuery, $currentQuery);
 
-        return (string) $uri->withQuery(build_query($mergedQuery));
+        return (string) (empty($mergedQuery) ? $uri : $uri->withQuery(build_query($mergedQuery)));
     }
 
     private function shouldTrackRequest(ServerRequestInterface $request, array $query, ?string $disableTrackParam): bool

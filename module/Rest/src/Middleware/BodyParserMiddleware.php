@@ -19,12 +19,6 @@ use function trim;
 
 class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterface
 {
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * to the next middleware component to create the response.
-     *
-     *
-     */
     public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         $method = $request->getMethod();
@@ -51,8 +45,6 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
         return $handler->handle($this->parseFromUrlEncoded($request));
     }
 
-    /**
-     */
     private function getRequestContentType(Request $request): string
     {
         $contentType = $request->getHeaderLine('Content-type');
@@ -60,8 +52,6 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
         return trim(array_shift($contentTypes));
     }
 
-    /**
-     */
     private function parseFromJson(Request $request): Request
     {
         $rawBody = (string) $request->getBody();
@@ -74,6 +64,7 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
     }
 
     /**
+     * @deprecated To be removed on Shlink v3.0.0, supporting only JSON requests.
      */
     private function parseFromUrlEncoded(Request $request): Request
     {

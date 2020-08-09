@@ -6,21 +6,6 @@ branches:
   only:
     - /.*/
 
-jobs:
-  fast_finish: true
-  include:
-    - name: "Docker publish"
-      php: '7.4'
-      if: NOT type = pull_request
-      env:
-        - DOCKER_PUBLISH="true"
-    - name: "CI"
-      php: '7.4'
-      env:
-        - DOCKER_PUBLISH="false"
-  allow_failures:
-    - name: "Docker publish"
-
 services:
   - docker
 
@@ -28,48 +13,55 @@ cache:
   directories:
     - $HOME/.composer/cache/files
 
+jobs:
+  fast_finish: true
+  allow_failures:
+    - php: 'nightly'
+  include:
+    - name: "CI - 8.0"
+      php: 'nightly'
+      env:
+        - COMPOSER_FLAGS='--ignore-platform-reqs'
+    - name: "CI - 7.4"
+      php: '7.4'
+      env:
+        - COMPOSER_FLAGS=''
+      # Deploy release only on smallest supported PHP version
+      before_deploy:
+        - rm -f ocular.phar
+        - ./build.sh ${TRAVIS_TAG#?}
+      deploy:
+        - provider: releases
+          api_key:
+            secure: a9dbZchocqeuOViwUeNH54bQR5Sz7rEYXx5b9WPFtnFn9LGKKUaLbA2U91UQ9QKPrcTpsALubUYbw2CnNmvCwzaY+R8lCD3gkU4ohsEnbpnw3deOeixI74sqBHJAuCH9FSaRDGILoBMtUKx2xlzIymFxkIsgIukkGbdkWHDlRWY3oTUUuw1SQ2Xk9KDsbJQtjIc1+G/O6gHaV4qv/R9W8NPmJExKTNDrAZbC1vIUnxqp4UpVo1hst8qPd1at94CndDYM5rG+7imGbdtxTxzamt819qdTO1OfvtctKawNAm7YXZrrWft6c7gI6j6SI4hxd+ZrrPBqbaRFHkZHjnNssO/yn4SaOHFFzccmu0MzvpPCf0qWZwd3sGHVYer1MnR2mHYqU84QPlW3nrHwJjkrpq3+q0JcBY6GsJs+RskHNtkMTKV05Iz6QUI5YZGwTpuXaRm036SmavjGc4IDlMaYCk/NmbB9BKpthJxLdUpczOHpnjXXHziotWD6cfEnbjU3byfD8HY5WrxSjsNT7SKmXN3hRof7bk985ewQVjGT42O3NbnfnqjQQWr/B7/zFTpLR4f526Bkq12CdCyf5lvrbq+POkLVdJ+uFfR7ds248Ue/jBQy6kM1tWmKF9QiwisFlA84eQ4CW3I93Rp97URv+AQa9zmbD0Ve3Udp+g6nF5I=
+          file: "./build/shlink_${TRAVIS_TAG#?}_dist.zip"
+          skip_cleanup: true
+          on:
+            tags: true
+
 before_install:
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - phpenv config-rm xdebug.ini || return 0
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then sudo ./data/infra/ci/install-ms-odbc.sh ; fi
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_ms shlink_db shlink_db_postgres shlink_db_maria ; fi
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then yes | pecl install pdo_sqlsrv swoole-4.4.18 ; fi
+  - sudo ./data/infra/ci/install-ms-odbc.sh
+  - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_ms shlink_db shlink_db_postgres shlink_db_maria
+  - yes | pecl install pdo_sqlsrv swoole-4.5.2
 
 install:
-  - if [[ "${DOCKER_PUBLISH}" == 'true' ]]; then sudo ./data/infra/ci/install-docker.sh ; fi
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then composer self-update ; fi
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then composer install --no-interaction --prefer-dist ; fi
+  - composer self-update
+  - composer install --no-interaction --prefer-dist $COMPOSER_FLAGS
 
 before_script:
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then docker-compose exec shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;" ; fi
+  - docker-compose exec shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
   - mkdir build
-  - export DOCKERFILE_CHANGED=$(git diff ${TRAVIS_COMMIT_RANGE:-origin/master} --name-only | grep Dockerfile)
+  - export DOCKERFILE_CHANGED=$(git diff ${TRAVIS_COMMIT_RANGE:-origin/main} --name-only | grep Dockerfile)
 
 script:
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then bin/test/run-api-tests.sh --coverage-php build/coverage-api.cov && composer ci ; fi
-  - if [[ ! -z "${DOCKERFILE_CHANGED}" && "${TRAVIS_PHP_VERSION}" == "7.4" && "${DOCKER_PUBLISH}" == "false" ]]; then docker build -t shlink-docker-image:temp . ; fi
-  - if [[ "${DOCKER_PUBLISH}" == 'true' ]]; then bash ./docker/build ; fi
+  - bin/test/run-api-tests.sh --coverage-php build/coverage-api.cov && composer ci
+  - if [[ ! -z "${DOCKERFILE_CHANGED}" && "${TRAVIS_PHP_VERSION}" == "7.4" ]]; then docker build -t shlink-docker-image:temp . ; fi
 
 after_success:
   - rm -f build/clover.xml
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then wget https://phar.phpunit.de/phpcov-7.0.2.phar ; fi
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then phpdbg -qrr phpcov-7.0.2.phar merge build --clover build/clover.xml ; fi
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then wget https://scrutinizer-ci.com/ocular.phar ; fi
-  - if [[ "${DOCKER_PUBLISH}" == 'false' ]]; then php ocular.phar code-coverage:upload --format=php-clover build/clover.xml ; fi
-
-# Before deploying, build dist file for current travis tag
-before_deploy:
-  - rm -f ocular.phar
-  - if [[ ! -z ${TRAVIS_TAG} && "${TRAVIS_PHP_VERSION}" == "7.4" ]]; then ./build.sh ${TRAVIS_TAG#?} ; fi
-
-deploy:
-  - provider: releases
-    api_key:
-      secure: a9dbZchocqeuOViwUeNH54bQR5Sz7rEYXx5b9WPFtnFn9LGKKUaLbA2U91UQ9QKPrcTpsALubUYbw2CnNmvCwzaY+R8lCD3gkU4ohsEnbpnw3deOeixI74sqBHJAuCH9FSaRDGILoBMtUKx2xlzIymFxkIsgIukkGbdkWHDlRWY3oTUUuw1SQ2Xk9KDsbJQtjIc1+G/O6gHaV4qv/R9W8NPmJExKTNDrAZbC1vIUnxqp4UpVo1hst8qPd1at94CndDYM5rG+7imGbdtxTxzamt819qdTO1OfvtctKawNAm7YXZrrWft6c7gI6j6SI4hxd+ZrrPBqbaRFHkZHjnNssO/yn4SaOHFFzccmu0MzvpPCf0qWZwd3sGHVYer1MnR2mHYqU84QPlW3nrHwJjkrpq3+q0JcBY6GsJs+RskHNtkMTKV05Iz6QUI5YZGwTpuXaRm036SmavjGc4IDlMaYCk/NmbB9BKpthJxLdUpczOHpnjXXHziotWD6cfEnbjU3byfD8HY5WrxSjsNT7SKmXN3hRof7bk985ewQVjGT42O3NbnfnqjQQWr/B7/zFTpLR4f526Bkq12CdCyf5lvrbq+POkLVdJ+uFfR7ds248Ue/jBQy6kM1tWmKF9QiwisFlA84eQ4CW3I93Rp97URv+AQa9zmbD0Ve3Udp+g6nF5I=
-    file: "./build/shlink_${TRAVIS_TAG#?}_dist.zip"
-    skip_cleanup: true
-    on:
-      all_branches: true
-      condition: ${DOCKER_PUBLISH} == 'false'
-      tags: true
-      php: '7.4'
+  - wget https://phar.phpunit.de/phpcov-7.0.2.phar
+  - phpdbg -qrr phpcov-7.0.2.phar merge build --clover build/clover.xml
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml

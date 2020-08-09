@@ -37,6 +37,7 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
         try {
             $this->httpClient->request(self::METHOD_GET, $url, [
                 RequestOptions::ALLOW_REDIRECTS => ['max' => self::MAX_REDIRECTS],
+                RequestOptions::IDN_CONVERSION => true,
             ]);
         } catch (GuzzleException $e) {
             throw InvalidUrlException::fromUrl($url, $e);

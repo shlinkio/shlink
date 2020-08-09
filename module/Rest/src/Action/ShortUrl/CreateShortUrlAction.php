@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
-use Laminas\Diactoros\Uri;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
@@ -28,6 +27,6 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
         }
 
         $meta = ShortUrlMeta::fromRawData($postData);
-        return new CreateShortUrlData(new Uri($postData['longUrl']), (array) ($postData['tags'] ?? []), $meta);
+        return new CreateShortUrlData($postData['longUrl'], (array) ($postData['tags'] ?? []), $meta);
     }
 }

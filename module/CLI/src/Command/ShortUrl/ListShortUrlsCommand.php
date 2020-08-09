@@ -11,7 +11,6 @@ use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
-use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Validation\ShortUrlsParamsInputFilter;
@@ -61,7 +60,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
                 'page',
                 'p',
                 InputOption::VALUE_REQUIRED,
-                sprintf('The first page to list (%s items per page)', ShortUrlRepositoryAdapter::ITEMS_PER_PAGE),
+                'The first page to list (10 items per page unless "--all" is provided)',
                 '1',
             )
             ->addOption(
@@ -82,7 +81,14 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
                 InputOption::VALUE_REQUIRED,
                 'The field from which we want to order by. Pass ASC or DESC separated by a comma',
             )
-            ->addOption('showTags', null, InputOption::VALUE_NONE, 'Whether to display the tags or not');
+            ->addOption('showTags', null, InputOption::VALUE_NONE, 'Whether to display the tags or not')
+            ->addOption(
+                'all',
+                'a',
+                InputOption::VALUE_NONE,
+                'Disables pagination and just displays all existing URLs. Caution! If the amount of short URLs is big,'
+                . ' this may end up failing due to memory usage.',
+            );
     }
 
     protected function getStartDateDesc(): string
@@ -104,24 +110,32 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $tags = $input->getOption('tags');
         $tags = ! empty($tags) ? explode(',', $tags) : [];
         $showTags = (bool) $input->getOption('showTags');
+        $all = (bool) $input->getOption('all');
         $startDate = $this->getDateOption($input, $output, 'startDate');
         $endDate = $this->getDateOption($input, $output, 'endDate');
         $orderBy = $this->processOrderBy($input);
 
+        $data = [
+            ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
+            ShortUrlsParamsInputFilter::TAGS => $tags,
+            ShortUrlsOrdering::ORDER_BY => $orderBy,
+            ShortUrlsParamsInputFilter::START_DATE => $startDate !== null ? $startDate->toAtomString() : null,
+            ShortUrlsParamsInputFilter::END_DATE => $endDate !== null ? $endDate->toAtomString() : null,
+        ];
+
+        if ($all) {
+            $data[ShortUrlsParamsInputFilter::ITEMS_PER_PAGE] = -1;
+        }
+
         do {
-            $result = $this->renderPage($output, $showTags, ShortUrlsParams::fromRawData([
-                ShortUrlsParamsInputFilter::PAGE => $page,
-                ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
-                ShortUrlsParamsInputFilter::TAGS => $tags,
-                ShortUrlsOrdering::ORDER_BY => $orderBy,
-                ShortUrlsParamsInputFilter::START_DATE => $startDate !== null ? $startDate->toAtomString() : null,
-                ShortUrlsParamsInputFilter::END_DATE => $endDate !== null ? $endDate->toAtomString() : null,
-            ]));
+            $data[ShortUrlsParamsInputFilter::PAGE] = $page;
+            $result = $this->renderPage($output, $showTags, ShortUrlsParams::fromRawData($data), $all);
             $page++;
 
-            $continue = $this->isLastPage($result)
-                ? false
-                : $io->confirm(sprintf('Continue with page <options=bold>%s</>?', $page), false);
+            $continue = ! $this->isLastPage($result) && $io->confirm(
+                sprintf('Continue with page <options=bold>%s</>?', $page),
+                false,
+            );
         } while ($continue);
 
         $io->newLine();
@@ -130,7 +144,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         return ExitCodes::EXIT_SUCCESS;
     }
 
-    private function renderPage(OutputInterface $output, bool $showTags, ShortUrlsParams $params): Paginator
+    private function renderPage(OutputInterface $output, bool $showTags, ShortUrlsParams $params, bool $all): Paginator
     {
         $result = $this->shortUrlService->listShortUrls($params);
 
@@ -151,7 +165,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
             $rows[] = array_values(array_intersect_key($shortUrl, array_flip(self::COLUMNS_WHITELIST)));
         }
 
-        ShlinkTable::fromOutput($output)->render($headers, $rows, $this->formatCurrentPageMessage(
+        ShlinkTable::fromOutput($output)->render($headers, $rows, $all ? null : $this->formatCurrentPageMessage(
             $result,
             'Page %s of %s',
         ));

@@ -4,11 +4,49 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## 2.3.0 - 2020-08-09
+
+#### Added
+
+* [#746](https://github.com/shlinkio/shlink/issues/746) Allowed to configure the kind of redirect you want to use for your short URLs. You can either set:
+
+    * `302` redirects: Default behavior. Visitors always hit the server.
+    * `301` redirects: Better for SEO. Visitors hit the server the first time and then cache the redirect.
+
+    When selecting 301 redirects, you can also configure the time redirects are cached, to mitigate deviations in stats.
+
+* [#734](https://github.com/shlinkio/shlink/issues/734) Added support to redirect to deeplinks and other links with schemas different from `http` and `https`.
+* [#709](https://github.com/shlinkio/shlink/issues/709) Added multi-architecture builds for the docker image.
+
+* [#707](https://github.com/shlinkio/shlink/issues/707) Added `--all` flag to `short-urls:list` command, which will print all existing URLs in one go, with no pagination.
+
+    It has one limitation, though. Because of the way the CLI tooling works, all rows in the table must be loaded in memory. If the amount of URLs is too high, the command may fail due to too much memory usage.
+
+#### Changed
+
+* [#508](https://github.com/shlinkio/shlink/issues/508) Added mutation checks to database tests.
+* [#790](https://github.com/shlinkio/shlink/issues/790) Updated to doctrine/migrations v3.
+* [#798](https://github.com/shlinkio/shlink/issues/798) Updated to guzzlehttp/guzzle v7.
+* [#822](https://github.com/shlinkio/shlink/issues/822) Updated docker image to use PHP 7.4.9 with Alpine 3.12 and swoole 4.5.2.
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* *Nothing*
+
+
 ## 2.2.2 - 2020-06-08
 
 #### Added
 
-* [#709](https://github.com/shlinkio/shlink/issues/709) Added multi-architecture builds for the docker image.
+* *Nothing*
 
 #### Changed
 

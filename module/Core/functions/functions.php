@@ -6,13 +6,18 @@ namespace Shlinkio\Shlink\Core;
 
 use Cake\Chronos\Chronos;
 use DateTimeInterface;
+use Fig\Http\Message\StatusCodeInterface;
 use PUGX\Shortid\Factory as ShortIdFactory;
 
 use function sprintf;
 
+const DEFAULT_DELETE_SHORT_URL_THRESHOLD = 15;
 const DEFAULT_SHORT_CODES_LENGTH = 5;
 const MIN_SHORT_CODES_LENGTH = 4;
+const DEFAULT_REDIRECT_STATUS_CODE = StatusCodeInterface::STATUS_FOUND;
+const DEFAULT_REDIRECT_CACHE_LIFETIME = 30;
 const LOCAL_LOCK_FACTORY = 'Shlinkio\Shlink\LocalLockFactory';
+const CUSTOM_SLUGS_REGEXP = '/[^A-Za-z0-9._~]+/';
 
 function generateRandomShortCode(int $length): string
 {

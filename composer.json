@@ -20,11 +20,11 @@
         "cocur/slugify": "^4.0",
         "doctrine/cache": "^1.9",
         "doctrine/dbal": "^2.10",
-        "doctrine/migrations": "^2.2",
+        "doctrine/migrations": "^3.0.1",
         "doctrine/orm": "^2.7",
         "endroid/qr-code": "^3.6",
         "geoip2/geoip2": "^2.9",
-        "guzzlehttp/guzzle": "^6.5.1",
+        "guzzlehttp/guzzle": "^7.0",
         "laminas/laminas-config": "^3.3",
         "laminas/laminas-config-aggregator": "^1.1",
         "laminas/laminas-dependency-plugin": "^1.0",
@@ -34,6 +34,7 @@
         "laminas/laminas-servicemanager": "^3.4",
         "laminas/laminas-stdlib": "^3.2",
         "lcobucci/jwt": "^4.0@alpha",
+        "league/uri": "^6.2",
         "lstrojny/functional-php": "^1.9",
         "mezzio/mezzio": "^3.2",
         "mezzio/mezzio-fastroute": "^3.0",
@@ -49,18 +50,17 @@
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.5",
         "ramsey/uuid": "^3.9",
-        "shlinkio/shlink-common": "^3.1.0",
+        "shlinkio/shlink-common": "^3.2.0",
         "shlinkio/shlink-config": "^1.0",
         "shlinkio/shlink-event-dispatcher": "^1.4",
-        "shlinkio/shlink-installer": "^5.0.0",
-        "shlinkio/shlink-ip-geolocation": "^1.4",
+        "shlinkio/shlink-installer": "^5.1.0",
+        "shlinkio/shlink-ip-geolocation": "^1.5",
         "symfony/console": "^5.1",
         "symfony/filesystem": "^5.1",
         "symfony/lock": "^5.1",
         "symfony/mercure": "^0.3.0",
         "symfony/process": "^5.1",
-        "symfony/string": "^5.1",
-        "symfony/translation-contracts": "^2.1"
+        "symfony/string": "^5.1"
     },
     "require-dev": {
         "devster/ubench": "^2.0",
@@ -71,7 +71,7 @@
         "phpunit/phpunit": "~9.0.1",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.1.0",
-        "shlinkio/shlink-test-utils": "^1.4",
+        "shlinkio/shlink-test-utils": "^1.5",
         "symfony/var-dumper": "^5.0"
     },
     "autoload": {
@@ -115,27 +115,31 @@
             "@test:db"
         ],
         "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
-        "test:unit:ci": "@test:unit --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/junit.xml",
+        "test:unit:ci": "@test:unit --coverage-clover=build/clover.xml --coverage-xml=build/coverage-unit/coverage-xml --log-junit=build/coverage-unit/junit.xml",
         "test:db": [
-            "@test:db:sqlite",
+            "@test:db:sqlite:ci",
             "@test:db:mysql",
             "@test:db:maria",
             "@test:db:postgres",
             "@test:db:ms"
         ],
-        "test:db:sqlite": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-db.cov --testdox -c phpunit-db.xml",
+        "test:db:sqlite": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-db.xml",
+        "test:db:sqlite:ci": "@test:db:sqlite --coverage-php build/coverage-db.cov --coverage-xml=build/coverage-db/coverage-xml --log-junit=build/coverage-db/junit.xml",
         "test:db:mysql": "DB_DRIVER=mysql composer test:db:sqlite",
         "test:db:maria": "DB_DRIVER=maria composer test:db:sqlite",
         "test:db:postgres": "DB_DRIVER=postgres composer test:db:sqlite",
         "test:db:ms": "DB_DRIVER=mssql composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
-        "test:api:ci": "@test:api --coverage-php build/coverage-api.cov",
         "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage",
         "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
-        "infect:ci": "@infect --coverage=build --skip-initial-tests",
-        "infect:show": "@infect --show-mutations",
+        "infect:ci:base": "@infect --skip-initial-tests",
+        "infect:ci": [
+            "@infect:ci:base --coverage=build/coverage-unit",
+            "@infect:ci:base --coverage=build/coverage-db --test-framework-options=--configuration=phpunit-db.xml"
+        ],
         "infect:test": [
             "@test:unit:ci",
+            "@test:db:sqlite:ci",
             "@infect:ci"
         ],
         "clean:dev": "rm -f data/database.sqlite && rm -f config/params/generated_config.php"
@@ -158,7 +162,6 @@
         "test:unit:pretty": "<fg=blue;options=bold>Runs unit test suites and generates an HTML code coverage report</>",
         "infect": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>",
         "infect:ci": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing with existing reports and logs</>",
-        "infect:show": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing and shows applied mutators</>",
         "infect:test": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>",
         "clean:dev": "<fg=blue;options=bold>Deletes artifacts which are gitignored and could affect dev env</>"
     },

@@ -9,7 +9,6 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Message\UriInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
@@ -71,8 +70,8 @@ class SingleStepCreateShortUrlActionTest extends TestCase
         ]);
         $findApiKey = $this->apiKeyService->check('abc123')->willReturn(true);
         $generateShortCode = $this->urlShortener->urlToShortCode(
-            Argument::that(function (UriInterface $argument) {
-                Assert::assertEquals('http://foobar.com', (string) $argument);
+            Argument::that(function (string $argument): string {
+                Assert::assertEquals('http://foobar.com', $argument);
                 return $argument;
             }),
             [],
