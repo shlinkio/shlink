@@ -52,7 +52,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         }
 
         $meta = $this->geoLiteDbReader->metadata();
-        if ($this->buildIsTooOld($meta->__get('buildEpoch'))) {
+        if ($this->buildIsTooOld($meta->buildEpoch)) {
             $this->downloadNewDb(true, $mustBeUpdated, $handleProgress);
         }
     }
