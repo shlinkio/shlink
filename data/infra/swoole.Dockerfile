@@ -1,10 +1,10 @@
-FROM php:7.4.5-alpine3.11
+FROM php:7.4.9-alpine3.12
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.18
 ENV APCU_BC_VERSION 1.0.5
 ENV INOTIFY_VERSION 2.0.0
-ENV SWOOLE_VERSION 4.4.18
+ENV SWOOLE_VERSION 4.5.2
 
 RUN apk update
 
