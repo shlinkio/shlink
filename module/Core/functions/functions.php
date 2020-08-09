@@ -17,6 +17,7 @@ const MIN_SHORT_CODES_LENGTH = 4;
 const DEFAULT_REDIRECT_STATUS_CODE = StatusCodeInterface::STATUS_FOUND;
 const DEFAULT_REDIRECT_CACHE_LIFETIME = 30;
 const LOCAL_LOCK_FACTORY = 'Shlinkio\Shlink\LocalLockFactory';
+const CUSTOM_SLUGS_REGEXP = '/[^A-Za-z0-9._~]+/';
 
 function generateRandomShortCode(int $length): string
 {

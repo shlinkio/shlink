@@ -12,6 +12,7 @@ use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
 use Shlinkio\Shlink\Core\Util\CocurSymfonySluggerBridge;
 
+use const Shlinkio\Shlink\Core\CUSTOM_SLUGS_REGEXP;
 use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
 
 class ShortUrlMetaInputFilter extends InputFilter
@@ -49,8 +50,8 @@ class ShortUrlMetaInputFilter extends InputFilter
         //       empty, is by using the deprecated setContinueIfEmpty
         $customSlug = $this->createInput(self::CUSTOM_SLUG, false)->setContinueIfEmpty(true);
         $customSlug->getFilterChain()->attach(new Validation\SluggerFilter(new CocurSymfonySluggerBridge(new Slugify([
-            'regexp' => '/[^A-Za-z0-9._~]+/',
-            'lowercase' => false,
+            'regexp' => CUSTOM_SLUGS_REGEXP,
+            'lowercase' => false, // We want to keep it case sensitive
         ]))));
         $customSlug->getValidatorChain()->attach(new Validator\NotEmpty([
             Validator\NotEmpty::STRING,
