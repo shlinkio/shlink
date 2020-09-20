@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Model;
 
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 
+use function explode;
 use function is_array;
 use function is_string;
 use function key;
@@ -40,15 +41,22 @@ final class ShortUrlsOrdering
             return;
         }
 
+        // FIXME Providing the ordering as array is considered deprecated. To be removed in v3.0.0
         $isArray = is_array($orderBy);
-        if (! $isArray && $orderBy !== null && ! is_string($orderBy)) {
+        if (! $isArray && ! is_string($orderBy)) {
             throw ValidationException::fromArray([
                 'orderBy' => '"Order by" must be an array, string or null',
             ]);
         }
 
-        $this->orderField = $isArray ? key($orderBy) : $orderBy;
-        $this->orderDirection = $isArray ? $orderBy[$this->orderField] : self::DEFAULT_ORDER_DIRECTION;
+        if (! $isArray) {
+            $parts = explode(':', $orderBy);
+            $this->orderField = $parts[0];
+            $this->orderDirection = $parts[1] ?? self::DEFAULT_ORDER_DIRECTION;
+        } else {
+            $this->orderField = key($orderBy);
+            $this->orderDirection = $orderBy[$this->orderField];
+        }
     }
 
     public function orderField(): ?string
