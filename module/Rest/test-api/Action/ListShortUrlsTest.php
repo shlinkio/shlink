@@ -137,7 +137,15 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_DOCS,
             self::SHORT_URL_CUSTOM_DOMAIN,
         ]];
-        yield [['orderBy' => ['shortCode' => 'DESC']], [
+        yield [['orderBy' => ['shortCode' => 'DESC']], [ // Deprecated
+            self::SHORT_URL_DOCS,
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_SHLINK,
+        ]];
+        yield [['orderBy' => 'shortCode-DESC'], [
             self::SHORT_URL_DOCS,
             self::SHORT_URL_CUSTOM_DOMAIN,
             self::SHORT_URL_META,
