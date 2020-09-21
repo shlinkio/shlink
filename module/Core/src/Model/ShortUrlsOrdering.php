@@ -50,7 +50,7 @@ final class ShortUrlsOrdering
         }
 
         if (! $isArray) {
-            $parts = explode(':', $orderBy);
+            $parts = explode('-', $orderBy);
             $this->orderField = $parts[0];
             $this->orderDirection = $parts[1] ?? self::DEFAULT_ORDER_DIRECTION;
         } else {
