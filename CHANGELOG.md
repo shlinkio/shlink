@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* [#836](https://github.com/shlinkio/shlink/issues/836) Added support for the `<field>-<dir>` notation while determining how to order the short URLs list, as in `?orderBy=shortCode-DESC`. This effectively deprecates the array notation (`?orderBy[shortCode]=DESC`), that will be removed in Shlink 3.0.0
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* *Nothing*
+
+#### Fixed
+
+* *Nothing*
+
 ## 2.3.0 - 2020-08-09
 
 #### Added
