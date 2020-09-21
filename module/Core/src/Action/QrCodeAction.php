@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Action;
 
 use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\SvgWriter;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
@@ -50,6 +51,11 @@ class QrCodeAction implements MiddlewareInterface
         $qrCode = new QrCode($shortUrl->toString($this->domainConfig));
         $qrCode->setSize($this->getSizeParam($request));
         $qrCode->setMargin(0);
+
+        $format = $request->getQueryParams()['format'] ?? 'png';
+        if ($format === 'svg') {
+            $qrCode->setWriter(new SvgWriter());
+        }
 
         return new QrCodeResponse($qrCode);
     }

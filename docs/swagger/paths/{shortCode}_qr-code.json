@@ -27,6 +27,19 @@
                     "maximum": 1000,
                     "default": 300
                 }
+            },
+            {
+                "name": "format",
+                "in": "query",
+                "description": "The format for the QR code image, being valid values png and svg. Not providing the param or providing any other value will fall back to png.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "png",
+                        "svg"
+                    ]
+                }
             }
         ],
         "responses": {
@@ -34,6 +47,12 @@
                 "description": "QR code in PNG format",
                 "content": {
                     "image/png": {
+                        "schema": {
+                            "type": "string",
+                            "format": "binary"
+                        }
+                    },
+                    "image/svg+xml": {
                         "schema": {
                             "type": "string",
                             "format": "binary"
