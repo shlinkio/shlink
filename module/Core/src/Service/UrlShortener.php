@@ -11,11 +11,10 @@ use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
+use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 use Throwable;
-
-use function array_reduce;
 
 class UrlShortener implements UrlShortenerInterface
 {
@@ -77,24 +76,9 @@ class UrlShortener implements UrlShortenerInterface
             return null;
         }
 
-        $criteria = ['longUrl' => $url];
-        if ($meta->hasCustomSlug()) {
-            $criteria['shortCode'] = $meta->getCustomSlug();
-        }
-        /** @var ShortUrl[] $shortUrls */
-        $shortUrls = $this->em->getRepository(ShortUrl::class)->findBy($criteria);
-        if (empty($shortUrls)) {
-            return null;
-        }
-
-        // Iterate short URLs until one that matches is found, or return null otherwise
-        return array_reduce($shortUrls, function (?ShortUrl $found, ShortUrl $shortUrl) use ($tags, $meta) {
-            if ($found !== null) {
-                return $found;
-            }
-
-            return $shortUrl->matchesCriteria($meta, $tags) ? $shortUrl : null;
-        });
+        /** @var ShortUrlRepositoryInterface $repo */
+        $repo = $this->em->getRepository(ShortUrl::class);
+        return $repo->findOneMatching($url, $tags, $meta);
     }
 
     private function verifyShortCodeUniqueness(ShortUrlMeta $meta, ShortUrl $shortUrlToBeCreated): void

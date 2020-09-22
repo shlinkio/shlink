@@ -147,7 +147,7 @@ class UrlShortenerTest extends TestCase
         ShortUrl $expected
     ): void {
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $findExisting = $repo->findBy(Argument::any())->willReturn([$expected]);
+        $findExisting = $repo->findOneMatching(Argument::cetera())->willReturn($expected);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $result = $this->urlShortener->urlToShortCode($url, $tags, $meta);
@@ -210,34 +210,5 @@ class UrlShortenerTest extends TestCase
                 'maxVisits' => 4,
             ])))->setTags(new ArrayCollection([new Tag('foo'), new Tag('bar'), new Tag('baz')])),
         ];
-    }
-
-    /** @test */
-    public function properExistingShortUrlIsReturnedWhenMultipleMatch(): void
-    {
-        $url = 'http://foo.com';
-        $tags = ['baz', 'foo', 'bar'];
-        $meta = ShortUrlMeta::fromRawData([
-            'findIfExists' => true,
-            'validUntil' => Chronos::parse('2017-01-01'),
-            'maxVisits' => 4,
-        ]);
-        $tagsCollection = new ArrayCollection(array_map(fn (string $tag) => new Tag($tag), $tags));
-        $expected = (new ShortUrl($url, $meta))->setTags($tagsCollection);
-
-        $repo = $this->prophesize(ShortUrlRepository::class);
-        $findExisting = $repo->findBy(Argument::any())->willReturn([
-            new ShortUrl($url),
-            new ShortUrl($url, $meta),
-            $expected,
-            (new ShortUrl($url))->setTags($tagsCollection),
-        ]);
-        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
-
-        $result = $this->urlShortener->urlToShortCode($url, $tags, $meta);
-
-        $this->assertSame($expected, $result);
-        $findExisting->shouldHaveBeenCalledOnce();
-        $getRepo->shouldHaveBeenCalledOnce();
     }
 }

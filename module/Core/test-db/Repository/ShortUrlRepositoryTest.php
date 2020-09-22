@@ -210,4 +210,34 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->assertNull($this->repo->findOne('another-slug', 'example.com'));
         $this->assertNotNull($this->repo->findOne('another-slug', 'doma.in'));
     }
+
+//    public function findOneMatchingAppliesProperConditions(): void
+//    {
+//        $matches = $this->provideCriteriaToMatch();
+//    }
+//
+//    private function provideCriteriaToMatch(): iterable
+//    {
+//        $start = Chronos::parse('2020-03-05 20:18:30');
+//        $end = Chronos::parse('2021-03-05 20:18:30');
+//
+//        yield [new ShortUrl('foo'), ShortUrlMeta::fromRawData(['validSince' => $start]), false];
+//        yield [new ShortUrl('foo'), ShortUrlMeta::fromRawData(['validUntil' => $end]), false];
+//        yield [new ShortUrl('foo'), ShortUrlMeta::fromRawData(['validSince' => $start, 'validUntil' => $end]), false];
+//        yield [
+//            new ShortUrl('foo', ShortUrlMeta::fromRawData(['validSince' => $start])),
+//            ShortUrlMeta::fromRawData(['validSince' => $start]),
+//            true,
+//        ];
+//        yield [
+//            new ShortUrl('foo', ShortUrlMeta::fromRawData(['validUntil' => $end])),
+//            ShortUrlMeta::fromRawData(['validUntil' => $end]),
+//            true,
+//        ];
+//        yield [
+//            new ShortUrl('foo', ShortUrlMeta::fromRawData(['validUntil' => $end, 'validSince' => $start])),
+//            ShortUrlMeta::fromRawData(['validUntil' => $end, 'validSince' => $start]),
+//            true,
+//        ];
+//    }
 }
