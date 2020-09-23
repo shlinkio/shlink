@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Entity;
 
-use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;

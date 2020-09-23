@@ -241,7 +241,7 @@ DQL;
 
         foreach ($tags as $index => $tag) {
             $alias = 't_' . $index;
-            $qb->join('s.tags', $alias, Join::WITH, $qb->expr()->eq($alias . '.name', ':tag' . $index))
+            $qb->join('s.tags', $alias, Join::WITH, $alias . '.name = :tag' . $index)
                ->setParameter('tag' . $index, $tag);
         }
 

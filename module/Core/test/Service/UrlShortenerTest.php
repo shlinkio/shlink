@@ -21,8 +21,6 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 
-use function array_map;
-
 class UrlShortenerTest extends TestCase
 {
     private UrlShortener $urlShortener;
