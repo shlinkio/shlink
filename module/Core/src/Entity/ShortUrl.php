@@ -15,10 +15,7 @@ use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 
-use function array_reduce;
 use function count;
-use function Functional\contains;
-use function Functional\invoke;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
 
 class ShortUrl extends AbstractEntity
@@ -194,28 +191,5 @@ class ShortUrl extends AbstractEntity
         }
 
         return $this->domain->getAuthority();
-    }
-
-    public function matchesCriteria(ShortUrlMeta $meta, array $tags): bool
-    {
-        if ($meta->hasMaxVisits() && $meta->getMaxVisits() !== $this->maxVisits) {
-            return false;
-        }
-        if ($meta->hasDomain() && $meta->getDomain() !== $this->resolveDomain()) {
-            return false;
-        }
-        if ($meta->hasValidSince() && ($this->validSince === null || ! $meta->getValidSince()->eq($this->validSince))) {
-            return false;
-        }
-        if ($meta->hasValidUntil() && ($this->validUntil === null || ! $meta->getValidUntil()->eq($this->validUntil))) {
-            return false;
-        }
-
-        $shortUrlTags = invoke($this->getTags(), '__toString');
-        return count($shortUrlTags) === count($tags) && array_reduce(
-            $tags,
-            fn (bool $hasAllTags, string $tag) => $hasAllTags && contains($shortUrlTags, $tag),
-            true,
-        );
     }
 }

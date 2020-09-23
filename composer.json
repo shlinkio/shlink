@@ -112,7 +112,8 @@
         ],
         "test:ci": [
             "@test:unit:ci",
-            "@test:db"
+            "@test:db",
+            "@test:api:ci"
         ],
         "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
         "test:unit:ci": "@test:unit --coverage-clover=build/clover.xml --coverage-xml=build/coverage-unit/coverage-xml --log-junit=build/coverage-unit/junit.xml",
@@ -130,6 +131,7 @@
         "test:db:postgres": "DB_DRIVER=postgres composer test:db:sqlite",
         "test:db:ms": "DB_DRIVER=mssql composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
+        "test:api:ci": "bin/test/run-api-tests.sh --coverage-php build/coverage-api.cov",
         "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage",
         "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
         "infect:ci:base": "@infect --skip-initial-tests",

@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 
 use function array_column;
 use function array_key_exists;
+use function count;
 use function Functional\contains;
 
 class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryInterface
@@ -195,5 +198,60 @@ DQL;
         }
 
         return $qb;
+    }
+
+    public function findOneMatching(string $url, array $tags, ShortUrlMeta $meta): ?ShortUrl
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('s')
+           ->from(ShortUrl::class, 's')
+           ->where($qb->expr()->eq('s.longUrl', ':longUrl'))
+           ->setParameter('longUrl', $url)
+           ->setMaxResults(1)
+           ->orderBy('s.id');
+
+        if ($meta->hasCustomSlug()) {
+            $qb->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
+               ->setParameter('slug', $meta->getCustomSlug());
+        }
+        if ($meta->hasMaxVisits()) {
+            $qb->andWhere($qb->expr()->eq('s.maxVisits', ':maxVisits'))
+               ->setParameter('maxVisits', $meta->getMaxVisits());
+        }
+        if ($meta->hasValidSince()) {
+            $qb->andWhere($qb->expr()->eq('s.validSince', ':validSince'))
+               ->setParameter('validSince', $meta->getValidSince());
+        }
+        if ($meta->hasValidUntil()) {
+            $qb->andWhere($qb->expr()->eq('s.validUntil', ':validUntil'))
+                ->setParameter('validUntil', $meta->getValidUntil());
+        }
+
+        if ($meta->hasDomain()) {
+            $qb->join('s.domain', 'd')
+               ->andWhere($qb->expr()->eq('d.authority', ':domain'))
+               ->setParameter('domain', $meta->getDomain());
+        }
+
+        $tagsAmount = count($tags);
+        if ($tagsAmount === 0) {
+            return $qb->getQuery()->getOneOrNullResult();
+        }
+
+        foreach ($tags as $index => $tag) {
+            $alias = 't_' . $index;
+            $qb->join('s.tags', $alias, Join::WITH, $alias . '.name = :tag' . $index)
+               ->setParameter('tag' . $index, $tag);
+        }
+
+        // If tags where provided, we need an extra join to see the amount of tags that every short URL has, so that we
+        // can discard those that also have more tags, making sure only those fully matching are included.
+        $qb->join('s.tags', 't')
+           ->groupBy('s')
+           ->having($qb->expr()->eq('COUNT(t.id)', ':tagsAmount'))
+           ->setParameter('tagsAmount', $tagsAmount);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }
