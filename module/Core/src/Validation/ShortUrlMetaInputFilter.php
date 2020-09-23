@@ -27,6 +27,7 @@ class ShortUrlMetaInputFilter extends InputFilter
     public const DOMAIN = 'domain';
     public const SHORT_CODE_LENGTH = 'shortCodeLength';
     public const LONG_URL = 'longUrl';
+    public const VALIDATE_URL = 'validateUrl';
 
     public function __construct(array $data)
     {
@@ -63,6 +64,8 @@ class ShortUrlMetaInputFilter extends InputFilter
         $this->add($this->createPositiveNumberInput(self::SHORT_CODE_LENGTH, MIN_SHORT_CODES_LENGTH));
 
         $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
+
+        $this->add($this->createInput(self::VALIDATE_URL, false));
 
         $domain = $this->createInput(self::DOMAIN, false);
         $domain->getValidatorChain()->attach(new Validation\HostAndPortValidator());

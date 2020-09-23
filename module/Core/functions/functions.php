@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core;
 use Cake\Chronos\Chronos;
 use DateTimeInterface;
 use Fig\Http\Message\StatusCodeInterface;
+use Laminas\InputFilter\InputFilter;
 use PUGX\Shortid\Factory as ShortIdFactory;
 
 use function sprintf;
@@ -61,4 +62,16 @@ function determineTableName(string $tableName, array $emConfig = []): string
     }
 
     return sprintf('%s.%s', $schema, $tableName);
+}
+
+function getOptionalIntFromInputFilter(InputFilter $inputFilter, string $fieldName): ?int
+{
+    $value = $inputFilter->getValue($fieldName);
+    return $value !== null ? (int) $value : null;
+}
+
+function getOptionalBoolFromInputFilter(InputFilter $inputFilter, string $fieldName): ?bool
+{
+    $value = $inputFilter->getValue($fieldName);
+    return $value !== null ? (bool) $value : null;
 }

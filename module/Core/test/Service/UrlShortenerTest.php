@@ -30,7 +30,7 @@ class UrlShortenerTest extends TestCase
     public function setUp(): void
     {
         $this->urlValidator = $this->prophesize(UrlValidatorInterface::class);
-        $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar')->will(
+        $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar', null)->will(
             function (): void {
             },
         );

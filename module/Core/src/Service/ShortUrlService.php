@@ -71,7 +71,7 @@ class ShortUrlService implements ShortUrlServiceInterface
     public function updateMetadataByShortCode(ShortUrlIdentifier $identifier, ShortUrlEdit $shortUrlEdit): ShortUrl
     {
         if ($shortUrlEdit->hasLongUrl()) {
-            $this->urlValidator->validateUrl($shortUrlEdit->longUrl());
+            $this->urlValidator->validateUrl($shortUrlEdit->longUrl(), $shortUrlEdit->doValidateUrl());
         }
 
         $shortUrl = $this->urlResolver->resolveShortUrl($identifier);
