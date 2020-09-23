@@ -208,7 +208,8 @@ DQL;
            ->from(ShortUrl::class, 's')
            ->where($qb->expr()->eq('s.longUrl', ':longUrl'))
            ->setParameter('longUrl', $url)
-           ->setMaxResults(1);
+           ->setMaxResults(1)
+           ->orderBy('s.id');
 
         if ($meta->hasCustomSlug()) {
             $qb->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
@@ -246,14 +247,11 @@ DQL;
 
         // If tags where provided, we need an extra join to see the amount of tags that every short URL has, so that we
         // can discard those that also have more tags, making sure only those fully matching are included.
-        $qb->addSelect('COUNT(t.id) as tagsAmount')
-           ->join('s.tags', 't')
+        $qb->join('s.tags', 't')
            ->groupBy('s')
-           ->having($qb->expr()->eq('tagsAmount', ':tagsAmount'))
+           ->having($qb->expr()->eq('COUNT(t.id)', ':tagsAmount'))
            ->setParameter('tagsAmount', $tagsAmount);
 
-        $result = $qb->getQuery()->getOneOrNullResult() ?? [];
-
-        return $result[0] ?? null;
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }
