@@ -13,6 +13,7 @@ use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -104,5 +105,35 @@ class GenerateShortUrlCommandTest extends TestCase
         $this->assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
         $this->assertStringContainsString($shortUrl->toString(self::DOMAIN_CONFIG), $output);
         $urlToShortCode->shouldHaveBeenCalledOnce();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideFlags
+     */
+    public function urlValidationHasExpectedValueBasedOnProvidedTags(array $options, ?bool $expectedValidateUrl): void
+    {
+        $shortUrl = new ShortUrl('');
+        $urlToShortCode = $this->urlShortener->urlToShortCode(
+            Argument::type('string'),
+            Argument::type('array'),
+            Argument::that(function (ShortUrlMeta $meta) use ($expectedValidateUrl) {
+                Assert::assertEquals($expectedValidateUrl, $meta->doValidateUrl());
+                return $meta;
+            }),
+        )->willReturn($shortUrl);
+
+        $options['longUrl'] = 'http://domain.com/foo/bar';
+        $this->commandTester->execute($options);
+
+        $urlToShortCode->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideFlags(): iterable
+    {
+        yield 'no flags' => [[], null];
+        yield 'no-validate-url only' => [['--no-validate-url' => true], false];
+        yield 'validate-url' => [['--validate-url' => true], true];
+        yield 'both flags' => [['--validate-url' => true, '--no-validate-url' => true], false];
     }
 }
