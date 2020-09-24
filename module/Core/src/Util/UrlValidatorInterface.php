@@ -11,5 +11,5 @@ interface UrlValidatorInterface
     /**
      * @throws InvalidUrlException
      */
-    public function validateUrl(string $url): void;
+    public function validateUrl(string $url, ?bool $doValidate): void;
 }

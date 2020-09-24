@@ -48,7 +48,7 @@ class UrlShortener implements UrlShortenerInterface
             return $existingShortUrl;
         }
 
-        $this->urlValidator->validateUrl($url);
+        $this->urlValidator->validateUrl($url, $meta->doValidateUrl());
         $this->em->beginTransaction();
         $shortUrl = new ShortUrl($url, $meta, $this->domainResolver);
         $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));

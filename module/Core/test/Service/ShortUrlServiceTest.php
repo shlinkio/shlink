@@ -104,7 +104,10 @@ class ShortUrlServiceTest extends TestCase
         $this->assertEquals($shortUrlEdit->longUrl() ?? $originalLongUrl, $shortUrl->getLongUrl());
         $findShortUrl->shouldHaveBeenCalled();
         $flush->shouldHaveBeenCalled();
-        $this->urlValidator->validateUrl($shortUrlEdit->longUrl())->shouldHaveBeenCalledTimes($expectedValidateCalls);
+        $this->urlValidator->validateUrl(
+            $shortUrlEdit->longUrl(),
+            $shortUrlEdit->doValidateUrl(),
+        )->shouldHaveBeenCalledTimes($expectedValidateCalls);
     }
 
     public function provideShortUrlEdits(): iterable
@@ -121,6 +124,12 @@ class ShortUrlServiceTest extends TestCase
                 'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
                 'maxVisits' => 10,
                 'longUrl' => 'modifiedLongUrl',
+            ],
+        )];
+        yield 'long URL with validation' => [1, ShortUrlEdit::fromRawData(
+            [
+                'longUrl' => 'modifiedLongUrl',
+                'validateUrl' => true,
             ],
         )];
     }

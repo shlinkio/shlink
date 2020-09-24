@@ -9,6 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Added
 
 * [#829](https://github.com/shlinkio/shlink/issues/829) Added support for QR codes in SVG format, by passing `?format=svg` to the QR code URL.
+* [#820](https://github.com/shlinkio/shlink/issues/820) Added new option to force enabling or disabling URL validation on a per-URL basis.
+
+    Currently, there's a global config that tells if long URLs should be validated (by ensuring they are publicly accessible and return a 2xx status). However, this is either always applied or never applied.
+
+    Now, it is possible to enforce validation or enforce disabling validation when a new short URL is created or edited:
+
+    * On the `POST /short-url` and `PATCH /short-url/{shortCode}` endpoints, you can now pass `validateUrl: true/false` in order to enforce enabling or disabling validation, ignoring the global config. If the value is not provided, the global config is still normally applied.
+    * On the `short-url:generate` CLI command, you can pass `--validate-url` or `--no-validate-url` flags, in order to enforce enabling or disabling validation. If none of them is provided, the global config is still normally applied.
 
 #### Changed
 
