@@ -21,6 +21,7 @@ use function array_map;
 use function Functional\curry;
 use function Functional\flatten;
 use function Functional\unique;
+use function method_exists;
 use function sprintf;
 use function strpos;
 
@@ -165,7 +166,7 @@ class GenerateShortUrlCommand extends Command
 
     private function doValidateUrl(InputInterface $input): ?bool
     {
-        $rawInput = (string) $input;
+        $rawInput = method_exists($input, '__toString') ? $input->__toString() : '';
 
         if (strpos($rawInput, '--no-validate-url') !== false) {
             return false;
