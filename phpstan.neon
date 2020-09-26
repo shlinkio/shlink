@@ -5,3 +5,4 @@ parameters:
 		- '#AbstractQuery::setParameters\(\)#'
 		- '#mustRun\(\)#'
 		- '#AssociationBuilder::setOrderBy#'
+		- '#If condition is always false#'

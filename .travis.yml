@@ -44,7 +44,7 @@ before_install:
   - phpenv config-rm xdebug.ini || return 0
   - sudo ./data/infra/ci/install-ms-odbc.sh
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_ms shlink_db shlink_db_postgres shlink_db_maria
-  - yes | pecl install pdo_sqlsrv swoole-4.5.2
+  - yes | pecl install pdo_sqlsrv swoole-4.5.2 pcov
 
 install:
   - composer self-update
@@ -62,6 +62,6 @@ script:
 after_success:
   - rm -f build/clover.xml
   - wget https://phar.phpunit.de/phpcov-7.0.2.phar
-  - phpdbg -qrr phpcov-7.0.2.phar merge build --clover build/clover.xml
+  - php phpcov-7.0.2.phar merge build --clover build/clover.xml
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml
