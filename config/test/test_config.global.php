@@ -12,7 +12,7 @@ use Laminas\Stdlib\Glob;
 use PDO;
 use PHPUnit\Runner\Version;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
-use SebastianBergmann\CodeCoverage\Report\Clover;
+use SebastianBergmann\CodeCoverage\Report\PHP;
 use SebastianBergmann\CodeCoverage\Report\Xml\Facade as Xml;
 
 use function Laminas\Stratigility\middleware;
@@ -109,7 +109,7 @@ return [
             'path' => '/api-tests/start-coverage',
             'middleware' => middleware(static function () use (&$coverage) {
                 if ($coverage) {
-                    $coverage->start('api tests');
+                    $coverage->start('API tests');
                 }
                 return new EmptyResponse();
             }),
@@ -122,7 +122,7 @@ return [
                 if ($coverage) {
                     $basePath = __DIR__ . '/../../build/coverage-api';
                     $coverage->stop();
-                    (new Clover())->process($coverage, $basePath . '.cov');
+                    (new PHP())->process($coverage, $basePath . '.cov');
                     (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
                 }
 
