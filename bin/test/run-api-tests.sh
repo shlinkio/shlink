@@ -15,7 +15,5 @@ testsExitCode=$?
 
 vendor/bin/mezzio-swoole stop
 
-echo "The exist code was $testsExitCode"
-
 # Exit this script with the same code as the tests. If tests failed, this script has to fail
 exit $testsExitCode

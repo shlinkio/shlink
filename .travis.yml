@@ -57,6 +57,7 @@ before_script:
 
 script:
   - composer ci
+  - bin/test/run-api-tests.sh
   - if [[ ! -z "${DOCKERFILE_CHANGED}" && "${TRAVIS_PHP_VERSION}" == "7.4" ]]; then docker build -t shlink-docker-image:temp . ; fi
 
 after_success:
