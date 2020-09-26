@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Changed
 
 * [#836](https://github.com/shlinkio/shlink/issues/836) Added support for the `<field>-<dir>` notation while determining how to order the short URLs list, as in `?orderBy=shortCode-DESC`. This effectively deprecates the array notation (`?orderBy[shortCode]=DESC`), that will be removed in Shlink 3.0.0
+* [#782](https://github.com/shlinkio/shlink/issues/782) Added code coverage to API tests.
 
 #### Deprecated
 
