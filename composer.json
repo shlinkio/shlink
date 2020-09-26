@@ -68,6 +68,7 @@
         "eaglewu/swoole-ide-helper": "dev-master",
         "infection/infection": "^0.16.1",
         "phpstan/phpstan": "^0.12.18",
+        "phpunit/php-code-coverage": "^8.0",
         "phpunit/phpunit": "~9.0.1",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.1.0",
@@ -93,7 +94,10 @@
                 "module/Core/test",
                 "module/Core/test-db"
             ]
-        }
+        },
+        "files": [
+            "config/test/constants.php"
+        ]
     },
     "scripts": {
         "ci": [
@@ -112,11 +116,10 @@
         ],
         "test:ci": [
             "@test:unit:ci",
-            "@test:db",
-            "@test:api:ci"
+            "@test:db"
         ],
-        "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
-        "test:unit:ci": "@test:unit --coverage-clover=build/clover.xml --coverage-xml=build/coverage-unit/coverage-xml --log-junit=build/coverage-unit/junit.xml",
+        "test:unit": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
+        "test:unit:ci": "@test:unit --coverage-xml=build/coverage-unit/coverage-xml --log-junit=build/coverage-unit/junit.xml",
         "test:db": [
             "@test:db:sqlite:ci",
             "@test:db:mysql",
@@ -124,15 +127,14 @@
             "@test:db:postgres",
             "@test:db:ms"
         ],
-        "test:db:sqlite": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-db.xml",
+        "test:db:sqlite": "APP_ENV=test php vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-db.xml",
         "test:db:sqlite:ci": "@test:db:sqlite --coverage-php build/coverage-db.cov --coverage-xml=build/coverage-db/coverage-xml --log-junit=build/coverage-db/junit.xml",
         "test:db:mysql": "DB_DRIVER=mysql composer test:db:sqlite",
         "test:db:maria": "DB_DRIVER=maria composer test:db:sqlite",
         "test:db:postgres": "DB_DRIVER=postgres composer test:db:sqlite",
         "test:db:ms": "DB_DRIVER=mssql composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
-        "test:api:ci": "bin/test/run-api-tests.sh --coverage-php build/coverage-api.cov",
-        "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage",
+        "test:unit:pretty": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage-unit-html",
         "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
         "infect:ci:base": "@infect --skip-initial-tests",
         "infect:ci": [

@@ -3,7 +3,6 @@ MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.18
 ENV APCU_BC_VERSION 1.0.5
-ENV XDEBUG_VERSION 2.9.0
 
 RUN apk update
 
@@ -55,29 +54,17 @@ RUN rm /tmp/apcu_bc.tar.gz
 RUN rm /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 RUN echo extension=apcu.so > /usr/local/etc/php/conf.d/20-php-ext-apcu.ini
 
-# Install xdebug
-ADD https://pecl.php.net/get/xdebug-$XDEBUG_VERSION /tmp/xdebug.tar.gz
-RUN mkdir -p /usr/src/php/ext/xdebug\
-  && tar xf /tmp/xdebug.tar.gz -C /usr/src/php/ext/xdebug --strip-components=1
-# configure and install
-RUN docker-php-ext-configure xdebug\
-  && docker-php-ext-install xdebug
-# cleanup
-RUN rm /tmp/xdebug.tar.gz
-
-# Install sqlsrv driver
+# Install pcov and sqlsrv driver
 RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.5.1.1-1_amd64.apk && \
     apk add --allow-untrusted msodbcsql17_17.5.1.1-1_amd64.apk && \
     apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
-    pecl install pdo_sqlsrv && \
-    docker-php-ext-enable pdo_sqlsrv && \
+    pecl install pdo_sqlsrv pcov && \
+    docker-php-ext-enable pdo_sqlsrv pcov && \
     apk del .phpize-deps && \
     rm msodbcsql17_17.5.1.1-1_amd64.apk
 
 # Install composer
-RUN php -r "readfile('https://getcomposer.org/installer');" | php
-RUN chmod +x composer.phar
-RUN mv composer.phar /usr/local/bin/composer
+COPY --from=composer:1.10.13 /usr/bin/composer /usr/local/bin/composer
 
 # Make home directory writable by anyone
 RUN chmod 777 /home

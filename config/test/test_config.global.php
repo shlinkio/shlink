@@ -6,15 +6,30 @@ namespace Shlinkio\Shlink;
 
 use GuzzleHttp\Client;
 use Laminas\ConfigAggregator\ConfigAggregator;
+use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
+use Laminas\Stdlib\Glob;
 use PDO;
+use PHPUnit\Runner\Version;
+use SebastianBergmann\CodeCoverage\CodeCoverage;
+use SebastianBergmann\CodeCoverage\Report\PHP;
+use SebastianBergmann\CodeCoverage\Report\Xml\Facade as Xml;
 
+use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Common\env;
 use function sprintf;
 use function sys_get_temp_dir;
 
-$swooleTestingHost = '127.0.0.1';
-$swooleTestingPort = 9999;
+use const ShlinkioTest\Shlink\SWOOLE_TESTING_HOST;
+use const ShlinkioTest\Shlink\SWOOLE_TESTING_PORT;
+
+$isApiTest = env('TEST_ENV') === 'api';
+if ($isApiTest) {
+    $coverage = new CodeCoverage();
+    foreach (Glob::glob(__DIR__ . '/../../module/*/src') as $item) {
+        $coverage->filter()->addDirectoryToWhitelist($item);
+    }
+}
 
 $buildDbConnection = function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
@@ -78,13 +93,42 @@ return [
     'mezzio-swoole' => [
         'enable_coroutine' => false,
         'swoole-http-server' => [
-            'host' => $swooleTestingHost,
-            'port' => $swooleTestingPort,
+            'host' => SWOOLE_TESTING_HOST,
+            'port' => SWOOLE_TESTING_PORT,
             'process-name' => 'shlink_test',
             'options' => [
                 'pid_file' => sys_get_temp_dir() . '/shlink-test-swoole.pid',
                 'enable_coroutine' => false,
             ],
+        ],
+    ],
+
+    'routes' => !$isApiTest ? [] : [
+        [
+            'name' => 'start_collecting_coverage',
+            'path' => '/api-tests/start-coverage',
+            'middleware' => middleware(static function () use (&$coverage) {
+                if ($coverage) {
+                    $coverage->start('API tests');
+                }
+                return new EmptyResponse();
+            }),
+            'allowed_methods' => ['GET'],
+        ],
+        [
+            'name' => 'dump_coverage',
+            'path' => '/api-tests/stop-coverage',
+            'middleware' => middleware(static function () use (&$coverage) {
+                if ($coverage) {
+                    $basePath = __DIR__ . '/../../build/coverage-api';
+                    $coverage->stop();
+                    (new PHP())->process($coverage, $basePath . '.cov');
+                    (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
+                }
+
+                return new EmptyResponse();
+            }),
+            'allowed_methods' => ['GET'],
         ],
     ],
 
@@ -97,7 +141,7 @@ return [
     'dependencies' => [
         'services' => [
             'shlink_test_api_client' => new Client([
-                'base_uri' => sprintf('http://%s:%s/', $swooleTestingHost, $swooleTestingPort),
+                'base_uri' => sprintf('http://%s:%s/', SWOOLE_TESTING_HOST, SWOOLE_TESTING_PORT),
                 'http_errors' => false,
             ]),
         ],
