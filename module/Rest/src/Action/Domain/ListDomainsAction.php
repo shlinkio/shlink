@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
-use function Functional\compose;
 use function Functional\map;
 
 class ListDomainsAction extends AbstractRestAction
