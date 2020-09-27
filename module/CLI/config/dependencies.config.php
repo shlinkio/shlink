@@ -10,6 +10,7 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
+use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Core\Visit;
@@ -52,6 +53,8 @@ return [
 
             Command\Db\CreateDatabaseCommand::class => ConfigAbstractFactory::class,
             Command\Db\MigrateDatabaseCommand::class => ConfigAbstractFactory::class,
+
+            Command\Domain\ListDomainsCommand::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -83,6 +86,8 @@ return [
         Command\Tag\CreateTagCommand::class => [TagService::class],
         Command\Tag\RenameTagCommand::class => [TagService::class],
         Command\Tag\DeleteTagsCommand::class => [TagService::class],
+
+        Command\Domain\ListDomainsCommand::class => [DomainService::class, 'config.url_shortener.domain.hostname'],
 
         Command\Db\CreateDatabaseCommand::class => [
             LockFactory::class,

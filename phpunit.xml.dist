@@ -23,6 +23,8 @@
 
             <exclude>
                 <directory suffix=".php">./module/Core/src/Repository</directory>
+                <directory suffix=".php">./module/Core/src/**/Repository</directory>
+                <directory suffix=".php">./module/Core/src/**/**/Repository</directory>
             </exclude>
         </whitelist>
     </filter>

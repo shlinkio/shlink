@@ -11,7 +11,8 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable(determineTableName('domains', $emConfig));
+    $builder->setTable(determineTableName('domains', $emConfig))
+            ->setCustomRepositoryClass(Domain\Repository\DomainRepository::class);
 
     $builder->createField('id', Types::BIGINT)
             ->columnName('id')

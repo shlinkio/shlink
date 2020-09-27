@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * On the `POST /short-url` and `PATCH /short-url/{shortCode}` endpoints, you can now pass `validateUrl: true/false` in order to enforce enabling or disabling validation, ignoring the global config. If the value is not provided, the global config is still normally applied.
     * On the `short-url:generate` CLI command, you can pass `--validate-url` or `--no-validate-url` flags, in order to enforce enabling or disabling validation. If none of them is provided, the global config is still normally applied.
 
+* [#838](https://github.com/shlinkio/shlink/issues/838) Added new endpoint and CLI command to list existing domains.
+
+    It returns both default domain and specific domains that were used for some short URLs.
+
+    * REST endpoint: `GET /rest/v2/domains`
+    * CLI Command: `domain:list`
+
 #### Changed
 
 * [#836](https://github.com/shlinkio/shlink/issues/836) Added support for the `<field>-<dir>` notation while determining how to order the short URLs list, as in `?orderBy=shortCode-DESC`. This effectively deprecates the array notation (`?orderBy[shortCode]=DESC`), that will be removed in Shlink 3.0.0

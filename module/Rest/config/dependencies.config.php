@@ -8,6 +8,7 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
 use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
+use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Core\Tag\TagService;
@@ -36,6 +37,7 @@ return [
             Action\Tag\DeleteTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\CreateTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\UpdateTagAction::class => ConfigAbstractFactory::class,
+            Action\Domain\ListDomainsAction::class => ConfigAbstractFactory::class,
 
             ImplicitOptionsMiddleware::class => Middleware\EmptyResponseImplicitOptionsMiddlewareFactory::class,
             Middleware\BodyParserMiddleware::class => InvokableFactory::class,
@@ -72,6 +74,7 @@ return [
         Action\Tag\DeleteTagsAction::class => [TagService::class],
         Action\Tag\CreateTagsAction::class => [TagService::class],
         Action\Tag\UpdateTagAction::class => [TagService::class],
+        Action\Domain\ListDomainsAction::class => [DomainService::class, 'config.url_shortener.domain.hostname'],
 
         Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ['config.url_shortener.domain.hostname'],
         Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => [

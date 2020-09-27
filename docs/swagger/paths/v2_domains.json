@@ -1,0 +1,86 @@
+{
+    "get": {
+        "operationId": "listDomains",
+        "tags": [
+            "Domains"
+        ],
+        "summary": "List existing domains",
+        "description": "Returns the list of all domains ever used, with a flag that tells if they are the default domain",
+        "security": [
+            {
+                "ApiKey": []
+            }
+        ],
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The list of tags",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": ["domains"],
+                            "properties": {
+                                "domains": {
+                                    "type": "object",
+                                    "required": ["data"],
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["domain", "isDefault"],
+                                                "properties": {
+                                                    "domain":  {
+                                                        "type": "string"
+                                                    },
+                                                    "isDefault": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "domains": {
+                            "data": [
+                                {
+                                    "domain": "example.com",
+                                    "isDefault": true
+                                },
+                                {
+                                    "domain": "aaa.com",
+                                    "isDefault": false
+                                },
+                                {
+                                    "domain": "bbb.com",
+                                    "isDefault": false
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

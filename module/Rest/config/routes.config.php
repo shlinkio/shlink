@@ -12,7 +12,7 @@ return [
     'routes' => [
         Action\HealthAction::getRouteDef(),
 
-        // Short codes
+        // Short URLs
         Action\ShortUrl\CreateShortUrlAction::getRouteDef([
             $contentNegotiationMiddleware,
             $dropDomainMiddleware,
@@ -35,6 +35,9 @@ return [
         Action\Tag\DeleteTagsAction::getRouteDef(),
         Action\Tag\CreateTagsAction::getRouteDef(),
         Action\Tag\UpdateTagAction::getRouteDef(),
+
+        // Domains
+        Action\Domain\ListDomainsAction::getRouteDef(),
 
         Action\MercureInfoAction::getRouteDef(),
     ],
