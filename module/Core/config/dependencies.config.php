@@ -31,6 +31,7 @@ return [
             Tag\TagService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
+            Domain\DomainService::class => ConfigAbstractFactory::class,
 
             Util\UrlValidator::class => ConfigAbstractFactory::class,
 
@@ -69,6 +70,7 @@ return [
             Service\ShortUrl\ShortUrlResolver::class,
         ],
         Service\ShortUrl\ShortUrlResolver::class => ['em'],
+        Domain\DomainService::class => ['em'],
 
         Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
 
