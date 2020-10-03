@@ -40,6 +40,7 @@ class SimplifiedConfigParser
         'anonymize_remote_addr' => ['url_shortener', 'anonymize_remote_addr'],
         'redirect_status_code' => ['url_shortener', 'redirect_status_code'],
         'redirect_cache_lifetime' => ['url_shortener', 'redirect_cache_lifetime'],
+        'port' => ['mezzio-swoole', 'swoole-http-server', 'port'],
     ];
     private const SIMPLIFIED_CONFIG_SIDE_EFFECTS = [
         'delete_short_url_threshold' => [
