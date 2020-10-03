@@ -1,6 +1,6 @@
 FROM php:7.4.9-alpine3.12 as base
 
-ARG SHLINK_VERSION=2.2.2
+ARG SHLINK_VERSION=2.3.0
 ENV SHLINK_VERSION ${SHLINK_VERSION}
 ENV SWOOLE_VERSION 4.5.2
 ENV LC_ALL "C"
@@ -44,7 +44,7 @@ RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS && \
 # Install shlink
 FROM base as builder
 COPY . .
-COPY --from=composer:1.10.1 /usr/bin/composer ./composer.phar
+COPY --from=composer:1.10.13 /usr/bin/composer ./composer.phar
 RUN apk add --no-cache git && \
     php composer.phar install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction && \
     php composer.phar clear-cache && \
@@ -59,7 +59,7 @@ LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 COPY --from=builder /etc/shlink .
 RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink
 
-# Expose swoole port
+# Expose default swoole port
 EXPOSE 8080
 
 # Expose params config dir, since the user is expected to provide custom config from there
