@@ -159,6 +159,7 @@ return [
 
     'mezzio-swoole' => [
         'swoole-http-server' => [
+            'port' => (int) env('PORT', 8080),
             'options' => [
                 'worker_num' => (int) env('WEB_WORKER_NUM', 16),
                 'task_worker_num' => (int) env('TASK_WORKER_NUM', 16),
