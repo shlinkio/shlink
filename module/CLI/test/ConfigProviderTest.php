@@ -17,7 +17,7 @@ class ConfigProviderTest extends TestCase
     }
 
     /** @test */
-    public function confiIsProperlyReturned(): void
+    public function configIsProperlyReturned(): void
     {
         $config = ($this->configProvider)();
 
