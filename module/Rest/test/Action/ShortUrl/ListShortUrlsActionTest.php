@@ -59,10 +59,10 @@ class ListShortUrlsActionTest extends TestCase
         $response = $this->action->handle((new ServerRequest())->withQueryParams($query));
         $payload = $response->getPayload();
 
-        $this->assertArrayHasKey('shortUrls', $payload);
-        $this->assertArrayHasKey('data', $payload['shortUrls']);
-        $this->assertEquals([], $payload['shortUrls']['data']);
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertArrayHasKey('shortUrls', $payload);
+        self::assertArrayHasKey('data', $payload['shortUrls']);
+        self::assertEquals([], $payload['shortUrls']['data']);
+        self::assertEquals(200, $response->getStatusCode());
         $listShortUrls->shouldHaveBeenCalledOnce();
     }
 

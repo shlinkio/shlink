@@ -20,11 +20,11 @@ class UpdateTagActionTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_PUT, '/tags', [RequestOptions::JSON => $body]);
         $payload = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
-        $this->assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
-        $this->assertEquals('INVALID_ARGUMENT', $payload['type']);
-        $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals('Invalid data', $payload['title']);
+        self::assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
+        self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
+        self::assertEquals('INVALID_ARGUMENT', $payload['type']);
+        self::assertEquals($expectedDetail, $payload['detail']);
+        self::assertEquals('Invalid data', $payload['title']);
     }
 
     public function provideInvalidBody(): iterable
@@ -45,11 +45,11 @@ class UpdateTagActionTest extends ApiTestCase
         ]]);
         $payload = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
-        $this->assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
-        $this->assertEquals('TAG_NOT_FOUND', $payload['type']);
-        $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals('Tag not found', $payload['title']);
+        self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
+        self::assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
+        self::assertEquals('TAG_NOT_FOUND', $payload['type']);
+        self::assertEquals($expectedDetail, $payload['detail']);
+        self::assertEquals('Tag not found', $payload['title']);
     }
 
     /** @test */
@@ -63,11 +63,11 @@ class UpdateTagActionTest extends ApiTestCase
         ]]);
         $payload = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals(self::STATUS_CONFLICT, $resp->getStatusCode());
-        $this->assertEquals(self::STATUS_CONFLICT, $payload['status']);
-        $this->assertEquals('TAG_CONFLICT', $payload['type']);
-        $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals('Tag conflict', $payload['title']);
+        self::assertEquals(self::STATUS_CONFLICT, $resp->getStatusCode());
+        self::assertEquals(self::STATUS_CONFLICT, $payload['status']);
+        self::assertEquals('TAG_CONFLICT', $payload['type']);
+        self::assertEquals($expectedDetail, $payload['detail']);
+        self::assertEquals('Tag conflict', $payload['title']);
     }
 
     /** @test */
@@ -78,6 +78,6 @@ class UpdateTagActionTest extends ApiTestCase
             'newName' => 'foo',
         ]]);
 
-        $this->assertEquals(self::STATUS_NO_CONTENT, $resp->getStatusCode());
+        self::assertEquals(self::STATUS_NO_CONTENT, $resp->getStatusCode());
     }
 }

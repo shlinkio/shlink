@@ -53,7 +53,7 @@ class ShortUrlTest extends TestCase
         $shortUrl->regenerateShortCode();
         $secondShortCode = $shortUrl->getShortCode();
 
-        $this->assertNotEquals($firstShortCode, $secondShortCode);
+        self::assertNotEquals($firstShortCode, $secondShortCode);
     }
 
     /**
@@ -66,7 +66,7 @@ class ShortUrlTest extends TestCase
             [ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => $length],
         ));
 
-        $this->assertEquals($expectedLength, strlen($shortUrl->getShortCode()));
+        self::assertEquals($expectedLength, strlen($shortUrl->getShortCode()));
     }
 
     public function provideLengths(): iterable

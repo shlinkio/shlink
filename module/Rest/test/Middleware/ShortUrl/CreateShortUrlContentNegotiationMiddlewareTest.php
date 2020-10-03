@@ -33,7 +33,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 
         $resp = $this->middleware->process(new ServerRequest(), $this->requestHandler->reveal());
 
-        $this->assertSame($expectedResp, $resp);
+        self::assertSame($expectedResp, $resp);
     }
 
     /**
@@ -54,7 +54,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 
         $response = $this->middleware->process($request, $this->requestHandler->reveal());
 
-        $this->assertEquals($expectedContentType, $response->getHeaderLine('Content-type'));
+        self::assertEquals($expectedContentType, $response->getHeaderLine('Content-type'));
         $handle->shouldHaveBeenCalled();
     }
 
@@ -85,7 +85,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 
         $response = $this->middleware->process($request, $this->requestHandler->reveal());
 
-        $this->assertEquals($expectedBody, (string) $response->getBody());
+        self::assertEquals($expectedBody, (string) $response->getBody());
         $handle->shouldHaveBeenCalled();
     }
 

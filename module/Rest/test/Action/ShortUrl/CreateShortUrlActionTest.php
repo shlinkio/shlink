@@ -57,8 +57,8 @@ class CreateShortUrlActionTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);
         $response = $this->action->handle($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertTrue(strpos($response->getBody()->getContents(), $shortUrl->toString(self::DOMAIN_CONFIG)) > 0);
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertTrue(strpos($response->getBody()->getContents(), $shortUrl->toString(self::DOMAIN_CONFIG)) > 0);
         $shorten->shouldHaveBeenCalledOnce();
     }
 

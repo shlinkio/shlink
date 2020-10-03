@@ -21,7 +21,7 @@ class VisitTest extends TestCase
     {
         $visit = new Visit(new ShortUrl(''), new Visitor('Chrome', 'some site', '1.2.3.4'), true, $date);
 
-        $this->assertEquals([
+        self::assertEquals([
             'referer' => 'some site',
             'date' => ($date ?? $visit->getDate())->toAtomString(),
             'userAgent' => 'Chrome',
@@ -43,7 +43,7 @@ class VisitTest extends TestCase
     {
         $visit = new Visit(new ShortUrl(''), new Visitor('Chrome', 'some site', $address), $anonymize);
 
-        $this->assertEquals($expectedAddress, $visit->getRemoteAddr());
+        self::assertEquals($expectedAddress, $visit->getRemoteAddr());
     }
 
     public function provideAddresses(): iterable

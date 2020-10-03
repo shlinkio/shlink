@@ -44,7 +44,7 @@ class ResolveUrlCommandTest extends TestCase
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
-        $this->assertEquals('Long URL: ' . $expectedUrl . PHP_EOL, $output);
+        self::assertEquals('Long URL: ' . $expectedUrl . PHP_EOL, $output);
     }
 
     /** @test */
@@ -59,6 +59,6 @@ class ResolveUrlCommandTest extends TestCase
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
+        self::assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
     }
 }

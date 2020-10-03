@@ -34,7 +34,7 @@ class CreateTagCommandTest extends TestCase
         $this->commandTester->execute([]);
 
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString('You have to provide at least one tag name', $output);
+        self::assertStringContainsString('You have to provide at least one tag name', $output);
     }
 
     /** @test */
@@ -48,7 +48,7 @@ class CreateTagCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Tags properly created', $output);
+        self::assertStringContainsString('Tags properly created', $output);
         $createTags->shouldHaveBeenCalled();
     }
 }

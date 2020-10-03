@@ -38,7 +38,7 @@ class VisitsStatsHelperTest extends TestCase
 
         $stats = $this->helper->getVisitsStats();
 
-        $this->assertEquals(new VisitsStats($expectedCount), $stats);
+        self::assertEquals(new VisitsStats($expectedCount), $stats);
         $count->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
     }

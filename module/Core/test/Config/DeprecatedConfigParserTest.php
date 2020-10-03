@@ -29,7 +29,7 @@ class DeprecatedConfigParserTest extends TestCase
 
         $result = ($this->postProcessor)($config);
 
-        $this->assertEquals($config, $result);
+        self::assertEquals($config, $result);
     }
 
     /** @test */
@@ -46,7 +46,7 @@ class DeprecatedConfigParserTest extends TestCase
 
         $result = ($this->postProcessor)($config);
 
-        $this->assertEquals($config, $result);
+        self::assertEquals($config, $result);
     }
 
     /** @test */
@@ -68,7 +68,7 @@ class DeprecatedConfigParserTest extends TestCase
 
         $result = ($this->postProcessor)($config);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     /** @test */
@@ -89,7 +89,7 @@ class DeprecatedConfigParserTest extends TestCase
 
         $result = ($this->postProcessor)($config);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     /** @test */
@@ -106,6 +106,6 @@ class DeprecatedConfigParserTest extends TestCase
 
         $result = ($this->postProcessor)($config);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 }

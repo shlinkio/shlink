@@ -27,7 +27,7 @@ class PersistenceDomainResolverTest extends TestCase
     {
         $getRepository = $this->em->getRepository(Domain::class);
 
-        $this->assertNull($this->domainResolver->resolveDomain(null));
+        self::assertNull($this->domainResolver->resolveDomain(null));
         $getRepository->shouldNotHaveBeenCalled();
     }
 
@@ -44,10 +44,10 @@ class PersistenceDomainResolverTest extends TestCase
         $result = $this->domainResolver->resolveDomain($authority);
 
         if ($foundDomain !== null) {
-            $this->assertSame($result, $foundDomain);
+            self::assertSame($result, $foundDomain);
         }
-        $this->assertInstanceOf(Domain::class, $result);
-        $this->assertEquals($authority, $result->getAuthority());
+        self::assertInstanceOf(Domain::class, $result);
+        self::assertEquals($authority, $result->getAuthority());
         $findDomain->shouldHaveBeenCalledOnce();
         $getRepository->shouldHaveBeenCalledOnce();
     }

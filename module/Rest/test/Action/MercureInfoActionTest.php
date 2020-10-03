@@ -87,11 +87,11 @@ class MercureInfoActionTest extends TestCase
         $resp = $action->handle(ServerRequestFactory::fromGlobals());
         $payload = $resp->getPayload();
 
-        $this->assertArrayHasKey('mercureHubUrl', $payload);
-        $this->assertEquals('http://foobar.com/.well-known/mercure', $payload['mercureHubUrl']);
-        $this->assertArrayHasKey('token', $payload);
-        $this->assertArrayHasKey('jwtExpiration', $payload);
-        $this->assertEquals(
+        self::assertArrayHasKey('mercureHubUrl', $payload);
+        self::assertEquals('http://foobar.com/.well-known/mercure', $payload['mercureHubUrl']);
+        self::assertArrayHasKey('token', $payload);
+        self::assertArrayHasKey('jwtExpiration', $payload);
+        self::assertEquals(
             Chronos::now()->addDays($days ?? 1)->startOfDay(),
             Chronos::parse($payload['jwtExpiration'])->startOfDay(),
         );

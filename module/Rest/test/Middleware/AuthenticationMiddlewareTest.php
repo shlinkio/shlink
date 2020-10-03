@@ -100,7 +100,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $handle = $handler->handle($request)->willReturn(new Response());
         $response = $this->middleware->process($request, $handler->reveal());
 
-        $this->assertSame($response, $newResponse);
+        self::assertSame($response, $newResponse);
         $verify->shouldHaveBeenCalledOnce();
         $update->shouldHaveBeenCalledOnce();
         $handle->shouldHaveBeenCalledOnce();

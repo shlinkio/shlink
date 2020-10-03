@@ -36,7 +36,7 @@ class ApiKeyServiceTest extends TestCase
 
         $key = $this->service->create($date);
 
-        $this->assertEquals($date, $key->getExpirationDate());
+        self::assertEquals($date, $key->getExpirationDate());
     }
 
     public function provideCreationDate(): iterable
@@ -56,7 +56,7 @@ class ApiKeyServiceTest extends TestCase
                                             ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
-        $this->assertFalse($this->service->check('12345'));
+        self::assertFalse($this->service->check('12345'));
     }
 
     public function provideInvalidApiKeys(): iterable
@@ -74,7 +74,7 @@ class ApiKeyServiceTest extends TestCase
                                             ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
-        $this->assertTrue($this->service->check('12345'));
+        self::assertTrue($this->service->check('12345'));
     }
 
     /** @test */
@@ -101,10 +101,10 @@ class ApiKeyServiceTest extends TestCase
 
         $this->em->flush()->shouldBeCalledOnce();
 
-        $this->assertTrue($key->isEnabled());
+        self::assertTrue($key->isEnabled());
         $returnedKey = $this->service->disable('12345');
-        $this->assertFalse($key->isEnabled());
-        $this->assertSame($key, $returnedKey);
+        self::assertFalse($key->isEnabled());
+        self::assertSame($key, $returnedKey);
     }
 
     /** @test */
@@ -119,7 +119,7 @@ class ApiKeyServiceTest extends TestCase
 
         $result = $this->service->listKeys();
 
-        $this->assertEquals($expectedApiKeys, $result);
+        self::assertEquals($expectedApiKeys, $result);
     }
 
     /** @test */
@@ -134,6 +134,6 @@ class ApiKeyServiceTest extends TestCase
 
         $result = $this->service->listKeys(true);
 
-        $this->assertEquals($expectedApiKeys, $result);
+        self::assertEquals($expectedApiKeys, $result);
     }
 }

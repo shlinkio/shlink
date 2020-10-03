@@ -37,7 +37,7 @@ class CloseDbConnectionEventListenerDelegatorTest extends TestCase
 
         ($this->delegator)($this->container->reveal(), '', $callback);
 
-        $this->assertTrue($callbackInvoked);
+        self::assertTrue($callbackInvoked);
         $getEm->shouldHaveBeenCalledOnce();
     }
 }

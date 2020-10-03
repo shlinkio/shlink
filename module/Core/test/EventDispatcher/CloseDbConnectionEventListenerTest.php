@@ -45,7 +45,7 @@ class CloseDbConnectionEventListenerTest extends TestCase
             // Ignore exceptions
         }
 
-        $this->assertTrue($wrappedWasCalled);
+        self::assertTrue($wrappedWasCalled);
         $close->shouldHaveBeenCalledOnce();
         $getConn->shouldHaveBeenCalledOnce();
         $clear->shouldHaveBeenCalledOnce();

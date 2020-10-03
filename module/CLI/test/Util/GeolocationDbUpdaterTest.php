@@ -50,7 +50,7 @@ class GeolocationDbUpdaterTest extends TestCase
     /** @test */
     public function exceptionIsThrownWhenOlderDbDoesNotExistAndDownloadFails(): void
     {
-        $mustBeUpdated = fn () => $this->assertTrue(true);
+        $mustBeUpdated = fn () => self::assertTrue(true);
         $prev = new RuntimeException('');
 
         $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(false);
@@ -59,12 +59,12 @@ class GeolocationDbUpdaterTest extends TestCase
 
         try {
             $this->geolocationDbUpdater->checkDbUpdate($mustBeUpdated);
-            $this->assertTrue(false); // If this is reached, the test will fail
+            self::assertTrue(false); // If this is reached, the test will fail
         } catch (Throwable $e) {
             /** @var GeolocationDbUpdateFailedException $e */
-            $this->assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
-            $this->assertSame($prev, $e->getPrevious());
-            $this->assertFalse($e->olderDbExists());
+            self::assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
+            self::assertSame($prev, $e->getPrevious());
+            self::assertFalse($e->olderDbExists());
         }
 
         $fileExists->shouldHaveBeenCalledOnce();
@@ -95,12 +95,12 @@ class GeolocationDbUpdaterTest extends TestCase
 
         try {
             $this->geolocationDbUpdater->checkDbUpdate();
-            $this->assertTrue(false); // If this is reached, the test will fail
+            self::assertTrue(false); // If this is reached, the test will fail
         } catch (Throwable $e) {
             /** @var GeolocationDbUpdateFailedException $e */
-            $this->assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
-            $this->assertSame($prev, $e->getPrevious());
-            $this->assertTrue($e->olderDbExists());
+            self::assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
+            self::assertSame($prev, $e->getPrevious());
+            self::assertTrue($e->olderDbExists());
         }
 
         $fileExists->shouldHaveBeenCalledOnce();

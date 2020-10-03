@@ -37,7 +37,7 @@ class DisableKeyCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('API key "abcd1234" properly disabled', $output);
+        self::assertStringContainsString('API key "abcd1234" properly disabled', $output);
     }
 
     /** @test */
@@ -52,7 +52,7 @@ class DisableKeyCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString($expectedMessage, $output);
+        self::assertStringContainsString($expectedMessage, $output);
         $disable->shouldHaveBeenCalledOnce();
     }
 }

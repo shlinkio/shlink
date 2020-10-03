@@ -25,12 +25,12 @@ class MissingAuthenticationExceptionTest extends TestCase
 
         $e = MissingAuthenticationException::fromExpectedTypes($expectedTypes);
 
-        $this->assertEquals($expectedMessage, $e->getMessage());
-        $this->assertEquals($expectedMessage, $e->getDetail());
-        $this->assertEquals('Invalid authorization', $e->getTitle());
-        $this->assertEquals('INVALID_AUTHORIZATION', $e->getType());
-        $this->assertEquals(401, $e->getStatus());
-        $this->assertEquals(['expectedTypes' => $expectedTypes], $e->getAdditionalData());
+        self::assertEquals($expectedMessage, $e->getMessage());
+        self::assertEquals($expectedMessage, $e->getDetail());
+        self::assertEquals('Invalid authorization', $e->getTitle());
+        self::assertEquals('INVALID_AUTHORIZATION', $e->getType());
+        self::assertEquals(401, $e->getStatus());
+        self::assertEquals(['expectedTypes' => $expectedTypes], $e->getAdditionalData());
     }
 
     public function provideExpectedTypes(): iterable

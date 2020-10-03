@@ -77,7 +77,7 @@ class CreateDatabaseCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Database already exists. Run "db:migrate" command', $output);
+        self::assertStringContainsString('Database already exists. Run "db:migrate" command', $output);
         $getDatabase->shouldHaveBeenCalledOnce();
         $listDatabases->shouldHaveBeenCalledOnce();
         $createDatabase->shouldNotHaveBeenCalled();
@@ -121,8 +121,8 @@ class CreateDatabaseCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Creating database tables...', $output);
-        $this->assertStringContainsString('Database properly created!', $output);
+        self::assertStringContainsString('Creating database tables...', $output);
+        self::assertStringContainsString('Database properly created!', $output);
         $getDatabase->shouldHaveBeenCalledOnce();
         $listDatabases->shouldHaveBeenCalledOnce();
         $createDatabase->shouldNotHaveBeenCalled();

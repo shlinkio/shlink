@@ -37,7 +37,7 @@ class ListTagsActionTest extends TestCase
         $resp = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams($query));
         $payload = $resp->getPayload();
 
-        $this->assertEquals([
+        self::assertEquals([
             'tags' => [
                 'data' => $tags,
             ],
@@ -65,7 +65,7 @@ class ListTagsActionTest extends TestCase
         $resp = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams(['withStats' => 'true']));
         $payload = $resp->getPayload();
 
-        $this->assertEquals([
+        self::assertEquals([
             'tags' => [
                 'data' => ['foo', 'bar'],
                 'stats' => $stats,

@@ -49,8 +49,8 @@ class GenerateShortUrlCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
-        $this->assertStringContainsString($shortUrl->toString(self::DOMAIN_CONFIG), $output);
+        self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
+        self::assertStringContainsString($shortUrl->toString(self::DOMAIN_CONFIG), $output);
         $urlToShortCode->shouldHaveBeenCalledOnce();
     }
 
@@ -64,8 +64,8 @@ class GenerateShortUrlCommandTest extends TestCase
         $this->commandTester->execute(['longUrl' => $url]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertEquals(ExitCodes::EXIT_FAILURE, $this->commandTester->getStatusCode());
-        $this->assertStringContainsString('Provided URL http://domain.com/invalid is invalid.', $output);
+        self::assertEquals(ExitCodes::EXIT_FAILURE, $this->commandTester->getStatusCode());
+        self::assertStringContainsString('Provided URL http://domain.com/invalid is invalid.', $output);
     }
 
     /** @test */
@@ -78,8 +78,8 @@ class GenerateShortUrlCommandTest extends TestCase
         $this->commandTester->execute(['longUrl' => 'http://domain.com/invalid', '--customSlug' => 'my-slug']);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertEquals(ExitCodes::EXIT_FAILURE, $this->commandTester->getStatusCode());
-        $this->assertStringContainsString('Provided slug "my-slug" is already in use', $output);
+        self::assertEquals(ExitCodes::EXIT_FAILURE, $this->commandTester->getStatusCode());
+        self::assertStringContainsString('Provided slug "my-slug" is already in use', $output);
         $urlToShortCode->shouldHaveBeenCalledOnce();
     }
 
@@ -102,8 +102,8 @@ class GenerateShortUrlCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
-        $this->assertStringContainsString($shortUrl->toString(self::DOMAIN_CONFIG), $output);
+        self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
+        self::assertStringContainsString($shortUrl->toString(self::DOMAIN_CONFIG), $output);
         $urlToShortCode->shouldHaveBeenCalledOnce();
     }
 

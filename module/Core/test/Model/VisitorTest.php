@@ -23,9 +23,9 @@ class VisitorTest extends TestCase
         $visitor = new Visitor(...$params);
         ['userAgent' => $userAgent, 'referer' => $referer, 'remoteAddress' => $remoteAddress] = $expected;
 
-        $this->assertEquals($userAgent, $visitor->getUserAgent());
-        $this->assertEquals($referer, $visitor->getReferer());
-        $this->assertEquals($remoteAddress, $visitor->getRemoteAddress());
+        self::assertEquals($userAgent, $visitor->getUserAgent());
+        self::assertEquals($referer, $visitor->getReferer());
+        self::assertEquals($remoteAddress, $visitor->getRemoteAddress());
     }
 
     public function provideParams(): iterable

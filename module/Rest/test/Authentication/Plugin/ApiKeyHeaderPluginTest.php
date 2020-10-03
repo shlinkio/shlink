@@ -56,7 +56,7 @@ class ApiKeyHeaderPluginTest extends TestCase
 
         $returnedResponse = $this->plugin->update($this->createRequest($apiKey), $response);
 
-        $this->assertSame($response, $returnedResponse);
+        self::assertSame($response, $returnedResponse);
     }
 
     private function createRequest(string $apiKey): ServerRequestInterface

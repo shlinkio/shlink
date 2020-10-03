@@ -14,6 +14,6 @@ class VerifyAuthenticationExceptionTest extends TestCase
     {
         $e = VerifyAuthenticationException::forInvalidApiKey();
 
-        $this->assertEquals('Provided API key does not exist or is invalid.', $e->getMessage());
+        self::assertEquals('Provided API key does not exist or is invalid.', $e->getMessage());
     }
 }

@@ -42,7 +42,7 @@ class RenameTagCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Tag with name "foo" could not be found', $output);
+        self::assertStringContainsString('Tag with name "foo" could not be found', $output);
         $renameTag->shouldHaveBeenCalled();
     }
 
@@ -59,7 +59,7 @@ class RenameTagCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Tag properly renamed', $output);
+        self::assertStringContainsString('Tag properly renamed', $output);
         $renameTag->shouldHaveBeenCalled();
     }
 }

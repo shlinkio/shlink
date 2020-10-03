@@ -30,7 +30,7 @@ class DeleteShortUrlActionTest extends TestCase
 
         $resp = $this->action->handle(new ServerRequest());
 
-        $this->assertEquals(204, $resp->getStatusCode());
+        self::assertEquals(204, $resp->getStatusCode());
         $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 }

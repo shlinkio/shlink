@@ -36,7 +36,7 @@ class GenerateKeyCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Generated API key: ', $output);
+        self::assertStringContainsString('Generated API key: ', $output);
         $create->shouldHaveBeenCalledOnce();
     }
 

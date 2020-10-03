@@ -18,10 +18,10 @@ class IpCannotBeLocatedExceptionTest extends TestCase
     {
         $e = IpCannotBeLocatedException::forEmptyAddress();
 
-        $this->assertTrue($e->isNonLocatableAddress());
-        $this->assertEquals('Ignored visit with no IP address', $e->getMessage());
-        $this->assertEquals(0, $e->getCode());
-        $this->assertNull($e->getPrevious());
+        self::assertTrue($e->isNonLocatableAddress());
+        self::assertEquals('Ignored visit with no IP address', $e->getMessage());
+        self::assertEquals(0, $e->getCode());
+        self::assertNull($e->getPrevious());
     }
 
     /** @test */
@@ -29,10 +29,10 @@ class IpCannotBeLocatedExceptionTest extends TestCase
     {
         $e = IpCannotBeLocatedException::forLocalhost();
 
-        $this->assertTrue($e->isNonLocatableAddress());
-        $this->assertEquals('Ignored localhost address', $e->getMessage());
-        $this->assertEquals(0, $e->getCode());
-        $this->assertNull($e->getPrevious());
+        self::assertTrue($e->isNonLocatableAddress());
+        self::assertEquals('Ignored localhost address', $e->getMessage());
+        self::assertEquals(0, $e->getCode());
+        self::assertNull($e->getPrevious());
     }
 
     /**
@@ -43,10 +43,10 @@ class IpCannotBeLocatedExceptionTest extends TestCase
     {
         $e = IpCannotBeLocatedException::forError($prev);
 
-        $this->assertFalse($e->isNonLocatableAddress());
-        $this->assertEquals('An error occurred while locating IP', $e->getMessage());
-        $this->assertEquals($prev->getCode(), $e->getCode());
-        $this->assertSame($prev, $e->getPrevious());
+        self::assertFalse($e->isNonLocatableAddress());
+        self::assertEquals('An error occurred while locating IP', $e->getMessage());
+        self::assertEquals($prev->getCode(), $e->getCode());
+        self::assertSame($prev, $e->getPrevious());
     }
 
     public function provideErrors(): iterable

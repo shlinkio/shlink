@@ -37,7 +37,7 @@ class NotFoundTemplateHandlerTest extends TestCase
 
         $resp = $this->handler->handle($request);
 
-        $this->assertInstanceOf(Response\HtmlResponse::class, $resp);
+        self::assertInstanceOf(Response\HtmlResponse::class, $resp);
         $render->shouldHaveBeenCalledOnce();
     }
 

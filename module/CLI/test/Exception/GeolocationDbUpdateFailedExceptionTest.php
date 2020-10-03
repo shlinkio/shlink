@@ -20,13 +20,13 @@ class GeolocationDbUpdateFailedExceptionTest extends TestCase
     {
         $e = GeolocationDbUpdateFailedException::create($olderDbExists, $prev);
 
-        $this->assertEquals($olderDbExists, $e->olderDbExists());
-        $this->assertEquals(
+        self::assertEquals($olderDbExists, $e->olderDbExists());
+        self::assertEquals(
             'An error occurred while updating geolocation database, and an older version could not be found',
             $e->getMessage(),
         );
-        $this->assertEquals(0, $e->getCode());
-        $this->assertEquals($prev, $e->getPrevious());
+        self::assertEquals(0, $e->getCode());
+        self::assertEquals($prev, $e->getPrevious());
     }
 
     public function provideCreateArgs(): iterable

@@ -33,8 +33,8 @@ class MercureUpdatesGeneratorTest extends TestCase
 
         $update = $this->generator->{$method}($visit);
 
-        $this->assertEquals([$expectedTopic], $update->getTopics());
-        $this->assertEquals([
+        self::assertEquals([$expectedTopic], $update->getTopics());
+        self::assertEquals([
             'shortUrl' => [
                 'shortCode' => $shortUrl->getShortCode(),
                 'shortUrl' => 'http:/' . $shortUrl->getShortCode(),

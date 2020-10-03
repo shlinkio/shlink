@@ -42,6 +42,6 @@ class EditShortUrlTagsActionTest extends TestCase
             (new ServerRequest())->withAttribute('shortCode', 'abc123')
                                  ->withParsedBody(['tags' => []]),
         );
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
     }
 }

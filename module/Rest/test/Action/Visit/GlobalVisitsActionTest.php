@@ -33,7 +33,7 @@ class GlobalVisitsActionTest extends TestCase
         $resp = $this->action->handle(ServerRequestFactory::fromGlobals());
         $payload = $resp->getPayload();
 
-        $this->assertEquals($payload, ['visits' => $stats]);
+        self::assertEquals($payload, ['visits' => $stats]);
         $getStats->shouldHaveBeenCalledOnce();
     }
 }

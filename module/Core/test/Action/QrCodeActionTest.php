@@ -77,8 +77,8 @@ class QrCodeActionTest extends TestCase
             $delegate->reveal(),
         );
 
-        $this->assertInstanceOf(QrCodeResponse::class, $resp);
-        $this->assertEquals(200, $resp->getStatusCode());
+        self::assertInstanceOf(QrCodeResponse::class, $resp);
+        self::assertEquals(200, $resp->getStatusCode());
         $delegate->handle(Argument::any())->shouldHaveBeenCalledTimes(0);
     }
 
@@ -97,7 +97,7 @@ class QrCodeActionTest extends TestCase
 
         $resp = $this->action->process($req, $delegate->reveal());
 
-        $this->assertEquals($expectedContentType, $resp->getHeaderLine('Content-Type'));
+        self::assertEquals($expectedContentType, $resp->getHeaderLine('Content-Type'));
     }
 
     public function provideQueries(): iterable

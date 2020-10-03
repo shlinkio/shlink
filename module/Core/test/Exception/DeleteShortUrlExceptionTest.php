@@ -25,16 +25,16 @@ class DeleteShortUrlExceptionTest extends TestCase
     ): void {
         $e = DeleteShortUrlException::fromVisitsThreshold($threshold, $shortCode);
 
-        $this->assertEquals($threshold, $e->getVisitsThreshold());
-        $this->assertEquals($expectedMessage, $e->getMessage());
-        $this->assertEquals($expectedMessage, $e->getDetail());
-        $this->assertEquals([
+        self::assertEquals($threshold, $e->getVisitsThreshold());
+        self::assertEquals($expectedMessage, $e->getMessage());
+        self::assertEquals($expectedMessage, $e->getDetail());
+        self::assertEquals([
             'shortCode' => $shortCode,
             'threshold' => $threshold,
         ], $e->getAdditionalData());
-        $this->assertEquals('Cannot delete short URL', $e->getTitle());
-        $this->assertEquals('INVALID_SHORTCODE_DELETION', $e->getType());
-        $this->assertEquals(422, $e->getStatus());
+        self::assertEquals('Cannot delete short URL', $e->getTitle());
+        self::assertEquals('INVALID_SHORTCODE_DELETION', $e->getType());
+        self::assertEquals(422, $e->getStatus());
     }
 
     public function provideThresholds(): array

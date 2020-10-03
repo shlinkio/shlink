@@ -13,6 +13,6 @@ class TagTest extends TestCase
     public function jsonSerializationOfTagsReturnsItsStringRepresentation(): void
     {
         $tag = new Tag('This is my name');
-        $this->assertEquals((string) $tag, $tag->jsonSerialize());
+        self::assertEquals((string) $tag, $tag->jsonSerialize());
     }
 }
