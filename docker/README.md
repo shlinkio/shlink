@@ -176,15 +176,17 @@ This is the complete list of supported env vars:
 * `ANONYMIZE_REMOTE_ADDR`: Tells if IP addresses from visitors should be obfuscated before storing them in the database. Default value is `true`. **Careful!** Setting this to `false` will make your Shlink instance no longer be in compliance with the GDPR and other similar data protection regulations. 
 * `REDIRECT_STATUS_CODE`: Either **301** or **302**. Used to determine if redirects from short to long URLs should be done with a 301 or 302 status. Defaults to 302.
 * `REDIRECT_CACHE_LIFETIME`: Allows to set the amount of seconds that redirects should be cached when redirect status is 301. Default values is 30. 
+* `PORT`: Can be used to set the port in which shlink listens. Defaults to 8080 (Some cloud providers, like Google cloud or Heroku, expect to be able to customize exposed port by providing this env var). 
 
 An example using all env vars could look like this:
 
 ```bash
 docker run \
     --name shlink \
-    -p 8080:8080 \
+    -p 8080:8888 \
     -e SHORT_DOMAIN_HOST=doma.in \
     -e SHORT_DOMAIN_SCHEMA=https \
+    -e PORT=8888 \
     -e DB_DRIVER=mysql \
     -e DB_NAME=shlink \
     -e DB_USER=root \
@@ -257,7 +259,8 @@ The whole configuration should have this format, but it can be split into multip
     "mercure_jwt_secret": "super_secret_key",
     "anonymize_remote_addr": false,
     "redirect_status_code": 301,
-    "redirect_cache_lifetime": 90
+    "redirect_cache_lifetime": 90,
+    "port": 8888
 }
 ```
 
