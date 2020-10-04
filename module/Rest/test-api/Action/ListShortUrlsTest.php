@@ -110,8 +110,8 @@ class ListShortUrlsTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls', [RequestOptions::QUERY => $query]);
         $respPayload = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals(self::STATUS_OK, $resp->getStatusCode());
-        $this->assertEquals([
+        self::assertEquals(self::STATUS_OK, $resp->getStatusCode());
+        self::assertEquals([
             'shortUrls' => [
                 'data' => $expectedShortUrls,
                 'pagination' => $this->buildPagination(count($expectedShortUrls)),

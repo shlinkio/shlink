@@ -35,7 +35,7 @@ class BodyParserMiddlewareTest extends TestCase
         $request->getMethod()->willReturn($method);
         $request->getParsedBody()->willReturn([]);
 
-        $this->assertHandlingRequestJustFallsBackToNext($request);
+        self::assertHandlingRequestJustFallsBackToNext($request);
     }
 
     public function provideIgnoredRequestMethods(): iterable
@@ -52,7 +52,7 @@ class BodyParserMiddlewareTest extends TestCase
         $request->getMethod()->willReturn('POST');
         $request->getParsedBody()->willReturn(['foo' => 'bar']);
 
-        $this->assertHandlingRequestJustFallsBackToNext($request);
+        self::assertHandlingRequestJustFallsBackToNext($request);
     }
 
     private function assertHandlingRequestJustFallsBackToNext(ProphecyInterface $requestMock): void

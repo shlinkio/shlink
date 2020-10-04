@@ -29,9 +29,9 @@ class ResolveShortUrlActionTest extends ApiTestCase
         $visitResp = $this->callShortUrl($shortCode);
         $fetchResp = $this->callApiWithKey(self::METHOD_GET, $url);
 
-        $this->assertEquals(self::STATUS_NO_CONTENT, $editResp->getStatusCode());
-        $this->assertEquals(self::STATUS_NOT_FOUND, $visitResp->getStatusCode());
-        $this->assertEquals(self::STATUS_OK, $fetchResp->getStatusCode());
+        self::assertEquals(self::STATUS_NO_CONTENT, $editResp->getStatusCode());
+        self::assertEquals(self::STATUS_NOT_FOUND, $visitResp->getStatusCode());
+        self::assertEquals(self::STATUS_OK, $fetchResp->getStatusCode());
     }
 
     public function provideDisabledMeta(): iterable
@@ -55,12 +55,12 @@ class ResolveShortUrlActionTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_GET, $this->buildShortUrlPath($shortCode, $domain));
         $payload = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
-        $this->assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
-        $this->assertEquals('INVALID_SHORTCODE', $payload['type']);
-        $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals('Short URL not found', $payload['title']);
-        $this->assertEquals($shortCode, $payload['shortCode']);
-        $this->assertEquals($domain, $payload['domain'] ?? null);
+        self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
+        self::assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
+        self::assertEquals('INVALID_SHORTCODE', $payload['type']);
+        self::assertEquals($expectedDetail, $payload['detail']);
+        self::assertEquals('Short URL not found', $payload['title']);
+        self::assertEquals($shortCode, $payload['shortCode']);
+        self::assertEquals($domain, $payload['domain'] ?? null);
     }
 }

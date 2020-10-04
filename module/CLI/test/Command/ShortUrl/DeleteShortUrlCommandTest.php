@@ -47,7 +47,7 @@ class DeleteShortUrlCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString(
+        self::assertStringContainsString(
             sprintf('Short URL with short code "%s" successfully deleted.', $shortCode),
             $output,
         );
@@ -66,7 +66,7 @@ class DeleteShortUrlCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
+        self::assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
         $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 
@@ -95,11 +95,11 @@ class DeleteShortUrlCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString(sprintf(
+        self::assertStringContainsString(sprintf(
             'Impossible to delete short URL with short code "%s" since it has more than "10" visits.',
             $shortCode,
         ), $output);
-        $this->assertStringContainsString($expectedMessage, $output);
+        self::assertStringContainsString($expectedMessage, $output);
         $deleteByShortCode->shouldHaveBeenCalledTimes($expectedDeleteCalls);
     }
 
@@ -122,11 +122,11 @@ class DeleteShortUrlCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString(sprintf(
+        self::assertStringContainsString(sprintf(
             'Impossible to delete short URL with short code "%s" since it has more than "10" visits.',
             $shortCode,
         ), $output);
-        $this->assertStringContainsString('Short URL was not deleted.', $output);
+        self::assertStringContainsString('Short URL was not deleted.', $output);
         $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 }

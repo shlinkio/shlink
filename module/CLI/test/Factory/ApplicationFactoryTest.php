@@ -37,9 +37,9 @@ class ApplicationFactoryTest extends TestCase
 
         $instance = ($this->factory)($sm);
 
-        $this->assertTrue($instance->has('foo'));
-        $this->assertTrue($instance->has('bar'));
-        $this->assertFalse($instance->has('baz'));
+        self::assertTrue($instance->has('foo'));
+        self::assertTrue($instance->has('bar'));
+        self::assertFalse($instance->has('baz'));
     }
 
     private function createServiceManager(array $config = []): ServiceManager

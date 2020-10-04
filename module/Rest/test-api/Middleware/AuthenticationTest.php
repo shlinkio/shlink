@@ -24,11 +24,11 @@ class AuthenticationTest extends ApiTestCase
         $resp = $this->callApi(self::METHOD_GET, '/short-urls');
         $payload = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals(self::STATUS_UNAUTHORIZED, $resp->getStatusCode());
-        $this->assertEquals(self::STATUS_UNAUTHORIZED, $payload['status']);
-        $this->assertEquals('INVALID_AUTHORIZATION', $payload['type']);
-        $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals('Invalid authorization', $payload['title']);
+        self::assertEquals(self::STATUS_UNAUTHORIZED, $resp->getStatusCode());
+        self::assertEquals(self::STATUS_UNAUTHORIZED, $payload['status']);
+        self::assertEquals('INVALID_AUTHORIZATION', $payload['type']);
+        self::assertEquals($expectedDetail, $payload['detail']);
+        self::assertEquals('Invalid authorization', $payload['title']);
     }
 
     /**
@@ -46,11 +46,11 @@ class AuthenticationTest extends ApiTestCase
         ]);
         $payload = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals(self::STATUS_UNAUTHORIZED, $resp->getStatusCode());
-        $this->assertEquals(self::STATUS_UNAUTHORIZED, $payload['status']);
-        $this->assertEquals('INVALID_API_KEY', $payload['type']);
-        $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals('Invalid API key', $payload['title']);
+        self::assertEquals(self::STATUS_UNAUTHORIZED, $resp->getStatusCode());
+        self::assertEquals(self::STATUS_UNAUTHORIZED, $payload['status']);
+        self::assertEquals('INVALID_API_KEY', $payload['type']);
+        self::assertEquals($expectedDetail, $payload['detail']);
+        self::assertEquals('Invalid API key', $payload['title']);
     }
 
     public function provideInvalidApiKeys(): iterable

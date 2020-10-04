@@ -67,7 +67,7 @@ class UrlShortenerTest extends TestCase
             ShortUrlMeta::createEmpty(),
         );
 
-        $this->assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
+        self::assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
     }
 
     /** @test */
@@ -91,7 +91,7 @@ class UrlShortenerTest extends TestCase
             ShortUrlMeta::createEmpty(),
         );
 
-        $this->assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
+        self::assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
         $getRepo->shouldBeCalledTimes($expectedCalls);
         $shortCodeIsInUse->shouldBeCalledTimes($expectedCalls);
     }
@@ -154,7 +154,7 @@ class UrlShortenerTest extends TestCase
         $getRepo->shouldHaveBeenCalledOnce();
         $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->urlValidator->validateUrl(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function provideExistingShortUrls(): iterable

@@ -20,9 +20,9 @@ class CreateShortUrlActionTest extends ApiTestCase
         $expectedKeys = ['shortCode', 'shortUrl', 'longUrl', 'dateCreated', 'visitsCount', 'tags'];
         [$statusCode, $payload] = $this->createShortUrl();
 
-        $this->assertEquals(self::STATUS_OK, $statusCode);
+        self::assertEquals(self::STATUS_OK, $statusCode);
         foreach ($expectedKeys as $key) {
-            $this->assertArrayHasKey($key, $payload);
+            self::assertArrayHasKey($key, $payload);
         }
     }
 
@@ -31,8 +31,8 @@ class CreateShortUrlActionTest extends ApiTestCase
     {
         [$statusCode, $payload] = $this->createShortUrl(['customSlug' => 'my cool slug']);
 
-        $this->assertEquals(self::STATUS_OK, $statusCode);
-        $this->assertEquals('my-cool-slug', $payload['shortCode']);
+        self::assertEquals(self::STATUS_OK, $statusCode);
+        self::assertEquals('my-cool-slug', $payload['shortCode']);
     }
 
     /**
@@ -46,17 +46,17 @@ class CreateShortUrlActionTest extends ApiTestCase
 
         [$statusCode, $payload] = $this->createShortUrl(['customSlug' => $slug, 'domain' => $domain]);
 
-        $this->assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
-        $this->assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
-        $this->assertEquals($detail, $payload['detail']);
-        $this->assertEquals('INVALID_SLUG', $payload['type']);
-        $this->assertEquals('Invalid custom slug', $payload['title']);
-        $this->assertEquals($slug, $payload['customSlug']);
+        self::assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
+        self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
+        self::assertEquals($detail, $payload['detail']);
+        self::assertEquals('INVALID_SLUG', $payload['type']);
+        self::assertEquals('Invalid custom slug', $payload['title']);
+        self::assertEquals($slug, $payload['customSlug']);
 
         if ($domain !== null) {
-            $this->assertEquals($domain, $payload['domain']);
+            self::assertEquals($domain, $payload['domain']);
         } else {
-            $this->assertArrayNotHasKey('domain', $payload);
+            self::assertArrayNotHasKey('domain', $payload);
         }
     }
 
@@ -65,8 +65,8 @@ class CreateShortUrlActionTest extends ApiTestCase
     {
         [$statusCode, ['tags' => $tags]] = $this->createShortUrl(['tags' => ['foo', 'bar', 'baz']]);
 
-        $this->assertEquals(self::STATUS_OK, $statusCode);
-        $this->assertEquals(['foo', 'bar', 'baz'], $tags);
+        self::assertEquals(self::STATUS_OK, $statusCode);
+        self::assertEquals(['foo', 'bar', 'baz'], $tags);
     }
 
     /**
@@ -77,14 +77,14 @@ class CreateShortUrlActionTest extends ApiTestCase
     {
         [$statusCode, ['shortCode' => $shortCode]] = $this->createShortUrl(['maxVisits' => $maxVisits]);
 
-        $this->assertEquals(self::STATUS_OK, $statusCode);
+        self::assertEquals(self::STATUS_OK, $statusCode);
 
         // Last request to the short URL will return a 404, and the rest, a 302
         for ($i = 0; $i < $maxVisits; $i++) {
-            $this->assertEquals(self::STATUS_FOUND, $this->callShortUrl($shortCode)->getStatusCode());
+            self::assertEquals(self::STATUS_FOUND, $this->callShortUrl($shortCode)->getStatusCode());
         }
         $lastResp = $this->callShortUrl($shortCode);
-        $this->assertEquals(self::STATUS_NOT_FOUND, $lastResp->getStatusCode());
+        self::assertEquals(self::STATUS_NOT_FOUND, $lastResp->getStatusCode());
     }
 
     public function provideMaxVisits(): array
@@ -99,11 +99,11 @@ class CreateShortUrlActionTest extends ApiTestCase
             'validSince' => Chronos::now()->addDay()->toAtomString(),
         ]);
 
-        $this->assertEquals(self::STATUS_OK, $statusCode);
+        self::assertEquals(self::STATUS_OK, $statusCode);
 
         // Request to the short URL will return a 404 since it's not valid yet
         $lastResp = $this->callShortUrl($shortCode);
-        $this->assertEquals(self::STATUS_NOT_FOUND, $lastResp->getStatusCode());
+        self::assertEquals(self::STATUS_NOT_FOUND, $lastResp->getStatusCode());
     }
 
     /** @test */
@@ -113,11 +113,11 @@ class CreateShortUrlActionTest extends ApiTestCase
             'validUntil' => Chronos::now()->subDay()->toAtomString(),
         ]);
 
-        $this->assertEquals(self::STATUS_OK, $statusCode);
+        self::assertEquals(self::STATUS_OK, $statusCode);
 
         // Request to the short URL will return a 404 since it's no longer valid
         $lastResp = $this->callShortUrl($shortCode);
-        $this->assertEquals(self::STATUS_NOT_FOUND, $lastResp->getStatusCode());
+        self::assertEquals(self::STATUS_NOT_FOUND, $lastResp->getStatusCode());
     }
 
     /**
@@ -131,9 +131,9 @@ class CreateShortUrlActionTest extends ApiTestCase
         $body['findIfExists'] = true;
         [$secondStatusCode, ['shortCode' => $secondShortCode]] = $this->createShortUrl($body);
 
-        $this->assertEquals(self::STATUS_OK, $firstStatusCode);
-        $this->assertEquals(self::STATUS_OK, $secondStatusCode);
-        $this->assertEquals($firstShortCode, $secondShortCode);
+        self::assertEquals(self::STATUS_OK, $firstStatusCode);
+        self::assertEquals(self::STATUS_OK, $secondStatusCode);
+        self::assertEquals($firstShortCode, $secondShortCode);
     }
 
     public function provideMatchingBodies(): iterable
@@ -167,8 +167,8 @@ class CreateShortUrlActionTest extends ApiTestCase
             'domain' => $domain,
         ]);
 
-        $this->assertEquals(self::STATUS_OK, $firstStatusCode);
-        $this->assertEquals(self::STATUS_BAD_REQUEST, $secondStatusCode);
+        self::assertEquals(self::STATUS_OK, $firstStatusCode);
+        self::assertEquals(self::STATUS_BAD_REQUEST, $secondStatusCode);
     }
 
     public function provideConflictingSlugs(): iterable
@@ -188,9 +188,9 @@ class CreateShortUrlActionTest extends ApiTestCase
             'findIfExists' => true,
         ]);
 
-        $this->assertEquals(self::STATUS_OK, $firstStatusCode);
-        $this->assertEquals(self::STATUS_OK, $secondStatusCode);
-        $this->assertNotEquals($firstShortCode, $secondShortCode);
+        self::assertEquals(self::STATUS_OK, $firstStatusCode);
+        self::assertEquals(self::STATUS_OK, $secondStatusCode);
+        self::assertNotEquals($firstShortCode, $secondShortCode);
     }
 
     /**
@@ -201,8 +201,8 @@ class CreateShortUrlActionTest extends ApiTestCase
     {
         [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $longUrl]);
 
-        $this->assertEquals(self::STATUS_OK, $statusCode);
-        $this->assertEquals($payload['longUrl'], $longUrl);
+        self::assertEquals(self::STATUS_OK, $statusCode);
+        self::assertEquals($payload['longUrl'], $longUrl);
     }
 
     public function provideIdn(): iterable
@@ -220,12 +220,12 @@ class CreateShortUrlActionTest extends ApiTestCase
 
         [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $url]);
 
-        $this->assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
-        $this->assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
-        $this->assertEquals('INVALID_URL', $payload['type']);
-        $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals('Invalid URL', $payload['title']);
-        $this->assertEquals($url, $payload['url']);
+        self::assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
+        self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
+        self::assertEquals('INVALID_URL', $payload['type']);
+        self::assertEquals($expectedDetail, $payload['detail']);
+        self::assertEquals('Invalid URL', $payload['title']);
+        self::assertEquals($url, $payload['url']);
     }
 
     /** @test */
@@ -238,10 +238,10 @@ class CreateShortUrlActionTest extends ApiTestCase
         $getResp = $this->callApiWithKey(self::METHOD_GET, '/short-urls/' . $shortCode);
         $payload = $this->getJsonResponsePayload($getResp);
 
-        $this->assertEquals(self::STATUS_OK, $createStatusCode);
-        $this->assertEquals(self::STATUS_OK, $getResp->getStatusCode());
-        $this->assertArrayHasKey('domain', $payload);
-        $this->assertNull($payload['domain']);
+        self::assertEquals(self::STATUS_OK, $createStatusCode);
+        self::assertEquals(self::STATUS_OK, $getResp->getStatusCode());
+        self::assertArrayHasKey('domain', $payload);
+        self::assertNull($payload['domain']);
     }
 
     /**

@@ -29,7 +29,7 @@ class ShortUrlDataTransformerTest extends TestCase
     {
         ['meta' => $meta] = $this->transformer->transform($shortUrl);
 
-        $this->assertEquals($expectedMeta, $meta);
+        self::assertEquals($expectedMeta, $meta);
     }
 
     public function provideShortUrls(): iterable

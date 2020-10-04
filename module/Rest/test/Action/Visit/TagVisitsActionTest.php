@@ -35,7 +35,7 @@ class TagVisitsActionTest extends TestCase
 
         $response = $this->action->handle((new ServerRequest())->withAttribute('tag', $tag));
 
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
         $getVisits->shouldHaveBeenCalledOnce();
     }
 }

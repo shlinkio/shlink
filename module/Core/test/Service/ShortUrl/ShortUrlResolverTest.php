@@ -44,7 +44,7 @@ class ShortUrlResolverTest extends TestCase
 
         $result = $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode));
 
-        $this->assertSame($shortUrl, $result);
+        self::assertSame($shortUrl, $result);
         $findOne->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
     }
@@ -77,7 +77,7 @@ class ShortUrlResolverTest extends TestCase
 
         $result = $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode));
 
-        $this->assertSame($shortUrl, $result);
+        self::assertSame($shortUrl, $result);
         $findOneByShortCode->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
     }

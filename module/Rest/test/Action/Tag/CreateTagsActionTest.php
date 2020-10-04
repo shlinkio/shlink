@@ -33,7 +33,7 @@ class CreateTagsActionTest extends TestCase
 
         $response = $this->action->handle($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
         $deleteTags->shouldHaveBeenCalled();
     }
 

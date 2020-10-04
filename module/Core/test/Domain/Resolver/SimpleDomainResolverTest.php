@@ -26,10 +26,10 @@ class SimpleDomainResolverTest extends TestCase
         $result = $this->domainResolver->resolveDomain($domain);
 
         if ($domain === null) {
-            $this->assertNull($result);
+            self::assertNull($result);
         } else {
-            $this->assertInstanceOf(Domain::class, $result);
-            $this->assertEquals($domain, $result->getAuthority());
+            self::assertInstanceOf(Domain::class, $result);
+            self::assertEquals($domain, $result->getAuthority());
         }
     }
 

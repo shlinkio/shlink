@@ -37,7 +37,7 @@ class ListTagsCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('No tags found', $output);
+        self::assertStringContainsString('No tags found', $output);
         $tagsInfo->shouldHaveBeenCalled();
     }
 
@@ -52,12 +52,12 @@ class ListTagsCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('| foo', $output);
-        $this->assertStringContainsString('| bar', $output);
-        $this->assertStringContainsString('| 10 ', $output);
-        $this->assertStringContainsString('| 2 ', $output);
-        $this->assertStringContainsString('| 7 ', $output);
-        $this->assertStringContainsString('| 32 ', $output);
+        self::assertStringContainsString('| foo', $output);
+        self::assertStringContainsString('| bar', $output);
+        self::assertStringContainsString('| 10 ', $output);
+        self::assertStringContainsString('| 2 ', $output);
+        self::assertStringContainsString('| 7 ', $output);
+        self::assertStringContainsString('| 32 ', $output);
         $tagsInfo->shouldHaveBeenCalled();
     }
 }

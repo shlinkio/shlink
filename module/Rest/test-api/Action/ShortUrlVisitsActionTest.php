@@ -27,13 +27,13 @@ class ShortUrlVisitsActionTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_GET, $this->buildShortUrlPath($shortCode, $domain, '/visits'));
         $payload = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
-        $this->assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
-        $this->assertEquals('INVALID_SHORTCODE', $payload['type']);
-        $this->assertEquals($expectedDetail, $payload['detail']);
-        $this->assertEquals('Short URL not found', $payload['title']);
-        $this->assertEquals($shortCode, $payload['shortCode']);
-        $this->assertEquals($domain, $payload['domain'] ?? null);
+        self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
+        self::assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
+        self::assertEquals('INVALID_SHORTCODE', $payload['type']);
+        self::assertEquals($expectedDetail, $payload['detail']);
+        self::assertEquals('Short URL not found', $payload['title']);
+        self::assertEquals($shortCode, $payload['shortCode']);
+        self::assertEquals($domain, $payload['domain'] ?? null);
     }
 
     /**
@@ -52,8 +52,8 @@ class ShortUrlVisitsActionTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_GET, (string) $url);
         $payload = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals($expectedAmountOfVisits, $payload['visits']['pagination']['totalItems'] ?? -1);
-        $this->assertCount($expectedAmountOfVisits, $payload['visits']['data'] ?? []);
+        self::assertEquals($expectedAmountOfVisits, $payload['visits']['pagination']['totalItems'] ?? -1);
+        self::assertCount($expectedAmountOfVisits, $payload['visits']['data'] ?? []);
     }
 
     public function provideDomains(): iterable

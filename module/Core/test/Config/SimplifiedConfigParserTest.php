@@ -153,6 +153,6 @@ class SimplifiedConfigParserTest extends TestCase
 
         $result = ($this->postProcessor)(array_merge($config, $simplified));
 
-        $this->assertEquals(array_merge($expected, $simplified), $result);
+        self::assertEquals(array_merge($expected, $simplified), $result);
     }
 }

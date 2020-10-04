@@ -80,7 +80,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
 
         $resp = $this->action->handle($request);
 
-        $this->assertEquals(200, $resp->getStatusCode());
+        self::assertEquals(200, $resp->getStatusCode());
         $findApiKey->shouldHaveBeenCalled();
         $generateShortCode->shouldHaveBeenCalled();
     }

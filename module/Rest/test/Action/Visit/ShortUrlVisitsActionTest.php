@@ -37,7 +37,7 @@ class ShortUrlVisitsActionTest extends TestCase
         )->shouldBeCalledOnce();
 
         $response = $this->action->handle((new ServerRequest())->withAttribute('shortCode', $shortCode));
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
     }
 
     /** @test */
@@ -60,6 +60,6 @@ class ShortUrlVisitsActionTest extends TestCase
                                      'itemsPerPage' => '10',
                                  ]),
         );
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
     }
 }

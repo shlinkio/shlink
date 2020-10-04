@@ -37,13 +37,13 @@ class CrossDomainMiddlewareTest extends TestCase
         $response = $this->middleware->process(new ServerRequest(), $this->handler->reveal());
         $headers = $response->getHeaders();
 
-        $this->assertSame($originalResponse, $response);
-        $this->assertEquals(404, $response->getStatusCode());
-        $this->assertArrayNotHasKey('Access-Control-Allow-Origin', $headers);
-        $this->assertArrayNotHasKey('Access-Control-Expose-Headers', $headers);
-        $this->assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
-        $this->assertArrayNotHasKey('Access-Control-Max-Age', $headers);
-        $this->assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
+        self::assertSame($originalResponse, $response);
+        self::assertEquals(404, $response->getStatusCode());
+        self::assertArrayNotHasKey('Access-Control-Allow-Origin', $headers);
+        self::assertArrayNotHasKey('Access-Control-Expose-Headers', $headers);
+        self::assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
+        self::assertArrayNotHasKey('Access-Control-Max-Age', $headers);
+        self::assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
     }
 
     /** @test */
@@ -56,18 +56,18 @@ class CrossDomainMiddlewareTest extends TestCase
             (new ServerRequest())->withHeader('Origin', 'local'),
             $this->handler->reveal(),
         );
-        $this->assertNotSame($originalResponse, $response);
+        self::assertNotSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
 
-        $this->assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertEquals(
+        self::assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertEquals(
             Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
             $response->getHeaderLine('Access-Control-Expose-Headers'),
         );
-        $this->assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
-        $this->assertArrayNotHasKey('Access-Control-Max-Age', $headers);
-        $this->assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
+        self::assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
+        self::assertArrayNotHasKey('Access-Control-Max-Age', $headers);
+        self::assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
     }
 
     /** @test */
@@ -81,19 +81,19 @@ class CrossDomainMiddlewareTest extends TestCase
         $this->handler->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
 
         $response = $this->middleware->process($request, $this->handler->reveal());
-        $this->assertNotSame($originalResponse, $response);
+        self::assertNotSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
 
-        $this->assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertEquals(
+        self::assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertEquals(
             Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
             $response->getHeaderLine('Access-Control-Expose-Headers'),
         );
-        $this->assertArrayHasKey('Access-Control-Allow-Methods', $headers);
-        $this->assertEquals('1000', $response->getHeaderLine('Access-Control-Max-Age'));
-        $this->assertEquals('foo, bar, baz', $response->getHeaderLine('Access-Control-Allow-Headers'));
-        $this->assertEquals(204, $response->getStatusCode());
+        self::assertArrayHasKey('Access-Control-Allow-Methods', $headers);
+        self::assertEquals('1000', $response->getHeaderLine('Access-Control-Max-Age'));
+        self::assertEquals('foo, bar, baz', $response->getHeaderLine('Access-Control-Allow-Headers'));
+        self::assertEquals(204, $response->getStatusCode());
     }
 
     /**
@@ -112,8 +112,8 @@ class CrossDomainMiddlewareTest extends TestCase
 
         $response = $this->middleware->process($request, $this->handler->reveal());
 
-        $this->assertEquals($response->getHeaderLine('Access-Control-Allow-Methods'), $expectedAllowedMethods);
-        $this->assertEquals(204, $response->getStatusCode());
+        self::assertEquals($response->getHeaderLine('Access-Control-Allow-Methods'), $expectedAllowedMethods);
+        self::assertEquals(204, $response->getStatusCode());
     }
 
     public function provideRouteResults(): iterable
@@ -145,7 +145,7 @@ class CrossDomainMiddlewareTest extends TestCase
 
         $response = $this->middleware->process($request, $this->handler->reveal());
 
-        $this->assertEquals($expectedStatus, $response->getStatusCode());
+        self::assertEquals($expectedStatus, $response->getStatusCode());
     }
 
     public function provideMethods(): iterable

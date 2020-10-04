@@ -60,8 +60,8 @@ class MigrateDatabaseCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Migrating database...', $output);
-        $this->assertStringContainsString('Database properly migrated!', $output);
+        self::assertStringContainsString('Migrating database...', $output);
+        self::assertStringContainsString('Database properly migrated!', $output);
         $runCommand->shouldHaveBeenCalledOnce();
     }
 }

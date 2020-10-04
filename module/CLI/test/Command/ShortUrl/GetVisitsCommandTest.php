@@ -88,7 +88,7 @@ class GetVisitsCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         $info->shouldHaveBeenCalledOnce();
-        $this->assertStringContainsString(
+        self::assertStringContainsString(
             sprintf('Ignored provided "startDate" since its value "%s" is not a valid date', $startDate),
             $output,
         );
@@ -108,8 +108,8 @@ class GetVisitsCommandTest extends TestCase
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString('foo', $output);
-        $this->assertStringContainsString('Spain', $output);
-        $this->assertStringContainsString('bar', $output);
+        self::assertStringContainsString('foo', $output);
+        self::assertStringContainsString('Spain', $output);
+        self::assertStringContainsString('bar', $output);
     }
 }

@@ -54,7 +54,7 @@ class UpdateTagActionTest extends TestCase
 
         $resp = $this->action->handle($request);
 
-        $this->assertEquals(204, $resp->getStatusCode());
+        self::assertEquals(204, $resp->getStatusCode());
         $rename->shouldHaveBeenCalled();
     }
 }

@@ -21,8 +21,8 @@ class ConfigProviderTest extends TestCase
     {
         $config = ($this->configProvider)();
 
-        $this->assertArrayHasKey('routes', $config);
-        $this->assertArrayHasKey('dependencies', $config);
+        self::assertArrayHasKey('routes', $config);
+        self::assertArrayHasKey('dependencies', $config);
     }
 
     /**
@@ -35,7 +35,7 @@ class ConfigProviderTest extends TestCase
 
         $config = $configProvider();
 
-        $this->assertEquals($expected, $config['routes']);
+        self::assertEquals($expected, $config['routes']);
     }
 
     public function provideRoutesConfig(): iterable

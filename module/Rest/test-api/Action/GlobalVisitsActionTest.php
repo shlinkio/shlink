@@ -14,8 +14,8 @@ class GlobalVisitsActionTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_GET, '/visits');
         $payload = $this->getJsonResponsePayload($resp);
 
-        $this->assertArrayHasKey('visits', $payload);
-        $this->assertArrayHasKey('visitsCount', $payload['visits']);
-        $this->assertEquals(7, $payload['visits']['visitsCount']);
+        self::assertArrayHasKey('visits', $payload);
+        self::assertArrayHasKey('visitsCount', $payload['visits']);
+        self::assertEquals(7, $payload['visits']['visitsCount']);
     }
 }

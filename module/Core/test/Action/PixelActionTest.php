@@ -47,8 +47,8 @@ class PixelActionTest extends TestCase
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
 
-        $this->assertInstanceOf(PixelResponse::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('image/gif', $response->getHeaderLine('content-type'));
+        self::assertInstanceOf(PixelResponse::class, $response);
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertEquals('image/gif', $response->getHeaderLine('content-type'));
     }
 }

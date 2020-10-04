@@ -26,12 +26,12 @@ class ShortUrlNotFoundExceptionTest extends TestCase
 
         $e = ShortUrlNotFoundException::fromNotFound(new ShortUrlIdentifier($shortCode, $domain));
 
-        $this->assertEquals($expectedMessage, $e->getMessage());
-        $this->assertEquals($expectedMessage, $e->getDetail());
-        $this->assertEquals('Short URL not found', $e->getTitle());
-        $this->assertEquals('INVALID_SHORTCODE', $e->getType());
-        $this->assertEquals(404, $e->getStatus());
-        $this->assertEquals($expectedAdditional, $e->getAdditionalData());
+        self::assertEquals($expectedMessage, $e->getMessage());
+        self::assertEquals($expectedMessage, $e->getDetail());
+        self::assertEquals('Short URL not found', $e->getTitle());
+        self::assertEquals('INVALID_SHORTCODE', $e->getType());
+        self::assertEquals(404, $e->getStatus());
+        self::assertEquals($expectedAdditional, $e->getAdditionalData());
     }
 
     public function provideMessages(): iterable

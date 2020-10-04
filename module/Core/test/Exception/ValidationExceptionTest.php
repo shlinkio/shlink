@@ -38,12 +38,12 @@ EOT;
 
         $e = ValidationException::fromInputFilter($inputFilter->reveal());
 
-        $this->assertEquals($invalidData, $e->getInvalidElements());
-        $this->assertEquals(['invalidElements' => array_keys($invalidData)], $e->getAdditionalData());
-        $this->assertEquals('Provided data is not valid', $e->getMessage());
-        $this->assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getCode());
-        $this->assertEquals($prev, $e->getPrevious());
-        $this->assertStringContainsString($expectedStringRepresentation, (string) $e);
+        self::assertEquals($invalidData, $e->getInvalidElements());
+        self::assertEquals(['invalidElements' => array_keys($invalidData)], $e->getAdditionalData());
+        self::assertEquals('Provided data is not valid', $e->getMessage());
+        self::assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getCode());
+        self::assertEquals($prev, $e->getPrevious());
+        self::assertStringContainsString($expectedStringRepresentation, (string) $e);
         $getMessages->shouldHaveBeenCalledOnce();
     }
 

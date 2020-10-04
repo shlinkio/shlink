@@ -112,7 +112,7 @@ class LocateShortUrlVisitTest extends TestCase
 
         ($this->locateVisit)($event);
 
-        $this->assertEquals($visit->getVisitLocation(), new VisitLocation(Location::emptyInstance()));
+        self::assertEquals($visit->getVisitLocation(), new VisitLocation(Location::emptyInstance()));
         $findVisit->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
         $resolveIp->shouldNotHaveBeenCalled();
@@ -149,7 +149,7 @@ class LocateShortUrlVisitTest extends TestCase
 
         ($this->locateVisit)($event);
 
-        $this->assertEquals($visit->getVisitLocation(), new VisitLocation($location));
+        self::assertEquals($visit->getVisitLocation(), new VisitLocation($location));
         $findVisit->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
         $resolveIp->shouldHaveBeenCalledOnce();
@@ -182,7 +182,7 @@ class LocateShortUrlVisitTest extends TestCase
 
         ($this->locateVisit)($event);
 
-        $this->assertEquals($visit->getVisitLocation(), new VisitLocation($location));
+        self::assertEquals($visit->getVisitLocation(), new VisitLocation($location));
         $findVisit->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
         $resolveIp->shouldHaveBeenCalledOnce();
@@ -217,7 +217,7 @@ class LocateShortUrlVisitTest extends TestCase
 
         ($this->locateVisit)($event);
 
-        $this->assertNull($visit->getVisitLocation());
+        self::assertNull($visit->getVisitLocation());
         $findVisit->shouldHaveBeenCalledOnce();
         $flush->shouldNotHaveBeenCalled();
         $resolveIp->shouldNotHaveBeenCalled();

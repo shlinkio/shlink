@@ -61,7 +61,7 @@ class ShortUrlServiceTest extends TestCase
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $list = $this->service->listShortUrls(ShortUrlsParams::emptyInstance());
-        $this->assertEquals(4, $list->getCurrentItemCount());
+        self::assertEquals(4, $list->getCurrentItemCount());
     }
 
     /** @test */
@@ -97,11 +97,11 @@ class ShortUrlServiceTest extends TestCase
 
         $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), $shortUrlEdit);
 
-        $this->assertSame($shortUrl, $result);
-        $this->assertEquals($shortUrlEdit->validSince(), $shortUrl->getValidSince());
-        $this->assertEquals($shortUrlEdit->validUntil(), $shortUrl->getValidUntil());
-        $this->assertEquals($shortUrlEdit->maxVisits(), $shortUrl->getMaxVisits());
-        $this->assertEquals($shortUrlEdit->longUrl() ?? $originalLongUrl, $shortUrl->getLongUrl());
+        self::assertSame($shortUrl, $result);
+        self::assertEquals($shortUrlEdit->validSince(), $shortUrl->getValidSince());
+        self::assertEquals($shortUrlEdit->validUntil(), $shortUrl->getValidUntil());
+        self::assertEquals($shortUrlEdit->maxVisits(), $shortUrl->getMaxVisits());
+        self::assertEquals($shortUrlEdit->longUrl() ?? $originalLongUrl, $shortUrl->getLongUrl());
         $findShortUrl->shouldHaveBeenCalled();
         $flush->shouldHaveBeenCalled();
         $this->urlValidator->validateUrl(

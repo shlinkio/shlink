@@ -38,11 +38,11 @@ class ListKeysCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Key', $output);
-        $this->assertStringContainsString('Is enabled', $output);
-        $this->assertStringContainsString(' +++ ', $output);
-        $this->assertStringNotContainsString(' --- ', $output);
-        $this->assertStringContainsString('Expiration date', $output);
+        self::assertStringContainsString('Key', $output);
+        self::assertStringContainsString('Is enabled', $output);
+        self::assertStringContainsString(' +++ ', $output);
+        self::assertStringNotContainsString(' --- ', $output);
+        self::assertStringContainsString('Expiration date', $output);
     }
 
     /** @test */
@@ -58,10 +58,10 @@ class ListKeysCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Key', $output);
-        $this->assertStringNotContainsString('Is enabled', $output);
-        $this->assertStringNotContainsString(' +++ ', $output);
-        $this->assertStringNotContainsString(' --- ', $output);
-        $this->assertStringContainsString('Expiration date', $output);
+        self::assertStringContainsString('Key', $output);
+        self::assertStringNotContainsString('Is enabled', $output);
+        self::assertStringNotContainsString(' +++ ', $output);
+        self::assertStringNotContainsString(' --- ', $output);
+        self::assertStringContainsString('Expiration date', $output);
     }
 }

@@ -32,9 +32,9 @@ class BasePathPrefixerTest extends TestCase
             'url_shortener' => $urlShortener,
         ] = ($this->prefixer)($originalConfig);
 
-        $this->assertEquals($expectedRoutes, $routes);
-        $this->assertEquals($expectedMiddlewares, $middlewares);
-        $this->assertEquals([
+        self::assertEquals($expectedRoutes, $routes);
+        self::assertEquals($expectedMiddlewares, $middlewares);
+        self::assertEquals([
             'domain' => [
                 'hostname' => $expectedHostname,
             ],

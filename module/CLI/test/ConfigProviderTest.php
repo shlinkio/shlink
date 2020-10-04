@@ -17,11 +17,11 @@ class ConfigProviderTest extends TestCase
     }
 
     /** @test */
-    public function confiIsProperlyReturned(): void
+    public function configIsProperlyReturned(): void
     {
         $config = ($this->configProvider)();
 
-        $this->assertArrayHasKey('cli', $config);
-        $this->assertArrayHasKey('dependencies', $config);
+        self::assertArrayHasKey('cli', $config);
+        self::assertArrayHasKey('dependencies', $config);
     }
 }

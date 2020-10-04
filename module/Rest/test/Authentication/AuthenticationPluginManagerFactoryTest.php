@@ -29,7 +29,7 @@ class AuthenticationPluginManagerFactoryTest extends TestCase
             'config' => $config,
         ]]));
 
-        $this->assertEquals($expectedPlugins, $this->getPlugins($instance));
+        self::assertEquals($expectedPlugins, $this->getPlugins($instance));
     }
 
     private function getPlugins(AuthenticationPluginManager $pluginManager): array
