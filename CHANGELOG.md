@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#836](https://github.com/shlinkio/shlink/issues/836) Added support for the `<field>-<dir>` notation while determining how to order the short URLs list, as in `?orderBy=shortCode-DESC`. This effectively deprecates the array notation (`?orderBy[shortCode]=DESC`), that will be removed in Shlink 3.0.0
 * [#782](https://github.com/shlinkio/shlink/issues/782) Added code coverage to API tests.
+* [#858](https://github.com/shlinkio/shlink/issues/858) Updated to latest infection version. Updated docker images to PHP 7.4.11 and swoole 4.5.5
 
 #### Deprecated
 
