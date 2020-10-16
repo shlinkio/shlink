@@ -66,14 +66,14 @@
         "devster/ubench": "^2.0",
         "dms/phpunit-arraysubset-asserts": "^0.2.0",
         "eaglewu/swoole-ide-helper": "dev-master",
-        "infection/infection": "^0.16.1",
-        "phpstan/phpstan": "^0.12.18",
+        "infection/infection": "^0.17.7",
+        "phpstan/phpstan": "^0.12.50",
         "phpunit/php-code-coverage": "^8.0",
         "phpunit/phpunit": "~9.0.1",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.1.0",
         "shlinkio/shlink-test-utils": "^1.5",
-        "symfony/var-dumper": "^5.0"
+        "symfony/var-dumper": "^5.1"
     },
     "autoload": {
         "psr-4": {

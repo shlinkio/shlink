@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink;
 
 use Laminas\ConfigAggregator;
+use Laminas\Diactoros;
 use Mezzio;
 use Mezzio\ProblemDetails;
 
@@ -17,6 +18,7 @@ return (new ConfigAggregator\ConfigAggregator([
     Mezzio\Plates\ConfigProvider::class,
     Mezzio\Swoole\ConfigProvider::class,
     ProblemDetails\ConfigProvider::class,
+    Diactoros\ConfigProvider::class,
     Common\ConfigProvider::class,
     Config\ConfigProvider::class,
     IpGeolocation\ConfigProvider::class,
