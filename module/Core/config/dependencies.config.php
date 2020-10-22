@@ -10,6 +10,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver;
 use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
+use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 
 return [
 
@@ -42,6 +43,12 @@ return [
             Resolver\PersistenceDomainResolver::class => ConfigAbstractFactory::class,
 
             Mercure\MercureUpdatesGenerator::class => ConfigAbstractFactory::class,
+
+            Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
+        ],
+
+        'aliases' => [
+            ImportedLinksProcessorInterface::class => Importer\ImportedLinksProcessor::class,
         ],
     ],
 
@@ -96,6 +103,8 @@ return [
         Resolver\PersistenceDomainResolver::class => ['em'],
 
         Mercure\MercureUpdatesGenerator::class => ['config.url_shortener.domain'],
+
+        Importer\ImportedLinksProcessor::class => ['em', Resolver\PersistenceDomainResolver::class],
     ],
 
 ];

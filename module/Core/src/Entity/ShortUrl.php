@@ -14,6 +14,8 @@ use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
 
 use function count;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
@@ -33,6 +35,7 @@ class ShortUrl extends AbstractEntity
     private ?Domain $domain = null;
     private bool $customSlugWasProvided;
     private int $shortCodeLength;
+    private ?string $source = null;
 
     public function __construct(
         string $longUrl,
@@ -52,6 +55,27 @@ class ShortUrl extends AbstractEntity
         $this->shortCodeLength = $meta->getShortCodeLength();
         $this->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode($this->shortCodeLength);
         $this->domain = ($domainResolver ?? new SimpleDomainResolver())->resolveDomain($meta->getDomain());
+    }
+
+    public static function fromImport(
+        ShlinkUrl $url,
+        string $source,
+        bool $importShortCode,
+        ?DomainResolverInterface $domainResolver = null
+    ): self {
+        $meta = [
+            ShortUrlMetaInputFilter::DOMAIN => $url->domain(),
+            ShortUrlMetaInputFilter::VALIDATE_URL => false,
+        ];
+        if ($importShortCode) {
+            $meta[ShortUrlMetaInputFilter::CUSTOM_SLUG] = $url->shortCode();
+        }
+
+        $instance = new self($url->longUrl(), ShortUrlMeta::fromRawData($meta), $domainResolver);
+        $instance->source = $source;
+        $instance->dateCreated = Chronos::instance($url->createdAt());
+
+        return $instance;
     }
 
     public function getLongUrl(): string

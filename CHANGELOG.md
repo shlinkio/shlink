@@ -45,6 +45,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#837](https://github.com/shlinkio/shlink/issues/837) Drastically improved performance when creating a new shortUrl and providing `findIfExists = true`.
 
+
 ## 2.3.0 - 2020-08-09
 
 #### Added

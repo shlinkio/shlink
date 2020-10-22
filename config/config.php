@@ -21,6 +21,7 @@ return (new ConfigAggregator\ConfigAggregator([
     Diactoros\ConfigProvider::class,
     Common\ConfigProvider::class,
     Config\ConfigProvider::class,
+    Importer\ConfigProvider::class,
     IpGeolocation\ConfigProvider::class,
     EventDispatcher\ConfigProvider::class,
     Core\ConfigProvider::class,
