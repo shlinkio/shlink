@@ -41,6 +41,7 @@ jobs:
 
 before_install:
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - echo 'extension = gd.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - phpenv config-rm xdebug.ini || return 0
   - sudo ./data/infra/ci/install-ms-odbc.sh
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_ms shlink_db shlink_db_postgres shlink_db_maria
