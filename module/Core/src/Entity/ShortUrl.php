@@ -35,7 +35,7 @@ class ShortUrl extends AbstractEntity
     private ?Domain $domain = null;
     private bool $customSlugWasProvided;
     private int $shortCodeLength;
-    private ?string $source = null;
+    private ?string $importSource = null;
 
     public function __construct(
         string $longUrl,
@@ -72,7 +72,7 @@ class ShortUrl extends AbstractEntity
         }
 
         $instance = new self($url->longUrl(), ShortUrlMeta::fromRawData($meta), $domainResolver);
-        $instance->source = $source;
+        $instance->importSource = $source;
         $instance->dateCreated = Chronos::instance($url->createdAt());
 
         return $instance;

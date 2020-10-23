@@ -51,6 +51,11 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->nullable()
             ->build();
 
+    $builder->createField('importSource', Types::STRING)
+            ->columnName('import_source')
+            ->nullable()
+            ->build();
+
     $builder->createOneToMany('visits', Entity\Visit::class)
             ->mappedBy('shortUrl')
             ->fetchExtraLazy()
