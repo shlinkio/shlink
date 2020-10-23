@@ -19,7 +19,7 @@
         "cakephp/chronos": "^1.2",
         "cocur/slugify": "^4.0",
         "doctrine/cache": "^1.9",
-        "doctrine/dbal": "^2.10",
+        "doctrine/dbal": "^2.12",
         "doctrine/migrations": "^3.0.1",
         "doctrine/orm": "^2.7",
         "endroid/qr-code": "^3.6",
