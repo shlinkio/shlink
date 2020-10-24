@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function array_column;
 use function array_key_exists;
@@ -253,5 +254,17 @@ DQL;
            ->setParameter('tagsAmount', $tagsAmount);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function importedUrlExists(ImportedShlinkUrl $url, string $source, bool $importShortCodes): bool
+    {
+        $findConditions = ['importSource' => $source];
+        if ($importShortCodes) {
+            $findConditions['shortCode'] = $url->shortCode();
+        } else {
+            $findConditions['longUrl'] = $url->longUrl();
+        }
+
+        return $this->count($findConditions) > 0;
     }
 }

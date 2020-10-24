@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
-use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function count;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
@@ -58,7 +58,7 @@ class ShortUrl extends AbstractEntity
     }
 
     public static function fromImport(
-        ShlinkUrl $url,
+        ImportedShlinkUrl $url,
         string $source,
         bool $importShortCode,
         ?DomainResolverInterface $domainResolver = null

@@ -7,9 +7,11 @@ namespace Shlinkio\Shlink\Core\Importer;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\Util\DoctrineBatchIterator;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
-use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 {
@@ -25,31 +27,28 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     }
 
     /**
-     * @param ShlinkUrl[] $shlinkUrls
+     * @param iterable|ImportedShlinkUrl[] $shlinkUrls
      */
     public function process(iterable $shlinkUrls, string $source, array $params): void
     {
+        /** @var ShortUrlRepositoryInterface $shortUrlRepo */
+        $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
         $importShortCodes = $params['import_short_codes'];
-        $count = 0;
-        $persistBlock = 100;
+        $iterable = new DoctrineBatchIterator($shlinkUrls, $this->em, 100);
 
-        foreach ($shlinkUrls as $url) {
-            $count++;
+        /** @var ImportedShlinkUrl $url */
+        foreach ($iterable as $url) {
+            // Skip already imported URLs
+            if ($shortUrlRepo->importedUrlExists($url, $source, $importShortCodes)) {
+                continue;
+            }
 
             $shortUrl = ShortUrl::fromImport($url, $source, $importShortCodes, $this->domainResolver);
             $shortUrl->setTags($this->tagNamesToEntities($this->em, $url->tags()));
 
             // TODO Handle errors while creating short URLs, to avoid making the whole process fail
+            //        * Duplicated short code
             $this->em->persist($shortUrl);
-
-            // Flush and clear after X iterations
-            if ($count % $persistBlock === 0) {
-                $this->em->flush();
-                $this->em->clear();
-            }
         }
-
-        $this->em->flush();
-        $this->em->clear();
     }
 }
