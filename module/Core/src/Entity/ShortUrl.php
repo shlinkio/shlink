@@ -59,7 +59,6 @@ class ShortUrl extends AbstractEntity
 
     public static function fromImport(
         ImportedShlinkUrl $url,
-        string $source,
         bool $importShortCode,
         ?DomainResolverInterface $domainResolver = null
     ): self {
@@ -72,7 +71,7 @@ class ShortUrl extends AbstractEntity
         }
 
         $instance = new self($url->longUrl(), ShortUrlMeta::fromRawData($meta), $domainResolver);
-        $instance->importSource = $source;
+        $instance->importSource = $url->source();
         $instance->dateCreated = Chronos::instance($url->createdAt());
 
         return $instance;

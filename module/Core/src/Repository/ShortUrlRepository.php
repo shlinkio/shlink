@@ -256,9 +256,9 @@ DQL;
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function importedUrlExists(ImportedShlinkUrl $url, string $source, bool $importShortCodes): bool
+    public function importedUrlExists(ImportedShlinkUrl $url, bool $importShortCodes): bool
     {
-        $findConditions = ['importSource' => $source];
+        $findConditions = ['importSource' => $url->source()];
         if ($importShortCodes) {
             $findConditions['shortCode'] = $url->shortCode();
         } else {

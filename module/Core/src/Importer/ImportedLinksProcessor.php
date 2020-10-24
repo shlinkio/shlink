@@ -12,6 +12,8 @@ use Shlinkio\Shlink\Core\Util\DoctrineBatchIterator;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Symfony\Component\Console\Style\StyleInterface;
+use function sprintf;
 
 class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 {
@@ -29,7 +31,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     /**
      * @param iterable|ImportedShlinkUrl[] $shlinkUrls
      */
-    public function process(iterable $shlinkUrls, string $source, array $params): void
+    public function process(StyleInterface $io, iterable $shlinkUrls, array $params): void
     {
         /** @var ShortUrlRepositoryInterface $shortUrlRepo */
         $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
@@ -39,16 +41,20 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         /** @var ImportedShlinkUrl $url */
         foreach ($iterable as $url) {
             // Skip already imported URLs
-            if ($shortUrlRepo->importedUrlExists($url, $source, $importShortCodes)) {
+            if ($shortUrlRepo->importedUrlExists($url, $importShortCodes)) {
+                $io->text(sprintf('%s: <comment>Skipped</comment>', $url->longUrl()));
                 continue;
             }
 
-            $shortUrl = ShortUrl::fromImport($url, $source, $importShortCodes, $this->domainResolver);
+            $shortUrl = ShortUrl::fromImport($url, $importShortCodes, $this->domainResolver);
             $shortUrl->setTags($this->tagNamesToEntities($this->em, $url->tags()));
+
 
             // TODO Handle errors while creating short URLs, to avoid making the whole process fail
             //        * Duplicated short code
             $this->em->persist($shortUrl);
+
+            $io->text(sprintf('%s: <info>Imported</info>', $url->longUrl()));
         }
     }
 }
