@@ -32,5 +32,5 @@ interface ShortUrlRepositoryInterface extends ObjectRepository
 
     public function findOneMatching(string $url, array $tags, ShortUrlMeta $meta): ?ShortUrl;
 
-    public function importedUrlExists(ImportedShlinkUrl $url, bool $importShortCodes): bool;
+    public function importedUrlExists(ImportedShlinkUrl $url): bool;
 }

@@ -190,13 +190,7 @@ DQL;
            ->setParameter('slug', $slug)
            ->setMaxResults(1);
 
-        if ($domain !== null) {
-            $qb->join('s.domain', 'd')
-               ->andWhere($qb->expr()->eq('d.authority', ':authority'))
-               ->setParameter('authority', $domain);
-        } else {
-            $qb->andWhere($qb->expr()->isNull('s.domain'));
-        }
+        $this->whereDomainIs($qb, $domain);
 
         return $qb;
     }
@@ -256,15 +250,31 @@ DQL;
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function importedUrlExists(ImportedShlinkUrl $url, bool $importShortCodes): bool
+    public function importedUrlExists(ImportedShlinkUrl $url): bool
     {
-        $findConditions = ['importSource' => $url->source()];
-        if ($importShortCodes) {
-            $findConditions['shortCode'] = $url->shortCode();
-        } else {
-            $findConditions['longUrl'] = $url->longUrl();
-        }
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('COUNT(DISTINCT s.id)')
+           ->from(ShortUrl::class, 's')
+           ->andWhere($qb->expr()->eq('s.importOriginalShortCode', ':shortCode'))
+           ->setParameter('shortCode', $url->shortCode())
+           ->andWhere($qb->expr()->eq('s.importSource', ':importSource'))
+           ->setParameter('importSource', $url->source())
+           ->setMaxResults(1);
 
-        return $this->count($findConditions) > 0;
+        $this->whereDomainIs($qb, $url->domain());
+
+        $result = (int) $qb->getQuery()->getSingleScalarResult();
+        return $result > 0;
+    }
+
+    private function whereDomainIs(QueryBuilder $qb, ?string $domain): void
+    {
+        if ($domain !== null) {
+            $qb->join('s.domain', 'd')
+               ->andWhere($qb->expr()->eq('d.authority', ':authority'))
+               ->setParameter('authority', $domain);
+        } else {
+            $qb->andWhere($qb->expr()->isNull('s.domain'));
+        }
     }
 }

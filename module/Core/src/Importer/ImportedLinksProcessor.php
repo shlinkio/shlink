@@ -50,7 +50,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
             $longUrl = $url->longUrl();
 
             // Skip already imported URLs
-            if ($shortUrlRepo->importedUrlExists($url, $importShortCodes)) {
+            if ($shortUrlRepo->importedUrlExists($url)) {
                 $io->text(sprintf('%s: <comment>Skipped</comment>', $longUrl));
                 continue;
             }
@@ -58,7 +58,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
             $shortUrl = ShortUrl::fromImport($url, $importShortCodes, $this->domainResolver);
             $shortUrl->setTags($this->tagNamesToEntities($this->em, $url->tags()));
 
-            if (! $this->handleShortcodeUniqueness($url, $shortUrl, $io, $importShortCodes)) {
+            if (! $this->handleShortCodeUniqueness($url, $shortUrl, $io, $importShortCodes)) {
                 continue;
             }
 
@@ -67,7 +67,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         }
     }
 
-    private function handleShortcodeUniqueness(
+    private function handleShortCodeUniqueness(
         ImportedShlinkUrl $url,
         ShortUrl $shortUrl,
         StyleInterface $io,
@@ -90,6 +90,6 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
             return false;
         }
 
-        return $this->handleShortcodeUniqueness($url, $shortUrl, $io, false);
+        return $this->handleShortCodeUniqueness($url, $shortUrl, $io, false);
     }
 }

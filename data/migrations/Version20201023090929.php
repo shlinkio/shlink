@@ -21,6 +21,15 @@ final class Version20201023090929 extends AbstractMigration
             'length' => 255,
             'notnull' => false,
         ]);
+        $shortUrls->addColumn('import_original_short_code', Types::STRING, [
+            'length' => 255,
+            'notnull' => false,
+        ]);
+
+        $shortUrls->addUniqueIndex(
+            [self::IMPORT_SOURCE_COLUMN, 'import_original_short_code', 'domain_id'],
+            'unique_imports',
+        );
     }
 
     public function down(Schema $schema): void
@@ -29,5 +38,7 @@ final class Version20201023090929 extends AbstractMigration
         $this->skipIf(! $shortUrls->hasColumn(self::IMPORT_SOURCE_COLUMN));
 
         $shortUrls->dropColumn(self::IMPORT_SOURCE_COLUMN);
+        $shortUrls->dropColumn('import_original_short_code');
+        $shortUrls->dropIndex('unique_imports');
     }
 }
