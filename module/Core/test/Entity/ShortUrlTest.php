@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Entity;
 
+use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use function Functional\map;
 use function range;
 use function strlen;
@@ -44,16 +46,26 @@ class ShortUrlTest extends TestCase
         ];
     }
 
-    /** @test */
-    public function regenerateShortCodeProperlyChangesTheValueOnValidShortUrls(): void
+    /**
+     * @test
+     * @dataProvider provideValidShortUrls
+     */
+    public function regenerateShortCodeProperlyChangesTheValueOnValidShortUrls(ShortUrl $shortUrl): void
     {
-        $shortUrl = new ShortUrl('');
         $firstShortCode = $shortUrl->getShortCode();
 
         $shortUrl->regenerateShortCode();
         $secondShortCode = $shortUrl->getShortCode();
 
         self::assertNotEquals($firstShortCode, $secondShortCode);
+    }
+
+    public function provideValidShortUrls(): iterable
+    {
+        yield 'no custom slug' => [new ShortUrl('')];
+        yield 'imported with custom slug' => [
+            ShortUrl::fromImport(new ImportedShlinkUrl('', '', [], Chronos::now(), null, 'custom-slug'), true),
+        ];
     }
 
     /**

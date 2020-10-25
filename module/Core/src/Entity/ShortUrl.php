@@ -135,8 +135,8 @@ class ShortUrl extends AbstractEntity
      */
     public function regenerateShortCode(): self
     {
-        // In ShortUrls where a custom slug was provided, do nothing
-        if ($this->customSlugWasProvided) {
+        // In ShortUrls where a custom slug was provided, throw error, unless it is an imported one
+        if ($this->customSlugWasProvided && $this->importSource === null) {
             throw ShortCodeCannotBeRegeneratedException::forShortUrlWithCustomSlug();
         }
 
