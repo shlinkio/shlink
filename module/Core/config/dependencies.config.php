@@ -36,6 +36,7 @@ return [
             Domain\DomainService::class => ConfigAbstractFactory::class,
 
             Util\UrlValidator::class => ConfigAbstractFactory::class,
+            Util\DoctrineBatchHelper::class => ConfigAbstractFactory::class,
 
             Action\RedirectAction::class => ConfigAbstractFactory::class,
             Action\PixelAction::class => ConfigAbstractFactory::class,
@@ -87,6 +88,7 @@ return [
         Domain\DomainService::class => ['em'],
 
         Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
+        Util\DoctrineBatchHelper::class => ['em'],
 
         Action\RedirectAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
@@ -115,6 +117,7 @@ return [
             'em',
             Resolver\PersistenceDomainResolver::class,
             Service\ShortUrl\ShortCodeHelper::class,
+            Util\DoctrineBatchHelper::class,
         ],
     ],
 

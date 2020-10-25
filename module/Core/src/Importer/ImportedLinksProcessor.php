@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
-use Shlinkio\Shlink\Core\Util\DoctrineBatchIterator;
+use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -24,15 +24,18 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     private EntityManagerInterface $em;
     private DomainResolverInterface $domainResolver;
     private ShortCodeHelperInterface $shortCodeHelper;
+    private DoctrineBatchHelperInterface $batchHelper;
 
     public function __construct(
         EntityManagerInterface $em,
         DomainResolverInterface $domainResolver,
-        ShortCodeHelperInterface $shortCodeHelper
+        ShortCodeHelperInterface $shortCodeHelper,
+        DoctrineBatchHelperInterface $batchHelper
     ) {
         $this->em = $em;
         $this->domainResolver = $domainResolver;
         $this->shortCodeHelper = $shortCodeHelper;
+        $this->batchHelper = $batchHelper;
     }
 
     /**
@@ -43,7 +46,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         /** @var ShortUrlRepositoryInterface $shortUrlRepo */
         $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
         $importShortCodes = $params['import_short_codes'];
-        $iterable = new DoctrineBatchIterator($shlinkUrls, $this->em, 100);
+        $iterable = $this->batchHelper->wrapIterable($shlinkUrls, 100);
 
         /** @var ImportedShlinkUrl $url */
         foreach ($iterable as $url) {
@@ -90,6 +93,6 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
             return false;
         }
 
-        return $this->handleShortCodeUniqueness($url, $shortUrl, $io, false);
+        return $this->shortCodeHelper->ensureShortCodeUniqueness($shortUrl, false);
     }
 }

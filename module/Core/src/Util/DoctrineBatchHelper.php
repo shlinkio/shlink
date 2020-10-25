@@ -5,32 +5,26 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
-use IteratorAggregate;
 use Throwable;
 
 /**
  * Inspired by ocramius/doctrine-batch-utils https://github.com/Ocramius/DoctrineBatchUtils
  */
-class DoctrineBatchIterator implements IteratorAggregate
+class DoctrineBatchHelper implements DoctrineBatchHelperInterface
 {
-    private iterable $resultSet;
     private EntityManagerInterface $em;
-    private int $batchSize;
 
-    public function __construct(iterable $resultSet, EntityManagerInterface $em, int $batchSize)
+    public function __construct(EntityManagerInterface $em)
     {
-        $this->resultSet = $resultSet;
         $this->em = $em;
-        $this->batchSize = $batchSize;
     }
 
     /**
      * @throws Throwable
      */
-    public function getIterator(): iterable
+    public function wrapIterable(iterable $resultSet, int $batchSize): iterable
     {
         $iteration = 0;
-        $resultSet = $this->resultSet;
 
         $this->em->beginTransaction();
 
@@ -38,7 +32,7 @@ class DoctrineBatchIterator implements IteratorAggregate
             foreach ($resultSet as $key => $value) {
                 $iteration++;
                 yield $key => $value;
-                $this->flushAndClearBatch($iteration);
+                $this->flushAndClearBatch($iteration, $batchSize);
             }
         } catch (Throwable $e) {
             $this->em->rollback();
@@ -50,9 +44,9 @@ class DoctrineBatchIterator implements IteratorAggregate
         $this->em->commit();
     }
 
-    private function flushAndClearBatch(int $iteration): void
+    private function flushAndClearBatch(int $iteration, int $batchSize): void
     {
-        if ($iteration % $this->batchSize) {
+        if ($iteration % $batchSize) {
             return;
         }
 
