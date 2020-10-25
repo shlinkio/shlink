@@ -7,8 +7,8 @@ namespace Shlinkio\Shlink\Core\Importer;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchIterator;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
@@ -23,11 +23,16 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 
     private EntityManagerInterface $em;
     private DomainResolverInterface $domainResolver;
+    private ShortCodeHelperInterface $shortCodeHelper;
 
-    public function __construct(EntityManagerInterface $em, DomainResolverInterface $domainResolver)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        DomainResolverInterface $domainResolver,
+        ShortCodeHelperInterface $shortCodeHelper
+    ) {
         $this->em = $em;
         $this->domainResolver = $domainResolver;
+        $this->shortCodeHelper = $shortCodeHelper;
     }
 
     /**
@@ -68,7 +73,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         StyleInterface $io,
         bool $importShortCodes
     ): bool {
-        if ($this->ensureShortCodeUniqueness($shortUrl, $importShortCodes)) {
+        if ($this->shortCodeHelper->ensureShortCodeUniqueness($shortUrl, $importShortCodes)) {
             return true;
         }
 
@@ -86,27 +91,5 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         }
 
         return $this->handleShortcodeUniqueness($url, $shortUrl, $io, false);
-    }
-
-    private function ensureShortCodeUniqueness(ShortUrl $shortUrlToBeCreated, bool $hasCustomSlug): bool
-    {
-        $shortCode = $shortUrlToBeCreated->getShortCode();
-        $domain = $shortUrlToBeCreated->getDomain();
-        $domainAuthority = $domain !== null ? $domain->getAuthority() : null;
-
-        /** @var ShortUrlRepository $repo */
-        $repo = $this->em->getRepository(ShortUrl::class);
-        $otherShortUrlsExist = $repo->shortCodeIsInUse($shortCode, $domainAuthority);
-
-        if (! $otherShortUrlsExist) {
-            return true;
-        }
-
-        if ($hasCustomSlug) {
-            return false;
-        }
-
-        $shortUrlToBeCreated->regenerateShortCode();
-        return $this->ensureShortCodeUniqueness($shortUrlToBeCreated, $hasCustomSlug);
     }
 }

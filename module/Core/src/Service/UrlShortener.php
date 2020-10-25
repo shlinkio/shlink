@@ -10,8 +10,8 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 use Throwable;
@@ -23,15 +23,18 @@ class UrlShortener implements UrlShortenerInterface
     private EntityManagerInterface $em;
     private UrlValidatorInterface $urlValidator;
     private DomainResolverInterface $domainResolver;
+    private ShortCodeHelperInterface $shortCodeHelper;
 
     public function __construct(
         UrlValidatorInterface $urlValidator,
         EntityManagerInterface $em,
-        DomainResolverInterface $domainResolver
+        DomainResolverInterface $domainResolver,
+        ShortCodeHelperInterface $shortCodeHelper
     ) {
         $this->urlValidator = $urlValidator;
         $this->em = $em;
         $this->domainResolver = $domainResolver;
+        $this->shortCodeHelper = $shortCodeHelper;
     }
 
     /**
@@ -83,20 +86,16 @@ class UrlShortener implements UrlShortenerInterface
 
     private function verifyShortCodeUniqueness(ShortUrlMeta $meta, ShortUrl $shortUrlToBeCreated): void
     {
-        $shortCode = $shortUrlToBeCreated->getShortCode();
-        $domain = $meta->getDomain();
+        $couldBeMadeUnique = $this->shortCodeHelper->ensureShortCodeUniqueness(
+            $shortUrlToBeCreated,
+            $meta->hasCustomSlug(),
+        );
 
-        /** @var ShortUrlRepository $repo */
-        $repo = $this->em->getRepository(ShortUrl::class);
-        $otherShortUrlsExist = $repo->shortCodeIsInUse($shortCode, $domain);
+        if (! $couldBeMadeUnique) {
+            $domain = $shortUrlToBeCreated->getDomain();
+            $domainAuthority = $domain !== null ? $domain->getAuthority() : null;
 
-        if ($otherShortUrlsExist && $meta->hasCustomSlug()) {
-            throw NonUniqueSlugException::fromSlug($shortCode, $domain);
-        }
-
-        if ($otherShortUrlsExist) {
-            $shortUrlToBeCreated->regenerateShortCode();
-            $this->verifyShortCodeUniqueness($meta, $shortUrlToBeCreated);
+            throw NonUniqueSlugException::fromSlug($shortUrlToBeCreated->getShortCode(), $domainAuthority);
         }
     }
 }

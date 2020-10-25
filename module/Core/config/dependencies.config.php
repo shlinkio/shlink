@@ -32,6 +32,7 @@ return [
             Tag\TagService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
+            Service\ShortUrl\ShortCodeHelper::class => ConfigAbstractFactory::class,
             Domain\DomainService::class => ConfigAbstractFactory::class,
 
             Util\UrlValidator::class => ConfigAbstractFactory::class,
@@ -61,7 +62,12 @@ return [
         Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
-        Service\UrlShortener::class => [Util\UrlValidator::class, 'em', Resolver\PersistenceDomainResolver::class],
+        Service\UrlShortener::class => [
+            Util\UrlValidator::class,
+            'em',
+            Resolver\PersistenceDomainResolver::class,
+            Service\ShortUrl\ShortCodeHelper::class,
+        ],
         Service\VisitsTracker::class => [
             'em',
             EventDispatcherInterface::class,
@@ -77,6 +83,7 @@ return [
             Service\ShortUrl\ShortUrlResolver::class,
         ],
         Service\ShortUrl\ShortUrlResolver::class => ['em'],
+        Service\ShortUrl\ShortCodeHelper::class => ['em'],
         Domain\DomainService::class => ['em'],
 
         Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
@@ -104,7 +111,11 @@ return [
 
         Mercure\MercureUpdatesGenerator::class => ['config.url_shortener.domain'],
 
-        Importer\ImportedLinksProcessor::class => ['em', Resolver\PersistenceDomainResolver::class],
+        Importer\ImportedLinksProcessor::class => [
+            'em',
+            Resolver\PersistenceDomainResolver::class,
+            Service\ShortUrl\ShortCodeHelper::class,
+        ],
     ],
 
 ];

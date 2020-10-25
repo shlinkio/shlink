@@ -133,7 +133,7 @@ class ShortUrl extends AbstractEntity
     /**
      * @throws ShortCodeCannotBeRegeneratedException
      */
-    public function regenerateShortCode(): self
+    public function regenerateShortCode(): void
     {
         // In ShortUrls where a custom slug was provided, throw error, unless it is an imported one
         if ($this->customSlugWasProvided && $this->importSource === null) {
@@ -146,7 +146,6 @@ class ShortUrl extends AbstractEntity
         }
 
         $this->shortCode = generateRandomShortCode($this->shortCodeLength);
-        return $this;
     }
 
     public function getValidSince(): ?Chronos

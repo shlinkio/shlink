@@ -10,8 +10,8 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
-
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+
 use function Functional\map;
 use function range;
 use function strlen;
