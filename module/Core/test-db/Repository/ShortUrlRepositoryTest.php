@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 use function count;
@@ -319,5 +320,27 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             $shortUrl3,
             $this->repo->findOneMatching('foo', $tags, ShortUrlMeta::fromRawData($meta)),
         );
+    }
+
+    /** @test */
+    public function importedShortUrlsAreSearchedAsExpected(): void
+    {
+        $buildImported = static fn (string $shortCode, ?String $domain = null) =>
+            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), $domain, $shortCode);
+
+        $shortUrlWithoutDomain = ShortUrl::fromImport($buildImported('my-cool-slug'), true);
+        $this->getEntityManager()->persist($shortUrlWithoutDomain);
+
+        $shortUrlWithDomain = ShortUrl::fromImport($buildImported('another-slug', 'doma.in'), true);
+        $this->getEntityManager()->persist($shortUrlWithDomain);
+
+        $this->getEntityManager()->flush();
+
+        self::assertTrue($this->repo->importedUrlExists($buildImported('my-cool-slug')));
+        self::assertTrue($this->repo->importedUrlExists($buildImported('another-slug', 'doma.in')));
+        self::assertFalse($this->repo->importedUrlExists($buildImported('non-existing-slug')));
+        self::assertFalse($this->repo->importedUrlExists($buildImported('non-existing-slug', 'doma.in')));
+        self::assertFalse($this->repo->importedUrlExists($buildImported('my-cool-slug', 'doma.in')));
+        self::assertFalse($this->repo->importedUrlExists($buildImported('another-slug')));
     }
 }
