@@ -64,7 +64,7 @@ RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8
     rm msodbcsql17_17.5.1.1-1_amd64.apk
 
 # Install composer
-COPY --from=composer:1.10.13 /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
 # Make home directory writable by anyone
 RUN chmod 777 /home

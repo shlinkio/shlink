@@ -47,7 +47,7 @@ before_install:
   - yes | pecl install pdo_sqlsrv-5.9.0preview1 swoole-4.5.5 pcov
 
 install:
-  - composer self-update --1
+  - composer self-update
   - composer install --no-interaction --prefer-dist $COMPOSER_FLAGS
 
 before_script:
