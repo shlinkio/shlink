@@ -18,6 +18,7 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 
@@ -26,6 +27,7 @@ class UrlShortenerTest extends TestCase
     private UrlShortener $urlShortener;
     private ObjectProphecy $em;
     private ObjectProphecy $urlValidator;
+    private ObjectProphecy $shortCodeHelper;
 
     public function setUp(): void
     {
@@ -51,10 +53,14 @@ class UrlShortenerTest extends TestCase
         $repo->shortCodeIsInUse(Argument::cetera())->willReturn(false);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
+        $this->shortCodeHelper = $this->prophesize(ShortCodeHelperInterface::class);
+        $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
+
         $this->urlShortener = new UrlShortener(
             $this->urlValidator->reveal(),
             $this->em->reveal(),
             new SimpleDomainResolver(),
+            $this->shortCodeHelper->reveal(),
         );
     }
 
@@ -71,29 +77,18 @@ class UrlShortenerTest extends TestCase
     }
 
     /** @test */
-    public function shortCodeIsRegeneratedIfAlreadyInUse(): void
+    public function exceptionIsThrownWhenNonUniqueSlugIsProvided(): void
     {
-        $callIndex = 0;
-        $expectedCalls = 3;
-        $repo = $this->prophesize(ShortUrlRepository::class);
-        $shortCodeIsInUse = $repo->shortCodeIsInUse(Argument::cetera())->will(
-            function () use (&$callIndex, $expectedCalls) {
-                $callIndex++;
-                return $callIndex < $expectedCalls;
-            },
-        );
-        $repo->findBy(Argument::cetera())->willReturn([]);
-        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
+        $ensureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(false);
 
-        $shortUrl = $this->urlShortener->urlToShortCode(
+        $ensureUniqueness->shouldBeCalledOnce();
+        $this->expectException(NonUniqueSlugException::class);
+
+        $this->urlShortener->urlToShortCode(
             'http://foobar.com/12345/hello?foo=bar',
             [],
-            ShortUrlMeta::createEmpty(),
+            ShortUrlMeta::fromRawData(['customSlug' => 'custom-slug']),
         );
-
-        self::assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
-        $getRepo->shouldBeCalledTimes($expectedCalls);
-        $shortCodeIsInUse->shouldBeCalledTimes($expectedCalls);
     }
 
     /** @test */
@@ -112,25 +107,6 @@ class UrlShortenerTest extends TestCase
             'http://foobar.com/12345/hello?foo=bar',
             [],
             ShortUrlMeta::createEmpty(),
-        );
-    }
-
-    /** @test */
-    public function exceptionIsThrownWhenNonUniqueSlugIsProvided(): void
-    {
-        $repo = $this->prophesize(ShortUrlRepository::class);
-        $shortCodeIsInUse = $repo->shortCodeIsInUse('custom-slug', null)->willReturn(true);
-        $repo->findBy(Argument::cetera())->willReturn([]);
-        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
-
-        $shortCodeIsInUse->shouldBeCalledOnce();
-        $getRepo->shouldBeCalled();
-        $this->expectException(NonUniqueSlugException::class);
-
-        $this->urlShortener->urlToShortCode(
-            'http://foobar.com/12345/hello?foo=bar',
-            [],
-            ShortUrlMeta::fromRawData(['customSlug' => 'custom-slug']),
         );
     }
 

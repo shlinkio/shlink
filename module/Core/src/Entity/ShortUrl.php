@@ -14,6 +14,8 @@ use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function count;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
@@ -33,6 +35,8 @@ class ShortUrl extends AbstractEntity
     private ?Domain $domain = null;
     private bool $customSlugWasProvided;
     private int $shortCodeLength;
+    private ?string $importSource = null;
+    private ?string $importOriginalShortCode = null;
 
     public function __construct(
         string $longUrl,
@@ -52,6 +56,27 @@ class ShortUrl extends AbstractEntity
         $this->shortCodeLength = $meta->getShortCodeLength();
         $this->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode($this->shortCodeLength);
         $this->domain = ($domainResolver ?? new SimpleDomainResolver())->resolveDomain($meta->getDomain());
+    }
+
+    public static function fromImport(
+        ImportedShlinkUrl $url,
+        bool $importShortCode,
+        ?DomainResolverInterface $domainResolver = null
+    ): self {
+        $meta = [
+            ShortUrlMetaInputFilter::DOMAIN => $url->domain(),
+            ShortUrlMetaInputFilter::VALIDATE_URL => false,
+        ];
+        if ($importShortCode) {
+            $meta[ShortUrlMetaInputFilter::CUSTOM_SLUG] = $url->shortCode();
+        }
+
+        $instance = new self($url->longUrl(), ShortUrlMeta::fromRawData($meta), $domainResolver);
+        $instance->importSource = $url->source();
+        $instance->importOriginalShortCode = $url->shortCode();
+        $instance->dateCreated = Chronos::instance($url->createdAt());
+
+        return $instance;
     }
 
     public function getLongUrl(): string
@@ -110,10 +135,10 @@ class ShortUrl extends AbstractEntity
     /**
      * @throws ShortCodeCannotBeRegeneratedException
      */
-    public function regenerateShortCode(): self
+    public function regenerateShortCode(): void
     {
-        // In ShortUrls where a custom slug was provided, do nothing
-        if ($this->customSlugWasProvided) {
+        // In ShortUrls where a custom slug was provided, throw error, unless it is an imported one
+        if ($this->customSlugWasProvided && $this->importSource === null) {
             throw ShortCodeCannotBeRegeneratedException::forShortUrlWithCustomSlug();
         }
 
@@ -123,7 +148,6 @@ class ShortUrl extends AbstractEntity
         }
 
         $this->shortCode = generateRandomShortCode($this->shortCodeLength);
-        return $this;
     }
 
     public function getValidSince(): ?Chronos

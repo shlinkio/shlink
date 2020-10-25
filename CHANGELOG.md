@@ -27,6 +27,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#832](https://github.com/shlinkio/shlink/issues/832) Added support to customize the port in which the docker image listens by using the `PORT` env var or the `port` config option.
 
+* [#860](https://github.com/shlinkio/shlink/issues/860) Added support to import links from bit.ly.
+
+    Run the command `short-urls:import bitly` and introduce requested information in order to import all your links.
+
+    Other sources will be supported in future releases.
+
 #### Changed
 
 * [#836](https://github.com/shlinkio/shlink/issues/836) Added support for the `<field>-<dir>` notation while determining how to order the short URLs list, as in `?orderBy=shortCode-DESC`. This effectively deprecates the array notation (`?orderBy[shortCode]=DESC`), that will be removed in Shlink 3.0.0
@@ -44,6 +50,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 #### Fixed
 
 * [#837](https://github.com/shlinkio/shlink/issues/837) Drastically improved performance when creating a new shortUrl and providing `findIfExists = true`.
+
 
 ## 2.3.0 - 2020-08-09
 

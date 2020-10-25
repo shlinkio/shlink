@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use GuzzleHttp\Client;
 use Mezzio\Container;
+use Psr\Http\Client\ClientInterface;
 
 return [
 
@@ -11,6 +13,10 @@ return [
             Mezzio\Application::class => [
                 Container\ApplicationConfigInjectionDelegator::class,
             ],
+        ],
+
+        'aliases' => [
+            ClientInterface::class => Client::class,
         ],
 
         'lazy_services' => [
