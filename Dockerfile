@@ -44,7 +44,7 @@ RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS && \
 # Install shlink
 FROM base as builder
 COPY . .
-COPY --from=composer:1.10.13 /usr/bin/composer ./composer.phar
+COPY --from=composer:2 /usr/bin/composer ./composer.phar
 RUN apk add --no-cache git && \
     php composer.phar install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction && \
     php composer.phar clear-cache && \

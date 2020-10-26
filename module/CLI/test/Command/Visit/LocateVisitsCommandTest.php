@@ -94,9 +94,9 @@ class LocateVisitsCommandTest extends TestCase
 
         self::assertStringContainsString('Processing IP 1.2.3.0', $output);
         if ($expectWarningPrint) {
-            self::assertStringContainsString('Continue at your own risk', $output);
+            self::assertStringContainsString('Continue at your own', $output);
         } else {
-            self::assertStringNotContainsString('Continue at your own risk', $output);
+            self::assertStringNotContainsString('Continue at your own', $output);
         }
         $locateVisits->shouldHaveBeenCalledTimes($expectedUnlocatedCalls);
         $locateEmptyVisits->shouldHaveBeenCalledTimes($expectedEmptyCalls);
