@@ -1,6 +1,6 @@
 ![Shlink](https://raw.githubusercontent.com/shlinkio/shlink.io/main/public/images/shlink-hero.png)
 
-[![Build Status](https://img.shields.io/travis/shlinkio/shlink.svg?style=flat-square)](https://travis-ci.org/shlinkio/shlink)
+[![Build Status](https://img.shields.io/travis/com/shlinkio/shlink.svg?style=flat-square)](https://travis-ci.com/shlinkio/shlink)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/shlinkio/shlink.svg?style=flat-square)](https://scrutinizer-ci.com/g/shlinkio/shlink/)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/shlinkio/shlink.svg?style=flat-square)](https://scrutinizer-ci.com/g/shlinkio/shlink/)
 [![Latest Stable Version](https://img.shields.io/github/release/shlinkio/shlink.svg?style=flat-square)](https://packagist.org/packages/shlinkio/shlink)
@@ -64,7 +64,7 @@ In order to run Shlink, you will need a built version of the project. There are 
 
     After that, you will have a `shlink_x.x.x_dist.zip` dist file inside the `build` directory, that you need to decompress in the location fo your choice.
 
-    > This is the process used when releasing new shlink versions. After tagging the new version with git, the Github release is automatically created by [travis](https://travis-ci.org/shlinkio/shlink), attaching the generated dist file to it.
+    > This is the process used when releasing new shlink versions. After tagging the new version with git, the Github release is automatically created by [travis](https://travis-ci.com/shlinkio/shlink), attaching the generated dist file to it.
 
 ### Configure
 
