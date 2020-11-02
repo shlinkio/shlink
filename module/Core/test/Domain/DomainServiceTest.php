@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Domain;
 
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
@@ -13,6 +14,8 @@ use Shlinkio\Shlink\Core\Entity\Domain;
 
 class DomainServiceTest extends TestCase
 {
+    use ProphecyTrait;
+
     private DomainService $domainService;
     private ObjectProphecy $em;
 

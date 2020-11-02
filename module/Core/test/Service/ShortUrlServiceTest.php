@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -24,6 +25,8 @@ use function count;
 
 class ShortUrlServiceTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ShortUrlService $service;
     private ObjectProphecy $em;
     private ObjectProphecy $urlResolver;

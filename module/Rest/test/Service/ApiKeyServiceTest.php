@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -16,6 +17,8 @@ use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
 class ApiKeyServiceTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ApiKeyService $service;
     private ObjectProphecy $em;
 

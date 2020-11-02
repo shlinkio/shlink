@@ -8,6 +8,7 @@ use Fig\Http\Message\StatusCodeInterface;
 use Laminas\InputFilter\InputFilterInterface;
 use LogicException;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use RuntimeException;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Throwable;
@@ -17,6 +18,8 @@ use function print_r;
 
 class ValidationExceptionTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @test
      * @dataProvider provideExceptions

@@ -10,27 +10,27 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Paginator\Adapter\ArrayAdapter;
 use Laminas\Paginator\Paginator;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ListShortUrlsAction;
 
 class ListShortUrlsActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ListShortUrlsAction $action;
     private ObjectProphecy $service;
-    private ObjectProphecy $logger;
 
     public function setUp(): void
     {
         $this->service = $this->prophesize(ShortUrlService::class);
-        $this->logger = $this->prophesize(LoggerInterface::class);
 
         $this->action = new ListShortUrlsAction($this->service->reveal(), [
             'hostname' => 'doma.in',
             'schema' => 'https',
-        ], $this->logger->reveal());
+        ]);
     }
 
     /**

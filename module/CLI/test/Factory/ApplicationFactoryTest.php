@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\CLI\Factory;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
 use Shlinkio\Shlink\Core\Options\AppOptions;
@@ -15,6 +16,8 @@ use Symfony\Component\Console\Command\Command;
 
 class ApplicationFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ApplicationFactory $factory;
 
     public function setUp(): void

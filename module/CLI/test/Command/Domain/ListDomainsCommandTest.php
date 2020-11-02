@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Domain;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Domain\ListDomainsCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
@@ -15,6 +16,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ListDomainsCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $domainService;
 

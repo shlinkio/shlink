@@ -8,6 +8,7 @@ use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -18,6 +19,8 @@ use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 
 class SingleStepCreateShortUrlActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private SingleStepCreateShortUrlAction $action;
     private ObjectProphecy $urlShortener;
     private ObjectProphecy $apiKeyService;

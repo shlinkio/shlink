@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Visit;
 
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
@@ -17,6 +18,8 @@ use function range;
 
 class VisitsStatsHelperTest extends TestCase
 {
+    use ProphecyTrait;
+
     private VisitsStatsHelper $helper;
     private ObjectProphecy $em;
 

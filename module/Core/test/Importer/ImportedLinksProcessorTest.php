@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -25,6 +26,8 @@ use function str_contains;
 
 class ImportedLinksProcessorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ImportedLinksProcessor $processor;
     private ObjectProphecy $em;
     private ObjectProphecy $shortCodeHelper;

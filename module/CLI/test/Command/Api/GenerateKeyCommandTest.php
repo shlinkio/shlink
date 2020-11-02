@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\Api;
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Api\GenerateKeyCommand;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -16,6 +17,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class GenerateKeyCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $apiKeyService;
 

@@ -7,12 +7,15 @@ namespace ShlinkioTest\Shlink\Core\Domain\Resolver;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Domain\Resolver\PersistenceDomainResolver;
 use Shlinkio\Shlink\Core\Entity\Domain;
 
 class PersistenceDomainResolverTest extends TestCase
 {
+    use ProphecyTrait;
+
     private PersistenceDomainResolver $domainResolver;
     private ObjectProphecy $em;
 

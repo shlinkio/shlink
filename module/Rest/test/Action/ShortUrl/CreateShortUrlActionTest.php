@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -20,6 +21,8 @@ use function strpos;
 
 class CreateShortUrlActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private const DOMAIN_CONFIG = [
         'schema' => 'http',
         'hostname' => 'foo.com',

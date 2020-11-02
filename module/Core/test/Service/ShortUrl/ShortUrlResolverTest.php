@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -23,6 +24,8 @@ use function range;
 
 class ShortUrlResolverTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ShortUrlResolver $urlResolver;
     private ObjectProphecy $em;
 

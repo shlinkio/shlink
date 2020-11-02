@@ -6,12 +6,15 @@ namespace ShlinkioTest\Shlink\Core\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelper;
 
 class DoctrineBatchHelperTest extends TestCase
 {
+    use ProphecyTrait;
+
     private DoctrineBatchHelper $helper;
     private ObjectProphecy $em;
 

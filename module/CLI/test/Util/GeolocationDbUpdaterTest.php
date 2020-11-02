@@ -9,6 +9,7 @@ use GeoIp2\Database\Reader;
 use MaxMind\Db\Reader\Metadata;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
@@ -22,28 +23,28 @@ use function range;
 
 class GeolocationDbUpdaterTest extends TestCase
 {
+    use ProphecyTrait;
+
     private GeolocationDbUpdater $geolocationDbUpdater;
     private ObjectProphecy $dbUpdater;
     private ObjectProphecy $geoLiteDbReader;
-    private ObjectProphecy $locker;
-    private ObjectProphecy $lock;
 
     public function setUp(): void
     {
         $this->dbUpdater = $this->prophesize(DbUpdaterInterface::class);
         $this->geoLiteDbReader = $this->prophesize(Reader::class);
 
-        $this->locker = $this->prophesize(Lock\LockFactory::class);
-        $this->lock = $this->prophesize(Lock\LockInterface::class);
-        $this->lock->acquire(true)->willReturn(true);
-        $this->lock->release()->will(function (): void {
+        $locker = $this->prophesize(Lock\LockFactory::class);
+        $lock = $this->prophesize(Lock\LockInterface::class);
+        $lock->acquire(true)->willReturn(true);
+        $lock->release()->will(function (): void {
         });
-        $this->locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
+        $locker->createLock(Argument::type('string'))->willReturn($lock->reveal());
 
         $this->geolocationDbUpdater = new GeolocationDbUpdater(
             $this->dbUpdater->reveal(),
             $this->geoLiteDbReader->reveal(),
-            $this->locker->reveal(),
+            $locker->reveal(),
         );
     }
 

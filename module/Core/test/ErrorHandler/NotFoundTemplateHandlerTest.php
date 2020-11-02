@@ -10,6 +10,7 @@ use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -17,6 +18,8 @@ use Shlinkio\Shlink\Core\ErrorHandler\NotFoundTemplateHandler;
 
 class NotFoundTemplateHandlerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private NotFoundTemplateHandler $handler;
     private ObjectProphecy $renderer;
 

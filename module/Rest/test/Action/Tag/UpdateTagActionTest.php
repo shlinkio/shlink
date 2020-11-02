@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -14,6 +15,8 @@ use Shlinkio\Shlink\Rest\Action\Tag\UpdateTagAction;
 
 class UpdateTagActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private UpdateTagAction $action;
     private ObjectProphecy $tagService;
 

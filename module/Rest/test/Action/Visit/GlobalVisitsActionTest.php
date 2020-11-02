@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
@@ -14,6 +15,8 @@ use Shlinkio\Shlink\Rest\Action\Visit\GlobalVisitsAction;
 
 class GlobalVisitsActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private GlobalVisitsAction $action;
     private ObjectProphecy $helper;
 

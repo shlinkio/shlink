@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
@@ -16,6 +17,8 @@ use function strpos;
 
 class ResolveShortUrlActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ResolveShortUrlAction $action;
     private ObjectProphecy $urlResolver;
 

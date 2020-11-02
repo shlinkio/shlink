@@ -7,12 +7,15 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\CreateTagsAction;
 
 class CreateTagsActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CreateTagsAction $action;
     private ObjectProphecy $tagService;
 

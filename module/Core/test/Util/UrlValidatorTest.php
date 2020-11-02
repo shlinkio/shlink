@@ -11,6 +11,7 @@ use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
@@ -18,6 +19,8 @@ use Shlinkio\Shlink\Core\Util\UrlValidator;
 
 class UrlValidatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private UrlValidator $urlValidator;
     private ObjectProphecy $httpClient;
     private UrlShortenerOptions $options;

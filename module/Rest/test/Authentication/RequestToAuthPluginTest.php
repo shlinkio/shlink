@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Authentication;
 
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Rest\Authentication\AuthenticationPluginManagerInterface;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\ApiKeyHeaderPlugin;
@@ -18,6 +19,8 @@ use function sprintf;
 
 class RequestToAuthPluginTest extends TestCase
 {
+    use ProphecyTrait;
+
     private RequestToHttpAuthPlugin $requestToPlugin;
     private ObjectProphecy $pluginManager;
 

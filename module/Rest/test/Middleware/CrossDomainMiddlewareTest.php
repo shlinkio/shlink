@@ -10,6 +10,7 @@ use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Authentication;
@@ -19,6 +20,8 @@ use function Laminas\Stratigility\middleware;
 
 class CrossDomainMiddlewareTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CrossDomainMiddleware $middleware;
     private ObjectProphecy $handler;
 

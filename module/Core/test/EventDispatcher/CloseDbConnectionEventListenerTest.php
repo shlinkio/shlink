@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Shlinkio\Shlink\Common\Doctrine\ReopeningEntityManagerInterface;
@@ -15,6 +16,8 @@ use Throwable;
 
 class CloseDbConnectionEventListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ObjectProphecy $em;
 
     public function setUp(): void
