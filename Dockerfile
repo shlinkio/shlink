@@ -7,6 +7,7 @@ ENV LC_ALL "C"
 
 WORKDIR /etc/shlink
 
+# Install required PHP extensions
 RUN \
     # Install mysql and calendar
     docker-php-ext-install -j"$(nproc)" pdo_mysql calendar && \
@@ -21,7 +22,10 @@ RUN \
     docker-php-ext-install -j"$(nproc)" intl && \
     # Install zip and gd
     apk add --no-cache libzip-dev zlib-dev libpng-dev && \
-    docker-php-ext-install -j"$(nproc)" zip gd
+    docker-php-ext-install -j"$(nproc)" zip gd && \
+    # Install gmp
+    apk add --no-cache gmp-dev && \
+    docker-php-ext-install -j"$(nproc)" gmp
 
 # Install sqlsrv driver
 RUN if [ $(uname -m) == "x86_64" ]; then \
