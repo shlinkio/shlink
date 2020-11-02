@@ -9,6 +9,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -16,6 +17,8 @@ use Shlinkio\Shlink\Rest\Middleware\ShortUrl\CreateShortUrlContentNegotiationMid
 
 class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CreateShortUrlContentNegotiationMiddleware $middleware;
     private ObjectProphecy $requestHandler;
 

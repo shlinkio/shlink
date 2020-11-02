@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\EventDispatcher;
+namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 use Shlinkio\Shlink\Common\Doctrine\ReopeningEntityManagerInterface;
@@ -12,6 +13,8 @@ use Shlinkio\Shlink\Core\EventDispatcher\CloseDbConnectionEventListenerDelegator
 
 class CloseDbConnectionEventListenerDelegatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CloseDbConnectionEventListenerDelegator $delegator;
     private ObjectProphecy $container;
 

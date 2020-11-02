@@ -12,6 +12,8 @@ use Laminas\Stdlib\Glob;
 use PDO;
 use PHPUnit\Runner\Version;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
+use SebastianBergmann\CodeCoverage\Driver\Selector;
+use SebastianBergmann\CodeCoverage\Filter;
 use SebastianBergmann\CodeCoverage\Report\PHP;
 use SebastianBergmann\CodeCoverage\Report\Xml\Facade as Xml;
 
@@ -25,10 +27,11 @@ use const ShlinkioTest\Shlink\SWOOLE_TESTING_PORT;
 
 $isApiTest = env('TEST_ENV') === 'api';
 if ($isApiTest) {
-    $coverage = new CodeCoverage();
+    $filter = new Filter();
     foreach (Glob::glob(__DIR__ . '/../../module/*/src') as $item) {
-        $coverage->filter()->addDirectoryToWhitelist($item);
+        $filter->includeDirectory($item);
     }
+    $coverage = new CodeCoverage((new Selector())->forLineCoverage($filter), $filter);
 }
 
 $buildDbConnection = function (): array {

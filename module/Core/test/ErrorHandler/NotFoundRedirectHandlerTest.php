@@ -10,6 +10,7 @@ use Laminas\Diactoros\Uri;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -19,6 +20,8 @@ use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 
 class NotFoundRedirectHandlerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private NotFoundRedirectHandler $middleware;
     private NotFoundRedirectOptions $redirectOptions;
 

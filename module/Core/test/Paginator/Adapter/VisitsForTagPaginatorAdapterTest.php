@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Paginator\Adapter;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
@@ -13,6 +14,8 @@ use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 
 class VisitsForTagPaginatorAdapterTest extends TestCase
 {
+    use ProphecyTrait;
+
     private VisitsForTagPaginatorAdapter $adapter;
     private ObjectProphecy $repo;
 

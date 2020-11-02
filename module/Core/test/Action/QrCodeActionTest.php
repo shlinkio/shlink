@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequest;
 use Mezzio\Router\RouterInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
@@ -20,6 +21,8 @@ use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 
 class QrCodeActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private QrCodeAction $action;
     private ObjectProphecy $urlResolver;
 

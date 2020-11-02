@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\LocateVisitsCommand;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
@@ -32,10 +33,11 @@ use const PHP_EOL;
 
 class LocateVisitsCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $visitService;
     private ObjectProphecy $ipResolver;
-    private ObjectProphecy $locker;
     private ObjectProphecy $lock;
     private ObjectProphecy $dbUpdater;
 
@@ -45,17 +47,17 @@ class LocateVisitsCommandTest extends TestCase
         $this->ipResolver = $this->prophesize(IpLocationResolverInterface::class);
         $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
 
-        $this->locker = $this->prophesize(Lock\LockFactory::class);
+        $locker = $this->prophesize(Lock\LockFactory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
         $this->lock->acquire(false)->willReturn(true);
         $this->lock->release()->will(function (): void {
         });
-        $this->locker->createLock(Argument::type('string'), 90.0, false)->willReturn($this->lock->reveal());
+        $locker->createLock(Argument::type('string'), 90.0, false)->willReturn($this->lock->reveal());
 
         $command = new LocateVisitsCommand(
             $this->visitService->reveal(),
             $this->ipResolver->reveal(),
-            $this->locker->reveal(),
+            $locker->reveal(),
             $this->dbUpdater->reveal(),
         );
         $app = new Application();

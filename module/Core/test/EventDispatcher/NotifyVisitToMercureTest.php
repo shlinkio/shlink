@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -21,6 +22,8 @@ use Symfony\Component\Mercure\Update;
 
 class NotifyVisitToMercureTest extends TestCase
 {
+    use ProphecyTrait;
+
     private NotifyVisitToMercure $listener;
     private ObjectProphecy $publisher;
     private ObjectProphecy $updatesGenerator;

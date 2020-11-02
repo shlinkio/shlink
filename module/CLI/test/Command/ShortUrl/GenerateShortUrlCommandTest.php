@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GenerateShortUrlCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
@@ -20,6 +21,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class GenerateShortUrlCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private const DOMAIN_CONFIG = [
         'schema' => 'http',
         'hostname' => 'foo.com',

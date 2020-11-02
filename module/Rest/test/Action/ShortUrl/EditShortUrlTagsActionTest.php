@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -15,6 +16,8 @@ use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlTagsAction;
 
 class EditShortUrlTagsActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private EditShortUrlTagsAction $action;
     private ObjectProphecy $shortUrlService;
 

@@ -10,12 +10,15 @@ use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Rest\Action\HealthAction;
 
 class HealthActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private HealthAction $action;
     private ObjectProphecy $conn;
 

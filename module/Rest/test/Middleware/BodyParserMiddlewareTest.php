@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -18,6 +19,8 @@ use function array_shift;
 
 class BodyParserMiddlewareTest extends TestCase
 {
+    use ProphecyTrait;
+
     private BodyParserMiddleware $middleware;
 
     public function setUp(): void

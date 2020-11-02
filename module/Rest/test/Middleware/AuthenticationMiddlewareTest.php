@@ -11,12 +11,12 @@ use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Rest\Action\HealthAction;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
 use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPluginInterface;
@@ -26,20 +26,15 @@ use function Laminas\Stratigility\middleware;
 
 class AuthenticationMiddlewareTest extends TestCase
 {
+    use ProphecyTrait;
+
     private AuthenticationMiddleware $middleware;
     private ObjectProphecy $requestToPlugin;
-    private ObjectProphecy $logger;
 
     public function setUp(): void
     {
         $this->requestToPlugin = $this->prophesize(RequestToHttpAuthPluginInterface::class);
-        $this->logger = $this->prophesize(LoggerInterface::class);
-
-        $this->middleware = new AuthenticationMiddleware(
-            $this->requestToPlugin->reveal(),
-            [HealthAction::class],
-            $this->logger->reveal(),
-        );
+        $this->middleware = new AuthenticationMiddleware($this->requestToPlugin->reveal(), [HealthAction::class]);
     }
 
     /**

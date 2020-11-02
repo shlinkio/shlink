@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\Service\Tag;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
@@ -17,6 +18,8 @@ use Shlinkio\Shlink\Core\Tag\TagService;
 
 class TagServiceTest extends TestCase
 {
+    use ProphecyTrait;
+
     private TagService $service;
     private ObjectProphecy $em;
     private ObjectProphecy $repo;

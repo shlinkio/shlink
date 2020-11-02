@@ -6,12 +6,15 @@ namespace ShlinkioTest\Shlink\Rest\Authentication;
 
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Shlinkio\Shlink\Rest\Authentication\AuthenticationPluginManager;
 use Shlinkio\Shlink\Rest\Authentication\AuthenticationPluginManagerFactory;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
 
 class AuthenticationPluginManagerFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     private AuthenticationPluginManagerFactory $factory;
 
     public function setUp(): void

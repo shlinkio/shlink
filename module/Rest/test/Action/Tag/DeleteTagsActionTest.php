@@ -6,12 +6,15 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\DeleteTagsAction;
 
 class DeleteTagsActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private DeleteTagsAction $action;
     private ObjectProphecy $tagService;
 

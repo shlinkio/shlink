@@ -10,6 +10,7 @@ use Laminas\Diactoros\ServerRequest;
 use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
@@ -24,6 +25,8 @@ use function array_key_exists;
 
 class RedirectActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private RedirectAction $action;
     private ObjectProphecy $urlResolver;
     private ObjectProphecy $visitTracker;

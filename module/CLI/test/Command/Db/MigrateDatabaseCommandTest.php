@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\Db;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Db\MigrateDatabaseCommand;
 use Symfony\Component\Console\Application;
@@ -19,6 +20,8 @@ use Symfony\Component\Process\Process;
 
 class MigrateDatabaseCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $processHelper;
 

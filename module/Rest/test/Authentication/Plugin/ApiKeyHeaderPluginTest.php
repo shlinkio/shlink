@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Authentication\Plugin;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Rest\Authentication\Plugin\ApiKeyHeaderPlugin;
@@ -15,6 +16,8 @@ use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 
 class ApiKeyHeaderPluginTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ApiKeyHeaderPlugin $plugin;
     private ObjectProphecy $apiKeyService;
 

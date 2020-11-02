@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Domain;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
@@ -14,6 +15,8 @@ use Shlinkio\Shlink\Rest\Action\Domain\ListDomainsAction;
 
 class ListDomainsActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ListDomainsAction $action;
     private ObjectProphecy $domainService;
 

@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Paginator\Adapter;
 
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
@@ -13,6 +14,8 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 
 class ShortUrlRepositoryAdapterTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ObjectProphecy $repo;
 
     public function setUp(): void

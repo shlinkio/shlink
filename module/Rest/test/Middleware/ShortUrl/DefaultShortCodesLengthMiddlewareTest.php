@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -17,6 +18,8 @@ use Shlinkio\Shlink\Rest\Middleware\ShortUrl\DefaultShortCodesLengthMiddleware;
 
 class DefaultShortCodesLengthMiddlewareTest extends TestCase
 {
+    use ProphecyTrait;
+
     private DefaultShortCodesLengthMiddleware $middleware;
     private ObjectProphecy $handler;
 

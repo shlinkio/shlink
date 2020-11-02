@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Service\ShortUrl;
 
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -14,6 +15,8 @@ use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelper;
 
 class ShortCodeHelperTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ShortCodeHelper $helper;
     private ObjectProphecy $em;
     private ObjectProphecy $shortUrl;

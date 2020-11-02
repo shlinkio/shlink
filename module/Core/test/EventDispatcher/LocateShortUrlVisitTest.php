@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
@@ -26,6 +27,8 @@ use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 class LocateShortUrlVisitTest extends TestCase
 {
+    use ProphecyTrait;
+
     private LocateShortUrlVisit $locateVisit;
     private ObjectProphecy $ipLocationResolver;
     private ObjectProphecy $em;
