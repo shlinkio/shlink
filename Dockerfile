@@ -7,6 +7,7 @@ ENV LC_ALL "C"
 
 WORKDIR /etc/shlink
 
+# Install required PHP extensions
 RUN \
     # Install mysql and calendar
     docker-php-ext-install -j"$(nproc)" pdo_mysql calendar && \
@@ -21,13 +22,16 @@ RUN \
     docker-php-ext-install -j"$(nproc)" intl && \
     # Install zip and gd
     apk add --no-cache libzip-dev zlib-dev libpng-dev && \
-    docker-php-ext-install -j"$(nproc)" zip gd
+    docker-php-ext-install -j"$(nproc)" zip gd && \
+    # Install gmp
+    apk add --no-cache gmp-dev && \
+    docker-php-ext-install -j"$(nproc)" gmp
 
 # Install sqlsrv driver
 RUN if [ $(uname -m) == "x86_64" ]; then \
       wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.5.1.1-1_amd64.apk && \
       apk add --allow-untrusted msodbcsql17_17.5.1.1-1_amd64.apk && \
-      apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
+      apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} unixodbc-dev && \
       pecl install pdo_sqlsrv && \
       docker-php-ext-enable pdo_sqlsrv && \
       apk del .phpize-deps && \
@@ -35,7 +39,7 @@ RUN if [ $(uname -m) == "x86_64" ]; then \
     fi
 
 # Install swoole
-RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS && \
+RUN apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} && \
     pecl install swoole-${SWOOLE_VERSION} && \
     docker-php-ext-enable swoole && \
     apk del .phpize-deps
