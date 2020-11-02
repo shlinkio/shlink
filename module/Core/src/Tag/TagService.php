@@ -58,6 +58,7 @@ class TagService implements TagServiceInterface
     /**
      * Provided a list of tag names, creates all that do not exist yet
      *
+     * @deprecated
      * @param string[] $tagNames
      * @return Collection|Tag[]
      */

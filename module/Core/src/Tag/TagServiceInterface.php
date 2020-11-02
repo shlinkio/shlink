@@ -28,6 +28,7 @@ interface TagServiceInterface
     public function deleteTags(array $tagNames): void;
 
     /**
+     * @deprecated
      * @param string[] $tagNames
      * @return Collection|Tag[]
      */

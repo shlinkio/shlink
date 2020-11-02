@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
+/** @deprecated */
 class CreateTagsAction extends AbstractRestAction
 {
     protected const ROUTE_PATH = '/tags';

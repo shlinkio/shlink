@@ -87,12 +87,13 @@
     },
 
     "post": {
+        "deprecated": true,
         "operationId": "createTags",
         "tags": [
             "Tags"
         ],
         "summary": "Create tags",
-        "description": "Provided a list of tags, creates all that do not yet exist",
+        "description": "Provided a list of tags, creates all that do not yet exist<br />This endpoint is deprecated, as tags are automatically created while creating a short URL",
         "security": [
             {
                 "ApiKey": []
