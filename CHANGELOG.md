@@ -37,7 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#858](https://github.com/shlinkio/shlink/issues/858) Updated to latest infection version. Updated docker images to PHP 7.4.11 and swoole 4.5.5
 
 ### Deprecated
-* *Nothing*
+* [#883](https://github.com/shlinkio/shlink/issues/883) Deprecated `POST /tags` endpoint and `tag:create` command, as tags are created automatically while creating short URLs.
 
 ### Removed
 * *Nothing*
