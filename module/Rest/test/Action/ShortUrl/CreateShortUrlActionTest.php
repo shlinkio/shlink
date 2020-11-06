@@ -51,7 +51,7 @@ class CreateShortUrlActionTest extends TestCase
     public function properShortcodeConversionReturnsData(array $body, ShortUrlMeta $expectedMeta): void
     {
         $shortUrl = new ShortUrl('');
-        $shorten = $this->urlShortener->urlToShortCode(
+        $shorten = $this->urlShortener->shorten(
             Argument::type('string'),
             Argument::type('array'),
             $expectedMeta,
@@ -88,7 +88,7 @@ class CreateShortUrlActionTest extends TestCase
     public function anInvalidDomainReturnsError(string $domain): void
     {
         $shortUrl = new ShortUrl('');
-        $urlToShortCode = $this->urlShortener->urlToShortCode(Argument::cetera())->willReturn($shortUrl);
+        $urlToShortCode = $this->urlShortener->shorten(Argument::cetera())->willReturn($shortUrl);
 
         $request = (new ServerRequest())->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',

@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function count;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
@@ -37,6 +38,7 @@ class ShortUrl extends AbstractEntity
     private int $shortCodeLength;
     private ?string $importSource = null;
     private ?string $importOriginalShortCode = null;
+    private ?ApiKey $authorApiKey = null;
 
     public function __construct(
         string $longUrl,

@@ -43,7 +43,7 @@ class UrlShortener implements UrlShortenerInterface
      * @throws InvalidUrlException
      * @throws Throwable
      */
-    public function urlToShortCode(string $url, array $tags, ShortUrlMeta $meta): ShortUrl
+    public function shorten(string $url, array $tags, ShortUrlMeta $meta): ShortUrl
     {
         // First, check if a short URL exists for all provided params
         $existingShortUrl = $this->findExistingShortUrlIfExists($url, $tags, $meta);
@@ -52,25 +52,16 @@ class UrlShortener implements UrlShortenerInterface
         }
 
         $this->urlValidator->validateUrl($url, $meta->doValidateUrl());
-        $this->em->beginTransaction();
-        $shortUrl = new ShortUrl($url, $meta, $this->domainResolver);
-        $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
 
-        try {
+        return $this->em->transactional(function () use ($url, $tags, $meta) {
+            $shortUrl = new ShortUrl($url, $meta, $this->domainResolver);
+            $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
+
             $this->verifyShortCodeUniqueness($meta, $shortUrl);
             $this->em->persist($shortUrl);
-            $this->em->flush();
-            $this->em->commit();
-        } catch (Throwable $e) {
-            if ($this->em->getConnection()->isTransactionActive()) {
-                $this->em->rollback();
-                $this->em->close();
-            }
 
-            throw $e;
-        }
-
-        return $shortUrl;
+            return $shortUrl;
+        });
     }
 
     private function findExistingShortUrlIfExists(string $url, array $tags, ShortUrlMeta $meta): ?ShortUrl

@@ -31,7 +31,7 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
         $tags = $shortUrlData->getTags();
         $shortUrlMeta = $shortUrlData->getMeta();
 
-        $shortUrl = $this->urlShortener->urlToShortCode($longUrl, $tags, $shortUrlMeta);
+        $shortUrl = $this->urlShortener->shorten($longUrl, $tags, $shortUrlMeta);
         $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
         return new JsonResponse($transformer->transform($shortUrl));
