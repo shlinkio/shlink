@@ -48,7 +48,7 @@ class CreateShortUrlActionTest extends TestCase
      * @test
      * @dataProvider provideRequestBodies
      */
-    public function properShortcodeConversionReturnsData(array $body, ShortUrlMeta $expectedMeta): void
+    public function properShortcodeConversionReturnsData(array $body, ShortUrlMeta $expectedMeta, ?string $apiKey): void
     {
         $shortUrl = new ShortUrl('');
         $shorten = $this->urlShortener->shorten(
@@ -58,6 +58,10 @@ class CreateShortUrlActionTest extends TestCase
         )->willReturn($shortUrl);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);
+        if ($apiKey !== null) {
+            $request = $request->withHeader('X-Api-Key', $apiKey);
+        }
+
         $response = $this->action->handle($request);
 
         self::assertEquals(200, $response->getStatusCode());
@@ -77,8 +81,14 @@ class CreateShortUrlActionTest extends TestCase
             'domain' => 'my-domain.com',
         ];
 
-        yield [['longUrl' => 'http://www.domain.com/foo/bar'], ShortUrlMeta::createEmpty()];
-        yield [$fullMeta, ShortUrlMeta::fromRawData($fullMeta)];
+        yield 'no data' => [['longUrl' => 'http://www.domain.com/foo/bar'], ShortUrlMeta::createEmpty(), null];
+        yield 'all data' => [$fullMeta, ShortUrlMeta::fromRawData($fullMeta), null];
+        yield 'all data and API key' => (static function (array $meta): array {
+            $apiKey = 'abc123';
+            $meta['apiKey'] = $apiKey;
+
+            return [$meta, ShortUrlMeta::fromRawData($meta), $apiKey];
+        })($fullMeta);
     }
 
     /**

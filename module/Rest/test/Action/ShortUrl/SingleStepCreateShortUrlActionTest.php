@@ -78,7 +78,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
                 return $argument;
             }),
             [],
-            ShortUrlMeta::createEmpty(),
+            ShortUrlMeta::fromRawData(['apiKey' => 'abc123']),
         )->willReturn(new ShortUrl(''));
 
         $resp = $this->action->handle($request);
