@@ -11,19 +11,23 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPluginInterface;
+use Shlinkio\Shlink\Rest\Exception\MissingAuthenticationException;
+use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
+use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 
 use function Functional\contains;
 
 class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface, RequestMethodInterface
 {
-    private array $routesWhitelist;
-    private RequestToHttpAuthPluginInterface $requestToAuthPlugin;
+    public const API_KEY_HEADER = 'X-Api-Key';
 
-    public function __construct(RequestToHttpAuthPluginInterface $requestToAuthPlugin, array $routesWhitelist)
+    private ApiKeyServiceInterface $apiKeyService;
+    private array $routesWhitelist;
+
+    public function __construct(ApiKeyServiceInterface $apiKeyService, array $routesWhitelist)
     {
+        $this->apiKeyService = $apiKeyService;
         $this->routesWhitelist = $routesWhitelist;
-        $this->requestToAuthPlugin = $requestToAuthPlugin;
     }
 
     public function process(Request $request, RequestHandlerInterface $handler): Response
@@ -39,10 +43,20 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
             return $handler->handle($request);
         }
 
-        $plugin = $this->requestToAuthPlugin->fromRequest($request);
-        $plugin->verify($request);
-        $response = $handler->handle($request);
+        $apiKey = self::apiKeyFromRequest($request);
+        if (empty($apiKey)) {
+            throw MissingAuthenticationException::fromExpectedTypes([self::API_KEY_HEADER]);
+        }
 
-        return $plugin->update($request, $response);
+        if (! $this->apiKeyService->check($apiKey)) {
+            throw VerifyAuthenticationException::forInvalidApiKey();
+        }
+
+        return $handler->handle($request);
+    }
+
+    public static function apiKeyFromRequest(Request $request): string
+    {
+        return $request->getHeaderLine(self::API_KEY_HEADER);
     }
 }

@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
-use Shlinkio\Shlink\Rest\Authentication\Plugin\ApiKeyHeaderPlugin;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class CreateShortUrlAction extends AbstractCreateShortUrlAction
 {
@@ -28,7 +28,7 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
             ]);
         }
 
-        $payload[ShortUrlMetaInputFilter::API_KEY] = $request->getHeaderLine(ApiKeyHeaderPlugin::HEADER_NAME);
+        $payload[ShortUrlMetaInputFilter::API_KEY] = AuthenticationMiddleware::apiKeyFromRequest($request);
         $meta = ShortUrlMeta::fromRawData($payload);
 
         return new CreateShortUrlData($payload['longUrl'], (array) ($payload['tags'] ?? []), $meta);

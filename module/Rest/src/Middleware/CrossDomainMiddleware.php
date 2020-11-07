@@ -11,7 +11,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Shlinkio\Shlink\Rest\Authentication;
 
 use function array_merge;
 use function implode;
@@ -27,9 +26,7 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
 
         // Add Allow-Origin header
         $response = $response->withHeader('Access-Control-Allow-Origin', $request->getHeader('Origin'))
-                             ->withHeader('Access-Control-Expose-Headers', implode(', ', [
-                                 Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-                             ]));
+                             ->withHeader('Access-Control-Expose-Headers', AuthenticationMiddleware::API_KEY_HEADER);
         if ($request->getMethod() !== self::METHOD_OPTIONS) {
             return $response;
         }
