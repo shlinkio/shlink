@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Core;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Shlinkio\Shlink\Core\Domain\Resolver;
 use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
@@ -42,7 +41,7 @@ return [
             Action\PixelAction::class => ConfigAbstractFactory::class,
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
 
-            Resolver\PersistenceDomainResolver::class => ConfigAbstractFactory::class,
+            ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ConfigAbstractFactory::class,
 
             Mercure\MercureUpdatesGenerator::class => ConfigAbstractFactory::class,
 
@@ -66,7 +65,7 @@ return [
         Service\UrlShortener::class => [
             Util\UrlValidator::class,
             'em',
-            Resolver\PersistenceDomainResolver::class,
+            ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
             Service\ShortUrl\ShortCodeHelper::class,
         ],
         Service\VisitsTracker::class => [
@@ -109,13 +108,13 @@ return [
             'Logger_Shlink',
         ],
 
-        Resolver\PersistenceDomainResolver::class => ['em'],
+        ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ['em'],
 
         Mercure\MercureUpdatesGenerator::class => ['config.url_shortener.domain'],
 
         Importer\ImportedLinksProcessor::class => [
             'em',
-            Resolver\PersistenceDomainResolver::class,
+            ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
             Service\ShortUrl\ShortCodeHelper::class,
             Util\DoctrineBatchHelper::class,
         ],

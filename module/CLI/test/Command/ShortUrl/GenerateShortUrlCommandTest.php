@@ -44,7 +44,7 @@ class GenerateShortUrlCommandTest extends TestCase
     public function properShortCodeIsCreatedIfLongUrlIsCorrect(): void
     {
         $shortUrl = new ShortUrl('');
-        $urlToShortCode = $this->urlShortener->urlToShortCode(Argument::cetera())->willReturn($shortUrl);
+        $urlToShortCode = $this->urlShortener->shorten(Argument::cetera())->willReturn($shortUrl);
 
         $this->commandTester->execute([
             'longUrl' => 'http://domain.com/foo/bar',
@@ -61,7 +61,7 @@ class GenerateShortUrlCommandTest extends TestCase
     public function exceptionWhileParsingLongUrlOutputsError(): void
     {
         $url = 'http://domain.com/invalid';
-        $this->urlShortener->urlToShortCode(Argument::cetera())->willThrow(InvalidUrlException::fromUrl($url))
+        $this->urlShortener->shorten(Argument::cetera())->willThrow(InvalidUrlException::fromUrl($url))
                                                                ->shouldBeCalledOnce();
 
         $this->commandTester->execute(['longUrl' => $url]);
@@ -74,7 +74,7 @@ class GenerateShortUrlCommandTest extends TestCase
     /** @test */
     public function providingNonUniqueSlugOutputsError(): void
     {
-        $urlToShortCode = $this->urlShortener->urlToShortCode(Argument::cetera())->willThrow(
+        $urlToShortCode = $this->urlShortener->shorten(Argument::cetera())->willThrow(
             NonUniqueSlugException::fromSlug('my-slug'),
         );
 
@@ -90,7 +90,7 @@ class GenerateShortUrlCommandTest extends TestCase
     public function properlyProcessesProvidedTags(): void
     {
         $shortUrl = new ShortUrl('');
-        $urlToShortCode = $this->urlShortener->urlToShortCode(
+        $urlToShortCode = $this->urlShortener->shorten(
             Argument::type('string'),
             Argument::that(function (array $tags) {
                 Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $tags);
@@ -117,7 +117,7 @@ class GenerateShortUrlCommandTest extends TestCase
     public function urlValidationHasExpectedValueBasedOnProvidedTags(array $options, ?bool $expectedValidateUrl): void
     {
         $shortUrl = new ShortUrl('');
-        $urlToShortCode = $this->urlShortener->urlToShortCode(
+        $urlToShortCode = $this->urlShortener->shorten(
             Argument::type('string'),
             Argument::type('array'),
             Argument::that(function (ShortUrlMeta $meta) use ($expectedValidateUrl) {

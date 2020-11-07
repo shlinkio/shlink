@@ -24,6 +24,7 @@ final class ShortUrlMeta
     private ?string $domain = null;
     private int $shortCodeLength = 5;
     private ?bool $validateUrl = null;
+    private ?string $apiKey = null;
 
     // Enforce named constructors
     private function __construct()
@@ -66,6 +67,7 @@ final class ShortUrlMeta
             $inputFilter,
             ShortUrlMetaInputFilter::SHORT_CODE_LENGTH,
         ) ?? DEFAULT_SHORT_CODES_LENGTH;
+        $this->apiKey = $inputFilter->getValue(ShortUrlMetaInputFilter::API_KEY);
     }
 
     public function getValidSince(): ?Chronos
@@ -131,5 +133,10 @@ final class ShortUrlMeta
     public function doValidateUrl(): ?bool
     {
         return $this->validateUrl;
+    }
+
+    public function getApiKey(): ?string
+    {
+        return $this->apiKey;
     }
 }

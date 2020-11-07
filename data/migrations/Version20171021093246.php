@@ -24,10 +24,10 @@ class Version20171021093246 extends AbstractMigration
             return;
         }
 
-        $shortUrls->addColumn('valid_since', Types::DATETIME, [
+        $shortUrls->addColumn('valid_since', Types::DATETIME_MUTABLE, [
             'notnull' => false,
         ]);
-        $shortUrls->addColumn('valid_until', Types::DATETIME, [
+        $shortUrls->addColumn('valid_until', Types::DATETIME_MUTABLE, [
             'notnull' => false,
         ]);
     }

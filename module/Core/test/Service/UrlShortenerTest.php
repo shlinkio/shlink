@@ -6,14 +6,11 @@ namespace ShlinkioTest\Shlink\Core\Service;
 
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
@@ -21,6 +18,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 
 class UrlShortenerTest extends TestCase
@@ -41,16 +39,16 @@ class UrlShortenerTest extends TestCase
         );
 
         $this->em = $this->prophesize(EntityManagerInterface::class);
-        $conn = $this->prophesize(Connection::class);
-        $conn->isTransactionActive()->willReturn(false);
-        $this->em->getConnection()->willReturn($conn->reveal());
-        $this->em->flush()->willReturn(null);
-        $this->em->commit()->willReturn(null);
-        $this->em->beginTransaction()->willReturn(null);
         $this->em->persist(Argument::any())->will(function ($arguments): void {
             /** @var ShortUrl $shortUrl */
             [$shortUrl] = $arguments;
             $shortUrl->setId('10');
+        });
+        $this->em->transactional(Argument::type('callable'))->will(function (array $args) {
+            /** @var callable $callback */
+            [$callback] = $args;
+
+            return $callback();
         });
         $repo = $this->prophesize(ShortUrlRepository::class);
         $repo->shortCodeIsInUse(Argument::cetera())->willReturn(false);
@@ -62,7 +60,7 @@ class UrlShortenerTest extends TestCase
         $this->urlShortener = new UrlShortener(
             $this->urlValidator->reveal(),
             $this->em->reveal(),
-            new SimpleDomainResolver(),
+            new SimpleShortUrlRelationResolver(),
             $this->shortCodeHelper->reveal(),
         );
     }
@@ -70,7 +68,7 @@ class UrlShortenerTest extends TestCase
     /** @test */
     public function urlIsProperlyShortened(): void
     {
-        $shortUrl = $this->urlShortener->urlToShortCode(
+        $shortUrl = $this->urlShortener->shorten(
             'http://foobar.com/12345/hello?foo=bar',
             [],
             ShortUrlMeta::createEmpty(),
@@ -87,29 +85,10 @@ class UrlShortenerTest extends TestCase
         $ensureUniqueness->shouldBeCalledOnce();
         $this->expectException(NonUniqueSlugException::class);
 
-        $this->urlShortener->urlToShortCode(
+        $this->urlShortener->shorten(
             'http://foobar.com/12345/hello?foo=bar',
             [],
             ShortUrlMeta::fromRawData(['customSlug' => 'custom-slug']),
-        );
-    }
-
-    /** @test */
-    public function transactionIsRolledBackAndExceptionRethrownWhenExceptionIsThrown(): void
-    {
-        $conn = $this->prophesize(Connection::class);
-        $conn->isTransactionActive()->willReturn(true);
-        $this->em->getConnection()->willReturn($conn->reveal());
-        $this->em->rollback()->shouldBeCalledOnce();
-        $this->em->close()->shouldBeCalledOnce();
-
-        $this->em->flush()->willThrow(new ORMException());
-
-        $this->expectException(ORMException::class);
-        $this->urlShortener->urlToShortCode(
-            'http://foobar.com/12345/hello?foo=bar',
-            [],
-            ShortUrlMeta::createEmpty(),
         );
     }
 
@@ -127,7 +106,7 @@ class UrlShortenerTest extends TestCase
         $findExisting = $repo->findOneMatching(Argument::cetera())->willReturn($expected);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $result = $this->urlShortener->urlToShortCode($url, $tags, $meta);
+        $result = $this->urlShortener->shorten($url, $tags, $meta);
 
         $findExisting->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();

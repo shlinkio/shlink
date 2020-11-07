@@ -16,5 +16,5 @@ interface UrlShortenerInterface
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      */
-    public function urlToShortCode(string $url, array $tags, ShortUrlMeta $meta): ShortUrl;
+    public function shorten(string $url, array $tags, ShortUrlMeta $meta): ShortUrl;
 }

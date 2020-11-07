@@ -72,13 +72,13 @@ class SingleStepCreateShortUrlActionTest extends TestCase
             'longUrl' => 'http://foobar.com',
         ]);
         $findApiKey = $this->apiKeyService->check('abc123')->willReturn(true);
-        $generateShortCode = $this->urlShortener->urlToShortCode(
+        $generateShortCode = $this->urlShortener->shorten(
             Argument::that(function (string $argument): string {
                 Assert::assertEquals('http://foobar.com', $argument);
                 return $argument;
             }),
             [],
-            ShortUrlMeta::createEmpty(),
+            ShortUrlMeta::fromRawData(['apiKey' => 'abc123']),
         )->willReturn(new ShortUrl(''));
 
         $resp = $this->action->handle($request);

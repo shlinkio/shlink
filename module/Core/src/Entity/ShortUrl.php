@@ -9,13 +9,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Laminas\Diactoros\Uri;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
-use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
-use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function count;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
@@ -37,13 +38,15 @@ class ShortUrl extends AbstractEntity
     private int $shortCodeLength;
     private ?string $importSource = null;
     private ?string $importOriginalShortCode = null;
+    private ?ApiKey $authorApiKey = null;
 
     public function __construct(
         string $longUrl,
         ?ShortUrlMeta $meta = null,
-        ?DomainResolverInterface $domainResolver = null
+        ?ShortUrlRelationResolverInterface $relationResolver = null
     ) {
         $meta = $meta ?? ShortUrlMeta::createEmpty();
+        $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
 
         $this->longUrl = $longUrl;
         $this->dateCreated = Chronos::now();
@@ -55,13 +58,14 @@ class ShortUrl extends AbstractEntity
         $this->customSlugWasProvided = $meta->hasCustomSlug();
         $this->shortCodeLength = $meta->getShortCodeLength();
         $this->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode($this->shortCodeLength);
-        $this->domain = ($domainResolver ?? new SimpleDomainResolver())->resolveDomain($meta->getDomain());
+        $this->domain = $relationResolver->resolveDomain($meta->getDomain());
+        $this->authorApiKey = $relationResolver->resolveApiKey($meta->getApiKey());
     }
 
     public static function fromImport(
         ImportedShlinkUrl $url,
         bool $importShortCode,
-        ?DomainResolverInterface $domainResolver = null
+        ?ShortUrlRelationResolverInterface $relationResolver = null
     ): self {
         $meta = [
             ShortUrlMetaInputFilter::DOMAIN => $url->domain(),
@@ -71,7 +75,7 @@ class ShortUrl extends AbstractEntity
             $meta[ShortUrlMetaInputFilter::CUSTOM_SLUG] = $url->shortCode();
         }
 
-        $instance = new self($url->longUrl(), ShortUrlMeta::fromRawData($meta), $domainResolver);
+        $instance = new self($url->longUrl(), ShortUrlMeta::fromRawData($meta), $relationResolver);
         $instance->importSource = $url->source();
         $instance->importOriginalShortCode = $url->shortCode();
         $instance->dateCreated = Chronos::instance($url->createdAt());
