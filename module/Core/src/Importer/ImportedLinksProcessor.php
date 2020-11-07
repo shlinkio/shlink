@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Importer;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
@@ -22,18 +22,18 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     use TagManagerTrait;
 
     private EntityManagerInterface $em;
-    private DomainResolverInterface $domainResolver;
+    private ShortUrlRelationResolverInterface $relationResolver;
     private ShortCodeHelperInterface $shortCodeHelper;
     private DoctrineBatchHelperInterface $batchHelper;
 
     public function __construct(
         EntityManagerInterface $em,
-        DomainResolverInterface $domainResolver,
+        ShortUrlRelationResolverInterface $relationResolver,
         ShortCodeHelperInterface $shortCodeHelper,
         DoctrineBatchHelperInterface $batchHelper
     ) {
         $this->em = $em;
-        $this->domainResolver = $domainResolver;
+        $this->relationResolver = $relationResolver;
         $this->shortCodeHelper = $shortCodeHelper;
         $this->batchHelper = $batchHelper;
     }
@@ -58,7 +58,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
                 continue;
             }
 
-            $shortUrl = ShortUrl::fromImport($url, $importShortCodes, $this->domainResolver);
+            $shortUrl = ShortUrl::fromImport($url, $importShortCodes, $this->relationResolver);
             $shortUrl->setTags($this->tagNamesToEntities($this->em, $url->tags()));
 
             if (! $this->handleShortCodeUniqueness($url, $shortUrl, $io, $importShortCodes)) {

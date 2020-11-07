@@ -10,11 +10,11 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Importer\ImportedLinksProcessor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Symfony\Component\Console\Style\StyleInterface;
@@ -46,7 +46,7 @@ class ImportedLinksProcessorTest extends TestCase
 
         $this->processor = new ImportedLinksProcessor(
             $this->em->reveal(),
-            new SimpleDomainResolver(),
+            new SimpleShortUrlRelationResolver(),
             $this->shortCodeHelper->reveal(),
             $batchHelper->reveal(),
         );

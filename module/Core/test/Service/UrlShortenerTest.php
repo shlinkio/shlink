@@ -12,7 +12,6 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
@@ -20,6 +19,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 
 class UrlShortenerTest extends TestCase
@@ -63,7 +63,7 @@ class UrlShortenerTest extends TestCase
         $this->urlShortener = new UrlShortener(
             $this->urlValidator->reveal(),
             $this->em->reveal(),
-            new SimpleDomainResolver(),
+            new SimpleShortUrlRelationResolver(),
             $this->shortCodeHelper->reveal(),
         );
     }
