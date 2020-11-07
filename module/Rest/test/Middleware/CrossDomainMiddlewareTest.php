@@ -13,7 +13,6 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
-use Shlinkio\Shlink\Rest\Authentication;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
 
 use function Laminas\Stratigility\middleware;
@@ -64,10 +63,7 @@ class CrossDomainMiddlewareTest extends TestCase
         $headers = $response->getHeaders();
 
         self::assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
-        self::assertEquals(
-            Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-            $response->getHeaderLine('Access-Control-Expose-Headers'),
-        );
+        self::assertEquals('X-Api-Key', $response->getHeaderLine('Access-Control-Expose-Headers'));
         self::assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
         self::assertArrayNotHasKey('Access-Control-Max-Age', $headers);
         self::assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
@@ -89,10 +85,7 @@ class CrossDomainMiddlewareTest extends TestCase
         $headers = $response->getHeaders();
 
         self::assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
-        self::assertEquals(
-            Authentication\Plugin\ApiKeyHeaderPlugin::HEADER_NAME,
-            $response->getHeaderLine('Access-Control-Expose-Headers'),
-        );
+        self::assertEquals('X-Api-Key', $response->getHeaderLine('Access-Control-Expose-Headers'));
         self::assertArrayHasKey('Access-Control-Allow-Methods', $headers);
         self::assertEquals('1000', $response->getHeaderLine('Access-Control-Max-Age'));
         self::assertEquals('foo, bar, baz', $response->getHeaderLine('Access-Control-Allow-Headers'));

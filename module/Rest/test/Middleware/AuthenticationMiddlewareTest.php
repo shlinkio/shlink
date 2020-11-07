@@ -7,20 +7,21 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequestFactory;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Action\HealthAction;
-use Shlinkio\Shlink\Rest\Authentication\Plugin\AuthenticationPluginInterface;
-use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPluginInterface;
+use Shlinkio\Shlink\Rest\Exception\MissingAuthenticationException;
+use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
+use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 
 use function Laminas\Stratigility\middleware;
 
@@ -29,12 +30,14 @@ class AuthenticationMiddlewareTest extends TestCase
     use ProphecyTrait;
 
     private AuthenticationMiddleware $middleware;
-    private ObjectProphecy $requestToPlugin;
+    private ObjectProphecy $apiKeyService;
+    private ObjectProphecy $handler;
 
     public function setUp(): void
     {
-        $this->requestToPlugin = $this->prophesize(RequestToHttpAuthPluginInterface::class);
-        $this->middleware = new AuthenticationMiddleware($this->requestToPlugin->reveal(), [HealthAction::class]);
+        $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
+        $this->middleware = new AuthenticationMiddleware($this->apiKeyService->reveal(), [HealthAction::class]);
+        $this->handler = $this->prophesize(RequestHandlerInterface::class);
     }
 
     /**
@@ -43,16 +46,13 @@ class AuthenticationMiddlewareTest extends TestCase
      */
     public function someWhiteListedSituationsFallbackToNextMiddleware(ServerRequestInterface $request): void
     {
-        $handler = $this->prophesize(RequestHandlerInterface::class);
-        $handle = $handler->handle($request)->willReturn(new Response());
-        $fromRequest = $this->requestToPlugin->fromRequest(Argument::any())->willReturn(
-            $this->prophesize(AuthenticationPluginInterface::class)->reveal(),
-        );
+        $handle = $this->handler->handle($request)->willReturn(new Response());
+        $checkApiKey = $this->apiKeyService->check(Argument::any());
 
-        $this->middleware->process($request, $handler->reveal());
+        $this->middleware->process($request, $this->handler->reveal());
 
         $handle->shouldHaveBeenCalledOnce();
-        $fromRequest->shouldNotHaveBeenCalled();
+        $checkApiKey->shouldNotHaveBeenCalled();
     }
 
     public function provideWhitelistedRequests(): iterable
@@ -76,30 +76,70 @@ class AuthenticationMiddlewareTest extends TestCase
         )->withMethod(RequestMethodInterface::METHOD_OPTIONS)];
     }
 
-    /** @test */
-    public function updatedResponseIsReturnedWhenVerificationPasses(): void
+    /**
+     * @test
+     * @dataProvider provideRequestsWithoutApiKey
+     */
+    public function throwsExceptionWhenNoApiKeyIsProvided(ServerRequestInterface $request): void
     {
-        $newResponse = new Response();
-        $request = (new ServerRequest())->withAttribute(
+        $this->apiKeyService->check(Argument::any())->shouldNotBeCalled();
+        $this->handler->handle($request)->shouldNotBeCalled();
+        $this->expectException(MissingAuthenticationException::class);
+        $this->expectExceptionMessage(
+            'Expected one of the following authentication headers, ["X-Api-Key"], but none were provided',
+        );
+
+        $this->middleware->process($request, $this->handler->reveal());
+    }
+
+    public function provideRequestsWithoutApiKey(): iterable
+    {
+        $baseRequest = ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), []),
         );
-        $plugin = $this->prophesize(AuthenticationPluginInterface::class);
 
-        $verify = $plugin->verify($request)->will(function (): void {
-        });
-        $update = $plugin->update($request, Argument::type(ResponseInterface::class))->willReturn($newResponse);
-        $fromRequest = $this->requestToPlugin->fromRequest(Argument::any())->willReturn($plugin->reveal());
+        yield 'no api key' => [$baseRequest];
+        yield 'empty api key' => [$baseRequest->withHeader('X-Api-Key', '')];
+    }
 
-        $handler = $this->prophesize(RequestHandlerInterface::class);
-        $handle = $handler->handle($request)->willReturn(new Response());
-        $response = $this->middleware->process($request, $handler->reveal());
+    /** @test */
+    public function throwsExceptionWhenProvidedApiKeyIsInvalid(): void
+    {
+        $apiKey = 'abc123';
+        $request = ServerRequestFactory::fromGlobals()
+            ->withAttribute(
+                RouteResult::class,
+                RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), []),
+            )
+            ->withHeader('X-Api-Key', $apiKey);
 
-        self::assertSame($response, $newResponse);
-        $verify->shouldHaveBeenCalledOnce();
-        $update->shouldHaveBeenCalledOnce();
+        $this->apiKeyService->check($apiKey)->willReturn(false)->shouldBeCalledOnce();
+        $this->handler->handle($request)->shouldNotBeCalled();
+        $this->expectException(VerifyAuthenticationException::class);
+        $this->expectExceptionMessage('Provided API key does not exist or is invalid');
+
+        $this->middleware->process($request, $this->handler->reveal());
+    }
+
+    /** @test */
+    public function validApiKeyFallsBackToNextMiddleware(): void
+    {
+        $apiKey = 'abc123';
+        $request = ServerRequestFactory::fromGlobals()
+            ->withAttribute(
+                RouteResult::class,
+                RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), []),
+            )
+            ->withHeader('X-Api-Key', $apiKey);
+
+        $handle = $this->handler->handle($request)->willReturn(new Response());
+        $checkApiKey = $this->apiKeyService->check($apiKey)->willReturn(true);
+
+        $this->middleware->process($request, $this->handler->reveal());
+
         $handle->shouldHaveBeenCalledOnce();
-        $fromRequest->shouldHaveBeenCalledOnce();
+        $checkApiKey->shouldHaveBeenCalledOnce();
     }
 
     private function getDummyMiddleware(): MiddlewareInterface

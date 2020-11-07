@@ -4,22 +4,14 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Middleware;
 
-use Shlinkio\Shlink\Rest\Authentication\Plugin;
-use Shlinkio\Shlink\Rest\Authentication\RequestToHttpAuthPlugin;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
-
-use function implode;
-use function sprintf;
 
 class AuthenticationTest extends ApiTestCase
 {
     /** @test */
     public function authorizationErrorIsReturnedIfNoApiKeyIsSent(): void
     {
-        $expectedDetail = sprintf(
-            'Expected one of the following authentication headers, ["%s"], but none were provided',
-            implode('", "', RequestToHttpAuthPlugin::SUPPORTED_AUTH_HEADERS),
-        );
+        $expectedDetail = 'Expected one of the following authentication headers, ["X-Api-Key"], but none were provided';
 
         $resp = $this->callApi(self::METHOD_GET, '/short-urls');
         $payload = $this->getJsonResponsePayload($resp);
@@ -41,7 +33,7 @@ class AuthenticationTest extends ApiTestCase
 
         $resp = $this->callApi(self::METHOD_GET, '/short-urls', [
             'headers' => [
-                Plugin\ApiKeyHeaderPlugin::HEADER_NAME => $apiKey,
+                'X-Api-Key' => $apiKey,
             ],
         ]);
         $payload = $this->getJsonResponsePayload($resp);
