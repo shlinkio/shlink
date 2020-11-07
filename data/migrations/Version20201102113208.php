@@ -46,7 +46,9 @@ final class Version20201102113208 extends AbstractMigration
                'expiration' => Chronos::now()->toDateTimeString(),
            ]);
 
-        $id = $this->resolveOneApiKeyId($qb->execute());
+        /** @var Result $result */
+        $result = $qb->execute();
+        $id = $this->resolveOneApiKeyId($result);
         if ($id === null) {
             return;
         }
