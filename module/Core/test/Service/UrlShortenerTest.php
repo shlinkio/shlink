@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\Core\Service;
 
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -40,8 +39,6 @@ class UrlShortenerTest extends TestCase
         );
 
         $this->em = $this->prophesize(EntityManagerInterface::class);
-        $conn = $this->prophesize(Connection::class);
-        $this->em->getConnection()->willReturn($conn->reveal());
         $this->em->persist(Argument::any())->will(function ($arguments): void {
             /** @var ShortUrl $shortUrl */
             [$shortUrl] = $arguments;
