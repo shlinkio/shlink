@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [2.4.0] - 2020-11-08
 ### Added
 * [#829](https://github.com/shlinkio/shlink/issues/829) Added support for QR codes in SVG format, by passing `?format=svg` to the QR code URL.
 * [#820](https://github.com/shlinkio/shlink/issues/820) Added new option to force enabling or disabling URL validation on a per-URL basis.
@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#836](https://github.com/shlinkio/shlink/issues/836) Added support for the `<field>-<dir>` notation while determining how to order the short URLs list, as in `?orderBy=shortCode-DESC`. This effectively deprecates the array notation (`?orderBy[shortCode]=DESC`), that will be removed in Shlink 3.0.0
 * [#782](https://github.com/shlinkio/shlink/issues/782) Added code coverage to API tests.
 * [#858](https://github.com/shlinkio/shlink/issues/858) Updated to latest infection version. Updated docker images to PHP 7.4.11 and swoole 4.5.5
+* [#887](https://github.com/shlinkio/shlink/pull/887) Started tracking the API key used to create short URLs, in order to allow restrictions in future releases.
 
 ### Deprecated
 * [#883](https://github.com/shlinkio/shlink/issues/883) Deprecated `POST /tags` endpoint and `tag:create` command, as tags are created automatically while creating short URLs.
