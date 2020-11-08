@@ -18,9 +18,11 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Action\HealthAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Exception\MissingAuthenticationException;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
+use Shlinkio\Shlink\Rest\Service\ApiKeyCheckResult;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 
 use function Laminas\Stratigility\middleware;
@@ -114,7 +116,7 @@ class AuthenticationMiddlewareTest extends TestCase
             )
             ->withHeader('X-Api-Key', $apiKey);
 
-        $this->apiKeyService->check($apiKey)->willReturn(false)->shouldBeCalledOnce();
+        $this->apiKeyService->check($apiKey)->willReturn(new ApiKeyCheckResult())->shouldBeCalledOnce();
         $this->handler->handle($request)->shouldNotBeCalled();
         $this->expectException(VerifyAuthenticationException::class);
         $this->expectExceptionMessage('Provided API key does not exist or is invalid');
@@ -125,16 +127,17 @@ class AuthenticationMiddlewareTest extends TestCase
     /** @test */
     public function validApiKeyFallsBackToNextMiddleware(): void
     {
-        $apiKey = 'abc123';
+        $apiKey = new ApiKey();
+        $key = $apiKey->toString();
         $request = ServerRequestFactory::fromGlobals()
             ->withAttribute(
                 RouteResult::class,
                 RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), []),
             )
-            ->withHeader('X-Api-Key', $apiKey);
+            ->withHeader('X-Api-Key', $key);
 
-        $handle = $this->handler->handle($request)->willReturn(new Response());
-        $checkApiKey = $this->apiKeyService->check($apiKey)->willReturn(true);
+        $handle = $this->handler->handle($request->withAttribute(ApiKey::class, $apiKey))->willReturn(new Response());
+        $checkApiKey = $this->apiKeyService->check($key)->willReturn(new ApiKeyCheckResult($apiKey));
 
         $this->middleware->process($request, $this->handler->reveal());
 

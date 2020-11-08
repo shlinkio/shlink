@@ -12,7 +12,7 @@ interface ApiKeyServiceInterface
 {
     public function create(?Chronos $expirationDate = null): ApiKey;
 
-    public function check(string $key): bool;
+    public function check(string $key): ApiKeyCheckResult;
 
     /**
      * @throws InvalidArgumentException
@@ -23,6 +23,4 @@ interface ApiKeyServiceInterface
      * @return ApiKey[]
      */
     public function listKeys(bool $enabledOnly = false): array;
-
-    public function getByKey(string $key): ?ApiKey;
 }

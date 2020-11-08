@@ -11,6 +11,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Exception\MissingAuthenticationException;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
@@ -43,20 +44,21 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
             return $handler->handle($request);
         }
 
-        $apiKey = self::apiKeyFromRequest($request);
+        $apiKey = $request->getHeaderLine(self::API_KEY_HEADER);
         if (empty($apiKey)) {
             throw MissingAuthenticationException::fromExpectedTypes([self::API_KEY_HEADER]);
         }
 
-        if (! $this->apiKeyService->check($apiKey)) {
+        $result = $this->apiKeyService->check($apiKey);
+        if (! $result->isValid()) {
             throw VerifyAuthenticationException::forInvalidApiKey();
         }
 
-        return $handler->handle($request);
+        return $handler->handle($request->withAttribute(ApiKey::class, $result->apiKey()));
     }
 
-    public static function apiKeyFromRequest(Request $request): string
+    public static function apiKeyFromRequest(Request $request): ApiKey
     {
-        return $request->getHeaderLine(self::API_KEY_HEADER);
+        return $request->getAttribute(ApiKey::class);
     }
 }

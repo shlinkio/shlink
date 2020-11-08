@@ -54,4 +54,9 @@ class ApiKey extends AbstractEntity
     {
         return $this->key;
     }
+
+    public function toString(): string
+    {
+        return $this->key;
+    }
 }
