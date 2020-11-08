@@ -88,6 +88,10 @@
             "$ref": "paths/v2_tags_{tag}_visits.json"
         },
 
+        "/rest/v{version}/domains": {
+            "$ref": "paths/v2_domains.json"
+        },
+
         "/rest/v{version}/mercure-info": {
             "$ref": "paths/v2_mercure-info.json"
         },

@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -24,6 +25,8 @@ use function sprintf;
 
 class DeleteShortUrlServiceTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ObjectProphecy $em;
     private ObjectProphecy $urlResolver;
     private string $shortCode;

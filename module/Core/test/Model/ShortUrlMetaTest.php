@@ -68,17 +68,17 @@ class ShortUrlMetaTest extends TestCase
             ['validSince' => Chronos::parse('2015-01-01')->toAtomString(), 'customSlug' => $customSlug],
         );
 
-        $this->assertTrue($meta->hasValidSince());
-        $this->assertEquals(Chronos::parse('2015-01-01'), $meta->getValidSince());
+        self::assertTrue($meta->hasValidSince());
+        self::assertEquals(Chronos::parse('2015-01-01'), $meta->getValidSince());
 
-        $this->assertFalse($meta->hasValidUntil());
-        $this->assertNull($meta->getValidUntil());
+        self::assertFalse($meta->hasValidUntil());
+        self::assertNull($meta->getValidUntil());
 
-        $this->assertTrue($meta->hasCustomSlug());
-        $this->assertEquals($expectedSlug, $meta->getCustomSlug());
+        self::assertTrue($meta->hasCustomSlug());
+        self::assertEquals($expectedSlug, $meta->getCustomSlug());
 
-        $this->assertFalse($meta->hasMaxVisits());
-        $this->assertNull($meta->getMaxVisits());
+        self::assertFalse($meta->hasMaxVisits());
+        self::assertNull($meta->getMaxVisits());
     }
 
     public function provideCustomSlugs(): iterable

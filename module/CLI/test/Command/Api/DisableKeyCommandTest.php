@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Api\DisableKeyCommand;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
@@ -14,6 +15,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class DisableKeyCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $apiKeyService;
 
@@ -37,7 +40,7 @@ class DisableKeyCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('API key "abcd1234" properly disabled', $output);
+        self::assertStringContainsString('API key "abcd1234" properly disabled', $output);
     }
 
     /** @test */
@@ -52,7 +55,7 @@ class DisableKeyCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString($expectedMessage, $output);
+        self::assertStringContainsString($expectedMessage, $output);
         $disable->shouldHaveBeenCalledOnce();
     }
 }

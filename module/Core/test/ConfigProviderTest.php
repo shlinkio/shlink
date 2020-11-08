@@ -21,9 +21,9 @@ class ConfigProviderTest extends TestCase
     {
         $config = $this->configProvider->__invoke();
 
-        $this->assertArrayHasKey('routes', $config);
-        $this->assertArrayHasKey('dependencies', $config);
-        $this->assertArrayHasKey('templates', $config);
-        $this->assertArrayHasKey('mezzio', $config);
+        self::assertArrayHasKey('routes', $config);
+        self::assertArrayHasKey('dependencies', $config);
+        self::assertArrayHasKey('templates', $config);
+        self::assertArrayHasKey('mezzio', $config);
     }
 }

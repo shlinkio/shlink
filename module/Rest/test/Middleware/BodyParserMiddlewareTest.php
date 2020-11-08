@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -18,6 +19,8 @@ use function array_shift;
 
 class BodyParserMiddlewareTest extends TestCase
 {
+    use ProphecyTrait;
+
     private BodyParserMiddleware $middleware;
 
     public function setUp(): void
@@ -35,7 +38,7 @@ class BodyParserMiddlewareTest extends TestCase
         $request->getMethod()->willReturn($method);
         $request->getParsedBody()->willReturn([]);
 
-        $this->assertHandlingRequestJustFallsBackToNext($request);
+        self::assertHandlingRequestJustFallsBackToNext($request);
     }
 
     public function provideIgnoredRequestMethods(): iterable
@@ -52,7 +55,7 @@ class BodyParserMiddlewareTest extends TestCase
         $request->getMethod()->willReturn('POST');
         $request->getParsedBody()->willReturn(['foo' => 'bar']);
 
-        $this->assertHandlingRequestJustFallsBackToNext($request);
+        self::assertHandlingRequestJustFallsBackToNext($request);
     }
 
     private function assertHandlingRequestJustFallsBackToNext(ProphecyInterface $requestMock): void

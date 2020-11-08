@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\LocateVisitsCommand;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
@@ -32,10 +33,11 @@ use const PHP_EOL;
 
 class LocateVisitsCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $visitService;
     private ObjectProphecy $ipResolver;
-    private ObjectProphecy $locker;
     private ObjectProphecy $lock;
     private ObjectProphecy $dbUpdater;
 
@@ -45,17 +47,17 @@ class LocateVisitsCommandTest extends TestCase
         $this->ipResolver = $this->prophesize(IpLocationResolverInterface::class);
         $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
 
-        $this->locker = $this->prophesize(Lock\LockFactory::class);
+        $locker = $this->prophesize(Lock\LockFactory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
         $this->lock->acquire(false)->willReturn(true);
         $this->lock->release()->will(function (): void {
         });
-        $this->locker->createLock(Argument::type('string'), 90.0, false)->willReturn($this->lock->reveal());
+        $locker->createLock(Argument::type('string'), 90.0, false)->willReturn($this->lock->reveal());
 
         $command = new LocateVisitsCommand(
             $this->visitService->reveal(),
             $this->ipResolver->reveal(),
-            $this->locker->reveal(),
+            $locker->reveal(),
             $this->dbUpdater->reveal(),
         );
         $app = new Application();
@@ -92,11 +94,11 @@ class LocateVisitsCommandTest extends TestCase
         $this->commandTester->execute($args);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Processing IP 1.2.3.0', $output);
+        self::assertStringContainsString('Processing IP 1.2.3.0', $output);
         if ($expectWarningPrint) {
-            $this->assertStringContainsString('Continue at your own risk', $output);
+            self::assertStringContainsString('Continue at your own', $output);
         } else {
-            $this->assertStringNotContainsString('Continue at your own risk', $output);
+            self::assertStringNotContainsString('Continue at your own', $output);
         }
         $locateVisits->shouldHaveBeenCalledTimes($expectedUnlocatedCalls);
         $locateEmptyVisits->shouldHaveBeenCalledTimes($expectedEmptyCalls);
@@ -132,11 +134,11 @@ class LocateVisitsCommandTest extends TestCase
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
 
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString($message, $output);
+        self::assertStringContainsString($message, $output);
         if (empty($address)) {
-            $this->assertStringNotContainsString('Processing IP', $output);
+            self::assertStringNotContainsString('Processing IP', $output);
         } else {
-            $this->assertStringContainsString('Processing IP', $output);
+            self::assertStringContainsString('Processing IP', $output);
         }
         $locateVisits->shouldHaveBeenCalledOnce();
         $resolveIpLocation->shouldNotHaveBeenCalled();
@@ -164,7 +166,7 @@ class LocateVisitsCommandTest extends TestCase
 
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('An error occurred while locating IP. Skipped', $output);
+        self::assertStringContainsString('An error occurred while locating IP. Skipped', $output);
         $locateVisits->shouldHaveBeenCalledOnce();
         $resolveIpLocation->shouldHaveBeenCalledOnce();
     }
@@ -192,7 +194,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString(
+        self::assertStringContainsString(
             sprintf('Command "%s" is already in progress. Skipping.', LocateVisitsCommand::NAME),
             $output,
         );
@@ -222,11 +224,11 @@ class LocateVisitsCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString(
+        self::assertStringContainsString(
             sprintf('%s GeoLite2 database...', $olderDbExists ? 'Updating' : 'Downloading'),
             $output,
         );
-        $this->assertStringContainsString($expectedMessage, $output);
+        self::assertStringContainsString($expectedMessage, $output);
         $locateVisits->shouldHaveBeenCalledTimes((int) $olderDbExists);
         $checkDbUpdate->shouldHaveBeenCalledOnce();
     }
@@ -243,7 +245,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->commandTester->execute(['--all' => true]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('The --all flag has no effect on its own', $output);
+        self::assertStringContainsString('The --all flag has no effect on its own', $output);
     }
 
     /**

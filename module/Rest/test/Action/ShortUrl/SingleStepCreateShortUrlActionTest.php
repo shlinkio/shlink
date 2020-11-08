@@ -8,6 +8,7 @@ use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -18,6 +19,8 @@ use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 
 class SingleStepCreateShortUrlActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private SingleStepCreateShortUrlAction $action;
     private ObjectProphecy $urlShortener;
     private ObjectProphecy $apiKeyService;
@@ -69,18 +72,18 @@ class SingleStepCreateShortUrlActionTest extends TestCase
             'longUrl' => 'http://foobar.com',
         ]);
         $findApiKey = $this->apiKeyService->check('abc123')->willReturn(true);
-        $generateShortCode = $this->urlShortener->urlToShortCode(
+        $generateShortCode = $this->urlShortener->shorten(
             Argument::that(function (string $argument): string {
                 Assert::assertEquals('http://foobar.com', $argument);
                 return $argument;
             }),
             [],
-            ShortUrlMeta::createEmpty(),
+            ShortUrlMeta::fromRawData(['apiKey' => 'abc123']),
         )->willReturn(new ShortUrl(''));
 
         $resp = $this->action->handle($request);
 
-        $this->assertEquals(200, $resp->getStatusCode());
+        self::assertEquals(200, $resp->getStatusCode());
         $findApiKey->shouldHaveBeenCalled();
         $generateShortCode->shouldHaveBeenCalled();
     }

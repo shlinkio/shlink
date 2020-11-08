@@ -19,7 +19,7 @@ class VisitLocationTest extends TestCase
         $payload = new Location(...$args);
         $location = new VisitLocation($payload);
 
-        $this->assertEquals($isEmpty, $location->isEmpty());
+        self::assertEquals($isEmpty, $location->isEmpty());
     }
 
     public function provideArgs(): iterable

@@ -110,8 +110,8 @@ class ListShortUrlsTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls', [RequestOptions::QUERY => $query]);
         $respPayload = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals(self::STATUS_OK, $resp->getStatusCode());
-        $this->assertEquals([
+        self::assertEquals(self::STATUS_OK, $resp->getStatusCode());
+        self::assertEquals([
             'shortUrls' => [
                 'data' => $expectedShortUrls,
                 'pagination' => $this->buildPagination(count($expectedShortUrls)),
@@ -137,7 +137,15 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_DOCS,
             self::SHORT_URL_CUSTOM_DOMAIN,
         ]];
-        yield [['orderBy' => ['shortCode' => 'DESC']], [
+        yield [['orderBy' => ['shortCode' => 'DESC']], [ // Deprecated
+            self::SHORT_URL_DOCS,
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_SHLINK,
+        ]];
+        yield [['orderBy' => 'shortCode-DESC'], [
             self::SHORT_URL_DOCS,
             self::SHORT_URL_CUSTOM_DOMAIN,
             self::SHORT_URL_META,

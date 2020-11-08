@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -24,6 +25,8 @@ use function count;
 
 class ShortUrlServiceTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ShortUrlService $service;
     private ObjectProphecy $em;
     private ObjectProphecy $urlResolver;
@@ -61,7 +64,7 @@ class ShortUrlServiceTest extends TestCase
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $list = $this->service->listShortUrls(ShortUrlsParams::emptyInstance());
-        $this->assertEquals(4, $list->getCurrentItemCount());
+        self::assertEquals(4, $list->getCurrentItemCount());
     }
 
     /** @test */
@@ -97,14 +100,17 @@ class ShortUrlServiceTest extends TestCase
 
         $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), $shortUrlEdit);
 
-        $this->assertSame($shortUrl, $result);
-        $this->assertEquals($shortUrlEdit->validSince(), $shortUrl->getValidSince());
-        $this->assertEquals($shortUrlEdit->validUntil(), $shortUrl->getValidUntil());
-        $this->assertEquals($shortUrlEdit->maxVisits(), $shortUrl->getMaxVisits());
-        $this->assertEquals($shortUrlEdit->longUrl() ?? $originalLongUrl, $shortUrl->getLongUrl());
+        self::assertSame($shortUrl, $result);
+        self::assertEquals($shortUrlEdit->validSince(), $shortUrl->getValidSince());
+        self::assertEquals($shortUrlEdit->validUntil(), $shortUrl->getValidUntil());
+        self::assertEquals($shortUrlEdit->maxVisits(), $shortUrl->getMaxVisits());
+        self::assertEquals($shortUrlEdit->longUrl() ?? $originalLongUrl, $shortUrl->getLongUrl());
         $findShortUrl->shouldHaveBeenCalled();
         $flush->shouldHaveBeenCalled();
-        $this->urlValidator->validateUrl($shortUrlEdit->longUrl())->shouldHaveBeenCalledTimes($expectedValidateCalls);
+        $this->urlValidator->validateUrl(
+            $shortUrlEdit->longUrl(),
+            $shortUrlEdit->doValidateUrl(),
+        )->shouldHaveBeenCalledTimes($expectedValidateCalls);
     }
 
     public function provideShortUrlEdits(): iterable
@@ -121,6 +127,12 @@ class ShortUrlServiceTest extends TestCase
                 'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
                 'maxVisits' => 10,
                 'longUrl' => 'modifiedLongUrl',
+            ],
+        )];
+        yield 'long URL with validation' => [1, ShortUrlEdit::fromRawData(
+            [
+                'longUrl' => 'modifiedLongUrl',
+                'validateUrl' => true,
             ],
         )];
     }

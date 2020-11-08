@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -23,6 +24,8 @@ use function range;
 
 class ShortUrlResolverTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ShortUrlResolver $urlResolver;
     private ObjectProphecy $em;
 
@@ -44,7 +47,7 @@ class ShortUrlResolverTest extends TestCase
 
         $result = $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode));
 
-        $this->assertSame($shortUrl, $result);
+        self::assertSame($shortUrl, $result);
         $findOne->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
     }
@@ -77,7 +80,7 @@ class ShortUrlResolverTest extends TestCase
 
         $result = $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode));
 
-        $this->assertSame($shortUrl, $result);
+        self::assertSame($shortUrl, $result);
         $findOneByShortCode->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
     }

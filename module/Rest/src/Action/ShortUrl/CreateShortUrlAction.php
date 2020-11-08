@@ -8,6 +8,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class CreateShortUrlAction extends AbstractCreateShortUrlAction
 {
@@ -19,14 +21,16 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
      */
     protected function buildShortUrlData(Request $request): CreateShortUrlData
     {
-        $postData = (array) $request->getParsedBody();
-        if (! isset($postData['longUrl'])) {
+        $payload = (array) $request->getParsedBody();
+        if (! isset($payload['longUrl'])) {
             throw ValidationException::fromArray([
                 'longUrl' => 'A URL was not provided',
             ]);
         }
 
-        $meta = ShortUrlMeta::fromRawData($postData);
-        return new CreateShortUrlData($postData['longUrl'], (array) ($postData['tags'] ?? []), $meta);
+        $payload[ShortUrlMetaInputFilter::API_KEY] = AuthenticationMiddleware::apiKeyFromRequest($request);
+        $meta = ShortUrlMeta::fromRawData($payload);
+
+        return new CreateShortUrlData($payload['longUrl'], (array) ($payload['tags'] ?? []), $meta);
     }
 }

@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -14,6 +15,8 @@ use Shlinkio\Shlink\Rest\Action\Tag\UpdateTagAction;
 
 class UpdateTagActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private UpdateTagAction $action;
     private ObjectProphecy $tagService;
 
@@ -54,7 +57,7 @@ class UpdateTagActionTest extends TestCase
 
         $resp = $this->action->handle($request);
 
-        $this->assertEquals(204, $resp->getStatusCode());
+        self::assertEquals(204, $resp->getStatusCode());
         $rename->shouldHaveBeenCalled();
     }
 }

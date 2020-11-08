@@ -67,6 +67,7 @@ class SimplifiedConfigParserTest extends TestCase
             'anonymize_remote_addr' => false,
             'redirect_status_code' => 301,
             'redirect_cache_lifetime' => 90,
+            'port' => 8888,
         ];
         $expected = [
             'app_options' => [
@@ -132,6 +133,7 @@ class SimplifiedConfigParserTest extends TestCase
 
             'mezzio-swoole' => [
                 'swoole-http-server' => [
+                    'port' => 8888,
                     'options' => [
                         'task_worker_num' => 50,
                     ],
@@ -151,6 +153,6 @@ class SimplifiedConfigParserTest extends TestCase
 
         $result = ($this->postProcessor)(array_merge($config, $simplified));
 
-        $this->assertEquals(array_merge($expected, $simplified), $result);
+        self::assertEquals(array_merge($expected, $simplified), $result);
     }
 }

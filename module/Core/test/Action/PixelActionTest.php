@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\Action;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Response\PixelResponse;
@@ -19,6 +20,8 @@ use Shlinkio\Shlink\Core\Service\VisitsTracker;
 
 class PixelActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private PixelAction $action;
     private ObjectProphecy $urlResolver;
     private ObjectProphecy $visitTracker;
@@ -47,8 +50,8 @@ class PixelActionTest extends TestCase
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
 
-        $this->assertInstanceOf(PixelResponse::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('image/gif', $response->getHeaderLine('content-type'));
+        self::assertInstanceOf(PixelResponse::class, $response);
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertEquals('image/gif', $response->getHeaderLine('content-type'));
     }
 }

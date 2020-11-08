@@ -9,6 +9,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Shlinkio\Shlink\Common\Mercure\JwtProviderInterface;
@@ -17,6 +18,8 @@ use Shlinkio\Shlink\Rest\Exception\MercureException;
 
 class MercureInfoActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ObjectProphecy $provider;
 
     public function setUp(): void
@@ -87,11 +90,11 @@ class MercureInfoActionTest extends TestCase
         $resp = $action->handle(ServerRequestFactory::fromGlobals());
         $payload = $resp->getPayload();
 
-        $this->assertArrayHasKey('mercureHubUrl', $payload);
-        $this->assertEquals('http://foobar.com/.well-known/mercure', $payload['mercureHubUrl']);
-        $this->assertArrayHasKey('token', $payload);
-        $this->assertArrayHasKey('jwtExpiration', $payload);
-        $this->assertEquals(
+        self::assertArrayHasKey('mercureHubUrl', $payload);
+        self::assertEquals('http://foobar.com/.well-known/mercure', $payload['mercureHubUrl']);
+        self::assertArrayHasKey('token', $payload);
+        self::assertArrayHasKey('jwtExpiration', $payload);
+        self::assertEquals(
             Chronos::now()->addDays($days ?? 1)->startOfDay(),
             Chronos::parse($payload['jwtExpiration'])->startOfDay(),
         );

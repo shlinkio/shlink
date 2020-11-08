@@ -10,12 +10,15 @@ use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Rest\Action\HealthAction;
 
 class HealthActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private HealthAction $action;
     private ObjectProphecy $conn;
 
@@ -37,14 +40,14 @@ class HealthActionTest extends TestCase
         $resp = $this->action->handle(new ServerRequest());
         $payload = $resp->getPayload();
 
-        $this->assertEquals(200, $resp->getStatusCode());
-        $this->assertEquals('pass', $payload['status']);
-        $this->assertEquals('1.2.3', $payload['version']);
-        $this->assertEquals([
+        self::assertEquals(200, $resp->getStatusCode());
+        self::assertEquals('pass', $payload['status']);
+        self::assertEquals('1.2.3', $payload['version']);
+        self::assertEquals([
             'about' => 'https://shlink.io',
             'project' => 'https://github.com/shlinkio/shlink',
         ], $payload['links']);
-        $this->assertEquals('application/health+json', $resp->getHeaderLine('Content-type'));
+        self::assertEquals('application/health+json', $resp->getHeaderLine('Content-type'));
         $ping->shouldHaveBeenCalledOnce();
     }
 
@@ -57,14 +60,14 @@ class HealthActionTest extends TestCase
         $resp = $this->action->handle(new ServerRequest());
         $payload = $resp->getPayload();
 
-        $this->assertEquals(503, $resp->getStatusCode());
-        $this->assertEquals('fail', $payload['status']);
-        $this->assertEquals('1.2.3', $payload['version']);
-        $this->assertEquals([
+        self::assertEquals(503, $resp->getStatusCode());
+        self::assertEquals('fail', $payload['status']);
+        self::assertEquals('1.2.3', $payload['version']);
+        self::assertEquals([
             'about' => 'https://shlink.io',
             'project' => 'https://github.com/shlinkio/shlink',
         ], $payload['links']);
-        $this->assertEquals('application/health+json', $resp->getHeaderLine('Content-type'));
+        self::assertEquals('application/health+json', $resp->getHeaderLine('Content-type'));
         $ping->shouldHaveBeenCalledOnce();
     }
 
@@ -77,14 +80,14 @@ class HealthActionTest extends TestCase
         $resp = $this->action->handle(new ServerRequest());
         $payload = $resp->getPayload();
 
-        $this->assertEquals(503, $resp->getStatusCode());
-        $this->assertEquals('fail', $payload['status']);
-        $this->assertEquals('1.2.3', $payload['version']);
-        $this->assertEquals([
+        self::assertEquals(503, $resp->getStatusCode());
+        self::assertEquals('fail', $payload['status']);
+        self::assertEquals('1.2.3', $payload['version']);
+        self::assertEquals([
             'about' => 'https://shlink.io',
             'project' => 'https://github.com/shlinkio/shlink',
         ], $payload['links']);
-        $this->assertEquals('application/health+json', $resp->getHeaderLine('Content-type'));
+        self::assertEquals('application/health+json', $resp->getHeaderLine('Content-type'));
         $ping->shouldHaveBeenCalledOnce();
     }
 }

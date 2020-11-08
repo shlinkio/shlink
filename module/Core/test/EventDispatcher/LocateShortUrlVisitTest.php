@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
@@ -26,6 +27,8 @@ use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 class LocateShortUrlVisitTest extends TestCase
 {
+    use ProphecyTrait;
+
     private LocateShortUrlVisit $locateVisit;
     private ObjectProphecy $ipLocationResolver;
     private ObjectProphecy $em;
@@ -112,7 +115,7 @@ class LocateShortUrlVisitTest extends TestCase
 
         ($this->locateVisit)($event);
 
-        $this->assertEquals($visit->getVisitLocation(), new VisitLocation(Location::emptyInstance()));
+        self::assertEquals($visit->getVisitLocation(), new VisitLocation(Location::emptyInstance()));
         $findVisit->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
         $resolveIp->shouldNotHaveBeenCalled();
@@ -149,7 +152,7 @@ class LocateShortUrlVisitTest extends TestCase
 
         ($this->locateVisit)($event);
 
-        $this->assertEquals($visit->getVisitLocation(), new VisitLocation($location));
+        self::assertEquals($visit->getVisitLocation(), new VisitLocation($location));
         $findVisit->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
         $resolveIp->shouldHaveBeenCalledOnce();
@@ -182,7 +185,7 @@ class LocateShortUrlVisitTest extends TestCase
 
         ($this->locateVisit)($event);
 
-        $this->assertEquals($visit->getVisitLocation(), new VisitLocation($location));
+        self::assertEquals($visit->getVisitLocation(), new VisitLocation($location));
         $findVisit->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
         $resolveIp->shouldHaveBeenCalledOnce();
@@ -217,7 +220,7 @@ class LocateShortUrlVisitTest extends TestCase
 
         ($this->locateVisit)($event);
 
-        $this->assertNull($visit->getVisitLocation());
+        self::assertNull($visit->getVisitLocation());
         $findVisit->shouldHaveBeenCalledOnce();
         $flush->shouldNotHaveBeenCalled();
         $resolveIp->shouldNotHaveBeenCalled();

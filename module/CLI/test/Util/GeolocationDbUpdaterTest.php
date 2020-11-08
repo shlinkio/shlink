@@ -9,6 +9,7 @@ use GeoIp2\Database\Reader;
 use MaxMind\Db\Reader\Metadata;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
@@ -22,35 +23,35 @@ use function range;
 
 class GeolocationDbUpdaterTest extends TestCase
 {
+    use ProphecyTrait;
+
     private GeolocationDbUpdater $geolocationDbUpdater;
     private ObjectProphecy $dbUpdater;
     private ObjectProphecy $geoLiteDbReader;
-    private ObjectProphecy $locker;
-    private ObjectProphecy $lock;
 
     public function setUp(): void
     {
         $this->dbUpdater = $this->prophesize(DbUpdaterInterface::class);
         $this->geoLiteDbReader = $this->prophesize(Reader::class);
 
-        $this->locker = $this->prophesize(Lock\LockFactory::class);
-        $this->lock = $this->prophesize(Lock\LockInterface::class);
-        $this->lock->acquire(true)->willReturn(true);
-        $this->lock->release()->will(function (): void {
+        $locker = $this->prophesize(Lock\LockFactory::class);
+        $lock = $this->prophesize(Lock\LockInterface::class);
+        $lock->acquire(true)->willReturn(true);
+        $lock->release()->will(function (): void {
         });
-        $this->locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
+        $locker->createLock(Argument::type('string'))->willReturn($lock->reveal());
 
         $this->geolocationDbUpdater = new GeolocationDbUpdater(
             $this->dbUpdater->reveal(),
             $this->geoLiteDbReader->reveal(),
-            $this->locker->reveal(),
+            $locker->reveal(),
         );
     }
 
     /** @test */
     public function exceptionIsThrownWhenOlderDbDoesNotExistAndDownloadFails(): void
     {
-        $mustBeUpdated = fn () => $this->assertTrue(true);
+        $mustBeUpdated = fn () => self::assertTrue(true);
         $prev = new RuntimeException('');
 
         $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(false);
@@ -59,12 +60,12 @@ class GeolocationDbUpdaterTest extends TestCase
 
         try {
             $this->geolocationDbUpdater->checkDbUpdate($mustBeUpdated);
-            $this->assertTrue(false); // If this is reached, the test will fail
+            self::assertTrue(false); // If this is reached, the test will fail
         } catch (Throwable $e) {
             /** @var GeolocationDbUpdateFailedException $e */
-            $this->assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
-            $this->assertSame($prev, $e->getPrevious());
-            $this->assertFalse($e->olderDbExists());
+            self::assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
+            self::assertSame($prev, $e->getPrevious());
+            self::assertFalse($e->olderDbExists());
         }
 
         $fileExists->shouldHaveBeenCalledOnce();
@@ -95,12 +96,12 @@ class GeolocationDbUpdaterTest extends TestCase
 
         try {
             $this->geolocationDbUpdater->checkDbUpdate();
-            $this->assertTrue(false); // If this is reached, the test will fail
+            self::assertTrue(false); // If this is reached, the test will fail
         } catch (Throwable $e) {
             /** @var GeolocationDbUpdateFailedException $e */
-            $this->assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
-            $this->assertSame($prev, $e->getPrevious());
-            $this->assertTrue($e->olderDbExists());
+            self::assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
+            self::assertSame($prev, $e->getPrevious());
+            self::assertTrue($e->olderDbExists());
         }
 
         $fileExists->shouldHaveBeenCalledOnce();

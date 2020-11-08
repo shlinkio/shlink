@@ -7,18 +7,22 @@ namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GenerateShortUrlCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class GenerateShortUrlCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private const DOMAIN_CONFIG = [
         'schema' => 'http',
         'hostname' => 'foo.com',
@@ -40,7 +44,7 @@ class GenerateShortUrlCommandTest extends TestCase
     public function properShortCodeIsCreatedIfLongUrlIsCorrect(): void
     {
         $shortUrl = new ShortUrl('');
-        $urlToShortCode = $this->urlShortener->urlToShortCode(Argument::cetera())->willReturn($shortUrl);
+        $urlToShortCode = $this->urlShortener->shorten(Argument::cetera())->willReturn($shortUrl);
 
         $this->commandTester->execute([
             'longUrl' => 'http://domain.com/foo/bar',
@@ -48,8 +52,8 @@ class GenerateShortUrlCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
-        $this->assertStringContainsString($shortUrl->toString(self::DOMAIN_CONFIG), $output);
+        self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
+        self::assertStringContainsString($shortUrl->toString(self::DOMAIN_CONFIG), $output);
         $urlToShortCode->shouldHaveBeenCalledOnce();
     }
 
@@ -57,28 +61,28 @@ class GenerateShortUrlCommandTest extends TestCase
     public function exceptionWhileParsingLongUrlOutputsError(): void
     {
         $url = 'http://domain.com/invalid';
-        $this->urlShortener->urlToShortCode(Argument::cetera())->willThrow(InvalidUrlException::fromUrl($url))
+        $this->urlShortener->shorten(Argument::cetera())->willThrow(InvalidUrlException::fromUrl($url))
                                                                ->shouldBeCalledOnce();
 
         $this->commandTester->execute(['longUrl' => $url]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertEquals(ExitCodes::EXIT_FAILURE, $this->commandTester->getStatusCode());
-        $this->assertStringContainsString('Provided URL http://domain.com/invalid is invalid.', $output);
+        self::assertEquals(ExitCodes::EXIT_FAILURE, $this->commandTester->getStatusCode());
+        self::assertStringContainsString('Provided URL http://domain.com/invalid is invalid.', $output);
     }
 
     /** @test */
     public function providingNonUniqueSlugOutputsError(): void
     {
-        $urlToShortCode = $this->urlShortener->urlToShortCode(Argument::cetera())->willThrow(
+        $urlToShortCode = $this->urlShortener->shorten(Argument::cetera())->willThrow(
             NonUniqueSlugException::fromSlug('my-slug'),
         );
 
         $this->commandTester->execute(['longUrl' => 'http://domain.com/invalid', '--customSlug' => 'my-slug']);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertEquals(ExitCodes::EXIT_FAILURE, $this->commandTester->getStatusCode());
-        $this->assertStringContainsString('Provided slug "my-slug" is already in use', $output);
+        self::assertEquals(ExitCodes::EXIT_FAILURE, $this->commandTester->getStatusCode());
+        self::assertStringContainsString('Provided slug "my-slug" is already in use', $output);
         $urlToShortCode->shouldHaveBeenCalledOnce();
     }
 
@@ -86,7 +90,7 @@ class GenerateShortUrlCommandTest extends TestCase
     public function properlyProcessesProvidedTags(): void
     {
         $shortUrl = new ShortUrl('');
-        $urlToShortCode = $this->urlShortener->urlToShortCode(
+        $urlToShortCode = $this->urlShortener->shorten(
             Argument::type('string'),
             Argument::that(function (array $tags) {
                 Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $tags);
@@ -101,8 +105,38 @@ class GenerateShortUrlCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
-        $this->assertStringContainsString($shortUrl->toString(self::DOMAIN_CONFIG), $output);
+        self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
+        self::assertStringContainsString($shortUrl->toString(self::DOMAIN_CONFIG), $output);
         $urlToShortCode->shouldHaveBeenCalledOnce();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideFlags
+     */
+    public function urlValidationHasExpectedValueBasedOnProvidedTags(array $options, ?bool $expectedValidateUrl): void
+    {
+        $shortUrl = new ShortUrl('');
+        $urlToShortCode = $this->urlShortener->shorten(
+            Argument::type('string'),
+            Argument::type('array'),
+            Argument::that(function (ShortUrlMeta $meta) use ($expectedValidateUrl) {
+                Assert::assertEquals($expectedValidateUrl, $meta->doValidateUrl());
+                return $meta;
+            }),
+        )->willReturn($shortUrl);
+
+        $options['longUrl'] = 'http://domain.com/foo/bar';
+        $this->commandTester->execute($options);
+
+        $urlToShortCode->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideFlags(): iterable
+    {
+        yield 'no flags' => [[], null];
+        yield 'no-validate-url only' => [['--no-validate-url' => true], false];
+        yield 'validate-url' => [['--validate-url' => true], true];
+        yield 'both flags' => [['--validate-url' => true, '--no-validate-url' => true], false];
     }
 }

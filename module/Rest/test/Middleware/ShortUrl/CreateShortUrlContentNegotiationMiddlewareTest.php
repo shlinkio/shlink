@@ -9,6 +9,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -16,6 +17,8 @@ use Shlinkio\Shlink\Rest\Middleware\ShortUrl\CreateShortUrlContentNegotiationMid
 
 class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CreateShortUrlContentNegotiationMiddleware $middleware;
     private ObjectProphecy $requestHandler;
 
@@ -33,7 +36,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 
         $resp = $this->middleware->process(new ServerRequest(), $this->requestHandler->reveal());
 
-        $this->assertSame($expectedResp, $resp);
+        self::assertSame($expectedResp, $resp);
     }
 
     /**
@@ -54,7 +57,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 
         $response = $this->middleware->process($request, $this->requestHandler->reveal());
 
-        $this->assertEquals($expectedContentType, $response->getHeaderLine('Content-type'));
+        self::assertEquals($expectedContentType, $response->getHeaderLine('Content-type'));
         $handle->shouldHaveBeenCalled();
     }
 
@@ -85,7 +88,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 
         $response = $this->middleware->process($request, $this->requestHandler->reveal());
 
-        $this->assertEquals($expectedBody, (string) $response->getBody());
+        self::assertEquals($expectedBody, (string) $response->getBody());
         $handle->shouldHaveBeenCalled();
     }
 

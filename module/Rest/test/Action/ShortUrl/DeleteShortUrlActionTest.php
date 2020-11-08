@@ -7,12 +7,15 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\DeleteShortUrlAction;
 
 class DeleteShortUrlActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private DeleteShortUrlAction $action;
     private ObjectProphecy $service;
 
@@ -30,7 +33,7 @@ class DeleteShortUrlActionTest extends TestCase
 
         $resp = $this->action->handle(new ServerRequest());
 
-        $this->assertEquals(204, $resp->getStatusCode());
+        self::assertEquals(204, $resp->getStatusCode());
         $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 }

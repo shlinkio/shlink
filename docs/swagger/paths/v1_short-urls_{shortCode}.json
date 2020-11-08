@@ -127,6 +127,10 @@
                             "maxVisits": {
                                 "description": "The maximum number of allowed visits for this short code",
                                 "type": "number"
+                            },
+                            "validateUrl": {
+                                "description": "Tells if the long URL (if provided) should or should not be validated as a reachable URL. If not provided, it will fall back to app-level config",
+                                "type": "boolean"
                             }
                         }
                     }

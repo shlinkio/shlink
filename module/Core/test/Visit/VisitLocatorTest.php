@@ -9,6 +9,7 @@ use Exception;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -31,6 +32,8 @@ use function sprintf;
 
 class VisitLocatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private VisitLocator $visitService;
     private ObjectProphecy $em;
     private ObjectProphecy $repo;

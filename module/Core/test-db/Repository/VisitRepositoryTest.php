@@ -75,9 +75,9 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         // Important! assertCount will not work here, as this iterable object loads data dynamically and the count
         // is 0 if not iterated
-        $this->assertEquals(2, $countIterable($unlocated));
-        $this->assertEquals(4, $countIterable($withEmptyLocation));
-        $this->assertEquals(6, $countIterable($all));
+        self::assertEquals(2, $countIterable($unlocated));
+        self::assertEquals(4, $countIterable($withEmptyLocation));
+        self::assertEquals(6, $countIterable($all));
     }
 
     public function provideBlockSize(): iterable
@@ -90,22 +90,22 @@ class VisitRepositoryTest extends DatabaseTestCase
     {
         [$shortCode, $domain] = $this->createShortUrlsAndVisits();
 
-        $this->assertCount(0, $this->repo->findVisitsByShortCode('invalid'));
-        $this->assertCount(6, $this->repo->findVisitsByShortCode($shortCode));
-        $this->assertCount(3, $this->repo->findVisitsByShortCode($shortCode, $domain));
-        $this->assertCount(2, $this->repo->findVisitsByShortCode($shortCode, null, new DateRange(
+        self::assertCount(0, $this->repo->findVisitsByShortCode('invalid'));
+        self::assertCount(6, $this->repo->findVisitsByShortCode($shortCode));
+        self::assertCount(3, $this->repo->findVisitsByShortCode($shortCode, $domain));
+        self::assertCount(2, $this->repo->findVisitsByShortCode($shortCode, null, new DateRange(
             Chronos::parse('2016-01-02'),
             Chronos::parse('2016-01-03'),
         )));
-        $this->assertCount(4, $this->repo->findVisitsByShortCode($shortCode, null, new DateRange(
+        self::assertCount(4, $this->repo->findVisitsByShortCode($shortCode, null, new DateRange(
             Chronos::parse('2016-01-03'),
         )));
-        $this->assertCount(1, $this->repo->findVisitsByShortCode($shortCode, $domain, new DateRange(
+        self::assertCount(1, $this->repo->findVisitsByShortCode($shortCode, $domain, new DateRange(
             Chronos::parse('2016-01-03'),
         )));
-        $this->assertCount(3, $this->repo->findVisitsByShortCode($shortCode, null, null, 3, 2));
-        $this->assertCount(2, $this->repo->findVisitsByShortCode($shortCode, null, null, 5, 4));
-        $this->assertCount(1, $this->repo->findVisitsByShortCode($shortCode, $domain, null, 3, 2));
+        self::assertCount(3, $this->repo->findVisitsByShortCode($shortCode, null, null, 3, 2));
+        self::assertCount(2, $this->repo->findVisitsByShortCode($shortCode, null, null, 5, 4));
+        self::assertCount(1, $this->repo->findVisitsByShortCode($shortCode, $domain, null, 3, 2));
     }
 
     /** @test */
@@ -113,17 +113,17 @@ class VisitRepositoryTest extends DatabaseTestCase
     {
         [$shortCode, $domain] = $this->createShortUrlsAndVisits();
 
-        $this->assertEquals(0, $this->repo->countVisitsByShortCode('invalid'));
-        $this->assertEquals(6, $this->repo->countVisitsByShortCode($shortCode));
-        $this->assertEquals(3, $this->repo->countVisitsByShortCode($shortCode, $domain));
-        $this->assertEquals(2, $this->repo->countVisitsByShortCode($shortCode, null, new DateRange(
+        self::assertEquals(0, $this->repo->countVisitsByShortCode('invalid'));
+        self::assertEquals(6, $this->repo->countVisitsByShortCode($shortCode));
+        self::assertEquals(3, $this->repo->countVisitsByShortCode($shortCode, $domain));
+        self::assertEquals(2, $this->repo->countVisitsByShortCode($shortCode, null, new DateRange(
             Chronos::parse('2016-01-02'),
             Chronos::parse('2016-01-03'),
         )));
-        $this->assertEquals(4, $this->repo->countVisitsByShortCode($shortCode, null, new DateRange(
+        self::assertEquals(4, $this->repo->countVisitsByShortCode($shortCode, null, new DateRange(
             Chronos::parse('2016-01-03'),
         )));
-        $this->assertEquals(1, $this->repo->countVisitsByShortCode($shortCode, $domain, new DateRange(
+        self::assertEquals(1, $this->repo->countVisitsByShortCode($shortCode, $domain, new DateRange(
             Chronos::parse('2016-01-03'),
         )));
     }
@@ -147,13 +147,13 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $this->assertCount(0, $this->repo->findVisitsByTag('invalid'));
-        $this->assertCount(18, $this->repo->findVisitsByTag((string) $foo));
-        $this->assertCount(6, $this->repo->findVisitsByTag((string) $foo, new DateRange(
+        self::assertCount(0, $this->repo->findVisitsByTag('invalid'));
+        self::assertCount(18, $this->repo->findVisitsByTag((string) $foo));
+        self::assertCount(6, $this->repo->findVisitsByTag((string) $foo, new DateRange(
             Chronos::parse('2016-01-02'),
             Chronos::parse('2016-01-03'),
         )));
-        $this->assertCount(12, $this->repo->findVisitsByTag((string) $foo, new DateRange(
+        self::assertCount(12, $this->repo->findVisitsByTag((string) $foo, new DateRange(
             Chronos::parse('2016-01-03'),
         )));
     }
@@ -174,13 +174,13 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $this->assertEquals(0, $this->repo->countVisitsByTag('invalid'));
-        $this->assertEquals(12, $this->repo->countVisitsByTag((string) $foo));
-        $this->assertEquals(4, $this->repo->countVisitsByTag((string) $foo, new DateRange(
+        self::assertEquals(0, $this->repo->countVisitsByTag('invalid'));
+        self::assertEquals(12, $this->repo->countVisitsByTag((string) $foo));
+        self::assertEquals(4, $this->repo->countVisitsByTag((string) $foo, new DateRange(
             Chronos::parse('2016-01-02'),
             Chronos::parse('2016-01-03'),
         )));
-        $this->assertEquals(8, $this->repo->countVisitsByTag((string) $foo, new DateRange(
+        self::assertEquals(8, $this->repo->countVisitsByTag((string) $foo, new DateRange(
             Chronos::parse('2016-01-03'),
         )));
     }

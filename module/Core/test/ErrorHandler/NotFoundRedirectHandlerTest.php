@@ -10,6 +10,7 @@ use Laminas\Diactoros\Uri;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -19,6 +20,8 @@ use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 
 class NotFoundRedirectHandlerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private NotFoundRedirectHandler $middleware;
     private NotFoundRedirectOptions $redirectOptions;
 
@@ -45,8 +48,8 @@ class NotFoundRedirectHandlerTest extends TestCase
 
         $resp = $this->middleware->process($request, $next->reveal());
 
-        $this->assertInstanceOf(Response\RedirectResponse::class, $resp);
-        $this->assertEquals($expectedRedirectTo, $resp->getHeaderLine('Location'));
+        self::assertInstanceOf(Response\RedirectResponse::class, $resp);
+        self::assertEquals($expectedRedirectTo, $resp->getHeaderLine('Location'));
         $handle->shouldNotHaveBeenCalled();
     }
 
@@ -93,7 +96,7 @@ class NotFoundRedirectHandlerTest extends TestCase
 
         $result = $this->middleware->process($req, $next->reveal());
 
-        $this->assertSame($resp, $result);
+        self::assertSame($resp, $result);
         $handle->shouldHaveBeenCalledOnce();
     }
 }

@@ -18,7 +18,7 @@ class ListTagsActionTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_GET, '/tags', [RequestOptions::QUERY => $query]);
         $payload = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals(['tags' => $expectedTags], $payload);
+        self::assertEquals(['tags' => $expectedTags], $payload);
     }
 
     public function provideQueries(): iterable

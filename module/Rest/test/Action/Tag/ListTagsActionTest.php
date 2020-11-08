@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
@@ -15,6 +16,8 @@ use Shlinkio\Shlink\Rest\Action\Tag\ListTagsAction;
 
 class ListTagsActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ListTagsAction $action;
     private ObjectProphecy $tagService;
 
@@ -37,7 +40,7 @@ class ListTagsActionTest extends TestCase
         $resp = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams($query));
         $payload = $resp->getPayload();
 
-        $this->assertEquals([
+        self::assertEquals([
             'tags' => [
                 'data' => $tags,
             ],
@@ -65,7 +68,7 @@ class ListTagsActionTest extends TestCase
         $resp = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams(['withStats' => 'true']));
         $payload = $resp->getPayload();
 
-        $this->assertEquals([
+        self::assertEquals([
             'tags' => [
                 'data' => ['foo', 'bar'],
                 'stats' => $stats,

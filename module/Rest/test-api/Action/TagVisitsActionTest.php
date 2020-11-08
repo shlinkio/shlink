@@ -19,9 +19,9 @@ class TagVisitsActionTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_GET, sprintf('/tags/%s/visits', $tag));
         $payload = $this->getJsonResponsePayload($resp);
 
-        $this->assertArrayHasKey('visits', $payload);
-        $this->assertArrayHasKey('data', $payload['visits']);
-        $this->assertCount($expectedVisitsAmount, $payload['visits']['data']);
+        self::assertArrayHasKey('visits', $payload);
+        self::assertArrayHasKey('data', $payload['visits']);
+        self::assertCount($expectedVisitsAmount, $payload['visits']['data']);
     }
 
     public function provideTags(): iterable
@@ -37,10 +37,10 @@ class TagVisitsActionTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_GET, '/tags/invalid_tag/visits');
         $payload = $this->getJsonResponsePayload($resp);
 
-        $this->assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
-        $this->assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
-        $this->assertEquals('TAG_NOT_FOUND', $payload['type']);
-        $this->assertEquals('Tag with name "invalid_tag" could not be found', $payload['detail']);
-        $this->assertEquals('Tag not found', $payload['title']);
+        self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
+        self::assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
+        self::assertEquals('TAG_NOT_FOUND', $payload['type']);
+        self::assertEquals('Tag with name "invalid_tag" could not be found', $payload['detail']);
+        self::assertEquals('Tag not found', $payload['title']);
     }
 }

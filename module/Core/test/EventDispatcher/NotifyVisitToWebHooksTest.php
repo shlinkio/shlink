@@ -14,6 +14,7 @@ use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -28,6 +29,8 @@ use function Functional\contains;
 
 class NotifyVisitToWebHooksTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ObjectProphecy $httpClient;
     private ObjectProphecy $em;
     private ObjectProphecy $logger;

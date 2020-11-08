@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Util;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use ReflectionObject;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
@@ -15,6 +16,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ShlinkTableTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ShlinkTable $shlinkTable;
     private ObjectProphecy $baseTable;
 
@@ -60,6 +63,6 @@ class ShlinkTableTest extends TestCase
         $baseTable = $ref->getProperty('baseTable');
         $baseTable->setAccessible(true);
 
-        $this->assertInstanceOf(Table::class, $baseTable->getValue($instance));
+        self::assertInstanceOf(Table::class, $baseTable->getValue($instance));
     }
 }

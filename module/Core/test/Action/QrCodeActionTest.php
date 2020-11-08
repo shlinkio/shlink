@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequest;
 use Mezzio\Router\RouterInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
@@ -20,6 +21,8 @@ use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 
 class QrCodeActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private QrCodeAction $action;
     private ObjectProphecy $urlResolver;
 
@@ -77,8 +80,34 @@ class QrCodeActionTest extends TestCase
             $delegate->reveal(),
         );
 
-        $this->assertInstanceOf(QrCodeResponse::class, $resp);
-        $this->assertEquals(200, $resp->getStatusCode());
+        self::assertInstanceOf(QrCodeResponse::class, $resp);
+        self::assertEquals(200, $resp->getStatusCode());
         $delegate->handle(Argument::any())->shouldHaveBeenCalledTimes(0);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideQueries
+     */
+    public function imageIsReturnedWithExpectedContentTypeBasedOnProvidedFormat(
+        array $query,
+        string $expectedContentType
+    ): void {
+        $code = 'abc123';
+        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($code, ''))->willReturn(new ShortUrl(''));
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
+        $req = (new ServerRequest())->withAttribute('shortCode', $code)->withQueryParams($query);
+
+        $resp = $this->action->process($req, $delegate->reveal());
+
+        self::assertEquals($expectedContentType, $resp->getHeaderLine('Content-Type'));
+    }
+
+    public function provideQueries(): iterable
+    {
+        yield 'no format' => [[], 'image/png'];
+        yield 'png format' => [['format' => 'png'], 'image/png'];
+        yield 'svg format' => [['format' => 'svg'], 'image/svg+xml'];
+        yield 'unsupported format' => [['format' => 'jpg'], 'image/png'];
     }
 }

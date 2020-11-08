@@ -21,7 +21,9 @@ use function array_map;
 use function Functional\curry;
 use function Functional\flatten;
 use function Functional\unique;
+use function method_exists;
 use function sprintf;
+use function strpos;
 
 class GenerateShortUrlCommand extends Command
 {
@@ -94,6 +96,18 @@ class GenerateShortUrlCommand extends Command
                 'l',
                 InputOption::VALUE_REQUIRED,
                 'The length for generated short code (it will be ignored if --customSlug was provided).',
+            )
+            ->addOption(
+                'validate-url',
+                null,
+                InputOption::VALUE_NONE,
+                'Forces the long URL to be validated, regardless what is globally configured.',
+            )
+            ->addOption(
+                'no-validate-url',
+                null,
+                InputOption::VALUE_NONE,
+                'Forces the long URL to not be validated, regardless what is globally configured.',
             );
     }
 
@@ -125,9 +139,10 @@ class GenerateShortUrlCommand extends Command
         $customSlug = $input->getOption('customSlug');
         $maxVisits = $input->getOption('maxVisits');
         $shortCodeLength = $input->getOption('shortCodeLength') ?? $this->defaultShortCodeLength;
+        $doValidateUrl = $this->doValidateUrl($input);
 
         try {
-            $shortUrl = $this->urlShortener->urlToShortCode($longUrl, $tags, ShortUrlMeta::fromRawData([
+            $shortUrl = $this->urlShortener->shorten($longUrl, $tags, ShortUrlMeta::fromRawData([
                 ShortUrlMetaInputFilter::VALID_SINCE => $input->getOption('validSince'),
                 ShortUrlMetaInputFilter::VALID_UNTIL => $input->getOption('validUntil'),
                 ShortUrlMetaInputFilter::CUSTOM_SLUG => $customSlug,
@@ -135,6 +150,7 @@ class GenerateShortUrlCommand extends Command
                 ShortUrlMetaInputFilter::FIND_IF_EXISTS => $input->getOption('findIfExists'),
                 ShortUrlMetaInputFilter::DOMAIN => $input->getOption('domain'),
                 ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
+                ShortUrlMetaInputFilter::VALIDATE_URL => $doValidateUrl,
             ]));
 
             $io->writeln([
@@ -146,5 +162,19 @@ class GenerateShortUrlCommand extends Command
             $io->error($e->getMessage());
             return ExitCodes::EXIT_FAILURE;
         }
+    }
+
+    private function doValidateUrl(InputInterface $input): ?bool
+    {
+        $rawInput = method_exists($input, '__toString') ? $input->__toString() : '';
+
+        if (strpos($rawInput, '--no-validate-url') !== false) {
+            return false;
+        }
+        if (strpos($rawInput, '--validate-url') !== false) {
+            return true;
+        }
+
+        return null;
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ResolveUrlCommand;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -20,6 +21,8 @@ use const PHP_EOL;
 
 class ResolveUrlCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $urlResolver;
 
@@ -44,7 +47,7 @@ class ResolveUrlCommandTest extends TestCase
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
-        $this->assertEquals('Long URL: ' . $expectedUrl . PHP_EOL, $output);
+        self::assertEquals('Long URL: ' . $expectedUrl . PHP_EOL, $output);
     }
 
     /** @test */
@@ -59,6 +62,6 @@ class ResolveUrlCommandTest extends TestCase
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
+        self::assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
     }
 }

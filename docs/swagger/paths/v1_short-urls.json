@@ -31,7 +31,7 @@
             {
                 "name": "tags[]",
                 "in": "query",
-                "description": "A list of tags used to filter the resultset. Only short URLs tagged with at least one of the provided tags will be returned. (Since v1.3.0)",
+                "description": "A list of tags used to filter the result set. Only short URLs tagged with at least one of the provided tags will be returned. (Since v1.3.0)",
                 "required": false,
                 "schema": {
                     "type": "array",
@@ -48,10 +48,14 @@
                 "schema": {
                     "type": "string",
                     "enum": [
-                        "longUrl",
-                        "shortCode",
-                        "dateCreated",
-                        "visits"
+                        "longUrl-ASC",
+                        "longUrl-DESC",
+                        "shortCode-ASC",
+                        "shortCode-DESC",
+                        "dateCreated-ASC",
+                        "dateCreated-DESC",
+                        "visits-ASC",
+                        "visits-DESC"
                     ]
                 }
             },
@@ -247,6 +251,10 @@
                             "shortCodeLength": {
                                 "description": "The length for generated short code. It has to be at least 4 and defaults to 5. It will be ignored when customSlug is provided",
                                 "type": "number"
+                            },
+                            "validateUrl": {
+                                "description": "Tells if the long URL should or should not be validated as a reachable URL. If not provided, it will fall back to app-level config",
+                                "type": "boolean"
                             }
                         }
                     }

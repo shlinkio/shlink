@@ -9,6 +9,7 @@ use Laminas\Paginator\Adapter\ArrayAdapter;
 use Laminas\Paginator\Paginator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -21,6 +22,8 @@ use function explode;
 
 class ListShortUrlsCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $shortUrlService;
 
@@ -50,9 +53,9 @@ class ListShortUrlsCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Continue with page 2?', $output);
-        $this->assertStringContainsString('Continue with page 3?', $output);
-        $this->assertStringContainsString('Continue with page 4?', $output);
+        self::assertStringContainsString('Continue with page 2?', $output);
+        self::assertStringContainsString('Continue with page 3?', $output);
+        self::assertStringContainsString('Continue with page 4?', $output);
     }
 
     /** @test */
@@ -72,13 +75,13 @@ class ListShortUrlsCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('url_1', $output);
-        $this->assertStringContainsString('url_9', $output);
-        $this->assertStringNotContainsString('url_10', $output);
-        $this->assertStringNotContainsString('url_20', $output);
-        $this->assertStringNotContainsString('url_30', $output);
-        $this->assertStringContainsString('Continue with page 2?', $output);
-        $this->assertStringNotContainsString('Continue with page 3?', $output);
+        self::assertStringContainsString('url_1', $output);
+        self::assertStringContainsString('url_9', $output);
+        self::assertStringNotContainsString('url_10', $output);
+        self::assertStringNotContainsString('url_20', $output);
+        self::assertStringNotContainsString('url_30', $output);
+        self::assertStringContainsString('Continue with page 2?', $output);
+        self::assertStringNotContainsString('Continue with page 3?', $output);
     }
 
     /** @test */
@@ -103,7 +106,7 @@ class ListShortUrlsCommandTest extends TestCase
         $this->commandTester->setInputs(['y']);
         $this->commandTester->execute(['--showTags' => true]);
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString('Tags', $output);
+        self::assertStringContainsString('Tags', $output);
     }
 
     /**

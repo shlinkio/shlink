@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\CLI\Factory;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
 use Shlinkio\Shlink\Core\Options\AppOptions;
@@ -15,6 +16,8 @@ use Symfony\Component\Console\Command\Command;
 
 class ApplicationFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ApplicationFactory $factory;
 
     public function setUp(): void
@@ -37,9 +40,9 @@ class ApplicationFactoryTest extends TestCase
 
         $instance = ($this->factory)($sm);
 
-        $this->assertTrue($instance->has('foo'));
-        $this->assertTrue($instance->has('bar'));
-        $this->assertFalse($instance->has('baz'));
+        self::assertTrue($instance->has('foo'));
+        self::assertTrue($instance->has('bar'));
+        self::assertFalse($instance->has('baz'));
     }
 
     private function createServiceManager(array $config = []): ServiceManager

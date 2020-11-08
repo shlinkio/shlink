@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -20,6 +21,8 @@ use function strpos;
 
 class CreateShortUrlActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private const DOMAIN_CONFIG = [
         'schema' => 'http',
         'hostname' => 'foo.com',
@@ -45,20 +48,24 @@ class CreateShortUrlActionTest extends TestCase
      * @test
      * @dataProvider provideRequestBodies
      */
-    public function properShortcodeConversionReturnsData(array $body, ShortUrlMeta $expectedMeta): void
+    public function properShortcodeConversionReturnsData(array $body, ShortUrlMeta $expectedMeta, ?string $apiKey): void
     {
         $shortUrl = new ShortUrl('');
-        $shorten = $this->urlShortener->urlToShortCode(
+        $shorten = $this->urlShortener->shorten(
             Argument::type('string'),
             Argument::type('array'),
             $expectedMeta,
         )->willReturn($shortUrl);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);
+        if ($apiKey !== null) {
+            $request = $request->withHeader('X-Api-Key', $apiKey);
+        }
+
         $response = $this->action->handle($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertTrue(strpos($response->getBody()->getContents(), $shortUrl->toString(self::DOMAIN_CONFIG)) > 0);
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertTrue(strpos($response->getBody()->getContents(), $shortUrl->toString(self::DOMAIN_CONFIG)) > 0);
         $shorten->shouldHaveBeenCalledOnce();
     }
 
@@ -74,8 +81,14 @@ class CreateShortUrlActionTest extends TestCase
             'domain' => 'my-domain.com',
         ];
 
-        yield [['longUrl' => 'http://www.domain.com/foo/bar'], ShortUrlMeta::createEmpty()];
-        yield [$fullMeta, ShortUrlMeta::fromRawData($fullMeta)];
+        yield 'no data' => [['longUrl' => 'http://www.domain.com/foo/bar'], ShortUrlMeta::createEmpty(), null];
+        yield 'all data' => [$fullMeta, ShortUrlMeta::fromRawData($fullMeta), null];
+        yield 'all data and API key' => (static function (array $meta): array {
+            $apiKey = 'abc123';
+            $meta['apiKey'] = $apiKey;
+
+            return [$meta, ShortUrlMeta::fromRawData($meta), $apiKey];
+        })($fullMeta);
     }
 
     /**
@@ -85,7 +98,7 @@ class CreateShortUrlActionTest extends TestCase
     public function anInvalidDomainReturnsError(string $domain): void
     {
         $shortUrl = new ShortUrl('');
-        $urlToShortCode = $this->urlShortener->urlToShortCode(Argument::cetera())->willReturn($shortUrl);
+        $urlToShortCode = $this->urlShortener->shorten(Argument::cetera())->willReturn($shortUrl);
 
         $request = (new ServerRequest())->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',

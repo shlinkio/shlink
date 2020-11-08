@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManager;
 use Laminas\Stdlib\ArrayUtils;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Util\DateRange;
@@ -30,6 +31,8 @@ use function range;
 
 class VisitsTrackerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private VisitsTracker $visitsTracker;
     private ObjectProphecy $em;
     private ObjectProphecy $eventDispatcher;
@@ -71,7 +74,7 @@ class VisitsTrackerTest extends TestCase
 
         $paginator = $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), new VisitsParams());
 
-        $this->assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentItems()));
+        self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentItems()));
         $count->shouldHaveBeenCalledOnce();
     }
 
@@ -120,7 +123,7 @@ class VisitsTrackerTest extends TestCase
 
         $paginator = $this->visitsTracker->visitsForTag($tag, new VisitsParams());
 
-        $this->assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentItems()));
+        self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentItems()));
         $count->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
     }

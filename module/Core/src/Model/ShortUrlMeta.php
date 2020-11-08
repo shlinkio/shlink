@@ -8,6 +8,8 @@ use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 
+use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
+use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
 use function Shlinkio\Shlink\Core\parseDateField;
 
 use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
@@ -21,6 +23,8 @@ final class ShortUrlMeta
     private ?bool $findIfExists = null;
     private ?string $domain = null;
     private int $shortCodeLength = 5;
+    private ?bool $validateUrl = null;
+    private ?string $apiKey = null;
 
     // Enforce named constructors
     private function __construct()
@@ -55,19 +59,15 @@ final class ShortUrlMeta
         $this->validSince = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
         $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
-        $this->maxVisits = $this->getOptionalIntFromInputFilter($inputFilter, ShortUrlMetaInputFilter::MAX_VISITS);
+        $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlMetaInputFilter::MAX_VISITS);
         $this->findIfExists = $inputFilter->getValue(ShortUrlMetaInputFilter::FIND_IF_EXISTS);
+        $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlMetaInputFilter::VALIDATE_URL);
         $this->domain = $inputFilter->getValue(ShortUrlMetaInputFilter::DOMAIN);
-        $this->shortCodeLength = $this->getOptionalIntFromInputFilter(
+        $this->shortCodeLength = getOptionalIntFromInputFilter(
             $inputFilter,
             ShortUrlMetaInputFilter::SHORT_CODE_LENGTH,
         ) ?? DEFAULT_SHORT_CODES_LENGTH;
-    }
-
-    private function getOptionalIntFromInputFilter(ShortUrlMetaInputFilter $inputFilter, string $fieldName): ?int
-    {
-        $value = $inputFilter->getValue($fieldName);
-        return $value !== null ? (int) $value : null;
+        $this->apiKey = $inputFilter->getValue(ShortUrlMetaInputFilter::API_KEY);
     }
 
     public function getValidSince(): ?Chronos
@@ -128,5 +128,15 @@ final class ShortUrlMeta
     public function getShortCodeLength(): int
     {
         return $this->shortCodeLength;
+    }
+
+    public function doValidateUrl(): ?bool
+    {
+        return $this->validateUrl;
+    }
+
+    public function getApiKey(): ?string
+    {
+        return $this->apiKey;
     }
 }

@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Domain\Resolver;
+namespace Shlinkio\Shlink\Core\ShortUrl\Resolver;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class PersistenceDomainResolver implements DomainResolverInterface
+class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInterface
 {
     private EntityManagerInterface $em;
 
@@ -25,5 +26,16 @@ class PersistenceDomainResolver implements DomainResolverInterface
         /** @var Domain|null $existingDomain */
         $existingDomain = $this->em->getRepository(Domain::class)->findOneBy(['authority' => $domain]);
         return $existingDomain ?? new Domain($domain);
+    }
+
+    public function resolveApiKey(?string $key): ?ApiKey
+    {
+        if ($key === null) {
+            return null;
+        }
+
+        /** @var ApiKey|null $existingApiKey */
+        $existingApiKey = $this->em->getRepository(ApiKey::class)->findOneBy(['key' => $key]);
+        return $existingApiKey;
     }
 }

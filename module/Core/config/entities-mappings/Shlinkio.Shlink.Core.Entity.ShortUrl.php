@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
@@ -51,6 +52,16 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->nullable()
             ->build();
 
+    $builder->createField('importSource', Types::STRING)
+            ->columnName('import_source')
+            ->nullable()
+            ->build();
+
+    $builder->createField('importOriginalShortCode', Types::STRING)
+            ->columnName('import_original_short_code')
+            ->nullable()
+            ->build();
+
     $builder->createOneToMany('visits', Entity\Visit::class)
             ->mappedBy('shortUrl')
             ->fetchExtraLazy()
@@ -66,6 +77,10 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder->createManyToOne('domain', Entity\Domain::class)
             ->addJoinColumn('domain_id', 'id', true, false, 'RESTRICT')
             ->cascadePersist()
+            ->build();
+
+    $builder->createManyToOne('authorApiKey', ApiKey::class)
+            ->addJoinColumn('author_api_key_id', 'id', true, false, 'SET NULL')
             ->build();
 
     $builder->addUniqueConstraint(['short_code', 'domain_id'], 'unique_short_code_plus_domain');

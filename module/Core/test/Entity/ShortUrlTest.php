@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function Functional\map;
 use function range;
@@ -45,16 +46,26 @@ class ShortUrlTest extends TestCase
         ];
     }
 
-    /** @test */
-    public function regenerateShortCodeProperlyChangesTheValueOnValidShortUrls(): void
+    /**
+     * @test
+     * @dataProvider provideValidShortUrls
+     */
+    public function regenerateShortCodeProperlyChangesTheValueOnValidShortUrls(ShortUrl $shortUrl): void
     {
-        $shortUrl = new ShortUrl('');
         $firstShortCode = $shortUrl->getShortCode();
 
         $shortUrl->regenerateShortCode();
         $secondShortCode = $shortUrl->getShortCode();
 
-        $this->assertNotEquals($firstShortCode, $secondShortCode);
+        self::assertNotEquals($firstShortCode, $secondShortCode);
+    }
+
+    public function provideValidShortUrls(): iterable
+    {
+        yield 'no custom slug' => [new ShortUrl('')];
+        yield 'imported with custom slug' => [
+            ShortUrl::fromImport(new ImportedShlinkUrl('', '', [], Chronos::now(), null, 'custom-slug'), true),
+        ];
     }
 
     /**
@@ -67,46 +78,12 @@ class ShortUrlTest extends TestCase
             [ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => $length],
         ));
 
-        $this->assertEquals($expectedLength, strlen($shortUrl->getShortCode()));
+        self::assertEquals($expectedLength, strlen($shortUrl->getShortCode()));
     }
 
     public function provideLengths(): iterable
     {
         yield [null, DEFAULT_SHORT_CODES_LENGTH];
         yield from map(range(4, 10), fn (int $value) => [$value, $value]);
-    }
-
-    /**
-     * @test
-     * @dataProvider provideCriteriaToMatch
-     */
-    public function criteriaIsMatchedWhenDatesMatch(ShortUrl $shortUrl, ShortUrlMeta $meta, bool $expected): void
-    {
-        $this->assertEquals($expected, $shortUrl->matchesCriteria($meta, []));
-    }
-
-    public function provideCriteriaToMatch(): iterable
-    {
-        $start = Chronos::parse('2020-03-05 20:18:30');
-        $end = Chronos::parse('2021-03-05 20:18:30');
-
-        yield [new ShortUrl('foo'), ShortUrlMeta::fromRawData(['validSince' => $start]), false];
-        yield [new ShortUrl('foo'), ShortUrlMeta::fromRawData(['validUntil' => $end]), false];
-        yield [new ShortUrl('foo'), ShortUrlMeta::fromRawData(['validSince' => $start, 'validUntil' => $end]), false];
-        yield [
-            new ShortUrl('foo', ShortUrlMeta::fromRawData(['validSince' => $start])),
-            ShortUrlMeta::fromRawData(['validSince' => $start]),
-            true,
-        ];
-        yield [
-            new ShortUrl('foo', ShortUrlMeta::fromRawData(['validUntil' => $end])),
-            ShortUrlMeta::fromRawData(['validUntil' => $end]),
-            true,
-        ];
-        yield [
-            new ShortUrl('foo', ShortUrlMeta::fromRawData(['validUntil' => $end, 'validSince' => $start])),
-            ShortUrlMeta::fromRawData(['validUntil' => $end, 'validSince' => $start]),
-            true,
-        ];
     }
 }

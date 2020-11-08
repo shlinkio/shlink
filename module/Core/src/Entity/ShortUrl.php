@@ -9,16 +9,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Laminas\Diactoros\Uri;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
-use Shlinkio\Shlink\Core\Domain\Resolver\DomainResolverInterface;
-use Shlinkio\Shlink\Core\Domain\Resolver\SimpleDomainResolver;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
+use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function array_reduce;
 use function count;
-use function Functional\contains;
-use function Functional\invoke;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
 
 class ShortUrl extends AbstractEntity
@@ -36,13 +36,17 @@ class ShortUrl extends AbstractEntity
     private ?Domain $domain = null;
     private bool $customSlugWasProvided;
     private int $shortCodeLength;
+    private ?string $importSource = null;
+    private ?string $importOriginalShortCode = null;
+    private ?ApiKey $authorApiKey = null;
 
     public function __construct(
         string $longUrl,
         ?ShortUrlMeta $meta = null,
-        ?DomainResolverInterface $domainResolver = null
+        ?ShortUrlRelationResolverInterface $relationResolver = null
     ) {
         $meta = $meta ?? ShortUrlMeta::createEmpty();
+        $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
 
         $this->longUrl = $longUrl;
         $this->dateCreated = Chronos::now();
@@ -54,7 +58,29 @@ class ShortUrl extends AbstractEntity
         $this->customSlugWasProvided = $meta->hasCustomSlug();
         $this->shortCodeLength = $meta->getShortCodeLength();
         $this->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode($this->shortCodeLength);
-        $this->domain = ($domainResolver ?? new SimpleDomainResolver())->resolveDomain($meta->getDomain());
+        $this->domain = $relationResolver->resolveDomain($meta->getDomain());
+        $this->authorApiKey = $relationResolver->resolveApiKey($meta->getApiKey());
+    }
+
+    public static function fromImport(
+        ImportedShlinkUrl $url,
+        bool $importShortCode,
+        ?ShortUrlRelationResolverInterface $relationResolver = null
+    ): self {
+        $meta = [
+            ShortUrlMetaInputFilter::DOMAIN => $url->domain(),
+            ShortUrlMetaInputFilter::VALIDATE_URL => false,
+        ];
+        if ($importShortCode) {
+            $meta[ShortUrlMetaInputFilter::CUSTOM_SLUG] = $url->shortCode();
+        }
+
+        $instance = new self($url->longUrl(), ShortUrlMeta::fromRawData($meta), $relationResolver);
+        $instance->importSource = $url->source();
+        $instance->importOriginalShortCode = $url->shortCode();
+        $instance->dateCreated = Chronos::instance($url->createdAt());
+
+        return $instance;
     }
 
     public function getLongUrl(): string
@@ -113,10 +139,10 @@ class ShortUrl extends AbstractEntity
     /**
      * @throws ShortCodeCannotBeRegeneratedException
      */
-    public function regenerateShortCode(): self
+    public function regenerateShortCode(): void
     {
-        // In ShortUrls where a custom slug was provided, do nothing
-        if ($this->customSlugWasProvided) {
+        // In ShortUrls where a custom slug was provided, throw error, unless it is an imported one
+        if ($this->customSlugWasProvided && $this->importSource === null) {
             throw ShortCodeCannotBeRegeneratedException::forShortUrlWithCustomSlug();
         }
 
@@ -126,7 +152,6 @@ class ShortUrl extends AbstractEntity
         }
 
         $this->shortCode = generateRandomShortCode($this->shortCodeLength);
-        return $this;
     }
 
     public function getValidSince(): ?Chronos
@@ -194,28 +219,5 @@ class ShortUrl extends AbstractEntity
         }
 
         return $this->domain->getAuthority();
-    }
-
-    public function matchesCriteria(ShortUrlMeta $meta, array $tags): bool
-    {
-        if ($meta->hasMaxVisits() && $meta->getMaxVisits() !== $this->maxVisits) {
-            return false;
-        }
-        if ($meta->hasDomain() && $meta->getDomain() !== $this->resolveDomain()) {
-            return false;
-        }
-        if ($meta->hasValidSince() && ($this->validSince === null || ! $meta->getValidSince()->eq($this->validSince))) {
-            return false;
-        }
-        if ($meta->hasValidUntil() && ($this->validUntil === null || ! $meta->getValidUntil()->eq($this->validUntil))) {
-            return false;
-        }
-
-        $shortUrlTags = invoke($this->getTags(), '__toString');
-        return count($shortUrlTags) === count($tags) && array_reduce(
-            $tags,
-            fn (bool $hasAllTags, string $tag) => $hasAllTags && contains($shortUrlTags, $tag),
-            true,
-        );
     }
 }

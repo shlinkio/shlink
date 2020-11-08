@@ -9,6 +9,7 @@ use Laminas\Paginator\Adapter\ArrayAdapter;
 use Laminas\Paginator\Paginator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GetVisitsCommand;
 use Shlinkio\Shlink\Common\Util\DateRange;
@@ -27,6 +28,8 @@ use function sprintf;
 
 class GetVisitsCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $visitsTracker;
 
@@ -88,7 +91,7 @@ class GetVisitsCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         $info->shouldHaveBeenCalledOnce();
-        $this->assertStringContainsString(
+        self::assertStringContainsString(
             sprintf('Ignored provided "startDate" since its value "%s" is not a valid date', $startDate),
             $output,
         );
@@ -108,8 +111,8 @@ class GetVisitsCommandTest extends TestCase
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString('foo', $output);
-        $this->assertStringContainsString('Spain', $output);
-        $this->assertStringContainsString('bar', $output);
+        self::assertStringContainsString('foo', $output);
+        self::assertStringContainsString('Spain', $output);
+        self::assertStringContainsString('bar', $output);
     }
 }

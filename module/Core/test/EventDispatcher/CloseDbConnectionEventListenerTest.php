@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Shlinkio\Shlink\Common\Doctrine\ReopeningEntityManagerInterface;
@@ -15,6 +16,8 @@ use Throwable;
 
 class CloseDbConnectionEventListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ObjectProphecy $em;
 
     public function setUp(): void
@@ -45,7 +48,7 @@ class CloseDbConnectionEventListenerTest extends TestCase
             // Ignore exceptions
         }
 
-        $this->assertTrue($wrappedWasCalled);
+        self::assertTrue($wrappedWasCalled);
         $close->shouldHaveBeenCalledOnce();
         $getConn->shouldHaveBeenCalledOnce();
         $clear->shouldHaveBeenCalledOnce();

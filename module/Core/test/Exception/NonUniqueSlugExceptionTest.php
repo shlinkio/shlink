@@ -22,12 +22,12 @@ class NonUniqueSlugExceptionTest extends TestCase
 
         $e = NonUniqueSlugException::fromSlug($slug, $domain);
 
-        $this->assertEquals($expectedMessage, $e->getMessage());
-        $this->assertEquals($expectedMessage, $e->getDetail());
-        $this->assertEquals('Invalid custom slug', $e->getTitle());
-        $this->assertEquals('INVALID_SLUG', $e->getType());
-        $this->assertEquals(400, $e->getStatus());
-        $this->assertEquals($expectedAdditional, $e->getAdditionalData());
+        self::assertEquals($expectedMessage, $e->getMessage());
+        self::assertEquals($expectedMessage, $e->getDetail());
+        self::assertEquals('Invalid custom slug', $e->getTitle());
+        self::assertEquals('INVALID_SLUG', $e->getType());
+        self::assertEquals(400, $e->getStatus());
+        self::assertEquals($expectedAdditional, $e->getAdditionalData());
     }
 
     public function provideMessages(): iterable

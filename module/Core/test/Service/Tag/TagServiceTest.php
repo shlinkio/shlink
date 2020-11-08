@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\Service\Tag;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
@@ -17,6 +18,8 @@ use Shlinkio\Shlink\Core\Tag\TagService;
 
 class TagServiceTest extends TestCase
 {
+    use ProphecyTrait;
+
     private TagService $service;
     private ObjectProphecy $em;
     private ObjectProphecy $repo;
@@ -39,7 +42,7 @@ class TagServiceTest extends TestCase
 
         $result = $this->service->listTags();
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
         $find->shouldHaveBeenCalled();
     }
 
@@ -52,7 +55,7 @@ class TagServiceTest extends TestCase
 
         $result = $this->service->tagsInfo();
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
         $find->shouldHaveBeenCalled();
     }
 
@@ -75,7 +78,7 @@ class TagServiceTest extends TestCase
 
         $result = $this->service->createTags(['foo', 'bar']);
 
-        $this->assertCount(2, $result);
+        self::assertCount(2, $result);
         $find->shouldHaveBeenCalled();
         $persist->shouldHaveBeenCalledTimes(2);
         $flush->shouldHaveBeenCalled();
@@ -106,8 +109,8 @@ class TagServiceTest extends TestCase
 
         $tag = $this->service->renameTag($oldName, $newName);
 
-        $this->assertSame($expected, $tag);
-        $this->assertEquals($newName, (string) $tag);
+        self::assertSame($expected, $tag);
+        self::assertEquals($newName, (string) $tag);
         $find->shouldHaveBeenCalled();
         $flush->shouldHaveBeenCalled();
         $countTags->shouldHaveBeenCalledTimes($count > 0 ? 0 : 1);

@@ -1,0 +1,30 @@
+name: Publish release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4' # Publish release with lowest supported PHP version
+          tools: composer
+          extensions: swoole-4.5.5
+      - name: Generate release assets
+        run: ./build.sh ${GITHUB_REF#refs/tags/v}
+      - name: Publish release with assets
+        uses: docker://antonyurchenko/git-release:latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ALLOW_TAG_PREFIX: "true"
+          ALLOW_EMPTY_CHANGELOG: "true"
+        with:
+          args: |
+            build/shlink_*_dist.zip

@@ -24,14 +24,14 @@ class InvalidUrlExceptionTest extends TestCase
         $expectedMessage = sprintf('Provided URL %s is invalid. Try with a different one.', $url);
         $e = InvalidUrlException::fromUrl($url, $prev);
 
-        $this->assertEquals($expectedMessage, $e->getMessage());
-        $this->assertEquals($expectedMessage, $e->getDetail());
-        $this->assertEquals('Invalid URL', $e->getTitle());
-        $this->assertEquals('INVALID_URL', $e->getType());
-        $this->assertEquals(['url' => $url], $e->getAdditionalData());
-        $this->assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getCode());
-        $this->assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getStatus());
-        $this->assertEquals($prev, $e->getPrevious());
+        self::assertEquals($expectedMessage, $e->getMessage());
+        self::assertEquals($expectedMessage, $e->getDetail());
+        self::assertEquals('Invalid URL', $e->getTitle());
+        self::assertEquals('INVALID_URL', $e->getType());
+        self::assertEquals(['url' => $url], $e->getAdditionalData());
+        self::assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getCode());
+        self::assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getStatus());
+        self::assertEquals($prev, $e->getPrevious());
     }
 
     public function providePrevious(): iterable

@@ -7,7 +7,9 @@ namespace Shlinkio\Shlink\Core\Repository;
 use Doctrine\Persistence\ObjectRepository;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 interface ShortUrlRepositoryInterface extends ObjectRepository
 {
@@ -27,4 +29,8 @@ interface ShortUrlRepositoryInterface extends ObjectRepository
     public function findOne(string $shortCode, ?string $domain = null): ?ShortUrl;
 
     public function shortCodeIsInUse(string $slug, ?string $domain): bool;
+
+    public function findOneMatching(string $url, array $tags, ShortUrlMeta $meta): ?ShortUrl;
+
+    public function importedUrlExists(ImportedShlinkUrl $url): bool;
 }

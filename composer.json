@@ -16,7 +16,7 @@
         "ext-json": "*",
         "ext-pdo": "*",
         "akrabat/ip-address-middleware": "^1.0",
-        "cakephp/chronos": "^1.2",
+        "cakephp/chronos": "^2.0",
         "cocur/slugify": "^4.0",
         "doctrine/cache": "^1.9",
         "doctrine/dbal": "^2.10",
@@ -27,7 +27,6 @@
         "guzzlehttp/guzzle": "^7.0",
         "laminas/laminas-config": "^3.3",
         "laminas/laminas-config-aggregator": "^1.1",
-        "laminas/laminas-dependency-plugin": "^1.0",
         "laminas/laminas-diactoros": "^2.1.3",
         "laminas/laminas-inputfilter": "^2.10",
         "laminas/laminas-paginator": "^2.8",
@@ -50,9 +49,10 @@
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.5",
         "ramsey/uuid": "^3.9",
-        "shlinkio/shlink-common": "^3.2.0",
+        "shlinkio/shlink-common": "^3.3.0",
         "shlinkio/shlink-config": "^1.0",
         "shlinkio/shlink-event-dispatcher": "^1.4",
+        "shlinkio/shlink-importer": "^2.0.1",
         "shlinkio/shlink-installer": "^5.1.0",
         "shlinkio/shlink-ip-geolocation": "^1.5",
         "symfony/console": "^5.1",
@@ -66,13 +66,15 @@
         "devster/ubench": "^2.0",
         "dms/phpunit-arraysubset-asserts": "^0.2.0",
         "eaglewu/swoole-ide-helper": "dev-master",
-        "infection/infection": "^0.16.1",
-        "phpstan/phpstan": "^0.12.18",
-        "phpunit/phpunit": "~9.0.1",
+        "infection/infection": "^0.20.0",
+        "phpspec/prophecy-phpunit": "^2.0",
+        "phpstan/phpstan": "^0.12.52",
+        "phpunit/php-code-coverage": "^9.2",
+        "phpunit/phpunit": "^9.4",
         "roave/security-advisories": "dev-master",
-        "shlinkio/php-coding-standard": "~2.1.0",
+        "shlinkio/php-coding-standard": "~2.1.1",
         "shlinkio/shlink-test-utils": "^1.5",
-        "symfony/var-dumper": "^5.0"
+        "symfony/var-dumper": "^5.1"
     },
     "autoload": {
         "psr-4": {
@@ -93,7 +95,10 @@
                 "module/Core/test",
                 "module/Core/test-db"
             ]
-        }
+        },
+        "files": [
+            "config/test/constants.php"
+        ]
     },
     "scripts": {
         "ci": [
@@ -104,7 +109,7 @@
         ],
         "cs": "phpcs",
         "cs:fix": "phpcbf",
-        "stan": "phpstan analyse module/*/src/ module/*/config config docker/config --level=6",
+        "stan": "phpstan analyse module/*/src/ module/*/config config docker/config data/migrations --level=6",
         "test": [
             "@test:unit",
             "@test:db",
@@ -114,8 +119,8 @@
             "@test:unit:ci",
             "@test:db"
         ],
-        "test:unit": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
-        "test:unit:ci": "@test:unit --coverage-clover=build/clover.xml --coverage-xml=build/coverage-unit/coverage-xml --log-junit=build/coverage-unit/junit.xml",
+        "test:unit": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
+        "test:unit:ci": "@test:unit --coverage-xml=build/coverage-unit/coverage-xml --log-junit=build/coverage-unit/junit.xml",
         "test:db": [
             "@test:db:sqlite:ci",
             "@test:db:mysql",
@@ -123,14 +128,14 @@
             "@test:db:postgres",
             "@test:db:ms"
         ],
-        "test:db:sqlite": "APP_ENV=test phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-db.xml",
+        "test:db:sqlite": "APP_ENV=test php vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-db.xml",
         "test:db:sqlite:ci": "@test:db:sqlite --coverage-php build/coverage-db.cov --coverage-xml=build/coverage-db/coverage-xml --log-junit=build/coverage-db/junit.xml",
         "test:db:mysql": "DB_DRIVER=mysql composer test:db:sqlite",
         "test:db:maria": "DB_DRIVER=maria composer test:db:sqlite",
         "test:db:postgres": "DB_DRIVER=postgres composer test:db:sqlite",
         "test:db:ms": "DB_DRIVER=mssql composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
-        "test:unit:pretty": "phpdbg -qrr vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage",
+        "test:unit:pretty": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage-unit-html",
         "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
         "infect:ci:base": "@infect --skip-initial-tests",
         "infect:ci": [
@@ -166,6 +171,7 @@
         "clean:dev": "<fg=blue;options=bold>Deletes artifacts which are gitignored and could affect dev env</>"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "platform-check": false
     }
 }

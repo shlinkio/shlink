@@ -10,6 +10,7 @@ use Laminas\Diactoros\ServerRequest;
 use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
@@ -24,6 +25,8 @@ use function array_key_exists;
 
 class RedirectActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private RedirectAction $action;
     private ObjectProphecy $urlResolver;
     private ObjectProphecy $visitTracker;
@@ -60,10 +63,10 @@ class RedirectActionTest extends TestCase
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)->withQueryParams($query);
         $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
 
-        $this->assertInstanceOf(Response\RedirectResponse::class, $response);
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertTrue($response->hasHeader('Location'));
-        $this->assertEquals($expectedUrl, $response->getHeaderLine('Location'));
+        self::assertInstanceOf(Response\RedirectResponse::class, $response);
+        self::assertEquals(302, $response->getStatusCode());
+        self::assertTrue($response->hasHeader('Location'));
+        self::assertEquals($expectedUrl, $response->getHeaderLine('Location'));
         $shortCodeToUrl->shouldHaveBeenCalledOnce();
         $track->shouldHaveBeenCalledTimes(array_key_exists('foobar', $query) ? 0 : 1);
     }
@@ -135,10 +138,10 @@ class RedirectActionTest extends TestCase
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
 
-        $this->assertInstanceOf(Response\RedirectResponse::class, $response);
-        $this->assertEquals($expectedStatus, $response->getStatusCode());
-        $this->assertEquals($response->hasHeader('Cache-Control'), $expectedCacheControl !== null);
-        $this->assertEquals($response->getHeaderLine('Cache-Control'), $expectedCacheControl ?? '');
+        self::assertInstanceOf(Response\RedirectResponse::class, $response);
+        self::assertEquals($expectedStatus, $response->getStatusCode());
+        self::assertEquals($response->hasHeader('Cache-Control'), $expectedCacheControl !== null);
+        self::assertEquals($response->getHeaderLine('Cache-Control'), $expectedCacheControl ?? '');
     }
 
     public function provideRedirectConfigs(): iterable

@@ -11,6 +11,7 @@ use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
@@ -18,6 +19,8 @@ use Shlinkio\Shlink\Core\Util\UrlValidator;
 
 class UrlValidatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private UrlValidator $urlValidator;
     private ObjectProphecy $httpClient;
     private UrlShortenerOptions $options;
@@ -37,7 +40,7 @@ class UrlValidatorTest extends TestCase
         $request->shouldBeCalledOnce();
         $this->expectException(InvalidUrlException::class);
 
-        $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar');
+        $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar', null);
     }
 
     /** @test */
@@ -54,19 +57,29 @@ class UrlValidatorTest extends TestCase
             ],
         )->willReturn(new Response());
 
-        $this->urlValidator->validateUrl($expectedUrl);
+        $this->urlValidator->validateUrl($expectedUrl, null);
 
         $request->shouldHaveBeenCalledOnce();
     }
 
-    /** @test */
-    public function noCheckIsPerformedWhenUrlValidationIsDisabled(): void
+    /**
+     * @test
+     * @dataProvider provideDisabledCombinations
+     */
+    public function noCheckIsPerformedWhenUrlValidationIsDisabled(?bool $doValidate, bool $validateUrl): void
     {
         $request = $this->httpClient->request(Argument::cetera())->willReturn(new Response());
-        $this->options->validateUrl = false;
+        $this->options->validateUrl = $validateUrl;
 
-        $this->urlValidator->validateUrl('');
+        $this->urlValidator->validateUrl('', $doValidate);
 
         $request->shouldNotHaveBeenCalled();
+    }
+
+    public function provideDisabledCombinations(): iterable
+    {
+        yield 'config is disabled and no runtime option is provided' => [null, false];
+        yield 'config is enabled but runtime option is disabled' => [false, true];
+        yield 'both config and runtime option are disabled' => [false, false];
     }
 }

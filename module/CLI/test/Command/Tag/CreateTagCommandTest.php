@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\CreateTagCommand;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
@@ -14,6 +15,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class CreateTagCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $tagService;
 
@@ -34,7 +37,7 @@ class CreateTagCommandTest extends TestCase
         $this->commandTester->execute([]);
 
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString('You have to provide at least one tag name', $output);
+        self::assertStringContainsString('You have to provide at least one tag name', $output);
     }
 
     /** @test */
@@ -48,7 +51,7 @@ class CreateTagCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Tags properly created', $output);
+        self::assertStringContainsString('Tags properly created', $output);
         $createTags->shouldHaveBeenCalled();
     }
 }

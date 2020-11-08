@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Api\ListKeysCommand;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -14,6 +15,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ListKeysCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $apiKeyService;
 
@@ -38,11 +41,11 @@ class ListKeysCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Key', $output);
-        $this->assertStringContainsString('Is enabled', $output);
-        $this->assertStringContainsString(' +++ ', $output);
-        $this->assertStringNotContainsString(' --- ', $output);
-        $this->assertStringContainsString('Expiration date', $output);
+        self::assertStringContainsString('Key', $output);
+        self::assertStringContainsString('Is enabled', $output);
+        self::assertStringContainsString(' +++ ', $output);
+        self::assertStringNotContainsString(' --- ', $output);
+        self::assertStringContainsString('Expiration date', $output);
     }
 
     /** @test */
@@ -58,10 +61,10 @@ class ListKeysCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Key', $output);
-        $this->assertStringNotContainsString('Is enabled', $output);
-        $this->assertStringNotContainsString(' +++ ', $output);
-        $this->assertStringNotContainsString(' --- ', $output);
-        $this->assertStringContainsString('Expiration date', $output);
+        self::assertStringContainsString('Key', $output);
+        self::assertStringNotContainsString('Is enabled', $output);
+        self::assertStringNotContainsString(' +++ ', $output);
+        self::assertStringNotContainsString(' --- ', $output);
+        self::assertStringContainsString('Expiration date', $output);
     }
 }

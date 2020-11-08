@@ -9,6 +9,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Db\CreateDatabaseCommand;
 use Symfony\Component\Console\Application;
@@ -22,10 +23,11 @@ use Symfony\Component\Process\Process;
 
 class CreateDatabaseCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $processHelper;
     private ObjectProphecy $regularConn;
-    private ObjectProphecy $noDbNameConn;
     private ObjectProphecy $schemaManager;
     private ObjectProphecy $databasePlatform;
 
@@ -48,15 +50,15 @@ class CreateDatabaseCommandTest extends TestCase
         $this->regularConn = $this->prophesize(Connection::class);
         $this->regularConn->getSchemaManager()->willReturn($this->schemaManager->reveal());
         $this->regularConn->getDatabasePlatform()->willReturn($this->databasePlatform->reveal());
-        $this->noDbNameConn = $this->prophesize(Connection::class);
-        $this->noDbNameConn->getSchemaManager()->willReturn($this->schemaManager->reveal());
+        $noDbNameConn = $this->prophesize(Connection::class);
+        $noDbNameConn->getSchemaManager()->willReturn($this->schemaManager->reveal());
 
         $command = new CreateDatabaseCommand(
             $locker->reveal(),
             $this->processHelper->reveal(),
             $phpExecutableFinder->reveal(),
             $this->regularConn->reveal(),
-            $this->noDbNameConn->reveal(),
+            $noDbNameConn->reveal(),
         );
         $app = new Application();
         $app->add($command);
@@ -77,7 +79,7 @@ class CreateDatabaseCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Database already exists. Run "db:migrate" command', $output);
+        self::assertStringContainsString('Database already exists. Run "db:migrate" command', $output);
         $getDatabase->shouldHaveBeenCalledOnce();
         $listDatabases->shouldHaveBeenCalledOnce();
         $createDatabase->shouldNotHaveBeenCalled();
@@ -121,8 +123,8 @@ class CreateDatabaseCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Creating database tables...', $output);
-        $this->assertStringContainsString('Database properly created!', $output);
+        self::assertStringContainsString('Creating database tables...', $output);
+        self::assertStringContainsString('Database properly created!', $output);
         $getDatabase->shouldHaveBeenCalledOnce();
         $listDatabases->shouldHaveBeenCalledOnce();
         $createDatabase->shouldNotHaveBeenCalled();

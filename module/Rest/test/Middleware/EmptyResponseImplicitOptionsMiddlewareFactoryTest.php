@@ -23,7 +23,7 @@ class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
     public function serviceIsCreated(): void
     {
         $instance = ($this->factory)();
-        $this->assertInstanceOf(ImplicitOptionsMiddleware::class, $instance);
+        self::assertInstanceOf(ImplicitOptionsMiddleware::class, $instance);
     }
 
     /** @test */
@@ -34,6 +34,6 @@ class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
         $ref = new ReflectionObject($instance);
         $prop = $ref->getProperty('responseFactory');
         $prop->setAccessible(true);
-        $this->assertInstanceOf(EmptyResponse::class, $prop->getValue($instance)());
+        self::assertInstanceOf(EmptyResponse::class, $prop->getValue($instance)());
     }
 }

@@ -9,6 +9,7 @@ use Laminas\Paginator\Adapter\ArrayAdapter;
 use Laminas\Paginator\Paginator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
@@ -16,6 +17,8 @@ use Shlinkio\Shlink\Rest\Action\Visit\TagVisitsAction;
 
 class TagVisitsActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private TagVisitsAction $action;
     private ObjectProphecy $visitsTracker;
 
@@ -35,7 +38,7 @@ class TagVisitsActionTest extends TestCase
 
         $response = $this->action->handle((new ServerRequest())->withAttribute('tag', $tag));
 
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
         $getVisits->shouldHaveBeenCalledOnce();
     }
 }

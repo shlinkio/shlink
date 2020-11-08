@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\RenameTagCommand;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -15,6 +16,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class RenameTagCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $tagService;
 
@@ -42,7 +45,7 @@ class RenameTagCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Tag with name "foo" could not be found', $output);
+        self::assertStringContainsString('Tag with name "foo" could not be found', $output);
         $renameTag->shouldHaveBeenCalled();
     }
 
@@ -59,7 +62,7 @@ class RenameTagCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Tag properly renamed', $output);
+        self::assertStringContainsString('Tag properly renamed', $output);
         $renameTag->shouldHaveBeenCalled();
     }
 }

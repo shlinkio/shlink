@@ -4,10 +4,52 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## 2.3.0 - 2020-08-09
+## [2.4.0] - 2020-11-08
+### Added
+* [#829](https://github.com/shlinkio/shlink/issues/829) Added support for QR codes in SVG format, by passing `?format=svg` to the QR code URL.
+* [#820](https://github.com/shlinkio/shlink/issues/820) Added new option to force enabling or disabling URL validation on a per-URL basis.
 
-#### Added
+    Currently, there's a global config that tells if long URLs should be validated (by ensuring they are publicly accessible and return a 2xx status). However, this is either always applied or never applied.
 
+    Now, it is possible to enforce validation or enforce disabling validation when a new short URL is created or edited:
+
+    * On the `POST /short-url` and `PATCH /short-url/{shortCode}` endpoints, you can now pass `validateUrl: true/false` in order to enforce enabling or disabling validation, ignoring the global config. If the value is not provided, the global config is still normally applied.
+    * On the `short-url:generate` CLI command, you can pass `--validate-url` or `--no-validate-url` flags, in order to enforce enabling or disabling validation. If none of them is provided, the global config is still normally applied.
+
+* [#838](https://github.com/shlinkio/shlink/issues/838) Added new endpoint and CLI command to list existing domains.
+
+    It returns both default domain and specific domains that were used for some short URLs.
+
+    * REST endpoint: `GET /rest/v2/domains`
+    * CLI Command: `domain:list`
+
+* [#832](https://github.com/shlinkio/shlink/issues/832) Added support to customize the port in which the docker image listens by using the `PORT` env var or the `port` config option.
+
+* [#860](https://github.com/shlinkio/shlink/issues/860) Added support to import links from bit.ly.
+
+    Run the command `short-urls:import bitly` and introduce requested information in order to import all your links.
+
+    Other sources will be supported in future releases.
+
+### Changed
+* [#836](https://github.com/shlinkio/shlink/issues/836) Added support for the `<field>-<dir>` notation while determining how to order the short URLs list, as in `?orderBy=shortCode-DESC`. This effectively deprecates the array notation (`?orderBy[shortCode]=DESC`), that will be removed in Shlink 3.0.0
+* [#782](https://github.com/shlinkio/shlink/issues/782) Added code coverage to API tests.
+* [#858](https://github.com/shlinkio/shlink/issues/858) Updated to latest infection version. Updated docker images to PHP 7.4.11 and swoole 4.5.5
+* [#887](https://github.com/shlinkio/shlink/pull/887) Started tracking the API key used to create short URLs, in order to allow restrictions in future releases.
+
+### Deprecated
+* [#883](https://github.com/shlinkio/shlink/issues/883) Deprecated `POST /tags` endpoint and `tag:create` command, as tags are created automatically while creating short URLs.
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#837](https://github.com/shlinkio/shlink/issues/837) Drastically improved performance when creating a new shortUrl and providing `findIfExists = true`.
+* [#878](https://github.com/shlinkio/shlink/issues/878) Added missing `gmp` extension to the official docker image.
+
+
+## [2.3.0] - 2020-08-09
+### Added
 * [#746](https://github.com/shlinkio/shlink/issues/746) Allowed to configure the kind of redirect you want to use for your short URLs. You can either set:
 
     * `302` redirects: Default behavior. Visitors always hit the server.
@@ -22,77 +64,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     It has one limitation, though. Because of the way the CLI tooling works, all rows in the table must be loaded in memory. If the amount of URLs is too high, the command may fail due to too much memory usage.
 
-#### Changed
-
+### Changed
 * [#508](https://github.com/shlinkio/shlink/issues/508) Added mutation checks to database tests.
 * [#790](https://github.com/shlinkio/shlink/issues/790) Updated to doctrine/migrations v3.
 * [#798](https://github.com/shlinkio/shlink/issues/798) Updated to guzzlehttp/guzzle v7.
 * [#822](https://github.com/shlinkio/shlink/issues/822) Updated docker image to use PHP 7.4.9 with Alpine 3.12 and swoole 4.5.2.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * *Nothing*
 
 
-## 2.2.2 - 2020-06-08
-
-#### Added
-
+## [2.2.2] - 2020-06-08
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#769](https://github.com/shlinkio/shlink/issues/769) Fixed custom slugs not allowing valid URL characters, like `.`, `_` or `~`.
 * [#781](https://github.com/shlinkio/shlink/issues/781) Fixed memory leak when loading visits for a tag which is used for big amounts of short URLs.
 
 
-## 2.2.1 - 2020-05-11
-
-#### Added
-
+## [2.2.1] - 2020-05-11
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#764](https://github.com/shlinkio/shlink/issues/764) Fixed error when trying to match an existing short URL which does not have `validSince` and/or `validUntil`, but you are providing either one of them for the new one.
 
 
-## 2.2.0 - 2020-05-09
-
-#### Added
-
+## [2.2.0] - 2020-05-09
+### Added
 * [#712](https://github.com/shlinkio/shlink/issues/712) Added support to integrate Shlink with a [mercure hub](https://mercure.rocks/) server.
 
     Thanks to that, Shlink will be able to publish events that can be consumed in real time.
@@ -119,71 +143,55 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#640](https://github.com/shlinkio/shlink/issues/640) Allowed to optionally disable visitors' IP address anonymization. This will make Shlink no longer be GDPR-compliant, but it's OK if you only plan to share your URLs in countries without this regulation.
 
-#### Changed
-
+### Changed
 * [#692](https://github.com/shlinkio/shlink/issues/692) Drastically improved performance when loading visits. Specially noticeable when loading big result sets.
 * [#657](https://github.com/shlinkio/shlink/issues/657) Updated how DB tests are run in travis by using docker containers which allow all engines to be covered.
 * [#751](https://github.com/shlinkio/shlink/issues/751) Updated PHP and swoole versions used in docker image, and removed mssql-tools, as they are not needed.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#729](https://github.com/shlinkio/shlink/issues/729) Fixed weird error when fetching multiple visits result sets concurrently using mariadb or mysql.
 * [#735](https://github.com/shlinkio/shlink/issues/735) Fixed error when cleaning metadata cache during installation when APCu is enabled.
 * [#677](https://github.com/shlinkio/shlink/issues/677) Fixed `/health` endpoint returning `503` fail responses when the database connection has expired.
 * [#732](https://github.com/shlinkio/shlink/issues/732) Fixed wrong client IP in access logs when serving app with swoole behind load balancer.
 
 
-## 2.1.4 - 2020-04-30
-
-#### Added
-
+## [2.1.4] - 2020-04-30
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#742](https://github.com/shlinkio/shlink/issues/742) Allowed a custom GeoLite2 license key to be provided, in order to avoid download limits.
 
 
-## 2.1.3 - 2020-04-09
-
-#### Added
-
+## [2.1.3] - 2020-04-09
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#712](https://github.com/shlinkio/shlink/issues/712) Fixed app set-up not clearing entities metadata cache.
 * [#711](https://github.com/shlinkio/shlink/issues/711) Fixed `HEAD` requests returning a duplicated `Content-Length` header.
 * [#716](https://github.com/shlinkio/shlink/issues/716) Fixed Twitter not properly displaying preview for final long URL.
@@ -191,230 +199,177 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#705](https://github.com/shlinkio/shlink/issues/705) Fixed how the short URL domain is inferred when generating QR codes, making sure the configured domain is respected even if the request is performed using a different one, and only when a custom domain is used, then that one is used instead.
 
 
-## 2.1.2 - 2020-03-29
-
-#### Added
-
+## [2.1.2] - 2020-03-29
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#696](https://github.com/shlinkio/shlink/issues/696) Updated to infection v0.16.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#700](https://github.com/shlinkio/shlink/issues/700) Fixed migration not working with postgres.
 * [#690](https://github.com/shlinkio/shlink/issues/690) Fixed tags being incorrectly sluggified when filtering short URL lists, making results not be the expected.
 
 
-## 2.1.1 - 2020-03-28
-
-#### Added
-
+## [2.1.1] - 2020-03-28
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#697](https://github.com/shlinkio/shlink/issues/697) Recovered `.htaccess` file that was unintentionally removed in v2.1.0, making Shlink unusable with Apache.
 
 
-## 2.1.0 - 2020-03-28
-
-#### Added
-
+## [2.1.0] - 2020-03-28
+### Added
 * [#626](https://github.com/shlinkio/shlink/issues/626) Added support for Microsoft SQL Server.
 * [#556](https://github.com/shlinkio/shlink/issues/556) Short code lengths can now be customized, both globally and on a per-short URL basis.
 * [#541](https://github.com/shlinkio/shlink/issues/541) Added a request ID that is returned on `X-Request-Id` header, can be provided from outside and is set in log entries.
 * [#642](https://github.com/shlinkio/shlink/issues/642) IP geolocation is now performed over the non-anonymized IP address when using swoole.
 * [#521](https://github.com/shlinkio/shlink/issues/521) The long URL for any existing short URL can now be edited using the `PATCH /short-urls/{shortCode}` endpoint.
 
-#### Changed
-
+### Changed
 * [#656](https://github.com/shlinkio/shlink/issues/656) Updated to PHPUnit 9.
 * [#641](https://github.com/shlinkio/shlink/issues/641) Added two new flags to the `visit:locate` command, `--retry` and `--all`.
 
     * When `--retry` is provided, it will try to re-locate visits which IP address was originally considered not found, in case it was a temporal issue.
     * When `--all` is provided together with `--retry`, it will try to re-locate all existing visits. A warning and confirmation are displayed, as this can have side effects.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#665](https://github.com/shlinkio/shlink/issues/665) Fixed `base_url_redirect_to` simplified config option not being properly parsed.
 * [#663](https://github.com/shlinkio/shlink/issues/663) Fixed Shlink allowing short URLs to be created with an empty custom slug.
 * [#678](https://github.com/shlinkio/shlink/issues/678) Fixed `db` commands not running in a non-interactive way.
 
 
-## 2.0.5 - 2020-02-09
-
-#### Added
-
+## [2.0.5] - 2020-02-09
+### Added
 * [#651](https://github.com/shlinkio/shlink/issues/651) Documented how Shlink behaves when using multiple domains.
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#648](https://github.com/shlinkio/shlink/issues/648) Ensured any user can write in log files, in case shlink is run by several system users.
 * [#650](https://github.com/shlinkio/shlink/issues/650) Ensured default domain is ignored when trying to create a short URL.
 
 
-## 2.0.4 - 2020-02-02
-
-#### Added
-
+## [2.0.4] - 2020-02-02
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#577](https://github.com/shlinkio/shlink/issues/577) Wrapped params used to customize short URL lists into a DTO with implicit validation.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#620](https://github.com/shlinkio/shlink/issues/620) Ensured "controlled" errors (like validation errors and such) won't be logged with error level, preventing logs to be polluted.
 * [#637](https://github.com/shlinkio/shlink/issues/637) Fixed several work flows in which short URLs with domain are handled form the API.
 * [#644](https://github.com/shlinkio/shlink/issues/644) Fixed visits to short URL on non-default domain being linked to the URL on default domain with the same short code.
 * [#643](https://github.com/shlinkio/shlink/issues/643) Fixed searching on short URL lists not taking into consideration the domain name.
 
 
-## 2.0.3 - 2020-01-27
-
-#### Added
-
+## [2.0.3] - 2020-01-27
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#624](https://github.com/shlinkio/shlink/issues/624) Fixed order in which headers for remote IP detection are inspected.
 * [#623](https://github.com/shlinkio/shlink/issues/623) Fixed short URLs metadata being impossible to reset.
 * [#628](https://github.com/shlinkio/shlink/issues/628) Fixed `GET /short-urls/{shortCode}` REST endpoint returning a 404 for short URLs which are not enabled.
 * [#621](https://github.com/shlinkio/shlink/issues/621) Fixed permission denied error when updating same GeoLite file version more than once.
 
 
-## 2.0.2 - 2020-01-12
-
-#### Added
-
+## [2.0.2] - 2020-01-12
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#614](https://github.com/shlinkio/shlink/issues/614) Fixed `OPTIONS` requests including the `Origin` header not always returning an empty body with status 2xx.
 * [#615](https://github.com/shlinkio/shlink/issues/615) Fixed query args with no value being lost from the long URL when users are redirected.
 
 
-## 2.0.1 - 2020-01-10
-
-#### Added
-
+## [2.0.1] - 2020-01-10
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#607](https://github.com/shlinkio/shlink/issues/607) Added missing info on UPGRADE.md doc.
 * [#610](https://github.com/shlinkio/shlink/issues/610) Fixed use of hardcoded quotes on a database migration which makes it fail on postgres.
 * [#605](https://github.com/shlinkio/shlink/issues/605) Fixed crashes occurring when migrating from old Shlink versions with nullable DB columns that are assigned to non-nullable entity typed props.
 
 
-## 2.0.0 - 2020-01-08
-
-#### Added
-
+## [2.0.0] - 2020-01-08
+### Added
 * [#429](https://github.com/shlinkio/shlink/issues/429) Added support for PHP 7.4
 * [#529](https://github.com/shlinkio/shlink/issues/529) Created an UPGRADING.md file explaining how to upgrade from v1.x to v2.x
 * [#594](https://github.com/shlinkio/shlink/issues/594) Updated external shlink packages, including installer v4.0, which adds the option to ask for the redis cluster config.
 
-#### Changed
-
+### Changed
 * [#592](https://github.com/shlinkio/shlink/issues/592) Updated coding styles to use [shlinkio/php-coding-standard](https://github.com/shlinkio/php-coding-standard) v2.1.0.
 * [#530](https://github.com/shlinkio/shlink/issues/530) Migrated project from deprecated `zendframework` components to the new `laminas` and `mezzio` ones.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * [#429](https://github.com/shlinkio/shlink/issues/429) Dropped support for PHP 7.2 and 7.3
 
 * [#229](https://github.com/shlinkio/shlink/issues/229) Remove everything which was deprecated, including:
@@ -424,38 +379,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     See [UPGRADE](UPGRADE.md) doc in order to get details on how to migrate to this version.
 
-#### Fixed
-
+### Fixed
 * [#600](https://github.com/shlinkio/shlink/issues/600) Fixed health action so that it works with and without version in the path.
 
 
-## 1.21.1 - 2020-01-02
-
-#### Added
-
+## [1.21.1] - 2020-01-02
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#596](https://github.com/shlinkio/shlink/issues/596) Fixed error when trying to download GeoLite2 database due to changes on how to get the database files.
 
 
-## 1.21.0 - 2019-12-29
-
-#### Added
-
+## [1.21.0] - 2019-12-29
+### Added
 * [#118](https://github.com/shlinkio/shlink/issues/118) API errors now implement the [problem details](https://tools.ietf.org/html/rfc7807) standard.
 
     In order to make it backwards compatible, two things have been done:
@@ -485,103 +431,79 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     > The `shortUrl` and `visit` props have the same shape as it is defined in the [API spec](https://api-spec.shlink.io).
 
-#### Changed
-
+### Changed
 * [#492](https://github.com/shlinkio/shlink/issues/492) Updated to monolog 2, together with other dependencies, like Symfony 5 and infection-php.
 * [#527](https://github.com/shlinkio/shlink/issues/527) Increased minimum required mutation score for unit tests to 80%.
 * [#557](https://github.com/shlinkio/shlink/issues/557) Added a few php.ini configs for development and production docker images.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#570](https://github.com/shlinkio/shlink/issues/570) Fixed shlink version generated for docker images when building from `develop` branch.
 
 
-## 1.20.3 - 2019-12-23
-
-#### Added
-
+## [1.20.3] - 2019-12-23
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#585](https://github.com/shlinkio/shlink/issues/585) Fixed `PHP Fatal error: Uncaught Error: Class 'Shlinkio\Shlink\LocalLockFactory' not found` happening when running some CLI commands.
 
 
-## 1.20.2 - 2019-12-06
-
-#### Added
-
+## [1.20.2] - 2019-12-06
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#561](https://github.com/shlinkio/shlink/issues/561) Fixed `db:migrate` command failing because yaml extension is not installed, which makes config file not to be readable.
 * [#562](https://github.com/shlinkio/shlink/issues/562) Fixed internal server error being returned when renaming a tag to another tag's name. Now a meaningful API error with status 409 is returned.
 * [#555](https://github.com/shlinkio/shlink/issues/555) Fixed internal server error being returned when invalid dates are provided for new short URLs. Now a 400 is returned, as intended.
 
 
-## 1.20.1 - 2019-11-17
-
-#### Added
-
+## [1.20.1] - 2019-11-17
+### Added
 * [#519](https://github.com/shlinkio/shlink/issues/519) Documented how to customize web workers and task workers for the docker image.
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#512](https://github.com/shlinkio/shlink/issues/512) Fixed query params not being properly forwarded from short URL to long one.
 * [#540](https://github.com/shlinkio/shlink/issues/540) Fixed errors thrown when creating short URLs if the original URL has an internationalized domain name and URL validation is enabled.
 * [#528](https://github.com/shlinkio/shlink/issues/528) Ensured `db:create` and `db:migrate` commands do not silently fail when run as part of `install` or `update`.
 * [#518](https://github.com/shlinkio/shlink/issues/518) Fixed service which updates Geolite db file to use a local lock instead of a shared one, since every shlink instance holds its own db instance.
 
 
-## 1.20.0 - 2019-11-02
-
-#### Added
-
+## [1.20.0] - 2019-11-02
+### Added
 * [#491](https://github.com/shlinkio/shlink/issues/491) Added improved short code generation logic.
 
     Now, short codes are truly random, which removes the guessability factor existing in previous versions.
@@ -598,30 +520,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#497](https://github.com/shlinkio/shlink/issues/497) Officially added support for MariaDB.
 
-#### Changed
-
+### Changed
 * [#458](https://github.com/shlinkio/shlink/issues/458) Updated coding styles to use [shlinkio/php-coding-standard](https://github.com/shlinkio/php-coding-standard) v2.0.0.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#507](https://github.com/shlinkio/shlink/issues/507) Fixed error with too long original URLs by increasing size to the maximum value (2048) based on [the standard](https://stackoverflow.com/a/417184).
 * [#502](https://github.com/shlinkio/shlink/issues/502) Fixed error when providing the port as part of the domain on short URLs.
 * [#509](https://github.com/shlinkio/shlink/issues/509) Fixed error when trying to generate a QR code for a short URL which uses a custom domain.
 * [#522](https://github.com/shlinkio/shlink/issues/522) Highly mitigated errors thrown when lots of short URLs are created concurrently including new and existing tags.
 
 
-## 1.19.0 - 2019-10-05
-
-#### Added
-
+## [1.19.0] - 2019-10-05
+### Added
 * [#482](https://github.com/shlinkio/shlink/issues/482) Added support to serve shlink under a sub path.
 
     The `router.base_path` config option can be defined now to set the base path from which shlink is served.
@@ -648,53 +564,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * If the domain is not known but the short code/slug is defined for default domain, the user is redirected there and the visit is tracked.
     * In any other case, no redirection happens and no visit is tracked (if a fall back redirection is configured for not-found URLs, it will still happen).
 
-#### Changed
-
+### Changed
 * [#486](https://github.com/shlinkio/shlink/issues/486) Updated to [shlink-installer](https://github.com/shlinkio/shlink-installer) v2, which supports asking for base path in which shlink is served.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * [#435](https://github.com/shlinkio/shlink/issues/435) Removed translations for error pages. All error pages are in english now.
 
-#### Fixed
-
+### Fixed
 * *Nothing*
 
 
-## 1.18.1 - 2019-08-24
-
-#### Added
-
+## [1.18.1] - 2019-08-24
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#450](https://github.com/shlinkio/shlink/issues/450) Added PHP 7.4 to the build matrix, as an allowed-to-fail env.
 * [#441](https://github.com/shlinkio/shlink/issues/441) and [#443](https://github.com/shlinkio/shlink/issues/443) Split some logic into independent modules.
 * [#451](https://github.com/shlinkio/shlink/issues/451) Updated to infection 0.13.
 * [#467](https://github.com/shlinkio/shlink/issues/467) Moved docker image config to main Shlink repo.
 
-#### Deprecated
-
+### Deprecated
 * [#428](https://github.com/shlinkio/shlink/issues/428) Deprecated preview-generation feature. It will keep working but it will be removed in Shlink v2.0.0
 
-#### Removed
-
+### Removed
 * [#468](https://github.com/shlinkio/shlink/issues/468) Removed APCu extension from docker image.
 
-#### Fixed
-
+### Fixed
 * [#449](https://github.com/shlinkio/shlink/issues/449) Fixed error when trying to save too big referrers on PostgreSQL.
 
 
-## 1.18.0 - 2019-08-08
-
-#### Added
-
+## [1.18.0] - 2019-08-08
+### Added
 * [#411](https://github.com/shlinkio/shlink/issues/411) Added new `meta` property on the `ShortUrl` REST API model.
 
     These endpoints are affected and include the new property when suitable:
@@ -736,31 +640,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#442](https://github.com/shlinkio/shlink/pull/442) Created `db:migrate` command, which improves doctrine's migrations command by generating a lock, preventing it to be run concurrently.
 
-#### Changed
-
+### Changed
 * [#430](https://github.com/shlinkio/shlink/issues/430) Updated to [shlinkio/php-coding-standard](https://github.com/shlinkio/php-coding-standard) 1.2.2
 * [#305](https://github.com/shlinkio/shlink/issues/305) Implemented changes which will allow Shlink to be truly clusterizable.
 * [#262](https://github.com/shlinkio/shlink/issues/262) Increased mutation score to 75%.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#416](https://github.com/shlinkio/shlink/issues/416) Fixed error thrown when trying to locate visits after the GeoLite2 DB is downloaded for the first time.
 * [#424](https://github.com/shlinkio/shlink/issues/424) Updated wkhtmltoimage to version 0.12.5
 * [#427](https://github.com/shlinkio/shlink/issues/427) and [#434](https://github.com/shlinkio/shlink/issues/434) Fixed shlink being unusable after a database error on swoole contexts.
 
 
-## 1.17.0 - 2019-05-13
-
-#### Added
-
+## [1.17.0] - 2019-05-13
+### Added
 * [#377](https://github.com/shlinkio/shlink/issues/377) Updated `visit:locate` command (formerly `visit:process`) to automatically update the GeoLite2 database if it is too old or it does not exist.
 
     This simplifies processing visits in a container-based infrastructure, since a fresh container is capable of getting an updated version of the file by itself.
@@ -769,99 +667,75 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#373](https://github.com/shlinkio/shlink/issues/373) Added support for a simplified config. Specially useful to use with the docker container.
 
-#### Changed
-
+### Changed
 * [#56](https://github.com/shlinkio/shlink/issues/56) Simplified supported cache, requiring APCu always.
 
-#### Deprecated
-
+### Deprecated
 * [#406](https://github.com/shlinkio/shlink/issues/406) Deprecated `PUT /short-urls/{shortCode}` REST endpoint in favor of `PATCH /short-urls/{shortCode}`.
 
-#### Removed
-
+### Removed
 * [#385](https://github.com/shlinkio/shlink/issues/385) Dropped support for PHP 7.1
 * [#379](https://github.com/shlinkio/shlink/issues/379) Removed copyright from error templates.
 
-#### Fixed
-
+### Fixed
 * *Nothing*
 
 
-## 1.16.3 - 2019-03-30
-
-#### Added
-
+## [1.16.3] - 2019-03-30
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#153](https://github.com/shlinkio/shlink/issues/153) Updated to [doctrine/migrations](https://github.com/doctrine/migrations) version 2.0.0
 * [#376](https://github.com/shlinkio/shlink/issues/376) Allowed `visit:update-db` command to not return an error exit code even if download fails, by passing the `-i` flag.
 * [#341](https://github.com/shlinkio/shlink/issues/341) Improved database tests so that they are executed against all supported database engines.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#382](https://github.com/shlinkio/shlink/issues/382) Fixed existing short URLs not properly checked when providing the `findIfExists` flag.
 
 
-## 1.16.2 - 2019-03-05
-
-#### Added
-
+## [1.16.2] - 2019-03-05
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#368](https://github.com/shlinkio/shlink/issues/368) Fixed error produced when running a `SELECT COUNT(...)` with `ORDER BY` in PostgreSQL databases.
 
 
-## 1.16.1 - 2019-02-26
-
-#### Added
-
+## [1.16.1] - 2019-02-26
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#363](https://github.com/shlinkio/shlink/issues/363) Updated to `shlinkio/php-coding-standard` version 1.1.0
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#362](https://github.com/shlinkio/shlink/issues/362) Fixed all visits without an IP address being processed every time the `visit:process` command is executed.
 
 
-## 1.16.0 - 2019-02-23
-
-#### Added
-
+## [1.16.0] - 2019-02-23
+### Added
 * [#304](https://github.com/shlinkio/shlink/issues/304) Added health endpoint to check healthiness of the service. Useful in container-based infrastructures.
 
     Call [GET /rest/health] in order to get a response like this:
@@ -895,8 +769,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#336](https://github.com/shlinkio/shlink/issues/336) Added an API test suite which performs API calls to an actual instance of the web service.
 
-#### Changed
-
+### Changed
 * [#342](https://github.com/shlinkio/shlink/issues/342) The installer no longer asks for a charset to be provided, and instead, it shuffles the base62 charset.
 * [#320](https://github.com/shlinkio/shlink/issues/320) Replaced query builder by plain DQL for all queries which do not need to be dynamically generated.
 * [#330](https://github.com/shlinkio/shlink/issues/330) No longer allow failures on PHP 7.3 envs during project CI build.
@@ -904,51 +777,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#346](https://github.com/shlinkio/shlink/issues/346) Extracted installer as an independent tool.
 * [#261](https://github.com/shlinkio/shlink/issues/261) Increased mutation score to 70%.
 
-#### Deprecated
-
+### Deprecated
 * [#351](https://github.com/shlinkio/shlink/issues/351) Deprecated `config:generate-charset` and `config:generate-secret` CLI commands.
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#317](https://github.com/shlinkio/shlink/issues/317) Fixed error while trying to generate previews because of global config file being deleted by mistake by build script.
 * [#307](https://github.com/shlinkio/shlink/issues/307) Fixed memory leak while trying to process huge amounts of visits due to the query not being properly paginated.
 
 
-## 1.15.1 - 2018-12-16
-
-#### Added
-
+## [1.15.1] - 2018-12-16
+### Added
 * [#162](https://github.com/shlinkio/shlink/issues/162) Added non-rest endpoints to swagger definition.
 
-#### Changed
-
+### Changed
 * [#312](https://github.com/shlinkio/shlink/issues/312) Now all config files both in `php` and `json` format are loaded from `config/params` folder, easing users to provided customizations to docker image.
 * [#226](https://github.com/shlinkio/shlink/issues/226) Updated how table are rendered in CLI commands, making use of new features in Symfony 4.2.
 * [#321](https://github.com/shlinkio/shlink/issues/321) Extracted entities mappings from entities to external config files.
 * [#308](https://github.com/shlinkio/shlink/issues/308) Automated docker image building.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * [#301](https://github.com/shlinkio/shlink/issues/301) Removed custom `AccessLogFactory` in favor of the implementation included in [zendframework/zend-expressive-swoole](https://github.com/zendframework/zend-expressive-swoole) v2.2.0
 
-#### Fixed
-
+### Fixed
 * [#309](https://github.com/shlinkio/shlink/issues/309) Added missing favicon to prevent 404 errors logged when an error page is loaded in a browser.
 * [#310](https://github.com/shlinkio/shlink/issues/310) Fixed execution context not being properly detected, making `CloseDbConnectionMiddlware` to be always piped. Now the check is not even made, which simplifies everything.
 
 
-## 1.15.0 - 2018-12-02
-
-#### Added
-
+## [1.15.0] - 2018-12-02
+### Added
 * [#208](https://github.com/shlinkio/shlink/issues/208) Added initial support to run shlink using [swoole](https://www.swoole.co.uk/), a non-blocking IO server which improves the performance of shlink from 4 to 10 times.
 
     Run shlink with `./vendor/bin/zend-expressive-swoole start` to start-up the service, which will be exposed in port `8080`.
@@ -959,54 +821,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     In order to make it backwards compatible, it keeps returning all visits by default, but it now allows to provide the `page` and `itemsPerPage` query parameters in order to configure the number of items to get.
 
-#### Changed
-
+### Changed
 * [#267](https://github.com/shlinkio/shlink/issues/267) API responses and the CLI interface is no longer translated and uses english always. Only not found error templates are still translated.
 * [#289](https://github.com/shlinkio/shlink/issues/289) Extracted coding standard rules to a separated package.
 * [#273](https://github.com/shlinkio/shlink/issues/273) Improved code coverage in repository classes.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#278](https://github.com/shlinkio/shlink/pull/278) Added missing `X-Api-Key` header to the list of valid cross domain headers.
 * [#295](https://github.com/shlinkio/shlink/pull/295) Fixed custom slugs so that they are case sensitive and do not try to lowercase provided values.
 
 
-## 1.14.1 - 2018-11-17
-
-#### Added
-
+## [1.14.1] - 2018-11-17
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#260](https://github.com/shlinkio/shlink/issues/260) Increased mutation score to 65%.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#271](https://github.com/shlinkio/shlink/issues/271) Fixed memory leak produced when processing high amounts of visits at the same time.
 * [#272](https://github.com/shlinkio/shlink/issues/272) Fixed errors produced when trying to process visits multiple times in parallel, by using a lock which ensures only one instance is run at a time.
 
 
-## 1.14.0 - 2018-11-16
-
-#### Added
-
+## [1.14.0] - 2018-11-16
+### Added
 * [#236](https://github.com/shlinkio/shlink/issues/236) Added option to define a redirection to a custom URL when a user hits an invalid short URL.
 
     It only affects URLs matched as "short URL" where the short code is invalid, not any 404 that happens in the app. For example, a request to the path `/foo/bar` will keep returning a 404.
@@ -1019,8 +869,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Previous service is still used as a fallback in case GeoLite DB does not contain any IP address.
 
-#### Changed
-
+### Changed
 * [#241](https://github.com/shlinkio/shlink/issues/241) Fixed columns in `visit_locations` table, to be snake_case instead of camelCase.
 * [#228](https://github.com/shlinkio/shlink/issues/228) Updated how exceptions are serialized into logs, by using monlog's `PsrLogMessageProcessor`.
 * [#225](https://github.com/shlinkio/shlink/issues/225) Performance and maintainability slightly improved by enforcing via code sniffer that all global namespace classes, functions and constants are explicitly imported.
@@ -1030,71 +879,54 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#256](https://github.com/shlinkio/shlink/issues/256) Updated to Infection v0.11.
 * [#202](https://github.com/shlinkio/shlink/issues/202) Added missing response examples to OpenAPI docs.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#223](https://github.com/shlinkio/shlink/issues/223) Fixed PHPStan errors produced with symfony/console 4.1.5
 
 
-## 1.13.2 - 2018-10-18
-
-#### Added
-
+## [1.13.2] - 2018-10-18
+### Added
 * [#233](https://github.com/shlinkio/shlink/issues/233) Added PHP 7.3 to build matrix allowing its failure.
 
-#### Changed
-
+### Changed
 * [#235](https://github.com/shlinkio/shlink/issues/235) Improved update instructions (thanks to [tivyhosting](https://github.com/tivyhosting)).
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#237](https://github.com/shlinkio/shlink/issues/233) Solved errors when trying to geo-locate `null` IP addresses.
 
     Also improved how visitor IP addresses are discovered, thanks to [akrabat/ip-address-middleware](https://github.com/akrabat/ip-address-middleware) package.
 
 
-## 1.13.1 - 2018-10-16
-
-#### Added
-
+## [1.13.1] - 2018-10-16
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#231](https://github.com/shlinkio/shlink/issues/197) Fixed error when processing visits.
 
 
-## 1.13.0 - 2018-10-06
-
-#### Added
-
+## [1.13.0] - 2018-10-06
+### Added
 * [#197](https://github.com/shlinkio/shlink/issues/197) Added [cakephp/chronos](https://book.cakephp.org/3.0/en/chronos.html) library for date manipulations.
 * [#214](https://github.com/shlinkio/shlink/issues/214) Improved build script, which allows builds to be done without "jumping" outside the project directory, and generates smaller dist files.
 
@@ -1107,16 +939,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * Visits threshold to allow short URLs to be deleted.
     * Check the visits threshold when trying to delete a short URL via REST API.
 
-#### Changed
-
+### Changed
 * [#211](https://github.com/shlinkio/shlink/issues/211) Extracted installer to its own module, which will simplify moving it to a separated package in the future.
 * [#200](https://github.com/shlinkio/shlink/issues/200) and [#201](https://github.com/shlinkio/shlink/issues/201) Renamed REST Action classes and CLI Command classes to use the concept of `ShortUrl` instead of the concept of `ShortCode` when referring to the entity, and left the `short code` concept to the identifier which is used as a unique code for a specific `Short URL`.
 * [#181](https://github.com/shlinkio/shlink/issues/181) When importing the configuration from a previous shlink installation, it no longer asks to import every block. Instead, it is capable of detecting only new config options introduced in the new version, and ask only for those.
 
     If no new options are found and you have selected to import config, no further questions will be asked and shlink will just import the old config.
 
-#### Deprecated
-
+### Deprecated
 * [#205](https://github.com/shlinkio/shlink/issues/205) Deprecated `[POST /authenticate]` endpoint, and allowed any API request to be automatically authenticated using the `X-Api-Key` header with a valid API key.
 
     This effectively deprecates the `Authorization: Bearer <JWT>` authentication form, but it will keep working.
@@ -1125,20 +955,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     In both cases, backwards compatibility has been retained and the old ones are aliases for the new ones, but the old ones are considered deprecated.
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#203](https://github.com/shlinkio/shlink/issues/203) Fixed some warnings thrown while unzipping distributable files.
 * [#206](https://github.com/shlinkio/shlink/issues/206) An error is now thrown during installation if any required param is left empty, making the installer display a message and ask again until a value is set.
 
 
-## 1.12.0 - 2018-09-15
-
-#### Added
-
+## [1.12.0] - 2018-09-15
+### Added
 * [#187](https://github.com/shlinkio/shlink/issues/187) Included an API endpoint and a CLI command to delete short URLs.
 
     Due to the implicit danger of this operation, the deletion includes a safety check. URLs cannot be deleted if they have more than a specific amount of visits.
@@ -1167,31 +993,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#183](https://github.com/shlinkio/shlink/issues/183) and [#190](https://github.com/shlinkio/shlink/issues/190) Included important documentation improvements in the repository itself. You no longer need to go to the website in order to see how to install or use shlink.
 * [#186](https://github.com/shlinkio/shlink/issues/186) Added a small robots.txt file that prevents 404 errors to be logged due to search engines trying to index the domain where shlink is located. Thanks to [@robwent](https://github.com/robwent) for the contribution.
 
-#### Changed
-
+### Changed
 * [#145](https://github.com/shlinkio/shlink/issues/145) Shlink now obfuscates IP addresses from visitors by replacing the latest octet by `0`, which does not affect geolocation and allows it to fulfil the GDPR.
 
     Other known services follow this same approach, like [Google Analytics](https://support.google.com/analytics/answer/2763052?hl=en) or [Matomo](https://matomo.org/docs/privacy/#step-1-automatically-anonymize-visitor-ips)
 
 * [#182](https://github.com/shlinkio/shlink/issues/182) The short URL creation API endpoints now return the same model used for lists and details endpoints.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#188](https://github.com/shlinkio/shlink/issues/188) Shlink now allows multiple short URLs to be created that resolve to the same long URL.
 
 
-## 1.11.0 - 2018-08-13
-
-#### Added
-
+## [1.11.0] - 2018-08-13
+### Added
 * [#170](https://github.com/shlinkio/shlink/issues/170) and [#171](https://github.com/shlinkio/shlink/issues/171) Updated `[GET /short-codes]` and `[GET /short-codes/{shortCode}]` endpoints to return more meaningful information and make their response consistent.
 
     The short URLs are now represented by this object in both cases:
@@ -1212,43 +1032,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     The `originalUrl` property is considered deprecated and has been kept for backward compatibility purposes. It holds the same value as the `longUrl` property.
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * The `originalUrl` property in `[GET /short-codes]` and `[GET /short-codes/{shortCode}]` endpoints is now deprecated and replaced by the `longUrl` property.
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * *Nothing*
 
 
-## 1.10.2 - 2018-08-04
-
-#### Added
-
+## [1.10.2] - 2018-08-04
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#177](https://github.com/shlinkio/shlink/issues/177) Fixed `[GET] /short-codes` endpoint returning a 500 status code when trying to filter by `tags` and `searchTerm` at the same time.
 * [#175](https://github.com/shlinkio/shlink/issues/175) Fixed error introduced in previous version, where you could end up banned from the service used to resolve IP address locations.
 
@@ -1257,26 +1067,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     In order to prevent this, after resolving 150 IP addresses, shlink now waits 1 minute before trying to resolve any more addresses.
 
 
-## 1.10.1 - 2018-08-02
-
-#### Added
-
+## [1.10.1] - 2018-08-02
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#167](https://github.com/shlinkio/shlink/issues/167) Shlink version is now set at build time to avoid older version numbers to be kept in newer builds.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#165](https://github.com/shlinkio/shlink/issues/165) Fixed custom slugs failing when they are longer than 10 characters.
 * [#166](https://github.com/shlinkio/shlink/issues/166) Fixed unusual edge case in which visits were not properly counted when ordering by visit and filtering by search term in `[GET] /short-codes` API endpoint.
 * [#174](https://github.com/shlinkio/shlink/issues/174) Fixed geolocation not working due to a deprecation on used service.
@@ -1287,34 +1091,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#169](https://github.com/shlinkio/shlink/issues/169) Fixed unhandled error when parsing `ShortUrlMeta` and date fields are already `DateTime` instances.
 
 
-## 1.10.0 - 2018-07-09
-
-#### Added
-
+## [1.10.0] - 2018-07-09
+### Added
 * [#161](https://github.com/shlinkio/shlink/issues/161) AddED support for shlink to be run with [swoole](https://www.swoole.co.uk/) via [zend-expressive-swoole](https://github.com/zendframework/zend-expressive-swoole) package
 
-#### Changed
-
+### Changed
 * [#159](https://github.com/shlinkio/shlink/issues/159) Updated CHANGELOG to follow the [keep-a-changelog](https://keepachangelog.com) format
 * [#160](https://github.com/shlinkio/shlink/issues/160) Update infection to v0.9 and phpstan to v 0.10
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * *Nothing*
 
 
-## 1.9.1 - 2018-06-18
-
-#### Added
-
+## [1.9.1] - 2018-06-18
+### Added
 * [#155](https://github.com/shlinkio/shlink/issues/155) Improved the pagination object returned in lists, including more meaningful properties.
     
     * Old structure:
@@ -1342,235 +1138,180 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     }
     ```
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#154](https://github.com/shlinkio/shlink/issues/154) Fixed sizes of every result page when filtering by searchTerm
 * [#157](https://github.com/shlinkio/shlink/issues/157) Background commands executed by installation process now respect the originally used php binary
 
 
-## 1.9.0 - 2018-05-07
-
-#### Added
-
+## [1.9.0] - 2018-05-07
+### Added
 * [#147](https://github.com/shlinkio/shlink/issues/147) Allowed short URLs to be created on the fly using a single API request, including the API key in a  query param.
 
     This eases integration with third party services.
     
     With this feature, a simple request to a URL like `https://doma.in/rest/v1/short-codes/shorten?apiKey=[YOUR_API_KEY]&longUrl=[URL_TO_BE_SHORTENED]` would return the shortened one in JSON or plain text format.
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#139](https://github.com/shlinkio/shlink/issues/139) Ensured all core actions log exceptions
 
 
-## 1.8.1 - 2018-04-07
-
-#### Added
-
+## [1.8.1] - 2018-04-07
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#141](https://github.com/shlinkio/shlink/issues/141) Removed workaround used in `PathVersionMiddleware`, since the bug in zend-stratigility has been fixed.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#140](https://github.com/shlinkio/shlink/issues/140) Fixed warning thrown during installation while trying to include doctrine script
 
 
-## 1.8.0 - 2018-03-29
-
-#### Added
-
+## [1.8.0] - 2018-03-29
+### Added
 * [#125](https://github.com/shlinkio/shlink/issues/125) Implemented a path which returns a 1px image instead of a redirection.
 
     Useful to track emails. Just add an image pointing to a URL like `https://doma.in/abc123/track` to any email and an invisible image will be generated tracking every time the email is opened.
 
 * [#132](https://github.com/shlinkio/shlink/issues/132) Added infection to improve tests
 
-#### Changed
-
+### Changed
 * [#130](https://github.com/shlinkio/shlink/issues/130) Updated to Expressive 3
 * [#137](https://github.com/shlinkio/shlink/issues/137) Updated symfony components to v4
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * [#131](https://github.com/shlinkio/shlink/issues/131) Dropped support for PHP 7
 
-#### Fixed
-
+### Fixed
 * *Nothing*
 
 
-## 1.7.2 - 2018-03-26
-
-#### Added
-
+## [1.7.2] - 2018-03-26
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#135](https://github.com/shlinkio/shlink/issues/135) Fixed `PathVersionMiddleware` being ignored when using expressive 2.2
 
 
-## 1.7.1 - 2018-03-21
-
-#### Added
-
+## [1.7.1] - 2018-03-21
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#128](https://github.com/shlinkio/shlink/issues/128) Upgraded to expressive 2.2
 
     This will ease the upcoming update to expressive 3
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#126](https://github.com/shlinkio/shlink/issues/126) Fixed `E_USER_DEPRECATED` errors triggered when using Expressive 2.2
 
 
-## 1.7.0 - 2018-01-21
-
-#### Added
-
+## [1.7.0] - 2018-01-21
+### Added
 * [#88](https://github.com/shlinkio/shlink/issues/88) Allowed tracking of short URLs to be disabled by including a configurable query param
 * [#108](https://github.com/shlinkio/shlink/issues/108) Allowed metadata to be defined when creating short codes
 
-#### Changed
-
+### Changed
 * [#113](https://github.com/shlinkio/shlink/issues/113) Updated CLI commands to use `SymfonyStyle`
 * [#112](https://github.com/shlinkio/shlink/issues/112) Enabled Lazy loading in CLI commands
 * [#117](https://github.com/shlinkio/shlink/issues/117) Every module which throws exceptions has now its own `ExceptionInterface` extending `Throwable`
 * [#115](https://github.com/shlinkio/shlink/issues/115) Added phpstan to build matrix on PHP >=7.1 envs
 * [#114](https://github.com/shlinkio/shlink/issues/114) Replaced [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv) dev requirement by [symfony/dotenv](https://github.com/symfony/dotenv)
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * *Nothing*
 
 
-## 1.6.2 - 2017-10-25
-
-#### Added
-
+## [1.6.2] - 2017-10-25
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#109](https://github.com/shlinkio/shlink/issues/109) Fixed installation error due to typo in latest migration
 
 
-## 1.6.1 - 2017-10-24
-
-#### Added
-
+## [1.6.1] - 2017-10-24
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#110](https://github.com/shlinkio/shlink/issues/110) Created `.gitattributes` file to define files to be excluded from distributable package
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * *Nothing*
 
 
-## 1.6.0 - 2017-10-23
-
-#### Added
-
+## [1.6.0] - 2017-10-23
+### Added
 * [#44](https://github.com/shlinkio/shlink/issues/44) Now it is possible to set custom slugs for short URLs instead of using a generated short code
 * [#47](https://github.com/shlinkio/shlink/issues/47) Allowed to limit short URLs availability by date range
 * [#48](https://github.com/shlinkio/shlink/issues/48) Allowed to limit the number of visits to a short URL
 * [#105](https://github.com/shlinkio/shlink/pull/105) Added option to enable/disable URL validation by response status code
 
-#### Changed
-
+### Changed
 * [#27](https://github.com/shlinkio/shlink/issues/27) Added repository functional tests with dbunit
 * [#101](https://github.com/shlinkio/shlink/issues/101) Now specific actions just capture very specific exceptions, and let the `ErrorHandler` catch any other unhandled exception
 * [#104](https://github.com/shlinkio/shlink/issues/104) Used different templates for *requested-short-code-does-not-exist* and *route-could-not-be-match*
@@ -1578,101 +1319,78 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#100](https://github.com/shlinkio/shlink/issues/100) Updated templates engine. Replaced twig by plates
 * [#102](https://github.com/shlinkio/shlink/issues/102) Improved coding standards strictness
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * [#86](https://github.com/shlinkio/shlink/issues/86) Dropped support for PHP 5
 
-#### Fixed
-
+### Fixed
 * [#103](https://github.com/shlinkio/shlink/issues/103) `NotFoundDelegate` now returns proper content types based on accepted content
 
 
-## 1.5.0 - 2017-07-16
-
-#### Added
-
+## [1.5.0] - 2017-07-16
+### Added
 * [#95](https://github.com/shlinkio/shlink/issues/95) Added tags CRUD to CLI
 * [#59](https://github.com/shlinkio/shlink/issues/59) Added tags CRUD to REST
 * [#66](https://github.com/shlinkio/shlink/issues/66) Allowed certain information to be imported from and older shlink instance directory when updating
 
-#### Changed
-
+### Changed
 * [#96](https://github.com/shlinkio/shlink/issues/96) Added namespace to functions
 * [#76](https://github.com/shlinkio/shlink/issues/76) Added response examples to swagger docs
 * [#93](https://github.com/shlinkio/shlink/issues/93) Improved cross domain management by using the `ImplicitOptionsMiddleware`
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#92](https://github.com/shlinkio/shlink/issues/92) Fixed formatted dates, using an ISO compliant format
 
 
-## 1.4.0 - 2017-03-25
-
-#### Added
-
+## [1.4.0] - 2017-03-25
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#89](https://github.com/shlinkio/shlink/issues/89) Updated to expressive 2
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * *Nothing*
 
 
-## 1.3.1 - 2017-01-22
-
-#### Added
-
+## [1.3.1] - 2017-01-22
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#82](https://github.com/shlinkio/shlink/issues/82) Enabled `FastRoute` routes cache
 * [#85](https://github.com/shlinkio/shlink/issues/85) Updated year in license file
 * [#81](https://github.com/shlinkio/shlink/issues/81) Added docker containers config
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#83](https://github.com/shlinkio/shlink/issues/83) Fixed short codes list: search in tags when filtering by query string
 * [#79](https://github.com/shlinkio/shlink/issues/79) Increased the number of followed redirects
 * [#75](https://github.com/shlinkio/shlink/issues/75) Applied `PathVersionMiddleware` only to rest routes defining it by configuration instead of code
 * [#77](https://github.com/shlinkio/shlink/issues/77) Allowed defining database server hostname and port
 
 
-## 1.3.0 - 2016-10-23
-
-#### Added
-
+## [1.3.0] - 2016-10-23
+### Added
 * [#67](https://github.com/shlinkio/shlink/issues/67) Allowed to order the short codes list
 * [#60](https://github.com/shlinkio/shlink/issues/60) Accepted JSON requests in REST and used a body parser middleware to set the request's `parsedBody`
 * [#72](https://github.com/shlinkio/shlink/issues/72) When listing API keys from CLI, use yellow color for enabled keys that have expired
@@ -1681,73 +1399,55 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#73](https://github.com/shlinkio/shlink/issues/73) Added tag-related endpoints to swagger file
 * [#63](https://github.com/shlinkio/shlink/issues/63) Added path versioning to REST API routes
 
-#### Changed
-
+### Changed
 * [#71](https://github.com/shlinkio/shlink/issues/71) Separated swagger docs into multiple files
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * *Nothing*
 
 
-## 1.2.2 - 2016-08-29
-
-#### Added
-
+## [1.2.2] - 2016-08-29
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * Fixed minor bugs on CORS requests
 
 
-## 1.2.1 - 2016-08-21
-
-#### Added
-
+## [1.2.1] - 2016-08-21
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#62](https://github.com/shlinkio/shlink/issues/62) Fixed cross-domain requests in REST API
 
 
-## 1.2.0 - 2016-08-21
-
-#### Added
-
+## [1.2.0] - 2016-08-21
+### Added
 * [#45](https://github.com/shlinkio/shlink/issues/45) Allowed to define tags on short codes, to improve filtering and classification
 * [#7](https://github.com/shlinkio/shlink/issues/7) Added website previews while listing available URLs
 * [#57](https://github.com/shlinkio/shlink/issues/57) Added database migrations system to improve updating between versions
@@ -1756,29 +1456,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#38](https://github.com/shlinkio/shlink/issues/38) Defined installation script. It will request dynamic data on the fly so that there is no need to define env vars
 * [#55](https://github.com/shlinkio/shlink/issues/55) Created update script which does not try to create a new database
 
-#### Changed
-
+### Changed
 * [#54](https://github.com/shlinkio/shlink/issues/54) Added cache namespace to prevent name collisions with other apps in the same environment
 * [#29](https://github.com/shlinkio/shlink/issues/29) Used the [acelaya/ze-content-based-error-handler](https://github.com/acelaya/ze-content-based-error-handler) package instead of custom error handler implementation
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#53](https://github.com/shlinkio/shlink/issues/53) Fixed entities database interoperability
 * [#52](https://github.com/shlinkio/shlink/issues/52) Added missing htaccess file for apache environments
 
 
-## 1.1.0 - 2016-08-09
-
-#### Added
-
+## [1.1.0] - 2016-08-09
+### Added
 * [#46](https://github.com/shlinkio/shlink/issues/46) Defined a route that returns a QR code representing the shortened URL.
 
     In order to get the QR code URL, use a pattern like `https://doma.in/abc123/qr-code`
@@ -1787,38 +1481,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#14](https://github.com/shlinkio/shlink/issues/14) Added logger and enabled errors logging
 * [#13](https://github.com/shlinkio/shlink/issues/13) Improved REST authentication
 
-#### Changed
-
+### Changed
 * [#41](https://github.com/shlinkio/shlink/issues/41) Cached the "short code" => "URL" map to prevent extra DB hits
 * [#39](https://github.com/shlinkio/shlink/issues/39) Changed copyright from "Alejandro Celaya" to "Shlink" in error pages
 * [#42](https://github.com/shlinkio/shlink/issues/42) REST endpoints that need to find *something* now return a 404 when it is not found
 * [#35](https://github.com/shlinkio/shlink/issues/35) Updated CLI commands to use the same PHP namespace as the one used for the command name
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#40](https://github.com/shlinkio/shlink/issues/40) Taken into account the `X-Forwarded-For` header in order to get the visitor information, in case the server is behind a load balancer or proxy
 
 
-## 1.0.0 - 2016-08-01
-
-#### Added
-
+## [1.0.0] - 2016-08-01
+### Added
 * [#33](https://github.com/shlinkio/shlink/issues/33) Created a command that generates a short code charset by randomizing the default one
 * [#23](https://github.com/shlinkio/shlink/issues/23) Translated application literals
 * [#21](https://github.com/shlinkio/shlink/issues/21) Allowed to filter visits by date range
 * [#4](https://github.com/shlinkio/shlink/issues/4) Added installation steps
 * [#12](https://github.com/shlinkio/shlink/issues/12) Improved code coverage
 
-#### Changed
-
+### Changed
 * [#15](https://github.com/shlinkio/shlink/issues/15) HTTP requests now return JSON/HTML responses for errors (4xx and 5xx) based on `Accept` header
 * [#22](https://github.com/shlinkio/shlink/issues/22) Now visits locations data is saved on a `visit_locations` table
 * [#20](https://github.com/shlinkio/shlink/issues/20) Injected cross domain headers in response only if the `Origin` header is present in the request
@@ -1829,39 +1516,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#25](https://github.com/shlinkio/shlink/issues/25) Replaced "Middleware" suffix on routable middlewares by "Action"
 * [#19](https://github.com/shlinkio/shlink/issues/19) Changed the vendor and app namespace from `Acelaya\UrlShortener` to `Shlinkio\Shlink`
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * [#36](https://github.com/shlinkio/shlink/issues/36) Removed hhvm from the CI matrix since it doesn't support array constants and will fail
 
-#### Fixed
-
+### Fixed
 * [#24](https://github.com/shlinkio/shlink/issues/24) Prevented duplicated short codes errors because of the case insensitive behavior on MySQL
 
 
-## 0.2.0 - 2016-08-01
-
-#### Added
-
+## [0.2.0] - 2016-08-01
+### Added
 * [#8](https://github.com/shlinkio/shlink/issues/8) Created a REST API
 * [#10](https://github.com/shlinkio/shlink/issues/10) Added more CLI functionality
 * [#5](https://github.com/shlinkio/shlink/issues/5) Created a CHANGELOG file
 
-#### Changed
-
+### Changed
 * [#9](https://github.com/shlinkio/shlink/issues/9) Used [symfony/console](https://github.com/symfony/console) to dispatch console requests, instead of trying to integrate the process with expressive
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * *Nothing*

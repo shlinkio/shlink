@@ -1,10 +1,10 @@
-FROM php:7.4.9-alpine3.12
+FROM php:7.4.11-alpine3.12
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.18
 ENV APCU_BC_VERSION 1.0.5
 ENV INOTIFY_VERSION 2.0.0
-ENV SWOOLE_VERSION 4.5.2
+ENV SWOOLE_VERSION 4.5.5
 
 RUN apk update
 
@@ -31,6 +31,9 @@ RUN docker-php-ext-install gd
 
 RUN apk add --no-cache postgresql-dev
 RUN docker-php-ext-install pdo_pgsql
+
+RUN apk add --no-cache gmp-dev
+RUN docker-php-ext-install gmp
 
 # Install APCu extension
 ADD https://pecl.php.net/get/apcu-$APCU_VERSION.tgz /tmp/apcu.tar.gz
@@ -66,19 +69,17 @@ RUN docker-php-ext-configure inotify\
 # cleanup
 RUN rm /tmp/inotify.tar.gz
 
-# Install swoole and mssql driver
+# Install swoole, pcov and mssql driver
 RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.5.1.1-1_amd64.apk && \
     apk add --allow-untrusted msodbcsql17_17.5.1.1-1_amd64.apk && \
     apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
-    pecl install swoole-${SWOOLE_VERSION} pdo_sqlsrv && \
-    docker-php-ext-enable swoole pdo_sqlsrv && \
+    pecl install swoole-${SWOOLE_VERSION} pdo_sqlsrv pcov && \
+    docker-php-ext-enable swoole pdo_sqlsrv pcov && \
     apk del .phpize-deps && \
     rm msodbcsql17_17.5.1.1-1_amd64.apk
 
 # Install composer
-RUN php -r "readfile('https://getcomposer.org/installer');" | php
-RUN chmod +x composer.phar
-RUN mv composer.phar /usr/local/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
 # Make home directory writable by anyone
 RUN chmod 777 /home

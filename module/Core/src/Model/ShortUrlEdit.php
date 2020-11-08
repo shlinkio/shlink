@@ -9,6 +9,8 @@ use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 
 use function array_key_exists;
+use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
+use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
 use function Shlinkio\Shlink\Core\parseDateField;
 
 final class ShortUrlEdit
@@ -21,6 +23,7 @@ final class ShortUrlEdit
     private ?Chronos $validUntil = null;
     private bool $maxVisitsPropWasProvided = false;
     private ?int $maxVisits = null;
+    private ?bool $validateUrl = null;
 
     // Enforce named constructors
     private function __construct()
@@ -55,13 +58,8 @@ final class ShortUrlEdit
         $this->longUrl = $inputFilter->getValue(ShortUrlMetaInputFilter::LONG_URL);
         $this->validSince = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
         $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
-        $this->maxVisits = $this->getOptionalIntFromInputFilter($inputFilter, ShortUrlMetaInputFilter::MAX_VISITS);
-    }
-
-    private function getOptionalIntFromInputFilter(ShortUrlMetaInputFilter $inputFilter, string $fieldName): ?int
-    {
-        $value = $inputFilter->getValue($fieldName);
-        return $value !== null ? (int) $value : null;
+        $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlMetaInputFilter::MAX_VISITS);
+        $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlMetaInputFilter::VALIDATE_URL);
     }
 
     public function longUrl(): ?string
@@ -102,5 +100,10 @@ final class ShortUrlEdit
     public function hasMaxVisits(): bool
     {
         return $this->maxVisitsPropWasProvided;
+    }
+
+    public function doValidateUrl(): ?bool
+    {
+        return $this->validateUrl;
     }
 }

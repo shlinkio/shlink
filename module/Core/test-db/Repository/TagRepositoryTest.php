@@ -32,7 +32,7 @@ class TagRepositoryTest extends DatabaseTestCase
     /** @test */
     public function deleteByNameDoesNothingWhenEmptyListIsProvided(): void
     {
-        $this->assertEquals(0, $this->repo->deleteByName([]));
+        self::assertEquals(0, $this->repo->deleteByName([]));
     }
 
     /** @test */
@@ -46,7 +46,7 @@ class TagRepositoryTest extends DatabaseTestCase
         }
         $this->getEntityManager()->flush();
 
-        $this->assertEquals(2, $this->repo->deleteByName($toDelete));
+        self::assertEquals(2, $this->repo->deleteByName($toDelete));
     }
 
     /** @test */
@@ -79,20 +79,20 @@ class TagRepositoryTest extends DatabaseTestCase
 
         $result = $this->repo->findTagsWithInfo();
 
-        $this->assertCount(4, $result);
-        $this->assertEquals(
+        self::assertCount(4, $result);
+        self::assertEquals(
             ['tag' => $tags[3], 'shortUrlsCount' => 0, 'visitsCount' => 0],
             $result[0]->jsonSerialize(),
         );
-        $this->assertEquals(
+        self::assertEquals(
             ['tag' => $tags[1], 'shortUrlsCount' => 1, 'visitsCount' => 3],
             $result[1]->jsonSerialize(),
         );
-        $this->assertEquals(
+        self::assertEquals(
             ['tag' => $tags[2], 'shortUrlsCount' => 1, 'visitsCount' => 3],
             $result[2]->jsonSerialize(),
         );
-        $this->assertEquals(
+        self::assertEquals(
             ['tag' => $tags[0], 'shortUrlsCount' => 2, 'visitsCount' => 4],
             $result[3]->jsonSerialize(),
         );

@@ -10,6 +10,7 @@ use Laminas\Paginator\Adapter\ArrayAdapter;
 use Laminas\Paginator\Paginator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
@@ -19,6 +20,8 @@ use Shlinkio\Shlink\Rest\Action\Visit\ShortUrlVisitsAction;
 
 class ShortUrlVisitsActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ShortUrlVisitsAction $action;
     private ObjectProphecy $visitsTracker;
 
@@ -37,7 +40,7 @@ class ShortUrlVisitsActionTest extends TestCase
         )->shouldBeCalledOnce();
 
         $response = $this->action->handle((new ServerRequest())->withAttribute('shortCode', $shortCode));
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
     }
 
     /** @test */
@@ -60,6 +63,6 @@ class ShortUrlVisitsActionTest extends TestCase
                                      'itemsPerPage' => '10',
                                  ]),
         );
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
     }
 }

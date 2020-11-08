@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\DeleteTagsCommand;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
@@ -13,6 +14,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class DeleteTagsCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private CommandTester $commandTester;
     private ObjectProphecy $tagService;
 
@@ -33,7 +36,7 @@ class DeleteTagsCommandTest extends TestCase
         $this->commandTester->execute([]);
 
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString('You have to provide at least one tag name', $output);
+        self::assertStringContainsString('You have to provide at least one tag name', $output);
     }
 
     /** @test */
@@ -48,7 +51,7 @@ class DeleteTagsCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        $this->assertStringContainsString('Tags properly deleted', $output);
+        self::assertStringContainsString('Tags properly deleted', $output);
         $deleteTags->shouldHaveBeenCalled();
     }
 }

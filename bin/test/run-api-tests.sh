@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 export APP_ENV=test
 export DB_DRIVER=mysql
+export TEST_ENV=api
 
 # Try to stop server just in case it hanged in last execution
 vendor/bin/mezzio-swoole stop
@@ -9,7 +10,7 @@ echo 'Starting server...'
 vendor/bin/mezzio-swoole start -d
 sleep 2
 
-phpdbg -qrr vendor/bin/phpunit --order-by=random -c phpunit-api.xml --testdox --colors=always $*
+vendor/bin/phpunit --order-by=random -c phpunit-api.xml --testdox --colors=always --log-junit=build/coverage-api/junit.xml $*
 testsExitCode=$?
 
 vendor/bin/mezzio-swoole stop

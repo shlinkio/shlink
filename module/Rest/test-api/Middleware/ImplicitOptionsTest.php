@@ -15,8 +15,8 @@ class ImplicitOptionsTest extends ApiTestCase
     {
         $resp = $this->callApi(self::METHOD_OPTIONS, '/short-urls');
 
-        $this->assertEquals(self::STATUS_NO_CONTENT, $resp->getStatusCode());
-        $this->assertEmpty((string) $resp->getBody());
+        self::assertEquals(self::STATUS_NO_CONTENT, $resp->getStatusCode());
+        self::assertEmpty((string) $resp->getBody());
     }
 
     /** @test */
@@ -25,7 +25,7 @@ class ImplicitOptionsTest extends ApiTestCase
         $resp = $this->callApi(self::METHOD_OPTIONS, '/short-urls');
         $allowedMethods = $resp->getHeaderLine('Allow');
 
-        $this->assertEquals([
+        self::assertEquals([
             self::METHOD_GET,
             self::METHOD_POST,
         ], explode(',', $allowedMethods));

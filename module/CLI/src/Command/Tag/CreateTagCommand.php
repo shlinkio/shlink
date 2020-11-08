@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/** @deprecated */
 class CreateTagCommand extends Command
 {
     public const NAME = 'tag:create';
@@ -28,7 +29,7 @@ class CreateTagCommand extends Command
     {
         $this
             ->setName(self::NAME)
-            ->setDescription('Creates one or more tags.')
+            ->setDescription('[Deprecated] Creates one or more tags.')
             ->addOption(
                 'name',
                 't',
