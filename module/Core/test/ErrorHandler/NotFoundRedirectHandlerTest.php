@@ -10,13 +10,16 @@ use Laminas\Diactoros\Uri;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\ErrorHandler\NotFoundRedirectHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
+use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 
 class NotFoundRedirectHandlerTest extends TestCase
 {
@@ -24,11 +27,13 @@ class NotFoundRedirectHandlerTest extends TestCase
 
     private NotFoundRedirectHandler $middleware;
     private NotFoundRedirectOptions $redirectOptions;
+    private ObjectProphecy $helper;
 
     public function setUp(): void
     {
         $this->redirectOptions = new NotFoundRedirectOptions();
-        $this->middleware = new NotFoundRedirectHandler($this->redirectOptions, '');
+        $this->helper = $this->prophesize(RedirectResponseHelperInterface::class);
+        $this->middleware = new NotFoundRedirectHandler($this->redirectOptions, $this->helper->reveal(), '');
     }
 
     /**
@@ -43,13 +48,16 @@ class NotFoundRedirectHandlerTest extends TestCase
         $this->redirectOptions->regular404 = 'regular404';
         $this->redirectOptions->baseUrl = 'baseUrl';
 
+        $expectedResp = new Response();
+        $buildResp = $this->helper->buildRedirectResponse($expectedRedirectTo)->willReturn($expectedResp);
+
         $next = $this->prophesize(RequestHandlerInterface::class);
         $handle = $next->handle($request)->willReturn(new Response());
 
         $resp = $this->middleware->process($request, $next->reveal());
 
-        self::assertInstanceOf(Response\RedirectResponse::class, $resp);
-        self::assertEquals($expectedRedirectTo, $resp->getHeaderLine('Location'));
+        self::assertSame($expectedResp, $resp);
+        $buildResp->shouldHaveBeenCalledOnce();
         $handle->shouldNotHaveBeenCalled();
     }
 
@@ -91,12 +99,15 @@ class NotFoundRedirectHandlerTest extends TestCase
         $req = ServerRequestFactory::fromGlobals();
         $resp = new Response();
 
+        $buildResp = $this->helper->buildRedirectResponse(Argument::cetera());
+
         $next = $this->prophesize(RequestHandlerInterface::class);
         $handle = $next->handle($req)->willReturn($resp);
 
         $result = $this->middleware->process($req, $next->reveal());
 
         self::assertSame($resp, $result);
+        $buildResp->shouldNotHaveBeenCalled();
         $handle->shouldHaveBeenCalledOnce();
     }
 }
