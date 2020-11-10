@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Action;
 
 use Fig\Http\Message\RequestMethodInterface;
+use GuzzleHttp\Psr7\Query;
 use League\Uri\Uri;
 use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use Psr\Http\Message\ResponseInterface;
@@ -23,8 +24,6 @@ use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 
 use function array_key_exists;
 use function array_merge;
-use function GuzzleHttp\Psr7\build_query;
-use function GuzzleHttp\Psr7\parse_query;
 
 abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMethodInterface
 {
@@ -68,13 +67,13 @@ abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMet
     private function buildUrlToRedirectTo(ShortUrl $shortUrl, array $currentQuery, ?string $disableTrackParam): string
     {
         $uri = Uri::createFromString($shortUrl->getLongUrl());
-        $hardcodedQuery = parse_query($uri->getQuery() ?? '');
+        $hardcodedQuery = Query::parse($uri->getQuery() ?? '');
         if ($disableTrackParam !== null) {
             unset($currentQuery[$disableTrackParam]);
         }
         $mergedQuery = array_merge($hardcodedQuery, $currentQuery);
 
-        return (string) (empty($mergedQuery) ? $uri : $uri->withQuery(build_query($mergedQuery)));
+        return (string) (empty($mergedQuery) ? $uri : $uri->withQuery(Query::build($mergedQuery)));
     }
 
     private function shouldTrackRequest(ServerRequestInterface $request, array $query, ?string $disableTrackParam): bool
