@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#891](https://github.com/shlinkio/shlink/issues/891) Fixed error when running migrations in postgres due to incorrect return type hint.
+* [#846](https://github.com/shlinkio/shlink/issues/846) Fixed base image used for the PHP-FPM dev container.
+
+
 ## [2.4.0] - 2020-11-08
 ### Added
 * [#829](https://github.com/shlinkio/shlink/issues/829) Added support for QR codes in SVG format, by passing `?format=svg` to the QR code URL.
