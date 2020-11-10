@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#891](https://github.com/shlinkio/shlink/issues/891) Fixed error when running migrations in postgres due to incorrect return type hint.
+* [#846](https://github.com/shlinkio/shlink/issues/846) Fixed base image used for the PHP-FPM dev container.
 
 
 ## [2.4.0] - 2020-11-08
