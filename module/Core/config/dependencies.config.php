@@ -36,6 +36,7 @@ return [
 
             Util\UrlValidator::class => ConfigAbstractFactory::class,
             Util\DoctrineBatchHelper::class => ConfigAbstractFactory::class,
+            Util\RedirectResponseHelper::class => ConfigAbstractFactory::class,
 
             Action\RedirectAction::class => ConfigAbstractFactory::class,
             Action\PixelAction::class => ConfigAbstractFactory::class,
@@ -54,7 +55,11 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        ErrorHandler\NotFoundRedirectHandler::class => [NotFoundRedirectOptions::class, 'config.router.base_path'],
+        ErrorHandler\NotFoundRedirectHandler::class => [
+            NotFoundRedirectOptions::class,
+            Util\RedirectResponseHelper::class,
+            'config.router.base_path',
+        ],
         ErrorHandler\NotFoundTemplateHandler::class => [TemplateRendererInterface::class],
 
         Options\AppOptions::class => ['config.app_options'],
@@ -88,12 +93,13 @@ return [
 
         Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
         Util\DoctrineBatchHelper::class => ['em'],
+        Util\RedirectResponseHelper::class => [Options\UrlShortenerOptions::class],
 
         Action\RedirectAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
             Service\VisitsTracker::class,
             Options\AppOptions::class,
-            Options\UrlShortenerOptions::class,
+            Util\RedirectResponseHelper::class,
             'Logger_Shlink',
         ],
         Action\PixelAction::class => [
