@@ -51,6 +51,14 @@
             "description": "Operations to manage visits on short URLs"
         },
         {
+            "name": "Domains",
+            "description": "Operations to manage domains used on short URLs"
+        },
+        {
+            "name": "Integrations",
+            "description": "Handle services with which shlink is integrated"
+        },
+        {
             "name": "Monitoring",
             "description": "Public endpoints designed to monitor the service"
         },
