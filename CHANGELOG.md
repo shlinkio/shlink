@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Fixed
 * [#904](https://github.com/shlinkio/shlink/issues/904) Explicitly added missing "Domains" and "Integrations" tags to swagger docs.
 * [#901](https://github.com/shlinkio/shlink/issues/901) Ensured domains which are not in use on any short URL are not returned on the list of domains.
+* [#899](https://github.com/shlinkio/shlink/issues/899) Avoided filesystem errors produced while downloading geolite DB files on several shlink instances that share the same filesystem.
 
 
 ## [2.4.1] - 2020-11-10
