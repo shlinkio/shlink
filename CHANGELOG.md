@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#904](https://github.com/shlinkio/shlink/issues/904) Explicitly added missing "Domains" and "Integrations" tags to swagger docs.
+
+
 ## [2.4.1] - 2020-11-10
 ### Added
 * *Nothing*
