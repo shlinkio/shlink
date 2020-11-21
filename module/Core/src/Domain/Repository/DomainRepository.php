@@ -17,7 +17,7 @@ class DomainRepository extends EntityRepository implements DomainRepositoryInter
     public function findDomainsWithout(?string $excludedAuthority = null): array
     {
         $qb = $this->createQueryBuilder('d');
-        $qb->join(ShortUrl::class, 's', Join::WITH, $qb->expr()->eq('s.domain', 'd'))
+        $qb->join(ShortUrl::class, 's', Join::WITH, 's.domain = d')
            ->orderBy('d.authority', 'ASC');
 
         if ($excludedAuthority !== null) {
