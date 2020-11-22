@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest;
 
+use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Rest\ConfigProvider;
 
@@ -21,8 +22,12 @@ class ConfigProviderTest extends TestCase
     {
         $config = ($this->configProvider)();
 
+        self::assertCount(5, $config);
         self::assertArrayHasKey('routes', $config);
         self::assertArrayHasKey('dependencies', $config);
+        self::assertArrayHasKey('auth', $config);
+        self::assertArrayHasKey('entity_manager', $config);
+        self::assertArrayHasKey(ConfigAbstractFactory::class, $config);
     }
 
     /**
