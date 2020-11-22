@@ -32,7 +32,7 @@
         "laminas/laminas-paginator": "^2.8",
         "laminas/laminas-servicemanager": "^3.4",
         "laminas/laminas-stdlib": "^3.2",
-        "lcobucci/jwt": "^4.0@alpha",
+        "lcobucci/jwt": "^4.0@alpha <4.0@beta",
         "league/uri": "^6.2",
         "lstrojny/functional-php": "^1.9",
         "mezzio/mezzio": "^3.2",

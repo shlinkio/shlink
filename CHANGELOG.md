@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.4.2] - 2020-11-22
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#904](https://github.com/shlinkio/shlink/issues/904) Explicitly added missing "Domains" and "Integrations" tags to swagger docs.
+* [#901](https://github.com/shlinkio/shlink/issues/901) Ensured domains which are not in use on any short URL are not returned on the list of domains.
+* [#899](https://github.com/shlinkio/shlink/issues/899) Avoided filesystem errors produced while downloading geolite DB files on several shlink instances that share the same filesystem.
+* [#827](https://github.com/shlinkio/shlink/issues/827) Fixed swoole config getting loaded in config cache if a console command is run before any web execution, when swoole extension is enabled, making subsequent non-swoole web requests fail.
+
+
 ## [2.4.1] - 2020-11-10
 ### Added
 * *Nothing*
