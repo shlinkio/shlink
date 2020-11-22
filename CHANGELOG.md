@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#869](https://github.com/shlinkio/shlink/issues/869) Added support for Mercure Hub 0.10.
 
 ### Changed
-* *Nothing*
+* [#912](https://github.com/shlinkio/shlink/issues/912) Changed error templates to be plain html files, removing the dependency on `league/plates` package.
 
 ### Deprecated
 * *Nothing*
