@@ -15,7 +15,6 @@ return (new ConfigAggregator\ConfigAggregator([
     Mezzio\ConfigProvider::class,
     Mezzio\Router\ConfigProvider::class,
     Mezzio\Router\FastRouteRouter\ConfigProvider::class,
-    Mezzio\Plates\ConfigProvider::class,
     Mezzio\Swoole\ConfigProvider::class,
     ProblemDetails\ConfigProvider::class,
     Diactoros\ConfigProvider::class,

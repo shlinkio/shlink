@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core;
 
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
-use Mezzio\Template\TemplateRendererInterface;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
@@ -16,7 +16,7 @@ return [
     'dependencies' => [
         'factories' => [
             ErrorHandler\NotFoundRedirectHandler::class => ConfigAbstractFactory::class,
-            ErrorHandler\NotFoundTemplateHandler::class => ConfigAbstractFactory::class,
+            ErrorHandler\NotFoundTemplateHandler::class => InvokableFactory::class,
 
             Options\AppOptions::class => ConfigAbstractFactory::class,
             Options\DeleteShortUrlsOptions::class => ConfigAbstractFactory::class,
@@ -60,7 +60,6 @@ return [
             Util\RedirectResponseHelper::class,
             'config.router.base_path',
         ],
-        ErrorHandler\NotFoundTemplateHandler::class => [TemplateRendererInterface::class],
 
         Options\AppOptions::class => ['config.app_options'],
         Options\DeleteShortUrlsOptions::class => ['config.delete_short_urls'],
