@@ -99,8 +99,6 @@ $helper = new class {
 
 return [
 
-    'config_cache_enabled' => false,
-
     'app_options' => [
         'disable_track_param' => env('DISABLE_TRACK_PARAM'),
     ],
