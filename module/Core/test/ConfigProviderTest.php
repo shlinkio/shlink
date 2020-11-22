@@ -19,11 +19,9 @@ class ConfigProviderTest extends TestCase
     /** @test */
     public function properConfigIsReturned(): void
     {
-        $config = $this->configProvider->__invoke();
+        $config = ($this->configProvider)();
 
         self::assertArrayHasKey('routes', $config);
         self::assertArrayHasKey('dependencies', $config);
-        self::assertArrayHasKey('templates', $config);
-        self::assertArrayHasKey('mezzio', $config);
     }
 }
