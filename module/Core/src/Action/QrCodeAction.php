@@ -50,7 +50,7 @@ class QrCodeAction implements MiddlewareInterface
 
         $query = $request->getQueryParams();
         // Size attribute is deprecated
-        $size = $this->normalizeSize($request->getAttribute('size', $query['size'] ?? self::DEFAULT_SIZE));
+        $size = $this->normalizeSize((int) $request->getAttribute('size', $query['size'] ?? self::DEFAULT_SIZE));
 
         $qrCode = new QrCode($shortUrl->toString($this->domainConfig));
         $qrCode->setSize($size);
