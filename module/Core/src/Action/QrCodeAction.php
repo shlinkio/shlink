@@ -48,11 +48,15 @@ class QrCodeAction implements MiddlewareInterface
             return $handler->handle($request);
         }
 
+        $query = $request->getQueryParams();
+        // Size attribute is deprecated
+        $size = $this->normalizeSize($request->getAttribute('size', $query['size'] ?? self::DEFAULT_SIZE));
+
         $qrCode = new QrCode($shortUrl->toString($this->domainConfig));
-        $qrCode->setSize($this->getSizeParam($request));
+        $qrCode->setSize($size);
         $qrCode->setMargin(0);
 
-        $format = $request->getQueryParams()['format'] ?? 'png';
+        $format = $query['format'] ?? 'png';
         if ($format === 'svg') {
             $qrCode->setWriter(new SvgWriter());
         }
@@ -60,9 +64,8 @@ class QrCodeAction implements MiddlewareInterface
         return new QrCodeResponse($qrCode);
     }
 
-    private function getSizeParam(Request $request): int
+    private function normalizeSize(int $size): int
     {
-        $size = (int) $request->getAttribute('size', self::DEFAULT_SIZE);
         if ($size < self::MIN_SIZE) {
             return self::MIN_SIZE;
         }
