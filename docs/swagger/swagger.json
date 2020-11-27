@@ -116,6 +116,9 @@
         },
         "/{shortCode}/qr-code": {
             "$ref": "paths/{shortCode}_qr-code.json"
+        },
+        "/{shortCode}/qr-code/{size}": {
+            "$ref": "paths/{shortCode}_qr-code_{size}.json"
         }
     }
 }

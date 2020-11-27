@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#912](https://github.com/shlinkio/shlink/issues/912) Changed error templates to be plain html files, removing the dependency on `league/plates` package.
 
 ### Deprecated
-* *Nothing*
+* [#917](https://github.com/shlinkio/shlink/issues/917) Deprecated `/{shortCode}/qr-code/{size}` URL, in favor of providing the size in the query instead, `/{shortCode}/qr-code?size={size}`.
 
 ### Removed
 * *Nothing*

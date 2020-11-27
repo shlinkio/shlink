@@ -29,7 +29,17 @@ return [
         ],
         [
             'name' => Action\QrCodeAction::class,
-            'path' => '/{shortCode}/qr-code[/{size:[0-9]+}]',
+            'path' => '/{shortCode}/qr-code',
+            'middleware' => [
+                Action\QrCodeAction::class,
+            ],
+            'allowed_methods' => [RequestMethod::METHOD_GET],
+        ],
+
+        // Deprecated
+        [
+            'name' => 'old_' . Action\QrCodeAction::class,
+            'path' => '/{shortCode}/qr-code/{size:[0-9]+}',
             'middleware' => [
                 Action\QrCodeAction::class,
             ],

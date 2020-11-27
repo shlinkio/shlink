@@ -1,6 +1,7 @@
 {
     "get": {
-        "operationId": "shortUrlQrCode",
+        "operationId": "shortUrlQrCodeSize",
+        "deprecated": true,
         "tags": [
             "URL Shortener"
         ],
@@ -18,7 +19,7 @@
             },
             {
                 "name": "size",
-                "in": "query",
+                "in": "path",
                 "description": "The size of the image to be returned.",
                 "required": false,
                 "schema": {
