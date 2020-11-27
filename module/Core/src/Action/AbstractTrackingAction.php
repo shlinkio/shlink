@@ -41,7 +41,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMet
         $this->urlResolver = $urlResolver;
         $this->visitTracker = $visitTracker;
         $this->appOptions = $appOptions;
-        $this->logger = $logger ?: new NullLogger();
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

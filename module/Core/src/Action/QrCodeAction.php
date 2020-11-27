@@ -34,7 +34,7 @@ class QrCodeAction implements MiddlewareInterface
     ) {
         $this->urlResolver = $urlResolver;
         $this->domainConfig = $domainConfig;
-        $this->logger = $logger ?: new NullLogger();
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function process(Request $request, RequestHandlerInterface $handler): Response
