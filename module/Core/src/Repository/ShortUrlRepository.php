@@ -33,15 +33,9 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         ?DateRange $dateRange = null
     ): array {
         $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange);
-        $qb->select('DISTINCT s');
-
-        // Set limit and offset
-        if ($limit !== null) {
-            $qb->setMaxResults($limit);
-        }
-        if ($offset !== null) {
-            $qb->setFirstResult($offset);
-        }
+        $qb->select('DISTINCT s')
+           ->setMaxResults($limit)
+           ->setFirstResult($offset);
 
         // In case the ordering has been specified, the query could be more complex. Process it
         if ($orderBy !== null && $orderBy->hasOrderField()) {
@@ -147,7 +141,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
              WHERE s.shortCode = :shortCode
                AND (s.domain IS NULL OR d.authority = :domain)
           ORDER BY s.domain {$ordering}
-DQL;
+        DQL;
 
         $query = $this->getEntityManager()->createQuery($dql);
         $query->setMaxResults(1)
@@ -220,9 +214,8 @@ DQL;
         }
         if ($meta->hasValidUntil()) {
             $qb->andWhere($qb->expr()->eq('s.validUntil', ':validUntil'))
-                ->setParameter('validUntil', $meta->getValidUntil());
+               ->setParameter('validUntil', $meta->getValidUntil());
         }
-
         if ($meta->hasDomain()) {
             $qb->join('s.domain', 'd')
                ->andWhere($qb->expr()->eq('d.authority', ':domain'))
