@@ -157,6 +157,7 @@ This is the complete list of supported env vars:
         * **mysql** or **maria** -> `3306`
         * **postgres** -> `5432`
         * **mssql** -> `1433`
+* `DB_UNIX_SOCKET`: Alternatively to the `DB_HOST`, you can provide this to connect through unix sockets when using `mysql`, `maria` or `postgres` drivers.
 * `DISABLE_TRACK_PARAM`: The name of a query param that can be used to visit short URLs avoiding the visit to be tracked. This feature won't be available if not value is provided.
 * `DELETE_SHORT_URL_THRESHOLD`: The amount of visits on short URLs which will not allow them to be deleted. Defaults to `15`.
 * `VALIDATE_URLS`: Boolean which tells if shlink should validate a status 20x is returned (after following redirects) when trying to shorten a URL. Defaults to `false`.
@@ -215,7 +216,11 @@ docker run \
     shlinkio/shlink:stable
 ```
 
-## Provide config via volumes
+## [DEPRECATED] Provide config via volumes
+
+> As of v2.5.0, providing config through volumes is deprecated, and no new options will be added anymore. Use env vars instead.
+>
+> Support for config options through volumes will be removed in Shlink v3.0.0
 
 Rather than providing custom configuration via env vars, it is also possible ot provide config files in json format.
 

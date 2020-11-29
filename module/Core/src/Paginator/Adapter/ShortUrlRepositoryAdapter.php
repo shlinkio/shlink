@@ -19,12 +19,6 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
         $this->params = $params;
     }
 
-    /**
-     * Returns a collection of items for a page.
-     *
-     * @param  int $offset Page offset
-     * @param  int $itemCountPerPage Number of items per page
-     */
     public function getItems($offset, $itemCountPerPage): array // phpcs:ignore
     {
         return $this->repository->findList(
@@ -37,15 +31,6 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
         );
     }
 
-    /**
-     * Count elements of an object
-     * @link http://php.net/manual/en/countable.count.php
-     * @return int The custom count as an integer.
-     * </p>
-     * <p>
-     * The return value is cast to an integer.
-     * @since 5.1.0
-     */
     public function count(): int
     {
         return $this->repository->countList(

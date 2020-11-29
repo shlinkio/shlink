@@ -7,12 +7,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ## [Unreleased]
 ### Added
 * [#869](https://github.com/shlinkio/shlink/issues/869) Added support for Mercure Hub 0.10.
+* [#833](https://github.com/shlinkio/shlink/issues/833) Added support to connect through unix socket when using an external MySQL, MariaDB or Postgres database.
+
+    It can be provided during the installation, or as the `DB_UNIX_SOCKET` env var for the docker image.
 
 ### Changed
 * [#912](https://github.com/shlinkio/shlink/issues/912) Changed error templates to be plain html files, removing the dependency on `league/plates` package.
 
 ### Deprecated
 * [#917](https://github.com/shlinkio/shlink/issues/917) Deprecated `/{shortCode}/qr-code/{size}` URL, in favor of providing the size in the query instead, `/{shortCode}/qr-code?size={size}`.
+* [#924](https://github.com/shlinkio/shlink/issues/924) Deprecated mechanism to provide config options to the docker image through volumes. Use the env vars instead as a direct replacement.
 
 ### Removed
 * *Nothing*

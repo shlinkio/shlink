@@ -14,6 +14,7 @@ return [
             Option\Database\DatabasePortConfigOption::class,
             Option\Database\DatabaseUserConfigOption::class,
             Option\Database\DatabasePasswordConfigOption::class,
+            Option\Database\DatabaseUnixSocketConfigOption::class,
             Option\Database\DatabaseSqlitePathConfigOption::class,
             Option\Database\DatabaseMySqlOptionsConfigOption::class,
             Option\UrlShortener\ShortDomainHostConfigOption::class,

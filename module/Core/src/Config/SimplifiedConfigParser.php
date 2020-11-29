@@ -15,6 +15,7 @@ use function Functional\contains;
 use function Functional\reduce_left;
 use function uksort;
 
+/** @deprecated */
 class SimplifiedConfigParser
 {
     private const SIMPLIFIED_CONFIG_MAPPING = [
