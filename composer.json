@@ -46,7 +46,7 @@
         "phly/phly-event-dispatcher": "^1.0",
         "php-middleware/request-id": "^4.0",
         "predis/predis": "^1.1",
-        "pugx/shortid-php": "^0.5",
+        "pugx/shortid-php": "^0.7",
         "ramsey/uuid": "^3.9",
         "shlinkio/shlink-common": "^3.3.2",
         "shlinkio/shlink-config": "^1.0",
@@ -57,7 +57,7 @@
         "symfony/console": "^5.1",
         "symfony/filesystem": "^5.1",
         "symfony/lock": "^5.1",
-        "symfony/mercure": "^0.4.0",
+        "symfony/mercure": "^0.4.1",
         "symfony/process": "^5.1",
         "symfony/string": "^5.1"
     },
