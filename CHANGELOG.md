@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     It can be provided during the installation, or as the `DB_UNIX_SOCKET` env var for the docker image.
 
+* [#896](https://github.com/shlinkio/shlink/issues/896) Added support for unicode characters in custom slugs.
+
 ### Changed
 * [#912](https://github.com/shlinkio/shlink/issues/912) Changed error templates to be plain html files, removing the dependency on `league/plates` package.
 
