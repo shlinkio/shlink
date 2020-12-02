@@ -88,5 +88,10 @@ class ShortUrlMetaTest extends TestCase
         yield ['wp-admin.php', 'wp-admin.php'];
         yield ['UPPER_lower', 'UPPER_lower'];
         yield ['more~url_special.chars', 'more~url_special.chars'];
+        yield ['äéñ', 'äen'];
+        yield ['구글', '구글'];
+        yield ['グーグル', 'グーグル'];
+        yield ['谷歌', '谷歌'];
+        yield ['гугл', 'гугл'];
     }
 }

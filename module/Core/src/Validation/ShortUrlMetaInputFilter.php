@@ -54,6 +54,7 @@ class ShortUrlMetaInputFilter extends InputFilter
         $customSlug->getFilterChain()->attach(new Validation\SluggerFilter(new CocurSymfonySluggerBridge(new Slugify([
             'regexp' => CUSTOM_SLUGS_REGEXP,
             'lowercase' => false, // We want to keep it case sensitive
+            'rulesets' => ['default'],
         ]))));
         $customSlug->getValidatorChain()->attach(new Validator\NotEmpty([
             Validator\NotEmpty::STRING,
