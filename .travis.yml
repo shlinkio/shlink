@@ -16,10 +16,10 @@ cache:
 jobs:
   fast_finish: true
   allow_failures:
-    - php: 'nightly'
+    - php: '8.0'
   include:
     - name: "CI - 8.0"
-      php: 'nightly'
+      php: '8.0'
       env:
         - COMPOSER_FLAGS='--ignore-platform-reqs'
     - name: "CI - 7.4"
