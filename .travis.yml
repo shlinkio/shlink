@@ -21,7 +21,7 @@ jobs:
     - name: "CI - 8.0"
       php: '8.0'
       env:
-        - COMPOSER_FLAGS='--ignore-platform-reqs'
+        - COMPOSER_FLAGS='--ignore-platform-req=php'
     - name: "CI - 7.4"
       php: '7.4'
       env:
