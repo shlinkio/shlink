@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
@@ -93,11 +94,11 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
 
         if ($dateRange !== null && $dateRange->getStartDate() !== null) {
             $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
-            $qb->setParameter('startDate', $dateRange->getStartDate());
+            $qb->setParameter('startDate', $dateRange->getStartDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
         if ($dateRange !== null && $dateRange->getEndDate() !== null) {
             $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
-            $qb->setParameter('endDate', $dateRange->getEndDate());
+            $qb->setParameter('endDate', $dateRange->getEndDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
 
         // Apply search term to every searchable field if not empty
@@ -210,11 +211,11 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         }
         if ($meta->hasValidSince()) {
             $qb->andWhere($qb->expr()->eq('s.validSince', ':validSince'))
-               ->setParameter('validSince', $meta->getValidSince());
+               ->setParameter('validSince', $meta->getValidSince(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
         if ($meta->hasValidUntil()) {
             $qb->andWhere($qb->expr()->eq('s.validUntil', ':validUntil'))
-               ->setParameter('validUntil', $meta->getValidUntil());
+               ->setParameter('validUntil', $meta->getValidUntil(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
         if ($meta->hasDomain()) {
             $qb->join('s.domain', 'd')

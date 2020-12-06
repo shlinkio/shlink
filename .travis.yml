@@ -16,13 +16,13 @@ cache:
 jobs:
   fast_finish: true
   allow_failures:
-    - php: 'nightly'
+    - php: '8.0'
   include:
-    - name: "CI - 8.0"
-      php: 'nightly'
+    - name: 'CI - 8.0'
+      php: '8.0'
       env:
-        - COMPOSER_FLAGS='--ignore-platform-reqs'
-    - name: "CI - 7.4"
+        - COMPOSER_FLAGS='--ignore-platform-req=php'
+    - name: 'CI - 7.4'
       php: '7.4'
       env:
         - COMPOSER_FLAGS=''
@@ -32,7 +32,7 @@ before_install:
   - phpenv config-rm xdebug.ini || return 0
   - sudo ./data/infra/ci/install-ms-odbc.sh
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_ms shlink_db shlink_db_postgres shlink_db_maria
-  - yes | pecl install pdo_sqlsrv-5.9.0preview1 swoole-4.5.5 pcov
+  - yes | pecl install pdo_sqlsrv-5.9.0beta2 swoole-4.5.9 pcov
 
 install:
   - composer self-update
