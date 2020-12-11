@@ -22,6 +22,7 @@ A PHP-based self-hosted URL shortener that can be used to serve shortened URLs u
     - [Serve](#serve)
     - [Bonus](#bonus)
 - [Update to new version](#update-to-new-version)
+    - [Update a configuration option](#update-a-configuration-option)
 - [Using a docker image](#using-a-docker-image)
 - [Using shlink](#using-shlink)
     - [Shlink CLI Help](#shlink-cli-help)
@@ -224,6 +225,16 @@ When a new Shlink version is available, you don't need to repeat the entire proc
 The `bin/update` will use the location from previous shlink version to import the configuration. It will then update the database and generate some assets shlink needs to work.
 
 **Important!** It is recommended that you don't skip any version when using this process. The update tool gets better on every version, but older versions might make assumptions.
+
+### Update a configuration option
+
+Sometimes you need to update the configuration on your shlink instance. Maybe you want to change the GeoLite2 license key, or move from http to https.
+
+In order to do that, run `bin/set-option` and follow the instructions. You will be asked to select the option to change, and then you will be asked to provide the new value.
+
+This script will take care of updating that value without changing anything else, and it will also delete the configuration cache so that the new value is applied.
+
+> This script will fail if you didn't run `bin/install` at least once.
 
 ## Using a docker image
 
