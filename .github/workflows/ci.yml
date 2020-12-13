@@ -9,7 +9,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         php-version: ['7.4']
@@ -27,7 +27,7 @@ jobs:
       - run: composer cs
 
   static-analysis:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         php-version: ['7.4']
@@ -45,7 +45,7 @@ jobs:
       - run: composer stan
 
   unit-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     continue-on-error: ${{ matrix.php-version == '8.0' }}
     strategy:
       matrix:
@@ -75,7 +75,7 @@ jobs:
             build/coverage-unit.cov
 
   db-tests-sqlite:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         php-version: ['7.4', '8.0']
@@ -104,7 +104,7 @@ jobs:
             build/coverage-db.cov
 
   db-tests-mysql:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         php-version: ['7.4', '8.0']
@@ -127,7 +127,7 @@ jobs:
       - run: composer test:db:mysql
 
   db-tests-maria:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         php-version: ['7.4', '8.0']
@@ -150,7 +150,7 @@ jobs:
       - run: composer test:db:maria
 
   db-tests-postgres:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         php-version: ['7.4', '8.0']
@@ -173,7 +173,7 @@ jobs:
       - run: composer test:db:postgres
 
   db-tests-ms:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         php-version: ['7.4', '8.0']
@@ -200,7 +200,7 @@ jobs:
       - run: composer test:db:ms
 
   api-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     continue-on-error: ${{ matrix.php-version == '8.0' }}
     strategy:
       matrix:
@@ -236,7 +236,7 @@ jobs:
       - unit-tests
       - db-tests-sqlite
       - api-tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         php-version: ['7.4']
@@ -263,7 +263,11 @@ jobs:
       - run: composer infect:ci
 
   upload-coverage:
-    runs-on: ubuntu-latest
+    needs:
+      - unit-tests
+      - db-tests-sqlite
+      - api-tests
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         php-version: ['7.4']
@@ -288,7 +292,7 @@ jobs:
     needs:
       - mutation-tests
       - upload-coverage
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:
