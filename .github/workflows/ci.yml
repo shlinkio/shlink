@@ -38,6 +38,8 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: composer
           extensions: swoole-4.5.9
+          coverage: pcov
+          ini-values: pcov.directory=module
       - if: ${{ matrix.php-version == '8.0' }}
         run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
       - if: ${{ matrix.php-version != '8.0' }}
@@ -61,6 +63,8 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: composer
           extensions: swoole-4.5.9
+          coverage: pcov
+          ini-values: pcov.directory=module
       - if: ${{ matrix.php-version == '8.0' }}
         run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
       - if: ${{ matrix.php-version != '8.0' }}
@@ -110,6 +114,8 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: composer
           extensions: swoole-4.5.9
+          coverage: pcov
+          ini-values: pcov.directory=module
       - if: ${{ matrix.php-version == '8.0' }}
         run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
       - if: ${{ matrix.php-version != '8.0' }}
