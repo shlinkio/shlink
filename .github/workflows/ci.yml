@@ -151,7 +151,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install MSSQL ODBC
-        run: ./data/infra/ci/install-ms-odbc.sh
+        run: sudo ./data/infra/ci/install-ms-odbc.sh
       - name: Start database
         run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_ms
       - name: Use PHP
