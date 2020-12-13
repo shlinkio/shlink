@@ -260,5 +260,39 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           path: build
-      - run: ls -l build
       - run: composer infect:ci
+
+  upload-coverage:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: ['7.4']
+    steps:
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+      - uses: actions/download-artifact@v2
+        with:
+          path: build
+      - run: mv build/coverage-unit/coverage-unit.cov build/coverage-unit.cov
+      - run: mv build/coverage-db/coverage-db.cov build/coverage-db.cov
+      - run: mv build/coverage-api/coverage-api.cov build/coverage-api.cov
+      - run: wget https://phar.phpunit.de/phpcov-7.0.2.phar
+      - run: php phpcov-7.0.2.phar merge build --clover build/clover.xml
+      - run: wget https://scrutinizer-ci.com/ocular.phar
+      - run: php ocular.phar code-coverage:upload --format=php-clover build/clover.xml
+
+  delete-artifacts:
+    needs:
+      - mutation-tests
+      - upload-coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: geekyeggo/delete-artifact@v1
+        with:
+          name: |
+            coverage-unit
+            coverage-db
+            coverage-api
