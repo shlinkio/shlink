@@ -115,7 +115,8 @@
         ],
         "test:ci": [
             "@test:unit:ci",
-            "@test:db"
+            "@test:db",
+            "@test:api"
         ],
         "test:unit": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
         "test:unit:ci": "@test:unit --coverage-xml=build/coverage-unit/coverage-xml --log-junit=build/coverage-unit/junit.xml",
