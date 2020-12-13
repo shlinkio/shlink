@@ -272,6 +272,8 @@ jobs:
       matrix:
         php-version: ['7.4']
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:
