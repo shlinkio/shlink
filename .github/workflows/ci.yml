@@ -303,3 +303,17 @@ jobs:
             coverage-unit
             coverage-db
             coverage-api
+
+  build-docker-image:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-dockerfile
+        with:
+          paths: ./Dockerfile
+      - if: ${{ steps.changed-dockerfile.outputs.changed == 'true' }}
+        run: docker build -t shlink-docker-image:temp .
+      - if: ${{ steps.changed-dockerfile.outputs.changed != 'true' }}
+        run: echo "Dockerfile didn't change. Skipped"
