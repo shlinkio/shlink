@@ -165,6 +165,7 @@ jobs:
         run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
       - if: ${{ matrix.php-version != '8.0' }}
         run: composer install --no-interaction --prefer-dist
+      - run: docker-compose exec -T shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
       - run: composer test:db:ms
 
   api-tests:
