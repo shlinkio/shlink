@@ -67,6 +67,7 @@ jobs:
         run: composer install --no-interaction --prefer-dist
       - run: composer test:unit:ci
       - uses: actions/upload-artifact@v2
+        if: ${{ matrix.php-version == '7.4' }}
         with:
           name: coverage-unit
           path: |
@@ -95,6 +96,7 @@ jobs:
         run: composer install --no-interaction --prefer-dist
       - run: composer test:db:sqlite:ci
       - uses: actions/upload-artifact@v2
+        if: ${{ matrix.php-version == '7.4' }}
         with:
           name: coverage-db
           path: |
@@ -222,8 +224,41 @@ jobs:
         run: composer install --no-interaction --prefer-dist
       - run: bin/test/run-api-tests.sh
       - uses: actions/upload-artifact@v2
+        if: ${{ matrix.php-version == '7.4' }}
         with:
           name: coverage-api
           path: |
             build/coverage-api
             build/coverage-api.cov
+
+  mutation-tests:
+    needs:
+      - unit-tests
+      - db-tests-sqlite
+      - api-tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: ['7.4']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Start database server
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+          coverage: pcov
+          ini-values: pcov.directory=module
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - uses: actions/download-artifact@v2
+        with:
+          path: build
+      - run: ls -l build
+      - run: composer infect:ci
