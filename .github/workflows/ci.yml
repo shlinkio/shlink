@@ -1,0 +1,118 @@
+name: Continuous integration
+
+on:
+  pull_request: null
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: composer
+          extensions: swoole-4.5.9
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer cs
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version:
+          - 7.4
+          - 8.0
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - run: composer test:unit:ci
+        # TODO Upload code coverage
+
+  db-tests-sqlite:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version:
+          - 7.4
+          - 8.0
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - run: composer test:db:sqlite:ci
+        # TODO Upload code coverage
+
+  db-tests-mysql:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version:
+          - 7.4
+          - 8.0
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Start database
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - run: composer test:db:mysql
+
+  api-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version:
+          - 7.4
+          - 8.0
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Start database
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - run: bin/test/run-api-tests.sh
+        # TODO Upload code coverage
