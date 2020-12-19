@@ -239,12 +239,10 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4']
+        php-version: ['7.4', '8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Start database server
-        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db
       - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:
