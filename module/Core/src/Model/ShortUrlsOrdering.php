@@ -35,7 +35,6 @@ final class ShortUrlsOrdering
      */
     private function validateAndInit(array $data): void
     {
-        /** @var string|array|null $orderBy */
         $orderBy = $data[self::ORDER_BY] ?? null;
         if ($orderBy === null) {
             return;
@@ -49,6 +48,7 @@ final class ShortUrlsOrdering
             ]);
         }
 
+        /** @var string|array $orderBy */
         if (! $isArray) {
             $parts = explode('-', $orderBy);
             $this->orderField = $parts[0];
