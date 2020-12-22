@@ -53,7 +53,7 @@ docker exec -it shlink_container shlink
 
 ## Use an external DB
 
-The image comes with a working sqlite database, but in production you will probably want to usa a distributed database.
+The image comes with a working sqlite database, but in production, it's strongly recommended using a distributed database.
 
 It is possible to use a set of env vars to make this shlink instance interact with an external MySQL, MariaDB, PostgreSQL or Microsoft SQL Server database.
 
