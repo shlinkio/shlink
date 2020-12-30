@@ -28,6 +28,7 @@ function generateRandomShortCode(int $length): string
     }
 
     $alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    if ( getenv('SHLINK_ALPHABET') ) { $alphabet = getenv('SHLINK_ALPHABET'); } # override with ENV VAR
     return $shortIdFactory->generate($length, $alphabet)->serialize();
 }
 
