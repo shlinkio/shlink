@@ -16,7 +16,6 @@ class CorsTest extends ApiTestCase
 
         self::assertEquals(200, $resp->getStatusCode());
         self::assertFalse($resp->hasHeader('Access-Control-Allow-Origin'));
-        self::assertFalse($resp->hasHeader('Access-Control-Expose-Headers'));
         self::assertFalse($resp->hasHeader('Access-Control-Allow-Methods'));
         self::assertFalse($resp->hasHeader('Access-Control-Max-Age'));
         self::assertFalse($resp->hasHeader('Access-Control-Allow-Headers'));
@@ -37,7 +36,6 @@ class CorsTest extends ApiTestCase
 
         self::assertEquals($expectedStatusCode, $resp->getStatusCode());
         self::assertEquals($origin, $resp->getHeaderLine('Access-Control-Allow-Origin'));
-        self::assertEquals('X-Api-Key', $resp->getHeaderLine('Access-Control-Expose-Headers'));
         self::assertFalse($resp->hasHeader('Access-Control-Allow-Methods'));
         self::assertFalse($resp->hasHeader('Access-Control-Max-Age'));
         self::assertFalse($resp->hasHeader('Access-Control-Allow-Headers'));
@@ -66,7 +64,6 @@ class CorsTest extends ApiTestCase
 
         self::assertEquals(204, $resp->getStatusCode());
         self::assertTrue($resp->hasHeader('Access-Control-Allow-Origin'));
-        self::assertTrue($resp->hasHeader('Access-Control-Expose-Headers'));
         self::assertTrue($resp->hasHeader('Access-Control-Max-Age'));
         self::assertEquals($expectedAllowedMethods, $resp->getHeaderLine('Access-Control-Allow-Methods'));
         self::assertEquals($allowedHeaders, $resp->getHeaderLine('Access-Control-Allow-Headers'));

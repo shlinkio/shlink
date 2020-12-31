@@ -32,8 +32,7 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
         }
 
         // Add Allow-Origin header
-        $response = $response->withHeader('Access-Control-Allow-Origin', $request->getHeader('Origin'))
-                             ->withHeader('Access-Control-Expose-Headers', AuthenticationMiddleware::API_KEY_HEADER);
+        $response = $response->withHeader('Access-Control-Allow-Origin', $request->getHeader('Origin'));
         if ($request->getMethod() !== self::METHOD_OPTIONS) {
             return $response;
         }
@@ -43,6 +42,8 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
 
     private function addOptionsHeaders(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
+        // TODO This won't work. The route has to be matched from the router as this middleware needs to be executed
+        //      before trying to match the route
         /** @var RouteResult|null $matchedRoute */
         $matchedRoute = $request->getAttribute(RouteResult::class);
         $matchedMethods = $matchedRoute !== null ? $matchedRoute->getAllowedMethods() : [
@@ -55,8 +56,8 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
         ];
         $corsHeaders = [
             'Access-Control-Allow-Methods' => implode(',', $matchedMethods),
-            'Access-Control-Max-Age' => $this->config['max_age'],
             'Access-Control-Allow-Headers' => $request->getHeaderLine('Access-Control-Request-Headers'),
+            'Access-Control-Max-Age' => $this->config['max_age'],
         ];
 
         // Options requests should always be empty and have a 204 status code

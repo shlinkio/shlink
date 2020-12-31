@@ -42,7 +42,6 @@ class CrossDomainMiddlewareTest extends TestCase
         self::assertSame($originalResponse, $response);
         self::assertEquals(404, $response->getStatusCode());
         self::assertArrayNotHasKey('Access-Control-Allow-Origin', $headers);
-        self::assertArrayNotHasKey('Access-Control-Expose-Headers', $headers);
         self::assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
         self::assertArrayNotHasKey('Access-Control-Max-Age', $headers);
         self::assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
@@ -63,7 +62,6 @@ class CrossDomainMiddlewareTest extends TestCase
         $headers = $response->getHeaders();
 
         self::assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
-        self::assertEquals('X-Api-Key', $response->getHeaderLine('Access-Control-Expose-Headers'));
         self::assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
         self::assertArrayNotHasKey('Access-Control-Max-Age', $headers);
         self::assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
@@ -85,7 +83,6 @@ class CrossDomainMiddlewareTest extends TestCase
         $headers = $response->getHeaders();
 
         self::assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
-        self::assertEquals('X-Api-Key', $response->getHeaderLine('Access-Control-Expose-Headers'));
         self::assertArrayHasKey('Access-Control-Allow-Methods', $headers);
         self::assertEquals('1000', $response->getHeaderLine('Access-Control-Max-Age'));
         self::assertEquals('foo, bar, baz', $response->getHeaderLine('Access-Control-Allow-Headers'));
