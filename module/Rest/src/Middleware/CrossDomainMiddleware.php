@@ -17,6 +17,13 @@ use function implode;
 
 class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterface
 {
+    private array $config;
+
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
+
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);
@@ -48,7 +55,7 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
         ];
         $corsHeaders = [
             'Access-Control-Allow-Methods' => implode(',', $matchedMethods),
-            'Access-Control-Max-Age' => '1000',
+            'Access-Control-Max-Age' => $this->config['max_age'],
             'Access-Control-Allow-Headers' => $request->getHeaderLine('Access-Control-Request-Headers'),
         ];
 
