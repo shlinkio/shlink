@@ -41,7 +41,7 @@ return [
 
             ImplicitOptionsMiddleware::class => Middleware\EmptyResponseImplicitOptionsMiddlewareFactory::class,
             Middleware\BodyParserMiddleware::class => InvokableFactory::class,
-            Middleware\CrossDomainMiddleware::class => InvokableFactory::class,
+            Middleware\CrossDomainMiddleware::class => ConfigAbstractFactory::class,
             Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class => InvokableFactory::class,
             Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ConfigAbstractFactory::class,
             Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => ConfigAbstractFactory::class,
@@ -76,6 +76,7 @@ return [
         Action\Tag\UpdateTagAction::class => [TagService::class],
         Action\Domain\ListDomainsAction::class => [DomainService::class, 'config.url_shortener.domain.hostname'],
 
+        Middleware\CrossDomainMiddleware::class => ['config.cors'],
         Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ['config.url_shortener.domain.hostname'],
         Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => [
             'config.url_shortener.default_short_codes_length',
