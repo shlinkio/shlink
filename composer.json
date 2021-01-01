@@ -72,7 +72,8 @@
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.1.1",
         "shlinkio/shlink-test-utils": "^1.6",
-        "symfony/var-dumper": "^5.2"
+        "symfony/var-dumper": "^5.2",
+        "veewee/composer-run-parallel": "^0.1.0"
     },
     "autoload": {
         "psr-4": {
@@ -104,6 +105,10 @@
             "@stan",
             "@test:ci",
             "@infect:ci"
+        ],
+        "ci:parallel": [
+            "@parallel cs stan test:unit:ci test:db:sqlite:ci test:db:mysql test:db:maria test:db:postgres test:db:ms",
+            "@parallel test:api infect:ci:unit infect:ci:db"
         ],
         "cs": "phpcs",
         "cs:fix": "phpcbf",
@@ -137,9 +142,11 @@
         "test:unit:pretty": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage-unit-html",
         "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
         "infect:ci:base": "@infect --skip-initial-tests",
+        "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit",
+        "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --test-framework-options=--configuration=phpunit-db.xml",
         "infect:ci": [
-            "@infect:ci:base --coverage=build/coverage-unit",
-            "@infect:ci:base --coverage=build/coverage-db --test-framework-options=--configuration=phpunit-db.xml"
+            "@infect:ci:unit",
+            "@infect:ci:db"
         ],
         "infect:test": [
             "@test:unit:ci",
