@@ -72,7 +72,8 @@
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.1.1",
         "shlinkio/shlink-test-utils": "^1.6",
-        "symfony/var-dumper": "^5.2"
+        "symfony/var-dumper": "^5.2",
+        "veewee/composer-run-parallel": "^0.1.0"
     },
     "autoload": {
         "psr-4": {
@@ -104,6 +105,10 @@
             "@stan",
             "@test:ci",
             "@infect:ci"
+        ],
+        "ci:parallel": [
+            "@parallel cs stan test:unit:ci test:db:sqlite:ci test:db:mysql test:db:maria test:db:postgres test:db:ms",
+            "@parallel test:api infect:ci:unit infect:ci:db"
         ],
         "cs": "phpcs",
         "cs:fix": "phpcbf",
@@ -137,9 +142,11 @@
         "test:unit:pretty": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage-unit-html",
         "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
         "infect:ci:base": "@infect --skip-initial-tests",
+        "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit",
+        "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --test-framework-options=--configuration=phpunit-db.xml",
         "infect:ci": [
-            "@infect:ci:base --coverage=build/coverage-unit",
-            "@infect:ci:base --coverage=build/coverage-db --test-framework-options=--configuration=phpunit-db.xml"
+            "@infect:ci:unit",
+            "@infect:ci:db"
         ],
         "infect:test": [
             "@test:unit:ci",
@@ -150,6 +157,7 @@
     },
     "scripts-descriptions": {
         "ci": "<fg=blue;options=bold>Alias for \"cs\", \"stan\", \"test:ci\" and \"infect:ci\"</>",
+        "ci:parallel": "<fg=blue;options=bold>Same as \"ci\", but parallelizing tasks as much as possible</>",
         "cs": "<fg=blue;options=bold>Checks coding styles</>",
         "cs:fix": "<fg=blue;options=bold>Fixes coding styles, when possible</>",
         "stan": "<fg=blue;options=bold>Inspects code with phpstan</>",
@@ -159,14 +167,17 @@
         "test:unit:ci": "<fg=blue;options=bold>Runs unit test suites, generating all needed reports and logs for CI envs</>",
         "test:db": "<fg=blue;options=bold>Runs database test suites on a SQLite, MySQL, MariaDB, PostgreSQL and MsSQL</>",
         "test:db:sqlite": "<fg=blue;options=bold>Runs database test suites on a SQLite database</>",
+        "test:db:sqlite:ci": "<fg=blue;options=bold>Runs database test suites on a SQLite database, generating all needed reports and logs for CI envs</>",
         "test:db:mysql": "<fg=blue;options=bold>Runs database test suites on a MySQL database</>",
         "test:db:maria": "<fg=blue;options=bold>Runs database test suites on a MariaDB database</>",
         "test:db:postgres": "<fg=blue;options=bold>Runs database test suites on a PostgreSQL database</>",
+        "test:db:ms": "<fg=blue;options=bold>Runs database test suites on a Miscrosoft SQL Server database</>",
         "test:api": "<fg=blue;options=bold>Runs API test suites</>",
         "test:unit:pretty": "<fg=blue;options=bold>Runs unit test suites and generates an HTML code coverage report</>",
-        "infect": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>",
-        "infect:ci": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing with existing reports and logs</>",
-        "infect:test": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>",
+        "infect:ci": "<fg=blue;options=bold>Checks unit and db tests quality applying mutation testing with existing reports and logs</>",
+        "infect:ci:unit": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing with existing reports and logs</>",
+        "infect:ci:db": "<fg=blue;options=bold>Checks db tests quality applying mutation testing with existing reports and logs</>",
+        "infect:test": "<fg=blue;options=bold>Runs unit and db tests, then checks tests quality applying mutation testing</>",
         "clean:dev": "<fg=blue;options=bold>Deletes artifacts which are gitignored and could affect dev env</>"
     },
     "config": {
