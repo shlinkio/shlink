@@ -11,6 +11,7 @@ use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Ramsey\Uuid\Uuid;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Rest\ApiKey\Role;
 
 class ApiKey extends AbstractEntity
 {
@@ -69,6 +70,7 @@ class ApiKey extends AbstractEntity
 
     public function spec(): Specification
     {
-        return Spec::andX();
+        $specs = $this->roles->map(fn (ApiKeyRole $role) => Role::toSpec($role));
+        return Spec::andX(...$specs);
     }
 }
