@@ -51,7 +51,7 @@ class TagServiceTest extends TestCase
     {
         $expected = [new TagInfo(new Tag('foo'), 1, 1), new TagInfo(new Tag('bar'), 3, 10)];
 
-        $find = $this->repo->findTagsWithInfo()->willReturn($expected);
+        $find = $this->repo->findTagsWithInfo(null)->willReturn($expected);
 
         $result = $this->service->tagsInfo();
 

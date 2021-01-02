@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 use function Functional\map;
 
@@ -38,7 +39,8 @@ class ListTagsAction extends AbstractRestAction
             ]);
         }
 
-        $tagsInfo = $this->tagService->tagsInfo();
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
+        $tagsInfo = $this->tagService->tagsInfo($apiKey);
         $data = map($tagsInfo, fn (TagInfo $info) => (string) $info->tag());
 
         return new JsonResponse([

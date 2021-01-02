@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Entity;
 
 use Cake\Chronos\Chronos;
+use Happyr\DoctrineSpecification\Spec;
+use Happyr\DoctrineSpecification\Specification\Specification;
 use Ramsey\Uuid\Uuid;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 
@@ -58,5 +60,12 @@ class ApiKey extends AbstractEntity
     public function toString(): string
     {
         return $this->key;
+    }
+
+    /**
+     */
+    public function spec(): Specification
+    {
+        return Spec::andX();
     }
 }

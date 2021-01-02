@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Happyr\DoctrineSpecification\EntitySpecificationRepository;
+use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 
 use function Functional\map;
 
-class TagRepository extends EntityRepository implements TagRepositoryInterface
+class TagRepository extends EntitySpecificationRepository implements TagRepositoryInterface
 {
     public function deleteByName(array $names): int
     {
@@ -28,17 +29,16 @@ class TagRepository extends EntityRepository implements TagRepositoryInterface
     /**
      * @return TagInfo[]
      */
-    public function findTagsWithInfo(): array
+    public function findTagsWithInfo(?Specification $spec = null): array
     {
-        $dql = <<<DQL
-            SELECT t AS tag, COUNT(DISTINCT s.id) AS shortUrlsCount, COUNT(DISTINCT v.id) AS visitsCount
-            FROM Shlinkio\Shlink\Core\Entity\Tag t
-            LEFT JOIN t.shortUrls s
-            LEFT JOIN s.visits v
-            GROUP BY t
-            ORDER BY t.name ASC
-        DQL;
-        $query = $this->getEntityManager()->createQuery($dql);
+        $qb = $this->getQueryBuilder($spec, 't');
+        $qb->select('t AS tag', 'COUNT(DISTINCT s.id) AS shortUrlsCount', 'COUNT(DISTINCT v.id) AS visitsCount')
+           ->leftJoin('t.shortUrls', 's')
+           ->leftJoin('s.visits', 'v')
+           ->groupBy('t')
+           ->orderBy('t.name', 'ASC');
+
+        $query = $qb->getQuery();
 
         return map(
             $query->getResult(),

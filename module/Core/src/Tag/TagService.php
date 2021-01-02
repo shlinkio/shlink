@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class TagService implements TagServiceInterface
 {
@@ -38,11 +39,11 @@ class TagService implements TagServiceInterface
     /**
      * @return TagInfo[]
      */
-    public function tagsInfo(): array
+    public function tagsInfo(?ApiKey $apiKey = null): array
     {
         /** @var TagRepositoryInterface $repo */
         $repo = $this->em->getRepository(Tag::class);
-        return $repo->findTagsWithInfo();
+        return $repo->findTagsWithInfo($apiKey !== null ? $apiKey->spec() : null);
     }
 
     /**

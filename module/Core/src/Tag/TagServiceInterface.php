@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface TagServiceInterface
 {
@@ -20,7 +21,7 @@ interface TagServiceInterface
     /**
      * @return TagInfo[]
      */
-    public function tagsInfo(): array;
+    public function tagsInfo(?ApiKey $apiKey = null): array;
 
     /**
      * @param string[] $tagNames
