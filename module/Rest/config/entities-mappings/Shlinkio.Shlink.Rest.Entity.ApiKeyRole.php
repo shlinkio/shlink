@@ -7,15 +7,14 @@ namespace Shlinkio\Shlink\Rest;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
-use Shlinkio\Shlink\Rest\Entity\ApiKeyRole;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function Shlinkio\Shlink\Core\determineTableName;
 
 return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable(determineTableName('api_keys', $emConfig));
+    $builder->setTable(determineTableName('api_key_roles', $emConfig));
 
     $builder->createField('id', Types::BIGINT)
             ->makePrimaryKey()
@@ -23,20 +22,21 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->option('unsigned', true)
             ->build();
 
-    $builder->createField('key', Types::STRING)
-            ->columnName('`key`')
-            ->unique()
+    $builder->createField('roleName', Types::STRING)
+            ->columnName('role_name')
+            ->length(256)
+            ->nullable(false)
             ->build();
 
-    $builder->createField('expirationDate', ChronosDateTimeType::CHRONOS_DATETIME)
-            ->columnName('expiration_date')
-            ->nullable()
+    $builder->createField('meta', Types::JSON)
+            ->columnName('meta')
+            ->nullable(false)
             ->build();
 
-    $builder->createField('enabled', Types::BOOLEAN)
+    $builder->createManyToOne('apiKey', ApiKey::class)
+            ->addJoinColumn('api_key_id', 'id', false, false, 'CASCADE')
+            ->cascadePersist()
             ->build();
 
-    $builder->createOneToMany('roles', ApiKeyRole::class)
-            ->mappedBy('apiKey')
-            ->build();
+    $builder->addUniqueConstraint(['role_name', 'api_key_id'], 'UQ_role_plus_api_key');
 };

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Entity;
 
 use Cake\Chronos\Chronos;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Ramsey\Uuid\Uuid;
@@ -15,12 +17,15 @@ class ApiKey extends AbstractEntity
     private string $key;
     private ?Chronos $expirationDate = null;
     private bool $enabled;
+    /** @var Collection|ApiKeyRole[] */
+    private Collection $roles;
 
     public function __construct(?Chronos $expirationDate = null)
     {
         $this->key = Uuid::uuid4()->toString();
         $this->expirationDate = $expirationDate;
         $this->enabled = true;
+        $this->roles = new ArrayCollection();
     }
 
     public function getExpirationDate(): ?Chronos
@@ -62,8 +67,6 @@ class ApiKey extends AbstractEntity
         return $this->key;
     }
 
-    /**
-     */
     public function spec(): Specification
     {
         return Spec::andX();
