@@ -132,9 +132,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
                ->andWhere($qb->expr()->in('t.name', $tags));
         }
 
-        if ($spec) {
-            $this->applySpecification($qb, $spec, 's');
-        }
+        $this->applySpecification($qb, $spec, 's');
 
         return $qb;
     }
@@ -198,9 +196,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         $this->whereDomainIs($qb, $domain);
 
-        if ($spec !== null) {
-            $this->applySpecification($qb, $spec, 's');
-        }
+        $this->applySpecification($qb, $spec, 's');
 
         return $qb;
     }

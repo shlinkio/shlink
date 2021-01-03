@@ -38,9 +38,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
            ->groupBy('t')
            ->orderBy('t.name', 'ASC');
 
-        if ($spec !== null) {
-            $this->applySpecification($qb, $spec, 't');
-        }
+        $this->applySpecification($qb, $spec, 't');
 
         $query = $qb->getQuery();
 
