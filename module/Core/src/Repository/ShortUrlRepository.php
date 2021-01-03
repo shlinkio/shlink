@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Happyr\DoctrineSpecification\EntitySpecificationRepository;
+use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -19,7 +20,7 @@ use function array_key_exists;
 use function count;
 use function Functional\contains;
 
-class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryInterface
+class ShortUrlRepository extends EntitySpecificationRepository implements ShortUrlRepositoryInterface
 {
     /**
      * @param string[] $tags
@@ -31,9 +32,10 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         ?string $searchTerm = null,
         array $tags = [],
         ?ShortUrlsOrdering $orderBy = null,
-        ?DateRange $dateRange = null
+        ?DateRange $dateRange = null,
+        ?Specification $spec = null
     ): array {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange);
+        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
         $qb->select('DISTINCT s')
            ->setMaxResults($limit)
            ->setFirstResult($offset);
@@ -75,9 +77,13 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb->getQuery()->getResult();
     }
 
-    public function countList(?string $searchTerm = null, array $tags = [], ?DateRange $dateRange = null): int
-    {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange);
+    public function countList(
+        ?string $searchTerm = null,
+        array $tags = [],
+        ?DateRange $dateRange = null,
+        ?Specification $spec = null
+    ): int {
+        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
         $qb->select('COUNT(DISTINCT s)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
@@ -86,7 +92,8 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
     private function createListQueryBuilder(
         ?string $searchTerm = null,
         array $tags = [],
-        ?DateRange $dateRange = null
+        ?DateRange $dateRange = null,
+        ?Specification $spec = null
     ): QueryBuilder {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
@@ -123,6 +130,10 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         if (! empty($tags)) {
             $qb->join('s.tags', 't')
                ->andWhere($qb->expr()->in('t.name', $tags));
+        }
+
+        if ($spec) {
+            $this->applySpecification($qb, $spec, 's');
         }
 
         return $qb;

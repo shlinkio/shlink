@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlService implements ShortUrlServiceInterface
 {
@@ -39,11 +40,11 @@ class ShortUrlService implements ShortUrlServiceInterface
     /**
      * @return ShortUrl[]|Paginator
      */
-    public function listShortUrls(ShortUrlsParams $params): Paginator
+    public function listShortUrls(ShortUrlsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        $paginator = new Paginator(new ShortUrlRepositoryAdapter($repo, $params));
+        $paginator = new Paginator(new ShortUrlRepositoryAdapter($repo, $params, $apiKey));
         $paginator->setItemCountPerPage($params->itemsPerPage())
                   ->setCurrentPageNumber($params->page());
 
