@@ -31,12 +31,16 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
      */
     public function findTagsWithInfo(?Specification $spec = null): array
     {
-        $qb = $this->getQueryBuilder($spec, 't');
+        $qb = $this->createQueryBuilder('t');
         $qb->select('t AS tag', 'COUNT(DISTINCT s.id) AS shortUrlsCount', 'COUNT(DISTINCT v.id) AS visitsCount')
            ->leftJoin('t.shortUrls', 's')
            ->leftJoin('s.visits', 'v')
            ->groupBy('t')
            ->orderBy('t.name', 'ASC');
+
+        if ($spec !== null) {
+            $this->applySpecification($qb, $spec, 't');
+        }
 
         $query = $qb->getQuery();
 
