@@ -90,10 +90,10 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     }
 
     private function createListQueryBuilder(
-        ?string $searchTerm = null,
-        array $tags = [],
-        ?DateRange $dateRange = null,
-        ?Specification $spec = null
+        ?string $searchTerm,
+        array $tags,
+        ?DateRange $dateRange,
+        ?Specification $spec
     ): QueryBuilder {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
@@ -171,9 +171,9 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $query->getOneOrNullResult();
     }
 
-    public function findOne(string $shortCode, ?string $domain = null): ?ShortUrl
+    public function findOne(string $shortCode, ?string $domain = null, ?Specification $spec = null): ?ShortUrl
     {
-        $qb = $this->createFindOneQueryBuilder($shortCode, $domain);
+        $qb = $this->createFindOneQueryBuilder($shortCode, $domain, $spec);
         $qb->select('s');
 
         return $qb->getQuery()->getOneOrNullResult();
@@ -181,13 +181,13 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
     public function shortCodeIsInUse(string $slug, ?string $domain = null): bool
     {
-        $qb = $this->createFindOneQueryBuilder($slug, $domain);
+        $qb = $this->createFindOneQueryBuilder($slug, $domain, null);
         $qb->select('COUNT(DISTINCT s.id)');
 
         return ((int) $qb->getQuery()->getSingleScalarResult()) > 0;
     }
 
-    private function createFindOneQueryBuilder(string $slug, ?string $domain = null): QueryBuilder
+    private function createFindOneQueryBuilder(string $slug, ?string $domain, ?Specification $spec): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
@@ -197,6 +197,10 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
            ->setMaxResults(1);
 
         $this->whereDomainIs($qb, $domain);
+
+        if ($spec !== null) {
+            $this->applySpecification($qb, $spec, 's');
+        }
 
         return $qb;
     }
