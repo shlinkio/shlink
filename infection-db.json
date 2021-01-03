@@ -6,14 +6,15 @@
     },
     "timeout": 5,
     "logs": {
-        "text": "build/infection-unit/infection-log.txt",
-        "summary": "build/infection-unit/summary-log.txt",
-        "debug": "build/infection-unit/debug-log.txt"
+        "text": "build/infection-db/infection-log.txt",
+        "summary": "build/infection-db/summary-log.txt",
+        "debug": "build/infection-db/debug-log.txt"
     },
-    "tmpDir": "build/infection-unit/temp",
+    "tmpDir": "build/infection-db/temp",
     "phpUnit": {
         "configDir": "."
     },
+    "testFrameworkOptions": "--configuration=phpunit-db.xml",
     "mutators": {
         "@default": true,
         "IdenticalEqual": false,

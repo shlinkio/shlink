@@ -134,17 +134,12 @@
         "test:db:ms": "DB_DRIVER=mssql composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
         "test:unit:pretty": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage-unit-html",
-        "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
-        "infect:ci:base": "@infect --skip-initial-tests",
-        "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit",
-        "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --test-framework-options=--configuration=phpunit-db.xml",
-        "infect:ci": [
-            "@infect:ci:unit",
-            "@infect:ci:db"
-        ],
+        "infect:ci:base": "infection --threads=4 --log-verbosity=default --only-covered --skip-initial-tests",
+        "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=80",
+        "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json",
+        "infect:ci": "@parallel infect:ci:unit infect:ci:db",
         "infect:test": [
-            "@test:unit:ci",
-            "@test:db:sqlite:ci",
+            "@parallel test:unit:ci test:db:sqlite:ci",
             "@infect:ci"
         ],
         "clean:dev": "rm -f data/database.sqlite && rm -f config/params/generated_config.php"

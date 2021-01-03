@@ -30,5 +30,9 @@ interface ShortUrlServiceInterface
      * @throws ShortUrlNotFoundException
      * @throws InvalidUrlException
      */
-    public function updateMetadataByShortCode(ShortUrlIdentifier $identifier, ShortUrlEdit $shortUrlEdit): ShortUrl;
+    public function updateMetadataByShortCode(
+        ShortUrlIdentifier $identifier,
+        ShortUrlEdit $shortUrlEdit,
+        ?ApiKey $apiKey = null
+    ): ShortUrl;
 }

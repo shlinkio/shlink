@@ -69,13 +69,16 @@ class ShortUrlService implements ShortUrlServiceInterface
      * @throws ShortUrlNotFoundException
      * @throws InvalidUrlException
      */
-    public function updateMetadataByShortCode(ShortUrlIdentifier $identifier, ShortUrlEdit $shortUrlEdit): ShortUrl
-    {
+    public function updateMetadataByShortCode(
+        ShortUrlIdentifier $identifier,
+        ShortUrlEdit $shortUrlEdit,
+        ?ApiKey $apiKey = null
+    ): ShortUrl {
         if ($shortUrlEdit->hasLongUrl()) {
             $this->urlValidator->validateUrl($shortUrlEdit->longUrl(), $shortUrlEdit->doValidateUrl());
         }
 
-        $shortUrl = $this->urlResolver->resolveShortUrl($identifier);
+        $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
         $shortUrl->update($shortUrlEdit);
 
         $this->em->flush();

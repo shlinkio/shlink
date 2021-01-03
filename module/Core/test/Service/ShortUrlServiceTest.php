@@ -20,6 +20,7 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function count;
 
@@ -90,15 +91,19 @@ class ShortUrlServiceTest extends TestCase
      */
     public function updateMetadataByShortCodeUpdatesProvidedData(
         int $expectedValidateCalls,
-        ShortUrlEdit $shortUrlEdit
+        ShortUrlEdit $shortUrlEdit,
+        ?ApiKey $apiKey
     ): void {
         $originalLongUrl = 'originalLongUrl';
         $shortUrl = new ShortUrl($originalLongUrl);
 
-        $findShortUrl = $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier('abc123'))->willReturn($shortUrl);
+        $findShortUrl = $this->urlResolver->resolveShortUrl(
+            new ShortUrlIdentifier('abc123'),
+            $apiKey,
+        )->willReturn($shortUrl);
         $flush = $this->em->flush()->willReturn(null);
 
-        $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), $shortUrlEdit);
+        $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), $shortUrlEdit, $apiKey);
 
         self::assertSame($shortUrl, $result);
         self::assertEquals($shortUrlEdit->validSince(), $shortUrl->getValidSince());
@@ -121,19 +126,19 @@ class ShortUrlServiceTest extends TestCase
                 'validUntil' => Chronos::parse('2017-01-05 00:00:00')->toAtomString(),
                 'maxVisits' => 5,
             ],
-        )];
+        ), null];
         yield 'long URL' => [1, ShortUrlEdit::fromRawData(
             [
                 'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
                 'maxVisits' => 10,
                 'longUrl' => 'modifiedLongUrl',
             ],
-        )];
+        ), new ApiKey()];
         yield 'long URL with validation' => [1, ShortUrlEdit::fromRawData(
             [
                 'longUrl' => 'modifiedLongUrl',
                 'validateUrl' => true,
             ],
-        )];
+        ), null];
     }
 }
