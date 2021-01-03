@@ -24,7 +24,7 @@ interface ShortUrlServiceInterface
      * @param string[] $tags
      * @throws ShortUrlNotFoundException
      */
-    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags = []): ShortUrl;
+    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags, ?ApiKey $apiKey = null): ShortUrl;
 
     /**
      * @throws ShortUrlNotFoundException

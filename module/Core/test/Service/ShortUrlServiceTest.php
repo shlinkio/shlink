@@ -74,8 +74,8 @@ class ShortUrlServiceTest extends TestCase
         $shortUrl = $this->prophesize(ShortUrl::class);
         $shortUrl->setTags(Argument::any())->shouldBeCalledOnce();
         $shortCode = 'abc123';
-        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode))->willReturn($shortUrl->reveal())
-                                                                               ->shouldBeCalledOnce();
+        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), null)->willReturn($shortUrl->reveal())
+                                                                                     ->shouldBeCalledOnce();
 
         $tagRepo = $this->prophesize(EntityRepository::class);
         $tagRepo->findOneBy(['name' => 'foo'])->willReturn(new Tag('foo'))->shouldBeCalledOnce();
