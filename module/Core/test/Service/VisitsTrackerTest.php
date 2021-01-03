@@ -63,13 +63,15 @@ class VisitsTrackerTest extends TestCase
     {
         $shortCode = '123ABC';
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $count = $repo->shortCodeIsInUse($shortCode, null)->willReturn(true);
+        $count = $repo->shortCodeIsInUse($shortCode, null, null)->willReturn(true);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
 
         $list = map(range(0, 1), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance()));
         $repo2 = $this->prophesize(VisitRepository::class);
-        $repo2->findVisitsByShortCode($shortCode, null, Argument::type(DateRange::class), 1, 0)->willReturn($list);
-        $repo2->countVisitsByShortCode($shortCode, null, Argument::type(DateRange::class))->willReturn(1);
+        $repo2->findVisitsByShortCode($shortCode, null, Argument::type(DateRange::class), 1, 0, null)->willReturn(
+            $list,
+        );
+        $repo2->countVisitsByShortCode($shortCode, null, Argument::type(DateRange::class), null)->willReturn(1);
         $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
 
         $paginator = $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), new VisitsParams());
@@ -83,7 +85,7 @@ class VisitsTrackerTest extends TestCase
     {
         $shortCode = '123ABC';
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $count = $repo->shortCodeIsInUse($shortCode, null)->willReturn(false);
+        $count = $repo->shortCodeIsInUse($shortCode, null, null)->willReturn(false);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
 
         $this->expectException(ShortUrlNotFoundException::class);

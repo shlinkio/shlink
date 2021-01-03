@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface VisitsTrackerInterface
 {
@@ -21,7 +22,7 @@ interface VisitsTrackerInterface
      * @return Visit[]|Paginator
      * @throws ShortUrlNotFoundException
      */
-    public function info(ShortUrlIdentifier $identifier, VisitsParams $params): Paginator;
+    public function info(ShortUrlIdentifier $identifier, VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
      * @return Visit[]|Paginator

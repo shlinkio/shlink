@@ -16,8 +16,8 @@ class BelongsToApiKey extends BaseSpecification
 
     public function __construct(ApiKey $apiKey, ?string $dqlAlias = null)
     {
-        $this->dqlAlias = $dqlAlias ?? 's';
         $this->apiKey = $apiKey;
+        $this->dqlAlias = $dqlAlias ?? 's';
         parent::__construct($this->dqlAlias);
     }
 

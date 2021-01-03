@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
+use Happyr\DoctrineSpecification\Specification\Specification;
 use Laminas\Paginator\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
@@ -31,7 +32,7 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
             $this->params->tags(),
             $this->params->orderBy(),
             $this->params->dateRange(),
-            $this->apiKey !== null ? $this->apiKey->spec() : null,
+            $this->resolveSpec(),
         );
     }
 
@@ -41,7 +42,12 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
             $this->params->searchTerm(),
             $this->params->tags(),
             $this->params->dateRange(),
-            $this->apiKey !== null ? $this->apiKey->spec() : null,
+            $this->resolveSpec(),
         );
+    }
+
+    private function resolveSpec(): ?Specification
+    {
+        return $this->apiKey !== null ? $this->apiKey->spec() : null;
     }
 }

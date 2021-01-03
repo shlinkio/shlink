@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\ORM\QueryBuilder;
+use Happyr\DoctrineSpecification\EntitySpecificationRepository;
+use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -14,7 +15,7 @@ use Shlinkio\Shlink\Core\Entity\VisitLocation;
 
 use const PHP_INT_MAX;
 
-class VisitRepository extends EntityRepository implements VisitRepositoryInterface
+class VisitRepository extends EntitySpecificationRepository implements VisitRepositoryInterface
 {
     /**
      * @return iterable|Visit[]
@@ -84,15 +85,20 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
         ?string $domain = null,
         ?DateRange $dateRange = null,
         ?int $limit = null,
-        ?int $offset = null
+        ?int $offset = null,
+        ?Specification $spec = null
     ): array {
-        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
+        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange, $spec);
         return $this->resolveVisitsWithNativeQuery($qb, $limit, $offset);
     }
 
-    public function countVisitsByShortCode(string $shortCode, ?string $domain = null, ?DateRange $dateRange = null): int
-    {
-        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange);
+    public function countVisitsByShortCode(
+        string $shortCode,
+        ?string $domain = null,
+        ?DateRange $dateRange = null,
+        ?Specification $spec = null
+    ): int {
+        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange, $spec);
         $qb->select('COUNT(v.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
@@ -101,11 +107,12 @@ class VisitRepository extends EntityRepository implements VisitRepositoryInterfa
     private function createVisitsByShortCodeQueryBuilder(
         string $shortCode,
         ?string $domain,
-        ?DateRange $dateRange
+        ?DateRange $dateRange,
+        ?Specification $spec = null
     ): QueryBuilder {
         /** @var ShortUrlRepositoryInterface $shortUrlRepo */
         $shortUrlRepo = $this->getEntityManager()->getRepository(ShortUrl::class);
-        $shortUrl = $shortUrlRepo->findOne($shortCode, $domain);
+        $shortUrl = $shortUrlRepo->findOne($shortCode, $domain, $spec);
         $shortUrlId = $shortUrl !== null ? $shortUrl->getId() : -1;
 
         // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later

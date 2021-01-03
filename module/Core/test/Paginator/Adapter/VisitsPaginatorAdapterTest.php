@@ -27,6 +27,7 @@ class VisitsPaginatorAdapterTest extends TestCase
             $this->repo->reveal(),
             new ShortUrlIdentifier(''),
             VisitsParams::fromRawData([]),
+            null,
         );
     }
 
@@ -36,7 +37,9 @@ class VisitsPaginatorAdapterTest extends TestCase
         $count = 3;
         $limit = 1;
         $offset = 5;
-        $findVisits = $this->repo->findVisitsByShortCode('', null, new DateRange(), $limit, $offset)->willReturn([]);
+        $findVisits = $this->repo->findVisitsByShortCode('', null, new DateRange(), $limit, $offset, null)->willReturn(
+            [],
+        );
 
         for ($i = 0; $i < $count; $i++) {
             $this->adapter->getItems($offset, $limit);
@@ -49,7 +52,7 @@ class VisitsPaginatorAdapterTest extends TestCase
     public function repoIsCalledOnlyOnceForCount(): void
     {
         $count = 3;
-        $countVisits = $this->repo->countVisitsByShortCode('', null, new DateRange())->willReturn(3);
+        $countVisits = $this->repo->countVisitsByShortCode('', null, new DateRange(), null)->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
             $this->adapter->count();

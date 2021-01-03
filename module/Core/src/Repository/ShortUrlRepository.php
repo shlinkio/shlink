@@ -177,9 +177,9 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function shortCodeIsInUse(string $slug, ?string $domain = null): bool
+    public function shortCodeIsInUse(string $slug, ?string $domain = null, ?Specification $spec = null): bool
     {
-        $qb = $this->createFindOneQueryBuilder($slug, $domain, null);
+        $qb = $this->createFindOneQueryBuilder($slug, $domain, $spec);
         $qb->select('COUNT(DISTINCT s.id)');
 
         return ((int) $qb->getQuery()->getSingleScalarResult()) > 0;

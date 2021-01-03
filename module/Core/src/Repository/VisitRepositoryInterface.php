@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\Persistence\ObjectRepository;
+use Happyr\DoctrineSpecification\EntitySpecificationRepositoryInterface;
+use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
 
-interface VisitRepositoryInterface extends ObjectRepository
+interface VisitRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
     public const DEFAULT_BLOCK_SIZE = 10000;
 
@@ -35,13 +37,15 @@ interface VisitRepositoryInterface extends ObjectRepository
         ?string $domain = null,
         ?DateRange $dateRange = null,
         ?int $limit = null,
-        ?int $offset = null
+        ?int $offset = null,
+        ?Specification $spec = null
     ): array;
 
     public function countVisitsByShortCode(
         string $shortCode,
         ?string $domain = null,
-        ?DateRange $dateRange = null
+        ?DateRange $dateRange = null,
+        ?Specification $spec = null
     ): int;
 
     /**
