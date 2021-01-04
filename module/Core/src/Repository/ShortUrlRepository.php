@@ -234,6 +234,11 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
                ->setParameter('domain', $meta->getDomain());
         }
 
+        $apiKey = $meta->getApiKey();
+        if ($apiKey !== null) {
+            $this->applySpecification($qb, $apiKey->spec(), 's');
+        }
+
         $tagsAmount = count($tags);
         if ($tagsAmount === 0) {
             return $qb->getQuery()->getOneOrNullResult();
