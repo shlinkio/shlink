@@ -16,7 +16,7 @@ interface TagServiceInterface
     /**
      * @return Tag[]
      */
-    public function listTags(): array;
+    public function listTags(?ApiKey $apiKey = null): array;
 
     /**
      * @return TagInfo[]

@@ -14,7 +14,7 @@ class WithApiKeySpecsEnsuringJoin extends BaseSpecification
     private ?ApiKey $apiKey;
     private string $fieldToJoin;
 
-    public function __construct(?ApiKey $apiKey, string $fieldToJoin)
+    public function __construct(?ApiKey $apiKey, string $fieldToJoin = 'shortUrls')
     {
         parent::__construct();
         $this->apiKey = $apiKey;

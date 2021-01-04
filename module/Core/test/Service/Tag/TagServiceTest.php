@@ -38,12 +38,12 @@ class TagServiceTest extends TestCase
     {
         $expected = [new Tag('foo'), new Tag('bar')];
 
-        $find = $this->repo->findBy(Argument::cetera())->willReturn($expected);
+        $match = $this->repo->match(Argument::cetera())->willReturn($expected);
 
         $result = $this->service->listTags();
 
         self::assertEquals($expected, $result);
-        $find->shouldHaveBeenCalled();
+        $match->shouldHaveBeenCalled();
     }
 
     /** @test */

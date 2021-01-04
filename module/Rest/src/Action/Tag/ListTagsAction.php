@@ -30,16 +30,16 @@ class ListTagsAction extends AbstractRestAction
     {
         $query = $request->getQueryParams();
         $withStats = ($query['withStats'] ?? null) === 'true';
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
         if (! $withStats) {
             return new JsonResponse([
                 'tags' => [
-                    'data' => $this->tagService->listTags(),
+                    'data' => $this->tagService->listTags($apiKey),
                 ],
             ]);
         }
 
-        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
         $tagsInfo = $this->tagService->tagsInfo($apiKey);
         $data = map($tagsInfo, fn (TagInfo $info) => (string) $info->tag());
 

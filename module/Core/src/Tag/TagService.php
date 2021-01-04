@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Tag;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM;
+use Happyr\DoctrineSpecification\Spec;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
@@ -13,6 +14,7 @@ use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
+use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class TagService implements TagServiceInterface
@@ -29,10 +31,15 @@ class TagService implements TagServiceInterface
     /**
      * @return Tag[]
      */
-    public function listTags(): array
+    public function listTags(?ApiKey $apiKey = null): array
     {
+        /** @var TagRepository $repo */
+        $repo = $this->em->getRepository(Tag::class);
         /** @var Tag[] $tags */
-        $tags = $this->em->getRepository(Tag::class)->findBy([], ['name' => 'ASC']);
+        $tags = $repo->match(Spec::andX(
+            Spec::orderBy('name'),
+            new WithApiKeySpecsEnsuringJoin($apiKey),
+        ));
         return $tags;
     }
 
