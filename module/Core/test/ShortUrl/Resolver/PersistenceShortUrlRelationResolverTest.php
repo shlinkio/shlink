@@ -11,7 +11,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
-use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class PersistenceShortUrlRelationResolverTest extends TestCase
 {
@@ -62,39 +61,5 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
 
         yield 'not found domain' => [null, $authority];
         yield 'found domain' => [new Domain($authority), $authority];
-    }
-
-    /** @test */
-    public function returnsEmptyWhenNoApiKeyIsProvided(): void
-    {
-        $getRepository = $this->em->getRepository(ApiKey::class);
-
-        self::assertNull($this->resolver->resolveApiKey(null));
-        $getRepository->shouldNotHaveBeenCalled();
-    }
-
-    /**
-     * @test
-     * @dataProvider provideFoundApiKeys
-     */
-    public function triesToFindApiKeyWhenValueIsProvided(?ApiKey $foundApiKey, string $key): void
-    {
-        $repo = $this->prophesize(ObjectRepository::class);
-        $find = $repo->findOneBy(['key' => $key])->willReturn($foundApiKey);
-        $getRepository = $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
-
-        $result = $this->resolver->resolveApiKey($key);
-
-        self::assertSame($result, $foundApiKey);
-        $find->shouldHaveBeenCalledOnce();
-        $getRepository->shouldHaveBeenCalledOnce();
-    }
-
-    public function provideFoundApiKeys(): iterable
-    {
-        $key = 'abc123';
-
-        yield 'not found api key' => [null, $key];
-        yield 'found api key' => [new ApiKey(), $key];
     }
 }

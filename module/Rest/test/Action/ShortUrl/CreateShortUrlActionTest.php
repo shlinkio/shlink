@@ -53,7 +53,7 @@ class CreateShortUrlActionTest extends TestCase
     {
         $apiKey = new ApiKey();
         $shortUrl = new ShortUrl('');
-        $expectedMeta['apiKey'] = $apiKey->toString();
+        $expectedMeta['apiKey'] = $apiKey;
 
         $shorten = $this->urlShortener->shorten(
             Argument::type('string'),

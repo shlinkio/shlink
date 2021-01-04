@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Model;
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
@@ -24,7 +25,7 @@ final class ShortUrlMeta
     private ?string $domain = null;
     private int $shortCodeLength = 5;
     private ?bool $validateUrl = null;
-    private ?string $apiKey = null;
+    private ?ApiKey $apiKey = null;
 
     // Enforce named constructors
     private function __construct()
@@ -135,7 +136,7 @@ final class ShortUrlMeta
         return $this->validateUrl;
     }
 
-    public function getApiKey(): ?string
+    public function getApiKey(): ?ApiKey
     {
         return $this->apiKey;
     }

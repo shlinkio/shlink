@@ -38,19 +38,4 @@ class SimpleShortUrlRelationResolverTest extends TestCase
         yield 'empty domain' => [null];
         yield 'non-empty domain' => ['domain.com'];
     }
-
-    /**
-     * @test
-     * @dataProvider provideKeys
-     */
-    public function alwaysReturnsNullForApiKeys(?string $key): void
-    {
-        self::assertNull($this->resolver->resolveApiKey($key));
-    }
-
-    public function provideKeys(): iterable
-    {
-        yield 'empty api key' => [null];
-        yield 'non-empty api key' => ['abc123'];
-    }
 }

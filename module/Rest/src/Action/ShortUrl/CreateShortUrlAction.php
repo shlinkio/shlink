@@ -28,7 +28,7 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
             ]);
         }
 
-        $payload[ShortUrlMetaInputFilter::API_KEY] = AuthenticationMiddleware::apiKeyFromRequest($request)->toString();
+        $payload[ShortUrlMetaInputFilter::API_KEY] = AuthenticationMiddleware::apiKeyFromRequest($request);
         $meta = ShortUrlMeta::fromRawData($payload);
 
         return new CreateShortUrlData($payload['longUrl'], (array) ($payload['tags'] ?? []), $meta);
