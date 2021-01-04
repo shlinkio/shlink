@@ -46,7 +46,7 @@ class DomainRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertEquals([$barDomain, $bazDomain, $fooDomain], $this->repo->findDomainsWithout());
+        self::assertEquals([$barDomain, $bazDomain, $fooDomain], $this->repo->findDomainsWithout(null));
         self::assertEquals([$barDomain, $bazDomain], $this->repo->findDomainsWithout('foo.com'));
         self::assertEquals([$bazDomain, $fooDomain], $this->repo->findDomainsWithout('bar.com'));
         self::assertEquals([$barDomain, $fooDomain], $this->repo->findDomainsWithout('baz.com'));

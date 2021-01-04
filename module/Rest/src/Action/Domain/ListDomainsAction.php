@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class ListDomainsAction extends AbstractRestAction
 {
@@ -24,7 +25,8 @@ class ListDomainsAction extends AbstractRestAction
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $domainItems = $this->domainService->listDomains();
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
+        $domainItems = $this->domainService->listDomains($apiKey);
 
         return new JsonResponse([
             'domains' => [

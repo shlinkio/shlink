@@ -76,6 +76,11 @@ class ApiKey extends AbstractEntity
 
     public function isAdmin(): bool
     {
-        return $this->roles->count() === 0;
+        return $this->roles->isEmpty();
+    }
+
+    public function hasRole(string $roleName): bool
+    {
+        return $this->roles->exists(fn ($key, ApiKeyRole $role) => $role->name() === $roleName);
     }
 }

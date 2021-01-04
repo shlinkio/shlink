@@ -12,6 +12,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Rest\Action\Domain\ListDomainsAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ListDomainsActionTest extends TestCase
 {
@@ -23,20 +24,21 @@ class ListDomainsActionTest extends TestCase
     public function setUp(): void
     {
         $this->domainService = $this->prophesize(DomainServiceInterface::class);
-        $this->action = new ListDomainsAction($this->domainService->reveal(), 'foo.com');
+        $this->action = new ListDomainsAction($this->domainService->reveal());
     }
 
     /** @test */
     public function domainsAreProperlyListed(): void
     {
+        $apiKey = new ApiKey();
         $domains = [
             new DomainItem('bar.com', true),
             new DomainItem('baz.com', false),
         ];
-        $listDomains = $this->domainService->listDomains()->willReturn($domains);
+        $listDomains = $this->domainService->listDomains($apiKey)->willReturn($domains);
 
         /** @var JsonResponse $resp */
-        $resp = $this->action->handle(ServerRequestFactory::fromGlobals());
+        $resp = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, $apiKey));
         $payload = $resp->getPayload();
 
         self::assertEquals([

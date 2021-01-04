@@ -34,7 +34,7 @@ class DomainServiceTest extends TestCase
     {
         $repo = $this->prophesize(DomainRepositoryInterface::class);
         $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
-        $findDomains = $repo->findDomainsWithout('default.com')->willReturn($domains);
+        $findDomains = $repo->findDomainsWithout('default.com', null)->willReturn($domains);
 
         $result = $this->domainService->listDomains();
 
