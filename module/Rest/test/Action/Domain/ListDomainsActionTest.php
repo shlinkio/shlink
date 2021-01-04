@@ -33,7 +33,7 @@ class ListDomainsActionTest extends TestCase
             new DomainItem('bar.com', true),
             new DomainItem('baz.com', false),
         ];
-        $listDomains = $this->domainService->listDomainsWithout()->willReturn($domains);
+        $listDomains = $this->domainService->listDomains()->willReturn($domains);
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle(ServerRequestFactory::fromGlobals());

@@ -25,7 +25,7 @@ class DomainService implements DomainServiceInterface
     /**
      * @return DomainItem[]
      */
-    public function listDomainsWithout(): array
+    public function listDomains(): array
     {
         /** @var DomainRepositoryInterface $repo */
         $repo = $this->em->getRepository(Domain::class);

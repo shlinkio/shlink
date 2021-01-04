@@ -35,11 +35,11 @@ class ListDomainsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $regularDomains = $this->domainService->listDomainsWithout();
+        $domains = $this->domainService->listDomains();
 
         ShlinkTable::fromOutput($output)->render(
             ['Domain', 'Is default'],
-            map($regularDomains, fn (DomainItem $domain) => [$domain->toString(), $domain->isDefault() ? 'Yes' : 'No']),
+            map($domains, fn (DomainItem $domain) => [$domain->toString(), $domain->isDefault() ? 'Yes' : 'No']),
         );
 
         return ExitCodes::EXIT_SUCCESS;

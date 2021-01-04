@@ -30,13 +30,13 @@ class DomainServiceTest extends TestCase
      * @test
      * @dataProvider provideExcludedDomains
      */
-    public function listDomainsWithoutDelegatesIntoRepository(array $domains, array $expectedResult): void
+    public function listDomainsDelegatesIntoRepository(array $domains, array $expectedResult): void
     {
         $repo = $this->prophesize(DomainRepositoryInterface::class);
         $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
         $findDomains = $repo->findDomainsWithout('default.com')->willReturn($domains);
 
-        $result = $this->domainService->listDomainsWithout();
+        $result = $this->domainService->listDomains();
 
         self::assertEquals($expectedResult, $result);
         $getRepo->shouldHaveBeenCalledOnce();

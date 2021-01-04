@@ -24,7 +24,7 @@ class ListDomainsAction extends AbstractRestAction
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $domainItems = $this->domainService->listDomainsWithout();
+        $domainItems = $this->domainService->listDomains();
 
         return new JsonResponse([
             'domains' => [

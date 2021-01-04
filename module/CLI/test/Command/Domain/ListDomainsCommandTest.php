@@ -45,7 +45,7 @@ class ListDomainsCommandTest extends TestCase
         +---------+------------+
 
         OUTPUT;
-        $listDomains = $this->domainService->listDomainsWithout()->willReturn([
+        $listDomains = $this->domainService->listDomains()->willReturn([
             new DomainItem('foo.com', true),
             new DomainItem('bar.com', false),
             new DomainItem('baz.com', false),

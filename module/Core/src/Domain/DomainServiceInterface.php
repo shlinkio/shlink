@@ -11,5 +11,5 @@ interface DomainServiceInterface
     /**
      * @return DomainItem[]
      */
-    public function listDomainsWithout(): array;
+    public function listDomains(): array;
 }
