@@ -9,6 +9,7 @@ use Happyr\DoctrineSpecification\EntitySpecificationRepositoryInterface;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface VisitRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
@@ -60,4 +61,6 @@ interface VisitRepositoryInterface extends ObjectRepository, EntitySpecification
     ): array;
 
     public function countVisitsByTag(string $tag, ?DateRange $dateRange = null, ?Specification $spec = null): int;
+
+    public function countVisits(?ApiKey $apiKey = null): int;
 }

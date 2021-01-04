@@ -56,7 +56,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
     {
         $result = (int) $this->matchSingleScalarResult(Spec::andX(
             new CountTagsWithName($tag),
-            new WithApiKeySpecsEnsuringJoin($apiKey),
+            new WithApiKeySpecsEnsuringJoin($apiKey, 'shortUrls'),
         ));
 
         return $result > 0;
