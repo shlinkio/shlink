@@ -74,7 +74,7 @@ return [
         Action\Tag\DeleteTagsAction::class => [TagService::class],
         Action\Tag\CreateTagsAction::class => [TagService::class],
         Action\Tag\UpdateTagAction::class => [TagService::class],
-        Action\Domain\ListDomainsAction::class => [DomainService::class, 'config.url_shortener.domain.hostname'],
+        Action\Domain\ListDomainsAction::class => [DomainService::class],
 
         Middleware\CrossDomainMiddleware::class => ['config.cors'],
         Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ['config.url_shortener.domain.hostname'],

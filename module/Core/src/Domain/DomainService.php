@@ -5,25 +5,35 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Domain;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
+
+use function Functional\map;
 
 class DomainService implements DomainServiceInterface
 {
     private EntityManagerInterface $em;
+    private string $defaultDomain;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, string $defaultDomain)
     {
         $this->em = $em;
+        $this->defaultDomain = $defaultDomain;
     }
 
     /**
-     * @return Domain[]
+     * @return DomainItem[]
      */
-    public function listDomainsWithout(?string $excludeDomain = null): array
+    public function listDomainsWithout(): array
     {
         /** @var DomainRepositoryInterface $repo */
         $repo = $this->em->getRepository(Domain::class);
-        return $repo->findDomainsWithout($excludeDomain);
+        $domains = $repo->findDomainsWithout($this->defaultDomain);
+
+        return [
+            new DomainItem($this->defaultDomain, true),
+            ...map($domains, fn (Domain $domain) => new DomainItem($domain->getAuthority(), false)),
+        ];
     }
 }

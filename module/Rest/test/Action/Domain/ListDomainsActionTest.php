@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
-use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Rest\Action\Domain\ListDomainsAction;
 
 class ListDomainsActionTest extends TestCase
@@ -29,10 +29,11 @@ class ListDomainsActionTest extends TestCase
     /** @test */
     public function domainsAreProperlyListed(): void
     {
-        $listDomains = $this->domainService->listDomainsWithout('foo.com')->willReturn([
-            new Domain('bar.com'),
-            new Domain('baz.com'),
-        ]);
+        $domains = [
+            new DomainItem('bar.com', true),
+            new DomainItem('baz.com', false),
+        ];
+        $listDomains = $this->domainService->listDomainsWithout()->willReturn($domains);
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle(ServerRequestFactory::fromGlobals());
@@ -40,20 +41,7 @@ class ListDomainsActionTest extends TestCase
 
         self::assertEquals([
             'domains' => [
-                'data' => [
-                    [
-                        'domain' => 'foo.com',
-                        'isDefault' => true,
-                    ],
-                    [
-                        'domain' => 'bar.com',
-                        'isDefault' => false,
-                    ],
-                    [
-                        'domain' => 'baz.com',
-                        'isDefault' => false,
-                    ],
-                ],
+                'data' => $domains,
             ],
         ], $payload);
         $listDomains->shouldHaveBeenCalledOnce();

@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Domain\DomainService;
+use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 
@@ -22,20 +23,20 @@ class DomainServiceTest extends TestCase
     public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->domainService = new DomainService($this->em->reveal());
+        $this->domainService = new DomainService($this->em->reveal(), 'default.com');
     }
 
     /**
      * @test
      * @dataProvider provideExcludedDomains
      */
-    public function listDomainsWithoutDelegatesIntoRepository(?string $excludedDomain, array $expectedResult): void
+    public function listDomainsWithoutDelegatesIntoRepository(array $domains, array $expectedResult): void
     {
         $repo = $this->prophesize(DomainRepositoryInterface::class);
         $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
-        $findDomains = $repo->findDomainsWithout($excludedDomain)->willReturn($expectedResult);
+        $findDomains = $repo->findDomainsWithout('default.com')->willReturn($domains);
 
-        $result = $this->domainService->listDomainsWithout($excludedDomain);
+        $result = $this->domainService->listDomainsWithout();
 
         self::assertEquals($expectedResult, $result);
         $getRepo->shouldHaveBeenCalledOnce();
@@ -44,9 +45,13 @@ class DomainServiceTest extends TestCase
 
     public function provideExcludedDomains(): iterable
     {
-        yield 'no excluded domain' => [null, []];
-        yield 'foo.com excluded domain' => ['foo.com', []];
-        yield 'bar.com excluded domain' => ['bar.com', [new Domain('bar.com')]];
-        yield 'baz.com excluded domain' => ['baz.com', [new Domain('foo.com'), new Domain('bar.com')]];
+        $default = new DomainItem('default.com', true);
+
+        yield 'empty list' => [[], [$default]];
+        yield 'one item' => [[new Domain('bar.com')], [$default, new DomainItem('bar.com', false)]];
+        yield 'multiple items' => [
+            [new Domain('foo.com'), new Domain('bar.com')],
+            [$default, new DomainItem('foo.com', false), new DomainItem('bar.com', false)],
+        ];
     }
 }

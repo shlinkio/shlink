@@ -88,7 +88,7 @@ return [
         ],
         Service\ShortUrl\ShortUrlResolver::class => ['em'],
         Service\ShortUrl\ShortCodeHelper::class => ['em'],
-        Domain\DomainService::class => ['em'],
+        Domain\DomainService::class => ['em', 'config.url_shortener.domain.hostname'],
 
         Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
         Util\DoctrineBatchHelper::class => ['em'],

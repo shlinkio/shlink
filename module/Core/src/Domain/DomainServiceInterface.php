@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Domain;
 
-use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 
 interface DomainServiceInterface
 {
     /**
-     * @return Domain[]
+     * @return DomainItem[]
      */
-    public function listDomainsWithout(?string $excludeDomain = null): array;
+    public function listDomainsWithout(): array;
 }
