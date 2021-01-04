@@ -22,7 +22,12 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
     protected function setUp(): void
     {
         $this->repo = $this->prophesize(VisitRepositoryInterface::class);
-        $this->adapter = new VisitsForTagPaginatorAdapter($this->repo->reveal(), 'foo', VisitsParams::fromRawData([]));
+        $this->adapter = new VisitsForTagPaginatorAdapter(
+            $this->repo->reveal(),
+            'foo',
+            VisitsParams::fromRawData([]),
+            null,
+        );
     }
 
     /** @test */
@@ -31,7 +36,7 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         $count = 3;
         $limit = 1;
         $offset = 5;
-        $findVisits = $this->repo->findVisitsByTag('foo', new DateRange(), $limit, $offset)->willReturn([]);
+        $findVisits = $this->repo->findVisitsByTag('foo', new DateRange(), $limit, $offset, null)->willReturn([]);
 
         for ($i = 0; $i < $count; $i++) {
             $this->adapter->getItems($offset, $limit);
@@ -44,7 +49,7 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
     public function repoIsCalledOnlyOnceForCount(): void
     {
         $count = 3;
-        $countVisits = $this->repo->countVisitsByTag('foo', new DateRange())->willReturn(3);
+        $countVisits = $this->repo->countVisitsByTag('foo', new DateRange(), null)->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
             $this->adapter->count();

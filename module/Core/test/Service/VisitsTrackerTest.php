@@ -25,6 +25,7 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function Functional\map;
 use function range;
@@ -98,15 +99,16 @@ class VisitsTrackerTest extends TestCase
     public function throwsExceptionWhenRequestingVisitsForInvalidTag(): void
     {
         $tag = 'foo';
+        $apiKey = new ApiKey();
         $repo = $this->prophesize(TagRepository::class);
-        $count = $repo->count(['name' => $tag])->willReturn(0);
+        $tagExists = $repo->tagExists($tag, $apiKey)->willReturn(false);
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
 
         $this->expectException(TagNotFoundException::class);
-        $count->shouldBeCalledOnce();
+        $tagExists->shouldBeCalledOnce();
         $getRepo->shouldBeCalledOnce();
 
-        $this->visitsTracker->visitsForTag($tag, new VisitsParams());
+        $this->visitsTracker->visitsForTag($tag, new VisitsParams(), $apiKey);
     }
 
     /** @test */
@@ -114,19 +116,19 @@ class VisitsTrackerTest extends TestCase
     {
         $tag = 'foo';
         $repo = $this->prophesize(TagRepository::class);
-        $count = $repo->count(['name' => $tag])->willReturn(1);
+        $tagExists = $repo->tagExists($tag, null)->willReturn(true);
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
 
         $list = map(range(0, 1), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance()));
         $repo2 = $this->prophesize(VisitRepository::class);
-        $repo2->findVisitsByTag($tag, Argument::type(DateRange::class), 1, 0)->willReturn($list);
-        $repo2->countVisitsByTag($tag, Argument::type(DateRange::class))->willReturn(1);
+        $repo2->findVisitsByTag($tag, Argument::type(DateRange::class), 1, 0, null)->willReturn($list);
+        $repo2->countVisitsByTag($tag, Argument::type(DateRange::class), null)->willReturn(1);
         $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
 
         $paginator = $this->visitsTracker->visitsForTag($tag, new VisitsParams());
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentItems()));
-        $count->shouldHaveBeenCalledOnce();
+        $tagExists->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
     }
 }

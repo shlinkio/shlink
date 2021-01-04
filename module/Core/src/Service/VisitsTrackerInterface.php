@@ -28,5 +28,5 @@ interface VisitsTrackerInterface
      * @return Visit[]|Paginator
      * @throws TagNotFoundException
      */
-    public function visitsForTag(string $tag, VisitsParams $params): Paginator;
+    public function visitsForTag(string $tag, VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
 }

@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Happyr\DoctrineSpecification\EntitySpecificationRepository;
+use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use Shlinkio\Shlink\Core\Tag\Spec\CountTagsWithName;
+use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function Functional\map;
 
@@ -46,5 +50,15 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             $query->getResult(),
             fn (array $row) => new TagInfo($row['tag'], (int) $row['shortUrlsCount'], (int) $row['visitsCount']),
         );
+    }
+
+    public function tagExists(string $tag, ?ApiKey $apiKey = null): bool
+    {
+        $result = (int) $this->matchSingleScalarResult(Spec::andX(
+            new CountTagsWithName($tag),
+            new WithApiKeySpecsEnsuringJoin($apiKey),
+        ));
+
+        return $result > 0;
     }
 }

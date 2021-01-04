@@ -131,32 +131,36 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         string $tag,
         ?DateRange $dateRange = null,
         ?int $limit = null,
-        ?int $offset = null
+        ?int $offset = null,
+        ?Specification $spec = null
     ): array {
-        $qb = $this->createVisitsByTagQueryBuilder($tag, $dateRange);
+        $qb = $this->createVisitsByTagQueryBuilder($tag, $dateRange, $spec);
         return $this->resolveVisitsWithNativeQuery($qb, $limit, $offset);
     }
 
-    public function countVisitsByTag(string $tag, ?DateRange $dateRange = null): int
+    public function countVisitsByTag(string $tag, ?DateRange $dateRange = null, ?Specification $spec = null): int
     {
-        $qb = $this->createVisitsByTagQueryBuilder($tag, $dateRange);
+        $qb = $this->createVisitsByTagQueryBuilder($tag, $dateRange, $spec);
         $qb->select('COUNT(v.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    private function createVisitsByTagQueryBuilder(string $tag, ?DateRange $dateRange = null): QueryBuilder
-    {
-        // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later
+    private function createVisitsByTagQueryBuilder(
+        string $tag,
+        ?DateRange $dateRange,
+        ?Specification $spec
+    ): QueryBuilder {
+        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
         // Since they are not strictly provided by the caller, it's reasonably safe
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
            ->join('v.shortUrl', 's')
            ->join('s.tags', 't')
-           ->where($qb->expr()->eq('t.name', '\'' . $tag . '\''));
+           ->where($qb->expr()->eq('t.name', '\'' . $tag . '\'')); // This needs to be concatenated, not bound
 
-        // Apply date range filtering
         $this->applyDatesInline($qb, $dateRange);
+        $this->applySpecification($qb, $spec, 'v');
 
         return $qb;
     }

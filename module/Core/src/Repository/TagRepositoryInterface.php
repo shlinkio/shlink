@@ -8,6 +8,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Happyr\DoctrineSpecification\EntitySpecificationRepositoryInterface;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface TagRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
@@ -17,4 +18,6 @@ interface TagRepositoryInterface extends ObjectRepository, EntitySpecificationRe
      * @return TagInfo[]
      */
     public function findTagsWithInfo(?Specification $spec = null): array;
+
+    public function tagExists(string $tag, ?ApiKey $apiKey = null): bool;
 }

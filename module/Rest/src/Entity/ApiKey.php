@@ -68,9 +68,14 @@ class ApiKey extends AbstractEntity
         return $this->key;
     }
 
-    public function spec(): Specification
+    public function spec(bool $inlined = false): Specification
     {
-        $specs = $this->roles->map(fn (ApiKeyRole $role) => Role::toSpec($role));
+        $specs = $this->roles->map(fn (ApiKeyRole $role) => Role::toSpec($role, $inlined));
         return Spec::andX(...$specs);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->roles->count() === 0;
     }
 }

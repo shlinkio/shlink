@@ -76,18 +76,17 @@ class VisitsTracker implements VisitsTrackerInterface
      * @return Visit[]|Paginator
      * @throws TagNotFoundException
      */
-    public function visitsForTag(string $tag, VisitsParams $params): Paginator
+    public function visitsForTag(string $tag, VisitsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         /** @var TagRepository $tagRepo */
         $tagRepo = $this->em->getRepository(Tag::class);
-        $count = $tagRepo->count(['name' => $tag]);
-        if ($count === 0) {
+        if (! $tagRepo->tagExists($tag, $apiKey)) {
             throw TagNotFoundException::fromTag($tag);
         }
 
         /** @var VisitRepositoryInterface $repo */
         $repo = $this->em->getRepository(Visit::class);
-        $paginator = new Paginator(new VisitsForTagPaginatorAdapter($repo, $tag, $params));
+        $paginator = new Paginator(new VisitsForTagPaginatorAdapter($repo, $tag, $params, $apiKey));
         $paginator->setItemCountPerPage($params->getItemsPerPage())
                   ->setCurrentPageNumber($params->getPage());
 

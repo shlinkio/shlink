@@ -55,8 +55,9 @@ interface VisitRepositoryInterface extends ObjectRepository, EntitySpecification
         string $tag,
         ?DateRange $dateRange = null,
         ?int $limit = null,
-        ?int $offset = null
+        ?int $offset = null,
+        ?Specification $spec = null
     ): array;
 
-    public function countVisitsByTag(string $tag, ?DateRange $dateRange = null): int;
+    public function countVisitsByTag(string $tag, ?DateRange $dateRange = null, ?Specification $spec = null): int;
 }
