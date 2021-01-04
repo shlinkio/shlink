@@ -10,10 +10,10 @@ use Happyr\DoctrineSpecification\Spec;
 
 class BelongsToDomain extends BaseSpecification
 {
-    private int $domainId;
+    private string $domainId;
     private string $dqlAlias;
 
-    public function __construct(int $domainId, ?string $dqlAlias = null)
+    public function __construct(string $domainId, ?string $dqlAlias = null)
     {
         $this->domainId = $domainId;
         $this->dqlAlias = $dqlAlias ?? 's';

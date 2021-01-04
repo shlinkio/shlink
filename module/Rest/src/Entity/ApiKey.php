@@ -83,4 +83,11 @@ class ApiKey extends AbstractEntity
     {
         return $this->roles->exists(fn ($key, ApiKeyRole $role) => $role->name() === $roleName);
     }
+
+    public function getRoleMeta(string $roleName): array
+    {
+        /** @var ApiKeyRole|false $role */
+        $role = $this->roles->filter(fn (ApiKeyRole $role) => $role->name() === $roleName)->first();
+        return ! $role ? [] : $role->meta();
+    }
 }

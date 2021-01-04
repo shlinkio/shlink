@@ -24,10 +24,15 @@ class Role
         }
 
         if ($role->name() === self::DOMAIN_SPECIFIC) {
-            $domainId = $role->meta()['domain_id'] ?? -1;
+            $domainId = self::domainIdFromMeta($role->meta());
             return $inlined ? new BelongsToDomainInlined($domainId) : new BelongsToDomain($domainId);
         }
 
         return Spec::andX();
+    }
+
+    public static function domainIdFromMeta(array $meta): string
+    {
+        return $meta['domain_id'] ?? '-1';
     }
 }

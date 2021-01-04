@@ -45,6 +45,7 @@ return [
             Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class => InvokableFactory::class,
             Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ConfigAbstractFactory::class,
             Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => ConfigAbstractFactory::class,
+            Middleware\ShortUrl\OverrideDomainMiddleware::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -81,6 +82,7 @@ return [
         Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => [
             'config.url_shortener.default_short_codes_length',
         ],
+        Middleware\ShortUrl\OverrideDomainMiddleware::class => [DomainService::class],
     ],
 
 ];

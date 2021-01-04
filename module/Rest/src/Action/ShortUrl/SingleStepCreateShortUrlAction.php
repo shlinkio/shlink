@@ -51,6 +51,8 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
 
         return new CreateShortUrlData($longUrl, [], ShortUrlMeta::fromRawData([
             ShortUrlMetaInputFilter::API_KEY => $apiKeyResult->apiKey(),
+            // This will usually be null, unless this API key enforces one specific domain
+            ShortUrlMetaInputFilter::DOMAIN => $request->getAttribute(ShortUrlMetaInputFilter::DOMAIN),
         ]));
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\Exception;
+namespace ShlinkioTest\Shlink\Core\Exception;
 
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;

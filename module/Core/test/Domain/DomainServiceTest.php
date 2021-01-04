@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
 
 class DomainServiceTest extends TestCase
 {
@@ -53,5 +54,28 @@ class DomainServiceTest extends TestCase
             [new Domain('foo.com'), new Domain('bar.com')],
             [$default, new DomainItem('foo.com', false), new DomainItem('bar.com', false)],
         ];
+    }
+
+    /** @test */
+    public function getDomainThrowsExceptionWhenDomainIsNotFound(): void
+    {
+        $find = $this->em->find(Domain::class, '123')->willReturn(null);
+
+        $this->expectException(DomainNotFoundException::class);
+        $find->shouldBeCalledOnce();
+
+        $this->domainService->getDomain('123');
+    }
+
+    /** @test */
+    public function getDomainReturnsEntityWhenFound(): void
+    {
+        $domain = new Domain('');
+        $find = $this->em->find(Domain::class, '123')->willReturn($domain);
+
+        $result = $this->domainService->getDomain('123');
+
+        self::assertSame($domain, $result);
+        $find->shouldHaveBeenCalledOnce();
     }
 }

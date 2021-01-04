@@ -9,9 +9,9 @@ use Happyr\DoctrineSpecification\Specification\Specification;
 
 class BelongsToDomainInlined implements Specification
 {
-    private int $domainId;
+    private string $domainId;
 
-    public function __construct(int $domainId)
+    public function __construct(string $domainId)
     {
         $this->domainId = $domainId;
     }
