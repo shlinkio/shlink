@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class UpdateTagAction extends AbstractRestAction
 {
@@ -23,17 +24,12 @@ class UpdateTagAction extends AbstractRestAction
         $this->tagService = $tagService;
     }
 
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * to the next middleware component to create the response.
-     *
-     *
-     * @throws \InvalidArgumentException
-     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $this->tagService->renameTag(TagRenaming::fromArray($body));
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
+
+        $this->tagService->renameTag(TagRenaming::fromArray($body), $apiKey);
         return new EmptyResponse();
     }
 }

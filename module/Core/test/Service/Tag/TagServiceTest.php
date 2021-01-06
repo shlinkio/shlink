@@ -10,12 +10,15 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\TagService;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class TagServiceTest extends TestCase
 {
@@ -29,7 +32,7 @@ class TagServiceTest extends TestCase
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->repo = $this->prophesize(TagRepository::class);
-        $this->em->getRepository(Tag::class)->willReturn($this->repo->reveal())->shouldBeCalled();
+        $this->em->getRepository(Tag::class)->willReturn($this->repo->reveal());
 
         $this->service = new TagService($this->em->reveal());
     }
@@ -60,14 +63,29 @@ class TagServiceTest extends TestCase
         $find->shouldHaveBeenCalled();
     }
 
-    /** @test */
-    public function deleteTagsDelegatesOnRepository(): void
+    /**
+     * @test
+     * @dataProvider provideAdminApiKeys
+     */
+    public function deleteTagsDelegatesOnRepository(?ApiKey $apiKey): void
     {
         $delete = $this->repo->deleteByName(['foo', 'bar'])->willReturn(4);
 
-        $this->service->deleteTags(['foo', 'bar']);
+        $this->service->deleteTags(['foo', 'bar'], $apiKey);
 
         $delete->shouldHaveBeenCalled();
+    }
+
+    /** @test */
+    public function deleteTagsThrowsExceptionWhenProvidedApiKeyIsNotAdmin(): void
+    {
+        $delete = $this->repo->deleteByName(['foo', 'bar']);
+
+        $this->expectException(ForbiddenTagOperationException::class);
+        $this->expectExceptionMessage('You are not allowed to delete tags');
+        $delete->shouldNotBeCalled();
+
+        $this->service->deleteTags(['foo', 'bar'], new ApiKey(null, [RoleDefinition::forAuthoredShortUrls()]));
     }
 
     /** @test */
@@ -85,15 +103,18 @@ class TagServiceTest extends TestCase
         $flush->shouldHaveBeenCalled();
     }
 
-    /** @test */
-    public function renameInvalidTagThrowsException(): void
+    /**
+     * @test
+     * @dataProvider provideAdminApiKeys
+     */
+    public function renameInvalidTagThrowsException(?ApiKey $apiKey): void
     {
         $find = $this->repo->findOneBy(Argument::cetera())->willReturn(null);
 
         $find->shouldBeCalled();
         $this->expectException(TagNotFoundException::class);
 
-        $this->service->renameTag(TagRenaming::fromNames('foo', 'bar'));
+        $this->service->renameTag(TagRenaming::fromNames('foo', 'bar'), $apiKey);
     }
 
     /**
@@ -123,8 +144,11 @@ class TagServiceTest extends TestCase
         yield 'different names names' => ['foo', 'bar', 0];
     }
 
-    /** @test */
-    public function renameTagToAnExistingNameThrowsException(): void
+    /**
+     * @test
+     * @dataProvider provideAdminApiKeys
+     */
+    public function renameTagToAnExistingNameThrowsException(?ApiKey $apiKey): void
     {
         $find = $this->repo->findOneBy(Argument::cetera())->willReturn(new Tag('foo'));
         $countTags = $this->repo->count(Argument::cetera())->willReturn(1);
@@ -135,6 +159,27 @@ class TagServiceTest extends TestCase
         $flush->shouldNotBeCalled();
         $this->expectException(TagConflictException::class);
 
-        $this->service->renameTag(TagRenaming::fromNames('foo', 'bar'));
+        $this->service->renameTag(TagRenaming::fromNames('foo', 'bar'), $apiKey);
+    }
+
+    public function provideAdminApiKeys(): iterable
+    {
+        yield 'no API key' => [null];
+        yield 'admin API key' => [new ApiKey()];
+    }
+
+    /** @test */
+    public function renamingTagThrowsExceptionWhenProvidedApiKeyIsNotAdmin(): void
+    {
+        $getRepo = $this->em->getRepository(Tag::class);
+
+        $this->expectExceptionMessage(ForbiddenTagOperationException::class);
+        $this->expectExceptionMessage('You are not allowed to rename tags');
+        $getRepo->shouldNotBeCalled();
+
+        $this->service->renameTag(
+            TagRenaming::fromNames('foo', 'bar'),
+            new ApiKey(null, [RoleDefinition::forAuthoredShortUrls()]),
+        );
     }
 }

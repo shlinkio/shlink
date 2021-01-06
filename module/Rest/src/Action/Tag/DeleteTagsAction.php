@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class DeleteTagsAction extends AbstractRestAction
 {
@@ -26,8 +27,9 @@ class DeleteTagsAction extends AbstractRestAction
     {
         $query = $request->getQueryParams();
         $tags = $query['tags'] ?? [];
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
-        $this->tagService->deleteTags($tags);
+        $this->tagService->deleteTags($tags, $apiKey);
         return new EmptyResponse();
     }
 }

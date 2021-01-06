@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM;
 use Happyr\DoctrineSpecification\Spec;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
@@ -56,9 +57,14 @@ class TagService implements TagServiceInterface
 
     /**
      * @param string[] $tagNames
+     * @throws ForbiddenTagOperationException
      */
-    public function deleteTags(array $tagNames): void
+    public function deleteTags(array $tagNames, ?ApiKey $apiKey = null): void
     {
+        if ($apiKey !== null && ! $apiKey->isAdmin()) {
+            throw ForbiddenTagOperationException::forDeletion();
+        }
+
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
         $repo->deleteByName($tagNames);
@@ -82,9 +88,14 @@ class TagService implements TagServiceInterface
     /**
      * @throws TagNotFoundException
      * @throws TagConflictException
+     * @throws ForbiddenTagOperationException
      */
-    public function renameTag(TagRenaming $renaming): Tag
+    public function renameTag(TagRenaming $renaming, ?ApiKey $apiKey = null): Tag
     {
+        if ($apiKey !== null && ! $apiKey->isAdmin()) {
+            throw ForbiddenTagOperationException::forRenaming();
+        }
+
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
 

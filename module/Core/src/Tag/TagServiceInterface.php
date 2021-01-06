@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Tag;
 
 use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
@@ -26,8 +27,9 @@ interface TagServiceInterface
 
     /**
      * @param string[] $tagNames
+     * @throws ForbiddenTagOperationException
      */
-    public function deleteTags(array $tagNames): void;
+    public function deleteTags(array $tagNames, ?ApiKey $apiKey = null): void;
 
     /**
      * @deprecated
@@ -39,6 +41,7 @@ interface TagServiceInterface
     /**
      * @throws TagNotFoundException
      * @throws TagConflictException
+     * @throws ForbiddenTagOperationException
      */
-    public function renameTag(TagRenaming $renaming): Tag;
+    public function renameTag(TagRenaming $renaming, ?ApiKey $apiKey = null): Tag;
 }
