@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface TagServiceInterface
@@ -39,5 +40,5 @@ interface TagServiceInterface
      * @throws TagNotFoundException
      * @throws TagConflictException
      */
-    public function renameTag(string $oldName, string $newName): Tag;
+    public function renameTag(TagRenaming $renaming): Tag;
 }

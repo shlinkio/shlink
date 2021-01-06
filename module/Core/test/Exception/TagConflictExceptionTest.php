@@ -2,22 +2,23 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Rest\Exception;
+namespace ShlinkioTest\Shlink\Core\Exception;
 
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
+use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 
 use function sprintf;
 
 class TagConflictExceptionTest extends TestCase
 {
     /** @test */
-    public function properlyCreatesExceptionFromNotFoundTag(): void
+    public function properlyCreatesExceptionForExistingTag(): void
     {
         $oldName = 'foo';
         $newName = 'bar';
         $expectedMessage = sprintf('You cannot rename tag %s to %s, because it already exists', $oldName, $newName);
-        $e = TagConflictException::fromExistingTag($oldName, $newName);
+        $e = TagConflictException::forExistingTag(TagRenaming::fromNames($oldName, $newName));
 
         self::assertEquals($expectedMessage, $e->getMessage());
         self::assertEquals($expectedMessage, $e->getDetail());

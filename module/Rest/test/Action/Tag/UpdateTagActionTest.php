@@ -10,6 +10,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\UpdateTagAction;
 
@@ -53,7 +54,7 @@ class UpdateTagActionTest extends TestCase
             'oldName' => 'foo',
             'newName' => 'bar',
         ]);
-        $rename = $this->tagService->renameTag('foo', 'bar')->willReturn(new Tag('bar'));
+        $rename = $this->tagService->renameTag(TagRenaming::fromNames('foo', 'bar'))->willReturn(new Tag('bar'));
 
         $resp = $this->action->handle($request);
 

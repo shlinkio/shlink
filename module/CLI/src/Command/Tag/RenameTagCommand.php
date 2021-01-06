@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\CLI\Command\Tag;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
+use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -42,7 +43,7 @@ class RenameTagCommand extends Command
         $newName = $input->getArgument('newName');
 
         try {
-            $this->tagService->renameTag($oldName, $newName);
+            $this->tagService->renameTag(TagRenaming::fromNames($oldName, $newName));
             $io->success('Tag properly renamed.');
             return ExitCodes::EXIT_SUCCESS;
         } catch (TagNotFoundException | TagConflictException $e) {

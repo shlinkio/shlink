@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\TagService;
 
 class TagServiceTest extends TestCase
@@ -92,7 +93,7 @@ class TagServiceTest extends TestCase
         $find->shouldBeCalled();
         $this->expectException(TagNotFoundException::class);
 
-        $this->service->renameTag('foo', 'bar');
+        $this->service->renameTag(TagRenaming::fromNames('foo', 'bar'));
     }
 
     /**
@@ -107,7 +108,7 @@ class TagServiceTest extends TestCase
         $countTags = $this->repo->count(Argument::cetera())->willReturn($count);
         $flush = $this->em->flush()->willReturn(null);
 
-        $tag = $this->service->renameTag($oldName, $newName);
+        $tag = $this->service->renameTag(TagRenaming::fromNames($oldName, $newName));
 
         self::assertSame($expected, $tag);
         self::assertEquals($newName, (string) $tag);
@@ -134,6 +135,6 @@ class TagServiceTest extends TestCase
         $flush->shouldNotBeCalled();
         $this->expectException(TagConflictException::class);
 
-        $this->service->renameTag('foo', 'bar');
+        $this->service->renameTag(TagRenaming::fromNames('foo', 'bar'));
     }
 }

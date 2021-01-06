@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -82,23 +83,23 @@ class TagService implements TagServiceInterface
      * @throws TagNotFoundException
      * @throws TagConflictException
      */
-    public function renameTag(string $oldName, string $newName): Tag
+    public function renameTag(TagRenaming $renaming): Tag
     {
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
 
         /** @var Tag|null $tag */
-        $tag = $repo->findOneBy(['name' => $oldName]);
+        $tag = $repo->findOneBy(['name' => $renaming->oldName()]);
         if ($tag === null) {
-            throw TagNotFoundException::fromTag($oldName);
+            throw TagNotFoundException::fromTag($renaming->oldName());
         }
 
-        $newNameExists = $newName !== $oldName && $repo->count(['name' => $newName]) > 0;
+        $newNameExists = $renaming->nameChanged() && $repo->count(['name' => $renaming->newName()]) > 0;
         if ($newNameExists) {
-            throw TagConflictException::fromExistingTag($oldName, $newName);
+            throw TagConflictException::forExistingTag($renaming);
         }
 
-        $tag->rename($newName);
+        $tag->rename($renaming->newName());
         $this->em->flush();
 
         return $tag;
