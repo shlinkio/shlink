@@ -29,6 +29,11 @@ class ApiKeyRole extends AbstractEntity
         return $this->meta;
     }
 
+    public function updateMeta(array $newMeta): void
+    {
+        $this->meta = $newMeta;
+    }
+
     public function apiKey(): ApiKey
     {
         return $this->apiKey;

@@ -7,10 +7,12 @@ namespace Shlinkio\Shlink\Rest\Entity;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Exception;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Ramsey\Uuid\Uuid;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 
 class ApiKey extends AbstractEntity
@@ -21,12 +23,20 @@ class ApiKey extends AbstractEntity
     /** @var Collection|ApiKeyRole[] */
     private Collection $roles;
 
-    public function __construct(?Chronos $expirationDate = null)
+    /**
+     * @param RoleDefinition[] $roleDefinitions
+     * @throws Exception
+     */
+    public function __construct(?Chronos $expirationDate = null, array $roleDefinitions = [])
     {
         $this->key = Uuid::uuid4()->toString();
         $this->expirationDate = $expirationDate;
         $this->enabled = true;
         $this->roles = new ArrayCollection();
+
+        foreach ($roleDefinitions as $roleDefinition) {
+            $this->registerRole($roleDefinition);
+        }
     }
 
     public function getExpirationDate(): ?Chronos
@@ -81,13 +91,33 @@ class ApiKey extends AbstractEntity
 
     public function hasRole(string $roleName): bool
     {
-        return $this->roles->exists(fn ($key, ApiKeyRole $role) => $role->name() === $roleName);
+        return $this->roles->containsKey($roleName);
     }
 
     public function getRoleMeta(string $roleName): array
     {
-        /** @var ApiKeyRole|false $role */
-        $role = $this->roles->filter(fn (ApiKeyRole $role) => $role->name() === $roleName)->first();
-        return ! $role ? [] : $role->meta();
+        /** @var ApiKeyRole|null $role */
+        $role = $this->roles->get($roleName);
+        return $role === null ? [] : $role->meta();
+    }
+
+    public function registerRole(RoleDefinition $roleDefinition): void
+    {
+        $roleName = $roleDefinition->roleName();
+        $meta = $roleDefinition->meta();
+
+        if ($this->hasRole($roleName)) {
+            /** @var ApiKeyRole $role */
+            $role = $this->roles->get($roleName);
+            $role->updateMeta($meta);
+        } else {
+            $role = new ApiKeyRole($roleDefinition->roleName(), $roleDefinition->meta(), $this);
+            $this->roles[$roleName] = $role;
+        }
+    }
+
+    public function removeRole(string $roleName): void
+    {
+        $this->roles->remove($roleName);
     }
 }
