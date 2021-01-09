@@ -80,7 +80,7 @@ class ApiKey extends AbstractEntity
 
     public function spec(bool $inlined = false): Specification
     {
-        $specs = $this->roles->map(fn (ApiKeyRole $role) => Role::toSpec($role, $inlined));
+        $specs = $this->roles->map(fn (ApiKeyRole $role) => Role::toSpec($role, $inlined))->getValues();
         return Spec::andX(...$specs);
     }
 
