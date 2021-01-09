@@ -13,6 +13,8 @@ use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class DomainServiceTest extends TestCase
 {
@@ -31,13 +33,13 @@ class DomainServiceTest extends TestCase
      * @test
      * @dataProvider provideExcludedDomains
      */
-    public function listDomainsDelegatesIntoRepository(array $domains, array $expectedResult): void
+    public function listDomainsDelegatesIntoRepository(array $domains, array $expectedResult, ?ApiKey $apiKey): void
     {
         $repo = $this->prophesize(DomainRepositoryInterface::class);
         $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
-        $findDomains = $repo->findDomainsWithout('default.com', null)->willReturn($domains);
+        $findDomains = $repo->findDomainsWithout('default.com', $apiKey)->willReturn($domains);
 
-        $result = $this->domainService->listDomains();
+        $result = $this->domainService->listDomains($apiKey);
 
         self::assertEquals($expectedResult, $result);
         $getRepo->shouldHaveBeenCalledOnce();
@@ -47,12 +49,43 @@ class DomainServiceTest extends TestCase
     public function provideExcludedDomains(): iterable
     {
         $default = new DomainItem('default.com', true);
+        $adminApiKey = new ApiKey();
+        $domainSpecificApiKey = new ApiKey(null, [RoleDefinition::forDomain('123')]);
 
-        yield 'empty list' => [[], [$default]];
-        yield 'one item' => [[new Domain('bar.com')], [$default, new DomainItem('bar.com', false)]];
-        yield 'multiple items' => [
+        yield 'empty list without API key' => [[], [$default], null];
+        yield 'one item without API key' => [
+            [new Domain('bar.com')],
+            [$default, new DomainItem('bar.com', false)],
+            null,
+        ];
+        yield 'multiple items without API key' => [
             [new Domain('foo.com'), new Domain('bar.com')],
             [$default, new DomainItem('foo.com', false), new DomainItem('bar.com', false)],
+            null,
+        ];
+
+        yield 'empty list with admin API key' => [[], [$default], $adminApiKey];
+        yield 'one item with admin API key' => [
+            [new Domain('bar.com')],
+            [$default, new DomainItem('bar.com', false)],
+            $adminApiKey,
+        ];
+        yield 'multiple items with admin API key' => [
+            [new Domain('foo.com'), new Domain('bar.com')],
+            [$default, new DomainItem('foo.com', false), new DomainItem('bar.com', false)],
+            $adminApiKey,
+        ];
+
+        yield 'empty list with domain-specific API key' => [[], [], $domainSpecificApiKey];
+        yield 'one item with domain-specific API key' => [
+            [new Domain('bar.com')],
+            [new DomainItem('bar.com', false)],
+            $domainSpecificApiKey,
+        ];
+        yield 'multiple items with domain-specific API key' => [
+            [new Domain('foo.com'), new Domain('bar.com')],
+            [new DomainItem('foo.com', false), new DomainItem('bar.com', false)],
+            $domainSpecificApiKey,
         ];
     }
 

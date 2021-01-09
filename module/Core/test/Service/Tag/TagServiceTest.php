@@ -50,14 +50,17 @@ class TagServiceTest extends TestCase
         $match->shouldHaveBeenCalled();
     }
 
-    /** @test */
-    public function tagsInfoDelegatesOnRepository(): void
+    /**
+     * @test
+     * @dataProvider provideAdminApiKeys
+     */
+    public function tagsInfoDelegatesOnRepository(?ApiKey $apiKey): void
     {
         $expected = [new TagInfo(new Tag('foo'), 1, 1), new TagInfo(new Tag('bar'), 3, 10)];
 
-        $find = $this->repo->findTagsWithInfo(null)->willReturn($expected);
+        $find = $this->repo->findTagsWithInfo($apiKey === null ? null : $apiKey->spec())->willReturn($expected);
 
-        $result = $this->service->tagsInfo();
+        $result = $this->service->tagsInfo($apiKey);
 
         self::assertEquals($expected, $result);
         $find->shouldHaveBeenCalled();

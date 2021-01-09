@@ -49,8 +49,11 @@ class ShortUrlServiceTest extends TestCase
         );
     }
 
-    /** @test */
-    public function listedUrlsAreReturnedFromEntityManager(): void
+    /**
+     * @test
+     * @dataProvider provideApiKeys
+     */
+    public function listedUrlsAreReturnedFromEntityManager(?ApiKey $apiKey): void
     {
         $list = [
             new ShortUrl(''),
@@ -64,25 +67,35 @@ class ShortUrlServiceTest extends TestCase
         $repo->countList(Argument::cetera())->willReturn(count($list))->shouldBeCalledOnce();
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $list = $this->service->listShortUrls(ShortUrlsParams::emptyInstance());
+        $list = $this->service->listShortUrls(ShortUrlsParams::emptyInstance(), $apiKey);
         self::assertEquals(4, $list->getCurrentItemCount());
     }
 
-    /** @test */
-    public function providedTagsAreGetFromRepoAndSetToTheShortUrl(): void
+    /**
+     * @test
+     * @dataProvider provideApiKeys
+     */
+    public function providedTagsAreGetFromRepoAndSetToTheShortUrl(?ApiKey $apiKey): void
     {
         $shortUrl = $this->prophesize(ShortUrl::class);
         $shortUrl->setTags(Argument::any())->shouldBeCalledOnce();
         $shortCode = 'abc123';
-        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), null)->willReturn($shortUrl->reveal())
-                                                                                     ->shouldBeCalledOnce();
+        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey)
+            ->willReturn($shortUrl->reveal())
+            ->shouldBeCalledOnce();
 
         $tagRepo = $this->prophesize(EntityRepository::class);
         $tagRepo->findOneBy(['name' => 'foo'])->willReturn(new Tag('foo'))->shouldBeCalledOnce();
         $tagRepo->findOneBy(['name' => 'bar'])->willReturn(null)->shouldBeCalledOnce();
         $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
 
-        $this->service->setTagsByShortCode(new ShortUrlIdentifier($shortCode), ['foo', 'bar']);
+        $this->service->setTagsByShortCode(new ShortUrlIdentifier($shortCode), ['foo', 'bar'], $apiKey);
+    }
+
+    public function provideApiKeys(): iterable
+    {
+        yield 'no API key' => [null];
+        yield 'API key' => [new ApiKey()];
     }
 
     /**

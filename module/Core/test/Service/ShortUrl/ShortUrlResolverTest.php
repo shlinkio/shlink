@@ -18,6 +18,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolver;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function Functional\map;
 use function range;
@@ -35,37 +36,49 @@ class ShortUrlResolverTest extends TestCase
         $this->urlResolver = new ShortUrlResolver($this->em->reveal());
     }
 
-    /** @test */
-    public function shortCodeIsProperlyParsed(): void
+    /**
+     * @test
+     * @dataProvider provideApiKeys
+     */
+    public function shortCodeIsProperlyParsed(?ApiKey $apiKey): void
     {
         $shortUrl = new ShortUrl('expected_url');
         $shortCode = $shortUrl->getShortCode();
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $findOne = $repo->findOne($shortCode, null, null)->willReturn($shortUrl);
+        $findOne = $repo->findOne($shortCode, null, $apiKey !== null ? $apiKey->spec() : null)->willReturn($shortUrl);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $result = $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode));
+        $result = $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey);
 
         self::assertSame($shortUrl, $result);
         $findOne->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
     }
 
-    /** @test */
-    public function exceptionIsThrownIfShortcodeIsNotFound(): void
+    /**
+     * @test
+     * @dataProvider provideApiKeys
+     */
+    public function exceptionIsThrownIfShortcodeIsNotFound(?ApiKey $apiKey): void
     {
         $shortCode = 'abc123';
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $findOne = $repo->findOne($shortCode, null, null)->willReturn(null);
-        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
+        $findOne = $repo->findOne($shortCode, null, $apiKey !== null ? $apiKey->spec() : null)->willReturn(null);
+        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal(), $apiKey);
 
         $this->expectException(ShortUrlNotFoundException::class);
         $findOne->shouldBeCalledOnce();
         $getRepo->shouldBeCalledOnce();
 
-        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode));
+        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey);
+    }
+
+    public function provideApiKeys(): iterable
+    {
+        yield 'no API key' => [null];
+        yield 'API key' => [new ApiKey()];
     }
 
     /** @test */

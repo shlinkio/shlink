@@ -43,7 +43,7 @@ class VisitsTrackerTest extends TestCase
         $this->em = $this->prophesize(EntityManager::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
 
-        $this->visitsTracker  = new VisitsTracker($this->em->reveal(), $this->eventDispatcher->reveal(), true);
+        $this->visitsTracker = new VisitsTracker($this->em->reveal(), $this->eventDispatcher->reveal(), true);
     }
 
     /** @test */
@@ -59,23 +59,27 @@ class VisitsTrackerTest extends TestCase
         $this->eventDispatcher->dispatch(Argument::type(ShortUrlVisited::class))->shouldHaveBeenCalled();
     }
 
-    /** @test */
-    public function infoReturnsVisitsForCertainShortCode(): void
+    /**
+     * @test
+     * @dataProvider provideApiKeys
+     */
+    public function infoReturnsVisitsForCertainShortCode(?ApiKey $apiKey): void
     {
         $shortCode = '123ABC';
+        $spec = $apiKey === null ? null : $apiKey->spec();
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $count = $repo->shortCodeIsInUse($shortCode, null, null)->willReturn(true);
+        $count = $repo->shortCodeIsInUse($shortCode, null, $spec)->willReturn(true);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
 
         $list = map(range(0, 1), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance()));
         $repo2 = $this->prophesize(VisitRepository::class);
-        $repo2->findVisitsByShortCode($shortCode, null, Argument::type(DateRange::class), 1, 0, null)->willReturn(
+        $repo2->findVisitsByShortCode($shortCode, null, Argument::type(DateRange::class), 1, 0, $spec)->willReturn(
             $list,
         );
-        $repo2->countVisitsByShortCode($shortCode, null, Argument::type(DateRange::class), null)->willReturn(1);
+        $repo2->countVisitsByShortCode($shortCode, null, Argument::type(DateRange::class), $spec)->willReturn(1);
         $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
 
-        $paginator = $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), new VisitsParams());
+        $paginator = $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), new VisitsParams(), $apiKey);
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentItems()));
         $count->shouldHaveBeenCalledOnce();
@@ -111,24 +115,34 @@ class VisitsTrackerTest extends TestCase
         $this->visitsTracker->visitsForTag($tag, new VisitsParams(), $apiKey);
     }
 
-    /** @test */
-    public function visitsForTagAreReturnedAsExpected(): void
+    /**
+     * @test
+     * @dataProvider provideApiKeys
+     */
+    public function visitsForTagAreReturnedAsExpected(?ApiKey $apiKey): void
     {
         $tag = 'foo';
         $repo = $this->prophesize(TagRepository::class);
-        $tagExists = $repo->tagExists($tag, null)->willReturn(true);
+        $tagExists = $repo->tagExists($tag, $apiKey)->willReturn(true);
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
 
+        $spec = $apiKey === null ? null : $apiKey->spec();
         $list = map(range(0, 1), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance()));
         $repo2 = $this->prophesize(VisitRepository::class);
-        $repo2->findVisitsByTag($tag, Argument::type(DateRange::class), 1, 0, null)->willReturn($list);
-        $repo2->countVisitsByTag($tag, Argument::type(DateRange::class), null)->willReturn(1);
+        $repo2->findVisitsByTag($tag, Argument::type(DateRange::class), 1, 0, $spec)->willReturn($list);
+        $repo2->countVisitsByTag($tag, Argument::type(DateRange::class), $spec)->willReturn(1);
         $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
 
-        $paginator = $this->visitsTracker->visitsForTag($tag, new VisitsParams());
+        $paginator = $this->visitsTracker->visitsForTag($tag, new VisitsParams(), $apiKey);
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentItems()));
         $tagExists->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideApiKeys(): iterable
+    {
+        yield 'no API key' => [null];
+        yield 'API key' => [new ApiKey()];
     }
 }
