@@ -145,15 +145,18 @@ class TagRepositoryTest extends DatabaseTestCase
         self::assertTrue($this->repo->tagExists('bar'));
         self::assertTrue($this->repo->tagExists('baz'));
         self::assertTrue($this->repo->tagExists('another'));
+        self::assertFalse($this->repo->tagExists('invalid'));
 
         self::assertTrue($this->repo->tagExists('foo', $authorApiKey));
         self::assertTrue($this->repo->tagExists('bar', $authorApiKey));
         self::assertTrue($this->repo->tagExists('baz', $authorApiKey));
         self::assertFalse($this->repo->tagExists('another', $authorApiKey));
+        self::assertFalse($this->repo->tagExists('invalid', $authorApiKey));
 
         self::assertFalse($this->repo->tagExists('foo', $domainApiKey));
         self::assertFalse($this->repo->tagExists('bar', $domainApiKey));
         self::assertFalse($this->repo->tagExists('baz', $domainApiKey));
         self::assertTrue($this->repo->tagExists('another', $domainApiKey));
+        self::assertFalse($this->repo->tagExists('invalid', $domainApiKey));
     }
 }
