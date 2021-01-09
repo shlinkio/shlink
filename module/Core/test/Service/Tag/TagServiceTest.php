@@ -88,7 +88,7 @@ class TagServiceTest extends TestCase
         $this->expectExceptionMessage('You are not allowed to delete tags');
         $delete->shouldNotBeCalled();
 
-        $this->service->deleteTags(['foo', 'bar'], new ApiKey(null, [RoleDefinition::forAuthoredShortUrls()]));
+        $this->service->deleteTags(['foo', 'bar'], ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls()));
     }
 
     /** @test */
@@ -182,7 +182,7 @@ class TagServiceTest extends TestCase
 
         $this->service->renameTag(
             TagRenaming::fromNames('foo', 'bar'),
-            new ApiKey(null, [RoleDefinition::forAuthoredShortUrls()]),
+            ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls()),
         );
     }
 }

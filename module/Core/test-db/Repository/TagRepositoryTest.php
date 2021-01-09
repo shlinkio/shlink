@@ -112,9 +112,9 @@ class TagRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($domain);
         $this->getEntityManager()->flush();
 
-        $authorApiKey = new ApiKey(null, [RoleDefinition::forAuthoredShortUrls()]);
+        $authorApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
         $this->getEntityManager()->persist($authorApiKey);
-        $domainApiKey = new ApiKey(null, [RoleDefinition::forDomain($domain->getId())]);
+        $domainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($domain->getId()));
         $this->getEntityManager()->persist($domainApiKey);
 
         $names = ['foo', 'bar', 'baz', 'another'];

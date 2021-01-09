@@ -331,13 +331,13 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $apiKey = new ApiKey(null, [RoleDefinition::forAuthoredShortUrls()]);
+        $apiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
         $this->getEntityManager()->persist($apiKey);
-        $otherApiKey = new ApiKey(null, [RoleDefinition::forAuthoredShortUrls()]);
+        $otherApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
         $this->getEntityManager()->persist($otherApiKey);
-        $wrongDomainApiKey = new ApiKey(null, [RoleDefinition::forDomain($wrongDomain->getId())]);
+        $wrongDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($wrongDomain->getId()));
         $this->getEntityManager()->persist($wrongDomainApiKey);
-        $rightDomainApiKey = new ApiKey(null, [RoleDefinition::forDomain($rightDomain->getId())]);
+        $rightDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($rightDomain->getId()));
         $this->getEntityManager()->persist($rightDomainApiKey);
 
         $shortUrl = new ShortUrl('foo', ShortUrlMeta::fromRawData(

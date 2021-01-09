@@ -50,7 +50,7 @@ class DomainServiceTest extends TestCase
     {
         $default = new DomainItem('default.com', true);
         $adminApiKey = new ApiKey();
-        $domainSpecificApiKey = new ApiKey(null, [RoleDefinition::forDomain('123')]);
+        $domainSpecificApiKey = ApiKey::withRoles(RoleDefinition::forDomain('123'));
 
         yield 'empty list without API key' => [[], [$default], null];
         yield 'one item without API key' => [

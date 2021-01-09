@@ -53,9 +53,9 @@ class DomainRepositoryTest extends DatabaseTestCase
     /** @test */
     public function findDomainsReturnsJustThoseMatchingProvidedApiKey(): void
     {
-        $authorApiKey = new ApiKey(null, [RoleDefinition::forAuthoredShortUrls()]);
+        $authorApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
         $this->getEntityManager()->persist($authorApiKey);
-        $authorAndDomainApiKey = new ApiKey(null, [RoleDefinition::forAuthoredShortUrls()]);
+        $authorAndDomainApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
         $this->getEntityManager()->persist($authorAndDomainApiKey);
 
         $fooDomain = new Domain('foo.com');
@@ -74,10 +74,10 @@ class DomainRepositoryTest extends DatabaseTestCase
 
         $authorAndDomainApiKey->registerRole(RoleDefinition::forDomain($fooDomain->getId()));
 
-        $fooDomainApiKey = new ApiKey(null, [RoleDefinition::forDomain($fooDomain->getId())]);
+        $fooDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($fooDomain->getId()));
         $this->getEntityManager()->persist($fooDomainApiKey);
 
-        $barDomainApiKey = new ApiKey(null, [RoleDefinition::forDomain($barDomain->getId())]);
+        $barDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($barDomain->getId()));
         $this->getEntityManager()->persist($fooDomainApiKey);
 
         $this->getEntityManager()->flush();
