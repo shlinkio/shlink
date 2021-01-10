@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Rest\Service;
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function sprintf;
@@ -20,9 +21,13 @@ class ApiKeyService implements ApiKeyServiceInterface
         $this->em = $em;
     }
 
-    public function create(?Chronos $expirationDate = null): ApiKey
+    public function create(?Chronos $expirationDate = null, RoleDefinition ...$roleDefinitions): ApiKey
     {
         $key = new ApiKey($expirationDate);
+        foreach ($roleDefinitions as $definition) {
+            $key->registerRole($definition);
+        }
+
         $this->em->persist($key);
         $this->em->flush();
 
@@ -31,7 +36,6 @@ class ApiKeyService implements ApiKeyServiceInterface
 
     public function check(string $key): ApiKeyCheckResult
     {
-        /** @var ApiKey|null $apiKey */
         $apiKey = $this->getByKey($key);
         return new ApiKeyCheckResult($apiKey);
     }
@@ -41,7 +45,6 @@ class ApiKeyService implements ApiKeyServiceInterface
      */
     public function disable(string $key): ApiKey
     {
-        /** @var ApiKey|null $apiKey */
         $apiKey = $this->getByKey($key);
         if ($apiKey === null) {
             throw new InvalidArgumentException(sprintf('API key "%s" does not exist and can\'t be disabled', $key));

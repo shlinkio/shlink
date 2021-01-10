@@ -12,6 +12,7 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
@@ -31,21 +32,26 @@ class ApiKeyServiceTest extends TestCase
     /**
      * @test
      * @dataProvider provideCreationDate
+     * @param RoleDefinition[] $roles
      */
-    public function apiKeyIsProperlyCreated(?Chronos $date): void
+    public function apiKeyIsProperlyCreated(?Chronos $date, array $roles): void
     {
         $this->em->flush()->shouldBeCalledOnce();
         $this->em->persist(Argument::type(ApiKey::class))->shouldBeCalledOnce();
 
-        $key = $this->service->create($date);
+        $key = $this->service->create($date, ...$roles);
 
         self::assertEquals($date, $key->getExpirationDate());
+        foreach ($roles as $roleDefinition) {
+            self::assertTrue($key->hasRole($roleDefinition->roleName()));
+        }
     }
 
     public function provideCreationDate(): iterable
     {
-        yield 'no expiration date' => [null];
-        yield 'expiration date' => [Chronos::parse('2030-01-01')];
+        yield 'no expiration date' => [null, []];
+        yield 'expiration date' => [Chronos::parse('2030-01-01'), []];
+        yield 'roles' => [null, [RoleDefinition::forDomain('123'), RoleDefinition::forAuthoredShortUrls()]];
     }
 
     /**
