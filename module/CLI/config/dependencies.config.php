@@ -8,7 +8,6 @@ use Doctrine\DBAL\Connection;
 use GeoIp2\Database\Reader;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
-use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Service;
@@ -32,7 +31,8 @@ return [
             SymfonyCli\Helper\ProcessHelper::class => ProcessHelperFactory::class,
             PhpExecutableFinder::class => InvokableFactory::class,
 
-            GeolocationDbUpdater::class => ConfigAbstractFactory::class,
+            Util\GeolocationDbUpdater::class => ConfigAbstractFactory::class,
+            ApiKey\RoleResolver::class => ConfigAbstractFactory::class,
 
             Command\ShortUrl\GenerateShortUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ResolveUrlCommand::class => ConfigAbstractFactory::class,
@@ -59,7 +59,8 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, LOCAL_LOCK_FACTORY],
+        Util\GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, LOCAL_LOCK_FACTORY],
+        ApiKey\RoleResolver::class => [DomainService::class],
 
         Command\ShortUrl\GenerateShortUrlCommand::class => [
             Service\UrlShortener::class,
@@ -75,10 +76,10 @@ return [
             Visit\VisitLocator::class,
             IpLocationResolverInterface::class,
             LockFactory::class,
-            GeolocationDbUpdater::class,
+            Util\GeolocationDbUpdater::class,
         ],
 
-        Command\Api\GenerateKeyCommand::class => [ApiKeyService::class],
+        Command\Api\GenerateKeyCommand::class => [ApiKeyService::class, ApiKey\RoleResolver::class],
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class],
         Command\Api\ListKeysCommand::class => [ApiKeyService::class],
 
