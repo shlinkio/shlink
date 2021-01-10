@@ -105,9 +105,9 @@ class ListShortUrlsTest extends ApiTestCase
      * @test
      * @dataProvider provideFilteredLists
      */
-    public function shortUrlsAreProperlyListed(array $query, array $expectedShortUrls): void
+    public function shortUrlsAreProperlyListed(array $query, array $expectedShortUrls, string $apiKey): void
     {
-        $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls', [RequestOptions::QUERY => $query]);
+        $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls', [RequestOptions::QUERY => $query], $apiKey);
         $respPayload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_OK, $resp->getStatusCode());
@@ -128,7 +128,7 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_SLUG,
             self::SHORT_URL_CUSTOM_DOMAIN,
-        ]];
+        ], 'valid_api_key'];
         yield [['orderBy' => 'shortCode'], [
             self::SHORT_URL_SHLINK,
             self::SHORT_URL_CUSTOM_SLUG,
@@ -136,7 +136,7 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_META,
             self::SHORT_URL_DOCS,
             self::SHORT_URL_CUSTOM_DOMAIN,
-        ]];
+        ], 'valid_api_key'];
         yield [['orderBy' => ['shortCode' => 'DESC']], [ // Deprecated
             self::SHORT_URL_DOCS,
             self::SHORT_URL_CUSTOM_DOMAIN,
@@ -144,7 +144,7 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
             self::SHORT_URL_CUSTOM_SLUG,
             self::SHORT_URL_SHLINK,
-        ]];
+        ], 'valid_api_key'];
         yield [['orderBy' => 'shortCode-DESC'], [
             self::SHORT_URL_DOCS,
             self::SHORT_URL_CUSTOM_DOMAIN,
@@ -152,34 +152,42 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
             self::SHORT_URL_CUSTOM_SLUG,
             self::SHORT_URL_SHLINK,
-        ]];
+        ], 'valid_api_key'];
         yield [['startDate' => Chronos::parse('2018-12-01')->toAtomString()], [
             self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_SLUG,
             self::SHORT_URL_CUSTOM_DOMAIN,
-        ]];
+        ], 'valid_api_key'];
         yield [['endDate' => Chronos::parse('2018-12-01')->toAtomString()], [
             self::SHORT_URL_SHLINK,
             self::SHORT_URL_DOCS,
             self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
-        ]];
+        ], 'valid_api_key'];
         yield [['tags' => ['foo']], [
             self::SHORT_URL_SHLINK,
             self::SHORT_URL_META,
-        ]];
+        ], 'valid_api_key'];
         yield [['tags' => ['bar']], [
             self::SHORT_URL_META,
-        ]];
+        ], 'valid_api_key'];
         yield [['tags' => ['foo'], 'endDate' => Chronos::parse('2018-12-01')->toAtomString()], [
             self::SHORT_URL_SHLINK,
-        ]];
+        ], 'valid_api_key'];
         yield [['searchTerm' => 'alejandro'], [
             self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_DOMAIN,
-        ]];
+        ], 'valid_api_key'];
         yield [['searchTerm' => 'example.com'], [
             self::SHORT_URL_CUSTOM_DOMAIN,
-        ]];
+        ], 'valid_api_key'];
+        yield [[], [
+            self::SHORT_URL_SHLINK,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG,
+        ], 'author_api_key'];
+        yield [[], [
+            self::SHORT_URL_CUSTOM_DOMAIN,
+        ], 'domain_api_key'];
     }
 
     private function buildPagination(int $itemsCount): array
