@@ -19,9 +19,11 @@ use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
+use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
 
 class TagServiceTest extends TestCase
 {
+    use ApiKeyHelpersTrait;
     use ProphecyTrait;
 
     private TagService $service;
@@ -163,12 +165,6 @@ class TagServiceTest extends TestCase
         $this->expectException(TagConflictException::class);
 
         $this->service->renameTag(TagRenaming::fromNames('foo', 'bar'), $apiKey);
-    }
-
-    public function provideAdminApiKeys(): iterable
-    {
-        yield 'no API key' => [null];
-        yield 'admin API key' => [new ApiKey()];
     }
 
     /** @test */

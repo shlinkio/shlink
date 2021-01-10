@@ -26,12 +26,14 @@ use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
+use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
 
 use function Functional\map;
 use function range;
 
 class VisitsTrackerTest extends TestCase
 {
+    use ApiKeyHelpersTrait;
     use ProphecyTrait;
 
     private VisitsTracker $visitsTracker;
@@ -61,7 +63,7 @@ class VisitsTrackerTest extends TestCase
 
     /**
      * @test
-     * @dataProvider provideApiKeys
+     * @dataProvider provideAdminApiKeys
      */
     public function infoReturnsVisitsForCertainShortCode(?ApiKey $apiKey): void
     {
@@ -117,7 +119,7 @@ class VisitsTrackerTest extends TestCase
 
     /**
      * @test
-     * @dataProvider provideApiKeys
+     * @dataProvider provideAdminApiKeys
      */
     public function visitsForTagAreReturnedAsExpected(?ApiKey $apiKey): void
     {
@@ -138,11 +140,5 @@ class VisitsTrackerTest extends TestCase
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentItems()));
         $tagExists->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
-    }
-
-    public function provideApiKeys(): iterable
-    {
-        yield 'no API key' => [null];
-        yield 'API key' => [new ApiKey()];
     }
 }

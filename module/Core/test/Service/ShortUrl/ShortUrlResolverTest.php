@@ -19,12 +19,14 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolver;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
+use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
 
 use function Functional\map;
 use function range;
 
 class ShortUrlResolverTest extends TestCase
 {
+    use ApiKeyHelpersTrait;
     use ProphecyTrait;
 
     private ShortUrlResolver $urlResolver;
@@ -38,7 +40,7 @@ class ShortUrlResolverTest extends TestCase
 
     /**
      * @test
-     * @dataProvider provideApiKeys
+     * @dataProvider provideAdminApiKeys
      */
     public function shortCodeIsProperlyParsed(?ApiKey $apiKey): void
     {
@@ -58,7 +60,7 @@ class ShortUrlResolverTest extends TestCase
 
     /**
      * @test
-     * @dataProvider provideApiKeys
+     * @dataProvider provideAdminApiKeys
      */
     public function exceptionIsThrownIfShortcodeIsNotFound(?ApiKey $apiKey): void
     {
@@ -73,12 +75,6 @@ class ShortUrlResolverTest extends TestCase
         $getRepo->shouldBeCalledOnce();
 
         $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey);
-    }
-
-    public function provideApiKeys(): iterable
-    {
-        yield 'no API key' => [null];
-        yield 'API key' => [new ApiKey()];
     }
 
     /** @test */

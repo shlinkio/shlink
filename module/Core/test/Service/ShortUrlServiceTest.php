@@ -21,11 +21,13 @@ use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
+use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
 
 use function count;
 
 class ShortUrlServiceTest extends TestCase
 {
+    use ApiKeyHelpersTrait;
     use ProphecyTrait;
 
     private ShortUrlService $service;
@@ -51,7 +53,7 @@ class ShortUrlServiceTest extends TestCase
 
     /**
      * @test
-     * @dataProvider provideApiKeys
+     * @dataProvider provideAdminApiKeys
      */
     public function listedUrlsAreReturnedFromEntityManager(?ApiKey $apiKey): void
     {
@@ -73,7 +75,7 @@ class ShortUrlServiceTest extends TestCase
 
     /**
      * @test
-     * @dataProvider provideApiKeys
+     * @dataProvider provideAdminApiKeys
      */
     public function providedTagsAreGetFromRepoAndSetToTheShortUrl(?ApiKey $apiKey): void
     {
@@ -90,12 +92,6 @@ class ShortUrlServiceTest extends TestCase
         $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
 
         $this->service->setTagsByShortCode(new ShortUrlIdentifier($shortCode), ['foo', 'bar'], $apiKey);
-    }
-
-    public function provideApiKeys(): iterable
-    {
-        yield 'no API key' => [null];
-        yield 'API key' => [new ApiKey()];
     }
 
     /**
