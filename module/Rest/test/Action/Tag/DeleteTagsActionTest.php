@@ -6,10 +6,12 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\DeleteTagsAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class DeleteTagsActionTest extends TestCase
 {
@@ -30,8 +32,10 @@ class DeleteTagsActionTest extends TestCase
      */
     public function processDelegatesIntoService(?array $tags): void
     {
-        $request = (new ServerRequest())->withQueryParams(['tags' => $tags]);
-        $deleteTags = $this->tagService->deleteTags($tags ?: []);
+        $request = (new ServerRequest())
+            ->withQueryParams(['tags' => $tags])
+            ->withAttribute(ApiKey::class, new ApiKey());
+        $deleteTags = $this->tagService->deleteTags($tags ?: [], Argument::type(ApiKey::class));
 
         $response = $this->action->handle($request);
 

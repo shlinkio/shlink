@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlService implements ShortUrlServiceInterface
 {
@@ -39,11 +40,11 @@ class ShortUrlService implements ShortUrlServiceInterface
     /**
      * @return ShortUrl[]|Paginator
      */
-    public function listShortUrls(ShortUrlsParams $params): Paginator
+    public function listShortUrls(ShortUrlsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        $paginator = new Paginator(new ShortUrlRepositoryAdapter($repo, $params));
+        $paginator = new Paginator(new ShortUrlRepositoryAdapter($repo, $params, $apiKey));
         $paginator->setItemCountPerPage($params->itemsPerPage())
                   ->setCurrentPageNumber($params->page());
 
@@ -54,9 +55,9 @@ class ShortUrlService implements ShortUrlServiceInterface
      * @param string[] $tags
      * @throws ShortUrlNotFoundException
      */
-    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags = []): ShortUrl
+    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags, ?ApiKey $apiKey = null): ShortUrl
     {
-        $shortUrl = $this->urlResolver->resolveShortUrl($identifier);
+        $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
         $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
 
         $this->em->flush();
@@ -68,13 +69,16 @@ class ShortUrlService implements ShortUrlServiceInterface
      * @throws ShortUrlNotFoundException
      * @throws InvalidUrlException
      */
-    public function updateMetadataByShortCode(ShortUrlIdentifier $identifier, ShortUrlEdit $shortUrlEdit): ShortUrl
-    {
+    public function updateMetadataByShortCode(
+        ShortUrlIdentifier $identifier,
+        ShortUrlEdit $shortUrlEdit,
+        ?ApiKey $apiKey = null
+    ): ShortUrl {
         if ($shortUrlEdit->hasLongUrl()) {
             $this->urlValidator->validateUrl($shortUrlEdit->longUrl(), $shortUrlEdit->doValidateUrl());
         }
 
-        $shortUrl = $this->urlResolver->resolveShortUrl($identifier);
+        $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
         $shortUrl->update($shortUrlEdit);
 
         $this->em->flush();

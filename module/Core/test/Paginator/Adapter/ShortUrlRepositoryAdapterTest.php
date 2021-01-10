@@ -11,6 +11,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlRepositoryAdapterTest extends TestCase
 {
@@ -41,11 +42,11 @@ class ShortUrlRepositoryAdapterTest extends TestCase
             'endDate' => $endDate,
             'orderBy' => $orderBy,
         ]);
-        $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $params);
+        $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $params, null);
         $orderBy = $params->orderBy();
         $dateRange = $params->dateRange();
 
-        $this->repo->findList(10, 5, $searchTerm, $tags, $orderBy, $dateRange)->shouldBeCalledOnce();
+        $this->repo->findList(10, 5, $searchTerm, $tags, $orderBy, $dateRange, null)->shouldBeCalledOnce();
         $adapter->getItems(5, 10);
     }
 
@@ -65,10 +66,11 @@ class ShortUrlRepositoryAdapterTest extends TestCase
             'startDate' => $startDate,
             'endDate' => $endDate,
         ]);
-        $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $params);
+        $apiKey = new ApiKey();
+        $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $params, $apiKey);
         $dateRange = $params->dateRange();
 
-        $this->repo->countList($searchTerm, $tags, $dateRange)->shouldBeCalledOnce();
+        $this->repo->countList($searchTerm, $tags, $dateRange, $apiKey->spec())->shouldBeCalledOnce();
         $adapter->count();
     }
 

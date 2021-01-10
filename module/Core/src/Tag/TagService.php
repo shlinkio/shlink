@@ -6,13 +6,18 @@ namespace Shlinkio\Shlink\Core\Tag;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM;
+use Happyr\DoctrineSpecification\Spec;
 use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
+use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class TagService implements TagServiceInterface
 {
@@ -28,28 +33,38 @@ class TagService implements TagServiceInterface
     /**
      * @return Tag[]
      */
-    public function listTags(): array
+    public function listTags(?ApiKey $apiKey = null): array
     {
+        /** @var TagRepository $repo */
+        $repo = $this->em->getRepository(Tag::class);
         /** @var Tag[] $tags */
-        $tags = $this->em->getRepository(Tag::class)->findBy([], ['name' => 'ASC']);
+        $tags = $repo->match(Spec::andX(
+            Spec::orderBy('name'),
+            new WithApiKeySpecsEnsuringJoin($apiKey),
+        ));
         return $tags;
     }
 
     /**
      * @return TagInfo[]
      */
-    public function tagsInfo(): array
+    public function tagsInfo(?ApiKey $apiKey = null): array
     {
         /** @var TagRepositoryInterface $repo */
         $repo = $this->em->getRepository(Tag::class);
-        return $repo->findTagsWithInfo();
+        return $repo->findTagsWithInfo($apiKey !== null ? $apiKey->spec() : null);
     }
 
     /**
      * @param string[] $tagNames
+     * @throws ForbiddenTagOperationException
      */
-    public function deleteTags(array $tagNames): void
+    public function deleteTags(array $tagNames, ?ApiKey $apiKey = null): void
     {
+        if ($apiKey !== null && ! $apiKey->isAdmin()) {
+            throw ForbiddenTagOperationException::forDeletion();
+        }
+
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
         $repo->deleteByName($tagNames);
@@ -73,24 +88,29 @@ class TagService implements TagServiceInterface
     /**
      * @throws TagNotFoundException
      * @throws TagConflictException
+     * @throws ForbiddenTagOperationException
      */
-    public function renameTag(string $oldName, string $newName): Tag
+    public function renameTag(TagRenaming $renaming, ?ApiKey $apiKey = null): Tag
     {
+        if ($apiKey !== null && ! $apiKey->isAdmin()) {
+            throw ForbiddenTagOperationException::forRenaming();
+        }
+
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
 
         /** @var Tag|null $tag */
-        $tag = $repo->findOneBy(['name' => $oldName]);
+        $tag = $repo->findOneBy(['name' => $renaming->oldName()]);
         if ($tag === null) {
-            throw TagNotFoundException::fromTag($oldName);
+            throw TagNotFoundException::fromTag($renaming->oldName());
         }
 
-        $newNameExists = $newName !== $oldName && $repo->count(['name' => $newName]) > 0;
+        $newNameExists = $renaming->nameChanged() && $repo->count(['name' => $renaming->newName()]) > 0;
         if ($newNameExists) {
-            throw TagConflictException::fromExistingTag($oldName, $newName);
+            throw TagConflictException::forExistingTag($renaming);
         }
 
-        $tag->rename($newName);
+        $tag->rename($renaming->newName());
         $this->em->flush();
 
         return $tag;

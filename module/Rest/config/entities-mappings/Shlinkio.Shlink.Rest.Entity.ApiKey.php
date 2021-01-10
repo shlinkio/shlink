@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
+use Shlinkio\Shlink\Rest\Entity\ApiKeyRole;
 
 use function Shlinkio\Shlink\Core\determineTableName;
 
@@ -33,5 +34,12 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->build();
 
     $builder->createField('enabled', Types::BOOLEAN)
+            ->build();
+
+    $builder->createOneToMany('roles', ApiKeyRole::class)
+            ->mappedBy('apiKey')
+            ->setIndexBy('roleName')
+            ->cascadePersist()
+            ->orphanRemoval()
             ->build();
 };

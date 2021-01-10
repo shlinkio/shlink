@@ -15,7 +15,10 @@ use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 use function Functional\map;
@@ -30,6 +33,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         ShortUrl::class,
         Domain::class,
         Tag::class,
+        ApiKey::class,
     ];
 
     private VisitRepository $repo;
@@ -185,6 +189,49 @@ class VisitRepositoryTest extends DatabaseTestCase
         )));
     }
 
+    /** @test */
+    public function countReturnsExpectedResultBasedOnApiKey(): void
+    {
+        $domain = new Domain('foo.com');
+        $this->getEntityManager()->persist($domain);
+
+        $this->getEntityManager()->flush();
+
+        $apiKey1 = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $this->getEntityManager()->persist($apiKey1);
+        $shortUrl = new ShortUrl(
+            '',
+            ShortUrlMeta::fromRawData(['apiKey' => $apiKey1, 'domain' => $domain->getAuthority()]),
+            new PersistenceShortUrlRelationResolver($this->getEntityManager()),
+        );
+        $this->getEntityManager()->persist($shortUrl);
+        $this->createVisitsForShortUrl($shortUrl, 4);
+
+        $apiKey2 = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $this->getEntityManager()->persist($apiKey2);
+        $shortUrl2 = new ShortUrl('', ShortUrlMeta::fromRawData(['apiKey' => $apiKey2]));
+        $this->getEntityManager()->persist($shortUrl2);
+        $this->createVisitsForShortUrl($shortUrl2, 5);
+
+        $shortUrl3 = new ShortUrl(
+            '',
+            ShortUrlMeta::fromRawData(['apiKey' => $apiKey2, 'domain' => $domain->getAuthority()]),
+            new PersistenceShortUrlRelationResolver($this->getEntityManager()),
+        );
+        $this->getEntityManager()->persist($shortUrl3);
+        $this->createVisitsForShortUrl($shortUrl3, 7);
+
+        $domainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($domain->getId()));
+        $this->getEntityManager()->persist($domainApiKey);
+
+        $this->getEntityManager()->flush();
+
+        self::assertEquals(4 + 5 + 7, $this->repo->countVisits());
+        self::assertEquals(4, $this->repo->countVisits($apiKey1));
+        self::assertEquals(5 + 7, $this->repo->countVisits($apiKey2));
+        self::assertEquals(4 + 7, $this->repo->countVisits($domainApiKey));
+    }
+
     private function createShortUrlsAndVisits(bool $withDomain = true): array
     {
         $shortUrl = new ShortUrl('');
@@ -192,7 +239,24 @@ class VisitRepositoryTest extends DatabaseTestCase
         $shortCode = $shortUrl->getShortCode();
         $this->getEntityManager()->persist($shortUrl);
 
-        for ($i = 0; $i < 6; $i++) {
+        $this->createVisitsForShortUrl($shortUrl);
+
+        if ($withDomain) {
+            $shortUrlWithDomain = new ShortUrl('', ShortUrlMeta::fromRawData([
+                'customSlug' => $shortCode,
+                'domain' => $domain,
+            ]));
+            $this->getEntityManager()->persist($shortUrlWithDomain);
+            $this->createVisitsForShortUrl($shortUrlWithDomain, 3);
+            $this->getEntityManager()->flush();
+        }
+
+        return [$shortCode, $domain, $shortUrl];
+    }
+
+    private function createVisitsForShortUrl(ShortUrl $shortUrl, int $amount = 6): void
+    {
+        for ($i = 0; $i < $amount; $i++) {
             $visit = new Visit(
                 $shortUrl,
                 Visitor::emptyInstance(),
@@ -201,26 +265,5 @@ class VisitRepositoryTest extends DatabaseTestCase
             );
             $this->getEntityManager()->persist($visit);
         }
-
-        if ($withDomain) {
-            $shortUrlWithDomain = new ShortUrl('', ShortUrlMeta::fromRawData([
-                'customSlug' => $shortCode,
-                'domain' => $domain,
-            ]));
-            $this->getEntityManager()->persist($shortUrlWithDomain);
-
-            for ($i = 0; $i < 3; $i++) {
-                $visit = new Visit(
-                    $shortUrlWithDomain,
-                    Visitor::emptyInstance(),
-                    true,
-                    Chronos::parse(sprintf('2016-01-0%s', $i + 1)),
-                );
-                $this->getEntityManager()->persist($visit);
-            }
-            $this->getEntityManager()->flush();
-        }
-
-        return [$shortCode, $domain, $shortUrl];
     }
 }

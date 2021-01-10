@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class GlobalVisitsAction extends AbstractRestAction
 {
@@ -24,8 +25,10 @@ class GlobalVisitsAction extends AbstractRestAction
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
+
         return new JsonResponse([
-            'visits' => $this->statsHelper->getVisitsStats(),
+            'visits' => $this->statsHelper->getVisitsStats($apiKey),
         ]);
     }
 }

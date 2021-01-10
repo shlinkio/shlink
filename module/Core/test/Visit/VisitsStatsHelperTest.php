@@ -36,7 +36,7 @@ class VisitsStatsHelperTest extends TestCase
     public function returnsExpectedVisitsStats(int $expectedCount): void
     {
         $repo = $this->prophesize(VisitRepository::class);
-        $count = $repo->count([])->willReturn($expectedCount);
+        $count = $repo->countVisits(null)->willReturn($expectedCount);
         $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
 
         $stats = $this->helper->getVisitsStats();

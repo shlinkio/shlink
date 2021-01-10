@@ -34,12 +34,13 @@ class EditShortUrlTagsActionTest extends ApiTestCase
     public function providingInvalidShortCodeReturnsBadRequest(
         string $shortCode,
         ?string $domain,
-        string $expectedDetail
+        string $expectedDetail,
+        string $apiKey
     ): void {
         $url = $this->buildShortUrlPath($shortCode, $domain, '/tags');
         $resp = $this->callApiWithKey(self::METHOD_PUT, $url, [RequestOptions::JSON => [
             'tags' => ['foo', 'bar'],
-        ]]);
+        ]], $apiKey);
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());

@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class ShortUrlVisitsAction extends AbstractRestAction
 {
@@ -30,7 +31,9 @@ class ShortUrlVisitsAction extends AbstractRestAction
     public function handle(Request $request): Response
     {
         $identifier = ShortUrlIdentifier::fromApiRequest($request);
-        $visits = $this->visitsTracker->info($identifier, VisitsParams::fromRawData($request->getQueryParams()));
+        $params = VisitsParams::fromRawData($request->getQueryParams());
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
+        $visits = $this->visitsTracker->info($identifier, $params, $apiKey);
 
         return new JsonResponse([
             'visits' => $this->serializePaginator($visits),

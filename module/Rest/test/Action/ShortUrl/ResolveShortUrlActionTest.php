@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ResolveShortUrlAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function strpos;
 
@@ -32,12 +33,14 @@ class ResolveShortUrlActionTest extends TestCase
     public function correctShortCodeReturnsSuccess(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode))->willReturn(
+        $apiKey = new ApiKey();
+        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey)->willReturn(
             new ShortUrl('http://domain.com/foo/bar'),
         )->shouldBeCalledOnce();
 
-        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)->withAttribute(ApiKey::class, $apiKey);
         $response = $this->action->handle($request);
+
         self::assertEquals(200, $response->getStatusCode());
         self::assertTrue(strpos($response->getBody()->getContents(), 'http://domain.com/foo/bar') > 0);
     }

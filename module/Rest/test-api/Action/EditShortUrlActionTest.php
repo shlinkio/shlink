@@ -104,10 +104,11 @@ class EditShortUrlActionTest extends ApiTestCase
     public function tryingToEditInvalidUrlReturnsNotFoundError(
         string $shortCode,
         ?string $domain,
-        string $expectedDetail
+        string $expectedDetail,
+        string $apiKey
     ): void {
         $url = $this->buildShortUrlPath($shortCode, $domain);
-        $resp = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => []]);
+        $resp = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => []], $apiKey);
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());

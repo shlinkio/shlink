@@ -16,6 +16,9 @@
             <directory suffix=".php">./module/*/src/Repository</directory>
             <directory suffix=".php">./module/*/src/**/Repository</directory>
             <directory suffix=".php">./module/*/src/**/**/Repository</directory>
+            <directory suffix=".php">./module/*/src/Spec</directory>
+            <directory suffix=".php">./module/*/src/**/Spec</directory>
+            <directory suffix=".php">./module/*/src/**/**/Spec</directory>
         </include>
     </coverage>
 </phpunit>

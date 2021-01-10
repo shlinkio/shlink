@@ -245,17 +245,39 @@ class CreateShortUrlActionTest extends ApiTestCase
     }
 
     /**
+     * @test
+     * @dataProvider provideDomains
+     */
+    public function apiKeyDomainIsEnforced(?string $providedDomain): void
+    {
+        [$statusCode, ['domain' => $returnedDomain]] = $this->createShortUrl(
+            ['domain' => $providedDomain],
+            'domain_api_key',
+        );
+
+        self::assertEquals(self::STATUS_OK, $statusCode);
+        self::assertEquals('example.com', $returnedDomain);
+    }
+
+    public function provideDomains(): iterable
+    {
+        yield 'no domain' => [null];
+        yield 'invalid domain' => ['this-will-be-overwritten.com'];
+        yield 'example domain' => ['example.com'];
+    }
+
+    /**
      * @return array {
      *     @var int $statusCode
      *     @var array $payload
      * }
      */
-    private function createShortUrl(array $body = []): array
+    private function createShortUrl(array $body = [], string $apiKey = 'valid_api_key'): array
     {
         if (! isset($body['longUrl'])) {
             $body['longUrl'] = 'https://app.shlink.io';
         }
-        $resp = $this->callApiWithKey(self::METHOD_POST, '/short-urls', [RequestOptions::JSON => $body]);
+        $resp = $this->callApiWithKey(self::METHOD_POST, '/short-urls', [RequestOptions::JSON => $body], $apiKey);
         $payload = $this->getJsonResponsePayload($resp);
 
         return [$resp->getStatusCode(), $payload];

@@ -11,6 +11,7 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
 use Shlinkio\Shlink\Core\Util\CocurSymfonySluggerBridge;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use const Shlinkio\Shlink\Core\CUSTOM_SLUGS_REGEXP;
 use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
@@ -73,7 +74,11 @@ class ShortUrlMetaInputFilter extends InputFilter
         $domain->getValidatorChain()->attach(new Validation\HostAndPortValidator());
         $this->add($domain);
 
-        $this->add($this->createInput(self::API_KEY, false));
+        $apiKeyInput = new Input(self::API_KEY);
+        $apiKeyInput
+            ->setRequired(false)
+            ->getValidatorChain()->attach(new Validator\IsInstanceOf(['className' => ApiKey::class]));
+        $this->add($apiKeyInput);
     }
 
     private function createPositiveNumberInput(string $name, int $min = 1): Input

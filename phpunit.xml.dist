@@ -25,6 +25,9 @@
             <directory suffix=".php">./module/Core/src/Repository</directory>
             <directory suffix=".php">./module/Core/src/**/Repository</directory>
             <directory suffix=".php">./module/Core/src/**/**/Repository</directory>
+            <directory suffix=".php">./module/Core/src/Spec</directory>
+            <directory suffix=".php">./module/Core/src/**/Spec</directory>
+            <directory suffix=".php">./module/Core/src/**/**/Spec</directory>
         </exclude>
     </coverage>
 </phpunit>

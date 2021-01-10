@@ -16,8 +16,11 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 use function count;
@@ -31,6 +34,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         Visit::class,
         ShortUrl::class,
         Domain::class,
+        ApiKey::class,
     ];
 
     private ShortUrlRepository $repo;
@@ -308,17 +312,84 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
+        $result = $this->repo->findOneMatching('foo', $tags, ShortUrlMeta::fromRawData($meta));
+
+        self::assertSame($shortUrl1, $result);
+        self::assertNotSame($shortUrl2, $result);
+        self::assertNotSame($shortUrl3, $result);
+    }
+
+    /** @test */
+    public function findOneMatchingAppliesProvidedApiKeyConditions(): void
+    {
+        $start = Chronos::parse('2020-03-05 20:18:30');
+
+        $wrongDomain = new Domain('wrong.com');
+        $this->getEntityManager()->persist($wrongDomain);
+        $rightDomain = new Domain('right.com');
+        $this->getEntityManager()->persist($rightDomain);
+
+        $this->getEntityManager()->flush();
+
+        $apiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $this->getEntityManager()->persist($apiKey);
+        $otherApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $this->getEntityManager()->persist($otherApiKey);
+        $wrongDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($wrongDomain->getId()));
+        $this->getEntityManager()->persist($wrongDomainApiKey);
+        $rightDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($rightDomain->getId()));
+        $this->getEntityManager()->persist($rightDomainApiKey);
+
+        $shortUrl = new ShortUrl('foo', ShortUrlMeta::fromRawData(
+            ['validSince' => $start, 'apiKey' => $apiKey, 'domain' => $rightDomain->getAuthority()],
+        ), new PersistenceShortUrlRelationResolver($this->getEntityManager()));
+        $shortUrl->setTags($this->tagNamesToEntities($this->getEntityManager(), ['foo', 'bar']));
+        $this->getEntityManager()->persist($shortUrl);
+
+        $this->getEntityManager()->flush();
+
         self::assertSame(
-            $shortUrl1,
-            $this->repo->findOneMatching('foo', $tags, ShortUrlMeta::fromRawData($meta)),
+            $shortUrl,
+            $this->repo->findOneMatching('foo', ['foo', 'bar'], ShortUrlMeta::fromRawData(['validSince' => $start])),
         );
-        self::assertNotSame(
-            $shortUrl2,
-            $this->repo->findOneMatching('foo', $tags, ShortUrlMeta::fromRawData($meta)),
+        self::assertSame($shortUrl, $this->repo->findOneMatching('foo', ['foo', 'bar'], ShortUrlMeta::fromRawData([
+            'validSince' => $start,
+            'apiKey' => $apiKey,
+        ])));
+        self::assertNull($this->repo->findOneMatching('foo', ['foo', 'bar'], ShortUrlMeta::fromRawData([
+            'validSince' => $start,
+            'apiKey' => $otherApiKey,
+        ])));
+
+        self::assertSame(
+            $shortUrl,
+            $this->repo->findOneMatching('foo', ['foo', 'bar'], ShortUrlMeta::fromRawData([
+                'validSince' => $start,
+                'domain' => $rightDomain->getAuthority(),
+            ])),
         );
-        self::assertNotSame(
-            $shortUrl3,
-            $this->repo->findOneMatching('foo', $tags, ShortUrlMeta::fromRawData($meta)),
+        self::assertSame(
+            $shortUrl,
+            $this->repo->findOneMatching('foo', ['foo', 'bar'], ShortUrlMeta::fromRawData([
+                'validSince' => $start,
+                'domain' => $rightDomain->getAuthority(),
+                'apiKey' => $rightDomainApiKey,
+            ])),
+        );
+        self::assertSame(
+            $shortUrl,
+            $this->repo->findOneMatching('foo', ['foo', 'bar'], ShortUrlMeta::fromRawData([
+                'validSince' => $start,
+                'domain' => $rightDomain->getAuthority(),
+                'apiKey' => $apiKey,
+            ])),
+        );
+        self::assertNull(
+            $this->repo->findOneMatching('foo', ['foo', 'bar'], ShortUrlMeta::fromRawData([
+                'validSince' => $start,
+                'domain' => $rightDomain->getAuthority(),
+                'apiKey' => $wrongDomainApiKey,
+            ])),
         );
     }
 

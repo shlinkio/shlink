@@ -59,7 +59,10 @@ class ApiKeyServiceTest extends TestCase
                                             ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
-        self::assertFalse($this->service->check('12345'));
+        $result = $this->service->check('12345');
+
+        self::assertFalse($result->isValid());
+        self::assertSame($invalidKey, $result->apiKey());
     }
 
     public function provideInvalidApiKeys(): iterable
@@ -72,12 +75,17 @@ class ApiKeyServiceTest extends TestCase
     /** @test */
     public function checkReturnsTrueWhenConditionsAreFavorable(): void
     {
+        $apiKey = new ApiKey();
+
         $repo = $this->prophesize(EntityRepository::class);
-        $repo->findOneBy(['key' => '12345'])->willReturn(new ApiKey())
+        $repo->findOneBy(['key' => '12345'])->willReturn($apiKey)
                                             ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
-        self::assertTrue($this->service->check('12345'));
+        $result = $this->service->check('12345');
+
+        self::assertTrue($result->isValid());
+        self::assertSame($apiKey, $result->apiKey());
     }
 
     /** @test */

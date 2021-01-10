@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest;
 
 $contentNegotiationMiddleware = Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class;
 $dropDomainMiddleware = Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class;
+$overrideDomainMiddleware = Middleware\ShortUrl\OverrideDomainMiddleware::class;
 
 return [
 
@@ -16,9 +17,13 @@ return [
         Action\ShortUrl\CreateShortUrlAction::getRouteDef([
             $contentNegotiationMiddleware,
             $dropDomainMiddleware,
+            $overrideDomainMiddleware,
             Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class,
         ]),
-        Action\ShortUrl\SingleStepCreateShortUrlAction::getRouteDef([$contentNegotiationMiddleware]),
+        Action\ShortUrl\SingleStepCreateShortUrlAction::getRouteDef([
+            $contentNegotiationMiddleware,
+            $overrideDomainMiddleware,
+        ]),
         Action\ShortUrl\EditShortUrlAction::getRouteDef([$dropDomainMiddleware]),
         Action\ShortUrl\DeleteShortUrlAction::getRouteDef([$dropDomainMiddleware]),
         Action\ShortUrl\ResolveShortUrlAction::getRouteDef([$dropDomainMiddleware]),

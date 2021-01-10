@@ -9,8 +9,12 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Domain\DomainService;
+use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class DomainServiceTest extends TestCase
 {
@@ -22,20 +26,20 @@ class DomainServiceTest extends TestCase
     public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->domainService = new DomainService($this->em->reveal());
+        $this->domainService = new DomainService($this->em->reveal(), 'default.com');
     }
 
     /**
      * @test
      * @dataProvider provideExcludedDomains
      */
-    public function listDomainsWithoutDelegatesIntoRepository(?string $excludedDomain, array $expectedResult): void
+    public function listDomainsDelegatesIntoRepository(array $domains, array $expectedResult, ?ApiKey $apiKey): void
     {
         $repo = $this->prophesize(DomainRepositoryInterface::class);
         $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
-        $findDomains = $repo->findDomainsWithout($excludedDomain)->willReturn($expectedResult);
+        $findDomains = $repo->findDomainsWithout('default.com', $apiKey)->willReturn($domains);
 
-        $result = $this->domainService->listDomainsWithout($excludedDomain);
+        $result = $this->domainService->listDomains($apiKey);
 
         self::assertEquals($expectedResult, $result);
         $getRepo->shouldHaveBeenCalledOnce();
@@ -44,9 +48,67 @@ class DomainServiceTest extends TestCase
 
     public function provideExcludedDomains(): iterable
     {
-        yield 'no excluded domain' => [null, []];
-        yield 'foo.com excluded domain' => ['foo.com', []];
-        yield 'bar.com excluded domain' => ['bar.com', [new Domain('bar.com')]];
-        yield 'baz.com excluded domain' => ['baz.com', [new Domain('foo.com'), new Domain('bar.com')]];
+        $default = new DomainItem('default.com', true);
+        $adminApiKey = new ApiKey();
+        $domainSpecificApiKey = ApiKey::withRoles(RoleDefinition::forDomain('123'));
+
+        yield 'empty list without API key' => [[], [$default], null];
+        yield 'one item without API key' => [
+            [new Domain('bar.com')],
+            [$default, new DomainItem('bar.com', false)],
+            null,
+        ];
+        yield 'multiple items without API key' => [
+            [new Domain('foo.com'), new Domain('bar.com')],
+            [$default, new DomainItem('foo.com', false), new DomainItem('bar.com', false)],
+            null,
+        ];
+
+        yield 'empty list with admin API key' => [[], [$default], $adminApiKey];
+        yield 'one item with admin API key' => [
+            [new Domain('bar.com')],
+            [$default, new DomainItem('bar.com', false)],
+            $adminApiKey,
+        ];
+        yield 'multiple items with admin API key' => [
+            [new Domain('foo.com'), new Domain('bar.com')],
+            [$default, new DomainItem('foo.com', false), new DomainItem('bar.com', false)],
+            $adminApiKey,
+        ];
+
+        yield 'empty list with domain-specific API key' => [[], [], $domainSpecificApiKey];
+        yield 'one item with domain-specific API key' => [
+            [new Domain('bar.com')],
+            [new DomainItem('bar.com', false)],
+            $domainSpecificApiKey,
+        ];
+        yield 'multiple items with domain-specific API key' => [
+            [new Domain('foo.com'), new Domain('bar.com')],
+            [new DomainItem('foo.com', false), new DomainItem('bar.com', false)],
+            $domainSpecificApiKey,
+        ];
+    }
+
+    /** @test */
+    public function getDomainThrowsExceptionWhenDomainIsNotFound(): void
+    {
+        $find = $this->em->find(Domain::class, '123')->willReturn(null);
+
+        $this->expectException(DomainNotFoundException::class);
+        $find->shouldBeCalledOnce();
+
+        $this->domainService->getDomain('123');
+    }
+
+    /** @test */
+    public function getDomainReturnsEntityWhenFound(): void
+    {
+        $domain = new Domain('');
+        $find = $this->em->find(Domain::class, '123')->willReturn($domain);
+
+        $result = $this->domainService->getDomain('123');
+
+        self::assertSame($domain, $result);
+        $find->shouldHaveBeenCalledOnce();
     }
 }

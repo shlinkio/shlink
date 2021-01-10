@@ -87,7 +87,7 @@ return [
         Command\Tag\RenameTagCommand::class => [TagService::class],
         Command\Tag\DeleteTagsCommand::class => [TagService::class],
 
-        Command\Domain\ListDomainsCommand::class => [DomainService::class, 'config.url_shortener.domain.hostname'],
+        Command\Domain\ListDomainsCommand::class => [DomainService::class],
 
         Command\Db\CreateDatabaseCommand::class => [
             LockFactory::class,

@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
-use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlTagsAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class EditShortUrlTagsActionTest extends TestCase
 {
@@ -31,20 +34,29 @@ class EditShortUrlTagsActionTest extends TestCase
     public function notProvidingTagsReturnsError(): void
     {
         $this->expectException(ValidationException::class);
-        $this->action->handle((new ServerRequest())->withAttribute('shortCode', 'abc123'));
+        $this->action->handle($this->createRequestWithAPiKey()->withAttribute('shortCode', 'abc123'));
     }
 
     /** @test */
     public function tagsListIsReturnedIfCorrectShortCodeIsProvided(): void
     {
         $shortCode = 'abc123';
-        $this->shortUrlService->setTagsByShortCode(new ShortUrlIdentifier($shortCode), [])->willReturn(new ShortUrl(''))
-                                                                                          ->shouldBeCalledOnce();
+        $this->shortUrlService->setTagsByShortCode(
+            new ShortUrlIdentifier($shortCode),
+            [],
+            Argument::type(ApiKey::class),
+        )->willReturn(new ShortUrl(''))
+         ->shouldBeCalledOnce();
 
         $response = $this->action->handle(
-            (new ServerRequest())->withAttribute('shortCode', 'abc123')
-                                 ->withParsedBody(['tags' => []]),
+            $this->createRequestWithAPiKey()->withAttribute('shortCode', 'abc123')
+                                            ->withParsedBody(['tags' => []]),
         );
         self::assertEquals(200, $response->getStatusCode());
+    }
+
+    private function createRequestWithAPiKey(): ServerRequestInterface
+    {
+        return ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, new ApiKey());
     }
 }

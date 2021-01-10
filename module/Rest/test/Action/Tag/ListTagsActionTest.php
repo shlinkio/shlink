@@ -7,12 +7,15 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\ListTagsAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ListTagsActionTest extends TestCase
 {
@@ -34,10 +37,10 @@ class ListTagsActionTest extends TestCase
     public function returnsBaseDataWhenStatsAreNotRequested(array $query): void
     {
         $tags = [new Tag('foo'), new Tag('bar')];
-        $listTags = $this->tagService->listTags()->willReturn($tags);
+        $listTags = $this->tagService->listTags(Argument::type(ApiKey::class))->willReturn($tags);
 
         /** @var JsonResponse $resp */
-        $resp = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams($query));
+        $resp = $this->action->handle($this->requestWithApiKey()->withQueryParams($query));
         $payload = $resp->getPayload();
 
         self::assertEquals([
@@ -62,10 +65,11 @@ class ListTagsActionTest extends TestCase
             new TagInfo(new Tag('foo'), 1, 1),
             new TagInfo(new Tag('bar'), 3, 10),
         ];
-        $tagsInfo = $this->tagService->tagsInfo()->willReturn($stats);
+        $tagsInfo = $this->tagService->tagsInfo(Argument::type(ApiKey::class))->willReturn($stats);
+        $req = $this->requestWithApiKey()->withQueryParams(['withStats' => 'true']);
 
         /** @var JsonResponse $resp */
-        $resp = $this->action->handle(ServerRequestFactory::fromGlobals()->withQueryParams(['withStats' => 'true']));
+        $resp = $this->action->handle($req);
         $payload = $resp->getPayload();
 
         self::assertEquals([
@@ -75,5 +79,10 @@ class ListTagsActionTest extends TestCase
             ],
         ], $payload);
         $tagsInfo->shouldHaveBeenCalled();
+    }
+
+    private function requestWithApiKey(): ServerRequestInterface
+    {
+        return ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, new ApiKey());
     }
 }

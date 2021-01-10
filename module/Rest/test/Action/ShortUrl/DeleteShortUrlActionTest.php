@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
-use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\DeleteShortUrlAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class DeleteShortUrlActionTest extends TestCase
 {
@@ -28,10 +29,13 @@ class DeleteShortUrlActionTest extends TestCase
     /** @test */
     public function emptyResponseIsReturnedIfProperlyDeleted(): void
     {
-        $deleteByShortCode = $this->service->deleteByShortCode(Argument::any())->will(function (): void {
-        });
+        $apiKey = new ApiKey();
+        $deleteByShortCode = $this->service->deleteByShortCode(Argument::any(), false, $apiKey)->will(
+            function (): void {
+            },
+        );
 
-        $resp = $this->action->handle(new ServerRequest());
+        $resp = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, $apiKey));
 
         self::assertEquals(204, $resp->getStatusCode());
         $deleteByShortCode->shouldHaveBeenCalledOnce();

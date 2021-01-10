@@ -59,7 +59,7 @@ class ShortUrl extends AbstractEntity
         $this->shortCodeLength = $meta->getShortCodeLength();
         $this->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode($this->shortCodeLength);
         $this->domain = $relationResolver->resolveDomain($meta->getDomain());
-        $this->authorApiKey = $relationResolver->resolveApiKey($meta->getApiKey());
+        $this->authorApiKey = $meta->getApiKey();
     }
 
     public static function fromImport(

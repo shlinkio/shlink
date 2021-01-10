@@ -12,8 +12,11 @@ class DomainFixture extends AbstractFixture
 {
     public function load(ObjectManager $manager): void
     {
-        $orphanDomain = new Domain('this_domain_is_detached.com');
-        $manager->persist($orphanDomain);
+        $domain = new Domain('example.com');
+        $manager->persist($domain);
+        $this->addReference('example_domain', $domain);
+
+        $manager->persist(new Domain('this_domain_is_detached.com'));
         $manager->flush();
     }
 }

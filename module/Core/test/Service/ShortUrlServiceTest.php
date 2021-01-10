@@ -20,11 +20,14 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
+use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
 
 use function count;
 
 class ShortUrlServiceTest extends TestCase
 {
+    use ApiKeyHelpersTrait;
     use ProphecyTrait;
 
     private ShortUrlService $service;
@@ -48,8 +51,11 @@ class ShortUrlServiceTest extends TestCase
         );
     }
 
-    /** @test */
-    public function listedUrlsAreReturnedFromEntityManager(): void
+    /**
+     * @test
+     * @dataProvider provideAdminApiKeys
+     */
+    public function listedUrlsAreReturnedFromEntityManager(?ApiKey $apiKey): void
     {
         $list = [
             new ShortUrl(''),
@@ -63,25 +69,29 @@ class ShortUrlServiceTest extends TestCase
         $repo->countList(Argument::cetera())->willReturn(count($list))->shouldBeCalledOnce();
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $list = $this->service->listShortUrls(ShortUrlsParams::emptyInstance());
+        $list = $this->service->listShortUrls(ShortUrlsParams::emptyInstance(), $apiKey);
         self::assertEquals(4, $list->getCurrentItemCount());
     }
 
-    /** @test */
-    public function providedTagsAreGetFromRepoAndSetToTheShortUrl(): void
+    /**
+     * @test
+     * @dataProvider provideAdminApiKeys
+     */
+    public function providedTagsAreGetFromRepoAndSetToTheShortUrl(?ApiKey $apiKey): void
     {
         $shortUrl = $this->prophesize(ShortUrl::class);
         $shortUrl->setTags(Argument::any())->shouldBeCalledOnce();
         $shortCode = 'abc123';
-        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode))->willReturn($shortUrl->reveal())
-                                                                               ->shouldBeCalledOnce();
+        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey)
+            ->willReturn($shortUrl->reveal())
+            ->shouldBeCalledOnce();
 
         $tagRepo = $this->prophesize(EntityRepository::class);
         $tagRepo->findOneBy(['name' => 'foo'])->willReturn(new Tag('foo'))->shouldBeCalledOnce();
         $tagRepo->findOneBy(['name' => 'bar'])->willReturn(null)->shouldBeCalledOnce();
         $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
 
-        $this->service->setTagsByShortCode(new ShortUrlIdentifier($shortCode), ['foo', 'bar']);
+        $this->service->setTagsByShortCode(new ShortUrlIdentifier($shortCode), ['foo', 'bar'], $apiKey);
     }
 
     /**
@@ -90,15 +100,19 @@ class ShortUrlServiceTest extends TestCase
      */
     public function updateMetadataByShortCodeUpdatesProvidedData(
         int $expectedValidateCalls,
-        ShortUrlEdit $shortUrlEdit
+        ShortUrlEdit $shortUrlEdit,
+        ?ApiKey $apiKey
     ): void {
         $originalLongUrl = 'originalLongUrl';
         $shortUrl = new ShortUrl($originalLongUrl);
 
-        $findShortUrl = $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier('abc123'))->willReturn($shortUrl);
+        $findShortUrl = $this->urlResolver->resolveShortUrl(
+            new ShortUrlIdentifier('abc123'),
+            $apiKey,
+        )->willReturn($shortUrl);
         $flush = $this->em->flush()->willReturn(null);
 
-        $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), $shortUrlEdit);
+        $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), $shortUrlEdit, $apiKey);
 
         self::assertSame($shortUrl, $result);
         self::assertEquals($shortUrlEdit->validSince(), $shortUrl->getValidSince());
@@ -121,19 +135,19 @@ class ShortUrlServiceTest extends TestCase
                 'validUntil' => Chronos::parse('2017-01-05 00:00:00')->toAtomString(),
                 'maxVisits' => 5,
             ],
-        )];
+        ), null];
         yield 'long URL' => [1, ShortUrlEdit::fromRawData(
             [
                 'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
                 'maxVisits' => 10,
                 'longUrl' => 'modifiedLongUrl',
             ],
-        )];
+        ), new ApiKey()];
         yield 'long URL with validation' => [1, ShortUrlEdit::fromRawData(
             [
                 'longUrl' => 'modifiedLongUrl',
                 'validateUrl' => true,
             ],
-        )];
+        ), null];
     }
 }

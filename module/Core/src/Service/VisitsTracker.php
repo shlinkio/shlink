@@ -21,6 +21,7 @@ use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsTracker implements VisitsTrackerInterface
 {
@@ -52,17 +53,19 @@ class VisitsTracker implements VisitsTrackerInterface
      * @return Visit[]|Paginator
      * @throws ShortUrlNotFoundException
      */
-    public function info(ShortUrlIdentifier $identifier, VisitsParams $params): Paginator
+    public function info(ShortUrlIdentifier $identifier, VisitsParams $params, ?ApiKey $apiKey = null): Paginator
     {
+        $spec = $apiKey !== null ? $apiKey->spec() : null;
+
         /** @var ShortUrlRepositoryInterface $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        if (! $repo->shortCodeIsInUse($identifier->shortCode(), $identifier->domain())) {
+        if (! $repo->shortCodeIsInUse($identifier->shortCode(), $identifier->domain(), $spec)) {
             throw ShortUrlNotFoundException::fromNotFound($identifier);
         }
 
         /** @var VisitRepositoryInterface $repo */
         $repo = $this->em->getRepository(Visit::class);
-        $paginator = new Paginator(new VisitsPaginatorAdapter($repo, $identifier, $params));
+        $paginator = new Paginator(new VisitsPaginatorAdapter($repo, $identifier, $params, $spec));
         $paginator->setItemCountPerPage($params->getItemsPerPage())
                   ->setCurrentPageNumber($params->getPage());
 
@@ -73,18 +76,17 @@ class VisitsTracker implements VisitsTrackerInterface
      * @return Visit[]|Paginator
      * @throws TagNotFoundException
      */
-    public function visitsForTag(string $tag, VisitsParams $params): Paginator
+    public function visitsForTag(string $tag, VisitsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         /** @var TagRepository $tagRepo */
         $tagRepo = $this->em->getRepository(Tag::class);
-        $count = $tagRepo->count(['name' => $tag]);
-        if ($count === 0) {
+        if (! $tagRepo->tagExists($tag, $apiKey)) {
             throw TagNotFoundException::fromTag($tag);
         }
 
         /** @var VisitRepositoryInterface $repo */
         $repo = $this->em->getRepository(Visit::class);
-        $paginator = new Paginator(new VisitsForTagPaginatorAdapter($repo, $tag, $params));
+        $paginator = new Paginator(new VisitsForTagPaginatorAdapter($repo, $tag, $params, $apiKey));
         $paginator->setItemCountPerPage($params->getItemsPerPage())
                   ->setCurrentPageNumber($params->getPage());
 

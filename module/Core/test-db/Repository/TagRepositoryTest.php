@@ -5,11 +5,16 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 use function array_chunk;
@@ -20,6 +25,8 @@ class TagRepositoryTest extends DatabaseTestCase
         Visit::class,
         ShortUrl::class,
         Tag::class,
+        ApiKey::class,
+        Domain::class,
     ];
 
     private TagRepository $repo;
@@ -96,5 +103,60 @@ class TagRepositoryTest extends DatabaseTestCase
             ['tag' => $tags[0], 'shortUrlsCount' => 2, 'visitsCount' => 4],
             $result[3]->jsonSerialize(),
         );
+    }
+
+    /** @test */
+    public function tagExistsReturnsExpectedResultBasedOnApiKey(): void
+    {
+        $domain = new Domain('foo.com');
+        $this->getEntityManager()->persist($domain);
+        $this->getEntityManager()->flush();
+
+        $authorApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $this->getEntityManager()->persist($authorApiKey);
+        $domainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($domain->getId()));
+        $this->getEntityManager()->persist($domainApiKey);
+
+        $names = ['foo', 'bar', 'baz', 'another'];
+        $tags = [];
+        foreach ($names as $name) {
+            $tag = new Tag($name);
+            $tags[] = $tag;
+            $this->getEntityManager()->persist($tag);
+        }
+
+        [$firstUrlTags, $secondUrlTags] = array_chunk($tags, 3);
+
+        $shortUrl = new ShortUrl('', ShortUrlMeta::fromRawData(['apiKey' => $authorApiKey]));
+        $shortUrl->setTags(new ArrayCollection($firstUrlTags));
+        $this->getEntityManager()->persist($shortUrl);
+
+        $shortUrl2 = new ShortUrl(
+            '',
+            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority()]),
+            new PersistenceShortUrlRelationResolver($this->getEntityManager()),
+        );
+        $shortUrl2->setTags(new ArrayCollection($secondUrlTags));
+        $this->getEntityManager()->persist($shortUrl2);
+
+        $this->getEntityManager()->flush();
+
+        self::assertTrue($this->repo->tagExists('foo'));
+        self::assertTrue($this->repo->tagExists('bar'));
+        self::assertTrue($this->repo->tagExists('baz'));
+        self::assertTrue($this->repo->tagExists('another'));
+        self::assertFalse($this->repo->tagExists('invalid'));
+
+        self::assertTrue($this->repo->tagExists('foo', $authorApiKey));
+        self::assertTrue($this->repo->tagExists('bar', $authorApiKey));
+        self::assertTrue($this->repo->tagExists('baz', $authorApiKey));
+        self::assertFalse($this->repo->tagExists('another', $authorApiKey));
+        self::assertFalse($this->repo->tagExists('invalid', $authorApiKey));
+
+        self::assertFalse($this->repo->tagExists('foo', $domainApiKey));
+        self::assertFalse($this->repo->tagExists('bar', $domainApiKey));
+        self::assertFalse($this->repo->tagExists('baz', $domainApiKey));
+        self::assertTrue($this->repo->tagExists('another', $domainApiKey));
+        self::assertFalse($this->repo->tagExists('invalid', $domainApiKey));
     }
 }
