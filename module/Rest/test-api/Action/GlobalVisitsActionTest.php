@@ -8,14 +8,24 @@ use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class GlobalVisitsActionTest extends ApiTestCase
 {
-    /** @test */
-    public function returnsExpectedVisitsStats(): void
+    /**
+     * @test
+     * @dataProvider provideApiKeys
+     */
+    public function returnsExpectedVisitsStats(string $apiKey, int $expectedVisits): void
     {
-        $resp = $this->callApiWithKey(self::METHOD_GET, '/visits');
+        $resp = $this->callApiWithKey(self::METHOD_GET, '/visits', [], $apiKey);
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertArrayHasKey('visits', $payload);
         self::assertArrayHasKey('visitsCount', $payload['visits']);
-        self::assertEquals(7, $payload['visits']['visitsCount']);
+        self::assertEquals($expectedVisits, $payload['visits']['visitsCount']);
+    }
+
+    public function provideApiKeys(): iterable
+    {
+        yield 'admin API key' => ['valid_api_key', 7];
+        yield 'domain API key' => ['domain_api_key', 0];
+        yield 'author API key' => ['author_api_key', 5];
     }
 }
