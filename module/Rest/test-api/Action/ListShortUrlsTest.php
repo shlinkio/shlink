@@ -92,7 +92,7 @@ class ListShortUrlsTest extends ApiTestCase
             . '/considerations-to-properly-use-open-source-software-projects/',
         'dateCreated' => '2019-01-01T00:00:30+00:00',
         'visitsCount' => 0,
-        'tags' => [],
+        'tags' => ['foo'],
         'meta' => [
             'validSince' => null,
             'validUntil' => null,
@@ -166,6 +166,7 @@ class ListShortUrlsTest extends ApiTestCase
         yield [['tags' => ['foo']], [
             self::SHORT_URL_SHLINK,
             self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_DOMAIN,
         ], 'valid_api_key'];
         yield [['tags' => ['bar']], [
             self::SHORT_URL_META,

@@ -34,6 +34,10 @@ class TagsFixture extends AbstractFixture implements DependentFixtureInterface
         $defShortUrl = $this->getReference('def456_short_url');
         $defShortUrl->setTags(new ArrayCollection([$fooTag, $barTag]));
 
+        /** @var ShortUrl $exampleShortUrl */
+        $exampleShortUrl = $this->getReference('example_short_url');
+        $exampleShortUrl->setTags(new ArrayCollection([$fooTag]));
+
         $manager->flush();
     }
 }

@@ -72,6 +72,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
         $this->addReference('abc123_short_url', $abcShortUrl);
         $this->addReference('def456_short_url', $defShortUrl);
         $this->addReference('ghi789_short_url', $ghiShortUrl);
+        $this->addReference('example_short_url', $withDomainDuplicatingShortCode);
     }
 
     private function setShortUrlDate(ShortUrl $shortUrl, string $date): ShortUrl

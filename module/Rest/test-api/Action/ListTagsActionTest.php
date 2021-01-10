@@ -41,7 +41,7 @@ class ListTagsActionTest extends ApiTestCase
                 ],
                 [
                     'tag' => 'foo',
-                    'shortUrlsCount' => 2,
+                    'shortUrlsCount' => 3,
                     'visitsCount' => 5,
                 ],
             ],

@@ -31,16 +31,26 @@ class TagVisitsActionTest extends ApiTestCase
         yield 'baz' => ['baz', 0];
     }
 
-    /** @test */
-    public function notFoundErrorIsReturnedForInvalidTags(): void
+    /**
+     * @test
+     * @dataProvider provideApiKeysAndTags
+     */
+    public function notFoundErrorIsReturnedForInvalidTags(string $apiKey, string $tag): void
     {
-        $resp = $this->callApiWithKey(self::METHOD_GET, '/tags/invalid_tag/visits');
+        $resp = $this->callApiWithKey(self::METHOD_GET, sprintf('/tags/%s/visits', $tag), [], $apiKey);
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
         self::assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
         self::assertEquals('TAG_NOT_FOUND', $payload['type']);
-        self::assertEquals('Tag with name "invalid_tag" could not be found', $payload['detail']);
+        self::assertEquals(sprintf('Tag with name "%s" could not be found', $tag), $payload['detail']);
         self::assertEquals('Tag not found', $payload['title']);
+    }
+
+    public function provideApiKeysAndTags(): iterable
+    {
+        yield 'admin API key with invalid tag' => ['valid_api_key', 'invalid_tag'];
+        yield 'domain API key with valid tag not used' => ['domain_api_key', 'bar'];
+        yield 'author API key with valid tag not used' => ['author_api_key', 'baz'];
     }
 }
