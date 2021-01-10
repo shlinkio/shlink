@@ -45,6 +45,14 @@ class ApiKey extends AbstractEntity
         return $apiKey;
     }
 
+    public static function withKey(string $key, ?Chronos $expirationDate = null): self
+    {
+        $apiKey = new self($expirationDate);
+        $apiKey->key = $key;
+
+        return $apiKey;
+    }
+
     public function getExpirationDate(): ?Chronos
     {
         return $this->expirationDate;
