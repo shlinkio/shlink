@@ -232,6 +232,16 @@
                     }
                 }
             },
+            "403": {
+                "description": "The API key you used does not have permissions to rename tags.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            },
             "404": {
                 "description": "There's no tag found with the name provided in oldName param.",
                 "content": {
@@ -297,6 +307,16 @@
         "responses": {
             "204": {
                 "description": "Tags properly deleted"
+            },
+            "403": {
+                "description": "The API key you used does not have permissions to delete tags.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
             },
             "500": {
                 "description": "Unexpected error.",
