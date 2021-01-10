@@ -14,11 +14,12 @@ class TagVisitsActionTest extends ApiTestCase
      * @test
      * @dataProvider provideTags
      */
-    public function expectedVisitsAreReturned(string $tag, int $expectedVisitsAmount): void
+    public function expectedVisitsAreReturned(string $apiKey, string $tag, int $expectedVisitsAmount): void
     {
-        $resp = $this->callApiWithKey(self::METHOD_GET, sprintf('/tags/%s/visits', $tag));
+        $resp = $this->callApiWithKey(self::METHOD_GET, sprintf('/tags/%s/visits', $tag), [], $apiKey);
         $payload = $this->getJsonResponsePayload($resp);
 
+        self::assertEquals(self::STATUS_OK, $resp->getStatusCode());
         self::assertArrayHasKey('visits', $payload);
         self::assertArrayHasKey('data', $payload['visits']);
         self::assertCount($expectedVisitsAmount, $payload['visits']['data']);
@@ -26,9 +27,12 @@ class TagVisitsActionTest extends ApiTestCase
 
     public function provideTags(): iterable
     {
-        yield 'foo' => ['foo', 5];
-        yield 'bar' => ['bar', 2];
-        yield 'baz' => ['baz', 0];
+        yield 'foo with admin API key' => ['valid_api_key', 'foo', 5];
+        yield 'bar with admin API key' => ['valid_api_key', 'bar', 2];
+        yield 'baz with admin API key' => ['valid_api_key', 'baz', 0];
+        yield 'foo with author API key' => ['author_api_key', 'foo', 5];
+        yield 'bar with author API key' => ['author_api_key', 'bar', 2];
+        yield 'foo with domain API key' => ['domain_api_key', 'foo', 0];
     }
 
     /**
