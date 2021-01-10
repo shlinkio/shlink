@@ -10,6 +10,9 @@ use Fig\Http\Message\StatusCodeInterface;
 use Laminas\InputFilter\InputFilter;
 use PUGX\Shortid\Factory as ShortIdFactory;
 
+use function Functional\reduce_left;
+use function is_array;
+use function print_r;
 use function sprintf;
 
 const DEFAULT_DELETE_SHORT_URL_THRESHOLD = 15;
@@ -74,4 +77,13 @@ function getOptionalBoolFromInputFilter(InputFilter $inputFilter, string $fieldN
 {
     $value = $inputFilter->getValue($fieldName);
     return $value !== null ? (bool) $value : null;
+}
+
+function arrayToString(array $array): string
+{
+    return reduce_left($array, fn ($messages, string $name, $_, string $acc) => $acc . sprintf(
+        "\n    '%s' => %s",
+        $name,
+        is_array($messages) ? print_r($messages, true) : $messages,
+    ), '');
 }

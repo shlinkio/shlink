@@ -32,9 +32,9 @@ class ValidationExceptionTest extends TestCase
         ];
         $barValue = print_r(['baz', 'foo'], true);
         $expectedStringRepresentation = <<<EOT
-    'foo' => bar
-    'something' => {$barValue}
-EOT;
+            'foo' => bar
+            'something' => {$barValue}
+        EOT;
 
         $inputFilter = $this->prophesize(InputFilterInterface::class);
         $getMessages = $inputFilter->getMessages()->willReturn($invalidData);
