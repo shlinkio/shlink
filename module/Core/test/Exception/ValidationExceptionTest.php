@@ -32,14 +32,14 @@ class ValidationExceptionTest extends TestCase
         ];
         $barValue = print_r(['baz', 'foo'], true);
         $expectedStringRepresentation = <<<EOT
-    'foo' => bar
-    'something' => {$barValue}
-EOT;
+            'foo' => bar
+            'something' => {$barValue}
+        EOT;
 
         $inputFilter = $this->prophesize(InputFilterInterface::class);
         $getMessages = $inputFilter->getMessages()->willReturn($invalidData);
 
-        $e = ValidationException::fromInputFilter($inputFilter->reveal());
+        $e = ValidationException::fromInputFilter($inputFilter->reveal(), $prev);
 
         self::assertEquals($invalidData, $e->getInvalidElements());
         self::assertEquals(['invalidElements' => array_keys($invalidData)], $e->getAdditionalData());
@@ -52,6 +52,6 @@ EOT;
 
     public function provideExceptions(): iterable
     {
-        return [[null, new RuntimeException(), new LogicException()]];
+        return [[null], [new RuntimeException()], [new LogicException()]];
     }
 }

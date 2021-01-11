@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Domain;
 
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface DomainServiceInterface
@@ -15,5 +16,10 @@ interface DomainServiceInterface
      */
     public function listDomains(?ApiKey $apiKey = null): array;
 
+    /**
+     * @throws DomainNotFoundException
+     */
     public function getDomain(string $domainId): Domain;
+
+    public function getOrCreate(string $authority): Domain;
 }

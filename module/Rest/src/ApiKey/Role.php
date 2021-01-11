@@ -16,6 +16,10 @@ class Role
 {
     public const AUTHORED_SHORT_URLS = 'AUTHORED_SHORT_URLS';
     public const DOMAIN_SPECIFIC = 'DOMAIN_SPECIFIC';
+    private const ROLE_FRIENDLY_NAMES = [
+        self::AUTHORED_SHORT_URLS => 'Author only',
+        self::DOMAIN_SPECIFIC => 'Domain only',
+    ];
 
     public static function toSpec(ApiKeyRole $role, bool $inlined): Specification
     {
@@ -34,5 +38,15 @@ class Role
     public static function domainIdFromMeta(array $meta): string
     {
         return $meta['domain_id'] ?? '-1';
+    }
+
+    public static function domainAuthorityFromMeta(array $meta): string
+    {
+        return $meta['authority'] ?? '';
+    }
+
+    public static function toFriendlyName(string $roleName): string
+    {
+        return self::ROLE_FRIENDLY_NAMES[$roleName] ?? '';
     }
 }

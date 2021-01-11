@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\Api;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
+use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;
@@ -14,7 +15,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function array_filter;
-use function array_map;
+use function Functional\map;
+use function implode;
 use function sprintf;
 
 class ListKeysCommand extends Command
@@ -50,7 +52,7 @@ class ListKeysCommand extends Command
     {
         $enabledOnly = $input->getOption('enabledOnly');
 
-        $rows = array_map(function (ApiKey $apiKey) use ($enabledOnly) {
+        $rows = map($this->apiKeyService->listKeys($enabledOnly), function (ApiKey $apiKey) use ($enabledOnly) {
             $expiration = $apiKey->getExpirationDate();
             $messagePattern = $this->determineMessagePattern($apiKey);
 
@@ -60,13 +62,21 @@ class ListKeysCommand extends Command
                 $rowData[] = sprintf($messagePattern, $this->getEnabledSymbol($apiKey));
             }
             $rowData[] = $expiration !== null ? $expiration->toAtomString() : '-';
+            $rowData[] = $apiKey->isAdmin() ? 'Admin' : implode("\n", $apiKey->mapRoles(
+                fn (string $roleName, array $meta) =>
+                    empty($meta)
+                        ? Role::toFriendlyName($roleName)
+                        : sprintf('%s: %s', Role::toFriendlyName($roleName), Role::domainAuthorityFromMeta($meta)),
+            ));
+
             return $rowData;
-        }, $this->apiKeyService->listKeys($enabledOnly));
+        });
 
         ShlinkTable::fromOutput($output)->render(array_filter([
             'Key',
             ! $enabledOnly ? 'Is enabled' : null,
             'Expiration date',
+            'Roles',
         ]), $rows);
         return ExitCodes::EXIT_SUCCESS;
     }
@@ -80,8 +90,6 @@ class ListKeysCommand extends Command
         return $apiKey->isExpired() ? self::WARNING_STRING_PATTERN : self::SUCCESS_STRING_PATTERN;
     }
 
-    /**
-     */
     private function getEnabledSymbol(ApiKey $apiKey): string
     {
         return ! $apiKey->isEnabled() || $apiKey->isExpired() ? '---' : '+++';

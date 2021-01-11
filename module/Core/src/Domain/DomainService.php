@@ -45,6 +45,9 @@ class DomainService implements DomainServiceInterface
         ];
     }
 
+    /**
+     * @throws DomainNotFoundException
+     */
     public function getDomain(string $domainId): Domain
     {
         /** @var Domain|null $domain */
@@ -52,6 +55,18 @@ class DomainService implements DomainServiceInterface
         if ($domain === null) {
             throw DomainNotFoundException::fromId($domainId);
         }
+
+        return $domain;
+    }
+
+    public function getOrCreate(string $authority): Domain
+    {
+        $repo = $this->em->getRepository(Domain::class);
+        /** @var Domain|null $domain */
+        $domain = $repo->findOneBy(['authority' => $authority]) ?? new Domain($authority);
+
+        $this->em->persist($domain);
+        $this->em->flush();
 
         return $domain;
     }

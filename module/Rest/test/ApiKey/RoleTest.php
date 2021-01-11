@@ -56,17 +56,49 @@ class RoleTest extends TestCase
 
     /**
      * @test
-     * @dataProvider provideMetas
+     * @dataProvider provideMetasWithDomainId
      */
     public function getsExpectedDomainIdFromMeta(array $meta, string $expectedDomainId): void
     {
         self::assertEquals($expectedDomainId, Role::domainIdFromMeta($meta));
     }
 
-    public function provideMetas(): iterable
+    public function provideMetasWithDomainId(): iterable
     {
         yield 'empty meta' => [[], '-1'];
         yield 'meta without domain_id' => [['foo' => 'bar'], '-1'];
         yield 'meta with domain_id' => [['domain_id' => '123'], '123'];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideMetasWithAuthority
+     */
+    public function getsExpectedAuthorityFromMeta(array $meta, string $expectedAuthority): void
+    {
+        self::assertEquals($expectedAuthority, Role::domainAuthorityFromMeta($meta));
+    }
+
+    public function provideMetasWithAuthority(): iterable
+    {
+        yield 'empty meta' => [[], ''];
+        yield 'meta without authority' => [['foo' => 'bar'], ''];
+        yield 'meta with authority' => [['authority' => 'example.com'], 'example.com'];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideRoleNames
+     */
+    public function getsExpectedRoleFriendlyName(string $roleName, string $expectedFriendlyName): void
+    {
+        self::assertEquals($expectedFriendlyName, Role::toFriendlyName($roleName));
+    }
+
+    public function provideRoleNames(): iterable
+    {
+        yield 'unknown' => ['unknown', ''];
+        yield Role::AUTHORED_SHORT_URLS => [Role::AUTHORED_SHORT_URLS, 'Author only'];
+        yield Role::DOMAIN_SPECIFIC => [Role::DOMAIN_SPECIFIC, 'Domain only'];
     }
 }

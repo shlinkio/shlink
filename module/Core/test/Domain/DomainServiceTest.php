@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Domain;
 
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Domain\DomainService;
@@ -50,7 +51,7 @@ class DomainServiceTest extends TestCase
     {
         $default = new DomainItem('default.com', true);
         $adminApiKey = new ApiKey();
-        $domainSpecificApiKey = ApiKey::withRoles(RoleDefinition::forDomain('123'));
+        $domainSpecificApiKey = ApiKey::withRoles(RoleDefinition::forDomain((new Domain(''))->setId('123')));
 
         yield 'empty list without API key' => [[], [$default], null];
         yield 'one item without API key' => [
@@ -110,5 +111,34 @@ class DomainServiceTest extends TestCase
 
         self::assertSame($domain, $result);
         $find->shouldHaveBeenCalledOnce();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideFoundDomains
+     */
+    public function getOrCreateAlwaysPersistsDomain(?Domain $foundDomain): void
+    {
+        $authority = 'example.com';
+        $repo = $this->prophesize(DomainRepositoryInterface::class);
+        $repo->findOneBy(['authority' => $authority])->willReturn($foundDomain);
+        $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
+        $persist = $this->em->persist($foundDomain !== null ? $foundDomain : Argument::type(Domain::class));
+        $flush = $this->em->flush();
+
+        $result = $this->domainService->getOrCreate($authority);
+
+        if ($foundDomain !== null) {
+            self::assertSame($result, $foundDomain);
+        }
+        $getRepo->shouldHaveBeenCalledOnce();
+        $persist->shouldHaveBeenCalledOnce();
+        $flush->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideFoundDomains(): iterable
+    {
+        yield 'domain not found' => [null];
+        yield 'domain found' => [new Domain('')];
     }
 }

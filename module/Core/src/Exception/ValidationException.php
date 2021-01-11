@@ -11,9 +11,7 @@ use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 use Throwable;
 
 use function array_keys;
-use function Functional\reduce_left;
-use function is_array;
-use function print_r;
+use function Shlinkio\Shlink\Core\arrayToString;
 use function sprintf;
 
 use const PHP_EOL;
@@ -55,24 +53,16 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
     public function __toString(): string
     {
         return sprintf(
-            '%s %s in %s:%s%s%sStack trace:%s%s',
+            '%s %s in %s:%s%s%s%sStack trace:%s%s',
             __CLASS__,
             $this->getMessage(),
             $this->getFile(),
             $this->getLine(),
-            $this->invalidElementsToString(),
+            PHP_EOL,
+            arrayToString($this->getInvalidElements()),
             PHP_EOL,
             PHP_EOL,
             $this->getTraceAsString(),
         );
-    }
-
-    private function invalidElementsToString(): string
-    {
-        return reduce_left($this->getInvalidElements(), fn ($messages, string $name, $_, string $acc) => $acc . sprintf(
-            "\n    '%s' => %s",
-            $name,
-            is_array($messages) ? print_r($messages, true) : $messages,
-        ), '');
     }
 }

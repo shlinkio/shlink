@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\ApiKey\Model;
 
+use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 
 final class RoleDefinition
@@ -22,9 +23,12 @@ final class RoleDefinition
         return new self(Role::AUTHORED_SHORT_URLS, []);
     }
 
-    public static function forDomain(string $domainId): self
+    public static function forDomain(Domain $domain): self
     {
-        return new self(Role::DOMAIN_SPECIFIC, ['domain_id' => $domainId]);
+        return new self(
+            Role::DOMAIN_SPECIFIC,
+            ['domain_id' => $domain->getId(), 'authority' => $domain->getAuthority()],
+        );
     }
 
     public function roleName(): string
