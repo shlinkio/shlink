@@ -53,11 +53,12 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
     public function __toString(): string
     {
         return sprintf(
-            '%s %s in %s:%s%s%sStack trace:%s%s',
+            '%s %s in %s:%s%s%s%sStack trace:%s%s',
             __CLASS__,
             $this->getMessage(),
             $this->getFile(),
             $this->getLine(),
+            PHP_EOL,
             arrayToString($this->getInvalidElements()),
             PHP_EOL,
             PHP_EOL,

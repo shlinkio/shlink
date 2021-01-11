@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\CLI\Command\Api;
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolverInterface;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;
@@ -15,6 +16,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+use function Shlinkio\Shlink\Core\arrayToString;
 use function sprintf;
 
 class GenerateKeyCommand extends Command
@@ -81,7 +83,17 @@ class GenerateKeyCommand extends Command
         );
 
         // TODO Print permissions that have been set
-        (new SymfonyStyle($input, $output))->success(sprintf('Generated API key: "%s"', $apiKey->toString()));
+        $io = new SymfonyStyle($input, $output);
+        $io->success(sprintf('Generated API key: "%s"', $apiKey->toString()));
+
+        if (! $apiKey->isAdmin()) {
+            ShlinkTable::fromOutput($io)->render(
+                ['Role name', 'Role metadata'],
+                $apiKey->mapRoles(fn (string $name, array $meta) => [$name, arrayToString($meta, 0)]),
+                null,
+                'Roles',
+            );
+        }
 
         return ExitCodes::EXIT_SUCCESS;
     }

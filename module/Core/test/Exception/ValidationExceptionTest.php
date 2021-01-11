@@ -39,7 +39,7 @@ class ValidationExceptionTest extends TestCase
         $inputFilter = $this->prophesize(InputFilterInterface::class);
         $getMessages = $inputFilter->getMessages()->willReturn($invalidData);
 
-        $e = ValidationException::fromInputFilter($inputFilter->reveal());
+        $e = ValidationException::fromInputFilter($inputFilter->reveal(), $prev);
 
         self::assertEquals($invalidData, $e->getInvalidElements());
         self::assertEquals(['invalidElements' => array_keys($invalidData)], $e->getAdditionalData());
@@ -52,6 +52,6 @@ class ValidationExceptionTest extends TestCase
 
     public function provideExceptions(): iterable
     {
-        return [[null, new RuntimeException(), new LogicException()]];
+        return [[null], [new RuntimeException()], [new LogicException()]];
     }
 }

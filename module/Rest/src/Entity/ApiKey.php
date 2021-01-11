@@ -115,6 +115,11 @@ class ApiKey extends AbstractEntity
         return $role === null ? [] : $role->meta();
     }
 
+    public function mapRoles(callable $fun): array
+    {
+        return $this->roles->map(fn (ApiKeyRole $role) => $fun($role->name(), $role->meta()))->getValues();
+    }
+
     public function registerRole(RoleDefinition $roleDefinition): void
     {
         $roleName = $roleDefinition->roleName();

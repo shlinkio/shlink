@@ -14,6 +14,7 @@ use function Functional\reduce_left;
 use function is_array;
 use function print_r;
 use function sprintf;
+use function str_repeat;
 
 const DEFAULT_DELETE_SHORT_URL_THRESHOLD = 15;
 const DEFAULT_SHORT_CODES_LENGTH = 5;
@@ -79,11 +80,20 @@ function getOptionalBoolFromInputFilter(InputFilter $inputFilter, string $fieldN
     return $value !== null ? (bool) $value : null;
 }
 
-function arrayToString(array $array): string
+function arrayToString(array $array, int $indentSize = 4): string
 {
-    return reduce_left($array, fn ($messages, string $name, $_, string $acc) => $acc . sprintf(
-        "\n    '%s' => %s",
-        $name,
-        is_array($messages) ? print_r($messages, true) : $messages,
-    ), '');
+    $indent = str_repeat(' ', $indentSize);
+    $index = 0;
+
+    return reduce_left($array, static function ($messages, string $name, $_, string $acc) use (&$index, $indent) {
+        $index++;
+
+        return $acc . sprintf(
+            "%s%s'%s' => %s",
+            $index === 1 ? '' : "\n",
+            $indent,
+            $name,
+            is_array($messages) ? print_r($messages, true) : $messages,
+        );
+    }, '');
 }
