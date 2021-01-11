@@ -22,21 +22,6 @@ use function sprintf;
 class GenerateKeyCommand extends Command
 {
     public const NAME = 'api-key:generate';
-    private const HELP = <<<HELP
-    The <info>%command.name%</info> generates a new valid API key.
-
-        <info>%command.full_name%</info>
-
-    You can optionally set its expiration date with <comment>--expirationDate</comment> or <comment>-e</comment>:
-
-        <info>%command.full_name% --expirationDate 2020-01-01</info>
-
-    You can also set roles to the API key:
-
-        * Can interact with short URLs created with this API key: <info>%command.full_name% --author-only</info>
-        * Can interact with short URLs for one domain only: <info>%command.full_name% --domain-only=example.com</info>
-        * Both: <info>%command.full_name% --author-only --domain-only=example.com</info>
-    HELP;
 
     private ApiKeyServiceInterface $apiKeyService;
     private RoleResolverInterface $roleResolver;
@@ -50,6 +35,24 @@ class GenerateKeyCommand extends Command
 
     protected function configure(): void
     {
+        $authorOnly = RoleResolverInterface::AUTHOR_ONLY_PARAM;
+        $domainOnly = RoleResolverInterface::DOMAIN_ONLY_PARAM;
+        $help = <<<HELP
+        The <info>%command.name%</info> generates a new valid API key.
+
+            <info>%command.full_name%</info>
+
+        You can optionally set its expiration date with <comment>--expirationDate</comment> or <comment>-e</comment>:
+
+            <info>%command.full_name% --expirationDate 2020-01-01</info>
+
+        You can also set roles to the API key:
+
+            * Can interact with short URLs created with this API key: <info>%command.full_name% --{$authorOnly}</info>
+            * Can interact with short URLs for one domain: <info>%command.full_name% --{$domainOnly}=example.com</info>
+            * Both: <info>%command.full_name% --{$authorOnly} --{$domainOnly}=example.com</info>
+        HELP;
+
         $this
             ->setName(self::NAME)
             ->setDescription('Generates a new valid API key.')
@@ -60,18 +63,18 @@ class GenerateKeyCommand extends Command
                 'The date in which the API key should expire. Use any valid PHP format.',
             )
             ->addOption(
-                RoleResolverInterface::AUTHOR_ONLY_PARAM,
+                $authorOnly,
                 'a',
                 InputOption::VALUE_NONE,
                 sprintf('Adds the "%s" role to the new API key.', Role::AUTHORED_SHORT_URLS),
             )
             ->addOption(
-                RoleResolverInterface::DOMAIN_ONLY_PARAM,
+                $domainOnly,
                 'd',
                 InputOption::VALUE_REQUIRED,
                 sprintf('Adds the "%s" role to the new API key, with the domain provided.', Role::DOMAIN_SPECIFIC),
             )
-            ->setHelp(self::HELP);
+            ->setHelp($help);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
@@ -82,7 +85,6 @@ class GenerateKeyCommand extends Command
             ...$this->roleResolver->determineRoles($input),
         );
 
-        // TODO Print permissions that have been set
         $io = new SymfonyStyle($input, $output);
         $io->success(sprintf('Generated API key: "%s"', $apiKey->toString()));
 
