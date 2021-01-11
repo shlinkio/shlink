@@ -47,6 +47,7 @@ class RoleResolverTest extends TestCase
 
     public function provideRoles(): iterable
     {
+        $domain = (new Domain('example.com'))->setId('1');
         $buildInput = function (array $definition): InputInterface {
             $input = $this->prophesize(InputInterface::class);
 
@@ -64,7 +65,7 @@ class RoleResolverTest extends TestCase
         ];
         yield 'domain role only' => [
             $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => 'example.com', RoleResolver::AUTHOR_ONLY_PARAM => false]),
-            [RoleDefinition::forDomain('1')],
+            [RoleDefinition::forDomain($domain)],
             1,
         ];
         yield 'author role only' => [
@@ -74,7 +75,7 @@ class RoleResolverTest extends TestCase
         ];
         yield 'both roles' => [
             $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => 'example.com', RoleResolver::AUTHOR_ONLY_PARAM => true]),
-            [RoleDefinition::forAuthoredShortUrls(), RoleDefinition::forDomain('1')],
+            [RoleDefinition::forAuthoredShortUrls(), RoleDefinition::forDomain($domain)],
             1,
         ];
     }

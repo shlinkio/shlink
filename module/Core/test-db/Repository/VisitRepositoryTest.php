@@ -221,7 +221,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($shortUrl3);
         $this->createVisitsForShortUrl($shortUrl3, 7);
 
-        $domainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($domain->getId()));
+        $domainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($domain));
         $this->getEntityManager()->persist($domainApiKey);
 
         $this->getEntityManager()->flush();

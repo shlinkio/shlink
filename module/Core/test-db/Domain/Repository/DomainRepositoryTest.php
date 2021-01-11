@@ -72,12 +72,12 @@ class DomainRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $authorAndDomainApiKey->registerRole(RoleDefinition::forDomain($fooDomain->getId()));
+        $authorAndDomainApiKey->registerRole(RoleDefinition::forDomain($fooDomain));
 
-        $fooDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($fooDomain->getId()));
+        $fooDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($fooDomain));
         $this->getEntityManager()->persist($fooDomainApiKey);
 
-        $barDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($barDomain->getId()));
+        $barDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($barDomain));
         $this->getEntityManager()->persist($fooDomainApiKey);
 
         $this->getEntityManager()->flush();

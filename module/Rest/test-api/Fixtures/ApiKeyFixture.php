@@ -33,7 +33,7 @@ class ApiKeyFixture extends AbstractFixture implements DependentFixtureInterface
         /** @var Domain $exampleDomain */
         $exampleDomain = $this->getReference('example_domain');
         $domainApiKey = $this->buildApiKey('domain_api_key', true);
-        $domainApiKey->registerRole(RoleDefinition::forDomain($exampleDomain->getId()));
+        $domainApiKey->registerRole(RoleDefinition::forDomain($exampleDomain));
         $manager->persist($domainApiKey);
 
         $manager->flush();

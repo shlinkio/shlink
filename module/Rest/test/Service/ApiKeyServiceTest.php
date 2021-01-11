@@ -12,6 +12,7 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
@@ -51,7 +52,10 @@ class ApiKeyServiceTest extends TestCase
     {
         yield 'no expiration date' => [null, []];
         yield 'expiration date' => [Chronos::parse('2030-01-01'), []];
-        yield 'roles' => [null, [RoleDefinition::forDomain('123'), RoleDefinition::forAuthoredShortUrls()]];
+        yield 'roles' => [null, [
+            RoleDefinition::forDomain((new Domain(''))->setId('123')),
+            RoleDefinition::forAuthoredShortUrls(),
+        ]];
     }
 
     /**

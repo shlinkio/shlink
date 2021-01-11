@@ -28,7 +28,7 @@ class RoleResolver implements RoleResolverInterface
         }
         if ($domainAuthority !== null) {
             $domain = $this->domainService->getOrCreate($domainAuthority);
-            $roleDefinitions[] = RoleDefinition::forDomain($domain->getId());
+            $roleDefinitions[] = RoleDefinition::forDomain($domain);
         }
 
         return $roleDefinitions;
