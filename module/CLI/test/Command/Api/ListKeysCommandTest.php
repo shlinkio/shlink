@@ -8,6 +8,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Api\ListKeysCommand;
+use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Application;
@@ -29,42 +31,87 @@ class ListKeysCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    /** @test */
-    public function everythingIsListedIfEnabledOnlyIsNotProvided(): void
+    /**
+     * @test
+     * @dataProvider provideKeysAndOutputs
+     */
+    public function returnsExpectedOutput(array $keys, bool $enabledOnly, string $expected): void
     {
-        $this->apiKeyService->listKeys(false)->willReturn([
-            new ApiKey(),
-            new ApiKey(),
-            new ApiKey(),
-        ])->shouldBeCalledOnce();
+        $listKeys = $this->apiKeyService->listKeys($enabledOnly)->willReturn($keys);
 
-        $this->commandTester->execute([]);
+        $this->commandTester->execute(['--enabledOnly' => $enabledOnly]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertStringContainsString('Key', $output);
-        self::assertStringContainsString('Is enabled', $output);
-        self::assertStringContainsString(' +++ ', $output);
-        self::assertStringNotContainsString(' --- ', $output);
-        self::assertStringContainsString('Expiration date', $output);
+        self::assertEquals($expected, $output);
+        $listKeys->shouldHaveBeenCalledOnce();
     }
 
-    /** @test */
-    public function onlyEnabledKeysAreListedIfEnabledOnlyIsProvided(): void
+    public function provideKeysAndOutputs(): iterable
     {
-        $this->apiKeyService->listKeys(true)->willReturn([
-            (new ApiKey())->disable(),
-            new ApiKey(),
-        ])->shouldBeCalledOnce();
+        yield 'all keys' => [
+            [ApiKey::withKey('foo'), ApiKey::withKey('bar'), ApiKey::withKey('baz')],
+            false,
+            <<<OUTPUT
+            +-----+------------+-----------------+-------+
+            | Key | Is enabled | Expiration date | Roles |
+            +-----+------------+-----------------+-------+
+            | foo | +++        | -               | -     |
+            | bar | +++        | -               | -     |
+            | baz | +++        | -               | -     |
+            +-----+------------+-----------------+-------+
 
-        $this->commandTester->execute([
-            '--enabledOnly' => true,
-        ]);
-        $output = $this->commandTester->getDisplay();
+            OUTPUT,
+        ];
+        yield 'enabled keys' => [
+            [ApiKey::withKey('foo')->disable(), ApiKey::withKey('bar')],
+            true,
+            <<<OUTPUT
+            +-----+-----------------+-------+
+            | Key | Expiration date | Roles |
+            +-----+-----------------+-------+
+            | foo | -               | -     |
+            | bar | -               | -     |
+            +-----+-----------------+-------+
 
-        self::assertStringContainsString('Key', $output);
-        self::assertStringNotContainsString('Is enabled', $output);
-        self::assertStringNotContainsString(' +++ ', $output);
-        self::assertStringNotContainsString(' --- ', $output);
-        self::assertStringContainsString('Expiration date', $output);
+            OUTPUT,
+        ];
+        yield 'with roles' => [
+            [
+                ApiKey::withKey('foo'),
+                $this->apiKeyWithRoles('bar', [RoleDefinition::forAuthoredShortUrls()]),
+                $this->apiKeyWithRoles('baz', [RoleDefinition::forDomain((new Domain('example.com'))->setId('1'))]),
+                ApiKey::withKey('foo2'),
+                $this->apiKeyWithRoles('baz2', [
+                    RoleDefinition::forAuthoredShortUrls(),
+                    RoleDefinition::forDomain((new Domain('example.com'))->setId('1')),
+                ]),
+                ApiKey::withKey('foo3'),
+            ],
+            true,
+            <<<OUTPUT
+            +------+-----------------+--------------------------+
+            | Key  | Expiration date | Roles                    |
+            +------+-----------------+--------------------------+
+            | foo  | -               | -                        |
+            | bar  | -               | Author only              |
+            | baz  | -               | Domain only: example.com |
+            | foo2 | -               | -                        |
+            | baz2 | -               | Author only              |
+            |      |                 | Domain only: example.com |
+            | foo3 | -               | -                        |
+            +------+-----------------+--------------------------+
+
+            OUTPUT,
+        ];
+    }
+
+    private function apiKeyWithRoles(string $key, array $roles): ApiKey
+    {
+        $apiKey = ApiKey::withKey($key);
+        foreach ($roles as $role) {
+            $apiKey->registerRole($role);
+        }
+
+        return $apiKey;
     }
 }
