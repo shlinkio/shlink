@@ -55,9 +55,9 @@ class ListKeysCommandTest extends TestCase
             +-----+------------+-----------------+-------+
             | Key | Is enabled | Expiration date | Roles |
             +-----+------------+-----------------+-------+
-            | foo | +++        | -               | -     |
-            | bar | +++        | -               | -     |
-            | baz | +++        | -               | -     |
+            | foo | +++        | -               | Admin |
+            | bar | +++        | -               | Admin |
+            | baz | +++        | -               | Admin |
             +-----+------------+-----------------+-------+
 
             OUTPUT,
@@ -69,8 +69,8 @@ class ListKeysCommandTest extends TestCase
             +-----+-----------------+-------+
             | Key | Expiration date | Roles |
             +-----+-----------------+-------+
-            | foo | -               | -     |
-            | bar | -               | -     |
+            | foo | -               | Admin |
+            | bar | -               | Admin |
             +-----+-----------------+-------+
 
             OUTPUT,
@@ -92,13 +92,13 @@ class ListKeysCommandTest extends TestCase
             +------+-----------------+--------------------------+
             | Key  | Expiration date | Roles                    |
             +------+-----------------+--------------------------+
-            | foo  | -               | -                        |
+            | foo  | -               | Admin                    |
             | bar  | -               | Author only              |
             | baz  | -               | Domain only: example.com |
-            | foo2 | -               | -                        |
+            | foo2 | -               | Admin                    |
             | baz2 | -               | Author only              |
             |      |                 | Domain only: example.com |
-            | foo3 | -               | -                        |
+            | foo3 | -               | Admin                    |
             +------+-----------------+--------------------------+
 
             OUTPUT,
