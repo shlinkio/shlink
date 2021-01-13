@@ -27,18 +27,9 @@ use function sprintf;
 
 class VisitRepositoryTest extends DatabaseTestCase
 {
-    protected const ENTITIES_TO_EMPTY = [
-        VisitLocation::class,
-        Visit::class,
-        ShortUrl::class,
-        Domain::class,
-        Tag::class,
-        ApiKey::class,
-    ];
-
     private VisitRepository $repo;
 
-    protected function setUp(): void
+    protected function beforeEach(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Visit::class);
     }

@@ -21,17 +21,9 @@ use function array_chunk;
 
 class TagRepositoryTest extends DatabaseTestCase
 {
-    protected const ENTITIES_TO_EMPTY = [
-        Visit::class,
-        ShortUrl::class,
-        Tag::class,
-        ApiKey::class,
-        Domain::class,
-    ];
-
     private TagRepository $repo;
 
-    protected function setUp(): void
+    protected function beforeEach(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Tag::class);
     }

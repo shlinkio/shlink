@@ -29,17 +29,9 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 {
     use TagManagerTrait;
 
-    protected const ENTITIES_TO_EMPTY = [
-        Tag::class,
-        Visit::class,
-        ShortUrl::class,
-        Domain::class,
-        ApiKey::class,
-    ];
-
     private ShortUrlRepository $repo;
 
-    public function setUp(): void
+    public function beforeEach(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(ShortUrl::class);
     }

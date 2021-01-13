@@ -15,11 +15,9 @@ use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 class DomainRepositoryTest extends DatabaseTestCase
 {
-    protected const ENTITIES_TO_EMPTY = [ShortUrl::class, Domain::class, ApiKey::class];
-
     private DomainRepository $repo;
 
-    protected function setUp(): void
+    protected function beforeEach(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Domain::class);
     }
