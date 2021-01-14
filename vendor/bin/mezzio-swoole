@@ -18,16 +18,22 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 
 use function explode;
+use function Functional\filter;
+use function str_starts_with;
 use function strstr;
 
 /** @var ServiceManager $container */
 $container = require __DIR__ . '/../../config/container.php';
 $version = strstr(Versions::getVersion('mezzio/mezzio-swoole'), '@', true);
-$commands = $container->get('config')['laminas-cli']['commands'] ?? [];
+$commandsPrefix = 'mezzio:swoole:';
+$commands = filter(
+    $container->get('config')['laminas-cli']['commands'] ?? [],
+    fn ($c, string $command) => str_starts_with($command, $commandsPrefix),
+);
 $registeredCommands = [];
 
 foreach ($commands as $newName => $commandServiceName) {
-    [, $oldName] = explode('mezzio:swoole:', $newName);
+    [, $oldName] = explode($commandsPrefix, $newName);
     $registeredCommands[$oldName] = $commandServiceName;
 
     $container->addDelegator($commandServiceName, static function ($c, $n, callable $factory) use ($oldName) {
