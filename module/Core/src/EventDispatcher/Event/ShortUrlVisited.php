@@ -29,6 +29,6 @@ final class ShortUrlVisited implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return ['visitId' => $this->visitId, 'originalIpAddress' => $this->originalIpAddress];
+        return ['visitId' => $this->visitId, 'originalIpAddress' => '<censored>'];
     }
 }
