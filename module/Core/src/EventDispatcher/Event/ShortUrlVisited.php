@@ -2,33 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\EventDispatcher;
+namespace Shlinkio\Shlink\Core\EventDispatcher\Event;
 
-use JsonSerializable;
-
-final class ShortUrlVisited implements JsonSerializable
+final class ShortUrlVisited extends AbstractVisitEvent
 {
-    private string $visitId;
     private ?string $originalIpAddress;
 
     public function __construct(string $visitId, ?string $originalIpAddress = null)
     {
-        $this->visitId = $visitId;
+        parent::__construct($visitId);
         $this->originalIpAddress = $originalIpAddress;
-    }
-
-    public function visitId(): string
-    {
-        return $this->visitId;
     }
 
     public function originalIpAddress(): ?string
     {
         return $this->originalIpAddress;
-    }
-
-    public function jsonSerialize(): array
-    {
-        return ['visitId' => $this->visitId, 'originalIpAddress' => '<censored>'];
     }
 }

@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\EventDispatcher;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGeneratorInterface;
 use Symfony\Component\Mercure\PublisherInterface;
 use Throwable;
