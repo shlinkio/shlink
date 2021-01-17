@@ -130,7 +130,7 @@ Once Shlink is configured, you need to expose it to the web, either by using a t
 
     First you need to install the swoole PHP extension with [pecl](https://pecl.php.net/package/swoole), `pecl install swoole`.
 
-    Once installed, it's actually pretty easy to get shlink up and running with swoole. Run `./vendor/bin/mezzio-swoole start -d` and you will get shlink running on port 8080.
+    Once installed, it's actually pretty easy to get shlink up and running with swoole. Run `./vendor/bin/laminas mezzio:swoole:start -d` and you will get shlink running on port 8080.
 
     However, by doing it this way, you are loosing all the access logs, and the service won't be automatically run if the server has to be restarted.
 
@@ -147,7 +147,7 @@ Once Shlink is configured, you need to expose it to the web, either by using a t
     # Description:       Shlink non-blocking server with swoole
     ### END INIT INFO
 
-    SCRIPT=/path/to/shlink/vendor/bin/mezzio-swoole\ start
+    SCRIPT=/path/to/shlink/vendor/bin/laminas\ mezzio:swoole:start
     RUNAS=root
 
     PIDFILE=/var/run/shlink_swoole.pid
