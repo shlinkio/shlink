@@ -4,7 +4,6 @@ build
 composer.lock
 composer.phar
 vendor/
-!vendor/bin/mezzio-swoole
 data/database.sqlite
 data/shlink-tests.db
 data/GeoLite2-City.mmdb

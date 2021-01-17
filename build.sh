@@ -28,6 +28,9 @@ echo "Installing dependencies with $composerBin..."
 ${composerBin} self-update
 ${composerBin} install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction
 
+# Copy mezzio helper script to vendor (deprecated - Remove with Shlink 3.0.0)
+cp "${projectdir}/bin/helper/mezzio-swoole" "./vendor/bin"
+
 # Delete development files
 echo 'Deleting dev files...'
 rm composer.*

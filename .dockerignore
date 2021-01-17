@@ -21,3 +21,4 @@ infection*
 **/test*
 build*
 **/.*
+bin/helper
