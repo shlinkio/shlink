@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Changed
 * [#912](https://github.com/shlinkio/shlink/issues/912) Changed error templates to be plain html files, removing the dependency on `league/plates` package.
 * [#875](https://github.com/shlinkio/shlink/issues/875) Updated to `mezzio/mezzio-swoole` v3.1.
+* [#952](https://github.com/shlinkio/shlink/issues/952) Simplified in-project docs, by keeping only the basics and linking to the websites docs for anything else.
 
 ### Deprecated
 * [#917](https://github.com/shlinkio/shlink/issues/917) Deprecated `/{shortCode}/qr-code/{size}` URL, in favor of providing the size in the query instead, `/{shortCode}/qr-code?size={size}`.
