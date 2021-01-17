@@ -36,7 +36,7 @@ if ($isApiTest) {
 
 $buildDbConnection = function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
-    $isCi = env('TRAVIS', false);
+    $isCi = env('CI', false);
     $getMysqlHost = fn (string $driver) => sprintf('shlink_db%s', $driver === 'mysql' ? '' : '_maria');
     $getCiMysqlPort = fn (string $driver) => $driver === 'mysql' ? '3307' : '3308';
 

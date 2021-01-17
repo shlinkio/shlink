@@ -6,13 +6,14 @@ namespace Shlinkio\Shlink\Rest\Service;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface ApiKeyServiceInterface
 {
-    public function create(?Chronos $expirationDate = null): ApiKey;
+    public function create(?Chronos $expirationDate = null, RoleDefinition ...$roleDefinitions): ApiKey;
 
-    public function check(string $key): bool;
+    public function check(string $key): ApiKeyCheckResult;
 
     /**
      * @throws InvalidArgumentException
@@ -23,6 +24,4 @@ interface ApiKeyServiceInterface
      * @return ApiKey[]
      */
     public function listKeys(bool $enabledOnly = false): array;
-
-    public function getByKey(string $key): ?ApiKey;
 }

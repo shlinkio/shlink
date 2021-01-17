@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Options\DeleteShortUrlsOptions;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class DeleteShortUrlService implements DeleteShortUrlServiceInterface
 {
@@ -30,9 +31,12 @@ class DeleteShortUrlService implements DeleteShortUrlServiceInterface
      * @throws Exception\ShortUrlNotFoundException
      * @throws Exception\DeleteShortUrlException
      */
-    public function deleteByShortCode(ShortUrlIdentifier $identifier, bool $ignoreThreshold = false): void
-    {
-        $shortUrl = $this->urlResolver->resolveShortUrl($identifier);
+    public function deleteByShortCode(
+        ShortUrlIdentifier $identifier,
+        bool $ignoreThreshold = false,
+        ?ApiKey $apiKey = null
+    ): void {
+        $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
         if (! $ignoreThreshold && $this->isThresholdReached($shortUrl)) {
             throw Exception\DeleteShortUrlException::fromVisitsThreshold(
                 $this->deleteShortUrlsOptions->getVisitsThreshold(),

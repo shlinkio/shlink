@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class DeleteShortUrlAction extends AbstractRestAction
 {
@@ -26,7 +27,10 @@ class DeleteShortUrlAction extends AbstractRestAction
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $identifier = ShortUrlIdentifier::fromApiRequest($request);
-        $this->deleteShortUrlService->deleteByShortCode($identifier);
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
+
+        $this->deleteShortUrlService->deleteByShortCode($identifier, false, $apiKey);
+
         return new EmptyResponse();
     }
 }

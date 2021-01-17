@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function strpos;
 
@@ -48,19 +49,19 @@ class CreateShortUrlActionTest extends TestCase
      * @test
      * @dataProvider provideRequestBodies
      */
-    public function properShortcodeConversionReturnsData(array $body, ShortUrlMeta $expectedMeta, ?string $apiKey): void
+    public function properShortcodeConversionReturnsData(array $body, array $expectedMeta): void
     {
+        $apiKey = new ApiKey();
         $shortUrl = new ShortUrl('');
+        $expectedMeta['apiKey'] = $apiKey;
+
         $shorten = $this->urlShortener->shorten(
             Argument::type('string'),
             Argument::type('array'),
-            $expectedMeta,
+            ShortUrlMeta::fromRawData($expectedMeta),
         )->willReturn($shortUrl);
 
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);
-        if ($apiKey !== null) {
-            $request = $request->withHeader('X-Api-Key', $apiKey);
-        }
+        $request = ServerRequestFactory::fromGlobals()->withParsedBody($body)->withAttribute(ApiKey::class, $apiKey);
 
         $response = $this->action->handle($request);
 
@@ -81,14 +82,8 @@ class CreateShortUrlActionTest extends TestCase
             'domain' => 'my-domain.com',
         ];
 
-        yield 'no data' => [['longUrl' => 'http://www.domain.com/foo/bar'], ShortUrlMeta::createEmpty(), null];
-        yield 'all data' => [$fullMeta, ShortUrlMeta::fromRawData($fullMeta), null];
-        yield 'all data and API key' => (static function (array $meta): array {
-            $apiKey = 'abc123';
-            $meta['apiKey'] = $apiKey;
-
-            return [$meta, ShortUrlMeta::fromRawData($meta), $apiKey];
-        })($fullMeta);
+        yield 'no data' => [['longUrl' => 'http://www.domain.com/foo/bar'], []];
+        yield 'all data' => [$fullMeta, $fullMeta];
     }
 
     /**
@@ -103,7 +98,7 @@ class CreateShortUrlActionTest extends TestCase
         $request = (new ServerRequest())->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
             'domain' => $domain,
-        ]);
+        ])->withAttribute(ApiKey::class, new ApiKey());
 
         $this->expectException(ValidationException::class);
         $urlToShortCode->shouldNotBeCalled();

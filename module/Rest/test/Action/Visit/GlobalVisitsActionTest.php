@@ -12,6 +12,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\Visit\GlobalVisitsAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class GlobalVisitsActionTest extends TestCase
 {
@@ -29,11 +30,12 @@ class GlobalVisitsActionTest extends TestCase
     /** @test */
     public function statsAreReturnedFromHelper(): void
     {
+        $apiKey = new ApiKey();
         $stats = new VisitsStats(5);
-        $getStats = $this->helper->getVisitsStats()->willReturn($stats);
+        $getStats = $this->helper->getVisitsStats($apiKey)->willReturn($stats);
 
         /** @var JsonResponse $resp */
-        $resp = $this->action->handle(ServerRequestFactory::fromGlobals());
+        $resp = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, $apiKey));
         $payload = $resp->getPayload();
 
         self::assertEquals($payload, ['visits' => $stats]);

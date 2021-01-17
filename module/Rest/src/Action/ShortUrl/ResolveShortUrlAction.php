@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class ResolveShortUrlAction extends AbstractRestAction
 {
@@ -29,7 +30,10 @@ class ResolveShortUrlAction extends AbstractRestAction
     public function handle(Request $request): Response
     {
         $transformer = new ShortUrlDataTransformer($this->domainConfig);
-        $url = $this->urlResolver->resolveShortUrl(ShortUrlIdentifier::fromApiRequest($request));
+        $url = $this->urlResolver->resolveShortUrl(
+            ShortUrlIdentifier::fromApiRequest($request),
+            AuthenticationMiddleware::apiKeyFromRequest($request),
+        );
 
         return new JsonResponse($transformer->transform($url));
     }

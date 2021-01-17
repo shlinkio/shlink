@@ -9,16 +9,15 @@ use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 class DomainRepositoryTest extends DatabaseTestCase
 {
-    protected const ENTITIES_TO_EMPTY = [ShortUrl::class, Domain::class];
-
     private DomainRepository $repo;
 
-    protected function setUp(): void
+    protected function beforeEach(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Domain::class);
     }
@@ -28,35 +27,70 @@ class DomainRepositoryTest extends DatabaseTestCase
     {
         $fooDomain = new Domain('foo.com');
         $this->getEntityManager()->persist($fooDomain);
-        $fooShortUrl = $this->createShortUrl($fooDomain);
-        $this->getEntityManager()->persist($fooShortUrl);
+        $this->getEntityManager()->persist($this->createShortUrl($fooDomain));
 
         $barDomain = new Domain('bar.com');
         $this->getEntityManager()->persist($barDomain);
-        $barShortUrl = $this->createShortUrl($barDomain);
-        $this->getEntityManager()->persist($barShortUrl);
+        $this->getEntityManager()->persist($this->createShortUrl($barDomain));
 
         $bazDomain = new Domain('baz.com');
         $this->getEntityManager()->persist($bazDomain);
-        $bazShortUrl = $this->createShortUrl($bazDomain);
-        $this->getEntityManager()->persist($bazShortUrl);
+        $this->getEntityManager()->persist($this->createShortUrl($bazDomain));
 
         $detachedDomain = new Domain('detached.com');
         $this->getEntityManager()->persist($detachedDomain);
 
         $this->getEntityManager()->flush();
 
-        self::assertEquals([$barDomain, $bazDomain, $fooDomain], $this->repo->findDomainsWithout());
+        self::assertEquals([$barDomain, $bazDomain, $fooDomain], $this->repo->findDomainsWithout(null));
         self::assertEquals([$barDomain, $bazDomain], $this->repo->findDomainsWithout('foo.com'));
         self::assertEquals([$bazDomain, $fooDomain], $this->repo->findDomainsWithout('bar.com'));
         self::assertEquals([$barDomain, $fooDomain], $this->repo->findDomainsWithout('baz.com'));
     }
 
-    private function createShortUrl(Domain $domain): ShortUrl
+    /** @test */
+    public function findDomainsReturnsJustThoseMatchingProvidedApiKey(): void
+    {
+        $authorApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $this->getEntityManager()->persist($authorApiKey);
+        $authorAndDomainApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $this->getEntityManager()->persist($authorAndDomainApiKey);
+
+        $fooDomain = new Domain('foo.com');
+        $this->getEntityManager()->persist($fooDomain);
+        $this->getEntityManager()->persist($this->createShortUrl($fooDomain, $authorApiKey));
+
+        $barDomain = new Domain('bar.com');
+        $this->getEntityManager()->persist($barDomain);
+        $this->getEntityManager()->persist($this->createShortUrl($barDomain, $authorAndDomainApiKey));
+
+        $bazDomain = new Domain('baz.com');
+        $this->getEntityManager()->persist($bazDomain);
+        $this->getEntityManager()->persist($this->createShortUrl($bazDomain, $authorApiKey));
+
+        $this->getEntityManager()->flush();
+
+        $authorAndDomainApiKey->registerRole(RoleDefinition::forDomain($fooDomain));
+
+        $fooDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($fooDomain));
+        $this->getEntityManager()->persist($fooDomainApiKey);
+
+        $barDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($barDomain));
+        $this->getEntityManager()->persist($fooDomainApiKey);
+
+        $this->getEntityManager()->flush();
+
+        self::assertEquals([$fooDomain], $this->repo->findDomainsWithout(null, $fooDomainApiKey));
+        self::assertEquals([$barDomain], $this->repo->findDomainsWithout(null, $barDomainApiKey));
+        self::assertEquals([$bazDomain, $fooDomain], $this->repo->findDomainsWithout(null, $authorApiKey));
+        self::assertEquals([], $this->repo->findDomainsWithout(null, $authorAndDomainApiKey));
+    }
+
+    private function createShortUrl(Domain $domain, ?ApiKey $apiKey = null): ShortUrl
     {
         return new ShortUrl(
             'foo',
-            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority()]),
+            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority(), 'apiKey' => $apiKey]),
             new class ($domain) implements ShortUrlRelationResolverInterface {
                 private Domain $domain;
 
@@ -68,11 +102,6 @@ class DomainRepositoryTest extends DatabaseTestCase
                 public function resolveDomain(?string $domain): ?Domain
                 {
                     return $this->domain;
-                }
-
-                public function resolveApiKey(?string $key): ?ApiKey
-                {
-                    return null;
                 }
             },
         );

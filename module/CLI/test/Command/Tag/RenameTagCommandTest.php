@@ -10,6 +10,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\RenameTagCommand;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
+use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -37,7 +38,9 @@ class RenameTagCommandTest extends TestCase
     {
         $oldName = 'foo';
         $newName = 'bar';
-        $renameTag = $this->tagService->renameTag($oldName, $newName)->willThrow(TagNotFoundException::fromTag('foo'));
+        $renameTag = $this->tagService->renameTag(TagRenaming::fromNames($oldName, $newName))->willThrow(
+            TagNotFoundException::fromTag('foo'),
+        );
 
         $this->commandTester->execute([
             'oldName' => $oldName,
@@ -54,7 +57,9 @@ class RenameTagCommandTest extends TestCase
     {
         $oldName = 'foo';
         $newName = 'bar';
-        $renameTag = $this->tagService->renameTag($oldName, $newName)->willReturn(new Tag($newName));
+        $renameTag = $this->tagService->renameTag(TagRenaming::fromNames($oldName, $newName))->willReturn(
+            new Tag($newName),
+        );
 
         $this->commandTester->execute([
             'oldName' => $oldName,

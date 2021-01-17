@@ -4,6 +4,40 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.5.0] - 2021-01-17
+### Added
+* [#795](https://github.com/shlinkio/shlink/issues/795) and [#882](https://github.com/shlinkio/shlink/issues/882) Added new roles system to API keys.
+
+    API keys can have any combinations of these two roles now, allowing to limit their interactions:
+
+    * Can interact only with short URLs created with that API key.
+    * Can interact only with short URLs for a specific domain.
+
+* [#833](https://github.com/shlinkio/shlink/issues/833) Added support to connect through unix socket when using an external MySQL, MariaDB or Postgres database.
+
+    It can be provided during the installation, or as the `DB_UNIX_SOCKET` env var for the docker image.
+
+* [#869](https://github.com/shlinkio/shlink/issues/869) Added support for Mercure Hub 0.10.
+* [#896](https://github.com/shlinkio/shlink/issues/896) Added support for unicode characters in custom slugs.
+* [#930](https://github.com/shlinkio/shlink/issues/930) Added new `bin/set-option` script that allows changing individual configuration options on existing shlink instances.
+* [#877](https://github.com/shlinkio/shlink/issues/877) Improved API tests on CORS, and "refined" middleware handling it.
+
+### Changed
+* [#912](https://github.com/shlinkio/shlink/issues/912) Changed error templates to be plain html files, removing the dependency on `league/plates` package.
+* [#875](https://github.com/shlinkio/shlink/issues/875) Updated to `mezzio/mezzio-swoole` v3.1.
+* [#952](https://github.com/shlinkio/shlink/issues/952) Simplified in-project docs, by keeping only the basics and linking to the websites docs for anything else.
+
+### Deprecated
+* [#917](https://github.com/shlinkio/shlink/issues/917) Deprecated `/{shortCode}/qr-code/{size}` URL, in favor of providing the size in the query instead, `/{shortCode}/qr-code?size={size}`.
+* [#924](https://github.com/shlinkio/shlink/issues/924) Deprecated mechanism to provide config options to the docker image through volumes. Use the env vars instead as a direct replacement.
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 ## [2.4.2] - 2020-11-22
 ### Added
 * *Nothing*

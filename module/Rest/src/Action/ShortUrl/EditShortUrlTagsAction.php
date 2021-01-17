@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class EditShortUrlTagsAction extends AbstractRestAction
 {
@@ -35,8 +36,9 @@ class EditShortUrlTagsAction extends AbstractRestAction
         }
         ['tags' => $tags] = $bodyParams;
         $identifier = ShortUrlIdentifier::fromApiRequest($request);
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
-        $shortUrl = $this->shortUrlService->setTagsByShortCode($identifier, $tags);
+        $shortUrl = $this->shortUrlService->setTagsByShortCode($identifier, $tags, $apiKey);
         return new JsonResponse(['tags' => $shortUrl->getTags()->toArray()]);
     }
 }

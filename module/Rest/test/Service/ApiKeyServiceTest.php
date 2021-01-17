@@ -12,6 +12,8 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
@@ -31,21 +33,29 @@ class ApiKeyServiceTest extends TestCase
     /**
      * @test
      * @dataProvider provideCreationDate
+     * @param RoleDefinition[] $roles
      */
-    public function apiKeyIsProperlyCreated(?Chronos $date): void
+    public function apiKeyIsProperlyCreated(?Chronos $date, array $roles): void
     {
         $this->em->flush()->shouldBeCalledOnce();
         $this->em->persist(Argument::type(ApiKey::class))->shouldBeCalledOnce();
 
-        $key = $this->service->create($date);
+        $key = $this->service->create($date, ...$roles);
 
         self::assertEquals($date, $key->getExpirationDate());
+        foreach ($roles as $roleDefinition) {
+            self::assertTrue($key->hasRole($roleDefinition->roleName()));
+        }
     }
 
     public function provideCreationDate(): iterable
     {
-        yield 'no expiration date' => [null];
-        yield 'expiration date' => [Chronos::parse('2030-01-01')];
+        yield 'no expiration date' => [null, []];
+        yield 'expiration date' => [Chronos::parse('2030-01-01'), []];
+        yield 'roles' => [null, [
+            RoleDefinition::forDomain((new Domain(''))->setId('123')),
+            RoleDefinition::forAuthoredShortUrls(),
+        ]];
     }
 
     /**
@@ -59,7 +69,10 @@ class ApiKeyServiceTest extends TestCase
                                             ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
-        self::assertFalse($this->service->check('12345'));
+        $result = $this->service->check('12345');
+
+        self::assertFalse($result->isValid());
+        self::assertSame($invalidKey, $result->apiKey());
     }
 
     public function provideInvalidApiKeys(): iterable
@@ -72,12 +85,17 @@ class ApiKeyServiceTest extends TestCase
     /** @test */
     public function checkReturnsTrueWhenConditionsAreFavorable(): void
     {
+        $apiKey = new ApiKey();
+
         $repo = $this->prophesize(EntityRepository::class);
-        $repo->findOneBy(['key' => '12345'])->willReturn(new ApiKey())
+        $repo->findOneBy(['key' => '12345'])->willReturn($apiKey)
                                             ->shouldBeCalledOnce();
         $this->em->getRepository(ApiKey::class)->willReturn($repo->reveal());
 
-        self::assertTrue($this->service->check('12345'));
+        $result = $this->service->check('12345');
+
+        self::assertTrue($result->isValid());
+        self::assertSame($apiKey, $result->apiKey());
     }
 
     /** @test */

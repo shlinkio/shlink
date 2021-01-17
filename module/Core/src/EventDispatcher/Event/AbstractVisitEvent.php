@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\EventDispatcher;
+namespace Shlinkio\Shlink\Core\EventDispatcher\Event;
 
 use JsonSerializable;
 
-final class VisitLocated implements JsonSerializable
+abstract class AbstractVisitEvent implements JsonSerializable
 {
-    private string $visitId;
+    protected string $visitId;
 
     public function __construct(string $visitId)
     {

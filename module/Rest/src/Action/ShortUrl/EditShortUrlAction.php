@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class EditShortUrlAction extends AbstractRestAction
 {
@@ -28,8 +29,9 @@ class EditShortUrlAction extends AbstractRestAction
     {
         $shortUrlEdit = ShortUrlEdit::fromRawData((array) $request->getParsedBody());
         $identifier = ShortUrlIdentifier::fromApiRequest($request);
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
-        $this->shortUrlService->updateMetadataByShortCode($identifier, $shortUrlEdit);
+        $this->shortUrlService->updateMetadataByShortCode($identifier, $shortUrlEdit, $apiKey);
         return new EmptyResponse();
     }
 }

@@ -22,9 +22,15 @@ class ShortUrlVisitsActionTest extends ApiTestCase
     public function tryingToGetVisitsForInvalidUrlReturnsNotFoundError(
         string $shortCode,
         ?string $domain,
-        string $expectedDetail
+        string $expectedDetail,
+        string $apiKey
     ): void {
-        $resp = $this->callApiWithKey(self::METHOD_GET, $this->buildShortUrlPath($shortCode, $domain, '/visits'));
+        $resp = $this->callApiWithKey(
+            self::METHOD_GET,
+            $this->buildShortUrlPath($shortCode, $domain, '/visits'),
+            [],
+            $apiKey,
+        );
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());

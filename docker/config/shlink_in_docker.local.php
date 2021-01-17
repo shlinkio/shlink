@@ -34,6 +34,7 @@ $helper = new class {
     public function getDbConfig(): array
     {
         $driver = env('DB_DRIVER');
+        $isMysql = contains(['maria', 'mysql'], $driver);
         if ($driver === null || $driver === 'sqlite') {
             return [
                 'driver' => 'pdo_sqlite',
@@ -41,7 +42,7 @@ $helper = new class {
             ];
         }
 
-        $driverOptions = ! contains(['maria', 'mysql'], $driver) ? [] : [
+        $driverOptions = ! $isMysql ? [] : [
             // 1002 -> PDO::MYSQL_ATTR_INIT_COMMAND
             1002 => 'SET NAMES utf8',
             // 1000 -> PDO::MYSQL_ATTR_USE_BUFFERED_QUERY
@@ -52,9 +53,10 @@ $helper = new class {
             'dbname' => env('DB_NAME', 'shlink'),
             'user' => env('DB_USER'),
             'password' => env('DB_PASSWORD'),
-            'host' => env('DB_HOST'),
+            'host' => env('DB_HOST', $driver === 'postgres' ? env('DB_UNIX_SOCKET') : null),
             'port' => env('DB_PORT', self::DB_PORTS_MAP[$driver]),
             'driverOptions' => $driverOptions,
+            'unix_socket' => $isMysql ? env('DB_UNIX_SOCKET') : null,
         ];
     }
 

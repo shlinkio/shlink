@@ -1,0 +1,319 @@
+name: Continuous integration
+
+on:
+  pull_request: null
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: ['7.4']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer cs
+
+  static-analysis:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: ['7.4']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer stan
+
+  unit-tests:
+    runs-on: ubuntu-20.04
+    continue-on-error: ${{ matrix.php-version == '8.0' }}
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+          coverage: pcov
+          ini-values: pcov.directory=module
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - run: composer test:unit:ci
+      - uses: actions/upload-artifact@v2
+        if: ${{ matrix.php-version == '7.4' }}
+        with:
+          name: coverage-unit
+          path: |
+            build/coverage-unit
+            build/coverage-unit.cov
+
+  db-tests-sqlite:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+          coverage: pcov
+          ini-values: pcov.directory=module
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - run: composer test:db:sqlite:ci
+      - uses: actions/upload-artifact@v2
+        if: ${{ matrix.php-version == '7.4' }}
+        with:
+          name: coverage-db
+          path: |
+            build/coverage-db
+            build/coverage-db.cov
+
+  db-tests-mysql:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Start database server
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+          coverage: none
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - run: composer test:db:mysql
+
+  db-tests-maria:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Start database server
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_maria
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+          coverage: none
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - run: composer test:db:maria
+
+  db-tests-postgres:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Start database server
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+          coverage: none
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - run: composer test:db:postgres
+
+  db-tests-ms:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install MSSQL ODBC
+        run: sudo ./data/infra/ci/install-ms-odbc.sh
+      - name: Start database server
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_ms
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9, pdo_sqlsrv-5.9.0beta2
+          coverage: none
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - name: Create test database
+        run: docker-compose exec -T shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
+      - run: composer test:db:ms
+
+  api-tests:
+    runs-on: ubuntu-20.04
+    continue-on-error: ${{ matrix.php-version == '8.0' }}
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Start database server
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+          coverage: pcov
+          ini-values: pcov.directory=module
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - run: bin/test/run-api-tests.sh
+      - uses: actions/upload-artifact@v2
+        if: ${{ matrix.php-version == '7.4' }}
+        with:
+          name: coverage-api
+          path: |
+            build/coverage-api
+            build/coverage-api.cov
+
+  mutation-tests:
+    needs:
+      - unit-tests
+      - db-tests-sqlite
+      - api-tests
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: swoole-4.5.9
+          coverage: pcov
+          ini-values: pcov.directory=module
+      - if: ${{ matrix.php-version == '8.0' }}
+        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
+      - if: ${{ matrix.php-version != '8.0' }}
+        run: composer install --no-interaction --prefer-dist
+      - uses: actions/download-artifact@v2
+        with:
+          path: build
+      - run: composer infect:ci
+
+  upload-coverage:
+    needs:
+      - unit-tests
+      - db-tests-sqlite
+      - api-tests
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: ['7.4']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: pcov
+          ini-values: pcov.directory=module
+      - uses: actions/download-artifact@v2
+        with:
+          path: build
+      - run: mv build/coverage-unit/coverage-unit.cov build/coverage-unit.cov
+      - run: mv build/coverage-db/coverage-db.cov build/coverage-db.cov
+      - run: mv build/coverage-api/coverage-api.cov build/coverage-api.cov
+      - run: wget https://phar.phpunit.de/phpcov-8.2.0.phar
+      - run: php phpcov-8.2.0.phar merge build --clover build/clover.xml
+      - name: Publish coverage
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./build/clover.xml
+
+  delete-artifacts:
+    needs:
+      - mutation-tests
+      - upload-coverage
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: geekyeggo/delete-artifact@v1
+        with:
+          name: |
+            coverage-unit
+            coverage-db
+            coverage-api
+
+  build-docker-image:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-dockerfile
+        with:
+          paths: ./Dockerfile
+      - if: ${{ steps.changed-dockerfile.outputs.changed == 'true' }}
+        run: docker build -t shlink-docker-image:temp .
+      - if: ${{ steps.changed-dockerfile.outputs.changed != 'true' }}
+        run: echo "Dockerfile didn't change. Skipped"

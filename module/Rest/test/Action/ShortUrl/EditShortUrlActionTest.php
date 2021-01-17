@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class EditShortUrlActionTest extends TestCase
 {
@@ -43,6 +44,7 @@ class EditShortUrlActionTest extends TestCase
     public function correctShortCodeReturnsSuccess(): void
     {
         $request = (new ServerRequest())->withAttribute('shortCode', 'abc123')
+                                        ->withAttribute(ApiKey::class, new ApiKey())
                                         ->withParsedBody([
                                             'maxVisits' => 5,
                                         ]);

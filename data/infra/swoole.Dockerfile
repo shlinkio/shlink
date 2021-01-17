@@ -4,7 +4,7 @@ MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 ENV APCU_VERSION 5.1.18
 ENV APCU_BC_VERSION 1.0.5
 ENV INOTIFY_VERSION 2.0.0
-ENV SWOOLE_VERSION 4.5.5
+ENV SWOOLE_VERSION 4.5.9
 
 RUN apk update
 
@@ -95,4 +95,4 @@ CMD \
     if [[ ! -d "./vendor" ]]; then /usr/local/bin/composer install ; fi && \
     # When restarting the container, swoole might think it is already in execution
     # This forces the app to be started every second until the exit code is 0
-    until php ./vendor/bin/mezzio-swoole start; do sleep 1 ; done
+    until php ./vendor/bin/laminas mezzio:swoole:start; do sleep 1 ; done

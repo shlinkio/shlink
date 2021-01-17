@@ -14,6 +14,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTracker;
 use Shlinkio\Shlink\Rest\Action\Visit\TagVisitsAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class TagVisitsActionTest extends TestCase
 {
@@ -32,11 +33,14 @@ class TagVisitsActionTest extends TestCase
     public function providingCorrectShortCodeReturnsVisits(): void
     {
         $tag = 'foo';
-        $getVisits = $this->visitsTracker->visitsForTag($tag, Argument::type(VisitsParams::class))->willReturn(
+        $apiKey = new ApiKey();
+        $getVisits = $this->visitsTracker->visitsForTag($tag, Argument::type(VisitsParams::class), $apiKey)->willReturn(
             new Paginator(new ArrayAdapter([])),
         );
 
-        $response = $this->action->handle((new ServerRequest())->withAttribute('tag', $tag));
+        $response = $this->action->handle(
+            (new ServerRequest())->withAttribute('tag', $tag)->withAttribute(ApiKey::class, $apiKey),
+        );
 
         self::assertEquals(200, $response->getStatusCode());
         $getVisits->shouldHaveBeenCalledOnce();

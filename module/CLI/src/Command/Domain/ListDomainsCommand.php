@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\CLI\Command\Domain;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
-use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,13 +19,11 @@ class ListDomainsCommand extends Command
     public const NAME = 'domain:list';
 
     private DomainServiceInterface $domainService;
-    private string $defaultDomain;
 
-    public function __construct(DomainServiceInterface $domainService, string $defaultDomain)
+    public function __construct(DomainServiceInterface $domainService)
     {
         parent::__construct();
         $this->domainService = $domainService;
-        $this->defaultDomain = $defaultDomain;
     }
 
     protected function configure(): void
@@ -37,12 +35,12 @@ class ListDomainsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $regularDomains = $this->domainService->listDomainsWithout($this->defaultDomain);
+        $domains = $this->domainService->listDomains();
 
-        ShlinkTable::fromOutput($output)->render(['Domain', 'Is default'], [
-            [$this->defaultDomain, 'Yes'],
-            ...map($regularDomains, fn (Domain $domain) => [$domain->getAuthority(), 'No']),
-        ]);
+        ShlinkTable::fromOutput($output)->render(
+            ['Domain', 'Is default'],
+            map($domains, fn (DomainItem $domain) => [$domain->toString(), $domain->isDefault() ? 'Yes' : 'No']),
+        );
 
         return ExitCodes::EXIT_SUCCESS;
     }

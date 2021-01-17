@@ -1,0 +1,23 @@
+{
+    "source": {
+        "directories": [
+            "module/*/src"
+        ]
+    },
+    "timeout": 5,
+    "logs": {
+        "text": "build/infection-db/infection-log.txt",
+        "summary": "build/infection-db/summary-log.txt",
+        "debug": "build/infection-db/debug-log.txt"
+    },
+    "tmpDir": "build/infection-db/temp",
+    "phpUnit": {
+        "configDir": "."
+    },
+    "testFrameworkOptions": "--configuration=phpunit-db.xml",
+    "mutators": {
+        "@default": true,
+        "IdenticalEqual": false,
+        "NotIdenticalNotEqual": false
+    }
+}

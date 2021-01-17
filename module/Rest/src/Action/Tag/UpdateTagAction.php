@@ -7,9 +7,10 @@ namespace Shlinkio\Shlink\Rest\Action\Tag;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class UpdateTagAction extends AbstractRestAction
 {
@@ -23,24 +24,12 @@ class UpdateTagAction extends AbstractRestAction
         $this->tagService = $tagService;
     }
 
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * to the next middleware component to create the response.
-     *
-     *
-     * @throws \InvalidArgumentException
-     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        if (! isset($body['oldName'], $body['newName'])) {
-            throw ValidationException::fromArray([
-                'oldName' => 'oldName is required',
-                'newName' => 'newName is required',
-            ]);
-        }
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
-        $this->tagService->renameTag($body['oldName'], $body['newName']);
+        $this->tagService->renameTag(TagRenaming::fromArray($body), $apiKey);
         return new EmptyResponse();
     }
 }

@@ -34,10 +34,10 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
     protected function buildShortUrlData(Request $request): CreateShortUrlData
     {
         $query = $request->getQueryParams();
-        $apiKey = $query['apiKey'] ?? '';
         $longUrl = $query['longUrl'] ?? null;
 
-        if (! $this->apiKeyService->check($apiKey)) {
+        $apiKeyResult = $this->apiKeyService->check($query['apiKey'] ?? '');
+        if (! $apiKeyResult->isValid()) {
             throw ValidationException::fromArray([
                 'apiKey' => 'No API key was provided or it is not valid',
             ]);
@@ -50,7 +50,9 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
         }
 
         return new CreateShortUrlData($longUrl, [], ShortUrlMeta::fromRawData([
-            ShortUrlMetaInputFilter::API_KEY => $apiKey,
+            ShortUrlMetaInputFilter::API_KEY => $apiKeyResult->apiKey(),
+            // This will usually be null, unless this API key enforces one specific domain
+            ShortUrlMetaInputFilter::DOMAIN => $request->getAttribute(ShortUrlMetaInputFilter::DOMAIN),
         ]));
     }
 }

@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class TagVisitsAction extends AbstractRestAction
 {
@@ -29,7 +30,9 @@ class TagVisitsAction extends AbstractRestAction
     public function handle(Request $request): Response
     {
         $tag = $request->getAttribute('tag', '');
-        $visits = $this->visitsTracker->visitsForTag($tag, VisitsParams::fromRawData($request->getQueryParams()));
+        $params = VisitsParams::fromRawData($request->getQueryParams());
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
+        $visits = $this->visitsTracker->visitsForTag($tag, $params, $apiKey);
 
         return new JsonResponse([
             'visits' => $this->serializePaginator($visits),

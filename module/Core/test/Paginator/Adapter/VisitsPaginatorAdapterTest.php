@@ -12,22 +12,17 @@ use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsPaginatorAdapterTest extends TestCase
 {
     use ProphecyTrait;
 
-    private VisitsPaginatorAdapter $adapter;
     private ObjectProphecy $repo;
 
     protected function setUp(): void
     {
         $this->repo = $this->prophesize(VisitRepositoryInterface::class);
-        $this->adapter = new VisitsPaginatorAdapter(
-            $this->repo->reveal(),
-            new ShortUrlIdentifier(''),
-            VisitsParams::fromRawData([]),
-        );
     }
 
     /** @test */
@@ -36,10 +31,13 @@ class VisitsPaginatorAdapterTest extends TestCase
         $count = 3;
         $limit = 1;
         $offset = 5;
-        $findVisits = $this->repo->findVisitsByShortCode('', null, new DateRange(), $limit, $offset)->willReturn([]);
+        $adapter = $this->createAdapter(null);
+        $findVisits = $this->repo->findVisitsByShortCode('', null, new DateRange(), $limit, $offset, null)->willReturn(
+            [],
+        );
 
         for ($i = 0; $i < $count; $i++) {
-            $this->adapter->getItems($offset, $limit);
+            $adapter->getItems($offset, $limit);
         }
 
         $findVisits->shouldHaveBeenCalledTimes($count);
@@ -49,12 +47,24 @@ class VisitsPaginatorAdapterTest extends TestCase
     public function repoIsCalledOnlyOnceForCount(): void
     {
         $count = 3;
-        $countVisits = $this->repo->countVisitsByShortCode('', null, new DateRange())->willReturn(3);
+        $apiKey = new ApiKey();
+        $adapter = $this->createAdapter($apiKey);
+        $countVisits = $this->repo->countVisitsByShortCode('', null, new DateRange(), $apiKey->spec())->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
-            $this->adapter->count();
+            $adapter->count();
         }
 
         $countVisits->shouldHaveBeenCalledOnce();
+    }
+
+    private function createAdapter(?ApiKey $apiKey): VisitsPaginatorAdapter
+    {
+        return new VisitsPaginatorAdapter(
+            $this->repo->reveal(),
+            new ShortUrlIdentifier(''),
+            VisitsParams::fromRawData([]),
+            $apiKey !== null ? $apiKey->spec() : null,
+        );
     }
 }

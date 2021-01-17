@@ -11,23 +11,28 @@ use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface ShortUrlServiceInterface
 {
     /**
      * @return ShortUrl[]|Paginator
      */
-    public function listShortUrls(ShortUrlsParams $params): Paginator;
+    public function listShortUrls(ShortUrlsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
      * @param string[] $tags
      * @throws ShortUrlNotFoundException
      */
-    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags = []): ShortUrl;
+    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags, ?ApiKey $apiKey = null): ShortUrl;
 
     /**
      * @throws ShortUrlNotFoundException
      * @throws InvalidUrlException
      */
-    public function updateMetadataByShortCode(ShortUrlIdentifier $identifier, ShortUrlEdit $shortUrlEdit): ShortUrl;
+    public function updateMetadataByShortCode(
+        ShortUrlIdentifier $identifier,
+        ShortUrlEdit $shortUrlEdit,
+        ?ApiKey $apiKey = null
+    ): ShortUrl;
 }

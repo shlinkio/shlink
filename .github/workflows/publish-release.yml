@@ -16,7 +16,7 @@ jobs:
         with:
           php-version: '7.4' # Publish release with lowest supported PHP version
           tools: composer
-          extensions: swoole-4.5.5
+          extensions: swoole-4.5.9
       - name: Generate release assets
         run: ./build.sh ${GITHUB_REF#refs/tags/v}
       - name: Publish release with assets

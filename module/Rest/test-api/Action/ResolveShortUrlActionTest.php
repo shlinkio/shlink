@@ -50,9 +50,10 @@ class ResolveShortUrlActionTest extends ApiTestCase
     public function tryingToResolveInvalidUrlReturnsNotFoundError(
         string $shortCode,
         ?string $domain,
-        string $expectedDetail
+        string $expectedDetail,
+        string $apiKey
     ): void {
-        $resp = $this->callApiWithKey(self::METHOD_GET, $this->buildShortUrlPath($shortCode, $domain));
+        $resp = $this->callApiWithKey(self::METHOD_GET, $this->buildShortUrlPath($shortCode, $domain), [], $apiKey);
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());

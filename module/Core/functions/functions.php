@@ -10,7 +10,11 @@ use Fig\Http\Message\StatusCodeInterface;
 use Laminas\InputFilter\InputFilter;
 use PUGX\Shortid\Factory as ShortIdFactory;
 
+use function Functional\reduce_left;
+use function is_array;
+use function print_r;
 use function sprintf;
+use function str_repeat;
 
 const DEFAULT_DELETE_SHORT_URL_THRESHOLD = 15;
 const DEFAULT_SHORT_CODES_LENGTH = 5;
@@ -18,7 +22,7 @@ const MIN_SHORT_CODES_LENGTH = 4;
 const DEFAULT_REDIRECT_STATUS_CODE = StatusCodeInterface::STATUS_FOUND;
 const DEFAULT_REDIRECT_CACHE_LIFETIME = 30;
 const LOCAL_LOCK_FACTORY = 'Shlinkio\Shlink\LocalLockFactory';
-const CUSTOM_SLUGS_REGEXP = '/[^A-Za-z0-9._~]+/';
+const CUSTOM_SLUGS_REGEXP = '/[^\pL\pN._~]/u'; // Any unicode letter or number, plus ".", "_" and "~" chars
 
 function generateRandomShortCode(int $length): string
 {
@@ -74,4 +78,22 @@ function getOptionalBoolFromInputFilter(InputFilter $inputFilter, string $fieldN
 {
     $value = $inputFilter->getValue($fieldName);
     return $value !== null ? (bool) $value : null;
+}
+
+function arrayToString(array $array, int $indentSize = 4): string
+{
+    $indent = str_repeat(' ', $indentSize);
+    $index = 0;
+
+    return reduce_left($array, static function ($messages, string $name, $_, string $acc) use (&$index, $indent) {
+        $index++;
+
+        return $acc . sprintf(
+            "%s%s'%s' => %s",
+            $index === 1 ? '' : "\n",
+            $indent,
+            $name,
+            is_array($messages) ? print_r($messages, true) : $messages,
+        );
+    }, '');
 }

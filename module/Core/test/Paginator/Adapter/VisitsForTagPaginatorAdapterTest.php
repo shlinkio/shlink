@@ -11,18 +11,17 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsForTagPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsForTagPaginatorAdapterTest extends TestCase
 {
     use ProphecyTrait;
 
-    private VisitsForTagPaginatorAdapter $adapter;
     private ObjectProphecy $repo;
 
     protected function setUp(): void
     {
         $this->repo = $this->prophesize(VisitRepositoryInterface::class);
-        $this->adapter = new VisitsForTagPaginatorAdapter($this->repo->reveal(), 'foo', VisitsParams::fromRawData([]));
     }
 
     /** @test */
@@ -31,10 +30,11 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         $count = 3;
         $limit = 1;
         $offset = 5;
-        $findVisits = $this->repo->findVisitsByTag('foo', new DateRange(), $limit, $offset)->willReturn([]);
+        $adapter = $this->createAdapter(null);
+        $findVisits = $this->repo->findVisitsByTag('foo', new DateRange(), $limit, $offset, null)->willReturn([]);
 
         for ($i = 0; $i < $count; $i++) {
-            $this->adapter->getItems($offset, $limit);
+            $adapter->getItems($offset, $limit);
         }
 
         $findVisits->shouldHaveBeenCalledTimes($count);
@@ -44,12 +44,24 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
     public function repoIsCalledOnlyOnceForCount(): void
     {
         $count = 3;
-        $countVisits = $this->repo->countVisitsByTag('foo', new DateRange())->willReturn(3);
+        $apiKey = new ApiKey();
+        $adapter = $this->createAdapter($apiKey);
+        $countVisits = $this->repo->countVisitsByTag('foo', new DateRange(), $apiKey->spec())->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
-            $this->adapter->count();
+            $adapter->count();
         }
 
         $countVisits->shouldHaveBeenCalledOnce();
+    }
+
+    private function createAdapter(?ApiKey $apiKey): VisitsForTagPaginatorAdapter
+    {
+        return new VisitsForTagPaginatorAdapter(
+            $this->repo->reveal(),
+            'foo',
+            VisitsParams::fromRawData([]),
+            $apiKey,
+        );
     }
 }

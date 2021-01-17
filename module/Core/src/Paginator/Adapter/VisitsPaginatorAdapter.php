@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
+use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
@@ -13,15 +14,18 @@ class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
     private VisitRepositoryInterface $visitRepository;
     private ShortUrlIdentifier $identifier;
     private VisitsParams $params;
+    private ?Specification $spec;
 
     public function __construct(
         VisitRepositoryInterface $visitRepository,
         ShortUrlIdentifier $identifier,
-        VisitsParams $params
+        VisitsParams $params,
+        ?Specification $spec
     ) {
         $this->visitRepository = $visitRepository;
         $this->params = $params;
         $this->identifier = $identifier;
+        $this->spec = $spec;
     }
 
     public function getItems($offset, $itemCountPerPage): array // phpcs:ignore
@@ -32,6 +36,7 @@ class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
             $this->params->getDateRange(),
             $itemCountPerPage,
             $offset,
+            $this->spec,
         );
     }
 
@@ -41,6 +46,7 @@ class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
             $this->identifier->shortCode(),
             $this->identifier->domain(),
             $this->params->getDateRange(),
+            $this->spec,
         );
     }
 }

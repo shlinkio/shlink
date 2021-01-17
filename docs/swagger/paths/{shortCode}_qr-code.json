@@ -18,7 +18,7 @@
             },
             {
                 "name": "size",
-                "in": "path",
+                "in": "query",
                 "description": "The size of the image to be returned.",
                 "required": false,
                 "schema": {

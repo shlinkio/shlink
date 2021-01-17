@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Happyr\DoctrineSpecification\EntitySpecificationRepository;
+use Happyr\DoctrineSpecification\Specification\Specification;
+use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
@@ -18,7 +20,7 @@ use function array_key_exists;
 use function count;
 use function Functional\contains;
 
-class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryInterface
+class ShortUrlRepository extends EntitySpecificationRepository implements ShortUrlRepositoryInterface
 {
     /**
      * @param string[] $tags
@@ -30,18 +32,13 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         ?string $searchTerm = null,
         array $tags = [],
         ?ShortUrlsOrdering $orderBy = null,
-        ?DateRange $dateRange = null
+        ?DateRange $dateRange = null,
+        ?Specification $spec = null
     ): array {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange);
-        $qb->select('DISTINCT s');
-
-        // Set limit and offset
-        if ($limit !== null) {
-            $qb->setMaxResults($limit);
-        }
-        if ($offset !== null) {
-            $qb->setFirstResult($offset);
-        }
+        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
+        $qb->select('DISTINCT s')
+           ->setMaxResults($limit)
+           ->setFirstResult($offset);
 
         // In case the ordering has been specified, the query could be more complex. Process it
         if ($orderBy !== null && $orderBy->hasOrderField()) {
@@ -80,18 +77,23 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
         return $qb->getQuery()->getResult();
     }
 
-    public function countList(?string $searchTerm = null, array $tags = [], ?DateRange $dateRange = null): int
-    {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange);
+    public function countList(
+        ?string $searchTerm = null,
+        array $tags = [],
+        ?DateRange $dateRange = null,
+        ?Specification $spec = null
+    ): int {
+        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
         $qb->select('COUNT(DISTINCT s)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     private function createListQueryBuilder(
-        ?string $searchTerm = null,
-        array $tags = [],
-        ?DateRange $dateRange = null
+        ?string $searchTerm,
+        array $tags,
+        ?DateRange $dateRange,
+        ?Specification $spec
     ): QueryBuilder {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
@@ -99,11 +101,11 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
 
         if ($dateRange !== null && $dateRange->getStartDate() !== null) {
             $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
-            $qb->setParameter('startDate', $dateRange->getStartDate());
+            $qb->setParameter('startDate', $dateRange->getStartDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
         if ($dateRange !== null && $dateRange->getEndDate() !== null) {
             $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
-            $qb->setParameter('endDate', $dateRange->getEndDate());
+            $qb->setParameter('endDate', $dateRange->getEndDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
 
         // Apply search term to every searchable field if not empty
@@ -130,6 +132,8 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
                ->andWhere($qb->expr()->in('t.name', $tags));
         }
 
+        $this->applySpecification($qb, $spec, 's');
+
         return $qb;
     }
 
@@ -147,7 +151,7 @@ class ShortUrlRepository extends EntityRepository implements ShortUrlRepositoryI
              WHERE s.shortCode = :shortCode
                AND (s.domain IS NULL OR d.authority = :domain)
           ORDER BY s.domain {$ordering}
-DQL;
+        DQL;
 
         $query = $this->getEntityManager()->createQuery($dql);
         $query->setMaxResults(1)
@@ -165,23 +169,23 @@ DQL;
         return $query->getOneOrNullResult();
     }
 
-    public function findOne(string $shortCode, ?string $domain = null): ?ShortUrl
+    public function findOne(string $shortCode, ?string $domain = null, ?Specification $spec = null): ?ShortUrl
     {
-        $qb = $this->createFindOneQueryBuilder($shortCode, $domain);
+        $qb = $this->createFindOneQueryBuilder($shortCode, $domain, $spec);
         $qb->select('s');
 
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function shortCodeIsInUse(string $slug, ?string $domain = null): bool
+    public function shortCodeIsInUse(string $slug, ?string $domain = null, ?Specification $spec = null): bool
     {
-        $qb = $this->createFindOneQueryBuilder($slug, $domain);
+        $qb = $this->createFindOneQueryBuilder($slug, $domain, $spec);
         $qb->select('COUNT(DISTINCT s.id)');
 
         return ((int) $qb->getQuery()->getSingleScalarResult()) > 0;
     }
 
-    private function createFindOneQueryBuilder(string $slug, ?string $domain = null): QueryBuilder
+    private function createFindOneQueryBuilder(string $slug, ?string $domain, ?Specification $spec): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
@@ -191,6 +195,8 @@ DQL;
            ->setMaxResults(1);
 
         $this->whereDomainIs($qb, $domain);
+
+        $this->applySpecification($qb, $spec, 's');
 
         return $qb;
     }
@@ -216,17 +222,21 @@ DQL;
         }
         if ($meta->hasValidSince()) {
             $qb->andWhere($qb->expr()->eq('s.validSince', ':validSince'))
-               ->setParameter('validSince', $meta->getValidSince());
+               ->setParameter('validSince', $meta->getValidSince(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
         if ($meta->hasValidUntil()) {
             $qb->andWhere($qb->expr()->eq('s.validUntil', ':validUntil'))
-                ->setParameter('validUntil', $meta->getValidUntil());
+               ->setParameter('validUntil', $meta->getValidUntil(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
-
         if ($meta->hasDomain()) {
             $qb->join('s.domain', 'd')
                ->andWhere($qb->expr()->eq('d.authority', ':domain'))
                ->setParameter('domain', $meta->getDomain());
+        }
+
+        $apiKey = $meta->getApiKey();
+        if ($apiKey !== null) {
+            $this->applySpecification($qb, $apiKey->spec(), 's');
         }
 
         $tagsAmount = count($tags);

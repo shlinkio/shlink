@@ -10,7 +10,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Domain\ListDomainsCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
-use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -25,7 +25,7 @@ class ListDomainsCommandTest extends TestCase
     {
         $this->domainService = $this->prophesize(DomainServiceInterface::class);
 
-        $command = new ListDomainsCommand($this->domainService->reveal(), 'foo.com');
+        $command = new ListDomainsCommand($this->domainService->reveal());
         $app = new Application();
         $app->add($command);
 
@@ -45,9 +45,10 @@ class ListDomainsCommandTest extends TestCase
         +---------+------------+
 
         OUTPUT;
-        $listDomains = $this->domainService->listDomainsWithout('foo.com')->willReturn([
-            new Domain('bar.com'),
-            new Domain('baz.com'),
+        $listDomains = $this->domainService->listDomains()->willReturn([
+            new DomainItem('foo.com', true),
+            new DomainItem('bar.com', false),
+            new DomainItem('baz.com', false),
         ]);
 
         $this->commandTester->execute([]);

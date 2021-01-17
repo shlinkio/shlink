@@ -4,29 +4,30 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ErrorHandler;
 
+use Closure;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
-use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Shlinkio\Shlink\Core\ErrorHandler\NotFoundTemplateHandler;
 
 class NotFoundTemplateHandlerTest extends TestCase
 {
-    use ProphecyTrait;
-
     private NotFoundTemplateHandler $handler;
-    private ObjectProphecy $renderer;
+    private Closure $readFile;
+    private bool $readFileCalled;
 
     public function setUp(): void
     {
-        $this->renderer = $this->prophesize(TemplateRendererInterface::class);
-        $this->handler = new NotFoundTemplateHandler($this->renderer->reveal());
+        $this->readFileCalled = false;
+        $this->readFile = function (string $fileName): string {
+            $this->readFileCalled = true;
+            return $fileName;
+        };
+        $this->handler = new NotFoundTemplateHandler($this->readFile);
     }
 
     /**
@@ -35,13 +36,11 @@ class NotFoundTemplateHandlerTest extends TestCase
      */
     public function properErrorTemplateIsRendered(ServerRequestInterface $request, string $expectedTemplate): void
     {
-        $request = $request->withHeader('Accept', 'text/html');
-        $render = $this->renderer->render($expectedTemplate)->willReturn('');
-
-        $resp = $this->handler->handle($request);
+        $resp = $this->handler->handle($request->withHeader('Accept', 'text/html'));
 
         self::assertInstanceOf(Response\HtmlResponse::class, $resp);
-        $render->shouldHaveBeenCalledOnce();
+        self::assertStringContainsString($expectedTemplate, (string) $resp->getBody());
+        self::assertTrue($this->readFileCalled);
     }
 
     public function provideTemplates(): iterable

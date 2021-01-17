@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
+use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class ListShortUrlsAction extends AbstractRestAction
 {
@@ -31,7 +32,10 @@ class ListShortUrlsAction extends AbstractRestAction
 
     public function handle(Request $request): Response
     {
-        $shortUrls = $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData($request->getQueryParams()));
+        $shortUrls = $this->shortUrlService->listShortUrls(
+            ShortUrlsParams::fromRawData($request->getQueryParams()),
+            AuthenticationMiddleware::apiKeyFromRequest($request),
+        );
         return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls, new ShortUrlDataTransformer(
             $this->domainConfig,
         ))]);

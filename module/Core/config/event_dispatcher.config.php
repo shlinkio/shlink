@@ -14,13 +14,13 @@ return [
 
     'events' => [
         'regular' => [
-            EventDispatcher\VisitLocated::class => [
+            EventDispatcher\Event\VisitLocated::class => [
                 EventDispatcher\NotifyVisitToMercure::class,
                 EventDispatcher\NotifyVisitToWebHooks::class,
             ],
         ],
         'async' => [
-            EventDispatcher\ShortUrlVisited::class => [
+            EventDispatcher\Event\ShortUrlVisited::class => [
                 EventDispatcher\LocateShortUrlVisit::class,
             ],
         ],

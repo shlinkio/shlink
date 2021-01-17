@@ -15,6 +15,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ListShortUrlsAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ListShortUrlsActionTest extends TestCase
 {
@@ -46,6 +47,8 @@ class ListShortUrlsActionTest extends TestCase
         ?string $startDate = null,
         ?string $endDate = null
     ): void {
+        $apiKey = new ApiKey();
+        $request = (new ServerRequest())->withQueryParams($query)->withAttribute(ApiKey::class, $apiKey);
         $listShortUrls = $this->service->listShortUrls(ShortUrlsParams::fromRawData([
             'page' => $expectedPage,
             'searchTerm' => $expectedSearchTerm,
@@ -53,10 +56,10 @@ class ListShortUrlsActionTest extends TestCase
             'orderBy' => $expectedOrderBy,
             'startDate' => $startDate,
             'endDate' => $endDate,
-        ]))->willReturn(new Paginator(new ArrayAdapter()));
+        ]), $apiKey)->willReturn(new Paginator(new ArrayAdapter()));
 
         /** @var JsonResponse $response */
-        $response = $this->action->handle((new ServerRequest())->withQueryParams($query));
+        $response = $this->action->handle($request);
         $payload = $response->getPayload();
 
         self::assertArrayHasKey('shortUrls', $payload);

@@ -18,9 +18,10 @@ class DeleteShortUrlActionTest extends ApiTestCase
     public function notFoundErrorIsReturnWhenDeletingInvalidUrl(
         string $shortCode,
         ?string $domain,
-        string $expectedDetail
+        string $expectedDetail,
+        string $apiKey
     ): void {
-        $resp = $this->callApiWithKey(self::METHOD_DELETE, $this->buildShortUrlPath($shortCode, $domain));
+        $resp = $this->callApiWithKey(self::METHOD_DELETE, $this->buildShortUrlPath($shortCode, $domain), [], $apiKey);
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());

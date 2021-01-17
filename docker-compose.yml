@@ -131,7 +131,7 @@ services:
 
     shlink_mercure:
         container_name: shlink_mercure
-        image: dunglas/mercure:v0.9
+        image: dunglas/mercure:v0.10
         ports:
             - "3080:80"
         environment:
