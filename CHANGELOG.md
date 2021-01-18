@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#968](https://github.com/shlinkio/shlink/issues/968) Fixed index error in MariaDB while updating to v2.5.0.
+
+
 ## [2.5.0] - 2021-01-17
 ### Added
 * [#795](https://github.com/shlinkio/shlink/issues/795) and [#882](https://github.com/shlinkio/shlink/issues/882) Added new roles system to API keys.
