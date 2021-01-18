@@ -25,7 +25,7 @@ final class Version20210102174433 extends AbstractMigration
         $table->setPrimaryKey(['id']);
 
         $table->addColumn('role_name', Types::STRING, [
-            'length' => 256,
+            'length' => 255,
             'notnull' => true,
         ]);
         $table->addColumn('meta', Types::JSON, [
