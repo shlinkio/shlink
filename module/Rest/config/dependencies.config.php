@@ -57,7 +57,6 @@ return [
         Action\ShortUrl\CreateShortUrlAction::class => [Service\UrlShortener::class, 'config.url_shortener.domain'],
         Action\ShortUrl\SingleStepCreateShortUrlAction::class => [
             Service\UrlShortener::class,
-            ApiKeyService::class,
             'config.url_shortener.domain',
         ],
         Action\ShortUrl\EditShortUrlAction::class => [Service\ShortUrlService::class],

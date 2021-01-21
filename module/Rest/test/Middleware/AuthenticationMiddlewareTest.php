@@ -38,7 +38,11 @@ class AuthenticationMiddlewareTest extends TestCase
     public function setUp(): void
     {
         $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
-        $this->middleware = new AuthenticationMiddleware($this->apiKeyService->reveal(), [HealthAction::class]);
+        $this->middleware = new AuthenticationMiddleware(
+            $this->apiKeyService->reveal(),
+            [HealthAction::class],
+            ['with_query_api_key'],
+        );
         $this->handler = $this->prophesize(RequestHandlerInterface::class);
     }
 
@@ -82,27 +86,34 @@ class AuthenticationMiddlewareTest extends TestCase
      * @test
      * @dataProvider provideRequestsWithoutApiKey
      */
-    public function throwsExceptionWhenNoApiKeyIsProvided(ServerRequestInterface $request): void
-    {
+    public function throwsExceptionWhenNoApiKeyIsProvided(
+        ServerRequestInterface $request,
+        string $expectedMessage
+    ): void {
         $this->apiKeyService->check(Argument::any())->shouldNotBeCalled();
         $this->handler->handle($request)->shouldNotBeCalled();
         $this->expectException(MissingAuthenticationException::class);
-        $this->expectExceptionMessage(
-            'Expected one of the following authentication headers, ["X-Api-Key"], but none were provided',
-        );
+        $this->expectExceptionMessage($expectedMessage);
 
         $this->middleware->process($request, $this->handler->reveal());
     }
 
     public function provideRequestsWithoutApiKey(): iterable
     {
-        $baseRequest = ServerRequestFactory::fromGlobals()->withAttribute(
+        $baseRequest = fn (string $routeName) => ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), []),
+            RouteResult::fromRoute(new Route($routeName, $this->getDummyMiddleware()), []),
         );
+        $apiKeyMessage = 'Expected one of the following authentication headers, ["X-Api-Key"], but none were provided';
+        $queryMessage = 'Expected authentication to be provided in "apiKey" query param';
 
-        yield 'no api key' => [$baseRequest];
-        yield 'empty api key' => [$baseRequest->withHeader('X-Api-Key', '')];
+        yield 'no api key in header' => [$baseRequest('bar'), $apiKeyMessage];
+        yield 'empty api key in header' => [$baseRequest('bar')->withHeader('X-Api-Key', ''), $apiKeyMessage];
+        yield 'no api key in query' => [$baseRequest('with_query_api_key'), $queryMessage];
+        yield 'empty api key in query' => [
+            $baseRequest('with_query_api_key')->withQueryParams(['apiKey' => '']),
+            $queryMessage,
+        ];
     }
 
     /** @test */

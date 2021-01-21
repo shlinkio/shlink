@@ -18,18 +18,36 @@ class MissingAuthenticationException extends RuntimeException implements Problem
     private const TITLE = 'Invalid authorization';
     private const TYPE = 'INVALID_AUTHORIZATION';
 
-    public static function fromExpectedTypes(array $expectedTypes): self
+    public static function forHeaders(array $expectedHeaders): self
     {
-        $e = new self(sprintf(
+        $e = self::withMessage(sprintf(
             'Expected one of the following authentication headers, ["%s"], but none were provided',
-            implode('", "', $expectedTypes),
+            implode('", "', $expectedHeaders),
         ));
+        $e->additional = [
+            'expectedTypes' => $expectedHeaders, // Deprecated
+            'expectedHeaders' => $expectedHeaders,
+        ];
 
-        $e->detail = $e->getMessage();
+        return $e;
+    }
+
+    public static function forQueryParam(string $param): self
+    {
+        $e = self::withMessage(sprintf('Expected authentication to be provided in "%s" query param', $param));
+        $e->additional = ['param' => $param];
+
+        return $e;
+    }
+
+    private static function withMessage(string $message): self
+    {
+        $e = new self($message);
+
+        $e->detail = $message;
         $e->title = self::TITLE;
         $e->type = self::TYPE;
         $e->status = StatusCodeInterface::STATUS_UNAUTHORIZED;
-        $e->additional = ['expectedTypes' => $expectedTypes];
 
         return $e;
     }
