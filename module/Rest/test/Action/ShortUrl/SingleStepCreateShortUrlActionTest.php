@@ -16,8 +16,6 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
-use Shlinkio\Shlink\Rest\Service\ApiKeyCheckResult;
-use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 
 class SingleStepCreateShortUrlActionTest extends TestCase
 {
@@ -30,11 +28,9 @@ class SingleStepCreateShortUrlActionTest extends TestCase
     public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortenerInterface::class);
-        $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
 
         $this->action = new SingleStepCreateShortUrlAction(
             $this->urlShortener->reveal(),
-            $this->apiKeyService->reveal(),
             [
                 'schema' => 'http',
                 'hostname' => 'foo.com',
@@ -43,25 +39,11 @@ class SingleStepCreateShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function errorResponseIsReturnedIfInvalidApiKeyIsProvided(): void
-    {
-        $request = (new ServerRequest())->withQueryParams(['apiKey' => 'abc123']);
-        $findApiKey = $this->apiKeyService->check('abc123')->willReturn(new ApiKeyCheckResult());
-
-        $this->expectException(ValidationException::class);
-        $findApiKey->shouldBeCalledOnce();
-
-        $this->action->handle($request);
-    }
-
-    /** @test */
     public function errorResponseIsReturnedIfNoUrlIsProvided(): void
     {
-        $request = (new ServerRequest())->withQueryParams(['apiKey' => 'abc123']);
-        $findApiKey = $this->apiKeyService->check('abc123')->willReturn(new ApiKeyCheckResult(new ApiKey()));
+        $request = new ServerRequest();
 
         $this->expectException(ValidationException::class);
-        $findApiKey->shouldBeCalledOnce();
 
         $this->action->handle($request);
     }
@@ -70,13 +52,10 @@ class SingleStepCreateShortUrlActionTest extends TestCase
     public function properDataIsPassedWhenGeneratingShortCode(): void
     {
         $apiKey = new ApiKey();
-        $key = $apiKey->toString();
 
         $request = (new ServerRequest())->withQueryParams([
-            'apiKey' => $key,
             'longUrl' => 'http://foobar.com',
-        ]);
-        $findApiKey = $this->apiKeyService->check($key)->willReturn(new ApiKeyCheckResult($apiKey));
+        ])->withAttribute(ApiKey::class, $apiKey);
         $generateShortCode = $this->urlShortener->shorten(
             Argument::that(function (string $argument): bool {
                 Assert::assertEquals('http://foobar.com', $argument);
@@ -89,7 +68,6 @@ class SingleStepCreateShortUrlActionTest extends TestCase
         $resp = $this->action->handle($request);
 
         self::assertEquals(200, $resp->getStatusCode());
-        $findApiKey->shouldHaveBeenCalled();
         $generateShortCode->shouldHaveBeenCalled();
     }
 }

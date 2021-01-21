@@ -8,6 +8,7 @@ use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -24,11 +25,16 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
 
     private ApiKeyServiceInterface $apiKeyService;
     private array $routesWhitelist;
+    private array $routesWithQueryApiKey;
 
-    public function __construct(ApiKeyServiceInterface $apiKeyService, array $routesWhitelist)
-    {
+    public function __construct(
+        ApiKeyServiceInterface $apiKeyService,
+        array $routesWhitelist,
+        array $routesWithQueryApiKey
+    ) {
         $this->apiKeyService = $apiKeyService;
         $this->routesWhitelist = $routesWhitelist;
+        $this->routesWithQueryApiKey = $routesWithQueryApiKey;
     }
 
     public function process(Request $request, RequestHandlerInterface $handler): Response
@@ -44,11 +50,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
             return $handler->handle($request);
         }
 
-        $apiKey = $request->getHeaderLine(self::API_KEY_HEADER);
-        if (empty($apiKey)) {
-            throw MissingAuthenticationException::fromExpectedTypes([self::API_KEY_HEADER]);
-        }
-
+        $apiKey = $this->getApiKeyFromRequest($request, $routeResult);
         $result = $this->apiKeyService->check($apiKey);
         if (! $result->isValid()) {
             throw VerifyAuthenticationException::forInvalidApiKey();
@@ -60,5 +62,21 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
     public static function apiKeyFromRequest(Request $request): ApiKey
     {
         return $request->getAttribute(ApiKey::class);
+    }
+
+    private function getApiKeyFromRequest(ServerRequestInterface $request, RouteResult $routeResult): string
+    {
+        $routeName = $routeResult->getMatchedRouteName();
+        $query = $request->getQueryParams();
+        $isRouteWithApiKeyInQuery = contains($this->routesWithQueryApiKey, $routeName);
+        $apiKey = $isRouteWithApiKeyInQuery ? ($query['apiKey'] ?? '') : $request->getHeaderLine(self::API_KEY_HEADER);
+
+        if (empty($apiKey)) {
+            throw $isRouteWithApiKeyInQuery
+                ? MissingAuthenticationException::forQueryParam('apiKey')
+                : MissingAuthenticationException::forHeaders([self::API_KEY_HEADER]);
+        }
+
+        return $apiKey;
     }
 }
