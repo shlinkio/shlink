@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#968](https://github.com/shlinkio/shlink/issues/968) Fixed index error in MariaDB while updating to v2.5.0.
+* [#972](https://github.com/shlinkio/shlink/issues/972) Fixed 500 error when calling single-step short URL creation endpoint.
 
 
 ## [2.5.0] - 2021-01-17
