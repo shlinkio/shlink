@@ -24,7 +24,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
 
     $builder->createField('roleName', Types::STRING)
             ->columnName('role_name')
-            ->length(256)
+            ->length(255)
             ->nullable(false)
             ->build();
 

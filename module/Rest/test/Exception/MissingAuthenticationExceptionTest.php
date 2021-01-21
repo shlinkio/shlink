@@ -16,21 +16,22 @@ class MissingAuthenticationExceptionTest extends TestCase
      * @test
      * @dataProvider provideExpectedTypes
      */
-    public function exceptionIsProperlyCreatedFromExpectedTypes(array $expectedTypes): void
+    public function exceptionIsProperlyCreatedFromExpectedHeaders(array $expectedHeaders): void
     {
         $expectedMessage = sprintf(
             'Expected one of the following authentication headers, ["%s"], but none were provided',
-            implode('", "', $expectedTypes),
+            implode('", "', $expectedHeaders),
         );
 
-        $e = MissingAuthenticationException::fromExpectedTypes($expectedTypes);
+        $e = MissingAuthenticationException::forHeaders($expectedHeaders);
 
+        $this->assertCommonExceptionShape($e);
         self::assertEquals($expectedMessage, $e->getMessage());
         self::assertEquals($expectedMessage, $e->getDetail());
-        self::assertEquals('Invalid authorization', $e->getTitle());
-        self::assertEquals('INVALID_AUTHORIZATION', $e->getType());
-        self::assertEquals(401, $e->getStatus());
-        self::assertEquals(['expectedTypes' => $expectedTypes], $e->getAdditionalData());
+        self::assertEquals([
+            'expectedTypes' => $expectedHeaders,
+            'expectedHeaders' => $expectedHeaders,
+        ], $e->getAdditionalData());
     }
 
     public function provideExpectedTypes(): iterable
@@ -39,5 +40,35 @@ class MissingAuthenticationExceptionTest extends TestCase
         yield [['something']];
         yield [[]];
         yield [['foo', 'bar', 'baz']];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideExpectedParam
+     */
+    public function exceptionIsProperlyCreatedFromExpectedQueryParam(string $param): void
+    {
+        $expectedMessage = sprintf('Expected authentication to be provided in "%s" query param', $param);
+
+        $e = MissingAuthenticationException::forQueryParam($param);
+
+        $this->assertCommonExceptionShape($e);
+        self::assertEquals($expectedMessage, $e->getMessage());
+        self::assertEquals($expectedMessage, $e->getDetail());
+        self::assertEquals(['param' => $param], $e->getAdditionalData());
+    }
+
+    public function provideExpectedParam(): iterable
+    {
+        yield ['foo'];
+        yield ['bar'];
+        yield ['something'];
+    }
+
+    private function assertCommonExceptionShape(MissingAuthenticationException $e): void
+    {
+        self::assertEquals('Invalid authorization', $e->getTitle());
+        self::assertEquals('INVALID_AUTHORIZATION', $e->getType());
+        self::assertEquals(401, $e->getStatus());
     }
 }

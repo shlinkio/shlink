@@ -11,8 +11,11 @@ return [
     'auth' => [
         'routes_whitelist' => [
             Action\HealthAction::class,
-            Action\ShortUrl\SingleStepCreateShortUrlAction::class,
             ConfigProvider::UNVERSIONED_HEALTH_ENDPOINT_NAME,
+        ],
+
+        'routes_with_query_api_key' => [
+            Action\ShortUrl\SingleStepCreateShortUrlAction::class,
         ],
     ],
 
@@ -23,7 +26,11 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        Middleware\AuthenticationMiddleware::class => [Service\ApiKeyService::class, 'config.auth.routes_whitelist'],
+        Middleware\AuthenticationMiddleware::class => [
+            Service\ApiKeyService::class,
+            'config.auth.routes_whitelist',
+            'config.auth.routes_with_query_api_key',
+        ],
     ],
 
 ];
