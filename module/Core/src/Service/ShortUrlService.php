@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM;
-use Laminas\Paginator\Paginator;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
@@ -45,8 +45,8 @@ class ShortUrlService implements ShortUrlServiceInterface
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
         $paginator = new Paginator(new ShortUrlRepositoryAdapter($repo, $params, $apiKey));
-        $paginator->setItemCountPerPage($params->itemsPerPage())
-                  ->setCurrentPageNumber($params->page());
+        $paginator->setMaxPerPage($params->itemsPerPage())
+                  ->setCurrentPage($params->page());
 
         return $paginator;
     }

@@ -7,11 +7,11 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
-use Laminas\Paginator\Adapter\ArrayAdapter;
-use Laminas\Paginator\Paginator;
+use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ListShortUrlsAction;
@@ -56,7 +56,7 @@ class ListShortUrlsActionTest extends TestCase
             'orderBy' => $expectedOrderBy,
             'startDate' => $startDate,
             'endDate' => $endDate,
-        ]), $apiKey)->willReturn(new Paginator(new ArrayAdapter()));
+        ]), $apiKey)->willReturn(new Paginator(new ArrayAdapter([])));
 
         /** @var JsonResponse $response */
         $response = $this->action->handle($request);

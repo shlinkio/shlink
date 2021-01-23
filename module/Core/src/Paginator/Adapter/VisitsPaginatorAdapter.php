@@ -28,13 +28,13 @@ class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
         $this->spec = $spec;
     }
 
-    public function getItems($offset, $itemCountPerPage): array // phpcs:ignore
+    public function getSlice($offset, $length): array // phpcs:ignore
     {
         return $this->visitRepository->findVisitsByShortCode(
             $this->identifier->shortCode(),
             $this->identifier->domain(),
             $this->params->getDateRange(),
-            $itemCountPerPage,
+            $length,
             $offset,
             $this->spec,
         );

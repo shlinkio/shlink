@@ -34,7 +34,7 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         $findVisits = $this->repo->findVisitsByTag('foo', new DateRange(), $limit, $offset, null)->willReturn([]);
 
         for ($i = 0; $i < $count; $i++) {
-            $adapter->getItems($offset, $limit);
+            $adapter->getSlice($offset, $limit);
         }
 
         $findVisits->shouldHaveBeenCalledTimes($count);
@@ -49,7 +49,7 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         $countVisits = $this->repo->countVisitsByTag('foo', new DateRange(), $apiKey->spec())->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
-            $adapter->count();
+            $adapter->getNbResults();
         }
 
         $countVisits->shouldHaveBeenCalledOnce();

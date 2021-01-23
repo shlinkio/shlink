@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
 use Happyr\DoctrineSpecification\Specification\Specification;
-use Laminas\Paginator\Adapter\AdapterInterface;
+use Pagerfanta\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -23,10 +23,10 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
         $this->apiKey = $apiKey;
     }
 
-    public function getItems($offset, $itemCountPerPage): array // phpcs:ignore
+    public function getSlice($offset, $length): array // phpcs:ignore
     {
         return $this->repository->findList(
-            $itemCountPerPage,
+            $length,
             $offset,
             $this->params->searchTerm(),
             $this->params->tags(),
@@ -36,7 +36,7 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
         );
     }
 
-    public function count(): int
+    public function getNbResults(): int
     {
         return $this->repository->countList(
             $this->params->searchTerm(),

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
-use Laminas\Paginator\Adapter\ArrayAdapter;
-use Laminas\Paginator\Paginator;
+use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
@@ -89,7 +89,7 @@ class ListShortUrlsCommandTest extends TestCase
     {
         $page = 5;
         $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData(['page' => $page]))
-            ->willReturn(new Paginator(new ArrayAdapter()))
+            ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['y']);
@@ -100,7 +100,7 @@ class ListShortUrlsCommandTest extends TestCase
     public function ifTagsFlagIsProvidedTagsColumnIsIncluded(): void
     {
         $this->shortUrlService->listShortUrls(ShortUrlsParams::emptyInstance())
-            ->willReturn(new Paginator(new ArrayAdapter()))
+            ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['y']);
@@ -127,7 +127,7 @@ class ListShortUrlsCommandTest extends TestCase
             'tags' => $tags,
             'startDate' => $startDate !== null ? Chronos::parse($startDate)->toAtomString() : null,
             'endDate' => $endDate !== null ? Chronos::parse($endDate)->toAtomString() : null,
-        ]))->willReturn(new Paginator(new ArrayAdapter()));
+        ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute($commandArgs);
@@ -180,7 +180,7 @@ class ListShortUrlsCommandTest extends TestCase
     {
         $listShortUrls = $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData([
             'orderBy' => $expectedOrderBy,
-        ]))->willReturn(new Paginator(new ArrayAdapter()));
+        ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute($commandArgs);
@@ -207,7 +207,7 @@ class ListShortUrlsCommandTest extends TestCase
             'endDate' => null,
             'orderBy' => null,
             'itemsPerPage' => -1,
-        ]))->willReturn(new Paginator(new ArrayAdapter()));
+        ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute(['--all' => true]);
 

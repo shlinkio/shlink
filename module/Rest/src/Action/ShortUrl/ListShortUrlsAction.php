@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
+use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class ListShortUrlsAction extends AbstractRestAction
 {
-    use PaginatorUtilsTrait;
+    use PagerfantaUtilsTrait;
 
     protected const ROUTE_PATH = '/short-urls';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];

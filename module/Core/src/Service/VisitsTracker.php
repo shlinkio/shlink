@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM;
-use Laminas\Paginator\Paginator;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -66,8 +66,8 @@ class VisitsTracker implements VisitsTrackerInterface
         /** @var VisitRepositoryInterface $repo */
         $repo = $this->em->getRepository(Visit::class);
         $paginator = new Paginator(new VisitsPaginatorAdapter($repo, $identifier, $params, $spec));
-        $paginator->setItemCountPerPage($params->getItemsPerPage())
-                  ->setCurrentPageNumber($params->getPage());
+        $paginator->setMaxPerPage($params->getItemsPerPage())
+                  ->setCurrentPage($params->getPage());
 
         return $paginator;
     }
@@ -87,8 +87,8 @@ class VisitsTracker implements VisitsTrackerInterface
         /** @var VisitRepositoryInterface $repo */
         $repo = $this->em->getRepository(Visit::class);
         $paginator = new Paginator(new VisitsForTagPaginatorAdapter($repo, $tag, $params, $apiKey));
-        $paginator->setItemCountPerPage($params->getItemsPerPage())
-                  ->setCurrentPageNumber($params->getPage());
+        $paginator->setMaxPerPage($params->getItemsPerPage())
+                  ->setCurrentPage($params->getPage());
 
         return $paginator;
     }
