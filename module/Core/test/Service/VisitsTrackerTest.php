@@ -83,7 +83,7 @@ class VisitsTrackerTest extends TestCase
 
         $paginator = $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), new VisitsParams(), $apiKey);
 
-        self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentItems()));
+        self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
         $count->shouldHaveBeenCalledOnce();
     }
 
@@ -137,7 +137,7 @@ class VisitsTrackerTest extends TestCase
 
         $paginator = $this->visitsTracker->visitsForTag($tag, new VisitsParams(), $apiKey);
 
-        self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentItems()));
+        self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
         $tagExists->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
     }

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
-use Laminas\Paginator\Adapter\ArrayAdapter;
-use Laminas\Paginator\Paginator;
+use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GetVisitsCommand;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;

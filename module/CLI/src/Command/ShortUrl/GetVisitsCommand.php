@@ -75,7 +75,7 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
 
         $paginator = $this->visitsTracker->info($identifier, new VisitsParams(new DateRange($startDate, $endDate)));
 
-        $rows = map($paginator->getCurrentItems(), function (Visit $visit) {
+        $rows = map($paginator->getCurrentPageResults(), function (Visit $visit) {
             $rowData = $visit->jsonSerialize();
             $rowData['country'] = ($visit->getVisitLocation() ?? new UnknownVisitLocation())->getCountryName();
             return select_keys($rowData, ['referer', 'date', 'userAgent', 'country']);

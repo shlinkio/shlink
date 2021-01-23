@@ -37,7 +37,7 @@ class VisitsPaginatorAdapterTest extends TestCase
         );
 
         for ($i = 0; $i < $count; $i++) {
-            $adapter->getItems($offset, $limit);
+            $adapter->getSlice($offset, $limit);
         }
 
         $findVisits->shouldHaveBeenCalledTimes($count);
@@ -52,7 +52,7 @@ class VisitsPaginatorAdapterTest extends TestCase
         $countVisits = $this->repo->countVisitsByShortCode('', null, new DateRange(), $apiKey->spec())->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
-            $adapter->count();
+            $adapter->getNbResults();
         }
 
         $countVisits->shouldHaveBeenCalledOnce();

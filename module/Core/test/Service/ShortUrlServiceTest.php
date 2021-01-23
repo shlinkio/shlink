@@ -69,8 +69,10 @@ class ShortUrlServiceTest extends TestCase
         $repo->countList(Argument::cetera())->willReturn(count($list))->shouldBeCalledOnce();
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $list = $this->service->listShortUrls(ShortUrlsParams::emptyInstance(), $apiKey);
-        self::assertEquals(4, $list->getCurrentItemCount());
+        $paginator = $this->service->listShortUrls(ShortUrlsParams::emptyInstance(), $apiKey);
+
+        self::assertCount(4, $paginator);
+        self::assertCount(4, $paginator->getCurrentPageResults());
     }
 
     /**

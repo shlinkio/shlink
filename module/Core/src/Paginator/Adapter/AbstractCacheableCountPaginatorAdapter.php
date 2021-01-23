@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
+use Pagerfanta\Adapter\AdapterInterface;
 
 abstract class AbstractCacheableCountPaginatorAdapter implements AdapterInterface
 {
     private ?int $count = null;
 
-    final public function count(): int
+    final public function getNbResults(): int
     {
         // Since a new adapter instance is created every time visits are fetched, it is reasonably safe to internally
         // cache the count value.

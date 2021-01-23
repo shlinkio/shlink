@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Laminas\Paginator\Paginator;
 use Shlinkio\Shlink\CLI\Command\Util\AbstractWithDateRangeCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
-use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
+use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
@@ -29,7 +29,7 @@ use function sprintf;
 
 class ListShortUrlsCommand extends AbstractWithDateRangeCommand
 {
-    use PaginatorUtilsTrait;
+    use PagerfantaUtilsTrait;
 
     public const NAME = 'short-url:list';
     private const COLUMNS_WHITELIST = [
@@ -132,7 +132,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
             $result = $this->renderPage($output, $showTags, ShortUrlsParams::fromRawData($data), $all);
             $page++;
 
-            $continue = ! $this->isLastPage($result) && $io->confirm(
+            $continue = $result->hasNextPage() && $io->confirm(
                 sprintf('Continue with page <options=bold>%s</>?', $page),
                 false,
             );
