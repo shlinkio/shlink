@@ -46,7 +46,6 @@ jobs:
 
   unit-tests:
     runs-on: ubuntu-20.04
-    continue-on-error: ${{ matrix.php-version == '8.0' }}
     strategy:
       matrix:
         php-version: ['7.4', '8.0']
