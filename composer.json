@@ -22,7 +22,7 @@
         "doctrine/cache": "^1.9",
         "doctrine/migrations": "^3.0.2",
         "doctrine/orm": "^2.8",
-        "endroid/qr-code": "^3.6",
+        "endroid/qr-code": "dev-master#0f1613a as 3.10",
         "geoip2/geoip2": "^2.9",
         "guzzlehttp/guzzle": "^7.0",
         "happyr/doctrine-specification": "2.0.x-dev#cb116d3 as 2.0",
