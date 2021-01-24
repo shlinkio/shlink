@@ -71,10 +71,9 @@ class CorsTest extends ApiTestCase
 
     public function providePreflightEndpoints(): iterable
     {
-        yield 'invalid route' => ['/foo/bar', 'GET,POST,PUT,PATCH,DELETE,OPTIONS'];
-        yield 'short URLs routes' => ['/short-urls', 'GET,POST,PUT,PATCH,DELETE,OPTIONS'];
-//        yield 'short URLs routes' => ['/short-urls', 'GET,POST']; // TODO This should be the good one
-        yield 'tags routes' => ['/tags', 'GET,POST,PUT,PATCH,DELETE,OPTIONS'];
-//        yield 'tags routes' => ['/short-urls', 'GET,POST,PUT,DELETE']; // TODO This should be the good one
+        yield 'invalid route' => ['/foo/bar', 'GET,POST,PUT,PATCH,DELETE'];
+        yield 'short URLs route' => ['/short-urls', 'GET,POST'];
+        yield 'tags route' => ['/tags', 'GET,POST,PUT,DELETE'];
+        yield 'health route' => ['/health', 'GET'];
     }
 }
