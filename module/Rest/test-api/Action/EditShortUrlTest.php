@@ -14,7 +14,7 @@ use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
 use function GuzzleHttp\Psr7\build_query;
 use function sprintf;
 
-class EditShortUrlActionTest extends ApiTestCase
+class EditShortUrlTest extends ApiTestCase
 {
     use ArraySubsetAsserts;
     use NotFoundUrlHelpersTrait;

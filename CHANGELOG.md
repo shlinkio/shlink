@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#979](https://github.com/shlinkio/shlink/issues/979) Added missing `itemsPerPage` query param to swagger docs for short RULs list.
+* [#980](https://github.com/shlinkio/shlink/issues/980) Fixed value used for `Access-Control-Allow-Origin`, that could not work as expected when including an IP address.
+
+
 ## [2.5.1] - 2021-01-21
 ### Added
 * *Nothing*

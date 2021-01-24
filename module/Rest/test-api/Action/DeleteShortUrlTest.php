@@ -7,7 +7,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
 
-class DeleteShortUrlActionTest extends ApiTestCase
+class DeleteShortUrlTest extends ApiTestCase
 {
     use NotFoundUrlHelpersTrait;
 
