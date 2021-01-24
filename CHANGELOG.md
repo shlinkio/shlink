@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Fixed
 * [#979](https://github.com/shlinkio/shlink/issues/979) Added missing `itemsPerPage` query param to swagger docs for short RULs list.
 * [#980](https://github.com/shlinkio/shlink/issues/980) Fixed value used for `Access-Control-Allow-Origin`, that could not work as expected when including an IP address.
+* [#947](https://github.com/shlinkio/shlink/issues/947) Fixed incorrect value returned in `Access-Control-Allow-Methods` header, which always contained all methods.
 
 
 ## [2.5.1] - 2021-01-21
