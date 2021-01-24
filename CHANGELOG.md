@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [2.5.2] - 2021-01-24
 ### Added
 * [#965](https://github.com/shlinkio/shlink/issues/965) Added docs section for Architectural Decision Records, including the one for API key roles.
 
