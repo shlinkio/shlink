@@ -6,16 +6,12 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
-use Mezzio\Router\Route;
-use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
-
-use function Laminas\Stratigility\middleware;
 
 class CrossDomainMiddlewareTest extends TestCase
 {
@@ -61,7 +57,7 @@ class CrossDomainMiddlewareTest extends TestCase
 
         $headers = $response->getHeaders();
 
-        self::assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertEquals('*', $response->getHeaderLine('Access-Control-Allow-Origin'));
         self::assertArrayNotHasKey('Access-Control-Allow-Methods', $headers);
         self::assertArrayNotHasKey('Access-Control-Max-Age', $headers);
         self::assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
@@ -82,7 +78,7 @@ class CrossDomainMiddlewareTest extends TestCase
 
         $headers = $response->getHeaders();
 
-        self::assertEquals('local', $response->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertEquals('*', $response->getHeaderLine('Access-Control-Allow-Origin'));
         self::assertArrayHasKey('Access-Control-Allow-Methods', $headers);
         self::assertEquals('1000', $response->getHeaderLine('Access-Control-Max-Age'));
         self::assertEquals('foo, bar, baz', $response->getHeaderLine('Access-Control-Allow-Headers'));
@@ -94,13 +90,15 @@ class CrossDomainMiddlewareTest extends TestCase
      * @dataProvider provideRouteResults
      */
     public function optionsRequestParsesRouteMatchToDetermineAllowedMethods(
-        ?RouteResult $result,
+        ?string $allowHeader,
         string $expectedAllowedMethods
     ): void {
         $originalResponse = new Response();
-        $request = (new ServerRequest())->withAttribute(RouteResult::class, $result)
-                                        ->withMethod('OPTIONS')
-                                        ->withHeader('Origin', 'local');
+        if ($allowHeader !== null) {
+            $originalResponse = $originalResponse->withHeader('Allow', $allowHeader);
+        }
+        $request = (new ServerRequest())->withHeader('Origin', 'local')
+                                        ->withMethod('OPTIONS');
         $this->handler->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
 
         $response = $this->middleware->process($request, $this->handler->reveal());
@@ -111,15 +109,9 @@ class CrossDomainMiddlewareTest extends TestCase
 
     public function provideRouteResults(): iterable
     {
-        yield 'with no route result' => [null, 'GET,POST,PUT,PATCH,DELETE,OPTIONS'];
-        yield 'with failed route result' => [RouteResult::fromRouteFailure(['POST', 'GET']), 'POST,GET'];
-        yield 'with success route result' => [
-            RouteResult::fromRoute(
-                new Route('/', middleware(function (): void {
-                }), ['DELETE', 'PATCH', 'PUT']),
-            ),
-            'DELETE,PATCH,PUT',
-        ];
+        yield 'no allow header in response' => [null, 'GET,POST,PUT,PATCH,DELETE'];
+        yield 'allow header in response' => ['POST,GET', 'POST,GET'];
+        yield 'also allow header in response' => ['DELETE,PATCH,PUT', 'DELETE,PATCH,PUT'];
     }
 
     /**

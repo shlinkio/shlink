@@ -8,7 +8,7 @@ use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function sprintf;
 
-class TagVisitsActionTest extends ApiTestCase
+class TagVisitsTest extends ApiTestCase
 {
     /**
      * @test

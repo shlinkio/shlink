@@ -11,7 +11,7 @@ use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
 use function GuzzleHttp\Psr7\build_query;
 use function sprintf;
 
-class ShortUrlVisitsActionTest extends ApiTestCase
+class ShortUrlVisitsTest extends ApiTestCase
 {
     use NotFoundUrlHelpersTrait;
 

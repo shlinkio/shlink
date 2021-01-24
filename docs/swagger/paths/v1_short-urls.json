@@ -20,6 +20,15 @@
                 }
             },
             {
+                "name": "itemsPerPage",
+                "in": "query",
+                "description": "The amount of items to return on every page. Defaults to 10",
+                "required": false,
+                "schema": {
+                    "type": "number"
+                }
+            },
+            {
                 "name": "searchTerm",
                 "in": "query",
                 "description": "A query used to filter results by searching for it on the longUrl and shortCode fields. (Since v1.3.0)",
