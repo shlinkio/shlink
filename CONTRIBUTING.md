@@ -46,27 +46,28 @@ This is a simplified version of the project structure:
 ```
 shlink
 ├── bin
-│   ├── cli
-│   ├── install
-│   └── update
+│   ├── cli
+│   ├── install
+│   └── update
 ├── config
-│   ├── autoload
-│   ├── params
-│   ├── config.php
-│   └── container.php
+│   ├── autoload
+│   ├── params
+│   ├── config.php
+│   └── container.php
 ├── data
-│   ├── cache
-│   ├── locks
-│   ├── log
-│   ├── migrations
-│   └── proxies
+│   ├── cache
+│   ├── locks
+│   ├── log
+│   ├── migrations
+│   └── proxies
 ├── docs
-│   ├── async-api
-│   └── swagger
+│   ├── adr
+│   ├── async-api
+│   └── swagger
 ├── module
-│   ├── CLI
-│   ├── Core
-│   └── Rest
+│   ├── CLI
+│   ├── Core
+│   └── Rest
 ├── public
 ├── composer.json
 └── README.md
@@ -77,7 +78,7 @@ The purposes of every folder are:
 * `bin`: It contains the CLI tools. The `cli` one is the main entry point to run shlink from the command line, while `install` and `update` are helper tools used to install and update shlink when not using the docker image.
 * `config`: Contains application-wide configurations, which are later merged with the ones provided by every module.
 * `data`: Common runtime-generated git-ignored assets, like logs, caches, etc.
-* `docs`: Any project documentation is stored here, like API spec definitions.
+* `docs`: Any project documentation is stored here, like API spec definitions or architectural decision records.
 * `module`: Contains a subfolder for every module in the project. Modules contain the source code, tests and configurations for every context in the project.
 * `public`: Few assets (like `favicon.ico` or `robots.txt`) and the web entry point are stored here. This web entry point is not used when serving the app with swoole.
 
@@ -134,3 +135,9 @@ In order to provide pull requests to this project, you should always start by cr
 The base branch should always be `develop`, and the target branch for the pull request should also be `develop`.
 
 Before your branch can be merged, all the checks described in [Running code checks](#running-code-checks) have to be passing. You can verify that manually by running `./indocker composer ci`, or wait for the build to be run automatically after the pull request is created.
+
+## Architectural Decision Records
+
+The project includes logs for some architectural decisions, using the [adr](https://adr.github.io/) proposal.
+
+If you are curious or want to understand why something has been built in some specific way, [take a look at them](docs/adr).
