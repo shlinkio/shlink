@@ -7,7 +7,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 use GuzzleHttp\RequestOptions;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
-class ListTagsActionTest extends ApiTestCase
+class ListTagsTest extends ApiTestCase
 {
     /**
      * @test
