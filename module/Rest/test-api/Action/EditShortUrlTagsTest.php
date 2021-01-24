@@ -8,7 +8,7 @@ use GuzzleHttp\RequestOptions;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
 
-class EditShortUrlTagsActionTest extends ApiTestCase
+class EditShortUrlTagsTest extends ApiTestCase
 {
     use NotFoundUrlHelpersTrait;
 

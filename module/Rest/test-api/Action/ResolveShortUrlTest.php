@@ -11,7 +11,7 @@ use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
 
 use function sprintf;
 
-class ResolveShortUrlActionTest extends ApiTestCase
+class ResolveShortUrlTest extends ApiTestCase
 {
     use NotFoundUrlHelpersTrait;
 

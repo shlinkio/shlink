@@ -6,7 +6,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
-class GlobalVisitsActionTest extends ApiTestCase
+class GlobalVisitsTest extends ApiTestCase
 {
     /**
      * @test

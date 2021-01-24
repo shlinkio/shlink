@@ -12,7 +12,7 @@ use function Functional\map;
 use function range;
 use function sprintf;
 
-class CreateShortUrlActionTest extends ApiTestCase
+class CreateShortUrlTest extends ApiTestCase
 {
     /** @test */
     public function createsNewShortUrlWhenOnlyLongUrlIsProvided(): void
