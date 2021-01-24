@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#856](https://github.com/shlinkio/shlink/issues/856) Added PHP 8.0 support.
 
 ### Changed
 * [#977](https://github.com/shlinkio/shlink/issues/977) Migrated from `laminas/laminas-paginator` to `pagerfanta/core` to handle pagination.
