@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#965](https://github.com/shlinkio/shlink/issues/965) Added docs section for Architectural Decision Records, including the one for API key roles.
 
 ### Changed
 * *Nothing*
