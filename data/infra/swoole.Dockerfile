@@ -1,10 +1,10 @@
-FROM php:7.4.11-alpine3.12
+FROM php:8.0.1-alpine3.13
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
-ENV APCU_VERSION 5.1.18
-ENV APCU_BC_VERSION 1.0.5
-ENV INOTIFY_VERSION 2.0.0
-ENV SWOOLE_VERSION 4.5.9
+ENV APCU_VERSION 5.1.19
+ENV PDO_SQLSRV_VERSION 5.9.0
+ENV INOTIFY_VERSION 3.0.0
+ENV SWOOLE_VERSION 4.6.2
 
 RUN apk update
 
@@ -37,43 +37,27 @@ RUN docker-php-ext-install gmp
 
 # Install APCu extension
 ADD https://pecl.php.net/get/apcu-$APCU_VERSION.tgz /tmp/apcu.tar.gz
-RUN mkdir -p /usr/src/php/ext/apcu\
-  && tar xf /tmp/apcu.tar.gz -C /usr/src/php/ext/apcu --strip-components=1
-# configure and install
-RUN docker-php-ext-configure apcu\
-  && docker-php-ext-install apcu
-# cleanup
-RUN rm /tmp/apcu.tar.gz
-
-# Install APCu-BC extension
-ADD https://pecl.php.net/get/apcu_bc-$APCU_BC_VERSION.tgz /tmp/apcu_bc.tar.gz
-RUN mkdir -p /usr/src/php/ext/apcu-bc\
-  && tar xf /tmp/apcu_bc.tar.gz -C /usr/src/php/ext/apcu-bc --strip-components=1
-# configure and install
-RUN docker-php-ext-configure apcu-bc\
-  && docker-php-ext-install apcu-bc
-# cleanup
-RUN rm /tmp/apcu_bc.tar.gz
-
-# Load APCU.ini before APC.ini
-RUN rm /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
-RUN echo extension=apcu.so > /usr/local/etc/php/conf.d/20-php-ext-apcu.ini
+RUN mkdir -p /usr/src/php/ext/apcu \
+  && tar xf /tmp/apcu.tar.gz -C /usr/src/php/ext/apcu --strip-components=1 \
+  && docker-php-ext-configure apcu \
+  && docker-php-ext-install apcu \
+  && rm /tmp/apcu.tar.gz \
+  && rm /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
+  && echo extension=apcu.so > /usr/local/etc/php/conf.d/20-php-ext-apcu.ini
 
 # Install inotify extension
 ADD https://pecl.php.net/get/inotify-$INOTIFY_VERSION.tgz /tmp/inotify.tar.gz
-RUN mkdir -p /usr/src/php/ext/inotify\
-  && tar xf /tmp/inotify.tar.gz -C /usr/src/php/ext/inotify --strip-components=1
-# configure and install
-RUN docker-php-ext-configure inotify\
-  && docker-php-ext-install inotify
-# cleanup
-RUN rm /tmp/inotify.tar.gz
+RUN mkdir -p /usr/src/php/ext/inotify \
+  && tar xf /tmp/inotify.tar.gz -C /usr/src/php/ext/inotify --strip-components=1 \
+  && docker-php-ext-configure inotify \
+  && docker-php-ext-install inotify \
+  && rm /tmp/inotify.tar.gz
 
 # Install swoole, pcov and mssql driver
 RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.5.1.1-1_amd64.apk && \
     apk add --allow-untrusted msodbcsql17_17.5.1.1-1_amd64.apk && \
     apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
-    pecl install swoole-${SWOOLE_VERSION} pdo_sqlsrv pcov && \
+    pecl install swoole-${SWOOLE_VERSION} pdo_sqlsrv-${PDO_SQLSRV_VERSION} pcov && \
     docker-php-ext-enable swoole pdo_sqlsrv pcov && \
     apk del .phpize-deps && \
     rm msodbcsql17_17.5.1.1-1_amd64.apk
