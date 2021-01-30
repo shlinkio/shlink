@@ -92,7 +92,7 @@ class GetVisitsCommandTest extends TestCase
 
         $info->shouldHaveBeenCalledOnce();
         self::assertStringContainsString(
-            sprintf('Ignored provided "startDate" since its value "%s" is not a valid date', $startDate),
+            sprintf('Ignored provided "start-date" since its value "%s" is not a valid date', $startDate),
             $output,
         );
     }

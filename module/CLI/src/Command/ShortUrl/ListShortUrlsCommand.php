@@ -60,28 +60,33 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
                 'page',
                 'p',
                 InputOption::VALUE_REQUIRED,
-                'The first page to list (10 items per page unless "--all" is provided)',
+                'The first page to list (10 items per page unless "--all" is provided).',
                 '1',
             )
-            ->addOption(
-                'searchTerm',
+            ->addOptionWithDeprecatedFallback(
+                'search-term',
                 'st',
                 InputOption::VALUE_REQUIRED,
-                'A query used to filter results by searching for it on the longUrl and shortCode fields',
+                'A query used to filter results by searching for it on the longUrl and shortCode fields.',
             )
             ->addOption(
                 'tags',
                 't',
                 InputOption::VALUE_REQUIRED,
-                'A comma-separated list of tags to filter results',
+                'A comma-separated list of tags to filter results.',
             )
-            ->addOption(
-                'orderBy',
+            ->addOptionWithDeprecatedFallback(
+                'order-by',
                 'o',
                 InputOption::VALUE_REQUIRED,
-                'The field from which we want to order by. Pass ASC or DESC separated by a comma',
+                'The field from which we want to order by. Pass ASC or DESC separated by a comma.',
             )
-            ->addOption('showTags', null, InputOption::VALUE_NONE, 'Whether to display the tags or not')
+            ->addOptionWithDeprecatedFallback(
+                'show-tags',
+                null,
+                InputOption::VALUE_NONE,
+                'Whether to display the tags or not.',
+            )
             ->addOption(
                 'all',
                 'a',
@@ -91,14 +96,14 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
             );
     }
 
-    protected function getStartDateDesc(): string
+    protected function getStartDateDesc(string $optionName): string
     {
-        return 'Allows to filter short URLs, returning only those created after "startDate"';
+        return sprintf('Allows to filter short URLs, returning only those created after "%s".', $optionName);
     }
 
-    protected function getEndDateDesc(): string
+    protected function getEndDateDesc(string $optionName): string
     {
-        return 'Allows to filter short URLs, returning only those created before "endDate"';
+        return sprintf('Allows to filter short URLs, returning only those created before "%s".', $optionName);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
@@ -106,13 +111,13 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $io = new SymfonyStyle($input, $output);
 
         $page = (int) $input->getOption('page');
-        $searchTerm = $input->getOption('searchTerm');
+        $searchTerm = $this->getOptionWithDeprecatedFallback($input, 'search-term');
         $tags = $input->getOption('tags');
         $tags = ! empty($tags) ? explode(',', $tags) : [];
-        $showTags = (bool) $input->getOption('showTags');
-        $all = (bool) $input->getOption('all');
-        $startDate = $this->getDateOption($input, $output, 'startDate');
-        $endDate = $this->getDateOption($input, $output, 'endDate');
+        $showTags = $this->getOptionWithDeprecatedFallback($input, 'show-tags');
+        $all = $input->getOption('all');
+        $startDate = $this->getStartDateOption($input, $output);
+        $endDate = $this->getEndDateOption($input, $output);
         $orderBy = $this->processOrderBy($input);
 
         $data = [
@@ -178,7 +183,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
      */
     private function processOrderBy(InputInterface $input)
     {
-        $orderBy = $input->getOption('orderBy');
+        $orderBy = $this->getOptionWithDeprecatedFallback($input, 'order-by');
         if (empty($orderBy)) {
             return null;
         }

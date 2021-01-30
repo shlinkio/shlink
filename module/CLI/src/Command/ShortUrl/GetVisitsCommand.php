@@ -21,6 +21,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function Functional\map;
 use function Functional\select_keys;
+use function sprintf;
 
 class GetVisitsCommand extends AbstractWithDateRangeCommand
 {
@@ -39,18 +40,18 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
         $this
             ->setName(self::NAME)
             ->setDescription('Returns the detailed visits information for provided short code')
-            ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code which visits we want to get')
-            ->addOption('domain', 'd', InputOption::VALUE_REQUIRED, 'The domain for the short code');
+            ->addArgument('shortCode', InputArgument::REQUIRED, 'The short code which visits we want to get.')
+            ->addOption('domain', 'd', InputOption::VALUE_REQUIRED, 'The domain for the short code.');
     }
 
-    protected function getStartDateDesc(): string
+    protected function getStartDateDesc(string $optionName): string
     {
-        return 'Allows to filter visits, returning only those older than start date';
+        return sprintf('Allows to filter visits, returning only those older than "%s".', $optionName);
     }
 
-    protected function getEndDateDesc(): string
+    protected function getEndDateDesc(string $optionName): string
     {
-        return 'Allows to filter visits, returning only those newer than end date';
+        return sprintf('Allows to filter visits, returning only those newer than "%s".', $optionName);
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void
@@ -70,8 +71,8 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $identifier = ShortUrlIdentifier::fromCli($input);
-        $startDate = $this->getDateOption($input, $output, 'startDate');
-        $endDate = $this->getDateOption($input, $output, 'endDate');
+        $startDate = $this->getStartDateOption($input, $output);
+        $endDate = $this->getEndDateOption($input, $output);
 
         $paginator = $this->visitsTracker->info($identifier, new VisitsParams(new DateRange($startDate, $endDate)));
 
