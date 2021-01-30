@@ -13,7 +13,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#986](https://github.com/shlinkio/shlink/issues/986) Updated official docker image to use PHP 8.
 
 ### Deprecated
-* *Nothing*
+* [#959](https://github.com/shlinkio/shlink/issues/959) Deprecated all command flags using camelCase format (like `--expirationDate`), adding kebab-case replacements for all of them (like `--expiration-date`).
+
+    All the existing camelCase flags will continue working for now, but will be removed in Shlink 3.0.0
 
 ### Removed
 * *Nothing*
