@@ -13,8 +13,6 @@ use Shlinkio\Shlink\Common\Validation;
 use Shlinkio\Shlink\Core\Util\CocurSymfonySluggerBridge;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function is_numeric;
-
 use const Shlinkio\Shlink\Core\CUSTOM_SLUGS_REGEXP;
 use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
 
@@ -77,8 +75,8 @@ class ShortUrlMetaInputFilter extends InputFilter
         ]));
         $this->add($customSlug);
 
-        $this->add($this->createPositiveNumberInput(self::MAX_VISITS));
-        $this->add($this->createPositiveNumberInput(self::SHORT_CODE_LENGTH, MIN_SHORT_CODES_LENGTH));
+        $this->add($this->createNumericInput(self::MAX_VISITS, false));
+        $this->add($this->createNumericInput(self::SHORT_CODE_LENGTH, false, MIN_SHORT_CODES_LENGTH));
 
         $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
 
@@ -94,15 +92,6 @@ class ShortUrlMetaInputFilter extends InputFilter
             ->getValidatorChain()->attach(new Validator\IsInstanceOf(['className' => ApiKey::class]));
         $this->add($apiKeyInput);
 
-        $this->add($this->createArrayInput(self::TAGS, false));
-    }
-
-    private function createPositiveNumberInput(string $name, int $min = 1): Input
-    {
-        $input = $this->createInput($name, false);
-        $input->getValidatorChain()->attach(new Validator\Callback(fn ($value) => is_numeric($value)))
-                                   ->attach(new Validator\GreaterThan(['min' => $min, 'inclusive' => true]));
-
-        return $input;
+        $this->add($this->createTagsInput(self::TAGS, false));
     }
 }
