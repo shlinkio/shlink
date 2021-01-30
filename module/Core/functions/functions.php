@@ -12,9 +12,12 @@ use PUGX\Shortid\Factory as ShortIdFactory;
 
 use function Functional\reduce_left;
 use function is_array;
+use function lcfirst;
 use function print_r;
 use function sprintf;
 use function str_repeat;
+use function str_replace;
+use function ucwords;
 
 const DEFAULT_DELETE_SHORT_URL_THRESHOLD = 15;
 const DEFAULT_SHORT_CODES_LENGTH = 5;
@@ -96,4 +99,9 @@ function arrayToString(array $array, int $indentSize = 4): string
             is_array($messages) ? print_r($messages, true) : $messages,
         );
     }, '');
+}
+
+function kebabCaseToCamelCase(string $name): string
+{
+    return lcfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $name))));
 }

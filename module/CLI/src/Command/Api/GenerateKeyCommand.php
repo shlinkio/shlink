@@ -6,11 +6,11 @@ namespace Shlinkio\Shlink\CLI\Command\Api;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolverInterface;
+use Shlinkio\Shlink\CLI\Command\BaseCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use function Shlinkio\Shlink\Core\arrayToString;
 use function sprintf;
 
-class GenerateKeyCommand extends Command
+class GenerateKeyCommand extends BaseCommand
 {
     public const NAME = 'api-key:generate';
 
@@ -42,9 +42,9 @@ class GenerateKeyCommand extends Command
 
             <info>%command.full_name%</info>
 
-        You can optionally set its expiration date with <comment>--expirationDate</comment> or <comment>-e</comment>:
+        You can optionally set its expiration date with <comment>--expiration-date</comment> or <comment>-e</comment>:
 
-            <info>%command.full_name% --expirationDate 2020-01-01</info>
+            <info>%command.full_name% --expiration-date 2020-01-01</info>
 
         You can also set roles to the API key:
 
@@ -56,8 +56,8 @@ class GenerateKeyCommand extends Command
         $this
             ->setName(self::NAME)
             ->setDescription('Generates a new valid API key.')
-            ->addOption(
-                'expirationDate',
+            ->addOptionWithDeprecatedFallback(
+                'expiration-date',
                 'e',
                 InputOption::VALUE_REQUIRED,
                 'The date in which the API key should expire. Use any valid PHP format.',
@@ -79,7 +79,7 @@ class GenerateKeyCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $expirationDate = $input->getOption('expirationDate');
+        $expirationDate = $this->getOptionWithDeprecatedFallback($input, 'expiration-date');
         $apiKey = $this->apiKeyService->create(
             isset($expirationDate) ? Chronos::parse($expirationDate) : null,
             ...$this->roleResolver->determineRoles($input),

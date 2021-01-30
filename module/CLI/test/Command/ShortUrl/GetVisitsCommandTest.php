@@ -71,8 +71,8 @@ class GetVisitsCommandTest extends TestCase
 
         $this->commandTester->execute([
             'shortCode' => $shortCode,
-            '--startDate' => $startDate,
-            '--endDate' => $endDate,
+            '--start-date' => $startDate,
+            '--end-date' => $endDate,
         ]);
     }
 
@@ -86,13 +86,13 @@ class GetVisitsCommandTest extends TestCase
 
         $this->commandTester->execute([
             'shortCode' => $shortCode,
-            '--startDate' => $startDate,
+            '--start-date' => $startDate,
         ]);
         $output = $this->commandTester->getDisplay();
 
         $info->shouldHaveBeenCalledOnce();
         self::assertStringContainsString(
-            sprintf('Ignored provided "startDate" since its value "%s" is not a valid date', $startDate),
+            sprintf('Ignored provided "start-date" since its value "%s" is not a valid date', $startDate),
             $output,
         );
     }
