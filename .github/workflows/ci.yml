@@ -21,7 +21,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.2
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer cs
@@ -39,7 +39,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.2
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer stan
@@ -57,7 +57,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.2
           coverage: pcov
           ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist
@@ -83,7 +83,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.2
           coverage: pcov
           ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist
@@ -111,7 +111,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.2
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer test:db:mysql
@@ -131,7 +131,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.2
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer test:db:maria
@@ -151,7 +151,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.2
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer test:db:postgres
@@ -173,7 +173,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9, pdo_sqlsrv-5.9.0beta2
+          extensions: swoole-4.6.2, pdo_sqlsrv-5.9.0
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - name: Create test database
@@ -195,7 +195,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.2
           coverage: pcov
           ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist
@@ -225,7 +225,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.2
           coverage: pcov
           ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist
@@ -283,6 +283,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 100
       - uses: marceloprado/has-changed-path@v1
         id: changed-dockerfile
         with:
