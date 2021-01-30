@@ -283,6 +283,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 100
       - uses: marceloprado/has-changed-path@v1
         id: changed-dockerfile
         with:
