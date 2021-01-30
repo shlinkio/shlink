@@ -43,18 +43,18 @@ class UrlShortener implements UrlShortenerInterface
      * @throws InvalidUrlException
      * @throws Throwable
      */
-    public function shorten(string $url, array $tags, ShortUrlMeta $meta): ShortUrl
+    public function shorten(array $tags, ShortUrlMeta $meta): ShortUrl
     {
         // First, check if a short URL exists for all provided params
-        $existingShortUrl = $this->findExistingShortUrlIfExists($url, $tags, $meta);
+        $existingShortUrl = $this->findExistingShortUrlIfExists($tags, $meta);
         if ($existingShortUrl !== null) {
             return $existingShortUrl;
         }
 
-        $this->urlValidator->validateUrl($url, $meta->doValidateUrl());
+        $this->urlValidator->validateUrl($meta->getLongUrl(), $meta->doValidateUrl());
 
-        return $this->em->transactional(function () use ($url, $tags, $meta) {
-            $shortUrl = new ShortUrl($url, $meta, $this->relationResolver);
+        return $this->em->transactional(function () use ($tags, $meta) {
+            $shortUrl = ShortUrl::fromMeta($meta, $this->relationResolver);
             $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
 
             $this->verifyShortCodeUniqueness($meta, $shortUrl);
@@ -64,7 +64,7 @@ class UrlShortener implements UrlShortenerInterface
         });
     }
 
-    private function findExistingShortUrlIfExists(string $url, array $tags, ShortUrlMeta $meta): ?ShortUrl
+    private function findExistingShortUrlIfExists(array $tags, ShortUrlMeta $meta): ?ShortUrl
     {
         if (! $meta->findIfExists()) {
             return null;
@@ -72,7 +72,7 @@ class UrlShortener implements UrlShortenerInterface
 
         /** @var ShortUrlRepositoryInterface $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        return $repo->findOneMatching($url, $tags, $meta);
+        return $repo->findOneMatching($tags, $meta);
     }
 
     private function verifyShortCodeUniqueness(ShortUrlMeta $meta, ShortUrl $shortUrlToBeCreated): void

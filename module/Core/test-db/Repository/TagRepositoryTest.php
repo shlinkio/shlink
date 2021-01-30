@@ -62,14 +62,14 @@ class TagRepositoryTest extends DatabaseTestCase
         [$firstUrlTags] = array_chunk($tags, 3);
         $secondUrlTags = [$tags[0]];
 
-        $shortUrl = new ShortUrl('');
+        $shortUrl = ShortUrl::createEmpty();
         $shortUrl->setTags(new ArrayCollection($firstUrlTags));
         $this->getEntityManager()->persist($shortUrl);
         $this->getEntityManager()->persist(new Visit($shortUrl, Visitor::emptyInstance()));
         $this->getEntityManager()->persist(new Visit($shortUrl, Visitor::emptyInstance()));
         $this->getEntityManager()->persist(new Visit($shortUrl, Visitor::emptyInstance()));
 
-        $shortUrl2 = new ShortUrl('');
+        $shortUrl2 = ShortUrl::createEmpty();
         $shortUrl2->setTags(new ArrayCollection($secondUrlTags));
         $this->getEntityManager()->persist($shortUrl2);
         $this->getEntityManager()->persist(new Visit($shortUrl2, Visitor::emptyInstance()));
@@ -119,13 +119,12 @@ class TagRepositoryTest extends DatabaseTestCase
 
         [$firstUrlTags, $secondUrlTags] = array_chunk($tags, 3);
 
-        $shortUrl = new ShortUrl('', ShortUrlMeta::fromRawData(['apiKey' => $authorApiKey]));
+        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['apiKey' => $authorApiKey, 'longUrl' => '']));
         $shortUrl->setTags(new ArrayCollection($firstUrlTags));
         $this->getEntityManager()->persist($shortUrl);
 
-        $shortUrl2 = new ShortUrl(
-            '',
-            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority()]),
+        $shortUrl2 = ShortUrl::fromMeta(
+            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority(), 'longUrl' => '']),
             new PersistenceShortUrlRelationResolver($this->getEntityManager()),
         );
         $shortUrl2->setTags(new ArrayCollection($secondUrlTags));

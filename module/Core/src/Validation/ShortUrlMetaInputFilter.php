@@ -31,15 +31,26 @@ class ShortUrlMetaInputFilter extends InputFilter
     public const VALIDATE_URL = 'validateUrl';
     public const API_KEY = 'apiKey';
 
-    public function __construct(array $data)
+    private bool $requireLongUrl;
+
+    public function __construct(array $data, bool $requireLongUrl = false)
     {
+        $this->requireLongUrl = $requireLongUrl;
         $this->initialize();
         $this->setData($data);
     }
 
     private function initialize(): void
     {
-        $this->add($this->createInput(self::LONG_URL, false));
+        $longUrlInput = $this->createInput(self::LONG_URL, $this->requireLongUrl);
+        $longUrlInput->getValidatorChain()->attach(new Validator\NotEmpty([
+            Validator\NotEmpty::OBJECT,
+            Validator\NotEmpty::SPACE,
+            Validator\NotEmpty::NULL,
+            Validator\NotEmpty::EMPTY_ARRAY,
+            Validator\NotEmpty::BOOLEAN,
+        ]));
+        $this->add($longUrlInput);
 
         $validSince = $this->createInput(self::VALID_SINCE, false);
         $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));

@@ -40,7 +40,7 @@ class VisitRepositoryTest extends DatabaseTestCase
      */
     public function findVisitsReturnsProperVisits(int $blockSize): void
     {
-        $shortUrl = new ShortUrl('');
+        $shortUrl = ShortUrl::createEmpty();
         $this->getEntityManager()->persist($shortUrl);
         $countIterable = function (iterable $results): int {
             $resultsCount = 0;
@@ -190,9 +190,8 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $apiKey1 = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
         $this->getEntityManager()->persist($apiKey1);
-        $shortUrl = new ShortUrl(
-            '',
-            ShortUrlMeta::fromRawData(['apiKey' => $apiKey1, 'domain' => $domain->getAuthority()]),
+        $shortUrl = ShortUrl::fromMeta(
+            ShortUrlMeta::fromRawData(['apiKey' => $apiKey1, 'domain' => $domain->getAuthority(), 'longUrl' => '']),
             new PersistenceShortUrlRelationResolver($this->getEntityManager()),
         );
         $this->getEntityManager()->persist($shortUrl);
@@ -200,13 +199,12 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $apiKey2 = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
         $this->getEntityManager()->persist($apiKey2);
-        $shortUrl2 = new ShortUrl('', ShortUrlMeta::fromRawData(['apiKey' => $apiKey2]));
+        $shortUrl2 = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['apiKey' => $apiKey2, 'longUrl' => '']));
         $this->getEntityManager()->persist($shortUrl2);
         $this->createVisitsForShortUrl($shortUrl2, 5);
 
-        $shortUrl3 = new ShortUrl(
-            '',
-            ShortUrlMeta::fromRawData(['apiKey' => $apiKey2, 'domain' => $domain->getAuthority()]),
+        $shortUrl3 = ShortUrl::fromMeta(
+            ShortUrlMeta::fromRawData(['apiKey' => $apiKey2, 'domain' => $domain->getAuthority(), 'longUrl' => '']),
             new PersistenceShortUrlRelationResolver($this->getEntityManager()),
         );
         $this->getEntityManager()->persist($shortUrl3);
@@ -225,7 +223,7 @@ class VisitRepositoryTest extends DatabaseTestCase
 
     private function createShortUrlsAndVisits(bool $withDomain = true): array
     {
-        $shortUrl = new ShortUrl('');
+        $shortUrl = ShortUrl::createEmpty();
         $domain = 'example.com';
         $shortCode = $shortUrl->getShortCode();
         $this->getEntityManager()->persist($shortUrl);
@@ -233,9 +231,10 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->createVisitsForShortUrl($shortUrl);
 
         if ($withDomain) {
-            $shortUrlWithDomain = new ShortUrl('', ShortUrlMeta::fromRawData([
+            $shortUrlWithDomain = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
                 'customSlug' => $shortCode,
                 'domain' => $domain,
+                'longUrl' => '',
             ]));
             $this->getEntityManager()->persist($shortUrlWithDomain);
             $this->createVisitsForShortUrl($shortUrlWithDomain, 3);

@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\ServerRequest;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
@@ -39,16 +36,6 @@ class SingleStepCreateShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function errorResponseIsReturnedIfNoUrlIsProvided(): void
-    {
-        $request = new ServerRequest();
-
-        $this->expectException(ValidationException::class);
-
-        $this->action->handle($request);
-    }
-
-    /** @test */
     public function properDataIsPassedWhenGeneratingShortCode(): void
     {
         $apiKey = new ApiKey();
@@ -57,13 +44,9 @@ class SingleStepCreateShortUrlActionTest extends TestCase
             'longUrl' => 'http://foobar.com',
         ])->withAttribute(ApiKey::class, $apiKey);
         $generateShortCode = $this->urlShortener->shorten(
-            Argument::that(function (string $argument): bool {
-                Assert::assertEquals('http://foobar.com', $argument);
-                return true;
-            }),
             [],
-            ShortUrlMeta::fromRawData(['apiKey' => $apiKey]),
-        )->willReturn(new ShortUrl(''));
+            ShortUrlMeta::fromRawData(['apiKey' => $apiKey, 'longUrl' => 'http://foobar.com']),
+        )->willReturn(ShortUrl::createEmpty());
 
         $resp = $this->action->handle($request);
 

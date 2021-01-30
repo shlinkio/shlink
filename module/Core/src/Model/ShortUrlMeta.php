@@ -17,6 +17,7 @@ use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
 
 final class ShortUrlMeta
 {
+    private string $longUrl;
     private ?Chronos $validSince = null;
     private ?Chronos $validUntil = null;
     private ?string $customSlug = null;
@@ -34,7 +35,10 @@ final class ShortUrlMeta
 
     public static function createEmpty(): self
     {
-        return new self();
+        $meta = new self();
+        $meta->longUrl = '';
+
+        return $meta;
     }
 
     /**
@@ -52,11 +56,12 @@ final class ShortUrlMeta
      */
     private function validateAndInit(array $data): void
     {
-        $inputFilter = new ShortUrlMetaInputFilter($data);
+        $inputFilter = new ShortUrlMetaInputFilter($data, true);
         if (! $inputFilter->isValid()) {
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
+        $this->longUrl = $inputFilter->getValue(ShortUrlMetaInputFilter::LONG_URL);
         $this->validSince = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
         $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
@@ -69,6 +74,11 @@ final class ShortUrlMeta
             ShortUrlMetaInputFilter::SHORT_CODE_LENGTH,
         ) ?? DEFAULT_SHORT_CODES_LENGTH;
         $this->apiKey = $inputFilter->getValue(ShortUrlMetaInputFilter::API_KEY);
+    }
+
+    public function getLongUrl(): string
+    {
+        return $this->longUrl;
     }
 
     public function getValidSince(): ?Chronos

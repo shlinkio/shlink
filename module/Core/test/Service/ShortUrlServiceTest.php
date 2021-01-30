@@ -58,10 +58,10 @@ class ShortUrlServiceTest extends TestCase
     public function listedUrlsAreReturnedFromEntityManager(?ApiKey $apiKey): void
     {
         $list = [
-            new ShortUrl(''),
-            new ShortUrl(''),
-            new ShortUrl(''),
-            new ShortUrl(''),
+            ShortUrl::createEmpty(),
+            ShortUrl::createEmpty(),
+            ShortUrl::createEmpty(),
+            ShortUrl::createEmpty(),
         ];
 
         $repo = $this->prophesize(ShortUrlRepository::class);
@@ -106,7 +106,7 @@ class ShortUrlServiceTest extends TestCase
         ?ApiKey $apiKey
     ): void {
         $originalLongUrl = 'originalLongUrl';
-        $shortUrl = new ShortUrl($originalLongUrl);
+        $shortUrl = ShortUrl::withLongUrl($originalLongUrl);
 
         $findShortUrl = $this->urlResolver->resolveShortUrl(
             new ShortUrlIdentifier('abc123'),

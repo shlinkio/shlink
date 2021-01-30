@@ -35,7 +35,7 @@ class ResolveShortUrlActionTest extends TestCase
         $shortCode = 'abc123';
         $apiKey = new ApiKey();
         $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey)->willReturn(
-            new ShortUrl('http://domain.com/foo/bar'),
+            ShortUrl::withLongUrl('http://domain.com/foo/bar'),
         )->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)->withAttribute(ApiKey::class, $apiKey);

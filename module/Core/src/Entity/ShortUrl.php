@@ -40,26 +40,37 @@ class ShortUrl extends AbstractEntity
     private ?string $importOriginalShortCode = null;
     private ?ApiKey $authorApiKey = null;
 
-    public function __construct(
-        string $longUrl,
-        ?ShortUrlMeta $meta = null,
+    public static function createEmpty(): self
+    {
+        return self::fromMeta(ShortUrlMeta::createEmpty());
+    }
+
+    public static function withLongUrl(string $longUrl): self
+    {
+        return self::fromMeta(ShortUrlMeta::fromRawData([ShortUrlMetaInputFilter::LONG_URL => $longUrl]));
+    }
+
+    public static function fromMeta(
+        ShortUrlMeta $meta,
         ?ShortUrlRelationResolverInterface $relationResolver = null
-    ) {
-        $meta = $meta ?? ShortUrlMeta::createEmpty();
+    ): self {
+        $instance = new self();
         $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
 
-        $this->longUrl = $longUrl;
-        $this->dateCreated = Chronos::now();
-        $this->visits = new ArrayCollection();
-        $this->tags = new ArrayCollection();
-        $this->validSince = $meta->getValidSince();
-        $this->validUntil = $meta->getValidUntil();
-        $this->maxVisits = $meta->getMaxVisits();
-        $this->customSlugWasProvided = $meta->hasCustomSlug();
-        $this->shortCodeLength = $meta->getShortCodeLength();
-        $this->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode($this->shortCodeLength);
-        $this->domain = $relationResolver->resolveDomain($meta->getDomain());
-        $this->authorApiKey = $meta->getApiKey();
+        $instance->longUrl = $meta->getLongUrl();
+        $instance->dateCreated = Chronos::now();
+        $instance->visits = new ArrayCollection();
+        $instance->tags = new ArrayCollection();
+        $instance->validSince = $meta->getValidSince();
+        $instance->validUntil = $meta->getValidUntil();
+        $instance->maxVisits = $meta->getMaxVisits();
+        $instance->customSlugWasProvided = $meta->hasCustomSlug();
+        $instance->shortCodeLength = $meta->getShortCodeLength();
+        $instance->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode($instance->shortCodeLength);
+        $instance->domain = $relationResolver->resolveDomain($meta->getDomain());
+        $instance->authorApiKey = $meta->getApiKey();
+
+        return $instance;
     }
 
     public static function fromImport(
@@ -68,6 +79,7 @@ class ShortUrl extends AbstractEntity
         ?ShortUrlRelationResolverInterface $relationResolver = null
     ): self {
         $meta = [
+            ShortUrlMetaInputFilter::LONG_URL => $url->longUrl(),
             ShortUrlMetaInputFilter::DOMAIN => $url->domain(),
             ShortUrlMetaInputFilter::VALIDATE_URL => false,
         ];
@@ -75,7 +87,7 @@ class ShortUrl extends AbstractEntity
             $meta[ShortUrlMetaInputFilter::CUSTOM_SLUG] = $url->shortCode();
         }
 
-        $instance = new self($url->longUrl(), ShortUrlMeta::fromRawData($meta), $relationResolver);
+        $instance = self::fromMeta(ShortUrlMeta::fromRawData($meta), $relationResolver);
         $instance->importSource = $url->source();
         $instance->importOriginalShortCode = $url->shortCode();
         $instance->dateCreated = Chronos::instance($url->createdAt());

@@ -27,11 +27,10 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
     public function handle(Request $request): Response
     {
         $shortUrlData = $this->buildShortUrlData($request);
-        $longUrl = $shortUrlData->getLongUrl();
         $tags = $shortUrlData->getTags();
         $shortUrlMeta = $shortUrlData->getMeta();
 
-        $shortUrl = $this->urlShortener->shorten($longUrl, $tags, $shortUrlMeta);
+        $shortUrl = $this->urlShortener->shorten($tags, $shortUrlMeta);
         $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
         return new JsonResponse($transformer->transform($shortUrl));

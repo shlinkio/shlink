@@ -103,7 +103,7 @@ class GetVisitsCommandTest extends TestCase
         $shortCode = 'abc123';
         $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), Argument::any())->willReturn(
             new Paginator(new ArrayAdapter([
-                (new Visit(new ShortUrl(''), new Visitor('bar', 'foo', '')))->locate(
+                (new Visit(ShortUrl::createEmpty(), new Visitor('bar', 'foo', '')))->locate(
                     new VisitLocation(new Location('', 'Spain', '', '', 0, 0, '')),
                 ),
             ])),

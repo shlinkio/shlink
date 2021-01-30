@@ -49,7 +49,7 @@ class EditShortUrlActionTest extends TestCase
                                             'maxVisits' => 5,
                                         ]);
         $updateMeta = $this->shortUrlService->updateMetadataByShortCode(Argument::cetera())->willReturn(
-            new ShortUrl(''),
+            ShortUrl::createEmpty(),
         );
 
         $resp = $this->action->handle($request);

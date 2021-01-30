@@ -43,7 +43,7 @@ class GenerateShortUrlCommandTest extends TestCase
     /** @test */
     public function properShortCodeIsCreatedIfLongUrlIsCorrect(): void
     {
-        $shortUrl = new ShortUrl('');
+        $shortUrl = ShortUrl::createEmpty();
         $urlToShortCode = $this->urlShortener->shorten(Argument::cetera())->willReturn($shortUrl);
 
         $this->commandTester->execute([
@@ -89,9 +89,8 @@ class GenerateShortUrlCommandTest extends TestCase
     /** @test */
     public function properlyProcessesProvidedTags(): void
     {
-        $shortUrl = new ShortUrl('');
+        $shortUrl = ShortUrl::createEmpty();
         $urlToShortCode = $this->urlShortener->shorten(
-            Argument::type('string'),
             Argument::that(function (array $tags) {
                 Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $tags);
                 return $tags;
@@ -116,9 +115,8 @@ class GenerateShortUrlCommandTest extends TestCase
      */
     public function urlValidationHasExpectedValueBasedOnProvidedTags(array $options, ?bool $expectedValidateUrl): void
     {
-        $shortUrl = new ShortUrl('');
+        $shortUrl = ShortUrl::createEmpty();
         $urlToShortCode = $this->urlShortener->shorten(
-            Argument::type('string'),
             Argument::type('array'),
             Argument::that(function (ShortUrlMeta $meta) use ($expectedValidateUrl) {
                 Assert::assertEquals($expectedValidateUrl, $meta->doValidateUrl());

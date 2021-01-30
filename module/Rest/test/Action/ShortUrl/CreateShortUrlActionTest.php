@@ -39,24 +39,22 @@ class CreateShortUrlActionTest extends TestCase
     }
 
     /** @test */
-    public function missingLongUrlParamReturnsError(): void
-    {
-        $this->expectException(ValidationException::class);
-        $this->action->handle(new ServerRequest());
-    }
-
-    /**
-     * @test
-     * @dataProvider provideRequestBodies
-     */
-    public function properShortcodeConversionReturnsData(array $body, array $expectedMeta): void
+    public function properShortcodeConversionReturnsData(): void
     {
         $apiKey = new ApiKey();
-        $shortUrl = new ShortUrl('');
+        $shortUrl = ShortUrl::createEmpty();
+        $expectedMeta = $body = [
+            'longUrl' => 'http://www.domain.com/foo/bar',
+            'validSince' => Chronos::now()->toAtomString(),
+            'validUntil' => Chronos::now()->toAtomString(),
+            'customSlug' => 'foo-bar-baz',
+            'maxVisits' => 50,
+            'findIfExists' => true,
+            'domain' => 'my-domain.com',
+        ];
         $expectedMeta['apiKey'] = $apiKey;
 
         $shorten = $this->urlShortener->shorten(
-            Argument::type('string'),
             Argument::type('array'),
             ShortUrlMeta::fromRawData($expectedMeta),
         )->willReturn($shortUrl);
@@ -70,29 +68,13 @@ class CreateShortUrlActionTest extends TestCase
         $shorten->shouldHaveBeenCalledOnce();
     }
 
-    public function provideRequestBodies(): iterable
-    {
-        $fullMeta = [
-            'longUrl' => 'http://www.domain.com/foo/bar',
-            'validSince' => Chronos::now()->toAtomString(),
-            'validUntil' => Chronos::now()->toAtomString(),
-            'customSlug' => 'foo-bar-baz',
-            'maxVisits' => 50,
-            'findIfExists' => true,
-            'domain' => 'my-domain.com',
-        ];
-
-        yield 'no data' => [['longUrl' => 'http://www.domain.com/foo/bar'], []];
-        yield 'all data' => [$fullMeta, $fullMeta];
-    }
-
     /**
      * @test
      * @dataProvider provideInvalidDomains
      */
     public function anInvalidDomainReturnsError(string $domain): void
     {
-        $shortUrl = new ShortUrl('');
+        $shortUrl = ShortUrl::createEmpty();
         $urlToShortCode = $this->urlShortener->shorten(Argument::cetera())->willReturn($shortUrl);
 
         $request = (new ServerRequest())->withParsedBody([

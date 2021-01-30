@@ -145,7 +145,8 @@ class GenerateShortUrlCommand extends BaseCommand
         $doValidateUrl = $this->doValidateUrl($input);
 
         try {
-            $shortUrl = $this->urlShortener->shorten($longUrl, $tags, ShortUrlMeta::fromRawData([
+            $shortUrl = $this->urlShortener->shorten($tags, ShortUrlMeta::fromRawData([
+                ShortUrlMetaInputFilter::LONG_URL => $longUrl,
                 ShortUrlMetaInputFilter::VALID_SINCE => $this->getOptionWithDeprecatedFallback($input, 'valid-since'),
                 ShortUrlMetaInputFilter::VALID_UNTIL => $this->getOptionWithDeprecatedFallback($input, 'valid-until'),
                 ShortUrlMetaInputFilter::CUSTOM_SLUG => $customSlug,

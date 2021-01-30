@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
@@ -20,15 +19,10 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
     {
         $query = $request->getQueryParams();
         $longUrl = $query['longUrl'] ?? null;
-
-        if ($longUrl === null) {
-            throw ValidationException::fromArray([
-                'longUrl' => 'A URL was not provided',
-            ]);
-        }
-
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
-        return new CreateShortUrlData($longUrl, [], ShortUrlMeta::fromRawData([
+
+        return new CreateShortUrlData([], ShortUrlMeta::fromRawData([
+            ShortUrlMetaInputFilter::LONG_URL => $longUrl,
             ShortUrlMetaInputFilter::API_KEY => $apiKey,
             // This will usually be null, unless this API key enforces one specific domain
             ShortUrlMetaInputFilter::DOMAIN => $request->getAttribute(ShortUrlMetaInputFilter::DOMAIN),

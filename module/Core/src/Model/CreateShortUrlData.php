@@ -6,20 +6,13 @@ namespace Shlinkio\Shlink\Core\Model;
 
 final class CreateShortUrlData
 {
-    private string $longUrl;
     private array $tags;
     private ShortUrlMeta $meta;
 
-    public function __construct(string $longUrl, array $tags = [], ?ShortUrlMeta $meta = null)
+    public function __construct(array $tags = [], ?ShortUrlMeta $meta = null)
     {
-        $this->longUrl = $longUrl;
         $this->tags = $tags;
         $this->meta = $meta ?? ShortUrlMeta::createEmpty();
-    }
-
-    public function getLongUrl(): string
-    {
-        return $this->longUrl;
     }
 
     /**

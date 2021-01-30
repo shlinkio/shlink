@@ -22,15 +22,9 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
     protected function buildShortUrlData(Request $request): CreateShortUrlData
     {
         $payload = (array) $request->getParsedBody();
-        if (! isset($payload['longUrl'])) {
-            throw ValidationException::fromArray([
-                'longUrl' => 'A URL was not provided',
-            ]);
-        }
-
         $payload[ShortUrlMetaInputFilter::API_KEY] = AuthenticationMiddleware::apiKeyFromRequest($request);
         $meta = ShortUrlMeta::fromRawData($payload);
 
-        return new CreateShortUrlData($payload['longUrl'], (array) ($payload['tags'] ?? []), $meta);
+        return new CreateShortUrlData((array) ($payload['tags'] ?? []), $meta);
     }
 }
