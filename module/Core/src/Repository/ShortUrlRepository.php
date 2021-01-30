@@ -201,7 +201,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $qb;
     }
 
-    public function findOneMatching(array $tags, ShortUrlMeta $meta): ?ShortUrl
+    public function findOneMatching(ShortUrlMeta $meta): ?ShortUrl
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
@@ -239,6 +239,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             $this->applySpecification($qb, $apiKey->spec(), 's');
         }
 
+        $tags = $meta->getTags();
         $tagsAmount = count($tags);
         if ($tagsAmount === 0) {
             return $qb->getQuery()->getOneOrNullResult();

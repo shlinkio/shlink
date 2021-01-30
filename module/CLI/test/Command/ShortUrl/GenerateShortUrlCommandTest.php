@@ -91,11 +91,11 @@ class GenerateShortUrlCommandTest extends TestCase
     {
         $shortUrl = ShortUrl::createEmpty();
         $urlToShortCode = $this->urlShortener->shorten(
-            Argument::that(function (array $tags) {
+            Argument::that(function (ShortUrlMeta $meta) {
+                $tags = $meta->getTags();
                 Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $tags);
-                return $tags;
+                return true;
             }),
-            Argument::cetera(),
         )->willReturn($shortUrl);
 
         $this->commandTester->execute([
@@ -117,7 +117,6 @@ class GenerateShortUrlCommandTest extends TestCase
     {
         $shortUrl = ShortUrl::createEmpty();
         $urlToShortCode = $this->urlShortener->shorten(
-            Argument::type('array'),
             Argument::that(function (ShortUrlMeta $meta) use ($expectedValidateUrl) {
                 Assert::assertEquals($expectedValidateUrl, $meta->doValidateUrl());
                 return $meta;

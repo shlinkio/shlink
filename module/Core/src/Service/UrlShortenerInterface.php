@@ -12,9 +12,8 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 interface UrlShortenerInterface
 {
     /**
-     * @param string[] $tags
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      */
-    public function shorten(array $tags, ShortUrlMeta $meta): ShortUrl;
+    public function shorten(ShortUrlMeta $meta): ShortUrl;
 }

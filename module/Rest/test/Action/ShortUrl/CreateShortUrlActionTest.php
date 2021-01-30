@@ -54,10 +54,7 @@ class CreateShortUrlActionTest extends TestCase
         ];
         $expectedMeta['apiKey'] = $apiKey;
 
-        $shorten = $this->urlShortener->shorten(
-            Argument::type('array'),
-            ShortUrlMeta::fromRawData($expectedMeta),
-        )->willReturn($shortUrl);
+        $shorten = $this->urlShortener->shorten(ShortUrlMeta::fromRawData($expectedMeta))->willReturn($shortUrl);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body)->withAttribute(ApiKey::class, $apiKey);
 

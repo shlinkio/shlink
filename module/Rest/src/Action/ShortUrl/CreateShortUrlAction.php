@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
-use Shlinkio\Shlink\Core\Model\CreateShortUrlData;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
@@ -19,12 +18,11 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
     /**
      * @throws ValidationException
      */
-    protected function buildShortUrlData(Request $request): CreateShortUrlData
+    protected function buildShortUrlData(Request $request): ShortUrlMeta
     {
         $payload = (array) $request->getParsedBody();
         $payload[ShortUrlMetaInputFilter::API_KEY] = AuthenticationMiddleware::apiKeyFromRequest($request);
-        $meta = ShortUrlMeta::fromRawData($payload);
 
-        return new CreateShortUrlData((array) ($payload['tags'] ?? []), $meta);
+        return ShortUrlMeta::fromRawData($payload);
     }
 }

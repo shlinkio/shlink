@@ -44,7 +44,6 @@ class SingleStepCreateShortUrlActionTest extends TestCase
             'longUrl' => 'http://foobar.com',
         ])->withAttribute(ApiKey::class, $apiKey);
         $generateShortCode = $this->urlShortener->shorten(
-            [],
             ShortUrlMeta::fromRawData(['apiKey' => $apiKey, 'longUrl' => 'http://foobar.com']),
         )->willReturn(ShortUrl::createEmpty());
 
