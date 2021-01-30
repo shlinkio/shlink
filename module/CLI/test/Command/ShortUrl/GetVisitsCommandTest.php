@@ -71,8 +71,8 @@ class GetVisitsCommandTest extends TestCase
 
         $this->commandTester->execute([
             'shortCode' => $shortCode,
-            '--startDate' => $startDate,
-            '--endDate' => $endDate,
+            '--start-date' => $startDate,
+            '--end-date' => $endDate,
         ]);
     }
 
@@ -86,7 +86,7 @@ class GetVisitsCommandTest extends TestCase
 
         $this->commandTester->execute([
             'shortCode' => $shortCode,
-            '--startDate' => $startDate,
+            '--start-date' => $startDate,
         ]);
         $output = $this->commandTester->getDisplay();
 

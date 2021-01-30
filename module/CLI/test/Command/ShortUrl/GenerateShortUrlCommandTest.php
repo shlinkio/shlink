@@ -48,7 +48,7 @@ class GenerateShortUrlCommandTest extends TestCase
 
         $this->commandTester->execute([
             'longUrl' => 'http://domain.com/foo/bar',
-            '--maxVisits' => '3',
+            '--max-visits' => '3',
         ]);
         $output = $this->commandTester->getDisplay();
 
@@ -78,7 +78,7 @@ class GenerateShortUrlCommandTest extends TestCase
             NonUniqueSlugException::fromSlug('my-slug'),
         );
 
-        $this->commandTester->execute(['longUrl' => 'http://domain.com/invalid', '--customSlug' => 'my-slug']);
+        $this->commandTester->execute(['longUrl' => 'http://domain.com/invalid', '--custom-slug' => 'my-slug']);
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(ExitCodes::EXIT_FAILURE, $this->commandTester->getStatusCode());

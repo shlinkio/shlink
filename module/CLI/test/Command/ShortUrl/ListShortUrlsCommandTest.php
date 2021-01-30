@@ -104,7 +104,7 @@ class ListShortUrlsCommandTest extends TestCase
             ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['y']);
-        $this->commandTester->execute(['--showTags' => true]);
+        $this->commandTester->execute(['--show-tags' => true]);
         $output = $this->commandTester->getDisplay();
         self::assertStringContainsString('Tags', $output);
     }
@@ -139,22 +139,22 @@ class ListShortUrlsCommandTest extends TestCase
     {
         yield [[], 1, null, []];
         yield [['--page' => $page = 3], $page, null, []];
-        yield [['--searchTerm' => $searchTerm = 'search this'], 1, $searchTerm, []];
+        yield [['--search-term' => $searchTerm = 'search this'], 1, $searchTerm, []];
         yield [
-            ['--page' => $page = 3, '--searchTerm' => $searchTerm = 'search this', '--tags' => $tags = 'foo,bar'],
+            ['--page' => $page = 3, '--search-term' => $searchTerm = 'search this', '--tags' => $tags = 'foo,bar'],
             $page,
             $searchTerm,
             explode(',', $tags),
         ];
         yield [
-            ['--startDate' => $startDate = '2019-01-01'],
+            ['--start-date' => $startDate = '2019-01-01'],
             1,
             null,
             [],
             $startDate,
         ];
         yield [
-            ['--endDate' => $endDate = '2020-05-23'],
+            ['--end-date' => $endDate = '2020-05-23'],
             1,
             null,
             [],
@@ -162,7 +162,7 @@ class ListShortUrlsCommandTest extends TestCase
             $endDate,
         ];
         yield [
-            ['--startDate' => $startDate = '2019-01-01', '--endDate' => $endDate = '2020-05-23'],
+            ['--start-date' => $startDate = '2019-01-01', '--end-date' => $endDate = '2020-05-23'],
             1,
             null,
             [],
@@ -191,9 +191,9 @@ class ListShortUrlsCommandTest extends TestCase
     public function provideOrderBy(): iterable
     {
         yield [[], null];
-        yield [['--orderBy' => 'foo'], 'foo'];
-        yield [['--orderBy' => 'foo,ASC'], ['foo' => 'ASC']];
-        yield [['--orderBy' => 'bar,DESC'], ['bar' => 'DESC']];
+        yield [['--order-by' => 'foo'], 'foo'];
+        yield [['--order-by' => 'foo,ASC'], ['foo' => 'ASC']];
+        yield [['--order-by' => 'bar,DESC'], ['bar' => 'DESC']];
     }
 
     /** @test */
