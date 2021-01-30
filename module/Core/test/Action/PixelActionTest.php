@@ -43,7 +43,7 @@ class PixelActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))->willReturn(
-            new ShortUrl('http://domain.com/foo/bar'),
+            ShortUrl::withLongUrl('http://domain.com/foo/bar'),
         )->shouldBeCalledOnce();
         $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();
 

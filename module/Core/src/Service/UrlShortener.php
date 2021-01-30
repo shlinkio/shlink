@@ -38,24 +38,23 @@ class UrlShortener implements UrlShortenerInterface
     }
 
     /**
-     * @param string[] $tags
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      * @throws Throwable
      */
-    public function shorten(string $url, array $tags, ShortUrlMeta $meta): ShortUrl
+    public function shorten(ShortUrlMeta $meta): ShortUrl
     {
         // First, check if a short URL exists for all provided params
-        $existingShortUrl = $this->findExistingShortUrlIfExists($url, $tags, $meta);
+        $existingShortUrl = $this->findExistingShortUrlIfExists($meta);
         if ($existingShortUrl !== null) {
             return $existingShortUrl;
         }
 
-        $this->urlValidator->validateUrl($url, $meta->doValidateUrl());
+        $this->urlValidator->validateUrl($meta->getLongUrl(), $meta->doValidateUrl());
 
-        return $this->em->transactional(function () use ($url, $tags, $meta) {
-            $shortUrl = new ShortUrl($url, $meta, $this->relationResolver);
-            $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
+        return $this->em->transactional(function () use ($meta) {
+            $shortUrl = ShortUrl::fromMeta($meta, $this->relationResolver);
+            $shortUrl->setTags($this->tagNamesToEntities($this->em, $meta->getTags()));
 
             $this->verifyShortCodeUniqueness($meta, $shortUrl);
             $this->em->persist($shortUrl);
@@ -64,7 +63,7 @@ class UrlShortener implements UrlShortenerInterface
         });
     }
 
-    private function findExistingShortUrlIfExists(string $url, array $tags, ShortUrlMeta $meta): ?ShortUrl
+    private function findExistingShortUrlIfExists(ShortUrlMeta $meta): ?ShortUrl
     {
         if (! $meta->findIfExists()) {
             return null;
@@ -72,7 +71,7 @@ class UrlShortener implements UrlShortenerInterface
 
         /** @var ShortUrlRepositoryInterface $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        return $repo->findOneMatching($url, $tags, $meta);
+        return $repo->findOneMatching($meta);
     }
 
     private function verifyShortCodeUniqueness(ShortUrlMeta $meta, ShortUrl $shortUrlToBeCreated): void

@@ -78,7 +78,7 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $event = new ShortUrlVisited('123');
         $findVisit = $this->em->find(Visit::class, '123')->willReturn(
-            new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4')),
+            new Visit(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4')),
         );
         $resolveLocation = $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->willThrow(
             WrongIpException::class,
@@ -125,7 +125,7 @@ class LocateShortUrlVisitTest extends TestCase
 
     public function provideNonLocatableVisits(): iterable
     {
-        $shortUrl = new ShortUrl('');
+        $shortUrl = ShortUrl::createEmpty();
 
         yield 'null IP' => [new Visit($shortUrl, new Visitor('', '', null))];
         yield 'empty IP' => [new Visit($shortUrl, new Visitor('', '', ''))];
@@ -139,7 +139,7 @@ class LocateShortUrlVisitTest extends TestCase
     public function locatableVisitsResolveToLocation(string $anonymizedIpAddress, ?string $originalIpAddress): void
     {
         $ipAddr = $originalIpAddress ?? $anonymizedIpAddress;
-        $visit = new Visit(new ShortUrl(''), new Visitor('', '', $ipAddr));
+        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr));
         $location = new Location('', '', '', '', 0.0, 0.0, '');
         $event = new ShortUrlVisited('123', $originalIpAddress);
 
@@ -171,7 +171,7 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $e = GeolocationDbUpdateFailedException::create(true);
         $ipAddr = '1.2.3.0';
-        $visit = new Visit(new ShortUrl(''), new Visitor('', '', $ipAddr));
+        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr));
         $location = new Location('', '', '', '', 0.0, 0.0, '');
         $event = new ShortUrlVisited('123');
 
@@ -202,7 +202,7 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $e = GeolocationDbUpdateFailedException::create(false);
         $ipAddr = '1.2.3.0';
-        $visit = new Visit(new ShortUrl(''), new Visitor('', '', $ipAddr));
+        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr));
         $location = new Location('', '', '', '', 0.0, 0.0, '');
         $event = new ShortUrlVisited('123');
 

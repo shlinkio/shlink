@@ -60,7 +60,7 @@ class QrCodeActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))
-            ->willReturn(new ShortUrl(''))
+            ->willReturn(ShortUrl::createEmpty())
             ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 
@@ -83,7 +83,9 @@ class QrCodeActionTest extends TestCase
         string $expectedContentType
     ): void {
         $code = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($code, ''))->willReturn(new ShortUrl(''));
+        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($code, ''))->willReturn(
+            ShortUrl::createEmpty(),
+        );
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $req = (new ServerRequest())->withAttribute('shortCode', $code)->withQueryParams($query);
 
@@ -107,7 +109,9 @@ class QrCodeActionTest extends TestCase
     public function imageIsReturnedWithExpectedSize(ServerRequestInterface $req, int $expectedSize): void
     {
         $code = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($code, ''))->willReturn(new ShortUrl(''));
+        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($code, ''))->willReturn(
+            ShortUrl::createEmpty(),
+        );
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 
         $resp = $this->action->process($req->withAttribute('shortCode', $code), $delegate->reveal());

@@ -17,6 +17,7 @@ use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
 
 final class ShortUrlMeta
 {
+    private string $longUrl;
     private ?Chronos $validSince = null;
     private ?Chronos $validUntil = null;
     private ?string $customSlug = null;
@@ -26,15 +27,18 @@ final class ShortUrlMeta
     private int $shortCodeLength = 5;
     private ?bool $validateUrl = null;
     private ?ApiKey $apiKey = null;
+    private array $tags = [];
 
-    // Enforce named constructors
     private function __construct()
     {
     }
 
     public static function createEmpty(): self
     {
-        return new self();
+        $instance = new self();
+        $instance->longUrl = '';
+
+        return $instance;
     }
 
     /**
@@ -44,6 +48,7 @@ final class ShortUrlMeta
     {
         $instance = new self();
         $instance->validateAndInit($data);
+
         return $instance;
     }
 
@@ -52,11 +57,12 @@ final class ShortUrlMeta
      */
     private function validateAndInit(array $data): void
     {
-        $inputFilter = new ShortUrlMetaInputFilter($data);
+        $inputFilter = new ShortUrlMetaInputFilter($data, true);
         if (! $inputFilter->isValid()) {
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
+        $this->longUrl = $inputFilter->getValue(ShortUrlMetaInputFilter::LONG_URL);
         $this->validSince = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
         $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
         $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
@@ -69,6 +75,12 @@ final class ShortUrlMeta
             ShortUrlMetaInputFilter::SHORT_CODE_LENGTH,
         ) ?? DEFAULT_SHORT_CODES_LENGTH;
         $this->apiKey = $inputFilter->getValue(ShortUrlMetaInputFilter::API_KEY);
+        $this->tags = $inputFilter->getValue(ShortUrlMetaInputFilter::TAGS);
+    }
+
+    public function getLongUrl(): string
+    {
+        return $this->longUrl;
     }
 
     public function getValidSince(): ?Chronos
@@ -139,5 +151,13 @@ final class ShortUrlMeta
     public function getApiKey(): ?ApiKey
     {
         return $this->apiKey;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTags(): array
+    {
+        return $this->tags;
     }
 }

@@ -25,7 +25,6 @@ final class ShortUrlEdit
     private ?int $maxVisits = null;
     private ?bool $validateUrl = null;
 
-    // Enforce named constructors
     private function __construct()
     {
     }

@@ -79,7 +79,9 @@ class NotifyVisitToWebHooksTest extends TestCase
         $webhooks = ['foo', 'invalid', 'bar', 'baz'];
         $invalidWebhooks = ['invalid', 'baz'];
 
-        $find = $this->em->find(Visit::class, '1')->willReturn(new Visit(new ShortUrl(''), Visitor::emptyInstance()));
+        $find = $this->em->find(Visit::class, '1')->willReturn(
+            new Visit(ShortUrl::createEmpty(), Visitor::emptyInstance()),
+        );
         $requestAsync = $this->httpClient->requestAsync(
             RequestMethodInterface::METHOD_POST,
             Argument::type('string'),

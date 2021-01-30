@@ -69,9 +69,7 @@ class UrlShortenerTest extends TestCase
     public function urlIsProperlyShortened(): void
     {
         $shortUrl = $this->urlShortener->shorten(
-            'http://foobar.com/12345/hello?foo=bar',
-            [],
-            ShortUrlMeta::createEmpty(),
+            ShortUrlMeta::fromRawData(['longUrl' => 'http://foobar.com/12345/hello?foo=bar']),
         );
 
         self::assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
@@ -85,28 +83,22 @@ class UrlShortenerTest extends TestCase
         $ensureUniqueness->shouldBeCalledOnce();
         $this->expectException(NonUniqueSlugException::class);
 
-        $this->urlShortener->shorten(
-            'http://foobar.com/12345/hello?foo=bar',
-            [],
-            ShortUrlMeta::fromRawData(['customSlug' => 'custom-slug']),
-        );
+        $this->urlShortener->shorten(ShortUrlMeta::fromRawData(
+            ['customSlug' => 'custom-slug', 'longUrl' => 'http://foobar.com/12345/hello?foo=bar'],
+        ));
     }
 
     /**
      * @test
      * @dataProvider provideExistingShortUrls
      */
-    public function existingShortUrlIsReturnedWhenRequested(
-        string $url,
-        array $tags,
-        ShortUrlMeta $meta,
-        ShortUrl $expected
-    ): void {
+    public function existingShortUrlIsReturnedWhenRequested(ShortUrlMeta $meta, ShortUrl $expected): void
+    {
         $repo = $this->prophesize(ShortUrlRepository::class);
         $findExisting = $repo->findOneMatching(Argument::cetera())->willReturn($expected);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $result = $this->urlShortener->shorten($url, $tags, $meta);
+        $result = $this->urlShortener->shorten($meta);
 
         $findExisting->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
@@ -119,52 +111,53 @@ class UrlShortenerTest extends TestCase
     {
         $url = 'http://foo.com';
 
-        yield [$url, [], ShortUrlMeta::fromRawData(['findIfExists' => true]), new ShortUrl($url)];
-        yield [$url, [], ShortUrlMeta::fromRawData(
-            ['findIfExists' => true, 'customSlug' => 'foo'],
-        ), new ShortUrl($url)];
-        yield [
+        yield [ShortUrlMeta::fromRawData(['findIfExists' => true, 'longUrl' => $url]), ShortUrl::withLongUrl(
             $url,
-            ['foo', 'bar'],
-            ShortUrlMeta::fromRawData(['findIfExists' => true]),
-            (new ShortUrl($url))->setTags(new ArrayCollection([new Tag('bar'), new Tag('foo')])),
+        )];
+        yield [ShortUrlMeta::fromRawData(
+            ['findIfExists' => true, 'customSlug' => 'foo', 'longUrl' => $url],
+        ), ShortUrl::withLongUrl($url)];
+        yield [
+            ShortUrlMeta::fromRawData(['findIfExists' => true, 'longUrl' => $url, 'tags' => ['foo', 'bar']]),
+            ShortUrl::withLongUrl($url)->setTags(new ArrayCollection([new Tag('bar'), new Tag('foo')])),
         ];
         yield [
-            $url,
-            [],
-            ShortUrlMeta::fromRawData(['findIfExists' => true, 'maxVisits' => 3]),
-            new ShortUrl($url, ShortUrlMeta::fromRawData(['maxVisits' => 3])),
+            ShortUrlMeta::fromRawData(['findIfExists' => true, 'maxVisits' => 3, 'longUrl' => $url]),
+            ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['maxVisits' => 3, 'longUrl' => $url])),
         ];
         yield [
-            $url,
-            [],
-            ShortUrlMeta::fromRawData(['findIfExists' => true, 'validSince' => Chronos::parse('2017-01-01')]),
-            new ShortUrl($url, ShortUrlMeta::fromRawData(['validSince' => Chronos::parse('2017-01-01')])),
+            ShortUrlMeta::fromRawData(
+                ['findIfExists' => true, 'validSince' => Chronos::parse('2017-01-01'), 'longUrl' => $url],
+            ),
+            ShortUrl::fromMeta(
+                ShortUrlMeta::fromRawData(['validSince' => Chronos::parse('2017-01-01'), 'longUrl' => $url]),
+            ),
         ];
         yield [
-            $url,
-            [],
-            ShortUrlMeta::fromRawData(['findIfExists' => true, 'validUntil' => Chronos::parse('2017-01-01')]),
-            new ShortUrl($url, ShortUrlMeta::fromRawData(['validUntil' => Chronos::parse('2017-01-01')])),
+            ShortUrlMeta::fromRawData(
+                ['findIfExists' => true, 'validUntil' => Chronos::parse('2017-01-01'), 'longUrl' => $url],
+            ),
+            ShortUrl::fromMeta(
+                ShortUrlMeta::fromRawData(['validUntil' => Chronos::parse('2017-01-01'), 'longUrl' => $url]),
+            ),
         ];
         yield [
-            $url,
-            [],
-            ShortUrlMeta::fromRawData(['findIfExists' => true, 'domain' => 'example.com']),
-            new ShortUrl($url, ShortUrlMeta::fromRawData(['domain' => 'example.com'])),
+            ShortUrlMeta::fromRawData(['findIfExists' => true, 'domain' => 'example.com', 'longUrl' => $url]),
+            ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['domain' => 'example.com', 'longUrl' => $url])),
         ];
         yield [
-            $url,
-            ['baz', 'foo', 'bar'],
             ShortUrlMeta::fromRawData([
                 'findIfExists' => true,
                 'validUntil' => Chronos::parse('2017-01-01'),
                 'maxVisits' => 4,
+                'longUrl' => $url,
+                'tags' => ['baz', 'foo', 'bar'],
             ]),
-            (new ShortUrl($url, ShortUrlMeta::fromRawData([
+            ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
                 'validUntil' => Chronos::parse('2017-01-01'),
                 'maxVisits' => 4,
-            ])))->setTags(new ArrayCollection([new Tag('foo'), new Tag('bar'), new Tag('baz')])),
+                'longUrl' => $url,
+            ]))->setTags(new ArrayCollection([new Tag('foo'), new Tag('bar'), new Tag('baz')])),
         ];
     }
 }

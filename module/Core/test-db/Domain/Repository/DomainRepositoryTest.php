@@ -88,9 +88,8 @@ class DomainRepositoryTest extends DatabaseTestCase
 
     private function createShortUrl(Domain $domain, ?ApiKey $apiKey = null): ShortUrl
     {
-        return new ShortUrl(
-            'foo',
-            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority(), 'apiKey' => $apiKey]),
+        return ShortUrl::fromMeta(
+            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority(), 'apiKey' => $apiKey, 'longUrl' => 'foo']),
             new class ($domain) implements ShortUrlRelationResolverInterface {
                 private Domain $domain;
 

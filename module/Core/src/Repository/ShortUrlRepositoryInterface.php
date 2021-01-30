@@ -38,7 +38,7 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
 
     public function shortCodeIsInUse(string $slug, ?string $domain, ?Specification $spec = null): bool;
 
-    public function findOneMatching(string $url, array $tags, ShortUrlMeta $meta): ?ShortUrl;
+    public function findOneMatching(ShortUrlMeta $meta): ?ShortUrl;
 
     public function importedUrlExists(ImportedShlinkUrl $url): bool;
 }

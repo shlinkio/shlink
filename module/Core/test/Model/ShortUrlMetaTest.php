@@ -56,6 +56,9 @@ class ShortUrlMetaTest extends TestCase
         yield [[
             ShortUrlMetaInputFilter::CUSTOM_SLUG => '   ',
         ]];
+        yield [[
+            ShortUrlMetaInputFilter::LONG_URL => [],
+        ]];
     }
 
     /**
@@ -64,9 +67,11 @@ class ShortUrlMetaTest extends TestCase
      */
     public function properlyCreatedInstanceReturnsValues(string $customSlug, string $expectedSlug): void
     {
-        $meta = ShortUrlMeta::fromRawData(
-            ['validSince' => Chronos::parse('2015-01-01')->toAtomString(), 'customSlug' => $customSlug],
-        );
+        $meta = ShortUrlMeta::fromRawData([
+            'validSince' => Chronos::parse('2015-01-01')->toAtomString(),
+            'customSlug' => $customSlug,
+            'longUrl' => '',
+        ]);
 
         self::assertTrue($meta->hasValidSince());
         self::assertEquals(Chronos::parse('2015-01-01'), $meta->getValidSince());

@@ -77,7 +77,7 @@ class LocateVisitsCommandTest extends TestCase
         bool $expectWarningPrint,
         array $args
     ): void {
-        $visit = new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4'));
+        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4'));
         $location = new VisitLocation(Location::emptyInstance());
         $mockMethodBehavior = $this->invokeHelperMethods($visit, $location);
 
@@ -121,7 +121,7 @@ class LocateVisitsCommandTest extends TestCase
      */
     public function localhostAndEmptyAddressesAreIgnored(?string $address, string $message): void
     {
-        $visit = new Visit(new ShortUrl(''), new Visitor('', '', $address));
+        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', $address));
         $location = new VisitLocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
@@ -154,7 +154,7 @@ class LocateVisitsCommandTest extends TestCase
     /** @test */
     public function errorWhileLocatingIpIsDisplayed(): void
     {
-        $visit = new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4'));
+        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4'));
         $location = new VisitLocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(

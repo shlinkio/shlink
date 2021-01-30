@@ -56,7 +56,7 @@ class VisitsTrackerTest extends TestCase
         $this->em->persist(Argument::that(fn (Visit $visit) => $visit->setId('1')))->shouldBeCalledOnce();
         $this->em->flush()->shouldBeCalledOnce();
 
-        $this->visitsTracker->track(new ShortUrl($shortCode), Visitor::emptyInstance());
+        $this->visitsTracker->track(ShortUrl::withLongUrl($shortCode), Visitor::emptyInstance());
 
         $this->eventDispatcher->dispatch(Argument::type(ShortUrlVisited::class))->shouldHaveBeenCalled();
     }
@@ -73,7 +73,7 @@ class VisitsTrackerTest extends TestCase
         $count = $repo->shortCodeIsInUse($shortCode, null, $spec)->willReturn(true);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
 
-        $list = map(range(0, 1), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance()));
+        $list = map(range(0, 1), fn () => new Visit(ShortUrl::createEmpty(), Visitor::emptyInstance()));
         $repo2 = $this->prophesize(VisitRepository::class);
         $repo2->findVisitsByShortCode($shortCode, null, Argument::type(DateRange::class), 1, 0, $spec)->willReturn(
             $list,
@@ -129,7 +129,7 @@ class VisitsTrackerTest extends TestCase
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
 
         $spec = $apiKey === null ? null : $apiKey->spec();
-        $list = map(range(0, 1), fn () => new Visit(new ShortUrl(''), Visitor::emptyInstance()));
+        $list = map(range(0, 1), fn () => new Visit(ShortUrl::createEmpty(), Visitor::emptyInstance()));
         $repo2 = $this->prophesize(VisitRepository::class);
         $repo2->findVisitsByTag($tag, Argument::type(DateRange::class), 1, 0, $spec)->willReturn($list);
         $repo2->countVisitsByTag($tag, Argument::type(DateRange::class), $spec)->willReturn(1);

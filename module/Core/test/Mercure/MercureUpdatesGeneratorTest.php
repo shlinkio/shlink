@@ -28,7 +28,7 @@ class MercureUpdatesGeneratorTest extends TestCase
      */
     public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic): void
     {
-        $shortUrl = new ShortUrl('', ShortUrlMeta::fromRawData(['customSlug' => 'foo']));
+        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['customSlug' => 'foo', 'longUrl' => '']));
         $visit = new Visit($shortUrl, Visitor::emptyInstance());
 
         $update = $this->generator->{$method}($visit);

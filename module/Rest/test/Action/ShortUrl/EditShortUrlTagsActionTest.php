@@ -45,7 +45,7 @@ class EditShortUrlTagsActionTest extends TestCase
             new ShortUrlIdentifier($shortCode),
             [],
             Argument::type(ApiKey::class),
-        )->willReturn(new ShortUrl(''))
+        )->willReturn(ShortUrl::createEmpty())
          ->shouldBeCalledOnce();
 
         $response = $this->action->handle(

@@ -212,10 +212,12 @@ class CreateShortUrlTest extends ApiTestCase
         yield ['http://téstb.shlink.io']; // Redirects to http://tést.shlink.io
     }
 
-    /** @test */
-    public function failsToCreateShortUrlWithInvalidLongUrl(): void
+    /**
+     * @test
+     * @dataProvider provideInvalidUrls
+     */
+    public function failsToCreateShortUrlWithInvalidLongUrl(string $url): void
     {
-        $url = 'https://this-has-to-be-invalid.com';
         $expectedDetail = sprintf('Provided URL %s is invalid. Try with a different one.', $url);
 
         [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $url]);
@@ -226,6 +228,25 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Invalid URL', $payload['title']);
         self::assertEquals($url, $payload['url']);
+    }
+
+    public function provideInvalidUrls(): iterable
+    {
+        yield 'empty URL' => [''];
+        yield 'non-reachable URL' => ['https://this-has-to-be-invalid.com'];
+    }
+
+    /** @test */
+    public function failsToCreateShortUrlWithoutLongUrl(): void
+    {
+        $resp = $this->callApiWithKey(self::METHOD_POST, '/short-urls', [RequestOptions::JSON => []]);
+        $payload = $this->getJsonResponsePayload($resp);
+
+        self::assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
+        self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
+        self::assertEquals('INVALID_ARGUMENT', $payload['type']);
+        self::assertEquals('Provided data is not valid', $payload['detail']);
+        self::assertEquals('Invalid data', $payload['title']);
     }
 
     /** @test */

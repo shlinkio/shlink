@@ -37,11 +37,11 @@ class ShortUrlTest extends TestCase
     public function provideInvalidShortUrls(): iterable
     {
         yield 'with custom slug' => [
-            new ShortUrl('', ShortUrlMeta::fromRawData(['customSlug' => 'custom-slug'])),
+            ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['customSlug' => 'custom-slug', 'longUrl' => ''])),
             'The short code cannot be regenerated on ShortUrls where a custom slug was provided.',
         ];
         yield 'already persisted' => [
-            (new ShortUrl(''))->setId('1'),
+            ShortUrl::createEmpty()->setId('1'),
             'The short code can be regenerated only on new ShortUrls which have not been persisted yet.',
         ];
     }
@@ -62,7 +62,7 @@ class ShortUrlTest extends TestCase
 
     public function provideValidShortUrls(): iterable
     {
-        yield 'no custom slug' => [new ShortUrl('')];
+        yield 'no custom slug' => [ShortUrl::createEmpty()];
         yield 'imported with custom slug' => [
             ShortUrl::fromImport(new ImportedShlinkUrl('', '', [], Chronos::now(), null, 'custom-slug'), true),
         ];
@@ -74,8 +74,8 @@ class ShortUrlTest extends TestCase
      */
     public function shortCodesHaveExpectedLength(?int $length, int $expectedLength): void
     {
-        $shortUrl = new ShortUrl('', ShortUrlMeta::fromRawData(
-            [ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => $length],
+        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
+            [ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => $length, 'longUrl' => ''],
         ));
 
         self::assertEquals($expectedLength, strlen($shortUrl->getShortCode()));

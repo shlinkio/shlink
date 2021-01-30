@@ -19,7 +19,7 @@ class VisitTest extends TestCase
      */
     public function isProperlyJsonSerialized(?Chronos $date): void
     {
-        $visit = new Visit(new ShortUrl(''), new Visitor('Chrome', 'some site', '1.2.3.4'), true, $date);
+        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('Chrome', 'some site', '1.2.3.4'), true, $date);
 
         self::assertEquals([
             'referer' => 'some site',
@@ -41,7 +41,7 @@ class VisitTest extends TestCase
      */
     public function addressIsAnonymizedWhenRequested(bool $anonymize, ?string $address, ?string $expectedAddress): void
     {
-        $visit = new Visit(new ShortUrl(''), new Visitor('Chrome', 'some site', $address), $anonymize);
+        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('Chrome', 'some site', $address), $anonymize);
 
         self::assertEquals($expectedAddress, $visit->getRemoteAddr());
     }
