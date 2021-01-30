@@ -40,6 +40,10 @@ class ShortUrl extends AbstractEntity
     private ?string $importOriginalShortCode = null;
     private ?ApiKey $authorApiKey = null;
 
+    private function __construct()
+    {
+    }
+
     public static function createEmpty(): self
     {
         return self::fromMeta(ShortUrlMeta::createEmpty());
@@ -219,9 +223,10 @@ class ShortUrl extends AbstractEntity
 
     public function toString(array $domainConfig): string
     {
-        return (string) (new Uri())->withPath($this->shortCode)
-                                   ->withScheme($domainConfig['schema'] ?? 'http')
-                                   ->withHost($this->resolveDomain($domainConfig['hostname'] ?? ''));
+        return (new Uri())->withPath($this->shortCode)
+                          ->withScheme($domainConfig['schema'] ?? 'http')
+                          ->withHost($this->resolveDomain($domainConfig['hostname'] ?? ''))
+                          ->__toString();
     }
 
     private function resolveDomain(string $fallback = ''): string

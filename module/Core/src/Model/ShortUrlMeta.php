@@ -27,18 +27,18 @@ final class ShortUrlMeta
     private int $shortCodeLength = 5;
     private ?bool $validateUrl = null;
     private ?ApiKey $apiKey = null;
+    private array $tags = [];
 
-    // Enforce named constructors
     private function __construct()
     {
     }
 
     public static function createEmpty(): self
     {
-        $meta = new self();
-        $meta->longUrl = '';
+        $instance = new self();
+        $instance->longUrl = '';
 
-        return $meta;
+        return $instance;
     }
 
     /**
@@ -48,6 +48,7 @@ final class ShortUrlMeta
     {
         $instance = new self();
         $instance->validateAndInit($data);
+
         return $instance;
     }
 
@@ -74,6 +75,7 @@ final class ShortUrlMeta
             ShortUrlMetaInputFilter::SHORT_CODE_LENGTH,
         ) ?? DEFAULT_SHORT_CODES_LENGTH;
         $this->apiKey = $inputFilter->getValue(ShortUrlMetaInputFilter::API_KEY);
+        $this->tags = $inputFilter->getValue(ShortUrlMetaInputFilter::TAGS);
     }
 
     public function getLongUrl(): string
@@ -149,5 +151,13 @@ final class ShortUrlMeta
     public function getApiKey(): ?ApiKey
     {
         return $this->apiKey;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTags(): array
+    {
+        return $this->tags;
     }
 }
