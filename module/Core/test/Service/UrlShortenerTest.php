@@ -119,7 +119,7 @@ class UrlShortenerTest extends TestCase
         ), ShortUrl::withLongUrl($url)];
         yield [
             ShortUrlMeta::fromRawData(['findIfExists' => true, 'longUrl' => $url, 'tags' => ['foo', 'bar']]),
-            ShortUrl::withLongUrl($url)->setTags(new ArrayCollection([new Tag('bar'), new Tag('foo')])),
+            ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['longUrl' => $url, 'tags' => ['foo', 'bar']])),
         ];
         yield [
             ShortUrlMeta::fromRawData(['findIfExists' => true, 'maxVisits' => 3, 'longUrl' => $url]),
@@ -157,7 +157,8 @@ class UrlShortenerTest extends TestCase
                 'validUntil' => Chronos::parse('2017-01-01'),
                 'maxVisits' => 4,
                 'longUrl' => $url,
-            ]))->setTags(new ArrayCollection([new Tag('foo'), new Tag('bar'), new Tag('baz')])),
+                'tags' => ['foo', 'bar', 'baz'],
+            ])),
         ];
     }
 }
