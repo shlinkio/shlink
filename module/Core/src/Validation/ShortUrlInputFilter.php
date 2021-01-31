@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use const Shlinkio\Shlink\Core\CUSTOM_SLUGS_REGEXP;
 use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
 
-class ShortUrlMetaInputFilter extends InputFilter
+class ShortUrlInputFilter extends InputFilter
 {
     use Validation\InputFactoryTrait;
 
@@ -32,18 +32,25 @@ class ShortUrlMetaInputFilter extends InputFilter
     public const API_KEY = 'apiKey';
     public const TAGS = 'tags';
 
-    private bool $requireLongUrl;
-
-    public function __construct(array $data, bool $requireLongUrl = false)
+    private function __construct(array $data, bool $requireLongUrl)
     {
-        $this->requireLongUrl = $requireLongUrl;
-        $this->initialize();
+        $this->initialize($requireLongUrl);
         $this->setData($data);
     }
 
-    private function initialize(): void
+    public static function withRequiredLongUrl(array $data): self
     {
-        $longUrlInput = $this->createInput(self::LONG_URL, $this->requireLongUrl);
+        return new self($data, true);
+    }
+
+    public static function withNonRequiredLongUrl(array $data): self
+    {
+        return new self($data, false);
+    }
+
+    private function initialize(bool $requireLongUrl): void
+    {
+        $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
         $longUrlInput->getValidatorChain()->attach(new Validator\NotEmpty([
             Validator\NotEmpty::OBJECT,
             Validator\NotEmpty::SPACE,

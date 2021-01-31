@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
-use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
@@ -36,11 +36,11 @@ class OverrideDomainMiddleware implements MiddlewareInterface
 
         if ($requestMethod === RequestMethodInterface::METHOD_POST) {
             $payload = $request->getParsedBody();
-            $payload[ShortUrlMetaInputFilter::DOMAIN] = $domain->getAuthority();
+            $payload[ShortUrlInputFilter::DOMAIN] = $domain->getAuthority();
 
             return $handler->handle($request->withParsedBody($payload));
         }
 
-        return $handler->handle($request->withAttribute(ShortUrlMetaInputFilter::DOMAIN, $domain->getAuthority()));
+        return $handler->handle($request->withAttribute(ShortUrlInputFilter::DOMAIN, $domain->getAuthority()));
     }
 }
