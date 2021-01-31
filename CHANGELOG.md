@@ -17,6 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     All the existing camelCase flags will continue working for now, but will be removed in Shlink 3.0.0
 
+* [#862](https://github.com/shlinkio/shlink/issues/862) Deprecated endpoint to edit tags for a short URL (`PUT /short-urls/{shortCode}/tags`).
+
+    The short URL edition endpoint (`PATCH /short-urls/{shortCode}`) now supports setting the tags too. Use it instead.
+
 ### Removed
 * *Nothing*
 
