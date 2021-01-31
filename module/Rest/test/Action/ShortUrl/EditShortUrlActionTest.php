@@ -25,7 +25,7 @@ class EditShortUrlActionTest extends TestCase
     public function setUp(): void
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
-        $this->action = new EditShortUrlAction($this->shortUrlService->reveal());
+        $this->action = new EditShortUrlAction($this->shortUrlService->reveal(), []);
     }
 
     /** @test */
@@ -54,7 +54,7 @@ class EditShortUrlActionTest extends TestCase
 
         $resp = $this->action->handle($request);
 
-        self::assertEquals(204, $resp->getStatusCode());
+        self::assertEquals(200, $resp->getStatusCode());
         $updateMeta->shouldHaveBeenCalled();
     }
 }
