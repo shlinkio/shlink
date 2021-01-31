@@ -16,22 +16,20 @@ use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 abstract class AbstractCreateShortUrlAction extends AbstractRestAction
 {
     private UrlShortenerInterface $urlShortener;
-    private array $domainConfig;
+    private ShortUrlDataTransformer $transformer;
 
     public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig)
     {
         $this->urlShortener = $urlShortener;
-        $this->domainConfig = $domainConfig;
+        $this->transformer = new ShortUrlDataTransformer($domainConfig);
     }
 
     public function handle(Request $request): Response
     {
         $shortUrlMeta = $this->buildShortUrlData($request);
-
         $shortUrl = $this->urlShortener->shorten($shortUrlMeta);
-        $transformer = new ShortUrlDataTransformer($this->domainConfig);
 
-        return new JsonResponse($transformer->transform($shortUrl));
+        return new JsonResponse($this->transformer->transform($shortUrl));
     }
 
     /**
