@@ -15,7 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
-use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Middleware\ShortUrl\OverrideDomainMiddleware;
@@ -82,21 +82,21 @@ class OverrideDomainMiddlewareTest extends TestCase
 
     public function provideBodies(): iterable
     {
-        yield 'no domain provided' => [new Domain('foo.com'), [], [ShortUrlMetaInputFilter::DOMAIN => 'foo.com']];
+        yield 'no domain provided' => [new Domain('foo.com'), [], [ShortUrlInputFilter::DOMAIN => 'foo.com']];
         yield 'other domain provided' => [
             new Domain('bar.com'),
-            [ShortUrlMetaInputFilter::DOMAIN => 'foo.com'],
-            [ShortUrlMetaInputFilter::DOMAIN => 'bar.com'],
+            [ShortUrlInputFilter::DOMAIN => 'foo.com'],
+            [ShortUrlInputFilter::DOMAIN => 'bar.com'],
         ];
         yield 'same domain provided' => [
             new Domain('baz.com'),
-            [ShortUrlMetaInputFilter::DOMAIN => 'baz.com'],
-            [ShortUrlMetaInputFilter::DOMAIN => 'baz.com'],
+            [ShortUrlInputFilter::DOMAIN => 'baz.com'],
+            [ShortUrlInputFilter::DOMAIN => 'baz.com'],
         ];
         yield 'more body params' => [
             new Domain('doma.in'),
-            [ShortUrlMetaInputFilter::DOMAIN => 'baz.com', 'something' => 'else', 'foo' => 123],
-            [ShortUrlMetaInputFilter::DOMAIN => 'doma.in', 'something' => 'else', 'foo' => 123],
+            [ShortUrlInputFilter::DOMAIN => 'baz.com', 'something' => 'else', 'foo' => 123],
+            [ShortUrlInputFilter::DOMAIN => 'doma.in', 'something' => 'else', 'foo' => 123],
         ];
     }
 
@@ -113,7 +113,7 @@ class OverrideDomainMiddlewareTest extends TestCase
         $getDomain = $this->domainService->getDomain('123')->willReturn($domain);
         $handle = $this->handler->handle(Argument::that(
             function (ServerRequestInterface $req): bool {
-                Assert::assertEquals($req->getAttribute(ShortUrlMetaInputFilter::DOMAIN), 'something.com');
+                Assert::assertEquals($req->getAttribute(ShortUrlInputFilter::DOMAIN), 'something.com');
                 return true;
             },
         ))->willReturn(new Response());

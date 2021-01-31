@@ -8,7 +8,7 @@ use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use stdClass;
 
 class ShortUrlMetaTest extends TestCase
@@ -27,37 +27,37 @@ class ShortUrlMetaTest extends TestCase
     public function provideInvalidData(): iterable
     {
         yield [[
-            ShortUrlMetaInputFilter::VALID_SINCE => '',
-            ShortUrlMetaInputFilter::VALID_UNTIL => '',
-            ShortUrlMetaInputFilter::CUSTOM_SLUG => 'foobar',
-            ShortUrlMetaInputFilter::MAX_VISITS => 'invalid',
+            ShortUrlInputFilter::VALID_SINCE => '',
+            ShortUrlInputFilter::VALID_UNTIL => '',
+            ShortUrlInputFilter::CUSTOM_SLUG => 'foobar',
+            ShortUrlInputFilter::MAX_VISITS => 'invalid',
         ]];
         yield [[
-            ShortUrlMetaInputFilter::VALID_SINCE => '2017',
-            ShortUrlMetaInputFilter::MAX_VISITS => 5,
+            ShortUrlInputFilter::VALID_SINCE => '2017',
+            ShortUrlInputFilter::MAX_VISITS => 5,
         ]];
         yield [[
-            ShortUrlMetaInputFilter::VALID_SINCE => new stdClass(),
-            ShortUrlMetaInputFilter::VALID_UNTIL => 'foo',
+            ShortUrlInputFilter::VALID_SINCE => new stdClass(),
+            ShortUrlInputFilter::VALID_UNTIL => 'foo',
         ]];
         yield [[
-            ShortUrlMetaInputFilter::VALID_UNTIL => 500,
-            ShortUrlMetaInputFilter::DOMAIN => 4,
+            ShortUrlInputFilter::VALID_UNTIL => 500,
+            ShortUrlInputFilter::DOMAIN => 4,
         ]];
         yield [[
-            ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => 3,
+            ShortUrlInputFilter::SHORT_CODE_LENGTH => 3,
         ]];
         yield [[
-            ShortUrlMetaInputFilter::CUSTOM_SLUG => '/',
+            ShortUrlInputFilter::CUSTOM_SLUG => '/',
         ]];
         yield [[
-            ShortUrlMetaInputFilter::CUSTOM_SLUG => '',
+            ShortUrlInputFilter::CUSTOM_SLUG => '',
         ]];
         yield [[
-            ShortUrlMetaInputFilter::CUSTOM_SLUG => '   ',
+            ShortUrlInputFilter::CUSTOM_SLUG => '   ',
         ]];
         yield [[
-            ShortUrlMetaInputFilter::LONG_URL => [],
+            ShortUrlInputFilter::LONG_URL => [],
         ]];
     }
 

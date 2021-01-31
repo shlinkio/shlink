@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
-use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
@@ -57,25 +57,25 @@ final class ShortUrlMeta
      */
     private function validateAndInit(array $data): void
     {
-        $inputFilter = new ShortUrlMetaInputFilter($data, true);
+        $inputFilter = ShortUrlInputFilter::withRequiredLongUrl($data);
         if (! $inputFilter->isValid()) {
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
-        $this->longUrl = $inputFilter->getValue(ShortUrlMetaInputFilter::LONG_URL);
-        $this->validSince = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
-        $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
-        $this->customSlug = $inputFilter->getValue(ShortUrlMetaInputFilter::CUSTOM_SLUG);
-        $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlMetaInputFilter::MAX_VISITS);
-        $this->findIfExists = $inputFilter->getValue(ShortUrlMetaInputFilter::FIND_IF_EXISTS);
-        $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlMetaInputFilter::VALIDATE_URL);
-        $this->domain = $inputFilter->getValue(ShortUrlMetaInputFilter::DOMAIN);
+        $this->longUrl = $inputFilter->getValue(ShortUrlInputFilter::LONG_URL);
+        $this->validSince = parseDateField($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
+        $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL));
+        $this->customSlug = $inputFilter->getValue(ShortUrlInputFilter::CUSTOM_SLUG);
+        $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlInputFilter::MAX_VISITS);
+        $this->findIfExists = $inputFilter->getValue(ShortUrlInputFilter::FIND_IF_EXISTS);
+        $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL);
+        $this->domain = $inputFilter->getValue(ShortUrlInputFilter::DOMAIN);
         $this->shortCodeLength = getOptionalIntFromInputFilter(
             $inputFilter,
-            ShortUrlMetaInputFilter::SHORT_CODE_LENGTH,
+            ShortUrlInputFilter::SHORT_CODE_LENGTH,
         ) ?? DEFAULT_SHORT_CODES_LENGTH;
-        $this->apiKey = $inputFilter->getValue(ShortUrlMetaInputFilter::API_KEY);
-        $this->tags = $inputFilter->getValue(ShortUrlMetaInputFilter::TAGS);
+        $this->apiKey = $inputFilter->getValue(ShortUrlInputFilter::API_KEY);
+        $this->tags = $inputFilter->getValue(ShortUrlInputFilter::TAGS);
     }
 
     public function getLongUrl(): string

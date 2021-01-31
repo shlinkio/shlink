@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
-use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -146,19 +146,19 @@ class GenerateShortUrlCommand extends BaseCommand
 
         try {
             $shortUrl = $this->urlShortener->shorten(ShortUrlMeta::fromRawData([
-                ShortUrlMetaInputFilter::LONG_URL => $longUrl,
-                ShortUrlMetaInputFilter::VALID_SINCE => $this->getOptionWithDeprecatedFallback($input, 'valid-since'),
-                ShortUrlMetaInputFilter::VALID_UNTIL => $this->getOptionWithDeprecatedFallback($input, 'valid-until'),
-                ShortUrlMetaInputFilter::CUSTOM_SLUG => $customSlug,
-                ShortUrlMetaInputFilter::MAX_VISITS => $maxVisits !== null ? (int) $maxVisits : null,
-                ShortUrlMetaInputFilter::FIND_IF_EXISTS => $this->getOptionWithDeprecatedFallback(
+                ShortUrlInputFilter::LONG_URL => $longUrl,
+                ShortUrlInputFilter::VALID_SINCE => $this->getOptionWithDeprecatedFallback($input, 'valid-since'),
+                ShortUrlInputFilter::VALID_UNTIL => $this->getOptionWithDeprecatedFallback($input, 'valid-until'),
+                ShortUrlInputFilter::CUSTOM_SLUG => $customSlug,
+                ShortUrlInputFilter::MAX_VISITS => $maxVisits !== null ? (int) $maxVisits : null,
+                ShortUrlInputFilter::FIND_IF_EXISTS => $this->getOptionWithDeprecatedFallback(
                     $input,
                     'find-if-exists',
                 ),
-                ShortUrlMetaInputFilter::DOMAIN => $input->getOption('domain'),
-                ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
-                ShortUrlMetaInputFilter::VALIDATE_URL => $doValidateUrl,
-                ShortUrlMetaInputFilter::TAGS => $tags,
+                ShortUrlInputFilter::DOMAIN => $input->getOption('domain'),
+                ShortUrlInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
+                ShortUrlInputFilter::VALIDATE_URL => $doValidateUrl,
+                ShortUrlInputFilter::TAGS => $tags,
             ]));
 
             $io->writeln([

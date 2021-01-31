@@ -13,7 +13,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\Middleware\ShortUrl\DefaultShortCodesLengthMiddleware;
 
 class DefaultShortCodesLengthMiddlewareTest extends TestCase
@@ -38,8 +38,8 @@ class DefaultShortCodesLengthMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);
         $handle = $this->handler->handle(Argument::that(function (ServerRequestInterface $req) use ($expectedLength) {
             $parsedBody = $req->getParsedBody();
-            Assert::assertArrayHasKey(ShortUrlMetaInputFilter::SHORT_CODE_LENGTH, $parsedBody);
-            Assert::assertEquals($expectedLength, $parsedBody[ShortUrlMetaInputFilter::SHORT_CODE_LENGTH]);
+            Assert::assertArrayHasKey(ShortUrlInputFilter::SHORT_CODE_LENGTH, $parsedBody);
+            Assert::assertEquals($expectedLength, $parsedBody[ShortUrlInputFilter::SHORT_CODE_LENGTH]);
 
             return $req;
         }))->willReturn(new Response());
@@ -51,7 +51,7 @@ class DefaultShortCodesLengthMiddlewareTest extends TestCase
 
     public function provideBodies(): iterable
     {
-        yield 'value provided' => [[ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => 6], 6];
+        yield 'value provided' => [[ShortUrlInputFilter::SHORT_CODE_LENGTH => 6], 6];
         yield 'value not provided' => [[], 8];
     }
 }

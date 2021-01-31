@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
-use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 
 use function array_key_exists;
 use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
@@ -44,21 +44,21 @@ final class ShortUrlEdit
      */
     private function validateAndInit(array $data): void
     {
-        $inputFilter = new ShortUrlMetaInputFilter($data);
+        $inputFilter = ShortUrlInputFilter::withNonRequiredLongUrl($data);
         if (! $inputFilter->isValid()) {
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
-        $this->longUrlPropWasProvided = array_key_exists(ShortUrlMetaInputFilter::LONG_URL, $data);
-        $this->validSincePropWasProvided = array_key_exists(ShortUrlMetaInputFilter::VALID_SINCE, $data);
-        $this->validUntilPropWasProvided = array_key_exists(ShortUrlMetaInputFilter::VALID_UNTIL, $data);
-        $this->maxVisitsPropWasProvided = array_key_exists(ShortUrlMetaInputFilter::MAX_VISITS, $data);
+        $this->longUrlPropWasProvided = array_key_exists(ShortUrlInputFilter::LONG_URL, $data);
+        $this->validSincePropWasProvided = array_key_exists(ShortUrlInputFilter::VALID_SINCE, $data);
+        $this->validUntilPropWasProvided = array_key_exists(ShortUrlInputFilter::VALID_UNTIL, $data);
+        $this->maxVisitsPropWasProvided = array_key_exists(ShortUrlInputFilter::MAX_VISITS, $data);
 
-        $this->longUrl = $inputFilter->getValue(ShortUrlMetaInputFilter::LONG_URL);
-        $this->validSince = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_SINCE));
-        $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlMetaInputFilter::VALID_UNTIL));
-        $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlMetaInputFilter::MAX_VISITS);
-        $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlMetaInputFilter::VALIDATE_URL);
+        $this->longUrl = $inputFilter->getValue(ShortUrlInputFilter::LONG_URL);
+        $this->validSince = parseDateField($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
+        $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL));
+        $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlInputFilter::MAX_VISITS);
+        $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL);
     }
 
     public function longUrl(): ?string

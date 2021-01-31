@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 
 class DefaultShortCodesLengthMiddleware implements MiddlewareInterface
 {
@@ -22,8 +22,8 @@ class DefaultShortCodesLengthMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $body = $request->getParsedBody();
-        if (! isset($body[ShortUrlMetaInputFilter::SHORT_CODE_LENGTH])) {
-            $body[ShortUrlMetaInputFilter::SHORT_CODE_LENGTH] = $this->defaultShortCodesLength;
+        if (! isset($body[ShortUrlInputFilter::SHORT_CODE_LENGTH])) {
+            $body[ShortUrlInputFilter::SHORT_CODE_LENGTH] = $this->defaultShortCodesLength;
         }
 
         return $handler->handle($request->withParsedBody($body));

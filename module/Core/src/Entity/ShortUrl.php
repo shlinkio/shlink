@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
-use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -51,7 +51,7 @@ class ShortUrl extends AbstractEntity
 
     public static function withLongUrl(string $longUrl): self
     {
-        return self::fromMeta(ShortUrlMeta::fromRawData([ShortUrlMetaInputFilter::LONG_URL => $longUrl]));
+        return self::fromMeta(ShortUrlMeta::fromRawData([ShortUrlInputFilter::LONG_URL => $longUrl]));
     }
 
     public static function fromMeta(
@@ -83,12 +83,12 @@ class ShortUrl extends AbstractEntity
         ?ShortUrlRelationResolverInterface $relationResolver = null
     ): self {
         $meta = [
-            ShortUrlMetaInputFilter::LONG_URL => $url->longUrl(),
-            ShortUrlMetaInputFilter::DOMAIN => $url->domain(),
-            ShortUrlMetaInputFilter::VALIDATE_URL => false,
+            ShortUrlInputFilter::LONG_URL => $url->longUrl(),
+            ShortUrlInputFilter::DOMAIN => $url->domain(),
+            ShortUrlInputFilter::VALIDATE_URL => false,
         ];
         if ($importShortCode) {
-            $meta[ShortUrlMetaInputFilter::CUSTOM_SLUG] = $url->shortCode();
+            $meta[ShortUrlInputFilter::CUSTOM_SLUG] = $url->shortCode();
         }
 
         $instance = self::fromMeta(ShortUrlMeta::fromRawData($meta), $relationResolver);

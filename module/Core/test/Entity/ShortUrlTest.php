@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
+use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function Functional\map;
@@ -75,7 +75,7 @@ class ShortUrlTest extends TestCase
     public function shortCodesHaveExpectedLength(?int $length, int $expectedLength): void
     {
         $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
-            [ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => $length, 'longUrl' => ''],
+            [ShortUrlInputFilter::SHORT_CODE_LENGTH => $length, 'longUrl' => ''],
         ));
 
         self::assertEquals($expectedLength, strlen($shortUrl->getShortCode()));
