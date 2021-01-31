@@ -16,14 +16,11 @@ use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
-use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlService implements ShortUrlServiceInterface
 {
-    use TagManagerTrait;
-
     private ORM\EntityManagerInterface $em;
     private ShortUrlResolverInterface $urlResolver;
     private UrlValidatorInterface $urlValidator;
@@ -53,21 +50,6 @@ class ShortUrlService implements ShortUrlServiceInterface
                   ->setCurrentPage($params->page());
 
         return $paginator;
-    }
-
-    /**
-     * @param string[] $tags
-     * @deprecated Use updateShortUrl instead
-     * @throws ShortUrlNotFoundException
-     */
-    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags, ?ApiKey $apiKey = null): ShortUrl
-    {
-        $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
-        $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
-
-        $this->em->flush();
-
-        return $shortUrl;
     }
 
     /**

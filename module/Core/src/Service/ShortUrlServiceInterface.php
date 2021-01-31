@@ -21,13 +21,6 @@ interface ShortUrlServiceInterface
     public function listShortUrls(ShortUrlsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
-     * @param string[] $tags
-     * @deprecated Use updateShortUrl instead
-     * @throws ShortUrlNotFoundException
-     */
-    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags, ?ApiKey $apiKey = null): ShortUrl;
-
-    /**
      * @throws ShortUrlNotFoundException
      * @throws InvalidUrlException
      */

@@ -6,13 +6,11 @@ namespace ShlinkioTest\Shlink\Core\Service;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
@@ -75,26 +73,6 @@ class ShortUrlServiceTest extends TestCase
 
         self::assertCount(4, $paginator);
         self::assertCount(4, $paginator->getCurrentPageResults());
-    }
-
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
-    public function providedTagsAreGetFromRepoAndSetToTheShortUrl(?ApiKey $apiKey): void
-    {
-        $shortUrl = ShortUrl::createEmpty();
-        $shortCode = 'abc123';
-        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey)
-            ->willReturn($shortUrl)
-            ->shouldBeCalledOnce();
-
-        $tagRepo = $this->prophesize(EntityRepository::class);
-        $tagRepo->findOneBy(['name' => 'foo'])->willReturn(new Tag('foo'))->shouldBeCalledOnce();
-        $tagRepo->findOneBy(['name' => 'bar'])->willReturn(null)->shouldBeCalledOnce();
-        $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
-
-        $this->service->setTagsByShortCode(new ShortUrlIdentifier($shortCode), ['foo', 'bar'], $apiKey);
     }
 
     /**

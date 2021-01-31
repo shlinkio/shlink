@@ -131,6 +131,13 @@
                             "validateUrl": {
                                 "description": "Tells if the long URL (if provided) should or should not be validated as a reachable URL. If not provided, it will fall back to app-level config",
                                 "type": "boolean"
+                            },
+                            "tags": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "The list of tags to set to the short URL."
                             }
                         }
                     }
