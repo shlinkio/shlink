@@ -59,7 +59,7 @@ return [
             Service\UrlShortener::class,
             'config.url_shortener.domain',
         ],
-        Action\ShortUrl\EditShortUrlAction::class => [Service\ShortUrlService::class],
+        Action\ShortUrl\EditShortUrlAction::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
         Action\ShortUrl\DeleteShortUrlAction::class => [Service\ShortUrl\DeleteShortUrlService::class],
         Action\ShortUrl\ResolveShortUrlAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,

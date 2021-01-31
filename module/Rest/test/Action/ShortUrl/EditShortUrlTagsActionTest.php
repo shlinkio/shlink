@@ -12,6 +12,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlTagsAction;
@@ -41,9 +42,9 @@ class EditShortUrlTagsActionTest extends TestCase
     public function tagsListIsReturnedIfCorrectShortCodeIsProvided(): void
     {
         $shortCode = 'abc123';
-        $this->shortUrlService->setTagsByShortCode(
+        $this->shortUrlService->updateShortUrl(
             new ShortUrlIdentifier($shortCode),
-            [],
+            Argument::type(ShortUrlEdit::class),
             Argument::type(ApiKey::class),
         )->willReturn(ShortUrl::createEmpty())
          ->shouldBeCalledOnce();

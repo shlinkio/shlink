@@ -64,7 +64,7 @@ class ShortUrl extends AbstractEntity
         $instance->longUrl = $meta->getLongUrl();
         $instance->dateCreated = Chronos::now();
         $instance->visits = new ArrayCollection();
-        $instance->tags = new ArrayCollection();
+        $instance->tags = $relationResolver->resolveTags($meta->getTags());
         $instance->validSince = $meta->getValidSince();
         $instance->validUntil = $meta->getValidUntil();
         $instance->maxVisits = $meta->getMaxVisits();
@@ -85,6 +85,7 @@ class ShortUrl extends AbstractEntity
         $meta = [
             ShortUrlInputFilter::LONG_URL => $url->longUrl(),
             ShortUrlInputFilter::DOMAIN => $url->domain(),
+            ShortUrlInputFilter::TAGS => $url->tags(),
             ShortUrlInputFilter::VALIDATE_URL => false,
         ];
         if ($importShortCode) {
@@ -127,17 +128,10 @@ class ShortUrl extends AbstractEntity
         return $this->tags;
     }
 
-    /**
-     * @param Collection|Tag[] $tags
-     */
-    public function setTags(Collection $tags): self
-    {
-        $this->tags = $tags;
-        return $this;
-    }
-
-    public function update(ShortUrlEdit $shortUrlEdit): void
-    {
+    public function update(
+        ShortUrlEdit $shortUrlEdit,
+        ?ShortUrlRelationResolverInterface $relationResolver = null
+    ): void {
         if ($shortUrlEdit->hasValidSince()) {
             $this->validSince = $shortUrlEdit->validSince();
         }
@@ -149,6 +143,10 @@ class ShortUrl extends AbstractEntity
         }
         if ($shortUrlEdit->hasLongUrl()) {
             $this->longUrl = $shortUrlEdit->longUrl();
+        }
+        if ($shortUrlEdit->hasTags()) {
+            $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
+            $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags());
         }
     }
 

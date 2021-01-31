@@ -25,7 +25,7 @@ class EditShortUrlActionTest extends TestCase
     public function setUp(): void
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
-        $this->action = new EditShortUrlAction($this->shortUrlService->reveal());
+        $this->action = new EditShortUrlAction($this->shortUrlService->reveal(), []);
     }
 
     /** @test */
@@ -48,13 +48,13 @@ class EditShortUrlActionTest extends TestCase
                                         ->withParsedBody([
                                             'maxVisits' => 5,
                                         ]);
-        $updateMeta = $this->shortUrlService->updateMetadataByShortCode(Argument::cetera())->willReturn(
+        $updateMeta = $this->shortUrlService->updateShortUrl(Argument::cetera())->willReturn(
             ShortUrl::createEmpty(),
         );
 
         $resp = $this->action->handle($request);
 
-        self::assertEquals(204, $resp->getStatusCode());
+        self::assertEquals(200, $resp->getStatusCode());
         $updateMeta->shouldHaveBeenCalled();
     }
 }

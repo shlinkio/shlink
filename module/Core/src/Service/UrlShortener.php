@@ -12,14 +12,11 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
-use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 use Throwable;
 
 class UrlShortener implements UrlShortenerInterface
 {
-    use TagManagerTrait;
-
     private EntityManagerInterface $em;
     private UrlValidatorInterface $urlValidator;
     private ShortUrlRelationResolverInterface $relationResolver;
@@ -54,7 +51,6 @@ class UrlShortener implements UrlShortenerInterface
 
         return $this->em->transactional(function () use ($meta) {
             $shortUrl = ShortUrl::fromMeta($meta, $this->relationResolver);
-            $shortUrl->setTags($this->tagNamesToEntities($this->em, $meta->getTags()));
 
             $this->verifyShortCodeUniqueness($meta, $shortUrl);
             $this->em->persist($shortUrl);

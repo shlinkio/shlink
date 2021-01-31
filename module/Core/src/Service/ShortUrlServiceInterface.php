@@ -21,16 +21,10 @@ interface ShortUrlServiceInterface
     public function listShortUrls(ShortUrlsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
-     * @param string[] $tags
-     * @throws ShortUrlNotFoundException
-     */
-    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags, ?ApiKey $apiKey = null): ShortUrl;
-
-    /**
      * @throws ShortUrlNotFoundException
      * @throws InvalidUrlException
      */
-    public function updateMetadataByShortCode(
+    public function updateShortUrl(
         ShortUrlIdentifier $identifier,
         ShortUrlEdit $shortUrlEdit,
         ?ApiKey $apiKey = null

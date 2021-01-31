@@ -29,7 +29,7 @@ class ResolveShortUrlTest extends ApiTestCase
         $visitResp = $this->callShortUrl($shortCode);
         $fetchResp = $this->callApiWithKey(self::METHOD_GET, $url);
 
-        self::assertEquals(self::STATUS_NO_CONTENT, $editResp->getStatusCode());
+        self::assertEquals(self::STATUS_OK, $editResp->getStatusCode());
         self::assertEquals(self::STATUS_NOT_FOUND, $visitResp->getStatusCode());
         self::assertEquals(self::STATUS_OK, $fetchResp->getStatusCode());
     }

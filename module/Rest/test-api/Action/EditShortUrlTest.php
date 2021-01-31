@@ -41,8 +41,8 @@ class EditShortUrlTest extends ApiTestCase
         ]);
         $metaAfterResetting = $this->findShortUrlMetaByShortCode($shortCode);
 
-        self::assertEquals(self::STATUS_NO_CONTENT, $editWithProvidedMeta->getStatusCode());
-        self::assertEquals(self::STATUS_NO_CONTENT, $editWithResetMeta->getStatusCode());
+        self::assertEquals(self::STATUS_OK, $editWithProvidedMeta->getStatusCode());
+        self::assertEquals(self::STATUS_OK, $editWithResetMeta->getStatusCode());
         self::assertEquals($resetMeta, $metaAfterResetting);
         self::assertArraySubset($meta, $metaAfterEditing);
     }
@@ -93,7 +93,7 @@ class EditShortUrlTest extends ApiTestCase
 
     public function provideLongUrls(): iterable
     {
-        yield 'valid URL' => ['https://shlink.io', self::STATUS_NO_CONTENT, null];
+        yield 'valid URL' => ['https://shlink.io', self::STATUS_OK, null];
         yield 'invalid URL' => ['htt:foo', self::STATUS_BAD_REQUEST, 'INVALID_URL'];
     }
 
@@ -155,7 +155,7 @@ class EditShortUrlTest extends ApiTestCase
         ]]);
         $editedShortUrl = $this->getJsonResponsePayload($this->callApiWithKey(self::METHOD_GET, (string) $url));
 
-        self::assertEquals(self::STATUS_NO_CONTENT, $editResp->getStatusCode());
+        self::assertEquals(self::STATUS_OK, $editResp->getStatusCode());
         self::assertEquals($domain, $editedShortUrl['domain']);
         self::assertEquals($expectedUrl, $editedShortUrl['longUrl']);
         self::assertEquals(100, $editedShortUrl['meta']['maxVisits'] ?? null);

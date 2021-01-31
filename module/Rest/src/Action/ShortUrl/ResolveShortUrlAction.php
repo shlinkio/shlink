@@ -19,22 +19,21 @@ class ResolveShortUrlAction extends AbstractRestAction
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     private ShortUrlResolverInterface $urlResolver;
-    private array $domainConfig;
+    private ShortUrlDataTransformer $transformer;
 
     public function __construct(ShortUrlResolverInterface $urlResolver, array $domainConfig)
     {
         $this->urlResolver = $urlResolver;
-        $this->domainConfig = $domainConfig;
+        $this->transformer = new ShortUrlDataTransformer($domainConfig);
     }
 
     public function handle(Request $request): Response
     {
-        $transformer = new ShortUrlDataTransformer($this->domainConfig);
         $url = $this->urlResolver->resolveShortUrl(
             ShortUrlIdentifier::fromApiRequest($request),
             AuthenticationMiddleware::apiKeyFromRequest($request),
         );
 
-        return new JsonResponse($transformer->transform($url));
+        return new JsonResponse($this->transformer->transform($url));
     }
 }

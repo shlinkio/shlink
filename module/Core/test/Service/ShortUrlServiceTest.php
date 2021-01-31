@@ -6,19 +6,18 @@ namespace ShlinkioTest\Shlink\Core\Service;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
@@ -48,6 +47,7 @@ class ShortUrlServiceTest extends TestCase
             $this->em->reveal(),
             $this->urlResolver->reveal(),
             $this->urlValidator->reveal(),
+            new SimpleShortUrlRelationResolver(),
         );
     }
 
@@ -77,30 +77,9 @@ class ShortUrlServiceTest extends TestCase
 
     /**
      * @test
-     * @dataProvider provideAdminApiKeys
-     */
-    public function providedTagsAreGetFromRepoAndSetToTheShortUrl(?ApiKey $apiKey): void
-    {
-        $shortUrl = $this->prophesize(ShortUrl::class);
-        $shortUrl->setTags(Argument::any())->shouldBeCalledOnce();
-        $shortCode = 'abc123';
-        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey)
-            ->willReturn($shortUrl->reveal())
-            ->shouldBeCalledOnce();
-
-        $tagRepo = $this->prophesize(EntityRepository::class);
-        $tagRepo->findOneBy(['name' => 'foo'])->willReturn(new Tag('foo'))->shouldBeCalledOnce();
-        $tagRepo->findOneBy(['name' => 'bar'])->willReturn(null)->shouldBeCalledOnce();
-        $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
-
-        $this->service->setTagsByShortCode(new ShortUrlIdentifier($shortCode), ['foo', 'bar'], $apiKey);
-    }
-
-    /**
-     * @test
      * @dataProvider provideShortUrlEdits
      */
-    public function updateMetadataByShortCodeUpdatesProvidedData(
+    public function updateShortUrlUpdatesProvidedData(
         int $expectedValidateCalls,
         ShortUrlEdit $shortUrlEdit,
         ?ApiKey $apiKey
@@ -114,7 +93,7 @@ class ShortUrlServiceTest extends TestCase
         )->willReturn($shortUrl);
         $flush = $this->em->flush()->willReturn(null);
 
-        $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), $shortUrlEdit, $apiKey);
+        $result = $this->service->updateShortUrl(new ShortUrlIdentifier('abc123'), $shortUrlEdit, $apiKey);
 
         self::assertSame($shortUrl, $result);
         self::assertEquals($shortUrlEdit->validSince(), $shortUrl->getValidSince());

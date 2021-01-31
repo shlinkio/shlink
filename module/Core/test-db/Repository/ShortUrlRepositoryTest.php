@@ -10,14 +10,12 @@ use ReflectionObject;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
-use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -27,13 +25,13 @@ use function count;
 
 class ShortUrlRepositoryTest extends DatabaseTestCase
 {
-    use TagManagerTrait;
-
     private ShortUrlRepository $repo;
+    private PersistenceShortUrlRelationResolver $relationResolver;
 
     public function beforeEach(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(ShortUrl::class);
+        $this->relationResolver = new PersistenceShortUrlRelationResolver($this->getEntityManager());
     }
 
     /** @test */
@@ -90,11 +88,10 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     /** @test */
     public function findListProperlyFiltersResult(): void
     {
-        $tag = new Tag('bar');
-        $this->getEntityManager()->persist($tag);
-
-        $foo = ShortUrl::withLongUrl('foo');
-        $foo->setTags(new ArrayCollection([$tag]));
+        $foo = ShortUrl::fromMeta(
+            ShortUrlMeta::fromRawData(['longUrl' => 'foo', 'tags' => ['bar']]),
+            $this->relationResolver,
+        );
         $this->getEntityManager()->persist($foo);
 
         $bar = ShortUrl::withLongUrl('bar');
@@ -235,8 +232,10 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $start = Chronos::parse('2020-03-05 20:18:30');
         $end = Chronos::parse('2021-03-05 20:18:30');
 
-        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['validSince' => $start, 'longUrl' => 'foo']));
-        $shortUrl->setTags($this->tagNamesToEntities($this->getEntityManager(), ['foo', 'bar']));
+        $shortUrl = ShortUrl::fromMeta(
+            ShortUrlMeta::fromRawData(['validSince' => $start, 'longUrl' => 'foo', 'tags' => ['foo', 'bar']]),
+            $this->relationResolver,
+        );
         $this->getEntityManager()->persist($shortUrl);
 
         $shortUrl2 = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['validUntil' => $end, 'longUrl' => 'bar']));
@@ -300,28 +299,24 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     public function findOneMatchingReturnsOldestOneWhenThereAreMultipleMatches(): void
     {
         $start = Chronos::parse('2020-03-05 20:18:30');
-        $meta = ShortUrlMeta::fromRawData(['validSince' => $start, 'maxVisits' => 50, 'longUrl' => 'foo']);
         $tags = ['foo', 'bar'];
-        $tagEntities = $this->tagNamesToEntities($this->getEntityManager(), $tags);
-        $metaWithTags = ShortUrlMeta::fromRawData(
+        $meta = ShortUrlMeta::fromRawData(
             ['validSince' => $start, 'maxVisits' => 50, 'longUrl' => 'foo', 'tags' => $tags],
         );
 
-        $shortUrl1 = ShortUrl::fromMeta($meta);
-        $shortUrl1->setTags($tagEntities);
+        $shortUrl1 = ShortUrl::fromMeta($meta, $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl1);
-
-        $shortUrl2 = ShortUrl::fromMeta($meta);
-        $shortUrl2->setTags($tagEntities);
-        $this->getEntityManager()->persist($shortUrl2);
-
-        $shortUrl3 = ShortUrl::fromMeta($meta);
-        $shortUrl3->setTags($tagEntities);
-        $this->getEntityManager()->persist($shortUrl3);
-
         $this->getEntityManager()->flush();
 
-        $result = $this->repo->findOneMatching($metaWithTags);
+        $shortUrl2 = ShortUrl::fromMeta($meta, $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl2);
+        $this->getEntityManager()->flush();
+
+        $shortUrl3 = ShortUrl::fromMeta($meta, $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl3);
+        $this->getEntityManager()->flush();
+
+        $result = $this->repo->findOneMatching($meta);
 
         self::assertSame($shortUrl1, $result);
         self::assertNotSame($shortUrl2, $result);
@@ -349,10 +344,13 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $rightDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($rightDomain));
         $this->getEntityManager()->persist($rightDomainApiKey);
 
-        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
-            ['validSince' => $start, 'apiKey' => $apiKey, 'domain' => $rightDomain->getAuthority(), 'longUrl' => 'foo'],
-        ), new PersistenceShortUrlRelationResolver($this->getEntityManager()));
-        $shortUrl->setTags($this->tagNamesToEntities($this->getEntityManager(), ['foo', 'bar']));
+        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+            'validSince' => $start,
+            'apiKey' => $apiKey,
+            'domain' => $rightDomain->getAuthority(),
+            'longUrl' => 'foo',
+            'tags' => ['foo', 'bar'],
+        ]), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl);
 
         $this->getEntityManager()->flush();

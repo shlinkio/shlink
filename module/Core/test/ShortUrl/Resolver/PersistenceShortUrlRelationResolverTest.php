@@ -7,9 +7,12 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Resolver;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 
 class PersistenceShortUrlRelationResolverTest extends TestCase
@@ -61,5 +64,43 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
 
         yield 'not found domain' => [null, $authority];
         yield 'found domain' => [new Domain($authority), $authority];
+    }
+
+    /** @test */
+    public function findsAndPersistsTagsWrappedIntoCollection(): void
+    {
+        $tags = ['foo', 'bar', 'baz'];
+
+        $tagRepo = $this->prophesize(TagRepositoryInterface::class);
+        $findTag = $tagRepo->findOneBy(Argument::type('array'))->will(function (array $args): ?Tag {
+            ['name' => $name] = $args[0];
+            return $name === 'foo' ? new Tag($name) : null;
+        });
+        $getRepo = $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
+        $persist = $this->em->persist(Argument::type(Tag::class));
+
+        $result = $this->resolver->resolveTags($tags);
+
+        self::assertCount(3, $result);
+        self::assertEquals([new Tag('foo'), new Tag('bar'), new Tag('baz')], $result->toArray());
+        $findTag->shouldHaveBeenCalledTimes(3);
+        $getRepo->shouldHaveBeenCalledOnce();
+        $persist->shouldHaveBeenCalledTimes(3);
+    }
+
+    /** @test */
+    public function returnsEmptyCollectionWhenProvidingEmptyListOfTags(): void
+    {
+        $tagRepo = $this->prophesize(TagRepositoryInterface::class);
+        $findTag = $tagRepo->findOneBy(Argument::type('array'))->willReturn(null);
+        $getRepo = $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
+        $persist = $this->em->persist(Argument::type(Tag::class));
+
+        $result = $this->resolver->resolveTags([]);
+
+        self::assertEmpty($result);
+        $findTag->shouldNotHaveBeenCalled();
+        $getRepo->shouldNotHaveBeenCalled();
+        $persist->shouldNotHaveBeenCalled();
     }
 }

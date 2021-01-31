@@ -22,12 +22,12 @@ class ListShortUrlsAction extends AbstractRestAction
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     private ShortUrlServiceInterface $shortUrlService;
-    private array $domainConfig;
+    private ShortUrlDataTransformer $transformer;
 
     public function __construct(ShortUrlServiceInterface $shortUrlService, array $domainConfig)
     {
         $this->shortUrlService = $shortUrlService;
-        $this->domainConfig = $domainConfig;
+        $this->transformer = new ShortUrlDataTransformer($domainConfig);
     }
 
     public function handle(Request $request): Response
@@ -36,8 +36,6 @@ class ListShortUrlsAction extends AbstractRestAction
             ShortUrlsParams::fromRawData($request->getQueryParams()),
             AuthenticationMiddleware::apiKeyFromRequest($request),
         );
-        return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls, new ShortUrlDataTransformer(
-            $this->domainConfig,
-        ))]);
+        return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls, $this->transformer)]);
     }
 }

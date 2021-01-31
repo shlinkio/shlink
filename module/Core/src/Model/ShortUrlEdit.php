@@ -23,6 +23,8 @@ final class ShortUrlEdit
     private ?Chronos $validUntil = null;
     private bool $maxVisitsPropWasProvided = false;
     private ?int $maxVisits = null;
+    private bool $tagsPropWasProvided = false;
+    private array $tags = [];
     private ?bool $validateUrl = null;
 
     private function __construct()
@@ -53,12 +55,14 @@ final class ShortUrlEdit
         $this->validSincePropWasProvided = array_key_exists(ShortUrlInputFilter::VALID_SINCE, $data);
         $this->validUntilPropWasProvided = array_key_exists(ShortUrlInputFilter::VALID_UNTIL, $data);
         $this->maxVisitsPropWasProvided = array_key_exists(ShortUrlInputFilter::MAX_VISITS, $data);
+        $this->tagsPropWasProvided = array_key_exists(ShortUrlInputFilter::TAGS, $data);
 
         $this->longUrl = $inputFilter->getValue(ShortUrlInputFilter::LONG_URL);
         $this->validSince = parseDateField($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
         $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL));
         $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlInputFilter::MAX_VISITS);
         $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL);
+        $this->tags = $inputFilter->getValue(ShortUrlInputFilter::TAGS);
     }
 
     public function longUrl(): ?string
@@ -99,6 +103,19 @@ final class ShortUrlEdit
     public function hasMaxVisits(): bool
     {
         return $this->maxVisitsPropWasProvided;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function tags(): array
+    {
+        return $this->tags;
+    }
+
+    public function hasTags(): bool
+    {
+        return $this->tagsPropWasProvided;
     }
 
     public function doValidateUrl(): ?bool
