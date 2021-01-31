@@ -38,8 +38,13 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
      */
     public function resolveTags(array $tags): Collections\Collection
     {
-        return new Collections\ArrayCollection(map($tags, function (string $tagName): Tag {
-            $tag = $this->em->getRepository(Tag::class)->findOneBy(['name' => $tagName]) ?? new Tag($tagName);
+        if (empty($tags)) {
+            return new Collections\ArrayCollection();
+        }
+
+        $repo = $this->em->getRepository(Tag::class);
+        return new Collections\ArrayCollection(map($tags, function (string $tagName) use ($repo): Tag {
+            $tag = $repo->findOneBy(['name' => $tagName]) ?? new Tag($tagName);
             $this->em->persist($tag);
 
             return $tag;

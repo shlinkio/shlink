@@ -128,16 +128,6 @@ class ShortUrl extends AbstractEntity
         return $this->tags;
     }
 
-    /**
-     * @param Collection|Tag[] $tags
-     * @deprecated Use ShortUrl::update to set the tags on this ShortUrl
-     */
-    public function setTags(Collection $tags): self
-    {
-        $this->tags = $tags;
-        return $this;
-    }
-
     public function update(
         ShortUrlEdit $shortUrlEdit,
         ?ShortUrlRelationResolverInterface $relationResolver = null
