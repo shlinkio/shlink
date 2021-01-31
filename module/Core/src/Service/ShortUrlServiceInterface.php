@@ -22,6 +22,7 @@ interface ShortUrlServiceInterface
 
     /**
      * @param string[] $tags
+     * @deprecated Use updateShortUrl instead
      * @throws ShortUrlNotFoundException
      */
     public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags, ?ApiKey $apiKey = null): ShortUrl;
@@ -30,7 +31,7 @@ interface ShortUrlServiceInterface
      * @throws ShortUrlNotFoundException
      * @throws InvalidUrlException
      */
-    public function updateMetadataByShortCode(
+    public function updateShortUrl(
         ShortUrlIdentifier $identifier,
         ShortUrlEdit $shortUrlEdit,
         ?ApiKey $apiKey = null

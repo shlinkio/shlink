@@ -53,6 +53,7 @@ class ShortUrlService implements ShortUrlServiceInterface
 
     /**
      * @param string[] $tags
+     * @deprecated Use updateShortUrl instead
      * @throws ShortUrlNotFoundException
      */
     public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags, ?ApiKey $apiKey = null): ShortUrl
@@ -69,7 +70,7 @@ class ShortUrlService implements ShortUrlServiceInterface
      * @throws ShortUrlNotFoundException
      * @throws InvalidUrlException
      */
-    public function updateMetadataByShortCode(
+    public function updateShortUrl(
         ShortUrlIdentifier $identifier,
         ShortUrlEdit $shortUrlEdit,
         ?ApiKey $apiKey = null

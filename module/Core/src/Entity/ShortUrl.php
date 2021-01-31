@@ -64,7 +64,7 @@ class ShortUrl extends AbstractEntity
         $instance->longUrl = $meta->getLongUrl();
         $instance->dateCreated = Chronos::now();
         $instance->visits = new ArrayCollection();
-        $instance->tags = new ArrayCollection();
+        $instance->tags = $relationResolver->resolveTags($meta->getTags());
         $instance->validSince = $meta->getValidSince();
         $instance->validUntil = $meta->getValidUntil();
         $instance->maxVisits = $meta->getMaxVisits();
@@ -85,6 +85,7 @@ class ShortUrl extends AbstractEntity
         $meta = [
             ShortUrlInputFilter::LONG_URL => $url->longUrl(),
             ShortUrlInputFilter::DOMAIN => $url->domain(),
+            ShortUrlInputFilter::TAGS => $url->tags(),
             ShortUrlInputFilter::VALIDATE_URL => false,
         ];
         if ($importShortCode) {
@@ -129,6 +130,7 @@ class ShortUrl extends AbstractEntity
 
     /**
      * @param Collection|Tag[] $tags
+     * @deprecated
      */
     public function setTags(Collection $tags): self
     {

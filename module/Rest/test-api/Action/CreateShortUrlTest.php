@@ -60,13 +60,23 @@ class CreateShortUrlTest extends ApiTestCase
         }
     }
 
-    /** @test */
-    public function createsNewShortUrlWithTags(): void
+    /**
+     * @test
+     * @dataProvider provideTags
+     */
+    public function createsNewShortUrlWithTags(array $providedTags, array $expectedTags): void
     {
-        [$statusCode, ['tags' => $tags]] = $this->createShortUrl(['tags' => ['foo', 'bar', 'baz']]);
+        [$statusCode, ['tags' => $tags]] = $this->createShortUrl(['tags' => $providedTags]);
 
         self::assertEquals(self::STATUS_OK, $statusCode);
-        self::assertEquals(['foo', 'bar', 'baz'], $tags);
+        self::assertEquals($expectedTags, $tags);
+    }
+
+    public function provideTags(): iterable
+    {
+        yield 'simple tags' => [$simpleTags = ['foo', 'bar', 'baz'], $simpleTags];
+        yield 'tags with spaces' => [['fo o', '  bar', 'b az'], ['fo-o', 'bar', 'b-az']];
+        yield 'tags with special chars' => [['UUU', 'Aäa'], ['uuu', 'aäa']];
     }
 
     /**

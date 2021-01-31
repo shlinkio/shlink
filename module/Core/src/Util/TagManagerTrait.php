@@ -13,10 +13,12 @@ use function str_replace;
 use function strtolower;
 use function trim;
 
+/** @deprecated */
 trait TagManagerTrait
 {
     /**
      * @param string[] $tags
+     * @deprecated
      * @return Collections\Collection|Tag[]
      */
     private function tagNamesToEntities(EntityManagerInterface $em, array $tags): Collections\Collection

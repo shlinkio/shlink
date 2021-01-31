@@ -100,7 +100,7 @@ class ShortUrlServiceTest extends TestCase
      * @test
      * @dataProvider provideShortUrlEdits
      */
-    public function updateMetadataByShortCodeUpdatesProvidedData(
+    public function updateShortUrlUpdatesProvidedData(
         int $expectedValidateCalls,
         ShortUrlEdit $shortUrlEdit,
         ?ApiKey $apiKey
@@ -114,7 +114,7 @@ class ShortUrlServiceTest extends TestCase
         )->willReturn($shortUrl);
         $flush = $this->em->flush()->willReturn(null);
 
-        $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), $shortUrlEdit, $apiKey);
+        $result = $this->service->updateShortUrl(new ShortUrlIdentifier('abc123'), $shortUrlEdit, $apiKey);
 
         self::assertSame($shortUrl, $result);
         self::assertEquals($shortUrlEdit->validSince(), $shortUrl->getValidSince());

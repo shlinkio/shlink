@@ -31,7 +31,7 @@ class EditShortUrlAction extends AbstractRestAction
         $identifier = ShortUrlIdentifier::fromApiRequest($request);
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
-        $this->shortUrlService->updateMetadataByShortCode($identifier, $shortUrlEdit, $apiKey);
+        $this->shortUrlService->updateShortUrl($identifier, $shortUrlEdit, $apiKey);
         return new EmptyResponse();
     }
 }
