@@ -130,7 +130,7 @@ class ShortUrl extends AbstractEntity
 
     /**
      * @param Collection|Tag[] $tags
-     * @deprecated
+     * @deprecated Use ShortUrl::update to set the tags on this ShortUrl
      */
     public function setTags(Collection $tags): self
     {

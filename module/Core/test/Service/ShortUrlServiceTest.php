@@ -81,11 +81,10 @@ class ShortUrlServiceTest extends TestCase
      */
     public function providedTagsAreGetFromRepoAndSetToTheShortUrl(?ApiKey $apiKey): void
     {
-        $shortUrl = $this->prophesize(ShortUrl::class);
-        $shortUrl->setTags(Argument::any())->shouldBeCalledOnce();
+        $shortUrl = ShortUrl::createEmpty();
         $shortCode = 'abc123';
         $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey)
-            ->willReturn($shortUrl->reveal())
+            ->willReturn($shortUrl)
             ->shouldBeCalledOnce();
 
         $tagRepo = $this->prophesize(EntityRepository::class);
