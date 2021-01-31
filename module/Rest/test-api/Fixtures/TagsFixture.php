@@ -4,39 +4,17 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Fixtures;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 
-class TagsFixture extends AbstractFixture implements DependentFixtureInterface
+class TagsFixture extends AbstractFixture
 {
-    public function getDependencies(): array
-    {
-        return [ShortUrlsFixture::class];
-    }
-
     public function load(ObjectManager $manager): void
     {
-        $fooTag = new Tag('foo');
-        $manager->persist($fooTag);
-        $barTag = new Tag('bar');
-        $manager->persist($barTag);
+        $manager->persist(new Tag('foo'));
+        $manager->persist(new Tag('bar'));
         $manager->persist(new Tag('baz'));
-
-        /** @var ShortUrl $abcShortUrl */
-        $abcShortUrl = $this->getReference('abc123_short_url');
-        $abcShortUrl->setTags(new ArrayCollection([$fooTag]));
-
-        /** @var ShortUrl $defShortUrl */
-        $defShortUrl = $this->getReference('def456_short_url');
-        $defShortUrl->setTags(new ArrayCollection([$fooTag, $barTag]));
-
-        /** @var ShortUrl $exampleShortUrl */
-        $exampleShortUrl = $this->getReference('example_short_url');
-        $exampleShortUrl->setTags(new ArrayCollection([$fooTag]));
 
         $manager->flush();
     }

@@ -18,18 +18,23 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
 {
     public function getDependencies(): array
     {
-        return [ApiKeyFixture::class];
+        return [ApiKeyFixture::class, TagsFixture::class];
     }
 
     public function load(ObjectManager $manager): void
     {
+        $relationResolver = new PersistenceShortUrlRelationResolver($manager);
+
         /** @var ApiKey $authorApiKey */
         $authorApiKey = $this->getReference('author_api_key');
 
         $abcShortUrl = $this->setShortUrlDate(
-            ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
-                ['customSlug' => 'abc123', 'apiKey' => $authorApiKey, 'longUrl' => 'https://shlink.io'],
-            )),
+            ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+                'customSlug' => 'abc123',
+                'apiKey' => $authorApiKey,
+                'longUrl' => 'https://shlink.io',
+                'tags' => ['foo'],
+            ]), $relationResolver),
             '2018-05-01',
         );
         $manager->persist($abcShortUrl);
@@ -40,7 +45,8 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
             'apiKey' => $authorApiKey,
             'longUrl' =>
                 'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
-        ])), '2019-01-01 00:00:10');
+            'tags' => ['foo', 'bar'],
+        ]), $relationResolver), '2019-01-01 00:00:10');
         $manager->persist($defShortUrl);
 
         $customShortUrl = $this->setShortUrlDate(ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
@@ -61,7 +67,8 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
             'customSlug' => 'ghi789',
             'longUrl' => 'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-'
                 . 'source-software-projects/',
-        ]), new PersistenceShortUrlRelationResolver($manager)), '2019-01-01 00:00:30');
+            'tags' => ['foo'],
+        ]), $relationResolver), '2019-01-01 00:00:30');
         $manager->persist($withDomainDuplicatingShortCode);
 
         $withDomainAndSlugShortUrl = $this->setShortUrlDate(ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
