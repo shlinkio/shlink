@@ -77,7 +77,12 @@ return [
             EventDispatcherInterface::class,
             'config.url_shortener.anonymize_remote_addr',
         ],
-        Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class, Util\UrlValidator::class],
+        Service\ShortUrlService::class => [
+            'em',
+            Service\ShortUrl\ShortUrlResolver::class,
+            Util\UrlValidator::class,
+            ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
+        ],
         Visit\VisitLocator::class => ['em'],
         Visit\VisitsStatsHelper::class => ['em'],
         Tag\TagService::class => ['em'],

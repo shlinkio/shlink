@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -26,15 +27,18 @@ class ShortUrlService implements ShortUrlServiceInterface
     private ORM\EntityManagerInterface $em;
     private ShortUrlResolverInterface $urlResolver;
     private UrlValidatorInterface $urlValidator;
+    private ShortUrlRelationResolverInterface $relationResolver;
 
     public function __construct(
         ORM\EntityManagerInterface $em,
         ShortUrlResolverInterface $urlResolver,
-        UrlValidatorInterface $urlValidator
+        UrlValidatorInterface $urlValidator,
+        ShortUrlRelationResolverInterface $relationResolver
     ) {
         $this->em = $em;
         $this->urlResolver = $urlResolver;
         $this->urlValidator = $urlValidator;
+        $this->relationResolver = $relationResolver;
     }
 
     /**
@@ -80,7 +84,7 @@ class ShortUrlService implements ShortUrlServiceInterface
         }
 
         $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
-        $shortUrl->update($shortUrlEdit);
+        $shortUrl->update($shortUrlEdit, $this->relationResolver);
 
         $this->em->flush();
 

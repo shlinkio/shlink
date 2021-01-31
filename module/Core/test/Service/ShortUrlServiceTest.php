@@ -19,6 +19,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
@@ -48,6 +49,7 @@ class ShortUrlServiceTest extends TestCase
             $this->em->reveal(),
             $this->urlResolver->reveal(),
             $this->urlValidator->reveal(),
+            new SimpleShortUrlRelationResolver(),
         );
     }
 

@@ -138,8 +138,10 @@ class ShortUrl extends AbstractEntity
         return $this;
     }
 
-    public function update(ShortUrlEdit $shortUrlEdit): void
-    {
+    public function update(
+        ShortUrlEdit $shortUrlEdit,
+        ?ShortUrlRelationResolverInterface $relationResolver = null
+    ): void {
         if ($shortUrlEdit->hasValidSince()) {
             $this->validSince = $shortUrlEdit->validSince();
         }
@@ -151,6 +153,10 @@ class ShortUrl extends AbstractEntity
         }
         if ($shortUrlEdit->hasLongUrl()) {
             $this->longUrl = $shortUrlEdit->longUrl();
+        }
+        if ($shortUrlEdit->hasTags()) {
+            $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
+            $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags());
         }
     }
 
