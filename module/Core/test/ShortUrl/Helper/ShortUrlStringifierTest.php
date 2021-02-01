@@ -17,10 +17,11 @@ class ShortUrlStringifierTest extends TestCase
      */
     public function generatesExpectedOutputBasedOnConfigAndShortUrl(
         array $config,
+        string $basePath,
         ShortUrl $shortUrl,
         string $expected
     ): void {
-        $stringifier = new ShortUrlStringifier($config);
+        $stringifier = new ShortUrlStringifier($config, $basePath);
 
         self::assertEquals($expected, $stringifier->stringify($shortUrl));
     }
@@ -35,21 +36,36 @@ class ShortUrlStringifierTest extends TestCase
             ]),
         );
 
-        yield 'no config' => [[], $shortUrlWithShortCode('foo'), 'http:/foo'];
+        yield 'no config' => [[], '', $shortUrlWithShortCode('foo'), 'http:/foo'];
         yield 'hostname in config' => [
             ['hostname' => 'example.com'],
+            '',
             $shortUrlWithShortCode('bar'),
             'http://example.com/bar',
         ];
+        yield 'hostname with base path in config' => [
+            ['hostname' => 'example.com/foo/bar'],
+            '',
+            $shortUrlWithShortCode('abc'),
+            'http://example.com/foo/bar/abc',
+        ];
         yield 'full config' => [
             ['schema' => 'https', 'hostname' => 'foo.com'],
+            '',
             $shortUrlWithShortCode('baz'),
             'https://foo.com/baz',
         ];
         yield 'custom domain' => [
             ['schema' => 'https', 'hostname' => 'foo.com'],
+            '',
             $shortUrlWithShortCode('baz', 'mydom.es'),
             'https://mydom.es/baz',
+        ];
+        yield 'custom domain with base path' => [
+            ['schema' => 'https', 'hostname' => 'foo.com'],
+            '/foo/bar',
+            $shortUrlWithShortCode('baz', 'mydom.es'),
+            'https://mydom.es/foo/bar/baz',
         ];
     }
 }

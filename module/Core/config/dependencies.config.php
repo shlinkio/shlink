@@ -121,7 +121,7 @@ return [
         ],
 
         ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ['em'],
-        ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain'],
+        ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain', 'config.router.base_path'],
         ShortUrl\Transformer\ShortUrlDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
 
         Mercure\MercureUpdatesGenerator::class => [ShortUrl\Transformer\ShortUrlDataTransformer::class],

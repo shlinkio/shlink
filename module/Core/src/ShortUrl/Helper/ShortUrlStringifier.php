@@ -7,13 +7,17 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Helper;
 use Laminas\Diactoros\Uri;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 
+use function sprintf;
+
 class ShortUrlStringifier implements ShortUrlStringifierInterface
 {
     private array $domainConfig;
+    private string $basePath;
 
-    public function __construct(array $domainConfig)
+    public function __construct(array $domainConfig, string $basePath = '')
     {
         $this->domainConfig = $domainConfig;
+        $this->basePath = $basePath;
     }
 
     public function stringify(ShortUrl $shortUrl): string
@@ -31,6 +35,6 @@ class ShortUrlStringifier implements ShortUrlStringifierInterface
             return $this->domainConfig['hostname'] ?? '';
         }
 
-        return $domain->getAuthority();
+        return sprintf('%s%s', $domain->getAuthority(), $this->basePath);
     }
 }
