@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#988](https://github.com/shlinkio/shlink/issues/988) Fixed serving zero-byte static files in apache and apache-compatible web servers.
+* [#990](https://github.com/shlinkio/shlink/issues/990) Fixed short URLs not properly composed in REST API endpoints when both custom domain and custom base path are used.
 
 
 ## [2.5.2] - 2021-01-24

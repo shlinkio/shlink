@@ -11,6 +11,8 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ResolveShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -26,7 +28,9 @@ class ResolveShortUrlActionTest extends TestCase
     public function setUp(): void
     {
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
-        $this->action = new ResolveShortUrlAction($this->urlResolver->reveal(), []);
+        $this->action = new ResolveShortUrlAction($this->urlResolver->reveal(), new ShortUrlDataTransformer(
+            new ShortUrlStringifier([]),
+        ));
     }
 
     /** @test */

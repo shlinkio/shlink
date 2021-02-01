@@ -7,21 +7,21 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
-use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
 abstract class AbstractCreateShortUrlAction extends AbstractRestAction
 {
     private UrlShortenerInterface $urlShortener;
-    private ShortUrlDataTransformer $transformer;
+    private DataTransformerInterface $transformer;
 
-    public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig)
+    public function __construct(UrlShortenerInterface $urlShortener, DataTransformerInterface $transformer)
     {
         $this->urlShortener = $urlShortener;
-        $this->transformer = new ShortUrlDataTransformer($domainConfig);
+        $this->transformer = $transformer;
     }
 
     public function handle(Request $request): Response

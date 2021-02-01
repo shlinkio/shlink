@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Core\Entity;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Laminas\Diactoros\Uri;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
@@ -128,6 +127,36 @@ class ShortUrl extends AbstractEntity
         return $this->tags;
     }
 
+    public function getValidSince(): ?Chronos
+    {
+        return $this->validSince;
+    }
+
+    public function getValidUntil(): ?Chronos
+    {
+        return $this->validUntil;
+    }
+
+    public function getVisitsCount(): int
+    {
+        return count($this->visits);
+    }
+
+    /**
+     * @param Collection|Visit[] $visits
+     * @internal
+     */
+    public function setVisits(Collection $visits): self
+    {
+        $this->visits = $visits;
+        return $this;
+    }
+
+    public function getMaxVisits(): ?int
+    {
+        return $this->maxVisits;
+    }
+
     public function update(
         ShortUrlEdit $shortUrlEdit,
         ?ShortUrlRelationResolverInterface $relationResolver = null
@@ -168,36 +197,6 @@ class ShortUrl extends AbstractEntity
         $this->shortCode = generateRandomShortCode($this->shortCodeLength);
     }
 
-    public function getValidSince(): ?Chronos
-    {
-        return $this->validSince;
-    }
-
-    public function getValidUntil(): ?Chronos
-    {
-        return $this->validUntil;
-    }
-
-    public function getVisitsCount(): int
-    {
-        return count($this->visits);
-    }
-
-    /**
-     * @param Collection|Visit[] $visits
-     * @internal
-     */
-    public function setVisits(Collection $visits): self
-    {
-        $this->visits = $visits;
-        return $this;
-    }
-
-    public function getMaxVisits(): ?int
-    {
-        return $this->maxVisits;
-    }
-
     public function isEnabled(): bool
     {
         $maxVisitsReached = $this->maxVisits !== null && $this->getVisitsCount() >= $this->maxVisits;
@@ -217,22 +216,5 @@ class ShortUrl extends AbstractEntity
         }
 
         return true;
-    }
-
-    public function toString(array $domainConfig): string
-    {
-        return (new Uri())->withPath($this->shortCode)
-                          ->withScheme($domainConfig['schema'] ?? 'http')
-                          ->withHost($this->resolveDomain($domainConfig['hostname'] ?? ''))
-                          ->__toString();
-    }
-
-    private function resolveDomain(string $fallback = ''): string
-    {
-        if ($this->domain === null) {
-            return $fallback;
-        }
-
-        return $this->domain->getAuthority();
     }
 }

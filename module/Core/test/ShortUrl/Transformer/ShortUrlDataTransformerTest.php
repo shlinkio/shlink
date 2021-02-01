@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Transformer;
+namespace ShlinkioTest\Shlink\Core\ShortUrl\Transformer;
 
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 
 use function random_int;
 
@@ -18,7 +19,7 @@ class ShortUrlDataTransformerTest extends TestCase
 
     public function setUp(): void
     {
-        $this->transformer = new ShortUrlDataTransformer([]);
+        $this->transformer = new ShortUrlDataTransformer(new ShortUrlStringifier([]));
     }
 
     /**

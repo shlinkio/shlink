@@ -43,6 +43,8 @@ return [
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
 
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ConfigAbstractFactory::class,
+            ShortUrl\Helper\ShortUrlStringifier::class => ConfigAbstractFactory::class,
+            ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
 
             Mercure\MercureUpdatesGenerator::class => ConfigAbstractFactory::class,
 
@@ -114,13 +116,15 @@ return [
         ],
         Action\QrCodeAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
-            'config.url_shortener.domain',
+            ShortUrl\Helper\ShortUrlStringifier::class,
             'Logger_Shlink',
         ],
 
         ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ['em'],
+        ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain', 'config.router.base_path'],
+        ShortUrl\Transformer\ShortUrlDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
 
-        Mercure\MercureUpdatesGenerator::class => ['config.url_shortener.domain'],
+        Mercure\MercureUpdatesGenerator::class => [ShortUrl\Transformer\ShortUrlDataTransformer::class],
 
         Importer\ImportedLinksProcessor::class => [
             'em',

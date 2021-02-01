@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
@@ -54,21 +55,21 @@ return [
 
         Action\HealthAction::class => ['em', AppOptions::class],
         Action\MercureInfoAction::class => [LcobucciJwtProvider::class, 'config.mercure'],
-        Action\ShortUrl\CreateShortUrlAction::class => [Service\UrlShortener::class, 'config.url_shortener.domain'],
+        Action\ShortUrl\CreateShortUrlAction::class => [Service\UrlShortener::class, ShortUrlDataTransformer::class],
         Action\ShortUrl\SingleStepCreateShortUrlAction::class => [
             Service\UrlShortener::class,
-            'config.url_shortener.domain',
+            ShortUrlDataTransformer::class,
         ],
-        Action\ShortUrl\EditShortUrlAction::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
+        Action\ShortUrl\EditShortUrlAction::class => [Service\ShortUrlService::class, ShortUrlDataTransformer::class],
         Action\ShortUrl\DeleteShortUrlAction::class => [Service\ShortUrl\DeleteShortUrlService::class],
         Action\ShortUrl\ResolveShortUrlAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
-            'config.url_shortener.domain',
+            ShortUrlDataTransformer::class,
         ],
         Action\Visit\ShortUrlVisitsAction::class => [Service\VisitsTracker::class],
         Action\Visit\TagVisitsAction::class => [Service\VisitsTracker::class],
         Action\Visit\GlobalVisitsAction::class => [Visit\VisitsStatsHelper::class],
-        Action\ShortUrl\ListShortUrlsAction::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
+        Action\ShortUrl\ListShortUrlsAction::class => [Service\ShortUrlService::class, ShortUrlDataTransformer::class],
         Action\ShortUrl\EditShortUrlTagsAction::class => [Service\ShortUrlService::class],
         Action\Tag\ListTagsAction::class => [TagService::class],
         Action\Tag\DeleteTagsAction::class => [TagService::class],

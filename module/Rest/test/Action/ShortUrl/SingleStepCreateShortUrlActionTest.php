@@ -6,8 +6,10 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
@@ -20,18 +22,17 @@ class SingleStepCreateShortUrlActionTest extends TestCase
 
     private SingleStepCreateShortUrlAction $action;
     private ObjectProphecy $urlShortener;
-    private ObjectProphecy $apiKeyService;
+    private ObjectProphecy $transformer;
 
     public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortenerInterface::class);
+        $this->transformer = $this->prophesize(DataTransformerInterface::class);
+        $this->transformer->transform(Argument::type(ShortUrl::class))->willReturn([]);
 
         $this->action = new SingleStepCreateShortUrlAction(
             $this->urlShortener->reveal(),
-            [
-                'schema' => 'http',
-                'hostname' => 'foo.com',
-            ],
+            $this->transformer->reveal(),
         );
     }
 

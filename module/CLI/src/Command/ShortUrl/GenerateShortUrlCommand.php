@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,14 +31,17 @@ class GenerateShortUrlCommand extends BaseCommand
     public const NAME = 'short-url:generate';
 
     private UrlShortenerInterface $urlShortener;
-    private array $domainConfig;
+    private ShortUrlStringifierInterface $stringifier;
     private int $defaultShortCodeLength;
 
-    public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig, int $defaultShortCodeLength)
-    {
+    public function __construct(
+        UrlShortenerInterface $urlShortener,
+        ShortUrlStringifierInterface $stringifier,
+        int $defaultShortCodeLength
+    ) {
         parent::__construct();
         $this->urlShortener = $urlShortener;
-        $this->domainConfig = $domainConfig;
+        $this->stringifier = $stringifier;
         $this->defaultShortCodeLength = $defaultShortCodeLength;
     }
 
@@ -163,7 +167,7 @@ class GenerateShortUrlCommand extends BaseCommand
 
             $io->writeln([
                 sprintf('Processed long URL: <info>%s</info>', $longUrl),
-                sprintf('Generated short URL: <info>%s</info>', $shortUrl->toString($this->domainConfig)),
+                sprintf('Generated short URL: <info>%s</info>', $this->stringifier->stringify($shortUrl)),
             ]);
             return ExitCodes::EXIT_SUCCESS;
         } catch (InvalidUrlException | NonUniqueSlugException $e) {

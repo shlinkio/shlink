@@ -20,6 +20,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 
 use function getimagesizefromstring;
 
@@ -37,7 +38,10 @@ class QrCodeActionTest extends TestCase
 
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
 
-        $this->action = new QrCodeAction($this->urlResolver->reveal(), ['domain' => 'doma.in']);
+        $this->action = new QrCodeAction(
+            $this->urlResolver->reveal(),
+            new ShortUrlStringifier(['domain' => 'doma.in']),
+        );
     }
 
     /** @test */

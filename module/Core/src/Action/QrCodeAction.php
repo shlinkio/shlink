@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 
 class QrCodeAction implements MiddlewareInterface
 {
@@ -24,17 +25,17 @@ class QrCodeAction implements MiddlewareInterface
     private const MAX_SIZE = 1000;
 
     private ShortUrlResolverInterface $urlResolver;
-    private array $domainConfig;
+    private ShortUrlStringifierInterface $stringifier;
     private LoggerInterface $logger;
 
     public function __construct(
         ShortUrlResolverInterface $urlResolver,
-        array $domainConfig,
+        ShortUrlStringifierInterface $stringifier,
         ?LoggerInterface $logger = null
     ) {
         $this->urlResolver = $urlResolver;
-        $this->domainConfig = $domainConfig;
         $this->logger = $logger ?? new NullLogger();
+        $this->stringifier = $stringifier;
     }
 
     public function process(Request $request, RequestHandlerInterface $handler): Response
@@ -52,7 +53,7 @@ class QrCodeAction implements MiddlewareInterface
         // Size attribute is deprecated
         $size = $this->normalizeSize((int) $request->getAttribute('size', $query['size'] ?? self::DEFAULT_SIZE));
 
-        $qrCode = new QrCode($shortUrl->toString($this->domainConfig));
+        $qrCode = new QrCode($this->stringifier->stringify($shortUrl));
         $qrCode->setSize($size);
         $qrCode->setMargin(0);
 
