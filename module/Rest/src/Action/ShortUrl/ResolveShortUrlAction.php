@@ -7,9 +7,9 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
-use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
@@ -19,12 +19,12 @@ class ResolveShortUrlAction extends AbstractRestAction
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     private ShortUrlResolverInterface $urlResolver;
-    private ShortUrlDataTransformer $transformer;
+    private DataTransformerInterface $transformer;
 
-    public function __construct(ShortUrlResolverInterface $urlResolver, array $domainConfig)
+    public function __construct(ShortUrlResolverInterface $urlResolver, DataTransformerInterface $transformer)
     {
         $this->urlResolver = $urlResolver;
-        $this->transformer = new ShortUrlDataTransformer($domainConfig);
+        $this->transformer = $transformer;
     }
 
     public function handle(Request $request): Response

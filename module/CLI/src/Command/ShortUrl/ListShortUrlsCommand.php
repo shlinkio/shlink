@@ -9,10 +9,10 @@ use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
+use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
-use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Validation\ShortUrlsParamsInputFilter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -42,13 +42,13 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
     ];
 
     private ShortUrlServiceInterface $shortUrlService;
-    private ShortUrlDataTransformer $transformer;
+    private DataTransformerInterface $transformer;
 
-    public function __construct(ShortUrlServiceInterface $shortUrlService, array $domainConfig)
+    public function __construct(ShortUrlServiceInterface $shortUrlService, DataTransformerInterface $transformer)
     {
         parent::__construct();
         $this->shortUrlService = $shortUrlService;
-        $this->transformer = new ShortUrlDataTransformer($domainConfig);
+        $this->transformer = $transformer;
     }
 
     protected function doConfigure(): void

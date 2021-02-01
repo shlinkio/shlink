@@ -23,6 +23,8 @@ use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\EventDispatcher\NotifyVisitToWebHooks;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\AppOptions;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 
 use function count;
 use function Functional\contains;
@@ -127,7 +129,7 @@ class NotifyVisitToWebHooksTest extends TestCase
             $this->em->reveal(),
             $this->logger->reveal(),
             $webhooks,
-            [],
+            new ShortUrlDataTransformer(new ShortUrlStringifier([])),
             new AppOptions(['name' => 'Shlink', 'version' => '1.2.3']),
         );
     }

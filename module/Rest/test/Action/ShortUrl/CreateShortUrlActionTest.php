@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Cake\Chronos\Chronos;
+use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
@@ -18,24 +20,21 @@ use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function strpos;
-
 class CreateShortUrlActionTest extends TestCase
 {
     use ProphecyTrait;
 
-    private const DOMAIN_CONFIG = [
-        'schema' => 'http',
-        'hostname' => 'foo.com',
-    ];
-
     private CreateShortUrlAction $action;
     private ObjectProphecy $urlShortener;
+    private ObjectProphecy $transformer;
 
     public function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $this->action = new CreateShortUrlAction($this->urlShortener->reveal(), self::DOMAIN_CONFIG);
+        $this->transformer = $this->prophesize(DataTransformerInterface::class);
+        $this->transformer->transform(Argument::type(ShortUrl::class))->willReturn([]);
+
+        $this->action = new CreateShortUrlAction($this->urlShortener->reveal(), $this->transformer->reveal());
     }
 
     /** @test */
@@ -55,14 +54,18 @@ class CreateShortUrlActionTest extends TestCase
         $expectedMeta['apiKey'] = $apiKey;
 
         $shorten = $this->urlShortener->shorten(ShortUrlMeta::fromRawData($expectedMeta))->willReturn($shortUrl);
+        $transform = $this->transformer->transform($shortUrl)->willReturn(['shortUrl' => 'stringified_short_url']);
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body)->withAttribute(ApiKey::class, $apiKey);
 
+        /** @var JsonResponse $response */
         $response = $this->action->handle($request);
+        $payload = $response->getPayload();
 
         self::assertEquals(200, $response->getStatusCode());
-        self::assertTrue(strpos($response->getBody()->getContents(), $shortUrl->toString(self::DOMAIN_CONFIG)) > 0);
+        self::assertEquals('stringified_short_url', $payload['shortUrl']);
         $shorten->shouldHaveBeenCalledOnce();
+        $transform->shouldHaveBeenCalledOnce();
     }
 
     /**

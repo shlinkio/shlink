@@ -15,6 +15,8 @@ use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -31,7 +33,9 @@ class ListShortUrlsCommandTest extends TestCase
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
         $app = new Application();
-        $command = new ListShortUrlsCommand($this->shortUrlService->reveal(), []);
+        $command = new ListShortUrlsCommand($this->shortUrlService->reveal(), new ShortUrlDataTransformer(
+            new ShortUrlStringifier([]),
+        ));
         $app->add($command);
         $this->commandTester = new CommandTester($command);
     }
@@ -56,6 +60,7 @@ class ListShortUrlsCommandTest extends TestCase
         self::assertStringContainsString('Continue with page 2?', $output);
         self::assertStringContainsString('Continue with page 3?', $output);
         self::assertStringContainsString('Continue with page 4?', $output);
+        self::assertStringNotContainsString('Continue with page 5?', $output);
     }
 
     /** @test */

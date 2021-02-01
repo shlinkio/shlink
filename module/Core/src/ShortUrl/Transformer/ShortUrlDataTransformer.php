@@ -2,21 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Transformer;
+namespace Shlinkio\Shlink\Core\ShortUrl\Transformer;
 
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 
 use function Functional\invoke;
 use function Functional\invoke_if;
 
 class ShortUrlDataTransformer implements DataTransformerInterface
 {
-    private array $domainConfig;
+    private ShortUrlStringifierInterface $stringifier;
 
-    public function __construct(array $domainConfig)
+    public function __construct(ShortUrlStringifierInterface $stringifier)
     {
-        $this->domainConfig = $domainConfig;
+        $this->stringifier = $stringifier;
     }
 
     /**
@@ -26,7 +27,7 @@ class ShortUrlDataTransformer implements DataTransformerInterface
     {
         return [
             'shortCode' => $shortUrl->getShortCode(),
-            'shortUrl' => $shortUrl->toString($this->domainConfig),
+            'shortUrl' => $this->stringifier->stringify($shortUrl),
             'longUrl' => $shortUrl->getLongUrl(),
             'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
             'visitsCount' => $shortUrl->getVisitsCount(),

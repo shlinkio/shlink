@@ -10,6 +10,8 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGenerator;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 
 use function Shlinkio\Shlink\Common\json_decode;
 
@@ -19,7 +21,7 @@ class MercureUpdatesGeneratorTest extends TestCase
 
     public function setUp(): void
     {
-        $this->generator = new MercureUpdatesGenerator([]);
+        $this->generator = new MercureUpdatesGenerator(new ShortUrlDataTransformer(new ShortUrlStringifier([])));
     }
 
     /**

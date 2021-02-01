@@ -14,6 +14,8 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ListShortUrlsAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -28,10 +30,12 @@ class ListShortUrlsActionTest extends TestCase
     {
         $this->service = $this->prophesize(ShortUrlService::class);
 
-        $this->action = new ListShortUrlsAction($this->service->reveal(), [
-            'hostname' => 'doma.in',
-            'schema' => 'https',
-        ]);
+        $this->action = new ListShortUrlsAction($this->service->reveal(), new ShortUrlDataTransformer(
+            new ShortUrlStringifier([
+                'hostname' => 'doma.in',
+                'schema' => 'https',
+            ]),
+        ));
     }
 
     /**
