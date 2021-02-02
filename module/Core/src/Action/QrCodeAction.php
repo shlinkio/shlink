@@ -54,7 +54,7 @@ class QrCodeAction implements MiddlewareInterface
         $size = $this->normalizeSize((int) $request->getAttribute('size', $query['size'] ?? self::DEFAULT_SIZE));
 
         $qrCode = new QrCode($this->stringifier->stringify($shortUrl));
-        $qrCode->setSize($size);
+        $qrCode->setSize($size - 2 * $qrCode->getMargin());
 
         $format = $query['format'] ?? 'png';
         if ($format === 'svg') {
