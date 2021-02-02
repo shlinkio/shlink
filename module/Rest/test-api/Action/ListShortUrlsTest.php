@@ -25,6 +25,7 @@ class ListShortUrlsTest extends ApiTestCase
             'maxVisits' => null,
         ],
         'domain' => null,
+        'title' => 'Shlink',
     ];
     private const SHORT_URL_DOCS = [
         'shortCode' => 'ghi789',
@@ -39,6 +40,7 @@ class ListShortUrlsTest extends ApiTestCase
             'maxVisits' => null,
         ],
         'domain' => null,
+        'title' => null,
     ];
     private const SHORT_URL_CUSTOM_SLUG_AND_DOMAIN = [
         'shortCode' => 'custom-with-domain',
@@ -53,6 +55,7 @@ class ListShortUrlsTest extends ApiTestCase
             'maxVisits' => null,
         ],
         'domain' => 'some-domain.com',
+        'title' => null,
     ];
     private const SHORT_URL_META = [
         'shortCode' => 'def456',
@@ -69,6 +72,7 @@ class ListShortUrlsTest extends ApiTestCase
             'maxVisits' => null,
         ],
         'domain' => null,
+        'title' => null,
     ];
     private const SHORT_URL_CUSTOM_SLUG = [
         'shortCode' => 'custom',
@@ -83,6 +87,7 @@ class ListShortUrlsTest extends ApiTestCase
             'maxVisits' => 2,
         ],
         'domain' => null,
+        'title' => null,
     ];
     private const SHORT_URL_CUSTOM_DOMAIN = [
         'shortCode' => 'ghi789',
@@ -99,6 +104,7 @@ class ListShortUrlsTest extends ApiTestCase
             'maxVisits' => null,
         ],
         'domain' => 'example.com',
+        'title' => null,
     ];
 
     /**

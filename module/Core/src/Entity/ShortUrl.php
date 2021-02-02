@@ -184,6 +184,9 @@ class ShortUrl extends AbstractEntity
             $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
             $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags());
         }
+        if ($shortUrlEdit->hasTitle()) {
+            $this->title = $shortUrlEdit->title();
+        }
     }
 
     /**

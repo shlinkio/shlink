@@ -137,7 +137,8 @@
                                         "validUntil": null,
                                         "maxVisits": 100
                                     },
-                                    "domain": null
+                                    "domain": null,
+                                    "title": "Welcome to Steam"
                                 },
                                 {
                                     "shortCode": "12Kb3",
@@ -153,7 +154,8 @@
                                         "validUntil": null,
                                         "maxVisits": null
                                     },
-                                    "domain":  null
+                                    "domain":  null,
+                                    "title": null
                                 },
                                 {
                                     "shortCode": "123bA",
@@ -167,7 +169,8 @@
                                         "validUntil": null,
                                         "maxVisits": null
                                     },
-                                    "domain":  "example.com"
+                                    "domain":  "example.com",
+                                    "title": null
                                 }
                             ],
                             "pagination": {
@@ -264,6 +267,10 @@
                             "validateUrl": {
                                 "description": "Tells if the long URL should or should not be validated as a reachable URL. If not provided, it will fall back to app-level config",
                                 "type": "boolean"
+                            },
+                            "title": {
+                                "type": "string",
+                                "description": "A descriptive title of the short URL."
                             }
                         }
                     }
