@@ -28,6 +28,7 @@ final class ShortUrlMeta
     private ?bool $validateUrl = null;
     private ?ApiKey $apiKey = null;
     private array $tags = [];
+    private ?string $title = null;
 
     private function __construct()
     {
@@ -76,6 +77,7 @@ final class ShortUrlMeta
         ) ?? DEFAULT_SHORT_CODES_LENGTH;
         $this->apiKey = $inputFilter->getValue(ShortUrlInputFilter::API_KEY);
         $this->tags = $inputFilter->getValue(ShortUrlInputFilter::TAGS);
+        $this->title = $inputFilter->getValue(ShortUrlInputFilter::TITLE);
     }
 
     public function getLongUrl(): string
@@ -159,5 +161,10 @@ final class ShortUrlMeta
     public function getTags(): array
     {
         return $this->tags;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
     }
 }

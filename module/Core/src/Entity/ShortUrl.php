@@ -38,6 +38,7 @@ class ShortUrl extends AbstractEntity
     private ?string $importSource = null;
     private ?string $importOriginalShortCode = null;
     private ?ApiKey $authorApiKey = null;
+    private ?string $title = null;
 
     private function __construct()
     {
@@ -72,6 +73,7 @@ class ShortUrl extends AbstractEntity
         $instance->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode($instance->shortCodeLength);
         $instance->domain = $relationResolver->resolveDomain($meta->getDomain());
         $instance->authorApiKey = $meta->getApiKey();
+        $instance->title = $meta->getTitle();
 
         return $instance;
     }
@@ -155,6 +157,11 @@ class ShortUrl extends AbstractEntity
     public function getMaxVisits(): ?int
     {
         return $this->maxVisits;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
     }
 
     public function update(
