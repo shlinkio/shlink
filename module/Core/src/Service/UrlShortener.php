@@ -45,13 +45,7 @@ class UrlShortener implements UrlShortenerInterface
             return $existingShortUrl;
         }
 
-        if ($meta->hasTitle()) {
-            $this->urlValidator->validateUrl($meta->getLongUrl(), $meta->doValidateUrl());
-        } else {
-            $meta = $meta->withResolvedTitle(
-                $this->urlValidator->validateUrlWithTitle($meta->getLongUrl(), $meta->doValidateUrl()),
-            );
-        }
+        $meta = $this->processTitleAndValidateUrl($meta);
 
         return $this->em->transactional(function () use ($meta) {
             $shortUrl = ShortUrl::fromMeta($meta, $this->relationResolver);
@@ -87,5 +81,16 @@ class UrlShortener implements UrlShortenerInterface
 
             throw NonUniqueSlugException::fromSlug($shortUrlToBeCreated->getShortCode(), $domainAuthority);
         }
+    }
+
+    private function processTitleAndValidateUrl(ShortUrlMeta $meta): ShortUrlMeta
+    {
+        if ($meta->hasTitle()) {
+            $this->urlValidator->validateUrl($meta->getLongUrl(), $meta->doValidateUrl());
+            return $meta;
+        }
+
+        $title = $this->urlValidator->validateUrlWithTitle($meta->getLongUrl(), $meta->doValidateUrl());
+        return $title === null ? $meta : $meta->withResolvedTitle($title);
     }
 }

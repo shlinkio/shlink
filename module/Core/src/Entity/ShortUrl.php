@@ -39,6 +39,7 @@ class ShortUrl extends AbstractEntity
     private ?string $importOriginalShortCode = null;
     private ?ApiKey $authorApiKey = null;
     private ?string $title = null;
+    private bool $titleWasAutoResolved = false;
 
     private function __construct()
     {
@@ -74,6 +75,7 @@ class ShortUrl extends AbstractEntity
         $instance->domain = $relationResolver->resolveDomain($meta->getDomain());
         $instance->authorApiKey = $meta->getApiKey();
         $instance->title = $meta->getTitle();
+        $instance->titleWasAutoResolved = $meta->titleWasAutoResolved();
 
         return $instance;
     }

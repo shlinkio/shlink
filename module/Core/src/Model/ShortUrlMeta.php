@@ -29,6 +29,7 @@ final class ShortUrlMeta
     private ?ApiKey $apiKey = null;
     private array $tags = [];
     private ?string $title = null;
+    private bool $titleWasAutoResolved = false;
 
     private function __construct()
     {
@@ -173,10 +174,16 @@ final class ShortUrlMeta
         return $this->title !== null;
     }
 
-    public function withResolvedTitle(?string $title): self
+    public function titleWasAutoResolved(): bool
+    {
+        return $this->titleWasAutoResolved;
+    }
+
+    public function withResolvedTitle(string $title): self
     {
         $copy = clone $this;
         $copy->title = $title;
+        $copy->titleWasAutoResolved = true;
 
         return $copy;
     }

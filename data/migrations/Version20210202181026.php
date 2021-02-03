@@ -21,6 +21,9 @@ final class Version20210202181026 extends AbstractMigration
             'notnull' => false,
             'length' => 512,
         ]);
+        $shortUrls->addColumn('title_was_auto_resolved', Types::BOOLEAN, [
+            'default' => false,
+        ]);
     }
 
     public function down(Schema $schema): void
@@ -28,5 +31,14 @@ final class Version20210202181026 extends AbstractMigration
         $shortUrls = $schema->getTable('short_urls');
         $this->skipIf(! $shortUrls->hasColumn(self::TITLE));
         $shortUrls->dropColumn(self::TITLE);
+        $shortUrls->dropColumn('title_was_auto_resolved');
+    }
+
+    /**
+     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
+     */
+    public function isTransactional(): bool
+    {
+        return false;
     }
 }

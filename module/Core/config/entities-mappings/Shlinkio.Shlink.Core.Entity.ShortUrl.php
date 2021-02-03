@@ -90,4 +90,9 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->length(512)
             ->nullable()
             ->build();
+
+    $builder->createField('titleWasAutoResolved', Types::BOOLEAN)
+            ->columnName('title_was_auto_resolved')
+            ->option('default', false)
+            ->build();
 };

@@ -75,6 +75,20 @@ class UrlShortenerTest extends TestCase
         $this->urlValidator->validateUrl($longUrl, null)->shouldHaveBeenCalledTimes($validateCallsNum);
     }
 
+    /**
+     * @test
+     * @dataProvider provideTitles
+     */
+    public function urlIsProperlyShortenedWithExpectedResolvedTitle(?string $title): void
+    {
+        $validateWithTitle = $this->urlValidator->validateUrlWithTitle(Argument::cetera())->willReturn($title);
+
+        $shortUrl = $this->urlShortener->shorten(ShortUrlMeta::fromRawData(['longUrl' => 'foo']));
+
+        self::assertEquals($title, $shortUrl->getTitle());
+        $validateWithTitle->shouldHaveBeenCalledOnce();
+    }
+
     public function provideTitles(): iterable
     {
         yield 'no title' => [null, 1, 0];
