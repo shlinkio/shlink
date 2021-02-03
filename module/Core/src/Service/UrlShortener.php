@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
-use Throwable;
 
 class UrlShortener implements UrlShortenerInterface
 {
@@ -37,7 +36,6 @@ class UrlShortener implements UrlShortenerInterface
     /**
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
-     * @throws Throwable
      */
     public function shorten(ShortUrlMeta $meta): ShortUrl
     {
@@ -47,7 +45,13 @@ class UrlShortener implements UrlShortenerInterface
             return $existingShortUrl;
         }
 
-        $this->urlValidator->validateUrl($meta->getLongUrl(), $meta->doValidateUrl());
+        if ($meta->hasTitle()) {
+            $this->urlValidator->validateUrl($meta->getLongUrl(), $meta->doValidateUrl());
+        } else {
+            $meta = $meta->withResolvedTitle(
+                $this->urlValidator->validateUrlWithTitle($meta->getLongUrl(), $meta->doValidateUrl()),
+            );
+        }
 
         return $this->em->transactional(function () use ($meta) {
             $shortUrl = ShortUrl::fromMeta($meta, $this->relationResolver);

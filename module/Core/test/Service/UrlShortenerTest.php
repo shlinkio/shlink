@@ -31,7 +31,7 @@ class UrlShortenerTest extends TestCase
     public function setUp(): void
     {
         $this->urlValidator = $this->prophesize(UrlValidatorInterface::class);
-        $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar', null)->will(
+        $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', null)->will(
             function (): void {
             },
         );
@@ -101,7 +101,7 @@ class UrlShortenerTest extends TestCase
         $findExisting->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
         $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->urlValidator->validateUrl(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->urlValidator->validateUrlWithTitle(Argument::cetera())->shouldNotHaveBeenCalled();
         self::assertSame($expected, $result);
     }
 

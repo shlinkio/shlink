@@ -167,4 +167,17 @@ final class ShortUrlMeta
     {
         return $this->title;
     }
+
+    public function hasTitle(): bool
+    {
+        return $this->title !== null;
+    }
+
+    public function withResolvedTitle(?string $title): self
+    {
+        $copy = clone $this;
+        $copy->title = $title;
+
+        return $copy;
+    }
 }
