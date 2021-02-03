@@ -51,7 +51,7 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
         }
 
         $body = $response->getBody()->__toString();
-        preg_match('/<title>(.+)<\/title>/i', $body, $matches);
+        preg_match('/<title[^>]*>(.*?)<\/title>/i', $body, $matches);
         return $matches[1] ?? null;
     }
 
