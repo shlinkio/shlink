@@ -13,6 +13,9 @@ use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 
 use function preg_match;
+use function trim;
+
+use const Shlinkio\Shlink\Core\TITLE_TAG_VALUE;
 
 class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
 {
@@ -51,8 +54,8 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
         }
 
         $body = $response->getBody()->__toString();
-        preg_match('/<title[^>]*>(.*?)<\/title>/i', $body, $matches);
-        return $matches[1] ?? null;
+        preg_match(TITLE_TAG_VALUE, $body, $matches);
+        return isset($matches[1]) ? trim($matches[1]) : null;
     }
 
     private function validateUrlAndGetResponse(string $url, bool $throwOnError): ?ResponseInterface
