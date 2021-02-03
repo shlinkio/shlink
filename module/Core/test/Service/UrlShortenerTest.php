@@ -31,10 +31,6 @@ class UrlShortenerTest extends TestCase
     public function setUp(): void
     {
         $this->urlValidator = $this->prophesize(UrlValidatorInterface::class);
-        $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', null)->will(
-            function (): void {
-            },
-        );
 
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->em->persist(Argument::any())->will(function ($arguments): void {
@@ -63,14 +59,26 @@ class UrlShortenerTest extends TestCase
         );
     }
 
-    /** @test */
-    public function urlIsProperlyShortened(): void
+    /**
+     * @test
+     * @dataProvider provideTitles
+     */
+    public function urlIsProperlyShortened(?string $title, int $validateWithTitleCallsNum, int $validateCallsNum): void
     {
-        $shortUrl = $this->urlShortener->shorten(
-            ShortUrlMeta::fromRawData(['longUrl' => 'http://foobar.com/12345/hello?foo=bar']),
-        );
+        $longUrl = 'http://foobar.com/12345/hello?foo=bar';
+        $shortUrl = $this->urlShortener->shorten(ShortUrlMeta::fromRawData(['longUrl' => $longUrl, 'title' => $title]));
 
         self::assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
+        $this->urlValidator->validateUrlWithTitle($longUrl, null)->shouldHaveBeenCalledTimes(
+            $validateWithTitleCallsNum,
+        );
+        $this->urlValidator->validateUrl($longUrl, null)->shouldHaveBeenCalledTimes($validateCallsNum);
+    }
+
+    public function provideTitles(): iterable
+    {
+        yield 'no title' => [null, 1, 0];
+        yield 'title' => ['link title', 0, 1];
     }
 
     /** @test */
@@ -101,6 +109,7 @@ class UrlShortenerTest extends TestCase
         $findExisting->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
         $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->urlValidator->validateUrl(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->urlValidator->validateUrlWithTitle(Argument::cetera())->shouldNotHaveBeenCalled();
         self::assertSame($expected, $result);
     }
