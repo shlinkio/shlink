@@ -19,11 +19,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-use function array_flip;
-use function array_intersect_key;
 use function array_pad;
-use function array_values;
 use function explode;
+use function Functional\map;
 use function implode;
 use function sprintf;
 
@@ -32,12 +30,16 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
     use PagerfantaUtilsTrait;
 
     public const NAME = 'short-url:list';
-    private const COLUMNS_WHITELIST = [
+    private const COLUMNS_TO_SHOW = [
         'shortCode',
+        'title',
         'shortUrl',
         'longUrl',
         'dateCreated',
         'visitsCount',
+    ];
+    private const COLUMNS_TO_SHOW_WITH_TAGS = [
+        ...self::COLUMNS_TO_SHOW,
         'tags',
     ];
 
@@ -154,21 +156,20 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
     {
         $result = $this->shortUrlService->listShortUrls($params);
 
-        $headers = ['Short code', 'Short URL', 'Long URL', 'Date created', 'Visits count'];
+        $headers = ['Short code', 'Title', 'Short URL', 'Long URL', 'Date created', 'Visits count'];
         if ($showTags) {
             $headers[] = 'Tags';
         }
 
         $rows = [];
         foreach ($result as $row) {
+            $columnsToShow = $showTags ? self::COLUMNS_TO_SHOW_WITH_TAGS : self::COLUMNS_TO_SHOW;
             $shortUrl = $this->transformer->transform($row);
             if ($showTags) {
                 $shortUrl['tags'] = implode(', ', $shortUrl['tags']);
-            } else {
-                unset($shortUrl['tags']);
             }
 
-            $rows[] = array_values(array_intersect_key($shortUrl, array_flip(self::COLUMNS_WHITELIST)));
+            $rows[] = map($columnsToShow, fn (string $prop) => $shortUrl[$prop]);
         }
 
         ShlinkTable::fromOutput($output)->render($headers, $rows, $all ? null : $this->formatCurrentPageMessage(

@@ -64,7 +64,9 @@
                         "dateCreated-ASC",
                         "dateCreated-DESC",
                         "visits-ASC",
-                        "visits-DESC"
+                        "visits-DESC",
+                        "title-ASC",
+                        "title-DESC"
                     ]
                 }
             },
