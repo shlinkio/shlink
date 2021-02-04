@@ -61,8 +61,8 @@ class ShortUrlService implements ShortUrlServiceInterface
         ShortUrlEdit $shortUrlEdit,
         ?ApiKey $apiKey = null
     ): ShortUrl {
-        if ($shortUrlEdit->hasLongUrl()) {
-            $this->urlValidator->validateUrl($shortUrlEdit->longUrl(), $shortUrlEdit->doValidateUrl());
+        if ($shortUrlEdit->longUrlWasProvided()) {
+            $shortUrlEdit = $this->processTitleAndValidateUrl($shortUrlEdit);
         }
 
         $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
@@ -71,5 +71,16 @@ class ShortUrlService implements ShortUrlServiceInterface
         $this->em->flush();
 
         return $shortUrl;
+    }
+
+    private function processTitleAndValidateUrl(ShortUrlEdit $shortUrlEdit): ShortUrlEdit
+    {
+        if ($shortUrlEdit->titleWasProvided()) {
+            $this->urlValidator->validateUrl($shortUrlEdit->longUrl(), $shortUrlEdit->doValidateUrl());
+            return $shortUrlEdit;
+        }
+
+        $title = $this->urlValidator->validateUrlWithTitle($shortUrlEdit->longUrl(), $shortUrlEdit->doValidateUrl());
+        return $title === null ? $shortUrlEdit : $shortUrlEdit->withResolvedTitle($title);
     }
 }

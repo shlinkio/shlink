@@ -102,7 +102,7 @@ class ShortUrlServiceTest extends TestCase
         self::assertEquals($shortUrlEdit->longUrl() ?? $originalLongUrl, $shortUrl->getLongUrl());
         $findShortUrl->shouldHaveBeenCalled();
         $flush->shouldHaveBeenCalled();
-        $this->urlValidator->validateUrl(
+        $this->urlValidator->validateUrlWithTitle(
             $shortUrlEdit->longUrl(),
             $shortUrlEdit->doValidateUrl(),
         )->shouldHaveBeenCalledTimes($expectedValidateCalls);

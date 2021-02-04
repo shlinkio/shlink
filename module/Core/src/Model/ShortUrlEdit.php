@@ -27,6 +27,7 @@ final class ShortUrlEdit
     private array $tags = [];
     private bool $titlePropWasProvided = false;
     private ?string $title = null;
+    private bool $titleWasAutoResolved = false;
     private ?bool $validateUrl = null;
 
     private function __construct()
@@ -74,7 +75,7 @@ final class ShortUrlEdit
         return $this->longUrl;
     }
 
-    public function hasLongUrl(): bool
+    public function longUrlWasProvided(): bool
     {
         return $this->longUrlPropWasProvided && $this->longUrl !== null;
     }
@@ -84,7 +85,7 @@ final class ShortUrlEdit
         return $this->validSince;
     }
 
-    public function hasValidSince(): bool
+    public function validSinceWasProvided(): bool
     {
         return $this->validSincePropWasProvided;
     }
@@ -94,7 +95,7 @@ final class ShortUrlEdit
         return $this->validUntil;
     }
 
-    public function hasValidUntil(): bool
+    public function validUntilWasProvided(): bool
     {
         return $this->validUntilPropWasProvided;
     }
@@ -104,7 +105,7 @@ final class ShortUrlEdit
         return $this->maxVisits;
     }
 
-    public function hasMaxVisits(): bool
+    public function maxVisitsWasProvided(): bool
     {
         return $this->maxVisitsPropWasProvided;
     }
@@ -117,7 +118,7 @@ final class ShortUrlEdit
         return $this->tags;
     }
 
-    public function hasTags(): bool
+    public function tagsWereProvided(): bool
     {
         return $this->tagsPropWasProvided;
     }
@@ -127,9 +128,23 @@ final class ShortUrlEdit
         return $this->title;
     }
 
-    public function hasTitle(): bool
+    public function titleWasProvided(): bool
     {
         return $this->titlePropWasProvided;
+    }
+
+    public function titleWasAutoResolved(): bool
+    {
+        return $this->titleWasAutoResolved;
+    }
+
+    public function withResolvedTitle(string $title): self
+    {
+        $copy = clone $this;
+        $copy->title = $title;
+        $copy->titleWasAutoResolved = true;
+
+        return $copy;
     }
 
     public function doValidateUrl(): ?bool

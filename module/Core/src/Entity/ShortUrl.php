@@ -171,24 +171,29 @@ class ShortUrl extends AbstractEntity
         ShortUrlEdit $shortUrlEdit,
         ?ShortUrlRelationResolverInterface $relationResolver = null
     ): void {
-        if ($shortUrlEdit->hasValidSince()) {
+        if ($shortUrlEdit->validSinceWasProvided()) {
             $this->validSince = $shortUrlEdit->validSince();
         }
-        if ($shortUrlEdit->hasValidUntil()) {
+        if ($shortUrlEdit->validUntilWasProvided()) {
             $this->validUntil = $shortUrlEdit->validUntil();
         }
-        if ($shortUrlEdit->hasMaxVisits()) {
+        if ($shortUrlEdit->maxVisitsWasProvided()) {
             $this->maxVisits = $shortUrlEdit->maxVisits();
         }
-        if ($shortUrlEdit->hasLongUrl()) {
-            $this->longUrl = $shortUrlEdit->longUrl();
+        if ($shortUrlEdit->longUrlWasProvided()) {
+            $this->longUrl = $shortUrlEdit->longUrl() ?? $this->longUrl;
         }
-        if ($shortUrlEdit->hasTags()) {
+        if ($shortUrlEdit->tagsWereProvided()) {
             $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
             $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags());
         }
-        if ($shortUrlEdit->hasTitle()) {
+        if (
+            $this->title === null
+            || $shortUrlEdit->titleWasProvided()
+            || ($this->titleWasAutoResolved && $shortUrlEdit->titleWasAutoResolved())
+        ) {
             $this->title = $shortUrlEdit->title();
+            $this->titleWasAutoResolved = $shortUrlEdit->titleWasAutoResolved();
         }
     }
 
