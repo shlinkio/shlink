@@ -21,8 +21,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function array_flip;
 use function array_intersect_key;
+use function array_pad;
 use function array_values;
-use function count;
 use function explode;
 use function implode;
 use function sprintf;
@@ -79,7 +79,8 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
                 'order-by',
                 'o',
                 InputOption::VALUE_REQUIRED,
-                'The field from which we want to order by. Pass ASC or DESC separated by a comma.',
+                'The field from which you want to order by. '
+                    . 'Define ordering dir by passing ASC or DESC after "," or "-".',
             )
             ->addOptionWithDeprecatedFallback(
                 'show-tags',
@@ -178,17 +179,14 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         return $result;
     }
 
-    /**
-     * @return array|string|null
-     */
-    private function processOrderBy(InputInterface $input)
+    private function processOrderBy(InputInterface $input): ?string
     {
         $orderBy = $this->getOptionWithDeprecatedFallback($input, 'order-by');
         if (empty($orderBy)) {
             return null;
         }
 
-        $orderBy = explode(',', $orderBy);
-        return count($orderBy) === 1 ? $orderBy[0] : [$orderBy[0] => $orderBy[1]];
+        [$field, $dir] = array_pad(explode(',', $orderBy), 2, null);
+        return $dir === null ? $field : sprintf('%s-%s', $field, $dir);
     }
 }
