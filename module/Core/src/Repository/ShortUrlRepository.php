@@ -120,6 +120,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
                ->andWhere($qb->expr()->orX(
                    $qb->expr()->like('s.longUrl', ':searchPattern'),
                    $qb->expr()->like('s.shortCode', ':searchPattern'),
+                   $qb->expr()->like('s.title', ':searchPattern'),
                    $qb->expr()->like('t.name', ':searchPattern'),
                    $qb->expr()->like('d.authority', ':searchPattern'),
                ))

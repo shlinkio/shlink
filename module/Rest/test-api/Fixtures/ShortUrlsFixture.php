@@ -34,7 +34,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
                 'apiKey' => $authorApiKey,
                 'longUrl' => 'https://shlink.io',
                 'tags' => ['foo'],
-                'title' => 'Shlink',
+                'title' => 'My cool title',
             ]), $relationResolver),
             '2018-05-01',
         );
