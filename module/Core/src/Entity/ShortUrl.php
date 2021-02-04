@@ -89,6 +89,7 @@ class ShortUrl extends AbstractEntity
             ShortUrlInputFilter::LONG_URL => $url->longUrl(),
             ShortUrlInputFilter::DOMAIN => $url->domain(),
             ShortUrlInputFilter::TAGS => $url->tags(),
+            ShortUrlInputFilter::TITLE => $url->title(),
             ShortUrlInputFilter::VALIDATE_URL => false,
         ];
         if ($importShortCode) {
