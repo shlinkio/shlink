@@ -11,23 +11,23 @@ use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
-use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 
 class UrlShortener implements UrlShortenerInterface
 {
     private EntityManagerInterface $em;
-    private UrlValidatorInterface $urlValidator;
+    private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
     private ShortUrlRelationResolverInterface $relationResolver;
     private ShortCodeHelperInterface $shortCodeHelper;
 
     public function __construct(
-        UrlValidatorInterface $urlValidator,
+        ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
         EntityManagerInterface $em,
         ShortUrlRelationResolverInterface $relationResolver,
         ShortCodeHelperInterface $shortCodeHelper
     ) {
-        $this->urlValidator = $urlValidator;
+        $this->titleResolutionHelper = $titleResolutionHelper;
         $this->em = $em;
         $this->relationResolver = $relationResolver;
         $this->shortCodeHelper = $shortCodeHelper;
@@ -45,7 +45,8 @@ class UrlShortener implements UrlShortenerInterface
             return $existingShortUrl;
         }
 
-        $meta = $this->processTitleAndValidateUrl($meta);
+        /** @var ShortUrlMeta $meta */
+        $meta = $this->titleResolutionHelper->processTitleAndValidateUrl($meta);
 
         return $this->em->transactional(function () use ($meta) {
             $shortUrl = ShortUrl::fromMeta($meta, $this->relationResolver);
@@ -81,16 +82,5 @@ class UrlShortener implements UrlShortenerInterface
 
             throw NonUniqueSlugException::fromSlug($shortUrlToBeCreated->getShortCode(), $domainAuthority);
         }
-    }
-
-    private function processTitleAndValidateUrl(ShortUrlMeta $meta): ShortUrlMeta
-    {
-        if ($meta->hasTitle()) {
-            $this->urlValidator->validateUrl($meta->getLongUrl(), $meta->doValidateUrl());
-            return $meta;
-        }
-
-        $title = $this->urlValidator->validateUrlWithTitle($meta->getLongUrl(), $meta->doValidateUrl());
-        return $title === null ? $meta : $meta->withResolvedTitle($title);
     }
 }

@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -15,7 +16,7 @@ use function Shlinkio\Shlink\Core\parseDateField;
 
 use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
 
-final class ShortUrlMeta
+final class ShortUrlMeta implements TitleResolutionModelInterface
 {
     private string $longUrl;
     private ?Chronos $validSince = null;

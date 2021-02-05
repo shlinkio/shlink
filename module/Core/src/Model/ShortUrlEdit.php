@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 
 use function array_key_exists;
@@ -13,7 +14,7 @@ use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
 use function Shlinkio\Shlink\Core\parseDateField;
 
-final class ShortUrlEdit
+final class ShortUrlEdit implements TitleResolutionModelInterface
 {
     private bool $longUrlPropWasProvided = false;
     private ?string $longUrl = null;
@@ -75,6 +76,11 @@ final class ShortUrlEdit
         return $this->longUrl;
     }
 
+    public function getLongUrl(): string
+    {
+        return $this->longUrl() ?? '';
+    }
+
     public function longUrlWasProvided(): bool
     {
         return $this->longUrlPropWasProvided && $this->longUrl !== null;
@@ -131,6 +137,11 @@ final class ShortUrlEdit
     public function titleWasProvided(): bool
     {
         return $this->titlePropWasProvided;
+    }
+
+    public function hasTitle(): bool
+    {
+        return $this->titleWasProvided();
     }
 
     public function titleWasAutoResolved(): bool

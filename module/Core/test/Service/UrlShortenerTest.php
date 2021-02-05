@@ -16,8 +16,8 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
-use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 
 class UrlShortenerTest extends TestCase
 {
@@ -25,12 +25,13 @@ class UrlShortenerTest extends TestCase
 
     private UrlShortener $urlShortener;
     private ObjectProphecy $em;
-    private ObjectProphecy $urlValidator;
+    private ObjectProphecy $titleResolutionHelper;
     private ObjectProphecy $shortCodeHelper;
 
     public function setUp(): void
     {
-        $this->urlValidator = $this->prophesize(UrlValidatorInterface::class);
+        $this->titleResolutionHelper = $this->prophesize(ShortUrlTitleResolutionHelperInterface::class);
+        $this->titleResolutionHelper->processTitleAndValidateUrl(Argument::cetera())->willReturnArgument();
 
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->em->persist(Argument::any())->will(function ($arguments): void {
@@ -52,47 +53,22 @@ class UrlShortenerTest extends TestCase
         $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
 
         $this->urlShortener = new UrlShortener(
-            $this->urlValidator->reveal(),
+            $this->titleResolutionHelper->reveal(),
             $this->em->reveal(),
             new SimpleShortUrlRelationResolver(),
             $this->shortCodeHelper->reveal(),
         );
     }
 
-    /**
-     * @test
-     * @dataProvider provideTitles
-     */
-    public function urlIsProperlyShortened(?string $title, int $validateWithTitleCallsNum, int $validateCallsNum): void
+    /** @test */
+    public function urlIsProperlyShortened(): void
     {
         $longUrl = 'http://foobar.com/12345/hello?foo=bar';
-        $shortUrl = $this->urlShortener->shorten(ShortUrlMeta::fromRawData(['longUrl' => $longUrl, 'title' => $title]));
+        $meta = ShortUrlMeta::fromRawData(['longUrl' => $longUrl]);
+        $shortUrl = $this->urlShortener->shorten($meta);
 
-        self::assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
-        $this->urlValidator->validateUrlWithTitle($longUrl, null)->shouldHaveBeenCalledTimes(
-            $validateWithTitleCallsNum,
-        );
-        $this->urlValidator->validateUrl($longUrl, null)->shouldHaveBeenCalledTimes($validateCallsNum);
-    }
-
-    /**
-     * @test
-     * @dataProvider provideTitles
-     */
-    public function urlIsProperlyShortenedWithExpectedResolvedTitle(?string $title): void
-    {
-        $validateWithTitle = $this->urlValidator->validateUrlWithTitle(Argument::cetera())->willReturn($title);
-
-        $shortUrl = $this->urlShortener->shorten(ShortUrlMeta::fromRawData(['longUrl' => 'foo']));
-
-        self::assertEquals($title, $shortUrl->getTitle());
-        $validateWithTitle->shouldHaveBeenCalledOnce();
-    }
-
-    public function provideTitles(): iterable
-    {
-        yield 'no title' => [null, 1, 0];
-        yield 'title' => ['link title', 0, 1];
+        self::assertEquals($longUrl, $shortUrl->getLongUrl());
+        $this->titleResolutionHelper->processTitleAndValidateUrl($meta)->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
@@ -123,8 +99,7 @@ class UrlShortenerTest extends TestCase
         $findExisting->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
         $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->urlValidator->validateUrl(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->urlValidator->validateUrlWithTitle(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->titleResolutionHelper->processTitleAndValidateUrl(Argument::cetera())->shouldNotHaveBeenCalled();
         self::assertSame($expected, $result);
     }
 
