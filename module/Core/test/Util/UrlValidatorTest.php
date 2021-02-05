@@ -87,6 +87,7 @@ class UrlValidatorTest extends TestCase
     ): void {
         $request = $this->httpClient->request(Argument::cetera())->willThrow(ClientException::class);
         $this->options->validateUrl = $validateUrl;
+        $this->options->autoResolveTitles = true;
 
         $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', $doValidate);
 
@@ -107,10 +108,10 @@ class UrlValidatorTest extends TestCase
         $request = $this->httpClient->request(Argument::cetera())->willReturn($this->respWithTitle());
         $this->options->autoResolveTitles = false;
 
-        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
+        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', false);
 
         self::assertNull($result);
-        $request->shouldHaveBeenCalledOnce();
+        $request->shouldNotHaveBeenCalled();
     }
 
     /** @test */
