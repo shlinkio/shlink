@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ## [Unreleased]
 ### Added
 * [#856](https://github.com/shlinkio/shlink/issues/856) Added PHP 8.0 support.
+* [#941](https://github.com/shlinkio/shlink/issues/856) Added support to provide a title for every short URL.
+
+    The title can also be automatically resolved from the long URL, when no title was explicitly provided, but this option needs to be opted in.
 
 ### Changed
 * [#977](https://github.com/shlinkio/shlink/issues/977) Migrated from `laminas/laminas-paginator` to `pagerfanta/core` to handle pagination.

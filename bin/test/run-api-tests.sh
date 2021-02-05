@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 export APP_ENV=test
-export DB_DRIVER=mysql
+export DB_DRIVER=postgres
 export TEST_ENV=api
 
 # Try to stop server just in case it hanged in last execution

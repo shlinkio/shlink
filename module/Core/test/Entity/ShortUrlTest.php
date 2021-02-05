@@ -64,7 +64,7 @@ class ShortUrlTest extends TestCase
     {
         yield 'no custom slug' => [ShortUrl::createEmpty()];
         yield 'imported with custom slug' => [
-            ShortUrl::fromImport(new ImportedShlinkUrl('', '', [], Chronos::now(), null, 'custom-slug'), true),
+            ShortUrl::fromImport(new ImportedShlinkUrl('', '', [], Chronos::now(), null, 'custom-slug', null), true),
         ];
     }
 

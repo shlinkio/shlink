@@ -8,8 +8,14 @@ use Fig\Http\Message\RequestMethodInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
+use Psr\Http\Message\ResponseInterface;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
+
+use function preg_match;
+use function trim;
+
+use const Shlinkio\Shlink\Core\TITLE_TAG_VALUE;
 
 class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
 {
@@ -35,13 +41,39 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
             return;
         }
 
+        $this->validateUrlAndGetResponse($url, true);
+    }
+
+    public function validateUrlWithTitle(string $url, ?bool $doValidate): ?string
+    {
+        $doValidate = $doValidate ?? $this->options->isUrlValidationEnabled();
+        if (! $doValidate && ! $this->options->autoResolveTitles()) {
+            return null;
+        }
+
+        $response = $this->validateUrlAndGetResponse($url, $doValidate);
+        if ($response === null) {
+            return null;
+        }
+
+        $body = $response->getBody()->__toString();
+        preg_match(TITLE_TAG_VALUE, $body, $matches);
+        return isset($matches[1]) ? trim($matches[1]) : null;
+    }
+
+    private function validateUrlAndGetResponse(string $url, bool $throwOnError): ?ResponseInterface
+    {
         try {
-            $this->httpClient->request(self::METHOD_GET, $url, [
+            return $this->httpClient->request(self::METHOD_GET, $url, [
                 RequestOptions::ALLOW_REDIRECTS => ['max' => self::MAX_REDIRECTS],
                 RequestOptions::IDN_CONVERSION => true,
             ]);
         } catch (GuzzleException $e) {
-            throw InvalidUrlException::fromUrl($url, $e);
+            if ($throwOnError) {
+                throw InvalidUrlException::fromUrl($url, $e);
+            }
+
+            return null;
         }
     }
 }

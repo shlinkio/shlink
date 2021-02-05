@@ -16,8 +16,8 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
-use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 
 class UrlShortenerTest extends TestCase
 {
@@ -25,16 +25,13 @@ class UrlShortenerTest extends TestCase
 
     private UrlShortener $urlShortener;
     private ObjectProphecy $em;
-    private ObjectProphecy $urlValidator;
+    private ObjectProphecy $titleResolutionHelper;
     private ObjectProphecy $shortCodeHelper;
 
     public function setUp(): void
     {
-        $this->urlValidator = $this->prophesize(UrlValidatorInterface::class);
-        $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar', null)->will(
-            function (): void {
-            },
-        );
+        $this->titleResolutionHelper = $this->prophesize(ShortUrlTitleResolutionHelperInterface::class);
+        $this->titleResolutionHelper->processTitleAndValidateUrl(Argument::cetera())->willReturnArgument();
 
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->em->persist(Argument::any())->will(function ($arguments): void {
@@ -56,7 +53,7 @@ class UrlShortenerTest extends TestCase
         $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
 
         $this->urlShortener = new UrlShortener(
-            $this->urlValidator->reveal(),
+            $this->titleResolutionHelper->reveal(),
             $this->em->reveal(),
             new SimpleShortUrlRelationResolver(),
             $this->shortCodeHelper->reveal(),
@@ -66,11 +63,12 @@ class UrlShortenerTest extends TestCase
     /** @test */
     public function urlIsProperlyShortened(): void
     {
-        $shortUrl = $this->urlShortener->shorten(
-            ShortUrlMeta::fromRawData(['longUrl' => 'http://foobar.com/12345/hello?foo=bar']),
-        );
+        $longUrl = 'http://foobar.com/12345/hello?foo=bar';
+        $meta = ShortUrlMeta::fromRawData(['longUrl' => $longUrl]);
+        $shortUrl = $this->urlShortener->shorten($meta);
 
-        self::assertEquals('http://foobar.com/12345/hello?foo=bar', $shortUrl->getLongUrl());
+        self::assertEquals($longUrl, $shortUrl->getLongUrl());
+        $this->titleResolutionHelper->processTitleAndValidateUrl($meta)->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
@@ -101,7 +99,7 @@ class UrlShortenerTest extends TestCase
         $findExisting->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
         $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->urlValidator->validateUrl(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->titleResolutionHelper->processTitleAndValidateUrl(Argument::cetera())->shouldNotHaveBeenCalled();
         self::assertSame($expected, $result);
     }
 

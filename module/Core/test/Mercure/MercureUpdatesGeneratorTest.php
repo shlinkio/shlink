@@ -28,9 +28,13 @@ class MercureUpdatesGeneratorTest extends TestCase
      * @test
      * @dataProvider provideMethod
      */
-    public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic): void
+    public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic, ?string $title): void
     {
-        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['customSlug' => 'foo', 'longUrl' => '']));
+        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+            'customSlug' => 'foo',
+            'longUrl' => '',
+            'title' => $title,
+        ]));
         $visit = new Visit($shortUrl, Visitor::emptyInstance());
 
         $update = $this->generator->{$method}($visit);
@@ -50,6 +54,7 @@ class MercureUpdatesGeneratorTest extends TestCase
                     'maxVisits' => null,
                 ],
                 'domain' => null,
+                'title' => $title,
             ],
             'visit' => [
                 'referer' => '',
@@ -62,7 +67,7 @@ class MercureUpdatesGeneratorTest extends TestCase
 
     public function provideMethod(): iterable
     {
-        yield 'newVisitUpdate' => ['newVisitUpdate', 'https://shlink.io/new-visit'];
-        yield 'newShortUrlVisitUpdate' => ['newShortUrlVisitUpdate', 'https://shlink.io/new-visit/foo'];
+        yield 'newVisitUpdate' => ['newVisitUpdate', 'https://shlink.io/new-visit', 'the cool title'];
+        yield 'newShortUrlVisitUpdate' => ['newShortUrlVisitUpdate', 'https://shlink.io/new-visit/foo', null];
     }
 }

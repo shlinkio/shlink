@@ -15,26 +15,26 @@ use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
-use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlService implements ShortUrlServiceInterface
 {
     private ORM\EntityManagerInterface $em;
     private ShortUrlResolverInterface $urlResolver;
-    private UrlValidatorInterface $urlValidator;
+    private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
     private ShortUrlRelationResolverInterface $relationResolver;
 
     public function __construct(
         ORM\EntityManagerInterface $em,
         ShortUrlResolverInterface $urlResolver,
-        UrlValidatorInterface $urlValidator,
+        ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
         ShortUrlRelationResolverInterface $relationResolver
     ) {
         $this->em = $em;
         $this->urlResolver = $urlResolver;
-        $this->urlValidator = $urlValidator;
+        $this->titleResolutionHelper = $titleResolutionHelper;
         $this->relationResolver = $relationResolver;
     }
 
@@ -61,8 +61,9 @@ class ShortUrlService implements ShortUrlServiceInterface
         ShortUrlEdit $shortUrlEdit,
         ?ApiKey $apiKey = null
     ): ShortUrl {
-        if ($shortUrlEdit->hasLongUrl()) {
-            $this->urlValidator->validateUrl($shortUrlEdit->longUrl(), $shortUrlEdit->doValidateUrl());
+        if ($shortUrlEdit->longUrlWasProvided()) {
+            /** @var ShortUrlEdit $shortUrlEdit */
+            $shortUrlEdit = $this->titleResolutionHelper->processTitleAndValidateUrl($shortUrlEdit);
         }
 
         $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);

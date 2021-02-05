@@ -58,9 +58,9 @@ class ImportedLinksProcessorTest extends TestCase
     public function newUrlsWithNoErrorsAreAllPersisted(): void
     {
         $urls = [
-            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), null, 'foo'),
-            new ImportedShlinkUrl('', 'bar', [], Chronos::now(), null, 'bar'),
-            new ImportedShlinkUrl('', 'baz', [], Chronos::now(), null, 'baz'),
+            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), null, 'foo', null),
+            new ImportedShlinkUrl('', 'bar', [], Chronos::now(), null, 'bar', 'foo'),
+            new ImportedShlinkUrl('', 'baz', [], Chronos::now(), null, 'baz', null),
         ];
         $expectedCalls = count($urls);
 
@@ -80,11 +80,11 @@ class ImportedLinksProcessorTest extends TestCase
     public function alreadyImportedUrlsAreSkipped(): void
     {
         $urls = [
-            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), null, 'foo'),
-            new ImportedShlinkUrl('', 'bar', [], Chronos::now(), null, 'bar'),
-            new ImportedShlinkUrl('', 'baz', [], Chronos::now(), null, 'baz'),
-            new ImportedShlinkUrl('', 'baz2', [], Chronos::now(), null, 'baz2'),
-            new ImportedShlinkUrl('', 'baz3', [], Chronos::now(), null, 'baz3'),
+            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), null, 'foo', null),
+            new ImportedShlinkUrl('', 'bar', [], Chronos::now(), null, 'bar', null),
+            new ImportedShlinkUrl('', 'baz', [], Chronos::now(), null, 'baz', null),
+            new ImportedShlinkUrl('', 'baz2', [], Chronos::now(), null, 'baz2', null),
+            new ImportedShlinkUrl('', 'baz3', [], Chronos::now(), null, 'baz3', null),
         ];
         $contains = fn (string $needle) => fn (string $text) => str_contains($text, $needle);
 
@@ -110,11 +110,11 @@ class ImportedLinksProcessorTest extends TestCase
     public function nonUniqueShortCodesAreAskedToUser(): void
     {
         $urls = [
-            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), null, 'foo'),
-            new ImportedShlinkUrl('', 'bar', [], Chronos::now(), null, 'bar'),
-            new ImportedShlinkUrl('', 'baz', [], Chronos::now(), null, 'baz'),
-            new ImportedShlinkUrl('', 'baz2', [], Chronos::now(), null, 'baz2'),
-            new ImportedShlinkUrl('', 'baz3', [], Chronos::now(), null, 'baz3'),
+            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), null, 'foo', null),
+            new ImportedShlinkUrl('', 'bar', [], Chronos::now(), null, 'bar', null),
+            new ImportedShlinkUrl('', 'baz', [], Chronos::now(), null, 'baz', 'foo'),
+            new ImportedShlinkUrl('', 'baz2', [], Chronos::now(), null, 'baz2', null),
+            new ImportedShlinkUrl('', 'baz3', [], Chronos::now(), null, 'baz3', 'bar'),
         ];
         $contains = fn (string $needle) => fn (string $text) => str_contains($text, $needle);
 

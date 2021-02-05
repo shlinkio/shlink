@@ -31,6 +31,7 @@ class ShortUrlInputFilter extends InputFilter
     public const VALIDATE_URL = 'validateUrl';
     public const API_KEY = 'apiKey';
     public const TAGS = 'tags';
+    public const TITLE = 'title';
 
     private function __construct(array $data, bool $requireLongUrl)
     {
@@ -87,6 +88,8 @@ class ShortUrlInputFilter extends InputFilter
 
         $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
 
+        // This cannot be defined as a boolean input because it can actually have 3 values, true, false and null.
+        // Defining it as boolean will make null fall back to false, which is not the desired behavior.
         $this->add($this->createInput(self::VALIDATE_URL, false));
 
         $domain = $this->createInput(self::DOMAIN, false);
@@ -100,5 +103,7 @@ class ShortUrlInputFilter extends InputFilter
         $this->add($apiKeyInput);
 
         $this->add($this->createTagsInput(self::TAGS, false));
+
+        $this->add($this->createInput(self::TITLE, false));
     }
 }

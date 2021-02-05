@@ -55,6 +55,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         $fieldName = $orderBy->orderField();
         $order = $orderBy->orderDirection();
 
+        // visitsCount and visitCount are deprecated. Only visits should work
         if (contains(['visits', 'visitsCount', 'visitCount'], $fieldName)) {
             $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
                ->leftJoin('s.visits', 'v')
@@ -66,10 +67,11 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         // Map public field names to column names
         $fieldNameMap = [
-            'originalUrl' => 'longUrl',
+            'originalUrl' => 'longUrl', // Deprecated
             'longUrl' => 'longUrl',
             'shortCode' => 'shortCode',
             'dateCreated' => 'dateCreated',
+            'title' => 'title',
         ];
         if (array_key_exists($fieldName, $fieldNameMap)) {
             $qb->orderBy('s.' . $fieldNameMap[$fieldName], $order);
@@ -120,6 +122,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
                ->andWhere($qb->expr()->orX(
                    $qb->expr()->like('s.longUrl', ':searchPattern'),
                    $qb->expr()->like('s.shortCode', ':searchPattern'),
+                   $qb->expr()->like('s.title', ':searchPattern'),
                    $qb->expr()->like('t.name', ':searchPattern'),
                    $qb->expr()->like('d.authority', ':searchPattern'),
                ))

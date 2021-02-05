@@ -9,6 +9,7 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Response;
+use Laminas\Diactoros\Stream;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -76,10 +77,60 @@ class UrlValidatorTest extends TestCase
         $request->shouldNotHaveBeenCalled();
     }
 
+    /**
+     * @test
+     * @dataProvider provideDisabledCombinations
+     */
+    public function validateUrlWithTitleReturnsNullWhenRequestFailsAndValidationIsDisabled(
+        ?bool $doValidate,
+        bool $validateUrl
+    ): void {
+        $request = $this->httpClient->request(Argument::cetera())->willThrow(ClientException::class);
+        $this->options->validateUrl = $validateUrl;
+        $this->options->autoResolveTitles = true;
+
+        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', $doValidate);
+
+        self::assertNull($result);
+        $request->shouldHaveBeenCalledOnce();
+    }
+
     public function provideDisabledCombinations(): iterable
     {
         yield 'config is disabled and no runtime option is provided' => [null, false];
         yield 'config is enabled but runtime option is disabled' => [false, true];
         yield 'both config and runtime option are disabled' => [false, false];
+    }
+
+    /** @test */
+    public function validateUrlWithTitleReturnsNullWhenAutoResolutionIsDisabled(): void
+    {
+        $request = $this->httpClient->request(Argument::cetera())->willReturn($this->respWithTitle());
+        $this->options->autoResolveTitles = false;
+
+        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', false);
+
+        self::assertNull($result);
+        $request->shouldNotHaveBeenCalled();
+    }
+
+    /** @test */
+    public function validateUrlWithTitleResolvesTitleWhenAutoResolutionIsEnabled(): void
+    {
+        $request = $this->httpClient->request(Argument::cetera())->willReturn($this->respWithTitle());
+        $this->options->autoResolveTitles = true;
+
+        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
+
+        self::assertEquals('Resolved title', $result);
+        $request->shouldHaveBeenCalledOnce();
+    }
+
+    private function respWithTitle(): Response
+    {
+        $body = new Stream('php://temp', 'wr');
+        $body->write('<title>  Resolved title</title>');
+
+        return new Response($body);
     }
 }

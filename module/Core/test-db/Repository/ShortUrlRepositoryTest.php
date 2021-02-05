@@ -418,7 +418,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     public function importedShortUrlsAreSearchedAsExpected(): void
     {
         $buildImported = static fn (string $shortCode, ?String $domain = null) =>
-            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), $domain, $shortCode);
+            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), $domain, $shortCode, null);
 
         $shortUrlWithoutDomain = ShortUrl::fromImport($buildImported('my-cool-slug'), true);
         $this->getEntityManager()->persist($shortUrlWithoutDomain);

@@ -11,24 +11,23 @@ use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
-use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
-use Throwable;
 
 class UrlShortener implements UrlShortenerInterface
 {
     private EntityManagerInterface $em;
-    private UrlValidatorInterface $urlValidator;
+    private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
     private ShortUrlRelationResolverInterface $relationResolver;
     private ShortCodeHelperInterface $shortCodeHelper;
 
     public function __construct(
-        UrlValidatorInterface $urlValidator,
+        ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
         EntityManagerInterface $em,
         ShortUrlRelationResolverInterface $relationResolver,
         ShortCodeHelperInterface $shortCodeHelper
     ) {
-        $this->urlValidator = $urlValidator;
+        $this->titleResolutionHelper = $titleResolutionHelper;
         $this->em = $em;
         $this->relationResolver = $relationResolver;
         $this->shortCodeHelper = $shortCodeHelper;
@@ -37,7 +36,6 @@ class UrlShortener implements UrlShortenerInterface
     /**
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
-     * @throws Throwable
      */
     public function shorten(ShortUrlMeta $meta): ShortUrl
     {
@@ -47,7 +45,8 @@ class UrlShortener implements UrlShortenerInterface
             return $existingShortUrl;
         }
 
-        $this->urlValidator->validateUrl($meta->getLongUrl(), $meta->doValidateUrl());
+        /** @var ShortUrlMeta $meta */
+        $meta = $this->titleResolutionHelper->processTitleAndValidateUrl($meta);
 
         return $this->em->transactional(function () use ($meta) {
             $shortUrl = ShortUrl::fromMeta($meta, $this->relationResolver);

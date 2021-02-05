@@ -84,4 +84,15 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->build();
 
     $builder->addUniqueConstraint(['short_code', 'domain_id'], 'unique_short_code_plus_domain');
+
+    $builder->createField('title', Types::STRING)
+            ->columnName('title')
+            ->length(512)
+            ->nullable()
+            ->build();
+
+    $builder->createField('titleWasAutoResolved', Types::BOOLEAN)
+            ->columnName('title_was_auto_resolved')
+            ->option('default', false)
+            ->build();
 };

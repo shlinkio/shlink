@@ -38,6 +38,8 @@ class ShortUrl extends AbstractEntity
     private ?string $importSource = null;
     private ?string $importOriginalShortCode = null;
     private ?ApiKey $authorApiKey = null;
+    private ?string $title = null;
+    private bool $titleWasAutoResolved = false;
 
     private function __construct()
     {
@@ -72,6 +74,8 @@ class ShortUrl extends AbstractEntity
         $instance->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode($instance->shortCodeLength);
         $instance->domain = $relationResolver->resolveDomain($meta->getDomain());
         $instance->authorApiKey = $meta->getApiKey();
+        $instance->title = $meta->getTitle();
+        $instance->titleWasAutoResolved = $meta->titleWasAutoResolved();
 
         return $instance;
     }
@@ -85,6 +89,7 @@ class ShortUrl extends AbstractEntity
             ShortUrlInputFilter::LONG_URL => $url->longUrl(),
             ShortUrlInputFilter::DOMAIN => $url->domain(),
             ShortUrlInputFilter::TAGS => $url->tags(),
+            ShortUrlInputFilter::TITLE => $url->title(),
             ShortUrlInputFilter::VALIDATE_URL => false,
         ];
         if ($importShortCode) {
@@ -157,25 +162,38 @@ class ShortUrl extends AbstractEntity
         return $this->maxVisits;
     }
 
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
     public function update(
         ShortUrlEdit $shortUrlEdit,
         ?ShortUrlRelationResolverInterface $relationResolver = null
     ): void {
-        if ($shortUrlEdit->hasValidSince()) {
+        if ($shortUrlEdit->validSinceWasProvided()) {
             $this->validSince = $shortUrlEdit->validSince();
         }
-        if ($shortUrlEdit->hasValidUntil()) {
+        if ($shortUrlEdit->validUntilWasProvided()) {
             $this->validUntil = $shortUrlEdit->validUntil();
         }
-        if ($shortUrlEdit->hasMaxVisits()) {
+        if ($shortUrlEdit->maxVisitsWasProvided()) {
             $this->maxVisits = $shortUrlEdit->maxVisits();
         }
-        if ($shortUrlEdit->hasLongUrl()) {
-            $this->longUrl = $shortUrlEdit->longUrl();
+        if ($shortUrlEdit->longUrlWasProvided()) {
+            $this->longUrl = $shortUrlEdit->longUrl() ?? $this->longUrl;
         }
-        if ($shortUrlEdit->hasTags()) {
+        if ($shortUrlEdit->tagsWereProvided()) {
             $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
             $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags());
+        }
+        if (
+            $this->title === null
+            || $shortUrlEdit->titleWasProvided()
+            || ($this->titleWasAutoResolved && $shortUrlEdit->titleWasAutoResolved())
+        ) {
+            $this->title = $shortUrlEdit->title();
+            $this->titleWasAutoResolved = $shortUrlEdit->titleWasAutoResolved();
         }
     }
 

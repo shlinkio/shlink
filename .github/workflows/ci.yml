@@ -189,7 +189,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Start database server
-        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
       - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:

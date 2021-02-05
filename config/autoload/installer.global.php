@@ -40,6 +40,7 @@ return [
             Option\UrlShortener\IpAnonymizationConfigOption::class,
             Option\UrlShortener\RedirectStatusCodeConfigOption::class,
             Option\UrlShortener\RedirectCacheLifeTimeConfigOption::class,
+            Option\UrlShortener\AutoResolveTitlesConfigOption::class,
         ],
 
         'installation_commands' => [

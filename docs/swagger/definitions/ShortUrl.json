@@ -34,7 +34,13 @@
         },
         "domain": {
             "type": "string",
+            "nullable": true,
             "description": "The domain in which the short URL was created. Null if it belongs to default domain."
+        },
+        "title": {
+            "type": "string",
+            "nullable": true,
+            "description": "A descriptive title of the short URL."
         }
     }
 }

@@ -19,6 +19,7 @@ return [
         'default_short_codes_length' => DEFAULT_SHORT_CODES_LENGTH,
         'redirect_status_code' => DEFAULT_REDIRECT_STATUS_CODE,
         'redirect_cache_lifetime' => DEFAULT_REDIRECT_CACHE_LIFETIME,
+        'auto_resolve_titles' => false,
     ],
 
 ];

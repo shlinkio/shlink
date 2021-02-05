@@ -12,4 +12,9 @@ interface UrlValidatorInterface
      * @throws InvalidUrlException
      */
     public function validateUrl(string $url, ?bool $doValidate): void;
+
+    /**
+     * @throws InvalidUrlException
+     */
+    public function validateUrlWithTitle(string $url, ?bool $doValidate): ?string;
 }

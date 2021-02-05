@@ -34,6 +34,7 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             'tags' => invoke($shortUrl->getTags(), '__toString'),
             'meta' => $this->buildMeta($shortUrl),
             'domain' => $shortUrl->getDomain(),
+            'title' => $shortUrl->getTitle(),
         ];
     }
 

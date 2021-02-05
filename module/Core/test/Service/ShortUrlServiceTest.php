@@ -17,8 +17,8 @@ use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
-use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
 
@@ -32,7 +32,7 @@ class ShortUrlServiceTest extends TestCase
     private ShortUrlService $service;
     private ObjectProphecy $em;
     private ObjectProphecy $urlResolver;
-    private ObjectProphecy $urlValidator;
+    private ObjectProphecy $titleResolutionHelper;
 
     public function setUp(): void
     {
@@ -41,12 +41,12 @@ class ShortUrlServiceTest extends TestCase
         $this->em->flush()->willReturn(null);
 
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
-        $this->urlValidator = $this->prophesize(UrlValidatorInterface::class);
+        $this->titleResolutionHelper = $this->prophesize(ShortUrlTitleResolutionHelperInterface::class);
 
         $this->service = new ShortUrlService(
             $this->em->reveal(),
             $this->urlResolver->reveal(),
-            $this->urlValidator->reveal(),
+            $this->titleResolutionHelper->reveal(),
             new SimpleShortUrlRelationResolver(),
         );
     }
@@ -93,6 +93,10 @@ class ShortUrlServiceTest extends TestCase
         )->willReturn($shortUrl);
         $flush = $this->em->flush()->willReturn(null);
 
+        $processTitle = $this->titleResolutionHelper->processTitleAndValidateUrl($shortUrlEdit)->willReturn(
+            $shortUrlEdit,
+        );
+
         $result = $this->service->updateShortUrl(new ShortUrlIdentifier('abc123'), $shortUrlEdit, $apiKey);
 
         self::assertSame($shortUrl, $result);
@@ -102,10 +106,7 @@ class ShortUrlServiceTest extends TestCase
         self::assertEquals($shortUrlEdit->longUrl() ?? $originalLongUrl, $shortUrl->getLongUrl());
         $findShortUrl->shouldHaveBeenCalled();
         $flush->shouldHaveBeenCalled();
-        $this->urlValidator->validateUrl(
-            $shortUrlEdit->longUrl(),
-            $shortUrlEdit->doValidateUrl(),
-        )->shouldHaveBeenCalledTimes($expectedValidateCalls);
+        $processTitle->shouldHaveBeenCalledTimes($expectedValidateCalls);
     }
 
     public function provideShortUrlEdits(): iterable

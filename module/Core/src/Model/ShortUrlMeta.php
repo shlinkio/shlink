@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -15,7 +16,7 @@ use function Shlinkio\Shlink\Core\parseDateField;
 
 use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
 
-final class ShortUrlMeta
+final class ShortUrlMeta implements TitleResolutionModelInterface
 {
     private string $longUrl;
     private ?Chronos $validSince = null;
@@ -28,6 +29,8 @@ final class ShortUrlMeta
     private ?bool $validateUrl = null;
     private ?ApiKey $apiKey = null;
     private array $tags = [];
+    private ?string $title = null;
+    private bool $titleWasAutoResolved = false;
 
     private function __construct()
     {
@@ -76,6 +79,7 @@ final class ShortUrlMeta
         ) ?? DEFAULT_SHORT_CODES_LENGTH;
         $this->apiKey = $inputFilter->getValue(ShortUrlInputFilter::API_KEY);
         $this->tags = $inputFilter->getValue(ShortUrlInputFilter::TAGS);
+        $this->title = $inputFilter->getValue(ShortUrlInputFilter::TITLE);
     }
 
     public function getLongUrl(): string
@@ -159,5 +163,29 @@ final class ShortUrlMeta
     public function getTags(): array
     {
         return $this->tags;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function hasTitle(): bool
+    {
+        return $this->title !== null;
+    }
+
+    public function titleWasAutoResolved(): bool
+    {
+        return $this->titleWasAutoResolved;
+    }
+
+    public function withResolvedTitle(string $title): self
+    {
+        $copy = clone $this;
+        $copy->title = $title;
+        $copy->titleWasAutoResolved = true;
+
+        return $copy;
     }
 }

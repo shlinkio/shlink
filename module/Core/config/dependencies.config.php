@@ -44,6 +44,7 @@ return [
 
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortUrlStringifier::class => ConfigAbstractFactory::class,
+            ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => ConfigAbstractFactory::class,
             ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
 
             Mercure\MercureUpdatesGenerator::class => ConfigAbstractFactory::class,
@@ -69,7 +70,7 @@ return [
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
         Service\UrlShortener::class => [
-            Util\UrlValidator::class,
+            ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
             'em',
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
             Service\ShortUrl\ShortCodeHelper::class,
@@ -82,7 +83,7 @@ return [
         Service\ShortUrlService::class => [
             'em',
             Service\ShortUrl\ShortUrlResolver::class,
-            Util\UrlValidator::class,
+            ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
         ],
         Visit\VisitLocator::class => ['em'],
@@ -122,6 +123,7 @@ return [
 
         ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ['em'],
         ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain', 'config.router.base_path'],
+        ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => [Util\UrlValidator::class],
         ShortUrl\Transformer\ShortUrlDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
 
         Mercure\MercureUpdatesGenerator::class => [ShortUrl\Transformer\ShortUrlDataTransformer::class],

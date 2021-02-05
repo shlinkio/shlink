@@ -53,7 +53,8 @@
                             "validUntil": null,
                             "maxVisits": 100
                         },
-                        "domain": null
+                        "domain": null,
+                        "title": null
                     }
                 }
             },
@@ -118,15 +119,18 @@
                             },
                             "validSince": {
                                 "description": "The date (in ISO-8601 format) from which this short code will be valid",
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                             },
                             "validUntil": {
                                 "description": "The date (in ISO-8601 format) until which this short code will be valid",
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                             },
                             "maxVisits": {
                                 "description": "The maximum number of allowed visits for this short code",
-                                "type": "number"
+                                "type": "number",
+                                "nullable": true
                             },
                             "validateUrl": {
                                 "description": "Tells if the long URL (if provided) should or should not be validated as a reachable URL. If not provided, it will fall back to app-level config",
@@ -138,6 +142,11 @@
                                     "type": "string"
                                 },
                                 "description": "The list of tags to set to the short URL."
+                            },
+                            "title": {
+                                "type": "string",
+                                "description": "A descriptive title of the short URL.",
+                                "nullable": true
                             }
                         }
                     }
@@ -174,7 +183,8 @@
                             "validUntil": null,
                             "maxVisits": 100
                         },
-                        "domain": null
+                        "domain": null,
+                        "title": "Shlink - The URL shortener"
                     }
                 }
             },
