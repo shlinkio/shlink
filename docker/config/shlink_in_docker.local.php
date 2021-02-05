@@ -125,7 +125,7 @@ return [
         'default_short_codes_length' => $helper->getDefaultShortCodesLength(),
         'redirect_status_code' => (int) env('REDIRECT_STATUS_CODE', DEFAULT_REDIRECT_STATUS_CODE),
         'redirect_cache_lifetime' => (int) env('REDIRECT_CACHE_LIFETIME', DEFAULT_REDIRECT_CACHE_LIFETIME),
-        'auto_resolve_titles' => (bool) env('AUTO_RESOLVE_TITLES', false), // Deprecated value. Default to true
+        'auto_resolve_titles' => (bool) env('AUTO_RESOLVE_TITLES', false),
     ],
 
     'not_found_redirects' => $helper->getNotFoundRedirectsConfig(),

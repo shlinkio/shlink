@@ -18,7 +18,7 @@ class UrlShortenerOptions extends AbstractOptions
     private bool $validateUrl = true;
     private int $redirectStatusCode = DEFAULT_REDIRECT_STATUS_CODE;
     private int $redirectCacheLifetime = DEFAULT_REDIRECT_CACHE_LIFETIME;
-    private bool $autoResolveTitles = false; // Deprecated value. Default to true with Shlink 3.0.0
+    private bool $autoResolveTitles = false;
 
     public function isUrlValidationEnabled(): bool
     {
