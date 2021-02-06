@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     The title can also be automatically resolved from the long URL, when no title was explicitly provided, but this option needs to be opted in.
 
+* [#913](https://github.com/shlinkio/shlink/issues/913) Added support to import short URLs from a standard CSV file.
+
+    The file requires the `Long URL` and `Short code` columns, and it also accepts the optional `title`, `domain` and `tags` columns.
+
 ### Changed
 * [#977](https://github.com/shlinkio/shlink/issues/977) Migrated from `laminas/laminas-paginator` to `pagerfanta/core` to handle pagination.
 * [#986](https://github.com/shlinkio/shlink/issues/986) Updated official docker image to use PHP 8.
