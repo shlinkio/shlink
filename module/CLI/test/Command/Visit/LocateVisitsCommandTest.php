@@ -217,7 +217,9 @@ class LocateVisitsCommandTest extends TestCase
                 $mustBeUpdated($olderDbExists);
                 $handleProgress(100, 50);
 
-                throw GeolocationDbUpdateFailedException::create($olderDbExists);
+                throw $olderDbExists
+                    ? GeolocationDbUpdateFailedException::withOlderDb()
+                    : GeolocationDbUpdateFailedException::withoutOlderDb();
             },
         );
 
