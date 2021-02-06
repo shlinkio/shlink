@@ -80,17 +80,9 @@ class GeolocationDbUpdaterTest extends TestCase
     public function exceptionIsThrownWhenOlderDbIsTooOldAndDownloadFails(int $days): void
     {
         $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(true);
-        $getMeta = $this->geoLiteDbReader->metadata()->willReturn(new Metadata([
-            'binary_format_major_version' => '',
-            'binary_format_minor_version' => '',
-            'build_epoch' => Chronos::now()->subDays($days)->getTimestamp(),
-            'database_type' => '',
-            'languages' => '',
-            'description' => '',
-            'ip_version' => '',
-            'node_count' => 1,
-            'record_size' => 4,
-        ]));
+        $getMeta = $this->geoLiteDbReader->metadata()->willReturn($this->buildMetaWithBuildEpoch(
+            Chronos::now()->subDays($days)->getTimestamp(),
+        ));
         $prev = new RuntimeException('');
         $download = $this->dbUpdater->downloadFreshCopy(null)->willThrow($prev);
 
@@ -120,21 +112,12 @@ class GeolocationDbUpdaterTest extends TestCase
     /**
      * @test
      * @dataProvider provideSmallDays
+     * @param string|int $buildEpoch
      */
-    public function databaseIsNotUpdatedIfItIsYoungerThanOneWeek(int $days): void
+    public function databaseIsNotUpdatedIfItIsYoungerThanOneWeek($buildEpoch): void
     {
         $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(true);
-        $getMeta = $this->geoLiteDbReader->metadata()->willReturn(new Metadata([
-            'binary_format_major_version' => '',
-            'binary_format_minor_version' => '',
-            'build_epoch' => Chronos::now()->subDays($days)->getTimestamp(),
-            'database_type' => '',
-            'languages' => '',
-            'description' => '',
-            'ip_version' => '',
-            'node_count' => 1,
-            'record_size' => 4,
-        ]));
+        $getMeta = $this->geoLiteDbReader->metadata()->willReturn($this->buildMetaWithBuildEpoch($buildEpoch));
         $download = $this->dbUpdater->downloadFreshCopy(null)->will(function (): void {
         });
 
@@ -147,6 +130,48 @@ class GeolocationDbUpdaterTest extends TestCase
 
     public function provideSmallDays(): iterable
     {
-        return map(range(0, 34), fn (int $days) => [$days]);
+        $generateParamsWithTimestamp = static function (int $days) {
+            $timestamp = Chronos::now()->subDays($days)->getTimestamp();
+            return [$days % 2 === 0 ? $timestamp : (string) $timestamp];
+        };
+
+        return map(range(0, 34), $generateParamsWithTimestamp);
+    }
+
+    /** @test */
+    public function exceptionIsThrownWhenCheckingExistingDatabaseWithInvalidBuildEpoch(): void
+    {
+        $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(true);
+        $getMeta = $this->geoLiteDbReader->metadata()->willReturn($this->buildMetaWithBuildEpoch('invalid'));
+        $download = $this->dbUpdater->downloadFreshCopy(null)->will(function (): void {
+        });
+
+        $this->expectException(GeolocationDbUpdateFailedException::class);
+        $this->expectExceptionMessage(
+            'Build epoch with value "invalid" from existing geolocation database, could not be parsed to integer.',
+        );
+        $fileExists->shouldBeCalledOnce();
+        $getMeta->shouldBeCalledOnce();
+        $download->shouldNotBeCalled();
+
+        $this->geolocationDbUpdater->checkDbUpdate();
+    }
+
+    /**
+     * @param string|int $buildEpoch
+     */
+    private function buildMetaWithBuildEpoch($buildEpoch): Metadata
+    {
+        return new Metadata([
+            'binary_format_major_version' => '',
+            'binary_format_minor_version' => '',
+            'build_epoch' => $buildEpoch,
+            'database_type' => '',
+            'languages' => '',
+            'description' => '',
+            'ip_version' => '',
+            'node_count' => 1,
+            'record_size' => 4,
+        ]);
     }
 }
