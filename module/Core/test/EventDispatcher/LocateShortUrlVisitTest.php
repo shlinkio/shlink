@@ -169,7 +169,7 @@ class LocateShortUrlVisitTest extends TestCase
     /** @test */
     public function errorWhenUpdatingGeoLiteWithExistingCopyLogsWarning(): void
     {
-        $e = GeolocationDbUpdateFailedException::create(true);
+        $e = GeolocationDbUpdateFailedException::withOlderDb();
         $ipAddr = '1.2.3.0';
         $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr));
         $location = new Location('', '', '', '', 0.0, 0.0, '');
@@ -200,7 +200,7 @@ class LocateShortUrlVisitTest extends TestCase
     /** @test */
     public function errorWhenDownloadingGeoLiteCancelsLocation(): void
     {
-        $e = GeolocationDbUpdateFailedException::create(false);
+        $e = GeolocationDbUpdateFailedException::withoutOlderDb();
         $ipAddr = '1.2.3.0';
         $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr));
         $location = new Location('', '', '', '', 0.0, 0.0, '');
