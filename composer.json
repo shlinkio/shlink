@@ -50,7 +50,7 @@
         "shlinkio/shlink-common": "dev-main#b889f5d as 3.5",
         "shlinkio/shlink-config": "^1.0",
         "shlinkio/shlink-event-dispatcher": "^2.0",
-        "shlinkio/shlink-importer": "dev-main#b6fc81f as 2.2",
+        "shlinkio/shlink-importer": "^2.2",
         "shlinkio/shlink-installer": "dev-develop#1ed5ac8 as 5.4",
         "shlinkio/shlink-ip-geolocation": "^1.5",
         "symfony/console": "^5.1",
