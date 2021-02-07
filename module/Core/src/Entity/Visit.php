@@ -14,10 +14,17 @@ use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
 
 class Visit extends AbstractEntity implements JsonSerializable
 {
+    public const TYPE_VALID_SHORT_URL = 'valid_short_url';
+    public const TYPE_INVALID_SHORT_URL = 'invalid_short_url';
+    public const TYPE_BASE_URL = 'base_url';
+    public const TYPE_REGULAR_404 = 'regular_404';
+
     private string $referer;
     private Chronos $date;
     private ?string $remoteAddr = null;
+    private ?string $visitedUrl = null;
     private string $userAgent;
+    private string $type;
     private ?ShortUrl $shortUrl;
     private ?VisitLocation $visitLocation = null;
 
@@ -28,6 +35,7 @@ class Visit extends AbstractEntity implements JsonSerializable
         $this->userAgent = $visitor->getUserAgent();
         $this->referer = $visitor->getReferer();
         $this->remoteAddr = $this->processAddress($anonymize, $visitor->getRemoteAddress());
+        $this->type = self::TYPE_VALID_SHORT_URL;
     }
 
     private function processAddress(bool $anonymize, ?string $address): ?string
