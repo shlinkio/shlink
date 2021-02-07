@@ -21,21 +21,27 @@ class Visit extends AbstractEntity implements JsonSerializable
 
     private string $referer;
     private Chronos $date;
-    private ?string $remoteAddr = null;
-    private ?string $visitedUrl = null;
+    private ?string $remoteAddr;
+    private ?string $visitedUrl;
     private string $userAgent;
     private string $type;
     private ?ShortUrl $shortUrl;
     private ?VisitLocation $visitLocation = null;
 
-    public function __construct(ShortUrl $shortUrl, Visitor $visitor, bool $anonymize = true, ?Chronos $date = null)
-    {
+    public function __construct(
+        ?ShortUrl $shortUrl,
+        Visitor $visitor,
+        bool $anonymize = true,
+        ?Chronos $date = null,
+        string $type = self::TYPE_VALID_SHORT_URL
+    ) {
         $this->shortUrl = $shortUrl;
         $this->date = $date ?? Chronos::now();
         $this->userAgent = $visitor->getUserAgent();
         $this->referer = $visitor->getReferer();
         $this->remoteAddr = $this->processAddress($anonymize, $visitor->getRemoteAddress());
-        $this->type = self::TYPE_VALID_SHORT_URL;
+        $this->visitedUrl = $visitor->getVisitedUrl();
+        $this->type = $type;
     }
 
     private function processAddress(bool $anonymize, ?string $address): ?string
@@ -50,6 +56,26 @@ class Visit extends AbstractEntity implements JsonSerializable
         } catch (InvalidArgumentException $e) {
             return null;
         }
+    }
+
+    public static function forValidShortUrl(ShortUrl $shortUrl, Visitor $visitor, bool $anonymize = true): self
+    {
+        return new self($shortUrl, $visitor, $anonymize);
+    }
+
+    public static function forBasePath(Visitor $visitor, bool $anonymize = true): self
+    {
+        return new self(null, $visitor, $anonymize, null, self::TYPE_BASE_URL);
+    }
+
+    public static function forInvalidShortUrl(Visitor $visitor, bool $anonymize = true): self
+    {
+        return new self(null, $visitor, $anonymize, null, self::TYPE_INVALID_SHORT_URL);
+    }
+
+    public static function forRegularNotFound(Visitor $visitor, bool $anonymize = true): self
+    {
+        return new self(null, $visitor, $anonymize, null, self::TYPE_REGULAR_404);
     }
 
     public function getRemoteAddr(): ?string

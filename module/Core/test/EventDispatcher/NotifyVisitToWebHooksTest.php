@@ -82,7 +82,7 @@ class NotifyVisitToWebHooksTest extends TestCase
         $invalidWebhooks = ['invalid', 'baz'];
 
         $find = $this->em->find(Visit::class, '1')->willReturn(
-            new Visit(ShortUrl::createEmpty(), Visitor::emptyInstance()),
+            Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()),
         );
         $requestAsync = $this->httpClient->requestAsync(
             RequestMethodInterface::METHOD_POST,

@@ -52,7 +52,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         };
 
         for ($i = 0; $i < 6; $i++) {
-            $visit = new Visit($shortUrl, Visitor::emptyInstance());
+            $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
 
             if ($i >= 2) {
                 $location = new VisitLocation(Location::emptyInstance());

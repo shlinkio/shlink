@@ -41,7 +41,7 @@ class VisitsTracker implements VisitsTrackerInterface
 
     public function track(ShortUrl $shortUrl, Visitor $visitor): void
     {
-        $visit = new Visit($shortUrl, $visitor, $this->anonymizeRemoteAddr);
+        $visit = Visit::forValidShortUrl($shortUrl, $visitor, $this->anonymizeRemoteAddr);
 
         $this->em->persist($visit);
         $this->em->flush();

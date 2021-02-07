@@ -57,7 +57,8 @@ class VisitLocatorTest extends TestCase
     ): void {
         $unlocatedVisits = map(
             range(1, 200),
-            fn (int $i) => new Visit(ShortUrl::withLongUrl(sprintf('short_code_%s', $i)), Visitor::emptyInstance()),
+            fn (int $i) =>
+                Visit::forValidShortUrl(ShortUrl::withLongUrl(sprintf('short_code_%s', $i)), Visitor::emptyInstance()),
         );
 
         $findVisits = $this->mockRepoMethod($expectedRepoMethodName)->willReturn($unlocatedVisits);
@@ -107,7 +108,7 @@ class VisitLocatorTest extends TestCase
         bool $isNonLocatableAddress
     ): void {
         $unlocatedVisits = [
-            new Visit(ShortUrl::withLongUrl('foo'), Visitor::emptyInstance()),
+            Visit::forValidShortUrl(ShortUrl::withLongUrl('foo'), Visitor::emptyInstance()),
         ];
 
         $findVisits = $this->mockRepoMethod($expectedRepoMethodName)->willReturn($unlocatedVisits);

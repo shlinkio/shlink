@@ -18,12 +18,14 @@ final class Visitor
 
     private string $userAgent;
     private string $referer;
+    private string $visitedUrl;
     private ?string $remoteAddress;
 
-    public function __construct(string $userAgent, string $referer, ?string $remoteAddress)
+    public function __construct(string $userAgent, string $referer, ?string $remoteAddress, string $visitedUrl)
     {
         $this->userAgent = $this->cropToLength($userAgent, self::USER_AGENT_MAX_LENGTH);
         $this->referer = $this->cropToLength($referer, self::REFERER_MAX_LENGTH);
+        $this->visitedUrl = $this->cropToLength($visitedUrl, self::VISITED_URL_MAX_LENGTH);
         $this->remoteAddress = $this->cropToLength($remoteAddress, self::REMOTE_ADDRESS_MAX_LENGTH);
     }
 
@@ -38,12 +40,13 @@ final class Visitor
             $request->getHeaderLine('User-Agent'),
             $request->getHeaderLine('Referer'),
             $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR),
+            $request->getUri()->__toString(),
         );
     }
 
     public static function emptyInstance(): self
     {
-        return new self('', '', null);
+        return new self('', '', null, '');
     }
 
     public function getUserAgent(): string
@@ -59,5 +62,10 @@ final class Visitor
     public function getRemoteAddress(): ?string
     {
         return $this->remoteAddress;
+    }
+
+    public function getVisitedUrl(): string
+    {
+        return $this->visitedUrl;
     }
 }

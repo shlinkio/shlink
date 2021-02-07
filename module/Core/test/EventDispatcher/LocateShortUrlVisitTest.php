@@ -78,7 +78,7 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $event = new ShortUrlVisited('123');
         $findVisit = $this->em->find(Visit::class, '123')->willReturn(
-            new Visit(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4')),
+            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
         );
         $resolveLocation = $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->willThrow(
             WrongIpException::class,
@@ -127,9 +127,9 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $shortUrl = ShortUrl::createEmpty();
 
-        yield 'null IP' => [new Visit($shortUrl, new Visitor('', '', null))];
-        yield 'empty IP' => [new Visit($shortUrl, new Visitor('', '', ''))];
-        yield 'localhost' => [new Visit($shortUrl, new Visitor('', '', IpAddress::LOCALHOST))];
+        yield 'null IP' => [Visit::forValidShortUrl($shortUrl, new Visitor('', '', null, ''))];
+        yield 'empty IP' => [Visit::forValidShortUrl($shortUrl, new Visitor('', '', '', ''))];
+        yield 'localhost' => [Visit::forValidShortUrl($shortUrl, new Visitor('', '', IpAddress::LOCALHOST, ''))];
     }
 
     /**
@@ -139,7 +139,7 @@ class LocateShortUrlVisitTest extends TestCase
     public function locatableVisitsResolveToLocation(string $anonymizedIpAddress, ?string $originalIpAddress): void
     {
         $ipAddr = $originalIpAddress ?? $anonymizedIpAddress;
-        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr));
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr, ''));
         $location = new Location('', '', '', '', 0.0, 0.0, '');
         $event = new ShortUrlVisited('123', $originalIpAddress);
 
@@ -171,7 +171,7 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $e = GeolocationDbUpdateFailedException::withOlderDb();
         $ipAddr = '1.2.3.0';
-        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr));
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr, ''));
         $location = new Location('', '', '', '', 0.0, 0.0, '');
         $event = new ShortUrlVisited('123');
 
@@ -202,7 +202,7 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $e = GeolocationDbUpdateFailedException::withoutOlderDb();
         $ipAddr = '1.2.3.0';
-        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr));
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr, ''));
         $location = new Location('', '', '', '', 0.0, 0.0, '');
         $event = new ShortUrlVisited('123');
 

@@ -35,7 +35,7 @@ class MercureUpdatesGeneratorTest extends TestCase
             'longUrl' => '',
             'title' => $title,
         ]));
-        $visit = new Visit($shortUrl, Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
 
         $update = $this->generator->{$method}($visit);
 

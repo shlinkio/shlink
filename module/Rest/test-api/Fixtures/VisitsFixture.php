@@ -22,19 +22,30 @@ class VisitsFixture extends AbstractFixture implements DependentFixtureInterface
     {
         /** @var ShortUrl $abcShortUrl */
         $abcShortUrl = $this->getReference('abc123_short_url');
-        $manager->persist(new Visit($abcShortUrl, new Visitor('shlink-tests-agent', '', '44.55.66.77')));
-        $manager->persist(new Visit($abcShortUrl, new Visitor('shlink-tests-agent', 'https://google.com', '4.5.6.7')));
-        $manager->persist(new Visit($abcShortUrl, new Visitor('shlink-tests-agent', '', '1.2.3.4')));
+        $manager->persist(
+            Visit::forValidShortUrl($abcShortUrl, new Visitor('shlink-tests-agent', '', '44.55.66.77', '')),
+        );
+        $manager->persist(Visit::forValidShortUrl(
+            $abcShortUrl,
+            new Visitor('shlink-tests-agent', 'https://google.com', '4.5.6.7', ''),
+        ));
+        $manager->persist(Visit::forValidShortUrl($abcShortUrl, new Visitor('shlink-tests-agent', '', '1.2.3.4', '')));
 
         /** @var ShortUrl $defShortUrl */
         $defShortUrl = $this->getReference('def456_short_url');
-        $manager->persist(new Visit($defShortUrl, new Visitor('shlink-tests-agent', '', '127.0.0.1')));
-        $manager->persist(new Visit($defShortUrl, new Visitor('shlink-tests-agent', 'https://app.shlink.io', '')));
+        $manager->persist(
+            Visit::forValidShortUrl($defShortUrl, new Visitor('shlink-tests-agent', '', '127.0.0.1', '')),
+        );
+        $manager->persist(
+            Visit::forValidShortUrl($defShortUrl, new Visitor('shlink-tests-agent', 'https://app.shlink.io', '', '')),
+        );
 
         /** @var ShortUrl $ghiShortUrl */
         $ghiShortUrl = $this->getReference('ghi789_short_url');
-        $manager->persist(new Visit($ghiShortUrl, new Visitor('shlink-tests-agent', '', '1.2.3.4')));
-        $manager->persist(new Visit($ghiShortUrl, new Visitor('shlink-tests-agent', 'https://app.shlink.io', '')));
+        $manager->persist(Visit::forValidShortUrl($ghiShortUrl, new Visitor('shlink-tests-agent', '', '1.2.3.4', '')));
+        $manager->persist(
+            Visit::forValidShortUrl($ghiShortUrl, new Visitor('shlink-tests-agent', 'https://app.shlink.io', '', '')),
+        );
 
         $manager->flush();
     }
