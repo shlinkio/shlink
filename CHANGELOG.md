@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     The file requires the `Long URL` and `Short code` columns, and it also accepts the optional `title`, `domain` and `tags` columns.
 
+* [#1000](https://github.com/shlinkio/shlink/issues/1000) Added support to provide a `margin` query param when generating some URL's QR code.
+
 ### Changed
 * [#977](https://github.com/shlinkio/shlink/issues/977) Migrated from `laminas/laminas-paginator` to `pagerfanta/core` to handle pagination.
 * [#986](https://github.com/shlinkio/shlink/issues/986) Updated official docker image to use PHP 8.
@@ -24,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     All the existing camelCase flags will continue working for now, but will be removed in Shlink 3.0.0
 
-* [#862](https://github.com/shlinkio/shlink/issues/862) Deprecated endpoint to edit tags for a short URL (`PUT /short-urls/{shortCode}/tags`).
+* [#862](https://github.com/shlinkio/shlink/issues/862) Deprecated the endpoint to edit tags for a short URL (`PUT /short-urls/{shortCode}/tags`).
 
     The short URL edition endpoint (`PATCH /short-urls/{shortCode}`) now supports setting the tags too. Use it instead.
 

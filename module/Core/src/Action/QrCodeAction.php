@@ -50,12 +50,9 @@ class QrCodeAction implements MiddlewareInterface
         }
 
         $query = $request->getQueryParams();
-        // Size attribute is deprecated
-        $size = $this->normalizeSize((int) $request->getAttribute('size', $query['size'] ?? self::DEFAULT_SIZE));
-
         $qrCode = new QrCode($this->stringifier->stringify($shortUrl));
-        $qrCode->setSize($size);
-        $qrCode->setMargin(0);
+        $qrCode->setSize($this->resolveSize($request, $query));
+        $qrCode->setMargin($this->resolveMargin($query));
 
         $format = $query['format'] ?? 'png';
         if ($format === 'svg') {
@@ -65,12 +62,29 @@ class QrCodeAction implements MiddlewareInterface
         return new QrCodeResponse($qrCode);
     }
 
-    private function normalizeSize(int $size): int
+    private function resolveSize(Request $request, array $query): int
     {
+        // Size attribute is deprecated. After v3.0.0, always use the query param instead
+        $size = (int) $request->getAttribute('size', $query['size'] ?? self::DEFAULT_SIZE);
         if ($size < self::MIN_SIZE) {
             return self::MIN_SIZE;
         }
 
         return $size > self::MAX_SIZE ? self::MAX_SIZE : $size;
+    }
+
+    private function resolveMargin(array $query): int
+    {
+        if (! isset($query['margin'])) {
+            return 0;
+        }
+
+        $margin = $query['margin'];
+        $intMargin = (int) $margin;
+        if ($margin !== (string) $intMargin) {
+            return 0;
+        }
+
+        return $intMargin < 0 ? 0 : $intMargin;
     }
 }
