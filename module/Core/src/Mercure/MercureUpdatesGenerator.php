@@ -38,7 +38,7 @@ final class MercureUpdatesGenerator implements MercureUpdatesGeneratorInterface
         $topic = sprintf('%s/%s', self::NEW_VISIT_TOPIC, $shortUrl->getShortCode());
 
         return new Update($topic, $this->serialize([
-            'shortUrl' => $this->transformer->transform($visit->getShortUrl()),
+            'shortUrl' => $this->transformer->transform($shortUrl),
             'visit' => $visit,
         ]));
     }

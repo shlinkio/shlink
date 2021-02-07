@@ -18,7 +18,7 @@ class Visit extends AbstractEntity implements JsonSerializable
     private Chronos $date;
     private ?string $remoteAddr = null;
     private string $userAgent;
-    private ShortUrl $shortUrl;
+    private ?ShortUrl $shortUrl;
     private ?VisitLocation $visitLocation = null;
 
     public function __construct(ShortUrl $shortUrl, Visitor $visitor, bool $anonymize = true, ?Chronos $date = null)
@@ -54,7 +54,7 @@ class Visit extends AbstractEntity implements JsonSerializable
         return ! empty($this->remoteAddr);
     }
 
-    public function getShortUrl(): ShortUrl
+    public function getShortUrl(): ?ShortUrl
     {
         return $this->shortUrl;
     }
@@ -75,13 +75,6 @@ class Visit extends AbstractEntity implements JsonSerializable
         return $this;
     }
 
-    /**
-     * Specify data which should be serialized to JSON
-     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return array data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
     public function jsonSerialize(): array
     {
         return [
