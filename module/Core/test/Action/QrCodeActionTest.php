@@ -133,5 +133,20 @@ class QrCodeActionTest extends TestCase
             ServerRequestFactory::fromGlobals()->withAttribute('size', '350')->withQueryParams(['size' => '123']),
             350,
         ];
+        yield 'margin' => [ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '35']), 370];
+        yield 'margin and size' => [
+            ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '100', 'size' => '200']),
+            400,
+        ];
+        yield 'negative margin' => [ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '-50']), 300];
+        yield 'non-numeric margin' => [ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => 'foo']), 300];
+        yield 'negative margin and size' => [
+            ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '-1', 'size' => '150']),
+            150,
+        ];
+        yield 'non-numeric margin and size' => [
+            ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => 'foo', 'size' => '538']),
+            538,
+        ];
     }
 }
