@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 
 use function rtrim;
 
-final class NotFoundType
+class NotFoundType
 {
     private string $type;
 

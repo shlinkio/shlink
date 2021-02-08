@@ -29,13 +29,9 @@ class NotFoundTrackerMiddleware implements MiddlewareInterface
 
         if ($notFoundType->isBaseUrl()) {
             $this->visitsTracker->trackBaseUrlVisit($visitor);
-        }
-
-        if ($notFoundType->isRegularNotFound()) {
+        } elseif ($notFoundType->isRegularNotFound()) {
             $this->visitsTracker->trackRegularNotFoundVisit($visitor);
-        }
-
-        if ($notFoundType->isInvalidShortUrl()) {
+        } elseif ($notFoundType->isInvalidShortUrl()) {
             $this->visitsTracker->trackInvalidShortUrlVisit($visitor);
         }
 
