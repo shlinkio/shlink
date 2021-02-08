@@ -12,7 +12,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
-use Shlinkio\Shlink\Core\Service\VisitsTracker;
+use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\Visit\TagVisitsAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -21,12 +21,12 @@ class TagVisitsActionTest extends TestCase
     use ProphecyTrait;
 
     private TagVisitsAction $action;
-    private ObjectProphecy $visitsTracker;
+    private ObjectProphecy $visitsHelper;
 
     protected function setUp(): void
     {
-        $this->visitsTracker = $this->prophesize(VisitsTracker::class);
-        $this->action = new TagVisitsAction($this->visitsTracker->reveal());
+        $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
+        $this->action = new TagVisitsAction($this->visitsHelper->reveal());
     }
 
     /** @test */
@@ -34,7 +34,7 @@ class TagVisitsActionTest extends TestCase
     {
         $tag = 'foo';
         $apiKey = new ApiKey();
-        $getVisits = $this->visitsTracker->visitsForTag($tag, Argument::type(VisitsParams::class), $apiKey)->willReturn(
+        $getVisits = $this->visitsHelper->visitsForTag($tag, Argument::type(VisitsParams::class), $apiKey)->willReturn(
             new Paginator(new ArrayAdapter([])),
         );
 

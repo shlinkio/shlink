@@ -11,8 +11,8 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
-use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Core\Visit\Model\UnknownVisitLocation;
+use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,11 +27,11 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
 {
     public const NAME = 'short-url:visits';
 
-    private VisitsTrackerInterface $visitsTracker;
+    private VisitsStatsHelperInterface $visitsHelper;
 
-    public function __construct(VisitsTrackerInterface $visitsTracker)
+    public function __construct(VisitsStatsHelperInterface $visitsHelper)
     {
-        $this->visitsTracker = $visitsTracker;
+        $this->visitsHelper = $visitsHelper;
         parent::__construct();
     }
 
@@ -74,7 +74,10 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
         $startDate = $this->getStartDateOption($input, $output);
         $endDate = $this->getEndDateOption($input, $output);
 
-        $paginator = $this->visitsTracker->info($identifier, new VisitsParams(new DateRange($startDate, $endDate)));
+        $paginator = $this->visitsHelper->visitsForShortUrl(
+            $identifier,
+            new VisitsParams(new DateRange($startDate, $endDate)),
+        );
 
         $rows = map($paginator->getCurrentPageResults(), function (Visit $visit) {
             $rowData = $visit->jsonSerialize();

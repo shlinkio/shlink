@@ -74,7 +74,7 @@ return [
             Service\ShortUrlService::class,
             ShortUrlDataTransformer::class,
         ],
-        Command\ShortUrl\GetVisitsCommand::class => [Service\VisitsTracker::class],
+        Command\ShortUrl\GetVisitsCommand::class => [Visit\VisitsStatsHelper::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
 
         Command\Visit\LocateVisitsCommand::class => [

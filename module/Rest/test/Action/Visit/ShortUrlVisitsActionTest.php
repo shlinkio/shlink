@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
-use Shlinkio\Shlink\Core\Service\VisitsTracker;
+use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\Visit\ShortUrlVisitsAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -25,19 +25,19 @@ class ShortUrlVisitsActionTest extends TestCase
     use ProphecyTrait;
 
     private ShortUrlVisitsAction $action;
-    private ObjectProphecy $visitsTracker;
+    private ObjectProphecy $visitsHelper;
 
     public function setUp(): void
     {
-        $this->visitsTracker = $this->prophesize(VisitsTracker::class);
-        $this->action = new ShortUrlVisitsAction($this->visitsTracker->reveal());
+        $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
+        $this->action = new ShortUrlVisitsAction($this->visitsHelper->reveal());
     }
 
     /** @test */
     public function providingCorrectShortCodeReturnsVisits(): void
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info(
+        $this->visitsHelper->visitsForShortUrl(
             new ShortUrlIdentifier($shortCode),
             Argument::type(VisitsParams::class),
             Argument::type(ApiKey::class),
@@ -52,7 +52,7 @@ class ShortUrlVisitsActionTest extends TestCase
     public function paramsAreReadFromQuery(): void
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), new VisitsParams(
+        $this->visitsHelper->visitsForShortUrl(new ShortUrlIdentifier($shortCode), new VisitsParams(
             new DateRange(null, Chronos::parse('2016-01-01 00:00:00')),
             3,
             10,
