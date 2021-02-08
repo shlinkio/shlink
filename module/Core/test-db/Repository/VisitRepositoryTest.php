@@ -168,7 +168,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function countReturnsExpectedResultBasedOnApiKey(): void
+    public function countVisitsReturnsExpectedResultBasedOnApiKey(): void
     {
         $domain = new Domain('foo.com');
         $this->getEntityManager()->persist($domain);
@@ -200,12 +200,18 @@ class VisitRepositoryTest extends DatabaseTestCase
         $domainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($domain));
         $this->getEntityManager()->persist($domainApiKey);
 
+        // Visits not linked to any short URL
+        $this->getEntityManager()->persist(Visit::forBasePath(Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forInvalidShortUrl(Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forRegularNotFound(Visitor::emptyInstance()));
+
         $this->getEntityManager()->flush();
 
         self::assertEquals(4 + 5 + 7, $this->repo->countVisits());
         self::assertEquals(4, $this->repo->countVisits($apiKey1));
         self::assertEquals(5 + 7, $this->repo->countVisits($apiKey2));
         self::assertEquals(4 + 7, $this->repo->countVisits($domainApiKey));
+        self::assertEquals(3, $this->repo->countOrphanVisits());
     }
 
     private function createShortUrlsAndVisits(bool $withDomain = true, array $tags = []): array

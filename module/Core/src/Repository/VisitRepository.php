@@ -7,13 +7,13 @@ namespace Shlinkio\Shlink\Core\Repository;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\EntitySpecificationRepository;
-use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
-use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
+use Shlinkio\Shlink\Core\Visit\Spec\CountOfOrphanVisits;
+use Shlinkio\Shlink\Core\Visit\Spec\CountOfShortUrlVisits;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use const PHP_INT_MAX;
@@ -211,9 +211,11 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     public function countVisits(?ApiKey $apiKey = null): int
     {
-        return (int) $this->matchSingleScalarResult(Spec::countOf(Spec::andX(
-            Spec::isNotNull('shortUrl'),
-            new WithApiKeySpecsEnsuringJoin($apiKey, 'shortUrl'),
-        )));
+        return (int) $this->matchSingleScalarResult(new CountOfShortUrlVisits($apiKey));
+    }
+
+    public function countOrphanVisits(): int
+    {
+        return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits());
     }
 }
