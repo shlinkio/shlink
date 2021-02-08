@@ -18,7 +18,9 @@ The intention is to change that, and allow users to track the cases mentioned ab
 
 ## Decision outcome
 
-*TBD*
+The decision is to use the existing table, as making the short URL nullable can be handled seamlessly by using named constructors, and it has a lot of benefits on regards of reusing existing components.
+
+Also, the domain name this kind of visits will receive is "Orphan Visits", as they are detached from any existing short URL.
 
 ## Pros and Cons of the Options
 
