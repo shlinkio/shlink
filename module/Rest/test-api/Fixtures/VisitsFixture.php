@@ -47,6 +47,14 @@ class VisitsFixture extends AbstractFixture implements DependentFixtureInterface
             Visit::forValidShortUrl($ghiShortUrl, new Visitor('shlink-tests-agent', 'https://app.shlink.io', '', '')),
         );
 
+        $manager->persist(Visit::forBasePath(new Visitor('shlink-tests-agent', 'https://doma.in', '1.2.3.4', '')));
+        $manager->persist(
+            Visit::forRegularNotFound(new Visitor('shlink-tests-agent', 'https://doma.in/foo/bar', '1.2.3.4', '')),
+        );
+        $manager->persist(
+            Visit::forInvalidShortUrl(new Visitor('shlink-tests-agent', 'https://doma.in/foo', '1.2.3.4', '')),
+        );
+
         $manager->flush();
     }
 }

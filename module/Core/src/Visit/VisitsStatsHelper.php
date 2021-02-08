@@ -33,14 +33,10 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
 
     public function getVisitsStats(?ApiKey $apiKey = null): VisitsStats
     {
-        return new VisitsStats($this->getVisitsCount($apiKey));
-    }
-
-    private function getVisitsCount(?ApiKey $apiKey): int
-    {
         /** @var VisitRepository $visitsRepo */
         $visitsRepo = $this->em->getRepository(Visit::class);
-        return $visitsRepo->countVisits($apiKey);
+
+        return new VisitsStats($visitsRepo->countVisits($apiKey), $visitsRepo->countOrphanVisits());
     }
 
     /**

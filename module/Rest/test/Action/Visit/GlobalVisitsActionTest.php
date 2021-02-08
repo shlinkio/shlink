@@ -31,7 +31,7 @@ class GlobalVisitsActionTest extends TestCase
     public function statsAreReturnedFromHelper(): void
     {
         $apiKey = new ApiKey();
-        $stats = new VisitsStats(5);
+        $stats = new VisitsStats(5, 3);
         $getStats = $this->helper->getVisitsStats($apiKey)->willReturn($stats);
 
         /** @var JsonResponse $resp */

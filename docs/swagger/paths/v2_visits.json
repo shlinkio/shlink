@@ -34,7 +34,8 @@
                 "examples": {
                     "application/json": {
                         "visits": {
-                            "visitsCount": 1569874
+                            "visitsCount": 1569874,
+                            "orphanVisitsCount": 71345
                         }
                     }
                 }
