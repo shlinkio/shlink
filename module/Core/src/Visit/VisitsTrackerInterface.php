@@ -10,4 +10,10 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 interface VisitsTrackerInterface
 {
     public function track(ShortUrl $shortUrl, Visitor $visitor): void;
+
+    public function trackInvalidShortUrlVisit(Visitor $visitor): void;
+
+    public function trackBaseUrlVisit(Visitor $visitor): void;
+
+    public function trackRegularNotFoundVisit(Visitor $visitor): void;
 }

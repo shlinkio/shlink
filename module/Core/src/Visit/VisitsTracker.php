@@ -29,11 +29,30 @@ class VisitsTracker implements VisitsTrackerInterface
 
     public function track(ShortUrl $shortUrl, Visitor $visitor): void
     {
-        $visit = Visit::forValidShortUrl($shortUrl, $visitor, $this->anonymizeRemoteAddr);
+        $visit = $this->trackVisit(Visit::forValidShortUrl($shortUrl, $visitor, $this->anonymizeRemoteAddr));
+        $this->eventDispatcher->dispatch(new ShortUrlVisited($visit->getId(), $visitor->getRemoteAddress()));
+    }
 
+    public function trackInvalidShortUrlVisit(Visitor $visitor): void
+    {
+        $this->trackVisit(Visit::forInvalidShortUrl($visitor));
+    }
+
+    public function trackBaseUrlVisit(Visitor $visitor): void
+    {
+        $this->trackVisit(Visit::forBasePath($visitor));
+    }
+
+    public function trackRegularNotFoundVisit(Visitor $visitor): void
+    {
+        $this->trackVisit(Visit::forRegularNotFound($visitor));
+    }
+
+    private function trackVisit(Visit $visit): Visit
+    {
         $this->em->persist($visit);
         $this->em->flush();
 
-        $this->eventDispatcher->dispatch(new ShortUrlVisited($visit->getId(), $visitor->getRemoteAddress()));
+        return $visit;
     }
 }

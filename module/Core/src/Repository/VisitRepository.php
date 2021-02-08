@@ -211,8 +211,9 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     public function countVisits(?ApiKey $apiKey = null): int
     {
-        return (int) $this->matchSingleScalarResult(
-            Spec::countOf(new WithApiKeySpecsEnsuringJoin($apiKey, 'shortUrl')),
-        );
+        return (int) $this->matchSingleScalarResult(Spec::countOf(Spec::andX(
+            Spec::isNotNull('shortUrl'),
+            new WithApiKeySpecsEnsuringJoin($apiKey, 'shortUrl'),
+        )));
     }
 }

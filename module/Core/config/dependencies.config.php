@@ -15,6 +15,8 @@ return [
 
     'dependencies' => [
         'factories' => [
+            ErrorHandler\NotFoundTypeResolverMiddleware::class => ConfigAbstractFactory::class,
+            ErrorHandler\NotFoundTrackerMiddleware::class => ConfigAbstractFactory::class,
             ErrorHandler\NotFoundRedirectHandler::class => ConfigAbstractFactory::class,
             ErrorHandler\NotFoundTemplateHandler::class => InvokableFactory::class,
 
@@ -58,10 +60,11 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
+        ErrorHandler\NotFoundTypeResolverMiddleware::class => ['config.router.base_path'],
+        ErrorHandler\NotFoundTrackerMiddleware::class => [Visit\VisitsTracker::class],
         ErrorHandler\NotFoundRedirectHandler::class => [
             NotFoundRedirectOptions::class,
             Util\RedirectResponseHelper::class,
-            'config.router.base_path',
         ],
 
         Options\AppOptions::class => ['config.app_options'],
