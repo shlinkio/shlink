@@ -20,7 +20,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
-use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
+use Shlinkio\Shlink\Core\Visit\VisitsTrackerInterface;
 
 use function array_key_exists;
 use function array_merge;

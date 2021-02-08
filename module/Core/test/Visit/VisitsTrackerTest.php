@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Service;
+namespace ShlinkioTest\Shlink\Core\Visit;
 
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\TestCase;
@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlVisited;
 use Shlinkio\Shlink\Core\Model\Visitor;
-use Shlinkio\Shlink\Core\Service\VisitsTracker;
+use Shlinkio\Shlink\Core\Visit\VisitsTracker;
 
 class VisitsTrackerTest extends TestCase
 {

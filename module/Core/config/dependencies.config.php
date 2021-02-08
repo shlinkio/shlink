@@ -24,7 +24,7 @@ return [
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
 
             Service\UrlShortener::class => ConfigAbstractFactory::class,
-            Service\VisitsTracker::class => ConfigAbstractFactory::class,
+            Visit\VisitsTracker::class => ConfigAbstractFactory::class,
             Service\ShortUrlService::class => ConfigAbstractFactory::class,
             Visit\VisitLocator::class => ConfigAbstractFactory::class,
             Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
@@ -75,7 +75,7 @@ return [
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
             Service\ShortUrl\ShortCodeHelper::class,
         ],
-        Service\VisitsTracker::class => [
+        Visit\VisitsTracker::class => [
             'em',
             EventDispatcherInterface::class,
             'config.url_shortener.anonymize_remote_addr',
@@ -104,14 +104,14 @@ return [
 
         Action\RedirectAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
-            Service\VisitsTracker::class,
+            Visit\VisitsTracker::class,
             Options\AppOptions::class,
             Util\RedirectResponseHelper::class,
             'Logger_Shlink',
         ],
         Action\PixelAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
-            Service\VisitsTracker::class,
+            Visit\VisitsTracker::class,
             Options\AppOptions::class,
             'Logger_Shlink',
         ],

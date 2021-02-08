@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
-use Shlinkio\Shlink\Core\Service\VisitsTracker;
+use Shlinkio\Shlink\Core\Visit\VisitsTracker;
 
 class PixelActionTest extends TestCase
 {

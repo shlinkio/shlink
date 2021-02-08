@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Service;
+namespace Shlinkio\Shlink\Core\Visit;
 
 use Doctrine\ORM;
 use Psr\EventDispatcher\EventDispatcherInterface;
