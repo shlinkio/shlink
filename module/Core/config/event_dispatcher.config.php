@@ -20,28 +20,28 @@ return [
             ],
         ],
         'async' => [
-            EventDispatcher\Event\ShortUrlVisited::class => [
-                EventDispatcher\LocateShortUrlVisit::class,
+            EventDispatcher\Event\UrlVisited::class => [
+                EventDispatcher\LocateVisit::class,
             ],
         ],
     ],
 
     'dependencies' => [
         'factories' => [
-            EventDispatcher\LocateShortUrlVisit::class => ConfigAbstractFactory::class,
+            EventDispatcher\LocateVisit::class => ConfigAbstractFactory::class,
             EventDispatcher\NotifyVisitToWebHooks::class => ConfigAbstractFactory::class,
             EventDispatcher\NotifyVisitToMercure::class => ConfigAbstractFactory::class,
         ],
 
         'delegators' => [
-            EventDispatcher\LocateShortUrlVisit::class => [
+            EventDispatcher\LocateVisit::class => [
                 EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
             ],
         ],
     ],
 
     ConfigAbstractFactory::class => [
-        EventDispatcher\LocateShortUrlVisit::class => [
+        EventDispatcher\LocateVisit::class => [
             IpLocationResolverInterface::class,
             'em',
             'Logger_Shlink',

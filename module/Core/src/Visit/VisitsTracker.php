@@ -8,7 +8,7 @@ use Doctrine\ORM;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlVisited;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\Model\Visitor;
 
 class VisitsTracker implements VisitsTrackerInterface
@@ -29,30 +29,29 @@ class VisitsTracker implements VisitsTrackerInterface
 
     public function track(ShortUrl $shortUrl, Visitor $visitor): void
     {
-        $visit = $this->trackVisit(Visit::forValidShortUrl($shortUrl, $visitor, $this->anonymizeRemoteAddr));
-        $this->eventDispatcher->dispatch(new ShortUrlVisited($visit->getId(), $visitor->getRemoteAddress()));
+        $this->trackVisit(Visit::forValidShortUrl($shortUrl, $visitor, $this->anonymizeRemoteAddr), $visitor);
     }
 
     public function trackInvalidShortUrlVisit(Visitor $visitor): void
     {
-        $this->trackVisit(Visit::forInvalidShortUrl($visitor));
+        $this->trackVisit(Visit::forInvalidShortUrl($visitor, $this->anonymizeRemoteAddr), $visitor);
     }
 
     public function trackBaseUrlVisit(Visitor $visitor): void
     {
-        $this->trackVisit(Visit::forBasePath($visitor));
+        $this->trackVisit(Visit::forBasePath($visitor, $this->anonymizeRemoteAddr), $visitor);
     }
 
     public function trackRegularNotFoundVisit(Visitor $visitor): void
     {
-        $this->trackVisit(Visit::forRegularNotFound($visitor));
+        $this->trackVisit(Visit::forRegularNotFound($visitor, $this->anonymizeRemoteAddr), $visitor);
     }
 
-    private function trackVisit(Visit $visit): Visit
+    private function trackVisit(Visit $visit, Visitor $visitor): void
     {
         $this->em->persist($visit);
         $this->em->flush();
 
-        return $visit;
+        $this->eventDispatcher->dispatch(new UrlVisited($visit->getId(), $visitor->getRemoteAddress()));
     }
 }

@@ -11,7 +11,7 @@ use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlVisited;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
@@ -19,7 +19,7 @@ use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 use function sprintf;
 
-class LocateShortUrlVisit
+class LocateVisit
 {
     private IpLocationResolverInterface $ipLocationResolver;
     private EntityManagerInterface $em;
@@ -41,7 +41,7 @@ class LocateShortUrlVisit
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function __invoke(ShortUrlVisited $shortUrlVisited): void
+    public function __invoke(UrlVisited $shortUrlVisited): void
     {
         $visitId = $shortUrlVisited->visitId();
 
@@ -58,7 +58,9 @@ class LocateShortUrlVisit
             $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress(), $visit);
         }
 
-        $this->eventDispatcher->dispatch(new VisitLocated($visitId));
+        if (! $visit->isOrphan()) {
+            $this->eventDispatcher->dispatch(new VisitLocated($visitId));
+        }
     }
 
     private function downloadOrUpdateGeoLiteDb(string $visitId): bool
