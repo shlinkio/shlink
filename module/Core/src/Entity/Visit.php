@@ -109,6 +109,16 @@ class Visit extends AbstractEntity implements JsonSerializable
         return $this->shortUrl === null;
     }
 
+    public function visitedUrl(): ?string
+    {
+        return $this->visitedUrl;
+    }
+
+    public function type(): string
+    {
+        return $this->type;
+    }
+
     public function jsonSerialize(): array
     {
         return [

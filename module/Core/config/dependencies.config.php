@@ -26,15 +26,19 @@ return [
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
 
             Service\UrlShortener::class => ConfigAbstractFactory::class,
-            Visit\VisitsTracker::class => ConfigAbstractFactory::class,
             Service\ShortUrlService::class => ConfigAbstractFactory::class,
-            Visit\VisitLocator::class => ConfigAbstractFactory::class,
-            Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
-            Tag\TagService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
             Service\ShortUrl\ShortCodeHelper::class => ConfigAbstractFactory::class,
+
+            Tag\TagService::class => ConfigAbstractFactory::class,
+
             Domain\DomainService::class => ConfigAbstractFactory::class,
+
+            Visit\VisitsTracker::class => ConfigAbstractFactory::class,
+            Visit\VisitLocator::class => ConfigAbstractFactory::class,
+            Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
+            Visit\Transformer\OrphanVisitDataTransformer::class => InvokableFactory::class,
 
             Util\UrlValidator::class => ConfigAbstractFactory::class,
             Util\DoctrineBatchHelper::class => ConfigAbstractFactory::class,

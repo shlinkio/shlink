@@ -9,6 +9,7 @@ use DateTimeInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\InputFilter\InputFilter;
 use PUGX\Shortid\Factory as ShortIdFactory;
+use Shlinkio\Shlink\Common\Util\DateRange;
 
 use function Functional\reduce_left;
 use function is_array;
@@ -42,6 +43,26 @@ function generateRandomShortCode(int $length): string
 function parseDateFromQuery(array $query, string $dateName): ?Chronos
 {
     return ! isset($query[$dateName]) || empty($query[$dateName]) ? null : Chronos::parse($query[$dateName]);
+}
+
+function parseDateRangeFromQuery(array $query, string $startDateName, string $endDateName): DateRange
+{
+    $startDate = parseDateFromQuery($query, $startDateName);
+    $endDate = parseDateFromQuery($query, $endDateName);
+
+    if ($startDate === null && $endDate === null) {
+        return DateRange::emptyInstance();
+    }
+
+    if ($startDate !== null && $endDate !== null) {
+        return DateRange::withStartAndEndDate($startDate, $endDate);
+    }
+
+    if ($startDate !== null) {
+        return DateRange::withStartDate($startDate);
+    }
+
+    return DateRange::withEndDate($endDate);
 }
 
 /**

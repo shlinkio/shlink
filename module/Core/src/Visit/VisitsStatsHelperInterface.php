@@ -32,4 +32,9 @@ interface VisitsStatsHelperInterface
      * @throws TagNotFoundException
      */
     public function visitsForTag(string $tag, VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
+
+    /**
+     * @return Visit[]|Paginator
+     */
+    public function orphanVisits(VisitsParams $params): Paginator;
 }

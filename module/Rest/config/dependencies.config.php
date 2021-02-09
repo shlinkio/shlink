@@ -34,6 +34,7 @@ return [
             Action\Visit\ShortUrlVisitsAction::class => ConfigAbstractFactory::class,
             Action\Visit\TagVisitsAction::class => ConfigAbstractFactory::class,
             Action\Visit\GlobalVisitsAction::class => ConfigAbstractFactory::class,
+            Action\Visit\OrphanVisitsAction::class => ConfigAbstractFactory::class,
             Action\Tag\ListTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\DeleteTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\CreateTagsAction::class => ConfigAbstractFactory::class,
@@ -69,6 +70,10 @@ return [
         Action\Visit\ShortUrlVisitsAction::class => [Visit\VisitsStatsHelper::class],
         Action\Visit\TagVisitsAction::class => [Visit\VisitsStatsHelper::class],
         Action\Visit\GlobalVisitsAction::class => [Visit\VisitsStatsHelper::class],
+        Action\Visit\OrphanVisitsAction::class => [
+            Visit\VisitsStatsHelper::class,
+            Visit\Transformer\OrphanVisitDataTransformer::class,
+        ],
         Action\ShortUrl\ListShortUrlsAction::class => [Service\ShortUrlService::class, ShortUrlDataTransformer::class],
         Action\ShortUrl\EditShortUrlTagsAction::class => [Service\ShortUrlService::class],
         Action\Tag\ListTagsAction::class => [TagService::class],
