@@ -9,6 +9,7 @@ use Mezzio\Helper;
 use Mezzio\ProblemDetails;
 use Mezzio\Router;
 use PhpMiddleware\RequestId\RequestIdMiddleware;
+use RKA\Middleware\IpAddress;
 
 return [
 
@@ -64,6 +65,8 @@ return [
         ],
         'not-found' => [
             'middleware' => [
+                // This middleware is in front of tracking actions explicitly. Putting here for orphan visits tracking
+                IpAddress::class,
                 Core\ErrorHandler\NotFoundTypeResolverMiddleware::class,
                 Core\ErrorHandler\NotFoundTrackerMiddleware::class,
                 Core\ErrorHandler\NotFoundRedirectHandler::class,
