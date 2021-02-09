@@ -28,15 +28,10 @@ class Visit extends AbstractEntity implements JsonSerializable
     private ?ShortUrl $shortUrl;
     private ?VisitLocation $visitLocation = null;
 
-    public function __construct(
-        ?ShortUrl $shortUrl,
-        Visitor $visitor,
-        bool $anonymize = true,
-        ?Chronos $date = null,
-        string $type = self::TYPE_VALID_SHORT_URL
-    ) {
+    private function __construct(?ShortUrl $shortUrl, Visitor $visitor, string $type, bool $anonymize = true)
+    {
         $this->shortUrl = $shortUrl;
-        $this->date = $date ?? Chronos::now();
+        $this->date = Chronos::now();
         $this->userAgent = $visitor->getUserAgent();
         $this->referer = $visitor->getReferer();
         $this->remoteAddr = $this->processAddress($anonymize, $visitor->getRemoteAddress());
@@ -60,22 +55,22 @@ class Visit extends AbstractEntity implements JsonSerializable
 
     public static function forValidShortUrl(ShortUrl $shortUrl, Visitor $visitor, bool $anonymize = true): self
     {
-        return new self($shortUrl, $visitor, $anonymize);
+        return new self($shortUrl, $visitor, self::TYPE_VALID_SHORT_URL, $anonymize);
     }
 
     public static function forBasePath(Visitor $visitor, bool $anonymize = true): self
     {
-        return new self(null, $visitor, $anonymize, null, self::TYPE_BASE_URL);
+        return new self(null, $visitor, self::TYPE_BASE_URL, $anonymize);
     }
 
     public static function forInvalidShortUrl(Visitor $visitor, bool $anonymize = true): self
     {
-        return new self(null, $visitor, $anonymize, null, self::TYPE_INVALID_SHORT_URL);
+        return new self(null, $visitor, self::TYPE_INVALID_SHORT_URL, $anonymize);
     }
 
     public static function forRegularNotFound(Visitor $visitor, bool $anonymize = true): self
     {
-        return new self(null, $visitor, $anonymize, null, self::TYPE_REGULAR_404);
+        return new self(null, $visitor, self::TYPE_REGULAR_404, $anonymize);
     }
 
     public function getRemoteAddr(): ?string

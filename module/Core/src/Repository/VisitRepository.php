@@ -168,6 +168,29 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $qb;
     }
 
+    public function findOrphanVisits(?DateRange $dateRange = null, ?int $limit = null, ?int $offset = null): array
+    {
+        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
+        // Since they are not strictly provided by the caller, it's reasonably safe
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(Visit::class, 'v')
+           ->where($qb->expr()->isNull('v.shortUrl'));
+
+        $this->applyDatesInline($qb, $dateRange);
+
+        return $this->resolveVisitsWithNativeQuery($qb, $limit, $offset);
+    }
+
+    public function countOrphanVisits(?DateRange $dateRange = null): int
+    {
+        return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits($dateRange));
+    }
+
+    public function countVisits(?ApiKey $apiKey = null): int
+    {
+        return (int) $this->matchSingleScalarResult(new CountOfShortUrlVisits($apiKey));
+    }
+
     private function applyDatesInline(QueryBuilder $qb, ?DateRange $dateRange): void
     {
         if ($dateRange !== null && $dateRange->getStartDate() !== null) {
@@ -207,15 +230,5 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $query = $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm);
 
         return $query->getResult();
-    }
-
-    public function countVisits(?ApiKey $apiKey = null): int
-    {
-        return (int) $this->matchSingleScalarResult(new CountOfShortUrlVisits($apiKey));
-    }
-
-    public function countOrphanVisits(): int
-    {
-        return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits());
     }
 }

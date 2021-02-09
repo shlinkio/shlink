@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Repository;
 
 use Cake\Chronos\Chronos;
+use ReflectionObject;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -214,6 +215,75 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(3, $this->repo->countOrphanVisits());
     }
 
+    /** @test */
+    public function findOrphanVisitsReturnsExpectedResult(): void
+    {
+        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['longUrl' => '']));
+        $this->getEntityManager()->persist($shortUrl);
+        $this->createVisitsForShortUrl($shortUrl, 7);
+
+        for ($i = 0; $i < 6; $i++) {
+            $this->getEntityManager()->persist($this->setDateOnVisit(
+                Visit::forBasePath(Visitor::emptyInstance()),
+                Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
+            ));
+            $this->getEntityManager()->persist($this->setDateOnVisit(
+                Visit::forInvalidShortUrl(Visitor::emptyInstance()),
+                Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
+            ));
+            $this->getEntityManager()->persist($this->setDateOnVisit(
+                Visit::forRegularNotFound(Visitor::emptyInstance()),
+                Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
+            ));
+        }
+
+        $this->getEntityManager()->flush();
+
+        self::assertCount(18, $this->repo->findOrphanVisits());
+        self::assertCount(5, $this->repo->findOrphanVisits(null, 5));
+        self::assertCount(10, $this->repo->findOrphanVisits(null, 15, 8));
+        self::assertCount(9, $this->repo->findOrphanVisits(DateRange::withStartDate(Chronos::parse('2020-01-04')), 15));
+        self::assertCount(2, $this->repo->findOrphanVisits(
+            DateRange::withStartAndEndDate(Chronos::parse('2020-01-02'), Chronos::parse('2020-01-03')),
+            6,
+            4,
+        ));
+        self::assertCount(3, $this->repo->findOrphanVisits(DateRange::withEndDate(Chronos::parse('2020-01-01'))));
+    }
+
+    /** @test */
+    public function countOrphanVisitsReturnsExpectedResult(): void
+    {
+        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['longUrl' => '']));
+        $this->getEntityManager()->persist($shortUrl);
+        $this->createVisitsForShortUrl($shortUrl, 7);
+
+        for ($i = 0; $i < 6; $i++) {
+            $this->getEntityManager()->persist($this->setDateOnVisit(
+                Visit::forBasePath(Visitor::emptyInstance()),
+                Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
+            ));
+            $this->getEntityManager()->persist($this->setDateOnVisit(
+                Visit::forInvalidShortUrl(Visitor::emptyInstance()),
+                Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
+            ));
+            $this->getEntityManager()->persist($this->setDateOnVisit(
+                Visit::forRegularNotFound(Visitor::emptyInstance()),
+                Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
+            ));
+        }
+
+        $this->getEntityManager()->flush();
+
+        self::assertEquals(18, $this->repo->countOrphanVisits());
+        self::assertEquals(18, $this->repo->countOrphanVisits(DateRange::emptyInstance()));
+        self::assertEquals(9, $this->repo->countOrphanVisits(DateRange::withStartDate(Chronos::parse('2020-01-04'))));
+        self::assertEquals(6, $this->repo->countOrphanVisits(
+            DateRange::withStartAndEndDate(Chronos::parse('2020-01-02'), Chronos::parse('2020-01-03')),
+        ));
+        self::assertEquals(3, $this->repo->countOrphanVisits(DateRange::withEndDate(Chronos::parse('2020-01-01'))));
+    }
+
     private function createShortUrlsAndVisits(bool $withDomain = true, array $tags = []): array
     {
         $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
@@ -243,13 +313,22 @@ class VisitRepositoryTest extends DatabaseTestCase
     private function createVisitsForShortUrl(ShortUrl $shortUrl, int $amount = 6): void
     {
         for ($i = 0; $i < $amount; $i++) {
-            $visit = new Visit(
-                $shortUrl,
-                Visitor::emptyInstance(),
-                true,
+            $visit = $this->setDateOnVisit(
+                Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
                 Chronos::parse(sprintf('2016-01-0%s', $i + 1)),
             );
+
             $this->getEntityManager()->persist($visit);
         }
+    }
+
+    private function setDateOnVisit(Visit $visit, Chronos $date): Visit
+    {
+        $ref = new ReflectionObject($visit);
+        $dateProp = $ref->getProperty('date');
+        $dateProp->setAccessible(true);
+        $dateProp->setValue($visit, $date);
+
+        return $visit;
     }
 }

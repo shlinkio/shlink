@@ -47,7 +47,7 @@
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.7",
         "ramsey/uuid": "^3.9",
-        "shlinkio/shlink-common": "dev-main#b889f5d as 3.5",
+        "shlinkio/shlink-common": "dev-main#62d4b84 as 3.5",
         "shlinkio/shlink-config": "^1.0",
         "shlinkio/shlink-event-dispatcher": "^2.0",
         "shlinkio/shlink-importer": "^2.2",
