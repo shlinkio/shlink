@@ -27,6 +27,7 @@ use Shlinkio\Shlink\Core\Visit\VisitsStatsHelper;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
 
+use function count;
 use function Functional\map;
 use function range;
 
@@ -146,6 +147,23 @@ class VisitsStatsHelperTest extends TestCase
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
         $tagExists->shouldHaveBeenCalledOnce();
+        $getRepo->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
+    public function orphanVisitsAreReturnedAsExpected(): void
+    {
+        $list = map(range(0, 3), fn () => Visit::forBasePath(Visitor::emptyInstance()));
+        $repo = $this->prophesize(VisitRepository::class);
+        $countVisits = $repo->countOrphanVisits(Argument::type(DateRange::class))->willReturn(count($list));
+        $listVisits = $repo->findOrphanVisits(Argument::type(DateRange::class), Argument::cetera())->willReturn($list);
+        $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
+
+        $paginator = $this->helper->orphanVisits(new VisitsParams());
+
+        self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
+        $listVisits->shouldHaveBeenCalledOnce();
+        $countVisits->shouldHaveBeenCalledOnce();
         $getRepo->shouldHaveBeenCalledOnce();
     }
 }
