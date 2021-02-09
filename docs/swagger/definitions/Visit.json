@@ -1,5 +1,6 @@
 {
     "type": "object",
+    "required": ["referer", "date", "userAgent", "visitLocation"],
     "properties": {
         "referer": {
             "type": "string",
