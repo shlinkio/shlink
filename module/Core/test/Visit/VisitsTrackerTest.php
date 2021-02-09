@@ -32,16 +32,25 @@ class VisitsTrackerTest extends TestCase
         $this->visitsTracker = new VisitsTracker($this->em->reveal(), $this->eventDispatcher->reveal(), true);
     }
 
-    /** @test */
-    public function trackPersistsVisit(): void
+    /**
+     * @test
+     * @dataProvider provideTrackingMethodNames
+     */
+    public function trackPersistsVisitAndDispatchesEvent(string $method, array $args): void
     {
-        $shortCode = '123ABC';
-
         $this->em->persist(Argument::that(fn (Visit $visit) => $visit->setId('1')))->shouldBeCalledOnce();
         $this->em->flush()->shouldBeCalledOnce();
 
-        $this->visitsTracker->track(ShortUrl::withLongUrl($shortCode), Visitor::emptyInstance());
+        $this->visitsTracker->{$method}(...$args);
 
         $this->eventDispatcher->dispatch(Argument::type(UrlVisited::class))->shouldHaveBeenCalled();
+    }
+
+    public function provideTrackingMethodNames(): iterable
+    {
+        yield 'track' => ['track', [ShortUrl::createEmpty(), Visitor::emptyInstance()]];
+        yield 'trackInvalidShortUrlVisit' => ['trackInvalidShortUrlVisit', [Visitor::emptyInstance()]];
+        yield 'trackBaseUrlVisit' => ['trackBaseUrlVisit', [Visitor::emptyInstance()]];
+        yield 'trackRegularNotFoundVisit' => ['trackRegularNotFoundVisit', [Visitor::emptyInstance()]];
     }
 }
