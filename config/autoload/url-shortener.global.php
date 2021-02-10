@@ -20,6 +20,7 @@ return [
         'redirect_status_code' => DEFAULT_REDIRECT_STATUS_CODE,
         'redirect_cache_lifetime' => DEFAULT_REDIRECT_CACHE_LIFETIME,
         'auto_resolve_titles' => false,
+        'track_orphan_visits' => true,
     ],
 
 ];

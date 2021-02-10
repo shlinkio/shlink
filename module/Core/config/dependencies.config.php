@@ -85,7 +85,7 @@ return [
         Visit\VisitsTracker::class => [
             'em',
             EventDispatcherInterface::class,
-            'config.url_shortener.anonymize_remote_addr',
+            Options\UrlShortenerOptions::class,
         ],
         Service\ShortUrlService::class => [
             'em',

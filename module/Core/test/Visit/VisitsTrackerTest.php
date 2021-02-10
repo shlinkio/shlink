@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Visit\VisitsTracker;
 
 class VisitsTrackerTest extends TestCase
@@ -23,13 +24,15 @@ class VisitsTrackerTest extends TestCase
     private VisitsTracker $visitsTracker;
     private ObjectProphecy $em;
     private ObjectProphecy $eventDispatcher;
+    private UrlShortenerOptions $options;
 
     public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManager::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->options = new UrlShortenerOptions();
 
-        $this->visitsTracker = new VisitsTracker($this->em->reveal(), $this->eventDispatcher->reveal(), true);
+        $this->visitsTracker = new VisitsTracker($this->em->reveal(), $this->eventDispatcher->reveal(), $this->options);
     }
 
     /**
@@ -52,5 +55,27 @@ class VisitsTrackerTest extends TestCase
         yield 'trackInvalidShortUrlVisit' => ['trackInvalidShortUrlVisit', [Visitor::emptyInstance()]];
         yield 'trackBaseUrlVisit' => ['trackBaseUrlVisit', [Visitor::emptyInstance()]];
         yield 'trackRegularNotFoundVisit' => ['trackRegularNotFoundVisit', [Visitor::emptyInstance()]];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideOrphanTrackingMethodNames
+     */
+    public function orphanVisitsAreNotTrackedWhenDisabled(string $method): void
+    {
+        $this->options->trackOrphanVisits = false;
+
+        $this->visitsTracker->{$method}(Visitor::emptyInstance());
+
+        $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->em->flush()->shouldNotHaveBeenCalled();
+    }
+
+    public function provideOrphanTrackingMethodNames(): iterable
+    {
+        yield 'trackInvalidShortUrlVisit' => ['trackInvalidShortUrlVisit'];
+        yield 'trackBaseUrlVisit' => ['trackBaseUrlVisit'];
+        yield 'trackRegularNotFoundVisit' => ['trackRegularNotFoundVisit'];
     }
 }
