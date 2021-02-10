@@ -13,7 +13,7 @@ return [
             'schema' => 'https',
             'hostname' => '',
         ],
-        'validate_url' => false,
+        'validate_url' => false, // Deprecated
         'anonymize_remote_addr' => true,
         'visits_webhooks' => [],
         'default_short_codes_length' => DEFAULT_SHORT_CODES_LENGTH,
