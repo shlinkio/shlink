@@ -37,6 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#988](https://github.com/shlinkio/shlink/issues/988) Fixed serving zero-byte static files in apache and apache-compatible web servers.
 * [#990](https://github.com/shlinkio/shlink/issues/990) Fixed short URLs not properly composed in REST API endpoints when both custom domain and custom base path are used.
 * [#1002](https://github.com/shlinkio/shlink/issues/1002) Fixed weird behavior in which GeoLite2 metadata's `buildEpoch` is parsed as string instead of int.
+* [#851](https://github.com/shlinkio/shlink/issues/851) Fixed error when trying to schedule swoole tasks in ARM architectures (like raspberry).
 
 
 ## [2.5.2] - 2021-01-24
