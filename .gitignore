@@ -9,5 +9,6 @@ data/shlink-tests.db
 data/GeoLite2-City.mmdb
 data/GeoLite2-City.mmdb.*
 docs/swagger-ui*
+docs/mercure.html
 docker-compose.override.yml
 .phpunit.result.cache
