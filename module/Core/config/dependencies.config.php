@@ -133,7 +133,10 @@ return [
         ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => [Util\UrlValidator::class],
         ShortUrl\Transformer\ShortUrlDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
 
-        Mercure\MercureUpdatesGenerator::class => [ShortUrl\Transformer\ShortUrlDataTransformer::class],
+        Mercure\MercureUpdatesGenerator::class => [
+            ShortUrl\Transformer\ShortUrlDataTransformer::class,
+            Visit\Transformer\OrphanVisitDataTransformer::class,
+        ],
 
         Importer\ImportedLinksProcessor::class => [
             'em',

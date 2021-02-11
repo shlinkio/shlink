@@ -136,11 +136,8 @@ class LocateVisitTest extends TestCase
      * @test
      * @dataProvider provideIpAddresses
      */
-    public function locatableVisitsResolveToLocation(
-        Visit $visit,
-        ?string $originalIpAddress,
-        int $expectedDispatchCalls
-    ): void {
+    public function locatableVisitsResolveToLocation(Visit $visit, ?string $originalIpAddress): void
+    {
         $ipAddr = $originalIpAddress ?? $visit->getRemoteAddr();
         $location = new Location('', '', '', '', 0.0, 0.0, '');
         $event = new UrlVisited('123', $originalIpAddress);
@@ -159,7 +156,7 @@ class LocateVisitTest extends TestCase
         $flush->shouldHaveBeenCalledOnce();
         $resolveIp->shouldHaveBeenCalledOnce();
         $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
-        $dispatch->shouldHaveBeenCalledTimes($expectedDispatchCalls);
+        $dispatch->shouldHaveBeenCalledOnce();
     }
 
     public function provideIpAddresses(): iterable
@@ -167,16 +164,14 @@ class LocateVisitTest extends TestCase
         yield 'no original IP address' => [
             Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
             null,
-            1,
         ];
         yield 'original IP address' => [
             Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
             '1.2.3.4',
-            1,
         ];
-        yield 'base url' => [Visit::forBasePath(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4', 0];
-        yield 'invalid short url' => [Visit::forInvalidShortUrl(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4', 0];
-        yield 'regular not found' => [Visit::forRegularNotFound(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4', 0];
+        yield 'base url' => [Visit::forBasePath(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4'];
+        yield 'invalid short url' => [Visit::forInvalidShortUrl(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4'];
+        yield 'regular not found' => [Visit::forRegularNotFound(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4'];
     }
 
     /** @test */

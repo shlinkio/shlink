@@ -58,9 +58,7 @@ class LocateVisit
             $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress(), $visit);
         }
 
-        if (! $visit->isOrphan()) {
-            $this->eventDispatcher->dispatch(new VisitLocated($visitId));
-        }
+        $this->eventDispatcher->dispatch(new VisitLocated($visitId));
     }
 
     private function downloadOrUpdateGeoLiteDb(string $visitId): bool
