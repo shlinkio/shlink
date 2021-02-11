@@ -95,7 +95,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($foo);
 
         $bar = ShortUrl::withLongUrl('bar');
-        $visit = new Visit($bar, Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl($bar, Visitor::emptyInstance());
         $this->getEntityManager()->persist($visit);
         $bar->setVisits(new ArrayCollection([$visit]));
         $this->getEntityManager()->persist($bar);

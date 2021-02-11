@@ -14,20 +14,29 @@ use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
 
 class Visit extends AbstractEntity implements JsonSerializable
 {
+    public const TYPE_VALID_SHORT_URL = 'valid_short_url';
+    public const TYPE_INVALID_SHORT_URL = 'invalid_short_url';
+    public const TYPE_BASE_URL = 'base_url';
+    public const TYPE_REGULAR_404 = 'regular_404';
+
     private string $referer;
     private Chronos $date;
-    private ?string $remoteAddr = null;
+    private ?string $remoteAddr;
+    private ?string $visitedUrl;
     private string $userAgent;
-    private ShortUrl $shortUrl;
+    private string $type;
+    private ?ShortUrl $shortUrl;
     private ?VisitLocation $visitLocation = null;
 
-    public function __construct(ShortUrl $shortUrl, Visitor $visitor, bool $anonymize = true, ?Chronos $date = null)
+    private function __construct(?ShortUrl $shortUrl, Visitor $visitor, string $type, bool $anonymize = true)
     {
         $this->shortUrl = $shortUrl;
-        $this->date = $date ?? Chronos::now();
+        $this->date = Chronos::now();
         $this->userAgent = $visitor->getUserAgent();
         $this->referer = $visitor->getReferer();
         $this->remoteAddr = $this->processAddress($anonymize, $visitor->getRemoteAddress());
+        $this->visitedUrl = $visitor->getVisitedUrl();
+        $this->type = $type;
     }
 
     private function processAddress(bool $anonymize, ?string $address): ?string
@@ -44,6 +53,26 @@ class Visit extends AbstractEntity implements JsonSerializable
         }
     }
 
+    public static function forValidShortUrl(ShortUrl $shortUrl, Visitor $visitor, bool $anonymize = true): self
+    {
+        return new self($shortUrl, $visitor, self::TYPE_VALID_SHORT_URL, $anonymize);
+    }
+
+    public static function forBasePath(Visitor $visitor, bool $anonymize = true): self
+    {
+        return new self(null, $visitor, self::TYPE_BASE_URL, $anonymize);
+    }
+
+    public static function forInvalidShortUrl(Visitor $visitor, bool $anonymize = true): self
+    {
+        return new self(null, $visitor, self::TYPE_INVALID_SHORT_URL, $anonymize);
+    }
+
+    public static function forRegularNotFound(Visitor $visitor, bool $anonymize = true): self
+    {
+        return new self(null, $visitor, self::TYPE_REGULAR_404, $anonymize);
+    }
+
     public function getRemoteAddr(): ?string
     {
         return $this->remoteAddr;
@@ -54,7 +83,7 @@ class Visit extends AbstractEntity implements JsonSerializable
         return ! empty($this->remoteAddr);
     }
 
-    public function getShortUrl(): ShortUrl
+    public function getShortUrl(): ?ShortUrl
     {
         return $this->shortUrl;
     }
@@ -75,13 +104,21 @@ class Visit extends AbstractEntity implements JsonSerializable
         return $this;
     }
 
-    /**
-     * Specify data which should be serialized to JSON
-     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return array data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
+    public function isOrphan(): bool
+    {
+        return $this->shortUrl === null;
+    }
+
+    public function visitedUrl(): ?string
+    {
+        return $this->visitedUrl;
+    }
+
+    public function type(): string
+    {
+        return $this->type;
+    }
+
     public function jsonSerialize(): array
     {
         return [

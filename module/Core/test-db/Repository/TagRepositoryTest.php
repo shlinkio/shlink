@@ -64,13 +64,13 @@ class TagRepositoryTest extends DatabaseTestCase
 
         $shortUrl = ShortUrl::fromMeta($metaWithTags($firstUrlTags), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl);
-        $this->getEntityManager()->persist(new Visit($shortUrl, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(new Visit($shortUrl, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(new Visit($shortUrl, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
 
         $shortUrl2 = ShortUrl::fromMeta($metaWithTags($secondUrlTags), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl2);
-        $this->getEntityManager()->persist(new Visit($shortUrl2, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
         $this->getEntityManager()->flush();
 
         $result = $this->repo->findTagsWithInfo();

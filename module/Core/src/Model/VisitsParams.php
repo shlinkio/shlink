@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\Model;
 
 use Shlinkio\Shlink\Common\Util\DateRange;
 
-use function Shlinkio\Shlink\Core\parseDateFromQuery;
+use function Shlinkio\Shlink\Core\parseDateRangeFromQuery;
 
 final class VisitsParams
 {
@@ -36,7 +36,7 @@ final class VisitsParams
     public static function fromRawData(array $query): self
     {
         return new self(
-            new DateRange(parseDateFromQuery($query, 'startDate'), parseDateFromQuery($query, 'endDate')),
+            parseDateRangeFromQuery($query, 'startDate', 'endDate'),
             (int) ($query['page'] ?? 1),
             isset($query['itemsPerPage']) ? (int) $query['itemsPerPage'] : null,
         );

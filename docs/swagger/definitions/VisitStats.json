@@ -1,10 +1,14 @@
 {
     "type": "object",
-    "required": ["visitsCount"],
+    "required": ["visitsCount", "orphanVisitsCount"],
     "properties": {
         "visitsCount": {
             "type": "number",
-            "description": "The total amount of visits received."
+            "description": "The total amount of visits received on any short URL."
+        },
+        "orphanVisitsCount": {
+            "type": "number",
+            "description": "The total amount of visits that could not be matched to a short URL (visits to the base URL, an invalid short URL or any other kind of 404)."
         }
     }
 }

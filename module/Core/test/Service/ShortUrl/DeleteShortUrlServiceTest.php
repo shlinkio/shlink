@@ -34,7 +34,7 @@ class DeleteShortUrlServiceTest extends TestCase
     public function setUp(): void
     {
         $shortUrl = ShortUrl::createEmpty()->setVisits(new ArrayCollection(
-            map(range(0, 10), fn () => new Visit(ShortUrl::createEmpty(), Visitor::emptyInstance())),
+            map(range(0, 10), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance())),
         ));
         $this->shortCode = $shortUrl->getShortCode();
 

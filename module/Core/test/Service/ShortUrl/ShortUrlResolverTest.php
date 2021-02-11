@@ -121,7 +121,7 @@ class ShortUrlResolverTest extends TestCase
             $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['maxVisits' => 3, 'longUrl' => '']));
             $shortUrl->setVisits(new ArrayCollection(map(
                 range(0, 4),
-                fn () => new Visit($shortUrl, Visitor::emptyInstance()),
+                fn () => Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
             )));
 
             return $shortUrl;
@@ -140,7 +140,7 @@ class ShortUrlResolverTest extends TestCase
             ]));
             $shortUrl->setVisits(new ArrayCollection(map(
                 range(0, 4),
-                fn () => new Visit($shortUrl, Visitor::emptyInstance()),
+                fn () => Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
             )));
 
             return $shortUrl;

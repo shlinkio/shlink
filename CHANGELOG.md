@@ -16,6 +16,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     The file requires the `Long URL` and `Short code` columns, and it also accepts the optional `title`, `domain` and `tags` columns.
 
 * [#1000](https://github.com/shlinkio/shlink/issues/1000) Added support to provide a `margin` query param when generating some URL's QR code.
+* [#675](https://github.com/shlinkio/shlink/issues/1000) Added ability to track visits to the base URL, invalid short URLs or any other "not found" URL, as known as orphan visits.
+
+    This behavior is enabled by default, but you can opt out via env vars or config options.
+
+    This new orphan visits can be consumed in these ways:
+
+      * The `https://shlink.io/new-orphan-visit` mercure topic, which gets notified when an orphan visit occurs.
+      * The `GET /visits/orphan` REST endpoint, which behaves like the short URL visits and tags visits endpoints, but returns only orphan visits.
 
 ### Changed
 * [#977](https://github.com/shlinkio/shlink/issues/977) Migrated from `laminas/laminas-paginator` to `pagerfanta/core` to handle pagination.

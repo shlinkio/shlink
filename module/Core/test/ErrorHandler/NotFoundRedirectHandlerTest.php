@@ -17,6 +17,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
+use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\ErrorHandler\NotFoundRedirectHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
@@ -33,7 +34,7 @@ class NotFoundRedirectHandlerTest extends TestCase
     {
         $this->redirectOptions = new NotFoundRedirectOptions();
         $this->helper = $this->prophesize(RedirectResponseHelperInterface::class);
-        $this->middleware = new NotFoundRedirectHandler($this->redirectOptions, $this->helper->reveal(), '');
+        $this->middleware = new NotFoundRedirectHandler($this->redirectOptions, $this->helper->reveal());
     }
 
     /**
@@ -64,19 +65,19 @@ class NotFoundRedirectHandlerTest extends TestCase
     public function provideRedirects(): iterable
     {
         yield 'base URL with trailing slash' => [
-            ServerRequestFactory::fromGlobals()->withUri(new Uri('/')),
+            $this->withNotFoundType(ServerRequestFactory::fromGlobals()->withUri(new Uri('/'))),
             'baseUrl',
         ];
         yield 'base URL without trailing slash' => [
-            ServerRequestFactory::fromGlobals()->withUri(new Uri('')),
+            $this->withNotFoundType(ServerRequestFactory::fromGlobals()->withUri(new Uri(''))),
             'baseUrl',
         ];
         yield 'regular 404' => [
-            ServerRequestFactory::fromGlobals()->withUri(new Uri('/foo/bar')),
+            $this->withNotFoundType(ServerRequestFactory::fromGlobals()->withUri(new Uri('/foo/bar'))),
             'regular404',
         ];
         yield 'invalid short URL' => [
-            ServerRequestFactory::fromGlobals()
+            $this->withNotFoundType(ServerRequestFactory::fromGlobals()
                 ->withAttribute(
                     RouteResult::class,
                     RouteResult::fromRoute(
@@ -88,7 +89,7 @@ class NotFoundRedirectHandlerTest extends TestCase
                         ),
                     ),
                 )
-                ->withUri(new Uri('/abc123')),
+                ->withUri(new Uri('/abc123'))),
             'invalidShortUrl',
         ];
     }
@@ -96,7 +97,7 @@ class NotFoundRedirectHandlerTest extends TestCase
     /** @test */
     public function nextMiddlewareIsInvokedWhenNotRedirectNeedsToOccur(): void
     {
-        $req = ServerRequestFactory::fromGlobals();
+        $req = $this->withNotFoundType(ServerRequestFactory::fromGlobals());
         $resp = new Response();
 
         $buildResp = $this->helper->buildRedirectResponse(Argument::cetera());
@@ -109,5 +110,11 @@ class NotFoundRedirectHandlerTest extends TestCase
         self::assertSame($resp, $result);
         $buildResp->shouldNotHaveBeenCalled();
         $handle->shouldHaveBeenCalledOnce();
+    }
+
+    private function withNotFoundType(ServerRequestInterface $req): ServerRequestInterface
+    {
+        $type = NotFoundType::fromRequest($req, '');
+        return $req->withAttribute(NotFoundType::class, $type);
     }
 }

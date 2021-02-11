@@ -7,10 +7,10 @@ namespace Shlinkio\Shlink\Core\ErrorHandler;
 use Closure;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\Diactoros\Response;
-use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 
 use function file_get_contents;
 use function sprintf;
@@ -29,11 +29,11 @@ class NotFoundTemplateHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        /** @var RouteResult $routeResult */
-        $routeResult = $request->getAttribute(RouteResult::class) ?? RouteResult::fromRouteFailure(null);
+        /** @var NotFoundType $notFoundType */
+        $notFoundType = $request->getAttribute(NotFoundType::class);
         $status = StatusCodeInterface::STATUS_NOT_FOUND;
 
-        $template = $routeResult->isFailure() ? self::NOT_FOUND_TEMPLATE : self::INVALID_SHORT_CODE_TEMPLATE;
+        $template = $notFoundType->isInvalidShortUrl() ? self::INVALID_SHORT_CODE_TEMPLATE : self::NOT_FOUND_TEMPLATE;
         $templateContent = ($this->readFile)(sprintf('%s/%s', self::TEMPLATES_BASE_DIR, $template));
         return new Response\HtmlResponse($templateContent, $status);
     }

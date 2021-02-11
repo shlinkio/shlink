@@ -10,6 +10,7 @@ use Fig\Http\Message\RequestMethodInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Promise\PromiseInterface;
+use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\RequestOptions;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
@@ -20,7 +21,6 @@ use Throwable;
 
 use function Functional\map;
 use function Functional\partial_left;
-use function GuzzleHttp\Promise\settle;
 
 class NotifyVisitToWebHooks
 {
@@ -69,7 +69,7 @@ class NotifyVisitToWebHooks
         $requestPromises = $this->performRequests($requestOptions, $visitId);
 
         // Wait for all the promises to finish, ignoring rejections, as in those cases we only want to log the error.
-        settle($requestPromises)->wait();
+        Utils::settle($requestPromises)->wait();
     }
 
     private function buildRequestOptions(Visit $visit): array

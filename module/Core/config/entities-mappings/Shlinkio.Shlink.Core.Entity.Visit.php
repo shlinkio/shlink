@@ -47,11 +47,22 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->build();
 
     $builder->createManyToOne('shortUrl', Entity\ShortUrl::class)
-            ->addJoinColumn('short_url_id', 'id', false, false, 'CASCADE')
+            ->addJoinColumn('short_url_id', 'id', true, false, 'CASCADE')
             ->build();
 
     $builder->createManyToOne('visitLocation', Entity\VisitLocation::class)
             ->addJoinColumn('visit_location_id', 'id', true, false, 'Set NULL')
             ->cascadePersist()
+            ->build();
+
+    $builder->createField('visitedUrl', Types::STRING)
+            ->columnName('visited_url')
+            ->length(Visitor::VISITED_URL_MAX_LENGTH)
+            ->nullable()
+            ->build();
+
+    $builder->createField('type', Types::STRING)
+            ->columnName('type')
+            ->length(255)
             ->build();
 };

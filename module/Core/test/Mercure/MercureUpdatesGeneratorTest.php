@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
+use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
 
 use function Shlinkio\Shlink\Common\json_decode;
 
@@ -21,7 +22,10 @@ class MercureUpdatesGeneratorTest extends TestCase
 
     public function setUp(): void
     {
-        $this->generator = new MercureUpdatesGenerator(new ShortUrlDataTransformer(new ShortUrlStringifier([])));
+        $this->generator = new MercureUpdatesGenerator(
+            new ShortUrlDataTransformer(new ShortUrlStringifier([])),
+            new OrphanVisitDataTransformer(),
+        );
     }
 
     /**
@@ -35,7 +39,7 @@ class MercureUpdatesGeneratorTest extends TestCase
             'longUrl' => '',
             'title' => $title,
         ]));
-        $visit = new Visit($shortUrl, Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
 
         $update = $this->generator->{$method}($visit);
 
@@ -69,5 +73,35 @@ class MercureUpdatesGeneratorTest extends TestCase
     {
         yield 'newVisitUpdate' => ['newVisitUpdate', 'https://shlink.io/new-visit', 'the cool title'];
         yield 'newShortUrlVisitUpdate' => ['newShortUrlVisitUpdate', 'https://shlink.io/new-visit/foo', null];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideOrphanVisits
+     */
+    public function orphanVisitIsProperlySerializedIntoUpdate(Visit $orphanVisit): void
+    {
+        $update = $this->generator->newOrphanVisitUpdate($orphanVisit);
+
+        self::assertEquals(['https://shlink.io/new-orphan-visit'], $update->getTopics());
+        self::assertEquals([
+            'visit' => [
+                'referer' => '',
+                'userAgent' => '',
+                'visitLocation' => null,
+                'date' => $orphanVisit->getDate()->toAtomString(),
+                'visitedUrl' => $orphanVisit->visitedUrl(),
+                'type' => $orphanVisit->type(),
+            ],
+        ], json_decode($update->getData()));
+    }
+
+    public function provideOrphanVisits(): iterable
+    {
+        $visitor = Visitor::emptyInstance();
+
+        yield Visit::TYPE_REGULAR_404 => [Visit::forRegularNotFound($visitor)];
+        yield Visit::TYPE_INVALID_SHORT_URL => [Visit::forInvalidShortUrl($visitor)];
+        yield Visit::TYPE_BASE_URL => [Visit::forBasePath($visitor)];
     }
 }

@@ -17,19 +17,19 @@ use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlVisited;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
-use Shlinkio\Shlink\Core\EventDispatcher\LocateShortUrlVisit;
+use Shlinkio\Shlink\Core\EventDispatcher\LocateVisit;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
-class LocateShortUrlVisitTest extends TestCase
+class LocateVisitTest extends TestCase
 {
     use ProphecyTrait;
 
-    private LocateShortUrlVisit $locateVisit;
+    private LocateVisit $locateVisit;
     private ObjectProphecy $ipLocationResolver;
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
@@ -44,7 +44,7 @@ class LocateShortUrlVisitTest extends TestCase
         $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
 
-        $this->locateVisit = new LocateShortUrlVisit(
+        $this->locateVisit = new LocateVisit(
             $this->ipLocationResolver->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),
@@ -56,7 +56,7 @@ class LocateShortUrlVisitTest extends TestCase
     /** @test */
     public function invalidVisitLogsWarning(): void
     {
-        $event = new ShortUrlVisited('123');
+        $event = new UrlVisited('123');
         $findVisit = $this->em->find(Visit::class, '123')->willReturn(null);
         $logWarning = $this->logger->warning('Tried to locate visit with id "{visitId}", but it does not exist.', [
             'visitId' => 123,
@@ -76,9 +76,9 @@ class LocateShortUrlVisitTest extends TestCase
     /** @test */
     public function invalidAddressLogsWarning(): void
     {
-        $event = new ShortUrlVisited('123');
+        $event = new UrlVisited('123');
         $findVisit = $this->em->find(Visit::class, '123')->willReturn(
-            new Visit(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4')),
+            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
         );
         $resolveLocation = $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->willThrow(
             WrongIpException::class,
@@ -105,7 +105,7 @@ class LocateShortUrlVisitTest extends TestCase
      */
     public function nonLocatableVisitsResolveToEmptyLocations(Visit $visit): void
     {
-        $event = new ShortUrlVisited('123');
+        $event = new UrlVisited('123');
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
         $flush = $this->em->flush()->will(function (): void {
         });
@@ -127,21 +127,20 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $shortUrl = ShortUrl::createEmpty();
 
-        yield 'null IP' => [new Visit($shortUrl, new Visitor('', '', null))];
-        yield 'empty IP' => [new Visit($shortUrl, new Visitor('', '', ''))];
-        yield 'localhost' => [new Visit($shortUrl, new Visitor('', '', IpAddress::LOCALHOST))];
+        yield 'null IP' => [Visit::forValidShortUrl($shortUrl, new Visitor('', '', null, ''))];
+        yield 'empty IP' => [Visit::forValidShortUrl($shortUrl, new Visitor('', '', '', ''))];
+        yield 'localhost' => [Visit::forValidShortUrl($shortUrl, new Visitor('', '', IpAddress::LOCALHOST, ''))];
     }
 
     /**
      * @test
      * @dataProvider provideIpAddresses
      */
-    public function locatableVisitsResolveToLocation(string $anonymizedIpAddress, ?string $originalIpAddress): void
+    public function locatableVisitsResolveToLocation(Visit $visit, ?string $originalIpAddress): void
     {
-        $ipAddr = $originalIpAddress ?? $anonymizedIpAddress;
-        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr));
+        $ipAddr = $originalIpAddress ?? $visit->getRemoteAddr();
         $location = new Location('', '', '', '', 0.0, 0.0, '');
-        $event = new ShortUrlVisited('123', $originalIpAddress);
+        $event = new UrlVisited('123', $originalIpAddress);
 
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
         $flush = $this->em->flush()->will(function (): void {
@@ -162,8 +161,17 @@ class LocateShortUrlVisitTest extends TestCase
 
     public function provideIpAddresses(): iterable
     {
-        yield 'no original IP address' => ['1.2.3.0', null];
-        yield 'original IP address' => ['1.2.3.0', '1.2.3.4'];
+        yield 'no original IP address' => [
+            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
+            null,
+        ];
+        yield 'original IP address' => [
+            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
+            '1.2.3.4',
+        ];
+        yield 'base url' => [Visit::forBasePath(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4'];
+        yield 'invalid short url' => [Visit::forInvalidShortUrl(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4'];
+        yield 'regular not found' => [Visit::forRegularNotFound(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4'];
     }
 
     /** @test */
@@ -171,9 +179,9 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $e = GeolocationDbUpdateFailedException::withOlderDb();
         $ipAddr = '1.2.3.0';
-        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr));
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr, ''));
         $location = new Location('', '', '', '', 0.0, 0.0, '');
-        $event = new ShortUrlVisited('123');
+        $event = new UrlVisited('123');
 
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
         $flush = $this->em->flush()->will(function (): void {
@@ -202,9 +210,9 @@ class LocateShortUrlVisitTest extends TestCase
     {
         $e = GeolocationDbUpdateFailedException::withoutOlderDb();
         $ipAddr = '1.2.3.0';
-        $visit = new Visit(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr));
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr, ''));
         $location = new Location('', '', '', '', 0.0, 0.0, '');
-        $event = new ShortUrlVisited('123');
+        $event = new UrlVisited('123');
 
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
         $flush = $this->em->flush()->will(function (): void {

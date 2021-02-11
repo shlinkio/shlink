@@ -16,19 +16,31 @@ use const JSON_THROW_ON_ERROR;
 final class MercureUpdatesGenerator implements MercureUpdatesGeneratorInterface
 {
     private const NEW_VISIT_TOPIC = 'https://shlink.io/new-visit';
+    private const NEW_ORPHAN_VISIT_TOPIC = 'https://shlink.io/new-orphan-visit';
 
-    private DataTransformerInterface $transformer;
+    private DataTransformerInterface $shortUrlTransformer;
+    private DataTransformerInterface $orphanVisitTransformer;
 
-    public function __construct(DataTransformerInterface $transformer)
-    {
-        $this->transformer = $transformer;
+    public function __construct(
+        DataTransformerInterface $shortUrlTransformer,
+        DataTransformerInterface $orphanVisitTransformer
+    ) {
+        $this->shortUrlTransformer = $shortUrlTransformer;
+        $this->orphanVisitTransformer = $orphanVisitTransformer;
     }
 
     public function newVisitUpdate(Visit $visit): Update
     {
         return new Update(self::NEW_VISIT_TOPIC, $this->serialize([
-            'shortUrl' => $this->transformer->transform($visit->getShortUrl()),
+            'shortUrl' => $this->shortUrlTransformer->transform($visit->getShortUrl()),
             'visit' => $visit,
+        ]));
+    }
+
+    public function newOrphanVisitUpdate(Visit $visit): Update
+    {
+        return new Update(self::NEW_ORPHAN_VISIT_TOPIC, $this->serialize([
+            'visit' => $this->orphanVisitTransformer->transform($visit),
         ]));
     }
 
@@ -38,7 +50,7 @@ final class MercureUpdatesGenerator implements MercureUpdatesGeneratorInterface
         $topic = sprintf('%s/%s', self::NEW_VISIT_TOPIC, $shortUrl->getShortCode());
 
         return new Update($topic, $this->serialize([
-            'shortUrl' => $this->transformer->transform($visit->getShortUrl()),
+            'shortUrl' => $this->shortUrlTransformer->transform($shortUrl),
             'visit' => $visit,
         ]));
     }
