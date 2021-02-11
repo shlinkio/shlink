@@ -11,12 +11,16 @@ use Mezzio\Router;
 use PhpMiddleware\RequestId\RequestIdMiddleware;
 use RKA\Middleware\IpAddress;
 
+use function extension_loaded;
+
 return [
 
     'middleware_pipeline' => [
         'error-handler' => [
             'middleware' => [
-                Helper\ContentLengthMiddleware::class,
+                // For some reason, with swoole 4.6.3, piping this middleware makes requests to have incomplete body or
+                // never finish loading. Disabling it for swoole fixes it as it already calculates the header on itself
+                ...extension_loaded('swoole') ? [] : [Helper\ContentLengthMiddleware::class],
                 ErrorHandler::class,
             ],
         ],
