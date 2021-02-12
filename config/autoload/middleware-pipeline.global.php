@@ -5,22 +5,18 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink;
 
 use Laminas\Stratigility\Middleware\ErrorHandler;
-use Mezzio\Helper;
 use Mezzio\ProblemDetails;
 use Mezzio\Router;
 use PhpMiddleware\RequestId\RequestIdMiddleware;
 use RKA\Middleware\IpAddress;
-
-use function extension_loaded;
+use Shlinkio\Shlink\Common\Middleware\ContentLengthMiddleware;
 
 return [
 
     'middleware_pipeline' => [
         'error-handler' => [
             'middleware' => [
-                // For some reason, with swoole 4.6.3, piping this middleware makes requests to have incomplete body or
-                // never finish loading. Disabling it for swoole fixes it as it already calculates the header on itself
-                ...extension_loaded('swoole') ? [] : [Helper\ContentLengthMiddleware::class],
+                ContentLengthMiddleware::class,
                 ErrorHandler::class,
             ],
         ],
