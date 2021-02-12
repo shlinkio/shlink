@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Changed
 * [#977](https://github.com/shlinkio/shlink/issues/977) Migrated from `laminas/laminas-paginator` to `pagerfanta/core` to handle pagination.
 * [#986](https://github.com/shlinkio/shlink/issues/986) Updated official docker image to use PHP 8.
+* [#1010](https://github.com/shlinkio/shlink/issues/1010) Increased timeout for database commands to 10 minutes.
 
 ### Deprecated
 * [#959](https://github.com/shlinkio/shlink/issues/959) Deprecated all command flags using camelCase format (like `--expirationDate`), adding kebab-case replacements for all of them (like `--expiration-date`).

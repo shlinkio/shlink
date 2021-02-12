@@ -34,6 +34,8 @@ return [
             PhpExecutableFinder::class => InvokableFactory::class,
 
             Util\GeolocationDbUpdater::class => ConfigAbstractFactory::class,
+            Util\ProcessRunner::class => ConfigAbstractFactory::class,
+
             ApiKey\RoleResolver::class => ConfigAbstractFactory::class,
 
             Command\ShortUrl\GenerateShortUrlCommand::class => ConfigAbstractFactory::class,
@@ -62,6 +64,7 @@ return [
 
     ConfigAbstractFactory::class => [
         Util\GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, LOCAL_LOCK_FACTORY],
+        Util\ProcessRunner::class => [SymfonyCli\Helper\ProcessHelper::class],
         ApiKey\RoleResolver::class => [DomainService::class],
 
         Command\ShortUrl\GenerateShortUrlCommand::class => [
@@ -97,14 +100,14 @@ return [
 
         Command\Db\CreateDatabaseCommand::class => [
             LockFactory::class,
-            SymfonyCli\Helper\ProcessHelper::class,
+            Util\ProcessRunner::class,
             PhpExecutableFinder::class,
             Connection::class,
             NoDbNameConnectionFactory::SERVICE_NAME,
         ],
         Command\Db\MigrateDatabaseCommand::class => [
             LockFactory::class,
-            SymfonyCli\Helper\ProcessHelper::class,
+            Util\ProcessRunner::class,
             PhpExecutableFinder::class,
         ],
     ],

@@ -12,14 +12,13 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Db\CreateDatabaseCommand;
+use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
-use Symfony\Component\Process\Process;
 
 class CreateDatabaseCommandTest extends TestCase
 {
@@ -43,7 +42,7 @@ class CreateDatabaseCommandTest extends TestCase
         $phpExecutableFinder = $this->prophesize(PhpExecutableFinder::class);
         $phpExecutableFinder->find(false)->willReturn('/usr/local/bin/php');
 
-        $this->processHelper = $this->prophesize(ProcessHelper::class);
+        $this->processHelper = $this->prophesize(ProcessRunnerInterface::class);
         $this->schemaManager = $this->prophesize(AbstractSchemaManager::class);
         $this->databasePlatform = $this->prophesize(AbstractPlatform::class);
 
@@ -113,12 +112,12 @@ class CreateDatabaseCommandTest extends TestCase
         $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function (): void {
         });
         $listTables = $this->schemaManager->listTableNames()->willReturn([]);
-        $runCommand = $this->processHelper->mustRun(Argument::type(OutputInterface::class), [
+        $runCommand = $this->processHelper->run(Argument::type(OutputInterface::class), [
             '/usr/local/bin/php',
             CreateDatabaseCommand::DOCTRINE_SCRIPT,
             CreateDatabaseCommand::DOCTRINE_CREATE_SCHEMA_COMMAND,
             '--no-interaction',
-        ], Argument::cetera())->willReturn(new Process([]));
+        ]);
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();

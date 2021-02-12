@@ -52,7 +52,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->lock->acquire(false)->willReturn(true);
         $this->lock->release()->will(function (): void {
         });
-        $locker->createLock(Argument::type('string'), 90.0, false)->willReturn($this->lock->reveal());
+        $locker->createLock(Argument::type('string'), 600.0, false)->willReturn($this->lock->reveal());
 
         $command = new LocateVisitsCommand(
             $this->visitService->reveal(),

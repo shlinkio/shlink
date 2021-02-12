@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\Db;
 
 use Doctrine\DBAL\Connection;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Symfony\Component\Console\Helper\ProcessHelper;
+use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -26,12 +26,12 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
     public function __construct(
         LockFactory $locker,
-        ProcessHelper $processHelper,
+        ProcessRunnerInterface $processRunner,
         PhpExecutableFinder $phpFinder,
         Connection $conn,
         Connection $noDbNameConn
     ) {
-        parent::__construct($locker, $processHelper, $phpFinder);
+        parent::__construct($locker, $processRunner, $phpFinder);
         $this->regularConn = $conn;
         $this->noDbNameConn = $noDbNameConn;
     }
