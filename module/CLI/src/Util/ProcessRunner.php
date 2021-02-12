@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Util;
 
+use Closure;
 use Shlinkio\Shlink\CLI\Command\Util\LockedCommandConfig;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 use Symfony\Component\Console\Helper\ProcessHelper;
@@ -18,10 +19,14 @@ use function str_replace;
 class ProcessRunner implements ProcessRunnerInterface
 {
     private ProcessHelper $helper;
+    private Closure $createProcess;
 
-    public function __construct(ProcessHelper $helper)
+    public function __construct(ProcessHelper $helper, ?callable $createProcess = null)
     {
         $this->helper = $helper;
+        $this->createProcess = $createProcess !== null
+            ? Closure::fromCallable($createProcess)
+            : static fn (array $cmd) => new Process($cmd, null, null, null, LockedCommandConfig::DEFAULT_TTL);
     }
 
     public function run(OutputInterface $output, array $cmd): void
@@ -32,7 +37,8 @@ class ProcessRunner implements ProcessRunnerInterface
 
         /** @var DebugFormatterHelper $formatter */
         $formatter = $this->helper->getHelperSet()->get('debug_formatter');
-        $process = new Process($cmd, null, null, null, LockedCommandConfig::DEFAULT_TTL);
+        /** @var Process $process */
+        $process = ($this->createProcess)($cmd);
 
         if ($output->isVeryVerbose()) {
             $output->write(
