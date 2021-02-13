@@ -48,7 +48,7 @@
         "ramsey/uuid": "^3.9",
         "shlinkio/shlink-common": "^3.5",
         "shlinkio/shlink-config": "^1.0",
-        "shlinkio/shlink-event-dispatcher": "^2.0",
+        "shlinkio/shlink-event-dispatcher": "^2.1",
         "shlinkio/shlink-importer": "^2.2",
         "shlinkio/shlink-installer": "dev-develop#c489d3f as 5.4",
         "shlinkio/shlink-ip-geolocation": "^1.5",
