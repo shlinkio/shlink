@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink;
 
 use Laminas\Stratigility\Middleware\ErrorHandler;
-use Mezzio\Helper;
 use Mezzio\ProblemDetails;
 use Mezzio\Router;
 use PhpMiddleware\RequestId\RequestIdMiddleware;
+use RKA\Middleware\IpAddress;
+use Shlinkio\Shlink\Common\Middleware\ContentLengthMiddleware;
 
 return [
 
     'middleware_pipeline' => [
         'error-handler' => [
             'middleware' => [
-                Helper\ContentLengthMiddleware::class,
+                ContentLengthMiddleware::class,
                 ErrorHandler::class,
             ],
         ],
@@ -64,6 +65,10 @@ return [
         ],
         'not-found' => [
             'middleware' => [
+                // This middleware is in front of tracking actions explicitly. Putting here for orphan visits tracking
+                IpAddress::class,
+                Core\ErrorHandler\NotFoundTypeResolverMiddleware::class,
+                Core\ErrorHandler\NotFoundTrackerMiddleware::class,
                 Core\ErrorHandler\NotFoundRedirectHandler::class,
                 Core\ErrorHandler\NotFoundTemplateHandler::class,
             ],

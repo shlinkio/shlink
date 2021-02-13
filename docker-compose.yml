@@ -3,7 +3,7 @@ version: '3'
 services:
     shlink_nginx:
         container_name: shlink_nginx
-        image: nginx:1.17.10-alpine
+        image: nginx:1.19.6-alpine
         ports:
             - "8000:80"
         volumes:
@@ -34,7 +34,7 @@ services:
 
     shlink_swoole_proxy:
         container_name: shlink_swoole_proxy
-        image: nginx:1.17.10-alpine
+        image: nginx:1.19.6-alpine
         ports:
             - "8002:80"
         volumes:
@@ -120,7 +120,7 @@ services:
 
     shlink_mercure_proxy:
         container_name: shlink_mercure_proxy
-        image: nginx:1.17.10-alpine
+        image: nginx:1.19.6-alpine
         ports:
             - "8001:80"
         volumes:

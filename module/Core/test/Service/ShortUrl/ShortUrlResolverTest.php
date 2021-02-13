@@ -44,7 +44,7 @@ class ShortUrlResolverTest extends TestCase
      */
     public function shortCodeIsProperlyParsed(?ApiKey $apiKey): void
     {
-        $shortUrl = new ShortUrl('expected_url');
+        $shortUrl = ShortUrl::withLongUrl('expected_url');
         $shortCode = $shortUrl->getShortCode();
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
@@ -80,7 +80,7 @@ class ShortUrlResolverTest extends TestCase
     /** @test */
     public function shortCodeToEnabledShortUrlProperlyParsesShortCode(): void
     {
-        $shortUrl = new ShortUrl('expected_url');
+        $shortUrl = ShortUrl::withLongUrl('expected_url');
         $shortCode = $shortUrl->getShortCode();
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
@@ -118,28 +118,29 @@ class ShortUrlResolverTest extends TestCase
         $now = Chronos::now();
 
         yield 'maxVisits reached' => [(function () {
-            $shortUrl = new ShortUrl('', ShortUrlMeta::fromRawData(['maxVisits' => 3]));
+            $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['maxVisits' => 3, 'longUrl' => '']));
             $shortUrl->setVisits(new ArrayCollection(map(
                 range(0, 4),
-                fn () => new Visit($shortUrl, Visitor::emptyInstance()),
+                fn () => Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
             )));
 
             return $shortUrl;
         })()];
-        yield 'future validSince' => [new ShortUrl('', ShortUrlMeta::fromRawData([
-            'validSince' => $now->addMonth()->toAtomString(),
-        ]))];
-        yield 'past validUntil' => [new ShortUrl('', ShortUrlMeta::fromRawData([
-            'validUntil' => $now->subMonth()->toAtomString(),
-        ]))];
+        yield 'future validSince' => [ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
+            ['validSince' => $now->addMonth()->toAtomString(), 'longUrl' => ''],
+        ))];
+        yield 'past validUntil' => [ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
+            ['validUntil' => $now->subMonth()->toAtomString(), 'longUrl' => ''],
+        ))];
         yield 'mixed' => [(function () use ($now) {
-            $shortUrl = new ShortUrl('', ShortUrlMeta::fromRawData([
+            $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
                 'maxVisits' => 3,
                 'validUntil' => $now->subMonth()->toAtomString(),
+                'longUrl' => '',
             ]));
             $shortUrl->setVisits(new ArrayCollection(map(
                 range(0, 4),
-                fn () => new Visit($shortUrl, Visitor::emptyInstance()),
+                fn () => Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
             )));
 
             return $shortUrl;

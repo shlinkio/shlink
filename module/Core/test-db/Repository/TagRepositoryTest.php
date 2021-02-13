@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Repository;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -22,10 +21,12 @@ use function array_chunk;
 class TagRepositoryTest extends DatabaseTestCase
 {
     private TagRepository $repo;
+    private PersistenceShortUrlRelationResolver $relationResolver;
 
     protected function beforeEach(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Tag::class);
+        $this->relationResolver = new PersistenceShortUrlRelationResolver($this->getEntityManager());
     }
 
     /** @test */
@@ -52,49 +53,44 @@ class TagRepositoryTest extends DatabaseTestCase
     public function properTagsInfoIsReturned(): void
     {
         $names = ['foo', 'bar', 'baz', 'another'];
-        $tags = [];
         foreach ($names as $name) {
-            $tag = new Tag($name);
-            $tags[] = $tag;
-            $this->getEntityManager()->persist($tag);
+            $this->getEntityManager()->persist(new Tag($name));
         }
+        $this->getEntityManager()->flush();
 
-        [$firstUrlTags] = array_chunk($tags, 3);
-        $secondUrlTags = [$tags[0]];
+        [$firstUrlTags] = array_chunk($names, 3);
+        $secondUrlTags = [$names[0]];
+        $metaWithTags = fn (array $tags) => ShortUrlMeta::fromRawData(['longUrl' => '', 'tags' => $tags]);
 
-        $shortUrl = new ShortUrl('');
-        $shortUrl->setTags(new ArrayCollection($firstUrlTags));
+        $shortUrl = ShortUrl::fromMeta($metaWithTags($firstUrlTags), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl);
-        $this->getEntityManager()->persist(new Visit($shortUrl, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(new Visit($shortUrl, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(new Visit($shortUrl, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
 
-        $shortUrl2 = new ShortUrl('');
-        $shortUrl2->setTags(new ArrayCollection($secondUrlTags));
+        $shortUrl2 = ShortUrl::fromMeta($metaWithTags($secondUrlTags), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl2);
-        $this->getEntityManager()->persist(new Visit($shortUrl2, Visitor::emptyInstance()));
-
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
         $this->getEntityManager()->flush();
 
         $result = $this->repo->findTagsWithInfo();
 
         self::assertCount(4, $result);
-        self::assertEquals(
-            ['tag' => $tags[3], 'shortUrlsCount' => 0, 'visitsCount' => 0],
-            $result[0]->jsonSerialize(),
-        );
-        self::assertEquals(
-            ['tag' => $tags[1], 'shortUrlsCount' => 1, 'visitsCount' => 3],
-            $result[1]->jsonSerialize(),
-        );
-        self::assertEquals(
-            ['tag' => $tags[2], 'shortUrlsCount' => 1, 'visitsCount' => 3],
-            $result[2]->jsonSerialize(),
-        );
-        self::assertEquals(
-            ['tag' => $tags[0], 'shortUrlsCount' => 2, 'visitsCount' => 4],
-            $result[3]->jsonSerialize(),
-        );
+        self::assertEquals(0, $result[0]->shortUrlsCount());
+        self::assertEquals(0, $result[0]->visitsCount());
+        self::assertEquals($names[3], $result[0]->tag()->__toString());
+
+        self::assertEquals(1, $result[1]->shortUrlsCount());
+        self::assertEquals(3, $result[1]->visitsCount());
+        self::assertEquals($names[1], $result[1]->tag()->__toString());
+
+        self::assertEquals(1, $result[2]->shortUrlsCount());
+        self::assertEquals(3, $result[2]->visitsCount());
+        self::assertEquals($names[2], $result[2]->tag()->__toString());
+
+        self::assertEquals(2, $result[3]->shortUrlsCount());
+        self::assertEquals(4, $result[3]->visitsCount());
+        self::assertEquals($names[0], $result[3]->tag()->__toString());
     }
 
     /** @test */
@@ -110,25 +106,23 @@ class TagRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($domainApiKey);
 
         $names = ['foo', 'bar', 'baz', 'another'];
-        $tags = [];
         foreach ($names as $name) {
-            $tag = new Tag($name);
-            $tags[] = $tag;
-            $this->getEntityManager()->persist($tag);
+            $this->getEntityManager()->persist(new Tag($name));
         }
+        $this->getEntityManager()->flush();
 
-        [$firstUrlTags, $secondUrlTags] = array_chunk($tags, 3);
+        [$firstUrlTags, $secondUrlTags] = array_chunk($names, 3);
 
-        $shortUrl = new ShortUrl('', ShortUrlMeta::fromRawData(['apiKey' => $authorApiKey]));
-        $shortUrl->setTags(new ArrayCollection($firstUrlTags));
+        $shortUrl = ShortUrl::fromMeta(
+            ShortUrlMeta::fromRawData(['apiKey' => $authorApiKey, 'longUrl' => '', 'tags' => $firstUrlTags]),
+            $this->relationResolver,
+        );
         $this->getEntityManager()->persist($shortUrl);
 
-        $shortUrl2 = new ShortUrl(
-            '',
-            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority()]),
-            new PersistenceShortUrlRelationResolver($this->getEntityManager()),
+        $shortUrl2 = ShortUrl::fromMeta(
+            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority(), 'longUrl' => '', 'tags' => $secondUrlTags]),
+            $this->relationResolver,
         );
-        $shortUrl2->setTags(new ArrayCollection($secondUrlTags));
         $this->getEntityManager()->persist($shortUrl2);
 
         $this->getEntityManager()->flush();

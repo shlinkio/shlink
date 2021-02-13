@@ -10,7 +10,10 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGeneratorInterface;
 use Symfony\Component\Mercure\PublisherInterface;
+use Symfony\Component\Mercure\Update;
 use Throwable;
+
+use function Functional\each;
 
 class NotifyVisitToMercure
 {
@@ -45,12 +48,26 @@ class NotifyVisitToMercure
         }
 
         try {
-            ($this->publisher)($this->updatesGenerator->newShortUrlVisitUpdate($visit));
-            ($this->publisher)($this->updatesGenerator->newVisitUpdate($visit));
+            each($this->determineUpdatesForVisit($visit), fn (Update $update) => ($this->publisher)($update));
         } catch (Throwable $e) {
             $this->logger->debug('Error while trying to notify mercure hub with new visit. {e}', [
                 'e' => $e,
             ]);
         }
+    }
+
+    /**
+     * @return Update[]
+     */
+    private function determineUpdatesForVisit(Visit $visit): array
+    {
+        if ($visit->isOrphan()) {
+            return [$this->updatesGenerator->newOrphanVisitUpdate($visit)];
+        }
+
+        return [
+            $this->updatesGenerator->newShortUrlVisitUpdate($visit),
+            $this->updatesGenerator->newVisitUpdate($visit),
+        ];
     }
 }

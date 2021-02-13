@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Service;
 
-use Laminas\Paginator\Paginator;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
@@ -21,16 +21,10 @@ interface ShortUrlServiceInterface
     public function listShortUrls(ShortUrlsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
-     * @param string[] $tags
-     * @throws ShortUrlNotFoundException
-     */
-    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags, ?ApiKey $apiKey = null): ShortUrl;
-
-    /**
      * @throws ShortUrlNotFoundException
      * @throws InvalidUrlException
      */
-    public function updateMetadataByShortCode(
+    public function updateShortUrl(
         ShortUrlIdentifier $identifier,
         ShortUrlEdit $shortUrlEdit,
         ?ApiKey $apiKey = null

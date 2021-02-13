@@ -52,7 +52,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->lock->acquire(false)->willReturn(true);
         $this->lock->release()->will(function (): void {
         });
-        $locker->createLock(Argument::type('string'), 90.0, false)->willReturn($this->lock->reveal());
+        $locker->createLock(Argument::type('string'), 600.0, false)->willReturn($this->lock->reveal());
 
         $command = new LocateVisitsCommand(
             $this->visitService->reveal(),
@@ -77,7 +77,7 @@ class LocateVisitsCommandTest extends TestCase
         bool $expectWarningPrint,
         array $args
     ): void {
-        $visit = new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4'));
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', ''));
         $location = new VisitLocation(Location::emptyInstance());
         $mockMethodBehavior = $this->invokeHelperMethods($visit, $location);
 
@@ -121,7 +121,7 @@ class LocateVisitsCommandTest extends TestCase
      */
     public function localhostAndEmptyAddressesAreIgnored(?string $address, string $message): void
     {
-        $visit = new Visit(new ShortUrl(''), new Visitor('', '', $address));
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', $address, ''));
         $location = new VisitLocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
@@ -154,7 +154,7 @@ class LocateVisitsCommandTest extends TestCase
     /** @test */
     public function errorWhileLocatingIpIsDisplayed(): void
     {
-        $visit = new Visit(new ShortUrl(''), new Visitor('', '', '1.2.3.4'));
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', ''));
         $location = new VisitLocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
@@ -217,7 +217,9 @@ class LocateVisitsCommandTest extends TestCase
                 $mustBeUpdated($olderDbExists);
                 $handleProgress(100, 50);
 
-                throw GeolocationDbUpdateFailedException::create($olderDbExists);
+                throw $olderDbExists
+                    ? GeolocationDbUpdateFailedException::withOlderDb()
+                    : GeolocationDbUpdateFailedException::withoutOlderDb();
             },
         );
 

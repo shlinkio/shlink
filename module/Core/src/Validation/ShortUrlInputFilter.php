@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use const Shlinkio\Shlink\Core\CUSTOM_SLUGS_REGEXP;
 use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
 
-class ShortUrlMetaInputFilter extends InputFilter
+class ShortUrlInputFilter extends InputFilter
 {
     use Validation\InputFactoryTrait;
 
@@ -30,16 +30,36 @@ class ShortUrlMetaInputFilter extends InputFilter
     public const LONG_URL = 'longUrl';
     public const VALIDATE_URL = 'validateUrl';
     public const API_KEY = 'apiKey';
+    public const TAGS = 'tags';
+    public const TITLE = 'title';
 
-    public function __construct(array $data)
+    private function __construct(array $data, bool $requireLongUrl)
     {
-        $this->initialize();
+        $this->initialize($requireLongUrl);
         $this->setData($data);
     }
 
-    private function initialize(): void
+    public static function withRequiredLongUrl(array $data): self
     {
-        $this->add($this->createInput(self::LONG_URL, false));
+        return new self($data, true);
+    }
+
+    public static function withNonRequiredLongUrl(array $data): self
+    {
+        return new self($data, false);
+    }
+
+    private function initialize(bool $requireLongUrl): void
+    {
+        $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
+        $longUrlInput->getValidatorChain()->attach(new Validator\NotEmpty([
+            Validator\NotEmpty::OBJECT,
+            Validator\NotEmpty::SPACE,
+            Validator\NotEmpty::NULL,
+            Validator\NotEmpty::EMPTY_ARRAY,
+            Validator\NotEmpty::BOOLEAN,
+        ]));
+        $this->add($longUrlInput);
 
         $validSince = $this->createInput(self::VALID_SINCE, false);
         $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));
@@ -63,11 +83,13 @@ class ShortUrlMetaInputFilter extends InputFilter
         ]));
         $this->add($customSlug);
 
-        $this->add($this->createPositiveNumberInput(self::MAX_VISITS));
-        $this->add($this->createPositiveNumberInput(self::SHORT_CODE_LENGTH, MIN_SHORT_CODES_LENGTH));
+        $this->add($this->createNumericInput(self::MAX_VISITS, false));
+        $this->add($this->createNumericInput(self::SHORT_CODE_LENGTH, false, MIN_SHORT_CODES_LENGTH));
 
         $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
 
+        // This cannot be defined as a boolean input because it can actually have 3 values, true, false and null.
+        // Defining it as boolean will make null fall back to false, which is not the desired behavior.
         $this->add($this->createInput(self::VALIDATE_URL, false));
 
         $domain = $this->createInput(self::DOMAIN, false);
@@ -79,14 +101,9 @@ class ShortUrlMetaInputFilter extends InputFilter
             ->setRequired(false)
             ->getValidatorChain()->attach(new Validator\IsInstanceOf(['className' => ApiKey::class]));
         $this->add($apiKeyInput);
-    }
 
-    private function createPositiveNumberInput(string $name, int $min = 1): Input
-    {
-        $input = $this->createInput($name, false);
-        $input->getValidatorChain()->attach(new Validator\Digits())
-                                   ->attach(new Validator\GreaterThan(['min' => $min, 'inclusive' => true]));
+        $this->add($this->createTagsInput(self::TAGS, false));
 
-        return $input;
+        $this->add($this->createInput(self::TITLE, false));
     }
 }

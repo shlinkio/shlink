@@ -8,14 +8,16 @@ use Laminas\ConfigAggregator;
 use Laminas\Diactoros;
 use Mezzio;
 use Mezzio\ProblemDetails;
+use Mezzio\Swoole\ConfigProvider as SwooleConfigProvider;
 
+use function class_exists;
 use function Shlinkio\Shlink\Common\env;
 
 return (new ConfigAggregator\ConfigAggregator([
     Mezzio\ConfigProvider::class,
     Mezzio\Router\ConfigProvider::class,
     Mezzio\Router\FastRouteRouter\ConfigProvider::class,
-    Mezzio\Swoole\ConfigProvider::class,
+    class_exists(SwooleConfigProvider::class) ? SwooleConfigProvider::class : new ConfigAggregator\ArrayProvider([]),
     ProblemDetails\ConfigProvider::class,
     Diactoros\ConfigProvider::class,
     Common\ConfigProvider::class,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM;
-use Laminas\Paginator\Paginator;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
@@ -15,26 +15,27 @@ use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
-use Shlinkio\Shlink\Core\Util\TagManagerTrait;
-use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlService implements ShortUrlServiceInterface
 {
-    use TagManagerTrait;
-
     private ORM\EntityManagerInterface $em;
     private ShortUrlResolverInterface $urlResolver;
-    private UrlValidatorInterface $urlValidator;
+    private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
+    private ShortUrlRelationResolverInterface $relationResolver;
 
     public function __construct(
         ORM\EntityManagerInterface $em,
         ShortUrlResolverInterface $urlResolver,
-        UrlValidatorInterface $urlValidator
+        ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
+        ShortUrlRelationResolverInterface $relationResolver
     ) {
         $this->em = $em;
         $this->urlResolver = $urlResolver;
-        $this->urlValidator = $urlValidator;
+        $this->titleResolutionHelper = $titleResolutionHelper;
+        $this->relationResolver = $relationResolver;
     }
 
     /**
@@ -45,41 +46,28 @@ class ShortUrlService implements ShortUrlServiceInterface
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
         $paginator = new Paginator(new ShortUrlRepositoryAdapter($repo, $params, $apiKey));
-        $paginator->setItemCountPerPage($params->itemsPerPage())
-                  ->setCurrentPageNumber($params->page());
+        $paginator->setMaxPerPage($params->itemsPerPage())
+                  ->setCurrentPage($params->page());
 
         return $paginator;
-    }
-
-    /**
-     * @param string[] $tags
-     * @throws ShortUrlNotFoundException
-     */
-    public function setTagsByShortCode(ShortUrlIdentifier $identifier, array $tags, ?ApiKey $apiKey = null): ShortUrl
-    {
-        $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
-        $shortUrl->setTags($this->tagNamesToEntities($this->em, $tags));
-
-        $this->em->flush();
-
-        return $shortUrl;
     }
 
     /**
      * @throws ShortUrlNotFoundException
      * @throws InvalidUrlException
      */
-    public function updateMetadataByShortCode(
+    public function updateShortUrl(
         ShortUrlIdentifier $identifier,
         ShortUrlEdit $shortUrlEdit,
         ?ApiKey $apiKey = null
     ): ShortUrl {
-        if ($shortUrlEdit->hasLongUrl()) {
-            $this->urlValidator->validateUrl($shortUrlEdit->longUrl(), $shortUrlEdit->doValidateUrl());
+        if ($shortUrlEdit->longUrlWasProvided()) {
+            /** @var ShortUrlEdit $shortUrlEdit */
+            $shortUrlEdit = $this->titleResolutionHelper->processTitleAndValidateUrl($shortUrlEdit);
         }
 
         $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
-        $shortUrl->update($shortUrlEdit);
+        $shortUrl->update($shortUrlEdit, $this->relationResolver);
 
         $this->em->flush();
 

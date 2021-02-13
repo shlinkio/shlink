@@ -6,10 +6,13 @@ namespace Shlinkio\Shlink\CLI\Util;
 
 use Cake\Chronos\Chronos;
 use GeoIp2\Database\Reader;
+use MaxMind\Db\Reader\Metadata;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock\LockFactory;
+
+use function is_int;
 
 class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
 {
@@ -52,7 +55,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         }
 
         $meta = $this->geoLiteDbReader->metadata();
-        if ($this->buildIsTooOld($meta->buildEpoch)) {
+        if ($this->buildIsTooOld($meta)) {
             $this->downloadNewDb(true, $mustBeUpdated, $handleProgress);
         }
     }
@@ -69,14 +72,37 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         try {
             $this->dbUpdater->downloadFreshCopy($handleProgress);
         } catch (RuntimeException $e) {
-            throw GeolocationDbUpdateFailedException::create($olderDbExists, $e);
+            throw $olderDbExists
+                ? GeolocationDbUpdateFailedException::withOlderDb($e)
+                : GeolocationDbUpdateFailedException::withoutOlderDb($e);
         }
     }
 
-    private function buildIsTooOld(int $buildTimestamp): bool
+    private function buildIsTooOld(Metadata $meta): bool
     {
+        $buildTimestamp = $this->resolveBuildTimestamp($meta);
         $buildDate = Chronos::createFromTimestamp($buildTimestamp);
         $now = Chronos::now();
+
         return $now->gt($buildDate->addDays(35));
+    }
+
+    private function resolveBuildTimestamp(Metadata $meta): int
+    {
+        // In theory the buildEpoch should be an int, but it has been reported to come as a string.
+        // See https://github.com/shlinkio/shlink/issues/1002 for context
+
+        /** @var int|string $buildEpoch */
+        $buildEpoch = $meta->buildEpoch;
+        if (is_int($buildEpoch)) {
+            return $buildEpoch;
+        }
+
+        $intBuildEpoch = (int) $buildEpoch;
+        if ($buildEpoch === (string) $intBuildEpoch) {
+            return $intBuildEpoch;
+        }
+
+        throw GeolocationDbUpdateFailedException::withInvalidEpochInOldDb($buildEpoch);
     }
 }

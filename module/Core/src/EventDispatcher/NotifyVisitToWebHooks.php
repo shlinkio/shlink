@@ -10,17 +10,17 @@ use Fig\Http\Message\RequestMethodInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Promise\PromiseInterface;
+use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\RequestOptions;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\Options\AppOptions;
-use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Throwable;
 
 use function Functional\map;
 use function Functional\partial_left;
-use function GuzzleHttp\Promise\settle;
 
 class NotifyVisitToWebHooks
 {
@@ -29,7 +29,7 @@ class NotifyVisitToWebHooks
     private LoggerInterface $logger;
     /** @var string[] */
     private array $webhooks;
-    private ShortUrlDataTransformer $transformer;
+    private DataTransformerInterface $transformer;
     private AppOptions $appOptions;
 
     public function __construct(
@@ -37,14 +37,14 @@ class NotifyVisitToWebHooks
         EntityManagerInterface $em,
         LoggerInterface $logger,
         array $webhooks,
-        array $domainConfig,
+        DataTransformerInterface $transformer,
         AppOptions $appOptions
     ) {
         $this->httpClient = $httpClient;
         $this->em = $em;
         $this->logger = $logger;
         $this->webhooks = $webhooks;
-        $this->transformer = new ShortUrlDataTransformer($domainConfig);
+        $this->transformer = $transformer;
         $this->appOptions = $appOptions;
     }
 
@@ -69,7 +69,7 @@ class NotifyVisitToWebHooks
         $requestPromises = $this->performRequests($requestOptions, $visitId);
 
         // Wait for all the promises to finish, ignoring rejections, as in those cases we only want to log the error.
-        settle($requestPromises)->wait();
+        Utils::settle($requestPromises)->wait();
     }
 
     private function buildRequestOptions(Visit $visit): array

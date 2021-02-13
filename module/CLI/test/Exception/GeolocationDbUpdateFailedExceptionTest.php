@@ -14,26 +14,54 @@ class GeolocationDbUpdateFailedExceptionTest extends TestCase
 {
     /**
      * @test
-     * @dataProvider provideCreateArgs
+     * @dataProvider providePrev
      */
-    public function createBuildsException(bool $olderDbExists, ?Throwable $prev): void
+    public function withOlderDbBuildsException(?Throwable $prev): void
     {
-        $e = GeolocationDbUpdateFailedException::create($olderDbExists, $prev);
+        $e = GeolocationDbUpdateFailedException::withOlderDb($prev);
 
-        self::assertEquals($olderDbExists, $e->olderDbExists());
+        self::assertTrue($e->olderDbExists());
         self::assertEquals(
-            'An error occurred while updating geolocation database, and an older version could not be found',
+            'An error occurred while updating geolocation database, but an older DB is already present.',
             $e->getMessage(),
         );
         self::assertEquals(0, $e->getCode());
         self::assertEquals($prev, $e->getPrevious());
     }
 
-    public function provideCreateArgs(): iterable
+    /**
+     * @test
+     * @dataProvider providePrev
+     */
+    public function withoutOlderDbBuildsException(?Throwable $prev): void
     {
-        yield 'older DB and no prev' => [true, null];
-        yield 'older DB and prev' => [true, new RuntimeException('prev')];
-        yield 'no older DB and no prev' => [false, null];
-        yield 'no older DB and prev' => [false, new Exception('prev')];
+        $e = GeolocationDbUpdateFailedException::withoutOlderDb($prev);
+
+        self::assertFalse($e->olderDbExists());
+        self::assertEquals(
+            'An error occurred while updating geolocation database, and an older version could not be found.',
+            $e->getMessage(),
+        );
+        self::assertEquals(0, $e->getCode());
+        self::assertEquals($prev, $e->getPrevious());
+    }
+
+    public function providePrev(): iterable
+    {
+        yield 'no prev' => [null];
+        yield 'RuntimeException' => [new RuntimeException('prev')];
+        yield 'Exception' => [new Exception('prev')];
+    }
+
+    /** @test */
+    public function withInvalidEpochInOldDbBuildsException(): void
+    {
+        $e = GeolocationDbUpdateFailedException::withInvalidEpochInOldDb('foobar');
+
+        self::assertTrue($e->olderDbExists());
+        self::assertEquals(
+            'Build epoch with value "foobar" from existing geolocation database, could not be parsed to integer.',
+            $e->getMessage(),
+        );
     }
 }

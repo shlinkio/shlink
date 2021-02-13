@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\EventDispatcher\Event;
 
-final class ShortUrlVisited extends AbstractVisitEvent
+final class UrlVisited extends AbstractVisitEvent
 {
     private ?string $originalIpAddress;
 

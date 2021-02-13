@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Domain\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -88,9 +90,8 @@ class DomainRepositoryTest extends DatabaseTestCase
 
     private function createShortUrl(Domain $domain, ?ApiKey $apiKey = null): ShortUrl
     {
-        return new ShortUrl(
-            'foo',
-            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority(), 'apiKey' => $apiKey]),
+        return ShortUrl::fromMeta(
+            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority(), 'apiKey' => $apiKey, 'longUrl' => 'foo']),
             new class ($domain) implements ShortUrlRelationResolverInterface {
                 private Domain $domain;
 
@@ -102,6 +103,11 @@ class DomainRepositoryTest extends DatabaseTestCase
                 public function resolveDomain(?string $domain): ?Domain
                 {
                     return $this->domain;
+                }
+
+                public function resolveTags(array $tags): Collection
+                {
+                    return new ArrayCollection();
                 }
             },
         );

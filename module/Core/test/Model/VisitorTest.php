@@ -31,7 +31,7 @@ class VisitorTest extends TestCase
     public function provideParams(): iterable
     {
         yield 'all values are bigger' => [
-            [str_repeat('a', 1000), str_repeat('b', 2000), str_repeat('c', 500)],
+            [str_repeat('a', 1000), str_repeat('b', 2000), str_repeat('c', 500), ''],
             [
                 'userAgent' => str_repeat('a', Visitor::USER_AGENT_MAX_LENGTH),
                 'referer' => str_repeat('b', Visitor::REFERER_MAX_LENGTH),
@@ -39,7 +39,7 @@ class VisitorTest extends TestCase
             ],
         ];
         yield 'some values are smaller' => [
-            [str_repeat('a', 10), str_repeat('b', 2000), null],
+            [str_repeat('a', 10), str_repeat('b', 2000), null, ''],
             [
                 'userAgent' => str_repeat('a', 10),
                 'referer' => str_repeat('b', Visitor::REFERER_MAX_LENGTH),
@@ -51,6 +51,7 @@ class VisitorTest extends TestCase
                 $userAgent = $this->generateRandomString(2000),
                 $referer = $this->generateRandomString(50),
                 null,
+                '',
             ],
             [
                 'userAgent' => substr($userAgent, 0, Visitor::USER_AGENT_MAX_LENGTH),

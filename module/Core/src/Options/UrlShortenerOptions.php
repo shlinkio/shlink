@@ -18,6 +18,9 @@ class UrlShortenerOptions extends AbstractOptions
     private bool $validateUrl = true;
     private int $redirectStatusCode = DEFAULT_REDIRECT_STATUS_CODE;
     private int $redirectCacheLifetime = DEFAULT_REDIRECT_CACHE_LIFETIME;
+    private bool $autoResolveTitles = false;
+    private bool $anonymizeRemoteAddr = true;
+    private bool $trackOrphanVisits = true;
 
     public function isUrlValidationEnabled(): bool
     {
@@ -54,5 +57,35 @@ class UrlShortenerOptions extends AbstractOptions
         $this->redirectCacheLifetime = $redirectCacheLifetime > 0
             ? $redirectCacheLifetime
             : DEFAULT_REDIRECT_CACHE_LIFETIME;
+    }
+
+    public function autoResolveTitles(): bool
+    {
+        return $this->autoResolveTitles;
+    }
+
+    protected function setAutoResolveTitles(bool $autoResolveTitles): void
+    {
+        $this->autoResolveTitles = $autoResolveTitles;
+    }
+
+    public function anonymizeRemoteAddr(): bool
+    {
+        return $this->anonymizeRemoteAddr;
+    }
+
+    protected function setAnonymizeRemoteAddr(bool $anonymizeRemoteAddr): void
+    {
+        $this->anonymizeRemoteAddr = $anonymizeRemoteAddr;
+    }
+
+    public function trackOrphanVisits(): bool
+    {
+        return $this->trackOrphanVisits;
+    }
+
+    protected function setTrackOrphanVisits(bool $trackOrphanVisits): void
+    {
+        $this->trackOrphanVisits = $trackOrphanVisits;
     }
 }

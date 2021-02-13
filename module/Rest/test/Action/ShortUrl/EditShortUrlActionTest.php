@@ -12,6 +12,8 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\EditShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -25,7 +27,9 @@ class EditShortUrlActionTest extends TestCase
     public function setUp(): void
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
-        $this->action = new EditShortUrlAction($this->shortUrlService->reveal());
+        $this->action = new EditShortUrlAction($this->shortUrlService->reveal(), new ShortUrlDataTransformer(
+            new ShortUrlStringifier([]),
+        ));
     }
 
     /** @test */
@@ -48,13 +52,13 @@ class EditShortUrlActionTest extends TestCase
                                         ->withParsedBody([
                                             'maxVisits' => 5,
                                         ]);
-        $updateMeta = $this->shortUrlService->updateMetadataByShortCode(Argument::cetera())->willReturn(
-            new ShortUrl(''),
+        $updateMeta = $this->shortUrlService->updateShortUrl(Argument::cetera())->willReturn(
+            ShortUrl::createEmpty(),
         );
 
         $resp = $this->action->handle($request);
 
-        self::assertEquals(204, $resp->getStatusCode());
+        self::assertEquals(200, $resp->getStatusCode());
         $updateMeta->shouldHaveBeenCalled();
     }
 }

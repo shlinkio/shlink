@@ -53,6 +53,25 @@ class EditShortUrlTagsTest extends ApiTestCase
     }
 
     /** @test */
+    public function allowsEditingTagsWithTwoEndpoints(): void
+    {
+        $getUrlTagsFromApi = fn () => $this->getJsonResponsePayload(
+            $this->callApiWithKey(self::METHOD_GET, '/short-urls/abc123'),
+        )['tags'] ?? null;
+        self::assertEquals(['foo'], $getUrlTagsFromApi());
+
+        $this->callApiWithKey(self::METHOD_PUT, '/short-urls/abc123/tags', [RequestOptions::JSON => [
+            'tags' => ['a', 'e'],
+        ]]);
+        self::assertEquals(['a', 'e'], $getUrlTagsFromApi());
+
+        $this->callApiWithKey(self::METHOD_PATCH, '/short-urls/abc123', [RequestOptions::JSON => [
+            'tags' => ['i', 'o', 'u'],
+        ]]);
+        self::assertEquals(['i', 'o', 'u'], $getUrlTagsFromApi());
+    }
+
+    /** @test */
     public function tagsAreSetOnProperShortUrlBasedOnProvidedDomain(): void
     {
         $urlWithoutDomain = '/short-urls/ghi789/tags';

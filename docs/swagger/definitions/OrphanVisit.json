@@ -1,0 +1,23 @@
+{
+    "type": "object",
+    "required": ["visitedUrl", "type"],
+    "allOf": [{
+        "$ref": "./Visit.json"
+    }],
+    "properties": {
+        "visitedUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "The originally visited URL that triggered the tracking of this visit"
+        },
+        "type": {
+            "type": "string",
+            "enum": [
+                "invalid_short_url",
+                "base_url",
+                "regular_404"
+            ],
+            "description": "Tells the type of orphan visit"
+        }
+    }
+}

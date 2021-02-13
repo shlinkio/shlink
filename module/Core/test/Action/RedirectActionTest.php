@@ -19,8 +19,8 @@ use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
-use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
+use Shlinkio\Shlink\Core\Visit\VisitsTrackerInterface;
 
 use function array_key_exists;
 
@@ -54,7 +54,7 @@ class RedirectActionTest extends TestCase
     public function redirectionIsPerformedToLongUrl(string $expectedUrl, array $query): void
     {
         $shortCode = 'abc123';
-        $shortUrl = new ShortUrl('http://domain.com/foo/bar?some=thing');
+        $shortUrl = ShortUrl::withLongUrl('http://domain.com/foo/bar?some=thing');
         $shortCodeToUrl = $this->urlResolver->resolveEnabledShortUrl(
             new ShortUrlIdentifier($shortCode, ''),
         )->willReturn($shortUrl);
@@ -104,7 +104,7 @@ class RedirectActionTest extends TestCase
     public function trackingIsDisabledWhenRequestIsForwardedFromHead(): void
     {
         $shortCode = 'abc123';
-        $shortUrl = new ShortUrl('http://domain.com/foo/bar?some=thing');
+        $shortUrl = ShortUrl::withLongUrl('http://domain.com/foo/bar?some=thing');
         $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))->willReturn($shortUrl);
         $track = $this->visitTracker->track(Argument::cetera())->will(function (): void {
         });

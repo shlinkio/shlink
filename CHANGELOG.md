@@ -4,6 +4,54 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.6.0] - 2021-02-13
+### Added
+* [#856](https://github.com/shlinkio/shlink/issues/856) Added PHP 8.0 support.
+* [#941](https://github.com/shlinkio/shlink/issues/941) Added support to provide a title for every short URL.
+
+    The title can also be automatically resolved from the long URL, when no title was explicitly provided, but this option needs to be opted in.
+
+* [#913](https://github.com/shlinkio/shlink/issues/913) Added support to import short URLs from a standard CSV file.
+
+    The file requires the `Long URL` and `Short code` columns, and it also accepts the optional `title`, `domain` and `tags` columns.
+
+* [#1000](https://github.com/shlinkio/shlink/issues/1000) Added support to provide a `margin` query param when generating some URL's QR code.
+* [#675](https://github.com/shlinkio/shlink/issues/675) Added ability to track visits to the base URL, invalid short URLs or any other "not found" URL, as known as orphan visits.
+
+    This behavior is enabled by default, but you can opt out via env vars or config options.
+
+    This new orphan visits can be consumed in these ways:
+
+      * The `https://shlink.io/new-orphan-visit` mercure topic, which gets notified when an orphan visit occurs.
+      * The `GET /visits/orphan` REST endpoint, which behaves like the short URL visits and tags visits endpoints, but returns only orphan visits.
+
+### Changed
+* [#977](https://github.com/shlinkio/shlink/issues/977) Migrated from `laminas/laminas-paginator` to `pagerfanta/core` to handle pagination.
+* [#986](https://github.com/shlinkio/shlink/issues/986) Updated official docker image to use PHP 8.
+* [#1010](https://github.com/shlinkio/shlink/issues/1010) Increased timeout for database commands to 10 minutes.
+* [#874](https://github.com/shlinkio/shlink/issues/874) Changed how dist files are generated. Now there will be two for every supported PHP version, with and without support for swoole.
+
+    The dist files will have been built under the same PHP version they are meant to be run under, ensuring resolved dependencies are the proper ones.
+
+### Deprecated
+* [#959](https://github.com/shlinkio/shlink/issues/959) Deprecated all command flags using camelCase format (like `--expirationDate`), adding kebab-case replacements for all of them (like `--expiration-date`).
+
+    All the existing camelCase flags will continue working for now, but will be removed in Shlink 3.0.0
+
+* [#862](https://github.com/shlinkio/shlink/issues/862) Deprecated the endpoint to edit tags for a short URL (`PUT /short-urls/{shortCode}/tags`).
+
+    The short URL edition endpoint (`PATCH /short-urls/{shortCode}`) now supports setting the tags too. Use it instead.
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#988](https://github.com/shlinkio/shlink/issues/988) Fixed serving zero-byte static files in apache and apache-compatible web servers.
+* [#990](https://github.com/shlinkio/shlink/issues/990) Fixed short URLs not properly composed in REST API endpoints when both custom domain and custom base path are used.
+* [#1002](https://github.com/shlinkio/shlink/issues/1002) Fixed weird behavior in which GeoLite2 metadata's `buildEpoch` is parsed as string instead of int.
+* [#851](https://github.com/shlinkio/shlink/issues/851) Fixed error when trying to schedule swoole tasks in ARM architectures (like raspberry).
+
+
 ## [2.5.2] - 2021-01-24
 ### Added
 * [#965](https://github.com/shlinkio/shlink/issues/965) Added docs section for Architectural Decision Records, including the one for API key roles.

@@ -1,8 +1,9 @@
-FROM php:7.4.11-alpine3.12 as base
+FROM php:8.0.2-alpine3.13 as base
 
-ARG SHLINK_VERSION=2.4.0
+ARG SHLINK_VERSION=2.5.2
 ENV SHLINK_VERSION ${SHLINK_VERSION}
-ENV SWOOLE_VERSION 4.5.9
+ENV SWOOLE_VERSION 4.6.3
+ENV PDO_SQLSRV_VERSION 5.9.0
 ENV LC_ALL "C"
 
 WORKDIR /etc/shlink
@@ -32,7 +33,7 @@ RUN if [ $(uname -m) == "x86_64" ]; then \
       wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.5.1.1-1_amd64.apk && \
       apk add --allow-untrusted msodbcsql17_17.5.1.1-1_amd64.apk && \
       apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} unixodbc-dev && \
-      pecl install pdo_sqlsrv && \
+      pecl install pdo_sqlsrv-${PDO_SQLSRV_VERSION} && \
       docker-php-ext-enable pdo_sqlsrv && \
       apk del .phpize-deps && \
       rm msodbcsql17_17.5.1.1-1_amd64.apk ; \

@@ -28,12 +28,12 @@ class VisitsForTagPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
         $this->apiKey = $apiKey;
     }
 
-    public function getItems($offset, $itemCountPerPage): array // phpcs:ignore
+    public function getSlice($offset, $length): array // phpcs:ignore
     {
         return $this->visitRepository->findVisitsByTag(
             $this->tag,
             $this->params->getDateRange(),
-            $itemCountPerPage,
+            $length,
             $offset,
             $this->resolveSpec(),
         );

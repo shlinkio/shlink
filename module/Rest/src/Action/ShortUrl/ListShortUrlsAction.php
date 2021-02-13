@@ -7,27 +7,27 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Shlinkio\Shlink\Common\Paginator\Util\PaginatorUtilsTrait;
+use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
+use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
-use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class ListShortUrlsAction extends AbstractRestAction
 {
-    use PaginatorUtilsTrait;
+    use PagerfantaUtilsTrait;
 
     protected const ROUTE_PATH = '/short-urls';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     private ShortUrlServiceInterface $shortUrlService;
-    private array $domainConfig;
+    private DataTransformerInterface $transformer;
 
-    public function __construct(ShortUrlServiceInterface $shortUrlService, array $domainConfig)
+    public function __construct(ShortUrlServiceInterface $shortUrlService, DataTransformerInterface $transformer)
     {
         $this->shortUrlService = $shortUrlService;
-        $this->domainConfig = $domainConfig;
+        $this->transformer = $transformer;
     }
 
     public function handle(Request $request): Response
@@ -36,8 +36,6 @@ class ListShortUrlsAction extends AbstractRestAction
             ShortUrlsParams::fromRawData($request->getQueryParams()),
             AuthenticationMiddleware::apiKeyFromRequest($request),
         );
-        return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls, new ShortUrlDataTransformer(
-            $this->domainConfig,
-        ))]);
+        return new JsonResponse(['shortUrls' => $this->serializePaginator($shortUrls, $this->transformer)]);
     }
 }

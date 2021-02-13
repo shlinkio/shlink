@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
-use Laminas\Diactoros\Response\EmptyResponse;
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
@@ -19,10 +20,12 @@ class EditShortUrlAction extends AbstractRestAction
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PATCH, self::METHOD_PUT];
 
     private ShortUrlServiceInterface $shortUrlService;
+    private DataTransformerInterface $transformer;
 
-    public function __construct(ShortUrlServiceInterface $shortUrlService)
+    public function __construct(ShortUrlServiceInterface $shortUrlService, DataTransformerInterface $transformer)
     {
         $this->shortUrlService = $shortUrlService;
+        $this->transformer = $transformer;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -31,7 +34,8 @@ class EditShortUrlAction extends AbstractRestAction
         $identifier = ShortUrlIdentifier::fromApiRequest($request);
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
-        $this->shortUrlService->updateMetadataByShortCode($identifier, $shortUrlEdit, $apiKey);
-        return new EmptyResponse();
+        $shortUrl = $this->shortUrlService->updateShortUrl($identifier, $shortUrlEdit, $apiKey);
+
+        return new JsonResponse($this->transformer->transform($shortUrl));
     }
 }

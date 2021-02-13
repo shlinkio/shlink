@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
-use Laminas\Paginator\Adapter\ArrayAdapter;
-use Laminas\Paginator\Paginator;
+use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GetVisitsCommand;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
-use Shlinkio\Shlink\Core\Service\VisitsTrackerInterface;
+use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -31,12 +31,12 @@ class GetVisitsCommandTest extends TestCase
     use ProphecyTrait;
 
     private CommandTester $commandTester;
-    private ObjectProphecy $visitsTracker;
+    private ObjectProphecy $visitsHelper;
 
     public function setUp(): void
     {
-        $this->visitsTracker = $this->prophesize(VisitsTrackerInterface::class);
-        $command = new GetVisitsCommand($this->visitsTracker->reveal());
+        $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
+        $command = new GetVisitsCommand($this->visitsHelper->reveal());
         $app = new Application();
         $app->add($command);
         $this->commandTester = new CommandTester($command);
@@ -46,7 +46,7 @@ class GetVisitsCommandTest extends TestCase
     public function noDateFlagsTriesToListWithoutDateRange(): void
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info(
+        $this->visitsHelper->visitsForShortUrl(
             new ShortUrlIdentifier($shortCode),
             new VisitsParams(new DateRange(null, null)),
         )
@@ -62,7 +62,7 @@ class GetVisitsCommandTest extends TestCase
         $shortCode = 'abc123';
         $startDate = '2016-01-01';
         $endDate = '2016-02-01';
-        $this->visitsTracker->info(
+        $this->visitsHelper->visitsForShortUrl(
             new ShortUrlIdentifier($shortCode),
             new VisitsParams(new DateRange(Chronos::parse($startDate), Chronos::parse($endDate))),
         )
@@ -71,8 +71,8 @@ class GetVisitsCommandTest extends TestCase
 
         $this->commandTester->execute([
             'shortCode' => $shortCode,
-            '--startDate' => $startDate,
-            '--endDate' => $endDate,
+            '--start-date' => $startDate,
+            '--end-date' => $endDate,
         ]);
     }
 
@@ -81,18 +81,20 @@ class GetVisitsCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $startDate = 'foo';
-        $info = $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), new VisitsParams(new DateRange()))
-            ->willReturn(new Paginator(new ArrayAdapter([])));
+        $info = $this->visitsHelper->visitsForShortUrl(
+            new ShortUrlIdentifier($shortCode),
+            new VisitsParams(new DateRange()),
+        )->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute([
             'shortCode' => $shortCode,
-            '--startDate' => $startDate,
+            '--start-date' => $startDate,
         ]);
         $output = $this->commandTester->getDisplay();
 
         $info->shouldHaveBeenCalledOnce();
         self::assertStringContainsString(
-            sprintf('Ignored provided "startDate" since its value "%s" is not a valid date', $startDate),
+            sprintf('Ignored provided "start-date" since its value "%s" is not a valid date', $startDate),
             $output,
         );
     }
@@ -101,9 +103,9 @@ class GetVisitsCommandTest extends TestCase
     public function outputIsProperlyGenerated(): void
     {
         $shortCode = 'abc123';
-        $this->visitsTracker->info(new ShortUrlIdentifier($shortCode), Argument::any())->willReturn(
+        $this->visitsHelper->visitsForShortUrl(new ShortUrlIdentifier($shortCode), Argument::any())->willReturn(
             new Paginator(new ArrayAdapter([
-                (new Visit(new ShortUrl(''), new Visitor('bar', 'foo', '')))->locate(
+                Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('bar', 'foo', '', ''))->locate(
                     new VisitLocation(new Location('', 'Spain', '', '', 0, 0, '')),
                 ),
             ])),

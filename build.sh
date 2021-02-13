@@ -1,35 +1,45 @@
 #!/usr/bin/env bash
 set -e
 
-if [[ "$#" -ne 1 ]]; then
+if [ "$#" -lt 1 ] || [ "$#" -gt 2 ] || ([ "$#" == 2 ] && [ "$2" != "--no-swoole" ]); then
   echo "Usage:" >&2
-  echo "   $0 {version}" >&2
+  echo "   $0 {version} [--no-swoole]" >&2
   exit 1
 fi
 
 version=$1
-builtcontent="./build/shlink_${version}_dist"
+noSwoole=$2
+phpVersion=$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;')
+[[ $noSwoole ]] && swooleSuffix="" || swooleSuffix="_swoole"
+distId="shlink${version}_php${phpVersion}${swooleSuffix}_dist"
+builtContent="./build/${distId}"
 projectdir=$(pwd)
 [[ -f ./composer.phar ]] && composerBin='./composer.phar' || composerBin='composer'
 
 # Copy project content to temp dir
 echo 'Copying project files...'
-rm -rf "${builtcontent}"
-mkdir -p "${builtcontent}"
-rsync -av * "${builtcontent}" \
+rm -rf "${builtContent}"
+mkdir -p "${builtContent}"
+rsync -av * "${builtContent}" \
     --exclude=*docker* \
     --exclude=Dockerfile \
     --include=.htaccess \
     --exclude-from=./.dockerignore
-cd "${builtcontent}"
+cd "${builtContent}"
 
 # Install dependencies
 echo "Installing dependencies with $composerBin..."
+composerFlags="--optimize-autoloader --no-progress --no-interaction"
 ${composerBin} self-update
-${composerBin} install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction
+${composerBin} install --no-dev --prefer-dist $composerFlags
 
-# Copy mezzio helper script to vendor (deprecated - Remove with Shlink 3.0.0)
-cp "${projectdir}/bin/helper/mezzio-swoole" "./vendor/bin"
+if [[ $noSwoole ]]; then
+  # If generating a dist not for swoole, uninstall mezzio-swoole
+  ${composerBin} remove mezzio/mezzio-swoole --with-all-dependencies --update-no-dev $composerFlags
+else
+  # Copy mezzio helper script to vendor (deprecated - Remove with Shlink 3.0.0)
+  cp "${projectdir}/bin/helper/mezzio-swoole" "./vendor/bin"
+fi
 
 # Delete development files
 echo 'Deleting dev files...'
@@ -41,9 +51,9 @@ sed -i "s/%SHLINK_VERSION%/${version}/g" config/autoload/app_options.global.php
 # Compressing file
 echo 'Compressing files...'
 cd "${projectdir}"/build
-rm -f ./shlink_${version}_dist.zip
-zip -ry ./shlink_${version}_dist.zip ./shlink_${version}_dist
+rm -f ./${distId}.zip
+zip -ry ./${distId}.zip ./${distId}
 cd "${projectdir}"
-rm -rf "${builtcontent}"
+rm -rf "${builtContent}"
 
 echo 'Done!'

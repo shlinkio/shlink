@@ -9,14 +9,13 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Db\MigrateDatabaseCommand;
+use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
-use Symfony\Component\Process\Process;
 
 class MigrateDatabaseCommandTest extends TestCase
 {
@@ -37,7 +36,7 @@ class MigrateDatabaseCommandTest extends TestCase
         $phpExecutableFinder = $this->prophesize(PhpExecutableFinder::class);
         $phpExecutableFinder->find(false)->willReturn('/usr/local/bin/php');
 
-        $this->processHelper = $this->prophesize(ProcessHelper::class);
+        $this->processHelper = $this->prophesize(ProcessRunnerInterface::class);
 
         $command = new MigrateDatabaseCommand(
             $locker->reveal(),
@@ -53,12 +52,12 @@ class MigrateDatabaseCommandTest extends TestCase
     /** @test */
     public function migrationsCommandIsRunWithProperVerbosity(): void
     {
-        $runCommand = $this->processHelper->mustRun(Argument::type(OutputInterface::class), [
+        $runCommand = $this->processHelper->run(Argument::type(OutputInterface::class), [
             '/usr/local/bin/php',
             MigrateDatabaseCommand::DOCTRINE_MIGRATIONS_SCRIPT,
             MigrateDatabaseCommand::DOCTRINE_MIGRATE_COMMAND,
             '--no-interaction',
-        ], Argument::cetera())->willReturn(new Process([]));
+        ]);
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();

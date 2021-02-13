@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
-use Laminas\Paginator\Adapter\ArrayAdapter;
-use Laminas\Paginator\Paginator;
+use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -31,7 +33,9 @@ class ListShortUrlsCommandTest extends TestCase
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
         $app = new Application();
-        $command = new ListShortUrlsCommand($this->shortUrlService->reveal(), []);
+        $command = new ListShortUrlsCommand($this->shortUrlService->reveal(), new ShortUrlDataTransformer(
+            new ShortUrlStringifier([]),
+        ));
         $app->add($command);
         $this->commandTester = new CommandTester($command);
     }
@@ -42,7 +46,7 @@ class ListShortUrlsCommandTest extends TestCase
         // The paginator will return more than one page
         $data = [];
         for ($i = 0; $i < 50; $i++) {
-            $data[] = new ShortUrl('url_' . $i);
+            $data[] = ShortUrl::withLongUrl('url_' . $i);
         }
 
         $this->shortUrlService->listShortUrls(Argument::cetera())
@@ -56,6 +60,7 @@ class ListShortUrlsCommandTest extends TestCase
         self::assertStringContainsString('Continue with page 2?', $output);
         self::assertStringContainsString('Continue with page 3?', $output);
         self::assertStringContainsString('Continue with page 4?', $output);
+        self::assertStringNotContainsString('Continue with page 5?', $output);
     }
 
     /** @test */
@@ -64,7 +69,7 @@ class ListShortUrlsCommandTest extends TestCase
         // The paginator will return more than one page
         $data = [];
         for ($i = 0; $i < 30; $i++) {
-            $data[] = new ShortUrl('url_' . $i);
+            $data[] = ShortUrl::withLongUrl('url_' . $i);
         }
 
         $this->shortUrlService->listShortUrls(ShortUrlsParams::emptyInstance())
@@ -89,7 +94,7 @@ class ListShortUrlsCommandTest extends TestCase
     {
         $page = 5;
         $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData(['page' => $page]))
-            ->willReturn(new Paginator(new ArrayAdapter()))
+            ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['y']);
@@ -100,11 +105,11 @@ class ListShortUrlsCommandTest extends TestCase
     public function ifTagsFlagIsProvidedTagsColumnIsIncluded(): void
     {
         $this->shortUrlService->listShortUrls(ShortUrlsParams::emptyInstance())
-            ->willReturn(new Paginator(new ArrayAdapter()))
+            ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['y']);
-        $this->commandTester->execute(['--showTags' => true]);
+        $this->commandTester->execute(['--show-tags' => true]);
         $output = $this->commandTester->getDisplay();
         self::assertStringContainsString('Tags', $output);
     }
@@ -127,7 +132,7 @@ class ListShortUrlsCommandTest extends TestCase
             'tags' => $tags,
             'startDate' => $startDate !== null ? Chronos::parse($startDate)->toAtomString() : null,
             'endDate' => $endDate !== null ? Chronos::parse($endDate)->toAtomString() : null,
-        ]))->willReturn(new Paginator(new ArrayAdapter()));
+        ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute($commandArgs);
@@ -139,22 +144,22 @@ class ListShortUrlsCommandTest extends TestCase
     {
         yield [[], 1, null, []];
         yield [['--page' => $page = 3], $page, null, []];
-        yield [['--searchTerm' => $searchTerm = 'search this'], 1, $searchTerm, []];
+        yield [['--search-term' => $searchTerm = 'search this'], 1, $searchTerm, []];
         yield [
-            ['--page' => $page = 3, '--searchTerm' => $searchTerm = 'search this', '--tags' => $tags = 'foo,bar'],
+            ['--page' => $page = 3, '--search-term' => $searchTerm = 'search this', '--tags' => $tags = 'foo,bar'],
             $page,
             $searchTerm,
             explode(',', $tags),
         ];
         yield [
-            ['--startDate' => $startDate = '2019-01-01'],
+            ['--start-date' => $startDate = '2019-01-01'],
             1,
             null,
             [],
             $startDate,
         ];
         yield [
-            ['--endDate' => $endDate = '2020-05-23'],
+            ['--end-date' => $endDate = '2020-05-23'],
             1,
             null,
             [],
@@ -162,7 +167,7 @@ class ListShortUrlsCommandTest extends TestCase
             $endDate,
         ];
         yield [
-            ['--startDate' => $startDate = '2019-01-01', '--endDate' => $endDate = '2020-05-23'],
+            ['--start-date' => $startDate = '2019-01-01', '--end-date' => $endDate = '2020-05-23'],
             1,
             null,
             [],
@@ -180,7 +185,7 @@ class ListShortUrlsCommandTest extends TestCase
     {
         $listShortUrls = $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData([
             'orderBy' => $expectedOrderBy,
-        ]))->willReturn(new Paginator(new ArrayAdapter()));
+        ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute($commandArgs);
@@ -191,9 +196,9 @@ class ListShortUrlsCommandTest extends TestCase
     public function provideOrderBy(): iterable
     {
         yield [[], null];
-        yield [['--orderBy' => 'foo'], 'foo'];
-        yield [['--orderBy' => 'foo,ASC'], ['foo' => 'ASC']];
-        yield [['--orderBy' => 'bar,DESC'], ['bar' => 'DESC']];
+        yield [['--order-by' => 'foo'], 'foo'];
+        yield [['--order-by' => 'foo,ASC'], ['foo' => 'ASC']];
+        yield [['--order-by' => 'bar,DESC'], ['bar' => 'DESC']];
     }
 
     /** @test */
@@ -207,7 +212,7 @@ class ListShortUrlsCommandTest extends TestCase
             'endDate' => null,
             'orderBy' => null,
             'itemsPerPage' => -1,
-        ]))->willReturn(new Paginator(new ArrayAdapter()));
+        ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute(['--all' => true]);
 

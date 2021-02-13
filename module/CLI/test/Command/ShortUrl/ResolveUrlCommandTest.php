@@ -41,7 +41,7 @@ class ResolveUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
-        $shortUrl = new ShortUrl($expectedUrl);
+        $shortUrl = ShortUrl::withLongUrl($expectedUrl);
         $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode))->willReturn($shortUrl)
                                                                                ->shouldBeCalledOnce();
 

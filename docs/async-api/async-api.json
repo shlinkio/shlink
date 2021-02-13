@@ -58,6 +58,23 @@
                     }
                 }
             }
+        },
+        "http://shlink.io/new-orphan-visit": {
+            "subscribe": {
+                "summary": "Receive information about any new orphan visit.",
+                "operationId": "newOrphanVisit",
+                "message": {
+                    "payload": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "visit": {
+                                "$ref": "#/components/schemas/OrphanVisit"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -177,6 +194,46 @@
                         "regionName": "California",
                         "timezone": "America/Los_Angeles"
                     }
+                }
+            },
+            "OrphanVisit": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/Visit"},
+                    {
+                        "type": "object",
+                        "properties": {
+                            "visitedUrl": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The originally visited URL that triggered the tracking of this visit"
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "invalid_short_url",
+                                    "base_url",
+                                    "regular_404"
+                                ],
+                                "description": "Tells the type of orphan visit"
+                            }
+                        }
+                    }
+                ],
+                "example": {
+                    "referer": "https://t.co",
+                    "date": "2015-08-20T05:05:03+04:00",
+                    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
+                    "visitLocation": {
+                        "cityName": "Cupertino",
+                        "countryCode": "US",
+                        "countryName": "United States",
+                        "latitude": 37.3042,
+                        "longitude": -122.0946,
+                        "regionName": "California",
+                        "timezone": "America/Los_Angeles"
+                    },
+                    "visitedUrl": "https://doma.in",
+                    "type": "base_url"
                 }
             },
             "VisitLocation": {

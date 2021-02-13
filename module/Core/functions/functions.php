@@ -9,12 +9,16 @@ use DateTimeInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\InputFilter\InputFilter;
 use PUGX\Shortid\Factory as ShortIdFactory;
+use Shlinkio\Shlink\Common\Util\DateRange;
 
 use function Functional\reduce_left;
 use function is_array;
+use function lcfirst;
 use function print_r;
 use function sprintf;
 use function str_repeat;
+use function str_replace;
+use function ucwords;
 
 const DEFAULT_DELETE_SHORT_URL_THRESHOLD = 15;
 const DEFAULT_SHORT_CODES_LENGTH = 5;
@@ -23,6 +27,7 @@ const DEFAULT_REDIRECT_STATUS_CODE = StatusCodeInterface::STATUS_FOUND;
 const DEFAULT_REDIRECT_CACHE_LIFETIME = 30;
 const LOCAL_LOCK_FACTORY = 'Shlinkio\Shlink\LocalLockFactory';
 const CUSTOM_SLUGS_REGEXP = '/[^\pL\pN._~]/u'; // Any unicode letter or number, plus ".", "_" and "~" chars
+const TITLE_TAG_VALUE = '/<title[^>]*>(.*?)<\/title>/i'; // Matches the value inside an html title tag
 
 function generateRandomShortCode(int $length): string
 {
@@ -38,6 +43,26 @@ function generateRandomShortCode(int $length): string
 function parseDateFromQuery(array $query, string $dateName): ?Chronos
 {
     return ! isset($query[$dateName]) || empty($query[$dateName]) ? null : Chronos::parse($query[$dateName]);
+}
+
+function parseDateRangeFromQuery(array $query, string $startDateName, string $endDateName): DateRange
+{
+    $startDate = parseDateFromQuery($query, $startDateName);
+    $endDate = parseDateFromQuery($query, $endDateName);
+
+    if ($startDate === null && $endDate === null) {
+        return DateRange::emptyInstance();
+    }
+
+    if ($startDate !== null && $endDate !== null) {
+        return DateRange::withStartAndEndDate($startDate, $endDate);
+    }
+
+    if ($startDate !== null) {
+        return DateRange::withStartDate($startDate);
+    }
+
+    return DateRange::withEndDate($endDate);
 }
 
 /**
@@ -96,4 +121,9 @@ function arrayToString(array $array, int $indentSize = 4): string
             is_array($messages) ? print_r($messages, true) : $messages,
         );
     }, '');
+}
+
+function kebabCaseToCamelCase(string $name): string
+{
+    return lcfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $name))));
 }

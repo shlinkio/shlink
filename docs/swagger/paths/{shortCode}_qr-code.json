@@ -40,6 +40,17 @@
                         "svg"
                     ]
                 }
+            },
+            {
+                "name": "margin",
+                "in": "query",
+                "description": "The margin around the QR code image.",
+                "required": false,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0
+                }
             }
         ],
         "responses": {

@@ -208,6 +208,6 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
 
     protected function getLockConfig(): LockedCommandConfig
     {
-        return new LockedCommandConfig($this->getName());
+        return LockedCommandConfig::nonBlocking($this->getName());
     }
 }

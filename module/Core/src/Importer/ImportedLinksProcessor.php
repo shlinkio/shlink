@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
-use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Symfony\Component\Console\Style\StyleInterface;
@@ -19,8 +18,6 @@ use function sprintf;
 
 class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 {
-    use TagManagerTrait;
-
     private EntityManagerInterface $em;
     private ShortUrlRelationResolverInterface $relationResolver;
     private ShortCodeHelperInterface $shortCodeHelper;
@@ -59,8 +56,6 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
             }
 
             $shortUrl = ShortUrl::fromImport($url, $importShortCodes, $this->relationResolver);
-            $shortUrl->setTags($this->tagNamesToEntities($this->em, $url->tags()));
-
             if (! $this->handleShortCodeUniqueness($url, $shortUrl, $io, $importShortCodes)) {
                 continue;
             }

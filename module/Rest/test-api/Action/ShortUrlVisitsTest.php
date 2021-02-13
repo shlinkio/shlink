@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
+use GuzzleHttp\Psr7\Query;
 use Laminas\Diactoros\Uri;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
 
-use function GuzzleHttp\Psr7\build_query;
 use function sprintf;
 
 class ShortUrlVisitsTest extends ApiTestCase
@@ -52,7 +52,7 @@ class ShortUrlVisitsTest extends ApiTestCase
         $url = new Uri(sprintf('/short-urls/%s/visits', $shortCode));
 
         if ($domain !== null) {
-            $url = $url->withQuery(build_query(['domain' => $domain]));
+            $url = $url->withQuery(Query::build(['domain' => $domain]));
         }
 
         $resp = $this->callApiWithKey(self::METHOD_GET, (string) $url);

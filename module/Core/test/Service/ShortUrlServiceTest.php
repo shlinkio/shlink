@@ -6,20 +6,19 @@ namespace ShlinkioTest\Shlink\Core\Service;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
-use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
 
@@ -33,7 +32,7 @@ class ShortUrlServiceTest extends TestCase
     private ShortUrlService $service;
     private ObjectProphecy $em;
     private ObjectProphecy $urlResolver;
-    private ObjectProphecy $urlValidator;
+    private ObjectProphecy $titleResolutionHelper;
 
     public function setUp(): void
     {
@@ -42,12 +41,13 @@ class ShortUrlServiceTest extends TestCase
         $this->em->flush()->willReturn(null);
 
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
-        $this->urlValidator = $this->prophesize(UrlValidatorInterface::class);
+        $this->titleResolutionHelper = $this->prophesize(ShortUrlTitleResolutionHelperInterface::class);
 
         $this->service = new ShortUrlService(
             $this->em->reveal(),
             $this->urlResolver->reveal(),
-            $this->urlValidator->reveal(),
+            $this->titleResolutionHelper->reveal(),
+            new SimpleShortUrlRelationResolver(),
         );
     }
 
@@ -58,10 +58,10 @@ class ShortUrlServiceTest extends TestCase
     public function listedUrlsAreReturnedFromEntityManager(?ApiKey $apiKey): void
     {
         $list = [
-            new ShortUrl(''),
-            new ShortUrl(''),
-            new ShortUrl(''),
-            new ShortUrl(''),
+            ShortUrl::createEmpty(),
+            ShortUrl::createEmpty(),
+            ShortUrl::createEmpty(),
+            ShortUrl::createEmpty(),
         ];
 
         $repo = $this->prophesize(ShortUrlRepository::class);
@@ -69,42 +69,23 @@ class ShortUrlServiceTest extends TestCase
         $repo->countList(Argument::cetera())->willReturn(count($list))->shouldBeCalledOnce();
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $list = $this->service->listShortUrls(ShortUrlsParams::emptyInstance(), $apiKey);
-        self::assertEquals(4, $list->getCurrentItemCount());
-    }
+        $paginator = $this->service->listShortUrls(ShortUrlsParams::emptyInstance(), $apiKey);
 
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
-    public function providedTagsAreGetFromRepoAndSetToTheShortUrl(?ApiKey $apiKey): void
-    {
-        $shortUrl = $this->prophesize(ShortUrl::class);
-        $shortUrl->setTags(Argument::any())->shouldBeCalledOnce();
-        $shortCode = 'abc123';
-        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey)
-            ->willReturn($shortUrl->reveal())
-            ->shouldBeCalledOnce();
-
-        $tagRepo = $this->prophesize(EntityRepository::class);
-        $tagRepo->findOneBy(['name' => 'foo'])->willReturn(new Tag('foo'))->shouldBeCalledOnce();
-        $tagRepo->findOneBy(['name' => 'bar'])->willReturn(null)->shouldBeCalledOnce();
-        $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
-
-        $this->service->setTagsByShortCode(new ShortUrlIdentifier($shortCode), ['foo', 'bar'], $apiKey);
+        self::assertCount(4, $paginator);
+        self::assertCount(4, $paginator->getCurrentPageResults());
     }
 
     /**
      * @test
      * @dataProvider provideShortUrlEdits
      */
-    public function updateMetadataByShortCodeUpdatesProvidedData(
+    public function updateShortUrlUpdatesProvidedData(
         int $expectedValidateCalls,
         ShortUrlEdit $shortUrlEdit,
         ?ApiKey $apiKey
     ): void {
         $originalLongUrl = 'originalLongUrl';
-        $shortUrl = new ShortUrl($originalLongUrl);
+        $shortUrl = ShortUrl::withLongUrl($originalLongUrl);
 
         $findShortUrl = $this->urlResolver->resolveShortUrl(
             new ShortUrlIdentifier('abc123'),
@@ -112,7 +93,11 @@ class ShortUrlServiceTest extends TestCase
         )->willReturn($shortUrl);
         $flush = $this->em->flush()->willReturn(null);
 
-        $result = $this->service->updateMetadataByShortCode(new ShortUrlIdentifier('abc123'), $shortUrlEdit, $apiKey);
+        $processTitle = $this->titleResolutionHelper->processTitleAndValidateUrl($shortUrlEdit)->willReturn(
+            $shortUrlEdit,
+        );
+
+        $result = $this->service->updateShortUrl(new ShortUrlIdentifier('abc123'), $shortUrlEdit, $apiKey);
 
         self::assertSame($shortUrl, $result);
         self::assertEquals($shortUrlEdit->validSince(), $shortUrl->getValidSince());
@@ -121,10 +106,7 @@ class ShortUrlServiceTest extends TestCase
         self::assertEquals($shortUrlEdit->longUrl() ?? $originalLongUrl, $shortUrl->getLongUrl());
         $findShortUrl->shouldHaveBeenCalled();
         $flush->shouldHaveBeenCalled();
-        $this->urlValidator->validateUrl(
-            $shortUrlEdit->longUrl(),
-            $shortUrlEdit->doValidateUrl(),
-        )->shouldHaveBeenCalledTimes($expectedValidateCalls);
+        $processTitle->shouldHaveBeenCalledTimes($expectedValidateCalls);
     }
 
     public function provideShortUrlEdits(): iterable

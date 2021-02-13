@@ -21,7 +21,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.3
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer cs
@@ -39,14 +39,13 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.3
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer stan
 
   unit-tests:
     runs-on: ubuntu-20.04
-    continue-on-error: ${{ matrix.php-version == '8.0' }}
     strategy:
       matrix:
         php-version: ['7.4', '8.0']
@@ -58,13 +57,10 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.3
           coverage: pcov
           ini-values: pcov.directory=module
-      - if: ${{ matrix.php-version == '8.0' }}
-        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
-      - if: ${{ matrix.php-version != '8.0' }}
-        run: composer install --no-interaction --prefer-dist
+      - run: composer install --no-interaction --prefer-dist
       - run: composer test:unit:ci
       - uses: actions/upload-artifact@v2
         if: ${{ matrix.php-version == '7.4' }}
@@ -87,13 +83,10 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.3
           coverage: pcov
           ini-values: pcov.directory=module
-      - if: ${{ matrix.php-version == '8.0' }}
-        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
-      - if: ${{ matrix.php-version != '8.0' }}
-        run: composer install --no-interaction --prefer-dist
+      - run: composer install --no-interaction --prefer-dist
       - run: composer test:db:sqlite:ci
       - uses: actions/upload-artifact@v2
         if: ${{ matrix.php-version == '7.4' }}
@@ -118,12 +111,9 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.3
           coverage: none
-      - if: ${{ matrix.php-version == '8.0' }}
-        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
-      - if: ${{ matrix.php-version != '8.0' }}
-        run: composer install --no-interaction --prefer-dist
+      - run: composer install --no-interaction --prefer-dist
       - run: composer test:db:mysql
 
   db-tests-maria:
@@ -141,12 +131,9 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.3
           coverage: none
-      - if: ${{ matrix.php-version == '8.0' }}
-        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
-      - if: ${{ matrix.php-version != '8.0' }}
-        run: composer install --no-interaction --prefer-dist
+      - run: composer install --no-interaction --prefer-dist
       - run: composer test:db:maria
 
   db-tests-postgres:
@@ -164,12 +151,9 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.3
           coverage: none
-      - if: ${{ matrix.php-version == '8.0' }}
-        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
-      - if: ${{ matrix.php-version != '8.0' }}
-        run: composer install --no-interaction --prefer-dist
+      - run: composer install --no-interaction --prefer-dist
       - run: composer test:db:postgres
 
   db-tests-ms:
@@ -189,19 +173,15 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9, pdo_sqlsrv-5.9.0beta2
+          extensions: swoole-4.6.3, pdo_sqlsrv-5.9.0
           coverage: none
-      - if: ${{ matrix.php-version == '8.0' }}
-        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
-      - if: ${{ matrix.php-version != '8.0' }}
-        run: composer install --no-interaction --prefer-dist
+      - run: composer install --no-interaction --prefer-dist
       - name: Create test database
         run: docker-compose exec -T shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
       - run: composer test:db:ms
 
   api-tests:
     runs-on: ubuntu-20.04
-    continue-on-error: ${{ matrix.php-version == '8.0' }}
     strategy:
       matrix:
         php-version: ['7.4', '8.0']
@@ -209,19 +189,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Start database server
-        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
       - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.3
           coverage: pcov
           ini-values: pcov.directory=module
-      - if: ${{ matrix.php-version == '8.0' }}
-        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
-      - if: ${{ matrix.php-version != '8.0' }}
-        run: composer install --no-interaction --prefer-dist
+      - run: composer install --no-interaction --prefer-dist
       - run: bin/test/run-api-tests.sh
       - uses: actions/upload-artifact@v2
         if: ${{ matrix.php-version == '7.4' }}
@@ -248,13 +225,10 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.5.9
+          extensions: swoole-4.6.3
           coverage: pcov
           ini-values: pcov.directory=module
-      - if: ${{ matrix.php-version == '8.0' }}
-        run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
-      - if: ${{ matrix.php-version != '8.0' }}
-        run: composer install --no-interaction --prefer-dist
+      - run: composer install --no-interaction --prefer-dist
       - uses: actions/download-artifact@v2
         with:
           path: build
@@ -309,6 +283,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 100
       - uses: marceloprado/has-changed-path@v1
         id: changed-dockerfile
         with:

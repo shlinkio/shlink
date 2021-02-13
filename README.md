@@ -47,7 +47,7 @@ In order to run Shlink, you will need a built version of the project. There are 
 
     The easiest way to install shlink is by using one of the pre-bundled distributable packages.
 
-    Go to the [latest version](https://github.com/shlinkio/shlink/releases/latest) and download the `shlink_x.x.x_dist.zip` file you will find there.
+    Go to the [latest version](https://github.com/shlinkio/shlink/releases/latest) and download the `shlink*_dist.zip` file that suits your needs. You will find one for every supported PHP version and with/without swoole integration.
 
     Finally, decompress the file in the location of your choice.
 
@@ -57,9 +57,9 @@ In order to run Shlink, you will need a built version of the project. There are 
 
     * Clone the project with git (`git clone https://github.com/shlinkio/shlink.git`), or download it by clicking the **Clone or download** green button.
     * Download the [Composer](https://getcomposer.org/download/) PHP package manager inside the project folder.
-    * Run `./build.sh 1.0.0`, replacing the version with the version number you are going to build (the version number is only used for the generated dist file).
+    * Run `./build.sh 1.0.0`, replacing the version with the version number you are going to build (the version number is used as part of the generated dist file name, and to set the value returned when running `shlink -V` from the command line).
 
-    After that, you will have a `shlink_x.x.x_dist.zip` dist file inside the `build` directory, that you need to decompress in the location fo your choice.
+    After that, you will have a dist file inside the `build` directory, that you need to decompress in the location of your choice.
 
     > This is the process used when releasing new shlink versions. After tagging the new version with git, the Github release is automatically created by a [GitHub workflow](https://github.com/shlinkio/shlink/actions?query=workflow%3A%22Publish+release%22), attaching the generated dist file to it.
 

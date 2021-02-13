@@ -55,7 +55,7 @@ class GenerateKeyCommandTest extends TestCase
         $this->apiKeyService->create(Argument::type(Chronos::class))->shouldBeCalledOnce()
                                                                     ->willReturn(new ApiKey());
         $this->commandTester->execute([
-            '--expirationDate' => '2016-01-01',
+            '--expiration-date' => '2016-01-01',
         ]);
     }
 }

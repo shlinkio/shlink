@@ -57,10 +57,9 @@ class NotifyVisitToMercureTest extends TestCase
         $logDebug = $this->logger->debug(Argument::cetera());
         $buildNewShortUrlVisitUpdate = $this->updatesGenerator->newShortUrlVisitUpdate(
             Argument::type(Visit::class),
-        )->willReturn(new Update('', ''));
-        $buildNewVisitUpdate = $this->updatesGenerator->newVisitUpdate(Argument::type(Visit::class))->willReturn(
-            new Update('', ''),
         );
+        $buildNewOrphanVisitUpdate = $this->updatesGenerator->newOrphanVisitUpdate(Argument::type(Visit::class));
+        $buildNewVisitUpdate = $this->updatesGenerator->newVisitUpdate(Argument::type(Visit::class));
         $publish = $this->publisher->__invoke(Argument::type(Update::class));
 
         ($this->listener)(new VisitLocated($visitId));
@@ -70,6 +69,7 @@ class NotifyVisitToMercureTest extends TestCase
         $logDebug->shouldNotHaveBeenCalled();
         $buildNewShortUrlVisitUpdate->shouldNotHaveBeenCalled();
         $buildNewVisitUpdate->shouldNotHaveBeenCalled();
+        $buildNewOrphanVisitUpdate->shouldNotHaveBeenCalled();
         $publish->shouldNotHaveBeenCalled();
     }
 
@@ -77,13 +77,14 @@ class NotifyVisitToMercureTest extends TestCase
     public function notificationsAreSentWhenVisitIsFound(): void
     {
         $visitId = '123';
-        $visit = new Visit(new ShortUrl(''), Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance());
         $update = new Update('', '');
 
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn($visit);
         $logWarning = $this->logger->warning(Argument::cetera());
         $logDebug = $this->logger->debug(Argument::cetera());
         $buildNewShortUrlVisitUpdate = $this->updatesGenerator->newShortUrlVisitUpdate($visit)->willReturn($update);
+        $buildNewOrphanVisitUpdate = $this->updatesGenerator->newOrphanVisitUpdate($visit)->willReturn($update);
         $buildNewVisitUpdate = $this->updatesGenerator->newVisitUpdate($visit)->willReturn($update);
         $publish = $this->publisher->__invoke($update);
 
@@ -94,6 +95,7 @@ class NotifyVisitToMercureTest extends TestCase
         $logDebug->shouldNotHaveBeenCalled();
         $buildNewShortUrlVisitUpdate->shouldHaveBeenCalledOnce();
         $buildNewVisitUpdate->shouldHaveBeenCalledOnce();
+        $buildNewOrphanVisitUpdate->shouldNotHaveBeenCalled();
         $publish->shouldHaveBeenCalledTimes(2);
     }
 
@@ -101,7 +103,7 @@ class NotifyVisitToMercureTest extends TestCase
     public function debugIsLoggedWhenExceptionIsThrown(): void
     {
         $visitId = '123';
-        $visit = new Visit(new ShortUrl(''), Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance());
         $update = new Update('', '');
         $e = new RuntimeException('Error');
 
@@ -111,6 +113,7 @@ class NotifyVisitToMercureTest extends TestCase
             'e' => $e,
         ]);
         $buildNewShortUrlVisitUpdate = $this->updatesGenerator->newShortUrlVisitUpdate($visit)->willReturn($update);
+        $buildNewOrphanVisitUpdate = $this->updatesGenerator->newOrphanVisitUpdate($visit)->willReturn($update);
         $buildNewVisitUpdate = $this->updatesGenerator->newVisitUpdate($visit)->willReturn($update);
         $publish = $this->publisher->__invoke($update)->willThrow($e);
 
@@ -120,7 +123,45 @@ class NotifyVisitToMercureTest extends TestCase
         $logWarning->shouldNotHaveBeenCalled();
         $logDebug->shouldHaveBeenCalledOnce();
         $buildNewShortUrlVisitUpdate->shouldHaveBeenCalledOnce();
-        $buildNewVisitUpdate->shouldNotHaveBeenCalled();
+        $buildNewVisitUpdate->shouldHaveBeenCalledOnce();
+        $buildNewOrphanVisitUpdate->shouldNotHaveBeenCalled();
         $publish->shouldHaveBeenCalledOnce();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideOrphanVisits
+     */
+    public function notificationsAreSentForOrphanVisits(Visit $visit): void
+    {
+        $visitId = '123';
+        $update = new Update('', '');
+
+        $findVisit = $this->em->find(Visit::class, $visitId)->willReturn($visit);
+        $logWarning = $this->logger->warning(Argument::cetera());
+        $logDebug = $this->logger->debug(Argument::cetera());
+        $buildNewShortUrlVisitUpdate = $this->updatesGenerator->newShortUrlVisitUpdate($visit)->willReturn($update);
+        $buildNewOrphanVisitUpdate = $this->updatesGenerator->newOrphanVisitUpdate($visit)->willReturn($update);
+        $buildNewVisitUpdate = $this->updatesGenerator->newVisitUpdate($visit)->willReturn($update);
+        $publish = $this->publisher->__invoke($update);
+
+        ($this->listener)(new VisitLocated($visitId));
+
+        $findVisit->shouldHaveBeenCalledOnce();
+        $logWarning->shouldNotHaveBeenCalled();
+        $logDebug->shouldNotHaveBeenCalled();
+        $buildNewShortUrlVisitUpdate->shouldNotHaveBeenCalled();
+        $buildNewVisitUpdate->shouldNotHaveBeenCalled();
+        $buildNewOrphanVisitUpdate->shouldHaveBeenCalledOnce();
+        $publish->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideOrphanVisits(): iterable
+    {
+        $visitor = Visitor::emptyInstance();
+
+        yield Visit::TYPE_REGULAR_404 => [Visit::forRegularNotFound($visitor)];
+        yield Visit::TYPE_INVALID_SHORT_URL => [Visit::forInvalidShortUrl($visitor)];
+        yield Visit::TYPE_BASE_URL => [Visit::forBasePath($visitor)];
     }
 }

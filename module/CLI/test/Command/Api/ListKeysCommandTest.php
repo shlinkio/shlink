@@ -39,7 +39,7 @@ class ListKeysCommandTest extends TestCase
     {
         $listKeys = $this->apiKeyService->listKeys($enabledOnly)->willReturn($keys);
 
-        $this->commandTester->execute(['--enabledOnly' => $enabledOnly]);
+        $this->commandTester->execute(['--enabled-only' => $enabledOnly]);
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals($expected, $output);

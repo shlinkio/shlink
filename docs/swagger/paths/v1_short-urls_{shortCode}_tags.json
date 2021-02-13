@@ -1,11 +1,12 @@
 {
     "put": {
+        "deprecated": true,
         "operationId": "editShortUrlTags",
         "tags": [
             "Short URLs"
         ],
         "summary": "Edit tags on short URL",
-        "description": "Edit the tags on URL identified by provided short code.",
+        "description": "Edit the tags on URL identified by provided short code.<br />This endpoint is deprecated. Use the [Edit short URL](#/Short%20URLs/editShortUrl) endpoint to edit tags.",
         "parameters": [
             {
                 "$ref": "../parameters/version.json"

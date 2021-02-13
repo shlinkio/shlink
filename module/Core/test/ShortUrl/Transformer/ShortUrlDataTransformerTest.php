@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Transformer;
+namespace ShlinkioTest\Shlink\Core\ShortUrl\Transformer;
 
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Transformer\ShortUrlDataTransformer;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 
 use function random_int;
 
@@ -18,7 +19,7 @@ class ShortUrlDataTransformerTest extends TestCase
 
     public function setUp(): void
     {
-        $this->transformer = new ShortUrlDataTransformer([]);
+        $this->transformer = new ShortUrlDataTransformer(new ShortUrlStringifier([]));
     }
 
     /**
@@ -37,18 +38,23 @@ class ShortUrlDataTransformerTest extends TestCase
         $maxVisits = random_int(1, 1000);
         $now = Chronos::now();
 
-        yield 'no metadata' => [new ShortUrl('', ShortUrlMeta::createEmpty()), [
+        yield 'no metadata' => [ShortUrl::createEmpty(), [
             'validSince' => null,
             'validUntil' => null,
             'maxVisits' => null,
         ]];
-        yield 'max visits only' => [new ShortUrl('', ShortUrlMeta::fromRawData(['maxVisits' => $maxVisits])), [
+        yield 'max visits only' => [ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+            'maxVisits' => $maxVisits,
+            'longUrl' => '',
+        ])), [
             'validSince' => null,
             'validUntil' => null,
             'maxVisits' => $maxVisits,
         ]];
         yield 'max visits and valid since' => [
-            new ShortUrl('', ShortUrlMeta::fromRawData(['validSince' => $now, 'maxVisits' => $maxVisits])),
+            ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
+                ['validSince' => $now, 'maxVisits' => $maxVisits, 'longUrl' => ''],
+            )),
             [
                 'validSince' => $now->toAtomString(),
                 'validUntil' => null,
@@ -56,8 +62,8 @@ class ShortUrlDataTransformerTest extends TestCase
             ],
         ];
         yield 'both dates' => [
-            new ShortUrl('', ShortUrlMeta::fromRawData(
-                ['validSince' => $now, 'validUntil' => $now->subDays(10)],
+            ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
+                ['validSince' => $now, 'validUntil' => $now->subDays(10), 'longUrl' => ''],
             )),
             [
                 'validSince' => $now->toAtomString(),
@@ -66,8 +72,8 @@ class ShortUrlDataTransformerTest extends TestCase
             ],
         ];
         yield 'everything' => [
-            new ShortUrl('', ShortUrlMeta::fromRawData(
-                ['validSince' => $now, 'validUntil' => $now->subDays(5), 'maxVisits' => $maxVisits],
+            ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
+                ['validSince' => $now, 'validUntil' => $now->subDays(5), 'maxVisits' => $maxVisits, 'longUrl' => ''],
             )),
             [
                 'validSince' => $now->toAtomString(),

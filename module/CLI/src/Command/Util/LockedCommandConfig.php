@@ -6,17 +6,27 @@ namespace Shlinkio\Shlink\CLI\Command\Util;
 
 final class LockedCommandConfig
 {
-    private const DEFAULT_TTL = 90.0; // 1.5 minutes
+    public const DEFAULT_TTL = 600.0; // 10 minutes
 
     private string $lockName;
     private bool $isBlocking;
     private float $ttl;
 
-    public function __construct(string $lockName, bool $isBlocking = false, float $ttl = self::DEFAULT_TTL)
+    private function __construct(string $lockName, bool $isBlocking, float $ttl = self::DEFAULT_TTL)
     {
         $this->lockName = $lockName;
         $this->isBlocking = $isBlocking;
         $this->ttl = $ttl;
+    }
+
+    public static function blocking(string $lockName): self
+    {
+        return new self($lockName, true);
+    }
+
+    public static function nonBlocking(string $lockName): self
+    {
+        return new self($lockName, false);
     }
 
     public function lockName(): string

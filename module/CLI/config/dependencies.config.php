@@ -11,6 +11,8 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Service;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Installer\Factory\ProcessHelperFactory;
@@ -32,6 +34,8 @@ return [
             PhpExecutableFinder::class => InvokableFactory::class,
 
             Util\GeolocationDbUpdater::class => ConfigAbstractFactory::class,
+            Util\ProcessRunner::class => ConfigAbstractFactory::class,
+
             ApiKey\RoleResolver::class => ConfigAbstractFactory::class,
 
             Command\ShortUrl\GenerateShortUrlCommand::class => ConfigAbstractFactory::class,
@@ -60,16 +64,20 @@ return [
 
     ConfigAbstractFactory::class => [
         Util\GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, LOCAL_LOCK_FACTORY],
+        Util\ProcessRunner::class => [SymfonyCli\Helper\ProcessHelper::class],
         ApiKey\RoleResolver::class => [DomainService::class],
 
         Command\ShortUrl\GenerateShortUrlCommand::class => [
             Service\UrlShortener::class,
-            'config.url_shortener.domain',
+            ShortUrlStringifier::class,
             'config.url_shortener.default_short_codes_length',
         ],
         Command\ShortUrl\ResolveUrlCommand::class => [Service\ShortUrl\ShortUrlResolver::class],
-        Command\ShortUrl\ListShortUrlsCommand::class => [Service\ShortUrlService::class, 'config.url_shortener.domain'],
-        Command\ShortUrl\GetVisitsCommand::class => [Service\VisitsTracker::class],
+        Command\ShortUrl\ListShortUrlsCommand::class => [
+            Service\ShortUrlService::class,
+            ShortUrlDataTransformer::class,
+        ],
+        Command\ShortUrl\GetVisitsCommand::class => [Visit\VisitsStatsHelper::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
 
         Command\Visit\LocateVisitsCommand::class => [
@@ -92,14 +100,14 @@ return [
 
         Command\Db\CreateDatabaseCommand::class => [
             LockFactory::class,
-            SymfonyCli\Helper\ProcessHelper::class,
+            Util\ProcessRunner::class,
             PhpExecutableFinder::class,
             Connection::class,
             NoDbNameConnectionFactory::SERVICE_NAME,
         ],
         Command\Db\MigrateDatabaseCommand::class => [
             LockFactory::class,
-            SymfonyCli\Helper\ProcessHelper::class,
+            Util\ProcessRunner::class,
             PhpExecutableFinder::class,
         ],
     ],

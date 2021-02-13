@@ -53,7 +53,8 @@
                             "validUntil": null,
                             "maxVisits": 100
                         },
-                        "domain": null
+                        "domain": null,
+                        "title": null
                     }
                 }
             },
@@ -118,19 +119,34 @@
                             },
                             "validSince": {
                                 "description": "The date (in ISO-8601 format) from which this short code will be valid",
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                             },
                             "validUntil": {
                                 "description": "The date (in ISO-8601 format) until which this short code will be valid",
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                             },
                             "maxVisits": {
                                 "description": "The maximum number of allowed visits for this short code",
-                                "type": "number"
+                                "type": "number",
+                                "nullable": true
                             },
                             "validateUrl": {
                                 "description": "Tells if the long URL (if provided) should or should not be validated as a reachable URL. If not provided, it will fall back to app-level config",
                                 "type": "boolean"
+                            },
+                            "tags": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "The list of tags to set to the short URL."
+                            },
+                            "title": {
+                                "type": "string",
+                                "description": "A descriptive title of the short URL.",
+                                "nullable": true
                             }
                         }
                     }
@@ -143,8 +159,34 @@
             }
         ],
         "responses": {
-            "204": {
-                "description": "The short code has been properly updated."
+            "200": {
+                "description": "The short URL has been properly updated.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../definitions/ShortUrl.json"
+                        }
+                    }
+                },
+                "examples": {
+                    "application/json": {
+                        "shortCode": "12Kb3",
+                        "shortUrl": "https://doma.in/12Kb3",
+                        "longUrl": "https://shlink.io",
+                        "dateCreated": "2016-05-01T20:34:16+02:00",
+                        "visitsCount": 1029,
+                        "tags": [
+                            "shlink"
+                        ],
+                        "meta": {
+                            "validSince": "2017-01-21T00:00:00+02:00",
+                            "validUntil": null,
+                            "maxVisits": 100
+                        },
+                        "domain": null,
+                        "title": "Shlink - The URL shortener"
+                    }
+                }
             },
             "400": {
                 "description": "Provided meta arguments are invalid.",

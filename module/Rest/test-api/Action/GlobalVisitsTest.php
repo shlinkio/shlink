@@ -19,7 +19,9 @@ class GlobalVisitsTest extends ApiTestCase
 
         self::assertArrayHasKey('visits', $payload);
         self::assertArrayHasKey('visitsCount', $payload['visits']);
+        self::assertArrayHasKey('orphanVisitsCount', $payload['visits']);
         self::assertEquals($expectedVisits, $payload['visits']['visitsCount']);
+        self::assertEquals(3, $payload['visits']['orphanVisitsCount']);
     }
 
     public function provideApiKeys(): iterable

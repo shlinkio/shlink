@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use Shlinkio\Shlink\CLI\Command\BaseCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
-use Shlinkio\Shlink\Core\Validation\ShortUrlMetaInputFilter;
-use Symfony\Component\Console\Command\Command;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
+use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,21 +24,24 @@ use function Functional\flatten;
 use function Functional\unique;
 use function method_exists;
 use function sprintf;
-use function strpos;
+use function str_contains;
 
-class GenerateShortUrlCommand extends Command
+class GenerateShortUrlCommand extends BaseCommand
 {
     public const NAME = 'short-url:generate';
 
     private UrlShortenerInterface $urlShortener;
-    private array $domainConfig;
+    private ShortUrlStringifierInterface $stringifier;
     private int $defaultShortCodeLength;
 
-    public function __construct(UrlShortenerInterface $urlShortener, array $domainConfig, int $defaultShortCodeLength)
-    {
+    public function __construct(
+        UrlShortenerInterface $urlShortener,
+        ShortUrlStringifierInterface $stringifier,
+        int $defaultShortCodeLength
+    ) {
         parent::__construct();
         $this->urlShortener = $urlShortener;
-        $this->domainConfig = $domainConfig;
+        $this->stringifier = $stringifier;
         $this->defaultShortCodeLength = $defaultShortCodeLength;
     }
 
@@ -53,34 +57,34 @@ class GenerateShortUrlCommand extends Command
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Tags to apply to the new short URL',
             )
-            ->addOption(
-                'validSince',
+            ->addOptionWithDeprecatedFallback(
+                'valid-since',
                 's',
                 InputOption::VALUE_REQUIRED,
                 'The date from which this short URL will be valid. '
                 . 'If someone tries to access it before this date, it will not be found.',
             )
-            ->addOption(
-                'validUntil',
+            ->addOptionWithDeprecatedFallback(
+                'valid-until',
                 'u',
                 InputOption::VALUE_REQUIRED,
                 'The date until which this short URL will be valid. '
                 . 'If someone tries to access it after this date, it will not be found.',
             )
-            ->addOption(
-                'customSlug',
+            ->addOptionWithDeprecatedFallback(
+                'custom-slug',
                 'c',
                 InputOption::VALUE_REQUIRED,
                 'If provided, this slug will be used instead of generating a short code',
             )
-            ->addOption(
-                'maxVisits',
+            ->addOptionWithDeprecatedFallback(
+                'max-visits',
                 'm',
                 InputOption::VALUE_REQUIRED,
                 'This will limit the number of visits for this short URL.',
             )
-            ->addOption(
-                'findIfExists',
+            ->addOptionWithDeprecatedFallback(
+                'find-if-exists',
                 'f',
                 InputOption::VALUE_NONE,
                 'This will force existing matching URL to be returned if found, instead of creating a new one.',
@@ -91,11 +95,11 @@ class GenerateShortUrlCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'The domain to which this short URL will be attached.',
             )
-            ->addOption(
-                'shortCodeLength',
+            ->addOptionWithDeprecatedFallback(
+                'short-code-length',
                 'l',
                 InputOption::VALUE_REQUIRED,
-                'The length for generated short code (it will be ignored if --customSlug was provided).',
+                'The length for generated short code (it will be ignored if --custom-slug was provided).',
             )
             ->addOption(
                 'validate-url',
@@ -136,26 +140,34 @@ class GenerateShortUrlCommand extends Command
 
         $explodeWithComma = curry('explode')(',');
         $tags = unique(flatten(array_map($explodeWithComma, $input->getOption('tags'))));
-        $customSlug = $input->getOption('customSlug');
-        $maxVisits = $input->getOption('maxVisits');
-        $shortCodeLength = $input->getOption('shortCodeLength') ?? $this->defaultShortCodeLength;
+        $customSlug = $this->getOptionWithDeprecatedFallback($input, 'custom-slug');
+        $maxVisits = $this->getOptionWithDeprecatedFallback($input, 'max-visits');
+        $shortCodeLength = $this->getOptionWithDeprecatedFallback(
+            $input,
+            'short-code-length',
+        ) ?? $this->defaultShortCodeLength;
         $doValidateUrl = $this->doValidateUrl($input);
 
         try {
-            $shortUrl = $this->urlShortener->shorten($longUrl, $tags, ShortUrlMeta::fromRawData([
-                ShortUrlMetaInputFilter::VALID_SINCE => $input->getOption('validSince'),
-                ShortUrlMetaInputFilter::VALID_UNTIL => $input->getOption('validUntil'),
-                ShortUrlMetaInputFilter::CUSTOM_SLUG => $customSlug,
-                ShortUrlMetaInputFilter::MAX_VISITS => $maxVisits !== null ? (int) $maxVisits : null,
-                ShortUrlMetaInputFilter::FIND_IF_EXISTS => $input->getOption('findIfExists'),
-                ShortUrlMetaInputFilter::DOMAIN => $input->getOption('domain'),
-                ShortUrlMetaInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
-                ShortUrlMetaInputFilter::VALIDATE_URL => $doValidateUrl,
+            $shortUrl = $this->urlShortener->shorten(ShortUrlMeta::fromRawData([
+                ShortUrlInputFilter::LONG_URL => $longUrl,
+                ShortUrlInputFilter::VALID_SINCE => $this->getOptionWithDeprecatedFallback($input, 'valid-since'),
+                ShortUrlInputFilter::VALID_UNTIL => $this->getOptionWithDeprecatedFallback($input, 'valid-until'),
+                ShortUrlInputFilter::CUSTOM_SLUG => $customSlug,
+                ShortUrlInputFilter::MAX_VISITS => $maxVisits !== null ? (int) $maxVisits : null,
+                ShortUrlInputFilter::FIND_IF_EXISTS => $this->getOptionWithDeprecatedFallback(
+                    $input,
+                    'find-if-exists',
+                ),
+                ShortUrlInputFilter::DOMAIN => $input->getOption('domain'),
+                ShortUrlInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
+                ShortUrlInputFilter::VALIDATE_URL => $doValidateUrl,
+                ShortUrlInputFilter::TAGS => $tags,
             ]));
 
             $io->writeln([
                 sprintf('Processed long URL: <info>%s</info>', $longUrl),
-                sprintf('Generated short URL: <info>%s</info>', $shortUrl->toString($this->domainConfig)),
+                sprintf('Generated short URL: <info>%s</info>', $this->stringifier->stringify($shortUrl)),
             ]);
             return ExitCodes::EXIT_SUCCESS;
         } catch (InvalidUrlException | NonUniqueSlugException $e) {
@@ -168,10 +180,10 @@ class GenerateShortUrlCommand extends Command
     {
         $rawInput = method_exists($input, '__toString') ? $input->__toString() : '';
 
-        if (strpos($rawInput, '--no-validate-url') !== false) {
+        if (str_contains($rawInput, '--no-validate-url')) {
             return false;
         }
-        if (strpos($rawInput, '--validate-url') !== false) {
+        if (str_contains($rawInput, '--validate-url')) {
             return true;
         }
 

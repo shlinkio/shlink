@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Model;
 
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 
+use function array_pad;
 use function explode;
 use function is_array;
 use function is_string;
@@ -50,9 +51,9 @@ final class ShortUrlsOrdering
 
         /** @var string|array $orderBy */
         if (! $isArray) {
-            $parts = explode('-', $orderBy);
-            $this->orderField = $parts[0];
-            $this->orderDirection = $parts[1] ?? self::DEFAULT_ORDER_DIRECTION;
+            [$field, $dir] = array_pad(explode('-', $orderBy), 2, null);
+            $this->orderField = $field;
+            $this->orderDirection = $dir ?? self::DEFAULT_ORDER_DIRECTION;
         } else {
             $this->orderField = key($orderBy);
             $this->orderDirection = $orderBy[$this->orderField];

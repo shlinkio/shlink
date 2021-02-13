@@ -15,6 +15,8 @@ return [
 
     'dependencies' => [
         'factories' => [
+            ErrorHandler\NotFoundTypeResolverMiddleware::class => ConfigAbstractFactory::class,
+            ErrorHandler\NotFoundTrackerMiddleware::class => ConfigAbstractFactory::class,
             ErrorHandler\NotFoundRedirectHandler::class => ConfigAbstractFactory::class,
             ErrorHandler\NotFoundTemplateHandler::class => InvokableFactory::class,
 
@@ -24,15 +26,19 @@ return [
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
 
             Service\UrlShortener::class => ConfigAbstractFactory::class,
-            Service\VisitsTracker::class => ConfigAbstractFactory::class,
             Service\ShortUrlService::class => ConfigAbstractFactory::class,
-            Visit\VisitLocator::class => ConfigAbstractFactory::class,
-            Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
-            Tag\TagService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
             Service\ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
             Service\ShortUrl\ShortCodeHelper::class => ConfigAbstractFactory::class,
+
+            Tag\TagService::class => ConfigAbstractFactory::class,
+
             Domain\DomainService::class => ConfigAbstractFactory::class,
+
+            Visit\VisitsTracker::class => ConfigAbstractFactory::class,
+            Visit\VisitLocator::class => ConfigAbstractFactory::class,
+            Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
+            Visit\Transformer\OrphanVisitDataTransformer::class => InvokableFactory::class,
 
             Util\UrlValidator::class => ConfigAbstractFactory::class,
             Util\DoctrineBatchHelper::class => ConfigAbstractFactory::class,
@@ -43,6 +49,9 @@ return [
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
 
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ConfigAbstractFactory::class,
+            ShortUrl\Helper\ShortUrlStringifier::class => ConfigAbstractFactory::class,
+            ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => ConfigAbstractFactory::class,
+            ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
 
             Mercure\MercureUpdatesGenerator::class => ConfigAbstractFactory::class,
 
@@ -55,10 +64,11 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
+        ErrorHandler\NotFoundTypeResolverMiddleware::class => ['config.router.base_path'],
+        ErrorHandler\NotFoundTrackerMiddleware::class => [Visit\VisitsTracker::class],
         ErrorHandler\NotFoundRedirectHandler::class => [
             NotFoundRedirectOptions::class,
             Util\RedirectResponseHelper::class,
-            'config.router.base_path',
         ],
 
         Options\AppOptions::class => ['config.app_options'],
@@ -67,17 +77,22 @@ return [
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
 
         Service\UrlShortener::class => [
-            Util\UrlValidator::class,
+            ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
             'em',
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
             Service\ShortUrl\ShortCodeHelper::class,
         ],
-        Service\VisitsTracker::class => [
+        Visit\VisitsTracker::class => [
             'em',
             EventDispatcherInterface::class,
-            'config.url_shortener.anonymize_remote_addr',
+            Options\UrlShortenerOptions::class,
         ],
-        Service\ShortUrlService::class => ['em', Service\ShortUrl\ShortUrlResolver::class, Util\UrlValidator::class],
+        Service\ShortUrlService::class => [
+            'em',
+            Service\ShortUrl\ShortUrlResolver::class,
+            ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
+            ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
+        ],
         Visit\VisitLocator::class => ['em'],
         Visit\VisitsStatsHelper::class => ['em'],
         Tag\TagService::class => ['em'],
@@ -96,26 +111,32 @@ return [
 
         Action\RedirectAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
-            Service\VisitsTracker::class,
+            Visit\VisitsTracker::class,
             Options\AppOptions::class,
             Util\RedirectResponseHelper::class,
             'Logger_Shlink',
         ],
         Action\PixelAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
-            Service\VisitsTracker::class,
+            Visit\VisitsTracker::class,
             Options\AppOptions::class,
             'Logger_Shlink',
         ],
         Action\QrCodeAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
-            'config.url_shortener.domain',
+            ShortUrl\Helper\ShortUrlStringifier::class,
             'Logger_Shlink',
         ],
 
         ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ['em'],
+        ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain', 'config.router.base_path'],
+        ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => [Util\UrlValidator::class],
+        ShortUrl\Transformer\ShortUrlDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
 
-        Mercure\MercureUpdatesGenerator::class => ['config.url_shortener.domain'],
+        Mercure\MercureUpdatesGenerator::class => [
+            ShortUrl\Transformer\ShortUrlDataTransformer::class,
+            Visit\Transformer\OrphanVisitDataTransformer::class,
+        ],
 
         Importer\ImportedLinksProcessor::class => [
             'em',
