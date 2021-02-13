@@ -27,7 +27,7 @@ jobs:
         run: ./build.sh ${GITHUB_REF#refs/tags/v} --no-swoole
       - uses: actions/upload-artifact@v2
         with:
-          name: dist-files
+          name: dist-files-${{ matrix.php-version }}-${{ matrix.swoole }}
           path: build
 
   publish:
@@ -50,7 +50,11 @@ jobs:
   delete-artifacts:
     needs: ['publish']
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: [ '7.4', '8.0' ]
+        swoole: [ 'yes', 'no' ]
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:
-          name: dist-files
+          name: dist-files-${{ matrix.php-version }}-${{ matrix.swoole }}
