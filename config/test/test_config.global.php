@@ -9,6 +9,8 @@ use Laminas\ConfigAggregator\ConfigAggregator;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\Stdlib\Glob;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
 use PDO;
 use PHPUnit\Runner\Version;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
@@ -160,6 +162,30 @@ return [
     'data_fixtures' => [
         'paths' => [
             __DIR__ . '/../../module/Rest/test-api/Fixtures',
+        ],
+    ],
+
+    'logger' => [
+        'Shlink' => [
+            'handlers' => [
+                'shlink_handler' => [
+                    'params' => [
+                        'level' => Logger::DEBUG,
+                        'filename' => 'data/log/api-tests/shlink_log.log',
+                    ],
+                ],
+            ],
+        ],
+        'Access' => [
+            'handlers' => [
+                'access_handler' => [
+                    'name' => RotatingFileHandler::class,
+                    'params' => [
+                        'level' => Logger::DEBUG,
+                        'filename' => 'data/log/api-tests/access_log.log',
+                    ],
+                ],
+            ],
         ],
     ],
 
