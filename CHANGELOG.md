@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [2.6.0] - 2021-02-13
 ### Added
 * [#856](https://github.com/shlinkio/shlink/issues/856) Added PHP 8.0 support.
 * [#941](https://github.com/shlinkio/shlink/issues/941) Added support to provide a title for every short URL.
