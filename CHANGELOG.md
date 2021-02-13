@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ## [Unreleased]
 ### Added
 * [#856](https://github.com/shlinkio/shlink/issues/856) Added PHP 8.0 support.
-* [#941](https://github.com/shlinkio/shlink/issues/856) Added support to provide a title for every short URL.
+* [#941](https://github.com/shlinkio/shlink/issues/941) Added support to provide a title for every short URL.
 
     The title can also be automatically resolved from the long URL, when no title was explicitly provided, but this option needs to be opted in.
 
@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     The file requires the `Long URL` and `Short code` columns, and it also accepts the optional `title`, `domain` and `tags` columns.
 
 * [#1000](https://github.com/shlinkio/shlink/issues/1000) Added support to provide a `margin` query param when generating some URL's QR code.
-* [#675](https://github.com/shlinkio/shlink/issues/1000) Added ability to track visits to the base URL, invalid short URLs or any other "not found" URL, as known as orphan visits.
+* [#675](https://github.com/shlinkio/shlink/issues/675) Added ability to track visits to the base URL, invalid short URLs or any other "not found" URL, as known as orphan visits.
 
     This behavior is enabled by default, but you can opt out via env vars or config options.
 
