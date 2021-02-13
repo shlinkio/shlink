@@ -7,18 +7,36 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0']
+        swoole: ['yes', 'no']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Use PHP 7.4
+      - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4' # Publish release with lowest supported PHP version
+          php-version: ${{ matrix.php-version }}
           tools: composer
           extensions: swoole-4.6.3
-      - name: Generate release assets
+      - if: ${{ matrix.swoole == 'yes' }}
         run: ./build.sh ${GITHUB_REF#refs/tags/v}
+      - if: ${{ matrix.swoole == 'no' }}
+        run: ./build.sh ${GITHUB_REF#refs/tags/v} --no-swoole
+      - uses: actions/upload-artifact@v2
+        with:
+          name: dist-files
+          path: build
+
+  publish:
+    needs: ['build']
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          path: build
       - name: Publish release with assets
         uses: docker://antonyurchenko/git-release:latest
         env:
@@ -27,4 +45,12 @@ jobs:
           ALLOW_EMPTY_CHANGELOG: "true"
         with:
           args: |
-            build/shlink_*_dist.zip
+            build/shlink*_dist.zip
+
+  delete-artifacts:
+    needs: ['publish']
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: geekyeggo/delete-artifact@v1
+        with:
+          name: dist-files
