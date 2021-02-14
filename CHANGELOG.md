@@ -22,8 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     This new orphan visits can be consumed in these ways:
 
-      * The `https://shlink.io/new-orphan-visit` mercure topic, which gets notified when an orphan visit occurs.
-      * The `GET /visits/orphan` REST endpoint, which behaves like the short URL visits and tags visits endpoints, but returns only orphan visits.
+    * The `https://shlink.io/new-orphan-visit` mercure topic, which gets notified when an orphan visit occurs.
+    * The `GET /visits/orphan` REST endpoint, which behaves like the short URL visits and tags visits endpoints, but returns only orphan visits.
 
 ### Changed
 * [#977](https://github.com/shlinkio/shlink/issues/977) Migrated from `laminas/laminas-paginator` to `pagerfanta/core` to handle pagination.
