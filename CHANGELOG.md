@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1024](https://github.com/shlinkio/shlink/issues/1024) Fixed migration that is incorrectly skipped due to the wrong condition being used to check it.
+
+
 ## [2.6.0] - 2021-02-13
 ### Added
 * [#856](https://github.com/shlinkio/shlink/issues/856) Added PHP 8.0 support.
