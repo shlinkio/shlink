@@ -24,16 +24,16 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
     public const API_KEY_HEADER = 'X-Api-Key';
 
     private ApiKeyServiceInterface $apiKeyService;
-    private array $routesWhitelist;
+    private array $routesWithoutApiKey;
     private array $routesWithQueryApiKey;
 
     public function __construct(
         ApiKeyServiceInterface $apiKeyService,
-        array $routesWhitelist,
+        array $routesWithoutApiKey,
         array $routesWithQueryApiKey
     ) {
         $this->apiKeyService = $apiKeyService;
-        $this->routesWhitelist = $routesWhitelist;
+        $this->routesWithoutApiKey = $routesWithoutApiKey;
         $this->routesWithQueryApiKey = $routesWithQueryApiKey;
     }
 
@@ -45,7 +45,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
             $routeResult === null
             || $routeResult->isFailure()
             || $request->getMethod() === self::METHOD_OPTIONS
-            || contains($this->routesWhitelist, $routeResult->getMatchedRouteName())
+            || contains($this->routesWithoutApiKey, $routeResult->getMatchedRouteName())
         ) {
             return $handler->handle($request);
         }

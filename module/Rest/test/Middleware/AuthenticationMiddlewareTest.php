@@ -48,9 +48,9 @@ class AuthenticationMiddlewareTest extends TestCase
 
     /**
      * @test
-     * @dataProvider provideWhitelistedRequests
+     * @dataProvider provideRequestsWithoutAuth
      */
-    public function someWhiteListedSituationsFallbackToNextMiddleware(ServerRequestInterface $request): void
+    public function someSituationsFallbackToNextMiddleware(ServerRequestInterface $request): void
     {
         $handle = $this->handler->handle($request)->willReturn(new Response());
         $checkApiKey = $this->apiKeyService->check(Argument::any());
@@ -61,22 +61,22 @@ class AuthenticationMiddlewareTest extends TestCase
         $checkApiKey->shouldNotHaveBeenCalled();
     }
 
-    public function provideWhitelistedRequests(): iterable
+    public function provideRequestsWithoutAuth(): iterable
     {
         $dummyMiddleware = $this->getDummyMiddleware();
 
-        yield 'with no route result' => [new ServerRequest()];
-        yield 'with failure route result' => [(new ServerRequest())->withAttribute(
+        yield 'no route result' => [new ServerRequest()];
+        yield 'failure route result' => [(new ServerRequest())->withAttribute(
             RouteResult::class,
             RouteResult::fromRouteFailure([RequestMethodInterface::METHOD_GET]),
         )];
-        yield 'with whitelisted route' => [(new ServerRequest())->withAttribute(
+        yield 'route without API key required' => [(new ServerRequest())->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(
                 new Route('foo', $dummyMiddleware, Route::HTTP_METHOD_ANY, HealthAction::class),
             ),
         )];
-        yield 'with OPTIONS method' => [(new ServerRequest())->withAttribute(
+        yield 'OPTIONS method' => [(new ServerRequest())->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $dummyMiddleware), []),
         )->withMethod(RequestMethodInterface::METHOD_OPTIONS)];

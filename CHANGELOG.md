@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Changed
-* *Nothing*
+* [#1026](https://github.com/shlinkio/shlink/issues/1026) Removed non-inclusive terms from source code.
 
 ### Deprecated
 * *Nothing*
