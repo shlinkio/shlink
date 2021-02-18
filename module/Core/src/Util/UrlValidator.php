@@ -20,6 +20,8 @@ use const Shlinkio\Shlink\Core\TITLE_TAG_VALUE;
 class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
 {
     private const MAX_REDIRECTS = 15;
+    private const CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
+        . 'Chrome/51.0.2704.103 Safari/537.36';
 
     private ClientInterface $httpClient;
     private UrlShortenerOptions $options;
@@ -67,6 +69,8 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
             return $this->httpClient->request(self::METHOD_GET, $url, [
                 RequestOptions::ALLOW_REDIRECTS => ['max' => self::MAX_REDIRECTS],
                 RequestOptions::IDN_CONVERSION => true,
+                // Making the request with a browser's user agent makes the validation closer to a real user
+                RequestOptions::HEADERS => ['User-Agent' => self::CHROME_USER_AGENT],
             ]);
         } catch (GuzzleException $e) {
             if ($throwOnError) {
