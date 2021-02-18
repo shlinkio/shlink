@@ -298,6 +298,24 @@ class CreateShortUrlTest extends ApiTestCase
     }
 
     /**
+     * @test
+     * @dataProvider provideTwitterUrls
+     */
+    public function urlsWithBothProtectionCanBeShortenedWithUrlValidationEnabled(string $longUrl): void
+    {
+        [$statusCode] = $this->createShortUrl(['longUrl' => $longUrl, 'validateUrl' => true]);
+        self::assertEquals(self::STATUS_OK, $statusCode);
+    }
+
+    public function provideTwitterUrls(): iterable
+    {
+        yield ['https://twitter.com/shlinkio'];
+        yield ['https://mobile.twitter.com/shlinkio'];
+        yield ['https://twitter.com/shlinkio/status/1360637738421268481'];
+        yield ['https://mobile.twitter.com/shlinkio/status/1360637738421268481'];
+    }
+
+    /**
      * @return array {
      *     @var int $statusCode
      *     @var array $payload

@@ -10,6 +10,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Stream;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -52,10 +53,16 @@ class UrlValidatorTest extends TestCase
         $request = $this->httpClient->request(
             RequestMethodInterface::METHOD_GET,
             $expectedUrl,
-            [
-                RequestOptions::ALLOW_REDIRECTS => ['max' => 15],
-                RequestOptions::IDN_CONVERSION => true,
-            ],
+            Argument::that(function (array $options) {
+                Assert::assertArrayHasKey(RequestOptions::ALLOW_REDIRECTS, $options);
+                Assert::assertEquals(['max' => 15], $options[RequestOptions::ALLOW_REDIRECTS]);
+                Assert::assertArrayHasKey(RequestOptions::IDN_CONVERSION, $options);
+                Assert::assertTrue($options[RequestOptions::IDN_CONVERSION]);
+                Assert::assertArrayHasKey(RequestOptions::HEADERS, $options);
+                Assert::assertArrayHasKey('User-Agent', $options[RequestOptions::HEADERS]);
+
+                return true;
+            }),
         )->willReturn(new Response());
 
         $this->urlValidator->validateUrl($expectedUrl, null);
