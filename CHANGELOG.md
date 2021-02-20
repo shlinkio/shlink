@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Fixed
 * [#1024](https://github.com/shlinkio/shlink/issues/1024) Fixed migration that is incorrectly skipped due to the wrong condition being used to check it.
 * [#1031](https://github.com/shlinkio/shlink/issues/1031) Fixed shortening of twitter URLs with URL validation enabled.
+* [#1034](https://github.com/shlinkio/shlink/issues/1034) Fixed warning displayed when shlink is stopped while running it with swoole.
 
 
 ## [2.6.0] - 2021-02-13
