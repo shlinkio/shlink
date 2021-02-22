@@ -15,10 +15,9 @@ final class Version20210207100807 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $visits = $schema->getTable('visits');
+        $this->skipIf($visits->hasColumn('visited_url'));
+
         $shortUrlId = $visits->getColumn('short_url_id');
-
-        $this->skipIf(! $shortUrlId->getNotnull());
-
         $shortUrlId->setNotnull(false);
 
         $visits->addColumn('visited_url', Types::STRING, [
@@ -34,10 +33,9 @@ final class Version20210207100807 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $visits = $schema->getTable('visits');
+        $this->skipIf(! $visits->hasColumn('visited_url'));
+
         $shortUrlId = $visits->getColumn('short_url_id');
-
-        $this->skipIf($shortUrlId->getNotnull());
-
         $shortUrlId->setNotnull(true);
         $visits->dropColumn('visited_url');
         $visits->dropColumn('type');

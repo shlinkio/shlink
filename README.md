@@ -33,7 +33,8 @@ The idea is that you can just generate a container using the image and provide t
 
 First, make sure the host where you are going to run shlink fulfills these requirements:
 
-* PHP 7.4 with JSON, curl, PDO, intl and gd extensions enabled (PHP 8.0 support is coming).
+* PHP 7.4 or 8.0
+* The next PHP extensions: json, curl, pdo, intl, gd and gmp.
     * apcu extension is recommended if you don't plan to use swoole.
     * xml extension is required if you want to generate QR codes in svg format.
 * MySQL, MariaDB, PostgreSQL, Microsoft SQL Server or SQLite.

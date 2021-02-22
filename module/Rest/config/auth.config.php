@@ -9,7 +9,7 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 return [
 
     'auth' => [
-        'routes_whitelist' => [
+        'routes_without_api_key' => [
             Action\HealthAction::class,
             ConfigProvider::UNVERSIONED_HEALTH_ENDPOINT_NAME,
         ],
@@ -28,7 +28,7 @@ return [
     ConfigAbstractFactory::class => [
         Middleware\AuthenticationMiddleware::class => [
             Service\ApiKeyService::class,
-            'config.auth.routes_whitelist',
+            'config.auth.routes_without_api_key',
             'config.auth.routes_with_query_api_key',
         ],
     ],

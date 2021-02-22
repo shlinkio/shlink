@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.6.1] - 2021-02-22
+### Added
+* *Nothing*
+
+### Changed
+* [#1026](https://github.com/shlinkio/shlink/issues/1026) Removed non-inclusive terms from source code.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1024](https://github.com/shlinkio/shlink/issues/1024) Fixed migration that is incorrectly skipped due to the wrong condition being used to check it.
+* [#1031](https://github.com/shlinkio/shlink/issues/1031) Fixed shortening of twitter URLs with URL validation enabled.
+* [#1034](https://github.com/shlinkio/shlink/issues/1034) Fixed warning displayed when shlink is stopped while running it with swoole.
+
+
 ## [2.6.0] - 2021-02-13
 ### Added
 * [#856](https://github.com/shlinkio/shlink/issues/856) Added PHP 8.0 support.
@@ -22,8 +41,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     This new orphan visits can be consumed in these ways:
 
-      * The `https://shlink.io/new-orphan-visit` mercure topic, which gets notified when an orphan visit occurs.
-      * The `GET /visits/orphan` REST endpoint, which behaves like the short URL visits and tags visits endpoints, but returns only orphan visits.
+    * The `https://shlink.io/new-orphan-visit` mercure topic, which gets notified when an orphan visit occurs.
+    * The `GET /visits/orphan` REST endpoint, which behaves like the short URL visits and tags visits endpoints, but returns only orphan visits.
 
 ### Changed
 * [#977](https://github.com/shlinkio/shlink/issues/977) Migrated from `laminas/laminas-paginator` to `pagerfanta/core` to handle pagination.
