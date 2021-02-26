@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Happyr\DoctrineSpecification\EntitySpecificationRepository;
+use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Common\Util\DateRange;

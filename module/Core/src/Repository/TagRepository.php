@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Repository;
 
-use Happyr\DoctrineSpecification\EntitySpecificationRepository;
+use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Core\Entity\Tag;

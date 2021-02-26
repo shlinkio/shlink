@@ -24,12 +24,13 @@ class Role
     public static function toSpec(ApiKeyRole $role, bool $inlined): Specification
     {
         if ($role->name() === self::AUTHORED_SHORT_URLS) {
-            return $inlined ? new BelongsToApiKeyInlined($role->apiKey()) : new BelongsToApiKey($role->apiKey());
+            $apiKey = $role->apiKey();
+            return $inlined ? Spec::andX(new BelongsToApiKeyInlined($apiKey)) : new BelongsToApiKey($apiKey);
         }
 
         if ($role->name() === self::DOMAIN_SPECIFIC) {
             $domainId = self::domainIdFromMeta($role->meta());
-            return $inlined ? new BelongsToDomainInlined($domainId) : new BelongsToDomain($domainId);
+            return $inlined ? Spec::andX(new BelongsToDomainInlined($domainId)) : new BelongsToDomain($domainId);
         }
 
         return Spec::andX();

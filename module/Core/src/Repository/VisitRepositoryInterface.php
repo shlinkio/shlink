@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\Persistence\ObjectRepository;
-use Happyr\DoctrineSpecification\EntitySpecificationRepositoryInterface;
+use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterface;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
