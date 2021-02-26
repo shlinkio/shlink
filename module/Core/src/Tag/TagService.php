@@ -52,7 +52,7 @@ class TagService implements TagServiceInterface
     {
         /** @var TagRepositoryInterface $repo */
         $repo = $this->em->getRepository(Tag::class);
-        return $repo->findTagsWithInfo($apiKey !== null ? $apiKey->spec() : null);
+        return $repo->findTagsWithInfo($apiKey);
     }
 
     /**

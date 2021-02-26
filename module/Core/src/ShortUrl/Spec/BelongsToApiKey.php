@@ -18,7 +18,7 @@ class BelongsToApiKey extends BaseSpecification
     {
         $this->apiKey = $apiKey;
         $this->dqlAlias = $dqlAlias;
-        parent::__construct($this->dqlAlias);
+        parent::__construct();
     }
 
     protected function getSpec(): Filter

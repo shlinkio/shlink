@@ -17,7 +17,7 @@ class BelongsToDomain extends BaseSpecification
     {
         $this->domainId = $domainId;
         $this->dqlAlias = $dqlAlias;
-        parent::__construct($this->dqlAlias);
+        parent::__construct();
     }
 
     protected function getSpec(): Filter

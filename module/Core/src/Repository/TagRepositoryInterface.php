@@ -17,7 +17,7 @@ interface TagRepositoryInterface extends ObjectRepository, EntitySpecificationRe
     /**
      * @return TagInfo[]
      */
-    public function findTagsWithInfo(?Specification $spec = null): array;
+    public function findTagsWithInfo(?ApiKey $apiKey = null): array;
 
     public function tagExists(string $tag, ?ApiKey $apiKey = null): bool;
 }

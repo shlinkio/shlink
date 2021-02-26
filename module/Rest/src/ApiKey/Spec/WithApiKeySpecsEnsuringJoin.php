@@ -25,7 +25,7 @@ class WithApiKeySpecsEnsuringJoin extends BaseSpecification
     {
         return $this->apiKey === null || $this->apiKey->isAdmin() ? Spec::andX() : Spec::andX(
             Spec::join($this->fieldToJoin, 's'),
-            $this->apiKey->spec(),
+            $this->apiKey->spec(false, $this->fieldToJoin),
         );
     }
 }
