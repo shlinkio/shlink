@@ -24,7 +24,7 @@
         "endroid/qr-code": "dev-master#0f1613a as 3.10",
         "geoip2/geoip2": "^2.9",
         "guzzlehttp/guzzle": "^7.0",
-        "happyr/doctrine-specification": "2.0.x-dev#cb116d3 as 2.0",
+        "happyr/doctrine-specification": "^2.0",
         "laminas/laminas-config": "^3.3",
         "laminas/laminas-config-aggregator": "^1.1",
         "laminas/laminas-diactoros": "^2.1.3",

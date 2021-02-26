@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Tag\Spec;
 
-use Happyr\DoctrineSpecification\BaseSpecification;
 use Happyr\DoctrineSpecification\Spec;
+use Happyr\DoctrineSpecification\Specification\BaseSpecification;
 use Happyr\DoctrineSpecification\Specification\Specification;
 
 class CountTagsWithName extends BaseSpecification
