@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\Persistence\ObjectRepository;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterface;
-use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
