@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Action;
 
-use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\SvgWriter;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -50,16 +50,17 @@ class QrCodeAction implements MiddlewareInterface
         }
 
         $query = $request->getQueryParams();
-        $qrCode = new QrCode($this->stringifier->stringify($shortUrl));
-        $qrCode->setSize($this->resolveSize($request, $query));
-        $qrCode->setMargin($this->resolveMargin($query));
+        $qrCode = Builder::create()
+            ->data($this->stringifier->stringify($shortUrl))
+            ->size($this->resolveSize($request, $query))
+            ->margin($this->resolveMargin($query));
 
         $format = $query['format'] ?? 'png';
         if ($format === 'svg') {
-            $qrCode->setWriter(new SvgWriter());
+            $qrCode->writer(new SvgWriter());
         }
 
-        return new QrCodeResponse($qrCode);
+        return new QrCodeResponse($qrCode->build());
     }
 
     private function resolveSize(Request $request, array $query): int
