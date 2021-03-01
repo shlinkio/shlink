@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* [#1041](https://github.com/shlinkio/shlink/issues/1041) Added missing `--build-arg SHLINK_VERSION=latest` when building latest docker image.
+* [#1041](https://github.com/shlinkio/shlink/issues/1041) Ensured the default value for the version while building the docker image is `latest`.
 
 
 ## [2.6.1] - 2021-02-22

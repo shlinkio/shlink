@@ -20,7 +20,6 @@ if [[ "$GITHUB_REF" != *"develop"* ]]; then
 # If build branch is develop, build latest
 elif [[ "$GITHUB_REF" == *"develop"* ]]; then
   docker buildx build --push \
-    --build-arg SHLINK_VERSION=latest \
     --platform ${PLATFORMS} \
     -t ${DOCKER_IMAGE}:latest .
 fi
