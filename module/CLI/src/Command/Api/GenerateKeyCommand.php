@@ -42,6 +42,10 @@ class GenerateKeyCommand extends BaseCommand
 
             <info>%command.full_name%</info>
 
+        You can optionally set its name for tracking purposes with <comment>--name</comment> or <comment>-m</comment>:
+
+            <info>%command.full_name% --name Alice</info>
+
         You can optionally set its expiration date with <comment>--expiration-date</comment> or <comment>-e</comment>:
 
             <info>%command.full_name% --expiration-date 2020-01-01</info>
@@ -56,6 +60,12 @@ class GenerateKeyCommand extends BaseCommand
         $this
             ->setName(self::NAME)
             ->setDescription('Generates a new valid API key.')
+            ->addOption(
+                'name',
+                'm',
+                InputOption::VALUE_REQUIRED,
+                'The name by which this API key will be known.',
+            )
             ->addOptionWithDeprecatedFallback(
                 'expiration-date',
                 'e',
@@ -82,6 +92,7 @@ class GenerateKeyCommand extends BaseCommand
         $expirationDate = $this->getOptionWithDeprecatedFallback($input, 'expiration-date');
         $apiKey = $this->apiKeyService->create(
             isset($expirationDate) ? Chronos::parse($expirationDate) : null,
+            $input->getOption('name'),
             ...$this->roleResolver->determineRoles($input),
         );
 

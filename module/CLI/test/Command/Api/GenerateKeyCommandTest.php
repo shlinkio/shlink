@@ -40,22 +40,43 @@ class GenerateKeyCommandTest extends TestCase
     /** @test */
     public function noExpirationDateIsDefinedIfNotProvided(): void
     {
-        $create = $this->apiKeyService->create(null)->willReturn(new ApiKey());
+        $this->apiKeyService->create(
+            null,   // Expiration date
+            null,    // Name
+        )->shouldBeCalledOnce()
+        ->willReturn(new ApiKey());
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString('Generated API key: ', $output);
-        $create->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
     public function expirationDateIsDefinedIfProvided(): void
     {
-        $this->apiKeyService->create(Argument::type(Chronos::class))->shouldBeCalledOnce()
-                                                                    ->willReturn(new ApiKey());
+        $this->apiKeyService->create(
+            Argument::type(Chronos::class), // Expiration date
+            null,    // Name
+        )->shouldBeCalledOnce()
+        ->willReturn(new ApiKey());
+
         $this->commandTester->execute([
             '--expiration-date' => '2016-01-01',
+        ]);
+    }
+
+    /** @test */
+    public function nameIsDefinedIfProvided(): void
+    {
+        $this->apiKeyService->create(
+            null,   // Expiration date
+            Argument::type('string'),    // Name
+        )->shouldBeCalledOnce()
+        ->willReturn(new ApiKey());
+
+        $this->commandTester->execute([
+            '--name' => 'Alice',
         ]);
     }
 }

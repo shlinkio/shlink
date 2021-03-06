@@ -35,14 +35,15 @@ class ApiKeyServiceTest extends TestCase
      * @dataProvider provideCreationDate
      * @param RoleDefinition[] $roles
      */
-    public function apiKeyIsProperlyCreated(?Chronos $date, array $roles): void
+    public function apiKeyIsProperlyCreated(?Chronos $date, ?string $name, array $roles): void
     {
         $this->em->flush()->shouldBeCalledOnce();
         $this->em->persist(Argument::type(ApiKey::class))->shouldBeCalledOnce();
 
-        $key = $this->service->create($date, ...$roles);
+        $key = $this->service->create($date, $name, ...$roles);
 
         self::assertEquals($date, $key->getExpirationDate());
+        self::assertEquals($name, $key->name());
         foreach ($roles as $roleDefinition) {
             self::assertTrue($key->hasRole($roleDefinition->roleName()));
         }
@@ -50,12 +51,15 @@ class ApiKeyServiceTest extends TestCase
 
     public function provideCreationDate(): iterable
     {
-        yield 'no expiration date' => [null, []];
-        yield 'expiration date' => [Chronos::parse('2030-01-01'), []];
-        yield 'roles' => [null, [
+        yield 'no expiration date or name' => [null, null, []];
+        yield 'expiration date' => [Chronos::parse('2030-01-01'), null, []];
+        yield 'roles' => [null, null, [
             RoleDefinition::forDomain((new Domain(''))->setId('123')),
             RoleDefinition::forAuthoredShortUrls(),
         ]];
+        yield 'single name' => [null, 'Alice', []];
+        yield 'multi-word name' => [null, 'Alice and Bob', []];
+        yield 'empty name' => [null, '', []];
     }
 
     /**
