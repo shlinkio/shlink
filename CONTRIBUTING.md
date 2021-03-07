@@ -100,7 +100,7 @@ In order to ensure stability and no regressions are introduced while developing 
 
     These are the best tests to catch regressions, and to verify everything behaves as expected.
 
-    They use MySQL as the database engine, and include some fixtures that ensure the same data exists at the beginning of the execution.
+    They use Postgres as the database engine, and include some fixtures that ensure the same data exists at the beginning of the execution.
 
 * **CLI tests**: *TBD. Once included, its purpose will be the same as API tests, but running through the command line*
 
