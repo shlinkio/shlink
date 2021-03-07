@@ -52,13 +52,13 @@ class ListKeysCommandTest extends TestCase
             [ApiKey::withKey('foo'), ApiKey::withKey('bar'), ApiKey::withKey('baz')],
             false,
             <<<OUTPUT
-            +-----+------------+-----------------+-------+
-            | Key | Is enabled | Expiration date | Roles |
-            +-----+------------+-----------------+-------+
-            | foo | +++        | -               | Admin |
-            | bar | +++        | -               | Admin |
-            | baz | +++        | -               | Admin |
-            +-----+------------+-----------------+-------+
+            +-----+------+------------+-----------------+-------+
+            | Key | Name | Is enabled | Expiration date | Roles |
+            +-----+------+------------+-----------------+-------+
+            | foo | -    | +++        | -               | Admin |
+            | bar | -    | +++        | -               | Admin |
+            | baz | -    | +++        | -               | Admin |
+            +-----+------+------------+-----------------+-------+
 
             OUTPUT,
         ];
@@ -66,12 +66,12 @@ class ListKeysCommandTest extends TestCase
             [ApiKey::withKey('foo')->disable(), ApiKey::withKey('bar')],
             true,
             <<<OUTPUT
-            +-----+-----------------+-------+
-            | Key | Expiration date | Roles |
-            +-----+-----------------+-------+
-            | foo | -               | Admin |
-            | bar | -               | Admin |
-            +-----+-----------------+-------+
+            +-----+------+-----------------+-------+
+            | Key | Name | Expiration date | Roles |
+            +-----+------+-----------------+-------+
+            | foo | -    | -               | Admin |
+            | bar | -    | -               | Admin |
+            +-----+------+-----------------+-------+
 
             OUTPUT,
         ];
@@ -89,17 +89,37 @@ class ListKeysCommandTest extends TestCase
             ],
             true,
             <<<OUTPUT
-            +------+-----------------+--------------------------+
-            | Key  | Expiration date | Roles                    |
-            +------+-----------------+--------------------------+
-            | foo  | -               | Admin                    |
-            | bar  | -               | Author only              |
-            | baz  | -               | Domain only: example.com |
-            | foo2 | -               | Admin                    |
-            | baz2 | -               | Author only              |
-            |      |                 | Domain only: example.com |
-            | foo3 | -               | Admin                    |
-            +------+-----------------+--------------------------+
+            +------+------+-----------------+--------------------------+
+            | Key  | Name | Expiration date | Roles                    |
+            +------+------+-----------------+--------------------------+
+            | foo  | -    | -               | Admin                    |
+            | bar  | -    | -               | Author only              |
+            | baz  | -    | -               | Domain only: example.com |
+            | foo2 | -    | -               | Admin                    |
+            | baz2 | -    | -               | Author only              |
+            |      |      |                 | Domain only: example.com |
+            | foo3 | -    | -               | Admin                    |
+            +------+------+-----------------+--------------------------+
+
+            OUTPUT,
+        ];
+        yield 'with names' => [
+            [
+                ApiKey::withKey('abc', null, 'Alice'),
+                ApiKey::withKey('def', null, 'Alice and Bob'),
+                ApiKey::withKey('ghi', null, ''),
+                ApiKey::withKey('jkl', null, null),
+            ],
+            true,
+            <<<OUTPUT
+            +-----+---------------+-----------------+-------+
+            | Key | Name          | Expiration date | Roles |
+            +-----+---------------+-----------------+-------+
+            | abc | Alice         | -               | Admin |
+            | def | Alice and Bob | -               | Admin |
+            | ghi |               | -               | Admin |
+            | jkl | -             | -               | Admin |
+            +-----+---------------+-----------------+-------+
 
             OUTPUT,
         ];

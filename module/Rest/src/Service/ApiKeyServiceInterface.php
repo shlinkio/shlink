@@ -11,7 +11,11 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface ApiKeyServiceInterface
 {
-    public function create(?Chronos $expirationDate = null, RoleDefinition ...$roleDefinitions): ApiKey;
+    public function create(
+        ?Chronos $expirationDate = null,
+        ?string $name = null,
+        RoleDefinition ...$roleDefinitions
+    ): ApiKey;
 
     public function check(string $key): ApiKeyCheckResult;
 

@@ -21,9 +21,12 @@ class ApiKeyService implements ApiKeyServiceInterface
         $this->em = $em;
     }
 
-    public function create(?Chronos $expirationDate = null, RoleDefinition ...$roleDefinitions): ApiKey
-    {
-        $key = new ApiKey($expirationDate);
+    public function create(
+        ?Chronos $expirationDate = null,
+        ?string $name = null,
+        RoleDefinition ...$roleDefinitions
+    ): ApiKey {
+        $key = new ApiKey($expirationDate, $name);
         foreach ($roleDefinitions as $definition) {
             $key->registerRole($definition);
         }
