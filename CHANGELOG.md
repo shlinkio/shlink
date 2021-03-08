@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#1044](https://github.com/shlinkio/shlink/issues/1044) Added ability to set names on API keys, which help identifying them when the list grows.
 
 ### Changed
 * [#1036](https://github.com/shlinkio/shlink/issues/1036) Updated to `happyr/doctrine-specification` 2.0.
