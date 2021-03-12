@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.6.2] - 2021-03-12
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1047](https://github.com/shlinkio/shlink/issues/1047) Fixed error in migrations when doing a fresh install using PHP8 and MySQL/Mariadb databases.
+
+
 ## [2.6.1] - 2021-02-22
 ### Added
 * *Nothing*
