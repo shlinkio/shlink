@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkMigrations;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use PDO;
@@ -16,15 +16,13 @@ use Shlinkio\Shlink\Common\Util\IpAddress;
  */
 final class Version20180913205455 extends AbstractMigration
 {
-    /**
-     */
     public function up(Schema $schema): void
     {
         // Nothing to create
     }
 
     /**
-     * @throws DBALException
+     * @throws Exception
      */
     public function postUp(Schema $schema): void
     {
@@ -64,10 +62,16 @@ final class Version20180913205455 extends AbstractMigration
         }
     }
 
-    /**
-     */
     public function down(Schema $schema): void
     {
         // Nothing to rollback
+    }
+
+    /**
+     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
+     */
+    public function isTransactional(): bool
+    {
+        return false;
     }
 }

@@ -50,4 +50,12 @@ final class Version20200110182849 extends AbstractMigration
     {
         // No need (and no way) to undo this migration
     }
+
+    /**
+     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
+     */
+    public function isTransactional(): bool
+    {
+        return false;
+    }
 }

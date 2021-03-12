@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkMigrations;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
@@ -16,7 +16,7 @@ final class Version20200105165647 extends AbstractMigration
     private const COLUMNS = ['lat' => 'latitude', 'lon' => 'longitude'];
 
     /**
-     * @throws DBALException
+     * @throws Exception
      */
     public function preUp(Schema $schema): void
     {
@@ -43,7 +43,7 @@ final class Version20200105165647 extends AbstractMigration
     }
 
     /**
-     * @throws DBALException
+     * @throws Exception
      */
     public function up(Schema $schema): void
     {
@@ -57,7 +57,7 @@ final class Version20200105165647 extends AbstractMigration
     }
 
     /**
-     * @throws DBALException
+     * @throws Exception
      */
     public function postUp(Schema $schema): void
     {
@@ -83,7 +83,7 @@ final class Version20200105165647 extends AbstractMigration
     }
 
     /**
-     * @throws DBALException
+     * @throws Exception
      */
     public function down(Schema $schema): void
     {
@@ -92,5 +92,13 @@ final class Version20200105165647 extends AbstractMigration
         foreach (self::COLUMNS as $colName => $oldName) {
             $visitLocations->dropColumn($colName);
         }
+    }
+
+    /**
+     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
+     */
+    public function isTransactional(): bool
+    {
+        return false;
     }
 }
