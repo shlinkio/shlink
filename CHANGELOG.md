@@ -22,6 +22,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1041](https://github.com/shlinkio/shlink/issues/1041) Ensured the default value for the version while building the docker image is `latest`.
 
 
+## [2.6.2] - 2021-03-12
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1047](https://github.com/shlinkio/shlink/issues/1047) Fixed error in migrations when doing a fresh installation using PHP8 and MySQL/Mariadb databases.
+
+
 ## [2.6.1] - 2021-02-22
 ### Added
 * *Nothing*

@@ -47,4 +47,12 @@ final class Version20180915110857 extends AbstractMigration
     {
         // Nothing to run
     }
+
+    /**
+     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
+     */
+    public function isTransactional(): bool
+    {
+        return false;
+    }
 }

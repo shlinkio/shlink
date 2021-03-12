@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkMigrations;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
@@ -42,7 +42,7 @@ final class Version20181020060559 extends AbstractMigration
 
     /**
      * @throws SchemaException
-     * @throws DBALException
+     * @throws Exception
      */
     public function postUp(Schema $schema): void
     {
@@ -64,5 +64,13 @@ final class Version20181020060559 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // No down
+    }
+
+    /**
+     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
+     */
+    public function isTransactional(): bool
+    {
+        return false;
     }
 }

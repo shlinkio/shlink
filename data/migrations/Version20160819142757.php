@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkMigrations;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\Migrations\AbstractMigration;
@@ -18,7 +18,7 @@ class Version20160819142757 extends AbstractMigration
     private const SQLITE = 'sqlite';
 
     /**
-     * @throws DBALException
+     * @throws Exception
      * @throws SchemaException
      */
     public function up(Schema $schema): void
@@ -35,10 +35,18 @@ class Version20160819142757 extends AbstractMigration
     }
 
     /**
-     * @throws DBALException
+     * @throws Exception
      */
     public function down(Schema $schema): void
     {
         $db = $this->connection->getDatabasePlatform()->getName();
+    }
+
+    /**
+     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
+     */
+    public function isTransactional(): bool
+    {
+        return false;
     }
 }
