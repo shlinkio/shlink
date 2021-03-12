@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* [#1047](https://github.com/shlinkio/shlink/issues/1047) Fixed error in migrations when doing a fresh install using PHP8 and MySQL/Mariadb databases.
+* [#1047](https://github.com/shlinkio/shlink/issues/1047) Fixed error in migrations when doing a fresh installation using PHP8 and MySQL/Mariadb databases.
 
 
 ## [2.6.1] - 2021-02-22
