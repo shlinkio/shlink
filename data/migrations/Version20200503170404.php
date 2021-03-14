@@ -24,12 +24,4 @@ final class Version20200503170404 extends AbstractMigration
         $this->skipIf(! $visits->hasIndex(self::INDEX_NAME));
         $visits->dropIndex(self::INDEX_NAME);
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

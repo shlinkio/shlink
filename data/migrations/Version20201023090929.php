@@ -41,12 +41,4 @@ final class Version20201023090929 extends AbstractMigration
         $shortUrls->dropColumn('import_original_short_code');
         $shortUrls->dropIndex('unique_imports');
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

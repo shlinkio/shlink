@@ -34,12 +34,4 @@ final class Version20210306165711 extends AbstractMigration
 
         $apiKeys->dropColumn(self::COLUMN);
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

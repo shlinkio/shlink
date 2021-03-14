@@ -46,12 +46,4 @@ final class Version20191001201532 extends AbstractMigration
         $shortUrls->dropIndex('unique_short_code_plus_domain');
         $shortUrls->addUniqueIndex(['short_code']);
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

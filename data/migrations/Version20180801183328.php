@@ -39,12 +39,4 @@ final class Version20180801183328 extends AbstractMigration
     {
         $schema->getTable('short_urls')->getColumn('short_code')->setLength($size);
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

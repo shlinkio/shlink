@@ -52,12 +52,4 @@ final class Version20190930165521 extends AbstractMigration
         $schema->getTable('short_urls')->dropColumn('domain_id');
         $schema->dropTable('domains');
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

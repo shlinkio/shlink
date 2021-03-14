@@ -86,12 +86,4 @@ final class Version20201102113208 extends AbstractMigration
         $shortUrls->removeForeignKey('FK_' . self::API_KEY_COLUMN);
         $shortUrls->dropColumn(self::API_KEY_COLUMN);
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }
