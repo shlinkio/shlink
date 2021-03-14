@@ -40,12 +40,4 @@ final class Version20210207100807 extends AbstractMigration
         $visits->dropColumn('visited_url');
         $visits->dropColumn('type');
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

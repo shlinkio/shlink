@@ -34,12 +34,4 @@ final class Version20190824075137 extends AbstractMigration
     {
         return $schema->getTable('visits')->getColumn('referer');
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

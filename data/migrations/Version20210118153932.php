@@ -23,12 +23,4 @@ final class Version20210118153932 extends AbstractMigration
     public function down(Schema $schema): void
     {
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

@@ -33,12 +33,4 @@ final class Version20210202181026 extends AbstractMigration
         $shortUrls->dropColumn(self::TITLE);
         $shortUrls->dropColumn('title_was_auto_resolved');
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

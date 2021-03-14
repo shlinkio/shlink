@@ -42,12 +42,4 @@ final class Version20200323190014 extends AbstractMigration
 
         $visitLocations->dropColumn('is_empty');
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

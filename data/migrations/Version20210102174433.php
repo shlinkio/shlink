@@ -49,12 +49,4 @@ final class Version20210102174433 extends AbstractMigration
         $schema->getTable(self::TABLE_NAME)->dropIndex('UQ_role_plus_api_key');
         $schema->dropTable(self::TABLE_NAME);
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

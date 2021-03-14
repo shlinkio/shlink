@@ -45,12 +45,4 @@ class Version20171021093246 extends AbstractMigration
         $shortUrls->dropColumn('valid_since');
         $shortUrls->dropColumn('valid_until');
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

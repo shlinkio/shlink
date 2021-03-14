@@ -41,12 +41,4 @@ class Version20160819142757 extends AbstractMigration
     {
         $db = $this->connection->getDatabasePlatform()->getName();
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }
