@@ -82,6 +82,18 @@ $buildDbConnection = function (): array {
     return $driverConfigMap[$driver] ?? [];
 };
 
+$buildTestLoggerConfig = fn (string $handlerName, string $filename) => [
+    'handlers' => [
+        $handlerName => [
+            'name' => StreamHandler::class,
+            'params' => [
+                'level' => Logger::DEBUG,
+                'stream' => sprintf('data/log/api-tests/%s', $filename),
+            ],
+        ],
+    ],
+];
+
 return [
 
     'debug' => true,
@@ -166,28 +178,8 @@ return [
     ],
 
     'logger' => [
-        'Shlink' => [
-            'handlers' => [
-                'shlink_handler' => [
-                    'name' => StreamHandler::class,
-                    'params' => [
-                        'level' => Logger::DEBUG,
-                        'stream' => 'data/log/api-tests/shlink.log',
-                    ],
-                ],
-            ],
-        ],
-        'Access' => [
-            'handlers' => [
-                'access_handler' => [
-                    'name' => StreamHandler::class,
-                    'params' => [
-                        'level' => Logger::DEBUG,
-                        'stream' => 'data/log/api-tests/access.log',
-                    ],
-                ],
-            ],
-        ],
+        'Shlink' => $buildTestLoggerConfig('shlink_handler', 'shlink.log'),
+        'Access' => $buildTestLoggerConfig('access_handler', 'access.log'),
     ],
 
 ];
