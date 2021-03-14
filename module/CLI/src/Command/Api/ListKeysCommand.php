@@ -57,8 +57,7 @@ class ListKeysCommand extends BaseCommand
             $messagePattern = $this->determineMessagePattern($apiKey);
 
             // Set columns for this row
-            $rowData = [sprintf($messagePattern, $apiKey)];
-            $rowData[] = $apiKey->name() ?? '-';
+            $rowData = [sprintf($messagePattern, $apiKey), sprintf($messagePattern, $apiKey->name() ?? '-')];
             if (! $enabledOnly) {
                 $rowData[] = sprintf($messagePattern, $this->getEnabledSymbol($apiKey));
             }
