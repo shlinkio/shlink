@@ -9,7 +9,7 @@ use Laminas\ConfigAggregator\ConfigAggregator;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\Stdlib\Glob;
-use Monolog\Handler\RotatingFileHandler;
+use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use PDO;
 use PHPUnit\Runner\Version;
@@ -169,9 +169,10 @@ return [
         'Shlink' => [
             'handlers' => [
                 'shlink_handler' => [
+                    'name' => StreamHandler::class,
                     'params' => [
                         'level' => Logger::DEBUG,
-                        'filename' => 'data/log/api-tests/shlink_log.log',
+                        'stream' => 'data/log/api-tests/shlink.log',
                     ],
                 ],
             ],
@@ -179,10 +180,10 @@ return [
         'Access' => [
             'handlers' => [
                 'access_handler' => [
-                    'name' => RotatingFileHandler::class,
+                    'name' => StreamHandler::class,
                     'params' => [
                         'level' => Logger::DEBUG,
-                        'filename' => 'data/log/api-tests/access_log.log',
+                        'stream' => 'data/log/api-tests/access.log',
                     ],
                 ],
             ],

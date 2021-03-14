@@ -33,7 +33,7 @@
         "laminas/laminas-stdlib": "^3.2",
         "lcobucci/jwt": "^4.0",
         "league/uri": "^6.2",
-        "lstrojny/functional-php": "^1.15",
+        "lstrojny/functional-php": "^1.17",
         "mezzio/mezzio": "^3.3",
         "mezzio/mezzio-fastroute": "^3.1",
         "mezzio/mezzio-problem-details": "^1.3",
