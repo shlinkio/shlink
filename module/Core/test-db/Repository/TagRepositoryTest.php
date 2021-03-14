@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
@@ -100,9 +101,9 @@ class TagRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($domain);
         $this->getEntityManager()->flush();
 
-        $authorApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $authorApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($authorApiKey);
-        $domainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($domain));
+        $domainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($domain)));
         $this->getEntityManager()->persist($domainApiKey);
 
         $names = ['foo', 'bar', 'baz', 'another'];

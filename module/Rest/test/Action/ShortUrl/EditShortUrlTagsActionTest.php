@@ -58,6 +58,6 @@ class EditShortUrlTagsActionTest extends TestCase
 
     private function createRequestWithAPiKey(): ServerRequestInterface
     {
-        return ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, new ApiKey());
+        return ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, ApiKey::create());
     }
 }

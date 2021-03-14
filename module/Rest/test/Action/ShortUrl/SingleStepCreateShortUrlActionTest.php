@@ -39,7 +39,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
     /** @test */
     public function properDataIsPassedWhenGeneratingShortCode(): void
     {
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
 
         $request = (new ServerRequest())->withQueryParams([
             'longUrl' => 'http://foobar.com',

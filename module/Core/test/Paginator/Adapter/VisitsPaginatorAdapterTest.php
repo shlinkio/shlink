@@ -47,7 +47,7 @@ class VisitsPaginatorAdapterTest extends TestCase
     public function repoIsCalledOnlyOnceForCount(): void
     {
         $count = 3;
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
         $adapter = $this->createAdapter($apiKey);
         $countVisits = $this->repo->countVisitsByShortCode('', null, new DateRange(), $apiKey->spec())->willReturn(3);
 

@@ -33,7 +33,7 @@ class TagVisitsActionTest extends TestCase
     public function providingCorrectShortCodeReturnsVisits(): void
     {
         $tag = 'foo';
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
         $getVisits = $this->visitsHelper->visitsForTag($tag, Argument::type(VisitsParams::class), $apiKey)->willReturn(
             new Paginator(new ArrayAdapter([])),
         );

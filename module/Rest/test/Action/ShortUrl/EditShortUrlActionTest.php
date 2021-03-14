@@ -48,7 +48,7 @@ class EditShortUrlActionTest extends TestCase
     public function correctShortCodeReturnsSuccess(): void
     {
         $request = (new ServerRequest())->withAttribute('shortCode', 'abc123')
-                                        ->withAttribute(ApiKey::class, new ApiKey())
+                                        ->withAttribute(ApiKey::class, ApiKey::create())
                                         ->withParsedBody([
                                             'maxVisits' => 5,
                                         ]);

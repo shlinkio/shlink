@@ -113,7 +113,7 @@ class VisitsStatsHelperTest extends TestCase
     public function throwsExceptionWhenRequestingVisitsForInvalidTag(): void
     {
         $tag = 'foo';
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
         $repo = $this->prophesize(TagRepository::class);
         $tagExists = $repo->tagExists($tag, $apiKey)->willReturn(false);
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());

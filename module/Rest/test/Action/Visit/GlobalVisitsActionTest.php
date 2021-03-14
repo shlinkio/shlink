@@ -30,7 +30,7 @@ class GlobalVisitsActionTest extends TestCase
     /** @test */
     public function statsAreReturnedFromHelper(): void
     {
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
         $stats = new VisitsStats(5, 3);
         $getStats = $this->helper->getVisitsStats($apiKey)->willReturn($stats);
 

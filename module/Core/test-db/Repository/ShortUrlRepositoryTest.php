@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
@@ -335,13 +336,13 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $apiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $apiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($apiKey);
-        $otherApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $otherApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($otherApiKey);
-        $wrongDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($wrongDomain));
+        $wrongDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($wrongDomain)));
         $this->getEntityManager()->persist($wrongDomainApiKey);
-        $rightDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($rightDomain));
+        $rightDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($rightDomain)));
         $this->getEntityManager()->persist($rightDomainApiKey);
 
         $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
