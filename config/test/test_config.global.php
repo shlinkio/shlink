@@ -9,6 +9,8 @@ use Laminas\ConfigAggregator\ConfigAggregator;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\Stdlib\Glob;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use PDO;
 use PHPUnit\Runner\Version;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
@@ -79,6 +81,18 @@ $buildDbConnection = function (): array {
 
     return $driverConfigMap[$driver] ?? [];
 };
+
+$buildTestLoggerConfig = fn (string $handlerName, string $filename) => [
+    'handlers' => [
+        $handlerName => [
+            'name' => StreamHandler::class,
+            'params' => [
+                'level' => Logger::DEBUG,
+                'stream' => sprintf('data/log/api-tests/%s', $filename),
+            ],
+        ],
+    ],
+];
 
 return [
 
@@ -161,6 +175,11 @@ return [
         'paths' => [
             __DIR__ . '/../../module/Rest/test-api/Fixtures',
         ],
+    ],
+
+    'logger' => [
+        'Shlink' => $buildTestLoggerConfig('shlink_handler', 'shlink.log'),
+        'Access' => $buildTestLoggerConfig('access_handler', 'access.log'),
     ],
 
 ];

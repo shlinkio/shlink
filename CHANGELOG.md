@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Changed
 * [#1036](https://github.com/shlinkio/shlink/issues/1036) Updated to `happyr/doctrine-specification` 2.0.
 * [#1039](https://github.com/shlinkio/shlink/issues/1039) Updated to `endroid/qr-code` 4.0.
+* [#1008](https://github.com/shlinkio/shlink/issues/1008) Ensured all logs are sent to the filesystem while running API tests, which helps debugging the reason for tests to fail.
 
 ### Deprecated
 * *Nothing*
