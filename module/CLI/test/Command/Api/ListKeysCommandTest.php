@@ -105,21 +105,21 @@ class ListKeysCommandTest extends TestCase
         ];
         yield 'with names' => [
             [
-                ApiKey::withKey('abc', null, 'Alice'),
-                ApiKey::withKey('def', null, 'Alice and Bob'),
-                ApiKey::withKey('ghi', null, ''),
-                ApiKey::withKey('jkl', null, null),
+                $apiKey1 = ApiKey::withName('Alice'),
+                $apiKey2 = ApiKey::withName('Alice and Bob'),
+                $apiKey3 = ApiKey::withName(''),
+                $apiKey4 = new ApiKey(),
             ],
             true,
             <<<OUTPUT
-            +-----+---------------+-----------------+-------+
-            | Key | Name          | Expiration date | Roles |
-            +-----+---------------+-----------------+-------+
-            | abc | Alice         | -               | Admin |
-            | def | Alice and Bob | -               | Admin |
-            | ghi |               | -               | Admin |
-            | jkl | -             | -               | Admin |
-            +-----+---------------+-----------------+-------+
+            +--------------------------------------+---------------+-----------------+-------+
+            | Key                                  | Name          | Expiration date | Roles |
+            +--------------------------------------+---------------+-----------------+-------+
+            | {$apiKey1} | Alice         | -               | Admin |
+            | {$apiKey2} | Alice and Bob | -               | Admin |
+            | {$apiKey3} |               | -               | Admin |
+            | {$apiKey4} | -             | -               | Admin |
+            +--------------------------------------+---------------+-----------------+-------+
 
             OUTPUT,
         ];
