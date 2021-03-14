@@ -96,11 +96,13 @@ In order to ensure stability and no regressions are introduced while developing 
 
     The project provides some tooling to run them against any of the supported database engines.
 
-* **API tests**: These are E2E tests that spin up an instance of the app and test it from the outside, by interacting with the REST API.
+* **API tests**: These are E2E tests that spin up an instance of the app with swoole, and test it from the outside by interacting with the REST API.
 
     These are the best tests to catch regressions, and to verify everything behaves as expected.
 
     They use Postgres as the database engine, and include some fixtures that ensure the same data exists at the beginning of the execution.
+
+    Since the app instance is run on a process different from the one running the tests, when a test fails it might not be obvious why. To help debugging that, the app will dump all its logs inside `data/log/api-tests`, where you will find the `shlink.log` and `access.log` files.
 
 * **CLI tests**: *TBD. Once included, its purpose will be the same as API tests, but running through the command line*
 
