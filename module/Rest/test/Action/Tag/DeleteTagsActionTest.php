@@ -34,7 +34,7 @@ class DeleteTagsActionTest extends TestCase
     {
         $request = (new ServerRequest())
             ->withQueryParams(['tags' => $tags])
-            ->withAttribute(ApiKey::class, new ApiKey());
+            ->withAttribute(ApiKey::class, ApiKey::create());
         $deleteTags = $this->tagService->deleteTags($tags ?: [], Argument::type(ApiKey::class));
 
         $response = $this->action->handle($request);

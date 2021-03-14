@@ -40,11 +40,7 @@ class GenerateKeyCommandTest extends TestCase
     /** @test */
     public function noExpirationDateIsDefinedIfNotProvided(): void
     {
-        $this->apiKeyService->create(
-            null,   // Expiration date
-            null,    // Name
-        )->shouldBeCalledOnce()
-        ->willReturn(new ApiKey());
+        $this->apiKeyService->create(null, null)->shouldBeCalledOnce()->willReturn(ApiKey::create());
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
@@ -55,11 +51,9 @@ class GenerateKeyCommandTest extends TestCase
     /** @test */
     public function expirationDateIsDefinedIfProvided(): void
     {
-        $this->apiKeyService->create(
-            Argument::type(Chronos::class), // Expiration date
-            null,    // Name
-        )->shouldBeCalledOnce()
-        ->willReturn(new ApiKey());
+        $this->apiKeyService->create(Argument::type(Chronos::class), null)->shouldBeCalledOnce()->willReturn(
+            ApiKey::create(),
+        );
 
         $this->commandTester->execute([
             '--expiration-date' => '2016-01-01',
@@ -69,11 +63,9 @@ class GenerateKeyCommandTest extends TestCase
     /** @test */
     public function nameIsDefinedIfProvided(): void
     {
-        $this->apiKeyService->create(
-            null,   // Expiration date
-            Argument::type('string'),    // Name
-        )->shouldBeCalledOnce()
-        ->willReturn(new ApiKey());
+        $this->apiKeyService->create(null, Argument::type('string'))->shouldBeCalledOnce()->willReturn(
+            ApiKey::create(),
+        );
 
         $this->commandTester->execute([
             '--name' => 'Alice',

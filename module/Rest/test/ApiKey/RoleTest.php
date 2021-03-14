@@ -28,7 +28,7 @@ class RoleTest extends TestCase
 
     public function provideRoles(): iterable
     {
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
 
         yield 'inline invalid role' => [new ApiKeyRole('invalid', [], $apiKey), true, Spec::andX()];
         yield 'not inline invalid role' => [new ApiKeyRole('invalid', [], $apiKey), false, Spec::andX()];

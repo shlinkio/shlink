@@ -40,7 +40,7 @@ class CreateShortUrlActionTest extends TestCase
     /** @test */
     public function properShortcodeConversionReturnsData(): void
     {
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
         $shortUrl = ShortUrl::createEmpty();
         $expectedMeta = $body = [
             'longUrl' => 'http://www.domain.com/foo/bar',
@@ -80,7 +80,7 @@ class CreateShortUrlActionTest extends TestCase
         $request = (new ServerRequest())->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
             'domain' => $domain,
-        ])->withAttribute(ApiKey::class, new ApiKey());
+        ])->withAttribute(ApiKey::class, ApiKey::create());
 
         $this->expectException(ValidationException::class);
         $urlToShortCode->shouldNotBeCalled();

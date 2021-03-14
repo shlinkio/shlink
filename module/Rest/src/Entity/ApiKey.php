@@ -12,6 +12,7 @@ use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Ramsey\Uuid\Uuid;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 
@@ -27,7 +28,7 @@ class ApiKey extends AbstractEntity
     /**
      * @throws Exception
      */
-    public function __construct(?Chronos $expirationDate = null, ?string $name = null)
+    private function __construct(?string $name = null, ?Chronos $expirationDate = null)
     {
         $this->key = Uuid::uuid4()->toString();
         $this->expirationDate = $expirationDate;
@@ -36,21 +37,17 @@ class ApiKey extends AbstractEntity
         $this->roles = new ArrayCollection();
     }
 
-    public static function withRoles(RoleDefinition ...$roleDefinitions): self
+    public static function create(): ApiKey
     {
-        $apiKey = new self();
-
-        foreach ($roleDefinitions as $roleDefinition) {
-            $apiKey->registerRole($roleDefinition);
-        }
-
-        return $apiKey;
+        return new self();
     }
 
-    public static function withKey(string $key, ?Chronos $expirationDate = null, ?string $name = null): self
+    public static function fromMeta(ApiKeyMeta $meta): self
     {
-        $apiKey = new self($expirationDate, $name);
-        $apiKey->key = $key;
+        $apiKey = new self($meta->name(), $meta->expirationDate());
+        foreach ($meta->roleDefinitions() as $roleDefinition) {
+            $apiKey->registerRole($roleDefinition);
+        }
 
         return $apiKey;
     }

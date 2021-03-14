@@ -9,6 +9,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Api\ListKeysCommand;
 use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
@@ -49,85 +50,85 @@ class ListKeysCommandTest extends TestCase
     public function provideKeysAndOutputs(): iterable
     {
         yield 'all keys' => [
-            [ApiKey::withKey('foo'), ApiKey::withKey('bar'), ApiKey::withKey('baz')],
+            [$apiKey1 = ApiKey::create(), $apiKey2 = ApiKey::create(), $apiKey3 = ApiKey::create()],
             false,
             <<<OUTPUT
-            +-----+------+------------+-----------------+-------+
-            | Key | Name | Is enabled | Expiration date | Roles |
-            +-----+------+------------+-----------------+-------+
-            | foo | -    | +++        | -               | Admin |
-            | bar | -    | +++        | -               | Admin |
-            | baz | -    | +++        | -               | Admin |
-            +-----+------+------------+-----------------+-------+
+            +--------------------------------------+------+------------+-----------------+-------+
+            | Key                                  | Name | Is enabled | Expiration date | Roles |
+            +--------------------------------------+------+------------+-----------------+-------+
+            | {$apiKey1} | -    | +++        | -               | Admin |
+            | {$apiKey2} | -    | +++        | -               | Admin |
+            | {$apiKey3} | -    | +++        | -               | Admin |
+            +--------------------------------------+------+------------+-----------------+-------+
 
             OUTPUT,
         ];
         yield 'enabled keys' => [
-            [ApiKey::withKey('foo')->disable(), ApiKey::withKey('bar')],
+            [$apiKey1 = ApiKey::create()->disable(), $apiKey2 = ApiKey::create()],
             true,
             <<<OUTPUT
-            +-----+------+-----------------+-------+
-            | Key | Name | Expiration date | Roles |
-            +-----+------+-----------------+-------+
-            | foo | -    | -               | Admin |
-            | bar | -    | -               | Admin |
-            +-----+------+-----------------+-------+
+            +--------------------------------------+------+-----------------+-------+
+            | Key                                  | Name | Expiration date | Roles |
+            +--------------------------------------+------+-----------------+-------+
+            | {$apiKey1} | -    | -               | Admin |
+            | {$apiKey2} | -    | -               | Admin |
+            +--------------------------------------+------+-----------------+-------+
 
             OUTPUT,
         ];
         yield 'with roles' => [
             [
-                ApiKey::withKey('foo'),
-                $this->apiKeyWithRoles('bar', [RoleDefinition::forAuthoredShortUrls()]),
-                $this->apiKeyWithRoles('baz', [RoleDefinition::forDomain((new Domain('example.com'))->setId('1'))]),
-                ApiKey::withKey('foo2'),
-                $this->apiKeyWithRoles('baz2', [
+                $apiKey1 = ApiKey::create(),
+                $apiKey2 = $this->apiKeyWithRoles([RoleDefinition::forAuthoredShortUrls()]),
+                $apiKey3 = $this->apiKeyWithRoles([RoleDefinition::forDomain((new Domain('example.com'))->setId('1'))]),
+                $apiKey4 = ApiKey::create(),
+                $apiKey5 = $this->apiKeyWithRoles([
                     RoleDefinition::forAuthoredShortUrls(),
                     RoleDefinition::forDomain((new Domain('example.com'))->setId('1')),
                 ]),
-                ApiKey::withKey('foo3'),
+                $apiKey6 = ApiKey::create(),
             ],
             true,
             <<<OUTPUT
-            +------+------+-----------------+--------------------------+
-            | Key  | Name | Expiration date | Roles                    |
-            +------+------+-----------------+--------------------------+
-            | foo  | -    | -               | Admin                    |
-            | bar  | -    | -               | Author only              |
-            | baz  | -    | -               | Domain only: example.com |
-            | foo2 | -    | -               | Admin                    |
-            | baz2 | -    | -               | Author only              |
-            |      |      |                 | Domain only: example.com |
-            | foo3 | -    | -               | Admin                    |
-            +------+------+-----------------+--------------------------+
+            +--------------------------------------+------+-----------------+--------------------------+
+            | Key                                  | Name | Expiration date | Roles                    |
+            +--------------------------------------+------+-----------------+--------------------------+
+            | {$apiKey1} | -    | -               | Admin                    |
+            | {$apiKey2} | -    | -               | Author only              |
+            | {$apiKey3} | -    | -               | Domain only: example.com |
+            | {$apiKey4} | -    | -               | Admin                    |
+            | {$apiKey5} | -    | -               | Author only              |
+            |                                      |      |                 | Domain only: example.com |
+            | {$apiKey6} | -    | -               | Admin                    |
+            +--------------------------------------+------+-----------------+--------------------------+
 
             OUTPUT,
         ];
         yield 'with names' => [
             [
-                ApiKey::withKey('abc', null, 'Alice'),
-                ApiKey::withKey('def', null, 'Alice and Bob'),
-                ApiKey::withKey('ghi', null, ''),
-                ApiKey::withKey('jkl', null, null),
+                $apiKey1 = ApiKey::fromMeta(ApiKeyMeta::withName('Alice')),
+                $apiKey2 = ApiKey::fromMeta(ApiKeyMeta::withName('Alice and Bob')),
+                $apiKey3 = ApiKey::fromMeta(ApiKeyMeta::withName('')),
+                $apiKey4 = ApiKey::create(),
             ],
             true,
             <<<OUTPUT
-            +-----+---------------+-----------------+-------+
-            | Key | Name          | Expiration date | Roles |
-            +-----+---------------+-----------------+-------+
-            | abc | Alice         | -               | Admin |
-            | def | Alice and Bob | -               | Admin |
-            | ghi |               | -               | Admin |
-            | jkl | -             | -               | Admin |
-            +-----+---------------+-----------------+-------+
+            +--------------------------------------+---------------+-----------------+-------+
+            | Key                                  | Name          | Expiration date | Roles |
+            +--------------------------------------+---------------+-----------------+-------+
+            | {$apiKey1} | Alice         | -               | Admin |
+            | {$apiKey2} | Alice and Bob | -               | Admin |
+            | {$apiKey3} |               | -               | Admin |
+            | {$apiKey4} | -             | -               | Admin |
+            +--------------------------------------+---------------+-----------------+-------+
 
             OUTPUT,
         ];
     }
 
-    private function apiKeyWithRoles(string $key, array $roles): ApiKey
+    private function apiKeyWithRoles(array $roles): ApiKey
     {
-        $apiKey = ApiKey::withKey($key);
+        $apiKey = ApiKey::create();
         foreach ($roles as $role) {
             $apiKey->registerRole($role);
         }

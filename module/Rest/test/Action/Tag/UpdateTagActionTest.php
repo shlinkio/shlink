@@ -70,6 +70,6 @@ class UpdateTagActionTest extends TestCase
 
     private function requestWithApiKey(): ServerRequestInterface
     {
-        return ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, new ApiKey());
+        return ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, ApiKey::create());
     }
 }

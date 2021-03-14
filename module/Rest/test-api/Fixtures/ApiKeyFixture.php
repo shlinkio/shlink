@@ -8,7 +8,9 @@ use Cake\Chronos\Chronos;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use ReflectionObject;
 use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -41,7 +43,11 @@ class ApiKeyFixture extends AbstractFixture implements DependentFixtureInterface
 
     private function buildApiKey(string $key, bool $enabled, ?Chronos $expiresAt = null): ApiKey
     {
-        $apiKey = ApiKey::withKey($key, $expiresAt);
+        $apiKey = $expiresAt !== null ? ApiKey::fromMeta(ApiKeyMeta::withExpirationDate($expiresAt)) : ApiKey::create();
+        $ref = new ReflectionObject($apiKey);
+        $keyProp = $ref->getProperty('key');
+        $keyProp->setAccessible(true);
+        $keyProp->setValue($apiKey, $key);
 
         if (! $enabled) {
             $apiKey->disable();

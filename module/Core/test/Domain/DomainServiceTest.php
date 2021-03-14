@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -50,8 +51,10 @@ class DomainServiceTest extends TestCase
     public function provideExcludedDomains(): iterable
     {
         $default = new DomainItem('default.com', true);
-        $adminApiKey = new ApiKey();
-        $domainSpecificApiKey = ApiKey::withRoles(RoleDefinition::forDomain((new Domain(''))->setId('123')));
+        $adminApiKey = ApiKey::create();
+        $domainSpecificApiKey = ApiKey::fromMeta(
+            ApiKeyMeta::withRoles(RoleDefinition::forDomain((new Domain(''))->setId('123'))),
+        );
 
         yield 'empty list without API key' => [[], [$default], null];
         yield 'one item without API key' => [

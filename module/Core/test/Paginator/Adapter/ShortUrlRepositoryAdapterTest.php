@@ -66,7 +66,7 @@ class ShortUrlRepositoryAdapterTest extends TestCase
             'startDate' => $startDate,
             'endDate' => $endDate,
         ]);
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
         $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $params, $apiKey);
         $dateRange = $params->dateRange();
 

@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
@@ -53,9 +54,9 @@ class DomainRepositoryTest extends DatabaseTestCase
     /** @test */
     public function findDomainsReturnsJustThoseMatchingProvidedApiKey(): void
     {
-        $authorApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $authorApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($authorApiKey);
-        $authorAndDomainApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $authorAndDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($authorAndDomainApiKey);
 
         $fooDomain = new Domain('foo.com');
@@ -74,10 +75,10 @@ class DomainRepositoryTest extends DatabaseTestCase
 
         $authorAndDomainApiKey->registerRole(RoleDefinition::forDomain($fooDomain));
 
-        $fooDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($fooDomain));
+        $fooDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($fooDomain)));
         $this->getEntityManager()->persist($fooDomainApiKey);
 
-        $barDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($barDomain));
+        $barDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($barDomain)));
         $this->getEntityManager()->persist($fooDomainApiKey);
 
         $this->getEntityManager()->flush();

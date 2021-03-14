@@ -51,7 +51,7 @@ class ListShortUrlsActionTest extends TestCase
         ?string $startDate = null,
         ?string $endDate = null
     ): void {
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
         $request = (new ServerRequest())->withQueryParams($query)->withAttribute(ApiKey::class, $apiKey);
         $listShortUrls = $this->service->listShortUrls(ShortUrlsParams::fromRawData([
             'page' => $expectedPage,

@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
@@ -176,7 +177,7 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $apiKey1 = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $apiKey1 = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($apiKey1);
         $shortUrl = ShortUrl::fromMeta(
             ShortUrlMeta::fromRawData(['apiKey' => $apiKey1, 'domain' => $domain->getAuthority(), 'longUrl' => '']),
@@ -185,7 +186,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($shortUrl);
         $this->createVisitsForShortUrl($shortUrl, 4);
 
-        $apiKey2 = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $apiKey2 = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($apiKey2);
         $shortUrl2 = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['apiKey' => $apiKey2, 'longUrl' => '']));
         $this->getEntityManager()->persist($shortUrl2);
@@ -198,7 +199,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($shortUrl3);
         $this->createVisitsForShortUrl($shortUrl3, 7);
 
-        $domainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($domain));
+        $domainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($domain)));
         $this->getEntityManager()->persist($domainApiKey);
 
         // Visits not linked to any short URL

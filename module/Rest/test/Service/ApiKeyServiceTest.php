@@ -13,6 +13,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
@@ -82,14 +83,14 @@ class ApiKeyServiceTest extends TestCase
     public function provideInvalidApiKeys(): iterable
     {
         yield 'non-existent api key' => [null];
-        yield 'disabled api key' => [(new ApiKey())->disable()];
-        yield 'expired api key' => [new ApiKey(Chronos::now()->subDay())];
+        yield 'disabled api key' => [ApiKey::create()->disable()];
+        yield 'expired api key' => [ApiKey::fromMeta(ApiKeyMeta::withExpirationDate(Chronos::now()->subDay()))];
     }
 
     /** @test */
     public function checkReturnsTrueWhenConditionsAreFavorable(): void
     {
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
 
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['key' => '12345'])->willReturn($apiKey)
@@ -118,7 +119,7 @@ class ApiKeyServiceTest extends TestCase
     /** @test */
     public function disableReturnsDisabledApiKeyWhenFound(): void
     {
-        $key = new ApiKey();
+        $key = ApiKey::create();
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['key' => '12345'])->willReturn($key)
                                             ->shouldBeCalledOnce();
@@ -135,7 +136,7 @@ class ApiKeyServiceTest extends TestCase
     /** @test */
     public function listFindsAllApiKeys(): void
     {
-        $expectedApiKeys = [new ApiKey(), new ApiKey(), new ApiKey()];
+        $expectedApiKeys = [ApiKey::create(), ApiKey::create(), ApiKey::create()];
 
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findBy([])->willReturn($expectedApiKeys)
@@ -150,7 +151,7 @@ class ApiKeyServiceTest extends TestCase
     /** @test */
     public function listEnabledFindsOnlyEnabledApiKeys(): void
     {
-        $expectedApiKeys = [new ApiKey(), new ApiKey(), new ApiKey()];
+        $expectedApiKeys = [ApiKey::create(), ApiKey::create(), ApiKey::create()];
 
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findBy(['enabled' => true])->willReturn($expectedApiKeys)
