@@ -69,7 +69,7 @@ EXPOSE 8080
 
 # Expose params config dir, since the user is expected to provide custom config from there
 VOLUME /etc/shlink/config/params
-# Expose data to have it persistent when using shlink as a docker service or similar
+# Expose data dir to allow persistent runtime data and SQLite db
 VOLUME /etc/shlink/data
 
 # Copy config specific for the image
