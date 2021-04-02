@@ -46,7 +46,7 @@
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.7",
         "ramsey/uuid": "^3.9",
-        "shlinkio/shlink-common": "^3.6",
+        "shlinkio/shlink-common": "dev-main#3777189 as 3.7",
         "shlinkio/shlink-config": "^1.0",
         "shlinkio/shlink-event-dispatcher": "^2.1",
         "shlinkio/shlink-importer": "^2.2",
@@ -55,7 +55,7 @@
         "symfony/console": "^5.1",
         "symfony/filesystem": "^5.1",
         "symfony/lock": "^5.1",
-        "symfony/mercure": "^0.4.1",
+        "symfony/mercure": "^0.5.1",
         "symfony/process": "^5.1",
         "symfony/string": "^5.1"
     },

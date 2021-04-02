@@ -8,7 +8,7 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
-use Symfony\Component\Mercure\Publisher;
+use Symfony\Component\Mercure\Hub;
 
 return [
 
@@ -57,7 +57,7 @@ return [
             Options\AppOptions::class,
         ],
         EventDispatcher\NotifyVisitToMercure::class => [
-            Publisher::class,
+            Hub::class,
             Mercure\MercureUpdatesGenerator::class,
             'em',
             'Logger_Shlink',
