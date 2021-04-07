@@ -32,13 +32,13 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    public function checkDbUpdate(?callable $mustBeUpdated = null, ?callable $handleProgress = null): void
+    public function checkDbUpdate(?callable $beforeDownload = null, ?callable $handleProgress = null): void
     {
         $lock = $this->locker->createLock(self::LOCK_NAME);
         $lock->acquire(true); // Block until lock is released
 
         try {
-            $this->downloadIfNeeded($mustBeUpdated, $handleProgress);
+            $this->downloadIfNeeded($beforeDownload, $handleProgress);
         } finally {
             $lock->release();
         }
@@ -47,26 +47,26 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    private function downloadIfNeeded(?callable $mustBeUpdated, ?callable $handleProgress): void
+    private function downloadIfNeeded(?callable $beforeDownload, ?callable $handleProgress): void
     {
         if (! $this->dbUpdater->databaseFileExists()) {
-            $this->downloadNewDb(false, $mustBeUpdated, $handleProgress);
+            $this->downloadNewDb(false, $beforeDownload, $handleProgress);
             return;
         }
 
         $meta = $this->geoLiteDbReader->metadata();
         if ($this->buildIsTooOld($meta)) {
-            $this->downloadNewDb(true, $mustBeUpdated, $handleProgress);
+            $this->downloadNewDb(true, $beforeDownload, $handleProgress);
         }
     }
 
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    private function downloadNewDb(bool $olderDbExists, ?callable $mustBeUpdated, ?callable $handleProgress): void
+    private function downloadNewDb(bool $olderDbExists, ?callable $beforeDownload, ?callable $handleProgress): void
     {
-        if ($mustBeUpdated !== null) {
-            $mustBeUpdated($olderDbExists);
+        if ($beforeDownload !== null) {
+            $beforeDownload($olderDbExists);
         }
 
         try {
