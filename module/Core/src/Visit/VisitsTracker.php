@@ -65,9 +65,11 @@ class VisitsTracker implements VisitsTrackerInterface
 
     private function trackVisit(Visit $visit, Visitor $visitor): void
     {
-        $this->em->persist($visit);
-        $this->em->flush();
+        $this->em->transactional(function () use ($visit, $visitor): void {
+            $this->em->persist($visit);
+            $this->em->flush();
 
-        $this->eventDispatcher->dispatch(new UrlVisited($visit->getId(), $visitor->getRemoteAddress()));
+            $this->eventDispatcher->dispatch(new UrlVisited($visit->getId(), $visitor->getRemoteAddress()));
+        });
     }
 }
