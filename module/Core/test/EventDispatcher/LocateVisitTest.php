@@ -11,8 +11,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
-use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -22,6 +20,7 @@ use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\EventDispatcher\LocateVisit;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
+use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
@@ -41,8 +40,10 @@ class LocateVisitTest extends TestCase
         $this->ipLocationResolver = $this->prophesize(IpLocationResolverInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
-        $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
+
+        $this->dbUpdater = $this->prophesize(DbUpdaterInterface::class);
+        $this->dbUpdater->databaseFileExists()->willReturn(true);
 
         $this->locateVisit = new LocateVisit(
             $this->ipLocationResolver->reveal(),
@@ -67,6 +68,31 @@ class LocateVisitTest extends TestCase
         ($this->locateVisit)($event);
 
         $findVisit->shouldHaveBeenCalledOnce();
+        $this->em->flush()->shouldNotHaveBeenCalled();
+        $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->shouldNotHaveBeenCalled();
+        $logWarning->shouldHaveBeenCalled();
+        $dispatch->shouldNotHaveBeenCalled();
+    }
+
+    /** @test */
+    public function nonExistingGeoLiteDbLogsWarning(): void
+    {
+        $event = new UrlVisited('123');
+        $findVisit = $this->em->find(Visit::class, '123')->willReturn(
+            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
+        );
+        $dbExists = $this->dbUpdater->databaseFileExists()->willReturn(false);
+        $logWarning = $this->logger->warning(
+            'Tried to locate visit with id "{visitId}", but a GeoLite2 db was not found.',
+            ['visitId' => 123],
+        );
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
+        });
+
+        ($this->locateVisit)($event);
+
+        $findVisit->shouldHaveBeenCalledOnce();
+        $dbExists->shouldHaveBeenCalledOnce();
         $this->em->flush()->shouldNotHaveBeenCalled();
         $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->shouldNotHaveBeenCalled();
         $logWarning->shouldHaveBeenCalled();
@@ -174,66 +200,66 @@ class LocateVisitTest extends TestCase
         yield 'regular not found' => [Visit::forRegularNotFound(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4'];
     }
 
-    /** @test */
-    public function errorWhenUpdatingGeoLiteWithExistingCopyLogsWarning(): void
-    {
-        $e = GeolocationDbUpdateFailedException::withOlderDb();
-        $ipAddr = '1.2.3.0';
-        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr, ''));
-        $location = new Location('', '', '', '', 0.0, 0.0, '');
-        $event = new UrlVisited('123');
-
-        $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
-        $flush = $this->em->flush()->will(function (): void {
-        });
-        $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
-        $checkUpdateDb = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willThrow($e);
-        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
-        });
-
-        ($this->locateVisit)($event);
-
-        self::assertEquals($visit->getVisitLocation(), new VisitLocation($location));
-        $findVisit->shouldHaveBeenCalledOnce();
-        $flush->shouldHaveBeenCalledOnce();
-        $resolveIp->shouldHaveBeenCalledOnce();
-        $checkUpdateDb->shouldHaveBeenCalledOnce();
-        $this->logger->warning(
-            'GeoLite2 database update failed. Proceeding with old version. {e}',
-            ['e' => $e],
-        )->shouldHaveBeenCalledOnce();
-        $dispatch->shouldHaveBeenCalledOnce();
-    }
-
-    /** @test */
-    public function errorWhenDownloadingGeoLiteCancelsLocation(): void
-    {
-        $e = GeolocationDbUpdateFailedException::withoutOlderDb();
-        $ipAddr = '1.2.3.0';
-        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr, ''));
-        $location = new Location('', '', '', '', 0.0, 0.0, '');
-        $event = new UrlVisited('123');
-
-        $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
-        $flush = $this->em->flush()->will(function (): void {
-        });
-        $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
-        $checkUpdateDb = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willThrow($e);
-        $logError = $this->logger->error(
-            'GeoLite2 database download failed. It is not possible to locate visit with id {visitId}. {e}',
-            ['e' => $e, 'visitId' => 123],
-        );
-        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
-        });
-
-        ($this->locateVisit)($event);
-
-        self::assertNull($visit->getVisitLocation());
-        $findVisit->shouldHaveBeenCalledOnce();
-        $flush->shouldNotHaveBeenCalled();
-        $resolveIp->shouldNotHaveBeenCalled();
-        $checkUpdateDb->shouldHaveBeenCalledOnce();
-        $logError->shouldHaveBeenCalledOnce();
-        $dispatch->shouldHaveBeenCalledOnce();
-    }
+//    /** @test */
+//    public function errorWhenUpdatingGeoLiteWithExistingCopyLogsWarning(): void
+//    {
+//        $e = GeolocationDbUpdateFailedException::withOlderDb();
+//        $ipAddr = '1.2.3.0';
+//        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr, ''));
+//        $location = new Location('', '', '', '', 0.0, 0.0, '');
+//        $event = new UrlVisited('123');
+//
+//        $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
+//        $flush = $this->em->flush()->will(function (): void {
+//        });
+//        $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
+//        $checkUpdateDb = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willThrow($e);
+//        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
+//        });
+//
+//        ($this->locateVisit)($event);
+//
+//        self::assertEquals($visit->getVisitLocation(), new VisitLocation($location));
+//        $findVisit->shouldHaveBeenCalledOnce();
+//        $flush->shouldHaveBeenCalledOnce();
+//        $resolveIp->shouldHaveBeenCalledOnce();
+//        $checkUpdateDb->shouldHaveBeenCalledOnce();
+//        $this->logger->warning(
+//            'GeoLite2 database update failed. Proceeding with old version. {e}',
+//            ['e' => $e],
+//        )->shouldHaveBeenCalledOnce();
+//        $dispatch->shouldHaveBeenCalledOnce();
+//    }
+//
+//    /** @test */
+//    public function errorWhenDownloadingGeoLiteCancelsLocation(): void
+//    {
+//        $e = GeolocationDbUpdateFailedException::withoutOlderDb();
+//        $ipAddr = '1.2.3.0';
+//        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', $ipAddr, ''));
+//        $location = new Location('', '', '', '', 0.0, 0.0, '');
+//        $event = new UrlVisited('123');
+//
+//        $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
+//        $flush = $this->em->flush()->will(function (): void {
+//        });
+//        $resolveIp = $this->ipLocationResolver->resolveIpLocation($ipAddr)->willReturn($location);
+//        $checkUpdateDb = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willThrow($e);
+//        $logError = $this->logger->error(
+//            'GeoLite2 database download failed. It is not possible to locate visit with id {visitId}. {e}',
+//            ['e' => $e, 'visitId' => 123],
+//        );
+//        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
+//        });
+//
+//        ($this->locateVisit)($event);
+//
+//        self::assertNull($visit->getVisitLocation());
+//        $findVisit->shouldHaveBeenCalledOnce();
+//        $flush->shouldNotHaveBeenCalled();
+//        $resolveIp->shouldNotHaveBeenCalled();
+//        $checkUpdateDb->shouldHaveBeenCalledOnce();
+//        $logError->shouldHaveBeenCalledOnce();
+//        $dispatch->shouldHaveBeenCalledOnce();
+//    }
 }
