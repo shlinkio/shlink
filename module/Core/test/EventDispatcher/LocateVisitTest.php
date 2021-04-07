@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
 use Doctrine\ORM\EntityManagerInterface;
+use OutOfRangeException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -110,7 +111,7 @@ class LocateVisitTest extends TestCase
             WrongIpException::class,
         );
         $logWarning = $this->logger->warning(
-            Argument::containingString('Tried to locate visit with id "{visitId}", but its address seems to be wrong.'),
+            'Tried to locate visit with id "{visitId}", but its address seems to be wrong. {e}',
             Argument::type('array'),
         );
         $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
@@ -121,6 +122,32 @@ class LocateVisitTest extends TestCase
         $findVisit->shouldHaveBeenCalledOnce();
         $resolveLocation->shouldHaveBeenCalledOnce();
         $logWarning->shouldHaveBeenCalled();
+        $this->em->flush()->shouldNotHaveBeenCalled();
+        $dispatch->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
+    public function unhandledExceptionLogsError(): void
+    {
+        $event = new UrlVisited('123');
+        $findVisit = $this->em->find(Visit::class, '123')->willReturn(
+            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
+        );
+        $resolveLocation = $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->willThrow(
+            OutOfRangeException::class,
+        );
+        $logError = $this->logger->error(
+            'An unexpected error occurred while trying to locate visit with id "{visitId}". {e}',
+            Argument::type('array'),
+        );
+        $dispatch = $this->eventDispatcher->dispatch(new VisitLocated('123'))->will(function (): void {
+        });
+
+        ($this->locateVisit)($event);
+
+        $findVisit->shouldHaveBeenCalledOnce();
+        $resolveLocation->shouldHaveBeenCalledOnce();
+        $logError->shouldHaveBeenCalled();
         $this->em->flush()->shouldNotHaveBeenCalled();
         $dispatch->shouldHaveBeenCalledOnce();
     }

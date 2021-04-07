@@ -15,6 +15,7 @@ use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
+use Throwable;
 
 class LocateVisit
 {
@@ -62,27 +63,6 @@ class LocateVisit
         $this->eventDispatcher->dispatch(new VisitLocated($visitId));
     }
 
-//    private function downloadOrUpdateGeoLiteDb(string $visitId): bool
-//    {
-//        try {
-//            $this->dbUpdater->checkDbUpdate(function (bool $olderDbExists): void {
-//                $this->logger->notice(sprintf('%s GeoLite2 database...', $olderDbExists ? 'Updating' : 'Downloading'));
-//            });
-//        } catch (GeolocationDbUpdateFailedException $e) {
-//            if (! $e->olderDbExists()) {
-//                $this->logger->error(
-//                    'GeoLite2 database download failed. It is not possible to locate visit with id {visitId}. {e}',
-//                    ['e' => $e, 'visitId' => $visitId],
-//                );
-//                return false;
-//            }
-//
-//            $this->logger->warning('GeoLite2 database update failed. Proceeding with old version. {e}', ['e' => $e]);
-//        }
-//
-//        return true;
-//    }
-
     private function locateVisit(string $visitId, ?string $originalIpAddress, Visit $visit): void
     {
         $isLocatable = $originalIpAddress !== null || $visit->isLocatable();
@@ -96,6 +76,11 @@ class LocateVisit
         } catch (WrongIpException $e) {
             $this->logger->warning(
                 'Tried to locate visit with id "{visitId}", but its address seems to be wrong. {e}',
+                ['e' => $e, 'visitId' => $visitId],
+            );
+        } catch (Throwable $e) {
+            $this->logger->error(
+                'An unexpected error occurred while trying to locate visit with id "{visitId}". {e}',
                 ['e' => $e, 'visitId' => $visitId],
             );
         }

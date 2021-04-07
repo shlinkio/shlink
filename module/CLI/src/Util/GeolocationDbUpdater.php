@@ -60,24 +60,6 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         }
     }
 
-    /**
-     * @throws GeolocationDbUpdateFailedException
-     */
-    private function downloadNewDb(bool $olderDbExists, ?callable $beforeDownload, ?callable $handleProgress): void
-    {
-        if ($beforeDownload !== null) {
-            $beforeDownload($olderDbExists);
-        }
-
-        try {
-            $this->dbUpdater->downloadFreshCopy($handleProgress);
-        } catch (RuntimeException $e) {
-            throw $olderDbExists
-                ? GeolocationDbUpdateFailedException::withOlderDb($e)
-                : GeolocationDbUpdateFailedException::withoutOlderDb($e);
-        }
-    }
-
     private function buildIsTooOld(Metadata $meta): bool
     {
         $buildTimestamp = $this->resolveBuildTimestamp($meta);
@@ -104,5 +86,32 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         }
 
         throw GeolocationDbUpdateFailedException::withInvalidEpochInOldDb($buildEpoch);
+    }
+
+    /**
+     * @throws GeolocationDbUpdateFailedException
+     */
+    private function downloadNewDb(bool $olderDbExists, ?callable $beforeDownload, ?callable $handleProgress): void
+    {
+        if ($beforeDownload !== null) {
+            $beforeDownload($olderDbExists);
+        }
+
+        try {
+            $this->dbUpdater->downloadFreshCopy($this->wrapHandleProgressCallback($handleProgress, $olderDbExists));
+        } catch (RuntimeException $e) {
+            throw $olderDbExists
+                ? GeolocationDbUpdateFailedException::withOlderDb($e)
+                : GeolocationDbUpdateFailedException::withoutOlderDb($e);
+        }
+    }
+
+    private function wrapHandleProgressCallback(?callable $handleProgress, bool $olderDbExists): ?callable
+    {
+        if ($handleProgress === null) {
+            return null;
+        }
+
+        return fn (int $total, int $downloaded) => $handleProgress($total, $downloaded, $olderDbExists);
     }
 }

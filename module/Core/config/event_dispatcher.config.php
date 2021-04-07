@@ -22,7 +22,7 @@ return [
             EventDispatcher\Event\VisitLocated::class => [
                 EventDispatcher\NotifyVisitToMercure::class,
                 EventDispatcher\NotifyVisitToWebHooks::class,
-//                EventDispatcher\UpdateGeoliteDb::class,
+//                EventDispatcher\UpdateGeoLiteDb::class,
             ],
         ],
     ],
