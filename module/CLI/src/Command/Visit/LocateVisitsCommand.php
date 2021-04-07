@@ -181,7 +181,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         try {
             $this->dbUpdater->checkDbUpdate(function (bool $olderDbExists): void {
                 $this->io->writeln(
-                    sprintf('<fg=blue>%s GeoLite2 database...</>', $olderDbExists ? 'Updating' : 'Downloading'),
+                    sprintf('<fg=blue>%s GeoLite2 db file...</>', $olderDbExists ? 'Updating' : 'Downloading'),
                 );
                 $this->progressBar = new ProgressBar($this->io);
             }, function (int $total, int $downloaded): void {

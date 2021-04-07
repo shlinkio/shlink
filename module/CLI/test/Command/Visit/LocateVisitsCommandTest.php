@@ -227,7 +227,7 @@ class LocateVisitsCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString(
-            sprintf('%s GeoLite2 database...', $olderDbExists ? 'Updating' : 'Downloading'),
+            sprintf('%s GeoLite2 db file...', $olderDbExists ? 'Updating' : 'Downloading'),
             $output,
         );
         self::assertStringContainsString($expectedMessage, $output);

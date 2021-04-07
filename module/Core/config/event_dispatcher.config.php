@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core;
 
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Mercure\Hub;
@@ -22,7 +23,7 @@ return [
             EventDispatcher\Event\VisitLocated::class => [
                 EventDispatcher\NotifyVisitToMercure::class,
                 EventDispatcher\NotifyVisitToWebHooks::class,
-//                EventDispatcher\UpdateGeoLiteDb::class,
+                EventDispatcher\UpdateGeoLiteDb::class,
             ],
         ],
     ],
@@ -32,6 +33,7 @@ return [
             EventDispatcher\LocateVisit::class => ConfigAbstractFactory::class,
             EventDispatcher\NotifyVisitToWebHooks::class => ConfigAbstractFactory::class,
             EventDispatcher\NotifyVisitToMercure::class => ConfigAbstractFactory::class,
+            EventDispatcher\UpdateGeoLiteDb::class => ConfigAbstractFactory::class,
         ],
 
         'delegators' => [
@@ -66,6 +68,7 @@ return [
             'em',
             'Logger_Shlink',
         ],
+        EventDispatcher\UpdateGeoLiteDb::class => [GeolocationDbUpdater::class, 'Logger_Shlink'],
     ],
 
 ];
