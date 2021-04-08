@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+namespace Shlinkio\Shlink\CLI;
+
 use Shlinkio\Shlink\Installer\Config\Option;
+use Shlinkio\Shlink\Installer\Util\InstallationCommand;
 
 return [
 
@@ -45,11 +48,14 @@ return [
         ],
 
         'installation_commands' => [
-            'db_create_schema' => [
-                'command' => 'bin/cli db:create',
+            InstallationCommand::DB_CREATE_SCHEMA => [
+                'command' => 'bin/cli ' . Command\Db\CreateDatabaseCommand::NAME,
             ],
-            'db_migrate' => [
-                'command' => 'bin/cli db:migrate',
+            InstallationCommand::DB_MIGRATE => [
+                'command' => 'bin/cli ' . Command\Db\MigrateDatabaseCommand::NAME,
+            ],
+            InstallationCommand::GEOLITE_DOWNLOAD_DB => [
+                'command' => 'bin/cli ' . Command\Visit\DownloadGeoLiteDbCommand::NAME,
             ],
         ],
     ],

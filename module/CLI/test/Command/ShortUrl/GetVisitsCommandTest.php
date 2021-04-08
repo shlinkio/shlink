@@ -8,7 +8,6 @@ use Cake\Chronos\Chronos;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GetVisitsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
@@ -21,14 +20,14 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
-use Symfony\Component\Console\Application;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function sprintf;
 
 class GetVisitsCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
     private ObjectProphecy $visitsHelper;
@@ -37,9 +36,7 @@ class GetVisitsCommandTest extends TestCase
     {
         $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
         $command = new GetVisitsCommand($this->visitsHelper->reveal());
-        $app = new Application();
-        $app->add($command);
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = $this->testerForCommand($command);
     }
 
     /** @test */

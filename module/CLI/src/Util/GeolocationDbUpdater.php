@@ -32,13 +32,13 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    public function checkDbUpdate(?callable $mustBeUpdated = null, ?callable $handleProgress = null): void
+    public function checkDbUpdate(?callable $beforeDownload = null, ?callable $handleProgress = null): void
     {
         $lock = $this->locker->createLock(self::LOCK_NAME);
         $lock->acquire(true); // Block until lock is released
 
         try {
-            $this->downloadIfNeeded($mustBeUpdated, $handleProgress);
+            $this->downloadIfNeeded($beforeDownload, $handleProgress);
         } finally {
             $lock->release();
         }
@@ -47,34 +47,16 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    private function downloadIfNeeded(?callable $mustBeUpdated, ?callable $handleProgress): void
+    private function downloadIfNeeded(?callable $beforeDownload, ?callable $handleProgress): void
     {
         if (! $this->dbUpdater->databaseFileExists()) {
-            $this->downloadNewDb(false, $mustBeUpdated, $handleProgress);
+            $this->downloadNewDb(false, $beforeDownload, $handleProgress);
             return;
         }
 
         $meta = $this->geoLiteDbReader->metadata();
         if ($this->buildIsTooOld($meta)) {
-            $this->downloadNewDb(true, $mustBeUpdated, $handleProgress);
-        }
-    }
-
-    /**
-     * @throws GeolocationDbUpdateFailedException
-     */
-    private function downloadNewDb(bool $olderDbExists, ?callable $mustBeUpdated, ?callable $handleProgress): void
-    {
-        if ($mustBeUpdated !== null) {
-            $mustBeUpdated($olderDbExists);
-        }
-
-        try {
-            $this->dbUpdater->downloadFreshCopy($handleProgress);
-        } catch (RuntimeException $e) {
-            throw $olderDbExists
-                ? GeolocationDbUpdateFailedException::withOlderDb($e)
-                : GeolocationDbUpdateFailedException::withoutOlderDb($e);
+            $this->downloadNewDb(true, $beforeDownload, $handleProgress);
         }
     }
 
@@ -104,5 +86,32 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         }
 
         throw GeolocationDbUpdateFailedException::withInvalidEpochInOldDb($buildEpoch);
+    }
+
+    /**
+     * @throws GeolocationDbUpdateFailedException
+     */
+    private function downloadNewDb(bool $olderDbExists, ?callable $beforeDownload, ?callable $handleProgress): void
+    {
+        if ($beforeDownload !== null) {
+            $beforeDownload($olderDbExists);
+        }
+
+        try {
+            $this->dbUpdater->downloadFreshCopy($this->wrapHandleProgressCallback($handleProgress, $olderDbExists));
+        } catch (RuntimeException $e) {
+            throw $olderDbExists
+                ? GeolocationDbUpdateFailedException::withOlderDb($e)
+                : GeolocationDbUpdateFailedException::withoutOlderDb($e);
+        }
+    }
+
+    private function wrapHandleProgressCallback(?callable $handleProgress, bool $olderDbExists): ?callable
+    {
+        if ($handleProgress === null) {
+            return null;
+        }
+
+        return fn (int $total, int $downloaded) => $handleProgress($total, $downloaded, $olderDbExists);
     }
 }

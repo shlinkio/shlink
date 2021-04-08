@@ -6,8 +6,7 @@ composer.phar
 vendor/
 data/database.sqlite
 data/shlink-tests.db
-data/GeoLite2-City.mmdb
-data/GeoLite2-City.mmdb.*
+data/GeoLite2-City.*
 docs/swagger-ui*
 docs/mercure.html
 docker-compose.override.yml

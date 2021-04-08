@@ -6,17 +6,13 @@ namespace ShlinkioTest\Shlink\CLI\Factory;
 
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
 use Shlinkio\Shlink\Core\Options\AppOptions;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Command\Command;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 
 class ApplicationFactoryTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private ApplicationFactory $factory;
 
@@ -53,18 +49,5 @@ class ApplicationFactoryTest extends TestCase
             ],
             AppOptions::class => new AppOptions(),
         ]]);
-    }
-
-    private function createCommandMock(string $name): ObjectProphecy
-    {
-        $command = $this->prophesize(Command::class);
-        $command->getName()->willReturn($name);
-        $command->getDefinition()->willReturn($name);
-        $command->isEnabled()->willReturn(true);
-        $command->getAliases()->willReturn([]);
-        $command->setApplication(Argument::type(Application::class))->willReturn(function (): void {
-        });
-
-        return $command;
     }
 }

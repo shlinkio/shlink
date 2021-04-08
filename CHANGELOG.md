@@ -6,7 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* [#1044](https://github.com/shlinkio/shlink/issues/1044) Added ability to set names on API keys, which help identifying them when the list grows.
+* [#1044](https://github.com/shlinkio/shlink/issues/1044) Added ability to set names on API keys, which helps to identify them when the list grows.
+* [#819](https://github.com/shlinkio/shlink/issues/819) Visits are now always located in real time, even when not using swoole.
+
+    The only side effect is that a GeoLite2 db file is now installed when the docker image starts or during shlink installation or update.
+
+    Also, when using swoole, the file is now updated **after** tracking a visit, which means it will not apply until the next one.
 
 ### Changed
 * [#1036](https://github.com/shlinkio/shlink/issues/1036) Updated to `happyr/doctrine-specification` 2.0.
