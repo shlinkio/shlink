@@ -5,7 +5,7 @@ data/log/*
 data/locks/*
 data/proxies/*
 data/migrations_template.txt
-data/GeoLite2-City.*
+data/GeoLite2-City*
 data/database.sqlite
 data/shlink-tests.db
 CHANGELOG.md
