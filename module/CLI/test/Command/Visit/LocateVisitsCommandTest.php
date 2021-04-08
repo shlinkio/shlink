@@ -216,45 +216,6 @@ class LocateVisitsCommandTest extends TestCase
         $this->visitService->locateUnlocatedVisits(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
-//    /**
-//     * @test
-//     * @dataProvider provideParams
-//     */
-//    public function showsProperMessageWhenGeoLiteUpdateFails(bool $olderDbExists, string $expectedMessage): void
-//    {
-//        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(function (): void {
-//        });
-//        $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
-//            function (array $args) use ($olderDbExists): void {
-//                [$mustBeUpdated, $handleProgress] = $args;
-//
-//                $mustBeUpdated($olderDbExists);
-//                $handleProgress(100, 50);
-//
-//                throw $olderDbExists
-//                    ? GeolocationDbUpdateFailedException::withOlderDb()
-//                    : GeolocationDbUpdateFailedException::withoutOlderDb();
-//            },
-//        );
-//
-//        $this->commandTester->execute([]);
-//        $output = $this->commandTester->getDisplay();
-//
-//        self::assertStringContainsString(
-//            sprintf('%s GeoLite2 db file...', $olderDbExists ? 'Updating' : 'Downloading'),
-//            $output,
-//        );
-//        self::assertStringContainsString($expectedMessage, $output);
-//        $locateVisits->shouldHaveBeenCalledTimes((int) $olderDbExists);
-//        $checkDbUpdate->shouldHaveBeenCalledOnce();
-//    }
-//
-//    public function provideParams(): iterable
-//    {
-//        yield [true, '[Warning] GeoLite2 database update failed. Proceeding with old version.'];
-//        yield [false, 'GeoLite2 database download failed. It is not possible to locate visits.'];
-//    }
-
     /** @test */
     public function providingAllFlagOnItsOwnDisplaysNotice(): void
     {

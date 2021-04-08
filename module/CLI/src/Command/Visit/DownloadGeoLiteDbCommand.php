@@ -51,11 +51,11 @@ class DownloadGeoLiteDbCommand extends Command
                 $this->progressBar->setProgress($downloaded);
             });
 
-            if ($this->progressBar !== null) {
+            if ($this->progressBar === null) {
+                $io->info('GeoLite2 db file is up to date.');
+            } else {
                 $this->progressBar->finish();
                 $io->success('GeoLite2 db file properly downloaded.');
-            } else {
-                $io->info('GeoLite2 db file is up to date.');
             }
 
             return ExitCodes::EXIT_SUCCESS;

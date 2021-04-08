@@ -9,6 +9,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Tester\CommandTester;
 
 trait CliTestUtilsTrait
 {
@@ -28,5 +29,16 @@ trait CliTestUtilsTrait
         });
 
         return $command;
+    }
+
+    private function testerForCommand(Command $mainCommand, Command ...$extraCommands): CommandTester
+    {
+        $app = new Application();
+        $app->add($mainCommand);
+        foreach ($extraCommands as $command) {
+            $app->add($command);
+        }
+
+        return new CommandTester($mainCommand);
     }
 }
