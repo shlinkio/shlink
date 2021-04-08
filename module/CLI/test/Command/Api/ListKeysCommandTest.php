@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Api\ListKeysCommand;
 use Shlinkio\Shlink\Core\Entity\Domain;
@@ -13,12 +12,12 @@ use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
-use Symfony\Component\Console\Application;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ListKeysCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
     private ObjectProphecy $apiKeyService;
@@ -26,10 +25,7 @@ class ListKeysCommandTest extends TestCase
     public function setUp(): void
     {
         $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
-        $command = new ListKeysCommand($this->apiKeyService->reveal());
-        $app = new Application();
-        $app->add($command);
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = $this->testerForCommand(new ListKeysCommand($this->apiKeyService->reveal()));
     }
 
     /**

@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ResolveUrlCommand;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
-use Symfony\Component\Console\Application;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function sprintf;
@@ -21,7 +20,7 @@ use const PHP_EOL;
 
 class ResolveUrlCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
     private ObjectProphecy $urlResolver;
@@ -29,11 +28,7 @@ class ResolveUrlCommandTest extends TestCase
     public function setUp(): void
     {
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
-        $command = new ResolveUrlCommand($this->urlResolver->reveal());
-        $app = new Application();
-        $app->add($command);
-
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = $this->testerForCommand(new ResolveUrlCommand($this->urlResolver->reveal()));
     }
 
     /** @test */

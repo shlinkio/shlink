@@ -6,11 +6,10 @@ namespace ShlinkioTest\Shlink\CLI\Command\Db;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Db\MigrateDatabaseCommand;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
-use Symfony\Component\Console\Application;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock\LockFactory;
@@ -19,7 +18,7 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class MigrateDatabaseCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
     private ObjectProphecy $processHelper;
@@ -43,10 +42,7 @@ class MigrateDatabaseCommandTest extends TestCase
             $this->processHelper->reveal(),
             $phpExecutableFinder->reveal(),
         );
-        $app = new Application();
-        $app->add($command);
-
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = $this->testerForCommand($command);
     }
 
     /** @test */

@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\DeleteTagsCommand;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
-use Symfony\Component\Console\Application;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class DeleteTagsCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
     private ObjectProphecy $tagService;
@@ -22,12 +21,7 @@ class DeleteTagsCommandTest extends TestCase
     public function setUp(): void
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
-
-        $command = new DeleteTagsCommand($this->tagService->reveal());
-        $app = new Application();
-        $app->add($command);
-
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = $this->testerForCommand(new DeleteTagsCommand($this->tagService->reveal()));
     }
 
     /** @test */

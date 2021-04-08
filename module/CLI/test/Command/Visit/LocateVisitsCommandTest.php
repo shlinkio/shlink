@@ -21,7 +21,6 @@ use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -58,14 +57,11 @@ class LocateVisitsCommandTest extends TestCase
             $this->ipResolver->reveal(),
             $locker->reveal(),
         );
-        $app = new Application();
-        $app->add($command);
 
         $this->downloadDbCommand = $this->createCommandMock(DownloadGeoLiteDbCommand::NAME);
         $this->downloadDbCommand->run(Argument::cetera())->willReturn(ExitCodes::EXIT_SUCCESS);
-        $app->add($this->downloadDbCommand->reveal());
 
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = $this->testerForCommand($command, $this->downloadDbCommand->reveal());
     }
 
     /**

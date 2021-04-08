@@ -7,7 +7,6 @@ namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GenerateShortUrlCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
@@ -17,12 +16,12 @@ use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
-use Symfony\Component\Console\Application;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class GenerateShortUrlCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
     private ObjectProphecy $urlShortener;
@@ -35,9 +34,7 @@ class GenerateShortUrlCommandTest extends TestCase
         $this->stringifier->stringify(Argument::type(ShortUrl::class))->willReturn('');
 
         $command = new GenerateShortUrlCommand($this->urlShortener->reveal(), $this->stringifier->reveal(), 5);
-        $app = new Application();
-        $app->add($command);
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = $this->testerForCommand($command);
     }
 
     /** @test */
