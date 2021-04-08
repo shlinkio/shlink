@@ -97,7 +97,7 @@ class LocateVisitTest extends TestCase
         $this->em->flush()->shouldNotHaveBeenCalled();
         $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->shouldNotHaveBeenCalled();
         $logWarning->shouldHaveBeenCalled();
-        $dispatch->shouldNotHaveBeenCalled();
+        $dispatch->shouldHaveBeenCalledOnce();
     }
 
     /** @test */

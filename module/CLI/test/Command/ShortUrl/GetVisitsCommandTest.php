@@ -22,6 +22,7 @@ use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
+
 use function sprintf;
 
 class GetVisitsCommandTest extends TestCase

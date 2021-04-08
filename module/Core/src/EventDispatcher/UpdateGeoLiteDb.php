@@ -26,11 +26,13 @@ class UpdateGeoLiteDb
         $beforeDownload = fn (bool $olderDbExists) => $this->logger->notice(
             sprintf('%s GeoLite2 db file...', $olderDbExists ? 'Updating' : 'Downloading'),
         );
-        $handleProgress = function (int $total, int $downloaded, bool $olderDbExists): void {
-            if ($total > $downloaded) {
+        $messageLogged = false;
+        $handleProgress = function (int $total, int $downloaded, bool $olderDbExists) use (&$messageLogged): void {
+            if ($messageLogged || $total > $downloaded) {
                 return;
             }
 
+            $messageLogged = true;
             $this->logger->notice(sprintf('Finished %s GeoLite2 db file', $olderDbExists ? 'updating' : 'downloading'));
         };
 

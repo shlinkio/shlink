@@ -52,6 +52,12 @@ class LocateVisit
             return;
         }
 
+        $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress(), $visit);
+        $this->eventDispatcher->dispatch(new VisitLocated($visitId));
+    }
+
+    private function locateVisit(string $visitId, ?string $originalIpAddress, Visit $visit): void
+    {
         if (! $this->dbUpdater->databaseFileExists()) {
             $this->logger->warning('Tried to locate visit with id "{visitId}", but a GeoLite2 db was not found.', [
                 'visitId' => $visitId,
@@ -59,12 +65,6 @@ class LocateVisit
             return;
         }
 
-        $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress(), $visit);
-        $this->eventDispatcher->dispatch(new VisitLocated($visitId));
-    }
-
-    private function locateVisit(string $visitId, ?string $originalIpAddress, Visit $visit): void
-    {
         $isLocatable = $originalIpAddress !== null || $visit->isLocatable();
         $addr = $originalIpAddress ?? $visit->getRemoteAddr();
 

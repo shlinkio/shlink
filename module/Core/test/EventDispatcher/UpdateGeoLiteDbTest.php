@@ -84,6 +84,10 @@ class UpdateGeoLiteDbTest extends TestCase
         $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
             function (array $args) use ($total, $downloaded, $oldDbExists): void {
                 [, $secondCallback] = $args;
+
+                // Invoke several times to ensure the log is printed only once
+                $secondCallback($total, $downloaded, $oldDbExists);
+                $secondCallback($total, $downloaded, $oldDbExists);
                 $secondCallback($total, $downloaded, $oldDbExists);
             },
         );
