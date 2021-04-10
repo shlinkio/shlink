@@ -51,17 +51,24 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 
             // Skip already imported URLs
             if ($shortUrlRepo->importedUrlExists($url)) {
+                // TODO If the URL exists, allow to merge visits instead of just skipping completely
                 $io->text(sprintf('%s: <comment>Skipped</comment>', $longUrl));
                 continue;
             }
 
             $shortUrl = ShortUrl::fromImport($url, $importShortCodes, $this->relationResolver);
             if (! $this->handleShortCodeUniqueness($url, $shortUrl, $io, $importShortCodes)) {
+                $io->text(sprintf('%s: <comment>Skipped</comment>', $longUrl));
                 continue;
             }
 
             $this->em->persist($shortUrl);
             $io->text(sprintf('%s: <info>Imported</info>', $longUrl));
+
+            // Process only missing visits when possible
+            if ($url->visitsCount() !== null) {
+
+            }
         }
     }
 
@@ -84,7 +91,6 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         ), ['Generate new short-code', 'Skip'], 1);
 
         if ($action === 'Skip') {
-            $io->text(sprintf('%s: <comment>Skipped</comment>', $longUrl));
             return false;
         }
 
