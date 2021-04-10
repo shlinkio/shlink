@@ -17,7 +17,7 @@ class VisitLocationTest extends TestCase
     public function isEmptyReturnsTrueWhenAllValuesAreEmpty(array $args, bool $isEmpty): void
     {
         $payload = new Location(...$args);
-        $location = new VisitLocation($payload);
+        $location = VisitLocation::fromGeolocation($payload);
 
         self::assertEquals($isEmpty, $location->isEmpty());
     }

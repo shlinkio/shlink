@@ -11,7 +11,6 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\Stdlib\Glob;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use PDO;
 use PHPUnit\Runner\Version;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\Driver\Selector;

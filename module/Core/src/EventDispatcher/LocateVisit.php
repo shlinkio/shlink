@@ -71,7 +71,7 @@ class LocateVisit
         try {
             $location = $isLocatable ? $this->ipLocationResolver->resolveIpLocation($addr) : Location::emptyInstance();
 
-            $visit->locate(new VisitLocation($location));
+            $visit->locate(VisitLocation::fromGeolocation($location));
             $this->em->flush();
         } catch (WrongIpException $e) {
             $this->logger->warning(

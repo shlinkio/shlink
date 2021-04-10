@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Importer;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
@@ -45,30 +46,38 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         $importShortCodes = $params['import_short_codes'];
         $iterable = $this->batchHelper->wrapIterable($shlinkUrls, 100);
 
-        /** @var ImportedShlinkUrl $url */
-        foreach ($iterable as $url) {
-            $longUrl = $url->longUrl();
+        /** @var ImportedShlinkUrl $importedUrl */
+        foreach ($iterable as $importedUrl) {
+            $longUrl = $importedUrl->longUrl();
 
             // Skip already imported URLs
-            if ($shortUrlRepo->importedUrlExists($url)) {
+            if ($shortUrlRepo->importedUrlExists($importedUrl)) {
                 // TODO If the URL exists, allow to merge visits instead of just skipping completely
                 $io->text(sprintf('%s: <comment>Skipped</comment>', $longUrl));
                 continue;
             }
 
-            $shortUrl = ShortUrl::fromImport($url, $importShortCodes, $this->relationResolver);
-            if (! $this->handleShortCodeUniqueness($url, $shortUrl, $io, $importShortCodes)) {
+            $shortUrl = ShortUrl::fromImport($importedUrl, $importShortCodes, $this->relationResolver);
+            if (! $this->handleShortCodeUniqueness($importedUrl, $shortUrl, $io, $importShortCodes)) {
                 $io->text(sprintf('%s: <comment>Skipped</comment>', $longUrl));
                 continue;
             }
 
             $this->em->persist($shortUrl);
-            $io->text(sprintf('%s: <info>Imported</info>', $longUrl));
 
-            // Process only missing visits when possible
-            if ($url->visitsCount() !== null) {
-
+            // TODO Process only missing visits when possible: $importedUrl->visitsCount();
+            // TODO Make importing visits optional based on params
+            $importedVisits = 0;
+            foreach ($importedUrl->visits() as $importedVisit) {
+                $this->em->persist(Visit::fromImport($importedVisit, $shortUrl));
+                $importedVisits++;
             }
+
+            $io->text(
+                $importedVisits === 0
+                    ? sprintf('%s: <info>Imported</info>', $longUrl)
+                    : sprintf('%s: <info>Imported</info> with <info>%s</info> visits', $longUrl, $importedVisits),
+            );
         }
     }
 

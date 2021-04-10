@@ -103,7 +103,7 @@ class GetVisitsCommandTest extends TestCase
         $this->visitsHelper->visitsForShortUrl(new ShortUrlIdentifier($shortCode), Argument::any())->willReturn(
             new Paginator(new ArrayAdapter([
                 Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('bar', 'foo', '', ''))->locate(
-                    new VisitLocation(new Location('', 'Spain', '', '', 0, 0, '')),
+                    VisitLocation::fromGeolocation(new Location('', 'Spain', '', '', 0, 0, '')),
                 ),
             ])),
         )->shouldBeCalledOnce();
