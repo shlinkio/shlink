@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Resolver;
 
+use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
@@ -14,6 +15,7 @@ use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
+
 use function count;
 
 class PersistenceShortUrlRelationResolverTest extends TestCase
@@ -26,6 +28,8 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
+        $this->em->getEventManager()->willReturn(new EventManager());
+
         $this->resolver = new PersistenceShortUrlRelationResolver($this->em->reveal());
     }
 
@@ -112,5 +116,46 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         $findTag->shouldNotHaveBeenCalled();
         $getRepo->shouldNotHaveBeenCalled();
         $persist->shouldNotHaveBeenCalled();
+    }
+
+    /** @test */
+    public function newDomainsAreMemoizedUntilStateIsCleared(): void
+    {
+        $repo = $this->prophesize(ObjectRepository::class);
+        $repo->findOneBy(Argument::type('array'))->willReturn(null);
+        $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
+
+        $authority = 'foo.com';
+        $domain1 = $this->resolver->resolveDomain($authority);
+        $domain2 = $this->resolver->resolveDomain($authority);
+
+        self::assertSame($domain1, $domain2);
+
+        $this->resolver->postFlush();
+        $domain3 = $this->resolver->resolveDomain($authority);
+
+        self::assertNotSame($domain1, $domain3);
+    }
+
+    /** @test */
+    public function newTagsAreMemoizedUntilStateIsCleared(): void
+    {
+        $tagRepo = $this->prophesize(TagRepositoryInterface::class);
+        $tagRepo->findOneBy(Argument::type('array'))->willReturn(null);
+        $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
+        $this->em->persist(Argument::type(Tag::class))->will(function (): void {
+        });
+
+        $tags = ['foo', 'bar'];
+        [$foo1, $bar1] = $this->resolver->resolveTags($tags);
+        [$foo2, $bar2] = $this->resolver->resolveTags($tags);
+
+        self::assertSame($foo1, $foo2);
+        self::assertSame($bar1, $bar2);
+
+        $this->resolver->postFlush();
+        [$foo3, $bar3] = $this->resolver->resolveTags($tags);
+        self::assertNotSame($foo1, $foo3);
+        self::assertNotSame($bar1, $bar3);
     }
 }
