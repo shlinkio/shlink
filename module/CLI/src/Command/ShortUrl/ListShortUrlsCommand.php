@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use closure;
 use Shlinkio\Shlink\CLI\Command\Util\AbstractWithDateRangeCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
@@ -19,10 +22,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+use function array_keys;
 use function array_pad;
+use function count;
 use function explode;
 use function Functional\map;
-use function implode;
+use function is_null;
+use function join;
 use function sprintf;
 
 class ListShortUrlsCommand extends AbstractWithDateRangeCommand
@@ -30,18 +36,6 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
     use PagerfantaUtilsTrait;
 
     public const NAME = 'short-url:list';
-    private const COLUMNS_TO_SHOW = [
-        'shortCode',
-        'title',
-        'shortUrl',
-        'longUrl',
-        'dateCreated',
-        'visitsCount',
-    ];
-    private const COLUMNS_TO_SHOW_WITH_TAGS = [
-        ...self::COLUMNS_TO_SHOW,
-        'tags',
-    ];
 
     private ShortUrlServiceInterface $shortUrlService;
     private DataTransformerInterface $transformer;
@@ -91,6 +85,18 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
                 'Whether to display the tags or not.',
             )
             ->addOption(
+                'show-api-key',
+                'k',
+                InputOption::VALUE_NONE,
+                'Whether to display the API key from which the URL was generated or not.',
+            )
+            ->addOption(
+                'show-api-key-name',
+                'm',
+                InputOption::VALUE_NONE,
+                'Whether to display the API key name from which the URL was generated or not.',
+            )
+            ->addOption(
                 'all',
                 'a',
                 InputOption::VALUE_NONE,
@@ -117,11 +123,37 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $searchTerm = $this->getOptionWithDeprecatedFallback($input, 'search-term');
         $tags = $input->getOption('tags');
         $tags = ! empty($tags) ? explode(',', $tags) : [];
-        $showTags = $this->getOptionWithDeprecatedFallback($input, 'show-tags');
         $all = $input->getOption('all');
         $startDate = $this->getStartDateOption($input, $output);
         $endDate = $this->getEndDateOption($input, $output);
         $orderBy = $this->processOrderBy($input);
+
+
+        $transformerLookup = fn (string $key): closure
+        => fn (ShortUrl $shortUrl)
+            => $this->transformer->transform($shortUrl)[$key];
+
+        $columnMap = [
+            'Short Code'    => $transformerLookup('shortCode'),
+            'Title'         => $transformerLookup('title'),
+            'Short URL'     => $transformerLookup('shortUrl'),
+            'Long URL'      => $transformerLookup('longUrl'),
+            'Date created'  => $transformerLookup('dateCreated'),
+            'Visits count'  => $transformerLookup('visitsCount'),
+        ];
+        if ($this->getOptionWithDeprecatedFallback($input, 'show-tags')) {
+            $columnMap['Tags'] = fn (ShortUrl $shortUrl): string
+                => join(', ', map($shortUrl->getTags(), fn (Tag $tag): string => (string) $tag));
+        }
+        if ($input->getOption('show-api-key')) {
+            $columnMap['API Key'] = fn (ShortUrl $shortUrl): string => (string) $shortUrl->authorApiKey();
+        }
+        if ($input->getOption('show-api-key-name')) {
+            $columnMap['API Key Name'] = fn (ShortUrl $shortUrl): ?string => ! is_null($shortUrl->authorApiKey())
+                ? $shortUrl->authorApiKey()->name()
+                : null;
+        }
+
 
         $data = [
             ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
@@ -137,7 +169,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
 
         do {
             $data[ShortUrlsParamsInputFilter::PAGE] = $page;
-            $result = $this->renderPage($output, $showTags, ShortUrlsParams::fromRawData($data), $all);
+            $result = $this->renderPage($output, $columnMap, ShortUrlsParams::fromRawData($data), $all);
             $page++;
 
             $continue = $result->hasNextPage() && $io->confirm(
@@ -152,32 +184,29 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         return ExitCodes::EXIT_SUCCESS;
     }
 
-    private function renderPage(OutputInterface $output, bool $showTags, ShortUrlsParams $params, bool $all): Paginator
-    {
-        $result = $this->shortUrlService->listShortUrls($params);
+    private function renderPage(
+        OutputInterface $output,
+        array $columnMap,
+        ShortUrlsParams $params,
+        bool $all
+    ): Paginator {
+        $shortUrls = $this->shortUrlService->listShortUrls($params);
 
-        $headers = ['Short code', 'Title', 'Short URL', 'Long URL', 'Date created', 'Visits count'];
-        if ($showTags) {
-            $headers[] = 'Tags';
-        }
+        $rows = map($shortUrls, fn (ShortUrl $shortUrl)
+            => map($columnMap, fn (callable $call)
+                => $call($shortUrl)));
 
-        $rows = [];
-        foreach ($result as $row) {
-            $columnsToShow = $showTags ? self::COLUMNS_TO_SHOW_WITH_TAGS : self::COLUMNS_TO_SHOW;
-            $shortUrl = $this->transformer->transform($row);
-            if ($showTags) {
-                $shortUrl['tags'] = implode(', ', $shortUrl['tags']);
-            }
+        ShlinkTable::fromOutput($output)
+            ->render(
+                array_keys($columnMap),
+                $rows,
+                $all ? null : $this->formatCurrentPageMessage(
+                    $shortUrls,
+                    'Page %s of %s',
+                ),
+            );
 
-            $rows[] = map($columnsToShow, fn (string $prop) => $shortUrl[$prop]);
-        }
-
-        ShlinkTable::fromOutput($output)->render($headers, $rows, $all ? null : $this->formatCurrentPageMessage(
-            $result,
-            'Page %s of %s',
-        ));
-
-        return $result;
+        return $shortUrls;
     }
 
     private function processOrderBy(InputInterface $input): ?string
