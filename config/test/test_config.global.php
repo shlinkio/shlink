@@ -55,10 +55,6 @@ $buildDbConnection = function (): array {
             'password' => 'root',
             'dbname' => 'shlink_test',
             'charset' => 'utf8',
-            'driverOptions' => [
-                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
-                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-            ],
         ],
         'postgres' => [
             'driver' => 'pdo_pgsql',

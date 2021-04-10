@@ -2,14 +2,6 @@
 
 declare(strict_types=1);
 
-use function Shlinkio\Shlink\Common\env;
-
-// When running tests, any mysql-specific option can interfere with other drivers
-$driverOptions = env('APP_ENV') === 'test' ? [] : [
-    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
-    PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-];
-
 return [
 
     'entity_manager' => [
@@ -18,7 +10,6 @@ return [
             'password' => 'root',
             'driver' => 'pdo_mysql',
             'host' => 'shlink_db',
-            'driverOptions' => $driverOptions,
         ],
     ],
 
