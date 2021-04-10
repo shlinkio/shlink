@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1041](https://github.com/shlinkio/shlink/issues/1041) Ensured the default value for the version while building the docker image is `latest`.
+* [#1067](https://github.com/shlinkio/shlink/issues/1067) Fixed exception when persisting multiple short URLs in one batch which include the same new tags/domains. This can potentially happen when importing URLs.
 
 
 ## [2.6.2] - 2021-03-12
