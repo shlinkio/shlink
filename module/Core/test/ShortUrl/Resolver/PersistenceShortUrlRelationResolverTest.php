@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
+use function count;
 
 class PersistenceShortUrlRelationResolverTest extends TestCase
 {
@@ -66,10 +67,13 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         yield 'found domain' => [new Domain($authority), $authority];
     }
 
-    /** @test */
-    public function findsAndPersistsTagsWrappedIntoCollection(): void
+    /**
+     * @test
+     * @dataProvider provideTags
+     */
+    public function findsAndPersistsTagsWrappedIntoCollection(array $tags, array $expectedTags): void
     {
-        $tags = ['foo', 'bar', 'baz'];
+        $expectedPersistedTags = count($expectedTags);
 
         $tagRepo = $this->prophesize(TagRepositoryInterface::class);
         $findTag = $tagRepo->findOneBy(Argument::type('array'))->will(function (array $args): ?Tag {
@@ -81,11 +85,17 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
 
         $result = $this->resolver->resolveTags($tags);
 
-        self::assertCount(3, $result);
-        self::assertEquals([new Tag('foo'), new Tag('bar'), new Tag('baz')], $result->toArray());
-        $findTag->shouldHaveBeenCalledTimes(3);
+        self::assertCount($expectedPersistedTags, $result);
+        self::assertEquals($expectedTags, $result->toArray());
+        $findTag->shouldHaveBeenCalledTimes($expectedPersistedTags);
         $getRepo->shouldHaveBeenCalledOnce();
-        $persist->shouldHaveBeenCalledTimes(3);
+        $persist->shouldHaveBeenCalledTimes($expectedPersistedTags);
+    }
+
+    public function provideTags(): iterable
+    {
+        yield 'no duplicated tags' => [['foo', 'bar', 'baz'], [new Tag('foo'), new Tag('bar'), new Tag('baz')]];
+        yield 'duplicated tags' => [['foo', 'bar', 'bar'], [new Tag('foo'), new Tag('bar')]];
     }
 
     /** @test */
