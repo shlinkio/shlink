@@ -132,6 +132,11 @@ class ShortUrl extends AbstractEntity
         return $this->tags;
     }
 
+    public function authorApiKey(): ?ApiKey
+    {
+        return $this->authorApiKey;
+    }
+
     public function getValidSince(): ?Chronos
     {
         return $this->validSince;

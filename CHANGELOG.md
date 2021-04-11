@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Also, when using swoole, the file is now updated **after** tracking a visit, which means it will not apply until the next one.
 
+* [#1059](https://github.com/shlinkio/shlink/issues/1059) Added ability to optionally display author API key and its name when listing short URLs from the command line.
+
 ### Changed
 * [#1036](https://github.com/shlinkio/shlink/issues/1036) Updated to `happyr/doctrine-specification` 2.0.
 * [#1039](https://github.com/shlinkio/shlink/issues/1039) Updated to `endroid/qr-code` 4.0.
