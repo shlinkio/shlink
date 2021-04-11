@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use closure;
 use Shlinkio\Shlink\CLI\Command\Util\AbstractWithDateRangeCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
@@ -24,11 +23,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function array_keys;
 use function array_pad;
-use function count;
 use function explode;
 use function Functional\map;
-use function is_null;
-use function join;
+use function implode;
 use function sprintf;
 
 class ListShortUrlsCommand extends AbstractWithDateRangeCommand
@@ -128,32 +125,33 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $endDate = $this->getEndDateOption($input, $output);
         $orderBy = $this->processOrderBy($input);
 
-
-        $transformerLookup = fn (string $key): closure
-        => fn (ShortUrl $shortUrl)
-            => $this->transformer->transform($shortUrl)[$key];
+        $transformerLookup = fn (string $key): callable =>
+            fn (ShortUrl $shortUrl) => $this->transformer->transform($shortUrl)[$key];
 
         $columnMap = [
-            'Short Code'    => $transformerLookup('shortCode'),
-            'Title'         => $transformerLookup('title'),
-            'Short URL'     => $transformerLookup('shortUrl'),
-            'Long URL'      => $transformerLookup('longUrl'),
-            'Date created'  => $transformerLookup('dateCreated'),
-            'Visits count'  => $transformerLookup('visitsCount'),
+            'Short Code' => $transformerLookup('shortCode'),
+            'Title' => $transformerLookup('title'),
+            'Short URL' => $transformerLookup('shortUrl'),
+            'Long URL' => $transformerLookup('longUrl'),
+            'Date created' => $transformerLookup('dateCreated'),
+            'Visits count' => $transformerLookup('visitsCount'),
         ];
         if ($this->getOptionWithDeprecatedFallback($input, 'show-tags')) {
-            $columnMap['Tags'] = fn (ShortUrl $shortUrl): string
-                => join(', ', map($shortUrl->getTags(), fn (Tag $tag): string => (string) $tag));
+            $columnMap['Tags'] = static fn (ShortUrl $shortUrl): string => implode(
+                ', ',
+                map($shortUrl->getTags(), fn (Tag $tag): string => (string) $tag),
+            );
         }
         if ($input->getOption('show-api-key')) {
-            $columnMap['API Key'] = fn (ShortUrl $shortUrl): string => (string) $shortUrl->authorApiKey();
+            $columnMap['API Key'] = static fn (ShortUrl $shortUrl): string => (string) $shortUrl->authorApiKey();
         }
         if ($input->getOption('show-api-key-name')) {
-            $columnMap['API Key Name'] = fn (ShortUrl $shortUrl): ?string => ! is_null($shortUrl->authorApiKey())
-                ? $shortUrl->authorApiKey()->name()
-                : null;
-        }
+            $columnMap['API Key Name'] = static function (ShortUrl $shortUrl): ?string {
+                $apiKey = $shortUrl->authorApiKey();
 
+                return $apiKey !== null ? $apiKey->name() : null;
+            };
+        }
 
         $data = [
             ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
@@ -192,19 +190,13 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
     ): Paginator {
         $shortUrls = $this->shortUrlService->listShortUrls($params);
 
-        $rows = map($shortUrls, fn (ShortUrl $shortUrl)
-            => map($columnMap, fn (callable $call)
-                => $call($shortUrl)));
+        $rows = map($shortUrls, fn (ShortUrl $shortUrl) => map($columnMap, fn (callable $call) => $call($shortUrl)));
 
-        ShlinkTable::fromOutput($output)
-            ->render(
-                array_keys($columnMap),
-                $rows,
-                $all ? null : $this->formatCurrentPageMessage(
-                    $shortUrls,
-                    'Page %s of %s',
-                ),
-            );
+        ShlinkTable::fromOutput($output)->render(
+            array_keys($columnMap),
+            $rows,
+            $all ? null : $this->formatCurrentPageMessage($shortUrls, 'Page %s of %s'),
+        );
 
         return $shortUrls;
     }
