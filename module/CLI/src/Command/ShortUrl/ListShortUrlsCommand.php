@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
@@ -125,28 +124,24 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $endDate = $this->getEndDateOption($input, $output);
         $orderBy = $this->processOrderBy($input);
 
-        $transformerLookup = fn (string $key): callable =>
-            fn (ShortUrl $shortUrl) => $this->transformer->transform($shortUrl)[$key];
-
+        $pickProp = static fn (string $prop): callable => static fn (array $shortUrl) => $shortUrl[$prop];
         $columnMap = [
-            'Short Code' => $transformerLookup('shortCode'),
-            'Title' => $transformerLookup('title'),
-            'Short URL' => $transformerLookup('shortUrl'),
-            'Long URL' => $transformerLookup('longUrl'),
-            'Date created' => $transformerLookup('dateCreated'),
-            'Visits count' => $transformerLookup('visitsCount'),
+            'Short Code' => $pickProp('shortCode'),
+            'Title' => $pickProp('title'),
+            'Short URL' => $pickProp('shortUrl'),
+            'Long URL' => $pickProp('longUrl'),
+            'Date created' => $pickProp('dateCreated'),
+            'Visits count' => $pickProp('visitsCount'),
         ];
         if ($this->getOptionWithDeprecatedFallback($input, 'show-tags')) {
-            $columnMap['Tags'] = static fn (ShortUrl $shortUrl): string => implode(
-                ', ',
-                map($shortUrl->getTags(), fn (Tag $tag): string => (string) $tag),
-            );
+            $columnMap['Tags'] = static fn (array $shortUrl): string => implode(', ', $shortUrl['tags']);
         }
         if ($input->getOption('show-api-key')) {
-            $columnMap['API Key'] = static fn (ShortUrl $shortUrl): string => (string) $shortUrl->authorApiKey();
+            $columnMap['API Key'] = static fn (array $_, ShortUrl $shortUrl): string =>
+                (string) $shortUrl->authorApiKey();
         }
         if ($input->getOption('show-api-key-name')) {
-            $columnMap['API Key Name'] = static function (ShortUrl $shortUrl): ?string {
+            $columnMap['API Key Name'] = static function (array $_, ShortUrl $shortUrl): ?string {
                 $apiKey = $shortUrl->authorApiKey();
 
                 return $apiKey !== null ? $apiKey->name() : null;
@@ -190,7 +185,10 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
     ): Paginator {
         $shortUrls = $this->shortUrlService->listShortUrls($params);
 
-        $rows = map($shortUrls, fn (ShortUrl $shortUrl) => map($columnMap, fn (callable $call) => $call($shortUrl)));
+        $rows = map($shortUrls, function (ShortUrl $shortUrl) use ($columnMap) {
+            $rawShortUrl = $this->transformer->transform($shortUrl);
+            return map($columnMap, fn (callable $call) => $call($rawShortUrl, $shortUrl));
+        });
 
         ShlinkTable::fromOutput($output)->render(
             array_keys($columnMap),
