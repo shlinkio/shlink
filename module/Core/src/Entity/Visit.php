@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 class Visit extends AbstractEntity implements JsonSerializable
 {
     public const TYPE_VALID_SHORT_URL = 'valid_short_url';
+    public const TYPE_IMPORTED = 'imported';
     public const TYPE_INVALID_SHORT_URL = 'invalid_short_url';
     public const TYPE_BASE_URL = 'base_url';
     public const TYPE_REGULAR_404 = 'regular_404';
@@ -44,9 +45,9 @@ class Visit extends AbstractEntity implements JsonSerializable
         return $instance;
     }
 
-    public static function fromImport(ImportedShlinkVisit $importedVisit, ShortUrl $shortUrl): self
+    public static function fromImport(ShortUrl $shortUrl, ImportedShlinkVisit $importedVisit): self
     {
-        $instance = new self($shortUrl, self::TYPE_VALID_SHORT_URL);
+        $instance = new self($shortUrl, self::TYPE_IMPORTED);
         $instance->userAgent = $importedVisit->userAgent();
         $instance->referer = $importedVisit->referer();
         $instance->date = Chronos::instance($importedVisit->date());

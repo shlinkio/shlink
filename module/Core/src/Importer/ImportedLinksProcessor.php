@@ -51,7 +51,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
             $longUrl = $importedUrl->longUrl();
 
             // Skip already imported URLs
-            if ($shortUrlRepo->importedUrlExists($importedUrl)) {
+            if ($shortUrlRepo->findOneByImportedUrl($importedUrl) !== null) {
                 // TODO If the URL exists, allow to merge visits instead of just skipping completely
                 $io->text(sprintf('%s: <comment>Skipped</comment>', $longUrl));
                 continue;
@@ -73,6 +73,11 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
             );
         }
     }
+
+//    private function getOrCreateShortUrl(ImportedShlinkUrl $url, bool $importShortCodes): ?ShortUrl
+//    {
+//
+//    }
 
     private function handleShortCodeUniqueness(
         ImportedShlinkUrl $url,
@@ -101,10 +106,17 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 
     private function importVisits(ImportedShlinkUrl $importedUrl, ShortUrl $shortUrl): int
     {
-        // TODO Process only missing visits when possible: $importedUrl->visitsCount();
+        // If we know the amount of visits that can be imported, import only those left. Import all otherwise.
+        $importVisitsCount = $importedUrl->visitsCount();
+        $visitsLeft = $importVisitsCount !== null ? $importVisitsCount - $shortUrl->importedVisitsCount() : null;
+
         $importedVisits = 0;
         foreach ($importedUrl->visits() as $importedVisit) {
-            $this->em->persist(Visit::fromImport($importedVisit, $shortUrl));
+            if ($visitsLeft !== null && $importedVisits >= $visitsLeft) {
+                break;
+            }
+
+            $this->em->persist(Visit::fromImport($shortUrl, $importedVisit));
             $importedVisits++;
         }
 

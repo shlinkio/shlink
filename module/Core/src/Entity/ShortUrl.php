@@ -7,6 +7,8 @@ namespace Shlinkio\Shlink\Core\Entity;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Selectable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
@@ -162,6 +164,14 @@ class ShortUrl extends AbstractEntity
     public function getVisitsCount(): int
     {
         return count($this->visits);
+    }
+
+    public function importedVisitsCount(): int
+    {
+        /** @var Selectable $visits */
+        $visits = $this->visits;
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('type', Visit::TYPE_IMPORTED));
+        return count($visits->matching($criteria));
     }
 
     /**

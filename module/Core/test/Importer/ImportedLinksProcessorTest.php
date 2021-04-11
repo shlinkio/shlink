@@ -64,7 +64,7 @@ class ImportedLinksProcessorTest extends TestCase
         ];
         $expectedCalls = count($urls);
 
-        $importedUrlExists = $this->repo->importedUrlExists(Argument::cetera())->willReturn(false);
+        $importedUrlExists = $this->repo->findOneByImportedUrl(Argument::cetera())->willReturn(null);
         $ensureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
         $persist = $this->em->persist(Argument::type(ShortUrl::class));
 
@@ -88,12 +88,14 @@ class ImportedLinksProcessorTest extends TestCase
         ];
         $contains = fn (string $needle) => fn (string $text) => str_contains($text, $needle);
 
-        $importedUrlExists = $this->repo->importedUrlExists(Argument::cetera())->will(function (array $args): bool {
-            /** @var ImportedShlinkUrl $url */
-            [$url] = $args;
+        $importedUrlExists = $this->repo->findOneByImportedUrl(Argument::cetera())->will(
+            function (array $args): ?ShortUrl {
+                /** @var ImportedShlinkUrl $url */
+                [$url] = $args;
 
-            return contains(['foo', 'baz2', 'baz3'], $url->longUrl());
-        });
+                return contains(['foo', 'baz2', 'baz3'], $url->longUrl()) ? ShortUrl::fromImport($url, true) : null;
+            },
+        );
         $ensureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
         $persist = $this->em->persist(Argument::type(ShortUrl::class));
 
@@ -118,7 +120,7 @@ class ImportedLinksProcessorTest extends TestCase
         ];
         $contains = fn (string $needle) => fn (string $text) => str_contains($text, $needle);
 
-        $importedUrlExists = $this->repo->importedUrlExists(Argument::cetera())->willReturn(false);
+        $importedUrlExists = $this->repo->findOneByImportedUrl(Argument::cetera())->willReturn(null);
         $failingEnsureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(
             Argument::any(),
             true,

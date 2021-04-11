@@ -416,7 +416,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function importedShortUrlsAreSearchedAsExpected(): void
+    public function importedShortUrlsAreFoundWhenExpected(): void
     {
         $buildImported = static fn (string $shortCode, ?String $domain = null) =>
             new ImportedShlinkUrl('', 'foo', [], Chronos::now(), $domain, $shortCode, null);
@@ -429,11 +429,11 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertTrue($this->repo->importedUrlExists($buildImported('my-cool-slug')));
-        self::assertTrue($this->repo->importedUrlExists($buildImported('another-slug', 'doma.in')));
-        self::assertFalse($this->repo->importedUrlExists($buildImported('non-existing-slug')));
-        self::assertFalse($this->repo->importedUrlExists($buildImported('non-existing-slug', 'doma.in')));
-        self::assertFalse($this->repo->importedUrlExists($buildImported('my-cool-slug', 'doma.in')));
-        self::assertFalse($this->repo->importedUrlExists($buildImported('another-slug')));
+        self::assertNotNull($this->repo->findOneByImportedUrl($buildImported('my-cool-slug')));
+        self::assertNotNull($this->repo->findOneByImportedUrl($buildImported('another-slug', 'doma.in')));
+        self::assertNull($this->repo->findOneByImportedUrl($buildImported('non-existing-slug')));
+        self::assertNull($this->repo->findOneByImportedUrl($buildImported('non-existing-slug', 'doma.in')));
+        self::assertNull($this->repo->findOneByImportedUrl($buildImported('my-cool-slug', 'doma.in')));
+        self::assertNull($this->repo->findOneByImportedUrl($buildImported('another-slug')));
     }
 }
