@@ -64,14 +64,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
             }
 
             $this->em->persist($shortUrl);
-
-            // TODO Process only missing visits when possible: $importedUrl->visitsCount();
-            // TODO Make importing visits optional based on params
-            $importedVisits = 0;
-            foreach ($importedUrl->visits() as $importedVisit) {
-                $this->em->persist(Visit::fromImport($importedVisit, $shortUrl));
-                $importedVisits++;
-            }
+            $importedVisits = $this->importVisits($importedUrl, $shortUrl);
 
             $io->text(
                 $importedVisits === 0
@@ -104,5 +97,17 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         }
 
         return $this->shortCodeHelper->ensureShortCodeUniqueness($shortUrl, false);
+    }
+
+    private function importVisits(ImportedShlinkUrl $importedUrl, ShortUrl $shortUrl): int
+    {
+        // TODO Process only missing visits when possible: $importedUrl->visitsCount();
+        $importedVisits = 0;
+        foreach ($importedUrl->visits() as $importedVisit) {
+            $this->em->persist(Visit::fromImport($importedVisit, $shortUrl));
+            $importedVisits++;
+        }
+
+        return $importedVisits;
     }
 }
