@@ -123,30 +123,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $startDate = $this->getStartDateOption($input, $output);
         $endDate = $this->getEndDateOption($input, $output);
         $orderBy = $this->processOrderBy($input);
-
-        $pickProp = static fn (string $prop): callable => static fn (array $shortUrl) => $shortUrl[$prop];
-        $columnMap = [
-            'Short Code' => $pickProp('shortCode'),
-            'Title' => $pickProp('title'),
-            'Short URL' => $pickProp('shortUrl'),
-            'Long URL' => $pickProp('longUrl'),
-            'Date created' => $pickProp('dateCreated'),
-            'Visits count' => $pickProp('visitsCount'),
-        ];
-        if ($this->getOptionWithDeprecatedFallback($input, 'show-tags')) {
-            $columnMap['Tags'] = static fn (array $shortUrl): string => implode(', ', $shortUrl['tags']);
-        }
-        if ($input->getOption('show-api-key')) {
-            $columnMap['API Key'] = static fn (array $_, ShortUrl $shortUrl): string =>
-                (string) $shortUrl->authorApiKey();
-        }
-        if ($input->getOption('show-api-key-name')) {
-            $columnMap['API Key Name'] = static function (array $_, ShortUrl $shortUrl): ?string {
-                $apiKey = $shortUrl->authorApiKey();
-
-                return $apiKey !== null ? $apiKey->name() : null;
-            };
-        }
+        $columnsMap = $this->resolveColumnsMap($input);
 
         $data = [
             ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
@@ -162,7 +139,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
 
         do {
             $data[ShortUrlsParamsInputFilter::PAGE] = $page;
-            $result = $this->renderPage($output, $columnMap, ShortUrlsParams::fromRawData($data), $all);
+            $result = $this->renderPage($output, $columnsMap, ShortUrlsParams::fromRawData($data), $all);
             $page++;
 
             $continue = $result->hasNextPage() && $io->confirm(
@@ -179,19 +156,19 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
 
     private function renderPage(
         OutputInterface $output,
-        array $columnMap,
+        array $columnsMap,
         ShortUrlsParams $params,
         bool $all
     ): Paginator {
         $shortUrls = $this->shortUrlService->listShortUrls($params);
 
-        $rows = map($shortUrls, function (ShortUrl $shortUrl) use ($columnMap) {
+        $rows = map($shortUrls, function (ShortUrl $shortUrl) use ($columnsMap) {
             $rawShortUrl = $this->transformer->transform($shortUrl);
-            return map($columnMap, fn (callable $call) => $call($rawShortUrl, $shortUrl));
+            return map($columnsMap, fn (callable $call) => $call($rawShortUrl, $shortUrl));
         });
 
         ShlinkTable::fromOutput($output)->render(
-            array_keys($columnMap),
+            array_keys($columnsMap),
             $rows,
             $all ? null : $this->formatCurrentPageMessage($shortUrls, 'Page %s of %s'),
         );
@@ -208,5 +185,34 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
 
         [$field, $dir] = array_pad(explode(',', $orderBy), 2, null);
         return $dir === null ? $field : sprintf('%s-%s', $field, $dir);
+    }
+
+    private function resolveColumnsMap(InputInterface $input): array
+    {
+        $pickProp = static fn (string $prop): callable => static fn (array $shortUrl) => $shortUrl[$prop];
+        $columnsMap = [
+            'Short Code' => $pickProp('shortCode'),
+            'Title' => $pickProp('title'),
+            'Short URL' => $pickProp('shortUrl'),
+            'Long URL' => $pickProp('longUrl'),
+            'Date created' => $pickProp('dateCreated'),
+            'Visits count' => $pickProp('visitsCount'),
+        ];
+        if ($this->getOptionWithDeprecatedFallback($input, 'show-tags')) {
+            $columnsMap['Tags'] = static fn (array $shortUrl): string => implode(', ', $shortUrl['tags']);
+        }
+        if ($input->getOption('show-api-key')) {
+            $columnsMap['API Key'] = static fn (array $_, ShortUrl $shortUrl): string =>
+            (string) $shortUrl->authorApiKey();
+        }
+        if ($input->getOption('show-api-key-name')) {
+            $columnsMap['API Key Name'] = static function (array $_, ShortUrl $shortUrl): ?string {
+                $apiKey = $shortUrl->authorApiKey();
+
+                return $apiKey !== null ? $apiKey->name() : null;
+            };
+        }
+
+        return $columnsMap;
     }
 }
