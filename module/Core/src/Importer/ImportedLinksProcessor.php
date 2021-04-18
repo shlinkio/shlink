@@ -49,9 +49,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 
         /** @var ImportedShlinkUrl $importedUrl */
         foreach ($iterable as $importedUrl) {
-            $longUrl = $importedUrl->longUrl();
-
-            $generateNewIfDuplicated = static function () use ($io, $importedUrl): bool {
+            $skipOnShortCodeConflict = static function () use ($io, $importedUrl): bool {
                 $action = $io->choice(sprintf(
                     'Failed to import URL "%s" because its short-code "%s" is already in use. Do you want to generate '
                     . 'a new one or skip it?',
@@ -59,10 +57,11 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
                     $importedUrl->shortCode(),
                 ), ['Generate new short-code', 'Skip'], 1);
 
-                return $action !== 'Skip';
+                return $action === 'Skip';
             };
-            [$shortUrl, $isNew] = $this->getOrCreateShortUrl($importedUrl, $importShortCodes, $generateNewIfDuplicated);
+            [$shortUrl, $isNew] = $this->getOrCreateShortUrl($importedUrl, $importShortCodes, $skipOnShortCodeConflict);
 
+            $longUrl = $importedUrl->longUrl();
             if ($shortUrl === null) {
                 $io->text(sprintf('%s: <fg=red>Error</>', $longUrl));
                 continue;
@@ -93,15 +92,15 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     private function getOrCreateShortUrl(
         ImportedShlinkUrl $importedUrl,
         bool $importShortCodes,
-        callable $generateNewIfDuplicated
+        callable $skipOnShortCodeConflict
     ): array {
-        $existingShortUrl = $this->shortUrlRepo->findOneByImportedUrl($importedUrl);
-        if ($existingShortUrl !== null) {
-            return [$existingShortUrl, false];
+        $alreadyImportedShortUrl = $this->shortUrlRepo->findOneByImportedUrl($importedUrl);
+        if ($alreadyImportedShortUrl !== null) {
+            return [$alreadyImportedShortUrl, false];
         }
 
         $shortUrl = ShortUrl::fromImport($importedUrl, $importShortCodes, $this->relationResolver);
-        if (! $this->handleShortCodeUniqueness($shortUrl, $importShortCodes, $generateNewIfDuplicated)) {
+        if (! $this->handleShortCodeUniqueness($shortUrl, $importShortCodes, $skipOnShortCodeConflict)) {
             return [null, false];
         }
 
@@ -112,13 +111,13 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     private function handleShortCodeUniqueness(
         ShortUrl $shortUrl,
         bool $importShortCodes,
-        callable $generateNewIfDuplicated
+        callable $skipOnShortCodeConflict
     ): bool {
         if ($this->shortCodeHelper->ensureShortCodeUniqueness($shortUrl, $importShortCodes)) {
             return true;
         }
 
-        if (! $generateNewIfDuplicated()) {
+        if ($skipOnShortCodeConflict()) {
             return false;
         }
 

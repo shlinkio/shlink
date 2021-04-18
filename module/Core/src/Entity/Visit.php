@@ -150,6 +150,15 @@ class Visit extends AbstractEntity implements JsonSerializable
         return $this->type;
     }
 
+    /**
+     * Needed only for ArrayCollections to be able to apply criteria filtering
+     * @internal
+     */
+    public function getType(): string
+    {
+        return $this->type();
+    }
+
     public function jsonSerialize(): array
     {
         return [
