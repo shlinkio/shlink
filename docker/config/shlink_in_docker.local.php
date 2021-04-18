@@ -99,7 +99,7 @@ return [
     ],
 
     'delete_short_urls' => [
-        'check_visits_threshold' => true,
+        'check_visits_threshold' => (bool) env('ENABLE_DELETE_SHORT_URL_THRESHOLD', true),
         'visits_threshold' => (int) env('DELETE_SHORT_URL_THRESHOLD', DEFAULT_DELETE_SHORT_URL_THRESHOLD),
     ],
 
