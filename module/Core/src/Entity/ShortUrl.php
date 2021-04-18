@@ -166,12 +166,18 @@ class ShortUrl extends AbstractEntity
         return count($this->visits);
     }
 
-    public function importedVisitsCount(): int
+    public function mostRecentImportedVisitDate(): ?Chronos
     {
         /** @var Selectable $visits */
         $visits = $this->visits;
-        $criteria = Criteria::create()->where(Criteria::expr()->eq('type', Visit::TYPE_IMPORTED));
-        return count($visits->matching($criteria));
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('type', Visit::TYPE_IMPORTED))
+                                      ->orderBy(['id' => 'DESC'])
+                                      ->setMaxResults(1);
+
+        /** @var Visit|false $visit */
+        $visit = $visits->matching($criteria)->last();
+
+        return $visit === false ? null : $visit->getDate();
     }
 
     /**
@@ -189,7 +195,7 @@ class ShortUrl extends AbstractEntity
         return $this->maxVisits;
     }
 
-    public function getTitle(): ?string
+    public function title(): ?string
     {
         return $this->title;
     }

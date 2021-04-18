@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Importer;
 
+use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -23,6 +24,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     private ShortUrlRelationResolverInterface $relationResolver;
     private ShortCodeHelperInterface $shortCodeHelper;
     private DoctrineBatchHelperInterface $batchHelper;
+    private ShortUrlRepositoryInterface $shortUrlRepo;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -34,6 +36,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         $this->relationResolver = $relationResolver;
         $this->shortCodeHelper = $shortCodeHelper;
         $this->batchHelper = $batchHelper;
+        $this->shortUrlRepo = $this->em->getRepository(ShortUrl::class); // @phpstan-ignore-line
     }
 
     /**
@@ -41,8 +44,6 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
      */
     public function process(StyleInterface $io, iterable $shlinkUrls, array $params): void
     {
-        /** @var ShortUrlRepositoryInterface $shortUrlRepo */
-        $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
         $importShortCodes = $params['import_short_codes'];
         $iterable = $this->batchHelper->wrapIterable($shlinkUrls, 100);
 
@@ -50,54 +51,74 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         foreach ($iterable as $importedUrl) {
             $longUrl = $importedUrl->longUrl();
 
-            // Skip already imported URLs
-            if ($shortUrlRepo->findOneByImportedUrl($importedUrl) !== null) {
-                // TODO If the URL exists, allow to merge visits instead of just skipping completely
-                $io->text(sprintf('%s: <comment>Skipped</comment>', $longUrl));
+            $generateNewIfDuplicated = static function () use ($io, $importedUrl): bool {
+                $action = $io->choice(sprintf(
+                    'Failed to import URL "%s" because its short-code "%s" is already in use. Do you want to generate '
+                    . 'a new one or skip it?',
+                    $importedUrl->longUrl(),
+                    $importedUrl->shortCode(),
+                ), ['Generate new short-code', 'Skip'], 1);
+
+                return $action !== 'Skip';
+            };
+            [$shortUrl, $isNew] = $this->getOrCreateShortUrl($importedUrl, $importShortCodes, $generateNewIfDuplicated);
+
+            if ($shortUrl === null) {
+                $io->text(sprintf('%s: <fg=red>Error</>', $longUrl));
                 continue;
             }
 
-            $shortUrl = ShortUrl::fromImport($importedUrl, $importShortCodes, $this->relationResolver);
-            if (! $this->handleShortCodeUniqueness($importedUrl, $shortUrl, $io, $importShortCodes)) {
-                $io->text(sprintf('%s: <comment>Skipped</comment>', $longUrl));
-                continue;
-            }
-
-            $this->em->persist($shortUrl);
             $importedVisits = $this->importVisits($importedUrl, $shortUrl);
 
-            $io->text(
-                $importedVisits === 0
-                    ? sprintf('%s: <info>Imported</info>', $longUrl)
-                    : sprintf('%s: <info>Imported</info> with <info>%s</info> visits', $longUrl, $importedVisits),
-            );
+            if ($importedVisits === 0) {
+                $io->text(
+                    $isNew
+                        ? sprintf('%s: <info>Imported</info>', $longUrl)
+                        : sprintf('%s: <comment>Skipped</comment>', $longUrl),
+                );
+            } else {
+                $io->text(
+                    $isNew
+                        ? sprintf('%s: <info>Imported</info> with <info>%s</info> visits', $longUrl, $importedVisits)
+                        : sprintf(
+                            '%s: <comment>Skipped</comment>. Imported <info>%s</info> visits',
+                            $longUrl,
+                            $importedVisits,
+                        ),
+                );
+            }
         }
     }
 
-//    private function getOrCreateShortUrl(ImportedShlinkUrl $url, bool $importShortCodes): ?ShortUrl
-//    {
-//
-//    }
+    private function getOrCreateShortUrl(
+        ImportedShlinkUrl $importedUrl,
+        bool $importShortCodes,
+        callable $generateNewIfDuplicated
+    ): array {
+        $existingShortUrl = $this->shortUrlRepo->findOneByImportedUrl($importedUrl);
+        if ($existingShortUrl !== null) {
+            return [$existingShortUrl, false];
+        }
+
+        $shortUrl = ShortUrl::fromImport($importedUrl, $importShortCodes, $this->relationResolver);
+        if (! $this->handleShortCodeUniqueness($shortUrl, $importShortCodes, $generateNewIfDuplicated)) {
+            return [null, false];
+        }
+
+        $this->em->persist($shortUrl);
+        return [$shortUrl, true];
+    }
 
     private function handleShortCodeUniqueness(
-        ImportedShlinkUrl $url,
         ShortUrl $shortUrl,
-        StyleInterface $io,
-        bool $importShortCodes
+        bool $importShortCodes,
+        callable $generateNewIfDuplicated
     ): bool {
         if ($this->shortCodeHelper->ensureShortCodeUniqueness($shortUrl, $importShortCodes)) {
             return true;
         }
 
-        $longUrl = $url->longUrl();
-        $action = $io->choice(sprintf(
-            'Failed to import URL "%s" because its short-code "%s" is already in use. Do you want to generate a new '
-            . 'one or skip it?',
-            $longUrl,
-            $url->shortCode(),
-        ), ['Generate new short-code', 'Skip'], 1);
-
-        if ($action === 'Skip') {
+        if (! $generateNewIfDuplicated()) {
             return false;
         }
 
@@ -106,14 +127,16 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 
     private function importVisits(ImportedShlinkUrl $importedUrl, ShortUrl $shortUrl): int
     {
-        // If we know the amount of visits that can be imported, import only those left. Import all otherwise.
-        $importVisitsCount = $importedUrl->visitsCount();
-        $visitsLeft = $importVisitsCount !== null ? $importVisitsCount - $shortUrl->importedVisitsCount() : null;
+        $mostRecentImportedDate = $shortUrl->mostRecentImportedVisitDate();
 
         $importedVisits = 0;
         foreach ($importedUrl->visits() as $importedVisit) {
-            if ($visitsLeft !== null && $importedVisits >= $visitsLeft) {
-                break;
+            // Skip visits which are older than the most recent already imported visit's date
+            if (
+                $mostRecentImportedDate !== null
+                && $mostRecentImportedDate->gte(Chronos::instance($importedVisit->date()))
+            ) {
+                continue;
             }
 
             $this->em->persist(Visit::fromImport($shortUrl, $importedVisit));
