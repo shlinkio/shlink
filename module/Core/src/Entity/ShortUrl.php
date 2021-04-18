@@ -7,6 +7,8 @@ namespace Shlinkio\Shlink\Core\Entity;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Selectable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
@@ -86,17 +88,29 @@ class ShortUrl extends AbstractEntity
         ?ShortUrlRelationResolverInterface $relationResolver = null
     ): self {
         $meta = [
+            ShortUrlInputFilter::VALIDATE_URL => false,
             ShortUrlInputFilter::LONG_URL => $url->longUrl(),
             ShortUrlInputFilter::DOMAIN => $url->domain(),
             ShortUrlInputFilter::TAGS => $url->tags(),
             ShortUrlInputFilter::TITLE => $url->title(),
-            ShortUrlInputFilter::VALIDATE_URL => false,
+            ShortUrlInputFilter::MAX_VISITS => $url->meta()->maxVisits(),
         ];
         if ($importShortCode) {
             $meta[ShortUrlInputFilter::CUSTOM_SLUG] = $url->shortCode();
         }
 
         $instance = self::fromMeta(ShortUrlMeta::fromRawData($meta), $relationResolver);
+
+        $validSince = $url->meta()->validSince();
+        if ($validSince !== null) {
+            $instance->validSince = Chronos::instance($validSince);
+        }
+
+        $validUntil = $url->meta()->validUntil();
+        if ($validUntil !== null) {
+            $instance->validUntil = Chronos::instance($validUntil);
+        }
+
         $instance->importSource = $url->source();
         $instance->importOriginalShortCode = $url->shortCode();
         $instance->dateCreated = Chronos::instance($url->createdAt());
@@ -152,6 +166,20 @@ class ShortUrl extends AbstractEntity
         return count($this->visits);
     }
 
+    public function mostRecentImportedVisitDate(): ?Chronos
+    {
+        /** @var Selectable $visits */
+        $visits = $this->visits;
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('type', Visit::TYPE_IMPORTED))
+                                      ->orderBy(['id' => 'DESC'])
+                                      ->setMaxResults(1);
+
+        /** @var Visit|false $visit */
+        $visit = $visits->matching($criteria)->last();
+
+        return $visit === false ? null : $visit->getDate();
+    }
+
     /**
      * @param Collection|Visit[] $visits
      * @internal
@@ -167,7 +195,7 @@ class ShortUrl extends AbstractEntity
         return $this->maxVisits;
     }
 
-    public function getTitle(): ?string
+    public function title(): ?string
     {
         return $this->title;
     }

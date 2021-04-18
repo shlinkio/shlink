@@ -11,7 +11,6 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\Stdlib\Glob;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use PDO;
 use PHPUnit\Runner\Version;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\Driver\Selector;
@@ -55,10 +54,6 @@ $buildDbConnection = function (): array {
             'password' => 'root',
             'dbname' => 'shlink_test',
             'charset' => 'utf8',
-            'driverOptions' => [
-                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
-                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-            ],
         ],
         'postgres' => [
             'driver' => 'pdo_pgsql',

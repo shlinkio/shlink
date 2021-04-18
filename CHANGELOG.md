@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     Also, when using swoole, the file is now updated **after** tracking a visit, which means it will not apply until the next one.
 
 * [#1059](https://github.com/shlinkio/shlink/issues/1059) Added ability to optionally display author API key and its name when listing short URLs from the command line.
+* [#1066](https://github.com/shlinkio/shlink/issues/1066) Added support to import short URLs and their visits from another Shlink instance using its API.
 
 ### Changed
 * [#1036](https://github.com/shlinkio/shlink/issues/1036) Updated to `happyr/doctrine-specification` 2.0.

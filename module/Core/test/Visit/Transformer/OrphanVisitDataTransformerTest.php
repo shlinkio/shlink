@@ -68,7 +68,7 @@ class OrphanVisitDataTransformerTest extends TestCase
                                                        ->withHeader('Referer', 'referer')
                                                        ->withUri(new Uri('https://doma.in/foo/bar')),
                 ),
-            )->locate($location = new VisitLocation(Location::emptyInstance())),
+            )->locate($location = VisitLocation::fromGeolocation(Location::emptyInstance())),
             [
                 'referer' => 'referer',
                 'date' => $visit->getDate()->toAtomString(),

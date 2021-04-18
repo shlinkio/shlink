@@ -11,32 +11,83 @@ use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 
 class Visit extends AbstractEntity implements JsonSerializable
 {
     public const TYPE_VALID_SHORT_URL = 'valid_short_url';
+    public const TYPE_IMPORTED = 'imported';
     public const TYPE_INVALID_SHORT_URL = 'invalid_short_url';
     public const TYPE_BASE_URL = 'base_url';
     public const TYPE_REGULAR_404 = 'regular_404';
 
     private string $referer;
     private Chronos $date;
-    private ?string $remoteAddr;
-    private ?string $visitedUrl;
+    private ?string $remoteAddr = null;
+    private ?string $visitedUrl = null;
     private string $userAgent;
     private string $type;
     private ?ShortUrl $shortUrl;
     private ?VisitLocation $visitLocation = null;
 
-    private function __construct(?ShortUrl $shortUrl, Visitor $visitor, string $type, bool $anonymize = true)
+    private function __construct(?ShortUrl $shortUrl, string $type)
     {
         $this->shortUrl = $shortUrl;
         $this->date = Chronos::now();
+        $this->type = $type;
+    }
+
+    public static function forValidShortUrl(ShortUrl $shortUrl, Visitor $visitor, bool $anonymize = true): self
+    {
+        $instance = new self($shortUrl, self::TYPE_VALID_SHORT_URL);
+        $instance->hydrateFromVisitor($visitor, $anonymize);
+
+        return $instance;
+    }
+
+    public static function fromImport(ShortUrl $shortUrl, ImportedShlinkVisit $importedVisit): self
+    {
+        $instance = new self($shortUrl, self::TYPE_IMPORTED);
+        $instance->userAgent = $importedVisit->userAgent();
+        $instance->referer = $importedVisit->referer();
+        $instance->date = Chronos::instance($importedVisit->date());
+
+        $importedLocation = $importedVisit->location();
+        $instance->visitLocation = $importedLocation !== null ? VisitLocation::fromImport($importedLocation) : null;
+
+        return $instance;
+    }
+
+    public static function forBasePath(Visitor $visitor, bool $anonymize = true): self
+    {
+        $instance = new self(null, self::TYPE_BASE_URL);
+        $instance->hydrateFromVisitor($visitor, $anonymize);
+
+        return $instance;
+    }
+
+    public static function forInvalidShortUrl(Visitor $visitor, bool $anonymize = true): self
+    {
+        $instance = new self(null, self::TYPE_INVALID_SHORT_URL);
+        $instance->hydrateFromVisitor($visitor, $anonymize);
+
+        return $instance;
+    }
+
+    public static function forRegularNotFound(Visitor $visitor, bool $anonymize = true): self
+    {
+        $instance = new self(null, self::TYPE_REGULAR_404);
+        $instance->hydrateFromVisitor($visitor, $anonymize);
+
+        return $instance;
+    }
+
+    private function hydrateFromVisitor(Visitor $visitor, bool $anonymize = true): void
+    {
         $this->userAgent = $visitor->getUserAgent();
         $this->referer = $visitor->getReferer();
         $this->remoteAddr = $this->processAddress($anonymize, $visitor->getRemoteAddress());
         $this->visitedUrl = $visitor->getVisitedUrl();
-        $this->type = $type;
     }
 
     private function processAddress(bool $anonymize, ?string $address): ?string
@@ -51,26 +102,6 @@ class Visit extends AbstractEntity implements JsonSerializable
         } catch (InvalidArgumentException $e) {
             return null;
         }
-    }
-
-    public static function forValidShortUrl(ShortUrl $shortUrl, Visitor $visitor, bool $anonymize = true): self
-    {
-        return new self($shortUrl, $visitor, self::TYPE_VALID_SHORT_URL, $anonymize);
-    }
-
-    public static function forBasePath(Visitor $visitor, bool $anonymize = true): self
-    {
-        return new self(null, $visitor, self::TYPE_BASE_URL, $anonymize);
-    }
-
-    public static function forInvalidShortUrl(Visitor $visitor, bool $anonymize = true): self
-    {
-        return new self(null, $visitor, self::TYPE_INVALID_SHORT_URL, $anonymize);
-    }
-
-    public static function forRegularNotFound(Visitor $visitor, bool $anonymize = true): self
-    {
-        return new self(null, $visitor, self::TYPE_REGULAR_404, $anonymize);
     }
 
     public function getRemoteAddr(): ?string
@@ -117,6 +148,15 @@ class Visit extends AbstractEntity implements JsonSerializable
     public function type(): string
     {
         return $this->type;
+    }
+
+    /**
+     * Needed only for ArrayCollections to be able to apply criteria filtering
+     * @internal
+     */
+    public function getType(): string
+    {
+        return $this->type();
     }
 
     public function jsonSerialize(): array

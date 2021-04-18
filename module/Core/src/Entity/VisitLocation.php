@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Entity;
 
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocation extends AbstractEntity implements VisitLocationInterface
@@ -19,9 +20,53 @@ class VisitLocation extends AbstractEntity implements VisitLocationInterface
     private string $timezone;
     private bool $isEmpty;
 
-    public function __construct(Location $location)
+    private function __construct()
     {
-        $this->exchangeLocationInfo($location);
+    }
+
+    public static function fromGeolocation(Location $location): self
+    {
+        $instance = new self();
+
+        $instance->countryCode = $location->countryCode();
+        $instance->countryName = $location->countryName();
+        $instance->regionName = $location->regionName();
+        $instance->cityName = $location->city();
+        $instance->latitude = $location->latitude();
+        $instance->longitude = $location->longitude();
+        $instance->timezone = $location->timeZone();
+        $instance->computeIsEmpty();
+
+        return $instance;
+    }
+
+    public static function fromImport(ImportedShlinkVisitLocation $location): self
+    {
+        $instance = new self();
+
+        $instance->countryCode = $location->countryCode();
+        $instance->countryName = $location->countryName();
+        $instance->regionName = $location->regionName();
+        $instance->cityName = $location->cityName();
+        $instance->latitude = $location->latitude();
+        $instance->longitude = $location->longitude();
+        $instance->timezone = $location->timeZone();
+        $instance->computeIsEmpty();
+
+        return $instance;
+    }
+
+    private function computeIsEmpty(): void
+    {
+        $this->isEmpty = (
+            $this->countryCode === '' &&
+            $this->countryName === '' &&
+            $this->regionName === '' &&
+            $this->cityName === '' &&
+            $this->latitude === 0.0 &&
+            $this->longitude === 0.0 &&
+            $this->timezone === ''
+        );
     }
 
     public function getCountryName(): string
@@ -47,26 +92,6 @@ class VisitLocation extends AbstractEntity implements VisitLocationInterface
     public function isEmpty(): bool
     {
         return $this->isEmpty;
-    }
-
-    private function exchangeLocationInfo(Location $info): void
-    {
-        $this->countryCode = $info->countryCode();
-        $this->countryName = $info->countryName();
-        $this->regionName = $info->regionName();
-        $this->cityName = $info->city();
-        $this->latitude = $info->latitude();
-        $this->longitude = $info->longitude();
-        $this->timezone = $info->timeZone();
-        $this->isEmpty = (
-            $this->countryCode === '' &&
-            $this->countryName === '' &&
-            $this->regionName === '' &&
-            $this->cityName === '' &&
-            $this->latitude === 0.0 &&
-            $this->longitude === 0.0 &&
-            $this->timezone === ''
-        );
     }
 
     public function jsonSerialize(): array

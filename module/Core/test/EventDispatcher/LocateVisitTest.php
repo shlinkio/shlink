@@ -168,7 +168,7 @@ class LocateVisitTest extends TestCase
 
         ($this->locateVisit)($event);
 
-        self::assertEquals($visit->getVisitLocation(), new VisitLocation(Location::emptyInstance()));
+        self::assertEquals($visit->getVisitLocation(), VisitLocation::fromGeolocation(Location::emptyInstance()));
         $findVisit->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
         $resolveIp->shouldNotHaveBeenCalled();
@@ -204,7 +204,7 @@ class LocateVisitTest extends TestCase
 
         ($this->locateVisit)($event);
 
-        self::assertEquals($visit->getVisitLocation(), new VisitLocation($location));
+        self::assertEquals($visit->getVisitLocation(), VisitLocation::fromGeolocation($location));
         $findVisit->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
         $resolveIp->shouldHaveBeenCalledOnce();

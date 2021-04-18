@@ -42,12 +42,6 @@ $helper = new class {
             ];
         }
 
-        $driverOptions = ! $isMysql ? [] : [
-            // 1002 -> PDO::MYSQL_ATTR_INIT_COMMAND
-            1002 => 'SET NAMES utf8',
-            // 1000 -> PDO::MYSQL_ATTR_USE_BUFFERED_QUERY
-            1000 => true,
-        ];
         return [
             'driver' => self::DB_DRIVERS_MAP[$driver],
             'dbname' => env('DB_NAME', 'shlink'),
@@ -55,7 +49,6 @@ $helper = new class {
             'password' => env('DB_PASSWORD'),
             'host' => env('DB_HOST', $driver === 'postgres' ? env('DB_UNIX_SOCKET') : null),
             'port' => env('DB_PORT', self::DB_PORTS_MAP[$driver]),
-            'driverOptions' => $driverOptions,
             'unix_socket' => $isMysql ? env('DB_UNIX_SOCKET') : null,
         ];
     }

@@ -57,7 +57,7 @@ class VisitRepositoryTest extends DatabaseTestCase
             $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
 
             if ($i >= 2) {
-                $location = new VisitLocation(Location::emptyInstance());
+                $location = VisitLocation::fromGeolocation(Location::emptyInstance());
                 $this->getEntityManager()->persist($location);
                 $visit->locate($location);
             }
