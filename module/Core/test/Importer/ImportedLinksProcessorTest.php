@@ -20,6 +20,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
+use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Symfony\Component\Console\Style\StyleInterface;
 
 use function count;
@@ -30,6 +31,8 @@ use function str_contains;
 class ImportedLinksProcessorTest extends TestCase
 {
     use ProphecyTrait;
+
+    private const PARAMS = ['import_short_codes' => true, 'source' => ImportSources::BITLY];
 
     private ImportedLinksProcessor $processor;
     private ObjectProphecy $em;
@@ -71,7 +74,7 @@ class ImportedLinksProcessorTest extends TestCase
         $ensureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
         $persist = $this->em->persist(Argument::type(ShortUrl::class));
 
-        $this->processor->process($this->io->reveal(), $urls, ['import_short_codes' => true]);
+        $this->processor->process($this->io->reveal(), $urls, self::PARAMS);
 
         $importedUrlExists->shouldHaveBeenCalledTimes($expectedCalls);
         $ensureUniqueness->shouldHaveBeenCalledTimes($expectedCalls);
@@ -101,7 +104,7 @@ class ImportedLinksProcessorTest extends TestCase
         $ensureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
         $persist = $this->em->persist(Argument::type(ShortUrl::class));
 
-        $this->processor->process($this->io->reveal(), $urls, ['import_short_codes' => true]);
+        $this->processor->process($this->io->reveal(), $urls, self::PARAMS);
 
         $importedUrlExists->shouldHaveBeenCalledTimes(count($urls));
         $ensureUniqueness->shouldHaveBeenCalledTimes(2);
@@ -138,7 +141,7 @@ class ImportedLinksProcessorTest extends TestCase
         });
         $persist = $this->em->persist(Argument::type(ShortUrl::class));
 
-        $this->processor->process($this->io->reveal(), $urls, ['import_short_codes' => true]);
+        $this->processor->process($this->io->reveal(), $urls, self::PARAMS);
 
         $importedUrlExists->shouldHaveBeenCalledTimes(count($urls));
         $failingEnsureUniqueness->shouldHaveBeenCalledTimes(5);
@@ -164,7 +167,7 @@ class ImportedLinksProcessorTest extends TestCase
         $persistUrl = $this->em->persist(Argument::type(ShortUrl::class));
         $persistVisits = $this->em->persist(Argument::type(Visit::class));
 
-        $this->processor->process($this->io->reveal(), [$importedUrl], ['import_short_codes' => true]);
+        $this->processor->process($this->io->reveal(), [$importedUrl], self::PARAMS);
 
         $findExisting->shouldHaveBeenCalledOnce();
         $ensureUniqueness->shouldHaveBeenCalledTimes($foundShortUrl === null ? 1 : 0);

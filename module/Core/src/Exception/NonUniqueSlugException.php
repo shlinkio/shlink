@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Exception;
 use Fig\Http\Message\StatusCodeInterface;
 use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function sprintf;
 
@@ -33,5 +34,10 @@ class NonUniqueSlugException extends InvalidArgumentException implements Problem
         }
 
         return $e;
+    }
+
+    public static function fromImport(ImportedShlinkUrl $importedUrl): self
+    {
+        return self::fromSlug($importedUrl->shortCode(), $importedUrl->domain());
     }
 }

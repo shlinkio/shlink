@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 
-class ShortCodeHelper implements ShortCodeHelperInterface
+class ShortCodeHelper implements ShortCodeHelperInterface // TODO Rename to ShortCodeUniquenessHelper
 {
     private EntityManagerInterface $em;
 

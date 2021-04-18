@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Importer;
 
-use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Symfony\Component\Console\Style\StyleInterface;
 
 use function sprintf;
@@ -45,7 +45,8 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     public function process(StyleInterface $io, iterable $shlinkUrls, array $params): void
     {
         $importShortCodes = $params['import_short_codes'];
-        $iterable = $this->batchHelper->wrapIterable($shlinkUrls, 100);
+        $source = $params['source'];
+        $iterable = $this->batchHelper->wrapIterable($shlinkUrls, $source === ImportSources::SHLINK ? 10 : 100);
 
         /** @var ImportedShlinkUrl $importedUrl */
         foreach ($iterable as $importedUrl) {
@@ -59,53 +60,37 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 
                 return $action === 'Skip';
             };
-            [$shortUrl, $isNew] = $this->getOrCreateShortUrl($importedUrl, $importShortCodes, $skipOnShortCodeConflict);
-
             $longUrl = $importedUrl->longUrl();
-            if ($shortUrl === null) {
+
+            try {
+                $shortUrlImporting = $this->resolveShortUrl($importedUrl, $importShortCodes, $skipOnShortCodeConflict);
+            } catch (NonUniqueSlugException $e) {
                 $io->text(sprintf('%s: <fg=red>Error</>', $longUrl));
                 continue;
             }
 
-            $importedVisits = $this->importVisits($importedUrl, $shortUrl);
-
-            if ($importedVisits === 0) {
-                $io->text(
-                    $isNew
-                        ? sprintf('%s: <info>Imported</info>', $longUrl)
-                        : sprintf('%s: <comment>Skipped</comment>', $longUrl),
-                );
-            } else {
-                $io->text(
-                    $isNew
-                        ? sprintf('%s: <info>Imported</info> with <info>%s</info> visits', $longUrl, $importedVisits)
-                        : sprintf(
-                            '%s: <comment>Skipped</comment>. Imported <info>%s</info> visits',
-                            $longUrl,
-                            $importedVisits,
-                        ),
-                );
-            }
+            $resultMessage = $shortUrlImporting->importVisits($importedUrl->visits(), $this->em);
+            $io->text(sprintf('%s: %s', $longUrl, $resultMessage));
         }
     }
 
-    private function getOrCreateShortUrl(
+    private function resolveShortUrl(
         ImportedShlinkUrl $importedUrl,
         bool $importShortCodes,
         callable $skipOnShortCodeConflict
-    ): array {
+    ): ShortUrlImporting {
         $alreadyImportedShortUrl = $this->shortUrlRepo->findOneByImportedUrl($importedUrl);
         if ($alreadyImportedShortUrl !== null) {
-            return [$alreadyImportedShortUrl, false];
+            return ShortUrlImporting::fromExistingShortUrl($alreadyImportedShortUrl);
         }
 
         $shortUrl = ShortUrl::fromImport($importedUrl, $importShortCodes, $this->relationResolver);
         if (! $this->handleShortCodeUniqueness($shortUrl, $importShortCodes, $skipOnShortCodeConflict)) {
-            return [null, false];
+            throw NonUniqueSlugException::fromImport($importedUrl);
         }
 
         $this->em->persist($shortUrl);
-        return [$shortUrl, true];
+        return ShortUrlImporting::fromNewShortUrl($shortUrl);
     }
 
     private function handleShortCodeUniqueness(
@@ -122,26 +107,5 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         }
 
         return $this->shortCodeHelper->ensureShortCodeUniqueness($shortUrl, false);
-    }
-
-    private function importVisits(ImportedShlinkUrl $importedUrl, ShortUrl $shortUrl): int
-    {
-        $mostRecentImportedDate = $shortUrl->mostRecentImportedVisitDate();
-
-        $importedVisits = 0;
-        foreach ($importedUrl->visits() as $importedVisit) {
-            // Skip visits which are older than the most recent already imported visit's date
-            if (
-                $mostRecentImportedDate !== null
-                && $mostRecentImportedDate->gte(Chronos::instance($importedVisit->date()))
-            ) {
-                continue;
-            }
-
-            $this->em->persist(Visit::fromImport($shortUrl, $importedVisit));
-            $importedVisits++;
-        }
-
-        return $importedVisits;
     }
 }
