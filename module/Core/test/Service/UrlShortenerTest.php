@@ -46,7 +46,6 @@ class UrlShortenerTest extends TestCase
             return $callback();
         });
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $repo->shortCodeIsInUse(Argument::cetera())->willReturn(false);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
         $this->shortCodeHelper = $this->prophesize(ShortCodeHelperInterface::class);

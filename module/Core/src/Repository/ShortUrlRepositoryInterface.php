@@ -9,6 +9,7 @@ use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterfa
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -36,7 +37,9 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
 
     public function findOne(string $shortCode, ?string $domain = null, ?Specification $spec = null): ?ShortUrl;
 
-    public function shortCodeIsInUse(string $slug, ?string $domain, ?Specification $spec = null): bool;
+    public function shortCodeIsInUse(ShortUrlIdentifier $identifier, ?Specification $spec = null): bool;
+
+    public function shortCodeIsInUseWithLock(ShortUrlIdentifier $identifier, ?Specification $spec = null): bool;
 
     public function findOneMatching(ShortUrlMeta $meta): ?ShortUrl;
 

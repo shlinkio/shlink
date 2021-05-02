@@ -81,7 +81,9 @@ class VisitsStatsHelperTest extends TestCase
         $shortCode = '123ABC';
         $spec = $apiKey === null ? null : $apiKey->spec();
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $count = $repo->shortCodeIsInUse($shortCode, null, $spec)->willReturn(true);
+        $count = $repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode), $spec)->willReturn(
+            true,
+        );
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
 
         $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
@@ -101,7 +103,9 @@ class VisitsStatsHelperTest extends TestCase
     {
         $shortCode = '123ABC';
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $count = $repo->shortCodeIsInUse($shortCode, null, null)->willReturn(false);
+        $count = $repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode), null)->willReturn(
+            false,
+        );
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
 
         $this->expectException(ShortUrlNotFoundException::class);

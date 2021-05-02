@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Model;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Symfony\Component\Console\Input\InputInterface;
 
 final class ShortUrlIdentifier
@@ -39,6 +40,19 @@ final class ShortUrlIdentifier
         $shortCode = $input->getArguments()['shortCode'] ?? '';
         $domain = $input->getOptions()['domain'] ?? null;
 
+        return new self($shortCode, $domain);
+    }
+
+    public static function fromShortUrl(ShortUrl $shortUrl): self
+    {
+        $domain = $shortUrl->getDomain();
+        $domainAuthority = $domain !== null ? $domain->getAuthority() : null;
+
+        return new self($shortUrl->getShortCode(), $domainAuthority);
+    }
+
+    public static function fromShortCodeAndDomain(string $shortCode, ?string $domain = null): self
+    {
         return new self($shortCode, $domain);
     }
 
