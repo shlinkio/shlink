@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\Persistence\ObjectRepository;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterface;
+use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -19,4 +20,6 @@ interface TagRepositoryInterface extends ObjectRepository, EntitySpecificationRe
     public function findTagsWithInfo(?ApiKey $apiKey = null): array;
 
     public function tagExists(string $tag, ?ApiKey $apiKey = null): bool;
+
+    public function findOneByNameWithLock(string $name): ?Tag;
 }

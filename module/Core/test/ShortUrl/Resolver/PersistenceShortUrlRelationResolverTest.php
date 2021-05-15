@@ -6,11 +6,11 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Resolver;
 
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
@@ -48,8 +48,8 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
      */
     public function findsOrCreatesDomainWhenValueIsProvided(?Domain $foundDomain, string $authority): void
     {
-        $repo = $this->prophesize(ObjectRepository::class);
-        $findDomain = $repo->findOneBy(['authority' => $authority])->willReturn($foundDomain);
+        $repo = $this->prophesize(DomainRepositoryInterface::class);
+        $findDomain = $repo->findOneByAuthorityWithLock($authority)->willReturn($foundDomain);
         $getRepository = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
 
         $result = $this->resolver->resolveDomain($authority);
@@ -80,7 +80,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         $expectedPersistedTags = count($expectedTags);
 
         $tagRepo = $this->prophesize(TagRepositoryInterface::class);
-        $findTag = $tagRepo->findOneBy(Argument::type('array'))->will(function (array $args): ?Tag {
+        $findTag = $tagRepo->findOneByNameWithLock(Argument::type('string'))->will(function (array $args): ?Tag {
             ['name' => $name] = $args[0];
             return $name === 'foo' ? new Tag($name) : null;
         });
@@ -106,7 +106,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     public function returnsEmptyCollectionWhenProvidingEmptyListOfTags(): void
     {
         $tagRepo = $this->prophesize(TagRepositoryInterface::class);
-        $findTag = $tagRepo->findOneBy(Argument::type('array'))->willReturn(null);
+        $findTag = $tagRepo->findOneByNameWithLock(Argument::type('string'))->willReturn(null);
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
         $persist = $this->em->persist(Argument::type(Tag::class));
 
@@ -121,8 +121,8 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     /** @test */
     public function newDomainsAreMemoizedUntilStateIsCleared(): void
     {
-        $repo = $this->prophesize(ObjectRepository::class);
-        $repo->findOneBy(Argument::type('array'))->willReturn(null);
+        $repo = $this->prophesize(DomainRepositoryInterface::class);
+        $repo->findOneByAuthorityWithLock(Argument::type('string'))->willReturn(null);
         $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
 
         $authority = 'foo.com';
@@ -141,7 +141,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     public function newTagsAreMemoizedUntilStateIsCleared(): void
     {
         $tagRepo = $this->prophesize(TagRepositoryInterface::class);
-        $tagRepo->findOneBy(Argument::type('array'))->willReturn(null);
+        $tagRepo->findOneByNameWithLock(Argument::type('string'))->willReturn(null);
         $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
         $this->em->persist(Argument::type(Tag::class))->will(function (): void {
         });

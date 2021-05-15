@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Domain\Repository;
 
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\Query\Expr\Join;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Core\Entity\Domain;
@@ -31,5 +32,17 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findOneByAuthorityWithLock(string $authority): ?Domain
+    {
+        $qb = $this->createQueryBuilder('d');
+        $qb->where($qb->expr()->eq('d.authority', ':authority'))
+           ->setParameter('authority', $authority)
+           ->setMaxResults(1);
+
+        $query = $qb->getQuery()->setLockMode(LockMode::PESSIMISTIC_WRITE);
+
+        return $query->getOneOrNullResult();
     }
 }
