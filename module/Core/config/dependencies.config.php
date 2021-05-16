@@ -24,6 +24,7 @@ return [
             Options\DeleteShortUrlsOptions::class => ConfigAbstractFactory::class,
             Options\NotFoundRedirectOptions::class => ConfigAbstractFactory::class,
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
+            Options\TrackingOptions::class => ConfigAbstractFactory::class,
 
             Service\UrlShortener::class => ConfigAbstractFactory::class,
             Service\ShortUrlService::class => ConfigAbstractFactory::class,
@@ -75,6 +76,7 @@ return [
         Options\DeleteShortUrlsOptions::class => ['config.delete_short_urls'],
         Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
+        Options\TrackingOptions::class => ['config.tracking'],
 
         Service\UrlShortener::class => [
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
@@ -85,7 +87,7 @@ return [
         Visit\VisitsTracker::class => [
             'em',
             EventDispatcherInterface::class,
-            Options\UrlShortenerOptions::class,
+            Options\TrackingOptions::class,
         ],
         Service\ShortUrlService::class => [
             'em',
@@ -112,14 +114,14 @@ return [
         Action\RedirectAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
             Visit\VisitsTracker::class,
-            Options\AppOptions::class,
+            Options\TrackingOptions::class,
             Util\RedirectResponseHelper::class,
             'Logger_Shlink',
         ],
         Action\PixelAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
             Visit\VisitsTracker::class,
-            Options\AppOptions::class,
+            Options\TrackingOptions::class,
             'Logger_Shlink',
         ],
         Action\QrCodeAction::class => [

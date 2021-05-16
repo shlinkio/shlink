@@ -19,8 +19,6 @@ class UrlShortenerOptions extends AbstractOptions
     private int $redirectStatusCode = DEFAULT_REDIRECT_STATUS_CODE;
     private int $redirectCacheLifetime = DEFAULT_REDIRECT_CACHE_LIFETIME;
     private bool $autoResolveTitles = false;
-    private bool $anonymizeRemoteAddr = true;
-    private bool $trackOrphanVisits = true;
 
     public function isUrlValidationEnabled(): bool
     {
@@ -69,23 +67,15 @@ class UrlShortenerOptions extends AbstractOptions
         $this->autoResolveTitles = $autoResolveTitles;
     }
 
-    public function anonymizeRemoteAddr(): bool
-    {
-        return $this->anonymizeRemoteAddr;
-    }
-
+    /** @deprecated  */
     protected function setAnonymizeRemoteAddr(bool $anonymizeRemoteAddr): void
     {
-        $this->anonymizeRemoteAddr = $anonymizeRemoteAddr;
+        // Keep just for backwards compatibility during hydration
     }
 
-    public function trackOrphanVisits(): bool
-    {
-        return $this->trackOrphanVisits;
-    }
-
+    /** @deprecated  */
     protected function setTrackOrphanVisits(bool $trackOrphanVisits): void
     {
-        $this->trackOrphanVisits = $trackOrphanVisits;
+        // Keep just for backwards compatibility during hydration
     }
 }

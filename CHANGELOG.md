@@ -15,6 +15,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#1059](https://github.com/shlinkio/shlink/issues/1059) Added ability to optionally display author API key and its name when listing short URLs from the command line.
 * [#1066](https://github.com/shlinkio/shlink/issues/1066) Added support to import short URLs and their visits from another Shlink instance using its API.
+* [#898](https://github.com/shlinkio/shlink/issues/898) Improved tracking granularity, allowing to disable visits tracking completely, or just parts of it.
+
+    In order to achieve it, Shlink now supports 4 new tracking-related options, that can be customized via env vars for docker, or via installer:
+
+    * `disable_tracking`: If true, visits will not be tracked at all.
+    * `disable_ip_tracking`: If true, visits will be tracked, but neither the IP address, nor the location will be resolved.
+    * `disable_referrer_tracking`: If true, the referrer will not be tracked.
+    * `disable_ua_tracking`: If true, the user agent will not be tracked.
 
 ### Changed
 * [#1036](https://github.com/shlinkio/shlink/issues/1036) Updated to `happyr/doctrine-specification` 2.0.
