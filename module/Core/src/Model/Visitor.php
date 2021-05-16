@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Model;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
+use Shlinkio\Shlink\Core\Options\TrackingOptions;
 
 use function substr;
 
@@ -67,5 +68,17 @@ final class Visitor
     public function getVisitedUrl(): string
     {
         return $this->visitedUrl;
+    }
+
+    public function normalizeForTrackingOptions(TrackingOptions $options): self
+    {
+        $instance = self::emptyInstance();
+
+        $instance->userAgent = $options->disableUaTracking() ? '' : $this->userAgent;
+        $instance->referer = $options->disableReferrerTracking() ? '' : $this->referer;
+        $instance->remoteAddress = $options->disableIpTracking() ? null : $this->remoteAddress;
+        $instance->visitedUrl = $this->visitedUrl;
+
+        return $instance;
     }
 }

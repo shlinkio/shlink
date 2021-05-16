@@ -13,7 +13,6 @@ class TrackingOptions extends AbstractOptions
     private ?string $disableTrackParam = null;
     private bool $disableTracking = false;
     private bool $disableIpTracking = false;
-    private bool $disableLocationTracking = false;
     private bool $disableReferrerTracking = false;
     private bool $disableUaTracking = false;
 
@@ -65,16 +64,6 @@ class TrackingOptions extends AbstractOptions
     protected function setDisableIpTracking(bool $disableIpTracking): void
     {
         $this->disableIpTracking = $disableIpTracking;
-    }
-
-    public function disableLocationTracking(): bool
-    {
-        return $this->disableLocationTracking;
-    }
-
-    protected function setDisableLocationTracking(bool $disableLocationTracking): void
-    {
-        $this->disableLocationTracking = $disableLocationTracking;
     }
 
     public function disableReferrerTracking(): bool

@@ -122,7 +122,6 @@ return [
         'disable_track_param' => env('DISABLE_TRACK_PARAM'),
         'disable_tracking' => (bool) env('DISABLE_TRACKING', false),
         'disable_ip_tracking' => (bool) env('DISABLE_IP_TRACKING', false),
-        'disable_location_tracking' => (bool) env('DISABLE_LOCATION_TRACKING', false),
         'disable_referrer_tracking' => (bool) env('DISABLE_REFERRER_TRACKING', false),
         'disable_ua_tracking' => (bool) env('DISABLE_UA_TRACKING', false),
     ],

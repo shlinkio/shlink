@@ -32,39 +32,49 @@ class VisitsTracker implements VisitsTrackerInterface
     {
         $this->trackVisit(
             Visit::forValidShortUrl($shortUrl, $visitor, $this->options->anonymizeRemoteAddr()),
-            $visitor,
+            $visitor->normalizeForTrackingOptions($this->options),
         );
     }
 
     public function trackInvalidShortUrlVisit(Visitor $visitor): void
     {
-        if (! $this->options->trackOrphanVisits()) {
-            return;
-        }
-
-        $this->trackVisit(Visit::forInvalidShortUrl($visitor, $this->options->anonymizeRemoteAddr()), $visitor);
+        $this->trackOrphanVisit(
+            Visit::forInvalidShortUrl($visitor, $this->options->anonymizeRemoteAddr()),
+            $visitor->normalizeForTrackingOptions($this->options),
+        );
     }
 
     public function trackBaseUrlVisit(Visitor $visitor): void
     {
-        if (! $this->options->trackOrphanVisits()) {
-            return;
-        }
-
-        $this->trackVisit(Visit::forBasePath($visitor, $this->options->anonymizeRemoteAddr()), $visitor);
+        $this->trackOrphanVisit(
+            Visit::forBasePath($visitor, $this->options->anonymizeRemoteAddr()),
+            $visitor->normalizeForTrackingOptions($this->options),
+        );
     }
 
     public function trackRegularNotFoundVisit(Visitor $visitor): void
     {
+        $this->trackOrphanVisit(
+            Visit::forRegularNotFound($visitor, $this->options->anonymizeRemoteAddr()),
+            $visitor->normalizeForTrackingOptions($this->options),
+        );
+    }
+
+    private function trackOrphanVisit(Visit $visit, Visitor $visitor): void
+    {
         if (! $this->options->trackOrphanVisits()) {
             return;
         }
 
-        $this->trackVisit(Visit::forRegularNotFound($visitor, $this->options->anonymizeRemoteAddr()), $visitor);
+        $this->trackVisit($visit, $visitor);
     }
 
     private function trackVisit(Visit $visit, Visitor $visitor): void
     {
+        if ($this->options->disableTracking()) {
+            return;
+        }
+
         $this->em->transactional(function () use ($visit, $visitor): void {
             $this->em->persist($visit);
             $this->em->flush();

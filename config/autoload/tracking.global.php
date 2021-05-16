@@ -21,9 +21,6 @@ return [
         // If true, visits will be tracked, but neither the IP address or the location will be resolved
         'disable_ip_tracking' => false,
 
-        // If true, visits will be tracked including the IP address, but the location won't be resolved
-        'disable_location_tracking' => false,
-
         // If true, the referrer will not be tracked
         'disable_referrer_tracking' => false,
 

@@ -57,6 +57,22 @@ class VisitsTrackerTest extends TestCase
         $this->eventDispatcher->dispatch(Argument::type(UrlVisited::class))->shouldHaveBeenCalled();
     }
 
+    /**
+     * @test
+     * @dataProvider provideTrackingMethodNames
+     */
+    public function trackingIsSkippedCompletelyWhenDisabledFromOptions(string $method, array $args): void
+    {
+        $this->options->disableTracking = true;
+
+        $this->visitsTracker->{$method}(...$args);
+
+        $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->em->transactional(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->em->flush()->shouldNotHaveBeenCalled();
+    }
+
     public function provideTrackingMethodNames(): iterable
     {
         yield 'track' => ['track', [ShortUrl::createEmpty(), Visitor::emptyInstance()]];
