@@ -10,18 +10,18 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\Model\Visitor;
-use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Core\Options\TrackingOptions;
 
 class VisitsTracker implements VisitsTrackerInterface
 {
     private ORM\EntityManagerInterface $em;
     private EventDispatcherInterface $eventDispatcher;
-    private UrlShortenerOptions $options;
+    private TrackingOptions $options;
 
     public function __construct(
         ORM\EntityManagerInterface $em,
         EventDispatcherInterface $eventDispatcher,
-        UrlShortenerOptions $options
+        TrackingOptions $options
     ) {
         $this->em = $em;
         $this->eventDispatcher = $eventDispatcher;

@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\Visitor;
-use Shlinkio\Shlink\Core\Options\AppOptions;
+use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Visit\VisitsTrackerInterface;
 
@@ -29,18 +29,18 @@ abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMet
 {
     private ShortUrlResolverInterface $urlResolver;
     private VisitsTrackerInterface $visitTracker;
-    private AppOptions $appOptions;
+    private TrackingOptions $trackingOptions;
     private LoggerInterface $logger;
 
     public function __construct(
         ShortUrlResolverInterface $urlResolver,
         VisitsTrackerInterface $visitTracker,
-        AppOptions $appOptions,
+        TrackingOptions $trackingOptions,
         ?LoggerInterface $logger = null
     ) {
         $this->urlResolver = $urlResolver;
         $this->visitTracker = $visitTracker;
-        $this->appOptions = $appOptions;
+        $this->trackingOptions = $trackingOptions;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -48,7 +48,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMet
     {
         $identifier = ShortUrlIdentifier::fromRedirectRequest($request);
         $query = $request->getQueryParams();
-        $disableTrackParam = $this->appOptions->getDisableTrackParam();
+        $disableTrackParam = $this->trackingOptions->getDisableTrackParam();
 
         try {
             $shortUrl = $this->urlResolver->resolveEnabledShortUrl($identifier);

@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Config;
 
 use function Functional\compose;
 
+/** @deprecated */
 class DeprecatedConfigParser
 {
     public function __invoke(array $config): array

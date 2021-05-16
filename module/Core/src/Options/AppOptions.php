@@ -12,7 +12,6 @@ class AppOptions extends AbstractOptions
 {
     private string $name = '';
     private string $version = '1.0';
-    private ?string $disableTrackParam = null;
 
     public function getName(): string
     {
@@ -36,16 +35,10 @@ class AppOptions extends AbstractOptions
         return $this;
     }
 
-    /**
-     */
-    public function getDisableTrackParam(): ?string
-    {
-        return $this->disableTrackParam;
-    }
-
+    /** @deprecated  */
     protected function setDisableTrackParam(?string $disableTrackParam): self
     {
-        $this->disableTrackParam = $disableTrackParam;
+        // Keep just for backwards compatibility during hydration
         return $this;
     }
 

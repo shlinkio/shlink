@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Common\Response\PixelResponse;
 use Shlinkio\Shlink\Core\Action\PixelAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\Options\AppOptions;
+use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Visit\VisitsTracker;
 
@@ -34,7 +34,7 @@ class PixelActionTest extends TestCase
         $this->action = new PixelAction(
             $this->urlResolver->reveal(),
             $this->visitTracker->reveal(),
-            new AppOptions(),
+            new TrackingOptions(),
         );
     }
 

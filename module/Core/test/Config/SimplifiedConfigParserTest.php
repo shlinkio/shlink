@@ -22,7 +22,7 @@ class SimplifiedConfigParserTest extends TestCase
     public function properlyMapsSimplifiedConfig(): void
     {
         $config = [
-            'app_options' => [
+            'tracking' => [
                 'disable_track_param' => 'foo',
             ],
 
@@ -70,8 +70,9 @@ class SimplifiedConfigParserTest extends TestCase
             'port' => 8888,
         ];
         $expected = [
-            'app_options' => [
+            'tracking' => [
                 'disable_track_param' => 'bar',
+                'anonymize_remote_addr' => false,
             ],
 
             'entity_manager' => [
@@ -96,7 +97,6 @@ class SimplifiedConfigParserTest extends TestCase
                     'https://third-party.io/foo',
                 ],
                 'default_short_codes_length' => 8,
-                'anonymize_remote_addr' => false,
                 'redirect_status_code' => 301,
                 'redirect_cache_lifetime' => 90,
             ],
