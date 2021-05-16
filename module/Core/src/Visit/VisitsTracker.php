@@ -31,50 +31,51 @@ class VisitsTracker implements VisitsTrackerInterface
     public function track(ShortUrl $shortUrl, Visitor $visitor): void
     {
         $this->trackVisit(
-            Visit::forValidShortUrl($shortUrl, $visitor, $this->options->anonymizeRemoteAddr()),
-            $visitor->normalizeForTrackingOptions($this->options),
+            fn (Visitor $v) => Visit::forValidShortUrl($shortUrl, $v, $this->options->anonymizeRemoteAddr()),
+            $visitor,
         );
     }
 
     public function trackInvalidShortUrlVisit(Visitor $visitor): void
     {
         $this->trackOrphanVisit(
-            Visit::forInvalidShortUrl($visitor, $this->options->anonymizeRemoteAddr()),
-            $visitor->normalizeForTrackingOptions($this->options),
+            fn (Visitor $v) => Visit::forInvalidShortUrl($v, $this->options->anonymizeRemoteAddr()),
+            $visitor,
         );
     }
 
     public function trackBaseUrlVisit(Visitor $visitor): void
     {
         $this->trackOrphanVisit(
-            Visit::forBasePath($visitor, $this->options->anonymizeRemoteAddr()),
-            $visitor->normalizeForTrackingOptions($this->options),
+            fn (Visitor $v) => Visit::forBasePath($v, $this->options->anonymizeRemoteAddr()),
+            $visitor,
         );
     }
 
     public function trackRegularNotFoundVisit(Visitor $visitor): void
     {
         $this->trackOrphanVisit(
-            Visit::forRegularNotFound($visitor, $this->options->anonymizeRemoteAddr()),
-            $visitor->normalizeForTrackingOptions($this->options),
+            fn (Visitor $v) => Visit::forRegularNotFound($v, $this->options->anonymizeRemoteAddr()),
+            $visitor,
         );
     }
 
-    private function trackOrphanVisit(Visit $visit, Visitor $visitor): void
+    private function trackOrphanVisit(callable $createVisit, Visitor $visitor): void
     {
         if (! $this->options->trackOrphanVisits()) {
             return;
         }
 
-        $this->trackVisit($visit, $visitor);
+        $this->trackVisit($createVisit, $visitor);
     }
 
-    private function trackVisit(Visit $visit, Visitor $visitor): void
+    private function trackVisit(callable $createVisit, Visitor $visitor): void
     {
         if ($this->options->disableTracking()) {
             return;
         }
 
+        $visit = $createVisit($visitor->normalizeForTrackingOptions($this->options));
         $this->em->transactional(function () use ($visit, $visitor): void {
             $this->em->persist($visit);
             $this->em->flush();
