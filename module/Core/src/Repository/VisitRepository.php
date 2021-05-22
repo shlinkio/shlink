@@ -66,11 +66,11 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
         do {
             $qb = (clone $originalQueryBuilder)->andWhere($qb->expr()->gt('v.id', $lastId));
-            $iterator = $qb->getQuery()->iterate();
+            $iterator = $qb->getQuery()->toIterable();
             $resultsFound = false;
 
             /** @var Visit $visit */
-            foreach ($iterator as $key => [$visit]) {
+            foreach ($iterator as $key => $visit) {
                 $resultsFound = true;
                 yield $key => $visit;
             }

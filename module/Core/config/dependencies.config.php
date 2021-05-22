@@ -59,7 +59,7 @@ return [
 
             Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
 
-            Crawling\CrawlingHelper::class => InvokableFactory::class,
+            Crawling\CrawlingHelper::class => ConfigAbstractFactory::class,
         ],
 
         'aliases' => [
@@ -150,6 +150,8 @@ return [
             Service\ShortUrl\ShortCodeHelper::class,
             Util\DoctrineBatchHelper::class,
         ],
+
+        Crawling\CrawlingHelper::class => ['em'],
     ],
 
 ];

@@ -288,4 +288,28 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             $qb->andWhere($qb->expr()->isNull('s.domain'));
         }
     }
+
+    public function findCrawlableShortCodes(): iterable
+    {
+        $blockSize = 1000;
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('DISTINCT s.shortCode')
+           ->from(ShortUrl::class, 's')
+           ->where($qb->expr()->eq('s.crawlable', ':crawlable'))
+           ->setParameter('crawlable', true)
+           ->setMaxResults($blockSize);
+
+        $page = 0;
+        do {
+            $qbClone = (clone $qb)->setFirstResult($blockSize * $page);
+            $iterator = $qbClone->getQuery()->toIterable();
+            $resultsFound = false;
+            $page++;
+
+            foreach ($iterator as ['shortCode' => $shortCode]) {
+                $resultsFound = true;
+                yield $shortCode;
+            }
+        } while ($resultsFound);
+    }
 }
