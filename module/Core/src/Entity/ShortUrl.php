@@ -42,6 +42,7 @@ class ShortUrl extends AbstractEntity
     private ?ApiKey $authorApiKey = null;
     private ?string $title = null;
     private bool $titleWasAutoResolved = false;
+    private bool $crawlable = false;
 
     private function __construct()
     {
@@ -78,6 +79,7 @@ class ShortUrl extends AbstractEntity
         $instance->authorApiKey = $meta->getApiKey();
         $instance->title = $meta->getTitle();
         $instance->titleWasAutoResolved = $meta->titleWasAutoResolved();
+        $instance->crawlable = $meta->isCrawlable();
 
         return $instance;
     }
@@ -200,6 +202,11 @@ class ShortUrl extends AbstractEntity
         return $this->title;
     }
 
+    public function crawlable(): bool
+    {
+        return $this->crawlable;
+    }
+
     public function update(
         ShortUrlEdit $shortUrlEdit,
         ?ShortUrlRelationResolverInterface $relationResolver = null
@@ -219,6 +226,9 @@ class ShortUrl extends AbstractEntity
         if ($shortUrlEdit->tagsWereProvided()) {
             $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
             $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags());
+        }
+        if ($shortUrlEdit->crawlableWasProvided()) {
+            $this->crawlable = $shortUrlEdit->crawlable();
         }
         if (
             $this->title === null

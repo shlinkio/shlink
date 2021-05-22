@@ -31,6 +31,7 @@ final class ShortUrlMeta implements TitleResolutionModelInterface
     private array $tags = [];
     private ?string $title = null;
     private bool $titleWasAutoResolved = false;
+    private bool $crawlable = false;
 
     private function __construct()
     {
@@ -80,6 +81,7 @@ final class ShortUrlMeta implements TitleResolutionModelInterface
         $this->apiKey = $inputFilter->getValue(ShortUrlInputFilter::API_KEY);
         $this->tags = $inputFilter->getValue(ShortUrlInputFilter::TAGS);
         $this->title = $inputFilter->getValue(ShortUrlInputFilter::TITLE);
+        $this->crawlable = $inputFilter->getValue(ShortUrlInputFilter::CRAWLABLE);
     }
 
     public function getLongUrl(): string
@@ -187,5 +189,10 @@ final class ShortUrlMeta implements TitleResolutionModelInterface
         $copy->titleWasAutoResolved = true;
 
         return $copy;
+    }
+
+    public function isCrawlable(): bool
+    {
+        return $this->crawlable;
     }
 }

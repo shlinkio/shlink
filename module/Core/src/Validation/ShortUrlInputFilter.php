@@ -32,6 +32,7 @@ class ShortUrlInputFilter extends InputFilter
     public const API_KEY = 'apiKey';
     public const TAGS = 'tags';
     public const TITLE = 'title';
+    public const CRAWLABLE = 'crawlable';
 
     private function __construct(array $data, bool $requireLongUrl)
     {
@@ -105,5 +106,7 @@ class ShortUrlInputFilter extends InputFilter
         $this->add($this->createTagsInput(self::TAGS, false));
 
         $this->add($this->createInput(self::TITLE, false));
+
+        $this->add($this->createBooleanInput(self::CRAWLABLE, false));
     }
 }
