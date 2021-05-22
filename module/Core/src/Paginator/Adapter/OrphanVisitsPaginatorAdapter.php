@@ -22,7 +22,10 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
 
     protected function doCount(): int
     {
-        return $this->repo->countOrphanVisits(new VisitsCountFiltering($this->params->getDateRange()));
+        return $this->repo->countOrphanVisits(new VisitsCountFiltering(
+            $this->params->getDateRange(),
+            $this->params->excludeBots(),
+        ));
     }
 
     public function getSlice($offset, $length): iterable // phpcs:ignore

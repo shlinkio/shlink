@@ -67,4 +67,30 @@ class ShortUrlVisitsTest extends ApiTestCase
         yield 'domain' => ['example.com', 0];
         yield 'no domain' => [null, 2];
     }
+
+    /**
+     * @test
+     * @dataProvider provideVisitsForBots
+     */
+    public function properVisitsAreReturnedWhenExcludingBots(bool $excludeBots, int $expectedAmountOfVisits): void
+    {
+        $shortCode = 'def456';
+        $url = new Uri(sprintf('/short-urls/%s/visits', $shortCode));
+
+        if ($excludeBots) {
+            $url = $url->withQuery(Query::build(['excludeBots' => true]));
+        }
+
+        $resp = $this->callApiWithKey(self::METHOD_GET, (string) $url);
+        $payload = $this->getJsonResponsePayload($resp);
+
+        self::assertEquals($expectedAmountOfVisits, $payload['visits']['pagination']['totalItems'] ?? -1);
+        self::assertCount($expectedAmountOfVisits, $payload['visits']['data'] ?? []);
+    }
+
+    public function provideVisitsForBots(): iterable
+    {
+        yield 'bots excluded' => [true, 1];
+        yield 'bots not excluded' => [false, 2];
+    }
 }

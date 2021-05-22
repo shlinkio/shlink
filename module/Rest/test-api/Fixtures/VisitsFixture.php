@@ -36,7 +36,7 @@ class VisitsFixture extends AbstractFixture implements DependentFixtureInterface
         /** @var ShortUrl $defShortUrl */
         $defShortUrl = $this->getReference('def456_short_url');
         $manager->persist(
-            Visit::forValidShortUrl($defShortUrl, new Visitor('shlink-tests-agent', '', '127.0.0.1', '')),
+            Visit::forValidShortUrl($defShortUrl, new Visitor('cf-facebook', '', '127.0.0.1', '')),
         );
         $manager->persist(
             Visit::forValidShortUrl($defShortUrl, new Visitor('shlink-tests-agent', 'https://app.shlink.io', '', '')),
