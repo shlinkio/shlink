@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsPaginatorAdapterTest extends TestCase
@@ -49,7 +50,11 @@ class VisitsPaginatorAdapterTest extends TestCase
         $count = 3;
         $apiKey = ApiKey::create();
         $adapter = $this->createAdapter($apiKey);
-        $countVisits = $this->repo->countVisitsByShortCode('', null, new DateRange(), $apiKey->spec())->willReturn(3);
+        $countVisits = $this->repo->countVisitsByShortCode(
+            '',
+            null,
+            new VisitsCountFiltering(new DateRange(), false, $apiKey->spec()),
+        )->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
             $adapter->getNbResults();

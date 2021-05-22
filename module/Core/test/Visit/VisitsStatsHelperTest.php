@@ -23,6 +23,7 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelper;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
@@ -53,7 +54,9 @@ class VisitsStatsHelperTest extends TestCase
     {
         $repo = $this->prophesize(VisitRepository::class);
         $count = $repo->countVisits(null)->willReturn($expectedCount * 3);
-        $countOrphan = $repo->countOrphanVisits()->willReturn($expectedCount);
+        $countOrphan = $repo->countOrphanVisits(Argument::type(VisitsCountFiltering::class))->willReturn(
+            $expectedCount,
+        );
         $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
 
         $stats = $this->helper->getVisitsStats();
@@ -86,7 +89,7 @@ class VisitsStatsHelperTest extends TestCase
         $repo2->findVisitsByShortCode($shortCode, null, Argument::type(DateRange::class), 1, 0, $spec)->willReturn(
             $list,
         );
-        $repo2->countVisitsByShortCode($shortCode, null, Argument::type(DateRange::class), $spec)->willReturn(1);
+        $repo2->countVisitsByShortCode($shortCode, null, Argument::type(VisitsCountFiltering::class))->willReturn(1);
         $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
 
         $paginator = $this->helper->visitsForShortUrl(new ShortUrlIdentifier($shortCode), new VisitsParams(), $apiKey);
@@ -140,7 +143,7 @@ class VisitsStatsHelperTest extends TestCase
         $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
         $repo2 = $this->prophesize(VisitRepository::class);
         $repo2->findVisitsByTag($tag, Argument::type(DateRange::class), 1, 0, $spec)->willReturn($list);
-        $repo2->countVisitsByTag($tag, Argument::type(DateRange::class), $spec)->willReturn(1);
+        $repo2->countVisitsByTag($tag, Argument::type(VisitsCountFiltering::class))->willReturn(1);
         $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
 
         $paginator = $this->helper->visitsForTag($tag, new VisitsParams(), $apiKey);
@@ -155,7 +158,7 @@ class VisitsStatsHelperTest extends TestCase
     {
         $list = map(range(0, 3), fn () => Visit::forBasePath(Visitor::emptyInstance()));
         $repo = $this->prophesize(VisitRepository::class);
-        $countVisits = $repo->countOrphanVisits(Argument::type(DateRange::class))->willReturn(count($list));
+        $countVisits = $repo->countOrphanVisits(Argument::type(VisitsCountFiltering::class))->willReturn(count($list));
         $listVisits = $repo->findOrphanVisits(Argument::type(DateRange::class), Argument::cetera())->willReturn($list);
         $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
 

@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsForTagPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
@@ -43,8 +44,11 @@ class VisitsForTagPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
     {
         return $this->visitRepository->countVisitsByTag(
             $this->tag,
-            $this->params->getDateRange(),
-            $this->resolveSpec(),
+            new VisitsCountFiltering(
+                $this->params->getDateRange(),
+                $this->params->excludeBots(),
+                $this->resolveSpec(),
+            ),
         );
     }
 

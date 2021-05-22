@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -110,18 +111,17 @@ class VisitRepositoryTest extends DatabaseTestCase
     {
         [$shortCode, $domain] = $this->createShortUrlsAndVisits();
 
-        self::assertEquals(0, $this->repo->countVisitsByShortCode('invalid'));
-        self::assertEquals(6, $this->repo->countVisitsByShortCode($shortCode));
-        self::assertEquals(3, $this->repo->countVisitsByShortCode($shortCode, $domain));
-        self::assertEquals(2, $this->repo->countVisitsByShortCode($shortCode, null, new DateRange(
-            Chronos::parse('2016-01-02'),
-            Chronos::parse('2016-01-03'),
+        self::assertEquals(0, $this->repo->countVisitsByShortCode('invalid', null, new VisitsCountFiltering()));
+        self::assertEquals(6, $this->repo->countVisitsByShortCode($shortCode, null, new VisitsCountFiltering()));
+        self::assertEquals(3, $this->repo->countVisitsByShortCode($shortCode, $domain, new VisitsCountFiltering()));
+        self::assertEquals(2, $this->repo->countVisitsByShortCode($shortCode, null, new VisitsCountFiltering(
+            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
-        self::assertEquals(4, $this->repo->countVisitsByShortCode($shortCode, null, new DateRange(
-            Chronos::parse('2016-01-03'),
+        self::assertEquals(4, $this->repo->countVisitsByShortCode($shortCode, null, new VisitsCountFiltering(
+            DateRange::withStartDate(Chronos::parse('2016-01-03')),
         )));
-        self::assertEquals(1, $this->repo->countVisitsByShortCode($shortCode, $domain, new DateRange(
-            Chronos::parse('2016-01-03'),
+        self::assertEquals(1, $this->repo->countVisitsByShortCode($shortCode, $domain, new VisitsCountFiltering(
+            DateRange::withStartDate(Chronos::parse('2016-01-03')),
         )));
     }
 
@@ -160,13 +160,14 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->createShortUrlsAndVisits(false, [$foo]);
         $this->getEntityManager()->flush();
 
-        self::assertEquals(0, $this->repo->countVisitsByTag('invalid'));
-        self::assertEquals(12, $this->repo->countVisitsByTag($foo));
-        self::assertEquals(4, $this->repo->countVisitsByTag($foo, new DateRange(
-            Chronos::parse('2016-01-02'),
-            Chronos::parse('2016-01-03'),
+        self::assertEquals(0, $this->repo->countVisitsByTag('invalid', new VisitsCountFiltering()));
+        self::assertEquals(12, $this->repo->countVisitsByTag($foo, new VisitsCountFiltering()));
+        self::assertEquals(4, $this->repo->countVisitsByTag($foo, new VisitsCountFiltering(
+            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
-        self::assertEquals(8, $this->repo->countVisitsByTag($foo, new DateRange(Chronos::parse('2016-01-03'))));
+        self::assertEquals(8, $this->repo->countVisitsByTag($foo, new VisitsCountFiltering(
+            DateRange::withStartDate(Chronos::parse('2016-01-03')),
+        )));
     }
 
     /** @test */
@@ -213,7 +214,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(4, $this->repo->countVisits($apiKey1));
         self::assertEquals(5 + 7, $this->repo->countVisits($apiKey2));
         self::assertEquals(4 + 7, $this->repo->countVisits($domainApiKey));
-        self::assertEquals(3, $this->repo->countOrphanVisits());
+        self::assertEquals(3, $this->repo->countOrphanVisits(new VisitsCountFiltering()));
     }
 
     /** @test */
@@ -276,13 +277,17 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertEquals(18, $this->repo->countOrphanVisits());
-        self::assertEquals(18, $this->repo->countOrphanVisits(DateRange::emptyInstance()));
-        self::assertEquals(9, $this->repo->countOrphanVisits(DateRange::withStartDate(Chronos::parse('2020-01-04'))));
-        self::assertEquals(6, $this->repo->countOrphanVisits(
-            DateRange::withStartAndEndDate(Chronos::parse('2020-01-02'), Chronos::parse('2020-01-03')),
+        self::assertEquals(18, $this->repo->countOrphanVisits(new VisitsCountFiltering()));
+        self::assertEquals(18, $this->repo->countOrphanVisits(new VisitsCountFiltering(DateRange::emptyInstance())));
+        self::assertEquals(9, $this->repo->countOrphanVisits(
+            new VisitsCountFiltering(DateRange::withStartDate(Chronos::parse('2020-01-04'))),
         ));
-        self::assertEquals(3, $this->repo->countOrphanVisits(DateRange::withEndDate(Chronos::parse('2020-01-01'))));
+        self::assertEquals(6, $this->repo->countOrphanVisits(new VisitsCountFiltering(
+            DateRange::withStartAndEndDate(Chronos::parse('2020-01-02'), Chronos::parse('2020-01-03')),
+        )));
+        self::assertEquals(3, $this->repo->countOrphanVisits(
+            new VisitsCountFiltering(DateRange::withEndDate(Chronos::parse('2020-01-01'))),
+        ));
     }
 
     private function createShortUrlsAndVisits(bool $withDomain = true, array $tags = []): array

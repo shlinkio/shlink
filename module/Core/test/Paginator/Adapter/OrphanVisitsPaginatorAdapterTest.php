@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\OrphanVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 
 class OrphanVisitsPaginatorAdapterTest extends TestCase
 {
@@ -32,7 +33,9 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     public function countDelegatesToRepository(): void
     {
         $expectedCount = 5;
-        $repoCount = $this->repo->countOrphanVisits($this->params->getDateRange())->willReturn($expectedCount);
+        $repoCount = $this->repo->countOrphanVisits(
+            new VisitsCountFiltering($this->params->getDateRange()),
+        )->willReturn($expectedCount);
 
         $result = $this->adapter->getNbResults();
 

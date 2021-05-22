@@ -8,6 +8,7 @@ use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 
 class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
@@ -45,8 +46,11 @@ class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
         return $this->visitRepository->countVisitsByShortCode(
             $this->identifier->shortCode(),
             $this->identifier->domain(),
-            $this->params->getDateRange(),
-            $this->spec,
+            new VisitsCountFiltering(
+                $this->params->getDateRange(),
+                $this->params->excludeBots(),
+                $this->spec,
+            ),
         );
     }
 }

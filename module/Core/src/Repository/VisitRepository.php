@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfOrphanVisits;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfShortUrlVisits;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -95,13 +96,9 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $this->resolveVisitsWithNativeQuery($qb, $limit, $offset);
     }
 
-    public function countVisitsByShortCode(
-        string $shortCode,
-        ?string $domain = null,
-        ?DateRange $dateRange = null,
-        ?Specification $spec = null
-    ): int {
-        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange, $spec);
+    public function countVisitsByShortCode(string $shortCode, ?string $domain, VisitsCountFiltering $filtering): int
+    {
+        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $filtering->dateRange(), $filtering->spec());
         $qb->select('COUNT(v.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
@@ -141,9 +138,9 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $this->resolveVisitsWithNativeQuery($qb, $limit, $offset);
     }
 
-    public function countVisitsByTag(string $tag, ?DateRange $dateRange = null, ?Specification $spec = null): int
+    public function countVisitsByTag(string $tag, VisitsCountFiltering $filtering): int
     {
-        $qb = $this->createVisitsByTagQueryBuilder($tag, $dateRange, $spec);
+        $qb = $this->createVisitsByTagQueryBuilder($tag, $filtering->dateRange(), $filtering->spec());
         $qb->select('COUNT(v.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
@@ -181,9 +178,9 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $this->resolveVisitsWithNativeQuery($qb, $limit, $offset);
     }
 
-    public function countOrphanVisits(?DateRange $dateRange = null): int
+    public function countOrphanVisits(VisitsCountFiltering $filtering): int
     {
-        return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits($dateRange));
+        return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits($filtering->dateRange()));
     }
 
     public function countVisits(?ApiKey $apiKey = null): int
