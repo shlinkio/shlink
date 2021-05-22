@@ -116,6 +116,15 @@
                     "domain": {
                         "type": "string",
                         "description": "The domain in which the short URL was created. Null if it belongs to default domain."
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "A descriptive title of the short URL."
+                    },
+                    "crawlable": {
+                        "type": "boolean",
+                        "description": "Tells if this URL will be included as 'Allow' in Shlink's robots.txt."
                     }
                 },
                 "example": {
@@ -133,7 +142,9 @@
                         "validUntil": null,
                         "maxVisits": 100
                     },
-                    "domain": "example.com"
+                    "domain": "example.com",
+                    "title": "The title",
+                    "crawlable": false
                 }
             },
             "ShortUrlMeta": {

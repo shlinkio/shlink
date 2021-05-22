@@ -24,6 +24,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * `disable_referrer_tracking`: If true, the referrer will not be tracked.
     * `disable_ua_tracking`: If true, the user agent will not be tracked.
 
+* [#955](https://github.com/shlinkio/shlink/issues/955) Added new option to set short URLs as crawlable, making them be listed in the robots.txt as Allowed.
+
 ### Changed
 * [#1036](https://github.com/shlinkio/shlink/issues/1036) Updated to `happyr/doctrine-specification` 2.0.
 * [#1039](https://github.com/shlinkio/shlink/issues/1039) Updated to `endroid/qr-code` 4.0.

@@ -30,6 +30,8 @@ final class ShortUrlEdit implements TitleResolutionModelInterface
     private ?string $title = null;
     private bool $titleWasAutoResolved = false;
     private ?bool $validateUrl = null;
+    private bool $crawlablePropWasProvided = false;
+    private bool $crawlable = false;
 
     private function __construct()
     {
@@ -61,6 +63,7 @@ final class ShortUrlEdit implements TitleResolutionModelInterface
         $this->maxVisitsPropWasProvided = array_key_exists(ShortUrlInputFilter::MAX_VISITS, $data);
         $this->tagsPropWasProvided = array_key_exists(ShortUrlInputFilter::TAGS, $data);
         $this->titlePropWasProvided = array_key_exists(ShortUrlInputFilter::TITLE, $data);
+        $this->crawlablePropWasProvided = array_key_exists(ShortUrlInputFilter::CRAWLABLE, $data);
 
         $this->longUrl = $inputFilter->getValue(ShortUrlInputFilter::LONG_URL);
         $this->validSince = parseDateField($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
@@ -69,6 +72,7 @@ final class ShortUrlEdit implements TitleResolutionModelInterface
         $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL);
         $this->tags = $inputFilter->getValue(ShortUrlInputFilter::TAGS);
         $this->title = $inputFilter->getValue(ShortUrlInputFilter::TITLE);
+        $this->crawlable = $inputFilter->getValue(ShortUrlInputFilter::CRAWLABLE);
     }
 
     public function longUrl(): ?string
@@ -161,5 +165,15 @@ final class ShortUrlEdit implements TitleResolutionModelInterface
     public function doValidateUrl(): ?bool
     {
         return $this->validateUrl;
+    }
+
+    public function crawlable(): bool
+    {
+        return $this->crawlable;
+    }
+
+    public function crawlableWasProvided(): bool
+    {
+        return $this->crawlablePropWasProvided;
     }
 }

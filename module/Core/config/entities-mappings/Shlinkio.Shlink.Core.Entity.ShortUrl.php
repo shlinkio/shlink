@@ -95,4 +95,9 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->columnName('title_was_auto_resolved')
             ->option('default', false)
             ->build();
+
+    $builder->createField('crawlable', Types::BOOLEAN)
+            ->columnName('crawlable')
+            ->option('default', false)
+            ->build();
 };

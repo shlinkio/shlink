@@ -35,6 +35,7 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             'meta' => $this->buildMeta($shortUrl),
             'domain' => $shortUrl->getDomain(),
             'title' => $shortUrl->title(),
+            'crawlable' => $shortUrl->crawlable(),
         ];
     }
 

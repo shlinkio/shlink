@@ -3,4 +3,3 @@ parameters:
 	checkGenericClassInNonGenericObjectType: false
 	ignoreErrors:
 		- '#If condition is always false#'
-		- '#setOrderBy\(\) expects array\<int, string\>, array\<string, string\> given#'

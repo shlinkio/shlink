@@ -10,6 +10,14 @@ return [
 
     'routes' => [
         [
+            'name' => Action\RobotsAction::class,
+            'path' => '/robots.txt',
+            'middleware' => [
+                Action\RobotsAction::class,
+            ],
+            'allowed_methods' => [RequestMethod::METHOD_GET],
+        ],
+        [
             'name' => Action\RedirectAction::class,
             'path' => '/{shortCode}',
             'middleware' => [

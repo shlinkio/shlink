@@ -59,6 +59,7 @@ class MercureUpdatesGeneratorTest extends TestCase
                 ],
                 'domain' => null,
                 'title' => $title,
+                'crawlable' => false,
             ],
             'visit' => [
                 'referer' => '',

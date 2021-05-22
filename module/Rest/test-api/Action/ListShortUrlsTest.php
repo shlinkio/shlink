@@ -26,6 +26,7 @@ class ListShortUrlsTest extends ApiTestCase
         ],
         'domain' => null,
         'title' => 'My cool title',
+        'crawlable' => true,
     ];
     private const SHORT_URL_DOCS = [
         'shortCode' => 'ghi789',
@@ -41,6 +42,7 @@ class ListShortUrlsTest extends ApiTestCase
         ],
         'domain' => null,
         'title' => null,
+        'crawlable' => false,
     ];
     private const SHORT_URL_CUSTOM_SLUG_AND_DOMAIN = [
         'shortCode' => 'custom-with-domain',
@@ -56,6 +58,7 @@ class ListShortUrlsTest extends ApiTestCase
         ],
         'domain' => 'some-domain.com',
         'title' => null,
+        'crawlable' => false,
     ];
     private const SHORT_URL_META = [
         'shortCode' => 'def456',
@@ -73,6 +76,7 @@ class ListShortUrlsTest extends ApiTestCase
         ],
         'domain' => null,
         'title' => null,
+        'crawlable' => false,
     ];
     private const SHORT_URL_CUSTOM_SLUG = [
         'shortCode' => 'custom',
@@ -88,6 +92,7 @@ class ListShortUrlsTest extends ApiTestCase
         ],
         'domain' => null,
         'title' => null,
+        'crawlable' => false,
     ];
     private const SHORT_URL_CUSTOM_DOMAIN = [
         'shortCode' => 'ghi789',
@@ -105,6 +110,7 @@ class ListShortUrlsTest extends ApiTestCase
         ],
         'domain' => 'example.com',
         'title' => null,
+        'crawlable' => false,
     ];
 
     /**

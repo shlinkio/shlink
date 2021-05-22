@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -242,7 +242,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

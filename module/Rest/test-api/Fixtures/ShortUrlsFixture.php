@@ -35,6 +35,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
                 'longUrl' => 'https://shlink.io',
                 'tags' => ['foo'],
                 'title' => 'My cool title',
+                'crawlable' => true,
             ]), $relationResolver),
             '2018-05-01',
         );

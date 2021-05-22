@@ -54,7 +54,8 @@
                             "maxVisits": 100
                         },
                         "domain": null,
-                        "title": null
+                        "title": null,
+                        "crawlable": false
                     }
                 }
             },
@@ -147,6 +148,10 @@
                                 "type": "string",
                                 "description": "A descriptive title of the short URL.",
                                 "nullable": true
+                            },
+                            "crawlable": {
+                                "type": "boolean",
+                                "description": "Tells if this URL will be included as 'Allow' in Shlink's robots.txt."
                             }
                         }
                     }
@@ -184,7 +189,8 @@
                             "maxVisits": 100
                         },
                         "domain": null,
-                        "title": "Shlink - The URL shortener"
+                        "title": "Shlink - The URL shortener",
+                        "crawlable": false
                     }
                 }
             },

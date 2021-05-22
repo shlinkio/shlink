@@ -48,6 +48,7 @@ return [
             Action\RedirectAction::class => ConfigAbstractFactory::class,
             Action\PixelAction::class => ConfigAbstractFactory::class,
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
+            Action\RobotsAction::class => ConfigAbstractFactory::class,
 
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortUrlStringifier::class => ConfigAbstractFactory::class,
@@ -57,6 +58,8 @@ return [
             Mercure\MercureUpdatesGenerator::class => ConfigAbstractFactory::class,
 
             Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
+
+            Crawling\CrawlingHelper::class => ConfigAbstractFactory::class,
         ],
 
         'aliases' => [
@@ -129,6 +132,7 @@ return [
             ShortUrl\Helper\ShortUrlStringifier::class,
             'Logger_Shlink',
         ],
+        Action\RobotsAction::class => [Crawling\CrawlingHelper::class],
 
         ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ['em'],
         ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain', 'config.router.base_path'],
@@ -146,6 +150,8 @@ return [
             Service\ShortUrl\ShortCodeHelper::class,
             Util\DoctrineBatchHelper::class,
         ],
+
+        Crawling\CrawlingHelper::class => ['em'],
     ],
 
 ];

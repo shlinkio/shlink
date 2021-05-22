@@ -140,7 +140,8 @@
                                         "maxVisits": 100
                                     },
                                     "domain": null,
-                                    "title": "Welcome to Steam"
+                                    "title": "Welcome to Steam",
+                                    "crawlable": false
                                 },
                                 {
                                     "shortCode": "12Kb3",
@@ -157,7 +158,8 @@
                                         "maxVisits": null
                                     },
                                     "domain":  null,
-                                    "title": null
+                                    "title": null,
+                                    "crawlable": false
                                 },
                                 {
                                     "shortCode": "123bA",
@@ -172,7 +174,8 @@
                                         "maxVisits": null
                                     },
                                     "domain":  "example.com",
-                                    "title": null
+                                    "title": null,
+                                    "crawlable": false
                                 }
                             ],
                             "pagination": {
@@ -273,6 +276,10 @@
                             "title": {
                                 "type": "string",
                                 "description": "A descriptive title of the short URL."
+                            },
+                            "crawlable": {
+                                "type": "boolean",
+                                "description": "Tells if this URL will be included as 'Allow' in Shlink's robots.txt."
                             }
                         }
                     }
@@ -305,7 +312,9 @@
                             "validUntil": null,
                             "maxVisits": 500
                         },
-                        "domain": null
+                        "domain": null,
+                        "title": null,
+                        "crawlable": false
                     }
                 }
             },
