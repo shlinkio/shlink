@@ -54,7 +54,8 @@
                             "maxVisits": 100
                         },
                         "domain": null,
-                        "title": null
+                        "title": null,
+                        "crawlable": false
                     }
                 }
             },
@@ -184,7 +185,8 @@
                             "maxVisits": 100
                         },
                         "domain": null,
-                        "title": "Shlink - The URL shortener"
+                        "title": "Shlink - The URL shortener",
+                        "crawlable": false
                     }
                 }
             },

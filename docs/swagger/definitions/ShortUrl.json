@@ -41,6 +41,10 @@
             "type": "string",
             "nullable": true,
             "description": "A descriptive title of the short URL."
+        },
+        "crawlable": {
+            "type": "boolean",
+            "description": "Tells if this URL will be included as 'Allow' in Shlink's robots.txt."
         }
     }
 }
