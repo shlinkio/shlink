@@ -45,6 +45,16 @@
                 "schema": {
                     "type": "number"
                 }
+            },
+            {
+                "name": "excludeBots",
+                "in": "query",
+                "description": "Tells if visits from potential bots should be excluded from the result set",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": ["true"]
+                }
             }
         ],
         "security": [
