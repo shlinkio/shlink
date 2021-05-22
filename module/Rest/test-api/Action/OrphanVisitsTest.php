@@ -12,17 +12,18 @@ class OrphanVisitsTest extends ApiTestCase
     private const INVALID_SHORT_URL = [
         'referer' => 'https://doma.in/foo',
         'date' => '2020-03-01T00:00:00+00:00',
-        'userAgent' => 'shlink-tests-agent',
+        'userAgent' => 'cf-facebook',
         'visitLocation' => null,
+        'potentialBot' => true,
         'visitedUrl' => 'foo.com',
         'type' => 'invalid_short_url',
-
     ];
     private const REGULAR_NOT_FOUND = [
         'referer' => 'https://doma.in/foo/bar',
         'date' => '2020-02-01T00:00:00+00:00',
         'userAgent' => 'shlink-tests-agent',
         'visitLocation' => null,
+        'potentialBot' => false,
         'visitedUrl' => '',
         'type' => 'regular_404',
     ];
@@ -31,6 +32,7 @@ class OrphanVisitsTest extends ApiTestCase
         'date' => '2020-01-01T00:00:00+00:00',
         'userAgent' => 'shlink-tests-agent',
         'visitLocation' => null,
+        'potentialBot' => false,
         'visitedUrl' => '',
         'type' => 'base_url',
     ];

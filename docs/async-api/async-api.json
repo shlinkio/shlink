@@ -190,6 +190,10 @@
                     },
                     "visitLocation": {
                         "$ref": "#/components/schemas/VisitLocation"
+                    },
+                    "potentialBot": {
+                        "type": "boolean",
+                        "description": "Tells if Shlink thinks this visits comes potentially from a bot or crawler"
                     }
                 },
                 "example": {
@@ -204,7 +208,8 @@
                         "longitude": -122.0946,
                         "regionName": "California",
                         "timezone": "America/Los_Angeles"
-                    }
+                    },
+                    "potentialBot": false
                 }
             },
             "OrphanVisit": {
@@ -243,6 +248,7 @@
                         "regionName": "California",
                         "timezone": "America/Los_Angeles"
                     },
+                    "potentialBot": false,
                     "visitedUrl": "https://doma.in",
                     "type": "base_url"
                 }

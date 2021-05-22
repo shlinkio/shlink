@@ -12,17 +12,33 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 
 class VisitTest extends TestCase
 {
-    /** @test */
-    public function isProperlyJsonSerialized(): void
+    /**
+     * @test
+     * @dataProvider provideUserAgents
+     */
+    public function isProperlyJsonSerialized(string $userAgent, bool $expectedToBePotentialBot): void
     {
-        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('Chrome', 'some site', '1.2.3.4', ''));
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor($userAgent, 'some site', '1.2.3.4', ''));
 
         self::assertEquals([
             'referer' => 'some site',
             'date' => $visit->getDate()->toAtomString(),
-            'userAgent' => 'Chrome',
+            'userAgent' => $userAgent,
             'visitLocation' => null,
+            'potentialBot' => $expectedToBePotentialBot,
         ], $visit->jsonSerialize());
+    }
+
+    public function provideUserAgents(): iterable
+    {
+        yield 'Chrome' => [
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36',
+            false,
+        ];
+        yield 'Firefox' => ['Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0', false];
+        yield 'Facebook' => ['cf-facebook', true];
+        yield 'Twitter' => ['IDG Twitter Links Resolver', true];
+        yield 'Guzzle' => ['guzzlehttp', true];
     }
 
     /**

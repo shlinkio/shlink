@@ -25,6 +25,7 @@
         "geoip2/geoip2": "^2.9",
         "guzzlehttp/guzzle": "^7.0",
         "happyr/doctrine-specification": "^2.0",
+        "jaybizzle/crawler-detect": "^1.2",
         "laminas/laminas-config": "^3.3",
         "laminas/laminas-config-aggregator": "^1.1",
         "laminas/laminas-diactoros": "^2.1.3",
