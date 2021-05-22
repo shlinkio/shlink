@@ -53,6 +53,11 @@ final class Visitor
         return new self('', '', null, '');
     }
 
+    public static function botInstance(): self
+    {
+        return new self('cf-facebook', '', null, '');
+    }
+
     public function getUserAgent(): string
     {
         return $this->userAgent;

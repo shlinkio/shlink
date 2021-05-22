@@ -114,6 +114,10 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $qb->from(Visit::class, 'v')
            ->where($qb->expr()->eq('v.shortUrl', $shortUrlId));
 
+        if ($filtering->excludeBots()) {
+            $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
+        }
+
         // Apply date range filtering
         $this->applyDatesInline($qb, $filtering->dateRange());
 
@@ -144,6 +148,10 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
            ->join('s.tags', 't')
            ->where($qb->expr()->eq('t.name', '\'' . $tag . '\'')); // This needs to be concatenated, not bound
 
+        if ($filtering->excludeBots()) {
+            $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
+        }
+
         $this->applyDatesInline($qb, $filtering->dateRange());
         $this->applySpecification($qb, $filtering->spec(), 'v');
 
@@ -158,6 +166,10 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $qb->from(Visit::class, 'v')
            ->where($qb->expr()->isNull('v.shortUrl'));
 
+        if ($filtering->excludeBots()) {
+            $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
+        }
+
         $this->applyDatesInline($qb, $filtering->dateRange());
 
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit(), $filtering->offset());
@@ -165,7 +177,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     public function countOrphanVisits(VisitsCountFiltering $filtering): int
     {
-        return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits($filtering->dateRange()));
+        return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits($filtering));
     }
 
     public function countVisits(?ApiKey $apiKey = null): int
