@@ -20,7 +20,7 @@
         },
         "potentialBot": {
             "type": "boolean",
-            "description": "Tells if Shlink thinks this visits comes potentially from a bot or crawler"
+            "description": "Tells if Shlink thinks this visit comes potentially from a bot or crawler"
         }
     }
 }
