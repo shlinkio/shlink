@@ -7,24 +7,30 @@ namespace Shlinkio\Shlink\Core\Visit\Spec;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\BaseSpecification;
 use Happyr\DoctrineSpecification\Specification\Specification;
-use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Spec\InDateRange;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 
 class CountOfOrphanVisits extends BaseSpecification
 {
-    private ?DateRange $dateRange;
+    private VisitsCountFiltering $filtering;
 
-    public function __construct(?DateRange $dateRange)
+    public function __construct(VisitsCountFiltering $filtering)
     {
         parent::__construct();
-        $this->dateRange = $dateRange;
+        $this->filtering = $filtering;
     }
 
     protected function getSpec(): Specification
     {
-        return Spec::countOf(Spec::andX(
+        $conditions = [
             Spec::isNull('shortUrl'),
-            new InDateRange($this->dateRange),
-        ));
+            new InDateRange($this->filtering->dateRange()),
+        ];
+
+        if ($this->filtering->excludeBots()) {
+            $conditions[] = Spec::eq('potentialBot', false);
+        }
+
+        return Spec::countOf(Spec::andX(...$conditions));
     }
 }

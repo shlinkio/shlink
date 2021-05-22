@@ -13,6 +13,8 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 
+use function Shlinkio\Shlink\Core\isCrawler;
+
 class Visit extends AbstractEntity implements JsonSerializable
 {
     public const TYPE_VALID_SHORT_URL = 'valid_short_url';
@@ -29,6 +31,7 @@ class Visit extends AbstractEntity implements JsonSerializable
     private string $type;
     private ?ShortUrl $shortUrl;
     private ?VisitLocation $visitLocation = null;
+    private bool $potentialBot;
 
     private function __construct(?ShortUrl $shortUrl, string $type)
     {
@@ -49,6 +52,7 @@ class Visit extends AbstractEntity implements JsonSerializable
     {
         $instance = new self($shortUrl, self::TYPE_IMPORTED);
         $instance->userAgent = $importedVisit->userAgent();
+        $instance->potentialBot = isCrawler($instance->userAgent);
         $instance->referer = $importedVisit->referer();
         $instance->date = Chronos::instance($importedVisit->date());
 
@@ -88,6 +92,7 @@ class Visit extends AbstractEntity implements JsonSerializable
         $this->referer = $visitor->getReferer();
         $this->remoteAddr = $this->processAddress($anonymize, $visitor->getRemoteAddress());
         $this->visitedUrl = $visitor->getVisitedUrl();
+        $this->potentialBot = $visitor->isPotentialBot();
     }
 
     private function processAddress(bool $anonymize, ?string $address): ?string
@@ -166,6 +171,7 @@ class Visit extends AbstractEntity implements JsonSerializable
             'date' => $this->date->toAtomString(),
             'userAgent' => $this->userAgent,
             'visitLocation' => $this->visitLocation,
+            'potentialBot' => $this->potentialBot,
         ];
     }
 

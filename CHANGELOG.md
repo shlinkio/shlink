@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * `disable_ua_tracking`: If true, the user agent will not be tracked.
 
 * [#955](https://github.com/shlinkio/shlink/issues/955) Added new option to set short URLs as crawlable, making them be listed in the robots.txt as Allowed.
+* [#900](https://github.com/shlinkio/shlink/issues/900) Shlink now tries to detect if the visit is coming from a potential bot or crawler, and allows to exclude those visits from visits lists if desired.
 
 ### Changed
 * [#1036](https://github.com/shlinkio/shlink/issues/1036) Updated to `happyr/doctrine-specification` 2.0.

@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 
+use function Shlinkio\Shlink\Core\isCrawler;
 use function substr;
 
 final class Visitor
@@ -21,6 +22,7 @@ final class Visitor
     private string $referer;
     private string $visitedUrl;
     private ?string $remoteAddress;
+    private bool $potentialBot;
 
     public function __construct(string $userAgent, string $referer, ?string $remoteAddress, string $visitedUrl)
     {
@@ -28,6 +30,7 @@ final class Visitor
         $this->referer = $this->cropToLength($referer, self::REFERER_MAX_LENGTH);
         $this->visitedUrl = $this->cropToLength($visitedUrl, self::VISITED_URL_MAX_LENGTH);
         $this->remoteAddress = $this->cropToLength($remoteAddress, self::REMOTE_ADDRESS_MAX_LENGTH);
+        $this->potentialBot = isCrawler($userAgent);
     }
 
     private function cropToLength(?string $value, int $length): ?string
@@ -50,6 +53,11 @@ final class Visitor
         return new self('', '', null, '');
     }
 
+    public static function botInstance(): self
+    {
+        return new self('cf-facebook', '', null, '');
+    }
+
     public function getUserAgent(): string
     {
         return $this->userAgent;
@@ -70,14 +78,22 @@ final class Visitor
         return $this->visitedUrl;
     }
 
+    public function isPotentialBot(): bool
+    {
+        return $this->potentialBot;
+    }
+
     public function normalizeForTrackingOptions(TrackingOptions $options): self
     {
-        $instance = self::emptyInstance();
+        $instance = new self(
+            $options->disableUaTracking() ? '' : $this->userAgent,
+            $options->disableReferrerTracking() ? '' : $this->referer,
+            $options->disableIpTracking() ? null : $this->remoteAddress,
+            $this->visitedUrl,
+        );
 
-        $instance->userAgent = $options->disableUaTracking() ? '' : $this->userAgent;
-        $instance->referer = $options->disableReferrerTracking() ? '' : $this->referer;
-        $instance->remoteAddress = $options->disableIpTracking() ? null : $this->remoteAddress;
-        $instance->visitedUrl = $this->visitedUrl;
+        // Keep the fact that the visit was a potential bot, even if we no longer save the user agent
+        $instance->potentialBot = $this->potentialBot;
 
         return $instance;
     }
