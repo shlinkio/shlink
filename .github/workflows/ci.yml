@@ -217,6 +217,7 @@ jobs:
     strategy:
       matrix:
         php-version: ['7.4', '8.0']
+        test-group: ['unit', 'db']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -232,7 +233,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           path: build
-      - run: composer infect:ci
+      - run: composer infect:ci:${{ matrix.test-group }}
 
   upload-coverage:
     needs:
