@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsPaginatorAdapterTest extends TestCase
@@ -33,9 +34,11 @@ class VisitsPaginatorAdapterTest extends TestCase
         $limit = 1;
         $offset = 5;
         $adapter = $this->createAdapter(null);
-        $findVisits = $this->repo->findVisitsByShortCode('', null, new DateRange(), $limit, $offset, null)->willReturn(
-            [],
-        );
+        $findVisits = $this->repo->findVisitsByShortCode(
+            '',
+            null,
+            new VisitsListFiltering(new DateRange(), false, null, $limit, $offset),
+        )->willReturn([]);
 
         for ($i = 0; $i < $count; $i++) {
             $adapter->getSlice($offset, $limit);

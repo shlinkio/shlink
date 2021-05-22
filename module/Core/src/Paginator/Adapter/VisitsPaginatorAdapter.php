@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 
 class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
@@ -34,10 +35,13 @@ class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
         return $this->visitRepository->findVisitsByShortCode(
             $this->identifier->shortCode(),
             $this->identifier->domain(),
-            $this->params->getDateRange(),
-            $length,
-            $offset,
-            $this->spec,
+            new VisitsListFiltering(
+                $this->params->getDateRange(),
+                $this->params->excludeBots(),
+                $this->spec,
+                $length,
+                $offset,
+            ),
         );
     }
 

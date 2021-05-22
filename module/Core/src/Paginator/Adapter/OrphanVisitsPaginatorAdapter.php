@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 
 class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
@@ -26,6 +27,12 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
 
     public function getSlice($offset, $length): iterable // phpcs:ignore
     {
-        return $this->repo->findOrphanVisits($this->params->getDateRange(), $length, $offset);
+        return $this->repo->findOrphanVisits(new VisitsListFiltering(
+            $this->params->getDateRange(),
+            $this->params->excludeBots(),
+            null,
+            $length,
+            $offset,
+        ));
     }
 }
