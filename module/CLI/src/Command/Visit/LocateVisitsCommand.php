@@ -119,7 +119,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         } catch (Throwable $e) {
             $this->io->error($e->getMessage());
             if ($this->io->isVerbose()) {
-                $this->getApplication()->renderThrowable($e, $this->io);
+                $this->getApplication()?->renderThrowable($e, $this->io);
             }
 
             return ExitCodes::EXIT_FAILURE;
@@ -151,7 +151,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         } catch (WrongIpException $e) {
             $this->io->writeln(' [<fg=red>An error occurred while locating IP. Skipped</>]');
             if ($this->io->isVerbose()) {
-                $this->getApplication()->renderThrowable($e, $this->io);
+                $this->getApplication()?->renderThrowable($e, $this->io);
             }
 
             throw IpCannotBeLocatedException::forError($e);

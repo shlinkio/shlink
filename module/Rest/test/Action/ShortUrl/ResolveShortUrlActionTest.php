@@ -16,8 +16,6 @@ use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ResolveShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function strpos;
-
 class ResolveShortUrlActionTest extends TestCase
 {
     use ProphecyTrait;
@@ -46,6 +44,6 @@ class ResolveShortUrlActionTest extends TestCase
         $response = $this->action->handle($request);
 
         self::assertEquals(200, $response->getStatusCode());
-        self::assertTrue(strpos($response->getBody()->getContents(), 'http://domain.com/foo/bar') > 0);
+        self::assertStringContainsString('http://domain.com/foo/bar', $response->getBody()->getContents());
     }
 }

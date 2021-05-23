@@ -104,7 +104,7 @@ class Visit extends AbstractEntity implements JsonSerializable
 
         try {
             return (string) IpAddress::fromString($address)->getAnonymizedCopy();
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             return null;
         }
     }

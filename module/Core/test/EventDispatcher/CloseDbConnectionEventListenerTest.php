@@ -44,7 +44,7 @@ class CloseDbConnectionEventListenerTest extends TestCase
 
         try {
             ($eventListener)(new stdClass());
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             // Ignore exceptions
         }
 

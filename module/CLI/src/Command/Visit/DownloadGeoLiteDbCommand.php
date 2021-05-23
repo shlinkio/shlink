@@ -69,7 +69,7 @@ class DownloadGeoLiteDbCommand extends Command
             }
 
             if ($io->isVerbose()) {
-                $this->getApplication()->renderThrowable($e, $io);
+                $this->getApplication()?->renderThrowable($e, $io);
             }
 
             return $olderDbExists ? ExitCodes::EXIT_WARNING : ExitCodes::EXIT_FAILURE;
