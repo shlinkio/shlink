@@ -9,13 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Changed
-* [#1046](https://github.com/shlinkio/shlink/issues/1046) Dropped support for PHP 7.4.
+* *Nothing*
 
 ### Deprecated
 * *Nothing*
 
 ### Removed
-* *Nothing*
+* [#1046](https://github.com/shlinkio/shlink/issues/1046) Dropped support for PHP 7.4.
 
 ### Fixed
 * *Nothing*
