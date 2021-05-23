@@ -1,10 +1,11 @@
-FROM php:8.0.2-alpine3.13
+FROM php:8.0.6-alpine3.13
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.19
 ENV PDO_SQLSRV_VERSION 5.9.0
 ENV INOTIFY_VERSION 3.0.0
-ENV SWOOLE_VERSION 4.6.3
+ENV SWOOLE_VERSION 4.6.7
+ENV MS_ODBC_SQL_VERSION 17.5.2.1
 
 RUN apk update
 
@@ -54,13 +55,13 @@ RUN mkdir -p /usr/src/php/ext/inotify \
   && rm /tmp/inotify.tar.gz
 
 # Install swoole, pcov and mssql driver
-RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.5.1.1-1_amd64.apk && \
-    apk add --allow-untrusted msodbcsql17_17.5.1.1-1_amd64.apk && \
+RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
+    apk add --allow-untrusted msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
     apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
     pecl install swoole-${SWOOLE_VERSION} pdo_sqlsrv-${PDO_SQLSRV_VERSION} pcov && \
     docker-php-ext-enable swoole pdo_sqlsrv pcov && \
     apk del .phpize-deps && \
-    rm msodbcsql17_17.5.1.1-1_amd64.apk
+    rm msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk
 
 # Install composer
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
