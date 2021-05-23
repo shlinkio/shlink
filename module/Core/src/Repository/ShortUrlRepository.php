@@ -35,7 +35,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         array $tags = [],
         ?ShortUrlsOrdering $orderBy = null,
         ?DateRange $dateRange = null,
-        ?Specification $spec = null
+        ?Specification $spec = null,
     ): array {
         $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
         $qb->select('DISTINCT s')
@@ -43,7 +43,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
            ->setFirstResult($offset);
 
         // In case the ordering has been specified, the query could be more complex. Process it
-        if ($orderBy !== null && $orderBy->hasOrderField()) {
+        if ($orderBy?->hasOrderField()) {
             return $this->processOrderByForList($qb, $orderBy);
         }
 
@@ -85,7 +85,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         ?string $searchTerm = null,
         array $tags = [],
         ?DateRange $dateRange = null,
-        ?Specification $spec = null
+        ?Specification $spec = null,
     ): int {
         $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
         $qb->select('COUNT(DISTINCT s)');
@@ -97,17 +97,17 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         ?string $searchTerm,
         array $tags,
         ?DateRange $dateRange,
-        ?Specification $spec
+        ?Specification $spec,
     ): QueryBuilder {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
            ->where('1=1');
 
-        if ($dateRange !== null && $dateRange->getStartDate() !== null) {
+        if ($dateRange?->getStartDate() !== null) {
             $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
             $qb->setParameter('startDate', $dateRange->getStartDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
-        if ($dateRange !== null && $dateRange->getEndDate() !== null) {
+        if ($dateRange?->getEndDate() !== null) {
             $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
             $qb->setParameter('endDate', $dateRange->getEndDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }

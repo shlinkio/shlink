@@ -49,9 +49,9 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
     public function visitsForShortUrl(
         ShortUrlIdentifier $identifier,
         VisitsParams $params,
-        ?ApiKey $apiKey = null
+        ?ApiKey $apiKey = null,
     ): Paginator {
-        $spec = $apiKey !== null ? $apiKey->spec() : null;
+        $spec = $apiKey?->spec();
 
         /** @var ShortUrlRepositoryInterface $repo */
         $repo = $this->em->getRepository(ShortUrl::class);

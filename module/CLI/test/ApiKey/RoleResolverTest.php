@@ -33,7 +33,7 @@ class RoleResolverTest extends TestCase
     public function properRolesAreResolvedBasedOnInput(
         InputInterface $input,
         array $expectedRoles,
-        int $expectedDomainCalls
+        int $expectedDomainCalls,
     ): void {
         $getDomain = $this->domainService->getOrCreate('example.com')->willReturn(
             (new Domain('example.com'))->setId('1'),

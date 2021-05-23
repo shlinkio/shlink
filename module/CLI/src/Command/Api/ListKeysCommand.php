@@ -58,7 +58,7 @@ class ListKeysCommand extends BaseCommand
             if (! $enabledOnly) {
                 $rowData[] = sprintf($messagePattern, $this->getEnabledSymbol($apiKey));
             }
-            $rowData[] = $expiration !== null ? $expiration->toAtomString() : '-';
+            $rowData[] = $expiration?->toAtomString() ?? '-';
             $rowData[] = $apiKey->isAdmin() ? 'Admin' : implode("\n", $apiKey->mapRoles(
                 fn (string $roleName, array $meta) =>
                     empty($meta)

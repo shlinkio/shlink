@@ -50,7 +50,7 @@ class ShortUrlService implements ShortUrlServiceInterface
     public function updateShortUrl(
         ShortUrlIdentifier $identifier,
         ShortUrlEdit $shortUrlEdit,
-        ?ApiKey $apiKey = null
+        ?ApiKey $apiKey = null,
     ): ShortUrl {
         if ($shortUrlEdit->longUrlWasProvided()) {
             /** @var ShortUrlEdit $shortUrlEdit */

@@ -71,14 +71,14 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
             $iterator = $qb->getQuery()->toIterable();
             $resultsFound = false;
 
-            /** @var Visit $visit */
             foreach ($iterator as $key => $visit) {
                 $resultsFound = true;
                 yield $key => $visit;
             }
 
             // As the query is ordered by ID, we can take the last one every time in order to exclude the whole list
-            $lastId = isset($visit) ? $visit->getId() : $lastId;
+            /** @var Visit|null $visit */
+            $lastId = $visit?->getId() ?? $lastId;
         } while ($resultsFound);
     }
 
@@ -101,12 +101,12 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     private function createVisitsByShortCodeQueryBuilder(
         ShortUrlIdentifier $identifier,
-        VisitsCountFiltering $filtering
+        VisitsCountFiltering $filtering,
     ): QueryBuilder {
         /** @var ShortUrlRepositoryInterface $shortUrlRepo */
         $shortUrlRepo = $this->getEntityManager()->getRepository(ShortUrl::class);
         $shortUrl = $shortUrlRepo->findOne($identifier, $filtering->spec());
-        $shortUrlId = $shortUrl !== null ? $shortUrl->getId() : -1;
+        $shortUrlId = $shortUrl?->getId() ?? '-1';
 
         // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later
         // Since they are not strictly provided by the caller, it's reasonably safe
@@ -187,10 +187,10 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     private function applyDatesInline(QueryBuilder $qb, ?DateRange $dateRange): void
     {
-        if ($dateRange !== null && $dateRange->getStartDate() !== null) {
+        if ($dateRange?->getStartDate() !== null) {
             $qb->andWhere($qb->expr()->gte('v.date', '\'' . $dateRange->getStartDate()->toDateTimeString() . '\''));
         }
-        if ($dateRange !== null && $dateRange->getEndDate() !== null) {
+        if ($dateRange?->getEndDate() !== null) {
             $qb->andWhere($qb->expr()->lte('v.date', '\'' . $dateRange->getEndDate()->toDateTimeString() . '\''));
         }
     }

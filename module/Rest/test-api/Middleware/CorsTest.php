@@ -28,7 +28,7 @@ class CorsTest extends ApiTestCase
     public function responseIncludesCorsHeadersIfOriginIsSent(
         string $origin,
         string $endpoint,
-        int $expectedStatusCode
+        int $expectedStatusCode,
     ): void {
         $resp = $this->callApiWithKey(self::METHOD_GET, $endpoint, [
             RequestOptions::HEADERS => ['Origin' => $origin],

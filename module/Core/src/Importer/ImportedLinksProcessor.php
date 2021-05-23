@@ -69,7 +69,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     private function resolveShortUrl(
         ImportedShlinkUrl $importedUrl,
         bool $importShortCodes,
-        callable $skipOnShortCodeConflict
+        callable $skipOnShortCodeConflict,
     ): ShortUrlImporting {
         $alreadyImportedShortUrl = $this->shortUrlRepo->findOneByImportedUrl($importedUrl);
         if ($alreadyImportedShortUrl !== null) {
@@ -88,7 +88,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     private function handleShortCodeUniqueness(
         ShortUrl $shortUrl,
         bool $importShortCodes,
-        callable $skipOnShortCodeConflict
+        callable $skipOnShortCodeConflict,
     ): bool {
         if ($this->shortCodeHelper->ensureShortCodeUniqueness($shortUrl, $importShortCodes)) {
             return true;

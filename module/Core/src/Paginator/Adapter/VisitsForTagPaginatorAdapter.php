@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
-use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
@@ -28,7 +27,7 @@ class VisitsForTagPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
             new VisitsListFiltering(
                 $this->params->getDateRange(),
                 $this->params->excludeBots(),
-                $this->resolveSpec(),
+                $this->apiKey?->spec(true),
                 $length,
                 $offset,
             ),
@@ -42,13 +41,8 @@ class VisitsForTagPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
             new VisitsCountFiltering(
                 $this->params->getDateRange(),
                 $this->params->excludeBots(),
-                $this->resolveSpec(),
+                $this->apiKey?->spec(true),
             ),
         );
-    }
-
-    private function resolveSpec(): ?Specification
-    {
-        return $this->apiKey !== null ? $this->apiKey->spec(true) : null;
     }
 }

@@ -126,7 +126,7 @@ class DomainServiceTest extends TestCase
         $repo = $this->prophesize(DomainRepositoryInterface::class);
         $repo->findOneBy(['authority' => $authority])->willReturn($foundDomain);
         $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
-        $persist = $this->em->persist($foundDomain !== null ? $foundDomain : Argument::type(Domain::class));
+        $persist = $this->em->persist($foundDomain ?? Argument::type(Domain::class));
         $flush = $this->em->flush();
 
         $result = $this->domainService->getOrCreate($authority);

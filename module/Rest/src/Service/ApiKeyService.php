@@ -22,7 +22,7 @@ class ApiKeyService implements ApiKeyServiceInterface
     public function create(
         ?Chronos $expirationDate = null,
         ?string $name = null,
-        RoleDefinition ...$roleDefinitions
+        RoleDefinition ...$roleDefinitions,
     ): ApiKey {
         $key = $this->buildApiKeyWithParams($expirationDate, $name);
         foreach ($roleDefinitions as $definition) {

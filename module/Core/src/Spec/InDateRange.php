@@ -20,11 +20,11 @@ class InDateRange extends BaseSpecification
     {
         $criteria = [];
 
-        if ($this->dateRange !== null && $this->dateRange->getStartDate() !== null) {
+        if ($this->dateRange?->getStartDate() !== null) {
             $criteria[] = Spec::gte($this->field, $this->dateRange->getStartDate()->toDateTimeString());
         }
 
-        if ($this->dateRange !== null && $this->dateRange->getEndDate() !== null) {
+        if ($this->dateRange?->getEndDate() !== null) {
             $criteria[] = Spec::lte($this->field, $this->dateRange->getEndDate()->toDateTimeString());
         }
 

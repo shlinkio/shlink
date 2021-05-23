@@ -45,7 +45,7 @@ class OrphanVisitsTest extends ApiTestCase
         array $query,
         int $totalItems,
         int $expectedAmount,
-        array $expectedVisits
+        array $expectedVisits,
     ): void {
         $resp = $this->callApiWithKey(self::METHOD_GET, '/visits/orphan', [RequestOptions::QUERY => $query]);
         $payload = $this->getJsonResponsePayload($resp);

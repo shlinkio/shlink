@@ -110,7 +110,7 @@ class ListShortUrlsCommandTest extends TestCase
         array $input,
         array $expectedContents,
         array $notExpectedContents,
-        ApiKey $apiKey
+        ApiKey $apiKey,
     ): void {
         $this->shortUrlService->listShortUrls(ShortUrlsParams::emptyInstance())
             ->willReturn(new Paginator(new ArrayAdapter([
@@ -185,7 +185,7 @@ class ListShortUrlsCommandTest extends TestCase
         ?string $searchTerm,
         array $tags,
         ?string $startDate = null,
-        ?string $endDate = null
+        ?string $endDate = null,
     ): void {
         $listShortUrls = $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData([
             'page' => $page,

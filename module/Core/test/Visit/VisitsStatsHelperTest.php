@@ -80,7 +80,7 @@ class VisitsStatsHelperTest extends TestCase
     {
         $shortCode = '123ABC';
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
-        $spec = $apiKey === null ? null : $apiKey->spec();
+        $spec = $apiKey?->spec();
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
         $count = $repo->shortCodeIsInUse($identifier, $spec)->willReturn(

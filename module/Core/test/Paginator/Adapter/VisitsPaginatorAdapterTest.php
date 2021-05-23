@@ -70,7 +70,7 @@ class VisitsPaginatorAdapterTest extends TestCase
             $this->repo->reveal(),
             new ShortUrlIdentifier(''),
             VisitsParams::fromRawData([]),
-            $apiKey !== null ? $apiKey->spec() : null,
+            $apiKey?->spec(),
         );
     }
 }

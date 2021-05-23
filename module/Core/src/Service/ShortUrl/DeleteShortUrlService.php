@@ -27,7 +27,7 @@ class DeleteShortUrlService implements DeleteShortUrlServiceInterface
     public function deleteByShortCode(
         ShortUrlIdentifier $identifier,
         bool $ignoreThreshold = false,
-        ?ApiKey $apiKey = null
+        ?ApiKey $apiKey = null,
     ): void {
         $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
         if (! $ignoreThreshold && $this->isThresholdReached($shortUrl)) {

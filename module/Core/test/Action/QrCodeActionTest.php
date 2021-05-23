@@ -84,7 +84,7 @@ class QrCodeActionTest extends TestCase
      */
     public function imageIsReturnedWithExpectedContentTypeBasedOnProvidedFormat(
         array $query,
-        string $expectedContentType
+        string $expectedContentType,
     ): void {
         $code = 'abc123';
         $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($code, ''))->willReturn(

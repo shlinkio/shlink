@@ -126,8 +126,8 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
             ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
             ShortUrlsParamsInputFilter::TAGS => $tags,
             ShortUrlsOrdering::ORDER_BY => $orderBy,
-            ShortUrlsParamsInputFilter::START_DATE => $startDate !== null ? $startDate->toAtomString() : null,
-            ShortUrlsParamsInputFilter::END_DATE => $endDate !== null ? $endDate->toAtomString() : null,
+            ShortUrlsParamsInputFilter::START_DATE => $startDate?->toAtomString(),
+            ShortUrlsParamsInputFilter::END_DATE => $endDate?->toAtomString(),
         ];
 
         if ($all) {
@@ -155,7 +155,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         OutputInterface $output,
         array $columnsMap,
         ShortUrlsParams $params,
-        bool $all
+        bool $all,
     ): Paginator {
         $shortUrls = $this->shortUrlService->listShortUrls($params);
 
@@ -200,14 +200,11 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         }
         if ($input->getOption('show-api-key')) {
             $columnsMap['API Key'] = static fn (array $_, ShortUrl $shortUrl): string =>
-            (string) $shortUrl->authorApiKey();
+                (string) $shortUrl->authorApiKey();
         }
         if ($input->getOption('show-api-key-name')) {
-            $columnsMap['API Key Name'] = static function (array $_, ShortUrl $shortUrl): ?string {
-                $apiKey = $shortUrl->authorApiKey();
-
-                return $apiKey !== null ? $apiKey->name() : null;
-            };
+            $columnsMap['API Key Name'] = static fn (array $_, ShortUrl $shortUrl): ?string =>
+                $shortUrl->authorApiKey()?->name();
         }
 
         return $columnsMap;

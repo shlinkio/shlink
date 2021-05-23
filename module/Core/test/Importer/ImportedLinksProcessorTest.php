@@ -160,7 +160,7 @@ class ImportedLinksProcessorTest extends TestCase
         ImportedShlinkUrl $importedUrl,
         string $expectedOutput,
         int $amountOfPersistedVisits,
-        ?ShortUrl $foundShortUrl
+        ?ShortUrl $foundShortUrl,
     ): void {
         $findExisting = $this->repo->findOneByImportedUrl(Argument::cetera())->willReturn($foundShortUrl);
         $ensureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);

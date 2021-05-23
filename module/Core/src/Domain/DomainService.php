@@ -30,7 +30,7 @@ class DomainService implements DomainServiceInterface
         $domains = $repo->findDomainsWithout($this->defaultDomain, $apiKey);
         $mappedDomains = map($domains, fn (Domain $domain) => new DomainItem($domain->getAuthority(), false));
 
-        if ($apiKey !== null && $apiKey->hasRole(Role::DOMAIN_SPECIFIC)) {
+        if ($apiKey?->hasRole(Role::DOMAIN_SPECIFIC)) {
             return $mappedDomains;
         }
 

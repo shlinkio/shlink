@@ -23,7 +23,7 @@ class ShortUrlVisitsTest extends ApiTestCase
         string $shortCode,
         ?string $domain,
         string $expectedDetail,
-        string $apiKey
+        string $apiKey,
     ): void {
         $resp = $this->callApiWithKey(
             self::METHOD_GET,

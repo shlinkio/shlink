@@ -84,6 +84,6 @@ abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMet
 
     abstract protected function createErrorResp(
         ServerRequestInterface $request,
-        RequestHandlerInterface $handler
+        RequestHandlerInterface $handler,
     ): ResponseInterface;
 }

@@ -53,7 +53,7 @@ class VisitLocatorTest extends TestCase
      */
     public function locateVisitsIteratesAndLocatesExpectedVisits(
         string $serviceMethodName,
-        string $expectedRepoMethodName
+        string $expectedRepoMethodName,
     ): void {
         $unlocatedVisits = map(
             range(1, 200),
@@ -105,7 +105,7 @@ class VisitLocatorTest extends TestCase
     public function visitsWhichCannotBeLocatedAreIgnoredOrLocatedAsEmpty(
         string $serviceMethodName,
         string $expectedRepoMethodName,
-        bool $isNonLocatableAddress
+        bool $isNonLocatableAddress,
     ): void {
         $unlocatedVisits = [
             Visit::forValidShortUrl(ShortUrl::withLongUrl('foo'), Visitor::emptyInstance()),

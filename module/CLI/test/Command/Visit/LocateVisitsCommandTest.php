@@ -73,7 +73,7 @@ class LocateVisitsCommandTest extends TestCase
         int $expectedEmptyCalls,
         int $expectedAllCalls,
         bool $expectWarningPrint,
-        array $args
+        array $args,
     ): void {
         $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', ''));
         $location = VisitLocation::fromGeolocation(Location::emptyInstance());
