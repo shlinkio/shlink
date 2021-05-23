@@ -58,7 +58,7 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
 
         /** @var ShortUrlRepositoryInterface $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        if (! $repo->shortCodeIsInUse($identifier->shortCode(), $identifier->domain(), $spec)) {
+        if (! $repo->shortCodeIsInUse($identifier, $spec)) {
             throw ShortUrlNotFoundException::fromNotFound($identifier);
         }
 

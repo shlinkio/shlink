@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Repository;
 
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
@@ -11,6 +12,7 @@ use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -172,32 +174,44 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $query->getOneOrNullResult();
     }
 
-    public function findOne(string $shortCode, ?string $domain = null, ?Specification $spec = null): ?ShortUrl
+    public function findOne(ShortUrlIdentifier $identifier, ?Specification $spec = null): ?ShortUrl
     {
-        $qb = $this->createFindOneQueryBuilder($shortCode, $domain, $spec);
+        $qb = $this->createFindOneQueryBuilder($identifier, $spec);
         $qb->select('s');
 
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function shortCodeIsInUse(string $slug, ?string $domain = null, ?Specification $spec = null): bool
+    public function shortCodeIsInUse(ShortUrlIdentifier $identifier, ?Specification $spec = null): bool
     {
-        $qb = $this->createFindOneQueryBuilder($slug, $domain, $spec);
-        $qb->select('COUNT(DISTINCT s.id)');
-
-        return ((int) $qb->getQuery()->getSingleScalarResult()) > 0;
+        return $this->doShortCodeIsInUse($identifier, $spec, null);
     }
 
-    private function createFindOneQueryBuilder(string $slug, ?string $domain, ?Specification $spec): QueryBuilder
+    public function shortCodeIsInUseWithLock(ShortUrlIdentifier $identifier, ?Specification $spec = null): bool
+    {
+        return $this->doShortCodeIsInUse($identifier, $spec, LockMode::PESSIMISTIC_WRITE);
+    }
+
+    private function doShortCodeIsInUse(ShortUrlIdentifier $identifier, ?Specification $spec, ?int $lockMode): bool
+    {
+        $qb = $this->createFindOneQueryBuilder($identifier, $spec);
+        $qb->select('s.id');
+
+        $query = $qb->getQuery()->setLockMode($lockMode);
+
+        return $query->getOneOrNullResult() !== null;
+    }
+
+    private function createFindOneQueryBuilder(ShortUrlIdentifier $identifier, ?Specification $spec): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
            ->where($qb->expr()->isNotNull('s.shortCode'))
            ->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
-           ->setParameter('slug', $slug)
+           ->setParameter('slug', $identifier->shortCode())
            ->setMaxResults(1);
 
-        $this->whereDomainIs($qb, $domain);
+        $this->whereDomainIs($qb, $identifier->domain());
 
         $this->applySpecification($qb, $spec, 's');
 

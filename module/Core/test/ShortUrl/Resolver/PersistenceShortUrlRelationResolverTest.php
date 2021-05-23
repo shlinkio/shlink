@@ -6,11 +6,11 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Resolver;
 
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
@@ -48,7 +48,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
      */
     public function findsOrCreatesDomainWhenValueIsProvided(?Domain $foundDomain, string $authority): void
     {
-        $repo = $this->prophesize(ObjectRepository::class);
+        $repo = $this->prophesize(DomainRepositoryInterface::class);
         $findDomain = $repo->findOneBy(['authority' => $authority])->willReturn($foundDomain);
         $getRepository = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
 
@@ -121,7 +121,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     /** @test */
     public function newDomainsAreMemoizedUntilStateIsCleared(): void
     {
-        $repo = $this->prophesize(ObjectRepository::class);
+        $repo = $this->prophesize(DomainRepositoryInterface::class);
         $repo->findOneBy(Argument::type('array'))->willReturn(null);
         $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
 

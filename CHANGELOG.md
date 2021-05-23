@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [2.7.0] - 2021-05-23
 ### Added
 * [#1044](https://github.com/shlinkio/shlink/issues/1044) Added ability to set names on API keys, which helps to identify them when the list grows.
 * [#819](https://github.com/shlinkio/shlink/issues/819) Visits are now always located in real time, even when not using swoole.

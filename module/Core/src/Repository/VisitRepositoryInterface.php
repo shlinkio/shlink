@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Repository;
 use Doctrine\Persistence\ObjectRepository;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -33,9 +34,9 @@ interface VisitRepositoryInterface extends ObjectRepository, EntitySpecification
     /**
      * @return Visit[]
      */
-    public function findVisitsByShortCode(string $shortCode, ?string $domain, VisitsListFiltering $filtering): array;
+    public function findVisitsByShortCode(ShortUrlIdentifier $identifier, VisitsListFiltering $filtering): array;
 
-    public function countVisitsByShortCode(string $shortCode, ?string $domain, VisitsCountFiltering $filtering): int;
+    public function countVisitsByShortCode(ShortUrlIdentifier $identifier, VisitsCountFiltering $filtering): int;
 
     /**
      * @return Visit[]

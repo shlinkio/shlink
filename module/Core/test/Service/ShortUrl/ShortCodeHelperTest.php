@@ -10,6 +10,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelper;
 
@@ -39,12 +40,12 @@ class ShortCodeHelperTest extends TestCase
         $callIndex = 0;
         $expectedCalls = 3;
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $shortCodeIsInUse = $repo->shortCodeIsInUse('abc123', $expectedAuthority)->will(
-            function () use (&$callIndex, $expectedCalls) {
-                $callIndex++;
-                return $callIndex < $expectedCalls;
-            },
-        );
+        $shortCodeIsInUse = $repo->shortCodeIsInUseWithLock(
+            ShortUrlIdentifier::fromShortCodeAndDomain('abc123', $expectedAuthority),
+        )->will(function () use (&$callIndex, $expectedCalls) {
+            $callIndex++;
+            return $callIndex < $expectedCalls;
+        });
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
         $this->shortUrl->getDomain()->willReturn($domain);
 
@@ -66,7 +67,9 @@ class ShortCodeHelperTest extends TestCase
     public function inUseSlugReturnsError(): void
     {
         $repo = $this->prophesize(ShortUrlRepository::class);
-        $shortCodeIsInUse = $repo->shortCodeIsInUse('abc123', null)->willReturn(true);
+        $shortCodeIsInUse = $repo->shortCodeIsInUseWithLock(
+            ShortUrlIdentifier::fromShortCodeAndDomain('abc123'),
+        )->willReturn(true);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
         $this->shortUrl->getDomain()->willReturn(null);
 

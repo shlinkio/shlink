@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
@@ -89,32 +90,46 @@ class VisitRepositoryTest extends DatabaseTestCase
     {
         [$shortCode, $domain] = $this->createShortUrlsAndVisits();
 
-        self::assertCount(0, $this->repo->findVisitsByShortCode('invalid', null, new VisitsListFiltering()));
-        self::assertCount(6, $this->repo->findVisitsByShortCode($shortCode, null, new VisitsListFiltering()));
-        self::assertCount(4, $this->repo->findVisitsByShortCode($shortCode, null, new VisitsListFiltering(null, true)));
-        self::assertCount(3, $this->repo->findVisitsByShortCode($shortCode, $domain, new VisitsListFiltering()));
-        self::assertCount(2, $this->repo->findVisitsByShortCode($shortCode, null, new VisitsListFiltering(
-            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
-        )));
-        self::assertCount(4, $this->repo->findVisitsByShortCode($shortCode, null, new VisitsListFiltering(
-            DateRange::withStartDate(Chronos::parse('2016-01-03')),
-        )));
-        self::assertCount(1, $this->repo->findVisitsByShortCode($shortCode, $domain, new VisitsListFiltering(
-            DateRange::withStartDate(Chronos::parse('2016-01-03')),
-        )));
+        self::assertCount(0, $this->repo->findVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain('invalid'),
+            new VisitsListFiltering(),
+        ));
+        self::assertCount(6, $this->repo->findVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            new VisitsListFiltering(),
+        ));
+        self::assertCount(4, $this->repo->findVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            new VisitsListFiltering(null, true),
+        ));
         self::assertCount(3, $this->repo->findVisitsByShortCode(
-            $shortCode,
-            null,
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
+            new VisitsListFiltering(),
+        ));
+        self::assertCount(2, $this->repo->findVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            new VisitsListFiltering(
+                DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+            ),
+        ));
+        self::assertCount(4, $this->repo->findVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            new VisitsListFiltering(DateRange::withStartDate(Chronos::parse('2016-01-03'))),
+        ));
+        self::assertCount(1, $this->repo->findVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
+            new VisitsListFiltering(DateRange::withStartDate(Chronos::parse('2016-01-03'))),
+        ));
+        self::assertCount(3, $this->repo->findVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             new VisitsListFiltering(null, false, null, 3, 2),
         ));
         self::assertCount(2, $this->repo->findVisitsByShortCode(
-            $shortCode,
-            null,
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             new VisitsListFiltering(null, false, null, 5, 4),
         ));
         self::assertCount(1, $this->repo->findVisitsByShortCode(
-            $shortCode,
-            $domain,
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
             new VisitsListFiltering(null, false, null, 3, 2),
         ));
     }
@@ -124,22 +139,36 @@ class VisitRepositoryTest extends DatabaseTestCase
     {
         [$shortCode, $domain] = $this->createShortUrlsAndVisits();
 
-        self::assertEquals(0, $this->repo->countVisitsByShortCode('invalid', null, new VisitsCountFiltering()));
-        self::assertEquals(6, $this->repo->countVisitsByShortCode($shortCode, null, new VisitsCountFiltering()));
-        self::assertEquals(4, $this->repo->countVisitsByShortCode($shortCode, null, new VisitsCountFiltering(
-            null,
-            true,
-        )));
-        self::assertEquals(3, $this->repo->countVisitsByShortCode($shortCode, $domain, new VisitsCountFiltering()));
-        self::assertEquals(2, $this->repo->countVisitsByShortCode($shortCode, null, new VisitsCountFiltering(
-            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
-        )));
-        self::assertEquals(4, $this->repo->countVisitsByShortCode($shortCode, null, new VisitsCountFiltering(
-            DateRange::withStartDate(Chronos::parse('2016-01-03')),
-        )));
-        self::assertEquals(1, $this->repo->countVisitsByShortCode($shortCode, $domain, new VisitsCountFiltering(
-            DateRange::withStartDate(Chronos::parse('2016-01-03')),
-        )));
+        self::assertEquals(0, $this->repo->countVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain('invalid'),
+            new VisitsCountFiltering(),
+        ));
+        self::assertEquals(6, $this->repo->countVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            new VisitsCountFiltering(),
+        ));
+        self::assertEquals(4, $this->repo->countVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            new VisitsCountFiltering(null, true),
+        ));
+        self::assertEquals(3, $this->repo->countVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
+            new VisitsCountFiltering(),
+        ));
+        self::assertEquals(2, $this->repo->countVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            new VisitsCountFiltering(
+                DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+            ),
+        ));
+        self::assertEquals(4, $this->repo->countVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            new VisitsCountFiltering(DateRange::withStartDate(Chronos::parse('2016-01-03'))),
+        ));
+        self::assertEquals(1, $this->repo->countVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
+            new VisitsCountFiltering(DateRange::withStartDate(Chronos::parse('2016-01-03'))),
+        ));
     }
 
     /** @test */

@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\Visitor;
@@ -180,12 +181,18 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertTrue($this->repo->shortCodeIsInUse('my-cool-slug'));
-        self::assertFalse($this->repo->shortCodeIsInUse('my-cool-slug', 'doma.in'));
-        self::assertFalse($this->repo->shortCodeIsInUse('slug-not-in-use'));
-        self::assertFalse($this->repo->shortCodeIsInUse('another-slug'));
-        self::assertFalse($this->repo->shortCodeIsInUse('another-slug', 'example.com'));
-        self::assertTrue($this->repo->shortCodeIsInUse('another-slug', 'doma.in'));
+        self::assertTrue($this->repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug')));
+        self::assertFalse($this->repo->shortCodeIsInUse(
+            ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug', 'doma.in'),
+        ));
+        self::assertFalse($this->repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain('slug-not-in-use')));
+        self::assertFalse($this->repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain('another-slug')));
+        self::assertFalse($this->repo->shortCodeIsInUse(
+            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'example.com'),
+        ));
+        self::assertTrue($this->repo->shortCodeIsInUse(
+            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'doma.in'),
+        ));
     }
 
     /** @test */
@@ -203,12 +210,16 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertNotNull($this->repo->findOne('my-cool-slug'));
-        self::assertNull($this->repo->findOne('my-cool-slug', 'doma.in'));
-        self::assertNull($this->repo->findOne('slug-not-in-use'));
-        self::assertNull($this->repo->findOne('another-slug'));
-        self::assertNull($this->repo->findOne('another-slug', 'example.com'));
-        self::assertNotNull($this->repo->findOne('another-slug', 'doma.in'));
+        self::assertNotNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug')));
+        self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug', 'doma.in')));
+        self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('slug-not-in-use')));
+        self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('another-slug')));
+        self::assertNull($this->repo->findOne(
+            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'example.com'),
+        ));
+        self::assertNotNull($this->repo->findOne(
+            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'doma.in'),
+        ));
     }
 
     /** @test */

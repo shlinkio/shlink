@@ -62,7 +62,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
 
         return new Collections\ArrayCollection(map($tags, function (string $tagName) use ($repo): Tag {
             // Memoize only new tags, and let doctrine handle objects hydrated from persistence
-            $tag = $repo->findOneBy(['name' => $tagName]) ?? $this->memoizeNewTag($tagName);
+            $tag = $repo->findOneBy(['name' => $tagName])  ?? $this->memoizeNewTag($tagName);
             $this->em->persist($tag);
 
             return $tag;

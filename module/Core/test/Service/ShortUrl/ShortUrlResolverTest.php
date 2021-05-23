@@ -46,12 +46,13 @@ class ShortUrlResolverTest extends TestCase
     {
         $shortUrl = ShortUrl::withLongUrl('expected_url');
         $shortCode = $shortUrl->getShortCode();
+        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $findOne = $repo->findOne($shortCode, null, $apiKey !== null ? $apiKey->spec() : null)->willReturn($shortUrl);
+        $findOne = $repo->findOne($identifier, $apiKey !== null ? $apiKey->spec() : null)->willReturn($shortUrl);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $result = $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey);
+        $result = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
 
         self::assertSame($shortUrl, $result);
         $findOne->shouldHaveBeenCalledOnce();
@@ -65,16 +66,17 @@ class ShortUrlResolverTest extends TestCase
     public function exceptionIsThrownIfShortcodeIsNotFound(?ApiKey $apiKey): void
     {
         $shortCode = 'abc123';
+        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
 
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $findOne = $repo->findOne($shortCode, null, $apiKey !== null ? $apiKey->spec() : null)->willReturn(null);
+        $findOne = $repo->findOne($identifier, $apiKey !== null ? $apiKey->spec() : null)->willReturn(null);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal(), $apiKey);
 
         $this->expectException(ShortUrlNotFoundException::class);
         $findOne->shouldBeCalledOnce();
         $getRepo->shouldBeCalledOnce();
 
-        $this->urlResolver->resolveShortUrl(new ShortUrlIdentifier($shortCode), $apiKey);
+        $this->urlResolver->resolveShortUrl($identifier, $apiKey);
     }
 
     /** @test */

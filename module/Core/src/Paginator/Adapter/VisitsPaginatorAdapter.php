@@ -33,8 +33,7 @@ class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
     public function getSlice($offset, $length): array // phpcs:ignore
     {
         return $this->visitRepository->findVisitsByShortCode(
-            $this->identifier->shortCode(),
-            $this->identifier->domain(),
+            $this->identifier,
             new VisitsListFiltering(
                 $this->params->getDateRange(),
                 $this->params->excludeBots(),
@@ -48,8 +47,7 @@ class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
     protected function doCount(): int
     {
         return $this->visitRepository->countVisitsByShortCode(
-            $this->identifier->shortCode(),
-            $this->identifier->domain(),
+            $this->identifier,
             new VisitsCountFiltering(
                 $this->params->getDateRange(),
                 $this->params->excludeBots(),

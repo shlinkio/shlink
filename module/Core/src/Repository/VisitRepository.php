@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfOrphanVisits;
@@ -84,28 +85,27 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     /**
      * @return Visit[]
      */
-    public function findVisitsByShortCode(string $shortCode, ?string $domain, VisitsListFiltering $filtering): array
+    public function findVisitsByShortCode(ShortUrlIdentifier $identifier, VisitsListFiltering $filtering): array
     {
-        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $filtering);
+        $qb = $this->createVisitsByShortCodeQueryBuilder($identifier, $filtering);
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit(), $filtering->offset());
     }
 
-    public function countVisitsByShortCode(string $shortCode, ?string $domain, VisitsCountFiltering $filtering): int
+    public function countVisitsByShortCode(ShortUrlIdentifier $identifier, VisitsCountFiltering $filtering): int
     {
-        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $filtering);
+        $qb = $this->createVisitsByShortCodeQueryBuilder($identifier, $filtering);
         $qb->select('COUNT(v.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     private function createVisitsByShortCodeQueryBuilder(
-        string $shortCode,
-        ?string $domain,
+        ShortUrlIdentifier $identifier,
         VisitsCountFiltering $filtering
     ): QueryBuilder {
         /** @var ShortUrlRepositoryInterface $shortUrlRepo */
         $shortUrlRepo = $this->getEntityManager()->getRepository(ShortUrl::class);
-        $shortUrl = $shortUrlRepo->findOne($shortCode, $domain, $filtering->spec());
+        $shortUrl = $shortUrlRepo->findOne($identifier, $filtering->spec());
         $shortUrlId = $shortUrl !== null ? $shortUrl->getId() : -1;
 
         // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later
