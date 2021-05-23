@@ -7,6 +7,8 @@ namespace Shlinkio\Shlink\Core\Entity;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Selectable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
@@ -40,6 +42,7 @@ class ShortUrl extends AbstractEntity
     private ?ApiKey $authorApiKey = null;
     private ?string $title = null;
     private bool $titleWasAutoResolved = false;
+    private bool $crawlable = false;
 
     private function __construct()
     {
@@ -76,6 +79,7 @@ class ShortUrl extends AbstractEntity
         $instance->authorApiKey = $meta->getApiKey();
         $instance->title = $meta->getTitle();
         $instance->titleWasAutoResolved = $meta->titleWasAutoResolved();
+        $instance->crawlable = $meta->isCrawlable();
 
         return $instance;
     }
@@ -86,17 +90,29 @@ class ShortUrl extends AbstractEntity
         ?ShortUrlRelationResolverInterface $relationResolver = null
     ): self {
         $meta = [
+            ShortUrlInputFilter::VALIDATE_URL => false,
             ShortUrlInputFilter::LONG_URL => $url->longUrl(),
             ShortUrlInputFilter::DOMAIN => $url->domain(),
             ShortUrlInputFilter::TAGS => $url->tags(),
             ShortUrlInputFilter::TITLE => $url->title(),
-            ShortUrlInputFilter::VALIDATE_URL => false,
+            ShortUrlInputFilter::MAX_VISITS => $url->meta()->maxVisits(),
         ];
         if ($importShortCode) {
             $meta[ShortUrlInputFilter::CUSTOM_SLUG] = $url->shortCode();
         }
 
         $instance = self::fromMeta(ShortUrlMeta::fromRawData($meta), $relationResolver);
+
+        $validSince = $url->meta()->validSince();
+        if ($validSince !== null) {
+            $instance->validSince = Chronos::instance($validSince);
+        }
+
+        $validUntil = $url->meta()->validUntil();
+        if ($validUntil !== null) {
+            $instance->validUntil = Chronos::instance($validUntil);
+        }
+
         $instance->importSource = $url->source();
         $instance->importOriginalShortCode = $url->shortCode();
         $instance->dateCreated = Chronos::instance($url->createdAt());
@@ -132,6 +148,11 @@ class ShortUrl extends AbstractEntity
         return $this->tags;
     }
 
+    public function authorApiKey(): ?ApiKey
+    {
+        return $this->authorApiKey;
+    }
+
     public function getValidSince(): ?Chronos
     {
         return $this->validSince;
@@ -145,6 +166,20 @@ class ShortUrl extends AbstractEntity
     public function getVisitsCount(): int
     {
         return count($this->visits);
+    }
+
+    public function mostRecentImportedVisitDate(): ?Chronos
+    {
+        /** @var Selectable $visits */
+        $visits = $this->visits;
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('type', Visit::TYPE_IMPORTED))
+                                      ->orderBy(['id' => 'DESC'])
+                                      ->setMaxResults(1);
+
+        /** @var Visit|false $visit */
+        $visit = $visits->matching($criteria)->last();
+
+        return $visit === false ? null : $visit->getDate();
     }
 
     /**
@@ -162,9 +197,14 @@ class ShortUrl extends AbstractEntity
         return $this->maxVisits;
     }
 
-    public function getTitle(): ?string
+    public function title(): ?string
     {
         return $this->title;
+    }
+
+    public function crawlable(): bool
+    {
+        return $this->crawlable;
     }
 
     public function update(
@@ -186,6 +226,9 @@ class ShortUrl extends AbstractEntity
         if ($shortUrlEdit->tagsWereProvided()) {
             $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
             $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags());
+        }
+        if ($shortUrlEdit->crawlableWasProvided()) {
+            $this->crawlable = $shortUrlEdit->crawlable();
         }
         if (
             $this->title === null

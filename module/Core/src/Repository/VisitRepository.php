@@ -6,12 +6,14 @@ namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\ORM\QueryBuilder;
-use Happyr\DoctrineSpecification\EntitySpecificationRepository;
-use Happyr\DoctrineSpecification\Specification\Specification;
+use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfOrphanVisits;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfShortUrlVisits;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -66,11 +68,11 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
         do {
             $qb = (clone $originalQueryBuilder)->andWhere($qb->expr()->gt('v.id', $lastId));
-            $iterator = $qb->getQuery()->iterate();
+            $iterator = $qb->getQuery()->toIterable();
             $resultsFound = false;
 
             /** @var Visit $visit */
-            foreach ($iterator as $key => [$visit]) {
+            foreach ($iterator as $key => $visit) {
                 $resultsFound = true;
                 yield $key => $visit;
             }
@@ -83,39 +85,27 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     /**
      * @return Visit[]
      */
-    public function findVisitsByShortCode(
-        string $shortCode,
-        ?string $domain = null,
-        ?DateRange $dateRange = null,
-        ?int $limit = null,
-        ?int $offset = null,
-        ?Specification $spec = null
-    ): array {
-        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange, $spec);
-        return $this->resolveVisitsWithNativeQuery($qb, $limit, $offset);
+    public function findVisitsByShortCode(ShortUrlIdentifier $identifier, VisitsListFiltering $filtering): array
+    {
+        $qb = $this->createVisitsByShortCodeQueryBuilder($identifier, $filtering);
+        return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit(), $filtering->offset());
     }
 
-    public function countVisitsByShortCode(
-        string $shortCode,
-        ?string $domain = null,
-        ?DateRange $dateRange = null,
-        ?Specification $spec = null
-    ): int {
-        $qb = $this->createVisitsByShortCodeQueryBuilder($shortCode, $domain, $dateRange, $spec);
+    public function countVisitsByShortCode(ShortUrlIdentifier $identifier, VisitsCountFiltering $filtering): int
+    {
+        $qb = $this->createVisitsByShortCodeQueryBuilder($identifier, $filtering);
         $qb->select('COUNT(v.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     private function createVisitsByShortCodeQueryBuilder(
-        string $shortCode,
-        ?string $domain,
-        ?DateRange $dateRange,
-        ?Specification $spec = null
+        ShortUrlIdentifier $identifier,
+        VisitsCountFiltering $filtering
     ): QueryBuilder {
         /** @var ShortUrlRepositoryInterface $shortUrlRepo */
         $shortUrlRepo = $this->getEntityManager()->getRepository(ShortUrl::class);
-        $shortUrl = $shortUrlRepo->findOne($shortCode, $domain, $spec);
+        $shortUrl = $shortUrlRepo->findOne($identifier, $filtering->spec());
         $shortUrlId = $shortUrl !== null ? $shortUrl->getId() : -1;
 
         // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later
@@ -124,36 +114,32 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $qb->from(Visit::class, 'v')
            ->where($qb->expr()->eq('v.shortUrl', $shortUrlId));
 
+        if ($filtering->excludeBots()) {
+            $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
+        }
+
         // Apply date range filtering
-        $this->applyDatesInline($qb, $dateRange);
+        $this->applyDatesInline($qb, $filtering->dateRange());
 
         return $qb;
     }
 
-    public function findVisitsByTag(
-        string $tag,
-        ?DateRange $dateRange = null,
-        ?int $limit = null,
-        ?int $offset = null,
-        ?Specification $spec = null
-    ): array {
-        $qb = $this->createVisitsByTagQueryBuilder($tag, $dateRange, $spec);
-        return $this->resolveVisitsWithNativeQuery($qb, $limit, $offset);
+    public function findVisitsByTag(string $tag, VisitsListFiltering $filtering): array
+    {
+        $qb = $this->createVisitsByTagQueryBuilder($tag, $filtering);
+        return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit(), $filtering->offset());
     }
 
-    public function countVisitsByTag(string $tag, ?DateRange $dateRange = null, ?Specification $spec = null): int
+    public function countVisitsByTag(string $tag, VisitsCountFiltering $filtering): int
     {
-        $qb = $this->createVisitsByTagQueryBuilder($tag, $dateRange, $spec);
+        $qb = $this->createVisitsByTagQueryBuilder($tag, $filtering);
         $qb->select('COUNT(v.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    private function createVisitsByTagQueryBuilder(
-        string $tag,
-        ?DateRange $dateRange,
-        ?Specification $spec
-    ): QueryBuilder {
+    private function createVisitsByTagQueryBuilder(string $tag, VisitsCountFiltering $filtering): QueryBuilder
+    {
         // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
         // Since they are not strictly provided by the caller, it's reasonably safe
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -162,13 +148,17 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
            ->join('s.tags', 't')
            ->where($qb->expr()->eq('t.name', '\'' . $tag . '\'')); // This needs to be concatenated, not bound
 
-        $this->applyDatesInline($qb, $dateRange);
-        $this->applySpecification($qb, $spec, 'v');
+        if ($filtering->excludeBots()) {
+            $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
+        }
+
+        $this->applyDatesInline($qb, $filtering->dateRange());
+        $this->applySpecification($qb, $filtering->spec(), 'v');
 
         return $qb;
     }
 
-    public function findOrphanVisits(?DateRange $dateRange = null, ?int $limit = null, ?int $offset = null): array
+    public function findOrphanVisits(VisitsListFiltering $filtering): array
     {
         // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
         // Since they are not strictly provided by the caller, it's reasonably safe
@@ -176,14 +166,18 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $qb->from(Visit::class, 'v')
            ->where($qb->expr()->isNull('v.shortUrl'));
 
-        $this->applyDatesInline($qb, $dateRange);
+        if ($filtering->excludeBots()) {
+            $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
+        }
 
-        return $this->resolveVisitsWithNativeQuery($qb, $limit, $offset);
+        $this->applyDatesInline($qb, $filtering->dateRange());
+
+        return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit(), $filtering->offset());
     }
 
-    public function countOrphanVisits(?DateRange $dateRange = null): int
+    public function countOrphanVisits(VisitsCountFiltering $filtering): int
     {
-        return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits($dateRange));
+        return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits($filtering));
     }
 
     public function countVisits(?ApiKey $apiKey = null): int
@@ -203,6 +197,9 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     private function resolveVisitsWithNativeQuery(QueryBuilder $qb, ?int $limit, ?int $offset): array
     {
+        // TODO Order by date and ID, not just by ID (order by date DESC, id DESC).
+        //      That ensures imported visits are properly ordered even if inserted in wrong chronological order.
+
         $qb->select('v.id')
            ->orderBy('v.id', 'DESC')
            // Falling back to values that will behave as no limit/offset, but will workaround MS SQL not allowing

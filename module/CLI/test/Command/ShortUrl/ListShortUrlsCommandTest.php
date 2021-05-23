@@ -8,23 +8,26 @@ use Cake\Chronos\Chronos;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
-use Symfony\Component\Console\Application;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
+use function count;
 use function explode;
 
 class ListShortUrlsCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
     private ObjectProphecy $shortUrlService;
@@ -32,12 +35,10 @@ class ListShortUrlsCommandTest extends TestCase
     public function setUp(): void
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
-        $app = new Application();
         $command = new ListShortUrlsCommand($this->shortUrlService->reveal(), new ShortUrlDataTransformer(
             new ShortUrlStringifier([]),
         ));
-        $app->add($command);
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = $this->testerForCommand($command);
     }
 
     /** @test */
@@ -101,17 +102,77 @@ class ListShortUrlsCommandTest extends TestCase
         $this->commandTester->execute(['--page' => $page]);
     }
 
-    /** @test */
-    public function ifTagsFlagIsProvidedTagsColumnIsIncluded(): void
-    {
+    /**
+     * @test
+     * @dataProvider provideOptionalFlags
+     */
+    public function provideOptionalFlagsMakesNewColumnsToBeIncluded(
+        array $input,
+        array $expectedContents,
+        array $notExpectedContents,
+        ApiKey $apiKey
+    ): void {
         $this->shortUrlService->listShortUrls(ShortUrlsParams::emptyInstance())
-            ->willReturn(new Paginator(new ArrayAdapter([])))
+            ->willReturn(new Paginator(new ArrayAdapter([
+                ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+                    'longUrl' => 'foo.com',
+                    'tags' => ['foo', 'bar', 'baz'],
+                    'apiKey' => $apiKey,
+                ])),
+            ])))
             ->shouldBeCalledOnce();
 
         $this->commandTester->setInputs(['y']);
-        $this->commandTester->execute(['--show-tags' => true]);
+        $this->commandTester->execute($input);
         $output = $this->commandTester->getDisplay();
-        self::assertStringContainsString('Tags', $output);
+
+        if (count($expectedContents) === 0 && count($notExpectedContents) === 0) {
+            self::fail('No expectations were run');
+        }
+
+        foreach ($expectedContents as $column) {
+            self::assertStringContainsString($column, $output);
+        }
+        foreach ($notExpectedContents as $column) {
+            self::assertStringNotContainsString($column, $output);
+        }
+    }
+
+    public function provideOptionalFlags(): iterable
+    {
+        $apiKey = ApiKey::fromMeta(ApiKeyMeta::withName('my api key'));
+        $key = $apiKey->toString();
+
+        yield 'tags only' => [
+            ['--show-tags' => true],
+            ['| Tags    ', '| foo, bar, baz'],
+            ['| API Key    ', '| API Key Name |', $key, '| my api key'],
+            $apiKey,
+        ];
+        yield 'api key only' => [
+            ['--show-api-key' => true],
+            ['| API Key    ', $key],
+            ['| Tags    ', '| foo, bar, baz', '| API Key Name |', '| my api key'],
+            $apiKey,
+        ];
+        yield 'api key name only' => [
+            ['--show-api-key-name' => true],
+            ['| API Key Name |', '| my api key'],
+            ['| Tags    ', '| foo, bar, baz', '| API Key    ', $key],
+            $apiKey,
+        ];
+        yield 'tags and api key' => [
+            ['--show-tags' => true, '--show-api-key' => true],
+            ['| API Key    ', '| Tags    ', '| foo, bar, baz', $key],
+            ['| API Key Name |', '| my api key'],
+            $apiKey,
+        ];
+        yield 'all' => [
+            ['--show-tags' => true, '--show-api-key' => true, '--show-api-key-name' => true],
+            ['| API Key    ', '| Tags    ', '| API Key Name |', '| foo, bar, baz', $key, '| my api key'],
+            [],
+            $apiKey,
+        ];
     }
 
     /**

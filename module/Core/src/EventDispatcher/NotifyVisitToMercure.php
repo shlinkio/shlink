@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGeneratorInterface;
-use Symfony\Component\Mercure\PublisherInterface;
+use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Throwable;
 
@@ -17,18 +17,18 @@ use function Functional\each;
 
 class NotifyVisitToMercure
 {
-    private PublisherInterface $publisher;
+    private HubInterface $hub;
     private MercureUpdatesGeneratorInterface $updatesGenerator;
     private EntityManagerInterface $em;
     private LoggerInterface $logger;
 
     public function __construct(
-        PublisherInterface $publisher,
+        HubInterface $hub,
         MercureUpdatesGeneratorInterface $updatesGenerator,
         EntityManagerInterface $em,
         LoggerInterface $logger
     ) {
-        $this->publisher = $publisher;
+        $this->hub = $hub;
         $this->em = $em;
         $this->logger = $logger;
         $this->updatesGenerator = $updatesGenerator;
@@ -48,7 +48,7 @@ class NotifyVisitToMercure
         }
 
         try {
-            each($this->determineUpdatesForVisit($visit), fn (Update $update) => ($this->publisher)($update));
+            each($this->determineUpdatesForVisit($visit), fn (Update $update) => $this->hub->publish($update));
         } catch (Throwable $e) {
             $this->logger->debug('Error while trying to notify mercure hub with new visit. {e}', [
                 'e' => $e,

@@ -27,11 +27,7 @@ class ShortUrlResolver implements ShortUrlResolverInterface
     {
         /** @var ShortUrlRepository $shortUrlRepo */
         $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
-        $shortUrl = $shortUrlRepo->findOne(
-            $identifier->shortCode(),
-            $identifier->domain(),
-            $apiKey !== null ? $apiKey->spec() : null,
-        );
+        $shortUrl = $shortUrlRepo->findOne($identifier, $apiKey !== null ? $apiKey->spec() : null);
         if ($shortUrl === null) {
             throw ShortUrlNotFoundException::fromNotFound($identifier);
         }

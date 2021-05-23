@@ -13,6 +13,11 @@ class GeolocationDbUpdateFailedException extends RuntimeException implements Exc
 {
     private bool $olderDbExists;
 
+    private function __construct(string $message, int $code = 0, ?Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
+
     public static function withOlderDb(?Throwable $prev = null): self
     {
         $e = new self(

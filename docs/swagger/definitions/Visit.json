@@ -17,6 +17,10 @@
         },
         "visitLocation": {
             "$ref": "./VisitLocation.json"
+        },
+        "potentialBot": {
+            "type": "boolean",
+            "description": "Tells if Shlink thinks this visit comes potentially from a bot or crawler"
         }
     }
 }

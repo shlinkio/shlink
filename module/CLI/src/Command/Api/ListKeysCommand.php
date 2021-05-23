@@ -57,7 +57,7 @@ class ListKeysCommand extends BaseCommand
             $messagePattern = $this->determineMessagePattern($apiKey);
 
             // Set columns for this row
-            $rowData = [sprintf($messagePattern, $apiKey)];
+            $rowData = [sprintf($messagePattern, $apiKey), sprintf($messagePattern, $apiKey->name() ?? '-')];
             if (! $enabledOnly) {
                 $rowData[] = sprintf($messagePattern, $this->getEnabledSymbol($apiKey));
             }
@@ -74,10 +74,12 @@ class ListKeysCommand extends BaseCommand
 
         ShlinkTable::fromOutput($output)->render(array_filter([
             'Key',
+            'Name',
             ! $enabledOnly ? 'Is enabled' : null,
             'Expiration date',
             'Roles',
         ]), $rows);
+
         return ExitCodes::EXIT_SUCCESS;
     }
 

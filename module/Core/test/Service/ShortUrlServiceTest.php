@@ -124,7 +124,7 @@ class ShortUrlServiceTest extends TestCase
                 'maxVisits' => 10,
                 'longUrl' => 'modifiedLongUrl',
             ],
-        ), new ApiKey()];
+        ), ApiKey::create()];
         yield 'long URL with validation' => [1, ShortUrlEdit::fromRawData(
             [
                 'longUrl' => 'modifiedLongUrl',

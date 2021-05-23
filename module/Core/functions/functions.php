@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core;
 use Cake\Chronos\Chronos;
 use DateTimeInterface;
 use Fig\Http\Message\StatusCodeInterface;
+use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Laminas\InputFilter\InputFilter;
 use PUGX\Shortid\Factory as ShortIdFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
@@ -50,6 +51,7 @@ function parseDateRangeFromQuery(array $query, string $startDateName, string $en
     $startDate = parseDateFromQuery($query, $startDateName);
     $endDate = parseDateFromQuery($query, $endDateName);
 
+    // TODO Use match expression when migrating to PHP8
     if ($startDate === null && $endDate === null) {
         return DateRange::emptyInstance();
     }
@@ -126,4 +128,14 @@ function arrayToString(array $array, int $indentSize = 4): string
 function kebabCaseToCamelCase(string $name): string
 {
     return lcfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $name))));
+}
+
+function isCrawler(string $userAgent): bool
+{
+    static $detector;
+    if ($detector === null) {
+        $detector = new CrawlerDetect();
+    }
+
+    return $detector->isCrawler($userAgent);
 }

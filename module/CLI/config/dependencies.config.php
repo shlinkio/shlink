@@ -44,6 +44,7 @@ return [
             Command\ShortUrl\GetVisitsCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\DeleteShortUrlCommand::class => ConfigAbstractFactory::class,
 
+            Command\Visit\DownloadGeoLiteDbCommand::class => ConfigAbstractFactory::class,
             Command\Visit\LocateVisitsCommand::class => ConfigAbstractFactory::class,
 
             Command\Api\GenerateKeyCommand::class => ConfigAbstractFactory::class,
@@ -80,11 +81,11 @@ return [
         Command\ShortUrl\GetVisitsCommand::class => [Visit\VisitsStatsHelper::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
 
+        Command\Visit\DownloadGeoLiteDbCommand::class => [Util\GeolocationDbUpdater::class],
         Command\Visit\LocateVisitsCommand::class => [
             Visit\VisitLocator::class,
             IpLocationResolverInterface::class,
             LockFactory::class,
-            Util\GeolocationDbUpdater::class,
         ],
 
         Command\Api\GenerateKeyCommand::class => [ApiKeyService::class, ApiKey\RoleResolver::class],

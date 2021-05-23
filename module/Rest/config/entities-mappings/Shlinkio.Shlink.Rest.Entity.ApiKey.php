@@ -28,6 +28,11 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->unique()
             ->build();
 
+    $builder->createField('name', Types::STRING)
+            ->columnName('`name`')
+            ->nullable()
+            ->build();
+
     $builder->createField('expirationDate', ChronosDateTimeType::CHRONOS_DATETIME)
             ->columnName('expiration_date')
             ->nullable()

@@ -11,6 +11,8 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsForTagPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsForTagPaginatorAdapterTest extends TestCase
@@ -31,7 +33,10 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         $limit = 1;
         $offset = 5;
         $adapter = $this->createAdapter(null);
-        $findVisits = $this->repo->findVisitsByTag('foo', new DateRange(), $limit, $offset, null)->willReturn([]);
+        $findVisits = $this->repo->findVisitsByTag(
+            'foo',
+            new VisitsListFiltering(new DateRange(), false, null, $limit, $offset),
+        )->willReturn([]);
 
         for ($i = 0; $i < $count; $i++) {
             $adapter->getSlice($offset, $limit);
@@ -44,9 +49,12 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
     public function repoIsCalledOnlyOnceForCount(): void
     {
         $count = 3;
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
         $adapter = $this->createAdapter($apiKey);
-        $countVisits = $this->repo->countVisitsByTag('foo', new DateRange(), $apiKey->spec())->willReturn(3);
+        $countVisits = $this->repo->countVisitsByTag(
+            'foo',
+            new VisitsCountFiltering(DateRange::emptyInstance(), false, $apiKey->spec()),
+        )->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
             $adapter->getNbResults();

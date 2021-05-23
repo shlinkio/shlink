@@ -63,8 +63,7 @@ class VisitLocator implements VisitLocatorInterface
                 $location = Location::emptyInstance();
             }
 
-            $location = new VisitLocation($location);
-            $this->locateVisit($visit, $location, $helper);
+            $this->locateVisit($visit, VisitLocation::fromGeolocation($location), $helper);
 
             // Flush and clear after X iterations
             if ($count % $persistBlock === 0) {

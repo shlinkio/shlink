@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ShortUrl\Spec;
 
-use Happyr\DoctrineSpecification\BaseSpecification;
 use Happyr\DoctrineSpecification\Filter\Filter;
 use Happyr\DoctrineSpecification\Spec;
+use Happyr\DoctrineSpecification\Specification\BaseSpecification;
 
 class BelongsToDomain extends BaseSpecification
 {
     private string $domainId;
-    private string $dqlAlias;
+    private ?string $dqlAlias;
 
     public function __construct(string $domainId, ?string $dqlAlias = null)
     {
         $this->domainId = $domainId;
-        $this->dqlAlias = $dqlAlias ?? 's';
-        parent::__construct($this->dqlAlias);
+        $this->dqlAlias = $dqlAlias;
+        parent::__construct();
     }
 
     protected function getSpec(): Filter

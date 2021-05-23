@@ -6,13 +6,12 @@ namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\DeleteShortUrlCommand;
 use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
-use Symfony\Component\Console\Application;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function array_pop;
@@ -22,7 +21,7 @@ use const PHP_EOL;
 
 class DeleteShortUrlCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
     private ObjectProphecy $service;
@@ -30,12 +29,7 @@ class DeleteShortUrlCommandTest extends TestCase
     public function setUp(): void
     {
         $this->service = $this->prophesize(DeleteShortUrlServiceInterface::class);
-
-        $command = new DeleteShortUrlCommand($this->service->reveal());
-        $app = new Application();
-        $app->add($command);
-
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = $this->testerForCommand(new DeleteShortUrlCommand($this->service->reveal()));
     }
 
     /** @test */

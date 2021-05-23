@@ -6,16 +6,15 @@ namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\CreateTagCommand;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
-use Symfony\Component\Console\Application;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class CreateTagCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
     private ObjectProphecy $tagService;
@@ -23,12 +22,7 @@ class CreateTagCommandTest extends TestCase
     public function setUp(): void
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
-
-        $command = new CreateTagCommand($this->tagService->reveal());
-        $app = new Application();
-        $app->add($command);
-
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = $this->testerForCommand(new CreateTagCommand($this->tagService->reveal()));
     }
 
     /** @test */

@@ -6,9 +6,10 @@ namespace Shlinkio\Shlink\Core\Service\ShortUrl;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 
-class ShortCodeHelper implements ShortCodeHelperInterface
+class ShortCodeHelper implements ShortCodeHelperInterface // TODO Rename to ShortCodeUniquenessHelper
 {
     private EntityManagerInterface $em;
 
@@ -19,13 +20,9 @@ class ShortCodeHelper implements ShortCodeHelperInterface
 
     public function ensureShortCodeUniqueness(ShortUrl $shortUrlToBeCreated, bool $hasCustomSlug): bool
     {
-        $shortCode = $shortUrlToBeCreated->getShortCode();
-        $domain = $shortUrlToBeCreated->getDomain();
-        $domainAuthority = $domain !== null ? $domain->getAuthority() : null;
-
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        $otherShortUrlsExist = $repo->shortCodeIsInUse($shortCode, $domainAuthority);
+        $otherShortUrlsExist = $repo->shortCodeIsInUseWithLock(ShortUrlIdentifier::fromShortUrl($shortUrlToBeCreated));
 
         if (! $otherShortUrlsExist) {
             return true;

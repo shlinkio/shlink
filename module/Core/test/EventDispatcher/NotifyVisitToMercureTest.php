@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\EventDispatcher\NotifyVisitToMercure;
 use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\Model\Visitor;
-use Symfony\Component\Mercure\PublisherInterface;
+use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 
 class NotifyVisitToMercureTest extends TestCase
@@ -25,20 +25,20 @@ class NotifyVisitToMercureTest extends TestCase
     use ProphecyTrait;
 
     private NotifyVisitToMercure $listener;
-    private ObjectProphecy $publisher;
+    private ObjectProphecy $hub;
     private ObjectProphecy $updatesGenerator;
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
 
     public function setUp(): void
     {
-        $this->publisher = $this->prophesize(PublisherInterface::class);
+        $this->hub = $this->prophesize(HubInterface::class);
         $this->updatesGenerator = $this->prophesize(MercureUpdatesGeneratorInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
 
         $this->listener = new NotifyVisitToMercure(
-            $this->publisher->reveal(),
+            $this->hub->reveal(),
             $this->updatesGenerator->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),
@@ -60,7 +60,7 @@ class NotifyVisitToMercureTest extends TestCase
         );
         $buildNewOrphanVisitUpdate = $this->updatesGenerator->newOrphanVisitUpdate(Argument::type(Visit::class));
         $buildNewVisitUpdate = $this->updatesGenerator->newVisitUpdate(Argument::type(Visit::class));
-        $publish = $this->publisher->__invoke(Argument::type(Update::class));
+        $publish = $this->hub->publish(Argument::type(Update::class));
 
         ($this->listener)(new VisitLocated($visitId));
 
@@ -86,7 +86,7 @@ class NotifyVisitToMercureTest extends TestCase
         $buildNewShortUrlVisitUpdate = $this->updatesGenerator->newShortUrlVisitUpdate($visit)->willReturn($update);
         $buildNewOrphanVisitUpdate = $this->updatesGenerator->newOrphanVisitUpdate($visit)->willReturn($update);
         $buildNewVisitUpdate = $this->updatesGenerator->newVisitUpdate($visit)->willReturn($update);
-        $publish = $this->publisher->__invoke($update);
+        $publish = $this->hub->publish($update);
 
         ($this->listener)(new VisitLocated($visitId));
 
@@ -115,7 +115,7 @@ class NotifyVisitToMercureTest extends TestCase
         $buildNewShortUrlVisitUpdate = $this->updatesGenerator->newShortUrlVisitUpdate($visit)->willReturn($update);
         $buildNewOrphanVisitUpdate = $this->updatesGenerator->newOrphanVisitUpdate($visit)->willReturn($update);
         $buildNewVisitUpdate = $this->updatesGenerator->newVisitUpdate($visit)->willReturn($update);
-        $publish = $this->publisher->__invoke($update)->willThrow($e);
+        $publish = $this->hub->publish($update)->willThrow($e);
 
         ($this->listener)(new VisitLocated($visitId));
 
@@ -143,7 +143,7 @@ class NotifyVisitToMercureTest extends TestCase
         $buildNewShortUrlVisitUpdate = $this->updatesGenerator->newShortUrlVisitUpdate($visit)->willReturn($update);
         $buildNewOrphanVisitUpdate = $this->updatesGenerator->newOrphanVisitUpdate($visit)->willReturn($update);
         $buildNewVisitUpdate = $this->updatesGenerator->newVisitUpdate($visit)->willReturn($update);
-        $publish = $this->publisher->__invoke($update);
+        $publish = $this->hub->publish($update);
 
         ($this->listener)(new VisitLocated($visitId));
 

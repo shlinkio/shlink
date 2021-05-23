@@ -42,12 +42,6 @@ $helper = new class {
             ];
         }
 
-        $driverOptions = ! $isMysql ? [] : [
-            // 1002 -> PDO::MYSQL_ATTR_INIT_COMMAND
-            1002 => 'SET NAMES utf8',
-            // 1000 -> PDO::MYSQL_ATTR_USE_BUFFERED_QUERY
-            1000 => true,
-        ];
         return [
             'driver' => self::DB_DRIVERS_MAP[$driver],
             'dbname' => env('DB_NAME', 'shlink'),
@@ -55,7 +49,6 @@ $helper = new class {
             'password' => env('DB_PASSWORD'),
             'host' => env('DB_HOST', $driver === 'postgres' ? env('DB_UNIX_SOCKET') : null),
             'port' => env('DB_PORT', self::DB_PORTS_MAP[$driver]),
-            'driverOptions' => $driverOptions,
             'unix_socket' => $isMysql ? env('DB_UNIX_SOCKET') : null,
         ];
     }
@@ -101,10 +94,6 @@ $helper = new class {
 
 return [
 
-    'app_options' => [
-        'disable_track_param' => env('DISABLE_TRACK_PARAM'),
-    ],
-
     'delete_short_urls' => [
         'check_visits_threshold' => true,
         'visits_threshold' => (int) env('DELETE_SHORT_URL_THRESHOLD', DEFAULT_DELETE_SHORT_URL_THRESHOLD),
@@ -120,13 +109,21 @@ return [
             'hostname' => env('SHORT_DOMAIN_HOST', ''),
         ],
         'validate_url' => (bool) env('VALIDATE_URLS', false),
-        'anonymize_remote_addr' => (bool) env('ANONYMIZE_REMOTE_ADDR', true),
         'visits_webhooks' => $helper->getVisitsWebhooks(),
         'default_short_codes_length' => $helper->getDefaultShortCodesLength(),
         'redirect_status_code' => (int) env('REDIRECT_STATUS_CODE', DEFAULT_REDIRECT_STATUS_CODE),
         'redirect_cache_lifetime' => (int) env('REDIRECT_CACHE_LIFETIME', DEFAULT_REDIRECT_CACHE_LIFETIME),
         'auto_resolve_titles' => (bool) env('AUTO_RESOLVE_TITLES', false),
+    ],
+
+    'tracking' => [
+        'anonymize_remote_addr' => (bool) env('ANONYMIZE_REMOTE_ADDR', true),
         'track_orphan_visits' => (bool) env('TRACK_ORPHAN_VISITS', true),
+        'disable_track_param' => env('DISABLE_TRACK_PARAM'),
+        'disable_tracking' => (bool) env('DISABLE_TRACKING', false),
+        'disable_ip_tracking' => (bool) env('DISABLE_IP_TRACKING', false),
+        'disable_referrer_tracking' => (bool) env('DISABLE_REFERRER_TRACKING', false),
+        'disable_ua_tracking' => (bool) env('DISABLE_UA_TRACKING', false),
     ],
 
     'not_found_redirects' => $helper->getNotFoundRedirectsConfig(),
@@ -170,7 +167,7 @@ return [
     ],
 
     'geolite2' => [
-        'license_key' => env('GEOLITE_LICENSE_KEY', 'G4Lm0C60yJsnkdPi'),
+        'license_key' => env('GEOLITE_LICENSE_KEY', 'G4Lm0C60yJsnkdPi'), // Deprecated. Remove the default value
     ],
 
     'mercure' => $helper->getMercureConfig(),

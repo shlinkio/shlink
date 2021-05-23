@@ -7,7 +7,6 @@ return [
     'app_options' => [
         'name' => 'Shlink',
         'version' => '%SHLINK_VERSION%',
-        'disable_track_param' => null,
     ],
 
 ];

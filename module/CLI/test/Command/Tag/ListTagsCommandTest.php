@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\ListTagsCommand;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
-use Symfony\Component\Console\Application;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ListTagsCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
     private ObjectProphecy $tagService;
@@ -24,12 +23,7 @@ class ListTagsCommandTest extends TestCase
     public function setUp(): void
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
-
-        $command = new ListTagsCommand($this->tagService->reveal());
-        $app = new Application();
-        $app->add($command);
-
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = $this->testerForCommand(new ListTagsCommand($this->tagService->reveal()));
     }
 
     /** @test */

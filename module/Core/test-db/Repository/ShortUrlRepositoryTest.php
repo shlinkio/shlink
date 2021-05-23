@@ -11,12 +11,14 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
@@ -179,12 +181,18 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertTrue($this->repo->shortCodeIsInUse('my-cool-slug'));
-        self::assertFalse($this->repo->shortCodeIsInUse('my-cool-slug', 'doma.in'));
-        self::assertFalse($this->repo->shortCodeIsInUse('slug-not-in-use'));
-        self::assertFalse($this->repo->shortCodeIsInUse('another-slug'));
-        self::assertFalse($this->repo->shortCodeIsInUse('another-slug', 'example.com'));
-        self::assertTrue($this->repo->shortCodeIsInUse('another-slug', 'doma.in'));
+        self::assertTrue($this->repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug')));
+        self::assertFalse($this->repo->shortCodeIsInUse(
+            ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug', 'doma.in'),
+        ));
+        self::assertFalse($this->repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain('slug-not-in-use')));
+        self::assertFalse($this->repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain('another-slug')));
+        self::assertFalse($this->repo->shortCodeIsInUse(
+            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'example.com'),
+        ));
+        self::assertTrue($this->repo->shortCodeIsInUse(
+            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'doma.in'),
+        ));
     }
 
     /** @test */
@@ -202,12 +210,16 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertNotNull($this->repo->findOne('my-cool-slug'));
-        self::assertNull($this->repo->findOne('my-cool-slug', 'doma.in'));
-        self::assertNull($this->repo->findOne('slug-not-in-use'));
-        self::assertNull($this->repo->findOne('another-slug'));
-        self::assertNull($this->repo->findOne('another-slug', 'example.com'));
-        self::assertNotNull($this->repo->findOne('another-slug', 'doma.in'));
+        self::assertNotNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug')));
+        self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug', 'doma.in')));
+        self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('slug-not-in-use')));
+        self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('another-slug')));
+        self::assertNull($this->repo->findOne(
+            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'example.com'),
+        ));
+        self::assertNotNull($this->repo->findOne(
+            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'doma.in'),
+        ));
     }
 
     /** @test */
@@ -335,13 +347,13 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $apiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $apiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($apiKey);
-        $otherApiKey = ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls());
+        $otherApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($otherApiKey);
-        $wrongDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($wrongDomain));
+        $wrongDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($wrongDomain)));
         $this->getEntityManager()->persist($wrongDomainApiKey);
-        $rightDomainApiKey = ApiKey::withRoles(RoleDefinition::forDomain($rightDomain));
+        $rightDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($rightDomain)));
         $this->getEntityManager()->persist($rightDomainApiKey);
 
         $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
@@ -415,7 +427,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function importedShortUrlsAreSearchedAsExpected(): void
+    public function importedShortUrlsAreFoundWhenExpected(): void
     {
         $buildImported = static fn (string $shortCode, ?String $domain = null) =>
             new ImportedShlinkUrl('', 'foo', [], Chronos::now(), $domain, $shortCode, null);
@@ -428,11 +440,44 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertTrue($this->repo->importedUrlExists($buildImported('my-cool-slug')));
-        self::assertTrue($this->repo->importedUrlExists($buildImported('another-slug', 'doma.in')));
-        self::assertFalse($this->repo->importedUrlExists($buildImported('non-existing-slug')));
-        self::assertFalse($this->repo->importedUrlExists($buildImported('non-existing-slug', 'doma.in')));
-        self::assertFalse($this->repo->importedUrlExists($buildImported('my-cool-slug', 'doma.in')));
-        self::assertFalse($this->repo->importedUrlExists($buildImported('another-slug')));
+        self::assertNotNull($this->repo->findOneByImportedUrl($buildImported('my-cool-slug')));
+        self::assertNotNull($this->repo->findOneByImportedUrl($buildImported('another-slug', 'doma.in')));
+        self::assertNull($this->repo->findOneByImportedUrl($buildImported('non-existing-slug')));
+        self::assertNull($this->repo->findOneByImportedUrl($buildImported('non-existing-slug', 'doma.in')));
+        self::assertNull($this->repo->findOneByImportedUrl($buildImported('my-cool-slug', 'doma.in')));
+        self::assertNull($this->repo->findOneByImportedUrl($buildImported('another-slug')));
+    }
+
+    /** @test */
+    public function findCrawlableShortCodesReturnsExpectedResult(): void
+    {
+        $createShortUrl = fn (bool $crawlable) => ShortUrl::fromMeta(
+            ShortUrlMeta::fromRawData(['crawlable' => $crawlable, 'longUrl' => 'foo.com']),
+        );
+
+        $shortUrl1 = $createShortUrl(true);
+        $this->getEntityManager()->persist($shortUrl1);
+        $shortUrl2 = $createShortUrl(false);
+        $this->getEntityManager()->persist($shortUrl2);
+        $shortUrl3 = $createShortUrl(true);
+        $this->getEntityManager()->persist($shortUrl3);
+        $shortUrl4 = $createShortUrl(true);
+        $this->getEntityManager()->persist($shortUrl4);
+        $shortUrl5 = $createShortUrl(false);
+        $this->getEntityManager()->persist($shortUrl5);
+        $this->getEntityManager()->flush();
+
+        $iterable = $this->repo->findCrawlableShortCodes();
+        $results = [];
+        foreach ($iterable as $shortCode) {
+            $results[] = $shortCode;
+        }
+
+        self::assertCount(3, $results);
+        self::assertContains($shortUrl1->getShortCode(), $results);
+        self::assertContains($shortUrl3->getShortCode(), $results);
+        self::assertContains($shortUrl4->getShortCode(), $results);
+        self::assertNotContains($shortUrl2->getShortCode(), $results);
+        self::assertNotContains($shortUrl5->getShortCode(), $results);
     }
 }

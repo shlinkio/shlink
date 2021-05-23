@@ -1,9 +1,10 @@
-FROM php:8.0.2-alpine3.13 as base
+FROM php:8.0.6-alpine3.13 as base
 
-ARG SHLINK_VERSION=2.5.2
+ARG SHLINK_VERSION=latest
 ENV SHLINK_VERSION ${SHLINK_VERSION}
-ENV SWOOLE_VERSION 4.6.3
+ENV SWOOLE_VERSION 4.6.7
 ENV PDO_SQLSRV_VERSION 5.9.0
+ENV MS_ODBC_SQL_VERSION 17.5.2.1
 ENV LC_ALL "C"
 
 WORKDIR /etc/shlink
@@ -30,13 +31,13 @@ RUN \
 
 # Install sqlsrv driver
 RUN if [ $(uname -m) == "x86_64" ]; then \
-      wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.5.1.1-1_amd64.apk && \
-      apk add --allow-untrusted msodbcsql17_17.5.1.1-1_amd64.apk && \
+      wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
+      apk add --allow-untrusted msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
       apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} unixodbc-dev && \
       pecl install pdo_sqlsrv-${PDO_SQLSRV_VERSION} && \
       docker-php-ext-enable pdo_sqlsrv && \
       apk del .phpize-deps && \
-      rm msodbcsql17_17.5.1.1-1_amd64.apk ; \
+      rm msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk ; \
     fi
 
 # Install swoole
@@ -69,6 +70,8 @@ EXPOSE 8080
 
 # Expose params config dir, since the user is expected to provide custom config from there
 VOLUME /etc/shlink/config/params
+# Expose data dir to allow persistent runtime data and SQLite db
+VOLUME /etc/shlink/data
 
 # Copy config specific for the image
 COPY docker/docker-entrypoint.sh docker-entrypoint.sh

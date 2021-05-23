@@ -5,18 +5,22 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Importer;
 
 use Cake\Chronos\Chronos;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Importer\ImportedLinksProcessor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
+use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Symfony\Component\Console\Style\StyleInterface;
 
 use function count;
@@ -27,6 +31,8 @@ use function str_contains;
 class ImportedLinksProcessorTest extends TestCase
 {
     use ProphecyTrait;
+
+    private const PARAMS = ['import_short_codes' => true, 'source' => ImportSources::BITLY];
 
     private ImportedLinksProcessor $processor;
     private ObjectProphecy $em;
@@ -64,11 +70,11 @@ class ImportedLinksProcessorTest extends TestCase
         ];
         $expectedCalls = count($urls);
 
-        $importedUrlExists = $this->repo->importedUrlExists(Argument::cetera())->willReturn(false);
+        $importedUrlExists = $this->repo->findOneByImportedUrl(Argument::cetera())->willReturn(null);
         $ensureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
         $persist = $this->em->persist(Argument::type(ShortUrl::class));
 
-        $this->processor->process($this->io->reveal(), $urls, ['import_short_codes' => true]);
+        $this->processor->process($this->io->reveal(), $urls, self::PARAMS);
 
         $importedUrlExists->shouldHaveBeenCalledTimes($expectedCalls);
         $ensureUniqueness->shouldHaveBeenCalledTimes($expectedCalls);
@@ -86,24 +92,25 @@ class ImportedLinksProcessorTest extends TestCase
             new ImportedShlinkUrl('', 'baz2', [], Chronos::now(), null, 'baz2', null),
             new ImportedShlinkUrl('', 'baz3', [], Chronos::now(), null, 'baz3', null),
         ];
-        $contains = fn (string $needle) => fn (string $text) => str_contains($text, $needle);
 
-        $importedUrlExists = $this->repo->importedUrlExists(Argument::cetera())->will(function (array $args): bool {
-            /** @var ImportedShlinkUrl $url */
-            [$url] = $args;
+        $importedUrlExists = $this->repo->findOneByImportedUrl(Argument::cetera())->will(
+            function (array $args): ?ShortUrl {
+                /** @var ImportedShlinkUrl $url */
+                [$url] = $args;
 
-            return contains(['foo', 'baz2', 'baz3'], $url->longUrl());
-        });
+                return contains(['foo', 'baz2', 'baz3'], $url->longUrl()) ? ShortUrl::fromImport($url, true) : null;
+            },
+        );
         $ensureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
         $persist = $this->em->persist(Argument::type(ShortUrl::class));
 
-        $this->processor->process($this->io->reveal(), $urls, ['import_short_codes' => true]);
+        $this->processor->process($this->io->reveal(), $urls, self::PARAMS);
 
         $importedUrlExists->shouldHaveBeenCalledTimes(count($urls));
         $ensureUniqueness->shouldHaveBeenCalledTimes(2);
         $persist->shouldHaveBeenCalledTimes(2);
-        $this->io->text(Argument::that($contains('Skipped')))->shouldHaveBeenCalledTimes(3);
-        $this->io->text(Argument::that($contains('Imported')))->shouldHaveBeenCalledTimes(2);
+        $this->io->text(Argument::containingString('Skipped'))->shouldHaveBeenCalledTimes(3);
+        $this->io->text(Argument::containingString('Imported'))->shouldHaveBeenCalledTimes(2);
     }
 
     /** @test */
@@ -116,9 +123,8 @@ class ImportedLinksProcessorTest extends TestCase
             new ImportedShlinkUrl('', 'baz2', [], Chronos::now(), null, 'baz2', null),
             new ImportedShlinkUrl('', 'baz3', [], Chronos::now(), null, 'baz3', 'bar'),
         ];
-        $contains = fn (string $needle) => fn (string $text) => str_contains($text, $needle);
 
-        $importedUrlExists = $this->repo->importedUrlExists(Argument::cetera())->willReturn(false);
+        $importedUrlExists = $this->repo->findOneByImportedUrl(Argument::cetera())->willReturn(null);
         $failingEnsureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(
             Argument::any(),
             true,
@@ -135,14 +141,77 @@ class ImportedLinksProcessorTest extends TestCase
         });
         $persist = $this->em->persist(Argument::type(ShortUrl::class));
 
-        $this->processor->process($this->io->reveal(), $urls, ['import_short_codes' => true]);
+        $this->processor->process($this->io->reveal(), $urls, self::PARAMS);
 
         $importedUrlExists->shouldHaveBeenCalledTimes(count($urls));
         $failingEnsureUniqueness->shouldHaveBeenCalledTimes(5);
         $successEnsureUniqueness->shouldHaveBeenCalledTimes(2);
         $choice->shouldHaveBeenCalledTimes(5);
         $persist->shouldHaveBeenCalledTimes(2);
-        $this->io->text(Argument::that($contains('Skipped')))->shouldHaveBeenCalledTimes(3);
-        $this->io->text(Argument::that($contains('Imported')))->shouldHaveBeenCalledTimes(2);
+        $this->io->text(Argument::containingString('Error'))->shouldHaveBeenCalledTimes(3);
+        $this->io->text(Argument::containingString('Imported'))->shouldHaveBeenCalledTimes(2);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideUrlsWithVisits
+     */
+    public function properAmountOfVisitsIsImported(
+        ImportedShlinkUrl $importedUrl,
+        string $expectedOutput,
+        int $amountOfPersistedVisits,
+        ?ShortUrl $foundShortUrl
+    ): void {
+        $findExisting = $this->repo->findOneByImportedUrl(Argument::cetera())->willReturn($foundShortUrl);
+        $ensureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
+        $persistUrl = $this->em->persist(Argument::type(ShortUrl::class));
+        $persistVisits = $this->em->persist(Argument::type(Visit::class));
+
+        $this->processor->process($this->io->reveal(), [$importedUrl], self::PARAMS);
+
+        $findExisting->shouldHaveBeenCalledOnce();
+        $ensureUniqueness->shouldHaveBeenCalledTimes($foundShortUrl === null ? 1 : 0);
+        $persistUrl->shouldHaveBeenCalledTimes($foundShortUrl === null ? 1 : 0);
+        $persistVisits->shouldHaveBeenCalledTimes($amountOfPersistedVisits);
+        $this->io->text(Argument::containingString($expectedOutput))->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideUrlsWithVisits(): iterable
+    {
+        $now = Chronos::now();
+        $createImportedUrl = fn (array $visits) => new ImportedShlinkUrl('', 's', [], $now, null, 's', null, $visits);
+
+        yield 'new short URL' => [$createImportedUrl([
+            new ImportedShlinkVisit('', '', $now, null),
+            new ImportedShlinkVisit('', '', $now, null),
+            new ImportedShlinkVisit('', '', $now, null),
+            new ImportedShlinkVisit('', '', $now, null),
+            new ImportedShlinkVisit('', '', $now, null),
+        ]), '<info>Imported</info> with <info>5</info> visits', 5, null];
+        yield 'existing short URL without previous imported visits' => [
+            $createImportedUrl([
+                new ImportedShlinkVisit('', '', $now, null),
+                new ImportedShlinkVisit('', '', $now, null),
+                new ImportedShlinkVisit('', '', $now->addDays(3), null),
+                new ImportedShlinkVisit('', '', $now->addDays(3), null),
+            ]),
+            '<comment>Skipped</comment>. Imported <info>4</info> visits',
+            4,
+            ShortUrl::createEmpty(),
+        ];
+        yield 'existing short URL with previous imported visits' => [
+            $createImportedUrl([
+                new ImportedShlinkVisit('', '', $now, null),
+                new ImportedShlinkVisit('', '', $now, null),
+                new ImportedShlinkVisit('', '', $now, null),
+                new ImportedShlinkVisit('', '', $now->addDays(3), null),
+                new ImportedShlinkVisit('', '', $now->addDays(3), null),
+            ]),
+            '<comment>Skipped</comment>. Imported <info>2</info> visits',
+            2,
+            ShortUrl::createEmpty()->setVisits(new ArrayCollection([
+                Visit::fromImport(ShortUrl::createEmpty(), new ImportedShlinkVisit('', '', $now, null)),
+            ])),
+        ];
     }
 }

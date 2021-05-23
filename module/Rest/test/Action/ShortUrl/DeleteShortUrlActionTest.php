@@ -29,7 +29,7 @@ class DeleteShortUrlActionTest extends TestCase
     /** @test */
     public function emptyResponseIsReturnedIfProperlyDeleted(): void
     {
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
         $deleteByShortCode = $this->service->deleteByShortCode(Argument::any(), false, $apiKey)->will(
             function (): void {
             },

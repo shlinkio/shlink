@@ -30,7 +30,7 @@ class ListDomainsActionTest extends TestCase
     /** @test */
     public function domainsAreProperlyListed(): void
     {
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
         $domains = [
             new DomainItem('bar.com', true),
             new DomainItem('baz.com', false),

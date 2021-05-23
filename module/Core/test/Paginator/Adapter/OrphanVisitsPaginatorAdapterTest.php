@@ -12,6 +12,8 @@ use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\OrphanVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 
 class OrphanVisitsPaginatorAdapterTest extends TestCase
 {
@@ -32,7 +34,9 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     public function countDelegatesToRepository(): void
     {
         $expectedCount = 5;
-        $repoCount = $this->repo->countOrphanVisits($this->params->getDateRange())->willReturn($expectedCount);
+        $repoCount = $this->repo->countOrphanVisits(
+            new VisitsCountFiltering($this->params->getDateRange()),
+        )->willReturn($expectedCount);
 
         $result = $this->adapter->getNbResults();
 
@@ -48,7 +52,9 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     {
         $visitor = Visitor::emptyInstance();
         $list = [Visit::forRegularNotFound($visitor), Visit::forInvalidShortUrl($visitor)];
-        $repoFind = $this->repo->findOrphanVisits($this->params->getDateRange(), $limit, $offset)->willReturn($list);
+        $repoFind = $this->repo->findOrphanVisits(
+            new VisitsListFiltering($this->params->getDateRange(), $this->params->excludeBots(), null, $limit, $offset),
+        )->willReturn($list);
 
         $result = $this->adapter->getSlice($offset, $limit);
 

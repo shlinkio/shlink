@@ -6,12 +6,14 @@ namespace Shlinkio\Shlink\Core\Importer;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Symfony\Component\Console\Style\StyleInterface;
 
 use function sprintf;
@@ -22,6 +24,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     private ShortUrlRelationResolverInterface $relationResolver;
     private ShortCodeHelperInterface $shortCodeHelper;
     private DoctrineBatchHelperInterface $batchHelper;
+    private ShortUrlRepositoryInterface $shortUrlRepo;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -33,6 +36,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         $this->relationResolver = $relationResolver;
         $this->shortCodeHelper = $shortCodeHelper;
         $this->batchHelper = $batchHelper;
+        $this->shortUrlRepo = $this->em->getRepository(ShortUrl::class); // @phpstan-ignore-line
     }
 
     /**
@@ -40,51 +44,65 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
      */
     public function process(StyleInterface $io, iterable $shlinkUrls, array $params): void
     {
-        /** @var ShortUrlRepositoryInterface $shortUrlRepo */
-        $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
         $importShortCodes = $params['import_short_codes'];
-        $iterable = $this->batchHelper->wrapIterable($shlinkUrls, 100);
+        $source = $params['source'];
+        $iterable = $this->batchHelper->wrapIterable($shlinkUrls, $source === ImportSources::SHLINK ? 10 : 100);
 
-        /** @var ImportedShlinkUrl $url */
-        foreach ($iterable as $url) {
-            $longUrl = $url->longUrl();
+        /** @var ImportedShlinkUrl $importedUrl */
+        foreach ($iterable as $importedUrl) {
+            $skipOnShortCodeConflict = static function () use ($io, $importedUrl): bool {
+                $action = $io->choice(sprintf(
+                    'Failed to import URL "%s" because its short-code "%s" is already in use. Do you want to generate '
+                    . 'a new one or skip it?',
+                    $importedUrl->longUrl(),
+                    $importedUrl->shortCode(),
+                ), ['Generate new short-code', 'Skip'], 1);
 
-            // Skip already imported URLs
-            if ($shortUrlRepo->importedUrlExists($url)) {
-                $io->text(sprintf('%s: <comment>Skipped</comment>', $longUrl));
+                return $action === 'Skip';
+            };
+            $longUrl = $importedUrl->longUrl();
+
+            try {
+                $shortUrlImporting = $this->resolveShortUrl($importedUrl, $importShortCodes, $skipOnShortCodeConflict);
+            } catch (NonUniqueSlugException $e) {
+                $io->text(sprintf('%s: <fg=red>Error</>', $longUrl));
                 continue;
             }
 
-            $shortUrl = ShortUrl::fromImport($url, $importShortCodes, $this->relationResolver);
-            if (! $this->handleShortCodeUniqueness($url, $shortUrl, $io, $importShortCodes)) {
-                continue;
-            }
-
-            $this->em->persist($shortUrl);
-            $io->text(sprintf('%s: <info>Imported</info>', $longUrl));
+            $resultMessage = $shortUrlImporting->importVisits($importedUrl->visits(), $this->em);
+            $io->text(sprintf('%s: %s', $longUrl, $resultMessage));
         }
     }
 
+    private function resolveShortUrl(
+        ImportedShlinkUrl $importedUrl,
+        bool $importShortCodes,
+        callable $skipOnShortCodeConflict
+    ): ShortUrlImporting {
+        $alreadyImportedShortUrl = $this->shortUrlRepo->findOneByImportedUrl($importedUrl);
+        if ($alreadyImportedShortUrl !== null) {
+            return ShortUrlImporting::fromExistingShortUrl($alreadyImportedShortUrl);
+        }
+
+        $shortUrl = ShortUrl::fromImport($importedUrl, $importShortCodes, $this->relationResolver);
+        if (! $this->handleShortCodeUniqueness($shortUrl, $importShortCodes, $skipOnShortCodeConflict)) {
+            throw NonUniqueSlugException::fromImport($importedUrl);
+        }
+
+        $this->em->persist($shortUrl);
+        return ShortUrlImporting::fromNewShortUrl($shortUrl);
+    }
+
     private function handleShortCodeUniqueness(
-        ImportedShlinkUrl $url,
         ShortUrl $shortUrl,
-        StyleInterface $io,
-        bool $importShortCodes
+        bool $importShortCodes,
+        callable $skipOnShortCodeConflict
     ): bool {
         if ($this->shortCodeHelper->ensureShortCodeUniqueness($shortUrl, $importShortCodes)) {
             return true;
         }
 
-        $longUrl = $url->longUrl();
-        $action = $io->choice(sprintf(
-            'Failed to import URL "%s" because its short-code "%s" is already in use. Do you want to generate a new '
-            . 'one or skip it?',
-            $longUrl,
-            $url->shortCode(),
-        ), ['Generate new short-code', 'Skip'], 1);
-
-        if ($action === 'Skip') {
-            $io->text(sprintf('%s: <comment>Skipped</comment>', $longUrl));
+        if ($skipOnShortCodeConflict()) {
             return false;
         }
 

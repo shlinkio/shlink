@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Model;
 
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Options\TrackingOptions;
 
 use function random_int;
 use function str_repeat;
@@ -70,5 +71,29 @@ class VisitorTest extends TestCase
             $randomString .= $characters[random_int(0, $charactersLength - 1)];
         }
         return $randomString;
+    }
+
+    /** @test */
+    public function newNormalizedInstanceIsCreatedFromTrackingOptions(): void
+    {
+        $visitor = new Visitor(
+            $this->generateRandomString(2000),
+            $this->generateRandomString(2000),
+            $this->generateRandomString(2000),
+            $this->generateRandomString(2000),
+        );
+        $normalizedVisitor = $visitor->normalizeForTrackingOptions(new TrackingOptions([
+            'disableIpTracking' => true,
+            'disableReferrerTracking' => true,
+            'disableUaTracking' => true,
+        ]));
+
+        self::assertNotSame($visitor, $normalizedVisitor);
+        self::assertEmpty($normalizedVisitor->getUserAgent());
+        self::assertNotEmpty($visitor->getUserAgent());
+        self::assertEmpty($normalizedVisitor->getReferer());
+        self::assertNotEmpty($visitor->getReferer());
+        self::assertNull($normalizedVisitor->getRemoteAddress());
+        self::assertNotNull($visitor->getRemoteAddress());
     }
 }

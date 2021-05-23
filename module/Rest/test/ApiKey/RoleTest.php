@@ -28,14 +28,14 @@ class RoleTest extends TestCase
 
     public function provideRoles(): iterable
     {
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
 
         yield 'inline invalid role' => [new ApiKeyRole('invalid', [], $apiKey), true, Spec::andX()];
         yield 'not inline invalid role' => [new ApiKeyRole('invalid', [], $apiKey), false, Spec::andX()];
         yield 'inline author role' => [
             new ApiKeyRole(Role::AUTHORED_SHORT_URLS, [], $apiKey),
             true,
-            new BelongsToApiKeyInlined($apiKey),
+            Spec::andX(new BelongsToApiKeyInlined($apiKey)),
         ];
         yield 'not inline author role' => [
             new ApiKeyRole(Role::AUTHORED_SHORT_URLS, [], $apiKey),
@@ -45,7 +45,7 @@ class RoleTest extends TestCase
         yield 'inline domain role' => [
             new ApiKeyRole(Role::DOMAIN_SPECIFIC, ['domain_id' => '123'], $apiKey),
             true,
-            new BelongsToDomainInlined('123'),
+            Spec::andX(new BelongsToDomainInlined('123')),
         ];
         yield 'not inline domain role' => [
             new ApiKeyRole(Role::DOMAIN_SPECIFIC, ['domain_id' => '456'], $apiKey),

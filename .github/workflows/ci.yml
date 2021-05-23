@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -21,7 +21,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.3
+          extensions: swoole-4.6.7
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer cs
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -39,7 +39,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.3
+          extensions: swoole-4.6.7
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer stan
@@ -57,7 +57,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.3
+          extensions: swoole-4.6.7
           coverage: pcov
           ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist
@@ -83,7 +83,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.3
+          extensions: swoole-4.6.7
           coverage: pcov
           ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist
@@ -111,7 +111,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.3
+          extensions: swoole-4.6.7
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer test:db:mysql
@@ -131,7 +131,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.3
+          extensions: swoole-4.6.7
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer test:db:maria
@@ -151,7 +151,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.3
+          extensions: swoole-4.6.7
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer test:db:postgres
@@ -173,7 +173,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.3, pdo_sqlsrv-5.9.0
+          extensions: swoole-4.6.7, pdo_sqlsrv-5.9.0
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - name: Create test database
@@ -195,7 +195,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.3
+          extensions: swoole-4.6.7
           coverage: pcov
           ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist
@@ -217,6 +217,7 @@ jobs:
     strategy:
       matrix:
         php-version: ['7.4', '8.0']
+        test-group: ['unit', 'db']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -225,14 +226,14 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.3
+          extensions: swoole-4.6.7
           coverage: pcov
           ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist
       - uses: actions/download-artifact@v2
         with:
           path: build
-      - run: composer infect:ci
+      - run: composer infect:ci:${{ matrix.test-group }}
 
   upload-coverage:
     needs:
@@ -242,7 +243,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

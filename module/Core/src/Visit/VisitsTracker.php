@@ -10,18 +10,18 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\Model\Visitor;
-use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Core\Options\TrackingOptions;
 
 class VisitsTracker implements VisitsTrackerInterface
 {
     private ORM\EntityManagerInterface $em;
     private EventDispatcherInterface $eventDispatcher;
-    private UrlShortenerOptions $options;
+    private TrackingOptions $options;
 
     public function __construct(
         ORM\EntityManagerInterface $em,
         EventDispatcherInterface $eventDispatcher,
-        UrlShortenerOptions $options
+        TrackingOptions $options
     ) {
         $this->em = $em;
         $this->eventDispatcher = $eventDispatcher;
@@ -31,43 +31,56 @@ class VisitsTracker implements VisitsTrackerInterface
     public function track(ShortUrl $shortUrl, Visitor $visitor): void
     {
         $this->trackVisit(
-            Visit::forValidShortUrl($shortUrl, $visitor, $this->options->anonymizeRemoteAddr()),
+            fn (Visitor $v) => Visit::forValidShortUrl($shortUrl, $v, $this->options->anonymizeRemoteAddr()),
             $visitor,
         );
     }
 
     public function trackInvalidShortUrlVisit(Visitor $visitor): void
     {
-        if (! $this->options->trackOrphanVisits()) {
-            return;
-        }
-
-        $this->trackVisit(Visit::forInvalidShortUrl($visitor, $this->options->anonymizeRemoteAddr()), $visitor);
+        $this->trackOrphanVisit(
+            fn (Visitor $v) => Visit::forInvalidShortUrl($v, $this->options->anonymizeRemoteAddr()),
+            $visitor,
+        );
     }
 
     public function trackBaseUrlVisit(Visitor $visitor): void
     {
-        if (! $this->options->trackOrphanVisits()) {
-            return;
-        }
-
-        $this->trackVisit(Visit::forBasePath($visitor, $this->options->anonymizeRemoteAddr()), $visitor);
+        $this->trackOrphanVisit(
+            fn (Visitor $v) => Visit::forBasePath($v, $this->options->anonymizeRemoteAddr()),
+            $visitor,
+        );
     }
 
     public function trackRegularNotFoundVisit(Visitor $visitor): void
     {
+        $this->trackOrphanVisit(
+            fn (Visitor $v) => Visit::forRegularNotFound($v, $this->options->anonymizeRemoteAddr()),
+            $visitor,
+        );
+    }
+
+    private function trackOrphanVisit(callable $createVisit, Visitor $visitor): void
+    {
         if (! $this->options->trackOrphanVisits()) {
             return;
         }
 
-        $this->trackVisit(Visit::forRegularNotFound($visitor, $this->options->anonymizeRemoteAddr()), $visitor);
+        $this->trackVisit($createVisit, $visitor);
     }
 
-    private function trackVisit(Visit $visit, Visitor $visitor): void
+    private function trackVisit(callable $createVisit, Visitor $visitor): void
     {
-        $this->em->persist($visit);
-        $this->em->flush();
+        if ($this->options->disableTracking()) {
+            return;
+        }
 
-        $this->eventDispatcher->dispatch(new UrlVisited($visit->getId(), $visitor->getRemoteAddress()));
+        $visit = $createVisit($visitor->normalizeForTrackingOptions($this->options));
+        $this->em->transactional(function () use ($visit, $visitor): void {
+            $this->em->persist($visit);
+            $this->em->flush();
+
+            $this->eventDispatcher->dispatch(new UrlVisited($visit->getId(), $visitor->getRemoteAddress()));
+        });
     }
 }

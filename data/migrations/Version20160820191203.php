@@ -73,12 +73,4 @@ class Version20160820191203 extends AbstractMigration
         $schema->dropTable('short_urls_in_tags');
         $schema->dropTable('tags');
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Domain;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Domain\ListDomainsCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
-use Symfony\Component\Console\Application;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ListDomainsCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
     private ObjectProphecy $domainService;
@@ -24,12 +23,7 @@ class ListDomainsCommandTest extends TestCase
     public function setUp(): void
     {
         $this->domainService = $this->prophesize(DomainServiceInterface::class);
-
-        $command = new ListDomainsCommand($this->domainService->reveal());
-        $app = new Application();
-        $app->add($command);
-
-        $this->commandTester = new CommandTester($command);
+        $this->commandTester = $this->testerForCommand(new ListDomainsCommand($this->domainService->reveal()));
     }
 
     /** @test */

@@ -13,6 +13,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
@@ -35,14 +36,15 @@ class ApiKeyServiceTest extends TestCase
      * @dataProvider provideCreationDate
      * @param RoleDefinition[] $roles
      */
-    public function apiKeyIsProperlyCreated(?Chronos $date, array $roles): void
+    public function apiKeyIsProperlyCreated(?Chronos $date, ?string $name, array $roles): void
     {
         $this->em->flush()->shouldBeCalledOnce();
         $this->em->persist(Argument::type(ApiKey::class))->shouldBeCalledOnce();
 
-        $key = $this->service->create($date, ...$roles);
+        $key = $this->service->create($date, $name, ...$roles);
 
         self::assertEquals($date, $key->getExpirationDate());
+        self::assertEquals($name, $key->name());
         foreach ($roles as $roleDefinition) {
             self::assertTrue($key->hasRole($roleDefinition->roleName()));
         }
@@ -50,12 +52,15 @@ class ApiKeyServiceTest extends TestCase
 
     public function provideCreationDate(): iterable
     {
-        yield 'no expiration date' => [null, []];
-        yield 'expiration date' => [Chronos::parse('2030-01-01'), []];
-        yield 'roles' => [null, [
+        yield 'no expiration date or name' => [null, null, []];
+        yield 'expiration date' => [Chronos::parse('2030-01-01'), null, []];
+        yield 'roles' => [null, null, [
             RoleDefinition::forDomain((new Domain(''))->setId('123')),
             RoleDefinition::forAuthoredShortUrls(),
         ]];
+        yield 'single name' => [null, 'Alice', []];
+        yield 'multi-word name' => [null, 'Alice and Bob', []];
+        yield 'empty name' => [null, '', []];
     }
 
     /**
@@ -78,14 +83,14 @@ class ApiKeyServiceTest extends TestCase
     public function provideInvalidApiKeys(): iterable
     {
         yield 'non-existent api key' => [null];
-        yield 'disabled api key' => [(new ApiKey())->disable()];
-        yield 'expired api key' => [new ApiKey(Chronos::now()->subDay())];
+        yield 'disabled api key' => [ApiKey::create()->disable()];
+        yield 'expired api key' => [ApiKey::fromMeta(ApiKeyMeta::withExpirationDate(Chronos::now()->subDay()))];
     }
 
     /** @test */
     public function checkReturnsTrueWhenConditionsAreFavorable(): void
     {
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
 
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['key' => '12345'])->willReturn($apiKey)
@@ -114,7 +119,7 @@ class ApiKeyServiceTest extends TestCase
     /** @test */
     public function disableReturnsDisabledApiKeyWhenFound(): void
     {
-        $key = new ApiKey();
+        $key = ApiKey::create();
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findOneBy(['key' => '12345'])->willReturn($key)
                                             ->shouldBeCalledOnce();
@@ -131,7 +136,7 @@ class ApiKeyServiceTest extends TestCase
     /** @test */
     public function listFindsAllApiKeys(): void
     {
-        $expectedApiKeys = [new ApiKey(), new ApiKey(), new ApiKey()];
+        $expectedApiKeys = [ApiKey::create(), ApiKey::create(), ApiKey::create()];
 
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findBy([])->willReturn($expectedApiKeys)
@@ -146,7 +151,7 @@ class ApiKeyServiceTest extends TestCase
     /** @test */
     public function listEnabledFindsOnlyEnabledApiKeys(): void
     {
-        $expectedApiKeys = [new ApiKey(), new ApiKey(), new ApiKey()];
+        $expectedApiKeys = [ApiKey::create(), ApiKey::create(), ApiKey::create()];
 
         $repo = $this->prophesize(EntityRepository::class);
         $repo->findBy(['enabled' => true])->willReturn($expectedApiKeys)

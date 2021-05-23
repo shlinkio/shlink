@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\Service\ShortUrl;
 
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 
-interface ShortCodeHelperInterface
+interface ShortCodeHelperInterface // TODO Rename to ShortCodeUniquenessHelperInterface
 {
     public function ensureShortCodeUniqueness(ShortUrl $shortUrlToBeCreated, bool $hasCustomSlug): bool;
 }

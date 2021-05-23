@@ -9,7 +9,8 @@ use Laminas\ConfigAggregator\ConfigAggregator;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\Stdlib\Glob;
-use PDO;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use PHPUnit\Runner\Version;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\Driver\Selector;
@@ -53,10 +54,6 @@ $buildDbConnection = function (): array {
             'password' => 'root',
             'dbname' => 'shlink_test',
             'charset' => 'utf8',
-            'driverOptions' => [
-                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
-                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-            ],
         ],
         'postgres' => [
             'driver' => 'pdo_pgsql',
@@ -79,6 +76,18 @@ $buildDbConnection = function (): array {
 
     return $driverConfigMap[$driver] ?? [];
 };
+
+$buildTestLoggerConfig = fn (string $handlerName, string $filename) => [
+    'handlers' => [
+        $handlerName => [
+            'name' => StreamHandler::class,
+            'params' => [
+                'level' => Logger::DEBUG,
+                'stream' => sprintf('data/log/api-tests/%s', $filename),
+            ],
+        ],
+    ],
+];
 
 return [
 
@@ -161,6 +170,11 @@ return [
         'paths' => [
             __DIR__ . '/../../module/Rest/test-api/Fixtures',
         ],
+    ],
+
+    'logger' => [
+        'Shlink' => $buildTestLoggerConfig('shlink_handler', 'shlink.log'),
+        'Access' => $buildTestLoggerConfig('access_handler', 'access.log'),
     ],
 
 ];

@@ -19,7 +19,7 @@ use function uksort;
 class SimplifiedConfigParser
 {
     private const SIMPLIFIED_CONFIG_MAPPING = [
-        'disable_track_param' => ['app_options', 'disable_track_param'],
+        'disable_track_param' => ['tracking', 'disable_track_param'],
         'short_domain_schema' => ['url_shortener', 'domain', 'schema'],
         'short_domain_host' => ['url_shortener', 'domain', 'hostname'],
         'validate_url' => ['url_shortener', 'validate_url'],
@@ -38,7 +38,7 @@ class SimplifiedConfigParser
         'mercure_public_hub_url' => ['mercure', 'public_hub_url'],
         'mercure_internal_hub_url' => ['mercure', 'internal_hub_url'],
         'mercure_jwt_secret' => ['mercure', 'jwt_secret'],
-        'anonymize_remote_addr' => ['url_shortener', 'anonymize_remote_addr'],
+        'anonymize_remote_addr' => ['tracking', 'anonymize_remote_addr'],
         'redirect_status_code' => ['url_shortener', 'redirect_status_code'],
         'redirect_cache_lifetime' => ['url_shortener', 'redirect_cache_lifetime'],
         'port' => ['mezzio-swoole', 'swoole-http-server', 'port'],

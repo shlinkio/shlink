@@ -4,6 +4,45 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.7.0] - 2021-05-23
+### Added
+* [#1044](https://github.com/shlinkio/shlink/issues/1044) Added ability to set names on API keys, which helps to identify them when the list grows.
+* [#819](https://github.com/shlinkio/shlink/issues/819) Visits are now always located in real time, even when not using swoole.
+
+    The only side effect is that a GeoLite2 db file is now installed when the docker image starts or during shlink installation or update.
+
+    Also, when using swoole, the file is now updated **after** tracking a visit, which means it will not apply until the next one.
+
+* [#1059](https://github.com/shlinkio/shlink/issues/1059) Added ability to optionally display author API key and its name when listing short URLs from the command line.
+* [#1066](https://github.com/shlinkio/shlink/issues/1066) Added support to import short URLs and their visits from another Shlink instance using its API.
+* [#898](https://github.com/shlinkio/shlink/issues/898) Improved tracking granularity, allowing to disable visits tracking completely, or just parts of it.
+
+    In order to achieve it, Shlink now supports 4 new tracking-related options, that can be customized via env vars for docker, or via installer:
+
+    * `disable_tracking`: If true, visits will not be tracked at all.
+    * `disable_ip_tracking`: If true, visits will be tracked, but neither the IP address, nor the location will be resolved.
+    * `disable_referrer_tracking`: If true, the referrer will not be tracked.
+    * `disable_ua_tracking`: If true, the user agent will not be tracked.
+
+* [#955](https://github.com/shlinkio/shlink/issues/955) Added new option to set short URLs as crawlable, making them be listed in the robots.txt as Allowed.
+* [#900](https://github.com/shlinkio/shlink/issues/900) Shlink now tries to detect if the visit is coming from a potential bot or crawler, and allows to exclude those visits from visits lists if desired.
+
+### Changed
+* [#1036](https://github.com/shlinkio/shlink/issues/1036) Updated to `happyr/doctrine-specification` 2.0.
+* [#1039](https://github.com/shlinkio/shlink/issues/1039) Updated to `endroid/qr-code` 4.0.
+* [#1008](https://github.com/shlinkio/shlink/issues/1008) Ensured all logs are sent to the filesystem while running API tests, which helps debugging the reason for tests to fail.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1041](https://github.com/shlinkio/shlink/issues/1041) Ensured the default value for the version while building the docker image is `latest`.
+* [#1067](https://github.com/shlinkio/shlink/issues/1067) Fixed exception when persisting multiple short URLs in one batch which include the same new tags/domains. This can potentially happen when importing URLs.
+
+
 ## [2.6.2] - 2021-03-12
 ### Added
 * *Nothing*

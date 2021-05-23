@@ -65,4 +65,9 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->columnName('type')
             ->length(255)
             ->build();
+
+    $builder->createField('potentialBot', Types::BOOLEAN)
+            ->columnName('potential_bot')
+            ->option('default', false)
+            ->build();
 };

@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Rest\Service;
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -21,9 +22,12 @@ class ApiKeyService implements ApiKeyServiceInterface
         $this->em = $em;
     }
 
-    public function create(?Chronos $expirationDate = null, RoleDefinition ...$roleDefinitions): ApiKey
-    {
-        $key = new ApiKey($expirationDate);
+    public function create(
+        ?Chronos $expirationDate = null,
+        ?string $name = null,
+        RoleDefinition ...$roleDefinitions
+    ): ApiKey {
+        $key = $this->buildApiKeyWithParams($expirationDate, $name);
         foreach ($roleDefinitions as $definition) {
             $key->registerRole($definition);
         }
@@ -32,6 +36,24 @@ class ApiKeyService implements ApiKeyServiceInterface
         $this->em->flush();
 
         return $key;
+    }
+
+    private function buildApiKeyWithParams(?Chronos $expirationDate, ?string $name): ApiKey
+    {
+        // TODO Use match expression when migrating to PHP8
+        if ($expirationDate === null && $name === null) {
+            return ApiKey::create();
+        }
+
+        if ($expirationDate !== null && $name !== null) {
+            return ApiKey::fromMeta(ApiKeyMeta::withNameAndExpirationDate($name, $expirationDate));
+        }
+
+        if ($name === null) {
+            return ApiKey::fromMeta(ApiKeyMeta::withExpirationDate($expirationDate));
+        }
+
+        return ApiKey::fromMeta(ApiKeyMeta::withName($name));
     }
 
     public function check(string $key): ApiKeyCheckResult

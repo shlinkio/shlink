@@ -34,12 +34,4 @@ final class Version20181110175521 extends AbstractMigration
     {
         return $schema->getTable('visits')->getColumn('user_agent');
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

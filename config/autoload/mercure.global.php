@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Laminas\ServiceManager\Proxy\LazyServiceFactory;
 use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
-use Symfony\Component\Mercure\Publisher;
-use Symfony\Component\Mercure\PublisherInterface;
+use Symfony\Component\Mercure\Hub;
+use Symfony\Component\Mercure\HubInterface;
 
 return [
 
@@ -21,14 +21,14 @@ return [
             LcobucciJwtProvider::class => [
                 LazyServiceFactory::class,
             ],
-            Publisher::class => [
+            Hub::class => [
                 LazyServiceFactory::class,
             ],
         ],
         'lazy_services' => [
             'class_map' => [
                 LcobucciJwtProvider::class => LcobucciJwtProvider::class,
-                Publisher::class => PublisherInterface::class,
+                Hub::class => HubInterface::class,
             ],
         ],
     ],

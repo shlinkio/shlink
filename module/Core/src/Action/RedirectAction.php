@@ -21,11 +21,11 @@ class RedirectAction extends AbstractTrackingAction implements StatusCodeInterfa
     public function __construct(
         ShortUrlResolverInterface $urlResolver,
         VisitsTrackerInterface $visitTracker,
-        Options\AppOptions $appOptions,
+        Options\TrackingOptions $trackingOptions,
         RedirectResponseHelperInterface $redirectResponseHelper,
         ?LoggerInterface $logger = null
     ) {
-        parent::__construct($urlResolver, $visitTracker, $appOptions, $logger);
+        parent::__construct($urlResolver, $visitTracker, $trackingOptions, $logger);
         $this->redirectResponseHelper = $redirectResponseHelper;
     }
 

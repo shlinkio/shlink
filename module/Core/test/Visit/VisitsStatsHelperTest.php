@@ -10,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -23,6 +22,8 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelper;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
@@ -53,7 +54,9 @@ class VisitsStatsHelperTest extends TestCase
     {
         $repo = $this->prophesize(VisitRepository::class);
         $count = $repo->countVisits(null)->willReturn($expectedCount * 3);
-        $countOrphan = $repo->countOrphanVisits()->willReturn($expectedCount);
+        $countOrphan = $repo->countOrphanVisits(Argument::type(VisitsCountFiltering::class))->willReturn(
+            $expectedCount,
+        );
         $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
 
         $stats = $this->helper->getVisitsStats();
@@ -76,20 +79,22 @@ class VisitsStatsHelperTest extends TestCase
     public function infoReturnsVisitsForCertainShortCode(?ApiKey $apiKey): void
     {
         $shortCode = '123ABC';
+        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
         $spec = $apiKey === null ? null : $apiKey->spec();
+
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $count = $repo->shortCodeIsInUse($shortCode, null, $spec)->willReturn(true);
+        $count = $repo->shortCodeIsInUse($identifier, $spec)->willReturn(
+            true,
+        );
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
 
         $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
         $repo2 = $this->prophesize(VisitRepository::class);
-        $repo2->findVisitsByShortCode($shortCode, null, Argument::type(DateRange::class), 1, 0, $spec)->willReturn(
-            $list,
-        );
-        $repo2->countVisitsByShortCode($shortCode, null, Argument::type(DateRange::class), $spec)->willReturn(1);
+        $repo2->findVisitsByShortCode($identifier, Argument::type(VisitsListFiltering::class))->willReturn($list);
+        $repo2->countVisitsByShortCode($identifier, Argument::type(VisitsCountFiltering::class))->willReturn(1);
         $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
 
-        $paginator = $this->helper->visitsForShortUrl(new ShortUrlIdentifier($shortCode), new VisitsParams(), $apiKey);
+        $paginator = $this->helper->visitsForShortUrl($identifier, new VisitsParams(), $apiKey);
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
         $count->shouldHaveBeenCalledOnce();
@@ -99,21 +104,25 @@ class VisitsStatsHelperTest extends TestCase
     public function throwsExceptionWhenRequestingVisitsForInvalidShortCode(): void
     {
         $shortCode = '123ABC';
+        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
+
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $count = $repo->shortCodeIsInUse($shortCode, null, null)->willReturn(false);
+        $count = $repo->shortCodeIsInUse($identifier, null)->willReturn(
+            false,
+        );
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
 
         $this->expectException(ShortUrlNotFoundException::class);
         $count->shouldBeCalledOnce();
 
-        $this->helper->visitsForShortUrl(new ShortUrlIdentifier($shortCode), new VisitsParams());
+        $this->helper->visitsForShortUrl($identifier, new VisitsParams());
     }
 
     /** @test */
     public function throwsExceptionWhenRequestingVisitsForInvalidTag(): void
     {
         $tag = 'foo';
-        $apiKey = new ApiKey();
+        $apiKey = ApiKey::create();
         $repo = $this->prophesize(TagRepository::class);
         $tagExists = $repo->tagExists($tag, $apiKey)->willReturn(false);
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
@@ -136,11 +145,10 @@ class VisitsStatsHelperTest extends TestCase
         $tagExists = $repo->tagExists($tag, $apiKey)->willReturn(true);
         $getRepo = $this->em->getRepository(Tag::class)->willReturn($repo->reveal());
 
-        $spec = $apiKey === null ? null : $apiKey->spec();
         $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
         $repo2 = $this->prophesize(VisitRepository::class);
-        $repo2->findVisitsByTag($tag, Argument::type(DateRange::class), 1, 0, $spec)->willReturn($list);
-        $repo2->countVisitsByTag($tag, Argument::type(DateRange::class), $spec)->willReturn(1);
+        $repo2->findVisitsByTag($tag, Argument::type(VisitsListFiltering::class))->willReturn($list);
+        $repo2->countVisitsByTag($tag, Argument::type(VisitsCountFiltering::class))->willReturn(1);
         $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
 
         $paginator = $this->helper->visitsForTag($tag, new VisitsParams(), $apiKey);
@@ -155,8 +163,8 @@ class VisitsStatsHelperTest extends TestCase
     {
         $list = map(range(0, 3), fn () => Visit::forBasePath(Visitor::emptyInstance()));
         $repo = $this->prophesize(VisitRepository::class);
-        $countVisits = $repo->countOrphanVisits(Argument::type(DateRange::class))->willReturn(count($list));
-        $listVisits = $repo->findOrphanVisits(Argument::type(DateRange::class), Argument::cetera())->willReturn($list);
+        $countVisits = $repo->countOrphanVisits(Argument::type(VisitsCountFiltering::class))->willReturn(count($list));
+        $listVisits = $repo->findOrphanVisits(Argument::type(VisitsListFiltering::class))->willReturn($list);
         $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
 
         $paginator = $this->helper->orphanVisits(new VisitsParams());

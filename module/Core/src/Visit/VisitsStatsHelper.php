@@ -22,6 +22,7 @@ use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
+use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsStatsHelper implements VisitsStatsHelperInterface
@@ -38,7 +39,10 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
         /** @var VisitRepository $visitsRepo */
         $visitsRepo = $this->em->getRepository(Visit::class);
 
-        return new VisitsStats($visitsRepo->countVisits($apiKey), $visitsRepo->countOrphanVisits());
+        return new VisitsStats(
+            $visitsRepo->countVisits($apiKey),
+            $visitsRepo->countOrphanVisits(new VisitsCountFiltering()),
+        );
     }
 
     /**
@@ -54,7 +58,7 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
 
         /** @var ShortUrlRepositoryInterface $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        if (! $repo->shortCodeIsInUse($identifier->shortCode(), $identifier->domain(), $spec)) {
+        if (! $repo->shortCodeIsInUse($identifier, $spec)) {
             throw ShortUrlNotFoundException::fromNotFound($identifier);
         }
 

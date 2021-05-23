@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\TagService;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
@@ -60,7 +61,7 @@ class TagServiceTest extends TestCase
     {
         $expected = [new TagInfo(new Tag('foo'), 1, 1), new TagInfo(new Tag('bar'), 3, 10)];
 
-        $find = $this->repo->findTagsWithInfo($apiKey === null ? null : $apiKey->spec())->willReturn($expected);
+        $find = $this->repo->findTagsWithInfo($apiKey)->willReturn($expected);
 
         $result = $this->service->tagsInfo($apiKey);
 
@@ -90,7 +91,10 @@ class TagServiceTest extends TestCase
         $this->expectExceptionMessage('You are not allowed to delete tags');
         $delete->shouldNotBeCalled();
 
-        $this->service->deleteTags(['foo', 'bar'], ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls()));
+        $this->service->deleteTags(
+            ['foo', 'bar'],
+            ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls())),
+        );
     }
 
     /** @test */
@@ -178,7 +182,7 @@ class TagServiceTest extends TestCase
 
         $this->service->renameTag(
             TagRenaming::fromNames('foo', 'bar'),
-            ApiKey::withRoles(RoleDefinition::forAuthoredShortUrls()),
+            ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls())),
         );
     }
 }

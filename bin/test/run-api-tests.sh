@@ -3,6 +3,8 @@ export APP_ENV=test
 export DB_DRIVER=postgres
 export TEST_ENV=api
 
+rm -rf data/log/api-tests
+
 # Try to stop server just in case it hanged in last execution
 vendor/bin/laminas mezzio:swoole:stop
 

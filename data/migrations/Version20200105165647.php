@@ -93,12 +93,4 @@ final class Version20200105165647 extends AbstractMigration
             $visitLocations->dropColumn($colName);
         }
     }
-
-    /**
-     * @fixme Workaround for https://github.com/doctrine/migrations/issues/1104
-     */
-    public function isTransactional(): bool
-    {
-        return false;
-    }
 }

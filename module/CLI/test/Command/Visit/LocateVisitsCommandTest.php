@@ -6,11 +6,10 @@ namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\CLI\Command\Visit\DownloadGeoLiteDbCommand;
 use Shlinkio\Shlink\CLI\Command\Visit\LocateVisitsCommand;
-use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
-use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
@@ -21,7 +20,7 @@ use Shlinkio\Shlink\Core\Visit\VisitLocator;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
-use Symfony\Component\Console\Application;
+use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -33,19 +32,18 @@ use const PHP_EOL;
 
 class LocateVisitsCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
     private ObjectProphecy $visitService;
     private ObjectProphecy $ipResolver;
     private ObjectProphecy $lock;
-    private ObjectProphecy $dbUpdater;
+    private ObjectProphecy $downloadDbCommand;
 
     public function setUp(): void
     {
         $this->visitService = $this->prophesize(VisitLocator::class);
         $this->ipResolver = $this->prophesize(IpLocationResolverInterface::class);
-        $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
 
         $locker = $this->prophesize(Lock\LockFactory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
@@ -58,12 +56,12 @@ class LocateVisitsCommandTest extends TestCase
             $this->visitService->reveal(),
             $this->ipResolver->reveal(),
             $locker->reveal(),
-            $this->dbUpdater->reveal(),
         );
-        $app = new Application();
-        $app->add($command);
 
-        $this->commandTester = new CommandTester($command);
+        $this->downloadDbCommand = $this->createCommandMock(DownloadGeoLiteDbCommand::NAME);
+        $this->downloadDbCommand->run(Argument::cetera())->willReturn(ExitCodes::EXIT_SUCCESS);
+
+        $this->commandTester = $this->testerForCommand($command, $this->downloadDbCommand->reveal());
     }
 
     /**
@@ -78,7 +76,7 @@ class LocateVisitsCommandTest extends TestCase
         array $args
     ): void {
         $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', ''));
-        $location = new VisitLocation(Location::emptyInstance());
+        $location = VisitLocation::fromGeolocation(Location::emptyInstance());
         $mockMethodBehavior = $this->invokeHelperMethods($visit, $location);
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will($mockMethodBehavior);
@@ -122,7 +120,7 @@ class LocateVisitsCommandTest extends TestCase
     public function localhostAndEmptyAddressesAreIgnored(?string $address, string $message): void
     {
         $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', $address, ''));
-        $location = new VisitLocation(Location::emptyInstance());
+        $location = VisitLocation::fromGeolocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
             $this->invokeHelperMethods($visit, $location),
@@ -155,7 +153,7 @@ class LocateVisitsCommandTest extends TestCase
     public function errorWhileLocatingIpIsDisplayed(): void
     {
         $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', ''));
-        $location = new VisitLocation(Location::emptyInstance());
+        $location = VisitLocation::fromGeolocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
             $this->invokeHelperMethods($visit, $location),
@@ -202,43 +200,16 @@ class LocateVisitsCommandTest extends TestCase
         $resolveIpLocation->shouldNotHaveBeenCalled();
     }
 
-    /**
-     * @test
-     * @dataProvider provideParams
-     */
-    public function showsProperMessageWhenGeoLiteUpdateFails(bool $olderDbExists, string $expectedMessage): void
+    /** @test */
+    public function showsProperMessageWhenGeoLiteUpdateFails(): void
     {
-        $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(function (): void {
-        });
-        $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
-            function (array $args) use ($olderDbExists): void {
-                [$mustBeUpdated, $handleProgress] = $args;
-
-                $mustBeUpdated($olderDbExists);
-                $handleProgress(100, 50);
-
-                throw $olderDbExists
-                    ? GeolocationDbUpdateFailedException::withOlderDb()
-                    : GeolocationDbUpdateFailedException::withoutOlderDb();
-            },
-        );
+        $this->downloadDbCommand->run(Argument::cetera())->willReturn(ExitCodes::EXIT_FAILURE);
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertStringContainsString(
-            sprintf('%s GeoLite2 database...', $olderDbExists ? 'Updating' : 'Downloading'),
-            $output,
-        );
-        self::assertStringContainsString($expectedMessage, $output);
-        $locateVisits->shouldHaveBeenCalledTimes((int) $olderDbExists);
-        $checkDbUpdate->shouldHaveBeenCalledOnce();
-    }
-
-    public function provideParams(): iterable
-    {
-        yield [true, '[Warning] GeoLite2 database update failed. Proceeding with old version.'];
-        yield [false, 'GeoLite2 database download failed. It is not possible to locate visits.'];
+        self::assertStringContainsString('It is not possible to locate visits without a GeoLite2 db file.', $output);
+        $this->visitService->locateUnlocatedVisits(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /** @test */

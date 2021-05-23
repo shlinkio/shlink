@@ -59,12 +59,14 @@ class MercureUpdatesGeneratorTest extends TestCase
                 ],
                 'domain' => null,
                 'title' => $title,
+                'crawlable' => false,
             ],
             'visit' => [
                 'referer' => '',
                 'userAgent' => '',
                 'visitLocation' => null,
                 'date' => $visit->getDate()->toAtomString(),
+                'potentialBot' => false,
             ],
         ], json_decode($update->getData()));
     }
@@ -90,6 +92,7 @@ class MercureUpdatesGeneratorTest extends TestCase
                 'userAgent' => '',
                 'visitLocation' => null,
                 'date' => $orphanVisit->getDate()->toAtomString(),
+                'potentialBot' => false,
                 'visitedUrl' => $orphanVisit->visitedUrl(),
                 'type' => $orphanVisit->type(),
             ],
