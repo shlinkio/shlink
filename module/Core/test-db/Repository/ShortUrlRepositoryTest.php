@@ -210,12 +210,16 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertNotNull($this->repo->findOne('my-cool-slug'));
-        self::assertNull($this->repo->findOne('my-cool-slug', 'doma.in'));
-        self::assertNull($this->repo->findOne('slug-not-in-use'));
-        self::assertNull($this->repo->findOne('another-slug'));
-        self::assertNull($this->repo->findOne('another-slug', 'example.com'));
-        self::assertNotNull($this->repo->findOne('another-slug', 'doma.in'));
+        self::assertNotNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug')));
+        self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug', 'doma.in')));
+        self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('slug-not-in-use')));
+        self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('another-slug')));
+        self::assertNull($this->repo->findOne(
+            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'example.com'),
+        ));
+        self::assertNotNull($this->repo->findOne(
+            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'doma.in'),
+        ));
     }
 
     /** @test */

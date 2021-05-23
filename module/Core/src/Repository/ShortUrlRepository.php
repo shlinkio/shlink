@@ -174,9 +174,9 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $query->getOneOrNullResult();
     }
 
-    public function findOne(string $shortCode, ?string $domain = null, ?Specification $spec = null): ?ShortUrl
+    public function findOne(ShortUrlIdentifier $identifier, ?Specification $spec = null): ?ShortUrl
     {
-        $qb = $this->createFindOneQueryBuilder($shortCode, $domain, $spec);
+        $qb = $this->createFindOneQueryBuilder($identifier, $spec);
         $qb->select('s');
 
         return $qb->getQuery()->getOneOrNullResult();
@@ -194,7 +194,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
     private function doShortCodeIsInUse(ShortUrlIdentifier $identifier, ?Specification $spec, ?int $lockMode): bool
     {
-        $qb = $this->createFindOneQueryBuilder($identifier->shortCode(), $identifier->domain(), $spec);
+        $qb = $this->createFindOneQueryBuilder($identifier, $spec);
         $qb->select('s.id');
 
         $query = $qb->getQuery()->setLockMode($lockMode);
@@ -202,16 +202,16 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $query->getOneOrNullResult() !== null;
     }
 
-    private function createFindOneQueryBuilder(string $slug, ?string $domain, ?Specification $spec): QueryBuilder
+    private function createFindOneQueryBuilder(ShortUrlIdentifier $identifier, ?Specification $spec): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
            ->where($qb->expr()->isNotNull('s.shortCode'))
            ->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
-           ->setParameter('slug', $slug)
+           ->setParameter('slug', $identifier->shortCode())
            ->setMaxResults(1);
 
-        $this->whereDomainIs($qb, $domain);
+        $this->whereDomainIs($qb, $identifier->domain());
 
         $this->applySpecification($qb, $spec, 's');
 

@@ -79,20 +79,22 @@ class VisitsStatsHelperTest extends TestCase
     public function infoReturnsVisitsForCertainShortCode(?ApiKey $apiKey): void
     {
         $shortCode = '123ABC';
+        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
         $spec = $apiKey === null ? null : $apiKey->spec();
+
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $count = $repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode), $spec)->willReturn(
+        $count = $repo->shortCodeIsInUse($identifier, $spec)->willReturn(
             true,
         );
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
 
         $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
         $repo2 = $this->prophesize(VisitRepository::class);
-        $repo2->findVisitsByShortCode($shortCode, null, Argument::type(VisitsListFiltering::class))->willReturn($list);
-        $repo2->countVisitsByShortCode($shortCode, null, Argument::type(VisitsCountFiltering::class))->willReturn(1);
+        $repo2->findVisitsByShortCode($identifier, Argument::type(VisitsListFiltering::class))->willReturn($list);
+        $repo2->countVisitsByShortCode($identifier, Argument::type(VisitsCountFiltering::class))->willReturn(1);
         $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
 
-        $paginator = $this->helper->visitsForShortUrl(new ShortUrlIdentifier($shortCode), new VisitsParams(), $apiKey);
+        $paginator = $this->helper->visitsForShortUrl($identifier, new VisitsParams(), $apiKey);
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
         $count->shouldHaveBeenCalledOnce();
@@ -102,8 +104,10 @@ class VisitsStatsHelperTest extends TestCase
     public function throwsExceptionWhenRequestingVisitsForInvalidShortCode(): void
     {
         $shortCode = '123ABC';
+        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
+
         $repo = $this->prophesize(ShortUrlRepositoryInterface::class);
-        $count = $repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode), null)->willReturn(
+        $count = $repo->shortCodeIsInUse($identifier, null)->willReturn(
             false,
         );
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal())->shouldBeCalledOnce();
@@ -111,7 +115,7 @@ class VisitsStatsHelperTest extends TestCase
         $this->expectException(ShortUrlNotFoundException::class);
         $count->shouldBeCalledOnce();
 
-        $this->helper->visitsForShortUrl(new ShortUrlIdentifier($shortCode), new VisitsParams());
+        $this->helper->visitsForShortUrl($identifier, new VisitsParams());
     }
 
     /** @test */

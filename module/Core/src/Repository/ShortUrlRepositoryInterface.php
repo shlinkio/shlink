@@ -35,7 +35,7 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
 
     public function findOneWithDomainFallback(string $shortCode, ?string $domain = null): ?ShortUrl;
 
-    public function findOne(string $shortCode, ?string $domain = null, ?Specification $spec = null): ?ShortUrl;
+    public function findOne(ShortUrlIdentifier $identifier, ?Specification $spec = null): ?ShortUrl;
 
     public function shortCodeIsInUse(ShortUrlIdentifier $identifier, ?Specification $spec = null): bool;
 
