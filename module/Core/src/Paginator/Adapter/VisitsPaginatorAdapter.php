@@ -13,21 +13,12 @@ use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 
 class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
-    private VisitRepositoryInterface $visitRepository;
-    private ShortUrlIdentifier $identifier;
-    private VisitsParams $params;
-    private ?Specification $spec;
-
     public function __construct(
-        VisitRepositoryInterface $visitRepository,
-        ShortUrlIdentifier $identifier,
-        VisitsParams $params,
-        ?Specification $spec
+        private VisitRepositoryInterface $visitRepository,
+        private ShortUrlIdentifier $identifier,
+        private VisitsParams $params,
+        private ?Specification $spec
     ) {
-        $this->visitRepository = $visitRepository;
-        $this->params = $params;
-        $this->identifier = $identifier;
-        $this->spec = $spec;
     }
 
     public function getSlice($offset, $length): array // phpcs:ignore

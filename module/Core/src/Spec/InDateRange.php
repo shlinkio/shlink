@@ -11,14 +11,9 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 
 class InDateRange extends BaseSpecification
 {
-    private ?DateRange $dateRange;
-    private string $field;
-
-    public function __construct(?DateRange $dateRange, string $field = 'date')
+    public function __construct(private ?DateRange $dateRange, private string $field = 'date')
     {
         parent::__construct();
-        $this->dateRange = $dateRange;
-        $this->field = $field;
     }
 
     protected function getSpec(): Specification

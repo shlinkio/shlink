@@ -13,21 +13,12 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsForTagPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
-    private VisitRepositoryInterface $visitRepository;
-    private string $tag;
-    private VisitsParams $params;
-    private ?ApiKey $apiKey;
-
     public function __construct(
-        VisitRepositoryInterface $visitRepository,
-        string $tag,
-        VisitsParams $params,
-        ?ApiKey $apiKey
+        private VisitRepositoryInterface $visitRepository,
+        private string $tag,
+        private VisitsParams $params,
+        private ?ApiKey $apiKey
     ) {
-        $this->visitRepository = $visitRepository;
-        $this->params = $params;
-        $this->tag = $tag;
-        $this->apiKey = $apiKey;
     }
 
     public function getSlice($offset, $length): array // phpcs:ignore

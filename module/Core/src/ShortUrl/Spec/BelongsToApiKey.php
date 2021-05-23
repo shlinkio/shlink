@@ -11,13 +11,8 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class BelongsToApiKey extends BaseSpecification
 {
-    private ApiKey $apiKey;
-    private ?string $dqlAlias;
-
-    public function __construct(ApiKey $apiKey, ?string $dqlAlias = null)
+    public function __construct(private ApiKey $apiKey, private ?string $dqlAlias = null)
     {
-        $this->apiKey = $apiKey;
-        $this->dqlAlias = $dqlAlias;
         parent::__construct();
     }
 

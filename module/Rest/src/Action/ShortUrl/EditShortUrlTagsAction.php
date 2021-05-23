@@ -21,11 +21,8 @@ class EditShortUrlTagsAction extends AbstractRestAction
     protected const ROUTE_PATH = '/short-urls/{shortCode}/tags';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PUT];
 
-    private ShortUrlServiceInterface $shortUrlService;
-
-    public function __construct(ShortUrlServiceInterface $shortUrlService)
+    public function __construct(private ShortUrlServiceInterface $shortUrlService)
     {
-        $this->shortUrlService = $shortUrlService;
     }
 
     public function handle(Request $request): Response

@@ -12,15 +12,11 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlRepositoryAdapter implements AdapterInterface
 {
-    private ShortUrlRepositoryInterface $repository;
-    private ShortUrlsParams $params;
-    private ?ApiKey $apiKey;
-
-    public function __construct(ShortUrlRepositoryInterface $repository, ShortUrlsParams $params, ?ApiKey $apiKey)
-    {
-        $this->repository = $repository;
-        $this->params = $params;
-        $this->apiKey = $apiKey;
+    public function __construct(
+        private ShortUrlRepositoryInterface $repository,
+        private ShortUrlsParams $params,
+        private ?ApiKey $apiKey
+    ) {
     }
 
     public function getSlice($offset, $length): array // phpcs:ignore

@@ -20,22 +20,14 @@ use function sprintf;
 
 class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 {
-    private EntityManagerInterface $em;
-    private ShortUrlRelationResolverInterface $relationResolver;
-    private ShortCodeHelperInterface $shortCodeHelper;
-    private DoctrineBatchHelperInterface $batchHelper;
     private ShortUrlRepositoryInterface $shortUrlRepo;
 
     public function __construct(
-        EntityManagerInterface $em,
-        ShortUrlRelationResolverInterface $relationResolver,
-        ShortCodeHelperInterface $shortCodeHelper,
-        DoctrineBatchHelperInterface $batchHelper
+        private EntityManagerInterface $em,
+        private ShortUrlRelationResolverInterface $relationResolver,
+        private ShortCodeHelperInterface $shortCodeHelper,
+        private DoctrineBatchHelperInterface $batchHelper
     ) {
-        $this->em = $em;
-        $this->relationResolver = $relationResolver;
-        $this->shortCodeHelper = $shortCodeHelper;
-        $this->batchHelper = $batchHelper;
         $this->shortUrlRepo = $this->em->getRepository(ShortUrl::class); // @phpstan-ignore-line
     }
 
@@ -64,7 +56,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 
             try {
                 $shortUrlImporting = $this->resolveShortUrl($importedUrl, $importShortCodes, $skipOnShortCodeConflict);
-            } catch (NonUniqueSlugException $e) {
+            } catch (NonUniqueSlugException) {
                 $io->text(sprintf('%s: <fg=red>Error</>', $longUrl));
                 continue;
             }

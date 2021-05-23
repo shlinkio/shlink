@@ -16,21 +16,12 @@ use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 
 class UrlShortener implements UrlShortenerInterface
 {
-    private EntityManagerInterface $em;
-    private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
-    private ShortUrlRelationResolverInterface $relationResolver;
-    private ShortCodeHelperInterface $shortCodeHelper;
-
     public function __construct(
-        ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
-        EntityManagerInterface $em,
-        ShortUrlRelationResolverInterface $relationResolver,
-        ShortCodeHelperInterface $shortCodeHelper
+        private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
+        private EntityManagerInterface $em,
+        private ShortUrlRelationResolverInterface $relationResolver,
+        private ShortCodeHelperInterface $shortCodeHelper
     ) {
-        $this->titleResolutionHelper = $titleResolutionHelper;
-        $this->em = $em;
-        $this->relationResolver = $relationResolver;
-        $this->shortCodeHelper = $shortCodeHelper;
     }
 
     /**

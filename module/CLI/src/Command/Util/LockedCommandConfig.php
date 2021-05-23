@@ -8,15 +8,11 @@ final class LockedCommandConfig
 {
     public const DEFAULT_TTL = 600.0; // 10 minutes
 
-    private string $lockName;
-    private bool $isBlocking;
-    private float $ttl;
-
-    private function __construct(string $lockName, bool $isBlocking, float $ttl = self::DEFAULT_TTL)
-    {
-        $this->lockName = $lockName;
-        $this->isBlocking = $isBlocking;
-        $this->ttl = $ttl;
+    private function __construct(
+        private string $lockName,
+        private bool $isBlocking,
+        private float $ttl = self::DEFAULT_TTL
+    ) {
     }
 
     public static function blocking(string $lockName): self

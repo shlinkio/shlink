@@ -24,28 +24,15 @@ use function Functional\partial_left;
 
 class NotifyVisitToWebHooks
 {
-    private ClientInterface $httpClient;
-    private EntityManagerInterface $em;
-    private LoggerInterface $logger;
-    /** @var string[] */
-    private array $webhooks;
-    private DataTransformerInterface $transformer;
-    private AppOptions $appOptions;
-
     public function __construct(
-        ClientInterface $httpClient,
-        EntityManagerInterface $em,
-        LoggerInterface $logger,
-        array $webhooks,
-        DataTransformerInterface $transformer,
-        AppOptions $appOptions
+        private ClientInterface $httpClient,
+        private EntityManagerInterface $em,
+        private LoggerInterface $logger,
+        /** @var string[] */
+        private array $webhooks,
+        private DataTransformerInterface $transformer,
+        private AppOptions $appOptions
     ) {
-        $this->httpClient = $httpClient;
-        $this->em = $em;
-        $this->logger = $logger;
-        $this->webhooks = $webhooks;
-        $this->transformer = $transformer;
-        $this->appOptions = $appOptions;
     }
 
     public function __invoke(VisitLocated $shortUrlLocated): void

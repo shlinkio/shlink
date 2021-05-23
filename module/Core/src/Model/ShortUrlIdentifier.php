@@ -10,13 +10,8 @@ use Symfony\Component\Console\Input\InputInterface;
 
 final class ShortUrlIdentifier
 {
-    private string $shortCode;
-    private ?string $domain;
-
-    public function __construct(string $shortCode, ?string $domain = null)
+    public function __construct(private string $shortCode, private ?string $domain = null)
     {
-        $this->shortCode = $shortCode;
-        $this->domain = $domain;
     }
 
     public static function fromApiRequest(ServerRequestInterface $request): self

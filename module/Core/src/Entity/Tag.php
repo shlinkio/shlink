@@ -10,12 +10,10 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 
 class Tag extends AbstractEntity implements JsonSerializable
 {
-    private string $name;
     private Collections\Collection $shortUrls;
 
-    public function __construct(string $name)
+    public function __construct(private string $name)
     {
-        $this->name = $name;
         $this->shortUrls = new Collections\ArrayCollection();
     }
 

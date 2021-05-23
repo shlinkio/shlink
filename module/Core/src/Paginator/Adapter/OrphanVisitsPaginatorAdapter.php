@@ -11,13 +11,8 @@ use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 
 class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
-    private VisitRepositoryInterface $repo;
-    private VisitsParams $params;
-
-    public function __construct(VisitRepositoryInterface $repo, VisitsParams $params)
+    public function __construct(private VisitRepositoryInterface $repo, private VisitsParams $params)
     {
-        $this->repo = $repo;
-        $this->params = $params;
     }
 
     protected function doCount(): int

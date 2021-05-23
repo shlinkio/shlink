@@ -9,15 +9,8 @@ use Shlinkio\Shlink\Core\Entity\Tag;
 
 final class TagInfo implements JsonSerializable
 {
-    private Tag $tag;
-    private int $shortUrlsCount;
-    private int $visitsCount;
-
-    public function __construct(Tag $tag, int $shortUrlsCount, int $visitsCount)
+    public function __construct(private Tag $tag, private int $shortUrlsCount, private int $visitsCount)
     {
-        $this->tag = $tag;
-        $this->shortUrlsCount = $shortUrlsCount;
-        $this->visitsCount = $visitsCount;
     }
 
     public function tag(): Tag

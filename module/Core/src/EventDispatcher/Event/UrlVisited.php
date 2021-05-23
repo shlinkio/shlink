@@ -6,12 +6,9 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\Event;
 
 final class UrlVisited extends AbstractVisitEvent
 {
-    private ?string $originalIpAddress;
-
-    public function __construct(string $visitId, ?string $originalIpAddress = null)
+    public function __construct(string $visitId, private ?string $originalIpAddress = null)
     {
         parent::__construct($visitId);
-        $this->originalIpAddress = $originalIpAddress;
     }
 
     public function originalIpAddress(): ?string

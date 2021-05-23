@@ -13,11 +13,8 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlResolver implements ShortUrlResolverInterface
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     /**

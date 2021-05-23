@@ -122,11 +122,8 @@ class VisitLocatorTest extends TestCase
 
         $this->visitService->{$serviceMethodName}(
             new class ($isNonLocatableAddress) implements VisitGeolocationHelperInterface {
-                private bool $isNonLocatableAddress;
-
-                public function __construct(bool $isNonLocatableAddress)
+                public function __construct(private bool $isNonLocatableAddress)
                 {
-                    $this->isNonLocatableAddress = $isNonLocatableAddress;
                 }
 
                 public function geolocateVisit(Visit $visit): Location

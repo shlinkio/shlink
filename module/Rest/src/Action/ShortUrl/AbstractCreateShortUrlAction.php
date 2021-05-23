@@ -15,13 +15,10 @@ use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
 abstract class AbstractCreateShortUrlAction extends AbstractRestAction
 {
-    private UrlShortenerInterface $urlShortener;
-    private DataTransformerInterface $transformer;
-
-    public function __construct(UrlShortenerInterface $urlShortener, DataTransformerInterface $transformer)
-    {
-        $this->urlShortener = $urlShortener;
-        $this->transformer = $transformer;
+    public function __construct(
+        private UrlShortenerInterface $urlShortener,
+        private DataTransformerInterface $transformer,
+    ) {
     }
 
     public function handle(Request $request): Response

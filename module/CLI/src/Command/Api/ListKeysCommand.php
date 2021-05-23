@@ -27,12 +27,9 @@ class ListKeysCommand extends BaseCommand
 
     public const NAME = 'api-key:list';
 
-    private ApiKeyServiceInterface $apiKeyService;
-
-    public function __construct(ApiKeyServiceInterface $apiKeyService)
+    public function __construct(private ApiKeyServiceInterface $apiKeyService)
     {
         parent::__construct();
-        $this->apiKeyService = $apiKeyService;
     }
 
     protected function configure(): void

@@ -18,13 +18,10 @@ class ResolveShortUrlAction extends AbstractRestAction
     protected const ROUTE_PATH = '/short-urls/{shortCode}';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    private ShortUrlResolverInterface $urlResolver;
-    private DataTransformerInterface $transformer;
-
-    public function __construct(ShortUrlResolverInterface $urlResolver, DataTransformerInterface $transformer)
-    {
-        $this->urlResolver = $urlResolver;
-        $this->transformer = $transformer;
+    public function __construct(
+        private ShortUrlResolverInterface $urlResolver,
+        private DataTransformerInterface $transformer,
+    ) {
     }
 
     public function handle(Request $request): Response

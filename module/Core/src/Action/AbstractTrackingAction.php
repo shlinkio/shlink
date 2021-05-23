@@ -27,20 +27,14 @@ use function array_merge;
 
 abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMethodInterface
 {
-    private ShortUrlResolverInterface $urlResolver;
-    private VisitsTrackerInterface $visitTracker;
-    private TrackingOptions $trackingOptions;
     private LoggerInterface $logger;
 
     public function __construct(
-        ShortUrlResolverInterface $urlResolver,
-        VisitsTrackerInterface $visitTracker,
-        TrackingOptions $trackingOptions,
+        private ShortUrlResolverInterface $urlResolver,
+        private VisitsTrackerInterface $visitTracker,
+        private TrackingOptions $trackingOptions,
         ?LoggerInterface $logger = null
     ) {
-        $this->urlResolver = $urlResolver;
-        $this->visitTracker = $visitTracker;
-        $this->trackingOptions = $trackingOptions;
         $this->logger = $logger ?? new NullLogger();
     }
 

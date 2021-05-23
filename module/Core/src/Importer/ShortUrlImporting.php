@@ -14,13 +14,8 @@ use function sprintf;
 
 final class ShortUrlImporting
 {
-    private ShortUrl $shortUrl;
-    private bool $isNew;
-
-    private function __construct(ShortUrl $shortUrl, bool $isNew)
+    private function __construct(private ShortUrl $shortUrl, private bool $isNew)
     {
-        $this->shortUrl = $shortUrl;
-        $this->isNew = $isNew;
     }
 
     public static function fromExistingShortUrl(ShortUrl $shortUrl): self

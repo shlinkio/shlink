@@ -17,21 +17,12 @@ use function Functional\each;
 
 class NotifyVisitToMercure
 {
-    private HubInterface $hub;
-    private MercureUpdatesGeneratorInterface $updatesGenerator;
-    private EntityManagerInterface $em;
-    private LoggerInterface $logger;
-
     public function __construct(
-        HubInterface $hub,
-        MercureUpdatesGeneratorInterface $updatesGenerator,
-        EntityManagerInterface $em,
-        LoggerInterface $logger
+        private HubInterface $hub,
+        private MercureUpdatesGeneratorInterface $updatesGenerator,
+        private EntityManagerInterface $em,
+        private LoggerInterface $logger
     ) {
-        $this->hub = $hub;
-        $this->em = $em;
-        $this->logger = $logger;
-        $this->updatesGenerator = $updatesGenerator;
     }
 
     public function __invoke(VisitLocated $shortUrlLocated): void

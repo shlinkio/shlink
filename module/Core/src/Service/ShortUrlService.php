@@ -21,21 +21,12 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlService implements ShortUrlServiceInterface
 {
-    private ORM\EntityManagerInterface $em;
-    private ShortUrlResolverInterface $urlResolver;
-    private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
-    private ShortUrlRelationResolverInterface $relationResolver;
-
     public function __construct(
-        ORM\EntityManagerInterface $em,
-        ShortUrlResolverInterface $urlResolver,
-        ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
-        ShortUrlRelationResolverInterface $relationResolver
+        private ORM\EntityManagerInterface $em,
+        private ShortUrlResolverInterface $urlResolver,
+        private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
+        private ShortUrlRelationResolverInterface $relationResolver
     ) {
-        $this->em = $em;
-        $this->urlResolver = $urlResolver;
-        $this->titleResolutionHelper = $titleResolutionHelper;
-        $this->relationResolver = $relationResolver;
     }
 
     /**

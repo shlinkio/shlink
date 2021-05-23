@@ -27,11 +27,8 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsStatsHelper implements VisitsStatsHelperInterface
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     public function getVisitsStats(?ApiKey $apiKey = null): VisitsStats

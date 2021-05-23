@@ -33,14 +33,11 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
 
     public const NAME = 'short-url:list';
 
-    private ShortUrlServiceInterface $shortUrlService;
-    private DataTransformerInterface $transformer;
-
-    public function __construct(ShortUrlServiceInterface $shortUrlService, DataTransformerInterface $transformer)
-    {
+    public function __construct(
+        private ShortUrlServiceInterface $shortUrlService,
+        private DataTransformerInterface $transformer
+    ) {
         parent::__construct();
-        $this->shortUrlService = $shortUrlService;
-        $this->transformer = $transformer;
     }
 
     protected function doConfigure(): void

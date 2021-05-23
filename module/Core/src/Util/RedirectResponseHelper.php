@@ -13,11 +13,8 @@ use function sprintf;
 
 class RedirectResponseHelper implements RedirectResponseHelperInterface
 {
-    private UrlShortenerOptions $options;
-
-    public function __construct(UrlShortenerOptions $options)
+    public function __construct(private UrlShortenerOptions $options)
     {
-        $this->options = $options;
     }
 
     public function buildRedirectResponse(string $location): ResponseInterface

@@ -16,13 +16,8 @@ use function Functional\map;
 
 class DomainService implements DomainServiceInterface
 {
-    private EntityManagerInterface $em;
-    private string $defaultDomain;
-
-    public function __construct(EntityManagerInterface $em, string $defaultDomain)
+    public function __construct(private EntityManagerInterface $em, private string $defaultDomain)
     {
-        $this->em = $em;
-        $this->defaultDomain = $defaultDomain;
     }
 
     /**

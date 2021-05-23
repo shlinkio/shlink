@@ -20,6 +20,7 @@ class NotFoundTemplateHandler implements RequestHandlerInterface
     private const TEMPLATES_BASE_DIR = __DIR__ . '/../../templates';
     public const NOT_FOUND_TEMPLATE = '404.html';
     public const INVALID_SHORT_CODE_TEMPLATE = 'invalid-short-code.html';
+
     private Closure $readFile;
 
     public function __construct(?callable $readFile = null)

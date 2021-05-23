@@ -23,11 +23,8 @@ class TagService implements TagServiceInterface
 {
     use TagManagerTrait;
 
-    private ORM\EntityManagerInterface $em;
-
-    public function __construct(ORM\EntityManagerInterface $em)
+    public function __construct(private ORM\EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     /**

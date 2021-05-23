@@ -18,15 +18,10 @@ final class MercureUpdatesGenerator implements MercureUpdatesGeneratorInterface
     private const NEW_VISIT_TOPIC = 'https://shlink.io/new-visit';
     private const NEW_ORPHAN_VISIT_TOPIC = 'https://shlink.io/new-orphan-visit';
 
-    private DataTransformerInterface $shortUrlTransformer;
-    private DataTransformerInterface $orphanVisitTransformer;
-
     public function __construct(
-        DataTransformerInterface $shortUrlTransformer,
-        DataTransformerInterface $orphanVisitTransformer
+        private DataTransformerInterface $shortUrlTransformer,
+        private DataTransformerInterface $orphanVisitTransformer
     ) {
-        $this->shortUrlTransformer = $shortUrlTransformer;
-        $this->orphanVisitTransformer = $orphanVisitTransformer;
     }
 
     public function newVisitUpdate(Visit $visit): Update

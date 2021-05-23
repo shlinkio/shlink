@@ -18,12 +18,9 @@ class ListDomainsCommand extends Command
 {
     public const NAME = 'domain:list';
 
-    private DomainServiceInterface $domainService;
-
-    public function __construct(DomainServiceInterface $domainService)
+    public function __construct(private DomainServiceInterface $domainService)
     {
         parent::__construct();
-        $this->domainService = $domainService;
     }
 
     protected function configure(): void

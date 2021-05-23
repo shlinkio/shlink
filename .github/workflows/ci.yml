@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4', '8.0']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -63,7 +63,7 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - run: composer test:unit:ci
       - uses: actions/upload-artifact@v2
-        if: ${{ matrix.php-version == '7.4' }}
+        if: ${{ matrix.php-version == '8.0' }}
         with:
           name: coverage-unit
           path: |
@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4', '8.0']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -89,7 +89,7 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - run: composer test:db:sqlite:ci
       - uses: actions/upload-artifact@v2
-        if: ${{ matrix.php-version == '7.4' }}
+        if: ${{ matrix.php-version == '8.0' }}
         with:
           name: coverage-db
           path: |
@@ -100,7 +100,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4', '8.0']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4', '8.0']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -140,7 +140,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4', '8.0']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -160,7 +160,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4', '8.0']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -184,7 +184,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4', '8.0']
+        php-version: ['8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -201,7 +201,7 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - run: bin/test/run-api-tests.sh
       - uses: actions/upload-artifact@v2
-        if: ${{ matrix.php-version == '7.4' }}
+        if: ${{ matrix.php-version == '8.0' }}
         with:
           name: coverage-api
           path: |
@@ -216,7 +216,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['7.4', '8.0']
+        php-version: ['8.0']
         test-group: ['unit', 'db']
     steps:
       - name: Checkout code

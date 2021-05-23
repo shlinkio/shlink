@@ -10,11 +10,8 @@ use Symfony\Component\Console\Input\InputInterface;
 
 class RoleResolver implements RoleResolverInterface
 {
-    private DomainServiceInterface $domainService;
-
-    public function __construct(DomainServiceInterface $domainService)
+    public function __construct(private DomainServiceInterface $domainService)
     {
-        $this->domainService = $domainService;
     }
 
     public function determineRoles(InputInterface $input): array
