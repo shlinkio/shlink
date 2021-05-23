@@ -8,10 +8,8 @@ use Doctrine\Common\Collections;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
-use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 
 use function Functional\map;
 use function Functional\unique;
@@ -37,9 +35,8 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
             return null;
         }
 
-        /** @var DomainRepositoryInterface $repo */
-        $repo = $this->em->getRepository(Domain::class);
-        $existingDomain = $repo->findOneByAuthorityWithLock($domain);
+        /** @var Domain|null $existingDomain */
+        $existingDomain = $this->em->getRepository(Domain::class)->findOneBy(['authority' => $domain]);
 
         // Memoize only new domains, and let doctrine handle objects hydrated from persistence
         return $existingDomain ?? $this->memoizeNewDomain($domain);
@@ -61,12 +58,11 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
         }
 
         $tags = unique($tags);
-        /** @var TagRepositoryInterface $repo */
         $repo = $this->em->getRepository(Tag::class);
 
         return new Collections\ArrayCollection(map($tags, function (string $tagName) use ($repo): Tag {
             // Memoize only new tags, and let doctrine handle objects hydrated from persistence
-            $tag = $repo->findOneByNameWithLock($tagName) ?? $this->memoizeNewTag($tagName);
+            $tag = $repo->findOneBy(['name' => $tagName])  ?? $this->memoizeNewTag($tagName);
             $this->em->persist($tag);
 
             return $tag;

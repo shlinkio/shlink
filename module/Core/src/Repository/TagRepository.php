@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Repository;
 
-use Doctrine\DBAL\LockMode;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Spec;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -62,17 +61,5 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         ));
 
         return $result > 0;
-    }
-
-    public function findOneByNameWithLock(string $name): ?Tag
-    {
-        $qb = $this->createQueryBuilder('t');
-        $qb->where($qb->expr()->eq('t.name', ':name'))
-           ->setParameter('name', $name)
-           ->setMaxResults(1);
-
-        $query = $qb->getQuery()->setLockMode(LockMode::PESSIMISTIC_WRITE);
-
-        return $query->getOneOrNullResult();
     }
 }
