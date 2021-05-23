@@ -10,11 +10,8 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 
 class CrawlingHelper implements CrawlingHelperInterface
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     public function listCrawlableShortCodes(): iterable

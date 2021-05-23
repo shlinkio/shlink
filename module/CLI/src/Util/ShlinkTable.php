@@ -12,11 +12,8 @@ final class ShlinkTable
     private const DEFAULT_STYLE_NAME = 'default';
     private const TABLE_TITLE_STYLE = '<options=bold> %s </>';
 
-    private ?Table $baseTable;
-
-    public function __construct(Table $baseTable)
+    public function __construct(private Table $baseTable)
     {
-        $this->baseTable = $baseTable;
     }
 
     public static function fromOutput(OutputInterface $output): self

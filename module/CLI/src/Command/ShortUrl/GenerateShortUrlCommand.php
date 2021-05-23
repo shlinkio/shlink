@@ -30,19 +30,12 @@ class GenerateShortUrlCommand extends BaseCommand
 {
     public const NAME = 'short-url:generate';
 
-    private UrlShortenerInterface $urlShortener;
-    private ShortUrlStringifierInterface $stringifier;
-    private int $defaultShortCodeLength;
-
     public function __construct(
-        UrlShortenerInterface $urlShortener,
-        ShortUrlStringifierInterface $stringifier,
-        int $defaultShortCodeLength
+        private UrlShortenerInterface $urlShortener,
+        private ShortUrlStringifierInterface $stringifier,
+        private int $defaultShortCodeLength
     ) {
         parent::__construct();
-        $this->urlShortener = $urlShortener;
-        $this->stringifier = $stringifier;
-        $this->defaultShortCodeLength = $defaultShortCodeLength;
     }
 
     protected function configure(): void

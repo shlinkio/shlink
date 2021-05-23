@@ -27,11 +27,8 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
 {
     public const NAME = 'short-url:visits';
 
-    private VisitsStatsHelperInterface $visitsHelper;
-
-    public function __construct(VisitsStatsHelperInterface $visitsHelper)
+    public function __construct(private VisitsStatsHelperInterface $visitsHelper)
     {
-        $this->visitsHelper = $visitsHelper;
         parent::__construct();
     }
 

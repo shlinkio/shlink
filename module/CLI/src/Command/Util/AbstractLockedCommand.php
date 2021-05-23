@@ -14,12 +14,9 @@ use function sprintf;
 
 abstract class AbstractLockedCommand extends Command
 {
-    private LockFactory $locker;
-
-    public function __construct(LockFactory $locker)
+    public function __construct(private LockFactory $locker)
     {
         parent::__construct();
-        $this->locker = $locker;
     }
 
     final protected function execute(InputInterface $input, OutputInterface $output): ?int

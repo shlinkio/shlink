@@ -74,7 +74,7 @@ class DeleteShortUrlCommandTest extends TestCase
     public function deleteIsRetriedWhenThresholdIsReachedAndQuestionIsAccepted(
         array $retryAnswer,
         int $expectedDeleteCalls,
-        string $expectedMessage
+        string $expectedMessage,
     ): void {
         $shortCode = 'abc123';
         $identifier = new ShortUrlIdentifier($shortCode);

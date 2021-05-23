@@ -15,17 +15,14 @@ use function sprintf;
 
 class ApiKeyService implements ApiKeyServiceInterface
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     public function create(
         ?Chronos $expirationDate = null,
         ?string $name = null,
-        RoleDefinition ...$roleDefinitions
+        RoleDefinition ...$roleDefinitions,
     ): ApiKey {
         $key = $this->buildApiKeyWithParams($expirationDate, $name);
         foreach ($roleDefinitions as $definition) {
@@ -40,20 +37,14 @@ class ApiKeyService implements ApiKeyServiceInterface
 
     private function buildApiKeyWithParams(?Chronos $expirationDate, ?string $name): ApiKey
     {
-        // TODO Use match expression when migrating to PHP8
-        if ($expirationDate === null && $name === null) {
-            return ApiKey::create();
-        }
-
-        if ($expirationDate !== null && $name !== null) {
-            return ApiKey::fromMeta(ApiKeyMeta::withNameAndExpirationDate($name, $expirationDate));
-        }
-
-        if ($name === null) {
-            return ApiKey::fromMeta(ApiKeyMeta::withExpirationDate($expirationDate));
-        }
-
-        return ApiKey::fromMeta(ApiKeyMeta::withName($name));
+        return match (true) {
+            $expirationDate === null && $name === null => ApiKey::create(),
+            $expirationDate !== null && $name !== null => ApiKey::fromMeta(
+                ApiKeyMeta::withNameAndExpirationDate($name, $expirationDate),
+            ),
+            $name === null =>  ApiKey::fromMeta(ApiKeyMeta::withExpirationDate($expirationDate)),
+            default => ApiKey::fromMeta(ApiKeyMeta::withName($name)),
+        };
     }
 
     public function check(string $key): ApiKeyCheckResult

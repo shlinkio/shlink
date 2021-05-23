@@ -12,11 +12,8 @@ use function Symfony\Component\String\s;
 
 class CocurSymfonySluggerBridge implements SluggerInterface
 {
-    private SlugifyInterface $slugger;
-
-    public function __construct(SlugifyInterface $slugger)
+    public function __construct(private SlugifyInterface $slugger)
     {
-        $this->slugger = $slugger;
     }
 
     public function slug(string $string, string $separator = '-', ?string $locale = null): AbstractUnicodeString

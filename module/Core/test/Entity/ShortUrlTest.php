@@ -26,7 +26,7 @@ class ShortUrlTest extends TestCase
      */
     public function regenerateShortCodeThrowsExceptionIfStateIsInvalid(
         ShortUrl $shortUrl,
-        string $expectedMessage
+        string $expectedMessage,
     ): void {
         $this->expectException(ShortCodeCannotBeRegeneratedException::class);
         $this->expectExceptionMessage($expectedMessage);

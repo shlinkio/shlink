@@ -51,7 +51,7 @@ class ResolveShortUrlTest extends ApiTestCase
         string $shortCode,
         ?string $domain,
         string $expectedDetail,
-        string $apiKey
+        string $apiKey,
     ): void {
         $resp = $this->callApiWithKey(self::METHOD_GET, $this->buildShortUrlPath($shortCode, $domain), [], $apiKey);
         $payload = $this->getJsonResponsePayload($resp);

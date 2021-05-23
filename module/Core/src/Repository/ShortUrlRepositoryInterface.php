@@ -23,14 +23,14 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
         array $tags = [],
         ?ShortUrlsOrdering $orderBy = null,
         ?DateRange $dateRange = null,
-        ?Specification $spec = null
+        ?Specification $spec = null,
     ): array;
 
     public function countList(
         ?string $searchTerm = null,
         array $tags = [],
         ?DateRange $dateRange = null,
-        ?Specification $spec = null
+        ?Specification $spec = null,
     ): int;
 
     public function findOneWithDomainFallback(string $shortCode, ?string $domain = null): ?ShortUrl;

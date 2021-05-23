@@ -21,11 +21,8 @@ class ShortUrlVisitsAction extends AbstractRestAction
     protected const ROUTE_PATH = '/short-urls/{shortCode}/visits';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    private VisitsStatsHelperInterface $visitsHelper;
-
-    public function __construct(VisitsStatsHelperInterface $visitsHelper)
+    public function __construct(private VisitsStatsHelperInterface $visitsHelper)
     {
-        $this->visitsHelper = $visitsHelper;
     }
 
     public function handle(Request $request): Response

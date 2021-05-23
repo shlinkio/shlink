@@ -30,19 +30,14 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
 {
     public const NAME = 'visit:locate';
 
-    private VisitLocatorInterface $visitLocator;
-    private IpLocationResolverInterface $ipLocationResolver;
-
     private SymfonyStyle $io;
 
     public function __construct(
-        VisitLocatorInterface $visitLocator,
-        IpLocationResolverInterface $ipLocationResolver,
+        private VisitLocatorInterface $visitLocator,
+        private IpLocationResolverInterface $ipLocationResolver,
         LockFactory $locker
     ) {
         parent::__construct($locker);
-        $this->visitLocator = $visitLocator;
-        $this->ipLocationResolver = $ipLocationResolver;
     }
 
     protected function configure(): void
@@ -124,7 +119,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         } catch (Throwable $e) {
             $this->io->error($e->getMessage());
             if ($this->io->isVerbose()) {
-                $this->getApplication()->renderThrowable($e, $this->io);
+                $this->getApplication()?->renderThrowable($e, $this->io);
             }
 
             return ExitCodes::EXIT_FAILURE;
@@ -156,7 +151,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         } catch (WrongIpException $e) {
             $this->io->writeln(' [<fg=red>An error occurred while locating IP. Skipped</>]');
             if ($this->io->isVerbose()) {
-                $this->getApplication()->renderThrowable($e, $this->io);
+                $this->getApplication()?->renderThrowable($e, $this->io);
             }
 
             throw IpCannotBeLocatedException::forError($e);

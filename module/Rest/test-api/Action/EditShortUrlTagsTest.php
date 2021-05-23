@@ -35,7 +35,7 @@ class EditShortUrlTagsTest extends ApiTestCase
         string $shortCode,
         ?string $domain,
         string $expectedDetail,
-        string $apiKey
+        string $apiKey,
     ): void {
         $url = $this->buildShortUrlPath($shortCode, $domain, '/tags');
         $resp = $this->callApiWithKey(self::METHOD_PUT, $url, [RequestOptions::JSON => [

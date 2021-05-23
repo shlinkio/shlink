@@ -43,7 +43,7 @@ class NotFoundRedirectHandlerTest extends TestCase
      */
     public function expectedRedirectionIsReturnedDependingOnTheCase(
         ServerRequestInterface $request,
-        string $expectedRedirectTo
+        string $expectedRedirectTo,
     ): void {
         $this->redirectOptions->invalidShortUrl = 'invalidShortUrl';
         $this->redirectOptions->regular404 = 'regular404';

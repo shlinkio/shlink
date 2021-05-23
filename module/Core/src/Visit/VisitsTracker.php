@@ -14,18 +14,11 @@ use Shlinkio\Shlink\Core\Options\TrackingOptions;
 
 class VisitsTracker implements VisitsTrackerInterface
 {
-    private ORM\EntityManagerInterface $em;
-    private EventDispatcherInterface $eventDispatcher;
-    private TrackingOptions $options;
-
     public function __construct(
-        ORM\EntityManagerInterface $em,
-        EventDispatcherInterface $eventDispatcher,
-        TrackingOptions $options
+        private ORM\EntityManagerInterface $em,
+        private EventDispatcherInterface $eventDispatcher,
+        private TrackingOptions $options
     ) {
-        $this->em = $em;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->options = $options;
     }
 
     public function track(ShortUrl $shortUrl, Visitor $visitor): void

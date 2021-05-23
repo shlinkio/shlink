@@ -28,7 +28,7 @@ class RedirectResponseHelperTest extends TestCase
         int $configuredStatus,
         int $configuredLifetime,
         int $expectedStatus,
-        ?string $expectedCacheControl
+        ?string $expectedCacheControl,
     ): void {
         $this->shortenerOpts->redirectStatusCode = $configuredStatus;
         $this->shortenerOpts->redirectCacheLifetime = $configuredLifetime;

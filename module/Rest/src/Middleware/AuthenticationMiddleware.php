@@ -23,18 +23,11 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
 {
     public const API_KEY_HEADER = 'X-Api-Key';
 
-    private ApiKeyServiceInterface $apiKeyService;
-    private array $routesWithoutApiKey;
-    private array $routesWithQueryApiKey;
-
     public function __construct(
-        ApiKeyServiceInterface $apiKeyService,
-        array $routesWithoutApiKey,
-        array $routesWithQueryApiKey
+        private ApiKeyServiceInterface $apiKeyService,
+        private array $routesWithoutApiKey,
+        private array $routesWithQueryApiKey
     ) {
-        $this->apiKeyService = $apiKeyService;
-        $this->routesWithoutApiKey = $routesWithoutApiKey;
-        $this->routesWithQueryApiKey = $routesWithQueryApiKey;
     }
 
     public function process(Request $request, RequestHandlerInterface $handler): Response

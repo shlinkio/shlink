@@ -90,7 +90,7 @@ class UrlValidatorTest extends TestCase
      */
     public function validateUrlWithTitleReturnsNullWhenRequestFailsAndValidationIsDisabled(
         ?bool $doValidate,
-        bool $validateUrl
+        bool $validateUrl,
     ): void {
         $request = $this->httpClient->request(Argument::cetera())->willThrow(ClientException::class);
         $this->options->validateUrl = $validateUrl;

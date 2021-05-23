@@ -17,6 +17,6 @@ interface DeleteShortUrlServiceInterface
     public function deleteByShortCode(
         ShortUrlIdentifier $identifier,
         bool $ignoreThreshold = false,
-        ?ApiKey $apiKey = null
+        ?ApiKey $apiKey = null,
     ): void;
 }

@@ -23,14 +23,11 @@ class GenerateKeyCommand extends BaseCommand
 {
     public const NAME = 'api-key:generate';
 
-    private ApiKeyServiceInterface $apiKeyService;
-    private RoleResolverInterface $roleResolver;
-
-    public function __construct(ApiKeyServiceInterface $apiKeyService, RoleResolverInterface $roleResolver)
-    {
+    public function __construct(
+        private ApiKeyServiceInterface $apiKeyService,
+        private RoleResolverInterface $roleResolver
+    ) {
         parent::__construct();
-        $this->apiKeyService = $apiKeyService;
-        $this->roleResolver = $roleResolver;
     }
 
     protected function configure(): void

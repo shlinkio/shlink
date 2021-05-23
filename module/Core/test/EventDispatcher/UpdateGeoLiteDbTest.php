@@ -79,7 +79,7 @@ class UpdateGeoLiteDbTest extends TestCase
         int $total,
         int $downloaded,
         bool $oldDbExists,
-        ?string $expectedMessage
+        ?string $expectedMessage,
     ): void {
         $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
             function (array $args) use ($total, $downloaded, $oldDbExists): void {

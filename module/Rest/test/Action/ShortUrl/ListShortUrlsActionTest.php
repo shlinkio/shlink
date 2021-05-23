@@ -49,7 +49,7 @@ class ListShortUrlsActionTest extends TestCase
         array $expectedTags,
         ?string $expectedOrderBy,
         ?string $startDate = null,
-        ?string $endDate = null
+        ?string $endDate = null,
     ): void {
         $apiKey = ApiKey::create();
         $request = (new ServerRequest())->withQueryParams($query)->withAttribute(ApiKey::class, $apiKey);

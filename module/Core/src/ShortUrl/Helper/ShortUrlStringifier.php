@@ -11,13 +11,8 @@ use function sprintf;
 
 class ShortUrlStringifier implements ShortUrlStringifierInterface
 {
-    private array $domainConfig;
-    private string $basePath;
-
-    public function __construct(array $domainConfig, string $basePath = '')
+    public function __construct(private array $domainConfig, private string $basePath = '')
     {
-        $this->domainConfig = $domainConfig;
-        $this->basePath = $basePath;
     }
 
     public function stringify(ShortUrl $shortUrl): string

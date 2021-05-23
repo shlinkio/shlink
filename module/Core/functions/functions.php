@@ -51,20 +51,12 @@ function parseDateRangeFromQuery(array $query, string $startDateName, string $en
     $startDate = parseDateFromQuery($query, $startDateName);
     $endDate = parseDateFromQuery($query, $endDateName);
 
-    // TODO Use match expression when migrating to PHP8
-    if ($startDate === null && $endDate === null) {
-        return DateRange::emptyInstance();
-    }
-
-    if ($startDate !== null && $endDate !== null) {
-        return DateRange::withStartAndEndDate($startDate, $endDate);
-    }
-
-    if ($startDate !== null) {
-        return DateRange::withStartDate($startDate);
-    }
-
-    return DateRange::withEndDate($endDate);
+    return match (true) {
+        $startDate === null && $endDate === null => DateRange::emptyInstance(),
+        $startDate !== null && $endDate !== null => DateRange::withStartAndEndDate($startDate, $endDate),
+        $startDate !== null => DateRange::withStartDate($startDate),
+        default => DateRange::withEndDate($endDate),
+    };
 }
 
 /**

@@ -14,13 +14,8 @@ use function sprintf;
 
 final class ShortUrlImporting
 {
-    private ShortUrl $shortUrl;
-    private bool $isNew;
-
-    private function __construct(ShortUrl $shortUrl, bool $isNew)
+    private function __construct(private ShortUrl $shortUrl, private bool $isNew)
     {
-        $this->shortUrl = $shortUrl;
-        $this->isNew = $isNew;
     }
 
     public static function fromExistingShortUrl(ShortUrl $shortUrl): self
@@ -43,10 +38,7 @@ final class ShortUrlImporting
         $importedVisits = 0;
         foreach ($visits as $importedVisit) {
             // Skip visits which are older than the most recent already imported visit's date
-            if (
-                $mostRecentImportedDate !== null
-                && $mostRecentImportedDate->gte(Chronos::instance($importedVisit->date()))
-            ) {
+            if ($mostRecentImportedDate?->gte(Chronos::instance($importedVisit->date()))) {
                 continue;
             }
 

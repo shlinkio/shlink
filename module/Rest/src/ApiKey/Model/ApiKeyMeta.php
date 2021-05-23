@@ -8,16 +8,12 @@ use Cake\Chronos\Chronos;
 
 final class ApiKeyMeta
 {
-    private ?string $name = null;
-    private ?Chronos $expirationDate = null;
-    /** @var RoleDefinition[] */
-    private array $roleDefinitions;
-
-    private function __construct(?string $name, ?Chronos $expirationDate, array $roleDefinitions)
-    {
-        $this->name = $name;
-        $this->expirationDate = $expirationDate;
-        $this->roleDefinitions = $roleDefinitions;
+    private function __construct(
+        private ?string $name,
+        private ?Chronos $expirationDate,
+        /** @var RoleDefinition[] */
+        private array $roleDefinitions,
+    ) {
     }
 
     public static function withName(string $name): self

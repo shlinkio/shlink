@@ -21,7 +21,7 @@ class DeleteShortUrlExceptionTest extends TestCase
     public function fromVisitsThresholdGeneratesMessageProperly(
         int $threshold,
         string $shortCode,
-        string $expectedMessage
+        string $expectedMessage,
     ): void {
         $e = DeleteShortUrlException::fromVisitsThreshold($threshold, $shortCode);
 

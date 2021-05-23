@@ -63,7 +63,7 @@ abstract class AbstractWithDateRangeCommand extends BaseCommand
             ));
 
             if ($output->isVeryVerbose()) {
-                $this->getApplication()->renderThrowable($e, $output);
+                $this->getApplication()?->renderThrowable($e, $output);
             }
 
             return null;

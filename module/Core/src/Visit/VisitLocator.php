@@ -13,13 +13,10 @@ use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocator implements VisitLocatorInterface
 {
-    private EntityManagerInterface $em;
     private VisitRepositoryInterface $repo;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $em;
-
         /** @var VisitRepositoryInterface $repo */
         $repo = $em->getRepository(Visit::class);
         $this->repo = $repo;

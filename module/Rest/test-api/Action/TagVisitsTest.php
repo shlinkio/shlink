@@ -19,7 +19,7 @@ class TagVisitsTest extends ApiTestCase
         string $apiKey,
         string $tag,
         bool $excludeBots,
-        int $expectedVisitsAmount
+        int $expectedVisitsAmount,
     ): void {
         $resp = $this->callApiWithKey(self::METHOD_GET, sprintf('/tags/%s/visits', $tag), [
             RequestOptions::QUERY => $excludeBots ? ['excludeBots' => true] : [],

@@ -31,7 +31,7 @@ class DoctrineBatchHelperTest extends TestCase
     public function entityManagerIsFlushedAndClearedTheExpectedAmountOfTimes(
         array $iterable,
         int $batchSize,
-        int $expectedCalls
+        int $expectedCalls,
     ): void {
         $wrappedIterable = $this->helper->wrapIterable($iterable, $batchSize);
 

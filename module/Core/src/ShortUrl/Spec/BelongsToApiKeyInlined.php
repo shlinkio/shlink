@@ -10,11 +10,8 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class BelongsToApiKeyInlined implements Filter
 {
-    private ApiKey $apiKey;
-
-    public function __construct(ApiKey $apiKey)
+    public function __construct(private ApiKey $apiKey)
     {
-        $this->apiKey = $apiKey;
     }
 
     public function getFilter(QueryBuilder $qb, string $dqlAlias): string

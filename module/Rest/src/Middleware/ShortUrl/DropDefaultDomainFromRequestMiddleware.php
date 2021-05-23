@@ -11,11 +11,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class DropDefaultDomainFromRequestMiddleware implements MiddlewareInterface
 {
-    private string $defaultDomain;
-
-    public function __construct(string $defaultDomain)
+    public function __construct(private string $defaultDomain)
     {
-        $this->defaultDomain = $defaultDomain;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

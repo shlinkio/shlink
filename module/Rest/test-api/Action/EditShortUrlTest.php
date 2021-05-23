@@ -6,12 +6,12 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use Cake\Chronos\Chronos;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Uri;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
 
-use function GuzzleHttp\Psr7\build_query;
 use function sprintf;
 
 class EditShortUrlTest extends ApiTestCase
@@ -105,7 +105,7 @@ class EditShortUrlTest extends ApiTestCase
         string $shortCode,
         ?string $domain,
         string $expectedDetail,
-        string $apiKey
+        string $apiKey,
     ): void {
         $url = $this->buildShortUrlPath($shortCode, $domain);
         $resp = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => []], $apiKey);
@@ -147,7 +147,7 @@ class EditShortUrlTest extends ApiTestCase
         $url = new Uri(sprintf('/short-urls/%s', $shortCode));
 
         if ($domain !== null) {
-            $url = $url->withQuery(build_query(['domain' => $domain]));
+            $url = $url->withQuery(Query::build(['domain' => $domain]));
         }
 
         $editResp = $this->callApiWithKey(self::METHOD_PATCH, (string) $url, [RequestOptions::JSON => [

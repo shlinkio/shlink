@@ -24,7 +24,7 @@ interface VisitsStatsHelperInterface
     public function visitsForShortUrl(
         ShortUrlIdentifier $identifier,
         VisitsParams $params,
-        ?ApiKey $apiKey = null
+        ?ApiKey $apiKey = null,
     ): Paginator;
 
     /**

@@ -8,13 +8,8 @@ use JsonSerializable;
 
 final class DomainItem implements JsonSerializable
 {
-    private string $domain;
-    private bool $isDefault;
-
-    public function __construct(string $domain, bool $isDefault)
+    public function __construct(private string $domain, private bool $isDefault)
     {
-        $this->domain = $domain;
-        $this->isDefault = $isDefault;
     }
 
     public function jsonSerialize(): array

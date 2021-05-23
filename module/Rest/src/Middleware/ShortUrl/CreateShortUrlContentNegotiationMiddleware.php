@@ -13,7 +13,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 use function array_shift;
 use function explode;
-use function strpos;
+use function str_contains;
 use function strtolower;
 
 class CreateShortUrlContentNegotiationMiddleware implements MiddlewareInterface
@@ -62,7 +62,7 @@ class CreateShortUrlContentNegotiationMiddleware implements MiddlewareInterface
     {
         $accepts = explode(',', $acceptValue);
         $accept = strtolower(array_shift($accepts));
-        return strpos($accept, 'text/plain') !== false ? self::PLAIN_TEXT : self::JSON;
+        return str_contains($accept, 'text/plain') ? self::PLAIN_TEXT : self::JSON;
     }
 
     private function determineBody(JsonResponse $resp): string

@@ -53,7 +53,7 @@ class VisitLocatorTest extends TestCase
      */
     public function locateVisitsIteratesAndLocatesExpectedVisits(
         string $serviceMethodName,
-        string $expectedRepoMethodName
+        string $expectedRepoMethodName,
     ): void {
         $unlocatedVisits = map(
             range(1, 200),
@@ -105,7 +105,7 @@ class VisitLocatorTest extends TestCase
     public function visitsWhichCannotBeLocatedAreIgnoredOrLocatedAsEmpty(
         string $serviceMethodName,
         string $expectedRepoMethodName,
-        bool $isNonLocatableAddress
+        bool $isNonLocatableAddress,
     ): void {
         $unlocatedVisits = [
             Visit::forValidShortUrl(ShortUrl::withLongUrl('foo'), Visitor::emptyInstance()),
@@ -122,11 +122,8 @@ class VisitLocatorTest extends TestCase
 
         $this->visitService->{$serviceMethodName}(
             new class ($isNonLocatableAddress) implements VisitGeolocationHelperInterface {
-                private bool $isNonLocatableAddress;
-
-                public function __construct(bool $isNonLocatableAddress)
+                public function __construct(private bool $isNonLocatableAddress)
                 {
-                    $this->isNonLocatableAddress = $isNonLocatableAddress;
                 }
 
                 public function geolocateVisit(Visit $visit): Location

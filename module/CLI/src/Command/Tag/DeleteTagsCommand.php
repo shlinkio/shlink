@@ -16,12 +16,9 @@ class DeleteTagsCommand extends Command
 {
     public const NAME = 'tag:delete';
 
-    private TagServiceInterface $tagService;
-
-    public function __construct(TagServiceInterface $tagService)
+    public function __construct(private TagServiceInterface $tagService)
     {
         parent::__construct();
-        $this->tagService = $tagService;
     }
 
     protected function configure(): void

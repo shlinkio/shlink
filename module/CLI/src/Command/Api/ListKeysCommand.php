@@ -27,12 +27,9 @@ class ListKeysCommand extends BaseCommand
 
     public const NAME = 'api-key:list';
 
-    private ApiKeyServiceInterface $apiKeyService;
-
-    public function __construct(ApiKeyServiceInterface $apiKeyService)
+    public function __construct(private ApiKeyServiceInterface $apiKeyService)
     {
         parent::__construct();
-        $this->apiKeyService = $apiKeyService;
     }
 
     protected function configure(): void
@@ -61,7 +58,7 @@ class ListKeysCommand extends BaseCommand
             if (! $enabledOnly) {
                 $rowData[] = sprintf($messagePattern, $this->getEnabledSymbol($apiKey));
             }
-            $rowData[] = $expiration !== null ? $expiration->toAtomString() : '-';
+            $rowData[] = $expiration?->toAtomString() ?? '-';
             $rowData[] = $apiKey->isAdmin() ? 'Admin' : implode("\n", $apiKey->mapRoles(
                 fn (string $roleName, array $meta) =>
                     empty($meta)

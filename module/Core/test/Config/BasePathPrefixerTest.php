@@ -24,7 +24,7 @@ class BasePathPrefixerTest extends TestCase
         array $originalConfig,
         array $expectedRoutes,
         array $expectedMiddlewares,
-        string $expectedHostname
+        string $expectedHostname,
     ): void {
         [
             'routes' => $routes,

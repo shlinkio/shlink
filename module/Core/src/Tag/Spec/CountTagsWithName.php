@@ -10,12 +10,9 @@ use Happyr\DoctrineSpecification\Specification\Specification;
 
 class CountTagsWithName extends BaseSpecification
 {
-    private string $tagName;
-
-    public function __construct(string $tagName)
+    public function __construct(private string $tagName)
     {
         parent::__construct();
-        $this->tagName = $tagName;
     }
 
     protected function getSpec(): Specification

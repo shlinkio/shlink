@@ -18,7 +18,7 @@ class PixelAction extends AbstractTrackingAction
 
     protected function createErrorResp(
         ServerRequestInterface $request,
-        RequestHandlerInterface $handler
+        RequestHandlerInterface $handler,
     ): ResponseInterface {
         return new PixelResponse();
     }

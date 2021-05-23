@@ -14,11 +14,8 @@ use Shlinkio\Shlink\Core\Visit\VisitsTrackerInterface;
 
 class NotFoundTrackerMiddleware implements MiddlewareInterface
 {
-    private VisitsTrackerInterface $visitsTracker;
-
-    public function __construct(VisitsTrackerInterface $visitsTracker)
+    public function __construct(private VisitsTrackerInterface $visitsTracker)
     {
-        $this->visitsTracker = $visitsTracker;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

@@ -9,11 +9,8 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 
 class Domain extends AbstractEntity implements JsonSerializable
 {
-    private string $authority;
-
-    public function __construct(string $authority)
+    public function __construct(private string $authority)
     {
-        $this->authority = $authority;
     }
 
     public function getAuthority(): string

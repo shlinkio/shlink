@@ -8,15 +8,8 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 
 class ApiKeyRole extends AbstractEntity
 {
-    private string $roleName;
-    private array $meta;
-    private ApiKey $apiKey;
-
-    public function __construct(string $roleName, array $meta, ApiKey $apiKey)
+    public function __construct(private string $roleName, private array $meta, private ApiKey $apiKey)
     {
-        $this->roleName = $roleName;
-        $this->meta = $meta;
-        $this->apiKey = $apiKey;
     }
 
     public function name(): string

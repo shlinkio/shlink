@@ -16,17 +16,14 @@ use Shlinkio\Shlink\Core\Visit\VisitsTrackerInterface;
 
 class RedirectAction extends AbstractTrackingAction implements StatusCodeInterface
 {
-    private RedirectResponseHelperInterface $redirectResponseHelper;
-
     public function __construct(
         ShortUrlResolverInterface $urlResolver,
         VisitsTrackerInterface $visitTracker,
         Options\TrackingOptions $trackingOptions,
-        RedirectResponseHelperInterface $redirectResponseHelper,
+        private RedirectResponseHelperInterface $redirectResponseHelper,
         ?LoggerInterface $logger = null
     ) {
         parent::__construct($urlResolver, $visitTracker, $trackingOptions, $logger);
-        $this->redirectResponseHelper = $redirectResponseHelper;
     }
 
     protected function createSuccessResp(string $longUrl): Response

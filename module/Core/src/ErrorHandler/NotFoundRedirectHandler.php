@@ -14,15 +14,10 @@ use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 
 class NotFoundRedirectHandler implements MiddlewareInterface
 {
-    private Options\NotFoundRedirectOptions $redirectOptions;
-    private RedirectResponseHelperInterface $redirectResponseHelper;
-
     public function __construct(
-        Options\NotFoundRedirectOptions $redirectOptions,
-        RedirectResponseHelperInterface $redirectResponseHelper
+        private Options\NotFoundRedirectOptions $redirectOptions,
+        private RedirectResponseHelperInterface $redirectResponseHelper
     ) {
-        $this->redirectOptions = $redirectOptions;
-        $this->redirectResponseHelper = $redirectResponseHelper;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

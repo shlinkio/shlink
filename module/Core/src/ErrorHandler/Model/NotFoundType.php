@@ -13,31 +13,24 @@ use function rtrim;
 
 class NotFoundType
 {
-    private string $type;
-
-    private function __construct(string $type)
+    private function __construct(private string $type)
     {
-        $this->type = $type;
     }
 
     public static function fromRequest(ServerRequestInterface $request, string $basePath): self
     {
-        $isBaseUrl = rtrim($request->getUri()->getPath(), '/') === $basePath;
-        if ($isBaseUrl) {
-            return new self(Visit::TYPE_BASE_URL);
-        }
-
         /** @var RouteResult $routeResult */
         $routeResult = $request->getAttribute(RouteResult::class, RouteResult::fromRouteFailure(null));
-        if ($routeResult->isFailure()) {
-            return new self(Visit::TYPE_REGULAR_404);
-        }
+        $isBaseUrl = rtrim($request->getUri()->getPath(), '/') === $basePath;
 
-        if ($routeResult->getMatchedRouteName() === RedirectAction::class) {
-            return new self(Visit::TYPE_INVALID_SHORT_URL);
-        }
+        $type = match (true) {
+            $isBaseUrl => Visit::TYPE_BASE_URL,
+            $routeResult->isFailure() => Visit::TYPE_REGULAR_404,
+            $routeResult->getMatchedRouteName() === RedirectAction::class => Visit::TYPE_INVALID_SHORT_URL,
+            default => self::class,
+        };
 
-        return new self(self::class);
+        return new self($type);
     }
 
     public function isBaseUrl(): bool

@@ -11,14 +11,9 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class WithApiKeySpecsEnsuringJoin extends BaseSpecification
 {
-    private ?ApiKey $apiKey;
-    private string $fieldToJoin;
-
-    public function __construct(?ApiKey $apiKey, string $fieldToJoin = 'shortUrls')
+    public function __construct(private ?ApiKey $apiKey, private string $fieldToJoin = 'shortUrls')
     {
         parent::__construct();
-        $this->apiKey = $apiKey;
-        $this->fieldToJoin = $fieldToJoin;
     }
 
     protected function getSpec(): Specification

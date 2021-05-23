@@ -12,11 +12,8 @@ use Throwable;
  */
 class DoctrineBatchHelper implements DoctrineBatchHelperInterface
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     /**

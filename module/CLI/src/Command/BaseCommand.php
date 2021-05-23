@@ -22,7 +22,7 @@ abstract class BaseCommand extends Command
         ?string $shortcut = null,
         ?int $mode = null,
         string $description = '',
-        $default = null
+        $default = null,
     ): self {
         $this->addOption($name, $shortcut, $mode, $description, $default);
 

@@ -91,7 +91,7 @@ class CrossDomainMiddlewareTest extends TestCase
      */
     public function optionsRequestParsesRouteMatchToDetermineAllowedMethods(
         ?string $allowHeader,
-        string $expectedAllowedMethods
+        string $expectedAllowedMethods,
     ): void {
         $originalResponse = new Response();
         if ($allowHeader !== null) {
@@ -121,7 +121,7 @@ class CrossDomainMiddlewareTest extends TestCase
     public function expectedStatusCodeIsReturnDependingOnRequestMethod(
         string $method,
         int $status,
-        int $expectedStatus
+        int $expectedStatus,
     ): void {
         $originalResponse = (new Response())->withStatus($status);
         $request = (new ServerRequest())->withMethod($method)

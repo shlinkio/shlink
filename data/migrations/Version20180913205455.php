@@ -57,7 +57,7 @@ final class Version20180913205455 extends AbstractMigration
 
         try {
             return (string) IpAddress::fromString($addr)->getAnonymizedCopy();
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             return null;
         }
     }

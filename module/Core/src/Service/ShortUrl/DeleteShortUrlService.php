@@ -13,18 +13,11 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class DeleteShortUrlService implements DeleteShortUrlServiceInterface
 {
-    private EntityManagerInterface $em;
-    private DeleteShortUrlsOptions $deleteShortUrlsOptions;
-    private ShortUrlResolverInterface $urlResolver;
-
     public function __construct(
-        EntityManagerInterface $em,
-        DeleteShortUrlsOptions $deleteShortUrlsOptions,
-        ShortUrlResolverInterface $urlResolver
+        private EntityManagerInterface $em,
+        private DeleteShortUrlsOptions $deleteShortUrlsOptions,
+        private ShortUrlResolverInterface $urlResolver
     ) {
-        $this->em = $em;
-        $this->deleteShortUrlsOptions = $deleteShortUrlsOptions;
-        $this->urlResolver = $urlResolver;
     }
 
     /**
@@ -34,7 +27,7 @@ class DeleteShortUrlService implements DeleteShortUrlServiceInterface
     public function deleteByShortCode(
         ShortUrlIdentifier $identifier,
         bool $ignoreThreshold = false,
-        ?ApiKey $apiKey = null
+        ?ApiKey $apiKey = null,
     ): void {
         $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
         if (! $ignoreThreshold && $this->isThresholdReached($shortUrl)) {

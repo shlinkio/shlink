@@ -17,11 +17,8 @@ use const PHP_EOL;
 
 class RobotsAction implements RequestHandlerInterface, StatusCodeInterface
 {
-    private CrawlingHelperInterface $crawlingHelper;
-
-    public function __construct(CrawlingHelperInterface $crawlingHelper)
+    public function __construct(private CrawlingHelperInterface $crawlingHelper)
     {
-        $this->crawlingHelper = $crawlingHelper;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface

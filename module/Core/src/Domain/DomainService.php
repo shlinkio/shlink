@@ -16,13 +16,8 @@ use function Functional\map;
 
 class DomainService implements DomainServiceInterface
 {
-    private EntityManagerInterface $em;
-    private string $defaultDomain;
-
-    public function __construct(EntityManagerInterface $em, string $defaultDomain)
+    public function __construct(private EntityManagerInterface $em, private string $defaultDomain)
     {
-        $this->em = $em;
-        $this->defaultDomain = $defaultDomain;
     }
 
     /**
@@ -35,7 +30,7 @@ class DomainService implements DomainServiceInterface
         $domains = $repo->findDomainsWithout($this->defaultDomain, $apiKey);
         $mappedDomains = map($domains, fn (Domain $domain) => new DomainItem($domain->getAuthority(), false));
 
-        if ($apiKey !== null && $apiKey->hasRole(Role::DOMAIN_SPECIFIC)) {
+        if ($apiKey?->hasRole(Role::DOMAIN_SPECIFIC)) {
             return $mappedDomains;
         }
 

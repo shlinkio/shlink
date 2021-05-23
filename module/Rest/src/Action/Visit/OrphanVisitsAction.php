@@ -20,15 +20,10 @@ class OrphanVisitsAction extends AbstractRestAction
     protected const ROUTE_PATH = '/visits/orphan';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    private VisitsStatsHelperInterface $visitsHelper;
-    private DataTransformerInterface $orphanVisitTransformer;
-
     public function __construct(
-        VisitsStatsHelperInterface $visitsHelper,
-        DataTransformerInterface $orphanVisitTransformer
+        private VisitsStatsHelperInterface $visitsHelper,
+        private DataTransformerInterface $orphanVisitTransformer
     ) {
-        $this->visitsHelper = $visitsHelper;
-        $this->orphanVisitTransformer = $orphanVisitTransformer;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface

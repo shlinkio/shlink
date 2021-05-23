@@ -24,18 +24,14 @@ class QrCodeAction implements MiddlewareInterface
     private const MIN_SIZE = 50;
     private const MAX_SIZE = 1000;
 
-    private ShortUrlResolverInterface $urlResolver;
-    private ShortUrlStringifierInterface $stringifier;
     private LoggerInterface $logger;
 
     public function __construct(
-        ShortUrlResolverInterface $urlResolver,
-        ShortUrlStringifierInterface $stringifier,
+        private ShortUrlResolverInterface $urlResolver,
+        private ShortUrlStringifierInterface $stringifier,
         ?LoggerInterface $logger = null
     ) {
-        $this->urlResolver = $urlResolver;
         $this->logger = $logger ?? new NullLogger();
-        $this->stringifier = $stringifier;
     }
 
     public function process(Request $request, RequestHandlerInterface $handler): Response
