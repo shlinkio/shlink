@@ -21,6 +21,15 @@ if [ ! -z "${GEOLITE_LICENSE_KEY}" ]; then
   php bin/cli visit:download-db -n -q
 fi
 
+# Periodicaly run visit:locate every hour
+# https://shlink.io/documentation/long-running-tasks/#locate-visits
+# set env var "ENABLE_PERIODIC_VISIT_LOCATE=1" to enable
+if [ $ENABLE_PERIODIC_VISIT_LOCATE ]; then
+  echo "Starting periodic visite locate..."
+  echo "0 * * * * php bin/cli visit:locate -q" > /etc/crontabs/root
+  /usr/sbin/crond &
+fi
+
 # When restarting the container, swoole might think it is already in execution
 # This forces the app to be started every second until the exit code is 0
 until php vendor/bin/laminas mezzio:swoole:start; do sleep 1 ; done
