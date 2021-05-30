@@ -10,6 +10,7 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Domain\DomainService;
+use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
@@ -64,7 +65,12 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        Util\GeolocationDbUpdater::class => [DbUpdater::class, Reader::class, LOCAL_LOCK_FACTORY],
+        Util\GeolocationDbUpdater::class => [
+            DbUpdater::class,
+            Reader::class,
+            LOCAL_LOCK_FACTORY,
+            TrackingOptions::class,
+        ],
         Util\ProcessRunner::class => [SymfonyCli\Helper\ProcessHelper::class],
         ApiKey\RoleResolver::class => [DomainService::class],
 
