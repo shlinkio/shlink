@@ -167,7 +167,7 @@ return [
     ],
 
     'geolite2' => [
-        'license_key' => env('GEOLITE_LICENSE_KEY', 'G4Lm0C60yJsnkdPi'), // Deprecated. Remove the default value
+        'license_key' => env('GEOLITE_LICENSE_KEY', 'G4Lm0C60yJsnkdPi'), // Deprecated. Remove hardcoded license on v3
     ],
 
     'mercure' => $helper->getMercureConfig(),

@@ -13,6 +13,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
+use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock;
@@ -28,11 +29,13 @@ class GeolocationDbUpdaterTest extends TestCase
     private GeolocationDbUpdater $geolocationDbUpdater;
     private ObjectProphecy $dbUpdater;
     private ObjectProphecy $geoLiteDbReader;
+    private TrackingOptions $trackingOptions;
 
     public function setUp(): void
     {
         $this->dbUpdater = $this->prophesize(DbUpdaterInterface::class);
         $this->geoLiteDbReader = $this->prophesize(Reader::class);
+        $this->trackingOptions = new TrackingOptions();
 
         $locker = $this->prophesize(Lock\LockFactory::class);
         $lock = $this->prophesize(Lock\LockInterface::class);
@@ -45,6 +48,7 @@ class GeolocationDbUpdaterTest extends TestCase
             $this->dbUpdater->reveal(),
             $this->geoLiteDbReader->reveal(),
             $locker->reveal(),
+            $this->trackingOptions,
         );
     }
 
@@ -173,5 +177,28 @@ class GeolocationDbUpdaterTest extends TestCase
             'node_count' => 1,
             'record_size' => 4,
         ]);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideTrackingOptions
+     */
+    public function downloadDbIsSkippedIfTrackingIsDisabled(array $props): void
+    {
+        foreach ($props as $prop) {
+            $this->trackingOptions->{$prop} = true;
+        }
+
+        $this->geolocationDbUpdater->checkDbUpdate();
+
+        $this->dbUpdater->databaseFileExists(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->geoLiteDbReader->metadata(Argument::cetera())->shouldNotHaveBeenCalled();
+    }
+
+    public function provideTrackingOptions(): iterable
+    {
+        yield 'disableTracking' => [['disableTracking']];
+        yield 'disableIpTracking' => [['disableIpTracking']];
+        yield 'both' => [['disableTracking', 'disableIpTracking']];
     }
 }
