@@ -26,7 +26,7 @@ fi
 # set env var "ENABLE_PERIODIC_VISIT_LOCATE=1" to enable
 if [ $ENABLE_PERIODIC_VISIT_LOCATE ]; then
   echo "Starting periodic visite locate..."
-  echo "0 * * * * php bin/cli visit:locate -q" > /etc/crontabs/root
+  echo "0 * * * * php /etc/shlink/bin/cli visit:locate -q" > /etc/crontabs/root
   /usr/sbin/crond &
 fi
 
