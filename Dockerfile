@@ -79,7 +79,11 @@ COPY docker/config/shlink_in_docker.local.php config/autoload/shlink_in_docker.l
 COPY docker/config/php.ini ${PHP_INI_DIR}/conf.d/
 
 # Change the ownership of /etc/shlink/data to be writable, then change the user to non-root
-RUN chown 1001 -R /etc/shlink/data
+RUN chown 1001 /etc/shlink/data
+RUN chown 1001 /etc/shlink/data/locks
+RUN chown 1001 /etc/shlink/data/proxies
+RUN chown 1001 /etc/shlink/data/cache
+RUN chown 1001 /etc/shlink/data/log
 
 USER 1001
 
