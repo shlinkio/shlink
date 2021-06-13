@@ -121,7 +121,7 @@ Depending on the kind of contribution, maybe not all kinds of tests are needed, 
     For example, `test:db:postgres`.
 
 * Run `./indocker composer test:api` to run API E2E tests. For these, the Postgres database engine is used.
-* Run `./indocker composer infect:test` ti run both unit and database tests (over sqlite) and then apply mutations to them with [infection](https://infection.github.io/).
+* Run `./indocker composer infect:test` to run both unit and database tests (over sqlite) and then apply mutations to them with [infection](https://infection.github.io/).
 * Run `./indocker composer ci` to run all previous commands together. This command is run during the project's continuous integration.
 * Run `./indocker composer ci:parallel` to do the same as in previous case, but parallelizing non-conflicting tasks as much as possible.
 
