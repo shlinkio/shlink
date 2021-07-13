@@ -5,7 +5,7 @@
             "URL Shortener"
         ],
         "summary": "Short URL QR code",
-        "description": "Generates a QR code image pointing to a short URL",
+        "description": "Generates a QR code image pointing to a short URL.<br />Since this is not an API endpoint but an image one, when an invalid value is provided for any of the query params, they will fall to their default values instead of throwing an error.",
         "parameters": [
             {
                 "name": "shortCode",
@@ -35,10 +35,8 @@
                 "required": false,
                 "schema": {
                     "type": "string",
-                    "enum": [
-                        "png",
-                        "svg"
-                    ]
+                    "enum": ["png", "svg"],
+                    "default": "png"
                 }
             },
             {
@@ -50,6 +48,17 @@
                     "type": "integer",
                     "minimum": 0,
                     "default": 0
+                }
+            },
+            {
+                "name": "errorCorrection",
+                "in": "query",
+                "description": "The error correction level to apply to the the QR code: **[L]**ow, **[M]**edium, **[Q]**uartile or **[H]**igh. See [docs](https://www.qrcode.com/en/about/error_correction.html).",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": ["L", "M", "Q", "H"],
+                    "default": "L"
                 }
             }
         ],
