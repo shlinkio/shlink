@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Action;
 
 use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelInterface;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelMedium;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelQuartile;
 use Endroid\QrCode\Writer\SvgWriter;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -17,6 +22,9 @@ use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
+
+use function strtoupper;
+use function trim;
 
 class QrCodeAction implements MiddlewareInterface
 {
@@ -46,17 +54,18 @@ class QrCodeAction implements MiddlewareInterface
         }
 
         $query = $request->getQueryParams();
-        $qrCode = Builder::create()
+        $qrCodeBuilder = Builder::create()
             ->data($this->stringifier->stringify($shortUrl))
             ->size($this->resolveSize($request, $query))
-            ->margin($this->resolveMargin($query));
+            ->margin($this->resolveMargin($query))
+            ->errorCorrectionLevel($this->resolveErrorCorrection($query));
 
         $format = $query['format'] ?? 'png';
         if ($format === 'svg') {
-            $qrCode->writer(new SvgWriter());
+            $qrCodeBuilder->writer(new SvgWriter());
         }
 
-        return new QrCodeResponse($qrCode->build());
+        return new QrCodeResponse($qrCodeBuilder->build());
     }
 
     private function resolveSize(Request $request, array $query): int
@@ -72,16 +81,27 @@ class QrCodeAction implements MiddlewareInterface
 
     private function resolveMargin(array $query): int
     {
-        if (! isset($query['margin'])) {
+        $margin = $query['margin'] ?? null;
+        if ($margin === null) {
             return 0;
         }
 
-        $margin = $query['margin'];
         $intMargin = (int) $margin;
         if ($margin !== (string) $intMargin) {
             return 0;
         }
 
         return $intMargin < 0 ? 0 : $intMargin;
+    }
+
+    private function resolveErrorCorrection(array $query): ErrorCorrectionLevelInterface
+    {
+        $errorCorrectionLevel = strtoupper(trim($query['errorCorrection'] ?? ''));
+        return match ($errorCorrectionLevel) {
+            'H' => new ErrorCorrectionLevelHigh(),
+            'Q' => new ErrorCorrectionLevelQuartile(),
+            'M' => new ErrorCorrectionLevelMedium(),
+            default => new ErrorCorrectionLevelLow(), // 'L'
+        };
     }
 }
