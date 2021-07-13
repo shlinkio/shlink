@@ -16,7 +16,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 use function strtolower;
-use function strtoupper;
 use function trim;
 
 final class QrCodeParams
@@ -82,12 +81,12 @@ final class QrCodeParams
 
     private static function resolveErrorCorrection(array $query): ErrorCorrectionLevelInterface
     {
-        $errorCorrectionLevel = strtoupper(trim($query['errorCorrection'] ?? ''));
+        $errorCorrectionLevel = strtolower(trim($query['errorCorrection'] ?? 'l'));
         return match ($errorCorrectionLevel) {
-            'H' => new ErrorCorrectionLevelHigh(),
-            'Q' => new ErrorCorrectionLevelQuartile(),
-            'M' => new ErrorCorrectionLevelMedium(),
-            default => new ErrorCorrectionLevelLow(), // 'L'
+            'h' => new ErrorCorrectionLevelHigh(),
+            'q' => new ErrorCorrectionLevelQuartile(),
+            'm' => new ErrorCorrectionLevelMedium(),
+            default => new ErrorCorrectionLevelLow(), // 'l'
         };
     }
 
