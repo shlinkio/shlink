@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ## [Unreleased]
 ### Added
 * [#1089](https://github.com/shlinkio/shlink/issues/1089) Added new `ENABLE_PERIODIC_VISIT_LOCATE` env var to docker image which schedules the `visit:locate` command every hour when provided with value `true`.
+* [#1082](https://github.com/shlinkio/shlink/issues/1082) Added support for error correction level on QR codes.
+
+    Now, when calling the `GET /{shorCode}/qr-code` URL, you can pass the `errorCorrection` query param with values `L` for Low, `M` for Medium, `Q` for Quartile or `H` for High.
 
 ### Changed
 * *Nothing*
