@@ -19,6 +19,7 @@ use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlRedirectionBuilderInterface;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 use Shlinkio\Shlink\Core\Visit\VisitsTrackerInterface;
 
@@ -27,6 +28,8 @@ use function array_key_exists;
 class RedirectActionTest extends TestCase
 {
     use ProphecyTrait;
+
+    private const LONG_URL = 'https://domain.com/foo/bar?some=thing';
 
     private RedirectAction $action;
     private ObjectProphecy $urlResolver;
@@ -39,9 +42,13 @@ class RedirectActionTest extends TestCase
         $this->visitTracker = $this->prophesize(VisitsTrackerInterface::class);
         $this->redirectRespHelper = $this->prophesize(RedirectResponseHelperInterface::class);
 
+        $redirectBuilder = $this->prophesize(ShortUrlRedirectionBuilderInterface::class);
+        $redirectBuilder->buildShortUrlRedirect(Argument::cetera())->willReturn(self::LONG_URL);
+
         $this->action = new RedirectAction(
             $this->urlResolver->reveal(),
             $this->visitTracker->reveal(),
+            $redirectBuilder->reveal(),
             new Options\TrackingOptions(['disableTrackParam' => 'foobar']),
             $this->redirectRespHelper->reveal(),
         );
@@ -51,17 +58,17 @@ class RedirectActionTest extends TestCase
      * @test
      * @dataProvider provideQueries
      */
-    public function redirectionIsPerformedToLongUrl(string $expectedUrl, array $query): void
+    public function redirectionIsPerformedToLongUrl(array $query): void
     {
         $shortCode = 'abc123';
-        $shortUrl = ShortUrl::withLongUrl('http://domain.com/foo/bar?some=thing');
+        $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
         $shortCodeToUrl = $this->urlResolver->resolveEnabledShortUrl(
             new ShortUrlIdentifier($shortCode, ''),
         )->willReturn($shortUrl);
         $track = $this->visitTracker->track(Argument::cetera())->will(function (): void {
         });
-        $expectedResp = new Response\RedirectResponse($expectedUrl);
-        $buildResp = $this->redirectRespHelper->buildRedirectResponse($expectedUrl)->willReturn($expectedResp);
+        $expectedResp = new Response\RedirectResponse(self::LONG_URL);
+        $buildResp = $this->redirectRespHelper->buildRedirectResponse(self::LONG_URL)->willReturn($expectedResp);
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)->withQueryParams($query);
         $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
@@ -74,12 +81,14 @@ class RedirectActionTest extends TestCase
 
     public function provideQueries(): iterable
     {
-        yield ['http://domain.com/foo/bar?some=thing', []];
-        yield ['http://domain.com/foo/bar?some=thing', ['foobar' => 'notrack']];
-        yield ['http://domain.com/foo/bar?some=thing&else', ['else' => null]];
-        yield ['http://domain.com/foo/bar?some=thing&foo=bar', ['foo' => 'bar']];
-        yield ['http://domain.com/foo/bar?some=overwritten&foo=bar', ['foo' => 'bar', 'some' => 'overwritten']];
-        yield ['http://domain.com/foo/bar?some=overwritten', ['foobar' => 'notrack', 'some' => 'overwritten']];
+        yield [[]];
+        yield [['foobar' => 'notrack']];
+        yield [['foobar' => 'barfoo']];
+        yield [['foobar' => null]];
+//        yield ['http://domain.com/foo/bar?some=thing&else', ['else' => null]];
+//        yield ['http://domain.com/foo/bar?some=thing&foo=bar', ['foo' => 'bar']];
+//        yield ['http://domain.com/foo/bar?some=overwritten&foo=bar', ['foo' => 'bar', 'some' => 'overwritten']];
+//        yield ['http://domain.com/foo/bar?some=overwritten', ['foobar' => 'notrack', 'some' => 'overwritten']];
     }
 
     /** @test */
@@ -104,13 +113,13 @@ class RedirectActionTest extends TestCase
     public function trackingIsDisabledWhenRequestIsForwardedFromHead(): void
     {
         $shortCode = 'abc123';
-        $shortUrl = ShortUrl::withLongUrl('http://domain.com/foo/bar?some=thing');
+        $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
         $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))->willReturn($shortUrl);
         $track = $this->visitTracker->track(Argument::cetera())->will(function (): void {
         });
-        $buildResp = $this->redirectRespHelper->buildRedirectResponse(
-            'http://domain.com/foo/bar?some=thing',
-        )->willReturn(new Response\RedirectResponse(''));
+        $buildResp = $this->redirectRespHelper->buildRedirectResponse(self::LONG_URL)->willReturn(
+            new Response\RedirectResponse(''),
+        );
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)
                                         ->withAttribute(

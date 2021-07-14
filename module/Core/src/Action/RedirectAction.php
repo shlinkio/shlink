@@ -11,6 +11,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlRedirectionBuilderInterface;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 use Shlinkio\Shlink\Core\Visit\VisitsTrackerInterface;
 
@@ -19,11 +20,12 @@ class RedirectAction extends AbstractTrackingAction implements StatusCodeInterfa
     public function __construct(
         ShortUrlResolverInterface $urlResolver,
         VisitsTrackerInterface $visitTracker,
+        ShortUrlRedirectionBuilderInterface $redirectionBuilder,
         Options\TrackingOptions $trackingOptions,
         private RedirectResponseHelperInterface $redirectResponseHelper,
         ?LoggerInterface $logger = null
     ) {
-        parent::__construct($urlResolver, $visitTracker, $trackingOptions, $logger);
+        parent::__construct($urlResolver, $visitTracker, $redirectionBuilder, $trackingOptions, $logger);
     }
 
     protected function createSuccessResp(string $longUrl): Response

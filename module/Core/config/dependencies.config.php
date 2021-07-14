@@ -53,6 +53,7 @@ return [
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortUrlStringifier::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => ConfigAbstractFactory::class,
+            ShortUrl\Helper\ShortUrlRedirectionBuilder::class => ConfigAbstractFactory::class,
             ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
 
             Mercure\MercureUpdatesGenerator::class => ConfigAbstractFactory::class,
@@ -117,6 +118,7 @@ return [
         Action\RedirectAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
             Visit\VisitsTracker::class,
+            ShortUrl\Helper\ShortUrlRedirectionBuilder::class,
             Options\TrackingOptions::class,
             Util\RedirectResponseHelper::class,
             'Logger_Shlink',
@@ -124,6 +126,7 @@ return [
         Action\PixelAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
             Visit\VisitsTracker::class,
+            ShortUrl\Helper\ShortUrlRedirectionBuilder::class,
             Options\TrackingOptions::class,
             'Logger_Shlink',
         ],
@@ -137,6 +140,7 @@ return [
         ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ['em'],
         ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain', 'config.router.base_path'],
         ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => [Util\UrlValidator::class],
+        ShortUrl\Helper\ShortUrlRedirectionBuilder::class => [Options\TrackingOptions::class],
         ShortUrl\Transformer\ShortUrlDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
 
         Mercure\MercureUpdatesGenerator::class => [

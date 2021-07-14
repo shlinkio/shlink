@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Shlinkio\Shlink\Core\ShortUrl\Helper;
+
+use GuzzleHttp\Psr7\Query;
+use League\Uri\Uri;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Options\TrackingOptions;
+
+use function array_merge;
+use function sprintf;
+
+class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
+{
+    public function __construct(private TrackingOptions $trackingOptions)
+    {
+    }
+
+    public function buildShortUrlRedirect(ShortUrl $shortUrl, array $currentQuery, ?string $extraPath = null): string
+    {
+        $uri = Uri::createFromString($shortUrl->getLongUrl());
+
+        return $uri
+            ->withQuery($this->resolveQuery($uri, $currentQuery))
+            ->withPath($this->resolvePath($uri, $extraPath))
+            ->__toString();
+    }
+
+    private function resolveQuery(Uri $uri, array $currentQuery): string
+    {
+        $hardcodedQuery = Query::parse($uri->getQuery() ?? '');
+
+        $disableTrackParam = $this->trackingOptions->getDisableTrackParam();
+        if ($disableTrackParam !== null) {
+            unset($currentQuery[$disableTrackParam]);
+        }
+
+        $mergedQuery = array_merge($hardcodedQuery, $currentQuery);
+
+        return empty($mergedQuery) ? '' : Query::build($mergedQuery);
+    }
+
+    private function resolvePath(Uri $uri, ?string $extraPath): string
+    {
+        $hardcodedPath = $uri->getPath();
+        return $extraPath === null ? $hardcodedPath : sprintf('%s%s', $hardcodedPath, $extraPath);
+    }
+}
