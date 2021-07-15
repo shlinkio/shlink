@@ -16,7 +16,6 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
-use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlRedirectionBuilderInterface;
 use Shlinkio\Shlink\Core\Visit\VisitsTracker;
 
 class PixelActionTest extends TestCase
@@ -32,13 +31,9 @@ class PixelActionTest extends TestCase
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
         $this->visitTracker = $this->prophesize(VisitsTracker::class);
 
-        $redirectBuilder = $this->prophesize(ShortUrlRedirectionBuilderInterface::class);
-        $redirectBuilder->buildShortUrlRedirect(Argument::cetera())->willReturn('http://domain.com/foo/bar');
-
         $this->action = new PixelAction(
             $this->urlResolver->reveal(),
             $this->visitTracker->reveal(),
-            $redirectBuilder->reveal(),
             new TrackingOptions(),
         );
     }

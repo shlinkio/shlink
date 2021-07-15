@@ -48,8 +48,8 @@ class RedirectActionTest extends TestCase
         $this->action = new RedirectAction(
             $this->urlResolver->reveal(),
             $this->visitTracker->reveal(),
-            $redirectBuilder->reveal(),
             new Options\TrackingOptions(['disableTrackParam' => 'foobar']),
+            $redirectBuilder->reveal(),
             $this->redirectRespHelper->reveal(),
         );
     }

@@ -118,17 +118,14 @@ return [
         Action\RedirectAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
             Visit\VisitsTracker::class,
-            ShortUrl\Helper\ShortUrlRedirectionBuilder::class,
             Options\TrackingOptions::class,
+            ShortUrl\Helper\ShortUrlRedirectionBuilder::class,
             Util\RedirectResponseHelper::class,
-            'Logger_Shlink',
         ],
         Action\PixelAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
             Visit\VisitsTracker::class,
-            ShortUrl\Helper\ShortUrlRedirectionBuilder::class,
             Options\TrackingOptions::class,
-            'Logger_Shlink',
         ],
         Action\QrCodeAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,

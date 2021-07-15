@@ -19,6 +19,7 @@ class UrlShortenerOptions extends AbstractOptions
     private int $redirectStatusCode = DEFAULT_REDIRECT_STATUS_CODE;
     private int $redirectCacheLifetime = DEFAULT_REDIRECT_CACHE_LIFETIME;
     private bool $autoResolveTitles = false;
+    private bool $appendExtraPath = false;
 
     public function isUrlValidationEnabled(): bool
     {
@@ -65,6 +66,16 @@ class UrlShortenerOptions extends AbstractOptions
     protected function setAutoResolveTitles(bool $autoResolveTitles): void
     {
         $this->autoResolveTitles = $autoResolveTitles;
+    }
+
+    public function appendExtraPath(): bool
+    {
+        return $this->appendExtraPath;
+    }
+
+    protected function setAppendExtraPath(bool $appendExtraPath): void
+    {
+        $this->appendExtraPath = $appendExtraPath;
     }
 
     /** @deprecated  */
