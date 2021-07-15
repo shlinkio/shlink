@@ -11,6 +11,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Now, when calling the `GET /{shorCode}/qr-code` URL, you can pass the `errorCorrection` query param with values `L` for Low, `M` for Medium, `Q` for Quartile or `H` for High.
 
+* [#1080](https://github.com/shlinkio/shlink/issues/1080) Added support to redirect to URLs as soon as the path starts with a valid short code, appending the rest of the path to the redirected long URL.
+
+    With this, if you have the `https://example.com/abc123` short URL redirecting to `https://www.twitter.com`, a visit to `https://example.com/abc123/shlinkio` will take you to `https://www.twitter.com/shlinkio`.
+
+    This behavior needs to be actively opted in, via installer config options or env vars.
+
 ### Changed
 * *Nothing*
 

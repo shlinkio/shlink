@@ -16,9 +16,12 @@ return [
         'validate_url' => false, // Deprecated
         'visits_webhooks' => [],
         'default_short_codes_length' => DEFAULT_SHORT_CODES_LENGTH,
+        'auto_resolve_titles' => false,
+        'append_extra_path' => false,
+
+        // TODO Move these two options to their own config namespace. Maybe "redirects".
         'redirect_status_code' => DEFAULT_REDIRECT_STATUS_CODE,
         'redirect_cache_lifetime' => DEFAULT_REDIRECT_CACHE_LIFETIME,
-        'auto_resolve_titles' => false,
     ],
 
 ];

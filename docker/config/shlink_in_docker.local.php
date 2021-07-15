@@ -111,9 +111,10 @@ return [
         'validate_url' => (bool) env('VALIDATE_URLS', false),
         'visits_webhooks' => $helper->getVisitsWebhooks(),
         'default_short_codes_length' => $helper->getDefaultShortCodesLength(),
+        'auto_resolve_titles' => (bool) env('AUTO_RESOLVE_TITLES', false),
         'redirect_status_code' => (int) env('REDIRECT_STATUS_CODE', DEFAULT_REDIRECT_STATUS_CODE),
         'redirect_cache_lifetime' => (int) env('REDIRECT_CACHE_LIFETIME', DEFAULT_REDIRECT_CACHE_LIFETIME),
-        'auto_resolve_titles' => (bool) env('AUTO_RESOLVE_TITLES', false),
+        'append_extra_path' => (bool) env('REDIRECT_APPEND_EXTRA_PATH', false),
     ],
 
     'tracking' => [
