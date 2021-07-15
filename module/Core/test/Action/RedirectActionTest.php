@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Action;
 
-use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
-use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -72,14 +70,6 @@ class RedirectActionTest extends TestCase
         $track->shouldHaveBeenCalledOnce();
     }
 
-//    public function provideQueries(): iterable
-//    {
-//        yield [[]];
-//        yield [['foobar' => 'notrack']];
-//        yield [['foobar' => 'barfoo']];
-//        yield [['foobar' => null]];
-//    }
-
     /** @test */
     public function nextMiddlewareIsInvokedIfLongUrlIsNotFound(): void
     {
@@ -97,27 +87,4 @@ class RedirectActionTest extends TestCase
 
         $handle->shouldHaveBeenCalledOnce();
     }
-
-//    /** @test */
-//    public function trackingIsDisabledWhenRequestIsForwardedFromHead(): void
-//    {
-//        $shortCode = 'abc123';
-//        $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
-//        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))->willReturn($shortUrl);
-//        $track = $this->requestTracker->trackIfApplicable(Argument::cetera())->will(function (): void {
-//        });
-//        $buildResp = $this->redirectRespHelper->buildRedirectResponse(self::LONG_URL)->willReturn(
-//            new Response\RedirectResponse(''),
-//        );
-//
-//        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)
-//                                        ->withAttribute(
-//                                            ImplicitHeadMiddleware::FORWARDED_HTTP_METHOD_ATTRIBUTE,
-//                                            RequestMethodInterface::METHOD_HEAD,
-//                                        );
-//        $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
-//
-//        $buildResp->shouldHaveBeenCalled();
-//        $track->shouldNotHaveBeenCalled();
-//    }
 }
