@@ -43,7 +43,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMet
             }
 
             return $this->createSuccessResp($shortUrl, $request);
-        } catch (ShortUrlNotFoundException $e) {
+        } catch (ShortUrlNotFoundException) {
             return $this->createErrorResp($request, $handler);
         }
     }

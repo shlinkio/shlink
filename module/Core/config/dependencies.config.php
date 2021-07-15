@@ -55,6 +55,7 @@ return [
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortUrlRedirectionBuilder::class => ConfigAbstractFactory::class,
             ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
+            ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => ConfigAbstractFactory::class,
 
             Mercure\MercureUpdatesGenerator::class => ConfigAbstractFactory::class,
 
@@ -139,6 +140,13 @@ return [
         ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => [Util\UrlValidator::class],
         ShortUrl\Helper\ShortUrlRedirectionBuilder::class => [Options\TrackingOptions::class],
         ShortUrl\Transformer\ShortUrlDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
+        ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => [
+            Service\ShortUrl\ShortUrlResolver::class,
+            Visit\VisitsTracker::class,
+            ShortUrl\Helper\ShortUrlRedirectionBuilder::class,
+            Util\RedirectResponseHelper::class,
+            Options\UrlShortenerOptions::class,
+        ],
 
         Mercure\MercureUpdatesGenerator::class => [
             ShortUrl\Transformer\ShortUrlDataTransformer::class,

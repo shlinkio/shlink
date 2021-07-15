@@ -68,6 +68,7 @@ return [
                 // This middleware is in front of tracking actions explicitly. Putting here for orphan visits tracking
                 IpAddress::class,
                 Core\ErrorHandler\NotFoundTypeResolverMiddleware::class,
+                Core\ShortUrl\Middleware\ExtraPathRedirectMiddleware::class,
                 Core\ErrorHandler\NotFoundTrackerMiddleware::class,
                 Core\ErrorHandler\NotFoundRedirectHandler::class,
                 Core\ErrorHandler\NotFoundTemplateHandler::class,

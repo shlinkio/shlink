@@ -28,7 +28,7 @@ class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
             ->__toString();
     }
 
-    private function resolveQuery(Uri $uri, array $currentQuery): string
+    private function resolveQuery(Uri $uri, array $currentQuery): ?string
     {
         $hardcodedQuery = Query::parse($uri->getQuery() ?? '');
 
@@ -39,7 +39,7 @@ class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
 
         $mergedQuery = array_merge($hardcodedQuery, $currentQuery);
 
-        return empty($mergedQuery) ? '' : Query::build($mergedQuery);
+        return empty($mergedQuery) ? null : Query::build($mergedQuery);
     }
 
     private function resolvePath(Uri $uri, ?string $extraPath): string
