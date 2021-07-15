@@ -37,6 +37,7 @@ return [
             Domain\DomainService::class => ConfigAbstractFactory::class,
 
             Visit\VisitsTracker::class => ConfigAbstractFactory::class,
+            Visit\RequestTracker::class => ConfigAbstractFactory::class,
             Visit\VisitLocator::class => ConfigAbstractFactory::class,
             Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
             Visit\Transformer\OrphanVisitDataTransformer::class => InvokableFactory::class,
@@ -71,7 +72,7 @@ return [
 
     ConfigAbstractFactory::class => [
         ErrorHandler\NotFoundTypeResolverMiddleware::class => ['config.router.base_path'],
-        ErrorHandler\NotFoundTrackerMiddleware::class => [Visit\VisitsTracker::class],
+        ErrorHandler\NotFoundTrackerMiddleware::class => [Visit\RequestTracker::class],
         ErrorHandler\NotFoundRedirectHandler::class => [
             NotFoundRedirectOptions::class,
             Util\RedirectResponseHelper::class,
@@ -94,6 +95,7 @@ return [
             EventDispatcherInterface::class,
             Options\TrackingOptions::class,
         ],
+        Visit\RequestTracker::class => [Visit\VisitsTracker::class, Options\TrackingOptions::class],
         Service\ShortUrlService::class => [
             'em',
             Service\ShortUrl\ShortUrlResolver::class,
@@ -118,16 +120,11 @@ return [
 
         Action\RedirectAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
-            Visit\VisitsTracker::class,
-            Options\TrackingOptions::class,
+            Visit\RequestTracker::class,
             ShortUrl\Helper\ShortUrlRedirectionBuilder::class,
             Util\RedirectResponseHelper::class,
         ],
-        Action\PixelAction::class => [
-            Service\ShortUrl\ShortUrlResolver::class,
-            Visit\VisitsTracker::class,
-            Options\TrackingOptions::class,
-        ],
+        Action\PixelAction::class => [Service\ShortUrl\ShortUrlResolver::class, Visit\RequestTracker::class],
         Action\QrCodeAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
             ShortUrl\Helper\ShortUrlStringifier::class,
@@ -142,7 +139,7 @@ return [
         ShortUrl\Transformer\ShortUrlDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
         ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => [
             Service\ShortUrl\ShortUrlResolver::class,
-            Visit\VisitsTracker::class,
+            Visit\RequestTracker::class,
             ShortUrl\Helper\ShortUrlRedirectionBuilder::class,
             Util\RedirectResponseHelper::class,
             Options\UrlShortenerOptions::class,

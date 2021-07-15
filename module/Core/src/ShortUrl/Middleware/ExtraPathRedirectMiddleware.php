@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlRedirectionBuilderInterface;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
-use Shlinkio\Shlink\Core\Visit\VisitsTrackerInterface;
+use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
 
 use function array_pad;
 use function explode;
@@ -27,7 +27,7 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private ShortUrlResolverInterface $resolver,
-        private VisitsTrackerInterface $visitTracker,
+        private RequestTrackerInterface $requestTracker,
         private ShortUrlRedirectionBuilderInterface $redirectionBuilder,
         private RedirectResponseHelperInterface $redirectResponseHelper,
         private UrlShortenerOptions $urlShortenerOptions,
@@ -51,8 +51,7 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
 
         try {
             $shortUrl = $this->resolver->resolveEnabledShortUrl($identifier);
-
-            // TODO Track visit
+            $this->requestTracker->trackIfApplicable($shortUrl, $request);
 
             $longUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $query, $extraPath);
             return $this->redirectResponseHelper->buildRedirectResponse($longUrl);
