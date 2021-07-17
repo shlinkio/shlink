@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
+use function is_string;
 use function sprintf;
 
 abstract class AbstractWithDateRangeCommand extends BaseCommand
@@ -49,7 +50,7 @@ abstract class AbstractWithDateRangeCommand extends BaseCommand
     private function getDateOption(InputInterface $input, OutputInterface $output, string $key): ?Chronos
     {
         $value = $this->getOptionWithDeprecatedFallback($input, $key);
-        if (empty($value)) {
+        if (empty($value) || ! is_string($value)) {
             return null;
         }
 

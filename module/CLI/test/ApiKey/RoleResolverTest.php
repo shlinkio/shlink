@@ -68,6 +68,21 @@ class RoleResolverTest extends TestCase
             [RoleDefinition::forDomain($domain)],
             1,
         ];
+        yield 'false domain role' => [
+            $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => false]),
+            [],
+            0,
+        ];
+        yield 'true domain role' => [
+            $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => true]),
+            [],
+            0,
+        ];
+        yield 'string array domain role' => [
+            $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => ['foo', 'bar']]),
+            [],
+            0,
+        ];
         yield 'author role only' => [
             $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => null, RoleResolver::AUTHOR_ONLY_PARAM => true]),
             [RoleDefinition::forAuthoredShortUrls()],

@@ -17,8 +17,10 @@ class DropDefaultDomainFromRequestMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        /** @var array $body */
+        $body = $request->getParsedBody();
         $request = $request->withQueryParams($this->sanitizeDomainFromPayload($request->getQueryParams()))
-                           ->withParsedBody($this->sanitizeDomainFromPayload($request->getParsedBody()));
+                           ->withParsedBody($this->sanitizeDomainFromPayload($body));
 
         return $handler->handle($request);
     }

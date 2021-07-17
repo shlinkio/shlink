@@ -8,6 +8,8 @@ use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 
+use function is_string;
+
 class RoleResolver implements RoleResolverInterface
 {
     public function __construct(private DomainServiceInterface $domainService)
@@ -23,7 +25,7 @@ class RoleResolver implements RoleResolverInterface
         if ($author) {
             $roleDefinitions[] = RoleDefinition::forAuthoredShortUrls();
         }
-        if ($domainAuthority !== null) {
+        if (is_string($domainAuthority)) {
             $domain = $this->domainService->getOrCreate($domainAuthority);
             $roleDefinitions[] = RoleDefinition::forDomain($domain);
         }
