@@ -18,6 +18,7 @@ class DefaultShortCodesLengthMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        /** @var array $body */
         $body = $request->getParsedBody();
         if (! isset($body[ShortUrlInputFilter::SHORT_CODE_LENGTH])) {
             $body[ShortUrlInputFilter::SHORT_CODE_LENGTH] = $this->defaultShortCodesLength;

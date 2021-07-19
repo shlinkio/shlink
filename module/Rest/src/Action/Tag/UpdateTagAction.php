@@ -23,6 +23,7 @@ class UpdateTagAction extends AbstractRestAction
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        /** @var array $body */
         $body = $request->getParsedBody();
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 

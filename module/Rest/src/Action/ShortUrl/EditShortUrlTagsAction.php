@@ -27,6 +27,7 @@ class EditShortUrlTagsAction extends AbstractRestAction
 
     public function handle(Request $request): Response
     {
+        /** @var array $bodyParams */
         $bodyParams = $request->getParsedBody();
 
         if (! isset($bodyParams['tags'])) {

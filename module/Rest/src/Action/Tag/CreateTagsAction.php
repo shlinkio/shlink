@@ -20,15 +20,9 @@ class CreateTagsAction extends AbstractRestAction
     {
     }
 
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * to the next middleware component to create the response.
-     *
-     *
-     * @throws \InvalidArgumentException
-     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        /** @var array $body */
         $body = $request->getParsedBody();
         $tags = $body['tags'] ?? [];
 
