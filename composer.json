@@ -113,7 +113,7 @@
         ],
         "cs": "phpcs",
         "cs:fix": "phpcbf",
-        "stan": "phpstan analyse module/*/src/ module/*/config config docker/config data/migrations --level=7",
+        "stan": "phpstan analyse module/*/src module/*/config config docker/config data/migrations --level=7",
         "test": [
             "@test:unit",
             "@test:db",
