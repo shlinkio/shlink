@@ -3,5 +3,8 @@
 
 declare(strict_types=1);
 
-$run = require __DIR__ . '/../config/run.php';
-$run(true);
+use Symfony\Component\Console\Application;
+
+/** @var Application $app */
+$app = require __DIR__ . '/../config/cli-app.php';
+$app->run();
