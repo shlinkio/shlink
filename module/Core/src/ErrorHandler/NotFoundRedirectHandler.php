@@ -26,17 +26,20 @@ class NotFoundRedirectHandler implements MiddlewareInterface
         $notFoundType = $request->getAttribute(NotFoundType::class);
 
         if ($notFoundType->isBaseUrl() && $this->redirectOptions->hasBaseUrlRedirect()) {
+            // @phpstan-ignore-next-line Create custom PHPStan rule
             return $this->redirectResponseHelper->buildRedirectResponse($this->redirectOptions->getBaseUrlRedirect());
         }
 
         if ($notFoundType->isRegularNotFound() && $this->redirectOptions->hasRegular404Redirect()) {
             return $this->redirectResponseHelper->buildRedirectResponse(
+                // @phpstan-ignore-next-line Create custom PHPStan rule
                 $this->redirectOptions->getRegular404Redirect(),
             );
         }
 
         if ($notFoundType->isInvalidShortUrl() && $this->redirectOptions->hasInvalidShortUrlRedirect()) {
             return $this->redirectResponseHelper->buildRedirectResponse(
+                // @phpstan-ignore-next-line Create custom PHPStan rule
                 $this->redirectOptions->getInvalidShortUrlRedirect(),
             );
         }
