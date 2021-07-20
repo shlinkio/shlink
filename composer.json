@@ -67,6 +67,7 @@
         "infection/infection": "^0.23.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^0.12.92",
+        "phpstan/phpstan-doctrine": "^0.12.42",
         "phpstan/phpstan-symfony": "^0.12.41",
         "phpunit/php-code-coverage": "^9.2",
         "phpunit/phpunit": "^9.5",

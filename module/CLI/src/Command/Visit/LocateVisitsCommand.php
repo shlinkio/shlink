@@ -139,7 +139,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
             throw IpCannotBeLocatedException::forEmptyAddress();
         }
 
-        $ipAddr = $visit->getRemoteAddr();
+        $ipAddr = $visit->getRemoteAddr() ?? '';
         $this->io->write(sprintf('Processing IP <fg=blue>%s</>', $ipAddr));
         if ($ipAddr === IpAddress::LOCALHOST) {
             $this->io->writeln(' [<comment>Ignored localhost address</comment>]');
@@ -168,7 +168,12 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
 
     private function checkDbUpdate(InputInterface $input): void
     {
-        $downloadDbCommand = $this->getApplication()->find(DownloadGeoLiteDbCommand::NAME);
+        $cliApp = $this->getApplication();
+        if ($cliApp === null) {
+            return;
+        }
+
+        $downloadDbCommand = $cliApp->find(DownloadGeoLiteDbCommand::NAME);
         $exitCode = $downloadDbCommand->run($input, $this->io);
 
         if ($exitCode === ExitCodes::EXIT_FAILURE) {
@@ -178,6 +183,6 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
 
     protected function getLockConfig(): LockedCommandConfig
     {
-        return LockedCommandConfig::nonBlocking($this->getName());
+        return LockedCommandConfig::nonBlocking(self::NAME);
     }
 }
