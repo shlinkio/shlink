@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     This behavior needs to be actively opted in, via installer config options or env vars.
 
 ### Changed
-* *Nothing*
+* [#1118](https://github.com/shlinkio/shlink/issues/1118) Increased phpstan required level to 8.
 
 ### Deprecated
 * *Nothing*
