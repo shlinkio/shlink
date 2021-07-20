@@ -62,9 +62,9 @@
     },
     "require-dev": {
         "devster/ubench": "^2.1",
-        "dms/phpunit-arraysubset-asserts": "^0.2.1",
+        "dms/phpunit-arraysubset-asserts": "^v0.3.0",
         "eaglewu/swoole-ide-helper": "dev-master",
-        "infection/infection": "^0.21.0",
+        "infection/infection": "^0.23.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^0.12.92",
         "phpstan/phpstan-symfony": "^0.12.41",
@@ -74,7 +74,7 @@
         "shlinkio/php-coding-standard": "~2.1.1",
         "shlinkio/shlink-test-utils": "^2.1",
         "symfony/var-dumper": "^5.2",
-        "veewee/composer-run-parallel": "^0.1.0"
+        "veewee/composer-run-parallel": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -113,7 +113,7 @@
         ],
         "cs": "phpcs",
         "cs:fix": "phpcbf",
-        "stan": "phpstan analyse module/*/src module/*/config config docker/config data/migrations --level=7",
+        "stan": "phpstan analyse module/*/src module/*/config config docker/config data/migrations --level=8",
         "test": [
             "@test:unit",
             "@test:db",

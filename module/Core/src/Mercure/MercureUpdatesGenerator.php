@@ -42,7 +42,7 @@ final class MercureUpdatesGenerator implements MercureUpdatesGeneratorInterface
     public function newShortUrlVisitUpdate(Visit $visit): Update
     {
         $shortUrl = $visit->getShortUrl();
-        $topic = sprintf('%s/%s', self::NEW_VISIT_TOPIC, $shortUrl->getShortCode());
+        $topic = sprintf('%s/%s', self::NEW_VISIT_TOPIC, $shortUrl?->getShortCode());
 
         return new Update($topic, $this->serialize([
             'shortUrl' => $this->shortUrlTransformer->transform($shortUrl),

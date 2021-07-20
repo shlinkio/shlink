@@ -18,7 +18,6 @@ use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function array_column;
-use function array_key_exists;
 use function count;
 use function Functional\contains;
 
@@ -59,6 +58,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         // visitsCount and visitCount are deprecated. Only visits should work
         if (contains(['visits', 'visitsCount', 'visitCount'], $fieldName)) {
+            // FIXME This query is inefficient. Debug it.
             $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
                ->leftJoin('s.visits', 'v')
                ->groupBy('s')
@@ -75,9 +75,11 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             'dateCreated' => 'dateCreated',
             'title' => 'title',
         ];
-        if (array_key_exists($fieldName, $fieldNameMap)) {
-            $qb->orderBy('s.' . $fieldNameMap[$fieldName], $order);
+        $resolvedFieldName = $fieldNameMap[$fieldName] ?? null;
+        if ($resolvedFieldName !== null) {
+            $qb->orderBy('s.' . $resolvedFieldName, $order);
         }
+
         return $qb->getQuery()->getResult();
     }
 
@@ -194,10 +196,12 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
     private function doShortCodeIsInUse(ShortUrlIdentifier $identifier, ?Specification $spec, ?int $lockMode): bool
     {
-        $qb = $this->createFindOneQueryBuilder($identifier, $spec);
-        $qb->select('s.id');
+        $qb = $this->createFindOneQueryBuilder($identifier, $spec)->select('s.id');
+        $query = $qb->getQuery();
 
-        $query = $qb->getQuery()->setLockMode($lockMode);
+        if ($lockMode !== null) {
+            $query = $query->setLockMode($lockMode);
+        }
 
         return $query->getOneOrNullResult() !== null;
     }

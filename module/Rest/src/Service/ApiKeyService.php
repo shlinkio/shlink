@@ -38,12 +38,12 @@ class ApiKeyService implements ApiKeyServiceInterface
     private function buildApiKeyWithParams(?Chronos $expirationDate, ?string $name): ApiKey
     {
         return match (true) {
-            $expirationDate === null && $name === null => ApiKey::create(),
             $expirationDate !== null && $name !== null => ApiKey::fromMeta(
                 ApiKeyMeta::withNameAndExpirationDate($name, $expirationDate),
             ),
-            $name === null =>  ApiKey::fromMeta(ApiKeyMeta::withExpirationDate($expirationDate)),
-            default => ApiKey::fromMeta(ApiKeyMeta::withName($name)),
+            $expirationDate !== null =>  ApiKey::fromMeta(ApiKeyMeta::withExpirationDate($expirationDate)),
+            $name !== null => ApiKey::fromMeta(ApiKeyMeta::withName($name)),
+            default => ApiKey::create(),
         };
     }
 
