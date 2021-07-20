@@ -32,6 +32,7 @@ class OverrideDomainMiddleware implements MiddlewareInterface
         $domain = $this->domainService->getDomain($domainId);
 
         if ($requestMethod === RequestMethodInterface::METHOD_POST) {
+            /** @var array $payload */
             $payload = $request->getParsedBody();
             $payload[ShortUrlInputFilter::DOMAIN] = $domain->getAuthority();
 

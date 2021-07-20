@@ -120,7 +120,7 @@ return [
             'name' => 'start_collecting_coverage',
             'path' => '/api-tests/start-coverage',
             'middleware' => middleware(static function () use (&$coverage) {
-                if ($coverage) {
+                if ($coverage) { // @phpstan-ignore-line
                     $coverage->start('API tests');
                 }
                 return new EmptyResponse();
@@ -131,7 +131,7 @@ return [
             'name' => 'dump_coverage',
             'path' => '/api-tests/stop-coverage',
             'middleware' => middleware(static function () use (&$coverage) {
-                if ($coverage) {
+                if ($coverage) { // @phpstan-ignore-line
                     $basePath = __DIR__ . '/../../build/coverage-api';
                     $coverage->stop();
                     (new PHP())->process($coverage, $basePath . '.cov');

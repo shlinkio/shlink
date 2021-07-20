@@ -57,7 +57,6 @@ class DomainService implements DomainServiceInterface
     public function getOrCreate(string $authority): Domain
     {
         $repo = $this->em->getRepository(Domain::class);
-        /** @var Domain|null $domain */
         $domain = $repo->findOneBy(['authority' => $authority]) ?? new Domain($authority);
 
         $this->em->persist($domain);

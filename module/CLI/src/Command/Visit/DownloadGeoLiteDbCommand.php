@@ -45,8 +45,8 @@ class DownloadGeoLiteDbCommand extends Command
                 $io->text(sprintf('<fg=blue>%s GeoLite2 db file...</>', $olderDbExists ? 'Updating' : 'Downloading'));
                 $this->progressBar = new ProgressBar($io);
             }, function (int $total, int $downloaded): void {
-                $this->progressBar->setMaxSteps($total);
-                $this->progressBar->setProgress($downloaded);
+                $this->progressBar?->setMaxSteps($total);
+                $this->progressBar?->setProgress($downloaded);
             });
 
             if ($this->progressBar === null) {

@@ -49,7 +49,6 @@ final class ShortUrlsOrdering
             ]);
         }
 
-        /** @var string|array $orderBy */
         if (! $isArray) {
             [$field, $dir] = array_pad(explode('-', $orderBy), 2, null);
             $this->orderField = $field;

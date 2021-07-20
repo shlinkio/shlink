@@ -13,7 +13,7 @@ final class VisitsParams
     private const FIRST_PAGE = 1;
     private const ALL_ITEMS = -1;
 
-    private ?DateRange $dateRange;
+    private DateRange $dateRange;
     private int $itemsPerPage;
 
     public function __construct(

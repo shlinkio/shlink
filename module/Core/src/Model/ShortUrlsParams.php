@@ -19,7 +19,7 @@ final class ShortUrlsParams
     private array $tags;
     private ShortUrlsOrdering $orderBy;
     private ?DateRange $dateRange;
-    private ?int $itemsPerPage = null;
+    private int $itemsPerPage;
 
     private function __construct()
     {

@@ -28,7 +28,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         private ShortCodeHelperInterface $shortCodeHelper,
         private DoctrineBatchHelperInterface $batchHelper
     ) {
-        $this->shortUrlRepo = $this->em->getRepository(ShortUrl::class); // @phpstan-ignore-line
+        $this->shortUrlRepo = $this->em->getRepository(ShortUrl::class);
     }
 
     /**

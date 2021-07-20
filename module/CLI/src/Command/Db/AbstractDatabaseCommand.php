@@ -32,6 +32,6 @@ abstract class AbstractDatabaseCommand extends AbstractLockedCommand
 
     protected function getLockConfig(): LockedCommandConfig
     {
-        return LockedCommandConfig::blocking($this->getName());
+        return LockedCommandConfig::blocking($this->getName() ?? static::class);
     }
 }

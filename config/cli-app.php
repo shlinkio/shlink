@@ -2,13 +2,11 @@
 
 declare(strict_types=1);
 
-use Mezzio\Application;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Application as CliApp;
 
-return static function (): void {
+return (static function () {
     /** @var ContainerInterface $container */
     $container = include __DIR__ . '/container.php';
-    $app = $container->get(Application::class);
-
-    $app->run();
-};
+    return $container->get(CliApp::class);
+})();

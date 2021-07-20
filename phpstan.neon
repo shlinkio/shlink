@@ -1,5 +1,11 @@
+includes:
+	- vendor/phpstan/phpstan-doctrine/extension.neon
+	- vendor/phpstan/phpstan-symfony/extension.neon
 parameters:
 	checkMissingIterableValueType: false
 	checkGenericClassInNonGenericObjectType: false
-	ignoreErrors:
-		- '#If condition is always false#'
+	symfony:
+		console_application_loader: 'config/cli-app.php'
+	doctrine:
+		repositoryClass: Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository
+		objectManagerLoader: 'config/entity-manager.php'

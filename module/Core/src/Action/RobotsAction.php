@@ -23,6 +23,7 @@ class RobotsAction implements RequestHandlerInterface, StatusCodeInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        // @phpstan-ignore-next-line The "Response" phpdoc is wrong
         return new Response(self::STATUS_OK, ['Content-type' => 'text/plain'], $this->buildRobots());
     }
 
