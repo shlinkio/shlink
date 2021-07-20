@@ -35,25 +35,16 @@ if ($isApiTest) {
     $coverage = new CodeCoverage((new Selector())->forLineCoverage($filter), $filter);
 }
 
-$buildDbConnection = function (): array {
+$buildDbConnection = static function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
     $isCi = env('CI', false);
-    $getMysqlHost = fn (string $driver) => sprintf('shlink_db%s', $driver === 'mysql' ? '' : '_maria');
-    $getCiMysqlPort = fn (string $driver) => $driver === 'mysql' ? '3307' : '3308';
+    $getMysqlHost = static fn (string $driver) => sprintf('shlink_db%s', $driver === 'mysql' ? '' : '_maria');
+    $getCiMysqlPort = static fn (string $driver) => $driver === 'mysql' ? '3307' : '3308';
 
-    $driverConfigMap = [
+    return match ($driver) {
         'sqlite' => [
             'driver' => 'pdo_sqlite',
             'path' => sys_get_temp_dir() . '/shlink-tests.db',
-        ],
-        'mysql' => [
-            'driver' => 'pdo_mysql',
-            'host' => $isCi ? '127.0.0.1' : $getMysqlHost($driver),
-            'port' => $isCi ? $getCiMysqlPort($driver) : '3306',
-            'user' => 'root',
-            'password' => 'root',
-            'dbname' => 'shlink_test',
-            'charset' => 'utf8',
         ],
         'postgres' => [
             'driver' => 'pdo_pgsql',
@@ -71,10 +62,16 @@ $buildDbConnection = function (): array {
             'password' => 'Passw0rd!',
             'dbname' => 'shlink_test',
         ],
-    ];
-    $driverConfigMap['maria'] = $driverConfigMap['mysql'];
-
-    return $driverConfigMap[$driver] ?? [];
+        default => [ // mysql and maria
+            'driver' => 'pdo_mysql',
+            'host' => $isCi ? '127.0.0.1' : $getMysqlHost($driver),
+            'port' => $isCi ? $getCiMysqlPort($driver) : '3306',
+            'user' => 'root',
+            'password' => 'root',
+            'dbname' => 'shlink_test',
+            'charset' => 'utf8',
+        ],
+    };
 };
 
 $buildTestLoggerConfig = fn (string $handlerName, string $filename) => [
