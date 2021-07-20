@@ -62,11 +62,11 @@
     },
     "require-dev": {
         "devster/ubench": "^2.1",
-        "dms/phpunit-arraysubset-asserts": "^v0.3.0",
+        "dms/phpunit-arraysubset-asserts": "^0.3.0",
         "eaglewu/swoole-ide-helper": "dev-master",
         "infection/infection": "^0.23.0",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/phpstan": "^0.12.92",
+        "phpstan/phpstan": "^0.12.93",
         "phpstan/phpstan-doctrine": "^0.12.42",
         "phpstan/phpstan-symfony": "^0.12.41",
         "phpunit/php-code-coverage": "^9.2",
