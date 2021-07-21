@@ -46,6 +46,8 @@ return [
             Util\DoctrineBatchHelper::class => ConfigAbstractFactory::class,
             Util\RedirectResponseHelper::class => ConfigAbstractFactory::class,
 
+            Config\NotFoundRedirectResolver::class => ConfigAbstractFactory::class,
+
             Action\RedirectAction::class => ConfigAbstractFactory::class,
             Action\PixelAction::class => ConfigAbstractFactory::class,
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
@@ -75,7 +77,8 @@ return [
         ErrorHandler\NotFoundTrackerMiddleware::class => [Visit\RequestTracker::class],
         ErrorHandler\NotFoundRedirectHandler::class => [
             NotFoundRedirectOptions::class,
-            Util\RedirectResponseHelper::class,
+            Config\NotFoundRedirectResolver::class,
+            Domain\DomainService::class,
         ],
 
         Options\AppOptions::class => ['config.app_options'],
@@ -117,6 +120,8 @@ return [
         Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
         Util\DoctrineBatchHelper::class => ['em'],
         Util\RedirectResponseHelper::class => [Options\UrlShortenerOptions::class],
+
+        Config\NotFoundRedirectResolver::class => [Util\RedirectResponseHelper::class],
 
         Action\RedirectAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,

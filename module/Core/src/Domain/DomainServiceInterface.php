@@ -22,4 +22,6 @@ interface DomainServiceInterface
     public function getDomain(string $domainId): Domain;
 
     public function getOrCreate(string $authority): Domain;
+
+    public function findByAuthority(string $authority): ?Domain;
 }

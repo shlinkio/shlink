@@ -54,10 +54,15 @@ class DomainService implements DomainServiceInterface
         return $domain;
     }
 
-    public function getOrCreate(string $authority): Domain
+    public function findByAuthority(string $authority): ?Domain
     {
         $repo = $this->em->getRepository(Domain::class);
-        $domain = $repo->findOneBy(['authority' => $authority]) ?? new Domain($authority);
+        return $repo->findOneBy(['authority' => $authority]);
+    }
+
+    public function getOrCreate(string $authority): Domain
+    {
+        $domain = $this->findByAuthority($authority) ?? new Domain($authority);
 
         $this->em->persist($domain);
         $this->em->flush();
