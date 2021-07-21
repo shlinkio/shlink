@@ -115,7 +115,11 @@ return [
         ],
         Service\ShortUrl\ShortUrlResolver::class => ['em'],
         Service\ShortUrl\ShortCodeHelper::class => ['em'],
-        Domain\DomainService::class => ['em', 'config.url_shortener.domain.hostname'],
+        Domain\DomainService::class => [
+            'em',
+            'config.url_shortener.domain.hostname',
+            Options\NotFoundRedirectOptions::class,
+        ],
 
         Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
         Util\DoctrineBatchHelper::class => ['em'],

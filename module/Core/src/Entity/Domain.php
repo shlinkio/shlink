@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Entity;
 use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
+use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 
 class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirectConfigInterface
 {
@@ -56,5 +57,12 @@ class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirec
     public function hasBaseUrlRedirect(): bool
     {
         return $this->baseUrlRedirect !== null;
+    }
+
+    public function configureNotFoundRedirects(NotFoundRedirects $redirects): void
+    {
+        $this->baseUrlRedirect = $redirects->baseUrlRedirect();
+        $this->regular404Redirect = $redirects->regular404Redirect();
+        $this->invalidShortUrlRedirect = $redirects->invalidShortUrlRedirect();
     }
 }

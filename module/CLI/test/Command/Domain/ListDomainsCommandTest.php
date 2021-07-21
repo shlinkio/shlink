@@ -10,6 +10,8 @@ use Shlinkio\Shlink\CLI\Command\Domain\ListDomainsCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
+use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -40,9 +42,9 @@ class ListDomainsCommandTest extends TestCase
 
         OUTPUT;
         $listDomains = $this->domainService->listDomains()->willReturn([
-            new DomainItem('foo.com', true),
-            new DomainItem('bar.com', false),
-            new DomainItem('baz.com', false),
+            DomainItem::forDefaultDomain('foo.com', new NotFoundRedirectOptions()),
+            DomainItem::forExistingDomain(new Domain('bar.com')),
+            DomainItem::forExistingDomain(new Domain('baz.com')),
         ]);
 
         $this->commandTester->execute([]);
