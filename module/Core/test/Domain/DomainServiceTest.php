@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
@@ -149,6 +150,36 @@ class DomainServiceTest extends TestCase
         $getRepo->shouldHaveBeenCalledOnce();
         $persist->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideFoundDomains
+     */
+    public function configureNotFoundRedirectsConfiguresFetchedDomain(?Domain $foundDomain): void
+    {
+        $authority = 'example.com';
+        $repo = $this->prophesize(DomainRepositoryInterface::class);
+        $repo->findOneBy(['authority' => $authority])->willReturn($foundDomain);
+        $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
+        $persist = $this->em->persist($foundDomain ?? Argument::type(Domain::class));
+        $flush = $this->em->flush();
+
+        $result = $this->domainService->configureNotFoundRedirects($authority, new NotFoundRedirects(
+            'foo.com',
+            'bar.com',
+            'baz.com',
+        ));
+
+        if ($foundDomain !== null) {
+            self::assertSame($result, $foundDomain);
+        }
+        self::assertEquals('foo.com', $result->baseUrlRedirect());
+        self::assertEquals('bar.com', $result->regular404Redirect());
+        self::assertEquals('baz.com', $result->invalidShortUrlRedirect());
+        $getRepo->shouldHaveBeenCalledOnce();
+        $persist->shouldHaveBeenCalledOnce();
+        $flush->shouldHaveBeenCalledTimes(2);
     }
 
     public function provideFoundDomains(): iterable
