@@ -15,7 +15,7 @@ class SimpleShortUrlRelationResolver implements ShortUrlRelationResolverInterfac
 {
     public function resolveDomain(?string $domain): ?Domain
     {
-        return $domain !== null ? new Domain($domain) : null;
+        return $domain !== null ? Domain::withAuthority($domain) : null;
     }
 
     /**

@@ -340,9 +340,9 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     {
         $start = Chronos::parse('2020-03-05 20:18:30');
 
-        $wrongDomain = new Domain('wrong.com');
+        $wrongDomain = Domain::withAuthority('wrong.com');
         $this->getEntityManager()->persist($wrongDomain);
-        $rightDomain = new Domain('right.com');
+        $rightDomain = Domain::withAuthority('right.com');
         $this->getEntityManager()->persist($rightDomain);
 
         $this->getEntityManager()->flush();

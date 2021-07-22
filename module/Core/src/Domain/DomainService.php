@@ -67,7 +67,7 @@ class DomainService implements DomainServiceInterface
 
     public function getOrCreate(string $authority): Domain
     {
-        $domain = $this->findByAuthority($authority) ?? new Domain($authority);
+        $domain = $this->findByAuthority($authority) ?? Domain::withAuthority($authority);
 
         $this->em->persist($domain);
         $this->em->flush();

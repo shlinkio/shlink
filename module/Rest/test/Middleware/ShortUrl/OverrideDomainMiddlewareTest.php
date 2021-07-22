@@ -82,19 +82,23 @@ class OverrideDomainMiddlewareTest extends TestCase
 
     public function provideBodies(): iterable
     {
-        yield 'no domain provided' => [new Domain('foo.com'), [], [ShortUrlInputFilter::DOMAIN => 'foo.com']];
+        yield 'no domain provided' => [
+            Domain::withAuthority('foo.com'),
+            [],
+            [ShortUrlInputFilter::DOMAIN => 'foo.com'],
+        ];
         yield 'other domain provided' => [
-            new Domain('bar.com'),
+            Domain::withAuthority('bar.com'),
             [ShortUrlInputFilter::DOMAIN => 'foo.com'],
             [ShortUrlInputFilter::DOMAIN => 'bar.com'],
         ];
         yield 'same domain provided' => [
-            new Domain('baz.com'),
+            Domain::withAuthority('baz.com'),
             [ShortUrlInputFilter::DOMAIN => 'baz.com'],
             [ShortUrlInputFilter::DOMAIN => 'baz.com'],
         ];
         yield 'more body params' => [
-            new Domain('doma.in'),
+            Domain::withAuthority('doma.in'),
             [ShortUrlInputFilter::DOMAIN => 'baz.com', 'something' => 'else', 'foo' => 123],
             [ShortUrlInputFilter::DOMAIN => 'doma.in', 'something' => 'else', 'foo' => 123],
         ];
@@ -106,7 +110,7 @@ class OverrideDomainMiddlewareTest extends TestCase
      */
     public function setsRequestAttributeWhenMethodIsNotPost(string $method): void
     {
-        $domain = new Domain('something.com');
+        $domain = Domain::withAuthority('something.com');
         $request = $this->requestWithApiKey()->withMethod($method);
         $hasRole = $this->apiKey->hasRole(Role::DOMAIN_SPECIFIC)->willReturn(true);
         $getRoleMeta = $this->apiKey->getRoleMeta(Role::DOMAIN_SPECIFIC)->willReturn(['domain_id' => '123']);

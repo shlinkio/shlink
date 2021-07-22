@@ -78,7 +78,7 @@ class NotFoundRedirectHandlerTest extends TestCase
         }];
         yield 'non-redirecting domain' => [function (ObjectProphecy $domainService, ObjectProphecy $resolver): void {
             $domainService->findByAuthority(Argument::cetera())
-                ->willReturn(new Domain(''))
+                ->willReturn(Domain::withAuthority(''))
                 ->shouldBeCalledOnce();
             $resolver->resolveRedirectResponse(Argument::cetera())
                 ->willReturn(null)
@@ -109,7 +109,7 @@ class NotFoundRedirectHandlerTest extends TestCase
     public function domainRedirectIsUsedIfFound(): void
     {
         $expectedResp = new Response();
-        $domain = new Domain('');
+        $domain = Domain::withAuthority('');
 
         $findDomain = $this->domainService->findByAuthority(Argument::cetera())->willReturn($domain);
         $resolveRedirect = $this->resolver->resolveRedirectResponse(

@@ -35,7 +35,7 @@ class ListDomainsCommandTest extends TestCase
      */
     public function allDomainsAreProperlyPrinted(array $input, string $expectedOutput): void
     {
-        $bazDomain = new Domain('baz.com');
+        $bazDomain = Domain::withAuthority('baz.com');
         $bazDomain->configureNotFoundRedirects(new NotFoundRedirects(
             null,
             'https://foo.com/baz-domain/regular',
@@ -47,7 +47,7 @@ class ListDomainsCommandTest extends TestCase
                 'base_url' => 'https://foo.com/default/base',
                 'invalid_short_url' => 'https://foo.com/default/invalid',
             ])),
-            DomainItem::forExistingDomain(new Domain('bar.com')),
+            DomainItem::forExistingDomain(Domain::withAuthority('bar.com')),
             DomainItem::forExistingDomain($bazDomain),
         ]);
 

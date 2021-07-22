@@ -97,7 +97,7 @@ class TagRepositoryTest extends DatabaseTestCase
     /** @test */
     public function tagExistsReturnsExpectedResultBasedOnApiKey(): void
     {
-        $domain = new Domain('foo.com');
+        $domain = Domain::withAuthority('foo.com');
         $this->getEntityManager()->persist($domain);
         $this->getEntityManager()->flush();
 

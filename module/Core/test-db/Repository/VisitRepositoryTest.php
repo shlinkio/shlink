@@ -222,7 +222,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     /** @test */
     public function countVisitsReturnsExpectedResultBasedOnApiKey(): void
     {
-        $domain = new Domain('foo.com');
+        $domain = Domain::withAuthority('foo.com');
         $this->getEntityManager()->persist($domain);
 
         $this->getEntityManager()->flush();

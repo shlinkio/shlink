@@ -35,7 +35,7 @@ class ListDomainsActionTest extends TestCase
         $apiKey = ApiKey::create();
         $domains = [
             DomainItem::forDefaultDomain('bar.com', new NotFoundRedirectOptions()),
-            DomainItem::forExistingDomain(new Domain('baz.com')),
+            DomainItem::forExistingDomain(Domain::withAuthority('baz.com')),
         ];
         $listDomains = $this->domainService->listDomains($apiKey)->willReturn($domains);
 

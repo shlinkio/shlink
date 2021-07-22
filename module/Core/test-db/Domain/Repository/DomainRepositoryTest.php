@@ -28,19 +28,19 @@ class DomainRepositoryTest extends DatabaseTestCase
     /** @test */
     public function findDomainsReturnsExpectedResult(): void
     {
-        $fooDomain = new Domain('foo.com');
+        $fooDomain = Domain::withAuthority('foo.com');
         $this->getEntityManager()->persist($fooDomain);
         $this->getEntityManager()->persist($this->createShortUrl($fooDomain));
 
-        $barDomain = new Domain('bar.com');
+        $barDomain = Domain::withAuthority('bar.com');
         $this->getEntityManager()->persist($barDomain);
         $this->getEntityManager()->persist($this->createShortUrl($barDomain));
 
-        $bazDomain = new Domain('baz.com');
+        $bazDomain = Domain::withAuthority('baz.com');
         $this->getEntityManager()->persist($bazDomain);
         $this->getEntityManager()->persist($this->createShortUrl($bazDomain));
 
-        $detachedDomain = new Domain('detached.com');
+        $detachedDomain = Domain::withAuthority('detached.com');
         $this->getEntityManager()->persist($detachedDomain);
 
         $this->getEntityManager()->flush();
@@ -59,15 +59,15 @@ class DomainRepositoryTest extends DatabaseTestCase
         $authorAndDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($authorAndDomainApiKey);
 
-        $fooDomain = new Domain('foo.com');
+        $fooDomain = Domain::withAuthority('foo.com');
         $this->getEntityManager()->persist($fooDomain);
         $this->getEntityManager()->persist($this->createShortUrl($fooDomain, $authorApiKey));
 
-        $barDomain = new Domain('bar.com');
+        $barDomain = Domain::withAuthority('bar.com');
         $this->getEntityManager()->persist($barDomain);
         $this->getEntityManager()->persist($this->createShortUrl($barDomain, $authorAndDomainApiKey));
 
-        $bazDomain = new Domain('baz.com');
+        $bazDomain = Domain::withAuthority('baz.com');
         $this->getEntityManager()->persist($bazDomain);
         $this->getEntityManager()->persist($this->createShortUrl($bazDomain, $authorApiKey));
 

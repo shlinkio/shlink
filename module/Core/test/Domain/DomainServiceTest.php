@@ -55,52 +55,52 @@ class DomainServiceTest extends TestCase
         $default = DomainItem::forDefaultDomain('default.com', new NotFoundRedirectOptions());
         $adminApiKey = ApiKey::create();
         $domainSpecificApiKey = ApiKey::fromMeta(
-            ApiKeyMeta::withRoles(RoleDefinition::forDomain((new Domain(''))->setId('123'))),
+            ApiKeyMeta::withRoles(RoleDefinition::forDomain(Domain::withAuthority('')->setId('123'))),
         );
 
         yield 'empty list without API key' => [[], [$default], null];
         yield 'one item without API key' => [
-            [new Domain('bar.com')],
-            [$default, DomainItem::forExistingDomain(new Domain('bar.com'))],
+            [Domain::withAuthority('bar.com')],
+            [$default, DomainItem::forExistingDomain(Domain::withAuthority('bar.com'))],
             null,
         ];
         yield 'multiple items without API key' => [
-            [new Domain('foo.com'), new Domain('bar.com')],
+            [Domain::withAuthority('foo.com'), Domain::withAuthority('bar.com')],
             [
                 $default,
-                DomainItem::forExistingDomain(new Domain('foo.com')),
-                DomainItem::forExistingDomain(new Domain('bar.com')),
+                DomainItem::forExistingDomain(Domain::withAuthority('foo.com')),
+                DomainItem::forExistingDomain(Domain::withAuthority('bar.com')),
             ],
             null,
         ];
 
         yield 'empty list with admin API key' => [[], [$default], $adminApiKey];
         yield 'one item with admin API key' => [
-            [new Domain('bar.com')],
-            [$default, DomainItem::forExistingDomain(new Domain('bar.com'))],
+            [Domain::withAuthority('bar.com')],
+            [$default, DomainItem::forExistingDomain(Domain::withAuthority('bar.com'))],
             $adminApiKey,
         ];
         yield 'multiple items with admin API key' => [
-            [new Domain('foo.com'), new Domain('bar.com')],
+            [Domain::withAuthority('foo.com'), Domain::withAuthority('bar.com')],
             [
                 $default,
-                DomainItem::forExistingDomain(new Domain('foo.com')),
-                DomainItem::forExistingDomain(new Domain('bar.com')),
+                DomainItem::forExistingDomain(Domain::withAuthority('foo.com')),
+                DomainItem::forExistingDomain(Domain::withAuthority('bar.com')),
             ],
             $adminApiKey,
         ];
 
         yield 'empty list with domain-specific API key' => [[], [], $domainSpecificApiKey];
         yield 'one item with domain-specific API key' => [
-            [new Domain('bar.com')],
-            [DomainItem::forExistingDomain(new Domain('bar.com'))],
+            [Domain::withAuthority('bar.com')],
+            [DomainItem::forExistingDomain(Domain::withAuthority('bar.com'))],
             $domainSpecificApiKey,
         ];
         yield 'multiple items with domain-specific API key' => [
-            [new Domain('foo.com'), new Domain('bar.com')],
+            [Domain::withAuthority('foo.com'), Domain::withAuthority('bar.com')],
             [
-                DomainItem::forExistingDomain(new Domain('foo.com')),
-                DomainItem::forExistingDomain(new Domain('bar.com')),
+                DomainItem::forExistingDomain(Domain::withAuthority('foo.com')),
+                DomainItem::forExistingDomain(Domain::withAuthority('bar.com')),
             ],
             $domainSpecificApiKey,
         ];
@@ -120,7 +120,7 @@ class DomainServiceTest extends TestCase
     /** @test */
     public function getDomainReturnsEntityWhenFound(): void
     {
-        $domain = new Domain('');
+        $domain = Domain::withAuthority('');
         $find = $this->em->find(Domain::class, '123')->willReturn($domain);
 
         $result = $this->domainService->getDomain('123');
@@ -185,6 +185,6 @@ class DomainServiceTest extends TestCase
     public function provideFoundDomains(): iterable
     {
         yield 'domain not found' => [null];
-        yield 'domain found' => [new Domain('')];
+        yield 'domain found' => [Domain::withAuthority('')];
     }
 }
