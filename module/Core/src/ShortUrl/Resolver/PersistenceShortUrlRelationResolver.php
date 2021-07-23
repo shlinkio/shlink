@@ -41,7 +41,9 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
 
     private function memoizeNewDomain(string $domain): Domain
     {
-        return $this->memoizedNewDomains[$domain] = $this->memoizedNewDomains[$domain] ?? new Domain($domain);
+        return $this->memoizedNewDomains[$domain] = $this->memoizedNewDomains[$domain] ?? Domain::withAuthority(
+            $domain,
+        );
     }
 
     /**

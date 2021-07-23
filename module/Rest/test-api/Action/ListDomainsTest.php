@@ -33,6 +33,10 @@ class ListDomainsTest extends ApiTestCase
                 'isDefault' => true,
             ],
             [
+                'domain' => 'detached-with-redirects.com',
+                'isDefault' => false,
+            ],
+            [
                 'domain' => 'example.com',
                 'isDefault' => false,
             ],

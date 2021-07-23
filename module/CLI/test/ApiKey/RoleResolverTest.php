@@ -36,7 +36,7 @@ class RoleResolverTest extends TestCase
         int $expectedDomainCalls,
     ): void {
         $getDomain = $this->domainService->getOrCreate('example.com')->willReturn(
-            (new Domain('example.com'))->setId('1'),
+            Domain::withAuthority('example.com')->setId('1'),
         );
 
         $result = $this->resolver->determineRoles($input);
@@ -47,7 +47,7 @@ class RoleResolverTest extends TestCase
 
     public function provideRoles(): iterable
     {
-        $domain = (new Domain('example.com'))->setId('1');
+        $domain = Domain::withAuthority('example.com')->setId('1');
         $buildInput = function (array $definition): InputInterface {
             $input = $this->prophesize(InputInterface::class);
 

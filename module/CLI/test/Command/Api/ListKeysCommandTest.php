@@ -76,11 +76,13 @@ class ListKeysCommandTest extends TestCase
             [
                 $apiKey1 = ApiKey::create(),
                 $apiKey2 = $this->apiKeyWithRoles([RoleDefinition::forAuthoredShortUrls()]),
-                $apiKey3 = $this->apiKeyWithRoles([RoleDefinition::forDomain((new Domain('example.com'))->setId('1'))]),
+                $apiKey3 = $this->apiKeyWithRoles(
+                    [RoleDefinition::forDomain(Domain::withAuthority('example.com')->setId('1'))],
+                ),
                 $apiKey4 = ApiKey::create(),
                 $apiKey5 = $this->apiKeyWithRoles([
                     RoleDefinition::forAuthoredShortUrls(),
-                    RoleDefinition::forDomain((new Domain('example.com'))->setId('1')),
+                    RoleDefinition::forDomain(Domain::withAuthority('example.com')->setId('1')),
                 ]),
                 $apiKey6 = ApiKey::create(),
             ],

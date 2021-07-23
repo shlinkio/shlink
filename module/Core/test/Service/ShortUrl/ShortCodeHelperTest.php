@@ -60,7 +60,7 @@ class ShortCodeHelperTest extends TestCase
     public function provideDomains(): iterable
     {
         yield 'no domain' => [null, null];
-        yield 'domain' => [new Domain($authority = 'doma.in'), $authority];
+        yield 'domain' => [Domain::withAuthority($authority = 'doma.in'), $authority];
     }
 
     /** @test */
