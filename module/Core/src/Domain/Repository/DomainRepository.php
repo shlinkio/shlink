@@ -18,8 +18,13 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
     public function findDomainsWithout(?string $excludedAuthority, ?ApiKey $apiKey = null): array
     {
         $qb = $this->createQueryBuilder('d');
-        $qb->join(ShortUrl::class, 's', Join::WITH, 's.domain = d')
-           ->orderBy('d.authority', 'ASC');
+        $qb->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
+           ->orderBy('d.authority', 'ASC')
+           ->groupBy('d')
+           ->having($qb->expr()->gt('COUNT(s.id)', '0'))
+           ->orHaving($qb->expr()->isNotNull('d.baseUrlRedirect'))
+           ->orHaving($qb->expr()->isNotNull('d.regular404Redirect'))
+           ->orHaving($qb->expr()->isNotNull('d.invalidShortUrlRedirect'));
 
         if ($excludedAuthority !== null) {
             $qb->where($qb->expr()->neq('d.authority', ':excludedAuthority'))

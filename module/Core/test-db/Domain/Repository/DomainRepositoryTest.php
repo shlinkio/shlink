@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Domain\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -43,12 +44,32 @@ class DomainRepositoryTest extends DatabaseTestCase
         $detachedDomain = Domain::withAuthority('detached.com');
         $this->getEntityManager()->persist($detachedDomain);
 
+        $detachedWithRedirects = Domain::withAuthority('detached-with-redirects.com');
+        $detachedWithRedirects->configureNotFoundRedirects(new NotFoundRedirects('foo.com', 'bar.com'));
+        $this->getEntityManager()->persist($detachedWithRedirects);
+
         $this->getEntityManager()->flush();
 
-        self::assertEquals([$barDomain, $bazDomain, $fooDomain], $this->repo->findDomainsWithout(null));
-        self::assertEquals([$barDomain, $bazDomain], $this->repo->findDomainsWithout('foo.com'));
-        self::assertEquals([$bazDomain, $fooDomain], $this->repo->findDomainsWithout('bar.com'));
-        self::assertEquals([$barDomain, $fooDomain], $this->repo->findDomainsWithout('baz.com'));
+        self::assertEquals(
+            [$barDomain, $bazDomain, $detachedWithRedirects, $fooDomain],
+            $this->repo->findDomainsWithout(null),
+        );
+        self::assertEquals(
+            [$barDomain, $bazDomain, $detachedWithRedirects],
+            $this->repo->findDomainsWithout('foo.com'),
+        );
+        self::assertEquals(
+            [$bazDomain, $detachedWithRedirects, $fooDomain],
+            $this->repo->findDomainsWithout('bar.com'),
+        );
+        self::assertEquals(
+            [$barDomain, $detachedWithRedirects, $fooDomain],
+            $this->repo->findDomainsWithout('baz.com'),
+        );
+        self::assertEquals(
+            [$barDomain, $bazDomain, $fooDomain],
+            $this->repo->findDomainsWithout('detached-with-redirects.com'),
+        );
     }
 
     /** @test */
@@ -71,6 +92,13 @@ class DomainRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($bazDomain);
         $this->getEntityManager()->persist($this->createShortUrl($bazDomain, $authorApiKey));
 
+//        $detachedDomain = Domain::withAuthority('detached.com');
+//        $this->getEntityManager()->persist($detachedDomain);
+//
+//        $detachedWithRedirects = Domain::withAuthority('detached-with-redirects.com');
+//        $detachedWithRedirects->configureNotFoundRedirects(new NotFoundRedirects('foo.com', 'bar.com'));
+//        $this->getEntityManager()->persist($detachedWithRedirects);
+
         $this->getEntityManager()->flush();
 
         $authorAndDomainApiKey->registerRole(RoleDefinition::forDomain($fooDomain));
@@ -79,12 +107,21 @@ class DomainRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($fooDomainApiKey);
 
         $barDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($barDomain)));
-        $this->getEntityManager()->persist($fooDomainApiKey);
+        $this->getEntityManager()->persist($barDomainApiKey);
+
+//        $detachedWithRedirectsApiKey = ApiKey::fromMeta(
+//            ApiKeyMeta::withRoles(RoleDefinition::forDomain($detachedWithRedirects)),
+//        );
+//        $this->getEntityManager()->persist($detachedWithRedirectsApiKey);
 
         $this->getEntityManager()->flush();
 
         self::assertEquals([$fooDomain], $this->repo->findDomainsWithout(null, $fooDomainApiKey));
         self::assertEquals([$barDomain], $this->repo->findDomainsWithout(null, $barDomainApiKey));
+//        self::assertEquals(
+//            [$detachedWithRedirects],
+//            $this->repo->findDomainsWithout(null, $detachedWithRedirectsApiKey),
+//        );
         self::assertEquals([$bazDomain, $fooDomain], $this->repo->findDomainsWithout(null, $authorApiKey));
         self::assertEquals([], $this->repo->findDomainsWithout(null, $authorAndDomainApiKey));
     }
