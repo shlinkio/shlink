@@ -1,5 +1,5 @@
 {
-    "openapi": "3.0.0",
+    "openapi": "3.0.3",
     "info": {
         "title": "Shlink",
         "description": "Shlink, the self-hosted URL shortener",
@@ -101,6 +101,9 @@
 
         "/rest/v{version}/domains": {
             "$ref": "paths/v2_domains.json"
+        },
+        "/rest/v{version}/domains/redirects": {
+            "$ref": "paths/v2_domains_redirects.json"
         },
 
         "/rest/v{version}/mercure-info": {
