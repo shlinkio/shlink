@@ -92,12 +92,12 @@ class DomainRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($bazDomain);
         $this->getEntityManager()->persist($this->createShortUrl($bazDomain, $authorApiKey));
 
-//        $detachedDomain = Domain::withAuthority('detached.com');
-//        $this->getEntityManager()->persist($detachedDomain);
-//
-//        $detachedWithRedirects = Domain::withAuthority('detached-with-redirects.com');
-//        $detachedWithRedirects->configureNotFoundRedirects(new NotFoundRedirects('foo.com', 'bar.com'));
-//        $this->getEntityManager()->persist($detachedWithRedirects);
+        $detachedDomain = Domain::withAuthority('detached.com');
+        $this->getEntityManager()->persist($detachedDomain);
+
+        $detachedWithRedirects = Domain::withAuthority('detached-with-redirects.com');
+        $detachedWithRedirects->configureNotFoundRedirects(new NotFoundRedirects('foo.com', 'bar.com'));
+        $this->getEntityManager()->persist($detachedWithRedirects);
 
         $this->getEntityManager()->flush();
 
@@ -109,19 +109,19 @@ class DomainRepositoryTest extends DatabaseTestCase
         $barDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($barDomain)));
         $this->getEntityManager()->persist($barDomainApiKey);
 
-//        $detachedWithRedirectsApiKey = ApiKey::fromMeta(
-//            ApiKeyMeta::withRoles(RoleDefinition::forDomain($detachedWithRedirects)),
-//        );
-//        $this->getEntityManager()->persist($detachedWithRedirectsApiKey);
+        $detachedWithRedirectsApiKey = ApiKey::fromMeta(
+            ApiKeyMeta::withRoles(RoleDefinition::forDomain($detachedWithRedirects)),
+        );
+        $this->getEntityManager()->persist($detachedWithRedirectsApiKey);
 
         $this->getEntityManager()->flush();
 
         self::assertEquals([$fooDomain], $this->repo->findDomainsWithout(null, $fooDomainApiKey));
         self::assertEquals([$barDomain], $this->repo->findDomainsWithout(null, $barDomainApiKey));
-//        self::assertEquals(
-//            [$detachedWithRedirects],
-//            $this->repo->findDomainsWithout(null, $detachedWithRedirectsApiKey),
-//        );
+        self::assertEquals(
+            [$detachedWithRedirects],
+            $this->repo->findDomainsWithout(null, $detachedWithRedirectsApiKey),
+        );
         self::assertEquals([$bazDomain, $fooDomain], $this->repo->findDomainsWithout(null, $authorApiKey));
         self::assertEquals([], $this->repo->findDomainsWithout(null, $authorAndDomainApiKey));
     }

@@ -2,22 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\ShortUrl\Spec;
+namespace Shlinkio\Shlink\Core\Domain\Spec;
 
 use Happyr\DoctrineSpecification\Filter\Filter;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\BaseSpecification;
-use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class BelongsToApiKey extends BaseSpecification
+class IsDomain extends BaseSpecification
 {
-    public function __construct(private ApiKey $apiKey, ?string $context = null)
+    public function __construct(private string $domainId, ?string $context = null)
     {
         parent::__construct($context);
     }
 
     protected function getSpec(): Filter
     {
-        return Spec::eq('authorApiKey', $this->apiKey);
+        return Spec::eq('id', $this->domainId);
     }
 }
