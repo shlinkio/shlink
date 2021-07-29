@@ -59,15 +59,21 @@ class DomainService implements DomainServiceInterface
         return $domain;
     }
 
-    public function findByAuthority(string $authority): ?Domain
+    public function findByAuthority(string $authority, ?ApiKey $apiKey = null): ?Domain
     {
         $repo = $this->em->getRepository(Domain::class);
-        return $repo->findOneBy(['authority' => $authority]);
+        return $repo->findOneByAuthority($authority, $apiKey);
     }
 
-    public function getOrCreate(string $authority): Domain
+    public function getOrCreate(string $authority, ?ApiKey $apiKey = null): Domain
     {
-        $domain = $this->findByAuthority($authority) ?? Domain::withAuthority($authority);
+        $domain = $this->findByAuthority($authority, $apiKey);
+        if ($domain === null && $apiKey?->hasRole(Role::DOMAIN_SPECIFIC)) {
+            // This API key is restricted to one domain and a different one was tried to be fetched
+            throw DomainNotFoundException::fromAuthority($authority);
+        }
+
+        $domain = $domain ?? Domain::withAuthority($authority);
 
         $this->em->persist($domain);
         $this->em->flush();
@@ -75,9 +81,12 @@ class DomainService implements DomainServiceInterface
         return $domain;
     }
 
-    public function configureNotFoundRedirects(string $authority, NotFoundRedirects $notFoundRedirects): Domain
-    {
-        $domain = $this->getOrCreate($authority);
+    public function configureNotFoundRedirects(
+        string $authority,
+        NotFoundRedirects $notFoundRedirects,
+        ?ApiKey $apiKey = null
+    ): Domain {
+        $domain = $this->getOrCreate($authority, $apiKey);
         $domain->configureNotFoundRedirects($notFoundRedirects);
 
         $this->em->flush();

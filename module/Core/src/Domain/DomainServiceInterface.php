@@ -22,9 +22,19 @@ interface DomainServiceInterface
      */
     public function getDomain(string $domainId): Domain;
 
-    public function getOrCreate(string $authority): Domain;
+    /**
+     * @throws DomainNotFoundException If the API key is restricted to one domain and a different one is provided
+     */
+    public function getOrCreate(string $authority, ?ApiKey $apiKey = null): Domain;
 
-    public function findByAuthority(string $authority): ?Domain;
+    public function findByAuthority(string $authority, ?ApiKey $apiKey = null): ?Domain;
 
-    public function configureNotFoundRedirects(string $authority, NotFoundRedirects $notFoundRedirects): Domain;
+    /**
+     * @throws DomainNotFoundException If the API key is restricted to one domain and a different one is provided
+     */
+    public function configureNotFoundRedirects(
+        string $authority,
+        NotFoundRedirects $notFoundRedirects,
+        ?ApiKey $apiKey = null,
+    ): Domain;
 }

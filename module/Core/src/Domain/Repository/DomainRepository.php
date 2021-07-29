@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Domain\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Spec;
 use Shlinkio\Shlink\Core\Domain\Spec\IsDomain;
@@ -22,14 +23,8 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
      */
     public function findDomainsWithout(?string $excludedAuthority, ?ApiKey $apiKey = null): array
     {
-        $qb = $this->createQueryBuilder('d');
-        $qb->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
-           ->orderBy('d.authority', 'ASC')
-           ->groupBy('d')
-           ->having($qb->expr()->gt('COUNT(s.id)', '0'))
-           ->orHaving($qb->expr()->isNotNull('d.baseUrlRedirect'))
-           ->orHaving($qb->expr()->isNotNull('d.regular404Redirect'))
-           ->orHaving($qb->expr()->isNotNull('d.invalidShortUrlRedirect'));
+        $qb = $this->createPublicDomainsQueryBuilder();
+        $qb->orderBy('d.authority', 'ASC');
 
         $specs = $this->determineExtraSpecs($excludedAuthority, $apiKey);
         foreach ($specs as [$alias, $spec]) {
@@ -37,6 +32,34 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findOneByAuthority(string $authority, ?ApiKey $apiKey = null): ?Domain
+    {
+        $qb = $this->createPublicDomainsQueryBuilder();
+        $qb->where($qb->expr()->eq('d.authority', ':authority'))
+           ->setParameter('authority', $authority)
+           ->setMaxResults(1);
+
+        $specs = $this->determineExtraSpecs(null, $apiKey);
+        foreach ($specs as [$alias, $spec]) {
+            $this->applySpecification($qb, $spec, $alias);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    private function createPublicDomainsQueryBuilder(): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('d');
+        $qb->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
+           ->groupBy('d')
+           ->having($qb->expr()->gt('COUNT(s.id)', '0'))
+           ->orHaving($qb->expr()->isNotNull('d.baseUrlRedirect'))
+           ->orHaving($qb->expr()->isNotNull('d.regular404Redirect'))
+           ->orHaving($qb->expr()->isNotNull('d.invalidShortUrlRedirect'));
+
+        return $qb;
     }
 
     private function determineExtraSpecs(?string $excludedAuthority, ?ApiKey $apiKey): iterable

@@ -27,7 +27,7 @@ class DomainRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function findDomainsReturnsExpectedResult(): void
+    public function expectedDomainsAreFoundWhenNoApiKeyIsInvolved(): void
     {
         $fooDomain = Domain::withAuthority('foo.com');
         $this->getEntityManager()->persist($fooDomain);
@@ -70,10 +70,15 @@ class DomainRepositoryTest extends DatabaseTestCase
             [$barDomain, $bazDomain, $fooDomain],
             $this->repo->findDomainsWithout('detached-with-redirects.com'),
         );
+
+        self::assertEquals($barDomain, $this->repo->findOneByAuthority('bar.com'));
+        self::assertEquals($detachedWithRedirects, $this->repo->findOneByAuthority('detached-with-redirects.com'));
+        self::assertNull($this->repo->findOneByAuthority('does-not-exist.com'));
+        self::assertNull($this->repo->findOneByAuthority('detached.com'));
     }
 
     /** @test */
-    public function findDomainsReturnsJustThoseMatchingProvidedApiKey(): void
+    public function expectedDomainsAreFoundWhenApiKeyIsProvided(): void
     {
         $authorApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($authorApiKey);
@@ -124,6 +129,15 @@ class DomainRepositoryTest extends DatabaseTestCase
         );
         self::assertEquals([$bazDomain, $fooDomain], $this->repo->findDomainsWithout(null, $authorApiKey));
         self::assertEquals([], $this->repo->findDomainsWithout(null, $authorAndDomainApiKey));
+
+        self::assertEquals($fooDomain, $this->repo->findOneByAuthority('foo.com', $authorApiKey));
+        self::assertNull($this->repo->findOneByAuthority('bar.com', $authorApiKey));
+        self::assertEquals($barDomain, $this->repo->findOneByAuthority('bar.com', $barDomainApiKey));
+        self::assertEquals(
+            $detachedWithRedirects,
+            $this->repo->findOneByAuthority('detached-with-redirects.com', $detachedWithRedirectsApiKey),
+        );
+        self::assertNull($this->repo->findOneByAuthority('foo.com', $detachedWithRedirectsApiKey));
     }
 
     private function createShortUrl(Domain $domain, ?ApiKey $apiKey = null): ShortUrl

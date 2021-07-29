@@ -15,4 +15,6 @@ interface DomainRepositoryInterface extends ObjectRepository, EntitySpecificatio
      * @return Domain[]
      */
     public function findDomainsWithout(?string $excludedAuthority, ?ApiKey $apiKey = null): array;
+
+    public function findOneByAuthority(string $authority, ?ApiKey $apiKey = null): ?Domain;
 }
