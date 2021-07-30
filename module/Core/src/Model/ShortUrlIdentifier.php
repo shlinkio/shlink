@@ -32,7 +32,11 @@ final class ShortUrlIdentifier
 
     public static function fromCli(InputInterface $input): self
     {
+        // Using getArguments and getOptions instead of getArgument(...) and getOption(...) because
+        // the later throw an exception if requested options are not defined
+        /** @var string $shortCode */
         $shortCode = $input->getArguments()['shortCode'] ?? '';
+        /** @var string|null $domain */
         $domain = $input->getOptions()['domain'] ?? null;
 
         return new self($shortCode, $domain);
