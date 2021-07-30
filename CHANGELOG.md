@@ -9,17 +9,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1089](https://github.com/shlinkio/shlink/issues/1089) Added new `ENABLE_PERIODIC_VISIT_LOCATE` env var to docker image which schedules the `visit:locate` command every hour when provided with value `true`.
 * [#1082](https://github.com/shlinkio/shlink/issues/1082) Added support for error correction level on QR codes.
 
-    Now, when calling the `GET /{shorCode}/qr-code` URL, you can pass the `errorCorrection` query param with values `L` for Low, `M` for Medium, `Q` for Quartile or `H` for High.
+  Now, when calling the `GET /{shorCode}/qr-code` URL, you can pass the `errorCorrection` query param with values `L` for Low, `M` for Medium, `Q` for Quartile or `H` for High.
 
 * [#1080](https://github.com/shlinkio/shlink/issues/1080) Added support to redirect to URLs as soon as the path starts with a valid short code, appending the rest of the path to the redirected long URL.
 
-    With this, if you have the `https://example.com/abc123` short URL redirecting to `https://www.twitter.com`, a visit to `https://example.com/abc123/shlinkio` will take you to `https://www.twitter.com/shlinkio`.
+  With this, if you have the `https://example.com/abc123` short URL redirecting to `https://www.twitter.com`, a visit to `https://example.com/abc123/shlinkio` will take you to `https://www.twitter.com/shlinkio`.
 
-    This behavior needs to be actively opted in, via installer config options or env vars.
+  This behavior needs to be actively opted in, via installer config options or env vars.
 
 * [#943](https://github.com/shlinkio/shlink/issues/943) Added support to define different "not-found" redirects for every domain handled by Shlink.
 
-    Shlink will continue to allow defining the default values via env vars or config, but afterwards, you can use the `domain:redirects` command to define specific values for every single domain.
+  Shlink will continue to allow defining the default values via env vars or config, but afterwards, you can use the `domain:redirects` command to define specific values for every single domain.
 
 ### Changed
 * [#1118](https://github.com/shlinkio/shlink/issues/1118) Increased phpstan required level to 8.
@@ -32,6 +32,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * *Nothing*
+
+
+## [2.7.2] - 2021-07-30
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1128](https://github.com/shlinkio/shlink/issues/1128) Increased memory limit reserved for the docker image, preventing it from crashing on GeoLite db download.
 
 
 ## [2.7.1] - 2021-05-30
