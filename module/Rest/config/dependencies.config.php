@@ -40,6 +40,7 @@ return [
             Action\Tag\CreateTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\UpdateTagAction::class => ConfigAbstractFactory::class,
             Action\Domain\ListDomainsAction::class => ConfigAbstractFactory::class,
+            Action\Domain\DomainRedirectsAction::class => ConfigAbstractFactory::class,
 
             ImplicitOptionsMiddleware::class => Middleware\EmptyResponseImplicitOptionsMiddlewareFactory::class,
             Middleware\BodyParserMiddleware::class => InvokableFactory::class,
@@ -81,6 +82,7 @@ return [
         Action\Tag\CreateTagsAction::class => [TagService::class],
         Action\Tag\UpdateTagAction::class => [TagService::class],
         Action\Domain\ListDomainsAction::class => [DomainService::class],
+        Action\Domain\DomainRedirectsAction::class => [DomainService::class],
 
         Middleware\CrossDomainMiddleware::class => ['config.cors'],
         Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ['config.url_shortener.domain.hostname'],

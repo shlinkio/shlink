@@ -66,6 +66,39 @@
                     }
                 }
             },
+            "400": {
+                "description": "Provided data is invalid.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "../definitions/Error.json"
+                                },
+                                {
+                                    "type": "object",
+                                    "required": ["invalidElements"],
+                                    "properties": {
+                                        "invalidElements": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "domain",
+                                                    "baseUrlRedirect",
+                                                    "regular404Redirect",
+                                                    "invalidShortUrlRedirect"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
             "500": {
                 "description": "Unexpected error.",
                 "content": {

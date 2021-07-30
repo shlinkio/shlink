@@ -44,6 +44,7 @@ return [
 
         // Domains
         Action\Domain\ListDomainsAction::getRouteDef(),
+        Action\Domain\DomainRedirectsAction::getRouteDef(),
 
         Action\MercureInfoAction::getRouteDef(),
     ],

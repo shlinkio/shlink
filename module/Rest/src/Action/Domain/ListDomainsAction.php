@@ -25,6 +25,8 @@ class ListDomainsAction extends AbstractRestAction
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
         $domainItems = $this->domainService->listDomains($apiKey);
 
+        // TODO Support including not found redirects if requested via query param
+
         return new JsonResponse([
             'domains' => [
                 'data' => $domainItems,
