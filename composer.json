@@ -24,7 +24,6 @@
         "endroid/qr-code": "^4.0",
         "geoip2/geoip2": "^2.9",
         "guzzlehttp/guzzle": "^7.0",
-        "guzzlehttp/psr7": "^1.7",
         "happyr/doctrine-specification": "^2.0",
         "jaybizzle/crawler-detect": "^1.2",
         "laminas/laminas-config": "^3.3",
