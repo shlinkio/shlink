@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.7.2] - 2021-07-30
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1128](https://github.com/shlinkio/shlink/issues/1128) Increased memory limit reserved for the docker image, preventing it from crashing on GeoLite db download.
+
+
 ## [2.7.1] - 2021-05-30
 ### Added
 * *Nothing*
