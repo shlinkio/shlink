@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#1118](https://github.com/shlinkio/shlink/issues/1118) Increased phpstan required level to 8.
+* [#1127](https://github.com/shlinkio/shlink/issues/1127) Updated to infection 0.24.
 
 ### Deprecated
 * *Nothing*
