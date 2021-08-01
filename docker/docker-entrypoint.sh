@@ -25,7 +25,7 @@ fi
 # https://shlink.io/documentation/long-running-tasks/#locate-visits
 # set env var "ENABLE_PERIODIC_VISIT_LOCATE=true" to enable
 if [ $ENABLE_PERIODIC_VISIT_LOCATE ]; then
-  echo "Starting periodic visite locate..."
+  echo "Configuring periodic visit locate..."
   echo "0 * * * * php /etc/shlink/bin/cli visit:locate -q" > /etc/crontabs/root
   /usr/sbin/crond &
 fi
