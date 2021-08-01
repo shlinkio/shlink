@@ -136,7 +136,7 @@
         "test:db:postgres": "DB_DRIVER=postgres composer test:db:sqlite",
         "test:db:ms": "DB_DRIVER=mssql composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
-        "infect:ci:base": "infection --threads=4 --log-verbosity=default --only-covered --skip-initial-tests",
+        "infect:ci:base": "infection --threads=4 --log-verbosity=default --only-covered --only-covering-test-cases --skip-initial-tests",
         "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=80",
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json",
         "infect:ci": "@parallel infect:ci:unit infect:ci:db",
