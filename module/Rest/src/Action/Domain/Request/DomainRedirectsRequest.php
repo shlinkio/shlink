@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Action\Domain\Request;
 
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
+
 use function array_key_exists;
 
 class DomainRedirectsRequest
