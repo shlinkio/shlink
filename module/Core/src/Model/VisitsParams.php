@@ -14,16 +14,23 @@ final class VisitsParams
     private const ALL_ITEMS = -1;
 
     private DateRange $dateRange;
+    private int $page;
     private int $itemsPerPage;
 
     public function __construct(
         ?DateRange $dateRange = null,
-        private int $page = self::FIRST_PAGE,
+        int $page = self::FIRST_PAGE,
         ?int $itemsPerPage = null,
         private bool $excludeBots = false
     ) {
         $this->dateRange = $dateRange ?? new DateRange();
+        $this->page = $this->determinePage($page);
         $this->itemsPerPage = $this->determineItemsPerPage($itemsPerPage);
+    }
+
+    private function determinePage(int $page): int
+    {
+        return $page > 0 ? $page : self::FIRST_PAGE;
     }
 
     private function determineItemsPerPage(?int $itemsPerPage): int
@@ -39,7 +46,7 @@ final class VisitsParams
     {
         return new self(
             parseDateRangeFromQuery($query, 'startDate', 'endDate'),
-            (int) ($query['page'] ?? 1),
+            (int) ($query['page'] ?? self::FIRST_PAGE),
             isset($query['itemsPerPage']) ? (int) $query['itemsPerPage'] : null,
             isset($query['excludeBots']),
         );
