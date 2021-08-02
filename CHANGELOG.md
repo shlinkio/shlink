@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.7.3] - 2021-08-02
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1135](https://github.com/shlinkio/shlink/issues/1135) Fixed error when importing short URLs with no visits from another Shlink instance.
+* [#1136](https://github.com/shlinkio/shlink/issues/1136) Fixed error when fetching tag/short-url/orphan visits for a page lower than 1.
+
+
 ## [2.7.2] - 2021-07-30
 ### Added
 * *Nothing*
