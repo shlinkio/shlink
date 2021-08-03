@@ -74,7 +74,7 @@ class DomainRepositoryTest extends DatabaseTestCase
         self::assertEquals($barDomain, $this->repo->findOneByAuthority('bar.com'));
         self::assertEquals($detachedWithRedirects, $this->repo->findOneByAuthority('detached-with-redirects.com'));
         self::assertNull($this->repo->findOneByAuthority('does-not-exist.com'));
-        self::assertNull($this->repo->findOneByAuthority('detached.com'));
+        self::assertEquals($detachedDomain, $this->repo->findOneByAuthority('detached.com'));
     }
 
     /** @test */

@@ -23,7 +23,7 @@ class DomainRedirectsAction extends AbstractRestAction
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        // TODO Do not allow to set redirects for default domain
+        // TODO Do not allow to set redirects for default domain. Or do allow. Check if there could be any issue
 
         /** @var array $body */
         $body = $request->getParsedBody();

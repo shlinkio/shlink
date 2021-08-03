@@ -23,8 +23,14 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
      */
     public function findDomainsWithout(?string $excludedAuthority, ?ApiKey $apiKey = null): array
     {
-        $qb = $this->createPublicDomainsQueryBuilder();
-        $qb->orderBy('d.authority', 'ASC');
+        $qb = $this->createQueryBuilder('d');
+        $qb->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
+           ->groupBy('d')
+           ->orderBy('d.authority', 'ASC')
+           ->having($qb->expr()->gt('COUNT(s.id)', '0'))
+           ->orHaving($qb->expr()->isNotNull('d.baseUrlRedirect'))
+           ->orHaving($qb->expr()->isNotNull('d.regular404Redirect'))
+           ->orHaving($qb->expr()->isNotNull('d.invalidShortUrlRedirect'));
 
         $specs = $this->determineExtraSpecs($excludedAuthority, $apiKey);
         foreach ($specs as [$alias, $spec]) {
@@ -36,8 +42,9 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
 
     public function findOneByAuthority(string $authority, ?ApiKey $apiKey = null): ?Domain
     {
-        $qb = $this->createPublicDomainsQueryBuilder();
-        $qb->where($qb->expr()->eq('d.authority', ':authority'))
+        $qb = $this->createQueryBuilder('d');
+        $qb->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
+           ->where($qb->expr()->eq('d.authority', ':authority'))
            ->setParameter('authority', $authority)
            ->setMaxResults(1);
 
@@ -47,19 +54,6 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
         }
 
         return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    private function createPublicDomainsQueryBuilder(): QueryBuilder
-    {
-        $qb = $this->createQueryBuilder('d');
-        $qb->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
-           ->groupBy('d')
-           ->having($qb->expr()->gt('COUNT(s.id)', '0'))
-           ->orHaving($qb->expr()->isNotNull('d.baseUrlRedirect'))
-           ->orHaving($qb->expr()->isNotNull('d.regular404Redirect'))
-           ->orHaving($qb->expr()->isNotNull('d.invalidShortUrlRedirect'));
-
-        return $qb;
     }
 
     private function determineExtraSpecs(?string $excludedAuthority, ?ApiKey $apiKey): iterable
