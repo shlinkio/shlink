@@ -28,6 +28,11 @@ final class NotFoundRedirects implements JsonSerializable
         return new self(null, null, null);
     }
 
+    public static function fromConfig(NotFoundRedirectConfigInterface $config): self
+    {
+        return new self($config->baseUrlRedirect(), $config->regular404Redirect(), $config->invalidShortUrlRedirect());
+    }
+
     public function baseUrlRedirect(): ?string
     {
         return $this->baseUrlRedirect;
