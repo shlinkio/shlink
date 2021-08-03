@@ -197,7 +197,7 @@ class DomainServiceTest extends TestCase
         self::assertEquals('baz.com', $result->invalidShortUrlRedirect());
         $getRepo->shouldHaveBeenCalledOnce();
         $persist->shouldHaveBeenCalledOnce();
-        $flush->shouldHaveBeenCalledTimes(2);
+        $flush->shouldHaveBeenCalledOnce();
     }
 
     public function provideFoundDomains(): iterable

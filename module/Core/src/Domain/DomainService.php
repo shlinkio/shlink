@@ -65,7 +65,37 @@ class DomainService implements DomainServiceInterface
         return $repo->findOneByAuthority($authority, $apiKey);
     }
 
+    /**
+     * @throws DomainNotFoundException
+     */
     public function getOrCreate(string $authority, ?ApiKey $apiKey = null): Domain
+    {
+        $domain = $this->getPersistedDomain($authority, $apiKey);
+        $this->em->flush();
+
+        return $domain;
+    }
+
+    /**
+     * @throws DomainNotFoundException
+     */
+    public function configureNotFoundRedirects(
+        string $authority,
+        NotFoundRedirects $notFoundRedirects,
+        ?ApiKey $apiKey = null
+    ): Domain {
+        $domain = $this->getPersistedDomain($authority, $apiKey);
+        $domain->configureNotFoundRedirects($notFoundRedirects);
+
+        $this->em->flush();
+
+        return $domain;
+    }
+
+    /**
+     * @throws DomainNotFoundException
+     */
+    private function getPersistedDomain(string $authority, ?ApiKey $apiKey): Domain
     {
         $domain = $this->findByAuthority($authority, $apiKey);
         if ($domain === null && $apiKey?->hasRole(Role::DOMAIN_SPECIFIC)) {
@@ -74,22 +104,7 @@ class DomainService implements DomainServiceInterface
         }
 
         $domain = $domain ?? Domain::withAuthority($authority);
-
         $this->em->persist($domain);
-        $this->em->flush();
-
-        return $domain;
-    }
-
-    public function configureNotFoundRedirects(
-        string $authority,
-        NotFoundRedirects $notFoundRedirects,
-        ?ApiKey $apiKey = null
-    ): Domain {
-        $domain = $this->getOrCreate($authority, $apiKey);
-        $domain->configureNotFoundRedirects($notFoundRedirects);
-
-        $this->em->flush();
 
         return $domain;
     }
