@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
+use Shlinkio\Shlink\Core\Exception\InvalidDomainException;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -78,12 +79,17 @@ class DomainService implements DomainServiceInterface
 
     /**
      * @throws DomainNotFoundException
+     * @throws InvalidDomainException
      */
     public function configureNotFoundRedirects(
         string $authority,
         NotFoundRedirects $notFoundRedirects,
         ?ApiKey $apiKey = null
     ): Domain {
+        if ($authority === $this->defaultDomain) {
+            throw InvalidDomainException::forDefaultDomainRedirects();
+        }
+
         $domain = $this->getPersistedDomain($authority, $apiKey);
         $domain->configureNotFoundRedirects($notFoundRedirects);
 
