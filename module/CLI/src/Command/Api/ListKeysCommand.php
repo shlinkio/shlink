@@ -69,7 +69,7 @@ class ListKeysCommand extends BaseCommand
             return $rowData;
         });
 
-        ShlinkTable::fromOutput($output)->render(array_filter([
+        ShlinkTable::withRowSeparators($output)->render(array_filter([
             'Key',
             'Name',
             ! $enabledOnly ? 'Is enabled' : null,

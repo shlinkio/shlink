@@ -32,7 +32,7 @@ class ListTagsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        ShlinkTable::fromOutput($output)->render(['Name', 'URLs amount', 'Visits amount'], $this->getTagsRows());
+        ShlinkTable::default($output)->render(['Name', 'URLs amount', 'Visits amount'], $this->getTagsRows());
         return ExitCodes::EXIT_SUCCESS;
     }
 

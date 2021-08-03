@@ -77,9 +77,11 @@ class ListDomainsCommandTest extends TestCase
         | foo.com | Yes        | * Base URL: https://foo.com/default/base                |
         |         |            | * Regular 404: N/A                                      |
         |         |            | * Invalid short URL: https://foo.com/default/invalid    |
+        +---------+------------+---------------------------------------------------------+
         | bar.com | No         | * Base URL: N/A                                         |
         |         |            | * Regular 404: N/A                                      |
         |         |            | * Invalid short URL: N/A                                |
+        +---------+------------+---------------------------------------------------------+
         | baz.com | No         | * Base URL: N/A                                         |
         |         |            | * Regular 404: https://foo.com/baz-domain/regular       |
         |         |            | * Invalid short URL: https://foo.com/baz-domain/invalid |

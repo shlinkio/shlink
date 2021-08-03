@@ -164,7 +164,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
             return map($columnsMap, fn (callable $call) => $call($rawShortUrl, $shortUrl));
         });
 
-        ShlinkTable::fromOutput($output)->render(
+        ShlinkTable::default($output)->render(
             array_keys($columnsMap),
             $rows,
             $all ? null : $this->formatCurrentPageMessage($shortUrls, 'Page %s of %s'),
