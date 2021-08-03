@@ -20,7 +20,7 @@ class DomainFixture extends AbstractFixture
         $manager->persist(Domain::withAuthority('this_domain_is_detached.com'));
 
         $detachedWithRedirects = Domain::withAuthority('detached-with-redirects.com');
-        $detachedWithRedirects->configureNotFoundRedirects(new NotFoundRedirects('foo.com', 'bar.com'));
+        $detachedWithRedirects->configureNotFoundRedirects(NotFoundRedirects::withRedirects('foo.com', 'bar.com'));
         $manager->persist($detachedWithRedirects);
 
         $manager->flush();

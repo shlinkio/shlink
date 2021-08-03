@@ -24,7 +24,7 @@ class ShlinkTableTest extends TestCase
     public function setUp(): void
     {
         $this->baseTable = $this->prophesize(Table::class);
-        $this->shlinkTable = new ShlinkTable($this->baseTable->reveal());
+        $this->shlinkTable = ShlinkTable::fromBaseTable($this->baseTable->reveal());
     }
 
     /** @test */
@@ -57,7 +57,7 @@ class ShlinkTableTest extends TestCase
     /** @test */
     public function newTableIsCreatedForFactoryMethod(): void
     {
-        $instance = ShlinkTable::fromOutput($this->prophesize(OutputInterface::class)->reveal());
+        $instance = ShlinkTable::default($this->prophesize(OutputInterface::class)->reveal());
 
         $ref = new ReflectionObject($instance);
         $baseTable = $ref->getProperty('baseTable');

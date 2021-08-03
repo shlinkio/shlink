@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
+use Shlinkio\Shlink\Core\Exception\InvalidDomainException;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -133,16 +134,16 @@ class DomainServiceTest extends TestCase
      * @test
      * @dataProvider provideFoundDomains
      */
-    public function getOrCreateAlwaysPersistsDomain(?Domain $foundDomain): void
+    public function getOrCreateAlwaysPersistsDomain(?Domain $foundDomain, ?ApiKey $apiKey): void
     {
         $authority = 'example.com';
         $repo = $this->prophesize(DomainRepositoryInterface::class);
-        $repo->findOneBy(['authority' => $authority])->willReturn($foundDomain);
+        $repo->findOneByAuthority($authority, $apiKey)->willReturn($foundDomain);
         $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
         $persist = $this->em->persist($foundDomain ?? Argument::type(Domain::class));
         $flush = $this->em->flush();
 
-        $result = $this->domainService->getOrCreate($authority);
+        $result = $this->domainService->getOrCreate($authority, $apiKey);
 
         if ($foundDomain !== null) {
             self::assertSame($result, $foundDomain);
@@ -152,24 +153,42 @@ class DomainServiceTest extends TestCase
         $flush->shouldHaveBeenCalledOnce();
     }
 
+    /** @test */
+    public function getOrCreateThrowsExceptionForApiKeysWithDomainRole(): void
+    {
+        $authority = 'example.com';
+        $domain = Domain::withAuthority($authority)->setId('1');
+        $apiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($domain)));
+        $repo = $this->prophesize(DomainRepositoryInterface::class);
+        $repo->findOneByAuthority($authority, $apiKey)->willReturn(null);
+        $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
+
+        $this->expectException(DomainNotFoundException::class);
+        $getRepo->shouldBeCalledOnce();
+        $this->em->persist(Argument::cetera())->shouldNotBeCalled();
+        $this->em->flush()->shouldNotBeCalled();
+
+        $this->domainService->getOrCreate($authority, $apiKey);
+    }
+
     /**
      * @test
      * @dataProvider provideFoundDomains
      */
-    public function configureNotFoundRedirectsConfiguresFetchedDomain(?Domain $foundDomain): void
+    public function configureNotFoundRedirectsConfiguresFetchedDomain(?Domain $foundDomain, ?ApiKey $apiKey): void
     {
         $authority = 'example.com';
         $repo = $this->prophesize(DomainRepositoryInterface::class);
-        $repo->findOneBy(['authority' => $authority])->willReturn($foundDomain);
+        $repo->findOneByAuthority($authority, $apiKey)->willReturn($foundDomain);
         $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
         $persist = $this->em->persist($foundDomain ?? Argument::type(Domain::class));
         $flush = $this->em->flush();
 
-        $result = $this->domainService->configureNotFoundRedirects($authority, new NotFoundRedirects(
+        $result = $this->domainService->configureNotFoundRedirects($authority, NotFoundRedirects::withRedirects(
             'foo.com',
             'bar.com',
             'baz.com',
-        ));
+        ), $apiKey);
 
         if ($foundDomain !== null) {
             self::assertSame($result, $foundDomain);
@@ -179,12 +198,31 @@ class DomainServiceTest extends TestCase
         self::assertEquals('baz.com', $result->invalidShortUrlRedirect());
         $getRepo->shouldHaveBeenCalledOnce();
         $persist->shouldHaveBeenCalledOnce();
-        $flush->shouldHaveBeenCalledTimes(2);
+        $flush->shouldHaveBeenCalledOnce();
     }
 
     public function provideFoundDomains(): iterable
     {
-        yield 'domain not found' => [null];
-        yield 'domain found' => [Domain::withAuthority('')];
+        $domain = Domain::withAuthority('');
+        $adminApiKey = ApiKey::create();
+        $authorApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
+
+        yield 'domain not found and no API key' => [null, null];
+        yield 'domain found and no API key' => [$domain, null];
+        yield 'domain not found and admin API key' => [null, $adminApiKey];
+        yield 'domain found and admin API key' => [$domain, $adminApiKey];
+        yield 'domain not found and author API key' => [null, $authorApiKey];
+        yield 'domain found and author API key' => [$domain, $authorApiKey];
+    }
+
+    /** @test */
+    public function anExceptionIsThrowsWhenTryingToEditRedirectsForDefaultDomain(): void
+    {
+        $this->expectException(InvalidDomainException::class);
+        $this->expectExceptionMessage(
+            'You cannot configure default domain\'s redirects this way. Use the configuration or env vars.',
+        );
+
+        $this->domainService->configureNotFoundRedirects('default.com', NotFoundRedirects::withoutRedirects());
     }
 }

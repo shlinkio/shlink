@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Domain\Model;
 
 use JsonSerializable;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
+use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Entity\Domain;
 
 final class DomainItem implements JsonSerializable
@@ -32,6 +33,7 @@ final class DomainItem implements JsonSerializable
         return [
             'domain' => $this->authority,
             'isDefault' => $this->isDefault,
+            'redirects' => NotFoundRedirects::fromConfig($this->notFoundRedirectConfig),
         ];
     }
 

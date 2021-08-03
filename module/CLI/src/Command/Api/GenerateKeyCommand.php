@@ -97,7 +97,7 @@ class GenerateKeyCommand extends BaseCommand
         $io->success(sprintf('Generated API key: "%s"', $apiKey->toString()));
 
         if (! $apiKey->isAdmin()) {
-            ShlinkTable::fromOutput($io)->render(
+            ShlinkTable::default($io)->render(
                 ['Role name', 'Role metadata'],
                 $apiKey->mapRoles(fn (string $name, array $meta) => [$name, arrayToString($meta, 0)]),
                 null,

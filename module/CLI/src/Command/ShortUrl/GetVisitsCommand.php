@@ -81,7 +81,7 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
             $rowData['country'] = ($visit->getVisitLocation() ?? new UnknownVisitLocation())->getCountryName();
             return select_keys($rowData, ['referer', 'date', 'userAgent', 'country']);
         });
-        ShlinkTable::fromOutput($output)->render(['Referer', 'Date', 'User agent', 'Country'], $rows);
+        ShlinkTable::default($output)->render(['Referer', 'Date', 'User agent', 'Country'], $rows);
 
         return ExitCodes::EXIT_SUCCESS;
     }
