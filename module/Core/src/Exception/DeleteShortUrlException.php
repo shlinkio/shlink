@@ -15,7 +15,7 @@ class DeleteShortUrlException extends DomainException implements ProblemDetailsE
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Cannot delete short URL';
-    private const TYPE = 'INVALID_SHORTCODE_DELETION'; // FIXME Should be INVALID_SHORT_URL_DELETION
+    private const TYPE = 'INVALID_SHORTCODE_DELETION'; // FIXME Deprecated: Should be INVALID_SHORT_URL_DELETION
 
     public static function fromVisitsThreshold(int $threshold, string $shortCode): self
     {
