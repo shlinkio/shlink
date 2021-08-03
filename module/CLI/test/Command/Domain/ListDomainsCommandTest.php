@@ -36,7 +36,7 @@ class ListDomainsCommandTest extends TestCase
     public function allDomainsAreProperlyPrinted(array $input, string $expectedOutput): void
     {
         $bazDomain = Domain::withAuthority('baz.com');
-        $bazDomain->configureNotFoundRedirects(new NotFoundRedirects(
+        $bazDomain->configureNotFoundRedirects(NotFoundRedirects::withRedirects(
             null,
             'https://foo.com/baz-domain/regular',
             'https://foo.com/baz-domain/invalid',

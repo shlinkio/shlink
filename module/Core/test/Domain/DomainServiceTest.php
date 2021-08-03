@@ -183,7 +183,7 @@ class DomainServiceTest extends TestCase
         $persist = $this->em->persist($foundDomain ?? Argument::type(Domain::class));
         $flush = $this->em->flush();
 
-        $result = $this->domainService->configureNotFoundRedirects($authority, new NotFoundRedirects(
+        $result = $this->domainService->configureNotFoundRedirects($authority, NotFoundRedirects::withRedirects(
             'foo.com',
             'bar.com',
             'baz.com',

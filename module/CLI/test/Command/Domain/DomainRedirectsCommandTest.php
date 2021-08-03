@@ -40,7 +40,7 @@ class DomainRedirectsCommandTest extends TestCase
         $findDomain = $this->domainService->findByAuthority($domainAuthority)->willReturn($domain);
         $configureRedirects = $this->domainService->configureNotFoundRedirects(
             $domainAuthority,
-            new NotFoundRedirects('foo.com', null, 'baz.com'),
+            NotFoundRedirects::withRedirects('foo.com', null, 'baz.com'),
         )->willReturn(Domain::withAuthority(''));
 
         $this->commandTester->setInputs(['foo.com', '', 'baz.com']);
@@ -71,12 +71,12 @@ class DomainRedirectsCommandTest extends TestCase
     {
         $domainAuthority = 'example.com';
         $domain = Domain::withAuthority($domainAuthority);
-        $domain->configureNotFoundRedirects(new NotFoundRedirects('foo.com', 'bar.com', 'baz.com'));
+        $domain->configureNotFoundRedirects(NotFoundRedirects::withRedirects('foo.com', 'bar.com', 'baz.com'));
 
         $findDomain = $this->domainService->findByAuthority($domainAuthority)->willReturn($domain);
         $configureRedirects = $this->domainService->configureNotFoundRedirects(
             $domainAuthority,
-            new NotFoundRedirects(null, 'edited.com', 'baz.com'),
+            NotFoundRedirects::withRedirects(null, 'edited.com', 'baz.com'),
         )->willReturn($domain);
 
         $this->commandTester->setInputs(['2', '1', 'edited.com', '0']);
@@ -105,7 +105,7 @@ class DomainRedirectsCommandTest extends TestCase
         $findDomain = $this->domainService->findByAuthority($domainAuthority)->willReturn($domain);
         $configureRedirects = $this->domainService->configureNotFoundRedirects(
             $domainAuthority,
-            new NotFoundRedirects(),
+            NotFoundRedirects::withoutRedirects(),
         )->willReturn($domain);
 
         $this->commandTester->setInputs([$domainAuthority, '', '', '']);
@@ -132,7 +132,7 @@ class DomainRedirectsCommandTest extends TestCase
         $findDomain = $this->domainService->findByAuthority($domainAuthority)->willReturn($domain);
         $configureRedirects = $this->domainService->configureNotFoundRedirects(
             $domainAuthority,
-            new NotFoundRedirects(),
+            NotFoundRedirects::withoutRedirects(),
         )->willReturn($domain);
 
         $this->commandTester->setInputs(['1', '', '', '']);
@@ -162,7 +162,7 @@ class DomainRedirectsCommandTest extends TestCase
         $findDomain = $this->domainService->findByAuthority($domainAuthority)->willReturn($domain);
         $configureRedirects = $this->domainService->configureNotFoundRedirects(
             $domainAuthority,
-            new NotFoundRedirects(),
+            NotFoundRedirects::withoutRedirects(),
         )->willReturn($domain);
 
         $this->commandTester->setInputs(['2', $domainAuthority, '', '', '']);

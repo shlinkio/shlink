@@ -8,11 +8,24 @@ use JsonSerializable;
 
 final class NotFoundRedirects implements JsonSerializable
 {
-    public function __construct(
-        private ?string $baseUrlRedirect = null,
-        private ?string $regular404Redirect = null,
-        private ?string $invalidShortUrlRedirect = null,
+    private function __construct(
+        private ?string $baseUrlRedirect,
+        private ?string $regular404Redirect,
+        private ?string $invalidShortUrlRedirect,
     ) {
+    }
+
+    public static function withRedirects(
+        ?string $baseUrlRedirect = null,
+        ?string $regular404Redirect = null,
+        ?string $invalidShortUrlRedirect = null,
+    ): self {
+        return new self($baseUrlRedirect, $regular404Redirect, $invalidShortUrlRedirect);
+    }
+
+    public static function withoutRedirects(): self
+    {
+        return new self(null, null, null);
     }
 
     public function baseUrlRedirect(): ?string

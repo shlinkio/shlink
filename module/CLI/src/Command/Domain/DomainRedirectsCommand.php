@@ -92,7 +92,7 @@ class DomainRedirectsCommand extends Command
             };
         };
 
-        $this->domainService->configureNotFoundRedirects($domainAuthority, new NotFoundRedirects(
+        $this->domainService->configureNotFoundRedirects($domainAuthority, NotFoundRedirects::withRedirects(
             $ask(
                 'URL to redirect to when a user hits this domain\'s base URL',
                 $domain?->baseUrlRedirect(),

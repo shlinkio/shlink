@@ -45,7 +45,7 @@ class DomainRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($detachedDomain);
 
         $detachedWithRedirects = Domain::withAuthority('detached-with-redirects.com');
-        $detachedWithRedirects->configureNotFoundRedirects(new NotFoundRedirects('foo.com', 'bar.com'));
+        $detachedWithRedirects->configureNotFoundRedirects(NotFoundRedirects::withRedirects('foo.com', 'bar.com'));
         $this->getEntityManager()->persist($detachedWithRedirects);
 
         $this->getEntityManager()->flush();
@@ -101,7 +101,7 @@ class DomainRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($detachedDomain);
 
         $detachedWithRedirects = Domain::withAuthority('detached-with-redirects.com');
-        $detachedWithRedirects->configureNotFoundRedirects(new NotFoundRedirects('foo.com', 'bar.com'));
+        $detachedWithRedirects->configureNotFoundRedirects(NotFoundRedirects::withRedirects('foo.com', 'bar.com'));
         $this->getEntityManager()->persist($detachedWithRedirects);
 
         $this->getEntityManager()->flush();
