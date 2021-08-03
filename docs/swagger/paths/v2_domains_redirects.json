@@ -99,6 +99,16 @@
                     }
                 }
             },
+            "403": {
+                "description": "Default domain was provided, and it cannot be edited this way.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            },
             "500": {
                 "description": "Unexpected error.",
                 "content": {

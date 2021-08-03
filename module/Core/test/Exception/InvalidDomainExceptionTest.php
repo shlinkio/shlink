@@ -19,6 +19,6 @@ class InvalidDomainExceptionTest extends TestCase
         self::assertEquals($expected, $e->getDetail());
         self::assertEquals('Invalid domain', $e->getTitle());
         self::assertEquals('INVALID_DOMAIN', $e->getType());
-        self::assertEquals(400, $e->getStatus());
+        self::assertEquals(403, $e->getStatus());
     }
 }

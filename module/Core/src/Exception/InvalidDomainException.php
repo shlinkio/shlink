@@ -26,7 +26,7 @@ class InvalidDomainException extends DomainException implements ProblemDetailsEx
         $e->detail = $e->getMessage();
         $e->title = self::TITLE;
         $e->type = self::TYPE;
-        $e->status = StatusCodeInterface::STATUS_BAD_REQUEST;
+        $e->status = StatusCodeInterface::STATUS_FORBIDDEN;
 
         return $e;
     }
