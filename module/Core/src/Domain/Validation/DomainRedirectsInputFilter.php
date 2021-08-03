@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Domain\Validation;
 
 use Laminas\InputFilter\InputFilter;
-use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
 
 class DomainRedirectsInputFilter extends InputFilter
@@ -34,13 +33,7 @@ class DomainRedirectsInputFilter extends InputFilter
     private function initializeInputs(): void
     {
         $domain = $this->createInput(self::DOMAIN);
-        $domain->getValidatorChain()->attach(new Validator\NotEmpty([
-            Validator\NotEmpty::OBJECT,
-            Validator\NotEmpty::SPACE,
-            Validator\NotEmpty::NULL,
-            Validator\NotEmpty::EMPTY_ARRAY,
-            Validator\NotEmpty::BOOLEAN,
-        ]));
+        $domain->getValidatorChain()->attach(new Validation\HostAndPortValidator());
         $this->add($domain);
 
         $this->add($this->createInput(self::BASE_URL_REDIRECT, false));

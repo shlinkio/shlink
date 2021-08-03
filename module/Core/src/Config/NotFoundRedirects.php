@@ -16,7 +16,7 @@ final class NotFoundRedirects implements JsonSerializable
     }
 
     public static function withRedirects(
-        ?string $baseUrlRedirect = null,
+        ?string $baseUrlRedirect,
         ?string $regular404Redirect = null,
         ?string $invalidShortUrlRedirect = null,
     ): self {
