@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [2.8.0] - 2021-08-04
 ### Added
 * [#1089](https://github.com/shlinkio/shlink/issues/1089) Added new `ENABLE_PERIODIC_VISIT_LOCATE` env var to docker image which schedules the `visit:locate` command every hour when provided with value `true`.
 * [#1082](https://github.com/shlinkio/shlink/issues/1082) Added support for error correction level on QR codes.
@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Changed
 * [#1118](https://github.com/shlinkio/shlink/issues/1118) Increased phpstan required level to 8.
 * [#1127](https://github.com/shlinkio/shlink/issues/1127) Updated to infection 0.24.
+* [#1139](https://github.com/shlinkio/shlink/issues/1139) Updated project dependencies, including base docker image to use PHP 8.0.9 and Alpine 3.14.
 
 ### Deprecated
 * *Nothing*
