@@ -35,7 +35,7 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         $adapter = $this->createAdapter(null);
         $findVisits = $this->repo->findVisitsByTag(
             'foo',
-            new VisitsListFiltering(new DateRange(), false, null, $limit, $offset),
+            new VisitsListFiltering(DateRange::emptyInstance(), false, null, $limit, $offset),
         )->willReturn([]);
 
         for ($i = 0; $i < $count; $i++) {

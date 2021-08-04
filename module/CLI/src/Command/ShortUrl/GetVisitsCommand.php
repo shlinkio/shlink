@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 use Shlinkio\Shlink\CLI\Command\Util\AbstractWithDateRangeCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
-use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
@@ -21,6 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function Functional\map;
 use function Functional\select_keys;
+use function Shlinkio\Shlink\Common\buildDateRange;
 use function sprintf;
 
 class GetVisitsCommand extends AbstractWithDateRangeCommand
@@ -73,7 +73,7 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
 
         $paginator = $this->visitsHelper->visitsForShortUrl(
             $identifier,
-            new VisitsParams(new DateRange($startDate, $endDate)),
+            new VisitsParams(buildDateRange($startDate, $endDate)),
         );
 
         $rows = map($paginator->getCurrentPageResults(), function (Visit $visit) {
