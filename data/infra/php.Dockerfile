@@ -1,7 +1,7 @@
-FROM php:8.0.6-fpm-alpine3.13
+FROM php:8.0.9-fpm-alpine3.14
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
-ENV APCU_VERSION 5.1.19
+ENV APCU_VERSION 5.1.20
 ENV PDO_SQLSRV_VERSION 5.9.0
 ENV MS_ODBC_SQL_VERSION 17.5.2.1
 
