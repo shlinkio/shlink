@@ -12,12 +12,9 @@ use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 
 class CountOfOrphanVisits extends BaseSpecification
 {
-    private VisitsCountFiltering $filtering;
-
-    public function __construct(VisitsCountFiltering $filtering)
+    public function __construct(private VisitsCountFiltering $filtering)
     {
         parent::__construct();
-        $this->filtering = $filtering;
     }
 
     protected function getSpec(): Specification

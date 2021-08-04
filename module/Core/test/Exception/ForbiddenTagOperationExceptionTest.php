@@ -15,7 +15,7 @@ class ForbiddenTagOperationExceptionTest extends TestCase
      */
     public function createsExpectedExceptionForDeletion(
         ForbiddenTagOperationException $e,
-        string $expectedMessage
+        string $expectedMessage,
     ): void {
         $this->assertExceptionShape($e, $expectedMessage);
     }

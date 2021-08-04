@@ -42,6 +42,7 @@ return [
             Option\UrlShortener\RedirectStatusCodeConfigOption::class,
             Option\UrlShortener\RedirectCacheLifeTimeConfigOption::class,
             Option\UrlShortener\AutoResolveTitlesConfigOption::class,
+            Option\UrlShortener\AppendExtraPathConfigOption::class,
             Option\Tracking\IpAnonymizationConfigOption::class,
             Option\Tracking\OrphanVisitsTrackingConfigOption::class,
             Option\Tracking\DisableTrackParamConfigOption::class,

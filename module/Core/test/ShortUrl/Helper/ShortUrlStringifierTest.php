@@ -19,7 +19,7 @@ class ShortUrlStringifierTest extends TestCase
         array $config,
         string $basePath,
         ShortUrl $shortUrl,
-        string $expected
+        string $expected,
     ): void {
         $stringifier = new ShortUrlStringifier($config, $basePath);
 

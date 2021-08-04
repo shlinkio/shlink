@@ -21,19 +21,14 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     public const DOCTRINE_SCRIPT = 'vendor/doctrine/orm/bin/doctrine.php';
     public const DOCTRINE_CREATE_SCHEMA_COMMAND = 'orm:schema-tool:create';
 
-    private Connection $regularConn;
-    private Connection $noDbNameConn;
-
     public function __construct(
         LockFactory $locker,
         ProcessRunnerInterface $processRunner,
         PhpExecutableFinder $phpFinder,
-        Connection $conn,
-        Connection $noDbNameConn
+        private Connection $regularConn,
+        private Connection $noDbNameConn
     ) {
         parent::__construct($locker, $processRunner, $phpFinder);
-        $this->regularConn = $conn;
-        $this->noDbNameConn = $noDbNameConn;
     }
 
     protected function configure(): void

@@ -36,7 +36,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
     public function showsProperMessageWhenGeoLiteUpdateFails(
         bool $olderDbExists,
         string $expectedMessage,
-        int $expectedExitCode
+        int $expectedExitCode,
     ): void {
         $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
             function (array $args) use ($olderDbExists): void {

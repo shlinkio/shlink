@@ -19,24 +19,13 @@ use Throwable;
 
 class LocateVisit
 {
-    private IpLocationResolverInterface $ipLocationResolver;
-    private EntityManagerInterface $em;
-    private LoggerInterface $logger;
-    private DbUpdaterInterface $dbUpdater;
-    private EventDispatcherInterface $eventDispatcher;
-
     public function __construct(
-        IpLocationResolverInterface $ipLocationResolver,
-        EntityManagerInterface $em,
-        LoggerInterface $logger,
-        DbUpdaterInterface $dbUpdater,
-        EventDispatcherInterface $eventDispatcher
+        private IpLocationResolverInterface $ipLocationResolver,
+        private EntityManagerInterface $em,
+        private LoggerInterface $logger,
+        private DbUpdaterInterface $dbUpdater,
+        private EventDispatcherInterface $eventDispatcher
     ) {
-        $this->ipLocationResolver = $ipLocationResolver;
-        $this->em = $em;
-        $this->logger = $logger;
-        $this->dbUpdater = $dbUpdater;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function __invoke(UrlVisited $shortUrlVisited): void
@@ -66,7 +55,7 @@ class LocateVisit
         }
 
         $isLocatable = $originalIpAddress !== null || $visit->isLocatable();
-        $addr = $originalIpAddress ?? $visit->getRemoteAddr();
+        $addr = $originalIpAddress ?? $visit->getRemoteAddr() ?? '';
 
         try {
             $location = $isLocatable ? $this->ipLocationResolver->resolveIpLocation($addr) : Location::emptyInstance();

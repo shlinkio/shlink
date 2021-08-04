@@ -13,16 +13,14 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 abstract class AbstractDatabaseCommand extends AbstractLockedCommand
 {
-    private ProcessRunnerInterface $processRunner;
     private string $phpBinary;
 
     public function __construct(
         LockFactory $locker,
-        ProcessRunnerInterface $processRunner,
+        private ProcessRunnerInterface $processRunner,
         PhpExecutableFinder $phpFinder
     ) {
         parent::__construct($locker);
-        $this->processRunner = $processRunner;
         $this->phpBinary = $phpFinder->find(false) ?: 'php';
     }
 
@@ -34,6 +32,6 @@ abstract class AbstractDatabaseCommand extends AbstractLockedCommand
 
     protected function getLockConfig(): LockedCommandConfig
     {
-        return LockedCommandConfig::blocking($this->getName());
+        return LockedCommandConfig::blocking($this->getName() ?? static::class);
     }
 }

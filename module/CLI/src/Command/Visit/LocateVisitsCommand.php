@@ -30,19 +30,14 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
 {
     public const NAME = 'visit:locate';
 
-    private VisitLocatorInterface $visitLocator;
-    private IpLocationResolverInterface $ipLocationResolver;
-
     private SymfonyStyle $io;
 
     public function __construct(
-        VisitLocatorInterface $visitLocator,
-        IpLocationResolverInterface $ipLocationResolver,
+        private VisitLocatorInterface $visitLocator,
+        private IpLocationResolverInterface $ipLocationResolver,
         LockFactory $locker
     ) {
         parent::__construct($locker);
-        $this->visitLocator = $visitLocator;
-        $this->ipLocationResolver = $ipLocationResolver;
     }
 
     protected function configure(): void
@@ -124,7 +119,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         } catch (Throwable $e) {
             $this->io->error($e->getMessage());
             if ($this->io->isVerbose()) {
-                $this->getApplication()->renderThrowable($e, $this->io);
+                $this->getApplication()?->renderThrowable($e, $this->io);
             }
 
             return ExitCodes::EXIT_FAILURE;
@@ -144,7 +139,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
             throw IpCannotBeLocatedException::forEmptyAddress();
         }
 
-        $ipAddr = $visit->getRemoteAddr();
+        $ipAddr = $visit->getRemoteAddr() ?? '';
         $this->io->write(sprintf('Processing IP <fg=blue>%s</>', $ipAddr));
         if ($ipAddr === IpAddress::LOCALHOST) {
             $this->io->writeln(' [<comment>Ignored localhost address</comment>]');
@@ -156,7 +151,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         } catch (WrongIpException $e) {
             $this->io->writeln(' [<fg=red>An error occurred while locating IP. Skipped</>]');
             if ($this->io->isVerbose()) {
-                $this->getApplication()->renderThrowable($e, $this->io);
+                $this->getApplication()?->renderThrowable($e, $this->io);
             }
 
             throw IpCannotBeLocatedException::forError($e);
@@ -173,7 +168,12 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
 
     private function checkDbUpdate(InputInterface $input): void
     {
-        $downloadDbCommand = $this->getApplication()->find(DownloadGeoLiteDbCommand::NAME);
+        $cliApp = $this->getApplication();
+        if ($cliApp === null) {
+            return;
+        }
+
+        $downloadDbCommand = $cliApp->find(DownloadGeoLiteDbCommand::NAME);
         $exitCode = $downloadDbCommand->run($input, $this->io);
 
         if ($exitCode === ExitCodes::EXIT_FAILURE) {
@@ -183,6 +183,6 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
 
     protected function getLockConfig(): LockedCommandConfig
     {
-        return LockedCommandConfig::nonBlocking($this->getName());
+        return LockedCommandConfig::nonBlocking(self::NAME);
     }
 }

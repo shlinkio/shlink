@@ -8,44 +8,35 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Config\NotFoundRedirectResolverInterface;
+use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\Options;
-use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 
 class NotFoundRedirectHandler implements MiddlewareInterface
 {
-    private Options\NotFoundRedirectOptions $redirectOptions;
-    private RedirectResponseHelperInterface $redirectResponseHelper;
-
     public function __construct(
-        Options\NotFoundRedirectOptions $redirectOptions,
-        RedirectResponseHelperInterface $redirectResponseHelper
+        private Options\NotFoundRedirectOptions $redirectOptions,
+        private NotFoundRedirectResolverInterface $redirectResolver,
+        private DomainServiceInterface $domainService,
     ) {
-        $this->redirectOptions = $redirectOptions;
-        $this->redirectResponseHelper = $redirectResponseHelper;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /** @var NotFoundType $notFoundType */
         $notFoundType = $request->getAttribute(NotFoundType::class);
+        $authority = $request->getUri()->getAuthority();
+        $domainSpecificRedirect = $this->resolveDomainSpecificRedirect($authority, $notFoundType);
 
-        if ($notFoundType->isBaseUrl() && $this->redirectOptions->hasBaseUrlRedirect()) {
-            return $this->redirectResponseHelper->buildRedirectResponse($this->redirectOptions->getBaseUrlRedirect());
-        }
+        return $domainSpecificRedirect
+            ?? $this->redirectResolver->resolveRedirectResponse($notFoundType, $this->redirectOptions)
+            ?? $handler->handle($request);
+    }
 
-        if ($notFoundType->isRegularNotFound() && $this->redirectOptions->hasRegular404Redirect()) {
-            return $this->redirectResponseHelper->buildRedirectResponse(
-                $this->redirectOptions->getRegular404Redirect(),
-            );
-        }
-
-        if ($notFoundType->isInvalidShortUrl() && $this->redirectOptions->hasInvalidShortUrlRedirect()) {
-            return $this->redirectResponseHelper->buildRedirectResponse(
-                $this->redirectOptions->getInvalidShortUrlRedirect(),
-            );
-        }
-
-        return $handler->handle($request);
+    private function resolveDomainSpecificRedirect(string $authority, NotFoundType $notFoundType): ?ResponseInterface
+    {
+        $domain = $this->domainService->findByAuthority($authority);
+        return $domain === null ? null : $this->redirectResolver->resolveRedirectResponse($notFoundType, $domain);
     }
 }

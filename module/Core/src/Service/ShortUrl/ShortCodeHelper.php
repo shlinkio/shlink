@@ -11,11 +11,8 @@ use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 
 class ShortCodeHelper implements ShortCodeHelperInterface // TODO Rename to ShortCodeUniquenessHelper
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     public function ensureShortCodeUniqueness(ShortUrl $shortUrlToBeCreated, bool $hasCustomSlug): bool

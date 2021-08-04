@@ -27,6 +27,6 @@ interface ShortUrlServiceInterface
     public function updateShortUrl(
         ShortUrlIdentifier $identifier,
         ShortUrlEdit $shortUrlEdit,
-        ?ApiKey $apiKey = null
+        ?ApiKey $apiKey = null,
     ): ShortUrl;
 }

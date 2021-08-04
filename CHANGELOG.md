@@ -4,6 +4,38 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.8.0] - 2021-08-04
+### Added
+* [#1089](https://github.com/shlinkio/shlink/issues/1089) Added new `ENABLE_PERIODIC_VISIT_LOCATE` env var to docker image which schedules the `visit:locate` command every hour when provided with value `true`.
+* [#1082](https://github.com/shlinkio/shlink/issues/1082) Added support for error correction level on QR codes.
+
+  Now, when calling the `GET /{shorCode}/qr-code` URL, you can pass the `errorCorrection` query param with values `L` for Low, `M` for Medium, `Q` for Quartile or `H` for High.
+
+* [#1080](https://github.com/shlinkio/shlink/issues/1080) Added support to redirect to URLs as soon as the path starts with a valid short code, appending the rest of the path to the redirected long URL.
+
+  With this, if you have the `https://example.com/abc123` short URL redirecting to `https://www.twitter.com`, a visit to `https://example.com/abc123/shlinkio` will take you to `https://www.twitter.com/shlinkio`.
+
+  This behavior needs to be actively opted in, via installer config options or env vars.
+
+* [#943](https://github.com/shlinkio/shlink/issues/943) Added support to define different "not-found" redirects for every domain handled by Shlink.
+
+  Shlink will continue to allow defining the default values via env vars or config, but afterwards, you can use the `domain:redirects` command or the `PATCH /domains/redirects` REST endpoint to define specific values for every single domain.
+
+### Changed
+* [#1118](https://github.com/shlinkio/shlink/issues/1118) Increased phpstan required level to 8.
+* [#1127](https://github.com/shlinkio/shlink/issues/1127) Updated to infection 0.24.
+* [#1139](https://github.com/shlinkio/shlink/issues/1139) Updated project dependencies, including base docker image to use PHP 8.0.9 and Alpine 3.14.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* [#1046](https://github.com/shlinkio/shlink/issues/1046) Dropped support for PHP 7.4.
+
+### Fixed
+* *Nothing*
+
+
 ## [2.7.3] - 2021-08-02
 ### Added
 * *Nothing*

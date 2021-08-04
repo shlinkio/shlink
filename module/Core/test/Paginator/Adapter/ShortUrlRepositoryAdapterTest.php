@@ -33,7 +33,7 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         array $tags = [],
         ?string $startDate = null,
         ?string $endDate = null,
-        ?string $orderBy = null
+        ?string $orderBy = null,
     ): void {
         $params = ShortUrlsParams::fromRawData([
             'searchTerm' => $searchTerm,
@@ -58,7 +58,7 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         ?string $searchTerm = null,
         array $tags = [],
         ?string $startDate = null,
-        ?string $endDate = null
+        ?string $endDate = null,
     ): void {
         $params = ShortUrlsParams::fromRawData([
             'searchTerm' => $searchTerm,

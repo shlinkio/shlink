@@ -21,12 +21,9 @@ class ResolveUrlCommand extends Command
 {
     public const NAME = 'short-url:parse';
 
-    private ShortUrlResolverInterface $urlResolver;
-
-    public function __construct(ShortUrlResolverInterface $urlResolver)
+    public function __construct(private ShortUrlResolverInterface $urlResolver)
     {
         parent::__construct();
-        $this->urlResolver = $urlResolver;
     }
 
     protected function configure(): void

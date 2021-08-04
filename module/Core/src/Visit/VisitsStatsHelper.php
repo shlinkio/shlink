@@ -27,11 +27,8 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsStatsHelper implements VisitsStatsHelperInterface
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     public function getVisitsStats(?ApiKey $apiKey = null): VisitsStats
@@ -52,9 +49,9 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
     public function visitsForShortUrl(
         ShortUrlIdentifier $identifier,
         VisitsParams $params,
-        ?ApiKey $apiKey = null
+        ?ApiKey $apiKey = null,
     ): Paginator {
-        $spec = $apiKey !== null ? $apiKey->spec() : null;
+        $spec = $apiKey?->spec();
 
         /** @var ShortUrlRepositoryInterface $repo */
         $repo = $this->em->getRepository(ShortUrl::class);

@@ -8,11 +8,8 @@ use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 
 class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionHelperInterface
 {
-    private UrlValidatorInterface $urlValidator;
-
-    public function __construct(UrlValidatorInterface $urlValidator)
+    public function __construct(private UrlValidatorInterface $urlValidator)
     {
-        $this->urlValidator = $urlValidator;
     }
 
     public function processTitleAndValidateUrl(TitleResolutionModelInterface $data): TitleResolutionModelInterface

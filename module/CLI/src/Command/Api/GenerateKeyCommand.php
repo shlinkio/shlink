@@ -23,14 +23,11 @@ class GenerateKeyCommand extends BaseCommand
 {
     public const NAME = 'api-key:generate';
 
-    private ApiKeyServiceInterface $apiKeyService;
-    private RoleResolverInterface $roleResolver;
-
-    public function __construct(ApiKeyServiceInterface $apiKeyService, RoleResolverInterface $roleResolver)
-    {
+    public function __construct(
+        private ApiKeyServiceInterface $apiKeyService,
+        private RoleResolverInterface $roleResolver
+    ) {
         parent::__construct();
-        $this->apiKeyService = $apiKeyService;
-        $this->roleResolver = $roleResolver;
     }
 
     protected function configure(): void
@@ -100,7 +97,7 @@ class GenerateKeyCommand extends BaseCommand
         $io->success(sprintf('Generated API key: "%s"', $apiKey->toString()));
 
         if (! $apiKey->isAdmin()) {
-            ShlinkTable::fromOutput($io)->render(
+            ShlinkTable::default($io)->render(
                 ['Role name', 'Role metadata'],
                 $apiKey->mapRoles(fn (string $name, array $meta) => [$name, arrayToString($meta, 0)]),
                 null,

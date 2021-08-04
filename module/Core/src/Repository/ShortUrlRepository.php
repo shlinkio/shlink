@@ -18,7 +18,6 @@ use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function array_column;
-use function array_key_exists;
 use function count;
 use function Functional\contains;
 
@@ -35,7 +34,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         array $tags = [],
         ?ShortUrlsOrdering $orderBy = null,
         ?DateRange $dateRange = null,
-        ?Specification $spec = null
+        ?Specification $spec = null,
     ): array {
         $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
         $qb->select('DISTINCT s')
@@ -43,7 +42,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
            ->setFirstResult($offset);
 
         // In case the ordering has been specified, the query could be more complex. Process it
-        if ($orderBy !== null && $orderBy->hasOrderField()) {
+        if ($orderBy?->hasOrderField()) {
             return $this->processOrderByForList($qb, $orderBy);
         }
 
@@ -59,6 +58,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         // visitsCount and visitCount are deprecated. Only visits should work
         if (contains(['visits', 'visitsCount', 'visitCount'], $fieldName)) {
+            // FIXME This query is inefficient. Debug it.
             $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
                ->leftJoin('s.visits', 'v')
                ->groupBy('s')
@@ -75,9 +75,11 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             'dateCreated' => 'dateCreated',
             'title' => 'title',
         ];
-        if (array_key_exists($fieldName, $fieldNameMap)) {
-            $qb->orderBy('s.' . $fieldNameMap[$fieldName], $order);
+        $resolvedFieldName = $fieldNameMap[$fieldName] ?? null;
+        if ($resolvedFieldName !== null) {
+            $qb->orderBy('s.' . $resolvedFieldName, $order);
         }
+
         return $qb->getQuery()->getResult();
     }
 
@@ -85,7 +87,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         ?string $searchTerm = null,
         array $tags = [],
         ?DateRange $dateRange = null,
-        ?Specification $spec = null
+        ?Specification $spec = null,
     ): int {
         $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
         $qb->select('COUNT(DISTINCT s)');
@@ -97,17 +99,17 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         ?string $searchTerm,
         array $tags,
         ?DateRange $dateRange,
-        ?Specification $spec
+        ?Specification $spec,
     ): QueryBuilder {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
            ->where('1=1');
 
-        if ($dateRange !== null && $dateRange->getStartDate() !== null) {
+        if ($dateRange?->getStartDate() !== null) {
             $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
             $qb->setParameter('startDate', $dateRange->getStartDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
-        if ($dateRange !== null && $dateRange->getEndDate() !== null) {
+        if ($dateRange?->getEndDate() !== null) {
             $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
             $qb->setParameter('endDate', $dateRange->getEndDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
@@ -194,10 +196,12 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
     private function doShortCodeIsInUse(ShortUrlIdentifier $identifier, ?Specification $spec, ?int $lockMode): bool
     {
-        $qb = $this->createFindOneQueryBuilder($identifier, $spec);
-        $qb->select('s.id');
+        $qb = $this->createFindOneQueryBuilder($identifier, $spec)->select('s.id');
+        $query = $qb->getQuery();
 
-        $query = $qb->getQuery()->setLockMode($lockMode);
+        if ($lockMode !== null) {
+            $query = $query->setLockMode($lockMode);
+        }
 
         return $query->getOneOrNullResult() !== null;
     }

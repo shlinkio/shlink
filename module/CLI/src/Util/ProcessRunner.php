@@ -18,12 +18,10 @@ use function str_replace;
 
 class ProcessRunner implements ProcessRunnerInterface
 {
-    private ProcessHelper $helper;
     private Closure $createProcess;
 
-    public function __construct(ProcessHelper $helper, ?callable $createProcess = null)
+    public function __construct(private ProcessHelper $helper, ?callable $createProcess = null)
     {
-        $this->helper = $helper;
         $this->createProcess = $createProcess !== null
             ? Closure::fromCallable($createProcess)
             : static fn (array $cmd) => new Process($cmd, null, null, null, LockedCommandConfig::DEFAULT_TTL);

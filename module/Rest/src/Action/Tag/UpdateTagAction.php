@@ -17,15 +17,13 @@ class UpdateTagAction extends AbstractRestAction
     protected const ROUTE_PATH = '/tags';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PUT];
 
-    private TagServiceInterface $tagService;
-
-    public function __construct(TagServiceInterface $tagService)
+    public function __construct(private TagServiceInterface $tagService)
     {
-        $this->tagService = $tagService;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        /** @var array $body */
         $body = $request->getParsedBody();
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 

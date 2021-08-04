@@ -13,21 +13,19 @@ final class VisitsParams
     private const FIRST_PAGE = 1;
     private const ALL_ITEMS = -1;
 
-    private ?DateRange $dateRange;
+    private DateRange $dateRange;
     private int $page;
     private int $itemsPerPage;
-    private bool $excludeBots;
 
     public function __construct(
         ?DateRange $dateRange = null,
         int $page = self::FIRST_PAGE,
         ?int $itemsPerPage = null,
-        bool $excludeBots = false
+        private bool $excludeBots = false
     ) {
         $this->dateRange = $dateRange ?? new DateRange();
         $this->page = $this->determinePage($page);
         $this->itemsPerPage = $this->determineItemsPerPage($itemsPerPage);
-        $this->excludeBots = $excludeBots;
     }
 
     private function determinePage(int $page): int

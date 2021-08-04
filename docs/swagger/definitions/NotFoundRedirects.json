@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "properties": {
+        "baseUrlRedirect": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL to redirect to when a user hits the domain's base URL"
+        },
+        "regular404Redirect": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL to redirect to when a user hits a not found URL other than an invalid short URL"
+        },
+        "invalidShortUrlRedirect": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL to redirect to when a user hits an invalid short URL"
+        }
+    }
+}

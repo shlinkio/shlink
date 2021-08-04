@@ -19,13 +19,8 @@ class MercureInfoAction extends AbstractRestAction
     protected const ROUTE_PATH = '/mercure-info';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    private JwtProviderInterface $jwtProvider;
-    private array $mercureConfig;
-
-    public function __construct(JwtProviderInterface $jwtProvider, array $mercureConfig)
+    public function __construct(private JwtProviderInterface $jwtProvider, private array $mercureConfig)
     {
-        $this->jwtProvider = $jwtProvider;
-        $this->mercureConfig = $mercureConfig;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface

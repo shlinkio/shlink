@@ -29,13 +29,16 @@ final class Visitor
         $this->userAgent = $this->cropToLength($userAgent, self::USER_AGENT_MAX_LENGTH);
         $this->referer = $this->cropToLength($referer, self::REFERER_MAX_LENGTH);
         $this->visitedUrl = $this->cropToLength($visitedUrl, self::VISITED_URL_MAX_LENGTH);
-        $this->remoteAddress = $this->cropToLength($remoteAddress, self::REMOTE_ADDRESS_MAX_LENGTH);
+        $this->remoteAddress = $remoteAddress === null ? null : $this->cropToLength(
+            $remoteAddress,
+            self::REMOTE_ADDRESS_MAX_LENGTH,
+        );
         $this->potentialBot = isCrawler($userAgent);
     }
 
-    private function cropToLength(?string $value, int $length): ?string
+    private function cropToLength(string $value, int $length): string
     {
-        return $value === null ? null : substr($value, 0, $length);
+        return substr($value, 0, $length);
     }
 
     public static function fromRequest(ServerRequestInterface $request): self

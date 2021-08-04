@@ -55,7 +55,7 @@ class ApiKeyServiceTest extends TestCase
         yield 'no expiration date or name' => [null, null, []];
         yield 'expiration date' => [Chronos::parse('2030-01-01'), null, []];
         yield 'roles' => [null, null, [
-            RoleDefinition::forDomain((new Domain(''))->setId('123')),
+            RoleDefinition::forDomain(Domain::withAuthority('')->setId('123')),
             RoleDefinition::forAuthoredShortUrls(),
         ]];
         yield 'single name' => [null, 'Alice', []];

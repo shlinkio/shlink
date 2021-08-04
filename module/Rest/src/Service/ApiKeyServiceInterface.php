@@ -14,7 +14,7 @@ interface ApiKeyServiceInterface
     public function create(
         ?Chronos $expirationDate = null,
         ?string $name = null,
-        RoleDefinition ...$roleDefinitions
+        RoleDefinition ...$roleDefinitions,
     ): ApiKey;
 
     public function check(string $key): ApiKeyCheckResult;

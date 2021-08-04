@@ -18,12 +18,9 @@ class ListTagsCommand extends Command
 {
     public const NAME = 'tag:list';
 
-    private TagServiceInterface $tagService;
-
-    public function __construct(TagServiceInterface $tagService)
+    public function __construct(private TagServiceInterface $tagService)
     {
         parent::__construct();
-        $this->tagService = $tagService;
     }
 
     protected function configure(): void
@@ -35,7 +32,7 @@ class ListTagsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        ShlinkTable::fromOutput($output)->render(['Name', 'URLs amount', 'Visits amount'], $this->getTagsRows());
+        ShlinkTable::default($output)->render(['Name', 'URLs amount', 'Visits amount'], $this->getTagsRows());
         return ExitCodes::EXIT_SUCCESS;
     }
 

@@ -14,6 +14,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Action\QrCodeAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -41,6 +42,7 @@ class QrCodeActionTest extends TestCase
         $this->action = new QrCodeAction(
             $this->urlResolver->reveal(),
             new ShortUrlStringifier(['domain' => 'doma.in']),
+            new NullLogger(),
         );
     }
 
@@ -84,7 +86,7 @@ class QrCodeActionTest extends TestCase
      */
     public function imageIsReturnedWithExpectedContentTypeBasedOnProvidedFormat(
         array $query,
-        string $expectedContentType
+        string $expectedContentType,
     ): void {
         $code = 'abc123';
         $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($code, ''))->willReturn(

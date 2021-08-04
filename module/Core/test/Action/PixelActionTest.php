@@ -14,9 +14,8 @@ use Shlinkio\Shlink\Common\Response\PixelResponse;
 use Shlinkio\Shlink\Core\Action\PixelAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
-use Shlinkio\Shlink\Core\Visit\VisitsTracker;
+use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
 
 class PixelActionTest extends TestCase
 {
@@ -24,18 +23,14 @@ class PixelActionTest extends TestCase
 
     private PixelAction $action;
     private ObjectProphecy $urlResolver;
-    private ObjectProphecy $visitTracker;
+    private ObjectProphecy $requestTracker;
 
     public function setUp(): void
     {
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
-        $this->visitTracker = $this->prophesize(VisitsTracker::class);
+        $this->requestTracker = $this->prophesize(RequestTrackerInterface::class);
 
-        $this->action = new PixelAction(
-            $this->urlResolver->reveal(),
-            $this->visitTracker->reveal(),
-            new TrackingOptions(),
-        );
+        $this->action = new PixelAction($this->urlResolver->reveal(), $this->requestTracker->reveal());
     }
 
     /** @test */
@@ -45,7 +40,7 @@ class PixelActionTest extends TestCase
         $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))->willReturn(
             ShortUrl::withLongUrl('http://domain.com/foo/bar'),
         )->shouldBeCalledOnce();
-        $this->visitTracker->track(Argument::cetera())->shouldBeCalledOnce();
+        $this->requestTracker->trackIfApplicable(Argument::cetera())->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());

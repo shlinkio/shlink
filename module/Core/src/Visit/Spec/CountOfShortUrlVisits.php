@@ -12,12 +12,9 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class CountOfShortUrlVisits extends BaseSpecification
 {
-    private ?ApiKey $apiKey;
-
-    public function __construct(?ApiKey $apiKey)
+    public function __construct(private ?ApiKey $apiKey)
     {
         parent::__construct();
-        $this->apiKey = $apiKey;
     }
 
     protected function getSpec(): Specification

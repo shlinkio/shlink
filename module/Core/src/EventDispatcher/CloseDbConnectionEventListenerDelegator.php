@@ -12,7 +12,7 @@ class CloseDbConnectionEventListenerDelegator
     public function __invoke(
         ContainerInterface $container,
         string $name,
-        callable $callback
+        callable $callback,
     ): CloseDbConnectionEventListener {
         /** @var callable $wrapped */
         $wrapped = $callback();

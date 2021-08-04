@@ -16,16 +16,13 @@ use function Functional\unique;
 
 class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInterface
 {
-    private EntityManagerInterface $em;
-
     /** @var array<string, Domain> */
     private array $memoizedNewDomains = [];
     /** @var array<string, Tag> */
     private array $memoizedNewTags = [];
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $em;
         $this->em->getEventManager()->addEventListener(Events::postFlush, $this);
     }
 
@@ -44,7 +41,9 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
 
     private function memoizeNewDomain(string $domain): Domain
     {
-        return $this->memoizedNewDomains[$domain] = $this->memoizedNewDomains[$domain] ?? new Domain($domain);
+        return $this->memoizedNewDomains[$domain] = $this->memoizedNewDomains[$domain] ?? Domain::withAuthority(
+            $domain,
+        );
     }
 
     /**

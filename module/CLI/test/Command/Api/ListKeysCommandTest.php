@@ -53,7 +53,9 @@ class ListKeysCommandTest extends TestCase
             | Key                                  | Name | Is enabled | Expiration date | Roles |
             +--------------------------------------+------+------------+-----------------+-------+
             | {$apiKey1} | -    | +++        | -               | Admin |
+            +--------------------------------------+------+------------+-----------------+-------+
             | {$apiKey2} | -    | +++        | -               | Admin |
+            +--------------------------------------+------+------------+-----------------+-------+
             | {$apiKey3} | -    | +++        | -               | Admin |
             +--------------------------------------+------+------------+-----------------+-------+
 
@@ -67,6 +69,7 @@ class ListKeysCommandTest extends TestCase
             | Key                                  | Name | Expiration date | Roles |
             +--------------------------------------+------+-----------------+-------+
             | {$apiKey1} | -    | -               | Admin |
+            +--------------------------------------+------+-----------------+-------+
             | {$apiKey2} | -    | -               | Admin |
             +--------------------------------------+------+-----------------+-------+
 
@@ -76,11 +79,13 @@ class ListKeysCommandTest extends TestCase
             [
                 $apiKey1 = ApiKey::create(),
                 $apiKey2 = $this->apiKeyWithRoles([RoleDefinition::forAuthoredShortUrls()]),
-                $apiKey3 = $this->apiKeyWithRoles([RoleDefinition::forDomain((new Domain('example.com'))->setId('1'))]),
+                $apiKey3 = $this->apiKeyWithRoles(
+                    [RoleDefinition::forDomain(Domain::withAuthority('example.com')->setId('1'))],
+                ),
                 $apiKey4 = ApiKey::create(),
                 $apiKey5 = $this->apiKeyWithRoles([
                     RoleDefinition::forAuthoredShortUrls(),
-                    RoleDefinition::forDomain((new Domain('example.com'))->setId('1')),
+                    RoleDefinition::forDomain(Domain::withAuthority('example.com')->setId('1')),
                 ]),
                 $apiKey6 = ApiKey::create(),
             ],
@@ -90,11 +95,16 @@ class ListKeysCommandTest extends TestCase
             | Key                                  | Name | Expiration date | Roles                    |
             +--------------------------------------+------+-----------------+--------------------------+
             | {$apiKey1} | -    | -               | Admin                    |
+            +--------------------------------------+------+-----------------+--------------------------+
             | {$apiKey2} | -    | -               | Author only              |
+            +--------------------------------------+------+-----------------+--------------------------+
             | {$apiKey3} | -    | -               | Domain only: example.com |
+            +--------------------------------------+------+-----------------+--------------------------+
             | {$apiKey4} | -    | -               | Admin                    |
+            +--------------------------------------+------+-----------------+--------------------------+
             | {$apiKey5} | -    | -               | Author only              |
             |                                      |      |                 | Domain only: example.com |
+            +--------------------------------------+------+-----------------+--------------------------+
             | {$apiKey6} | -    | -               | Admin                    |
             +--------------------------------------+------+-----------------+--------------------------+
 
@@ -113,8 +123,11 @@ class ListKeysCommandTest extends TestCase
             | Key                                  | Name          | Expiration date | Roles |
             +--------------------------------------+---------------+-----------------+-------+
             | {$apiKey1} | Alice         | -               | Admin |
+            +--------------------------------------+---------------+-----------------+-------+
             | {$apiKey2} | Alice and Bob | -               | Admin |
+            +--------------------------------------+---------------+-----------------+-------+
             | {$apiKey3} |               | -               | Admin |
+            +--------------------------------------+---------------+-----------------+-------+
             | {$apiKey4} | -             | -               | Admin |
             +--------------------------------------+---------------+-----------------+-------+
 

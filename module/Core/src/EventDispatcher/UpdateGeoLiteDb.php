@@ -12,13 +12,8 @@ use function sprintf;
 
 class UpdateGeoLiteDb
 {
-    private GeolocationDbUpdaterInterface $dbUpdater;
-    private LoggerInterface $logger;
-
-    public function __construct(GeolocationDbUpdaterInterface $dbUpdater, LoggerInterface $logger)
+    public function __construct(private GeolocationDbUpdaterInterface $dbUpdater, private LoggerInterface $logger)
     {
-        $this->dbUpdater = $dbUpdater;
-        $this->logger = $logger;
     }
 
     public function __invoke(): void

@@ -9,13 +9,8 @@ use Shlinkio\Shlink\Rest\ApiKey\Role;
 
 final class RoleDefinition
 {
-    private string $roleName;
-    private array $meta;
-
-    private function __construct(string $roleName, array $meta)
+    private function __construct(private string $roleName, private array $meta)
     {
-        $this->roleName = $roleName;
-        $this->meta = $meta;
     }
 
     public static function forAuthoredShortUrls(): self

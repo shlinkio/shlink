@@ -23,13 +23,8 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
     private const CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
         . 'Chrome/51.0.2704.103 Safari/537.36';
 
-    private ClientInterface $httpClient;
-    private UrlShortenerOptions $options;
-
-    public function __construct(ClientInterface $httpClient, UrlShortenerOptions $options)
+    public function __construct(private ClientInterface $httpClient, private UrlShortenerOptions $options)
     {
-        $this->httpClient = $httpClient;
-        $this->options = $options;
     }
 
     /**

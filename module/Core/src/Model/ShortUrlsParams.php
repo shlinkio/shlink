@@ -15,7 +15,7 @@ final class ShortUrlsParams
     public const DEFAULT_ITEMS_PER_PAGE = 10;
 
     private int $page;
-    private ?int $itemsPerPage = null;
+    private int $itemsPerPage;
     private ?string $searchTerm;
     private array $tags;
     private ShortUrlsOrdering $orderBy;

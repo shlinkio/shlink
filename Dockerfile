@@ -1,8 +1,8 @@
-FROM php:8.0.6-alpine3.13 as base
+FROM php:8.0.9-alpine3.14 as base
 
 ARG SHLINK_VERSION=latest
 ENV SHLINK_VERSION ${SHLINK_VERSION}
-ENV SWOOLE_VERSION 4.6.7
+ENV SWOOLE_VERSION 4.7.0
 ENV PDO_SQLSRV_VERSION 5.9.0
 ENV MS_ODBC_SQL_VERSION 17.5.2.1
 ENV LC_ALL "C"
@@ -77,5 +77,15 @@ VOLUME /etc/shlink/data
 COPY docker/docker-entrypoint.sh docker-entrypoint.sh
 COPY docker/config/shlink_in_docker.local.php config/autoload/shlink_in_docker.local.php
 COPY docker/config/php.ini ${PHP_INI_DIR}/conf.d/
+
+# Change the ownership of /etc/shlink/data to be writable, then change the user to non-root
+# FIXME Disabled for now, as it conflicts with ENABLE_PERIODIC_VISIT_LOCATE, which is used to configure a cron as root.
+#       Ref: https://github.com/shlinkio/shlink/issues/1132
+#RUN chown 1001 /etc/shlink/data
+#RUN chown 1001 /etc/shlink/data/locks
+#RUN chown 1001 /etc/shlink/data/proxies
+#RUN chown 1001 /etc/shlink/data/cache
+#RUN chown 1001 /etc/shlink/data/log
+#USER 1001
 
 ENTRYPOINT ["/bin/sh", "./docker-entrypoint.sh"]

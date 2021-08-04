@@ -16,11 +16,8 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class OverrideDomainMiddleware implements MiddlewareInterface
 {
-    private DomainServiceInterface $domainService;
-
-    public function __construct(DomainServiceInterface $domainService)
+    public function __construct(private DomainServiceInterface $domainService)
     {
-        $this->domainService = $domainService;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -35,6 +32,7 @@ class OverrideDomainMiddleware implements MiddlewareInterface
         $domain = $this->domainService->getDomain($domainId);
 
         if ($requestMethod === RequestMethodInterface::METHOD_POST) {
+            /** @var array $payload */
             $payload = $request->getParsedBody();
             $payload[ShortUrlInputFilter::DOMAIN] = $domain->getAuthority();
 

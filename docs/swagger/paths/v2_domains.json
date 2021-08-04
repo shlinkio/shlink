@@ -18,7 +18,7 @@
         ],
         "responses": {
             "200": {
-                "description": "The list of tags",
+                "description": "The list of domains",
                 "content": {
                     "application/json": {
                         "schema": {
@@ -33,13 +33,16 @@
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": ["domain", "isDefault"],
+                                                "required": ["domain", "isDefault", "redirects"],
                                                 "properties": {
                                                     "domain":  {
                                                         "type": "string"
                                                     },
                                                     "isDefault": {
                                                         "type": "boolean"
+                                                    },
+                                                    "redirects": {
+                                                        "$ref": "../definitions/NotFoundRedirects.json"
                                                     }
                                                 }
                                             }
@@ -56,15 +59,30 @@
                             "data": [
                                 {
                                     "domain": "example.com",
-                                    "isDefault": true
+                                    "isDefault": true,
+                                    "redirects": {
+                                        "baseUrlRedirect": "https://example.com/my-landing-page",
+                                        "regular404Redirect": null,
+                                        "invalidShortUrlRedirect": "https://example.com/invalid-url"
+                                    }
                                 },
                                 {
                                     "domain": "aaa.com",
-                                    "isDefault": false
+                                    "isDefault": false,
+                                    "redirects":  {
+                                        "baseUrlRedirect": null,
+                                        "regular404Redirect": null,
+                                        "invalidShortUrlRedirect": null
+                                    }
                                 },
                                 {
                                     "domain": "bbb.com",
-                                    "isDefault": false
+                                    "isDefault": false,
+                                    "redirects":  {
+                                        "baseUrlRedirect": null,
+                                        "regular404Redirect": null,
+                                        "invalidShortUrlRedirect": "https://example.com/invalid-url"
+                                    }
                                 }
                             ]
                         }

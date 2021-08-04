@@ -27,11 +27,8 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
 {
     public const NAME = 'short-url:visits';
 
-    private VisitsStatsHelperInterface $visitsHelper;
-
-    public function __construct(VisitsStatsHelperInterface $visitsHelper)
+    public function __construct(private VisitsStatsHelperInterface $visitsHelper)
     {
-        $this->visitsHelper = $visitsHelper;
         parent::__construct();
     }
 
@@ -84,7 +81,7 @@ class GetVisitsCommand extends AbstractWithDateRangeCommand
             $rowData['country'] = ($visit->getVisitLocation() ?? new UnknownVisitLocation())->getCountryName();
             return select_keys($rowData, ['referer', 'date', 'userAgent', 'country']);
         });
-        ShlinkTable::fromOutput($output)->render(['Referer', 'Date', 'User agent', 'Country'], $rows);
+        ShlinkTable::default($output)->render(['Referer', 'Date', 'User agent', 'Country'], $rows);
 
         return ExitCodes::EXIT_SUCCESS;
     }

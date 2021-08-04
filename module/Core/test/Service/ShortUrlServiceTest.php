@@ -82,7 +82,7 @@ class ShortUrlServiceTest extends TestCase
     public function updateShortUrlUpdatesProvidedData(
         int $expectedValidateCalls,
         ShortUrlEdit $shortUrlEdit,
-        ?ApiKey $apiKey
+        ?ApiKey $apiKey,
     ): void {
         $originalLongUrl = 'originalLongUrl';
         $shortUrl = ShortUrl::withLongUrl($originalLongUrl);

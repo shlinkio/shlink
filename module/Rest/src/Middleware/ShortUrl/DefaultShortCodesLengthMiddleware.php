@@ -12,15 +12,13 @@ use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 
 class DefaultShortCodesLengthMiddleware implements MiddlewareInterface
 {
-    private int $defaultShortCodesLength;
-
-    public function __construct(int $defaultShortCodesLength)
+    public function __construct(private int $defaultShortCodesLength)
     {
-        $this->defaultShortCodesLength = $defaultShortCodesLength;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        /** @var array $body */
         $body = $request->getParsedBody();
         if (! isset($body[ShortUrlInputFilter::SHORT_CODE_LENGTH])) {
             $body[ShortUrlInputFilter::SHORT_CODE_LENGTH] = $this->defaultShortCodesLength;

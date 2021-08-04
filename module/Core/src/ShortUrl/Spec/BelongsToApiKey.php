@@ -11,18 +11,13 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class BelongsToApiKey extends BaseSpecification
 {
-    private ApiKey $apiKey;
-    private ?string $dqlAlias;
-
-    public function __construct(ApiKey $apiKey, ?string $dqlAlias = null)
+    public function __construct(private ApiKey $apiKey, ?string $context = null)
     {
-        $this->apiKey = $apiKey;
-        $this->dqlAlias = $dqlAlias;
-        parent::__construct();
+        parent::__construct($context);
     }
 
     protected function getSpec(): Filter
     {
-        return Spec::eq('authorApiKey', $this->apiKey, $this->dqlAlias);
+        return Spec::eq('authorApiKey', $this->apiKey);
     }
 }

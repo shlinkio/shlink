@@ -68,7 +68,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         $authority = 'doma.in';
 
         yield 'not found domain' => [null, $authority];
-        yield 'found domain' => [new Domain($authority), $authority];
+        yield 'found domain' => [Domain::withAuthority($authority), $authority];
     }
 
     /**

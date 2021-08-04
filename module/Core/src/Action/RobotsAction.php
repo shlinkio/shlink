@@ -17,15 +17,13 @@ use const PHP_EOL;
 
 class RobotsAction implements RequestHandlerInterface, StatusCodeInterface
 {
-    private CrawlingHelperInterface $crawlingHelper;
-
-    public function __construct(CrawlingHelperInterface $crawlingHelper)
+    public function __construct(private CrawlingHelperInterface $crawlingHelper)
     {
-        $this->crawlingHelper = $crawlingHelper;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        // @phpstan-ignore-next-line The "Response" phpdoc is wrong
         return new Response(self::STATUS_OK, ['Content-type' => 'text/plain'], $this->buildRobots());
     }
 

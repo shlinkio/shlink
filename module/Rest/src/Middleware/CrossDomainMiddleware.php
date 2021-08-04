@@ -16,11 +16,8 @@ use function implode;
 
 class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterface
 {
-    private array $config;
-
-    public function __construct(array $config)
+    public function __construct(private array $config)
     {
-        $this->config = $config;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

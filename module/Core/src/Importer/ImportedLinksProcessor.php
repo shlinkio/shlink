@@ -20,23 +20,15 @@ use function sprintf;
 
 class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 {
-    private EntityManagerInterface $em;
-    private ShortUrlRelationResolverInterface $relationResolver;
-    private ShortCodeHelperInterface $shortCodeHelper;
-    private DoctrineBatchHelperInterface $batchHelper;
     private ShortUrlRepositoryInterface $shortUrlRepo;
 
     public function __construct(
-        EntityManagerInterface $em,
-        ShortUrlRelationResolverInterface $relationResolver,
-        ShortCodeHelperInterface $shortCodeHelper,
-        DoctrineBatchHelperInterface $batchHelper
+        private EntityManagerInterface $em,
+        private ShortUrlRelationResolverInterface $relationResolver,
+        private ShortCodeHelperInterface $shortCodeHelper,
+        private DoctrineBatchHelperInterface $batchHelper
     ) {
-        $this->em = $em;
-        $this->relationResolver = $relationResolver;
-        $this->shortCodeHelper = $shortCodeHelper;
-        $this->batchHelper = $batchHelper;
-        $this->shortUrlRepo = $this->em->getRepository(ShortUrl::class); // @phpstan-ignore-line
+        $this->shortUrlRepo = $this->em->getRepository(ShortUrl::class);
     }
 
     /**
@@ -64,7 +56,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 
             try {
                 $shortUrlImporting = $this->resolveShortUrl($importedUrl, $importShortCodes, $skipOnShortCodeConflict);
-            } catch (NonUniqueSlugException $e) {
+            } catch (NonUniqueSlugException) {
                 $io->text(sprintf('%s: <fg=red>Error</>', $longUrl));
                 continue;
             }
@@ -77,7 +69,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     private function resolveShortUrl(
         ImportedShlinkUrl $importedUrl,
         bool $importShortCodes,
-        callable $skipOnShortCodeConflict
+        callable $skipOnShortCodeConflict,
     ): ShortUrlImporting {
         $alreadyImportedShortUrl = $this->shortUrlRepo->findOneByImportedUrl($importedUrl);
         if ($alreadyImportedShortUrl !== null) {
@@ -96,7 +88,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     private function handleShortCodeUniqueness(
         ShortUrl $shortUrl,
         bool $importShortCodes,
-        callable $skipOnShortCodeConflict
+        callable $skipOnShortCodeConflict,
     ): bool {
         if ($this->shortCodeHelper->ensureShortCodeUniqueness($shortUrl, $importShortCodes)) {
             return true;

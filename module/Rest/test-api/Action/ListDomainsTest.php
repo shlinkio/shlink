@@ -31,26 +31,60 @@ class ListDomainsTest extends ApiTestCase
             [
                 'domain' => 'doma.in',
                 'isDefault' => true,
+                'redirects' => [
+                    'baseUrlRedirect' => null,
+                    'regular404Redirect' => null,
+                    'invalidShortUrlRedirect' => null,
+                ],
+            ],
+            [
+                'domain' => 'detached-with-redirects.com',
+                'isDefault' => false,
+                'redirects' => [
+                    'baseUrlRedirect' => 'foo.com',
+                    'regular404Redirect' => 'bar.com',
+                    'invalidShortUrlRedirect' => null,
+                ],
             ],
             [
                 'domain' => 'example.com',
                 'isDefault' => false,
+                'redirects' => [
+                    'baseUrlRedirect' => null,
+                    'regular404Redirect' => null,
+                    'invalidShortUrlRedirect' => null,
+                ],
             ],
             [
                 'domain' => 'some-domain.com',
                 'isDefault' => false,
+                'redirects' => [
+                    'baseUrlRedirect' => null,
+                    'regular404Redirect' => null,
+                    'invalidShortUrlRedirect' => null,
+                ],
             ],
         ]];
         yield 'author API key' => ['author_api_key', [
             [
                 'domain' => 'doma.in',
                 'isDefault' => true,
+                'redirects' => [
+                    'baseUrlRedirect' => null,
+                    'regular404Redirect' => null,
+                    'invalidShortUrlRedirect' => null,
+                ],
             ],
         ]];
         yield 'domain API key' => ['domain_api_key', [
             [
                 'domain' => 'example.com',
                 'isDefault' => false,
+                'redirects' => [
+                    'baseUrlRedirect' => null,
+                    'regular404Redirect' => null,
+                    'invalidShortUrlRedirect' => null,
+                ],
             ],
         ]];
     }

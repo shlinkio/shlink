@@ -21,12 +21,9 @@ class DeleteShortUrlCommand extends Command
 {
     public const NAME = 'short-url:delete';
 
-    private DeleteShortUrlServiceInterface $deleteShortUrlService;
-
-    public function __construct(DeleteShortUrlServiceInterface $deleteShortUrlService)
+    public function __construct(private DeleteShortUrlServiceInterface $deleteShortUrlService)
     {
         parent::__construct();
-        $this->deleteShortUrlService = $deleteShortUrlService;
     }
 
     protected function configure(): void

@@ -60,7 +60,7 @@ class ShortUrl extends AbstractEntity
 
     public static function fromMeta(
         ShortUrlMeta $meta,
-        ?ShortUrlRelationResolverInterface $relationResolver = null
+        ?ShortUrlRelationResolverInterface $relationResolver = null,
     ): self {
         $instance = new self();
         $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
@@ -87,7 +87,7 @@ class ShortUrl extends AbstractEntity
     public static function fromImport(
         ImportedShlinkUrl $url,
         bool $importShortCode,
-        ?ShortUrlRelationResolverInterface $relationResolver = null
+        ?ShortUrlRelationResolverInterface $relationResolver = null,
     ): self {
         $meta = [
             ShortUrlInputFilter::VALIDATE_URL => false,
@@ -209,7 +209,7 @@ class ShortUrl extends AbstractEntity
 
     public function update(
         ShortUrlEdit $shortUrlEdit,
-        ?ShortUrlRelationResolverInterface $relationResolver = null
+        ?ShortUrlRelationResolverInterface $relationResolver = null,
     ): void {
         if ($shortUrlEdit->validSinceWasProvided()) {
             $this->validSince = $shortUrlEdit->validSince();

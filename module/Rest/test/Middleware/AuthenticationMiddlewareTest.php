@@ -88,7 +88,7 @@ class AuthenticationMiddlewareTest extends TestCase
      */
     public function throwsExceptionWhenNoApiKeyIsProvided(
         ServerRequestInterface $request,
-        string $expectedMessage
+        string $expectedMessage,
     ): void {
         $this->apiKeyService->check(Argument::any())->shouldNotBeCalled();
         $this->handler->handle($request)->shouldNotBeCalled();

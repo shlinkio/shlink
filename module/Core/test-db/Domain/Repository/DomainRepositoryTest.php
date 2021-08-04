@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Domain\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -26,50 +27,82 @@ class DomainRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function findDomainsReturnsExpectedResult(): void
+    public function expectedDomainsAreFoundWhenNoApiKeyIsInvolved(): void
     {
-        $fooDomain = new Domain('foo.com');
+        $fooDomain = Domain::withAuthority('foo.com');
         $this->getEntityManager()->persist($fooDomain);
         $this->getEntityManager()->persist($this->createShortUrl($fooDomain));
 
-        $barDomain = new Domain('bar.com');
+        $barDomain = Domain::withAuthority('bar.com');
         $this->getEntityManager()->persist($barDomain);
         $this->getEntityManager()->persist($this->createShortUrl($barDomain));
 
-        $bazDomain = new Domain('baz.com');
+        $bazDomain = Domain::withAuthority('baz.com');
         $this->getEntityManager()->persist($bazDomain);
         $this->getEntityManager()->persist($this->createShortUrl($bazDomain));
 
-        $detachedDomain = new Domain('detached.com');
+        $detachedDomain = Domain::withAuthority('detached.com');
         $this->getEntityManager()->persist($detachedDomain);
+
+        $detachedWithRedirects = Domain::withAuthority('detached-with-redirects.com');
+        $detachedWithRedirects->configureNotFoundRedirects(NotFoundRedirects::withRedirects('foo.com', 'bar.com'));
+        $this->getEntityManager()->persist($detachedWithRedirects);
 
         $this->getEntityManager()->flush();
 
-        self::assertEquals([$barDomain, $bazDomain, $fooDomain], $this->repo->findDomainsWithout(null));
-        self::assertEquals([$barDomain, $bazDomain], $this->repo->findDomainsWithout('foo.com'));
-        self::assertEquals([$bazDomain, $fooDomain], $this->repo->findDomainsWithout('bar.com'));
-        self::assertEquals([$barDomain, $fooDomain], $this->repo->findDomainsWithout('baz.com'));
+        self::assertEquals(
+            [$barDomain, $bazDomain, $detachedWithRedirects, $fooDomain],
+            $this->repo->findDomainsWithout(null),
+        );
+        self::assertEquals(
+            [$barDomain, $bazDomain, $detachedWithRedirects],
+            $this->repo->findDomainsWithout('foo.com'),
+        );
+        self::assertEquals(
+            [$bazDomain, $detachedWithRedirects, $fooDomain],
+            $this->repo->findDomainsWithout('bar.com'),
+        );
+        self::assertEquals(
+            [$barDomain, $detachedWithRedirects, $fooDomain],
+            $this->repo->findDomainsWithout('baz.com'),
+        );
+        self::assertEquals(
+            [$barDomain, $bazDomain, $fooDomain],
+            $this->repo->findDomainsWithout('detached-with-redirects.com'),
+        );
+
+        self::assertEquals($barDomain, $this->repo->findOneByAuthority('bar.com'));
+        self::assertEquals($detachedWithRedirects, $this->repo->findOneByAuthority('detached-with-redirects.com'));
+        self::assertNull($this->repo->findOneByAuthority('does-not-exist.com'));
+        self::assertEquals($detachedDomain, $this->repo->findOneByAuthority('detached.com'));
     }
 
     /** @test */
-    public function findDomainsReturnsJustThoseMatchingProvidedApiKey(): void
+    public function expectedDomainsAreFoundWhenApiKeyIsProvided(): void
     {
         $authorApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($authorApiKey);
         $authorAndDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($authorAndDomainApiKey);
 
-        $fooDomain = new Domain('foo.com');
+        $fooDomain = Domain::withAuthority('foo.com');
         $this->getEntityManager()->persist($fooDomain);
         $this->getEntityManager()->persist($this->createShortUrl($fooDomain, $authorApiKey));
 
-        $barDomain = new Domain('bar.com');
+        $barDomain = Domain::withAuthority('bar.com');
         $this->getEntityManager()->persist($barDomain);
         $this->getEntityManager()->persist($this->createShortUrl($barDomain, $authorAndDomainApiKey));
 
-        $bazDomain = new Domain('baz.com');
+        $bazDomain = Domain::withAuthority('baz.com');
         $this->getEntityManager()->persist($bazDomain);
         $this->getEntityManager()->persist($this->createShortUrl($bazDomain, $authorApiKey));
+
+        $detachedDomain = Domain::withAuthority('detached.com');
+        $this->getEntityManager()->persist($detachedDomain);
+
+        $detachedWithRedirects = Domain::withAuthority('detached-with-redirects.com');
+        $detachedWithRedirects->configureNotFoundRedirects(NotFoundRedirects::withRedirects('foo.com', 'bar.com'));
+        $this->getEntityManager()->persist($detachedWithRedirects);
 
         $this->getEntityManager()->flush();
 
@@ -79,14 +112,32 @@ class DomainRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($fooDomainApiKey);
 
         $barDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($barDomain)));
-        $this->getEntityManager()->persist($fooDomainApiKey);
+        $this->getEntityManager()->persist($barDomainApiKey);
+
+        $detachedWithRedirectsApiKey = ApiKey::fromMeta(
+            ApiKeyMeta::withRoles(RoleDefinition::forDomain($detachedWithRedirects)),
+        );
+        $this->getEntityManager()->persist($detachedWithRedirectsApiKey);
 
         $this->getEntityManager()->flush();
 
         self::assertEquals([$fooDomain], $this->repo->findDomainsWithout(null, $fooDomainApiKey));
         self::assertEquals([$barDomain], $this->repo->findDomainsWithout(null, $barDomainApiKey));
+        self::assertEquals(
+            [$detachedWithRedirects],
+            $this->repo->findDomainsWithout(null, $detachedWithRedirectsApiKey),
+        );
         self::assertEquals([$bazDomain, $fooDomain], $this->repo->findDomainsWithout(null, $authorApiKey));
         self::assertEquals([], $this->repo->findDomainsWithout(null, $authorAndDomainApiKey));
+
+        self::assertEquals($fooDomain, $this->repo->findOneByAuthority('foo.com', $authorApiKey));
+        self::assertNull($this->repo->findOneByAuthority('bar.com', $authorApiKey));
+        self::assertEquals($barDomain, $this->repo->findOneByAuthority('bar.com', $barDomainApiKey));
+        self::assertEquals(
+            $detachedWithRedirects,
+            $this->repo->findOneByAuthority('detached-with-redirects.com', $detachedWithRedirectsApiKey),
+        );
+        self::assertNull($this->repo->findOneByAuthority('foo.com', $detachedWithRedirectsApiKey));
     }
 
     private function createShortUrl(Domain $domain, ?ApiKey $apiKey = null): ShortUrl
@@ -94,11 +145,8 @@ class DomainRepositoryTest extends DatabaseTestCase
         return ShortUrl::fromMeta(
             ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority(), 'apiKey' => $apiKey, 'longUrl' => 'foo']),
             new class ($domain) implements ShortUrlRelationResolverInterface {
-                private Domain $domain;
-
-                public function __construct(Domain $domain)
+                public function __construct(private Domain $domain)
                 {
-                    $this->domain = $domain;
                 }
 
                 public function resolveDomain(?string $domain): ?Domain
