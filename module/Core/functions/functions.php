@@ -16,6 +16,7 @@ use function Functional\reduce_left;
 use function is_array;
 use function lcfirst;
 use function print_r;
+use function Shlinkio\Shlink\Common\buildDateRange;
 use function sprintf;
 use function str_repeat;
 use function str_replace;
@@ -51,12 +52,7 @@ function parseDateRangeFromQuery(array $query, string $startDateName, string $en
     $startDate = parseDateFromQuery($query, $startDateName);
     $endDate = parseDateFromQuery($query, $endDateName);
 
-    return match (true) {
-        $startDate === null && $endDate === null => DateRange::emptyInstance(),
-        $startDate !== null && $endDate !== null => DateRange::withStartAndEndDate($startDate, $endDate),
-        $startDate !== null => DateRange::withStartDate($startDate),
-        default => DateRange::withEndDate($endDate),
-    };
+    return buildDateRange($startDate, $endDate);
 }
 
 /**

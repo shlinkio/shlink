@@ -187,11 +187,11 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     private function applyDatesInline(QueryBuilder $qb, ?DateRange $dateRange): void
     {
-        if ($dateRange?->getStartDate() !== null) {
-            $qb->andWhere($qb->expr()->gte('v.date', '\'' . $dateRange->getStartDate()->toDateTimeString() . '\''));
+        if ($dateRange?->startDate() !== null) {
+            $qb->andWhere($qb->expr()->gte('v.date', '\'' . $dateRange->startDate()->toDateTimeString() . '\''));
         }
-        if ($dateRange?->getEndDate() !== null) {
-            $qb->andWhere($qb->expr()->lte('v.date', '\'' . $dateRange->getEndDate()->toDateTimeString() . '\''));
+        if ($dateRange?->endDate() !== null) {
+            $qb->andWhere($qb->expr()->lte('v.date', '\'' . $dateRange->endDate()->toDateTimeString() . '\''));
         }
     }
 

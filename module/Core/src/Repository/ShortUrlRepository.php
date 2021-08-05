@@ -105,13 +105,13 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         $qb->from(ShortUrl::class, 's')
            ->where('1=1');
 
-        if ($dateRange?->getStartDate() !== null) {
+        if ($dateRange?->startDate() !== null) {
             $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
-            $qb->setParameter('startDate', $dateRange->getStartDate(), ChronosDateTimeType::CHRONOS_DATETIME);
+            $qb->setParameter('startDate', $dateRange->startDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
-        if ($dateRange?->getEndDate() !== null) {
+        if ($dateRange?->endDate() !== null) {
             $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
-            $qb->setParameter('endDate', $dateRange->getEndDate(), ChronosDateTimeType::CHRONOS_DATETIME);
+            $qb->setParameter('endDate', $dateRange->endDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
 
         // Apply search term to every searchable field if not empty

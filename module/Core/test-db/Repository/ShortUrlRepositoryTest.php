@@ -133,16 +133,16 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         self::assertCount(3, $result);
         self::assertSame($bar, $result[0]);
 
-        $result = $this->repo->findList(null, null, null, [], null, new DateRange(null, Chronos::now()->subDays(2)));
+        $result = $this->repo->findList(null, null, null, [], null, DateRange::withEndDate(Chronos::now()->subDays(2)));
         self::assertCount(1, $result);
-        self::assertEquals(1, $this->repo->countList(null, [], new DateRange(null, Chronos::now()->subDays(2))));
+        self::assertEquals(1, $this->repo->countList(null, [], DateRange::withEndDate(Chronos::now()->subDays(2))));
         self::assertSame($foo2, $result[0]);
 
         self::assertCount(
             2,
-            $this->repo->findList(null, null, null, [], null, new DateRange(Chronos::now()->subDays(2))),
+            $this->repo->findList(null, null, null, [], null, DateRange::withStartDate(Chronos::now()->subDays(2))),
         );
-        self::assertEquals(2, $this->repo->countList(null, [], new DateRange(Chronos::now()->subDays(2))));
+        self::assertEquals(2, $this->repo->countList(null, [], DateRange::withStartDate(Chronos::now()->subDays(2))));
     }
 
     /** @test */

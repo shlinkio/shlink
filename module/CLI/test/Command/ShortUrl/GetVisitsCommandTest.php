@@ -45,7 +45,7 @@ class GetVisitsCommandTest extends TestCase
         $shortCode = 'abc123';
         $this->visitsHelper->visitsForShortUrl(
             new ShortUrlIdentifier($shortCode),
-            new VisitsParams(new DateRange(null, null)),
+            new VisitsParams(DateRange::emptyInstance()),
         )
             ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
@@ -61,7 +61,7 @@ class GetVisitsCommandTest extends TestCase
         $endDate = '2016-02-01';
         $this->visitsHelper->visitsForShortUrl(
             new ShortUrlIdentifier($shortCode),
-            new VisitsParams(new DateRange(Chronos::parse($startDate), Chronos::parse($endDate))),
+            new VisitsParams(DateRange::withStartAndEndDate(Chronos::parse($startDate), Chronos::parse($endDate))),
         )
             ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
@@ -80,7 +80,7 @@ class GetVisitsCommandTest extends TestCase
         $startDate = 'foo';
         $info = $this->visitsHelper->visitsForShortUrl(
             new ShortUrlIdentifier($shortCode),
-            new VisitsParams(new DateRange()),
+            new VisitsParams(DateRange::emptyInstance()),
         )->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute([
