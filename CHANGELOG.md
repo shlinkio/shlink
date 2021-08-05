@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* [#1142](https://github.com/shlinkio/shlink/issues/1142) Replaced `doctrine/cache` package with `symfony/cache`.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1098](https://github.com/shlinkio/shlink/issues/1098) Fixed errors when using a Redis Cluster for caching, caused by `doctrine/cache` not fully supporting clusters.
+
+
 ## [2.8.0] - 2021-08-04
 ### Added
 * [#1089](https://github.com/shlinkio/shlink/issues/1089) Added new `ENABLE_PERIODIC_VISIT_LOCATE` env var to docker image which schedules the `visit:locate` command every hour when provided with value `true`.
