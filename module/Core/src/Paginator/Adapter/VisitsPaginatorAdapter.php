@@ -17,7 +17,7 @@ class VisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
         private VisitRepositoryInterface $visitRepository,
         private ShortUrlIdentifier $identifier,
         private VisitsParams $params,
-        private ?Specification $spec
+        private ?Specification $spec,
     ) {
     }
 

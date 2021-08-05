@@ -26,7 +26,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
     public function __construct(
         private ApiKeyServiceInterface $apiKeyService,
         private array $routesWithoutApiKey,
-        private array $routesWithQueryApiKey
+        private array $routesWithQueryApiKey,
     ) {
     }
 

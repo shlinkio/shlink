@@ -11,7 +11,7 @@ final class LockedCommandConfig
     private function __construct(
         private string $lockName,
         private bool $isBlocking,
-        private float $ttl = self::DEFAULT_TTL
+        private float $ttl = self::DEFAULT_TTL,
     ) {
     }
 

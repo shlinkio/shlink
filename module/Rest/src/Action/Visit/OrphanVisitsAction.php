@@ -22,7 +22,7 @@ class OrphanVisitsAction extends AbstractRestAction
 
     public function __construct(
         private VisitsStatsHelperInterface $visitsHelper,
-        private DataTransformerInterface $orphanVisitTransformer
+        private DataTransformerInterface $orphanVisitTransformer,
     ) {
     }
 

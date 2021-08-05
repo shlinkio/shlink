@@ -20,7 +20,7 @@ final class MercureUpdatesGenerator implements MercureUpdatesGeneratorInterface
 
     public function __construct(
         private DataTransformerInterface $shortUrlTransformer,
-        private DataTransformerInterface $orphanVisitTransformer
+        private DataTransformerInterface $orphanVisitTransformer,
     ) {
     }
 

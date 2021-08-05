@@ -116,9 +116,8 @@ class GeolocationDbUpdaterTest extends TestCase
     /**
      * @test
      * @dataProvider provideSmallDays
-     * @param string|int $buildEpoch
      */
-    public function databaseIsNotUpdatedIfItIsYoungerThanOneWeek($buildEpoch): void
+    public function databaseIsNotUpdatedIfItIsYoungerThanOneWeek(string|int $buildEpoch): void
     {
         $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(true);
         $getMeta = $this->geoLiteDbReader->metadata()->willReturn($this->buildMetaWithBuildEpoch($buildEpoch));
@@ -161,10 +160,7 @@ class GeolocationDbUpdaterTest extends TestCase
         $this->geolocationDbUpdater->checkDbUpdate();
     }
 
-    /**
-     * @param string|int $buildEpoch
-     */
-    private function buildMetaWithBuildEpoch($buildEpoch): Metadata
+    private function buildMetaWithBuildEpoch(string|int $buildEpoch): Metadata
     {
         return new Metadata([
             'binary_format_major_version' => '',

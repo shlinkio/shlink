@@ -17,7 +17,7 @@ class VisitsTracker implements VisitsTrackerInterface
     public function __construct(
         private ORM\EntityManagerInterface $em,
         private EventDispatcherInterface $eventDispatcher,
-        private TrackingOptions $options
+        private TrackingOptions $options,
     ) {
     }
 

@@ -14,7 +14,7 @@ final class VisitsListFiltering extends VisitsCountFiltering
         bool $excludeBots = false,
         ?Specification $spec = null,
         private ?int $limit = null,
-        private ?int $offset = null
+        private ?int $offset = null,
     ) {
         parent::__construct($dateRange, $excludeBots, $spec);
     }

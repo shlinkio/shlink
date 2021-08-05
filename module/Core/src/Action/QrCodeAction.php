@@ -22,7 +22,7 @@ class QrCodeAction implements MiddlewareInterface
     public function __construct(
         private ShortUrlResolverInterface $urlResolver,
         private ShortUrlStringifierInterface $stringifier,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

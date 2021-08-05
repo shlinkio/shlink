@@ -21,7 +21,7 @@ class NotifyVisitToMercure
         private HubInterface $hub,
         private MercureUpdatesGeneratorInterface $updatesGenerator,
         private EntityManagerInterface $em,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

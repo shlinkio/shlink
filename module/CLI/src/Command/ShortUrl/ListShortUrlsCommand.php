@@ -35,7 +35,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
 
     public function __construct(
         private ShortUrlServiceInterface $shortUrlService,
-        private DataTransformerInterface $transformer
+        private DataTransformerInterface $transformer,
     ) {
         parent::__construct();
     }

@@ -11,6 +11,6 @@ interface NotFoundRedirectResolverInterface
 {
     public function resolveRedirectResponse(
         NotFoundType $notFoundType,
-        NotFoundRedirectConfigInterface $config
+        NotFoundRedirectConfigInterface $config,
     ): ?ResponseInterface;
 }

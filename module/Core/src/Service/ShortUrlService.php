@@ -25,7 +25,7 @@ class ShortUrlService implements ShortUrlServiceInterface
         private ORM\EntityManagerInterface $em,
         private ShortUrlResolverInterface $urlResolver,
         private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
-        private ShortUrlRelationResolverInterface $relationResolver
+        private ShortUrlRelationResolverInterface $relationResolver,
     ) {
     }
 

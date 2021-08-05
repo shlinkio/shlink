@@ -16,7 +16,7 @@ class DeleteShortUrlService implements DeleteShortUrlServiceInterface
     public function __construct(
         private EntityManagerInterface $em,
         private DeleteShortUrlsOptions $deleteShortUrlsOptions,
-        private ShortUrlResolverInterface $urlResolver
+        private ShortUrlResolverInterface $urlResolver,
     ) {
     }
 
