@@ -31,7 +31,7 @@ class NotifyVisitToWebHooks
         /** @var string[] */
         private array $webhooks,
         private DataTransformerInterface $transformer,
-        private AppOptions $appOptions
+        private AppOptions $appOptions,
     ) {
     }
 

@@ -84,7 +84,7 @@ class DomainService implements DomainServiceInterface
     public function configureNotFoundRedirects(
         string $authority,
         NotFoundRedirects $notFoundRedirects,
-        ?ApiKey $apiKey = null
+        ?ApiKey $apiKey = null,
     ): Domain {
         if ($authority === $this->defaultDomain) {
             throw InvalidDomainException::forDefaultDomainRedirects();

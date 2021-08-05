@@ -46,7 +46,7 @@
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.7",
         "ramsey/uuid": "^3.9",
-        "shlinkio/shlink-common": "dev-main#2832a4a as 4.0",
+        "shlinkio/shlink-common": "dev-main#baef0ca as 4.0",
         "shlinkio/shlink-config": "^1.2",
         "shlinkio/shlink-event-dispatcher": "^2.1",
         "shlinkio/shlink-importer": "^2.3.1",
@@ -71,7 +71,7 @@
         "phpunit/php-code-coverage": "^9.2",
         "phpunit/phpunit": "^9.5",
         "roave/security-advisories": "dev-master",
-        "shlinkio/php-coding-standard": "~2.1.1",
+        "shlinkio/php-coding-standard": "~2.2.0",
         "shlinkio/shlink-test-utils": "^2.2",
         "symfony/var-dumper": "^5.3",
         "veewee/composer-run-parallel": "^1.0"

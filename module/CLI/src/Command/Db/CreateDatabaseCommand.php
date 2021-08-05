@@ -26,7 +26,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
         ProcessRunnerInterface $processRunner,
         PhpExecutableFinder $phpFinder,
         private Connection $regularConn,
-        private Connection $noDbNameConn
+        private Connection $noDbNameConn,
     ) {
         parent::__construct($locker, $processRunner, $phpFinder);
     }

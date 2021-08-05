@@ -33,7 +33,7 @@ class GenerateShortUrlCommand extends BaseCommand
     public function __construct(
         private UrlShortenerInterface $urlShortener,
         private ShortUrlStringifierInterface $stringifier,
-        private int $defaultShortCodeLength
+        private int $defaultShortCodeLength,
     ) {
         parent::__construct();
     }

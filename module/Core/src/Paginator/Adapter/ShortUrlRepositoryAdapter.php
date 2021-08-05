@@ -14,7 +14,7 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
     public function __construct(
         private ShortUrlRepositoryInterface $repository,
         private ShortUrlsParams $params,
-        private ?ApiKey $apiKey
+        private ?ApiKey $apiKey,
     ) {
     }
 

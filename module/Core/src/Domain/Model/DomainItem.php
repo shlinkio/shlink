@@ -14,7 +14,7 @@ final class DomainItem implements JsonSerializable
     private function __construct(
         private string $authority,
         private NotFoundRedirectConfigInterface $notFoundRedirectConfig,
-        private bool $isDefault
+        private bool $isDefault,
     ) {
     }
 

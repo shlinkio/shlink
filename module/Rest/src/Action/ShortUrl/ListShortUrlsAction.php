@@ -23,7 +23,7 @@ class ListShortUrlsAction extends AbstractRestAction
 
     public function __construct(
         private ShortUrlServiceInterface $shortUrlService,
-        private DataTransformerInterface $transformer
+        private DataTransformerInterface $transformer,
     ) {
     }
 

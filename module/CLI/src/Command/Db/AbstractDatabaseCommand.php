@@ -18,7 +18,7 @@ abstract class AbstractDatabaseCommand extends AbstractLockedCommand
     public function __construct(
         LockFactory $locker,
         private ProcessRunnerInterface $processRunner,
-        PhpExecutableFinder $phpFinder
+        PhpExecutableFinder $phpFinder,
     ) {
         parent::__construct($locker);
         $this->phpBinary = $phpFinder->find(false) ?: 'php';

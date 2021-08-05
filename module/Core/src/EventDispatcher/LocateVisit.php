@@ -24,7 +24,7 @@ class LocateVisit
         private EntityManagerInterface $em,
         private LoggerInterface $logger,
         private DbUpdaterInterface $dbUpdater,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 

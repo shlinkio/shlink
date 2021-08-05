@@ -25,7 +25,7 @@ class GenerateKeyCommand extends BaseCommand
 
     public function __construct(
         private ApiKeyServiceInterface $apiKeyService,
-        private RoleResolverInterface $roleResolver
+        private RoleResolverInterface $roleResolver,
     ) {
         parent::__construct();
     }

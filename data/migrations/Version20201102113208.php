@@ -60,10 +60,7 @@ final class Version20201102113208 extends AbstractMigration
            ->execute();
     }
 
-    /**
-     * @return string|int|null
-     */
-    private function resolveOneApiKeyId(Result $result)
+    private function resolveOneApiKeyId(Result $result): string|int|null
     {
         $results = [];
         while ($row = $result->fetchAssociative()) {

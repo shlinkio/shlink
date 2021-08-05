@@ -55,10 +55,7 @@ function parseDateRangeFromQuery(array $query, string $startDateName, string $en
     return buildDateRange($startDate, $endDate);
 }
 
-/**
- * @param string|DateTimeInterface|Chronos|null $date
- */
-function parseDateField($date): ?Chronos
+function parseDateField(string|DateTimeInterface|Chronos|null $date): ?Chronos
 {
     if ($date === null || $date instanceof Chronos) {
         return $date;

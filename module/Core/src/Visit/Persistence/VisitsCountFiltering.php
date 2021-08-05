@@ -12,7 +12,7 @@ class VisitsCountFiltering
     public function __construct(
         private ?DateRange $dateRange = null,
         private bool $excludeBots = false,
-        private ?Specification $spec = null
+        private ?Specification $spec = null,
     ) {
     }
 

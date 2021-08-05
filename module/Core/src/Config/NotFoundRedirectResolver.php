@@ -16,7 +16,7 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
 
     public function resolveRedirectResponse(
         NotFoundType $notFoundType,
-        NotFoundRedirectConfigInterface $config
+        NotFoundRedirectConfigInterface $config,
     ): ?ResponseInterface {
         return match (true) {
             $notFoundType->isBaseUrl() && $config->hasBaseUrlRedirect() =>

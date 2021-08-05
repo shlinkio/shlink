@@ -28,7 +28,7 @@ final class QrCodeParams
         private int $size,
         private int $margin,
         private WriterInterface $writer,
-        private ErrorCorrectionLevelInterface $errorCorrectionLevel
+        private ErrorCorrectionLevelInterface $errorCorrectionLevel,
     ) {
     }
 

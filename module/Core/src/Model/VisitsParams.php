@@ -21,7 +21,7 @@ final class VisitsParams
         ?DateRange $dateRange = null,
         int $page = self::FIRST_PAGE,
         ?int $itemsPerPage = null,
-        private bool $excludeBots = false
+        private bool $excludeBots = false,
     ) {
         $this->dateRange = $dateRange ?? DateRange::emptyInstance();
         $this->page = $this->determinePage($page);
