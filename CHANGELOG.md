@@ -50,7 +50,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1046](https://github.com/shlinkio/shlink/issues/1046) Dropped support for PHP 7.4.
 
 ### Fixed
-* [#1098](https://github.com/shlinkio/shlink/issues/1098) Fixed errors when using a Redis Cluster for caching, caused by `doctrine/cache` not fully supporting clusters.
+* [#1098](https://github.com/shlinkio/shlink/issues/1098) Fixed errors when using Redis for caching, caused by some third party lib bug that was fixed on dependencies update.
 
 
 ## [2.7.3] - 2021-08-02
