@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use function Shlinkio\Shlink\Common\env;
+
 return [
 
     'mezzio-swoole' => [
@@ -10,11 +12,12 @@ return [
 
         'swoole-http-server' => [
             'host' => '0.0.0.0',
+            'port' => (int) env('PORT', 8080),
             'process-name' => 'shlink',
 
             'options' => [
-                'worker_num' => 16,
-                'task_worker_num' => 16,
+                'worker_num' => (int) env('WEB_WORKER_NUM', 16),
+                'task_worker_num' => (int) env('TASK_WORKER_NUM', 16),
             ],
         ],
     ],
