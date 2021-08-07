@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Predis\ClientInterface as PredisClient;
-use Shlinkio\Shlink\Common\Lock\RetryLockStoreDelegatorFactory;
 use Shlinkio\Shlink\Common\Logger\LoggerAwareDelegatorFactory;
 use Symfony\Component\Lock;
+
+use function Shlinkio\Shlink\Common\env;
 
 use const Shlinkio\Shlink\Core\LOCAL_LOCK_FACTORY;
 
@@ -24,16 +25,12 @@ return [
             LOCAL_LOCK_FACTORY => ConfigAbstractFactory::class,
         ],
         'aliases' => [
-            // With this config, a user could alias 'lock_store' => 'redis_lock_store' to override the default
-            'lock_store' => 'local_lock_store',
+            'lock_store' => env('REDIS_SERVERS') === null ? 'local_lock_store' : 'redis_lock_store',
 
             'redis_lock_store' => Lock\Store\RedisStore::class,
             'local_lock_store' => Lock\Store\FlockStore::class,
         ],
         'delegators' => [
-            Lock\Store\RedisStore::class => [
-                RetryLockStoreDelegatorFactory::class,
-            ],
             Lock\LockFactory::class => [
                 LoggerAwareDelegatorFactory::class,
             ],
