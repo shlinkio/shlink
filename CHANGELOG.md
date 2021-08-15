@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.8.1] - 2021-08-15
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1155](https://github.com/shlinkio/shlink/issues/1155) Fixed numeric query params in long URLs being replaced by `0`.
+
+
 ## [2.8.0] - 2021-08-04
 ### Added
 * [#1089](https://github.com/shlinkio/shlink/issues/1089) Added new `ENABLE_PERIODIC_VISIT_LOCATE` env var to docker image which schedules the `visit:locate` command every hour when provided with value `true`.
