@@ -37,6 +37,8 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         yield ['https://domain.com/foo/bar?some=thing', [], null];
         yield ['https://domain.com/foo/bar?some=thing&else', ['else' => null], null];
         yield ['https://domain.com/foo/bar?some=thing&foo=bar', ['foo' => 'bar'], null];
+        yield ['https://domain.com/foo/bar?some=thing&123=foo', ['123' => 'foo'], null];
+        yield ['https://domain.com/foo/bar?some=thing&456=foo', [456 => 'foo'], null];
         yield ['https://domain.com/foo/bar?some=overwritten&foo=bar', ['foo' => 'bar', 'some' => 'overwritten'], null];
         yield ['https://domain.com/foo/bar?some=overwritten', ['foobar' => 'notrack', 'some' => 'overwritten'], null];
         yield ['https://domain.com/foo/bar/something/else-baz?some=thing', [], '/something/else-baz'];

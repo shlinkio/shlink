@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl\Helper;
 
 use GuzzleHttp\Psr7\Query;
+use Laminas\Stdlib\ArrayUtils;
 use League\Uri\Uri;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 
-use function array_merge;
 use function sprintf;
 
 class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
@@ -37,7 +37,8 @@ class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
             unset($currentQuery[$disableTrackParam]);
         }
 
-        $mergedQuery = array_merge($hardcodedQuery, $currentQuery);
+        // We want to merge preserving numeric keys, as some params might be numbers
+        $mergedQuery = ArrayUtils::merge($hardcodedQuery, $currentQuery, true);
 
         return empty($mergedQuery) ? null : Query::build($mergedQuery);
     }
