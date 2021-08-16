@@ -18,12 +18,12 @@ return [
             'middleware' => [
                 ContentLengthMiddleware::class,
                 ErrorHandler::class,
+                Rest\Middleware\CrossDomainMiddleware::class,
             ],
         ],
         'error-handler-rest' => [
             'path' => '/rest',
             'middleware' => [
-                Rest\Middleware\CrossDomainMiddleware::class,
                 RequestIdMiddleware::class,
                 ProblemDetails\ProblemDetailsMiddleware::class,
             ],
