@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#1165](https://github.com/shlinkio/shlink/issues/1165) Fixed warning displayed when trying to locate visits and there are none pending.
 
 
 ## [2.8.1] - 2021-08-15
