@@ -69,9 +69,9 @@ RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink
 EXPOSE 8080
 
 # Expose params config dir, since the user is expected to provide custom config from there
-VOLUME /etc/shlink/config/params
+#VOLUME /etc/shlink/config/params
 # Expose data dir to allow persistent runtime data and SQLite db
-VOLUME /etc/shlink/data
+#VOLUME /etc/shlink/data
 
 # Copy config specific for the image
 COPY docker/docker-entrypoint.sh docker-entrypoint.sh
