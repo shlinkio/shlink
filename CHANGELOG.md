@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1165](https://github.com/shlinkio/shlink/issues/1165) Fixed warning displayed when trying to locate visits and there are none pending.
+* [#1172](https://github.com/shlinkio/shlink/pull/1172) Removed unneeded explicitly defined volumes in docker image.
 
 
 ## [2.8.1] - 2021-08-15
