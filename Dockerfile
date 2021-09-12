@@ -68,11 +68,6 @@ RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink
 # Expose default swoole port
 EXPOSE 8080
 
-# Expose params config dir, since the user is expected to provide custom config from there
-VOLUME /etc/shlink/config/params
-# Expose data dir to allow persistent runtime data and SQLite db
-VOLUME /etc/shlink/data
-
 # Copy config specific for the image
 COPY docker/docker-entrypoint.sh docker-entrypoint.sh
 COPY docker/config/shlink_in_docker.local.php config/autoload/shlink_in_docker.local.php
