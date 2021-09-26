@@ -14,3 +14,7 @@ const DEFAULT_REDIRECT_CACHE_LIFETIME = 30;
 const LOCAL_LOCK_FACTORY = 'Shlinkio\Shlink\LocalLockFactory';
 const CUSTOM_SLUGS_REGEXP = '/[^\pL\pN._~]/u'; // Any unicode letter or number, plus ".", "_" and "~" chars
 const TITLE_TAG_VALUE = '/<title[^>]*>(.*?)<\/title>/i'; // Matches the value inside an html title tag
+const DEFAULT_QR_CODE_SIZE = 300;
+const DEFAULT_QR_CODE_MARGIN = 0;
+const DEFAULT_QR_CODE_FORMAT = 'png';
+const DEFAULT_QR_CODE_ERROR_CORRECTION = 'l';

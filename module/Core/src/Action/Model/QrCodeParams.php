@@ -14,15 +14,17 @@ use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Writer\WriterInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Shlinkio\Shlink\Core\Options\QrCodeOptions;
 
+use function Functional\contains;
 use function strtolower;
 use function trim;
 
 final class QrCodeParams
 {
-    private const DEFAULT_SIZE = 300;
     private const MIN_SIZE = 50;
     private const MAX_SIZE = 1000;
+    private const SUPPORTED_FORMATS = ['png', 'svg'];
 
     private function __construct(
         private int $size,
@@ -32,22 +34,22 @@ final class QrCodeParams
     ) {
     }
 
-    public static function fromRequest(ServerRequestInterface $request): self
+    public static function fromRequest(ServerRequestInterface $request, QrCodeOptions $defaults): self
     {
         $query = $request->getQueryParams();
 
         return new self(
-            self::resolveSize($request, $query),
-            self::resolveMargin($query),
-            self::resolveWriter($query),
-            self::resolveErrorCorrection($query),
+            self::resolveSize($request, $query, $defaults),
+            self::resolveMargin($query, $defaults),
+            self::resolveWriter($query, $defaults),
+            self::resolveErrorCorrection($query, $defaults),
         );
     }
 
-    private static function resolveSize(Request $request, array $query): int
+    private static function resolveSize(Request $request, array $query, QrCodeOptions $defaults): int
     {
         // FIXME Size attribute is deprecated. After v3.0.0, always use the query param instead
-        $size = (int) $request->getAttribute('size', $query['size'] ?? self::DEFAULT_SIZE);
+        $size = (int) $request->getAttribute('size', $query['size'] ?? $defaults->size());
         if ($size < self::MIN_SIZE) {
             return self::MIN_SIZE;
         }
@@ -55,13 +57,9 @@ final class QrCodeParams
         return $size > self::MAX_SIZE ? self::MAX_SIZE : $size;
     }
 
-    private static function resolveMargin(array $query): int
+    private static function resolveMargin(array $query, QrCodeOptions $defaults): int
     {
-        $margin = $query['margin'] ?? null;
-        if ($margin === null) {
-            return 0;
-        }
-
+        $margin = $query['margin'] ?? (string) $defaults->margin();
         $intMargin = (int) $margin;
         if ($margin !== (string) $intMargin) {
             return 0;
@@ -70,24 +68,31 @@ final class QrCodeParams
         return $intMargin < 0 ? 0 : $intMargin;
     }
 
-    private static function resolveWriter(array $query): WriterInterface
+    private static function resolveWriter(array $query, QrCodeOptions $defaults): WriterInterface
     {
-        $format = strtolower(trim($query['format'] ?? 'png'));
+        $qFormat = self::normalizeParam($query['format'] ?? '');
+        $format = contains(self::SUPPORTED_FORMATS, $qFormat) ? $qFormat : self::normalizeParam($defaults->format());
+
         return match ($format) {
             'svg' => new SvgWriter(),
             default => new PngWriter(),
         };
     }
 
-    private static function resolveErrorCorrection(array $query): ErrorCorrectionLevelInterface
+    private static function resolveErrorCorrection(array $query, QrCodeOptions $defaults): ErrorCorrectionLevelInterface
     {
-        $errorCorrectionLevel = strtolower(trim($query['errorCorrection'] ?? 'l'));
+        $errorCorrectionLevel = self::normalizeParam($query['errorCorrection'] ?? $defaults->errorCorrection());
         return match ($errorCorrectionLevel) {
             'h' => new ErrorCorrectionLevelHigh(),
             'q' => new ErrorCorrectionLevelQuartile(),
             'm' => new ErrorCorrectionLevelMedium(),
             default => new ErrorCorrectionLevelLow(), // 'l'
         };
+    }
+
+    private static function normalizeParam(string $param): string
+    {
+        return strtolower(trim($param));
     }
 
     public function size(): int

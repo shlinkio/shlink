@@ -25,6 +25,7 @@ return [
             Options\NotFoundRedirectOptions::class => ConfigAbstractFactory::class,
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
             Options\TrackingOptions::class => ConfigAbstractFactory::class,
+            Options\QrCodeOptions::class => ConfigAbstractFactory::class,
 
             Service\UrlShortener::class => ConfigAbstractFactory::class,
             Service\ShortUrlService::class => ConfigAbstractFactory::class,
@@ -86,6 +87,7 @@ return [
         Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
         Options\TrackingOptions::class => ['config.tracking'],
+        Options\QrCodeOptions::class => ['config.qr_codes'],
 
         Service\UrlShortener::class => [
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
@@ -138,6 +140,7 @@ return [
             Service\ShortUrl\ShortUrlResolver::class,
             ShortUrl\Helper\ShortUrlStringifier::class,
             'Logger_Shlink',
+            Options\QrCodeOptions::class,
         ],
         Action\RobotsAction::class => [Crawling\CrawlingHelper::class],
 
