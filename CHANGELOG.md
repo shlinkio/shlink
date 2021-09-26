@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Changed
 * [#1142](https://github.com/shlinkio/shlink/issues/1142) Replaced `doctrine/cache` package with `symfony/cache`.
 * [#1157](https://github.com/shlinkio/shlink/issues/1157) All routes now support CORS, not only rest ones.
+* [#1144](https://github.com/shlinkio/shlink/issues/1144) Added experimental builds under PHP 8.1.
 
 ### Deprecated
 * [#1164](https://github.com/shlinkio/shlink/issues/1164) Deprecated `SHORT_DOMAIN_HOST` and `SHORT_DOMAIN_SCHEMA` env vars. Use `DEFAULT_DOMAIN` and `USE_HTTPS=true|false` instead.
