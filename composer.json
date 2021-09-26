@@ -83,6 +83,7 @@
             "Shlinkio\\Shlink\\Core\\": "module/Core/src"
         },
         "files": [
+            "config/constants.php",
             "module/Core/functions/functions.php"
         ]
     },

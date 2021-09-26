@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink;
 
 use function Shlinkio\Shlink\Common\env;
 
-use const Shlinkio\Shlink\Core\DEFAULT_DELETE_SHORT_URL_THRESHOLD;
+use const Shlinkio\Shlink\DEFAULT_DELETE_SHORT_URL_THRESHOLD;
 
 return [
 

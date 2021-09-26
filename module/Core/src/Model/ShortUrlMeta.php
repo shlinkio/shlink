@@ -14,7 +14,7 @@ use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
 use function Shlinkio\Shlink\Core\parseDateField;
 
-use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
+use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
 final class ShortUrlMeta implements TitleResolutionModelInterface
 {
