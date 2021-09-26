@@ -198,7 +198,7 @@ jobs:
           extensions: swoole-4.7.1, pdo_sqlsrv-5.10.0beta1
           coverage: none
       - name: Use PHP
-        if: ${{ matrix.php-version == '8.1' }}
+        if: ${{ matrix.php-version != '8.1' }}
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
