@@ -21,7 +21,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.7
+          extensions: swoole-4.7.1
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer cs
@@ -39,7 +39,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.7
+          extensions: swoole-4.7.1
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer stan
@@ -58,7 +58,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.7
+          extensions: swoole-4.7.1
           coverage: pcov
           ini-values: pcov.directory=module
       - if: ${{ matrix.php-version == '8.1' }}
@@ -88,7 +88,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.7
+          extensions: swoole-4.7.1
           coverage: pcov
           ini-values: pcov.directory=module
       - if: ${{ matrix.php-version == '8.1' }}
@@ -120,7 +120,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.7
+          extensions: swoole-4.7.1
           coverage: none
       - if: ${{ matrix.php-version == '8.1' }}
         run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
@@ -144,7 +144,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.7
+          extensions: swoole-4.7.1
           coverage: none
       - if: ${{ matrix.php-version == '8.1' }}
         run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
@@ -168,7 +168,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.7
+          extensions: swoole-4.7.1
           coverage: none
       - if: ${{ matrix.php-version == '8.1' }}
         run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
@@ -194,7 +194,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.7, pdo_sqlsrv-5.9.0
+          extensions: swoole-4.7.1, pdo_sqlsrv-5.9.0
           coverage: none
       - if: ${{ matrix.php-version == '8.1' }}
         run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
@@ -220,7 +220,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.7
+          extensions: swoole-4.7.1
           coverage: pcov
           ini-values: pcov.directory=module
       - if: ${{ matrix.php-version == '8.1' }}
@@ -255,7 +255,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.6.7
+          extensions: swoole-4.7.1
           coverage: pcov
           ini-values: pcov.directory=module
       - if: ${{ matrix.php-version == '8.1' }}
