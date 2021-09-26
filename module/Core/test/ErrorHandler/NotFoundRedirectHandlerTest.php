@@ -81,6 +81,10 @@ class NotFoundRedirectHandlerTest extends TestCase
             $domainService->findByAuthority(Argument::cetera())
                 ->willReturn(Domain::withAuthority(''))
                 ->shouldBeCalledOnce();
+            $resolver->resolveRedirectResponse(
+                Argument::type(NotFoundType::class),
+                Argument::type(NotFoundRedirectOptions::class),
+            )->willReturn(null)->shouldBeCalledOnce();
             $resolver->resolveRedirectResponse(Argument::type(NotFoundType::class), Argument::type(Domain::class))
                 ->willReturn(null)
                 ->shouldBeCalledOnce();
