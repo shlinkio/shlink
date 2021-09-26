@@ -50,6 +50,10 @@ return [
             Option\Tracking\DisableIpTrackingConfigOption::class,
             Option\Tracking\DisableReferrerTrackingConfigOption::class,
             Option\Tracking\DisableUaTrackingConfigOption::class,
+            Option\QrCode\DefaultSizeConfigOption::class,
+            Option\QrCode\DefaultMarginConfigOption::class,
+            Option\QrCode\DefaultFormatConfigOption::class,
+            Option\QrCode\DefaultErrorCorrectionConfigOption::class,
         ],
 
         'installation_commands' => [
