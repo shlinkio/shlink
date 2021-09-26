@@ -27,16 +27,9 @@ class NotFoundRedirectHandler implements MiddlewareInterface
         /** @var NotFoundType $notFoundType */
         $notFoundType = $request->getAttribute(NotFoundType::class);
         $authority = $request->getUri()->getAuthority();
-        $domainSpecificRedirect = $this->resolveDomainSpecificRedirect($authority, $notFoundType);
+        $redirectConfig = $this->domainService->findByAuthority($authority) ?? $this->redirectOptions;
+        $redirectResponse = $this->redirectResolver->resolveRedirectResponse($notFoundType, $redirectConfig);
 
-        return $domainSpecificRedirect
-            ?? $this->redirectResolver->resolveRedirectResponse($notFoundType, $this->redirectOptions)
-            ?? $handler->handle($request);
-    }
-
-    private function resolveDomainSpecificRedirect(string $authority, NotFoundType $notFoundType): ?ResponseInterface
-    {
-        $domain = $this->domainService->findByAuthority($authority);
-        return $domain === null ? null : $this->redirectResolver->resolveRedirectResponse($notFoundType, $domain);
+        return $redirectResponse ?? $handler->handle($request);
     }
 }
