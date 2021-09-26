@@ -8,8 +8,8 @@ use Laminas\Stdlib\AbstractOptions;
 
 use function Functional\contains;
 
-use const Shlinkio\Shlink\Core\DEFAULT_REDIRECT_CACHE_LIFETIME;
-use const Shlinkio\Shlink\Core\DEFAULT_REDIRECT_STATUS_CODE;
+use const Shlinkio\Shlink\DEFAULT_REDIRECT_CACHE_LIFETIME;
+use const Shlinkio\Shlink\DEFAULT_REDIRECT_STATUS_CODE;
 
 class UrlShortenerOptions extends AbstractOptions
 {

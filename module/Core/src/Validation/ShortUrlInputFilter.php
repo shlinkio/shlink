@@ -13,8 +13,8 @@ use Shlinkio\Shlink\Common\Validation;
 use Shlinkio\Shlink\Core\Util\CocurSymfonySluggerBridge;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use const Shlinkio\Shlink\Core\CUSTOM_SLUGS_REGEXP;
-use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
+use const Shlinkio\Shlink\CUSTOM_SLUGS_REGEXP;
+use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
 class ShortUrlInputFilter extends InputFilter
 {

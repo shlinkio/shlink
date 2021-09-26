@@ -9,7 +9,7 @@ use Symfony\Component\Lock;
 
 use function Shlinkio\Shlink\Common\env;
 
-use const Shlinkio\Shlink\Core\LOCAL_LOCK_FACTORY;
+use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
 
 return [
 

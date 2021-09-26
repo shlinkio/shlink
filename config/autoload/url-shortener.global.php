@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use function Shlinkio\Shlink\Common\env;
 
-use const Shlinkio\Shlink\Core\DEFAULT_REDIRECT_CACHE_LIFETIME;
-use const Shlinkio\Shlink\Core\DEFAULT_REDIRECT_STATUS_CODE;
-use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
-use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
+use const Shlinkio\Shlink\DEFAULT_REDIRECT_CACHE_LIFETIME;
+use const Shlinkio\Shlink\DEFAULT_REDIRECT_STATUS_CODE;
+use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
+use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
 return (static function (): array {
     $webhooks = env('VISITS_WEBHOOKS');

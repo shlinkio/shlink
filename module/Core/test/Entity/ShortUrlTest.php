@@ -16,7 +16,7 @@ use function Functional\map;
 use function range;
 use function strlen;
 
-use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
+use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
 class ShortUrlTest extends TestCase
 {
