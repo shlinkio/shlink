@@ -72,17 +72,18 @@ class NotFoundRedirectHandlerTest extends TestCase
             $domainService->findByAuthority(Argument::cetera())
                 ->willReturn(null)
                 ->shouldBeCalledOnce();
-            $resolver->resolveRedirectResponse(Argument::cetera())
-                ->willReturn(null)
-                ->shouldBeCalledOnce();
+            $resolver->resolveRedirectResponse(
+                Argument::type(NotFoundType::class),
+                Argument::type(NotFoundRedirectOptions::class),
+            )->willReturn(null)->shouldBeCalledOnce();
         }];
         yield 'non-redirecting domain' => [function (ObjectProphecy $domainService, ObjectProphecy $resolver): void {
             $domainService->findByAuthority(Argument::cetera())
                 ->willReturn(Domain::withAuthority(''))
                 ->shouldBeCalledOnce();
-            $resolver->resolveRedirectResponse(Argument::cetera())
+            $resolver->resolveRedirectResponse(Argument::type(NotFoundType::class), Argument::type(Domain::class))
                 ->willReturn(null)
-                ->shouldBeCalledTimes(2);
+                ->shouldBeCalledOnce();
         }];
     }
 
