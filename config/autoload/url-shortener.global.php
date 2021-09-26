@@ -13,13 +13,15 @@ return (static function (): array {
     $webhooks = env('VISITS_WEBHOOKS');
     $shortCodesLength = (int) env('DEFAULT_SHORT_CODES_LENGTH', DEFAULT_SHORT_CODES_LENGTH);
     $shortCodesLength = $shortCodesLength < MIN_SHORT_CODES_LENGTH ? MIN_SHORT_CODES_LENGTH : $shortCodesLength;
+    $useHttps = env('USE_HTTPS'); // Deprecated. For v3, set this to true by default, instead of null
 
     return [
 
         'url_shortener' => [
             'domain' => [
-                'schema' => env('SHORT_DOMAIN_SCHEMA', 'http'),
-                'hostname' => env('SHORT_DOMAIN_HOST', ''),
+                // Deprecated SHORT_DOMAIN_* env vars
+                'schema' => $useHttps !== null ? (bool) $useHttps : env('SHORT_DOMAIN_SCHEMA', 'http'),
+                'hostname' => env('DEFAULT_DOMAIN', env('SHORT_DOMAIN_HOST', '')),
             ],
             'validate_url' => (bool) env('VALIDATE_URLS', false), // Deprecated
             'visits_webhooks' => $webhooks === null ? [] : explode(',', $webhooks),

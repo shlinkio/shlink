@@ -11,8 +11,8 @@ It exposes a shlink instance served with [swoole](https://www.swoole.co.uk/), wh
 
 The most basic way to run Shlink's docker image is by providing these mandatory env vars.
 
-* `SHORT_DOMAIN_HOST`: The custom short domain used for this shlink instance. For example **doma.in**.
-* `SHORT_DOMAIN_SCHEMA`: Either **http** or **https**.
+* `DEFAULT_DOMAIN`: The default short domain used for this shlink instance. For example **doma.in**.
+* `USE_HTTPS`: Either **true** or **false**.
 * `GEOLITE_LICENSE_KEY`: Your GeoLite2 license key. [Learn more](https://shlink.io/documentation/geolite-license-key/) about this.
 
 To run shlink on top of a local docker service, and using an internal SQLite database, do the following:
@@ -21,8 +21,8 @@ To run shlink on top of a local docker service, and using an internal SQLite dat
 docker run \
     --name shlink \
     -p 8080:8080 \
-    -e SHORT_DOMAIN_HOST=doma.in \
-    -e SHORT_DOMAIN_SCHEMA=https \
+    -e DEFAULT_DOMAIN=doma.in \
+    -e USE_HTTPS=true \
     -e GEOLITE_LICENSE_KEY=kjh23ljkbndskj345 \
     shlinkio/shlink:stable
 ```
