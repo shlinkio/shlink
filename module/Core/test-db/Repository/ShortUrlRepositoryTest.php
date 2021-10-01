@@ -355,6 +355,8 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($wrongDomainApiKey);
         $rightDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($rightDomain)));
         $this->getEntityManager()->persist($rightDomainApiKey);
+        $adminApiKey = ApiKey::create();
+        $this->getEntityManager()->persist($adminApiKey);
 
         $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
             'validSince' => $start,
@@ -364,6 +366,12 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             'tags' => ['foo', 'bar'],
         ]), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl);
+
+        $nonDomainShortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+            'apiKey' => $apiKey,
+            'longUrl' => 'non-domain',
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($nonDomainShortUrl);
 
         $this->getEntityManager()->flush();
 
@@ -376,6 +384,12 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         self::assertSame($shortUrl, $this->repo->findOneMatching(ShortUrlMeta::fromRawData([
             'validSince' => $start,
             'apiKey' => $apiKey,
+            'longUrl' => 'foo',
+            'tags' => ['foo', 'bar'],
+        ])));
+        self::assertSame($shortUrl, $this->repo->findOneMatching(ShortUrlMeta::fromRawData([
+            'validSince' => $start,
+            'apiKey' => $adminApiKey,
             'longUrl' => 'foo',
             'tags' => ['foo', 'bar'],
         ])));
@@ -422,6 +436,27 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
                 'apiKey' => $wrongDomainApiKey,
                 'longUrl' => 'foo',
                 'tags' => ['foo', 'bar'],
+            ])),
+        );
+
+        self::assertSame(
+            $nonDomainShortUrl,
+            $this->repo->findOneMatching(ShortUrlMeta::fromRawData([
+                'apiKey' => $apiKey,
+                'longUrl' => 'non-domain',
+            ])),
+        );
+        self::assertSame(
+            $nonDomainShortUrl,
+            $this->repo->findOneMatching(ShortUrlMeta::fromRawData([
+                'apiKey' => $adminApiKey,
+                'longUrl' => 'non-domain',
+            ])),
+        );
+        self::assertNull(
+            $this->repo->findOneMatching(ShortUrlMeta::fromRawData([
+                'apiKey' => $otherApiKey,
+                'longUrl' => 'non-domain',
             ])),
         );
     }
