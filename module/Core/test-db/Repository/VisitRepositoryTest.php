@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
+use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
@@ -25,6 +26,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 use function Functional\map;
+use function is_string;
 use function range;
 use function sprintf;
 
@@ -168,6 +170,38 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(1, $this->repo->countVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
             new VisitsCountFiltering(DateRange::withStartDate(Chronos::parse('2016-01-03'))),
+        ));
+    }
+
+    /** @test */
+    public function findVisitsByShortCodeReturnsProperDataWhenUsingAPiKeys(): void
+    {
+        $adminApiKey = ApiKey::create();
+        $this->getEntityManager()->persist($adminApiKey);
+
+        $restrictedApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
+        $this->getEntityManager()->persist($restrictedApiKey);
+
+        $this->getEntityManager()->flush();
+
+        [$shortCode1] = $this->createShortUrlsAndVisits(true, [], $adminApiKey);
+        [$shortCode2] = $this->createShortUrlsAndVisits('bar.com', [], $restrictedApiKey);
+
+        self::assertNotEmpty($this->repo->findVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode1),
+            new VisitsListFiltering(null, false, $adminApiKey->spec()),
+        ));
+        self::assertNotEmpty($this->repo->findVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode2),
+            new VisitsListFiltering(null, false, $adminApiKey->spec()),
+        ));
+        self::assertEmpty($this->repo->findVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode1),
+            new VisitsListFiltering(null, false, $restrictedApiKey->spec()),
+        ));
+        self::assertNotEmpty($this->repo->findVisitsByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode2),
+            new VisitsListFiltering(null, false, $restrictedApiKey->spec()),
         ));
     }
 
@@ -354,19 +388,26 @@ class VisitRepositoryTest extends DatabaseTestCase
         ));
     }
 
-    private function createShortUrlsAndVisits(bool $withDomain = true, array $tags = []): array
-    {
+    /**
+     * @return array{string, string, ShortUrl}
+     */
+    private function createShortUrlsAndVisits(
+        bool|string $withDomain = true,
+        array $tags = [],
+        ?ApiKey $apiKey = null,
+    ): array {
         $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
-            'longUrl' => '',
-            'tags' => $tags,
+            ShortUrlInputFilter::LONG_URL => '',
+            ShortUrlInputFilter::TAGS => $tags,
+            ShortUrlInputFilter::API_KEY => $apiKey,
         ]), $this->relationResolver);
-        $domain = 'example.com';
+        $domain = is_string($withDomain) ? $withDomain : 'example.com';
         $shortCode = $shortUrl->getShortCode();
         $this->getEntityManager()->persist($shortUrl);
 
         $this->createVisitsForShortUrl($shortUrl);
 
-        if ($withDomain) {
+        if ($withDomain !== false) {
             $shortUrlWithDomain = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
                 'customSlug' => $shortCode,
                 'domain' => $domain,
