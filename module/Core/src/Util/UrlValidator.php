@@ -32,7 +32,7 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
      */
     public function validateUrl(string $url, ?bool $doValidate): void
     {
-        // If the URL validation is not enabled or it was explicitly set to not validate, skip check
+        // If the URL validation is not enabled, or it was explicitly set to not validate, skip check
         $doValidate = $doValidate ?? $this->options->isUrlValidationEnabled();
         if (! $doValidate) {
             return;

@@ -60,6 +60,7 @@ class MercureUpdatesGeneratorTest extends TestCase
                 'domain' => null,
                 'title' => $title,
                 'crawlable' => false,
+                'forwardQuery' => true,
             ],
             'visit' => [
                 'referer' => '',
