@@ -53,7 +53,7 @@ class NotFoundRedirectResolverTest extends TestCase
         $expectedResp = new Response();
         $buildResp = $this->helper->buildRedirectResponse($expectedRedirectTo)->willReturn($expectedResp);
 
-        $resp = $this->resolver->resolveRedirectResponse($notFoundType, $this->config);
+        $resp = $this->resolver->resolveRedirectResponse($notFoundType, $this->config, new Uri());
 
         self::assertSame($expectedResp, $resp);
         $buildResp->shouldHaveBeenCalledOnce();
@@ -84,7 +84,7 @@ class NotFoundRedirectResolverTest extends TestCase
     {
         $notFoundType = $this->notFoundType($this->requestForRoute('foo'));
 
-        $result = $this->resolver->resolveRedirectResponse($notFoundType, $this->config);
+        $result = $this->resolver->resolveRedirectResponse($notFoundType, $this->config, new Uri());
 
         self::assertNull($result);
         $this->helper->buildRedirectResponse(Argument::cetera())->shouldNotHaveBeenCalled();

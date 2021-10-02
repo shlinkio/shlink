@@ -11,6 +11,7 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectResolverInterface;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
@@ -75,6 +76,7 @@ class NotFoundRedirectHandlerTest extends TestCase
             $resolver->resolveRedirectResponse(
                 Argument::type(NotFoundType::class),
                 Argument::type(NotFoundRedirectOptions::class),
+                Argument::type(UriInterface::class),
             )->willReturn(null)->shouldBeCalledOnce();
         }];
         yield 'non-redirecting domain' => [function (ObjectProphecy $domainService, ObjectProphecy $resolver): void {
@@ -84,10 +86,13 @@ class NotFoundRedirectHandlerTest extends TestCase
             $resolver->resolveRedirectResponse(
                 Argument::type(NotFoundType::class),
                 Argument::type(NotFoundRedirectOptions::class),
+                Argument::type(UriInterface::class),
             )->willReturn(null)->shouldBeCalledOnce();
-            $resolver->resolveRedirectResponse(Argument::type(NotFoundType::class), Argument::type(Domain::class))
-                ->willReturn(null)
-                ->shouldBeCalledOnce();
+            $resolver->resolveRedirectResponse(
+                Argument::type(NotFoundType::class),
+                Argument::type(Domain::class),
+                Argument::type(UriInterface::class),
+            )->willReturn(null)->shouldBeCalledOnce();
         }];
     }
 
@@ -100,6 +105,7 @@ class NotFoundRedirectHandlerTest extends TestCase
         $resolveRedirect = $this->resolver->resolveRedirectResponse(
             Argument::type(NotFoundType::class),
             $this->redirectOptions,
+            Argument::type(UriInterface::class),
         )->willReturn($expectedResp);
 
         $result = $this->middleware->process($this->req, $this->next->reveal());
@@ -120,6 +126,7 @@ class NotFoundRedirectHandlerTest extends TestCase
         $resolveRedirect = $this->resolver->resolveRedirectResponse(
             Argument::type(NotFoundType::class),
             $domain,
+            Argument::type(UriInterface::class),
         )->willReturn($expectedResp);
 
         $result = $this->middleware->process($this->req, $this->next->reveal());
