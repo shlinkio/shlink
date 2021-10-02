@@ -225,63 +225,37 @@
             "content": {
                 "application/json": {
                     "schema": {
-                        "type": "object",
-                        "required": [
-                            "longUrl"
-                        ],
-                        "properties": {
-                            "longUrl": {
-                                "description": "The URL to parse",
-                                "type": "string"
+                        "allOf": [
+                            {
+                                "$ref": "../definitions/ShortUrlEdition.json"
                             },
-                            "tags": {
-                                "description": "The URL to parse",
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
+                            {
+                                "type": "object",
+                                "required": ["longUrl"],
+                                "properties": {
+                                    "customSlug": {
+                                        "description": "A unique custom slug to be used instead of the generated short code",
+                                        "type": "string"
+                                    },
+                                    "findIfExists": {
+                                        "description": "Will force existing matching URL to be returned if found, instead of creating a new one",
+                                        "type": "boolean"
+                                    },
+                                    "domain": {
+                                        "description": "The domain to which the short URL will be attached",
+                                        "type": "string"
+                                    },
+                                    "shortCodeLength": {
+                                        "description": "The length for generated short code. It has to be at least 4 and defaults to 5. It will be ignored when customSlug is provided",
+                                        "type": "number"
+                                    },
+                                    "validateUrl": {
+                                        "description": "Tells if the long URL should or should not be validated as a reachable URL. If not provided, it will fall back to app-level config",
+                                        "type": "boolean"
+                                    }
                                 }
-                            },
-                            "validSince": {
-                                "description": "The date (in ISO-8601 format) from which this short code will be valid",
-                                "type": "string"
-                            },
-                            "validUntil": {
-                                "description": "The date (in ISO-8601 format) until which this short code will be valid",
-                                "type": "string"
-                            },
-                            "customSlug": {
-                                "description": "A unique custom slug to be used instead of the generated short code",
-                                "type": "string"
-                            },
-                            "maxVisits": {
-                                "description": "The maximum number of allowed visits for this short code",
-                                "type": "number"
-                            },
-                            "findIfExists": {
-                                "description": "Will force existing matching URL to be returned if found, instead of creating a new one",
-                                "type": "boolean"
-                            },
-                            "domain": {
-                                "description": "The domain to which the short URL will be attached",
-                                "type": "string"
-                            },
-                            "shortCodeLength": {
-                                "description": "The length for generated short code. It has to be at least 4 and defaults to 5. It will be ignored when customSlug is provided",
-                                "type": "number"
-                            },
-                            "validateUrl": {
-                                "description": "Tells if the long URL should or should not be validated as a reachable URL. If not provided, it will fall back to app-level config",
-                                "type": "boolean"
-                            },
-                            "title": {
-                                "type": "string",
-                                "description": "A descriptive title of the short URL."
-                            },
-                            "crawlable": {
-                                "type": "boolean",
-                                "description": "Tells if this URL will be included as 'Allow' in Shlink's robots.txt."
                             }
-                        }
+                        ]
                     }
                 }
             }

@@ -32,6 +32,8 @@ final class ShortUrlEdit implements TitleResolutionModelInterface
     private ?bool $validateUrl = null;
     private bool $crawlablePropWasProvided = false;
     private bool $crawlable = false;
+    private bool $forwardQueryPropWasProvided = false;
+    private bool $forwardQuery = true;
 
     private function __construct()
     {
@@ -64,6 +66,7 @@ final class ShortUrlEdit implements TitleResolutionModelInterface
         $this->tagsPropWasProvided = array_key_exists(ShortUrlInputFilter::TAGS, $data);
         $this->titlePropWasProvided = array_key_exists(ShortUrlInputFilter::TITLE, $data);
         $this->crawlablePropWasProvided = array_key_exists(ShortUrlInputFilter::CRAWLABLE, $data);
+        $this->forwardQueryPropWasProvided = array_key_exists(ShortUrlInputFilter::FORWARD_QUERY, $data);
 
         $this->longUrl = $inputFilter->getValue(ShortUrlInputFilter::LONG_URL);
         $this->validSince = parseDateField($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
@@ -73,6 +76,7 @@ final class ShortUrlEdit implements TitleResolutionModelInterface
         $this->tags = $inputFilter->getValue(ShortUrlInputFilter::TAGS);
         $this->title = $inputFilter->getValue(ShortUrlInputFilter::TITLE);
         $this->crawlable = $inputFilter->getValue(ShortUrlInputFilter::CRAWLABLE);
+        $this->forwardQuery = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::FORWARD_QUERY) ?? true;
     }
 
     public function longUrl(): ?string
@@ -175,5 +179,15 @@ final class ShortUrlEdit implements TitleResolutionModelInterface
     public function crawlableWasProvided(): bool
     {
         return $this->crawlablePropWasProvided;
+    }
+
+    public function forwardQuery(): bool
+    {
+        return $this->forwardQuery;
+    }
+
+    public function forwardQueryWasProvided(): bool
+    {
+        return $this->forwardQueryPropWasProvided;
     }
 }

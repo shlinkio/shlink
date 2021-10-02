@@ -81,6 +81,7 @@ class ShortUrl extends AbstractEntity
         $instance->title = $meta->getTitle();
         $instance->titleWasAutoResolved = $meta->titleWasAutoResolved();
         $instance->crawlable = $meta->isCrawlable();
+        $instance->forwardQuery = $meta->forwardQuery();
 
         return $instance;
     }
@@ -243,6 +244,9 @@ class ShortUrl extends AbstractEntity
         ) {
             $this->title = $shortUrlEdit->title();
             $this->titleWasAutoResolved = $shortUrlEdit->titleWasAutoResolved();
+        }
+        if ($shortUrlEdit->forwardQueryWasProvided()) {
+            $this->forwardQuery = $shortUrlEdit->forwardQuery();
         }
     }
 
