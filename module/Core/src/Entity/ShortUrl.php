@@ -43,6 +43,7 @@ class ShortUrl extends AbstractEntity
     private ?string $title = null;
     private bool $titleWasAutoResolved = false;
     private bool $crawlable = false;
+    private bool $forwardQuery = true;
 
     private function __construct()
     {
@@ -205,6 +206,11 @@ class ShortUrl extends AbstractEntity
     public function crawlable(): bool
     {
         return $this->crawlable;
+    }
+
+    public function forwardQuery(): bool
+    {
+        return $this->forwardQuery;
     }
 
     public function update(

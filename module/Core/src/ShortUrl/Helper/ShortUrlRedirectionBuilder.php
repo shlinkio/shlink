@@ -21,9 +21,10 @@ class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
     public function buildShortUrlRedirect(ShortUrl $shortUrl, array $currentQuery, ?string $extraPath = null): string
     {
         $uri = Uri::createFromString($shortUrl->getLongUrl());
+        $shouldForwardQuery = $shortUrl->forwardQuery();
 
         return $uri
-            ->withQuery($this->resolveQuery($uri, $currentQuery))
+            ->withQuery($shouldForwardQuery ? $this->resolveQuery($uri, $currentQuery) : $uri->getQuery())
             ->withPath($this->resolvePath($uri, $extraPath))
             ->__toString();
     }

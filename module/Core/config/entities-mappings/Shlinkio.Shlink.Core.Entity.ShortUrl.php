@@ -100,4 +100,9 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->columnName('crawlable')
             ->option('default', false)
             ->build();
+
+    $builder->createField('forwardQuery', Types::BOOLEAN)
+            ->columnName('forward_query')
+            ->option('default', true)
+            ->build();
 };
