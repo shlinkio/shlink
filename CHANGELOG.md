@@ -15,6 +15,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   The new `forwardQuery=true|false` param can be provided during short URL creation or edition, via REST API or CLI command, allowing to override the default behavior which makes the query string to always be forwarded.
 
+* [#1105](https://github.com/shlinkio/shlink/issues/1105) Added support to define placeholders on not-found redirects, so that the redirected URL receives the originally visited path and/or domain.
+
+  Currently, `{DOMAIN}` and `{ORIGINAL_PATH}` placeholders are supported, and they can be used both in the redirected URL's path or query.
+
+  When they are used in the query, the values are URL encoded.
+
 ### Changed
 * [#1142](https://github.com/shlinkio/shlink/issues/1142) Replaced `doctrine/cache` package with `symfony/cache`.
 * [#1157](https://github.com/shlinkio/shlink/issues/1157) All routes now support CORS, not only rest ones.

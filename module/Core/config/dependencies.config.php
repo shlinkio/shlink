@@ -127,7 +127,7 @@ return [
         Util\DoctrineBatchHelper::class => ['em'],
         Util\RedirectResponseHelper::class => [Options\UrlShortenerOptions::class],
 
-        Config\NotFoundRedirectResolver::class => [Util\RedirectResponseHelper::class],
+        Config\NotFoundRedirectResolver::class => [Util\RedirectResponseHelper::class, 'Logger_Shlink'],
 
         Action\RedirectAction::class => [
             Service\ShortUrl\ShortUrlResolver::class,
