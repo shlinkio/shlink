@@ -27,24 +27,21 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
         NotFoundRedirectConfigInterface $config,
         UriInterface $currentUri,
     ): ?ResponseInterface {
-        return match (true) {
-            $notFoundType->isBaseUrl() && $config->hasBaseUrlRedirect() =>
-                $this->redirectResponseHelper->buildRedirectResponse(
-                    // @phpstan-ignore-next-line Create custom PHPStan rule
-                    $this->resolvePlaceholders($currentUri, $config->baseUrlRedirect()),
-                ),
-            $notFoundType->isRegularNotFound() && $config->hasRegular404Redirect() =>
-                $this->redirectResponseHelper->buildRedirectResponse(
-                    // @phpstan-ignore-next-line Create custom PHPStan rule
-                    $this->resolvePlaceholders($currentUri, $config->regular404Redirect()),
-                ),
+        $urlToRedirectTo = match (true) {
+            $notFoundType->isBaseUrl() && $config->hasBaseUrlRedirect() => $config->baseUrlRedirect(),
+            $notFoundType->isRegularNotFound() && $config->hasRegular404Redirect() => $config->regular404Redirect(),
             $notFoundType->isInvalidShortUrl() && $config->hasInvalidShortUrlRedirect() =>
-                $this->redirectResponseHelper->buildRedirectResponse(
-                    // @phpstan-ignore-next-line Create custom PHPStan rule
-                    $this->resolvePlaceholders($currentUri, $config->invalidShortUrlRedirect()),
-                ),
+                $config->invalidShortUrlRedirect(),
             default => null,
         };
+
+        if ($urlToRedirectTo === null) {
+            return null;
+        }
+
+        return $this->redirectResponseHelper->buildRedirectResponse(
+            $this->resolvePlaceholders($currentUri, $urlToRedirectTo),
+        );
     }
 
     private function resolvePlaceholders(UriInterface $currentUri, string $redirectUrl): string
