@@ -13,6 +13,7 @@ return (static function (): array {
             'cache' => [
                 'redis' => [
                     'servers' => $redisServers,
+                    'sentinel_service' => env('REDIS_SENTINEL_SERVICE'),
                 ],
             ],
         ],
