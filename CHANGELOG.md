@@ -21,6 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   When they are used in the query, the values are URL encoded.
 
+* [#1119](https://github.com/shlinkio/shlink/issues/1119) Added support to provide redis sentinel when using redis cache.
+
 ### Changed
 * [#1142](https://github.com/shlinkio/shlink/issues/1142) Replaced `doctrine/cache` package with `symfony/cache`.
 * [#1157](https://github.com/shlinkio/shlink/issues/1157) All routes now support CORS, not only rest ones.
