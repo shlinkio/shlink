@@ -22,6 +22,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   When they are used in the query, the values are URL encoded.
 
 * [#1119](https://github.com/shlinkio/shlink/issues/1119) Added support to provide redis sentinel when using redis cache.
+* [#1016](https://github.com/shlinkio/shlink/issues/1016) Added new option to send orphan visits to webhooks, via `NOTIFY_ORPHAN_VISITS_TO_WEBHOOKS` env var or installer tool.
+
+  The option is disabled by default, as the payload is backwards incompatible. You will need to adapt your webhooks to treat the `shortUrl` property as optional before enabling this option.
 
 ### Changed
 * [#1142](https://github.com/shlinkio/shlink/issues/1142) Replaced `doctrine/cache` package with `symfony/cache`.

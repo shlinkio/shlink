@@ -58,7 +58,7 @@ return [
             'httpClient',
             'em',
             'Logger_Shlink',
-            'config.url_shortener.visits_webhooks',
+            Options\WebhookOptions::class,
             ShortUrl\Transformer\ShortUrlDataTransformer::class,
             Options\AppOptions::class,
         ],

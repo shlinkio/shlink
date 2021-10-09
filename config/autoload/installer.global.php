@@ -24,6 +24,7 @@ return [
             Option\UrlShortener\ShortDomainSchemaConfigOption::class,
             Option\UrlShortener\ValidateUrlConfigOption::class,
             Option\Visit\VisitsWebhooksConfigOption::class,
+            Option\Visit\OrphanVisitsWebhooksConfigOption::class,
             Option\Redirect\BaseUrlRedirectConfigOption::class,
             Option\Redirect\InvalidShortUrlRedirectConfigOption::class,
             Option\Redirect\Regular404RedirectConfigOption::class,
