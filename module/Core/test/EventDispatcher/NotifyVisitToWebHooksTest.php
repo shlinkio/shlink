@@ -75,34 +75,39 @@ class NotifyVisitToWebHooksTest extends TestCase
         $requestAsync->shouldNotHaveBeenCalled();
     }
 
-    /** @test */
-    public function expectedRequestsArePerformedToWebhooks(): void
+    /**
+     * @test
+     * @dataProvider provideVisits
+     */
+    public function expectedRequestsArePerformedToWebhooks(Visit $visit, array $expectedResponseKeys): void
     {
         $webhooks = ['foo', 'invalid', 'bar', 'baz'];
         $invalidWebhooks = ['invalid', 'baz'];
 
-        $find = $this->em->find(Visit::class, '1')->willReturn(
-            Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()),
-        );
+        $find = $this->em->find(Visit::class, '1')->willReturn($visit);
         $requestAsync = $this->httpClient->requestAsync(
             RequestMethodInterface::METHOD_POST,
             Argument::type('string'),
-            Argument::that(function (array $requestOptions) {
+            Argument::that(function (array $requestOptions) use ($expectedResponseKeys) {
                 Assert::assertArrayHasKey(RequestOptions::HEADERS, $requestOptions);
                 Assert::assertArrayHasKey(RequestOptions::JSON, $requestOptions);
                 Assert::assertArrayHasKey(RequestOptions::TIMEOUT, $requestOptions);
                 Assert::assertEquals($requestOptions[RequestOptions::TIMEOUT], 10);
                 Assert::assertEquals($requestOptions[RequestOptions::HEADERS], ['User-Agent' => 'Shlink:v1.2.3']);
-                Assert::assertArrayHasKey('shortUrl', $requestOptions[RequestOptions::JSON]);
-                Assert::assertArrayHasKey('visit', $requestOptions[RequestOptions::JSON]);
+
+                $json = $requestOptions[RequestOptions::JSON];
+                Assert::assertCount(count($expectedResponseKeys), $json);
+                foreach ($expectedResponseKeys as $key) {
+                    Assert::assertArrayHasKey($key, $json);
+                }
 
                 return $requestOptions;
             }),
         )->will(function (array $args) use ($invalidWebhooks) {
             [, $webhook] = $args;
-            $e = new Exception('');
+            $shouldReject = contains($invalidWebhooks, $webhook);
 
-            return contains($invalidWebhooks, $webhook) ? new RejectedPromise($e) : new FulfilledPromise('');
+            return $shouldReject ? new RejectedPromise(new Exception('')) : new FulfilledPromise('');
         });
         $logWarning = $this->logger->warning(
             'Failed to notify visit with id "{visitId}" to webhook "{webhook}". {e}',
@@ -120,6 +125,15 @@ class NotifyVisitToWebHooksTest extends TestCase
         $find->shouldHaveBeenCalledOnce();
         $requestAsync->shouldHaveBeenCalledTimes(count($webhooks));
         $logWarning->shouldHaveBeenCalledTimes(count($invalidWebhooks));
+    }
+
+    public function provideVisits(): iterable
+    {
+        yield 'regular visit' => [
+            Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()),
+            ['shortUrl', 'visit'],
+        ];
+        yield 'orphan visit' => [Visit::forBasePath(Visitor::emptyInstance()), ['visit'],];
     }
 
     private function createListener(array $webhooks): NotifyVisitToWebHooks

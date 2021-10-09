@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\EventDispatcher;
 
-use Closure;
 use Doctrine\ORM\EntityManagerInterface;
 use Fig\Http\Message\RequestMethodInterface;
 use GuzzleHttp\ClientInterface;
@@ -20,7 +19,6 @@ use Shlinkio\Shlink\Core\Options\AppOptions;
 use Throwable;
 
 use function Functional\map;
-use function Functional\partial_left;
 
 class NotifyVisitToWebHooks
 {
@@ -61,15 +59,16 @@ class NotifyVisitToWebHooks
 
     private function buildRequestOptions(Visit $visit): array
     {
+        $payload = ['visit' => $visit->jsonSerialize()];
+        $shortUrl = $visit->getShortUrl();
+        if ($shortUrl !== null) {
+            $payload['shortUrl'] = $this->transformer->transform($shortUrl);
+        }
+
         return [
             RequestOptions::TIMEOUT => 10,
-            RequestOptions::HEADERS => [
-                'User-Agent' => (string) $this->appOptions,
-            ],
-            RequestOptions::JSON => [
-                'shortUrl' => $this->transformer->transform($visit->getShortUrl()),
-                'visit' => $visit->jsonSerialize(),
-            ],
+            RequestOptions::JSON => $payload,
+            RequestOptions::HEADERS => ['User-Agent' => $this->appOptions->__toString()],
         ];
     }
 
@@ -78,13 +77,11 @@ class NotifyVisitToWebHooks
      */
     private function performRequests(array $requestOptions, string $visitId): array
     {
-        $logWebhookFailure = Closure::fromCallable([$this, 'logWebhookFailure']);
-
         return map(
             $this->webhooks,
             fn (string $webhook): PromiseInterface => $this->httpClient
                 ->requestAsync(RequestMethodInterface::METHOD_POST, $webhook, $requestOptions)
-                ->otherwise(partial_left($logWebhookFailure, $webhook, $visitId)),
+                ->otherwise(fn (Throwable $e) => $this->logWebhookFailure($webhook, $visitId, $e)),
         );
     }
 
