@@ -26,6 +26,7 @@ return [
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
             Options\TrackingOptions::class => ConfigAbstractFactory::class,
             Options\QrCodeOptions::class => ConfigAbstractFactory::class,
+            Options\WebhookOptions::class => ConfigAbstractFactory::class,
 
             Service\UrlShortener::class => ConfigAbstractFactory::class,
             Service\ShortUrlService::class => ConfigAbstractFactory::class,
@@ -88,6 +89,7 @@ return [
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
         Options\TrackingOptions::class => ['config.tracking'],
         Options\QrCodeOptions::class => ['config.qr_codes'],
+        Options\WebhookOptions::class => ['config.url_shortener'], // TODO This config is currently under url_shortener
 
         Service\UrlShortener::class => [
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,

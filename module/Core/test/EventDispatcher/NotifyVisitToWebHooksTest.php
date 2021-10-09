@@ -23,6 +23,7 @@ use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\EventDispatcher\NotifyVisitToWebHooks;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\AppOptions;
+use Shlinkio\Shlink\Core\Options\WebhookOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 
@@ -72,6 +73,24 @@ class NotifyVisitToWebHooksTest extends TestCase
 
         $find->shouldHaveBeenCalledOnce();
         $logWarning->shouldHaveBeenCalledOnce();
+        $requestAsync->shouldNotHaveBeenCalled();
+    }
+
+    /** @test */
+    public function orphanVisitDoesNotPerformAnyRequestWhenDisabled(): void
+    {
+        $find = $this->em->find(Visit::class, '1')->willReturn(Visit::forBasePath(Visitor::emptyInstance()));
+        $requestAsync = $this->httpClient->requestAsync(
+            RequestMethodInterface::METHOD_POST,
+            Argument::type('string'),
+            Argument::type('array'),
+        )->willReturn(new FulfilledPromise(''));
+        $logWarning = $this->logger->warning(Argument::cetera());
+
+        $this->createListener(['foo', 'bar'], false)(new VisitLocated('1'));
+
+        $find->shouldHaveBeenCalledOnce();
+        $logWarning->shouldNotHaveBeenCalled();
         $requestAsync->shouldNotHaveBeenCalled();
     }
 
@@ -136,13 +155,15 @@ class NotifyVisitToWebHooksTest extends TestCase
         yield 'orphan visit' => [Visit::forBasePath(Visitor::emptyInstance()), ['visit'],];
     }
 
-    private function createListener(array $webhooks): NotifyVisitToWebHooks
+    private function createListener(array $webhooks, bool $notifyOrphanVisits = true): NotifyVisitToWebHooks
     {
         return new NotifyVisitToWebHooks(
             $this->httpClient->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),
-            $webhooks,
+            new WebhookOptions(
+                ['visits_webhooks' => $webhooks, 'notify_orphan_visits_to_webhooks' => $notifyOrphanVisits],
+            ),
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
             new AppOptions(['name' => 'Shlink', 'version' => '1.2.3']),
         );

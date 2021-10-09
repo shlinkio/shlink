@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\Options\AppOptions;
+use Shlinkio\Shlink\Core\Options\WebhookOptions;
 use Throwable;
 
 use function Functional\map;
@@ -26,8 +27,7 @@ class NotifyVisitToWebHooks
         private ClientInterface $httpClient,
         private EntityManagerInterface $em,
         private LoggerInterface $logger,
-        /** @var string[] */
-        private array $webhooks,
+        private WebhookOptions $webhookOptions,
         private DataTransformerInterface $transformer,
         private AppOptions $appOptions,
     ) {
@@ -35,7 +35,7 @@ class NotifyVisitToWebHooks
 
     public function __invoke(VisitLocated $shortUrlLocated): void
     {
-        if (empty($this->webhooks)) {
+        if (! $this->webhookOptions->hasWebhooks()) {
             return;
         }
 
@@ -47,6 +47,10 @@ class NotifyVisitToWebHooks
             $this->logger->warning('Tried to notify webhooks for visit with id "{visitId}", but it does not exist.', [
                 'visitId' => $visitId,
             ]);
+            return;
+        }
+
+        if ($visit->isOrphan() && ! $this->webhookOptions->notifyOrphanVisits()) {
             return;
         }
 
@@ -78,7 +82,7 @@ class NotifyVisitToWebHooks
     private function performRequests(array $requestOptions, string $visitId): array
     {
         return map(
-            $this->webhooks,
+            $this->webhookOptions->webhooks(),
             fn (string $webhook): PromiseInterface => $this->httpClient
                 ->requestAsync(RequestMethodInterface::METHOD_POST, $webhook, $requestOptions)
                 ->otherwise(fn (Throwable $e) => $this->logWebhookFailure($webhook, $visitId, $e)),
