@@ -47,6 +47,7 @@ return [
             Option\Tracking\IpAnonymizationConfigOption::class,
             Option\Tracking\OrphanVisitsTrackingConfigOption::class,
             Option\Tracking\DisableTrackParamConfigOption::class,
+            Option\Tracking\DisableTrackingFromConfigOption::class,
             Option\Tracking\DisableTrackingConfigOption::class,
             Option\Tracking\DisableIpTrackingConfigOption::class,
             Option\Tracking\DisableReferrerTrackingConfigOption::class,
