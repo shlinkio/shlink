@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [2.9.0] - 2021-10-10
 ### Added
 * [#1015](https://github.com/shlinkio/shlink/issues/1015) Shlink now accepts configuration via env vars even when not using docker.
 
@@ -25,6 +25,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1016](https://github.com/shlinkio/shlink/issues/1016) Added new option to send orphan visits to webhooks, via `NOTIFY_ORPHAN_VISITS_TO_WEBHOOKS` env var or installer tool.
 
   The option is disabled by default, as the payload is backwards incompatible. You will need to adapt your webhooks to treat the `shortUrl` property as optional before enabling this option.
+
+* [#1104](https://github.com/shlinkio/shlink/issues/1104) Added ability to disable tracking based on IP addresses.
+
+  IP addresses can be provided in the form of fixed addresses, CIDR blocks, or wildcard patterns (192.168.*.*).
 
 ### Changed
 * [#1142](https://github.com/shlinkio/shlink/issues/1142) Replaced `doctrine/cache` package with `symfony/cache`.
