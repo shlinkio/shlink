@@ -6,6 +6,10 @@ namespace Shlinkio\Shlink\Core\Options;
 
 use Laminas\Stdlib\AbstractOptions;
 
+use function array_key_exists;
+use function explode;
+use function is_array;
+
 class TrackingOptions extends AbstractOptions
 {
     private bool $anonymizeRemoteAddr = true;
@@ -15,6 +19,7 @@ class TrackingOptions extends AbstractOptions
     private bool $disableIpTracking = false;
     private bool $disableReferrerTracking = false;
     private bool $disableUaTracking = false;
+    private array $disableTrackingFrom = [];
 
     public function anonymizeRemoteAddr(): bool
     {
@@ -39,6 +44,11 @@ class TrackingOptions extends AbstractOptions
     public function getDisableTrackParam(): ?string
     {
         return $this->disableTrackParam;
+    }
+
+    public function queryHasDisableTrackParam(array $query): bool
+    {
+        return $this->disableTrackParam !== null && array_key_exists($this->disableTrackParam, $query);
     }
 
     protected function setDisableTrackParam(?string $disableTrackParam): void
@@ -84,5 +94,24 @@ class TrackingOptions extends AbstractOptions
     protected function setDisableUaTracking(bool $disableUaTracking): void
     {
         $this->disableUaTracking = $disableUaTracking;
+    }
+
+    public function disableTrackingFrom(): array
+    {
+        return $this->disableTrackingFrom;
+    }
+
+    public function hasDisableTrackingFrom(): bool
+    {
+        return ! empty($this->disableTrackingFrom);
+    }
+
+    protected function setDisableTrackingFrom(string|array|null $disableTrackingFrom): void
+    {
+        if (is_array($disableTrackingFrom)) {
+            $this->disableTrackingFrom = $disableTrackingFrom;
+        } else {
+            $this->disableTrackingFrom = $disableTrackingFrom === null ? [] : explode(',', $disableTrackingFrom);
+        }
     }
 }

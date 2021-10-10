@@ -28,6 +28,9 @@ return [
 
         // If true, the user agent will not be tracked
         'disable_ua_tracking' => (bool) env('DISABLE_UA_TRACKING', false),
+
+        // A list of IP addresses, patterns or CIDR blocks from which tracking is disabled by default
+        'disable_tracking_from' => env('DISABLE_TRACKING_FROM'),
     ],
 
 ];
