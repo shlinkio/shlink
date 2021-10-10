@@ -70,15 +70,17 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
             $qb = (clone $originalQueryBuilder)->andWhere($qb->expr()->gt('v.id', $lastId));
             $iterator = $qb->getQuery()->toIterable();
             $resultsFound = false;
+            /** @var Visit|null $lastProcessedVisit */
+            $lastProcessedVisit = null;
 
             foreach ($iterator as $key => $visit) {
                 $resultsFound = true;
+                $lastProcessedVisit = $visit;
                 yield $key => $visit;
             }
 
             // As the query is ordered by ID, we can take the last one every time in order to exclude the whole list
-            /** @var Visit|null $visit */
-            $lastId = $visit?->getId() ?? $lastId;
+            $lastId = $lastProcessedVisit?->getId() ?? $lastId;
         } while ($resultsFound);
     }
 
@@ -187,11 +189,11 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     private function applyDatesInline(QueryBuilder $qb, ?DateRange $dateRange): void
     {
-        if ($dateRange?->getStartDate() !== null) {
-            $qb->andWhere($qb->expr()->gte('v.date', '\'' . $dateRange->getStartDate()->toDateTimeString() . '\''));
+        if ($dateRange?->startDate() !== null) {
+            $qb->andWhere($qb->expr()->gte('v.date', '\'' . $dateRange->startDate()->toDateTimeString() . '\''));
         }
-        if ($dateRange?->getEndDate() !== null) {
-            $qb->andWhere($qb->expr()->lte('v.date', '\'' . $dateRange->getEndDate()->toDateTimeString() . '\''));
+        if ($dateRange?->endDate() !== null) {
+            $qb->andWhere($qb->expr()->lte('v.date', '\'' . $dateRange->endDate()->toDateTimeString() . '\''));
         }
     }
 

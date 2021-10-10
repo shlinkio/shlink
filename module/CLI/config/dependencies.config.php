@@ -24,7 +24,7 @@ use Symfony\Component\Console as SymfonyCli;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 
-use const Shlinkio\Shlink\Core\LOCAL_LOCK_FACTORY;
+use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
 
 return [
 

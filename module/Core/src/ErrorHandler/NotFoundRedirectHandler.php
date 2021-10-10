@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\ErrorHandler;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectResolverInterface;
@@ -26,17 +27,25 @@ class NotFoundRedirectHandler implements MiddlewareInterface
     {
         /** @var NotFoundType $notFoundType */
         $notFoundType = $request->getAttribute(NotFoundType::class);
-        $authority = $request->getUri()->getAuthority();
-        $domainSpecificRedirect = $this->resolveDomainSpecificRedirect($authority, $notFoundType);
+        $currentUri = $request->getUri();
+        $domainSpecificRedirect = $this->resolveDomainSpecificRedirect($currentUri, $notFoundType);
 
         return $domainSpecificRedirect
-            ?? $this->redirectResolver->resolveRedirectResponse($notFoundType, $this->redirectOptions)
+            // If we did not find domain-specific redirects for current domain, we try to fall back to default redirects
+            ?? $this->redirectResolver->resolveRedirectResponse($notFoundType, $this->redirectOptions, $currentUri)
+            // Ultimately, we just call next handler if no domain-specific redirects or default redirects were found
             ?? $handler->handle($request);
     }
 
-    private function resolveDomainSpecificRedirect(string $authority, NotFoundType $notFoundType): ?ResponseInterface
-    {
-        $domain = $this->domainService->findByAuthority($authority);
-        return $domain === null ? null : $this->redirectResolver->resolveRedirectResponse($notFoundType, $domain);
+    private function resolveDomainSpecificRedirect(
+        UriInterface $currentUri,
+        NotFoundType $notFoundType,
+    ): ?ResponseInterface {
+        $domain = $this->domainService->findByAuthority($currentUri->getAuthority());
+        if ($domain === null) {
+            return null;
+        }
+
+        return $this->redirectResolver->resolveRedirectResponse($notFoundType, $domain, $currentUri);
     }
 }

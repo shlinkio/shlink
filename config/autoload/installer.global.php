@@ -24,6 +24,7 @@ return [
             Option\UrlShortener\ShortDomainSchemaConfigOption::class,
             Option\UrlShortener\ValidateUrlConfigOption::class,
             Option\Visit\VisitsWebhooksConfigOption::class,
+            Option\Visit\OrphanVisitsWebhooksConfigOption::class,
             Option\Redirect\BaseUrlRedirectConfigOption::class,
             Option\Redirect\InvalidShortUrlRedirectConfigOption::class,
             Option\Redirect\Regular404RedirectConfigOption::class,
@@ -46,10 +47,15 @@ return [
             Option\Tracking\IpAnonymizationConfigOption::class,
             Option\Tracking\OrphanVisitsTrackingConfigOption::class,
             Option\Tracking\DisableTrackParamConfigOption::class,
+            Option\Tracking\DisableTrackingFromConfigOption::class,
             Option\Tracking\DisableTrackingConfigOption::class,
             Option\Tracking\DisableIpTrackingConfigOption::class,
             Option\Tracking\DisableReferrerTrackingConfigOption::class,
             Option\Tracking\DisableUaTrackingConfigOption::class,
+            Option\QrCode\DefaultSizeConfigOption::class,
+            Option\QrCode\DefaultMarginConfigOption::class,
+            Option\QrCode\DefaultFormatConfigOption::class,
+            Option\QrCode\DefaultErrorCorrectionConfigOption::class,
         ],
 
         'installation_commands' => [

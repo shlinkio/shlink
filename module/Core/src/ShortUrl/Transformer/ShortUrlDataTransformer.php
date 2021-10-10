@@ -33,6 +33,7 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             'domain' => $shortUrl->getDomain(),
             'title' => $shortUrl->title(),
             'crawlable' => $shortUrl->crawlable(),
+            'forwardQuery' => $shortUrl->forwardQuery(),
         ];
     }
 

@@ -65,7 +65,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
      */
     public function handlerIsCalledWhenConfigPreventsRedirectWithExtraPath(
         bool $appendExtraPath,
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
     ): void {
         $this->options->appendExtraPath = $appendExtraPath;
 

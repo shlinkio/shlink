@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\Options;
 
 use Laminas\Stdlib\AbstractOptions;
 
-use const Shlinkio\Shlink\Core\DEFAULT_DELETE_SHORT_URL_THRESHOLD;
+use const Shlinkio\Shlink\DEFAULT_DELETE_SHORT_URL_THRESHOLD;
 
 class DeleteShortUrlsOptions extends AbstractOptions
 {

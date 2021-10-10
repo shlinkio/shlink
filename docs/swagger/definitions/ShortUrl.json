@@ -1,5 +1,18 @@
 {
     "type": "object",
+    "required": [
+        "shortCode",
+        "shortUrl",
+        "longUrl",
+        "dateCreated",
+        "visitsCount",
+        "tags",
+        "meta",
+        "domain",
+        "title",
+        "crawlable",
+        "forwardQuery"
+    ],
     "properties": {
         "shortCode": {
             "type": "string",
@@ -45,6 +58,10 @@
         "crawlable": {
             "type": "boolean",
             "description": "Tells if this URL will be included as 'Allow' in Shlink's robots.txt."
+        },
+        "forwardQuery": {
+            "type": "boolean",
+            "description": "Tells if this URL will forward the query params to the long URL when visited, as explained in [the docs](https://shlink.io/documentation/some-features/#query-params-forwarding)."
         }
     }
 }

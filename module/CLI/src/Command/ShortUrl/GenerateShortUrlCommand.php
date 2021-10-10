@@ -33,7 +33,7 @@ class GenerateShortUrlCommand extends BaseCommand
     public function __construct(
         private UrlShortenerInterface $urlShortener,
         private ShortUrlStringifierInterface $stringifier,
-        private int $defaultShortCodeLength
+        private int $defaultShortCodeLength,
     ) {
         parent::__construct();
     }
@@ -104,7 +104,19 @@ class GenerateShortUrlCommand extends BaseCommand
                 'no-validate-url',
                 null,
                 InputOption::VALUE_NONE,
-                'Forces the long URL to not be validated, regardless what is globally configured.',
+                '[DEPRECATED] Forces the long URL to not be validated, regardless what is globally configured.',
+            )
+            ->addOption(
+                'crawlable',
+                'r',
+                InputOption::VALUE_NONE,
+                'Tells if this URL will be included as "Allow" in Shlink\'s robots.txt.',
+            )
+            ->addOption(
+                'no-forward-query',
+                'w',
+                InputOption::VALUE_NONE,
+                'Disables the forwarding of the query string to the long URL, when the new short URL is visited.',
             );
     }
 
@@ -156,6 +168,8 @@ class GenerateShortUrlCommand extends BaseCommand
                 ShortUrlInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
                 ShortUrlInputFilter::VALIDATE_URL => $doValidateUrl,
                 ShortUrlInputFilter::TAGS => $tags,
+                ShortUrlInputFilter::CRAWLABLE => $input->getOption('crawlable'),
+                ShortUrlInputFilter::FORWARD_QUERY => !$input->getOption('no-forward-query'),
             ]));
 
             $io->writeln([

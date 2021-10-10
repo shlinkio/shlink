@@ -35,7 +35,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
     public function __construct(
         private VisitLocatorInterface $visitLocator,
         private IpLocationResolverInterface $ipLocationResolver,
-        LockFactory $locker
+        LockFactory $locker,
     ) {
         parent::__construct($locker);
     }

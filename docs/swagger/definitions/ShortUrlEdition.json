@@ -1,0 +1,48 @@
+{
+    "type": "object",
+    "properties": {
+        "longUrl": {
+            "description": "The long URL this short URL will redirect to",
+            "type": "string"
+        },
+        "validSince": {
+            "description": "The date (in ISO-8601 format) from which this short code will be valid",
+            "type": "string",
+            "nullable": true
+        },
+        "validUntil": {
+            "description": "The date (in ISO-8601 format) until which this short code will be valid",
+            "type": "string",
+            "nullable": true
+        },
+        "maxVisits": {
+            "description": "The maximum number of allowed visits for this short code",
+            "type": "number",
+            "nullable": true
+        },
+        "validateUrl": {
+            "description": "Tells if the long URL (if provided) should or should not be validated as a reachable URL. If not provided, it will fall back to app-level config",
+            "type": "boolean"
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "The list of tags to set to the short URL."
+        },
+        "title": {
+            "type": "string",
+            "description": "A descriptive title of the short URL.",
+            "nullable": true
+        },
+        "crawlable": {
+            "type": "boolean",
+            "description": "Tells if this URL will be included as 'Allow' in Shlink's robots.txt."
+        },
+        "forwardQuery": {
+            "type": "boolean",
+            "description": "Tells if the query params should be forwarded from the short URL to the long one, as explained in [the docs](https://shlink.io/documentation/some-features/#query-params-forwarding)."
+        }
+    }
+}

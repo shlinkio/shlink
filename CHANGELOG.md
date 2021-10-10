@@ -4,6 +4,48 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.9.0] - 2021-10-10
+### Added
+* [#1015](https://github.com/shlinkio/shlink/issues/1015) Shlink now accepts configuration via env vars even when not using docker.
+
+  The config generated with the installing tool still has precedence over the env vars, so it cannot be combined. Either you use the tool, or use env vars.
+
+* [#1149](https://github.com/shlinkio/shlink/issues/1149) Allowed to set custom defaults for the QR codes.
+* [#1112](https://github.com/shlinkio/shlink/issues/1112) Added new option to define if the query string should be forwarded on a per-short URL basis.
+
+  The new `forwardQuery=true|false` param can be provided during short URL creation or edition, via REST API or CLI command, allowing to override the default behavior which makes the query string to always be forwarded.
+
+* [#1105](https://github.com/shlinkio/shlink/issues/1105) Added support to define placeholders on not-found redirects, so that the redirected URL receives the originally visited path and/or domain.
+
+  Currently, `{DOMAIN}` and `{ORIGINAL_PATH}` placeholders are supported, and they can be used both in the redirected URL's path or query.
+
+  When they are used in the query, the values are URL encoded.
+
+* [#1119](https://github.com/shlinkio/shlink/issues/1119) Added support to provide redis sentinel when using redis cache.
+* [#1016](https://github.com/shlinkio/shlink/issues/1016) Added new option to send orphan visits to webhooks, via `NOTIFY_ORPHAN_VISITS_TO_WEBHOOKS` env var or installer tool.
+
+  The option is disabled by default, as the payload is backwards incompatible. You will need to adapt your webhooks to treat the `shortUrl` property as optional before enabling this option.
+
+* [#1104](https://github.com/shlinkio/shlink/issues/1104) Added ability to disable tracking based on IP addresses.
+
+  IP addresses can be provided in the form of fixed addresses, CIDR blocks, or wildcard patterns (192.168.*.*).
+
+### Changed
+* [#1142](https://github.com/shlinkio/shlink/issues/1142) Replaced `doctrine/cache` package with `symfony/cache`.
+* [#1157](https://github.com/shlinkio/shlink/issues/1157) All routes now support CORS, not only rest ones.
+* [#1144](https://github.com/shlinkio/shlink/issues/1144) Added experimental builds under PHP 8.1.
+
+### Deprecated
+* [#1164](https://github.com/shlinkio/shlink/issues/1164) Deprecated `SHORT_DOMAIN_HOST` and `SHORT_DOMAIN_SCHEMA` env vars. Use `DEFAULT_DOMAIN` and `USE_HTTPS=true|false` instead.
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1165](https://github.com/shlinkio/shlink/issues/1165) Fixed warning displayed when trying to locate visits and there are none pending.
+* [#1172](https://github.com/shlinkio/shlink/pull/1172) Removed unneeded explicitly defined volumes in docker image.
+
+
 ## [2.8.1] - 2021-08-15
 ### Added
 * *Nothing*
@@ -50,7 +92,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1046](https://github.com/shlinkio/shlink/issues/1046) Dropped support for PHP 7.4.
 
 ### Fixed
-* *Nothing*
+* [#1098](https://github.com/shlinkio/shlink/issues/1098) Fixed errors when using Redis for caching, caused by some third party lib bug that was fixed on dependencies update.
 
 
 ## [2.7.3] - 2021-08-02

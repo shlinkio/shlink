@@ -8,7 +8,7 @@ use Laminas\ConfigAggregator;
 use Laminas\Diactoros;
 use Mezzio;
 use Mezzio\ProblemDetails;
-use Mezzio\Swoole\ConfigProvider as SwooleConfigProvider;
+use Mezzio\Swoole;
 
 use function class_exists;
 use function Shlinkio\Shlink\Common\env;
@@ -17,7 +17,7 @@ return (new ConfigAggregator\ConfigAggregator([
     Mezzio\ConfigProvider::class,
     Mezzio\Router\ConfigProvider::class,
     Mezzio\Router\FastRouteRouter\ConfigProvider::class,
-    class_exists(SwooleConfigProvider::class) ? SwooleConfigProvider::class : new ConfigAggregator\ArrayProvider([]),
+    class_exists(Swoole\ConfigProvider::class) ? Swoole\ConfigProvider::class : new ConfigAggregator\ArrayProvider([]),
     ProblemDetails\ConfigProvider::class,
     Diactoros\ConfigProvider::class,
     Common\ConfigProvider::class,
@@ -31,6 +31,7 @@ return (new ConfigAggregator\ConfigAggregator([
     new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
     env('APP_ENV') === 'test'
         ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')
+        // Deprecated. When the SimplifiedConfigParser is removed, load only generated_config.php here
         : new ConfigAggregator\LaminasConfigProvider('config/params/{generated_config.php,*.config.{php,json}}'),
 ], 'data/cache/app_config.php', [
     Core\Config\SimplifiedConfigParser::class,

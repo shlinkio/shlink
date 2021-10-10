@@ -43,6 +43,7 @@ class ShortUrl extends AbstractEntity
     private ?string $title = null;
     private bool $titleWasAutoResolved = false;
     private bool $crawlable = false;
+    private bool $forwardQuery = true;
 
     private function __construct()
     {
@@ -80,6 +81,7 @@ class ShortUrl extends AbstractEntity
         $instance->title = $meta->getTitle();
         $instance->titleWasAutoResolved = $meta->titleWasAutoResolved();
         $instance->crawlable = $meta->isCrawlable();
+        $instance->forwardQuery = $meta->forwardQuery();
 
         return $instance;
     }
@@ -207,6 +209,11 @@ class ShortUrl extends AbstractEntity
         return $this->crawlable;
     }
 
+    public function forwardQuery(): bool
+    {
+        return $this->forwardQuery;
+    }
+
     public function update(
         ShortUrlEdit $shortUrlEdit,
         ?ShortUrlRelationResolverInterface $relationResolver = null,
@@ -237,6 +244,9 @@ class ShortUrl extends AbstractEntity
         ) {
             $this->title = $shortUrlEdit->title();
             $this->titleWasAutoResolved = $shortUrlEdit->titleWasAutoResolved();
+        }
+        if ($shortUrlEdit->forwardQueryWasProvided()) {
+            $this->forwardQuery = $shortUrlEdit->forwardQuery();
         }
     }
 

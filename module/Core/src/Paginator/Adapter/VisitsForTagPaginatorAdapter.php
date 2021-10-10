@@ -16,7 +16,7 @@ class VisitsForTagPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
         private VisitRepositoryInterface $visitRepository,
         private string $tag,
         private VisitsParams $params,
-        private ?ApiKey $apiKey
+        private ?ApiKey $apiKey,
     ) {
     }
 

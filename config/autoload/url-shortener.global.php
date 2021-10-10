@@ -2,26 +2,29 @@
 
 declare(strict_types=1);
 
-use const Shlinkio\Shlink\Core\DEFAULT_REDIRECT_CACHE_LIFETIME;
-use const Shlinkio\Shlink\Core\DEFAULT_REDIRECT_STATUS_CODE;
-use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
+use function Shlinkio\Shlink\Common\env;
 
-return [
+use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
+use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
-    'url_shortener' => [
-        'domain' => [
-            'schema' => 'https',
-            'hostname' => '',
+return (static function (): array {
+    $shortCodesLength = (int) env('DEFAULT_SHORT_CODES_LENGTH', DEFAULT_SHORT_CODES_LENGTH);
+    $shortCodesLength = $shortCodesLength < MIN_SHORT_CODES_LENGTH ? MIN_SHORT_CODES_LENGTH : $shortCodesLength;
+    $useHttps = env('USE_HTTPS'); // Deprecated. For v3, set this to true by default, instead of null
+
+    return [
+
+        'url_shortener' => [
+            'domain' => [
+                // Deprecated SHORT_DOMAIN_* env vars
+                'schema' => $useHttps !== null ? (bool) $useHttps : env('SHORT_DOMAIN_SCHEMA', 'http'),
+                'hostname' => env('DEFAULT_DOMAIN', env('SHORT_DOMAIN_HOST', '')),
+            ],
+            'validate_url' => (bool) env('VALIDATE_URLS', false), // Deprecated
+            'default_short_codes_length' => $shortCodesLength,
+            'auto_resolve_titles' => (bool) env('AUTO_RESOLVE_TITLES', false),
+            'append_extra_path' => (bool) env('REDIRECT_APPEND_EXTRA_PATH', false),
         ],
-        'validate_url' => false, // Deprecated
-        'visits_webhooks' => [],
-        'default_short_codes_length' => DEFAULT_SHORT_CODES_LENGTH,
-        'auto_resolve_titles' => false,
-        'append_extra_path' => false,
 
-        // TODO Move these two options to their own config namespace. Maybe "redirects".
-        'redirect_status_code' => DEFAULT_REDIRECT_STATUS_CODE,
-        'redirect_cache_lifetime' => DEFAULT_REDIRECT_CACHE_LIFETIME,
-    ],
-
-];
+    ];
+})();

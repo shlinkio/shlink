@@ -23,7 +23,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         private DbUpdaterInterface $dbUpdater,
         private Reader $geoLiteDbReader,
         private LockFactory $locker,
-        private TrackingOptions $trackingOptions
+        private TrackingOptions $trackingOptions,
     ) {
     }
 

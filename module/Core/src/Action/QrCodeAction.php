@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Action\Model\QrCodeParams;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\Options\QrCodeOptions;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 
@@ -22,7 +23,8 @@ class QrCodeAction implements MiddlewareInterface
     public function __construct(
         private ShortUrlResolverInterface $urlResolver,
         private ShortUrlStringifierInterface $stringifier,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
+        private QrCodeOptions $defaultOptions,
     ) {
     }
 
@@ -37,7 +39,7 @@ class QrCodeAction implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $params = QrCodeParams::fromRequest($request);
+        $params = QrCodeParams::fromRequest($request, $this->defaultOptions);
         $qrCodeBuilder = Builder::create()
             ->data($this->stringifier->stringify($shortUrl))
             ->size($params->size())

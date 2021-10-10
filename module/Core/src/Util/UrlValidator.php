@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use function preg_match;
 use function trim;
 
-use const Shlinkio\Shlink\Core\TITLE_TAG_VALUE;
+use const Shlinkio\Shlink\TITLE_TAG_VALUE;
 
 class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
 {
@@ -32,7 +32,7 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
      */
     public function validateUrl(string $url, ?bool $doValidate): void
     {
-        // If the URL validation is not enabled or it was explicitly set to not validate, skip check
+        // If the URL validation is not enabled, or it was explicitly set to not validate, skip check
         $doValidate = $doValidate ?? $this->options->isUrlValidationEnabled();
         if (! $doValidate) {
             return;

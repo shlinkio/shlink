@@ -2,9 +2,9 @@ FROM php:8.0.9-alpine3.14 as base
 
 ARG SHLINK_VERSION=latest
 ENV SHLINK_VERSION ${SHLINK_VERSION}
-ENV SWOOLE_VERSION 4.7.0
+ENV SWOOLE_VERSION 4.7.1
 ENV PDO_SQLSRV_VERSION 5.9.0
-ENV MS_ODBC_SQL_VERSION 17.5.2.1
+ENV MS_ODBC_SQL_VERSION 17.5.2.2
 ENV LC_ALL "C"
 
 WORKDIR /etc/shlink
@@ -67,11 +67,6 @@ RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink
 
 # Expose default swoole port
 EXPOSE 8080
-
-# Expose params config dir, since the user is expected to provide custom config from there
-VOLUME /etc/shlink/config/params
-# Expose data dir to allow persistent runtime data and SQLite db
-VOLUME /etc/shlink/data
 
 # Copy config specific for the image
 COPY docker/docker-entrypoint.sh docker-entrypoint.sh

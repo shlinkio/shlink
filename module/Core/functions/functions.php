@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\Core;
 
 use Cake\Chronos\Chronos;
 use DateTimeInterface;
-use Fig\Http\Message\StatusCodeInterface;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Laminas\InputFilter\InputFilter;
 use PUGX\Shortid\Factory as ShortIdFactory;
@@ -16,19 +15,11 @@ use function Functional\reduce_left;
 use function is_array;
 use function lcfirst;
 use function print_r;
+use function Shlinkio\Shlink\Common\buildDateRange;
 use function sprintf;
 use function str_repeat;
 use function str_replace;
 use function ucwords;
-
-const DEFAULT_DELETE_SHORT_URL_THRESHOLD = 15;
-const DEFAULT_SHORT_CODES_LENGTH = 5;
-const MIN_SHORT_CODES_LENGTH = 4;
-const DEFAULT_REDIRECT_STATUS_CODE = StatusCodeInterface::STATUS_FOUND;
-const DEFAULT_REDIRECT_CACHE_LIFETIME = 30;
-const LOCAL_LOCK_FACTORY = 'Shlinkio\Shlink\LocalLockFactory';
-const CUSTOM_SLUGS_REGEXP = '/[^\pL\pN._~]/u'; // Any unicode letter or number, plus ".", "_" and "~" chars
-const TITLE_TAG_VALUE = '/<title[^>]*>(.*?)<\/title>/i'; // Matches the value inside an html title tag
 
 function generateRandomShortCode(int $length): string
 {
@@ -51,18 +42,10 @@ function parseDateRangeFromQuery(array $query, string $startDateName, string $en
     $startDate = parseDateFromQuery($query, $startDateName);
     $endDate = parseDateFromQuery($query, $endDateName);
 
-    return match (true) {
-        $startDate === null && $endDate === null => DateRange::emptyInstance(),
-        $startDate !== null && $endDate !== null => DateRange::withStartAndEndDate($startDate, $endDate),
-        $startDate !== null => DateRange::withStartDate($startDate),
-        default => DateRange::withEndDate($endDate),
-    };
+    return buildDateRange($startDate, $endDate);
 }
 
-/**
- * @param string|DateTimeInterface|Chronos|null $date
- */
-function parseDateField($date): ?Chronos
+function parseDateField(string|DateTimeInterface|Chronos|null $date): ?Chronos
 {
     if ($date === null || $date instanceof Chronos) {
         return $date;

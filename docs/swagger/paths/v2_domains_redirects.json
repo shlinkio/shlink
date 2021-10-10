@@ -5,7 +5,7 @@
             "Domains"
         ],
         "summary": "Sets domain \"not found\" redirects",
-        "description": "Sets the URLs that you want a visitor to get redirected to for \not found\" URLs for a specific domain",
+        "description": "Sets the URLs that you want a visitor to get redirected to for \"not found\" URLs for a specific domain",
         "security": [
             {
                 "ApiKey": []

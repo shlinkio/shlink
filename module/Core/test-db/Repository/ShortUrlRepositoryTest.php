@@ -133,16 +133,16 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         self::assertCount(3, $result);
         self::assertSame($bar, $result[0]);
 
-        $result = $this->repo->findList(null, null, null, [], null, new DateRange(null, Chronos::now()->subDays(2)));
+        $result = $this->repo->findList(null, null, null, [], null, DateRange::withEndDate(Chronos::now()->subDays(2)));
         self::assertCount(1, $result);
-        self::assertEquals(1, $this->repo->countList(null, [], new DateRange(null, Chronos::now()->subDays(2))));
+        self::assertEquals(1, $this->repo->countList(null, [], DateRange::withEndDate(Chronos::now()->subDays(2))));
         self::assertSame($foo2, $result[0]);
 
         self::assertCount(
             2,
-            $this->repo->findList(null, null, null, [], null, new DateRange(Chronos::now()->subDays(2))),
+            $this->repo->findList(null, null, null, [], null, DateRange::withStartDate(Chronos::now()->subDays(2))),
         );
-        self::assertEquals(2, $this->repo->countList(null, [], new DateRange(Chronos::now()->subDays(2))));
+        self::assertEquals(2, $this->repo->countList(null, [], DateRange::withStartDate(Chronos::now()->subDays(2))));
     }
 
     /** @test */
@@ -355,6 +355,8 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($wrongDomainApiKey);
         $rightDomainApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($rightDomain)));
         $this->getEntityManager()->persist($rightDomainApiKey);
+        $adminApiKey = ApiKey::create();
+        $this->getEntityManager()->persist($adminApiKey);
 
         $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
             'validSince' => $start,
@@ -364,6 +366,12 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             'tags' => ['foo', 'bar'],
         ]), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl);
+
+        $nonDomainShortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+            'apiKey' => $apiKey,
+            'longUrl' => 'non-domain',
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($nonDomainShortUrl);
 
         $this->getEntityManager()->flush();
 
@@ -376,6 +384,12 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         self::assertSame($shortUrl, $this->repo->findOneMatching(ShortUrlMeta::fromRawData([
             'validSince' => $start,
             'apiKey' => $apiKey,
+            'longUrl' => 'foo',
+            'tags' => ['foo', 'bar'],
+        ])));
+        self::assertSame($shortUrl, $this->repo->findOneMatching(ShortUrlMeta::fromRawData([
+            'validSince' => $start,
+            'apiKey' => $adminApiKey,
             'longUrl' => 'foo',
             'tags' => ['foo', 'bar'],
         ])));
@@ -422,6 +436,27 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
                 'apiKey' => $wrongDomainApiKey,
                 'longUrl' => 'foo',
                 'tags' => ['foo', 'bar'],
+            ])),
+        );
+
+        self::assertSame(
+            $nonDomainShortUrl,
+            $this->repo->findOneMatching(ShortUrlMeta::fromRawData([
+                'apiKey' => $apiKey,
+                'longUrl' => 'non-domain',
+            ])),
+        );
+        self::assertSame(
+            $nonDomainShortUrl,
+            $this->repo->findOneMatching(ShortUrlMeta::fromRawData([
+                'apiKey' => $adminApiKey,
+                'longUrl' => 'non-domain',
+            ])),
+        );
+        self::assertNull(
+            $this->repo->findOneMatching(ShortUrlMeta::fromRawData([
+                'apiKey' => $otherApiKey,
+                'longUrl' => 'non-domain',
             ])),
         );
     }

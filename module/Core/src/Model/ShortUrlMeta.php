@@ -14,7 +14,7 @@ use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
 use function Shlinkio\Shlink\Core\parseDateField;
 
-use const Shlinkio\Shlink\Core\DEFAULT_SHORT_CODES_LENGTH;
+use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
 final class ShortUrlMeta implements TitleResolutionModelInterface
 {
@@ -32,6 +32,7 @@ final class ShortUrlMeta implements TitleResolutionModelInterface
     private ?string $title = null;
     private bool $titleWasAutoResolved = false;
     private bool $crawlable = false;
+    private bool $forwardQuery = true;
 
     private function __construct()
     {
@@ -82,6 +83,7 @@ final class ShortUrlMeta implements TitleResolutionModelInterface
         $this->tags = $inputFilter->getValue(ShortUrlInputFilter::TAGS);
         $this->title = $inputFilter->getValue(ShortUrlInputFilter::TITLE);
         $this->crawlable = $inputFilter->getValue(ShortUrlInputFilter::CRAWLABLE);
+        $this->forwardQuery = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::FORWARD_QUERY) ?? true;
     }
 
     public function getLongUrl(): string
@@ -194,5 +196,10 @@ final class ShortUrlMeta implements TitleResolutionModelInterface
     public function isCrawlable(): bool
     {
         return $this->crawlable;
+    }
+
+    public function forwardQuery(): bool
+    {
+        return $this->forwardQuery;
     }
 }

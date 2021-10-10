@@ -12,6 +12,7 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
+use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\Model\Visitor;
@@ -37,7 +38,10 @@ class RequestTrackerTest extends TestCase
 
         $this->requestTracker = new RequestTracker(
             $this->visitsTracker->reveal(),
-            new TrackingOptions(['disable_track_param' => 'foobar']),
+            new TrackingOptions([
+                'disable_track_param' => 'foobar',
+                'disable_tracking_from' => ['80.90.100.110', '192.168.10.0/24', '1.2.*.*'],
+            ]),
         );
 
         $this->request = ServerRequestFactory::fromGlobals()->withAttribute(
@@ -69,6 +73,18 @@ class RequestTrackerTest extends TestCase
         yield 'disable track param as null' => [
             ServerRequestFactory::fromGlobals()->withQueryParams(['foobar' => null]),
         ];
+        yield 'exact remote address' => [ServerRequestFactory::fromGlobals()->withAttribute(
+            IpAddressMiddlewareFactory::REQUEST_ATTR,
+            '80.90.100.110',
+        )];
+        yield 'matching wildcard remote address' => [ServerRequestFactory::fromGlobals()->withAttribute(
+            IpAddressMiddlewareFactory::REQUEST_ATTR,
+            '1.2.3.4',
+        )];
+        yield 'matching CIDR block remote address' => [ServerRequestFactory::fromGlobals()->withAttribute(
+            IpAddressMiddlewareFactory::REQUEST_ATTR,
+            '192.168.10.100',
+        )];
     }
 
     /** @test */

@@ -20,7 +20,7 @@ class UrlShortener implements UrlShortenerInterface
         private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
         private EntityManagerInterface $em,
         private ShortUrlRelationResolverInterface $relationResolver,
-        private ShortCodeHelperInterface $shortCodeHelper
+        private ShortCodeHelperInterface $shortCodeHelper,
     ) {
     }
 

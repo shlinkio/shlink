@@ -26,7 +26,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         private EntityManagerInterface $em,
         private ShortUrlRelationResolverInterface $relationResolver,
         private ShortCodeHelperInterface $shortCodeHelper,
-        private DoctrineBatchHelperInterface $batchHelper
+        private DoctrineBatchHelperInterface $batchHelper,
     ) {
         $this->shortUrlRepo = $this->em->getRepository(ShortUrl::class);
     }

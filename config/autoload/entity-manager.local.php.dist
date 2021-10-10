@@ -10,6 +10,8 @@ return [
             'password' => 'root',
             'driver' => 'pdo_mysql',
             'host' => 'shlink_db',
+            'dbname' => 'shlink',
+            'charset' => 'utf8',
         ],
     ],
 

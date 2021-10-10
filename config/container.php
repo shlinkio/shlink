@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Laminas\ServiceManager\ServiceManager;
 use Symfony\Component\Lock;
 
-use const Shlinkio\Shlink\Core\LOCAL_LOCK_FACTORY;
+use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
 
 chdir(dirname(__DIR__));
 

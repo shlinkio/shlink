@@ -238,11 +238,10 @@ class ListShortUrlsCommandTest extends TestCase
     }
 
     /**
-     * @param string|array|null $expectedOrderBy
      * @test
      * @dataProvider provideOrderBy
      */
-    public function orderByIsProperlyComputed(array $commandArgs, $expectedOrderBy): void
+    public function orderByIsProperlyComputed(array $commandArgs, string|array|null $expectedOrderBy): void
     {
         $listShortUrls = $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData([
             'orderBy' => $expectedOrderBy,

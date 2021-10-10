@@ -13,8 +13,8 @@ use Shlinkio\Shlink\Common\Validation;
 use Shlinkio\Shlink\Core\Util\CocurSymfonySluggerBridge;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use const Shlinkio\Shlink\Core\CUSTOM_SLUGS_REGEXP;
-use const Shlinkio\Shlink\Core\MIN_SHORT_CODES_LENGTH;
+use const Shlinkio\Shlink\CUSTOM_SLUGS_REGEXP;
+use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
 class ShortUrlInputFilter extends InputFilter
 {
@@ -33,6 +33,7 @@ class ShortUrlInputFilter extends InputFilter
     public const TAGS = 'tags';
     public const TITLE = 'title';
     public const CRAWLABLE = 'crawlable';
+    public const FORWARD_QUERY = 'forwardQuery';
 
     private function __construct(array $data, bool $requireLongUrl)
     {
@@ -89,9 +90,10 @@ class ShortUrlInputFilter extends InputFilter
 
         $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
 
-        // This cannot be defined as a boolean input because it can actually have 3 values, true, false and null.
-        // Defining it as boolean will make null fall back to false, which is not the desired behavior.
+        // These cannot be defined as a boolean inputs, because they can actually have 3 values: true, false and null.
+        // Defining them as boolean will make null fall back to false, which is not the desired behavior.
         $this->add($this->createInput(self::VALIDATE_URL, false));
+        $this->add($this->createInput(self::FORWARD_QUERY, false));
 
         $domain = $this->createInput(self::DOMAIN, false);
         $domain->getValidatorChain()->attach(new Validation\HostAndPortValidator());

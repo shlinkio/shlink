@@ -18,7 +18,6 @@
         "akrabat/ip-address-middleware": "^2.0",
         "cakephp/chronos": "^2.2",
         "cocur/slugify": "^4.0",
-        "doctrine/cache": "^1.12",
         "doctrine/migrations": "^3.2",
         "doctrine/orm": "^2.9",
         "endroid/qr-code": "^4.2",
@@ -47,11 +46,12 @@
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.7",
         "ramsey/uuid": "^3.9",
-        "shlinkio/shlink-common": "^3.7",
+        "rlanvin/php-ip": "3.0.0-rc2",
+        "shlinkio/shlink-common": "^4.0",
         "shlinkio/shlink-config": "^1.2",
         "shlinkio/shlink-event-dispatcher": "^2.1",
         "shlinkio/shlink-importer": "^2.3.1",
-        "shlinkio/shlink-installer": "^6.1",
+        "shlinkio/shlink-installer": "^6.2",
         "shlinkio/shlink-ip-geolocation": "^2.0",
         "symfony/console": "^5.3",
         "symfony/filesystem": "^5.3",
@@ -64,7 +64,7 @@
         "devster/ubench": "^2.1",
         "dms/phpunit-arraysubset-asserts": "^0.3.0",
         "eaglewu/swoole-ide-helper": "dev-master",
-        "infection/infection": "^0.24.0",
+        "infection/infection": "^0.25.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^0.12.94",
         "phpstan/phpstan-doctrine": "^0.12.42",
@@ -72,7 +72,7 @@
         "phpunit/php-code-coverage": "^9.2",
         "phpunit/phpunit": "^9.5",
         "roave/security-advisories": "dev-master",
-        "shlinkio/php-coding-standard": "~2.1.1",
+        "shlinkio/php-coding-standard": "~2.2.0",
         "shlinkio/shlink-test-utils": "^2.2",
         "symfony/var-dumper": "^5.3",
         "veewee/composer-run-parallel": "^1.0"
@@ -84,6 +84,7 @@
             "Shlinkio\\Shlink\\Core\\": "module/Core/src"
         },
         "files": [
+            "config/constants.php",
             "module/Core/functions/functions.php"
         ]
     },
