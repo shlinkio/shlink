@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.9.1] - 2021-10-11
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1201](https://github.com/shlinkio/shlink/issues/1201) Fixed crash when using the new `USE_HTTPS`, as it's boolean raw value was being used instead of resolving "https" or "http".
+
+
 ## [2.9.0] - 2021-10-10
 ### Added
 * [#1015](https://github.com/shlinkio/shlink/issues/1015) Shlink now accepts configuration via env vars even when not using docker.

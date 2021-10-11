@@ -10,14 +10,22 @@ use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 return (static function (): array {
     $shortCodesLength = (int) env('DEFAULT_SHORT_CODES_LENGTH', DEFAULT_SHORT_CODES_LENGTH);
     $shortCodesLength = $shortCodesLength < MIN_SHORT_CODES_LENGTH ? MIN_SHORT_CODES_LENGTH : $shortCodesLength;
-    $useHttps = env('USE_HTTPS'); // Deprecated. For v3, set this to true by default, instead of null
+    $resolveSchema = static function (): string {
+        $useHttps = env('USE_HTTPS'); // Deprecated. For v3, set this to true by default, instead of null
+        if ($useHttps !== null) {
+            $boolUseHttps = (bool) $useHttps;
+            return $boolUseHttps ? 'https' : 'http';
+        }
+
+        return env('SHORT_DOMAIN_SCHEMA', 'http');
+    };
 
     return [
 
         'url_shortener' => [
             'domain' => [
                 // Deprecated SHORT_DOMAIN_* env vars
-                'schema' => $useHttps !== null ? (bool) $useHttps : env('SHORT_DOMAIN_SCHEMA', 'http'),
+                'schema' => $resolveSchema(),
                 'hostname' => env('DEFAULT_DOMAIN', env('SHORT_DOMAIN_HOST', '')),
             ],
             'validate_url' => (bool) env('VALIDATE_URLS', false), // Deprecated
