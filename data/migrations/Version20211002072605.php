@@ -23,4 +23,9 @@ final class Version20211002072605 extends AbstractMigration
         $this->skipIf(! $shortUrls->hasColumn('forward_query'));
         $shortUrls->dropColumn('forward_query');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

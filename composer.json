@@ -18,7 +18,7 @@
         "akrabat/ip-address-middleware": "^2.0",
         "cakephp/chronos": "^2.2",
         "cocur/slugify": "^4.0",
-        "doctrine/migrations": "^3.2 <3.3",
+        "doctrine/migrations": "^3.3",
         "doctrine/orm": "^2.9",
         "endroid/qr-code": "^4.2",
         "geoip2/geoip2": "^2.11",
@@ -73,7 +73,7 @@
         "phpunit/phpunit": "^9.5",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.2.0",
-        "shlinkio/shlink-test-utils": "^2.2",
+        "shlinkio/shlink-test-utils": "^2.3",
         "symfony/var-dumper": "^5.3",
         "veewee/composer-run-parallel": "^1.0"
     },

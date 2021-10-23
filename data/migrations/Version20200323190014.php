@@ -42,4 +42,9 @@ final class Version20200323190014 extends AbstractMigration
 
         $visitLocations->dropColumn('is_empty');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

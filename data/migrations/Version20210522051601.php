@@ -23,4 +23,9 @@ final class Version20210522051601 extends AbstractMigration
         $this->skipIf(! $shortUrls->hasColumn('crawlable'));
         $shortUrls->dropColumn('crawlable');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

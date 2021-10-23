@@ -38,4 +38,9 @@ final class Version20210720143824 extends AbstractMigration
         $domainsTable->dropColumn('regular_not_found_redirect');
         $domainsTable->dropColumn('invalid_short_url_redirect');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

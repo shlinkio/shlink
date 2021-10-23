@@ -45,4 +45,9 @@ class Version20171021093246 extends AbstractMigration
         $shortUrls->dropColumn('valid_since');
         $shortUrls->dropColumn('valid_until');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

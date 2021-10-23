@@ -49,4 +49,9 @@ final class Version20210102174433 extends AbstractMigration
         $schema->getTable(self::TABLE_NAME)->dropIndex('UQ_role_plus_api_key');
         $schema->dropTable(self::TABLE_NAME);
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

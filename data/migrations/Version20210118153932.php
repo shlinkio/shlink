@@ -23,4 +23,9 @@ final class Version20210118153932 extends AbstractMigration
     public function down(Schema $schema): void
     {
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

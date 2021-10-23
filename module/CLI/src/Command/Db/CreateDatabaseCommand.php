@@ -67,7 +67,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
         // In order to create the new database, we have to use a connection where the dbname was not set.
         // Otherwise, it will fail to connect and will not be able to create the new database
-        $schemaManager = $this->noDbNameConn->getSchemaManager();
+        $schemaManager = $this->noDbNameConn->createSchemaManager();
         $databases = $schemaManager->listDatabases();
         $shlinkDatabase = $this->regularConn->getDatabase();
 
@@ -80,7 +80,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     {
         // If at least one of the shlink tables exist, we will consider the database exists somehow.
         // Any inconsistency should be taken care by the migrations
-        $schemaManager = $this->regularConn->getSchemaManager();
+        $schemaManager = $this->regularConn->createSchemaManager();
         return ! empty($schemaManager->listTableNames());
     }
 }

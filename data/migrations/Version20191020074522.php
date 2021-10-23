@@ -34,4 +34,9 @@ final class Version20191020074522 extends AbstractMigration
     {
         return $schema->getTable('short_urls')->getColumn('original_url');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }
