@@ -42,4 +42,9 @@ class Version20171022064541 extends AbstractMigration
 
         $shortUrls->dropColumn('max_visits');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

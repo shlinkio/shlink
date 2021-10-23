@@ -34,4 +34,9 @@ final class Version20210306165711 extends AbstractMigration
 
         $apiKeys->dropColumn(self::COLUMN);
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

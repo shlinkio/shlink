@@ -52,4 +52,9 @@ final class Version20190930165521 extends AbstractMigration
         $schema->getTable('short_urls')->dropColumn('domain_id');
         $schema->dropTable('domains');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

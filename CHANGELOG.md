@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [2.9.2] - 2021-10-23
 ### Added
 * *Nothing*
 
@@ -18,7 +18,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* [#1210](https://github.com/shlinkio/shlink/issues/1210) Fixed real time updates not being notified.
+* [#1210](https://github.com/shlinkio/shlink/issues/1210) Fixed real time updates not being notified due to an incorrect handling of db transactions on multi-process tasks.
+* [#1211](https://github.com/shlinkio/shlink/issues/1211) Fixed `There is no active transaction` error when running migrations in MySQL/Mariadb after updating to doctrine-migrations 3.3.
+* [#1197](https://github.com/shlinkio/shlink/issues/1197) Fixed amount of task workers provided via config option or env var not being validated to ensure enough workers to process all parallel tasks.
 
 
 ## [2.9.1] - 2021-10-11

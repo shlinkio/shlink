@@ -34,4 +34,9 @@ final class Version20181110175521 extends AbstractMigration
     {
         return $schema->getTable('visits')->getColumn('user_agent');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

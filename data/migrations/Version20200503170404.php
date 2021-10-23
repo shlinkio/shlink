@@ -24,4 +24,9 @@ final class Version20200503170404 extends AbstractMigration
         $this->skipIf(! $visits->hasIndex(self::INDEX_NAME));
         $visits->dropIndex(self::INDEX_NAME);
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

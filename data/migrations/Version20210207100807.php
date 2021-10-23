@@ -40,4 +40,9 @@ final class Version20210207100807 extends AbstractMigration
         $visits->dropColumn('visited_url');
         $visits->dropColumn('type');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }
