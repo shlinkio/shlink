@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1210](https://github.com/shlinkio/shlink/issues/1210) Fixed real time updates not being notified.
+* [#1211](https://github.com/shlinkio/shlink/issues/1211) Fixed `There is no active transaction` error when running migrations in MySQL/Mariadb after updating to doctrine-migrations 3.3.
 
 
 ## [2.9.1] - 2021-10-11

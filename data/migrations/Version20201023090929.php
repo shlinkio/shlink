@@ -41,4 +41,9 @@ final class Version20201023090929 extends AbstractMigration
         $shortUrls->dropColumn('import_original_short_code');
         $shortUrls->dropIndex('unique_imports');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

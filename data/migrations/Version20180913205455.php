@@ -66,4 +66,9 @@ final class Version20180913205455 extends AbstractMigration
     {
         // Nothing to rollback
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

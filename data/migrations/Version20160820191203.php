@@ -73,4 +73,9 @@ class Version20160820191203 extends AbstractMigration
         $schema->dropTable('short_urls_in_tags');
         $schema->dropTable('tags');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

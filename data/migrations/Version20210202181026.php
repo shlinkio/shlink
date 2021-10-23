@@ -33,4 +33,9 @@ final class Version20210202181026 extends AbstractMigration
         $shortUrls->dropColumn(self::TITLE);
         $shortUrls->dropColumn('title_was_auto_resolved');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

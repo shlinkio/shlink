@@ -34,4 +34,9 @@ final class Version20190824075137 extends AbstractMigration
     {
         return $schema->getTable('visits')->getColumn('referer');
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

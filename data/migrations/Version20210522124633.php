@@ -25,4 +25,9 @@ final class Version20210522124633 extends AbstractMigration
         $this->skipIf(! $visits->hasColumn(self::POTENTIAL_BOT_COLUMN));
         $visits->dropColumn(self::POTENTIAL_BOT_COLUMN);
     }
+
+    public function isTransactional(): bool
+    {
+        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+    }
 }

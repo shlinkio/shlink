@@ -8,5 +8,5 @@ use Psr\Container\ContainerInterface;
 
 /** @var ContainerInterface $container */
 $container = require __DIR__ . '/../container.php';
-$container->get(Helper\TestHelper::class)->createTestDb(['bin/cli', 'db:create'], ['bin/cli', 'db:migrate']);
+$container->get(Helper\TestHelper::class)->createTestDb();
 DbTest\DatabaseTestCase::setEntityManager($container->get('em'));
