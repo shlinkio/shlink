@@ -32,7 +32,9 @@ class HealthAction extends AbstractRestAction
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         try {
-            $connected = $this->em->getConnection()->isConnected();
+            $connection = $this->em->getConnection();
+            $connection->executeQuery($connection->getDatabasePlatform()->getDummySelectSQL());
+            $connected = true;
         } catch (Throwable) {
             $connected = false;
         }
