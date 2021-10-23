@@ -34,7 +34,7 @@ class HealthActionTest extends TestCase
     /** @test */
     public function passResponseIsReturnedWhenConnectionSucceeds(): void
     {
-        $ping = $this->conn->ping()->willReturn(true);
+        $ping = $this->conn->isConnected()->willReturn(true);
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle(new ServerRequest());
@@ -54,7 +54,7 @@ class HealthActionTest extends TestCase
     /** @test */
     public function failResponseIsReturnedWhenConnectionFails(): void
     {
-        $ping = $this->conn->ping()->willReturn(false);
+        $ping = $this->conn->isConnected()->willReturn(false);
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle(new ServerRequest());
@@ -74,7 +74,7 @@ class HealthActionTest extends TestCase
     /** @test */
     public function failResponseIsReturnedWhenConnectionThrowsException(): void
     {
-        $ping = $this->conn->ping()->willThrow(Exception::class);
+        $ping = $this->conn->isConnected()->willThrow(Exception::class);
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle(new ServerRequest());

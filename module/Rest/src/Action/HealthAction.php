@@ -32,7 +32,7 @@ class HealthAction extends AbstractRestAction
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         try {
-            $connected = $this->em->getConnection()->ping();
+            $connected = $this->em->getConnection()->isConnected();
         } catch (Throwable) {
             $connected = false;
         }
