@@ -46,10 +46,10 @@ class CreateDatabaseCommandTest extends TestCase
         $this->databasePlatform = $this->prophesize(AbstractPlatform::class);
 
         $this->regularConn = $this->prophesize(Connection::class);
-        $this->regularConn->getSchemaManager()->willReturn($this->schemaManager->reveal());
+        $this->regularConn->createSchemaManager()->willReturn($this->schemaManager->reveal());
         $this->regularConn->getDatabasePlatform()->willReturn($this->databasePlatform->reveal());
         $noDbNameConn = $this->prophesize(Connection::class);
-        $noDbNameConn->getSchemaManager()->willReturn($this->schemaManager->reveal());
+        $noDbNameConn->createSchemaManager()->willReturn($this->schemaManager->reveal());
 
         $command = new CreateDatabaseCommand(
             $locker->reveal(),

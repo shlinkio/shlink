@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Result;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -27,8 +28,7 @@ class HealthActionTest extends TestCase
     public function setUp(): void
     {
         $this->conn = $this->prophesize(Connection::class);
-        $this->conn->executeQuery(Argument::cetera())->will(function (): void {
-        });
+        $this->conn->executeQuery(Argument::cetera())->willReturn($this->prophesize(Result::class)->reveal());
         $dbPlatform = $this->prophesize(AbstractPlatform::class);
         $dbPlatform->getDummySelectSQL()->willReturn('');
         $this->conn->getDatabasePlatform()->willReturn($dbPlatform->reveal());

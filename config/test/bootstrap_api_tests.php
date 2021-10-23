@@ -29,6 +29,6 @@ register_shutdown_function(function () use ($httpClient): void {
     );
 });
 
-$testHelper->createTestDb();
+$testHelper->createTestDb(['bin/cli', 'db:create'], ['bin/cli', 'db:migrate']);
 ApiTest\ApiTestCase::setApiClient($httpClient);
 ApiTest\ApiTestCase::setSeedFixturesCallback(fn () => $testHelper->seedFixtures($em, $config['data_fixtures'] ?? []));
