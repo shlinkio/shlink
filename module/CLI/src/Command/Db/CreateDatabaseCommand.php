@@ -71,7 +71,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
         $databases = $schemaManager->listDatabases();
         $shlinkDatabase = $this->regularConn->getDatabase();
 
-        if (! contains($databases, $shlinkDatabase)) {
+        if ($shlinkDatabase !== null && ! contains($databases, $shlinkDatabase)) {
             $schemaManager->createDatabase($shlinkDatabase);
         }
     }

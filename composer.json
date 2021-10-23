@@ -18,7 +18,7 @@
         "akrabat/ip-address-middleware": "^2.0",
         "cakephp/chronos": "^2.2",
         "cocur/slugify": "^4.0",
-        "doctrine/migrations": "^3.2",
+        "doctrine/migrations": "^3.2 <3.3",
         "doctrine/orm": "^2.9",
         "endroid/qr-code": "^4.2",
         "geoip2/geoip2": "^2.11",

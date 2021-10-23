@@ -69,11 +69,9 @@ class VisitsTracker implements VisitsTrackerInterface
         }
 
         $visit = $createVisit($visitor->normalizeForTrackingOptions($this->options));
-        $this->em->transactional(function () use ($visit, $visitor): void {
-            $this->em->persist($visit);
-            $this->em->flush();
+        $this->em->persist($visit);
+        $this->em->flush();
 
-            $this->eventDispatcher->dispatch(new UrlVisited($visit->getId(), $visitor->getRemoteAddress()));
-        });
+        $this->eventDispatcher->dispatch(new UrlVisited($visit->getId(), $visitor->getRemoteAddress()));
     }
 }

@@ -29,10 +29,6 @@ class VisitsTrackerTest extends TestCase
     public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManager::class);
-        $this->em->transactional(Argument::any())->will(function (array $args) {
-            [$callback] = $args;
-            return $callback();
-        });
 
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
         $this->options = new TrackingOptions();
@@ -52,7 +48,6 @@ class VisitsTrackerTest extends TestCase
         $this->visitsTracker->{$method}(...$args);
 
         $persist->shouldHaveBeenCalledOnce();
-        $this->em->transactional(Argument::cetera())->shouldHaveBeenCalledOnce();
         $this->em->flush()->shouldHaveBeenCalledOnce();
         $this->eventDispatcher->dispatch(Argument::type(UrlVisited::class))->shouldHaveBeenCalled();
     }
@@ -68,7 +63,6 @@ class VisitsTrackerTest extends TestCase
         $this->visitsTracker->{$method}(...$args);
 
         $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->em->transactional(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->em->flush()->shouldNotHaveBeenCalled();
     }
@@ -92,7 +86,6 @@ class VisitsTrackerTest extends TestCase
         $this->visitsTracker->{$method}(Visitor::emptyInstance());
 
         $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->em->transactional(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->em->flush()->shouldNotHaveBeenCalled();
     }
