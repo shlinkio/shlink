@@ -131,10 +131,11 @@ services:
 
     shlink_mercure:
         container_name: shlink_mercure
-        image: dunglas/mercure:v0.10
+        image: dunglas/mercure:v0.13
         ports:
             - "3080:80"
         environment:
-            CORS_ALLOWED_ORIGINS: "*"
-            JWT_KEY: "mercure_jwt_key"
-            USE_FORWARDED_HEADERS: "1"
+            SERVER_NAME: ":80"
+            MERCURE_PUBLISHER_JWT_KEY: mercure_jwt_key
+            MERCURE_SUBSCRIBER_JWT_KEY: mercure_jwt_key
+            MERCURE_EXTRA_DIRECTIVES: "cors_origins https://app.shlink.io http://localhost:3000 http://127.0.0.1:3000"
