@@ -47,7 +47,7 @@
         "pugx/shortid-php": "^0.7",
         "ramsey/uuid": "^3.9",
         "rlanvin/php-ip": "3.0.0-rc2",
-        "shlinkio/shlink-common": "^4.0",
+        "shlinkio/shlink-common": "dev-main#0f935d4 as 4.1",
         "shlinkio/shlink-config": "^1.2",
         "shlinkio/shlink-event-dispatcher": "^2.1",
         "shlinkio/shlink-importer": "^2.3.1",
@@ -56,7 +56,7 @@
         "symfony/console": "^5.3",
         "symfony/filesystem": "^5.3",
         "symfony/lock": "^5.3",
-        "symfony/mercure": "^0.5.3",
+        "symfony/mercure": "^0.6",
         "symfony/process": "^5.3",
         "symfony/string": "^5.3"
     },
