@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.9.3] - 2021-11-15
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1232](https://github.com/shlinkio/shlink/issues/1232) Solved potential SQL injection by enforcing `doctrine/dbal` 3.1.4.
+
+
 ## [2.9.2] - 2021-10-23
 ### Added
 * *Nothing*
