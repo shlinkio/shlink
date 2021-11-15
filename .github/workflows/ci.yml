@@ -182,6 +182,8 @@ jobs:
       matrix:
         php-version: ['8.0', '8.1']
     continue-on-error: ${{ matrix.php-version == '8.1' }}
+    env:
+      LC_ALL: C
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
