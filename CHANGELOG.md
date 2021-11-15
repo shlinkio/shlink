@@ -21,6 +21,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 
+## [2.9.3] - 2021-11-15
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1232](https://github.com/shlinkio/shlink/issues/1232) Solved potential SQL injection by enforcing `doctrine/dbal` 3.1.4.
+
+
 ## [2.9.2] - 2021-10-23
 ### Added
 * *Nothing*
