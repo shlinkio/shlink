@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Changed
 * [#1218](https://github.com/shlinkio/shlink/issues/1218) Updated to symfony/mercure 0.6.
 * [#1223](https://github.com/shlinkio/shlink/issues/1223) Updated to phpstan 1.0.
+* Added `domain` field to `DeleteShortUrlException` exception.
 
 ### Deprecated
 * *Nothing*

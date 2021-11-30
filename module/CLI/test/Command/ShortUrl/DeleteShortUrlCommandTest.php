@@ -83,7 +83,10 @@ class DeleteShortUrlCommandTest extends TestCase
                 $ignoreThreshold = array_pop($args);
 
                 if (!$ignoreThreshold) {
-                    throw Exception\DeleteShortUrlException::fromVisitsThreshold(10, $shortCode);
+                    throw Exception\DeleteShortUrlException::fromVisitsThreshold(
+                        10,
+                        ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+                    );
                 }
             },
         );
@@ -93,7 +96,7 @@ class DeleteShortUrlCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString(sprintf(
-            'Impossible to delete short URL with short code "%s" since it has more than "10" visits.',
+            'Impossible to delete short URL with short code "%s", since it has more than "10" visits.',
             $shortCode,
         ), $output);
         self::assertStringContainsString($expectedMessage, $output);
@@ -112,7 +115,10 @@ class DeleteShortUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $deleteByShortCode = $this->service->deleteByShortCode(new ShortUrlIdentifier($shortCode), false)->willThrow(
-            Exception\DeleteShortUrlException::fromVisitsThreshold(10, $shortCode),
+            Exception\DeleteShortUrlException::fromVisitsThreshold(
+                10,
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            ),
         );
         $this->commandTester->setInputs(['no']);
 
@@ -120,7 +126,7 @@ class DeleteShortUrlCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString(sprintf(
-            'Impossible to delete short URL with short code "%s" since it has more than "10" visits.',
+            'Impossible to delete short URL with short code "%s", since it has more than "10" visits.',
             $shortCode,
         ), $output);
         self::assertStringContainsString('Short URL was not deleted.', $output);

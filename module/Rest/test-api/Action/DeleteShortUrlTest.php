@@ -40,7 +40,8 @@ class DeleteShortUrlTest extends ApiTestCase
         for ($i = 0; $i < 20; $i++) {
             self::assertEquals(self::STATUS_FOUND, $this->callShortUrl('abc123')->getStatusCode());
         }
-        $expectedDetail = 'Impossible to delete short URL with short code "abc123" since it has more than "15" visits.';
+        $expectedDetail = 'Impossible to delete short URL with short code "abc123", since it has more than "15" '
+            . 'visits.';
 
         $resp = $this->callApiWithKey(self::METHOD_DELETE, '/short-urls/abc123');
         $payload = $this->getJsonResponsePayload($resp);
