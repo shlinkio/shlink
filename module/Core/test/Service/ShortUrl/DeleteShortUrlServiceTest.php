@@ -51,7 +51,7 @@ class DeleteShortUrlServiceTest extends TestCase
 
         $this->expectException(DeleteShortUrlException::class);
         $this->expectExceptionMessage(sprintf(
-            'Impossible to delete short URL with short code "%s" since it has more than "5" visits.',
+            'Impossible to delete short URL with short code "%s", since it has more than "5" visits.',
             $this->shortCode,
         ));
 
