@@ -192,20 +192,11 @@ jobs:
       - name: Start database server
         run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_ms
       - name: Use PHP
-        if: ${{ matrix.php-version == '8.1' }}
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
           extensions: swoole-4.7.1, pdo_sqlsrv-5.10.0beta2
-          coverage: none
-      - name: Use PHP
-        if: ${{ matrix.php-version != '8.1' }}
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          tools: composer
-          extensions: swoole-4.7.1, pdo_sqlsrv-5.9.0
           coverage: none
       - if: ${{ matrix.php-version == '8.1' }}
         run: composer install --no-interaction --prefer-dist --ignore-platform-req=php
