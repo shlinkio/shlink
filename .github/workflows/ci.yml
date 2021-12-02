@@ -197,7 +197,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: swoole-4.7.1, pdo_sqlsrv-5.10.0beta1
+          extensions: swoole-4.7.1, pdo_sqlsrv-5.10.0beta2
           coverage: none
       - name: Use PHP
         if: ${{ matrix.php-version != '8.1' }}
