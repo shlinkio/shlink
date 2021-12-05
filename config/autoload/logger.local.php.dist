@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
-$isSwoole = extension_loaded('swoole');
+$isSwoole = extension_loaded('openswoole');
 
 // For swoole, send logs to standard output
 $handler = $isSwoole

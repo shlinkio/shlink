@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-$isSwoole = extension_loaded('swoole');
+$isSwoole = extension_loaded('openswoole');
 
 return [
 

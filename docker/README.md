@@ -5,7 +5,7 @@
 
 This image provides an easy way to set up [shlink](https://shlink.io) on a container-based runtime.
 
-It exposes a shlink instance served with [swoole](https://www.swoole.co.uk/), which can be linked to external databases to persist data.
+It exposes a shlink instance served with [openswoole](https://www.swoole.co.uk/), which can be linked to external databases to persist data.
 
 ## Usage
 
