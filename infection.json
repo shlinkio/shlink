@@ -8,7 +8,10 @@
     "logs": {
         "text": "build/infection-unit/infection-log.txt",
         "summary": "build/infection-unit/summary-log.txt",
-        "debug": "build/infection-unit/debug-log.txt"
+        "debug": "build/infection-unit/debug-log.txt",
+        "badge": {
+            "branch": "develop"
+        }
     },
     "tmpDir": "build/infection-unit/temp",
     "phpUnit": {

@@ -2,6 +2,7 @@
 
 [![Build Status](https://img.shields.io/github/workflow/status/shlinkio/shlink/Continuous%20integration/develop?logo=github&style=flat-square)](https://github.com/shlinkio/shlink/actions?query=workflow%3A%22Continuous+integration%22)
 [![Code Coverage](https://img.shields.io/codecov/c/gh/shlinkio/shlink/develop?style=flat-square)](https://app.codecov.io/gh/shlinkio/shlink)
+[![Infection MSI](https://img.shields.io/endpoint?style=flat-square&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fshlinkio%2Fshlink%2Fdevelop)](https://dashboard.stryker-mutator.io/reports/github.com/shlinkio/shlink/develop)
 [![Latest Stable Version](https://img.shields.io/github/release/shlinkio/shlink.svg?style=flat-square)](https://packagist.org/packages/shlinkio/shlink)
 [![Docker pulls](https://img.shields.io/docker/pulls/shlinkio/shlink.svg?logo=docker&style=flat-square)](https://hub.docker.com/r/shlinkio/shlink/)
 [![License](https://img.shields.io/github/license/shlinkio/shlink.svg?style=flat-square)](https://github.com/shlinkio/shlink/blob/main/LICENSE)
