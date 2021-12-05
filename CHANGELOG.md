@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#1204](https://github.com/shlinkio/shlink/issues/1204) Added support for `openswoole` and migrated official docker image to `openswoole`.
 
 ### Changed
 * [#1218](https://github.com/shlinkio/shlink/issues/1218) Updated to symfony/mercure 0.6.
