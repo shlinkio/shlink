@@ -267,7 +267,12 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           path: build
-      - run: composer infect:ci:${{ matrix.test-group }}
+      - if: ${{ matrix.test-group == 'unit' }}
+        run: composer infect:ci:unit
+        env:
+          INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
+      - if: ${{ matrix.test-group == 'db' }}
+        run: composer infect:ci:db
 
   upload-coverage:
     needs:
