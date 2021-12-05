@@ -31,6 +31,8 @@ services:
             - shlink_mercure_proxy
         environment:
             LC_ALL: C
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
 
     shlink_swoole_proxy:
         container_name: shlink_swoole_proxy
@@ -64,6 +66,8 @@ services:
             - shlink_mercure_proxy
         environment:
             LC_ALL: C
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
 
     shlink_db:
         container_name: shlink_db
