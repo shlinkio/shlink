@@ -97,7 +97,9 @@ final class QrCodeParams
 
     private static function resolveRoundBlockSize(array $query, QrCodeOptions $defaults): RoundBlockSizeModeInterface
     {
-        $doNotRoundBlockSize = ($query['roundBlockSize'] ?? null) === 'false' || ! $defaults->roundBlockSize();
+        $doNotRoundBlockSize = isset($query['roundBlockSize'])
+            ? $query['roundBlockSize'] === 'false'
+            : ! $defaults->roundBlockSize();
         return $doNotRoundBlockSize ? new RoundBlockSizeModeNone() : new RoundBlockSizeModeMargin();
     }
 
