@@ -9,6 +9,9 @@ use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelInterface;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelMedium;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelQuartile;
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeInterface;
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeNone;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Writer\WriterInterface;
@@ -31,6 +34,7 @@ final class QrCodeParams
         private int $margin,
         private WriterInterface $writer,
         private ErrorCorrectionLevelInterface $errorCorrectionLevel,
+        private RoundBlockSizeModeInterface $roundBlockSizeMode,
     ) {
     }
 
@@ -43,6 +47,7 @@ final class QrCodeParams
             self::resolveMargin($query, $defaults),
             self::resolveWriter($query, $defaults),
             self::resolveErrorCorrection($query, $defaults),
+            self::resolveRoundBlockSize($query, $defaults),
         );
     }
 
@@ -90,6 +95,12 @@ final class QrCodeParams
         };
     }
 
+    private static function resolveRoundBlockSize(array $query, QrCodeOptions $defaults): RoundBlockSizeModeInterface
+    {
+        $doNotRoundBlockSize = ($query['roundBlockSize'] ?? null) === 'false' || ! $defaults->roundBlockSize();
+        return $doNotRoundBlockSize ? new RoundBlockSizeModeNone() : new RoundBlockSizeModeMargin();
+    }
+
     private static function normalizeParam(string $param): string
     {
         return strtolower(trim($param));
@@ -113,5 +124,10 @@ final class QrCodeParams
     public function errorCorrectionLevel(): ErrorCorrectionLevelInterface
     {
         return $this->errorCorrectionLevel;
+    }
+
+    public function roundBlockSizeMode(): RoundBlockSizeModeInterface
+    {
+        return $this->roundBlockSizeMode;
     }
 }

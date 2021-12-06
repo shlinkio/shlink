@@ -45,7 +45,8 @@ class QrCodeAction implements MiddlewareInterface
             ->size($params->size())
             ->margin($params->margin())
             ->writer($params->writer())
-            ->errorCorrectionLevel($params->errorCorrectionLevel());
+            ->errorCorrectionLevel($params->errorCorrectionLevel())
+            ->roundBlockSizeMode($params->roundBlockSizeMode());
 
         return new QrCodeResponse($qrCodeBuilder->build());
     }
