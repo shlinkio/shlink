@@ -56,6 +56,7 @@ return [
             Option\QrCode\DefaultMarginConfigOption::class,
             Option\QrCode\DefaultFormatConfigOption::class,
             Option\QrCode\DefaultErrorCorrectionConfigOption::class,
+            Option\QrCode\DefaultRoundBlockSizeConfigOption::class,
         ],
 
         'installation_commands' => [

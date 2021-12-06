@@ -9,6 +9,7 @@ use Laminas\Stdlib\AbstractOptions;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_ERROR_CORRECTION;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_FORMAT;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_MARGIN;
+use const Shlinkio\Shlink\DEFAULT_QR_CODE_ROUND_BLOCK_SIZE;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_SIZE;
 
 class QrCodeOptions extends AbstractOptions
@@ -17,6 +18,7 @@ class QrCodeOptions extends AbstractOptions
     private int $margin = DEFAULT_QR_CODE_MARGIN;
     private string $format = DEFAULT_QR_CODE_FORMAT;
     private string $errorCorrection = DEFAULT_QR_CODE_ERROR_CORRECTION;
+    private bool $roundBlockSize = DEFAULT_QR_CODE_ROUND_BLOCK_SIZE;
 
     public function size(): int
     {
@@ -56,5 +58,15 @@ class QrCodeOptions extends AbstractOptions
     protected function setErrorCorrection(string $errorCorrection): void
     {
         $this->errorCorrection = $errorCorrection;
+    }
+
+    public function roundBlockSize(): bool
+    {
+        return $this->roundBlockSize;
+    }
+
+    protected function setRoundBlockSize(bool $roundBlockSize): void
+    {
+        $this->roundBlockSize = $roundBlockSize;
     }
 }
