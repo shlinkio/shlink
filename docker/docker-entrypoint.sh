@@ -1,24 +1,27 @@
 #!/usr/bin/env sh
 set -e
 
+# If SHELL_VERBOSITY was not explicitly provided, run commands in quite mode (-q)
+[ $SHELL_VERBOSITY ] && flags="" || flags="-q"
+
 cd /etc/shlink
 
 echo "Creating fresh database if needed..."
-php bin/cli db:create -n -q
+php bin/cli db:create -n ${flags}
 
 echo "Updating database..."
-php bin/cli db:migrate -n -q
+php bin/cli db:migrate -n ${flags}
 
 echo "Generating proxies..."
-php vendor/doctrine/orm/bin/doctrine.php orm:generate-proxies -n -q
+php vendor/doctrine/orm/bin/doctrine.php orm:generate-proxies -n ${flags}
 
 echo "Clearing entities cache..."
-php vendor/doctrine/orm/bin/doctrine.php orm:clear-cache:metadata -n -q
+php vendor/doctrine/orm/bin/doctrine.php orm:clear-cache:metadata -n ${flags}
 
 # Try to download GeoLite2 db file only if the license key env var was defined
 if [ ! -z "${GEOLITE_LICENSE_KEY}" ]; then
   echo "Downloading GeoLite2 db file..."
-  php bin/cli visit:download-db -n -q
+  php bin/cli visit:download-db -n ${flags}
 fi
 
 # Periodicaly run visit:locate every hour
