@@ -15,7 +15,6 @@ use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
-use Shlinkio\Shlink\Core\Exception\InvalidDomainException;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -42,7 +41,7 @@ class DomainServiceTest extends TestCase
     {
         $repo = $this->prophesize(DomainRepositoryInterface::class);
         $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
-        $findDomains = $repo->findDomainsWithout('default.com', $apiKey)->willReturn($domains);
+        $findDomains = $repo->findDomainsWithout(null, $apiKey)->willReturn($domains);
 
         $result = $this->domainService->listDomains($apiKey);
 
@@ -213,16 +212,5 @@ class DomainServiceTest extends TestCase
         yield 'domain found and admin API key' => [$domain, $adminApiKey];
         yield 'domain not found and author API key' => [null, $authorApiKey];
         yield 'domain found and author API key' => [$domain, $authorApiKey];
-    }
-
-    /** @test */
-    public function anExceptionIsThrowsWhenTryingToEditRedirectsForDefaultDomain(): void
-    {
-        $this->expectException(InvalidDomainException::class);
-        $this->expectExceptionMessage(
-            'You cannot configure default domain\'s redirects this way. Use the configuration or env vars.',
-        );
-
-        $this->domainService->configureNotFoundRedirects('default.com', NotFoundRedirects::withoutRedirects());
     }
 }

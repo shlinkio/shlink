@@ -10,11 +10,12 @@ use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
-use Shlinkio\Shlink\Core\Exception\InvalidDomainException;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+use function Functional\first;
+use function Functional\group;
 use function Functional\map;
 
 class DomainService implements DomainServiceInterface
@@ -31,9 +32,7 @@ class DomainService implements DomainServiceInterface
      */
     public function listDomains(?ApiKey $apiKey = null): array
     {
-        /** @var DomainRepositoryInterface $repo */
-        $repo = $this->em->getRepository(Domain::class);
-        $domains = $repo->findDomainsWithout($this->defaultDomain, $apiKey);
+        [$default, $domains] = $this->defaultDomainAndRest($apiKey);
         $mappedDomains = map($domains, fn (Domain $domain) => DomainItem::forExistingDomain($domain));
 
         if ($apiKey?->hasRole(Role::DOMAIN_SPECIFIC)) {
@@ -41,9 +40,24 @@ class DomainService implements DomainServiceInterface
         }
 
         return [
-            DomainItem::forDefaultDomain($this->defaultDomain, $this->redirectOptions),
+            DomainItem::forDefaultDomain($this->defaultDomain, $default ?? $this->redirectOptions),
             ...$mappedDomains,
         ];
+    }
+
+    /**
+     * @return array{Domain|null, Domain[]}
+     */
+    private function defaultDomainAndRest(?ApiKey $apiKey): array
+    {
+        /** @var DomainRepositoryInterface $repo */
+        $repo = $this->em->getRepository(Domain::class);
+        $groups = group(
+            $repo->findDomainsWithout(null, $apiKey), // FIXME Always called with null as first arg
+            fn (Domain $domain) => $domain->getAuthority() === $this->defaultDomain ? 'default' : 'domains',
+        );
+
+        return [first($groups['default'] ?? []), $groups['domains'] ?? []];
     }
 
     /**
@@ -79,17 +93,12 @@ class DomainService implements DomainServiceInterface
 
     /**
      * @throws DomainNotFoundException
-     * @throws InvalidDomainException
      */
     public function configureNotFoundRedirects(
         string $authority,
         NotFoundRedirects $notFoundRedirects,
         ?ApiKey $apiKey = null,
     ): Domain {
-        if ($authority === $this->defaultDomain) {
-            throw InvalidDomainException::forDefaultDomainRedirects();
-        }
-
         $domain = $this->getPersistedDomain($authority, $apiKey);
         $domain->configureNotFoundRedirects($notFoundRedirects);
 
