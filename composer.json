@@ -45,7 +45,7 @@
         "php-middleware/request-id": "^4.1",
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^0.7",
-        "ramsey/uuid": "^3.9",
+        "ramsey/uuid": "^4.2",
         "rlanvin/php-ip": "3.0.0-rc2",
         "shlinkio/shlink-common": "dev-main#7cc36a6 as 4.2",
         "shlinkio/shlink-config": "^1.4",
