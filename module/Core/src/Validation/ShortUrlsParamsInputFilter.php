@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Validation;
 
 use Laminas\InputFilter\InputFilter;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Validation;
 
 class ShortUrlsParamsInputFilter extends InputFilter
@@ -32,7 +33,7 @@ class ShortUrlsParamsInputFilter extends InputFilter
         $this->add($this->createInput(self::SEARCH_TERM, false));
 
         $this->add($this->createNumericInput(self::PAGE, false));
-        $this->add($this->createNumericInput(self::ITEMS_PER_PAGE, false, -1));
+        $this->add($this->createNumericInput(self::ITEMS_PER_PAGE, false, Paginator::ALL_ITEMS));
 
         $this->add($this->createTagsInput(self::TAGS, false));
     }

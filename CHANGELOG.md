@@ -8,7 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Added
 * [#1204](https://github.com/shlinkio/shlink/issues/1204) Added support for `openswoole` and migrated official docker image to `openswoole`.
 * [#1242](https://github.com/shlinkio/shlink/issues/1242) Added support to import urls and visits from YOURLS.
+
+    In order to do it, you need to first install this [dedicated plugin](https://slnk.to/yourls-import) in YOURLS, and then run the `short-url:import yourls` command, as with any other source.
+
 * [#1235](https://github.com/shlinkio/shlink/issues/1235) Added support to disable rounding QR codes block sizing via config option, env var or query param.
+* [#1188](https://github.com/shlinkio/shlink/issues/1188) Added support for PHP 8.1.
+
+    The official docker image has also been updated to use PHP 8.1 by default.
 
 ### Changed
 * [#1218](https://github.com/shlinkio/shlink/issues/1218) Updated to symfony/mercure 0.6.
