@@ -1,14 +1,14 @@
 includes:
-	- vendor/phpstan/phpstan-doctrine/extension.neon
-	- vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-doctrine/extension.neon
+    - vendor/phpstan/phpstan-symfony/extension.neon
 parameters:
-	checkMissingIterableValueType: false
-	checkGenericClassInNonGenericObjectType: false
-	symfony:
-		console_application_loader: 'config/cli-app.php'
-	doctrine:
-		repositoryClass: Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository
-		objectManagerLoader: 'config/entity-manager.php'
-	ignoreErrors:
-		- '#should return int<0, max> but returns int#'
-		- '#expects -1|int<1, max>, int given#'
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    symfony:
+        console_application_loader: 'config/cli-app.php'
+    doctrine:
+        repositoryClass: Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository
+        objectManagerLoader: 'config/entity-manager.php'
+    ignoreErrors:
+        - '#should return int<0, max> but returns int#'
+        - '#expects -1|int<1, max>, int given#'
