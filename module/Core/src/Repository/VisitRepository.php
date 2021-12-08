@@ -226,8 +226,6 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
             'id' => 'visit_location_id',
         ]);
 
-        $query = $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm);
-
-        return $query->getResult();
+        return $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm)->getResult();
     }
 }

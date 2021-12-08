@@ -9,3 +9,6 @@ parameters:
 	doctrine:
 		repositoryClass: Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository
 		objectManagerLoader: 'config/entity-manager.php'
+	ignoreErrors:
+		- '#should return int<0, max> but returns int#'
+		- '#expects -1|int<1, max>, int given#'

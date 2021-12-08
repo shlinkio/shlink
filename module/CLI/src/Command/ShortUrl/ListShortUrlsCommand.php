@@ -131,7 +131,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         ];
 
         if ($all) {
-            $data[ShortUrlsParamsInputFilter::ITEMS_PER_PAGE] = -1;
+            $data[ShortUrlsParamsInputFilter::ITEMS_PER_PAGE] = Paginator::ALL_ITEMS;
         }
 
         do {
