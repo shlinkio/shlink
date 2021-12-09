@@ -146,11 +146,16 @@
                     "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
+                        },
+                        "examples": {
+                            "Tag not found": {
+                                "$ref": "../examples/tag-not-found.json"
+                            }
                         }
                     }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/problem+json": {

@@ -62,12 +62,35 @@
                 "content": {
                     "application/problem+json": {
                         "schema": {
-                            "$ref": "../definitions/Error.json"
+                            "allOf": [
+                                {
+                                    "$ref": "../definitions/Error.json"
+                                },
+                                {
+                                    "type": "object",
+                                    "required": ["shortCode"],
+                                    "properties": {
+                                        "shortCode": {
+                                            "type": "string",
+                                            "description": "The short code with which we tried to find the short URL"
+                                        },
+                                        "domain": {
+                                            "type": "string",
+                                            "description": "The domain with which we tried to find the short URL"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "Not found": {
+                                "$ref": "../examples/short-url-not-found.json"
+                            }
                         }
                     }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/problem+json": {
@@ -178,21 +201,49 @@
                                     }
                                 }
                             ]
+                        },
+                        "examples": {
+                            "Invalid arguments": {
+                                "$ref": "../examples/short-url-invalid-args.json"
+                            }
                         }
                     }
                 }
             },
             "404": {
-                "description": "No short URL was found for provided short code.",
+                "description": "No URL was found for provided short code.",
                 "content": {
                     "application/problem+json": {
                         "schema": {
-                            "$ref": "../definitions/Error.json"
+                            "allOf": [
+                                {
+                                    "$ref": "../definitions/Error.json"
+                                },
+                                {
+                                    "type": "object",
+                                    "required": ["shortCode"],
+                                    "properties": {
+                                        "shortCode": {
+                                            "type": "string",
+                                            "description": "The short code with which we tried to find the short URL"
+                                        },
+                                        "domain": {
+                                            "type": "string",
+                                            "description": "The domain with which we tried to find the short URL"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "Not found": {
+                                "$ref": "../examples/short-url-not-found.json"
+                            }
                         }
                     }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/problem+json": {
@@ -279,16 +330,39 @@
                 }
             },
             "404": {
-                "description": "No short URL was found for provided short code.",
+                "description": "No URL was found for provided short code.",
                 "content": {
                     "application/problem+json": {
                         "schema": {
-                            "$ref": "../definitions/Error.json"
+                            "allOf": [
+                                {
+                                    "$ref": "../definitions/Error.json"
+                                },
+                                {
+                                    "type": "object",
+                                    "required": ["shortCode"],
+                                    "properties": {
+                                        "shortCode": {
+                                            "type": "string",
+                                            "description": "The short code with which we tried to find the short URL"
+                                        },
+                                        "domain": {
+                                            "type": "string",
+                                            "description": "The domain with which we tried to find the short URL"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "Not found": {
+                                "$ref": "../examples/short-url-not-found.json"
+                            }
                         }
                     }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/problem+json": {

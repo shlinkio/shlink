@@ -187,7 +187,7 @@
                     }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/problem+json": {
@@ -322,22 +322,42 @@
                                         "customSlug": {
                                             "type": "string",
                                             "description": "Provided custom slug when the error type is INVALID_SLUG"
+                                        },
+                                        "domain": {"type": "string",
+                                            "description": "The domain for which you were trying to create the new short URL"
+
                                         }
                                     }
                                 }
                             ]
                         },
-                        "example": {
-                            "title": "Invalid URL",
-                            "type": "INVALID_URL",
-                            "detail": "Provided URL foo is invalid. Try with a different one.",
-                            "status": 400,
-                            "url": "https://invalid-url.com"
+                        "examples": {
+                            "Invalid arguments": {
+                                "$ref": "../examples/short-url-invalid-args.json"
+                            },
+                            "Invalid long URL": {
+                                "value": {
+                                    "title": "Invalid URL",
+                                    "type": "INVALID_URL",
+                                    "detail": "Provided URL foo is invalid. Try with a different one.",
+                                    "status": 400,
+                                    "url": "https://invalid-url.com"
+                                }
+                            },
+                            "Non-unique slug": {
+                                "value": {
+                                    "title": "Invalid custom slug",
+                                    "type": "INVALID_SLUG",
+                                    "detail": "Provided slug \"my-slug\" is already in use.",
+                                    "status": 400,
+                                    "customSlug": "my-slug"
+                                }
+                            }
                         }
                     }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/problem+json": {

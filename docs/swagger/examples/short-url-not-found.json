@@ -1,0 +1,9 @@
+{
+    "value": {
+        "detail":"No URL found with short code \"abc123\"",
+        "title":"Short URL not found",
+        "type": "INVALID_SHORTCODE",
+        "status": 404,
+        "shortCode": "abc123"
+    }
+}
