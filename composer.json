@@ -61,6 +61,7 @@
         "symfony/string": "^5.4"
     },
     "require-dev": {
+        "cebe/php-openapi": "^1.5",
         "devster/ubench": "^2.1",
         "dms/phpunit-arraysubset-asserts": "^0.3.0",
         "eaglewu/swoole-ide-helper": "dev-master",
@@ -145,6 +146,8 @@
             "@parallel test:unit:ci test:db:sqlite:ci",
             "@infect:ci"
         ],
+        "swagger:validate": "php-openapi validate docs/swagger/swagger.json",
+        "swagger:inline": "php-openapi inline docs/swagger/swagger.json docs/swagger/swagger-inlined.json",
         "clean:dev": "rm -f data/database.sqlite && rm -f config/params/generated_config.php"
     },
     "scripts-descriptions": {
@@ -170,6 +173,8 @@
         "infect:ci:unit": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing with existing reports and logs</>",
         "infect:ci:db": "<fg=blue;options=bold>Checks db tests quality applying mutation testing with existing reports and logs</>",
         "infect:test": "<fg=blue;options=bold>Runs unit and db tests, then checks tests quality applying mutation testing</>",
+        "swagger:validate": "<fg=blue;options=bold>Validates the swagger docs, making sure they fulfil the spec</>",
+        "swagger:inline": "<fg=blue;options=bold>Inlines swagger docs in a single file</>",
         "clean:dev": "<fg=blue;options=bold>Deletes artifacts which are gitignored and could affect dev env</>"
     },
     "config": {
