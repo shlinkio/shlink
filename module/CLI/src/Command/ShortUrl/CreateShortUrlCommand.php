@@ -26,9 +26,9 @@ use function method_exists;
 use function sprintf;
 use function str_contains;
 
-class GenerateShortUrlCommand extends BaseCommand
+class CreateShortUrlCommand extends BaseCommand
 {
-    public const NAME = 'short-url:generate';
+    public const NAME = 'short-url:create';
 
     public function __construct(
         private UrlShortenerInterface $urlShortener,
@@ -42,6 +42,7 @@ class GenerateShortUrlCommand extends BaseCommand
     {
         $this
             ->setName(self::NAME)
+            ->setAliases(['short-url:generate']) // Deprecated
             ->setDescription('Generates a short URL for provided long URL and returns it')
             ->addArgument('longUrl', InputArgument::REQUIRED, 'The long URL to parse')
             ->addOption(

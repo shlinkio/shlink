@@ -39,7 +39,7 @@ return [
 
             ApiKey\RoleResolver::class => ConfigAbstractFactory::class,
 
-            Command\ShortUrl\GenerateShortUrlCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\CreateShortUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ResolveUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ListShortUrlsCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\GetVisitsCommand::class => ConfigAbstractFactory::class,
@@ -75,7 +75,7 @@ return [
         Util\ProcessRunner::class => [SymfonyCli\Helper\ProcessHelper::class],
         ApiKey\RoleResolver::class => [DomainService::class],
 
-        Command\ShortUrl\GenerateShortUrlCommand::class => [
+        Command\ShortUrl\CreateShortUrlCommand::class => [
             Service\UrlShortener::class,
             ShortUrlStringifier::class,
             'config.url_shortener.default_short_codes_length',
