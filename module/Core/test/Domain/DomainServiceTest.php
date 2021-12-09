@@ -9,13 +9,13 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Core\Config\EmptyNotFoundRedirectConfig;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
-use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -30,7 +30,7 @@ class DomainServiceTest extends TestCase
     public function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->domainService = new DomainService($this->em->reveal(), 'default.com', new NotFoundRedirectOptions());
+        $this->domainService = new DomainService($this->em->reveal(), 'default.com');
     }
 
     /**
@@ -52,7 +52,7 @@ class DomainServiceTest extends TestCase
 
     public function provideExcludedDomains(): iterable
     {
-        $default = DomainItem::forDefaultDomain('default.com', new NotFoundRedirectOptions());
+        $default = DomainItem::forDefaultDomain('default.com', new EmptyNotFoundRedirectConfig());
         $adminApiKey = ApiKey::create();
         $domainSpecificApiKey = ApiKey::fromMeta(
             ApiKeyMeta::withRoles(RoleDefinition::forDomain(Domain::withAuthority('')->setId('123'))),
@@ -61,15 +61,15 @@ class DomainServiceTest extends TestCase
         yield 'empty list without API key' => [[], [$default], null];
         yield 'one item without API key' => [
             [Domain::withAuthority('bar.com')],
-            [$default, DomainItem::forExistingDomain(Domain::withAuthority('bar.com'))],
+            [$default, DomainItem::forNonDefaultDomain(Domain::withAuthority('bar.com'))],
             null,
         ];
         yield 'multiple items without API key' => [
             [Domain::withAuthority('foo.com'), Domain::withAuthority('bar.com')],
             [
                 $default,
-                DomainItem::forExistingDomain(Domain::withAuthority('foo.com')),
-                DomainItem::forExistingDomain(Domain::withAuthority('bar.com')),
+                DomainItem::forNonDefaultDomain(Domain::withAuthority('foo.com')),
+                DomainItem::forNonDefaultDomain(Domain::withAuthority('bar.com')),
             ],
             null,
         ];
@@ -77,15 +77,15 @@ class DomainServiceTest extends TestCase
         yield 'empty list with admin API key' => [[], [$default], $adminApiKey];
         yield 'one item with admin API key' => [
             [Domain::withAuthority('bar.com')],
-            [$default, DomainItem::forExistingDomain(Domain::withAuthority('bar.com'))],
+            [$default, DomainItem::forNonDefaultDomain(Domain::withAuthority('bar.com'))],
             $adminApiKey,
         ];
         yield 'multiple items with admin API key' => [
             [Domain::withAuthority('foo.com'), Domain::withAuthority('bar.com')],
             [
                 $default,
-                DomainItem::forExistingDomain(Domain::withAuthority('foo.com')),
-                DomainItem::forExistingDomain(Domain::withAuthority('bar.com')),
+                DomainItem::forNonDefaultDomain(Domain::withAuthority('foo.com')),
+                DomainItem::forNonDefaultDomain(Domain::withAuthority('bar.com')),
             ],
             $adminApiKey,
         ];
@@ -93,14 +93,14 @@ class DomainServiceTest extends TestCase
         yield 'empty list with domain-specific API key' => [[], [], $domainSpecificApiKey];
         yield 'one item with domain-specific API key' => [
             [Domain::withAuthority('bar.com')],
-            [DomainItem::forExistingDomain(Domain::withAuthority('bar.com'))],
+            [DomainItem::forNonDefaultDomain(Domain::withAuthority('bar.com'))],
             $domainSpecificApiKey,
         ];
         yield 'multiple items with domain-specific API key' => [
             [Domain::withAuthority('foo.com'), Domain::withAuthority('bar.com')],
             [
-                DomainItem::forExistingDomain(Domain::withAuthority('foo.com')),
-                DomainItem::forExistingDomain(Domain::withAuthority('bar.com')),
+                DomainItem::forNonDefaultDomain(Domain::withAuthority('foo.com')),
+                DomainItem::forNonDefaultDomain(Domain::withAuthority('bar.com')),
             ],
             $domainSpecificApiKey,
         ];

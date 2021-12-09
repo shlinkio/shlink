@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Rest\Action\Domain;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -29,7 +30,7 @@ class ListDomainsAction extends AbstractRestAction
         return new JsonResponse([
             'domains' => [
                 'data' => $domainItems,
-                'defaultRedirects' => $this->options,
+                'defaultRedirects' => NotFoundRedirects::fromConfig($this->options),
             ],
         ]);
     }

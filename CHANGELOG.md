@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
+* [#1163](https://github.com/shlinkio/shlink/issues/1163) Allowed setting not-found redirects for default domain in the same way it's done for any other domain.
+
+    This implies a few non-breaking changes:
+
+    * The domains list no longer has the values of `INVALID_SHORT_URL_REDIRECT_TO`, `REGULAR_404_REDIRECT_TO` and `BASE_URL_REDIRECT_TO` on the default domain redirects.
+    * The `GET /domains` endpoint includes a new `defaultRedirects` property in the response, with the default redirects set via config or env vars.
+    * The `INVALID_SHORT_URL_REDIRECT_TO`, `REGULAR_404_REDIRECT_TO` and `BASE_URL_REDIRECT_TO` env vars are now deprecated, and should be replaced by `DEFAULT_INVALID_SHORT_URL_REDIRECT`, `DEFAULT_REGULAR_404_REDIRECT` and `DEFAULT_BASE_URL_REDIRECT` respectively. Deprecated ones will continue to work until v3.0.0, where they will be removed.
+
 * [#1204](https://github.com/shlinkio/shlink/issues/1204) Added support for `openswoole` and migrated official docker image to `openswoole`.
 * [#1242](https://github.com/shlinkio/shlink/issues/1242) Added support to import urls and visits from YOURLS.
 

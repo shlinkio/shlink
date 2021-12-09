@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Domain;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Shlinkio\Shlink\Core\Config\EmptyNotFoundRedirectConfig;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
-use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -20,11 +20,8 @@ use function Functional\map;
 
 class DomainService implements DomainServiceInterface
 {
-    public function __construct(
-        private EntityManagerInterface $em,
-        private string $defaultDomain,
-        private NotFoundRedirectOptions $redirectOptions,
-    ) {
+    public function __construct(private EntityManagerInterface $em, private string $defaultDomain)
+    {
     }
 
     /**
@@ -33,14 +30,14 @@ class DomainService implements DomainServiceInterface
     public function listDomains(?ApiKey $apiKey = null): array
     {
         [$default, $domains] = $this->defaultDomainAndRest($apiKey);
-        $mappedDomains = map($domains, fn (Domain $domain) => DomainItem::forExistingDomain($domain));
+        $mappedDomains = map($domains, fn (Domain $domain) => DomainItem::forNonDefaultDomain($domain));
 
         if ($apiKey?->hasRole(Role::DOMAIN_SPECIFIC)) {
             return $mappedDomains;
         }
 
         return [
-            DomainItem::forDefaultDomain($this->defaultDomain, $default ?? $this->redirectOptions),
+            DomainItem::forDefaultDomain($this->defaultDomain, $default ?? new EmptyNotFoundRedirectConfig()),
             ...$mappedDomains,
         ];
     }

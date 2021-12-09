@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Entity\Domain;
@@ -37,7 +38,7 @@ class ListDomainsActionTest extends TestCase
         $apiKey = ApiKey::create();
         $domains = [
             DomainItem::forDefaultDomain('bar.com', new NotFoundRedirectOptions()),
-            DomainItem::forExistingDomain(Domain::withAuthority('baz.com')),
+            DomainItem::forNonDefaultDomain(Domain::withAuthority('baz.com')),
         ];
         $listDomains = $this->domainService->listDomains($apiKey)->willReturn($domains);
 
@@ -48,7 +49,7 @@ class ListDomainsActionTest extends TestCase
         self::assertEquals([
             'domains' => [
                 'data' => $domains,
-                'defaultRedirects' => $this->options,
+                'defaultRedirects' => NotFoundRedirects::fromConfig($this->options),
             ],
         ], $payload);
         $listDomains->shouldHaveBeenCalledOnce();

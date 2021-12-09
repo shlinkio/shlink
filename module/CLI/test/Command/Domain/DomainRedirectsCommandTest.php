@@ -126,8 +126,8 @@ class DomainRedirectsCommandTest extends TestCase
 
         $listDomains = $this->domainService->listDomains()->willReturn([
             DomainItem::forDefaultDomain('default-domain.com', new NotFoundRedirectOptions()),
-            DomainItem::forExistingDomain(Domain::withAuthority('existing-one.com')),
-            DomainItem::forExistingDomain(Domain::withAuthority($domainAuthority)),
+            DomainItem::forNonDefaultDomain(Domain::withAuthority('existing-one.com')),
+            DomainItem::forNonDefaultDomain(Domain::withAuthority($domainAuthority)),
         ]);
         $findDomain = $this->domainService->findByAuthority($domainAuthority)->willReturn($domain);
         $configureRedirects = $this->domainService->configureNotFoundRedirects(
@@ -156,8 +156,8 @@ class DomainRedirectsCommandTest extends TestCase
 
         $listDomains = $this->domainService->listDomains()->willReturn([
             DomainItem::forDefaultDomain('default-domain.com', new NotFoundRedirectOptions()),
-            DomainItem::forExistingDomain(Domain::withAuthority('existing-one.com')),
-            DomainItem::forExistingDomain(Domain::withAuthority('existing-two.com')),
+            DomainItem::forNonDefaultDomain(Domain::withAuthority('existing-one.com')),
+            DomainItem::forNonDefaultDomain(Domain::withAuthority('existing-two.com')),
         ]);
         $findDomain = $this->domainService->findByAuthority($domainAuthority)->willReturn($domain);
         $configureRedirects = $this->domainService->configureNotFoundRedirects(
