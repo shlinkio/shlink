@@ -46,6 +46,9 @@
                                                     }
                                                 }
                                             }
+                                        },
+                                        "defaultRedirects": {
+                                            "$ref": "../definitions/NotFoundRedirects.json"
                                         }
                                     }
                                 }
@@ -84,7 +87,12 @@
                                         "invalidShortUrlRedirect": "https://example.com/invalid-url"
                                     }
                                 }
-                            ]
+                            ],
+                            "defaultRedirects": {
+                                "baseUrlRedirect": "https://somewhere.com",
+                                "regular404Redirect": null,
+                                "invalidShortUrlRedirect": null
+                            }
                         }
                     }
                 }

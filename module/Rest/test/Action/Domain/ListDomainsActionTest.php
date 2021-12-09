@@ -22,11 +22,13 @@ class ListDomainsActionTest extends TestCase
 
     private ListDomainsAction $action;
     private ObjectProphecy $domainService;
+    private NotFoundRedirectOptions $options;
 
     public function setUp(): void
     {
         $this->domainService = $this->prophesize(DomainServiceInterface::class);
-        $this->action = new ListDomainsAction($this->domainService->reveal());
+        $this->options = new NotFoundRedirectOptions();
+        $this->action = new ListDomainsAction($this->domainService->reveal(), $this->options);
     }
 
     /** @test */
@@ -46,6 +48,7 @@ class ListDomainsActionTest extends TestCase
         self::assertEquals([
             'domains' => [
                 'data' => $domains,
+                'defaultRedirects' => $this->options,
             ],
         ], $payload);
         $listDomains->shouldHaveBeenCalledOnce();

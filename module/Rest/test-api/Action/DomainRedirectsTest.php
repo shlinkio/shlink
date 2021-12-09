@@ -9,24 +9,6 @@ use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class DomainRedirectsTest extends ApiTestCase
 {
-    /** @test */
-    public function anErrorIsReturnedWhenTryingToEditDefaultDomain(): void
-    {
-        $resp = $this->callApiWithKey(self::METHOD_PATCH, '/domains/redirects', [
-            RequestOptions::JSON => ['domain' => 'doma.in'],
-        ]);
-        $payload = $this->getJsonResponsePayload($resp);
-
-        self::assertEquals(self::STATUS_FORBIDDEN, $resp->getStatusCode());
-        self::assertEquals(self::STATUS_FORBIDDEN, $payload['status']);
-        self::assertEquals('INVALID_DOMAIN', $payload['type']);
-        self::assertEquals(
-            'You cannot configure default domain\'s redirects this way. Use the configuration or env vars.',
-            $payload['detail'],
-        );
-        self::assertEquals('Invalid domain', $payload['title']);
-    }
-
     /**
      * @test
      * @dataProvider provideInvalidDomains
@@ -76,6 +58,14 @@ class DomainRedirectsTest extends ApiTestCase
         ], [
             'baseUrlRedirect' => null,
             'regular404Redirect' => 'foo.com',
+            'invalidShortUrlRedirect' => null,
+        ]];
+        yield 'default domain' => [[
+            'domain' => 'doma.in',
+            'regular404Redirect' => 'foo-for-default.com',
+        ], [
+            'baseUrlRedirect' => null,
+            'regular404Redirect' => 'foo-for-default.com',
             'invalidShortUrlRedirect' => null,
         ]];
         yield 'existing domain with redirects' => [[

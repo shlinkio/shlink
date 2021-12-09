@@ -9,7 +9,7 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
 use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
 use Shlinkio\Shlink\Core\Domain\DomainService;
-use Shlinkio\Shlink\Core\Options\AppOptions;
+use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Tag\TagService;
@@ -55,7 +55,7 @@ return [
     ConfigAbstractFactory::class => [
         ApiKeyService::class => ['em'],
 
-        Action\HealthAction::class => ['em', AppOptions::class],
+        Action\HealthAction::class => ['em', Options\AppOptions::class],
         Action\MercureInfoAction::class => [LcobucciJwtProvider::class, 'config.mercure'],
         Action\ShortUrl\CreateShortUrlAction::class => [Service\UrlShortener::class, ShortUrlDataTransformer::class],
         Action\ShortUrl\SingleStepCreateShortUrlAction::class => [
@@ -81,7 +81,7 @@ return [
         Action\Tag\DeleteTagsAction::class => [TagService::class],
         Action\Tag\CreateTagsAction::class => [TagService::class],
         Action\Tag\UpdateTagAction::class => [TagService::class],
-        Action\Domain\ListDomainsAction::class => [DomainService::class],
+        Action\Domain\ListDomainsAction::class => [DomainService::class, Options\NotFoundRedirectOptions::class],
         Action\Domain\DomainRedirectsAction::class => [DomainService::class],
 
         Middleware\CrossDomainMiddleware::class => ['config.cors'],

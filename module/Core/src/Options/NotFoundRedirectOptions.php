@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Options;
 
+use JsonSerializable;
 use Laminas\Stdlib\AbstractOptions;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
 
-class NotFoundRedirectOptions extends AbstractOptions implements NotFoundRedirectConfigInterface
+class NotFoundRedirectOptions extends AbstractOptions implements NotFoundRedirectConfigInterface, JsonSerializable
 {
     private ?string $invalidShortUrl = null;
     private ?string $regular404 = null;
@@ -59,5 +60,14 @@ class NotFoundRedirectOptions extends AbstractOptions implements NotFoundRedirec
     {
         $this->baseUrl = $baseUrl;
         return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'baseUrlRedirect' => $this->baseUrl,
+            'regular404Redirect' => $this->regular404,
+            'invalidShortUrlRedirect' => $this->invalidShortUrl,
+        ];
     }
 }
