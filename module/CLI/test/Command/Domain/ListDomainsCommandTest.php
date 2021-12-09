@@ -47,8 +47,8 @@ class ListDomainsCommandTest extends TestCase
                 'base_url' => 'https://foo.com/default/base',
                 'invalid_short_url' => 'https://foo.com/default/invalid',
             ])),
-            DomainItem::forExistingDomain(Domain::withAuthority('bar.com')),
-            DomainItem::forExistingDomain($bazDomain),
+            DomainItem::forNonDefaultDomain(Domain::withAuthority('bar.com')),
+            DomainItem::forNonDefaultDomain($bazDomain),
         ]);
 
         $this->commandTester->execute($input);

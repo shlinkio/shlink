@@ -21,6 +21,11 @@ class ListDomainsTest extends ApiTestCase
         self::assertEquals([
             'domains' => [
                 'data' => $expectedDomains,
+                'defaultRedirects' => [
+                    'baseUrlRedirect' => null,
+                    'regular404Redirect' => null,
+                    'invalidShortUrlRedirect' => null,
+                ],
             ],
         ], $respPayload);
     }

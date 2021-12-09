@@ -18,7 +18,7 @@ final class DomainItem implements JsonSerializable
     ) {
     }
 
-    public static function forExistingDomain(Domain $domain): self
+    public static function forNonDefaultDomain(Domain $domain): self
     {
         return new self($domain->getAuthority(), $domain, false);
     }

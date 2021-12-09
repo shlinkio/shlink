@@ -8,7 +8,7 @@ return [
 
     'cli' => [
         'commands' => [
-            Command\ShortUrl\GenerateShortUrlCommand::NAME => Command\ShortUrl\GenerateShortUrlCommand::class,
+            Command\ShortUrl\CreateShortUrlCommand::NAME => Command\ShortUrl\CreateShortUrlCommand::class,
             Command\ShortUrl\ResolveUrlCommand::NAME => Command\ShortUrl\ResolveUrlCommand::class,
             Command\ShortUrl\ListShortUrlsCommand::NAME => Command\ShortUrl\ListShortUrlsCommand::class,
             Command\ShortUrl\GetVisitsCommand::NAME => Command\ShortUrl\GetVisitsCommand::class,
