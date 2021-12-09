@@ -37,6 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1206](https://github.com/shlinkio/shlink/issues/1206) Fixed debugging of the docker image, so that it does not run the commands with `-q` when the `SHELL_VERBOSITY` env var has been provided.
+* [#1254](https://github.com/shlinkio/shlink/issues/1254) Fixed examples in swagger docs.
 
 
 ## [2.9.3] - 2021-11-15
