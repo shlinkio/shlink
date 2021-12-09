@@ -323,9 +323,9 @@
                                             "type": "string",
                                             "description": "Provided custom slug when the error type is INVALID_SLUG"
                                         },
-                                        "domain": {"type": "string",
+                                        "domain": {
+                                            "type": "string",
                                             "description": "The domain for which you were trying to create the new short URL"
-
                                         }
                                     }
                                 }
