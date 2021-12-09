@@ -55,14 +55,12 @@
                                     "$ref": "../definitions/NotFoundRedirects.json"
                                 }
                             ]
+                        },
+                        "example": {
+                            "baseUrlRedirect": "https://example.com/my-landing-page",
+                            "regular404Redirect": null,
+                            "invalidShortUrlRedirect": "https://example.com/invalid-url"
                         }
-                    }
-                },
-                "examples": {
-                    "application/json": {
-                        "baseUrlRedirect": "https://example.com/my-landing-page",
-                        "regular404Redirect": null,
-                        "invalidShortUrlRedirect": "https://example.com/invalid-url"
                     }
                 }
             },

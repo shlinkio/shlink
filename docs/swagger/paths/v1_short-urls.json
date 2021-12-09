@@ -117,73 +117,71 @@
                                     }
                                 }
                             }
-                        }
-                    }
-                },
-                "examples": {
-                    "application/json": {
-                        "shortUrls": {
-                            "data": [
-                                {
-                                    "shortCode": "12C18",
-                                    "shortUrl": "https://doma.in/12C18",
-                                    "longUrl": "https://store.steampowered.com",
-                                    "dateCreated": "2016-08-21T20:34:16+02:00",
-                                    "visitsCount": 328,
-                                    "tags": [
-                                        "games",
-                                        "tech"
-                                    ],
-                                    "meta": {
-                                        "validSince": "2017-01-21T00:00:00+02:00",
-                                        "validUntil": null,
-                                        "maxVisits": 100
+                        },
+                        "example": {
+                            "shortUrls": {
+                                "data": [
+                                    {
+                                        "shortCode": "12C18",
+                                        "shortUrl": "https://doma.in/12C18",
+                                        "longUrl": "https://store.steampowered.com",
+                                        "dateCreated": "2016-08-21T20:34:16+02:00",
+                                        "visitsCount": 328,
+                                        "tags": [
+                                            "games",
+                                            "tech"
+                                        ],
+                                        "meta": {
+                                            "validSince": "2017-01-21T00:00:00+02:00",
+                                            "validUntil": null,
+                                            "maxVisits": 100
+                                        },
+                                        "domain": null,
+                                        "title": "Welcome to Steam",
+                                        "crawlable": false
                                     },
-                                    "domain": null,
-                                    "title": "Welcome to Steam",
-                                    "crawlable": false
-                                },
-                                {
-                                    "shortCode": "12Kb3",
-                                    "shortUrl": "https://doma.in/12Kb3",
-                                    "longUrl": "https://shlink.io",
-                                    "dateCreated": "2016-05-01T20:34:16+02:00",
-                                    "visitsCount": 1029,
-                                    "tags": [
-                                        "shlink"
-                                    ],
-                                    "meta": {
-                                        "validSince": null,
-                                        "validUntil": null,
-                                        "maxVisits": null
+                                    {
+                                        "shortCode": "12Kb3",
+                                        "shortUrl": "https://doma.in/12Kb3",
+                                        "longUrl": "https://shlink.io",
+                                        "dateCreated": "2016-05-01T20:34:16+02:00",
+                                        "visitsCount": 1029,
+                                        "tags": [
+                                            "shlink"
+                                        ],
+                                        "meta": {
+                                            "validSince": null,
+                                            "validUntil": null,
+                                            "maxVisits": null
+                                        },
+                                        "domain":  null,
+                                        "title": null,
+                                        "crawlable": false
                                     },
-                                    "domain":  null,
-                                    "title": null,
-                                    "crawlable": false
-                                },
-                                {
-                                    "shortCode": "123bA",
-                                    "shortUrl": "https://example.com/123bA",
-                                    "longUrl": "https://www.google.com",
-                                    "dateCreated": "2015-10-01T20:34:16+02:00",
-                                    "visitsCount": 25,
-                                    "tags": [],
-                                    "meta": {
-                                        "validSince": "2017-01-21T00:00:00+02:00",
-                                        "validUntil": null,
-                                        "maxVisits": null
-                                    },
-                                    "domain":  "example.com",
-                                    "title": null,
-                                    "crawlable": false
+                                    {
+                                        "shortCode": "123bA",
+                                        "shortUrl": "https://example.com/123bA",
+                                        "longUrl": "https://www.google.com",
+                                        "dateCreated": "2015-10-01T20:34:16+02:00",
+                                        "visitsCount": 25,
+                                        "tags": [],
+                                        "meta": {
+                                            "validSince": "2017-01-21T00:00:00+02:00",
+                                            "validUntil": null,
+                                            "maxVisits": null
+                                        },
+                                        "domain":  "example.com",
+                                        "title": null,
+                                        "crawlable": false
+                                    }
+                                ],
+                                "pagination": {
+                                    "currentPage": 5,
+                                    "pagesCount": 12,
+                                    "itemsPerPage": 10,
+                                    "itemsInCurrentPage": 10,
+                                    "totalItems": 115
                                 }
-                            ],
-                            "pagination": {
-                                "currentPage": 5,
-                                "pagesCount": 12,
-                                "itemsPerPage": 10,
-                                "itemsInCurrentPage": 10,
-                                "totalItems": 115
                             }
                         }
                     }
@@ -267,28 +265,26 @@
                     "application/json": {
                         "schema": {
                             "$ref": "../definitions/ShortUrl.json"
-                        }
-                    }
-                },
-                "examples": {
-                    "application/json": {
-                        "shortCode": "12C18",
-                        "shortUrl": "https://doma.in/12C18",
-                        "longUrl": "https://store.steampowered.com",
-                        "dateCreated": "2016-08-21T20:34:16+02:00",
-                        "visitsCount": 0,
-                        "tags": [
-                            "games",
-                            "tech"
-                        ],
-                        "meta": {
-                            "validSince": "2017-01-21T00:00:00+02:00",
-                            "validUntil": null,
-                            "maxVisits": 500
                         },
-                        "domain": null,
-                        "title": null,
-                        "crawlable": false
+                        "example": {
+                            "shortCode": "12C18",
+                            "shortUrl": "https://doma.in/12C18",
+                            "longUrl": "https://store.steampowered.com",
+                            "dateCreated": "2016-08-21T20:34:16+02:00",
+                            "visitsCount": 0,
+                            "tags": [
+                                "games",
+                                "tech"
+                            ],
+                            "meta": {
+                                "validSince": "2017-01-21T00:00:00+02:00",
+                                "validUntil": null,
+                                "maxVisits": 500
+                            },
+                            "domain": null,
+                            "title": null,
+                            "crawlable": false
+                        }
                     }
                 }
             },
@@ -330,6 +326,13 @@
                                     }
                                 }
                             ]
+                        },
+                        "example": {
+                            "title": "Invalid URL",
+                            "type": "INVALID_URL",
+                            "detail": "Provided URL foo is invalid. Try with a different one.",
+                            "status": 400,
+                            "url": "https://invalid-url.com"
                         }
                     }
                 }

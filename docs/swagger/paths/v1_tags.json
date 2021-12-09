@@ -57,18 +57,42 @@
                                     }
                                 }
                             }
-                        }
-                    }
-                },
-                "examples": {
-                    "application/json": {
-                        "tags": {
-                            "data": [
-                                "games",
-                                "php",
-                                "shlink",
-                                "tech"
-                            ]
+                        },
+                        "examples": {
+                            "Without stats": {
+                                "value": {
+                                    "tags": {
+                                        "data": [
+                                            "games",
+                                            "php",
+                                            "shlink",
+                                            "tech"
+                                        ]
+                                    }
+                                }
+                            },
+                            "With stats": {
+                                "value": {
+                                    "tags": {
+                                        "data": [
+                                            "games",
+                                            "shlink"
+                                        ],
+                                        "stats": [
+                                            {
+                                                "tag": "games",
+                                                "shortUrlsCount": 10,
+                                                "visitsCount": 521
+                                            },
+                                            {
+                                                "tag": "shlink",
+                                                "shortUrlsCount": 7,
+                                                "visitsCount": 1087
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -147,18 +171,6 @@
                                     }
                                 }
                             }
-                        }
-                    }
-                },
-                "examples": {
-                    "application/json": {
-                        "tags": {
-                            "data": [
-                                "games",
-                                "php",
-                                "shlink",
-                                "tech"
-                            ]
                         }
                     }
                 }

@@ -35,27 +35,25 @@
                     "application/json": {
                         "schema": {
                             "$ref": "../definitions/ShortUrl.json"
-                        }
-                    }
-                },
-                "examples": {
-                    "application/json": {
-                        "shortCode": "12Kb3",
-                        "shortUrl": "https://doma.in/12Kb3",
-                        "longUrl": "https://shlink.io",
-                        "dateCreated": "2016-05-01T20:34:16+02:00",
-                        "visitsCount": 1029,
-                        "tags": [
-                            "shlink"
-                        ],
-                        "meta": {
-                            "validSince": "2017-01-21T00:00:00+02:00",
-                            "validUntil": null,
-                            "maxVisits": 100
                         },
-                        "domain": null,
-                        "title": null,
-                        "crawlable": false
+                        "example": {
+                            "shortCode": "12Kb3",
+                            "shortUrl": "https://doma.in/12Kb3",
+                            "longUrl": "https://shlink.io",
+                            "dateCreated": "2016-05-01T20:34:16+02:00",
+                            "visitsCount": 1029,
+                            "tags": [
+                                "shlink"
+                            ],
+                            "meta": {
+                                "validSince": "2017-01-21T00:00:00+02:00",
+                                "validUntil": null,
+                                "maxVisits": 100
+                            },
+                            "domain": null,
+                            "title": null,
+                            "crawlable": false
+                        }
                     }
                 }
             },
@@ -129,27 +127,25 @@
                     "application/json": {
                         "schema": {
                             "$ref": "../definitions/ShortUrl.json"
-                        }
-                    }
-                },
-                "examples": {
-                    "application/json": {
-                        "shortCode": "12Kb3",
-                        "shortUrl": "https://doma.in/12Kb3",
-                        "longUrl": "https://shlink.io",
-                        "dateCreated": "2016-05-01T20:34:16+02:00",
-                        "visitsCount": 1029,
-                        "tags": [
-                            "shlink"
-                        ],
-                        "meta": {
-                            "validSince": "2017-01-21T00:00:00+02:00",
-                            "validUntil": null,
-                            "maxVisits": 100
                         },
-                        "domain": null,
-                        "title": "Shlink - The URL shortener",
-                        "crawlable": false
+                        "example": {
+                            "shortCode": "12Kb3",
+                            "shortUrl": "https://doma.in/12Kb3",
+                            "longUrl": "https://shlink.io",
+                            "dateCreated": "2016-05-01T20:34:16+02:00",
+                            "visitsCount": 1029,
+                            "tags": [
+                                "shlink"
+                            ],
+                            "meta": {
+                                "validSince": "2017-01-21T00:00:00+02:00",
+                                "validUntil": null,
+                                "maxVisits": 100
+                            },
+                            "domain": null,
+                            "title": "Shlink - The URL shortener",
+                            "crawlable": false
+                        }
                     }
                 }
             },
@@ -247,16 +243,38 @@
                 "content": {
                     "application/problem+json": {
                         "schema": {
-                            "$ref": "../definitions/Error.json"
+                            "allOf": [
+                                {
+                                    "$ref": "../definitions/Error.json"
+                                },
+                                {
+                                    "type": "object",
+                                    "required": ["shortCode", "threshold"],
+                                    "properties": {
+                                        "shortCode": {
+                                            "type": "string",
+                                            "description": "The short code with which we tried to find the short URL to delete"
+                                        },
+                                        "domain": {
+                                            "type": "string",
+                                            "description": "The domain with which we tried to find the short URL to delete"
+                                        },
+                                        "threshold": {
+                                            "type": "number",
+                                            "description": "The amount of visits currently configured as threshold to allow deleting short UYRLs or not"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "example": {
+                            "title": "Cannot delete short URL",
+                            "type": "INVALID_SHORTCODE_DELETION",
+                            "detail": "Impossible to delete short URL with short code \"abc123\", since it has more than \"15\" visits.",
+                            "status": 422,
+                            "shortCode": "abc123",
+                            "threshold": 15
                         }
-                    }
-                },
-                "examples": {
-                    "application/problem+json": {
-                        "title": "Cannot delete short URL",
-                        "type": "INVALID_SHORTCODE_DELETION",
-                        "detail": "It is not possible to delete URL with short code \"abc123\" because it has reached more than \"15\" visits.",
-                        "status": 422
                     }
                 }
             },
