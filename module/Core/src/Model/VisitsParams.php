@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Model;
 
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 
 use function Shlinkio\Shlink\Core\parseDateRangeFromQuery;
@@ -11,7 +12,6 @@ use function Shlinkio\Shlink\Core\parseDateRangeFromQuery;
 final class VisitsParams
 {
     private const FIRST_PAGE = 1;
-    private const ALL_ITEMS = -1;
 
     private DateRange $dateRange;
     private int $page;
@@ -36,10 +36,10 @@ final class VisitsParams
     private function determineItemsPerPage(?int $itemsPerPage): int
     {
         if ($itemsPerPage !== null && $itemsPerPage < 0) {
-            return self::ALL_ITEMS;
+            return Paginator::ALL_ITEMS;
         }
 
-        return $itemsPerPage ?? self::ALL_ITEMS;
+        return $itemsPerPage ?? Paginator::ALL_ITEMS;
     }
 
     public static function fromRawData(array $query): self

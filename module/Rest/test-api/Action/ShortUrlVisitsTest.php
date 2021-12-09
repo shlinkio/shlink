@@ -6,6 +6,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use GuzzleHttp\Psr7\Query;
 use Laminas\Diactoros\Uri;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
 
@@ -58,7 +59,10 @@ class ShortUrlVisitsTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_GET, (string) $url);
         $payload = $this->getJsonResponsePayload($resp);
 
-        self::assertEquals($expectedAmountOfVisits, $payload['visits']['pagination']['totalItems'] ?? -1);
+        self::assertEquals(
+            $expectedAmountOfVisits,
+            $payload['visits']['pagination']['totalItems'] ?? Paginator::ALL_ITEMS,
+        );
         self::assertCount($expectedAmountOfVisits, $payload['visits']['data'] ?? []);
     }
 
@@ -84,7 +88,10 @@ class ShortUrlVisitsTest extends ApiTestCase
         $resp = $this->callApiWithKey(self::METHOD_GET, (string) $url);
         $payload = $this->getJsonResponsePayload($resp);
 
-        self::assertEquals($expectedAmountOfVisits, $payload['visits']['pagination']['totalItems'] ?? -1);
+        self::assertEquals(
+            $expectedAmountOfVisits,
+            $payload['visits']['pagination']['totalItems'] ?? Paginator::ALL_ITEMS,
+        );
         self::assertCount($expectedAmountOfVisits, $payload['visits']['data'] ?? []);
     }
 

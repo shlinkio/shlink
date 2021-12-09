@@ -271,7 +271,7 @@ class ListShortUrlsCommandTest extends TestCase
             'startDate' => null,
             'endDate' => null,
             'orderBy' => null,
-            'itemsPerPage' => -1,
+            'itemsPerPage' => Paginator::ALL_ITEMS,
         ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute(['--all' => true]);
