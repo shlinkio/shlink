@@ -13,16 +13,14 @@
                     "application/json": {
                         "schema": {
                             "$ref": "../definitions/Health.json"
-                        }
-                    }
-                },
-                "examples": {
-                    "application/json": {
-                        "status": "pass",
-                        "version": "1.16.0",
-                        "links": {
-                            "about": "https://shlink.io",
-                            "project": "https://github.com/shlinkio/shlink"
+                        },
+                        "example": {
+                            "status": "pass",
+                            "version": "2.10.0",
+                            "links": {
+                                "about": "https://shlink.io",
+                                "project": "https://github.com/shlinkio/shlink"
+                            }
                         }
                     }
                 }
@@ -33,21 +31,19 @@
                     "application/json": {
                         "schema": {
                             "$ref": "../definitions/Health.json"
-                        }
-                    }
-                },
-                "examples": {
-                    "application/json": {
-                        "status": "fail",
-                        "version": "1.16.0",
-                        "links": {
-                            "about": "https://shlink.io",
-                            "project": "https://github.com/shlinkio/shlink"
+                        },
+                        "example": {
+                            "status": "fail",
+                            "version": "2.10.0",
+                            "links": {
+                                "about": "https://shlink.io",
+                                "project": "https://github.com/shlinkio/shlink"
+                            }
                         }
                     }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/json": {

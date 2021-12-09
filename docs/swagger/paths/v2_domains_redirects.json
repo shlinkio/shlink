@@ -55,14 +55,12 @@
                                     "$ref": "../definitions/NotFoundRedirects.json"
                                 }
                             ]
+                        },
+                        "example": {
+                            "baseUrlRedirect": "https://example.com/my-landing-page",
+                            "regular404Redirect": null,
+                            "invalidShortUrlRedirect": "https://example.com/invalid-url"
                         }
-                    }
-                },
-                "examples": {
-                    "application/json": {
-                        "baseUrlRedirect": "https://example.com/my-landing-page",
-                        "regular404Redirect": null,
-                        "invalidShortUrlRedirect": "https://example.com/invalid-url"
                     }
                 }
             },
@@ -95,11 +93,18 @@
                                     }
                                 }
                             ]
+                        },
+                        "example": {
+                            "title": "Invalid data",
+                            "type": "INVALID_ARGUMENT",
+                            "detail": "Provided data is not valid",
+                            "status": 400,
+                            "invalidElements": ["domain", "invalidShortUrlRedirect"]
                         }
                     }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/problem+json": {

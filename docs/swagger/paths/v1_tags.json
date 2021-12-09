@@ -57,23 +57,47 @@
                                     }
                                 }
                             }
-                        }
-                    }
-                },
-                "examples": {
-                    "application/json": {
-                        "tags": {
-                            "data": [
-                                "games",
-                                "php",
-                                "shlink",
-                                "tech"
-                            ]
+                        },
+                        "examples": {
+                            "Without stats": {
+                                "value": {
+                                    "tags": {
+                                        "data": [
+                                            "games",
+                                            "php",
+                                            "shlink",
+                                            "tech"
+                                        ]
+                                    }
+                                }
+                            },
+                            "With stats": {
+                                "value": {
+                                    "tags": {
+                                        "data": [
+                                            "games",
+                                            "shlink"
+                                        ],
+                                        "stats": [
+                                            {
+                                                "tag": "games",
+                                                "shortUrlsCount": 10,
+                                                "visitsCount": 521
+                                            },
+                                            {
+                                                "tag": "shlink",
+                                                "shortUrlsCount": 7,
+                                                "visitsCount": 1087
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/problem+json": {
@@ -149,21 +173,9 @@
                             }
                         }
                     }
-                },
-                "examples": {
-                    "application/json": {
-                        "tags": {
-                            "data": [
-                                "games",
-                                "php",
-                                "shlink",
-                                "tech"
-                            ]
-                        }
-                    }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/problem+json": {
@@ -228,6 +240,13 @@
                     "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
+                        },
+                        "example": {
+                            "title": "Invalid data",
+                            "type": "INVALID_ARGUMENT",
+                            "detail": "Provided data is not valid",
+                            "status": 400,
+                            "invalidElements": ["oldName", "newName"]
                         }
                     }
                 }
@@ -238,6 +257,12 @@
                     "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
+                        },
+                        "example": {
+                            "detail": "You are not allowed to rename tags",
+                            "title": "Forbidden tag operation",
+                            "type": "FORBIDDEN_OPERATION",
+                            "status": 403
                         }
                     }
                 }
@@ -248,6 +273,11 @@
                     "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
+                        },
+                        "examples": {
+                            "Tag not found": {
+                                "$ref": "../examples/tag-not-found.json"
+                            }
                         }
                     }
                 }
@@ -258,11 +288,19 @@
                     "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
+                        },
+                        "example": {
+                            "detail": "You cannot rename tag foo, because it already exists",
+                            "title": "Tag conflict",
+                            "type": "TAG_CONFLICT",
+                            "status": 409,
+                            "oldName": "bar",
+                            "newName": "foo"
                         }
                     }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/problem+json": {
@@ -314,11 +352,17 @@
                     "application/problem+json": {
                         "schema": {
                             "$ref": "../definitions/Error.json"
+                        },
+                        "example": {
+                            "detail": "You are not allowed to delete tags",
+                            "title": "Forbidden tag operation",
+                            "type": "FORBIDDEN_OPERATION",
+                            "status": 403
                         }
                     }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/problem+json": {
