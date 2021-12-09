@@ -23,6 +23,8 @@ class CreateShortUrlCommandTest extends TestCase
 {
     use CliTestUtilsTrait;
 
+    private const DEFAULT_DOMAIN = 'default.com';
+
     private CommandTester $commandTester;
     private ObjectProphecy $urlShortener;
     private ObjectProphecy $stringifier;
@@ -33,7 +35,12 @@ class CreateShortUrlCommandTest extends TestCase
         $this->stringifier = $this->prophesize(ShortUrlStringifierInterface::class);
         $this->stringifier->stringify(Argument::type(ShortUrl::class))->willReturn('');
 
-        $command = new CreateShortUrlCommand($this->urlShortener->reveal(), $this->stringifier->reveal(), 5);
+        $command = new CreateShortUrlCommand(
+            $this->urlShortener->reveal(),
+            $this->stringifier->reveal(),
+            5,
+            self::DEFAULT_DOMAIN,
+        );
         $this->commandTester = $this->testerForCommand($command);
     }
 
@@ -108,6 +115,34 @@ class CreateShortUrlCommandTest extends TestCase
         self::assertStringContainsString('stringified_short_url', $output);
         $urlToShortCode->shouldHaveBeenCalledOnce();
         $stringify->shouldHaveBeenCalledOnce();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideDomains
+     */
+    public function properlyProcessesProvidedDomain(array $input, ?string $expectedDomain): void
+    {
+        $shorten = $this->urlShortener->shorten(
+            Argument::that(function (ShortUrlMeta $meta) use ($expectedDomain) {
+                Assert::assertEquals($expectedDomain, $meta->getDomain());
+                return true;
+            }),
+        )->willReturn(ShortUrl::createEmpty());
+
+        $input['longUrl'] = 'http://domain.com/foo/bar';
+        $this->commandTester->execute($input);
+
+        self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
+        $shorten->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideDomains(): iterable
+    {
+        yield 'no domain' => [[], null];
+        yield 'non-default domain foo' => [['--domain' => 'foo.com'], 'foo.com'];
+        yield 'non-default domain bar' => [['-d' => 'bar.com'], 'bar.com'];
+        yield 'default domain' => [['--domain' => self::DEFAULT_DOMAIN], null];
     }
 
     /**

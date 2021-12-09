@@ -79,6 +79,7 @@ return [
             Service\UrlShortener::class,
             ShortUrlStringifier::class,
             'config.url_shortener.default_short_codes_length',
+            'config.url_shortener.domain.hostname',
         ],
         Command\ShortUrl\ResolveUrlCommand::class => [Service\ShortUrl\ShortUrlResolver::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [
