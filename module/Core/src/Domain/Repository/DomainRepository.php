@@ -8,7 +8,6 @@ use Doctrine\ORM\Query\Expr\Join;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Spec;
 use Shlinkio\Shlink\Core\Domain\Spec\IsDomain;
-use Shlinkio\Shlink\Core\Domain\Spec\IsNotAuthority;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Spec\BelongsToApiKey;
@@ -20,7 +19,7 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
     /**
      * @return Domain[]
      */
-    public function findDomainsWithout(?string $excludedAuthority, ?ApiKey $apiKey = null): array
+    public function findDomains(?ApiKey $apiKey = null): array
     {
         $qb = $this->createQueryBuilder('d');
         $qb->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
@@ -31,7 +30,7 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
            ->orHaving($qb->expr()->isNotNull('d.regular404Redirect'))
            ->orHaving($qb->expr()->isNotNull('d.invalidShortUrlRedirect'));
 
-        $specs = $this->determineExtraSpecs($excludedAuthority, $apiKey);
+        $specs = $this->determineExtraSpecs($apiKey);
         foreach ($specs as [$alias, $spec]) {
             $this->applySpecification($qb, $spec, $alias);
         }
@@ -47,7 +46,7 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
            ->setParameter('authority', $authority)
            ->setMaxResults(1);
 
-        $specs = $this->determineExtraSpecs(null, $apiKey);
+        $specs = $this->determineExtraSpecs($apiKey);
         foreach ($specs as [$alias, $spec]) {
             $this->applySpecification($qb, $spec, $alias);
         }
@@ -55,12 +54,8 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    private function determineExtraSpecs(?string $excludedAuthority, ?ApiKey $apiKey): iterable
+    private function determineExtraSpecs(?ApiKey $apiKey): iterable
     {
-        if ($excludedAuthority !== null) {
-            yield ['d', new IsNotAuthority($excludedAuthority)];
-        }
-
         // FIXME The $apiKey->spec() method cannot be used here, as it returns a single spec which assumes the
         //       ShortUrl is the root entity. Here, the Domain is the root entity.
         //       Think on a way to centralize the conditional behavior and make $apiKey->spec() more flexible.

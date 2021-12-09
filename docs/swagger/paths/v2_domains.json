@@ -4,8 +4,8 @@
         "tags": [
             "Domains"
         ],
-        "summary": "List existing domains",
-        "description": "Returns the list of all domains ever used, with a flag that tells if they are the default domain",
+        "summary": "List configured domains",
+        "description": "Returns the list of all domains that have been either used for some short URL, or have explicitly configured redirects.<br/>It also includes the domain redirects, plus the default redirects that will be used for any non-explicitly-configured one.",
         "security": [
             {
                 "ApiKey": []

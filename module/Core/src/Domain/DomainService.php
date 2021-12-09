@@ -50,7 +50,7 @@ class DomainService implements DomainServiceInterface
         /** @var DomainRepositoryInterface $repo */
         $repo = $this->em->getRepository(Domain::class);
         $groups = group(
-            $repo->findDomainsWithout(null, $apiKey), // FIXME Always called with null as first arg
+            $repo->findDomains($apiKey),
             fn (Domain $domain) => $domain->getAuthority() === $this->defaultDomain ? 'default' : 'domains',
         );
 
@@ -73,8 +73,7 @@ class DomainService implements DomainServiceInterface
 
     public function findByAuthority(string $authority, ?ApiKey $apiKey = null): ?Domain
     {
-        $repo = $this->em->getRepository(Domain::class);
-        return $repo->findOneByAuthority($authority, $apiKey);
+        return $this->em->getRepository(Domain::class)->findOneByAuthority($authority, $apiKey);
     }
 
     /**
