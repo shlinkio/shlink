@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     The official docker image has also been updated to use PHP 8.1 by default.
 
 ### Changed
+* [#844](https://github.com/shlinkio/shlink/issues/844) Added mutation checks to API tests.
 * [#1218](https://github.com/shlinkio/shlink/issues/1218) Updated to symfony/mercure 0.6.
 * [#1223](https://github.com/shlinkio/shlink/issues/1223) Updated to phpstan 1.0.
 * Added `domain` field to `DeleteShortUrlException` exception.
