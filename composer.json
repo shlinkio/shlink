@@ -53,12 +53,12 @@
         "shlinkio/shlink-importer": "dev-main#d099072 as 2.5",
         "shlinkio/shlink-installer": "dev-develop#7dd00fb as 6.3",
         "shlinkio/shlink-ip-geolocation": "^2.2",
-        "symfony/console": "^5.4",
-        "symfony/filesystem": "^5.4",
-        "symfony/lock": "^5.4",
+        "symfony/console": "^6.0 || ^5.4",
+        "symfony/filesystem": "^6.0 || ^5.4",
+        "symfony/lock": "^6.0 || ^5.4",
         "symfony/mercure": "^0.6",
-        "symfony/process": "^5.4",
-        "symfony/string": "^5.4"
+        "symfony/process": "^6.0 || ^5.4",
+        "symfony/string": "^6.0 || ^5.4"
     },
     "require-dev": {
         "cebe/php-openapi": "^1.5",
@@ -107,11 +107,12 @@
         "ci": [
             "@cs",
             "@stan",
+            "@swagger:validate",
             "@test:ci",
             "@infect:ci"
         ],
         "ci:parallel": [
-            "@parallel cs stan test:unit:ci test:db:sqlite:ci test:db:mysql test:db:maria test:db:postgres test:db:ms",
+            "@parallel cs stan swagger:validate test:unit:ci test:db:sqlite:ci test:db:mysql test:db:maria test:db:postgres test:db:ms",
             "@parallel test:api infect:ci:unit infect:ci:db"
         ],
         "cs": "phpcs",
@@ -139,19 +140,23 @@
         "test:db:ms": "DB_DRIVER=mssql composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
         "infect:ci:base": "infection --threads=4 --log-verbosity=default --only-covered --only-covering-test-cases --skip-initial-tests",
-        "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=80",
+        "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=83",
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json",
         "infect:ci": "@parallel infect:ci:unit infect:ci:db",
         "infect:test": [
             "@parallel test:unit:ci test:db:sqlite:ci",
             "@infect:ci"
         ],
+        "infect:test:unit": [
+            "@test:unit:ci",
+            "@infect:ci:unit"
+        ],
         "swagger:validate": "php-openapi validate docs/swagger/swagger.json",
         "swagger:inline": "php-openapi inline docs/swagger/swagger.json docs/swagger/swagger-inlined.json",
         "clean:dev": "rm -f data/database.sqlite && rm -f config/params/generated_config.php"
     },
     "scripts-descriptions": {
-        "ci": "<fg=blue;options=bold>Alias for \"cs\", \"stan\", \"test:ci\" and \"infect:ci\"</>",
+        "ci": "<fg=blue;options=bold>Alias for \"cs\", \"stan\", \"swagger:validate\", \"test:ci\" and \"infect:ci\"</>",
         "ci:parallel": "<fg=blue;options=bold>Same as \"ci\", but parallelizing tasks as much as possible</>",
         "cs": "<fg=blue;options=bold>Checks coding styles</>",
         "cs:fix": "<fg=blue;options=bold>Fixes coding styles, when possible</>",

@@ -49,12 +49,18 @@ class ListTagsCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertStringContainsString('| foo', $output);
-        self::assertStringContainsString('| bar', $output);
-        self::assertStringContainsString('| 10 ', $output);
-        self::assertStringContainsString('| 2 ', $output);
-        self::assertStringContainsString('| 7 ', $output);
-        self::assertStringContainsString('| 32 ', $output);
+        self::assertEquals(
+            <<<OUTPUT
+            +------+-------------+---------------+
+            | Name | URLs amount | Visits amount |
+            +------+-------------+---------------+
+            | foo  | 10          | 2             |
+            | bar  | 7           | 32            |
+            +------+-------------+---------------+
+            
+            OUTPUT,
+            $output,
+        );
         $tagsInfo->shouldHaveBeenCalled();
     }
 }

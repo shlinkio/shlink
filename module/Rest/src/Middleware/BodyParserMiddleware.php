@@ -54,7 +54,7 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
 
     private function parseFromJson(Request $request): Request
     {
-        $rawBody = (string) $request->getBody();
+        $rawBody = $request->getBody()->__toString();
         if (empty($rawBody)) {
             return $request;
         }
@@ -68,7 +68,7 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
      */
     private function parseFromUrlEncoded(Request $request): Request
     {
-        $rawBody = (string) $request->getBody();
+        $rawBody = $request->getBody()->__toString();
         if (empty($rawBody)) {
             return $request;
         }

@@ -45,13 +45,16 @@ class OrphanVisitsActionTest extends TestCase
         $orphanVisits = $this->visitsHelper->orphanVisits(Argument::type(VisitsParams::class))->willReturn(
             new Paginator(new ArrayAdapter($visits)),
         );
+        $visitsAmount = count($visits);
         $transform = $this->orphanVisitTransformer->transform(Argument::type(Visit::class))->willReturn([]);
 
+        /** @var JsonResponse $response */
         $response = $this->action->handle(ServerRequestFactory::fromGlobals());
+        $payload = $response->getPayload();
 
-        self::assertInstanceOf(JsonResponse::class, $response);
+        self::assertCount($visitsAmount, $payload['visits']['data']);
         self::assertEquals(200, $response->getStatusCode());
         $orphanVisits->shouldHaveBeenCalledOnce();
-        $transform->shouldHaveBeenCalledTimes(count($visits));
+        $transform->shouldHaveBeenCalledTimes($visitsAmount);
     }
 }

@@ -38,7 +38,7 @@ class ListTagsAction extends AbstractRestAction
         }
 
         $tagsInfo = $this->tagService->tagsInfo($apiKey);
-        $data = map($tagsInfo, fn (TagInfo $info) => (string) $info->tag());
+        $data = map($tagsInfo, static fn (TagInfo $info) => $info->tag()->__toString());
 
         return new JsonResponse([
             'tags' => [

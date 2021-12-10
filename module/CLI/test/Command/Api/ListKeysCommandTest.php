@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
+use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Api\ListKeysCommand;
@@ -45,19 +46,25 @@ class ListKeysCommandTest extends TestCase
 
     public function provideKeysAndOutputs(): iterable
     {
+        $dateInThePast = Chronos::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
+
         yield 'all keys' => [
-            [$apiKey1 = ApiKey::create(), $apiKey2 = ApiKey::create(), $apiKey3 = ApiKey::create()],
+            [
+                $apiKey1 = ApiKey::create()->disable(),
+                $apiKey2 = ApiKey::fromMeta(ApiKeyMeta::withExpirationDate($dateInThePast)),
+                $apiKey3 = ApiKey::create(),
+            ],
             false,
             <<<OUTPUT
-            +--------------------------------------+------+------------+-----------------+-------+
-            | Key                                  | Name | Is enabled | Expiration date | Roles |
-            +--------------------------------------+------+------------+-----------------+-------+
-            | {$apiKey1} | -    | +++        | -               | Admin |
-            +--------------------------------------+------+------------+-----------------+-------+
-            | {$apiKey2} | -    | +++        | -               | Admin |
-            +--------------------------------------+------+------------+-----------------+-------+
-            | {$apiKey3} | -    | +++        | -               | Admin |
-            +--------------------------------------+------+------------+-----------------+-------+
+            +--------------------------------------+------+------------+---------------------------+-------+
+            | Key                                  | Name | Is enabled | Expiration date           | Roles |
+            +--------------------------------------+------+------------+---------------------------+-------+
+            | {$apiKey1} | -    | ---        | -                         | Admin |
+            +--------------------------------------+------+------------+---------------------------+-------+
+            | {$apiKey2} | -    | ---        | 2020-01-01T00:00:00+00:00 | Admin |
+            +--------------------------------------+------+------------+---------------------------+-------+
+            | {$apiKey3} | -    | +++        | -                         | Admin |
+            +--------------------------------------+------+------------+---------------------------+-------+
 
             OUTPUT,
         ];
