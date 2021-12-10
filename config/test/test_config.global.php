@@ -119,6 +119,8 @@ return [
             'name' => 'dump_coverage',
             'path' => '/api-tests/stop-coverage',
             'middleware' => middleware(static function () use (&$coverage) {
+                // TODO I have tried moving this block to a listener so that it's invoked automatically,
+                //      but then the coverage is generated empty ¯\_(ツ)_/¯
                 if ($coverage) { // @phpstan-ignore-line
                     $basePath = __DIR__ . '/../../build/coverage-api';
 
