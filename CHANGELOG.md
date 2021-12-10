@@ -31,7 +31,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1001](https://github.com/shlinkio/shlink/issues/1001) Increased required MSI to 83%.
 
 ### Deprecated
-* *Nothing*
+* [#1260](https://github.com/shlinkio/shlink/issues/1260) Deprecated `USE_HTTPS` env var that was added in previous release, in favor of the new `IS_HTTPS_ENABLED`.
+
+    The old one proved to be confusing and misleading, making people think it was used to actually enable HTTPS transparently, instead of its actual purpose, which is just telling Shlink it is being served with HTTPS.
 
 ### Removed
 * *Nothing*
