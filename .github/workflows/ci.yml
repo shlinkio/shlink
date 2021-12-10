@@ -202,7 +202,7 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.0', '8.1']
-        test-group: ['unit', 'db']
+        test-group: ['unit', 'db', 'api']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -222,8 +222,8 @@ jobs:
         run: composer infect:ci:unit
         env:
           INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
-      - if: ${{ matrix.test-group == 'db' }}
-        run: composer infect:ci:db
+      - if: ${{ matrix.test-group != 'unit' }}
+        run: composer infect:ci:${{ matrix.test-group }}
 
   upload-coverage:
     needs:

@@ -74,7 +74,7 @@
         "phpunit/phpunit": "^9.5",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.2.0",
-        "shlinkio/shlink-test-utils": "^2.4",
+        "shlinkio/shlink-test-utils": "^2.5",
         "symfony/var-dumper": "^6.0",
         "veewee/composer-run-parallel": "^1.1"
     },
@@ -113,7 +113,7 @@
         ],
         "ci:parallel": [
             "@parallel cs stan swagger:validate test:unit:ci test:db:sqlite:ci test:db:mysql test:db:maria test:db:postgres test:db:ms",
-            "@parallel test:api infect:ci:unit infect:ci:db"
+            "@parallel infect:test:api infect:ci:unit infect:ci:db"
         ],
         "cs": "phpcs",
         "cs:fix": "phpcbf",
@@ -130,7 +130,7 @@
         ],
         "test:unit": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
         "test:unit:ci": "@test:unit --coverage-xml=build/coverage-unit/coverage-xml --log-junit=build/coverage-unit/junit.xml",
-        "test:unit:pretty": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage-unit-html",
+        "test:unit:pretty": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-html build/coverage-unit/coverage-html",
         "test:db": "@parallel test:db:sqlite:ci test:db:mysql test:db:maria test:db:postgres test:db:ms",
         "test:db:sqlite": "APP_ENV=test php vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-db.xml",
         "test:db:sqlite:ci": "@test:db:sqlite --coverage-php build/coverage-db.cov --coverage-xml=build/coverage-db/coverage-xml --log-junit=build/coverage-db/junit.xml",
@@ -142,14 +142,19 @@
         "infect:ci:base": "infection --threads=4 --log-verbosity=default --only-covered --only-covering-test-cases --skip-initial-tests",
         "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=83",
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json",
-        "infect:ci": "@parallel infect:ci:unit infect:ci:db",
+        "infect:ci:api": "@infect:ci:base --coverage=build/coverage-api --min-msi=80 --configuration=infection-api.json",
+        "infect:ci": "@parallel infect:ci:unit infect:ci:db infect:ci:api",
         "infect:test": [
-            "@parallel test:unit:ci test:db:sqlite:ci",
+            "@parallel test:unit:ci test:db:sqlite:ci test:api",
             "@infect:ci"
         ],
         "infect:test:unit": [
             "@test:unit:ci",
             "@infect:ci:unit"
+        ],
+        "infect:test:api": [
+            "@test:api",
+            "@infect:ci:api"
         ],
         "swagger:validate": "php-openapi validate docs/swagger/swagger.json",
         "swagger:inline": "php-openapi inline docs/swagger/swagger.json docs/swagger/swagger-inlined.json",
