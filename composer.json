@@ -147,6 +147,10 @@
             "@parallel test:unit:ci test:db:sqlite:ci",
             "@infect:ci"
         ],
+        "infect:test:unit": [
+            "@test:unit:ci",
+            "@infect:ci:unit"
+        ],
         "swagger:validate": "php-openapi validate docs/swagger/swagger.json",
         "swagger:inline": "php-openapi inline docs/swagger/swagger.json docs/swagger/swagger-inlined.json",
         "clean:dev": "rm -f data/database.sqlite && rm -f config/params/generated_config.php"
