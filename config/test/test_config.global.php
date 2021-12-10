@@ -8,13 +8,16 @@ use GuzzleHttp\Client;
 use Laminas\ConfigAggregator\ConfigAggregator;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
-use Laminas\Stdlib\Glob;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use PHPUnit\Runner\Version;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\Driver\Selector;
 use SebastianBergmann\CodeCoverage\Filter;
+use SebastianBergmann\CodeCoverage\Report\Html\Facade as Html;
 use SebastianBergmann\CodeCoverage\Report\PHP;
 use SebastianBergmann\CodeCoverage\Report\Xml\Facade as Xml;
 
@@ -29,9 +32,8 @@ use const ShlinkioTest\Shlink\SWOOLE_TESTING_PORT;
 $isApiTest = env('TEST_ENV') === 'api';
 if ($isApiTest) {
     $filter = new Filter();
-    foreach (Glob::glob(__DIR__ . '/../../module/*/src') as $item) {
-        $filter->includeDirectory($item);
-    }
+    $filter->includeDirectory(__DIR__ . '/../../module/Core/src');
+    $filter->includeDirectory(__DIR__ . '/../../module/Rest/src');
     $coverage = new CodeCoverage((new Selector())->forLineCoverage($filter), $filter);
 }
 
@@ -114,30 +116,39 @@ return [
 
     'routes' => !$isApiTest ? [] : [
         [
-            'name' => 'start_collecting_coverage',
-            'path' => '/api-tests/start-coverage',
-            'middleware' => middleware(static function () use (&$coverage) {
-                if ($coverage) { // @phpstan-ignore-line
-                    $coverage->start('API tests');
-                }
-                return new EmptyResponse();
-            }),
-            'allowed_methods' => ['GET'],
-        ],
-        [
             'name' => 'dump_coverage',
             'path' => '/api-tests/stop-coverage',
             'middleware' => middleware(static function () use (&$coverage) {
                 if ($coverage) { // @phpstan-ignore-line
                     $basePath = __DIR__ . '/../../build/coverage-api';
-                    $coverage->stop();
+
+                    // TODO Generate these coverages dynamically based on CLI options
                     (new PHP())->process($coverage, $basePath . '.cov');
                     (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
+                    (new Html())->process($coverage, $basePath . '/coverage-html');
                 }
 
                 return new EmptyResponse();
             }),
             'allowed_methods' => ['GET'],
+        ],
+    ],
+
+    'middleware_pipeline' => !$isApiTest ? [] : [
+        'capture_code_coverage' => [
+            'middleware' => middleware(static function (
+                ServerRequestInterface $req,
+                RequestHandlerInterface $handler,
+            ) use (&$coverage): ResponseInterface {
+                $coverage?->start($req->getHeaderLine('x-coverage-id'));
+
+                try {
+                    return $handler->handle($req);
+                } finally {
+                    $coverage?->stop();
+                }
+            }),
+            'priority' => 9999,
         ],
     ],
 

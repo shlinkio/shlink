@@ -13,7 +13,8 @@
 
     <coverage processUncoveredFiles="true">
         <include>
-            <directory suffix=".php">./module/*/src</directory>
+            <directory suffix=".php">./module/Core/src</directory>
+            <directory suffix=".php">./module/Rest/src</directory>
         </include>
     </coverage>
 </phpunit>
