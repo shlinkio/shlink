@@ -19,8 +19,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Determine version
-        run: echo ${{ github.event.inputs.version }}
 #      - name: Determine version
 #        id: determine_version
 #        run: echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
@@ -37,7 +35,7 @@ jobs:
 #      - run: mkdir ${{ steps.determine_version.outputs.version }}
       - run: mkdir ${{ github.event.inputs.version }}
 #      - run: mv docs/swagger/swagger-inline.json ${{ steps.determine_version.outputs.version }}/oas.json
-      - run: mv docs/swagger/swagger-inline.json ${{ github.event.inputs.version }}/oas.json
+      - run: mv docs/swagger/swagger-inlined.json ${{ github.event.inputs.version }}/oas.json
       - name: Publish spec
         uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
