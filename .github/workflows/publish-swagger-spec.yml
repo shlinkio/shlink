@@ -44,5 +44,6 @@ jobs:
           branch: main
 #          folder: ${{ steps.determine_version.outputs.version }}
           folder: ${{ github.event.inputs.version }}
-          target-folder: specs
+#          target-folder: specs/${{ github.event.inputs.version }}
+          target-folder: specs/${{ steps.determine_version.outputs.version }}
           clean: false
