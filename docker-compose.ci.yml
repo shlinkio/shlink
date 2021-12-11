@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-    shlink_db:
+    shlink_db_mysql:
         environment:
             MYSQL_DATABASE: shlink_test
 

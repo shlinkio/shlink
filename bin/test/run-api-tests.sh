@@ -2,6 +2,7 @@
 export APP_ENV=test
 export DB_DRIVER=postgres
 export TEST_ENV=api
+export GENERATE_COVERAGE=${GENERATE_COVERAGE:-"no"}
 
 rm -rf data/log/api-tests
 

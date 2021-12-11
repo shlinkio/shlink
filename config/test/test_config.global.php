@@ -30,7 +30,8 @@ use const ShlinkioTest\Shlink\SWOOLE_TESTING_HOST;
 use const ShlinkioTest\Shlink\SWOOLE_TESTING_PORT;
 
 $isApiTest = env('TEST_ENV') === 'api';
-if ($isApiTest) {
+$generateCoverage = env('GENERATE_COVERAGE') === 'yes';
+if ($isApiTest && $generateCoverage) {
     $filter = new Filter();
     $filter->includeDirectory(__DIR__ . '/../../module/Core/src');
     $filter->includeDirectory(__DIR__ . '/../../module/Rest/src');
@@ -40,7 +41,6 @@ if ($isApiTest) {
 $buildDbConnection = static function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
     $isCi = env('CI', false);
-    $getMysqlHost = static fn (string $driver) => sprintf('shlink_db%s', $driver === 'mysql' ? '' : '_maria');
     $getCiMysqlPort = static fn (string $driver) => $driver === 'mysql' ? '3307' : '3308';
 
     return match ($driver) {
@@ -66,7 +66,7 @@ $buildDbConnection = static function (): array {
         ],
         default => [ // mysql and maria
             'driver' => 'pdo_mysql',
-            'host' => $isCi ? '127.0.0.1' : $getMysqlHost($driver),
+            'host' => $isCi ? '127.0.0.1' : sprintf('shlink_db_%s', $driver),
             'port' => $isCi ? $getCiMysqlPort($driver) : '3306',
             'user' => 'root',
             'password' => 'root',
@@ -124,7 +124,6 @@ return [
                 if ($coverage) { // @phpstan-ignore-line
                     $basePath = __DIR__ . '/../../build/coverage-api';
 
-                    // TODO Generate these coverages dynamically based on CLI options
                     (new PHP())->process($coverage, $basePath . '.cov');
                     (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
                     (new Html())->process($coverage, $basePath . '/coverage-html');

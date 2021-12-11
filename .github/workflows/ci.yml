@@ -27,107 +27,17 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - run: composer ${{ matrix.command }}
 
-  unit-tests:
+  tests:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
         php-version: ['8.0', '8.1']
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Use PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          tools: composer
-          extensions: openswoole-4.8.1
-          coverage: pcov
-          ini-values: pcov.directory=module
-      - run: composer install --no-interaction --prefer-dist
-      - run: composer test:unit:ci
-      - uses: actions/upload-artifact@v2
-        if: ${{ matrix.php-version == '8.0' }}
-        with:
-          name: coverage-unit
-          path: |
-            build/coverage-unit
-            build/coverage-unit.cov
-
-  db-tests-sqlite:
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        php-version: ['8.0', '8.1']
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Use PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          tools: composer
-          extensions: openswoole-4.8.1
-          coverage: pcov
-          ini-values: pcov.directory=module
-      - run: composer install --no-interaction --prefer-dist
-      - run: composer test:db:sqlite:ci
-      - uses: actions/upload-artifact@v2
-        if: ${{ matrix.php-version == '8.0' }}
-        with:
-          name: coverage-db
-          path: |
-            build/coverage-db
-            build/coverage-db.cov
-
-  db-tests-mysql:
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        php-version: ['8.0', '8.1']
+        test-group: ['unit', 'api']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Start database server
-        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db
-      - name: Use PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          tools: composer
-          extensions: openswoole-4.8.1
-          coverage: none
-      - run: composer install --no-interaction --prefer-dist
-      - run: composer test:db:mysql
-
-  db-tests-maria:
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        php-version: ['8.0', '8.1']
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Start database server
-        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_maria
-      - name: Use PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          tools: composer
-          extensions: openswoole-4.8.1
-          coverage: none
-      - run: composer install --no-interaction --prefer-dist
-      - run: composer test:db:maria
-
-  db-tests-postgres:
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        php-version: ['8.0', '8.1']
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Start database server
+        if: ${{ matrix.test-group == 'api' }}
         run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
       - name: Use PHP
         uses: shivammathur/setup-php@v2
@@ -135,46 +45,35 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: composer
           extensions: openswoole-4.8.1
-          coverage: none
+          coverage: pcov
+          ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist
-      - run: composer test:db:postgres
+      - run: composer test:${{ matrix.test-group }}:ci
+      - uses: actions/upload-artifact@v2
+        if: ${{ matrix.php-version == '8.0' }}
+        with:
+          name: coverage-${{ matrix.test-group }}
+          path: |
+            build/coverage-${{ matrix.test-group }}
+            build/coverage-${{ matrix.test-group }}.cov
 
-  db-tests-ms:
+  db-tests:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
         php-version: ['8.0', '8.1']
+        platform: ['sqlite:ci', 'mysql', 'maria', 'postgres', 'ms']
     env:
       LC_ALL: C
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install MSSQL ODBC
+        if: ${{ matrix.platform == 'ms' }}
         run: sudo ./data/infra/ci/install-ms-odbc.sh
       - name: Start database server
-        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_ms
-      - name: Use PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          tools: composer
-          extensions: openswoole-4.8.1, pdo_sqlsrv-5.10.0beta2
-          coverage: none
-      - run: composer install --no-interaction --prefer-dist
-      - name: Create test database
-        run: docker-compose exec -T shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
-      - run: composer test:db:ms
-
-  api-tests:
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        php-version: ['8.0', '8.1']
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Start database server
-        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
+        if: ${{ matrix.platform != 'sqlite:ci' }}
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_${{ matrix.platform }}
       - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -184,20 +83,24 @@ jobs:
           coverage: pcov
           ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist
-      - run: bin/test/run-api-tests.sh
-      - uses: actions/upload-artifact@v2
-        if: ${{ matrix.php-version == '8.0' }}
+      - name: Create test database
+        if: ${{ matrix.platform == 'ms' }}
+        run: docker-compose exec -T shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
+      - name: Run tests
+        run: composer test:db:${{ matrix.platform }}
+      - name: Upload code coverage
+        uses: actions/upload-artifact@v2
+        if: ${{ matrix.php-version == '8.0' && matrix.platform == 'sqlite:ci' }}
         with:
-          name: coverage-api
+          name: coverage-db
           path: |
-            build/coverage-api
-            build/coverage-api.cov
+            build/coverage-db
+            build/coverage-db.cov
 
   mutation-tests:
     needs:
-      - unit-tests
-      - db-tests-sqlite
-      - api-tests
+      - tests
+      - db-tests
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -227,9 +130,8 @@ jobs:
 
   upload-coverage:
     needs:
-      - unit-tests
-      - db-tests-sqlite
-      - api-tests
+      - tests
+      - db-tests
     runs-on: ubuntu-20.04
     strategy:
       matrix:
