@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+
+    'rabbit' => [
+        'host' => 'shlink_rabbitmq',
+        'user' => 'rabbit',
+        'password' => 'rabbit',
+    ],
+
+];
