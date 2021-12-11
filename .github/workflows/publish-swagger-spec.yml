@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Determine version - from input
         id: determine_version
-        run: echo "::set-output name=version::${{ github.event.inputs.project }}"
+        run: echo "::set-output name=version::${{ github.event.inputs.version }}"
         shell: bash
 #      - name: Determine version - from env
 #        id: determine_version
