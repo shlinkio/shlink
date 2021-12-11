@@ -126,7 +126,7 @@
         "test:ci": [
             "@test:unit:ci",
             "@test:db",
-            "@test:api"
+            "@test:api:ci"
         ],
         "test:unit": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
         "test:unit:ci": "@test:unit --coverage-xml=build/coverage-unit/coverage-xml --log-junit=build/coverage-unit/junit.xml",
@@ -139,13 +139,14 @@
         "test:db:postgres": "DB_DRIVER=postgres composer test:db:sqlite",
         "test:db:ms": "DB_DRIVER=mssql composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
+        "test:api:ci": "GENERATE_COVERAGE=yes composer test:api",
         "infect:ci:base": "infection --threads=4 --log-verbosity=default --only-covered --only-covering-test-cases --skip-initial-tests",
         "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=83",
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json",
         "infect:ci:api": "@infect:ci:base --coverage=build/coverage-api --min-msi=80 --configuration=infection-api.json",
         "infect:ci": "@parallel infect:ci:unit infect:ci:db infect:ci:api",
         "infect:test": [
-            "@parallel test:unit:ci test:db:sqlite:ci test:api",
+            "@parallel test:unit:ci test:db:sqlite:ci test:api:ci",
             "@infect:ci"
         ],
         "infect:test:unit": [
@@ -153,7 +154,7 @@
             "@infect:ci:unit"
         ],
         "infect:test:api": [
-            "@test:api",
+            "@test:api:ci",
             "@infect:ci:api"
         ],
         "swagger:validate": "php-openapi validate docs/swagger/swagger.json",
@@ -170,6 +171,7 @@
         "test:ci": "<fg=blue;options=bold>Runs all test suites, generating all needed reports and logs for CI envs</>",
         "test:unit": "<fg=blue;options=bold>Runs unit test suites</>",
         "test:unit:ci": "<fg=blue;options=bold>Runs unit test suites, generating all needed reports and logs for CI envs</>",
+        "test:unit:pretty": "<fg=blue;options=bold>Runs unit test suites and generates an HTML code coverage report</>",
         "test:db": "<fg=blue;options=bold>Runs database test suites on a SQLite, MySQL, MariaDB, PostgreSQL and MsSQL</>",
         "test:db:sqlite": "<fg=blue;options=bold>Runs database test suites on a SQLite database</>",
         "test:db:sqlite:ci": "<fg=blue;options=bold>Runs database test suites on a SQLite database, generating all needed reports and logs for CI envs</>",
@@ -178,7 +180,7 @@
         "test:db:postgres": "<fg=blue;options=bold>Runs database test suites on a PostgreSQL database</>",
         "test:db:ms": "<fg=blue;options=bold>Runs database test suites on a Miscrosoft SQL Server database</>",
         "test:api": "<fg=blue;options=bold>Runs API test suites</>",
-        "test:unit:pretty": "<fg=blue;options=bold>Runs unit test suites and generates an HTML code coverage report</>",
+        "test:api:ci": "<fg=blue;options=bold>Runs API test suites, and generates code coverage reports</>",
         "infect:ci": "<fg=blue;options=bold>Checks unit and db tests quality applying mutation testing with existing reports and logs</>",
         "infect:ci:unit": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing with existing reports and logs</>",
         "infect:ci:db": "<fg=blue;options=bold>Checks db tests quality applying mutation testing with existing reports and logs</>",

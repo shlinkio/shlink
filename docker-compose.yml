@@ -22,7 +22,7 @@ services:
             - ./:/home/shlink/www
             - ./data/infra/php.ini:/usr/local/etc/php/php.ini
         links:
-            - shlink_db
+            - shlink_db_mysql
             - shlink_db_postgres
             - shlink_db_maria
             - shlink_db_ms
@@ -57,7 +57,7 @@ services:
             - ./:/home/shlink
             - ./data/infra/php.ini:/usr/local/etc/php/php.ini
         links:
-            - shlink_db
+            - shlink_db_mysql
             - shlink_db_postgres
             - shlink_db_maria
             - shlink_db_ms
@@ -69,8 +69,8 @@ services:
         extra_hosts:
             - 'host.docker.internal:host-gateway'
 
-    shlink_db:
-        container_name: shlink_db
+    shlink_db_mysql:
+        container_name: shlink_db_mysql
         image: mysql:5.7
         ports:
             - "3307:3306"

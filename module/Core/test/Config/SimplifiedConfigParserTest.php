@@ -29,7 +29,7 @@ class SimplifiedConfigParserTest extends TestCase
             'entity_manager' => [
                 'connection' => [
                     'driver' => 'mysql',
-                    'host' => 'shlink_db',
+                    'host' => 'shlink_db_mysql',
                     'port' => '3306',
                 ],
             ],
@@ -78,7 +78,7 @@ class SimplifiedConfigParserTest extends TestCase
             'entity_manager' => [
                 'connection' => [
                     'driver' => 'mysql',
-                    'host' => 'shlink_db',
+                    'host' => 'shlink_db_mysql',
                     'dbname' => 'shlink',
                     'user' => 'foo',
                     'password' => 'bar',
