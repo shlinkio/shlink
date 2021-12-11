@@ -38,9 +38,8 @@ class NotifyVisitToRabbit
         }
 
         $visitId = $shortUrlLocated->visitId();
-
-        /** @var Visit|null $visit */
         $visit = $this->em->find(Visit::class, $visitId);
+
         if ($visit === null) {
             $this->logger->warning('Tried to notify RabbitMQ for visit with id "{visitId}", but it does not exist.', [
                 'visitId' => $visitId,
