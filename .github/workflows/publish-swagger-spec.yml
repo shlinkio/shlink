@@ -39,6 +39,7 @@ jobs:
       - name: Publish spec
         uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
+          token: ${{ secrets.OAS_PUBLISH_TOKEN }}
           repository-name: 'shlinkio/shlink-open-api-specs'
           branch: main
 #          folder: ${{ steps.determine_version.outputs.version }}
