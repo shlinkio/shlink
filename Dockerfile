@@ -11,8 +11,8 @@ WORKDIR /etc/shlink
 
 # Install required PHP extensions
 RUN \
-    # Install mysql and calendar
-    docker-php-ext-install -j"$(nproc)" pdo_mysql calendar && \
+    # Install extensions with no extra dependencies
+    docker-php-ext-install -j"$(nproc)" pdo_mysql calendar sockets bcmath && \
     # Install sqlite
     apk add --no-cache sqlite-libs sqlite-dev && \
     docker-php-ext-install -j"$(nproc)" pdo_sqlite && \
