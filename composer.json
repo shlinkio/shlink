@@ -48,7 +48,7 @@
         "pugx/shortid-php": "^1.0",
         "ramsey/uuid": "^4.2",
         "rlanvin/php-ip": "dev-master#6b3a785 as 3.0",
-        "shlinkio/shlink-common": "dev-main#c2e3442 as 4.2",
+        "shlinkio/shlink-common": "dev-main#e7fdff3 as 4.2",
         "shlinkio/shlink-config": "^1.4",
         "shlinkio/shlink-event-dispatcher": "dev-main#3925299 as 2.3",
         "shlinkio/shlink-importer": "dev-main#d099072 as 2.5",

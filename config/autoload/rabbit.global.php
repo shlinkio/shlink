@@ -11,13 +11,12 @@ use function Shlinkio\Shlink\Common\env;
 return [
 
     'rabbit' => [
+        'enabled' => (bool) env('RABBITMQ_ENABLED', false),
         'host' => env('RABBITMQ_HOST'),
         'port' => env('RABBITMQ_PORT', '5672'),
         'user' => env('RABBITMQ_USER'),
         'password' => env('RABBITMQ_PASSWORD'),
         'vhost' => env('RABBITMQ_VHOST', '/'),
-        'exchange' => env('RABBITMQ_EXCHANGE', 'shlink-exchange'),
-        'queue' => env('RABBITMQ_QUEUE', 'shlink-queue'),
     ],
 
     'dependencies' => [

@@ -5,6 +5,7 @@ declare(strict_types=1);
 return [
 
     'rabbit' => [
+        'enabled' => true,
         'host' => 'shlink_rabbitmq',
         'user' => 'rabbit',
         'password' => 'rabbit',
