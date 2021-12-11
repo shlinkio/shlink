@@ -1,0 +1,50 @@
+name: Publish swagger spec
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: The version to generate
+        required: true
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: ['8.0']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Determine version - from input
+        if: ${{ github.event.inputs.project != '' }}
+        id: determine_version
+        run: echo "::set-output name=version::$(echo ${{ github.event.inputs.project }})"
+        shell: bash
+      - name: Determine version - from env
+        if: ${{ github.event.inputs.project == '' }}
+        id: determine_version
+        run: echo "::set-output name=version::$(echo ${GITHUB_REF#refs/tags/})"
+        shell: bash
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: openswoole-4.8.1
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer swagger:inline
+      - run: mkdir ${{ steps.determine_version.outputs.version }}
+      - run: mv docs/swagger/swagger-inline.json ${{ steps.determine_version.outputs.version }}/oas.json
+      - name: Publish spec
+        uses: JamesIves/github-pages-deploy-action@4.1.7
+        with:
+          repository-name: 'shlinkio/shlink-open-api-specs'
+          branch: main
+          folder: ${{ steps.determine_version.outputs.version }}
+          target-folder: specs
+          clean: false
