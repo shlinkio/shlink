@@ -42,6 +42,7 @@
         "nikolaposa/monolog-factory": "^3.1",
         "ocramius/proxy-manager": "^2.11",
         "pagerfanta/core": "^3.5",
+        "php-amqplib/php-amqplib": "^2.0",
         "php-middleware/request-id": "^4.1",
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^1.0",
