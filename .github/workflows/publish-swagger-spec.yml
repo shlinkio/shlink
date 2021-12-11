@@ -6,9 +6,9 @@ on:
       version:
         description: The version to generate
         required: true
-  push:
-    tags:
-      - 'v*'
+#  push:
+#    tags:
+#      - 'v*'
 
 jobs:
   build:
@@ -20,15 +20,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Determine version - from input
-        if: ${{ github.event.inputs.project != '' }}
         id: determine_version
-        run: echo "::set-output name=version::$(echo ${{ github.event.inputs.project }})"
+        run: echo "::set-output name=version::${{ github.event.inputs.project }}"
         shell: bash
-      - name: Determine version - from env
-        if: ${{ github.event.inputs.project == '' }}
-        id: determine_version
-        run: echo "::set-output name=version::$(echo ${GITHUB_REF#refs/tags/})"
-        shell: bash
+#      - name: Determine version - from env
+#        id: determine_version
+#        run: echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
+#        shell: bash
       - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:
