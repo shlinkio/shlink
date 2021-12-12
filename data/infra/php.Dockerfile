@@ -34,6 +34,9 @@ RUN docker-php-ext-install pdo_pgsql
 RUN apk add --no-cache gmp-dev
 RUN docker-php-ext-install gmp
 
+RUN docker-php-ext-install sockets
+RUN docker-php-ext-install bcmath
+
 # Install APCu extension
 ADD https://pecl.php.net/get/apcu-$APCU_VERSION.tgz /tmp/apcu.tar.gz
 RUN mkdir -p /usr/src/php/ext/apcu \

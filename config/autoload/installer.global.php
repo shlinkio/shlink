@@ -57,6 +57,12 @@ return [
             Option\QrCode\DefaultFormatConfigOption::class,
             Option\QrCode\DefaultErrorCorrectionConfigOption::class,
             Option\QrCode\DefaultRoundBlockSizeConfigOption::class,
+            Option\RabbitMq\RabbitMqEnabledConfigOption::class,
+            Option\RabbitMq\RabbitMqHostConfigOption::class,
+            Option\RabbitMq\RabbitMqPortConfigOption::class,
+            Option\RabbitMq\RabbitMqUserConfigOption::class,
+            Option\RabbitMq\RabbitMqPasswordConfigOption::class,
+            Option\RabbitMq\RabbitMqVhostConfigOption::class,
         ],
 
         'installation_commands' => [
