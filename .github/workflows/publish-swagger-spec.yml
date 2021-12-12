@@ -28,7 +28,7 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - run: composer swagger:inline
       - run: mkdir ${{ steps.determine_version.outputs.version }}
-      - run: mv docs/swagger/swagger-inline.json ${{ steps.determine_version.outputs.version }}/oas.json
+      - run: mv docs/swagger/swagger-inlined.json ${{ steps.determine_version.outputs.version }}/oas.json
       - name: Publish spec
         uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
