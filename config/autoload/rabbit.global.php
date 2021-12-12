@@ -10,10 +10,10 @@ use function Shlinkio\Shlink\Common\env;
 
 return [
 
-    'rabbit' => [
+    'rabbitmq' => [
         'enabled' => (bool) env('RABBITMQ_ENABLED', false),
         'host' => env('RABBITMQ_HOST'),
-        'port' => env('RABBITMQ_PORT', '5672'),
+        'port' => (int) env('RABBITMQ_PORT', '5672'),
         'user' => env('RABBITMQ_USER'),
         'password' => env('RABBITMQ_PASSWORD'),
         'vhost' => env('RABBITMQ_VHOST', '/'),
@@ -37,11 +37,11 @@ return [
 
     ConfigAbstractFactory::class => [
         AMQPStreamConnection::class => [
-            'config.rabbit.host',
-            'config.rabbit.port',
-            'config.rabbit.user',
-            'config.rabbit.password',
-            'config.rabbit.vhost',
+            'config.rabbitmq.host',
+            'config.rabbitmq.port',
+            'config.rabbitmq.user',
+            'config.rabbitmq.password',
+            'config.rabbitmq.vhost',
         ],
     ],
 

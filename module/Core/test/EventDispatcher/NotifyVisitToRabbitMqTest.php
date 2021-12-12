@@ -18,7 +18,7 @@ use RuntimeException;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
-use Shlinkio\Shlink\Core\EventDispatcher\NotifyVisitToRabbit;
+use Shlinkio\Shlink\Core\EventDispatcher\NotifyVisitToRabbitMq;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
@@ -27,11 +27,11 @@ use Throwable;
 use function count;
 use function Functional\contains;
 
-class NotifyVisitToRabbitTest extends TestCase
+class NotifyVisitToRabbitMqTest extends TestCase
 {
     use ProphecyTrait;
 
-    private NotifyVisitToRabbit $listener;
+    private NotifyVisitToRabbitMq $listener;
     private ObjectProphecy $connection;
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
@@ -49,7 +49,7 @@ class NotifyVisitToRabbitTest extends TestCase
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
 
-        $this->listener = new NotifyVisitToRabbit(
+        $this->listener = new NotifyVisitToRabbitMq(
             $this->connection->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),
@@ -61,7 +61,7 @@ class NotifyVisitToRabbitTest extends TestCase
     /** @test */
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
-        $listener = new NotifyVisitToRabbit(
+        $listener = new NotifyVisitToRabbitMq(
             $this->connection->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),

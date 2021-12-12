@@ -17,7 +17,7 @@ use Throwable;
 use function Shlinkio\Shlink\Common\json_encode;
 use function sprintf;
 
-class NotifyVisitToRabbit
+class NotifyVisitToRabbitMq
 {
     private const NEW_VISIT_QUEUE = 'https://shlink.io/new-visit';
     private const NEW_ORPHAN_VISIT_QUEUE = 'https://shlink.io/new-orphan-visit';
