@@ -1,9 +1,9 @@
-FROM php:8.0.9-alpine3.14 as base
+FROM php:8.1.0-alpine3.15 as base
 
 ARG SHLINK_VERSION=latest
 ENV SHLINK_VERSION ${SHLINK_VERSION}
-ENV SWOOLE_VERSION 4.7.1
-ENV PDO_SQLSRV_VERSION 5.9.0
+ENV OPENSWOOLE_VERSION 4.8.1
+ENV PDO_SQLSRV_VERSION 5.10.0beta2
 ENV MS_ODBC_SQL_VERSION 17.5.2.2
 ENV LC_ALL "C"
 
@@ -11,8 +11,8 @@ WORKDIR /etc/shlink
 
 # Install required PHP extensions
 RUN \
-    # Install mysql and calendar
-    docker-php-ext-install -j"$(nproc)" pdo_mysql calendar && \
+    # Install extensions with no extra dependencies
+    docker-php-ext-install -j"$(nproc)" pdo_mysql calendar sockets bcmath && \
     # Install sqlite
     apk add --no-cache sqlite-libs sqlite-dev && \
     docker-php-ext-install -j"$(nproc)" pdo_sqlite && \
@@ -40,10 +40,10 @@ RUN if [ $(uname -m) == "x86_64" ]; then \
       rm msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk ; \
     fi
 
-# Install swoole
+# Install openswoole
 RUN apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} && \
-    pecl install swoole-${SWOOLE_VERSION} && \
-    docker-php-ext-enable swoole && \
+    pecl install openswoole-${OPENSWOOLE_VERSION} && \
+    docker-php-ext-enable openswoole && \
     apk del .phpize-deps
 
 
@@ -65,7 +65,7 @@ LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 COPY --from=builder /etc/shlink .
 RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink
 
-# Expose default swoole port
+# Expose default openswoole port
 EXPOSE 8080
 
 # Copy config specific for the image

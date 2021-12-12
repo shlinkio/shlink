@@ -9,7 +9,7 @@ return [
             'user' => 'root',
             'password' => 'root',
             'driver' => 'pdo_mysql',
-            'host' => 'shlink_db',
+            'host' => 'shlink_db_mysql',
             'dbname' => 'shlink',
             'charset' => 'utf8',
         ],

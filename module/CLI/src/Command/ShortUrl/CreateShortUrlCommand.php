@@ -26,14 +26,17 @@ use function method_exists;
 use function sprintf;
 use function str_contains;
 
-class GenerateShortUrlCommand extends BaseCommand
+class CreateShortUrlCommand extends BaseCommand
 {
-    public const NAME = 'short-url:generate';
+    public const NAME = 'short-url:create';
+
+    private ?SymfonyStyle $io;
 
     public function __construct(
         private UrlShortenerInterface $urlShortener,
         private ShortUrlStringifierInterface $stringifier,
         private int $defaultShortCodeLength,
+        private string $defaultDomain,
     ) {
         parent::__construct();
     }
@@ -42,6 +45,7 @@ class GenerateShortUrlCommand extends BaseCommand
     {
         $this
             ->setName(self::NAME)
+            ->setAliases(['short-url:generate']) // Deprecated
             ->setDescription('Generates a short URL for provided long URL and returns it')
             ->addArgument('longUrl', InputArgument::REQUIRED, 'The long URL to parse')
             ->addOption(
@@ -122,21 +126,33 @@ class GenerateShortUrlCommand extends BaseCommand
 
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
-        $io = new SymfonyStyle($input, $output);
+        $this->verifyLongUrlArgument($input, $output);
+        $this->verifyDomainArgument($input);
+    }
+
+    private function verifyLongUrlArgument(InputInterface $input, OutputInterface $output): void
+    {
         $longUrl = $input->getArgument('longUrl');
         if (! empty($longUrl)) {
             return;
         }
 
+        $io = $this->getIO($input, $output);
         $longUrl = $io->ask('Which URL do you want to shorten?');
         if (! empty($longUrl)) {
             $input->setArgument('longUrl', $longUrl);
         }
     }
 
+    private function verifyDomainArgument(InputInterface $input): void
+    {
+        $domain = $input->getOption('domain');
+        $input->setOption('domain', $domain === $this->defaultDomain ? null : $domain);
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $io = new SymfonyStyle($input, $output);
+        $io = $this->getIO($input, $output);
         $longUrl = $input->getArgument('longUrl');
         if (empty($longUrl)) {
             $io->error('A URL was not provided!');
@@ -195,5 +211,10 @@ class GenerateShortUrlCommand extends BaseCommand
         }
 
         return null;
+    }
+
+    private function getIO(InputInterface $input, OutputInterface $output): SymfonyStyle
+    {
+        return $this->io ?? ($this->io = new SymfonyStyle($input, $output));
     }
 }

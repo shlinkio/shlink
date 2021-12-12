@@ -4,8 +4,8 @@
         "tags": [
             "Domains"
         ],
-        "summary": "List existing domains",
-        "description": "Returns the list of all domains ever used, with a flag that tells if they are the default domain",
+        "summary": "List configured domains",
+        "description": "Returns the list of all domains that have been either used for some short URL, or have explicitly configured redirects.<br/>It also includes the domain redirects, plus the default redirects that will be used for any non-explicitly-configured one.",
         "security": [
             {
                 "ApiKey": []
@@ -46,50 +46,56 @@
                                                     }
                                                 }
                                             }
+                                        },
+                                        "defaultRedirects": {
+                                            "$ref": "../definitions/NotFoundRedirects.json"
                                         }
                                     }
                                 }
                             }
-                        }
-                    }
-                },
-                "examples": {
-                    "application/json": {
-                        "domains": {
-                            "data": [
-                                {
-                                    "domain": "example.com",
-                                    "isDefault": true,
-                                    "redirects": {
-                                        "baseUrlRedirect": "https://example.com/my-landing-page",
-                                        "regular404Redirect": null,
-                                        "invalidShortUrlRedirect": "https://example.com/invalid-url"
+                        },
+                        "example": {
+                            "domains": {
+                                "data": [
+                                    {
+                                        "domain": "example.com",
+                                        "isDefault": true,
+                                        "redirects": {
+                                            "baseUrlRedirect": "https://example.com/my-landing-page",
+                                            "regular404Redirect": null,
+                                            "invalidShortUrlRedirect": "https://example.com/invalid-url"
+                                        }
+                                    },
+                                    {
+                                        "domain": "aaa.com",
+                                        "isDefault": false,
+                                        "redirects":  {
+                                            "baseUrlRedirect": null,
+                                            "regular404Redirect": null,
+                                            "invalidShortUrlRedirect": null
+                                        }
+                                    },
+                                    {
+                                        "domain": "bbb.com",
+                                        "isDefault": false,
+                                        "redirects":  {
+                                            "baseUrlRedirect": null,
+                                            "regular404Redirect": null,
+                                            "invalidShortUrlRedirect": "https://example.com/invalid-url"
+                                        }
                                     }
-                                },
-                                {
-                                    "domain": "aaa.com",
-                                    "isDefault": false,
-                                    "redirects":  {
-                                        "baseUrlRedirect": null,
-                                        "regular404Redirect": null,
-                                        "invalidShortUrlRedirect": null
-                                    }
-                                },
-                                {
-                                    "domain": "bbb.com",
-                                    "isDefault": false,
-                                    "redirects":  {
-                                        "baseUrlRedirect": null,
-                                        "regular404Redirect": null,
-                                        "invalidShortUrlRedirect": "https://example.com/invalid-url"
-                                    }
+                                ],
+                                "defaultRedirects": {
+                                    "baseUrlRedirect": "https://somewhere.com",
+                                    "regular404Redirect": null,
+                                    "invalidShortUrlRedirect": null
                                 }
-                            ]
+                            }
                         }
                     }
                 }
             },
-            "500": {
+            "default": {
                 "description": "Unexpected error.",
                 "content": {
                     "application/problem+json": {

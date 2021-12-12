@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use GuzzleHttp\RequestOptions;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class OrphanVisitsTest extends ApiTestCase
@@ -51,7 +52,7 @@ class OrphanVisitsTest extends ApiTestCase
         $payload = $this->getJsonResponsePayload($resp);
         $visits = $payload['visits']['data'] ?? [];
 
-        self::assertEquals($totalItems, $payload['visits']['pagination']['totalItems'] ?? -1);
+        self::assertEquals($totalItems, $payload['visits']['pagination']['totalItems'] ?? Paginator::ALL_ITEMS);
         self::assertCount($expectedAmount, $visits);
         self::assertEquals($expectedVisits, $visits);
     }

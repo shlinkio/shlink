@@ -21,7 +21,7 @@
                 "name": "size",
                 "in": "path",
                 "description": "The size of the image to be returned.",
-                "required": false,
+                "required": true,
                 "schema": {
                     "type": "integer",
                     "minimum": 50,

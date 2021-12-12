@@ -2,6 +2,7 @@
 
 [![Build Status](https://img.shields.io/github/workflow/status/shlinkio/shlink/Continuous%20integration/develop?logo=github&style=flat-square)](https://github.com/shlinkio/shlink/actions?query=workflow%3A%22Continuous+integration%22)
 [![Code Coverage](https://img.shields.io/codecov/c/gh/shlinkio/shlink/develop?style=flat-square)](https://app.codecov.io/gh/shlinkio/shlink)
+[![Infection MSI](https://img.shields.io/endpoint?style=flat-square&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fshlinkio%2Fshlink%2Fdevelop)](https://dashboard.stryker-mutator.io/reports/github.com/shlinkio/shlink/develop)
 [![Latest Stable Version](https://img.shields.io/github/release/shlinkio/shlink.svg?style=flat-square)](https://packagist.org/packages/shlinkio/shlink)
 [![Docker pulls](https://img.shields.io/docker/pulls/shlinkio/shlink.svg?logo=docker&style=flat-square)](https://hub.docker.com/r/shlinkio/shlink/)
 [![License](https://img.shields.io/github/license/shlinkio/shlink.svg?style=flat-square)](https://github.com/shlinkio/shlink/blob/main/LICENSE)
@@ -33,10 +34,11 @@ The idea is that you can just generate a container using the image and provide t
 
 First, make sure the host where you are going to run shlink fulfills these requirements:
 
-* PHP 8.0
+* PHP 8.0 or 8.1
 * The next PHP extensions: json, curl, pdo, intl, gd and gmp.
-    * apcu extension is recommended if you don't plan to use swoole.
+    * apcu extension is recommended if you don't plan to use swoole or openswoole.
     * xml extension is required if you want to generate QR codes in svg format.
+    * sockets and bcmath extensions are required if you want to integrate with a RabbitMQ instance.
 * MySQL, MariaDB, PostgreSQL, Microsoft SQL Server or SQLite.
 * The web server of your choice with PHP integration (Apache or Nginx recommended).
 
@@ -48,7 +50,7 @@ In order to run Shlink, you will need a built version of the project. There are 
 
     The easiest way to install shlink is by using one of the pre-bundled distributable packages.
 
-    Go to the [latest version](https://github.com/shlinkio/shlink/releases/latest) and download the `shlink*_dist.zip` file that suits your needs. You will find one for every supported PHP version and with/without swoole integration.
+    Go to the [latest version](https://github.com/shlinkio/shlink/releases/latest) and download the `shlink*_dist.zip` file that suits your needs. You will find one for every supported PHP version and with/without swoole/openswoole integration.
 
     Finally, decompress the file in the location of your choice.
 

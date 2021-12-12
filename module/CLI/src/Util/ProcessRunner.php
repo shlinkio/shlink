@@ -34,7 +34,7 @@ class ProcessRunner implements ProcessRunnerInterface
         }
 
         /** @var DebugFormatterHelper $formatter */
-        $formatter = $this->helper->getHelperSet()->get('debug_formatter');
+        $formatter = $this->helper->getHelperSet()?->get('debug_formatter') ?? new DebugFormatterHelper();
         /** @var Process $process */
         $process = ($this->createProcess)($cmd);
 

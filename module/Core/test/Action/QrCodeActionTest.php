@@ -25,10 +25,15 @@ use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 
 use function getimagesizefromstring;
+use function imagecolorat;
+use function imagecreatefromstring;
 
 class QrCodeActionTest extends TestCase
 {
     use ProphecyTrait;
+
+    private const WHITE = 0xFFFFFF;
+    private const BLACK = 0x0;
 
     private QrCodeAction $action;
     private ObjectProphecy $urlResolver;
@@ -135,7 +140,7 @@ class QrCodeActionTest extends TestCase
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 
         $resp = $this->action->process($req->withAttribute('shortCode', $code), $delegate->reveal());
-        [$size] = getimagesizefromstring((string) $resp->getBody());
+        [$size] = getimagesizefromstring($resp->getBody()->__toString());
 
         self::assertEquals($expectedSize, $size);
     }
@@ -198,5 +203,42 @@ class QrCodeActionTest extends TestCase
             ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => 'foo', 'size' => '538']),
             538,
         ];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideRoundBlockSize
+     */
+    public function imageCanRemoveExtraMarginWhenBlockRoundIsDisabled(
+        array $defaults,
+        ?string $roundBlockSize,
+        int $expectedColor,
+    ): void {
+        $this->options->setFromArray($defaults);
+        $code = 'abc123';
+        $req = ServerRequestFactory::fromGlobals()
+            ->withQueryParams(['size' => 250, 'roundBlockSize' => $roundBlockSize])
+            ->withAttribute('shortCode', $code);
+
+        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($code, ''))->willReturn(
+            ShortUrl::withLongUrl('https://shlink.io'),
+        );
+        $delegate = $this->prophesize(RequestHandlerInterface::class);
+
+        $resp = $this->action->process($req, $delegate->reveal());
+        $image = imagecreatefromstring($resp->getBody()->__toString());
+        $color = imagecolorat($image, 1, 1);
+
+        self::assertEquals($color, $expectedColor);
+    }
+
+    public function provideRoundBlockSize(): iterable
+    {
+        yield 'no round block param' => [[], null, self::WHITE];
+        yield 'no round block param, but disabled by default' => [['round_block_size' => false], null, self::BLACK];
+        yield 'round block: "true"' => [[], 'true', self::WHITE];
+        yield 'round block: "true", but disabled by default' => [['round_block_size' => false], 'true', self::WHITE];
+        yield 'round block: "false"' => [[], 'false', self::BLACK];
+        yield 'round block: "false", but enabled by default' => [['round_block_size' => true], 'false', self::BLACK];
     }
 }

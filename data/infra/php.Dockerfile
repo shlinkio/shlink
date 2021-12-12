@@ -1,8 +1,8 @@
-FROM php:8.0.9-fpm-alpine3.14
+FROM php:8.1.0-fpm-alpine3.15
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
-ENV APCU_VERSION 5.1.20
-ENV PDO_SQLSRV_VERSION 5.9.0
+ENV APCU_VERSION 5.1.21
+ENV PDO_SQLSRV_VERSION 5.10.0beta2
 ENV MS_ODBC_SQL_VERSION 17.5.2.2
 
 RUN apk update
@@ -33,6 +33,9 @@ RUN docker-php-ext-install pdo_pgsql
 
 RUN apk add --no-cache gmp-dev
 RUN docker-php-ext-install gmp
+
+RUN docker-php-ext-install sockets
+RUN docker-php-ext-install bcmath
 
 # Install APCu extension
 ADD https://pecl.php.net/get/apcu-$APCU_VERSION.tgz /tmp/apcu.tar.gz

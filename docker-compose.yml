@@ -22,15 +22,18 @@ services:
             - ./:/home/shlink/www
             - ./data/infra/php.ini:/usr/local/etc/php/php.ini
         links:
-            - shlink_db
+            - shlink_db_mysql
             - shlink_db_postgres
             - shlink_db_maria
             - shlink_db_ms
             - shlink_redis
             - shlink_mercure
             - shlink_mercure_proxy
+            - shlink_rabbitmq
         environment:
             LC_ALL: C
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
 
     shlink_swoole_proxy:
         container_name: shlink_swoole_proxy
@@ -55,18 +58,21 @@ services:
             - ./:/home/shlink
             - ./data/infra/php.ini:/usr/local/etc/php/php.ini
         links:
-            - shlink_db
+            - shlink_db_mysql
             - shlink_db_postgres
             - shlink_db_maria
             - shlink_db_ms
             - shlink_redis
             - shlink_mercure
             - shlink_mercure_proxy
+            - shlink_rabbitmq
         environment:
             LC_ALL: C
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
 
-    shlink_db:
-        container_name: shlink_db
+    shlink_db_mysql:
+        container_name: shlink_db_mysql
         image: mysql:5.7
         ports:
             - "3307:3306"
@@ -131,10 +137,21 @@ services:
 
     shlink_mercure:
         container_name: shlink_mercure
-        image: dunglas/mercure:v0.10
+        image: dunglas/mercure:v0.13
         ports:
             - "3080:80"
         environment:
-            CORS_ALLOWED_ORIGINS: "*"
-            JWT_KEY: "mercure_jwt_key"
-            USE_FORWARDED_HEADERS: "1"
+            SERVER_NAME: ":80"
+            MERCURE_PUBLISHER_JWT_KEY: mercure_jwt_key
+            MERCURE_SUBSCRIBER_JWT_KEY: mercure_jwt_key
+            MERCURE_EXTRA_DIRECTIVES: "cors_origins https://app.shlink.io http://localhost:3000 http://127.0.0.1:3000"
+
+    shlink_rabbitmq:
+        container_name: shlink_rabbitmq
+        image: rabbitmq:3.9-management-alpine
+        ports:
+            - "15672:15672"
+            - "5672:5672"
+        environment:
+            RABBITMQ_DEFAULT_USER: "rabbit"
+            RABBITMQ_DEFAULT_PASS: "rabbit"

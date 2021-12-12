@@ -13,11 +13,17 @@ use Mezzio\Swoole;
 use function class_exists;
 use function Shlinkio\Shlink\Common\env;
 
+use const PHP_SAPI;
+
+$isCli = PHP_SAPI === 'cli';
+
 return (new ConfigAggregator\ConfigAggregator([
     Mezzio\ConfigProvider::class,
     Mezzio\Router\ConfigProvider::class,
     Mezzio\Router\FastRouteRouter\ConfigProvider::class,
-    class_exists(Swoole\ConfigProvider::class) ? Swoole\ConfigProvider::class : new ConfigAggregator\ArrayProvider([]),
+    $isCli && class_exists(Swoole\ConfigProvider::class)
+        ? Swoole\ConfigProvider::class
+        : new ConfigAggregator\ArrayProvider([]),
     ProblemDetails\ConfigProvider::class,
     Diactoros\ConfigProvider::class,
     Common\ConfigProvider::class,

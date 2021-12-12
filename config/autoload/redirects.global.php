@@ -10,9 +10,10 @@ use const Shlinkio\Shlink\DEFAULT_REDIRECT_STATUS_CODE;
 return [
 
     'not_found_redirects' => [
-        'invalid_short_url' => env('INVALID_SHORT_URL_REDIRECT_TO'),
-        'regular_404' => env('REGULAR_404_REDIRECT_TO'),
-        'base_url' => env('BASE_URL_REDIRECT_TO'),
+        // Deprecated env vars
+        'invalid_short_url' => env('DEFAULT_INVALID_SHORT_URL_REDIRECT', env('INVALID_SHORT_URL_REDIRECT_TO')),
+        'regular_404' => env('DEFAULT_REGULAR_404_REDIRECT', env('REGULAR_404_REDIRECT_TO')),
+        'base_url' => env('DEFAULT_BASE_URL_REDIRECT', env('BASE_URL_REDIRECT_TO')),
     ],
 
     'url_shortener' => [

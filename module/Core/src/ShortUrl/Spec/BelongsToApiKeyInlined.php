@@ -17,6 +17,6 @@ class BelongsToApiKeyInlined implements Filter
     public function getFilter(QueryBuilder $qb, string $dqlAlias): string
     {
         // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
-        return (string) $qb->expr()->eq('s.authorApiKey', '\'' . $this->apiKey->getId() . '\'');
+        return $qb->expr()->eq('s.authorApiKey', '\'' . $this->apiKey->getId() . '\'')->__toString();
     }
 }

@@ -4,6 +4,52 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.10.0] - 2021-12-12
+### Added
+* [#1163](https://github.com/shlinkio/shlink/issues/1163) Allowed setting not-found redirects for default domain in the same way it's done for any other domain.
+
+    This implies a few non-breaking changes:
+
+    * The domains list no longer has the values of `INVALID_SHORT_URL_REDIRECT_TO`, `REGULAR_404_REDIRECT_TO` and `BASE_URL_REDIRECT_TO` on the default domain redirects.
+    * The `GET /domains` endpoint includes a new `defaultRedirects` property in the response, with the default redirects set via config or env vars.
+    * The `INVALID_SHORT_URL_REDIRECT_TO`, `REGULAR_404_REDIRECT_TO` and `BASE_URL_REDIRECT_TO` env vars are now deprecated, and should be replaced by `DEFAULT_INVALID_SHORT_URL_REDIRECT`, `DEFAULT_REGULAR_404_REDIRECT` and `DEFAULT_BASE_URL_REDIRECT` respectively. Deprecated ones will continue to work until v3.0.0, where they will be removed.
+
+* [#868](https://github.com/shlinkio/shlink/issues/868) Added support to publish real-time updates in a RabbitMQ server.
+
+    Shlink will create new exchanges and queues for every topic documented in the [Async API spec](https://api-spec.shlink.io/async-api/), meaning, you will have one queue for orphan visits, one for regular visits, and one queue for every short URL with its visits.
+
+    The RabbitMQ server config can be provided via installer config options, or via environment variables.
+
+* [#1204](https://github.com/shlinkio/shlink/issues/1204) Added support for `openswoole` and migrated official docker image to `openswoole`.
+* [#1242](https://github.com/shlinkio/shlink/issues/1242) Added support to import urls and visits from YOURLS.
+
+    In order to do it, you need to first install this [dedicated plugin](https://slnk.to/yourls-import) in YOURLS, and then run the `short-url:import yourls` command, as with any other source.
+
+* [#1235](https://github.com/shlinkio/shlink/issues/1235) Added support to disable rounding QR codes block sizing via config option, env var or query param.
+* [#1188](https://github.com/shlinkio/shlink/issues/1188) Added support for PHP 8.1.
+
+    The official docker image has also been updated to use PHP 8.1 by default.
+
+### Changed
+* [#844](https://github.com/shlinkio/shlink/issues/844) Added mutation checks to API tests.
+* [#1218](https://github.com/shlinkio/shlink/issues/1218) Updated to symfony/mercure 0.6.
+* [#1223](https://github.com/shlinkio/shlink/issues/1223) Updated to phpstan 1.0.
+* [#1258](https://github.com/shlinkio/shlink/issues/1258) Updated to Symfony 6 components, except symfony/console.
+* Added `domain` field to `DeleteShortUrlException` exception.
+
+### Deprecated
+* [#1260](https://github.com/shlinkio/shlink/issues/1260) Deprecated `USE_HTTPS` env var that was added in previous release, in favor of the new `IS_HTTPS_ENABLED`.
+
+    The old one proved to be confusing and misleading, making people think it was used to actually enable HTTPS transparently, instead of its actual purpose, which is just telling Shlink it is being served with HTTPS.
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1206](https://github.com/shlinkio/shlink/issues/1206) Fixed debugging of the docker image, so that it does not run the commands with `-q` when the `SHELL_VERBOSITY` env var has been provided.
+* [#1254](https://github.com/shlinkio/shlink/issues/1254) Fixed examples in swagger docs.
+
+
 ## [2.9.3] - 2021-11-15
 ### Added
 * *Nothing*

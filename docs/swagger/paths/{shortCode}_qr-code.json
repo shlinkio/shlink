@@ -60,6 +60,17 @@
                     "enum": ["L", "M", "Q", "H"],
                     "default": "L"
                 }
+            },
+            {
+                "name": "roundBlockSize",
+                "in": "query",
+                "description": "Allows to disable block size rounding, which might reduce the readability of the QR code, but ensures no extra margin is added.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "default": "false"
+                }
             }
         ],
         "responses": {

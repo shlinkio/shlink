@@ -1,0 +1,9 @@
+{
+    "value": {
+        "title": "Invalid data",
+        "type": "INVALID_ARGUMENT",
+        "detail": "Provided data is not valid",
+        "status": 400,
+        "invalidElements": ["maxVisits", "validSince"]
+    }
+}

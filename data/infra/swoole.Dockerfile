@@ -1,10 +1,10 @@
-FROM php:8.0.9-alpine3.14
+FROM php:8.1.0-alpine3.15
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
-ENV APCU_VERSION 5.1.20
+ENV APCU_VERSION 5.1.21
 ENV INOTIFY_VERSION 3.0.0
-ENV SWOOLE_VERSION 4.7.1
-ENV PDO_SQLSRV_VERSION 5.9.0
+ENV OPENSWOOLE_VERSION 4.8.1
+ENV PDO_SQLSRV_VERSION 5.10.0beta2
 ENV MS_ODBC_SQL_VERSION 17.5.2.2
 
 RUN apk update
@@ -36,6 +36,9 @@ RUN docker-php-ext-install pdo_pgsql
 RUN apk add --no-cache gmp-dev
 RUN docker-php-ext-install gmp
 
+RUN docker-php-ext-install sockets
+RUN docker-php-ext-install bcmath
+
 # Install APCu extension
 ADD https://pecl.php.net/get/apcu-$APCU_VERSION.tgz /tmp/apcu.tar.gz
 RUN mkdir -p /usr/src/php/ext/apcu \
@@ -54,12 +57,12 @@ RUN mkdir -p /usr/src/php/ext/inotify \
   && docker-php-ext-install inotify \
   && rm /tmp/inotify.tar.gz
 
-# Install swoole, pcov and mssql driver
+# Install openswoole, pcov and mssql driver
 RUN wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
     apk add --allow-untrusted msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
     apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
-    pecl install swoole-${SWOOLE_VERSION} pdo_sqlsrv-${PDO_SQLSRV_VERSION} pcov && \
-    docker-php-ext-enable swoole pdo_sqlsrv pcov && \
+    pecl install openswoole-${OPENSWOOLE_VERSION} pdo_sqlsrv-${PDO_SQLSRV_VERSION} pcov && \
+    docker-php-ext-enable openswoole pdo_sqlsrv pcov && \
     apk del .phpize-deps && \
     rm msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk
 
@@ -72,12 +75,12 @@ RUN chmod 777 /home
 VOLUME /home/shlink
 WORKDIR /home/shlink
 
-# Expose swoole port
+# Expose openswoole port
 EXPOSE 8080
 
 CMD \
     # Install dependencies if the vendor dir does not exist
     if [[ ! -d "./vendor" ]]; then /usr/local/bin/composer install ; fi && \
-    # When restarting the container, swoole might think it is already in execution
+    # When restarting the container, openswoole might think it is already in execution
     # This forces the app to be started every second until the exit code is 0
     until php ./vendor/bin/laminas mezzio:swoole:start; do sleep 1 ; done

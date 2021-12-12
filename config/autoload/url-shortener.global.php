@@ -8,13 +8,17 @@ use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
 return (static function (): array {
-    $shortCodesLength = (int) env('DEFAULT_SHORT_CODES_LENGTH', DEFAULT_SHORT_CODES_LENGTH);
-    $shortCodesLength = $shortCodesLength < MIN_SHORT_CODES_LENGTH ? MIN_SHORT_CODES_LENGTH : $shortCodesLength;
+    $shortCodesLength = max(
+        (int) env('DEFAULT_SHORT_CODES_LENGTH', DEFAULT_SHORT_CODES_LENGTH),
+        MIN_SHORT_CODES_LENGTH,
+    );
     $resolveSchema = static function (): string {
-        $useHttps = env('USE_HTTPS'); // Deprecated. For v3, set this to true by default, instead of null
-        if ($useHttps !== null) {
-            $boolUseHttps = (bool) $useHttps;
-            return $boolUseHttps ? 'https' : 'http';
+        // Deprecated. For v3, IS_HTTPS_ENABLED should be true by default, instead of null
+//        return ((bool) env('IS_HTTPS_ENABLED', true)) ? 'https' : 'http';
+        $isHttpsEnabled = env('IS_HTTPS_ENABLED', env('USE_HTTPS'));
+        if ($isHttpsEnabled !== null) {
+            $boolIsHttpsEnabled = (bool) $isHttpsEnabled;
+            return $boolIsHttpsEnabled ? 'https' : 'http';
         }
 
         return env('SHORT_DOMAIN_SCHEMA', 'http');

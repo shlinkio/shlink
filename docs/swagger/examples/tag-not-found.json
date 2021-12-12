@@ -1,0 +1,9 @@
+{
+    "value": {
+        "detail": "Tag with name \"foo\" could not be found",
+        "title": "Tag not found",
+        "type": "TAG_NOT_FOUND",
+        "status": 404,
+        "tag":  "foo"
+    }
+}

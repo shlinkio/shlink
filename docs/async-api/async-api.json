@@ -11,7 +11,7 @@
     },
     "defaultContentType": "application/json",
     "channels": {
-        "http://shlink.io/new-visit": {
+        "https://shlink.io/new-visit": {
             "subscribe": {
                 "summary": "Receive information about any new visit occurring on any short URL.",
                 "operationId": "newVisit",
@@ -31,7 +31,7 @@
                 }
             }
         },
-        "http://shlink.io/new-visit/{shortCode}": {
+        "https://shlink.io/new-visit/{shortCode}": {
             "parameters": {
                 "shortCode": {
                     "description": "The short code of the short URL",
@@ -59,7 +59,7 @@
                 }
             }
         },
-        "http://shlink.io/new-orphan-visit": {
+        "https://shlink.io/new-orphan-visit": {
             "subscribe": {
                 "summary": "Receive information about any new orphan visit.",
                 "operationId": "newOrphanVisit",
