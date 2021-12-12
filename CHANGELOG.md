@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [2.10.0] - 2021-12-12
 ### Added
 * [#1163](https://github.com/shlinkio/shlink/issues/1163) Allowed setting not-found redirects for default domain in the same way it's done for any other domain.
 
@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#844](https://github.com/shlinkio/shlink/issues/844) Added mutation checks to API tests.
 * [#1218](https://github.com/shlinkio/shlink/issues/1218) Updated to symfony/mercure 0.6.
 * [#1223](https://github.com/shlinkio/shlink/issues/1223) Updated to phpstan 1.0.
+* [#1258](https://github.com/shlinkio/shlink/issues/1258) Updated to Symfony 6 components, except symfony/console.
 * Added `domain` field to `DeleteShortUrlException` exception.
 
 ### Deprecated
