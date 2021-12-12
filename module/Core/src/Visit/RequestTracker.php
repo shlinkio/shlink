@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit;
 
 use Fig\Http\Message\RequestMethodInterface;
-use InvalidArgumentException;
+use IPLib\Address\IPv4;
+use IPLib\Factory;
+use IPLib\Range\RangeInterface;
 use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
-use PhpIP\IP;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -73,9 +74,8 @@ class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
             return false;
         }
 
-        try {
-            $ip = IP::create($remoteAddr);
-        } catch (InvalidArgumentException) {
+        $ip = IPv4::parseString($remoteAddr);
+        if ($ip === null) {
             return false;
         }
 
@@ -83,24 +83,23 @@ class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
         $disableTrackingFrom = $this->trackingOptions->disableTrackingFrom();
 
         return some($disableTrackingFrom, function (string $value) use ($ip, $remoteAddrParts): bool {
-            try {
-                return match (true) {
-                    str_contains($value, '*') => $ip->matches($this->parseValueWithWildcards($value, $remoteAddrParts)),
-                    str_contains($value, '/') => $ip->isIn($value),
-                    default => $ip->matches($value),
-                };
-            } catch (InvalidArgumentException) {
-                return false;
-            }
+            $range = match (true) {
+                str_contains($value, '*') => $this->parseValueWithWildcards($value, $remoteAddrParts),
+                default => Factory::parseRangeString($value),
+            };
+
+            return $range !== null && $ip->matches($range);
         });
     }
 
-    private function parseValueWithWildcards(string $value, array $remoteAddrParts): string
+    private function parseValueWithWildcards(string $value, array $remoteAddrParts): ?RangeInterface
     {
         // Replace wildcard parts with the corresponding ones from the remote address
-        return implode('.', map(
-            explode('.', $value),
-            fn (string $part, int $index) => $part === '*' ? $remoteAddrParts[$index] : $part,
-        ));
+        return Factory::parseRangeString(
+            implode('.', map(
+                explode('.', $value),
+                fn (string $part, int $index) => $part === '*' ? $remoteAddrParts[$index] : $part,
+            )),
+        );
     }
 }
