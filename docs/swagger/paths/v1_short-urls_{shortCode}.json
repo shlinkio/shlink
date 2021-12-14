@@ -320,7 +320,7 @@
                         },
                         "example": {
                             "title": "Cannot delete short URL",
-                            "type": "INVALID_SHORTCODE_DELETION",
+                            "type": "INVALID_SHORT_URL_DELETION",
                             "detail": "Impossible to delete short URL with short code \"abc123\", since it has more than \"15\" visits.",
                             "status": 422,
                             "shortCode": "abc123",

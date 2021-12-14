@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
-use Shlinkio\Shlink\CLI\Command\BaseCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,7 +19,7 @@ use function Functional\map;
 use function implode;
 use function sprintf;
 
-class ListKeysCommand extends BaseCommand
+class ListKeysCommand extends Command
 {
     private const ERROR_STRING_PATTERN = '<fg=red>%s</>';
     private const SUCCESS_STRING_PATTERN = '<info>%s</info>';
@@ -37,7 +37,7 @@ class ListKeysCommand extends BaseCommand
         $this
             ->setName(self::NAME)
             ->setDescription('Lists all the available API keys.')
-            ->addOptionWithDeprecatedFallback(
+            ->addOption(
                 'enabled-only',
                 'e',
                 InputOption::VALUE_NONE,
@@ -47,7 +47,7 @@ class ListKeysCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $enabledOnly = $this->getOptionWithDeprecatedFallback($input, 'enabled-only');
+        $enabledOnly = $input->getOption('enabled-only');
 
         $rows = map($this->apiKeyService->listKeys($enabledOnly), function (ApiKey $apiKey) use ($enabledOnly) {
             $expiration = $apiKey->getExpirationDate();

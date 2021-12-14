@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Tag;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM;
 use Happyr\DoctrineSpecification\Spec;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -15,14 +14,11 @@ use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
-use Shlinkio\Shlink\Core\Util\TagManagerTrait;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class TagService implements TagServiceInterface
 {
-    use TagManagerTrait;
-
     public function __construct(private ORM\EntityManagerInterface $em)
     {
     }
@@ -34,12 +30,10 @@ class TagService implements TagServiceInterface
     {
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
-        /** @var Tag[] $tags */
-        $tags = $repo->match(Spec::andX(
+        return $repo->match(Spec::andX(
             Spec::orderBy('name'),
             new WithApiKeySpecsEnsuringJoin($apiKey),
         ));
-        return $tags;
     }
 
     /**
@@ -65,21 +59,6 @@ class TagService implements TagServiceInterface
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
         $repo->deleteByName($tagNames);
-    }
-
-    /**
-     * Provided a list of tag names, creates all that do not exist yet
-     *
-     * @deprecated
-     * @param string[] $tagNames
-     * @return Collection|Tag[]
-     */
-    public function createTags(array $tagNames): Collection
-    {
-        $tags = $this->tagNamesToEntities($this->em, $tagNames);
-        $this->em->flush();
-
-        return $tags;
     }
 
     /**

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Tag;
 
-use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
@@ -30,13 +29,6 @@ interface TagServiceInterface
      * @throws ForbiddenTagOperationException
      */
     public function deleteTags(array $tagNames, ?ApiKey $apiKey = null): void;
-
-    /**
-     * @deprecated
-     * @param string[] $tagNames
-     * @return Collection|Tag[]
-     */
-    public function createTags(array $tagNames): Collection;
 
     /**
      * @throws TagNotFoundException

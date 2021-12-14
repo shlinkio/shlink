@@ -16,7 +16,6 @@ use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Writer\WriterInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Options\QrCodeOptions;
 
 use function Functional\contains;
@@ -43,7 +42,7 @@ final class QrCodeParams
         $query = $request->getQueryParams();
 
         return new self(
-            self::resolveSize($request, $query, $defaults),
+            self::resolveSize($query, $defaults),
             self::resolveMargin($query, $defaults),
             self::resolveWriter($query, $defaults),
             self::resolveErrorCorrection($query, $defaults),
@@ -51,10 +50,9 @@ final class QrCodeParams
         );
     }
 
-    private static function resolveSize(Request $request, array $query, QrCodeOptions $defaults): int
+    private static function resolveSize(array $query, QrCodeOptions $defaults): int
     {
-        // FIXME Size attribute is deprecated. After v3.0.0, always use the query param instead
-        $size = (int) $request->getAttribute('size', $query['size'] ?? $defaults->size());
+        $size = (int) ($query['size'] ?? $defaults->size());
         if ($size < self::MIN_SIZE) {
             return self::MIN_SIZE;
         }

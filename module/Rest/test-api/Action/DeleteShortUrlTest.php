@@ -48,7 +48,7 @@ class DeleteShortUrlTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_UNPROCESSABLE_ENTITY, $resp->getStatusCode());
         self::assertEquals(self::STATUS_UNPROCESSABLE_ENTITY, $payload['status']);
-        self::assertEquals('INVALID_SHORTCODE_DELETION', $payload['type']);
+        self::assertEquals('INVALID_SHORT_URL_DELETION', $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Cannot delete short URL', $payload['title']);
     }

@@ -53,7 +53,6 @@ return [
             Command\Api\ListKeysCommand::class => ConfigAbstractFactory::class,
 
             Command\Tag\ListTagsCommand::class => ConfigAbstractFactory::class,
-            Command\Tag\CreateTagCommand::class => ConfigAbstractFactory::class,
             Command\Tag\RenameTagCommand::class => ConfigAbstractFactory::class,
             Command\Tag\DeleteTagsCommand::class => ConfigAbstractFactory::class,
 
@@ -101,7 +100,6 @@ return [
         Command\Api\ListKeysCommand::class => [ApiKeyService::class],
 
         Command\Tag\ListTagsCommand::class => [TagService::class],
-        Command\Tag\CreateTagCommand::class => [TagService::class],
         Command\Tag\RenameTagCommand::class => [TagService::class],
         Command\Tag\DeleteTagsCommand::class => [TagService::class],
 

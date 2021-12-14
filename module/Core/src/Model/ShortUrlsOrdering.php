@@ -8,9 +8,6 @@ use Shlinkio\Shlink\Core\Exception\ValidationException;
 
 use function array_pad;
 use function explode;
-use function is_array;
-use function is_string;
-use function key;
 
 final class ShortUrlsOrdering
 {
@@ -41,22 +38,9 @@ final class ShortUrlsOrdering
             return;
         }
 
-        // FIXME Providing the ordering as array is considered deprecated. To be removed in v3.0.0
-        $isArray = is_array($orderBy);
-        if (! $isArray && ! is_string($orderBy)) {
-            throw ValidationException::fromArray([
-                'orderBy' => '"Order by" must be an array, string or null',
-            ]);
-        }
-
-        if (! $isArray) {
-            [$field, $dir] = array_pad(explode('-', $orderBy), 2, null);
-            $this->orderField = $field;
-            $this->orderDirection = $dir ?? self::DEFAULT_ORDER_DIRECTION;
-        } else {
-            $this->orderField = key($orderBy);
-            $this->orderDirection = $orderBy[$this->orderField];
-        }
+        [$field, $dir] = array_pad(explode('-', $orderBy), 2, null);
+        $this->orderField = $field;
+        $this->orderDirection = $dir ?? self::DEFAULT_ORDER_DIRECTION;
     }
 
     public function orderField(): ?string

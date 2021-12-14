@@ -14,7 +14,7 @@ class MissingAuthenticationExceptionTest extends TestCase
 {
     /**
      * @test
-     * @dataProvider provideExpectedTypes
+     * @dataProvider provideExpectedHeaders
      */
     public function exceptionIsProperlyCreatedFromExpectedHeaders(array $expectedHeaders): void
     {
@@ -28,13 +28,10 @@ class MissingAuthenticationExceptionTest extends TestCase
         $this->assertCommonExceptionShape($e);
         self::assertEquals($expectedMessage, $e->getMessage());
         self::assertEquals($expectedMessage, $e->getDetail());
-        self::assertEquals([
-            'expectedTypes' => $expectedHeaders,
-            'expectedHeaders' => $expectedHeaders,
-        ], $e->getAdditionalData());
+        self::assertEquals(['expectedHeaders' => $expectedHeaders], $e->getAdditionalData());
     }
 
-    public function provideExpectedTypes(): iterable
+    public function provideExpectedHeaders(): iterable
     {
         yield [['foo', 'bar']];
         yield [['something']];
