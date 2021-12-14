@@ -128,7 +128,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         self::assertCount(1, $this->repo->findList(2, 2));
 
         $result = $this->repo->findList(null, null, null, [], ShortUrlsOrdering::fromRawData([
-            'orderBy' => ['visits' => 'DESC'],
+            'orderBy' => 'visits-DESC',
         ]));
         self::assertCount(3, $result);
         self::assertSame($bar, $result[0]);
@@ -156,7 +156,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         $result = $this->repo->findList(null, null, null, [], ShortUrlsOrdering::fromRawData([
-            'orderBy' => ['longUrl' => 'ASC'],
+            'orderBy' => 'longUrl-ASC',
         ]));
 
         self::assertCount(count($urls), $result);

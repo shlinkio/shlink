@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* [#1275](https://github.com/shlinkio/shlink/issues/1275) Removed everything that was deprecated.
+
+    See [UPGRADE](UPGRADE.md#from-v2x-to-v3x) doc in order to get details on how to migrate to this version.
+
+### Fixed
+* *Nothing*
+
+
 ## [2.10.0] - 2021-12-12
 ### Added
 * [#1163](https://github.com/shlinkio/shlink/issues/1163) Allowed setting not-found redirects for default domain in the same way it's done for any other domain.
@@ -852,7 +871,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * Preview generation feature completely removed.
     * Authentication against REST API using JWT is no longer supported.
 
-    See [UPGRADE](UPGRADE.md) doc in order to get details on how to migrate to this version.
+    See [UPGRADE](UPGRADE.md#from-v1x-to-v2x) doc in order to get details on how to migrate to this version.
 
 ### Fixed
 * [#600](https://github.com/shlinkio/shlink/issues/600) Fixed health action so that it works with and without version in the path.

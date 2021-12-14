@@ -73,7 +73,7 @@ class CorsTest extends ApiTestCase
     {
         yield 'invalid route' => ['/foo/bar', 'GET,POST,PUT,PATCH,DELETE'];
         yield 'short URLs route' => ['/short-urls', 'GET,POST'];
-        yield 'tags route' => ['/tags', 'GET,POST,PUT,DELETE'];
+        yield 'tags route' => ['/tags', 'GET,PUT,DELETE'];
         yield 'health route' => ['/health', 'GET'];
     }
 }
