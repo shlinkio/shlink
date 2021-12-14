@@ -37,7 +37,7 @@ class DeleteShortUrlExceptionTest extends TestCase
             'threshold' => $threshold,
         ], $e->getAdditionalData());
         self::assertEquals('Cannot delete short URL', $e->getTitle());
-        self::assertEquals('INVALID_SHORTCODE_DELETION', $e->getType());
+        self::assertEquals('INVALID_SHORT_URL_DELETION', $e->getType());
         self::assertEquals(422, $e->getStatus());
     }
 

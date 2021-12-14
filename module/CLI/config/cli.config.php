@@ -22,7 +22,6 @@ return [
             Command\Api\ListKeysCommand::NAME => Command\Api\ListKeysCommand::class,
 
             Command\Tag\ListTagsCommand::NAME => Command\Tag\ListTagsCommand::class,
-            Command\Tag\CreateTagCommand::NAME => Command\Tag\CreateTagCommand::class,
             Command\Tag\RenameTagCommand::NAME => Command\Tag\RenameTagCommand::class,
             Command\Tag\DeleteTagsCommand::NAME => Command\Tag\DeleteTagsCommand::class,
 

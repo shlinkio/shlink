@@ -28,7 +28,6 @@ return [
         Action\ShortUrl\DeleteShortUrlAction::getRouteDef([$dropDomainMiddleware]),
         Action\ShortUrl\ResolveShortUrlAction::getRouteDef([$dropDomainMiddleware]),
         Action\ShortUrl\ListShortUrlsAction::getRouteDef(),
-        Action\ShortUrl\EditShortUrlTagsAction::getRouteDef([$dropDomainMiddleware]),
 
         // Visits
         Action\Visit\ShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
@@ -39,7 +38,6 @@ return [
         // Tags
         Action\Tag\ListTagsAction::getRouteDef(),
         Action\Tag\DeleteTagsAction::getRouteDef(),
-        Action\Tag\CreateTagsAction::getRouteDef(),
         Action\Tag\UpdateTagAction::getRouteDef(),
 
         // Domains

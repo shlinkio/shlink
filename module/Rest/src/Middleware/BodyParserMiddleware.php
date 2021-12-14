@@ -10,12 +10,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-use function array_shift;
-use function explode;
 use function Functional\contains;
-use function parse_str;
 use function Shlinkio\Shlink\Common\json_decode;
-use function trim;
 
 class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterface
 {
@@ -36,20 +32,7 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
             return $handler->handle($request);
         }
 
-        // If the accepted content is JSON, try to parse the body from JSON
-        $contentType = $this->getRequestContentType($request);
-        if (contains(['application/json', 'text/json', 'application/x-json'], $contentType)) {
-            return $handler->handle($this->parseFromJson($request));
-        }
-
-        return $handler->handle($this->parseFromUrlEncoded($request));
-    }
-
-    private function getRequestContentType(Request $request): string
-    {
-        $contentType = $request->getHeaderLine('Content-type');
-        $contentTypes = explode(';', $contentType);
-        return trim(array_shift($contentTypes));
+        return $handler->handle($this->parseFromJson($request));
     }
 
     private function parseFromJson(Request $request): Request
@@ -61,21 +44,5 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
 
         $parsedJson = json_decode($rawBody);
         return $request->withParsedBody($parsedJson);
-    }
-
-    /**
-     * @deprecated To be removed on Shlink v3.0.0, supporting only JSON requests.
-     */
-    private function parseFromUrlEncoded(Request $request): Request
-    {
-        $rawBody = $request->getBody()->__toString();
-        if (empty($rawBody)) {
-            return $request;
-        }
-
-        $parsedBody = [];
-        parse_str($rawBody, $parsedBody);
-
-        return $request->withParsedBody($parsedBody);
     }
 }

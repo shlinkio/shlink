@@ -37,10 +37,7 @@ return (new ConfigAggregator\ConfigAggregator([
     new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
     env('APP_ENV') === 'test'
         ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')
-        // Deprecated. When the SimplifiedConfigParser is removed, load only generated_config.php here
-        : new ConfigAggregator\LaminasConfigProvider('config/params/{generated_config.php,*.config.{php,json}}'),
+        : new ConfigAggregator\LaminasConfigProvider('config/params/generated_config.php'),
 ], 'data/cache/app_config.php', [
-    Core\Config\SimplifiedConfigParser::class,
     Core\Config\BasePathPrefixer::class,
-    Core\Config\DeprecatedConfigParser::class,
 ]))->getMergedConfig();

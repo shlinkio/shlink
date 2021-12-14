@@ -77,16 +77,4 @@ class UrlShortenerOptions extends AbstractOptions
     {
         $this->appendExtraPath = $appendExtraPath;
     }
-
-    /** @deprecated  */
-    protected function setAnonymizeRemoteAddr(bool $anonymizeRemoteAddr): void
-    {
-        // Keep just for backwards compatibility during hydration
-    }
-
-    /** @deprecated  */
-    protected function setTrackOrphanVisits(bool $trackOrphanVisits): void
-    {
-        // Keep just for backwards compatibility during hydration
-    }
 }

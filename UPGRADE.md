@@ -1,5 +1,44 @@
 # Upgrading
 
+## From v2.x to v3.x
+
+### Changes in REST API
+
+* The `type` property returned when trying to delete a URL that reached the visits threshold, when using the `DELETE /short-urls/{shortCode}` endpoint, is now `INVALID_SHORT_URL_DELETION` instead pf `INVALID_SHORTCODE_DELETION`.
+* The `INVALID_AUTHORIZATION` error no longer includes the `expectedTypes` property. Use `expectedHeaders` one instead.
+* The `GET /rest/v2/short-urls` endpoint no longer allows ordering by `visitsCount`, `visitCount` or `originalUrl`. Use `visits` to replace the first two, and `longUrl` to replace the last one.
+* The `GET /rest/v2/short-urls` endpoint no longer allows providing the ordering params with array notation, as in `/shortUrls?orderBy[longUrl]=DESC`. Instead, use the following notation `/shortUrls?orderBy?longUrl-DESC`.
+* Requests expecting a body no longer support url-encoded payloads. Instead, always use JSON bodies.
+* The next endpoints have been removed:
+  * `PUT /rest/v2/short-urls/{shortCode}/tags`: Use the `PATCH /rest/v2/short-urls/{shortCode}` endpoint to set the short URL tags.
+  * `POST /rest/v2/tags`: Use `POST /rest/v2/short-urls` or `PATCH /rest/v2/short-urls/{shortCodes}` to create new tags already attached to a short URL. Creating orphan tags makes no sense.
+
+### Changes in CLI
+
+* The next commands have been removed:
+  * `short-url:generate`: Use `short-url:create` instead.
+  * `tag:create`: Creating orphan tags makes no sense.
+* Params in camelCase format are no longer supported. They all have an equivalent kebab-case replacement. (for example, from `--startDate` to `--start-date`).
+* The `short-url:create` command no longer accepts the `--no-validate-url` flag. Now URLs are never validated, unless `--validate-url` is passed.
+
+### Changes in config
+
+* The next env vars have been removed:
+  * `INVALID_SHORT_URL_REDIRECT_TO`: Replaced by `DEFAULT_INVALID_SHORT_URL_REDIRECT`.
+  * `REGULAR_404_REDIRECT_TO`: Replaced by `DEFAULT_REGULAR_404_REDIRECT`.
+  * `BASE_URL_REDIRECT_TO`: Replaced by `DEFAULT_BASE_URL_REDIRECT`.
+  * `SHORT_DOMAIN_HOST`: Replaced by `DEFAULT_DOMAIN`.
+  * `SHORT_DOMAIN_SCHEMA`: Replaced by `IS_HTTPS_ENABLED`.
+  * `USE_HTTPS`: Replaced by `IS_HTTPS_ENABLED`.
+  * `VALIDATE_URLS`: There's no replacement. URLs are not validated, unless explicitly requested during creation or edition.
+
+### Other changes
+
+* A default GeoLite2 license key is no longer provided. If you don't provide your own as explained in [the docs](https://shlink.io/documentation/geolite-license-key/), Shlink will not try to update the file anymore.
+* The docker image no longer accepts providing configuration via json files mounted in the `config/params` folder. Only env vars are supported now.
+* If you were manually serving Shlink with swoole, the entry script has to be changed from `/path/to/shlink/vendor/bin/mezzio-swoole start` to `/path/to/shlink/vendor/bin/laminas mezzio:swoole:start`
+* The `GET /{shortCode}/qr-code/{size}` url has been removed. Use `GET /{shortCode}/qr-code?size={size}` instead.
+
 ## From v1.x to v2.x
 
 ### PHP 7.4 required

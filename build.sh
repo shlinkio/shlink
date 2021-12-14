@@ -36,9 +36,6 @@ ${composerBin} install --no-dev --prefer-dist $composerFlags
 if [[ $noSwoole ]]; then
   # If generating a dist not for swoole, uninstall mezzio-swoole
   ${composerBin} remove mezzio/mezzio-swoole --with-all-dependencies --update-no-dev $composerFlags
-else
-  # Copy mezzio helper script to vendor (deprecated - Remove with Shlink 3.0.0)
-  cp "${projectdir}/bin/helper/mezzio-swoole" "./vendor/bin"
 fi
 
 # Delete development files

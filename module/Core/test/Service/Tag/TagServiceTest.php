@@ -97,21 +97,6 @@ class TagServiceTest extends TestCase
         );
     }
 
-    /** @test */
-    public function createTagsPersistsEntities(): void
-    {
-        $find = $this->repo->findOneBy(Argument::cetera())->willReturn(new Tag('foo'));
-        $persist = $this->em->persist(Argument::type(Tag::class))->willReturn(null);
-        $flush = $this->em->flush()->willReturn(null);
-
-        $result = $this->service->createTags(['foo', 'bar']);
-
-        self::assertCount(2, $result);
-        $find->shouldHaveBeenCalled();
-        $persist->shouldHaveBeenCalledTimes(2);
-        $flush->shouldHaveBeenCalled();
-    }
-
     /**
      * @test
      * @dataProvider provideAdminApiKeys
