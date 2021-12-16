@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Changed
-* *Nothing*
+* [#1268](https://github.com/shlinkio/shlink/issues/1268) Updated dependencies, including symfony/console 6 and mezzio/mezzio-swoole 4.
 
 ### Deprecated
 * *Nothing*

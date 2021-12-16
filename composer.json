@@ -37,7 +37,7 @@
         "mezzio/mezzio": "^3.7",
         "mezzio/mezzio-fastroute": "^3.3",
         "mezzio/mezzio-problem-details": "^1.5",
-        "mezzio/mezzio-swoole": "^3.5",
+        "mezzio/mezzio-swoole": "^4.0",
         "mlocati/ip-lib": "^1.17",
         "monolog/monolog": "^2.3",
         "nikolaposa/monolog-factory": "^3.1",
@@ -54,12 +54,12 @@
         "shlinkio/shlink-importer": "^2.5",
         "shlinkio/shlink-installer": "^6.3",
         "shlinkio/shlink-ip-geolocation": "^2.2",
-        "symfony/console": "^5.4",
-        "symfony/filesystem": "^6.0 || ^5.4",
-        "symfony/lock": "^6.0 || ^5.4",
+        "symfony/console": "^6.0",
+        "symfony/filesystem": "^6.0",
+        "symfony/lock": "^6.0",
         "symfony/mercure": "^0.6",
-        "symfony/process": "^6.0 || ^5.4",
-        "symfony/string": "^6.0 || ^5.4"
+        "symfony/process": "^6.0",
+        "symfony/string": "^6.0"
     },
     "require-dev": {
         "cebe/php-openapi": "^1.5",
