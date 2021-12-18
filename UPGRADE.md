@@ -20,6 +20,10 @@
   * `tag:create`: Creating orphan tags makes no sense.
 * Params in camelCase format are no longer supported. They all have an equivalent kebab-case replacement. (for example, from `--startDate` to `--start-date`).
 * The `short-url:create` command no longer accepts the `--no-validate-url` flag. Now URLs are never validated, unless `--validate-url` is passed.
+* The CLI installer tool entry-points have changed.
+  * `bin/install`: replaced by `vendor/bin/shlink-installer install`
+  * `bin/update`: replaced by `vendor/bin/shlink-installer update`
+  * `bin/set-option`: replaced by `vendor/bin/shlink-installer set-option`
 
 ### Changes in config
 
@@ -31,6 +35,8 @@
   * `SHORT_DOMAIN_SCHEMA`: Replaced by `IS_HTTPS_ENABLED`.
   * `USE_HTTPS`: Replaced by `IS_HTTPS_ENABLED`.
   * `VALIDATE_URLS`: There's no replacement. URLs are not validated, unless explicitly requested during creation or edition.
+* The next env vars behavior has changed:
+  * `DELETE_SHORT_URL_THRESHOLD`: Now, if this env var is not provided, the "visits threshold" won't be checked at all when deleting short URLs. Make sure you explicitly provide a value if you want to enable this feature.
 
 ### Other changes
 
