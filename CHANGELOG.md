@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1286](https://github.com/shlinkio/shlink/issues/1286) Fixed `x-request-id` header not being generated during non-rest requests.
+
+
 ## [2.10.0] - 2021-12-12
 ### Added
 * [#1163](https://github.com/shlinkio/shlink/issues/1163) Allowed setting not-found redirects for default domain in the same way it's done for any other domain.

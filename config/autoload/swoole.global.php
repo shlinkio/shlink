@@ -22,7 +22,7 @@ return (static function () {
 
                 'options' => [
                     'worker_num' => (int) env('WEB_WORKER_NUM', 16),
-                    'task_worker_num' => $taskWorkers < MIN_TASK_WORKERS ? MIN_TASK_WORKERS : $taskWorkers,
+                    'task_worker_num' => max($taskWorkers, MIN_TASK_WORKERS),
                 ],
             ],
         ],
