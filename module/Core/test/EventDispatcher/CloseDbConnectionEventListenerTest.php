@@ -35,7 +35,7 @@ class CloseDbConnectionEventListenerTest extends TestCase
         $close = $conn->close()->will(function (): void {
         });
         $getConn = $this->em->getConnection()->willReturn($conn->reveal());
-        $clear = $this->em->clear()->will(function (): void {
+        $close = $this->em->close()->will(function (): void {
         });
         $open = $this->em->open()->will(function (): void {
         });
@@ -51,7 +51,7 @@ class CloseDbConnectionEventListenerTest extends TestCase
         self::assertTrue($wrappedWasCalled);
         $close->shouldHaveBeenCalledOnce();
         $getConn->shouldHaveBeenCalledOnce();
-        $clear->shouldHaveBeenCalledOnce();
+        $close->shouldHaveBeenCalledOnce();
         $open->shouldHaveBeenCalledOnce();
     }
 

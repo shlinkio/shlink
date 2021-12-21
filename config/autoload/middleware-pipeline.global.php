@@ -17,6 +17,7 @@ return [
         'error-handler' => [
             'middleware' => [
                 ContentLengthMiddleware::class,
+                RequestIdMiddleware::class,
                 ErrorHandler::class,
                 Rest\Middleware\CrossDomainMiddleware::class,
             ],
@@ -24,7 +25,6 @@ return [
         'error-handler-rest' => [
             'path' => '/rest',
             'middleware' => [
-                RequestIdMiddleware::class,
                 ProblemDetails\ProblemDetailsMiddleware::class,
             ],
         ],
