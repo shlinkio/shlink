@@ -18,10 +18,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Removed
 * [#1275](https://github.com/shlinkio/shlink/issues/1275) Removed everything that was deprecated.
 
-    See [UPGRADE](UPGRADE.md#from-v2x-to-v3x) doc in order to get details on how to migrate to this version.
+  See [UPGRADE](UPGRADE.md#from-v2x-to-v3x) doc in order to get details on how to migrate to this version.
 
 ### Fixed
 * *Nothing*
+
+
+## [2.10.1] - 2021-12-21
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1285](https://github.com/shlinkio/shlink/issues/1285) Fixed error caused by database connections expiring after some hours of inactivity.
+* [#1286](https://github.com/shlinkio/shlink/issues/1286) Fixed `x-request-id` header not being generated during non-rest requests.
 
 
 ## [2.10.0] - 2021-12-12
