@@ -24,7 +24,7 @@ class CloseDbConnectionEventListener
             ($this->wrapped)($event);
         } finally {
             $this->em->getConnection()->close();
-            $this->em->clear();
+            $this->em->close();
         }
     }
 }
