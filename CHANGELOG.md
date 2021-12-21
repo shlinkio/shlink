@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [2.10.1] - 2021-12-21
 ### Added
 * *Nothing*
 
@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
+* [#1285](https://github.com/shlinkio/shlink/issues/1285) Fixed error caused by database connections expiring after some hours of inactivity.
 * [#1286](https://github.com/shlinkio/shlink/issues/1286) Fixed `x-request-id` header not being generated during non-rest requests.
 
 
