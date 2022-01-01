@@ -21,8 +21,8 @@ return (static function (): array {
         'mssql' => '1433',
         default => '3306',
     };
-    $resolveConnection = static fn () => match (true) {
-        $driver === null || $driver === 'sqlite' => [
+    $resolveConnection = static fn () => match ($driver) {
+        null, 'sqlite' => [
             'driver' => 'pdo_sqlite',
             'path' => 'data/database.sqlite',
         ],

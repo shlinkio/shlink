@@ -7,8 +7,8 @@ use function Shlinkio\Shlink\Common\env;
 return (static function (): array {
     $redisServers = env('REDIS_SERVERS');
 
-    return match (true) {
-        $redisServers === null => [],
+    return match ($redisServers) {
+        null => [],
         default => [
             'cache' => [
                 'redis' => [
