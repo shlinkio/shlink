@@ -41,7 +41,7 @@ class ApiKeyService implements ApiKeyServiceInterface
             $expirationDate !== null && $name !== null => ApiKey::fromMeta(
                 ApiKeyMeta::withNameAndExpirationDate($name, $expirationDate),
             ),
-            $expirationDate !== null =>  ApiKey::fromMeta(ApiKeyMeta::withExpirationDate($expirationDate)),
+            $expirationDate !== null => ApiKey::fromMeta(ApiKeyMeta::withExpirationDate($expirationDate)),
             $name !== null => ApiKey::fromMeta(ApiKeyMeta::withName($name)),
             default => ApiKey::create(),
         };
