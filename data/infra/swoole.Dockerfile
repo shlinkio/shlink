@@ -33,9 +33,6 @@ RUN docker-php-ext-install gd
 RUN apk add --no-cache postgresql-dev
 RUN docker-php-ext-install pdo_pgsql
 
-RUN apk add --no-cache gmp-dev
-RUN docker-php-ext-install gmp
-
 RUN docker-php-ext-install sockets
 RUN docker-php-ext-install bcmath
 

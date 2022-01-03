@@ -9,6 +9,7 @@ data/GeoLite2-City*
 data/database.sqlite
 data/shlink-tests.db
 CHANGELOG.md
+CONTRIBUTING.md
 UPGRADE.md
 composer.lock
 vendor
