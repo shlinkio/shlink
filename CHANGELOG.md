@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Changed
+* [#1277](https://github.com/shlinkio/shlink/issues/1277) Reduced docker image size to 45% the original size.
 * [#1268](https://github.com/shlinkio/shlink/issues/1268) Updated dependencies, including symfony/console 6 and mezzio/mezzio-swoole 4.
 * [#1283](https://github.com/shlinkio/shlink/issues/1283) Changed behavior of `DELETE_SHORT_URL_THRESHOLD` env var, disabling the feature if a value was not provided.
 
