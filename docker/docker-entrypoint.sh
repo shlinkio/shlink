@@ -24,11 +24,9 @@ if [ ! -z "${GEOLITE_LICENSE_KEY}" ]; then
   php bin/cli visit:download-db -n ${flags}
 fi
 
-# Periodicaly run visit:locate every hour
-# https://shlink.io/documentation/long-running-tasks/#locate-visits
-# set env var "ENABLE_PERIODIC_VISIT_LOCATE=true" to enable
+# Periodically run visit:locate every hour, if ENABLE_PERIODIC_VISIT_LOCATE=true was provided
 if [ $ENABLE_PERIODIC_VISIT_LOCATE ]; then
-  echo "Configuring periodic visit locate..."
+  echo "Configuring periodic visit location..."
   echo "0 * * * * php /etc/shlink/bin/cli visit:locate -q" > /etc/crontabs/root
   /usr/sbin/crond &
 fi
