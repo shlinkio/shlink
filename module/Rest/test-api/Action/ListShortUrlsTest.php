@@ -241,4 +241,21 @@ class ListShortUrlsTest extends ApiTestCase
             'totalItems' => $itemsCount,
         ];
     }
+
+    /** @test */
+    public function errorIsReturnedWhenProvidingInvalidValues(): void
+    {
+        $query = ['tagsMode' => 'invalid'];
+        $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls', [RequestOptions::QUERY => $query]);
+        $respPayload = $this->getJsonResponsePayload($resp);
+
+        self::assertEquals(400, $resp->getStatusCode());
+        self::assertEquals([
+            'invalidElements' => ['tagsMode'],
+            'title' => 'Invalid data',
+            'type' => 'INVALID_ARGUMENT',
+            'status' => 400,
+            'detail' => 'Provided data is not valid',
+        ], $respPayload);
+    }
 }
