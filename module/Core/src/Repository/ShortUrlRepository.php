@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\DBAL\LockMode;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
@@ -15,6 +16,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
+use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function array_column;
@@ -32,11 +34,12 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         ?int $offset = null,
         ?string $searchTerm = null,
         array $tags = [],
+        string $tagsMode = ShortUrlsParams::TAGS_MODE_ANY,
         ?ShortUrlsOrdering $orderBy = null,
         ?DateRange $dateRange = null,
         ?Specification $spec = null,
     ): array {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
+        $qb = $this->createListQueryBuilder($searchTerm, $tags, $tagsMode, $dateRange, $spec);
         $qb->select('DISTINCT s')
            ->setMaxResults($limit)
            ->setFirstResult($offset);
@@ -77,10 +80,11 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     public function countList(
         ?string $searchTerm = null,
         array $tags = [],
+        string $tagsMode = ShortUrlsParams::TAGS_MODE_ANY,
         ?DateRange $dateRange = null,
         ?Specification $spec = null,
     ): int {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
+        $qb = $this->createListQueryBuilder($searchTerm, $tags, $tagsMode, $dateRange, $spec);
         $qb->select('COUNT(DISTINCT s)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
@@ -89,6 +93,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     private function createListQueryBuilder(
         ?string $searchTerm,
         array $tags,
+        string $tagsMode,
         ?DateRange $dateRange,
         ?Specification $spec,
     ): QueryBuilder {
@@ -139,8 +144,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     {
         // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
         // the bottom
-        $dbPlatform = $this->getEntityManager()->getConnection()->getDatabasePlatform()->getName();
-        $ordering = $dbPlatform === 'postgresql' ? 'ASC' : 'DESC';
+        $dbPlatform = $this->getEntityManager()->getConnection()->getDatabasePlatform();
+        $ordering = $dbPlatform instanceof PostgreSQLPlatform ? 'ASC' : 'DESC';
 
         $dql = <<<DQL
             SELECT s

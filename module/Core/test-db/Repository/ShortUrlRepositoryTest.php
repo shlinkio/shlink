@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
+use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
@@ -127,22 +128,31 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         self::assertCount(1, $this->repo->findList(2, 2));
 
-        $result = $this->repo->findList(null, null, null, [], ShortUrlsOrdering::fromRawData([
+        $tagsModeAll = ShortUrlsParams::TAGS_MODE_ANY;
+        $result = $this->repo->findList(null, null, null, [], $tagsModeAll, ShortUrlsOrdering::fromRawData([
             'orderBy' => 'visits-DESC',
         ]));
         self::assertCount(3, $result);
         self::assertSame($bar, $result[0]);
 
-        $result = $this->repo->findList(null, null, null, [], null, DateRange::withEndDate(Chronos::now()->subDays(2)));
+        $result = $this->repo->findList(null, null, null, [], $tagsModeAll, null, DateRange::withEndDate(
+            Chronos::now()->subDays(2),
+        ));
         self::assertCount(1, $result);
-        self::assertEquals(1, $this->repo->countList(null, [], DateRange::withEndDate(Chronos::now()->subDays(2))));
+        self::assertEquals(1, $this->repo->countList(null, [], $tagsModeAll, DateRange::withEndDate(
+            Chronos::now()->subDays(2),
+        )));
         self::assertSame($foo2, $result[0]);
 
         self::assertCount(
             2,
-            $this->repo->findList(null, null, null, [], null, DateRange::withStartDate(Chronos::now()->subDays(2))),
+            $this->repo->findList(null, null, null, [], $tagsModeAll, null, DateRange::withStartDate(
+                Chronos::now()->subDays(2),
+            )),
         );
-        self::assertEquals(2, $this->repo->countList(null, [], DateRange::withStartDate(Chronos::now()->subDays(2))));
+        self::assertEquals(2, $this->repo->countList(null, [], $tagsModeAll, DateRange::withStartDate(
+            Chronos::now()->subDays(2),
+        )));
     }
 
     /** @test */
@@ -155,9 +165,14 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $result = $this->repo->findList(null, null, null, [], ShortUrlsOrdering::fromRawData([
-            'orderBy' => 'longUrl-ASC',
-        ]));
+        $result = $this->repo->findList(
+            null,
+            null,
+            null,
+            [],
+            ShortUrlsParams::TAGS_MODE_ANY,
+            ShortUrlsOrdering::fromRawData(['orderBy' => 'longUrl-ASC']),
+        );
 
         self::assertCount(count($urls), $result);
         self::assertEquals('a', $result[0]->getLongUrl());

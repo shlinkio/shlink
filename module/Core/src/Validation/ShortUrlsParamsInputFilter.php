@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Validation;
 
 use Laminas\InputFilter\InputFilter;
+use Laminas\Validator\InArray;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Validation;
+use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 
 class ShortUrlsParamsInputFilter extends InputFilter
 {
@@ -18,6 +20,7 @@ class ShortUrlsParamsInputFilter extends InputFilter
     public const START_DATE = 'startDate';
     public const END_DATE = 'endDate';
     public const ITEMS_PER_PAGE = 'itemsPerPage';
+    public const TAGS_MODE = 'tagsMode';
 
     public function __construct(array $data)
     {
@@ -36,5 +39,12 @@ class ShortUrlsParamsInputFilter extends InputFilter
         $this->add($this->createNumericInput(self::ITEMS_PER_PAGE, false, Paginator::ALL_ITEMS));
 
         $this->add($this->createTagsInput(self::TAGS, false));
+
+        $tagsMode = $this->createInput(self::TAGS_MODE, false);
+        $tagsMode->getValidatorChain()->attach(new InArray([
+            'haystack' => [ShortUrlsParams::TAGS_MODE_ALL, ShortUrlsParams::TAGS_MODE_ANY],
+            'strict' => InArray::COMPARE_STRICT,
+        ]));
+        $this->add($tagsMode);
     }
 }

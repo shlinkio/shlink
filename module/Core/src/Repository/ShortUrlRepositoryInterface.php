@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
+use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
@@ -21,6 +22,7 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
         ?int $offset = null,
         ?string $searchTerm = null,
         array $tags = [],
+        string $tagsMode = ShortUrlsParams::TAGS_MODE_ANY,
         ?ShortUrlsOrdering $orderBy = null,
         ?DateRange $dateRange = null,
         ?Specification $spec = null,
@@ -29,6 +31,7 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
     public function countList(
         ?string $searchTerm = null,
         array $tags = [],
+        string $tagsMode = ShortUrlsParams::TAGS_MODE_ANY,
         ?DateRange $dateRange = null,
         ?Specification $spec = null,
     ): int;

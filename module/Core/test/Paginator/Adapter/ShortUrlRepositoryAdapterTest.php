@@ -46,7 +46,8 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         $orderBy = $params->orderBy();
         $dateRange = $params->dateRange();
 
-        $this->repo->findList(10, 5, $searchTerm, $tags, $orderBy, $dateRange, null)->shouldBeCalledOnce();
+        $this->repo->findList(10, 5, $searchTerm, $tags, ShortUrlsParams::TAGS_MODE_ANY, $orderBy, $dateRange, null)
+            ->shouldBeCalledOnce();
         $adapter->getSlice(5, 10);
     }
 
@@ -70,7 +71,8 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $params, $apiKey);
         $dateRange = $params->dateRange();
 
-        $this->repo->countList($searchTerm, $tags, $dateRange, $apiKey->spec())->shouldBeCalledOnce();
+        $this->repo->countList($searchTerm, $tags, ShortUrlsParams::TAGS_MODE_ANY, $dateRange, $apiKey->spec())
+            ->shouldBeCalledOnce();
         $adapter->getNbResults();
     }
 

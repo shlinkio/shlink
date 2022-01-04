@@ -14,11 +14,15 @@ use function Shlinkio\Shlink\Core\parseDateField;
 final class ShortUrlsParams
 {
     public const DEFAULT_ITEMS_PER_PAGE = 10;
+    public const TAGS_MODE_ANY = 'any';
+    public const TAGS_MODE_ALL = 'all';
 
     private int $page;
     private int $itemsPerPage;
     private ?string $searchTerm;
     private array $tags;
+    /** @var self::TAGS_MODE_ANY|self::TAGS_MODE_ALL */
+    private string $tagsMode = self::TAGS_MODE_ANY;
     private ShortUrlsOrdering $orderBy;
     private ?DateRange $dateRange;
 
@@ -63,6 +67,7 @@ final class ShortUrlsParams
         $this->itemsPerPage = (int) (
             $inputFilter->getValue(ShortUrlsParamsInputFilter::ITEMS_PER_PAGE) ?? self::DEFAULT_ITEMS_PER_PAGE
         );
+        $this->tagsMode = $inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS_MODE) ?? self::TAGS_MODE_ANY;
     }
 
     public function page(): int
@@ -93,5 +98,13 @@ final class ShortUrlsParams
     public function dateRange(): ?DateRange
     {
         return $this->dateRange;
+    }
+
+    /**
+     * @return self::TAGS_MODE_ANY|self::TAGS_MODE_ALL
+     */
+    public function tagsMode(): string
+    {
+        return $this->tagsMode;
     }
 }
