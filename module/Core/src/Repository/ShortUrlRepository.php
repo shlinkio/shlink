@@ -16,7 +16,6 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
-use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function array_column;
@@ -34,7 +33,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         ?int $offset = null,
         ?string $searchTerm = null,
         array $tags = [],
-        string $tagsMode = ShortUrlsParams::TAGS_MODE_ANY,
+        ?string $tagsMode = null,
         ?ShortUrlsOrdering $orderBy = null,
         ?DateRange $dateRange = null,
         ?Specification $spec = null,
@@ -80,7 +79,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     public function countList(
         ?string $searchTerm = null,
         array $tags = [],
-        string $tagsMode = ShortUrlsParams::TAGS_MODE_ANY,
+        ?string $tagsMode = null,
         ?DateRange $dateRange = null,
         ?Specification $spec = null,
     ): int {
@@ -93,7 +92,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     private function createListQueryBuilder(
         ?string $searchTerm,
         array $tags,
-        string $tagsMode,
+        ?string $tagsMode,
         ?DateRange $dateRange,
         ?Specification $spec,
     ): QueryBuilder {
