@@ -50,9 +50,19 @@
                 }
             },
             {
+                "name": "tagsMode",
+                "in": "query",
+                "description": "Tells how the filtering by tags should work, returning short URLs containing \"any\" of the tags, or \"all\" the tags. It's ignored if no tags are provided, and defaults to \"any\" if not provided.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": ["any", "all"]
+                }
+            },
+            {
                 "name": "orderBy",
                 "in": "query",
-                "description": "The field from which you want to order the result. (Since v1.3.0)",
+                "description": "The field from which you want to order the result.",
                 "required": false,
                 "schema": {
                     "type": "string",

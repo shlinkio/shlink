@@ -25,6 +25,7 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
             $offset,
             $this->params->searchTerm(),
             $this->params->tags(),
+            $this->params->tagsMode(),
             $this->params->orderBy(),
             $this->params->dateRange(),
             $this->apiKey?->spec(),
@@ -36,6 +37,7 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
         return $this->repository->countList(
             $this->params->searchTerm(),
             $this->params->tags(),
+            $this->params->tagsMode(),
             $this->params->dateRange(),
             $this->apiKey?->spec(),
         );

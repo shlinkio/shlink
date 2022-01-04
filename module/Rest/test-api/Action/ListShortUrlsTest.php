@@ -189,6 +189,25 @@ class ListShortUrlsTest extends ApiTestCase
         yield [['tags' => ['bar']], [
             self::SHORT_URL_META,
         ], 'valid_api_key'];
+        yield [['tags' => ['foo', 'bar']], [
+            self::SHORT_URL_SHLINK_WITH_TITLE,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_DOMAIN,
+        ], 'valid_api_key'];
+        yield [['tags' => ['foo', 'bar'], 'tagsMode' => 'any'], [
+            self::SHORT_URL_SHLINK_WITH_TITLE,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_DOMAIN,
+        ], 'valid_api_key'];
+        yield [['tags' => ['foo', 'bar'], 'tagsMode' => 'all'], [
+            self::SHORT_URL_META,
+        ], 'valid_api_key'];
+        yield [['tags' => ['foo', 'bar', 'baz']], [
+            self::SHORT_URL_SHLINK_WITH_TITLE,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_DOMAIN,
+        ], 'valid_api_key'];
+        yield [['tags' => ['foo', 'bar', 'baz'], 'tagsMode' => 'all'], [], 'valid_api_key'];
         yield [['tags' => ['foo'], 'endDate' => Chronos::parse('2018-12-01')->toAtomString()], [
             self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
@@ -221,5 +240,22 @@ class ListShortUrlsTest extends ApiTestCase
             'itemsInCurrentPage' => $itemsCount,
             'totalItems' => $itemsCount,
         ];
+    }
+
+    /** @test */
+    public function errorIsReturnedWhenProvidingInvalidValues(): void
+    {
+        $query = ['tagsMode' => 'invalid'];
+        $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls', [RequestOptions::QUERY => $query]);
+        $respPayload = $this->getJsonResponsePayload($resp);
+
+        self::assertEquals(400, $resp->getStatusCode());
+        self::assertEquals([
+            'invalidElements' => ['tagsMode'],
+            'title' => 'Invalid data',
+            'type' => 'INVALID_ARGUMENT',
+            'status' => 400,
+            'detail' => 'Provided data is not valid',
+        ], $respPayload);
     }
 }

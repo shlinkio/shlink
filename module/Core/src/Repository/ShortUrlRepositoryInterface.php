@@ -21,6 +21,7 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
         ?int $offset = null,
         ?string $searchTerm = null,
         array $tags = [],
+        ?string $tagsMode = null,
         ?ShortUrlsOrdering $orderBy = null,
         ?DateRange $dateRange = null,
         ?Specification $spec = null,
@@ -29,6 +30,7 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
     public function countList(
         ?string $searchTerm = null,
         array $tags = [],
+        ?string $tagsMode = null,
         ?DateRange $dateRange = null,
         ?Specification $spec = null,
     ): int;

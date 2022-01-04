@@ -65,6 +65,12 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
                 'A comma-separated list of tags to filter results.',
             )
             ->addOption(
+                'including-all-tags',
+                'i',
+                InputOption::VALUE_NONE,
+                'If tags is provided, returns only short URLs having ALL tags.',
+            )
+            ->addOption(
                 'order-by',
                 'o',
                 InputOption::VALUE_REQUIRED,
@@ -115,6 +121,9 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $page = (int) $input->getOption('page');
         $searchTerm = $input->getOption('search-term');
         $tags = $input->getOption('tags');
+        $tagsMode = $input->getOption('including-all-tags') === true
+            ? ShortUrlsParams::TAGS_MODE_ALL
+            : ShortUrlsParams::TAGS_MODE_ANY;
         $tags = ! empty($tags) ? explode(',', $tags) : [];
         $all = $input->getOption('all');
         $startDate = $this->getStartDateOption($input, $output);
@@ -125,6 +134,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $data = [
             ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
             ShortUrlsParamsInputFilter::TAGS => $tags,
+            ShortUrlsParamsInputFilter::TAGS_MODE => $tagsMode,
             ShortUrlsOrdering::ORDER_BY => $orderBy,
             ShortUrlsParamsInputFilter::START_DATE => $startDate?->toAtomString(),
             ShortUrlsParamsInputFilter::END_DATE => $endDate?->toAtomString(),

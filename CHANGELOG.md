@@ -6,7 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#1274](https://github.com/shlinkio/shlink/issues/1274) Added support to filter short URLs lists by all provided tags.
+
+    The `GET /short-urls` endpoint now accepts a `tagsMode=all` param which will make only short URLs matching **all** the tags in the `tags[]` query param, to be returned.
+
+    The `short-urls:list` command now accepts a `-i`/`--including-all-tags` flag which behaves the same.
 
 ### Changed
 * [#1277](https://github.com/shlinkio/shlink/issues/1277) Reduced docker image size to 45% the original size.

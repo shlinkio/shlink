@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\DBAL\LockMode;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
@@ -15,6 +16,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
+use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function array_column;
@@ -32,11 +34,12 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         ?int $offset = null,
         ?string $searchTerm = null,
         array $tags = [],
+        ?string $tagsMode = null,
         ?ShortUrlsOrdering $orderBy = null,
         ?DateRange $dateRange = null,
         ?Specification $spec = null,
     ): array {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
+        $qb = $this->createListQueryBuilder($searchTerm, $tags, $tagsMode, $dateRange, $spec);
         $qb->select('DISTINCT s')
            ->setMaxResults($limit)
            ->setFirstResult($offset);
@@ -77,10 +80,11 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     public function countList(
         ?string $searchTerm = null,
         array $tags = [],
+        ?string $tagsMode = null,
         ?DateRange $dateRange = null,
         ?Specification $spec = null,
     ): int {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
+        $qb = $this->createListQueryBuilder($searchTerm, $tags, $tagsMode, $dateRange, $spec);
         $qb->select('COUNT(DISTINCT s)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
@@ -89,6 +93,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     private function createListQueryBuilder(
         ?string $searchTerm,
         array $tags,
+        ?string $tagsMode,
         ?DateRange $dateRange,
         ?Specification $spec,
     ): QueryBuilder {
@@ -126,8 +131,10 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         // Filter by tags if provided
         if (! empty($tags)) {
-            $qb->join('s.tags', 't')
-               ->andWhere($qb->expr()->in('t.name', $tags));
+            $tagsMode = $tagsMode ?? ShortUrlsParams::TAGS_MODE_ANY;
+            $tagsMode === ShortUrlsParams::TAGS_MODE_ANY
+                ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
+                : $this->joinAllTags($qb, $tags);
         }
 
         $this->applySpecification($qb, $spec, 's');
@@ -139,8 +146,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     {
         // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
         // the bottom
-        $dbPlatform = $this->getEntityManager()->getConnection()->getDatabasePlatform()->getName();
-        $ordering = $dbPlatform === 'postgresql' ? 'ASC' : 'DESC';
+        $dbPlatform = $this->getEntityManager()->getConnection()->getDatabasePlatform();
+        $ordering = $dbPlatform instanceof PostgreSQLPlatform ? 'ASC' : 'DESC';
 
         $dql = <<<DQL
             SELECT s
@@ -257,11 +264,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             return $qb->getQuery()->getOneOrNullResult();
         }
 
-        foreach ($tags as $index => $tag) {
-            $alias = 't_' . $index;
-            $qb->join('s.tags', $alias, Join::WITH, $alias . '.name = :tag' . $index)
-               ->setParameter('tag' . $index, $tag);
-        }
+        $this->joinAllTags($qb, $tags);
 
         // If tags where provided, we need an extra join to see the amount of tags that every short URL has, so that we
         // can discard those that also have more tags, making sure only those fully matching are included.
@@ -271,6 +274,15 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
            ->setParameter('tagsAmount', $tagsAmount);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    private function joinAllTags(QueryBuilder $qb, array $tags): void
+    {
+        foreach ($tags as $index => $tag) {
+            $alias = 't_' . $index;
+            $qb->join('s.tags', $alias, Join::WITH, $alias . '.name = :tag' . $index)
+               ->setParameter('tag' . $index, $tag);
+        }
     }
 
     public function findOneByImportedUrl(ImportedShlinkUrl $url): ?ShortUrl
