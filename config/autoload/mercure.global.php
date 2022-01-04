@@ -7,7 +7,7 @@ use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
 use Symfony\Component\Mercure\Hub;
 use Symfony\Component\Mercure\HubInterface;
 
-use function Shlinkio\Shlink\Common\env;
+use function Shlinkio\Shlink\Config\env;
 
 return (static function (): array {
     $publicUrl = env('MERCURE_PUBLIC_HUB_URL');

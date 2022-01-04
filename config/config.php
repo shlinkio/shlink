@@ -11,7 +11,7 @@ use Mezzio\ProblemDetails;
 use Mezzio\Swoole;
 
 use function class_exists;
-use function Shlinkio\Shlink\Common\env;
+use function Shlinkio\Shlink\Config\env;
 
 use const PHP_SAPI;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use function Shlinkio\Shlink\Common\env;
+use function Shlinkio\Shlink\Config\env;
 
 use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;

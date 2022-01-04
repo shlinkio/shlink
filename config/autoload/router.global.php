@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Mezzio\Router\FastRouteRouter;
 
-use function Shlinkio\Shlink\Common\env;
+use function Shlinkio\Shlink\Config\env;
 
 return [
 

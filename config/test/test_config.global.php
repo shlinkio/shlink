@@ -22,7 +22,7 @@ use SebastianBergmann\CodeCoverage\Report\PHP;
 use SebastianBergmann\CodeCoverage\Report\Xml\Facade as Xml;
 
 use function Laminas\Stratigility\middleware;
-use function Shlinkio\Shlink\Common\env;
+use function Shlinkio\Shlink\Config\env;
 use function sprintf;
 use function sys_get_temp_dir;
 

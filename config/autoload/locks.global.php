@@ -7,7 +7,7 @@ use Predis\ClientInterface as PredisClient;
 use Shlinkio\Shlink\Common\Logger\LoggerAwareDelegatorFactory;
 use Symfony\Component\Lock;
 
-use function Shlinkio\Shlink\Common\env;
+use function Shlinkio\Shlink\Config\env;
 
 use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
 
