@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
+use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\ListTagsCommand;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
@@ -29,7 +32,7 @@ class ListTagsCommandTest extends TestCase
     /** @test */
     public function noTagsPrintsEmptyMessage(): void
     {
-        $tagsInfo = $this->tagService->tagsInfo()->willReturn([]);
+        $tagsInfo = $this->tagService->tagsInfo(Argument::any())->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
@@ -41,10 +44,10 @@ class ListTagsCommandTest extends TestCase
     /** @test */
     public function listOfTagsIsPrinted(): void
     {
-        $tagsInfo = $this->tagService->tagsInfo()->willReturn([
+        $tagsInfo = $this->tagService->tagsInfo(Argument::any())->willReturn(new Paginator(new ArrayAdapter([
             new TagInfo(new Tag('foo'), 10, 2),
             new TagInfo(new Tag('bar'), 7, 32),
-        ]);
+        ])));
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();

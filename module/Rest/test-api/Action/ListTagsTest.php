@@ -7,6 +7,8 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 use GuzzleHttp\RequestOptions;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
+use function count;
+
 class ListTagsTest extends ApiTestCase
 {
     /**
@@ -17,6 +19,14 @@ class ListTagsTest extends ApiTestCase
     {
         $resp = $this->callApiWithKey(self::METHOD_GET, '/tags', [RequestOptions::QUERY => $query], $apiKey);
         $payload = $this->getJsonResponsePayload($resp);
+        $itemsCount = count($expectedTags['data']);
+        $expectedTags['pagination'] = [
+            'currentPage' => 1,
+            'pagesCount' => 1,
+            'itemsPerPage' => $itemsCount,
+            'itemsInCurrentPage' => $itemsCount,
+            'totalItems' => $itemsCount,
+        ];
 
         self::assertEquals(['tags' => $expectedTags], $payload);
     }

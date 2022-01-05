@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\CLI\Command\Tag;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,7 +39,7 @@ class ListTagsCommand extends Command
 
     private function getTagsRows(): array
     {
-        $tags = $this->tagService->tagsInfo();
+        $tags = $this->tagService->tagsInfo(TagsParams::fromRawData([]))->getCurrentPageResults();
         if (empty($tags)) {
             return [['No tags found', '-', '-']];
         }

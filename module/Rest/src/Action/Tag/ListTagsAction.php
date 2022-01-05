@@ -7,7 +7,9 @@ namespace Shlinkio\Shlink\Rest\Action\Tag;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
@@ -16,6 +18,8 @@ use function Functional\map;
 
 class ListTagsAction extends AbstractRestAction
 {
+    use PagerfantaUtilsTrait;
+
     protected const ROUTE_PATH = '/tags';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
@@ -28,23 +32,18 @@ class ListTagsAction extends AbstractRestAction
         $query = $request->getQueryParams();
         $withStats = ($query['withStats'] ?? null) === 'true';
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
+        $params = TagsParams::fromRawData($query);
 
         if (! $withStats) {
             return new JsonResponse([
-                'tags' => [
-                    'data' => $this->tagService->listTags($apiKey),
-                ],
+                'tags' => $this->serializePaginator($this->tagService->listTags($params, $apiKey)),
             ]);
         }
 
-        $tagsInfo = $this->tagService->tagsInfo($apiKey);
-        $data = map($tagsInfo, static fn (TagInfo $info) => $info->tag()->__toString());
+        $tagsInfo = $this->tagService->tagsInfo($params, $apiKey);
+        $rawTags = $this->serializePaginator($tagsInfo, null, 'stats');
+        $rawTags['data'] = map($tagsInfo, static fn (TagInfo $info) => $info->tag()->__toString());
 
-        return new JsonResponse([
-            'tags' => [
-                'data' => $data,
-                'stats' => $tagsInfo,
-            ],
-        ]);
+        return new JsonResponse(['tags' => $rawTags]);
     }
 }

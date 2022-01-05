@@ -6,6 +6,8 @@ namespace Shlinkio\Shlink\Core\Tag;
 
 use Doctrine\ORM;
 use Happyr\DoctrineSpecification\Spec;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
@@ -14,6 +16,7 @@ use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
+use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -24,26 +27,34 @@ class TagService implements TagServiceInterface
     }
 
     /**
-     * @return Tag[]
+     * @return Tag[]|Paginator
      */
-    public function listTags(?ApiKey $apiKey = null): array
+    public function listTags(TagsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
-        return $repo->match(Spec::andX(
+        $tags = $repo->match(Spec::andX(
             Spec::orderBy('name'),
             new WithApiKeySpecsEnsuringJoin($apiKey),
         ));
+
+        return (new Paginator(new ArrayAdapter($tags)))
+            ->setMaxPerPage($params->getItemsPerPage())
+            ->setCurrentPage($params->getPage());
     }
 
     /**
-     * @return TagInfo[]
+     * @return TagInfo[]|Paginator
      */
-    public function tagsInfo(?ApiKey $apiKey = null): array
+    public function tagsInfo(TagsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         /** @var TagRepositoryInterface $repo */
         $repo = $this->em->getRepository(Tag::class);
-        return $repo->findTagsWithInfo($apiKey);
+        $tagsInfo = $repo->findTagsWithInfo($apiKey);
+
+        return (new Paginator(new ArrayAdapter($tagsInfo)))
+            ->setMaxPerPage($params->getItemsPerPage())
+            ->setCurrentPage($params->getPage());
     }
 
     /**

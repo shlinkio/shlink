@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
+use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -47,9 +48,9 @@ class TagServiceTest extends TestCase
 
         $match = $this->repo->match(Argument::cetera())->willReturn($expected);
 
-        $result = $this->service->listTags();
+        $result = $this->service->listTags(TagsParams::fromRawData([]));
 
-        self::assertEquals($expected, $result);
+        self::assertEquals($expected, $result->getCurrentPageResults());
         $match->shouldHaveBeenCalled();
     }
 
@@ -63,9 +64,9 @@ class TagServiceTest extends TestCase
 
         $find = $this->repo->findTagsWithInfo($apiKey)->willReturn($expected);
 
-        $result = $this->service->tagsInfo($apiKey);
+        $result = $this->service->tagsInfo(TagsParams::fromRawData([]), $apiKey); // TODO Add more cases with params
 
-        self::assertEquals($expected, $result);
+        self::assertEquals($expected, $result->getCurrentPageResults());
         $find->shouldHaveBeenCalled();
     }
 
