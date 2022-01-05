@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\Core\Tag;
 
 use Doctrine\ORM;
 use Pagerfanta\Adapter\AdapterInterface;
-use Pagerfanta\Adapter\ArrayAdapter;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
@@ -17,6 +16,7 @@ use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
+use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsInfoPaginatorAdapter;
 use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsPaginatorAdapter;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -43,9 +43,7 @@ class TagService implements TagServiceInterface
     {
         /** @var TagRepositoryInterface $repo */
         $repo = $this->em->getRepository(Tag::class);
-        $tagsInfo = $repo->findTagsWithInfo($apiKey);
-
-        return $this->createPaginator(new ArrayAdapter($tagsInfo), $params);
+        return $this->createPaginator(new TagsInfoPaginatorAdapter($repo, $params, $apiKey), $params);
     }
 
     private function createPaginator(AdapterInterface $adapter, TagsParams $params): Paginator

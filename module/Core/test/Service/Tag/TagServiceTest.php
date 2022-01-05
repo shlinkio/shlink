@@ -47,7 +47,7 @@ class TagServiceTest extends TestCase
         $expected = [new Tag('foo'), new Tag('bar')];
 
         $match = $this->repo->match(Argument::cetera())->willReturn($expected);
-        $count = $this->repo->matchSingleScalarResult(Argument::cetera())->willReturn(0);
+        $count = $this->repo->matchSingleScalarResult(Argument::cetera())->willReturn(2);
 
         $result = $this->service->listTags(TagsParams::fromRawData([]));
 
@@ -64,12 +64,14 @@ class TagServiceTest extends TestCase
     {
         $expected = [new TagInfo(new Tag('foo'), 1, 1), new TagInfo(new Tag('bar'), 3, 10)];
 
-        $find = $this->repo->findTagsWithInfo($apiKey)->willReturn($expected);
+        $find = $this->repo->findTagsWithInfo(2, 0, null, $apiKey)->willReturn($expected);
+        $count = $this->repo->matchSingleScalarResult(Argument::cetera())->willReturn(2);
 
         $result = $this->service->tagsInfo(TagsParams::fromRawData([]), $apiKey); // TODO Add more cases with params
 
         self::assertEquals($expected, $result->getCurrentPageResults());
         $find->shouldHaveBeenCalled();
+        $count->shouldHaveBeenCalled();
     }
 
     /**
