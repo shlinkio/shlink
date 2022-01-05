@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Tag;
 
 use Doctrine\ORM;
-use Happyr\DoctrineSpecification\Spec;
 use Pagerfanta\Adapter\AdapterInterface;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
@@ -18,7 +17,7 @@ use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
-use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
+use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsPaginatorAdapter;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class TagService implements TagServiceInterface
@@ -34,12 +33,7 @@ class TagService implements TagServiceInterface
     {
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
-        $tags = $repo->match(Spec::andX(
-            Spec::orderBy('name'),
-            new WithApiKeySpecsEnsuringJoin($apiKey),
-        ));
-
-        return $this->createPaginator(new ArrayAdapter($tags), $params);
+        return $this->createPaginator(new TagsPaginatorAdapter($repo, $params, $apiKey), $params);
     }
 
     /**

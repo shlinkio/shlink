@@ -47,11 +47,13 @@ class TagServiceTest extends TestCase
         $expected = [new Tag('foo'), new Tag('bar')];
 
         $match = $this->repo->match(Argument::cetera())->willReturn($expected);
+        $count = $this->repo->matchSingleScalarResult(Argument::cetera())->willReturn(0);
 
         $result = $this->service->listTags(TagsParams::fromRawData([]));
 
         self::assertEquals($expected, $result->getCurrentPageResults());
         $match->shouldHaveBeenCalled();
+        $count->shouldHaveBeenCalled();
     }
 
     /**

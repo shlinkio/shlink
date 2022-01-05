@@ -49,7 +49,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
 
         return map(
             $query->getResult(),
-            fn (array $row) => new TagInfo($row['tag'], (int) $row['shortUrlsCount'], (int) $row['visitsCount']),
+            static fn (array $row) => new TagInfo($row['tag'], (int) $row['shortUrlsCount'], (int) $row['visitsCount']),
         );
     }
 
