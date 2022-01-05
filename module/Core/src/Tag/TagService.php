@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Tag;
 
 use Doctrine\ORM;
 use Happyr\DoctrineSpecification\Spec;
+use Pagerfanta\Adapter\AdapterInterface;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\Tag;
@@ -38,9 +39,7 @@ class TagService implements TagServiceInterface
             new WithApiKeySpecsEnsuringJoin($apiKey),
         ));
 
-        return (new Paginator(new ArrayAdapter($tags)))
-            ->setMaxPerPage($params->getItemsPerPage())
-            ->setCurrentPage($params->getPage());
+        return $this->createPaginator(new ArrayAdapter($tags), $params);
     }
 
     /**
@@ -52,7 +51,12 @@ class TagService implements TagServiceInterface
         $repo = $this->em->getRepository(Tag::class);
         $tagsInfo = $repo->findTagsWithInfo($apiKey);
 
-        return (new Paginator(new ArrayAdapter($tagsInfo)))
+        return $this->createPaginator(new ArrayAdapter($tagsInfo), $params);
+    }
+
+    private function createPaginator(AdapterInterface $adapter, TagsParams $params): Paginator
+    {
+        return (new Paginator($adapter))
             ->setMaxPerPage($params->getItemsPerPage())
             ->setCurrentPage($params->getPage());
     }
