@@ -109,6 +109,7 @@ return [
             'process-name' => 'shlink_test',
             'options' => [
                 'pid_file' => sys_get_temp_dir() . '/shlink-test-swoole.pid',
+                'log_file' => __DIR__ . '/../../data/log/api-tests/output.log',
                 'enable_coroutine' => false,
             ],
         ],
