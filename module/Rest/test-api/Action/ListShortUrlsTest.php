@@ -140,12 +140,12 @@ class ListShortUrlsTest extends ApiTestCase
     public function provideFilteredLists(): iterable
     {
         yield [[], [
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
             self::SHORT_URL_SHLINK_WITH_TITLE,
             self::SHORT_URL_DOCS,
-            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
-            self::SHORT_URL_META,
-            self::SHORT_URL_CUSTOM_SLUG,
-            self::SHORT_URL_CUSTOM_DOMAIN,
         ], 'valid_api_key'];
         yield [['orderBy' => 'shortCode'], [
             self::SHORT_URL_SHLINK_WITH_TITLE,
@@ -172,48 +172,48 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['startDate' => Chronos::parse('2018-12-01')->toAtomString()], [
-            self::SHORT_URL_META,
-            self::SHORT_URL_CUSTOM_SLUG,
             self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
         ], 'valid_api_key'];
         yield [['endDate' => Chronos::parse('2018-12-01')->toAtomString()], [
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
             self::SHORT_URL_SHLINK_WITH_TITLE,
             self::SHORT_URL_DOCS,
-            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
         ], 'valid_api_key'];
         yield [['tags' => ['foo']], [
-            self::SHORT_URL_SHLINK_WITH_TITLE,
-            self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['tags' => ['bar']], [
             self::SHORT_URL_META,
         ], 'valid_api_key'];
         yield [['tags' => ['foo', 'bar']], [
-            self::SHORT_URL_SHLINK_WITH_TITLE,
-            self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['tags' => ['foo', 'bar'], 'tagsMode' => 'any'], [
-            self::SHORT_URL_SHLINK_WITH_TITLE,
-            self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['tags' => ['foo', 'bar'], 'tagsMode' => 'all'], [
             self::SHORT_URL_META,
         ], 'valid_api_key'];
         yield [['tags' => ['foo', 'bar', 'baz']], [
-            self::SHORT_URL_SHLINK_WITH_TITLE,
-            self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['tags' => ['foo', 'bar', 'baz'], 'tagsMode' => 'all'], [], 'valid_api_key'];
         yield [['tags' => ['foo'], 'endDate' => Chronos::parse('2018-12-01')->toAtomString()], [
             self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['searchTerm' => 'alejandro'], [
-            self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
         ], 'valid_api_key'];
         yield [['searchTerm' => 'cool'], [
             self::SHORT_URL_SHLINK_WITH_TITLE,
@@ -222,9 +222,9 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_CUSTOM_DOMAIN,
         ], 'valid_api_key'];
         yield [[], [
-            self::SHORT_URL_SHLINK_WITH_TITLE,
-            self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'author_api_key'];
         yield [[], [
             self::SHORT_URL_CUSTOM_DOMAIN,

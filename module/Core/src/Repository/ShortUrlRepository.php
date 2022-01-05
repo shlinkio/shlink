@@ -49,9 +49,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             return $this->processOrderByForList($qb, $orderBy);
         }
 
-        // With no order by, order by date and just return the list of ShortUrls
-        $qb->orderBy('s.dateCreated');
-        return $qb->getQuery()->getResult();
+        // With no explicit order by, fallback to dateCreated-DESC
+        return $qb->orderBy('s.dateCreated', 'DESC')->getQuery()->getResult();
     }
 
     private function processOrderByForList(QueryBuilder $qb, ShortUrlsOrdering $orderBy): array
