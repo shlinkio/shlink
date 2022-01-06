@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Tag\Paginator\Adapter;
+namespace ShlinkioDbTest\Shlink\Core\Tag\Paginator\Adapter;
 
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Repository\TagRepository;

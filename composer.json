@@ -95,10 +95,8 @@
             "ShlinkioTest\\Shlink\\CLI\\": "module/CLI/test",
             "ShlinkioTest\\Shlink\\Rest\\": "module/Rest/test",
             "ShlinkioApiTest\\Shlink\\Rest\\": "module/Rest/test-api",
-            "ShlinkioTest\\Shlink\\Core\\": [
-                "module/Core/test",
-                "module/Core/test-db"
-            ]
+            "ShlinkioTest\\Shlink\\Core\\": "module/Core/test",
+            "ShlinkioDbTest\\Shlink\\Core\\": "module/Core/test-db"
         },
         "files": [
             "config/test/constants.php"
