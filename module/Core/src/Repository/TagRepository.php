@@ -44,6 +44,12 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
            ->setMaxResults($filtering?->limit())
            ->setFirstResult($filtering?->offset());
 
+        $searchTerm = $filtering?->searchTerm();
+        if ($searchTerm !== null) {
+            $qb->andWhere($qb->expr()->like('t.name', ':searchPattern'))
+               ->setParameter('searchPattern', '%' . $searchTerm . '%');
+        }
+
         $apiKey = $filtering?->apiKey();
         if ($apiKey !== null) {
             $this->applySpecification($qb, $apiKey->spec(false, 'shortUrls'), 't');
