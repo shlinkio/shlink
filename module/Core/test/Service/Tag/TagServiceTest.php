@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
+use Shlinkio\Shlink\Core\Tag\Model\TagsListFiltering;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
@@ -64,7 +65,7 @@ class TagServiceTest extends TestCase
     {
         $expected = [new TagInfo(new Tag('foo'), 1, 1), new TagInfo(new Tag('bar'), 3, 10)];
 
-        $find = $this->repo->findTagsWithInfo(2, 0, null, $apiKey)->willReturn($expected);
+        $find = $this->repo->findTagsWithInfo(new TagsListFiltering(2, 0, null, $apiKey))->willReturn($expected);
         $count = $this->repo->matchSingleScalarResult(Argument::cetera())->willReturn(2);
 
         $result = $this->service->tagsInfo(TagsParams::fromRawData([]), $apiKey); // TODO Add more cases with params

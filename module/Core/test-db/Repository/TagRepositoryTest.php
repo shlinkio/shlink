@@ -74,7 +74,7 @@ class TagRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
         $this->getEntityManager()->flush();
 
-        $result = $this->repo->findTagsWithInfo();
+        $result = $this->repo->findTagsWithInfo(); // TODO Test with some filters
 
         self::assertCount(4, $result);
         self::assertEquals(0, $result[0]->shortUrlsCount());
