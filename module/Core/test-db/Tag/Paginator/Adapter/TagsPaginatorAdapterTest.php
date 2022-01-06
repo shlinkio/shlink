@@ -1,0 +1,52 @@
+<?php
+
+declare(strict_types=1);
+
+namespace ShlinkioTest\Shlink\Core\Tag\Paginator\Adapter;
+
+use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Repository\TagRepository;
+use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
+use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsPaginatorAdapter;
+use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
+
+class TagsPaginatorAdapterTest extends DatabaseTestCase
+{
+    private TagRepository $repo;
+
+    protected function beforeEach(): void
+    {
+        $this->repo = $this->getEntityManager()->getRepository(Tag::class);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideFilters
+     */
+    public function expectedListOfTagsIsReturned(?string $searchTerm, int $offset, int $length, int $expected): void
+    {
+        $names = ['foo', 'bar', 'baz', 'another'];
+        foreach ($names as $name) {
+            $this->getEntityManager()->persist(new Tag($name));
+        }
+        $this->getEntityManager()->flush();
+
+        $adapter = new TagsPaginatorAdapter($this->repo, TagsParams::fromRawData(['searchTerm' => $searchTerm]), null);
+
+        self::assertCount($expected, $adapter->getSlice($offset, $length));
+        self::assertEquals(4, $adapter->getNbResults());
+    }
+
+    public function provideFilters(): iterable
+    {
+        yield [null, 0, 10, 4];
+        yield [null, 2, 10, 2];
+        yield [null, 1, 3, 3];
+        yield [null, 3, 3, 1];
+        yield [null, 0, 2, 2];
+        yield ['ba', 0, 10, 2];
+        yield ['ba', 0, 1, 1];
+        yield ['foo', 0, 10, 1];
+        yield ['a', 0, 10, 3];
+    }
+}
