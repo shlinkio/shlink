@@ -59,20 +59,52 @@ class TagServiceTest extends TestCase
 
     /**
      * @test
-     * @dataProvider provideAdminApiKeys
+     * @dataProvider provideApiKeysAndSearchTerm
      */
-    public function tagsInfoDelegatesOnRepository(?ApiKey $apiKey): void
-    {
+    public function tagsInfoDelegatesOnRepository(
+        ?ApiKey $apiKey,
+        TagsParams $params,
+        TagsListFiltering $expectedFiltering,
+        int $countCalls,
+    ): void {
         $expected = [new TagInfo(new Tag('foo'), 1, 1), new TagInfo(new Tag('bar'), 3, 10)];
 
-        $find = $this->repo->findTagsWithInfo(new TagsListFiltering(2, 0, null, $apiKey))->willReturn($expected);
+        $find = $this->repo->findTagsWithInfo($expectedFiltering)->willReturn($expected);
         $count = $this->repo->matchSingleScalarResult(Argument::cetera())->willReturn(2);
 
-        $result = $this->service->tagsInfo(TagsParams::fromRawData([]), $apiKey); // TODO Add more cases with params
+        $result = $this->service->tagsInfo($params, $apiKey);
 
         self::assertEquals($expected, $result->getCurrentPageResults());
-        $find->shouldHaveBeenCalled();
-        $count->shouldHaveBeenCalled();
+        $find->shouldHaveBeenCalledOnce();
+        $count->shouldHaveBeenCalledTimes($countCalls);
+    }
+
+    public function provideApiKeysAndSearchTerm(): iterable
+    {
+        yield 'no API key, no filter' => [
+            null,
+            TagsParams::fromRawData([]),
+            new TagsListFiltering(2, 0, null, null),
+            1,
+        ];
+        yield 'admin API key, no filter' => [
+            $apiKey = ApiKey::create(),
+            TagsParams::fromRawData([]),
+            new TagsListFiltering(2, 0, null, $apiKey),
+            1,
+        ];
+        yield 'no API key, search term' => [
+            null,
+            TagsParams::fromRawData(['searchTerm' => $searchTerm = 'foobar']),
+            new TagsListFiltering(2, 0, $searchTerm, null),
+            1,
+        ];
+        yield 'admin API key, limits' => [
+            $apiKey = ApiKey::create(),
+            TagsParams::fromRawData(['page' => 1, 'itemsPerPage' => 1]),
+            new TagsListFiltering(1, 0, null, $apiKey),
+            0,
+        ];
     }
 
     /**
