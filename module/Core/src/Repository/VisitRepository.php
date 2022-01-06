@@ -204,7 +204,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
         $qb->select('v.id')
            ->orderBy('v.id', 'DESC')
-           // Falling back to values that will behave as no limit/offset, but will workaround MS SQL not allowing
+           // Falling back to values that will behave as no limit/offset, but will work around MS SQL not allowing
            // order on sub-queries without offset
            ->setMaxResults($limit ?? PHP_INT_MAX)
            ->setFirstResult($offset ?? 0);
