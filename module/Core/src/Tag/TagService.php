@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Tag;
 
 use Doctrine\ORM;
-use Happyr\DoctrineSpecification\Spec;
+use Pagerfanta\Adapter\AdapterInterface;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
@@ -14,7 +15,9 @@ use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
-use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
+use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
+use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsInfoPaginatorAdapter;
+use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsPaginatorAdapter;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class TagService implements TagServiceInterface
@@ -24,26 +27,30 @@ class TagService implements TagServiceInterface
     }
 
     /**
-     * @return Tag[]
+     * @return Tag[]|Paginator
      */
-    public function listTags(?ApiKey $apiKey = null): array
+    public function listTags(TagsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
-        return $repo->match(Spec::andX(
-            Spec::orderBy('name'),
-            new WithApiKeySpecsEnsuringJoin($apiKey),
-        ));
+        return $this->createPaginator(new TagsPaginatorAdapter($repo, $params, $apiKey), $params);
     }
 
     /**
-     * @return TagInfo[]
+     * @return TagInfo[]|Paginator
      */
-    public function tagsInfo(?ApiKey $apiKey = null): array
+    public function tagsInfo(TagsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         /** @var TagRepositoryInterface $repo */
         $repo = $this->em->getRepository(Tag::class);
-        return $repo->findTagsWithInfo($apiKey);
+        return $this->createPaginator(new TagsInfoPaginatorAdapter($repo, $params, $apiKey), $params);
+    }
+
+    private function createPaginator(AdapterInterface $adapter, TagsParams $params): Paginator
+    {
+        return (new Paginator($adapter))
+            ->setMaxPerPage($params->getItemsPerPage())
+            ->setCurrentPage($params->getPage());
     }
 
     /**

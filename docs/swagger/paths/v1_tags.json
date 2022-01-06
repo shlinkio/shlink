@@ -17,7 +17,7 @@
             },
             {
                 "name": "withStats",
-                "description": "Whether you want to include also a list with general stats by tag or not.",
+                "description": "Whether you want to include also a list with general stats by tag or not. Defaults to false.",
                 "in": "query",
                 "required": false,
                 "schema": {
@@ -26,6 +26,33 @@
                         "true",
                         "false"
                     ]
+                }
+            },
+            {
+                "name": "page",
+                "in": "query",
+                "description": "The page to display. Defaults to 1",
+                "required": false,
+                "schema": {
+                    "type": "number"
+                }
+            },
+            {
+                "name": "itemsPerPage",
+                "in": "query",
+                "description": "The amount of items to return on every page. Defaults to all the items",
+                "required": false,
+                "schema": {
+                    "type": "number"
+                }
+            },
+            {
+                "name": "searchTerm",
+                "in": "query",
+                "description": "A query used to filter results by searching for it on the tag name.",
+                "required": false,
+                "schema": {
+                    "type": "string"
                 }
             }
         ],
@@ -53,6 +80,9 @@
                                             "items": {
                                                 "$ref": "../definitions/TagInfo.json"
                                             }
+                                        },
+                                        "pagination": {
+                                            "$ref": "../definitions/Pagination.json"
                                         }
                                     }
                                 }
@@ -67,7 +97,14 @@
                                             "php",
                                             "shlink",
                                             "tech"
-                                        ]
+                                        ],
+                                        "pagination": {
+                                            "currentPage": 5,
+                                            "pagesCount": 10,
+                                            "itemsPerPage": 4,
+                                            "itemsInCurrentPage": 4,
+                                            "totalItems": 38
+                                        }
                                     }
                                 }
                             },
@@ -89,7 +126,14 @@
                                                 "shortUrlsCount": 7,
                                                 "visitsCount": 1087
                                             }
-                                        ]
+                                        ],
+                                        "pagination": {
+                                            "currentPage": 5,
+                                            "pagesCount": 5,
+                                            "itemsPerPage": 10,
+                                            "itemsInCurrentPage": 2,
+                                            "totalItems": 42
+                                        }
                                     }
                                 }
                             }

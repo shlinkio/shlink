@@ -12,6 +12,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     The `short-urls:list` command now accepts a `-i`/`--including-all-tags` flag which behaves the same.
 
+* [#1273](https://github.com/shlinkio/shlink/issues/1273) Added support for pagination in tags lists.
+
+    For backwards compatibility, lists continue returning all items by default, but the `GET /tags` endpoint now supports `page` and `itemsPerPage` query params, to make sure only a subset of the tags is returned.
+
+    This is supported both when invoking the endpoint with and without `withStats=true`.
+
+    Additionally, the endpoint also supports filtering by `searchTerm` query param. When provided, only tags matching it will be returned.
+
 ### Changed
 * [#1277](https://github.com/shlinkio/shlink/issues/1277) Reduced docker image size to 45% the original size.
 * [#1268](https://github.com/shlinkio/shlink/issues/1268) Updated dependencies, including symfony/console 6 and mezzio/mezzio-swoole 4.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use function Shlinkio\Shlink\Common\env;
+use function Shlinkio\Shlink\Config\env;
 
 return (static function (): array {
     $redisServers = env('REDIS_SERVERS');

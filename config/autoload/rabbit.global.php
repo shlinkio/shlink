@@ -6,7 +6,7 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Proxy\LazyServiceFactory;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
-use function Shlinkio\Shlink\Common\env;
+use function Shlinkio\Shlink\Config\env;
 
 return [
 

@@ -4,7 +4,10 @@ export DB_DRIVER=postgres
 export TEST_ENV=api
 export GENERATE_COVERAGE=${GENERATE_COVERAGE:-"no"}
 
+# Reset logs
 rm -rf data/log/api-tests
+mkdir data/log/api-tests
+touch data/log/api-tests/output.log
 
 # Try to stop server just in case it hanged in last execution
 vendor/bin/laminas mezzio:swoole:stop

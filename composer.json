@@ -48,8 +48,8 @@
         "predis/predis": "^1.1",
         "pugx/shortid-php": "^1.0",
         "ramsey/uuid": "^4.2",
-        "shlinkio/shlink-common": "^4.2.1",
-        "shlinkio/shlink-config": "^1.4",
+        "shlinkio/shlink-common": "dev-main#0d476fd as 4.3",
+        "shlinkio/shlink-config": "^1.5",
         "shlinkio/shlink-event-dispatcher": "^2.3",
         "shlinkio/shlink-importer": "^2.5",
         "shlinkio/shlink-installer": "dev-develop#a008036 as 7.0",
@@ -95,10 +95,8 @@
             "ShlinkioTest\\Shlink\\CLI\\": "module/CLI/test",
             "ShlinkioTest\\Shlink\\Rest\\": "module/Rest/test",
             "ShlinkioApiTest\\Shlink\\Rest\\": "module/Rest/test-api",
-            "ShlinkioTest\\Shlink\\Core\\": [
-                "module/Core/test",
-                "module/Core/test-db"
-            ]
+            "ShlinkioTest\\Shlink\\Core\\": "module/Core/test",
+            "ShlinkioDbTest\\Shlink\\Core\\": "module/Core/test-db"
         },
         "files": [
             "config/test/constants.php"
@@ -192,6 +190,12 @@
     },
     "config": {
         "sort-packages": true,
-        "platform-check": false
+        "platform-check": false,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "infection/extension-installer": true,
+            "veewee/composer-run-parallel": true
+        }
     }
 }

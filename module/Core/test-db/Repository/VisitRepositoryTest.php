@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Repository;
+namespace ShlinkioDbTest\Shlink\Core\Repository;
 
 use Cake\Chronos\Chronos;
 use ReflectionObject;

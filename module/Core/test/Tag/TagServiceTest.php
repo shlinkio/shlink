@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Service\Tag;
+namespace ShlinkioTest\Shlink\Core\Tag;
 
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +16,8 @@ use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
+use Shlinkio\Shlink\Core\Tag\Model\TagsListFiltering;
+use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -46,27 +48,63 @@ class TagServiceTest extends TestCase
         $expected = [new Tag('foo'), new Tag('bar')];
 
         $match = $this->repo->match(Argument::cetera())->willReturn($expected);
+        $count = $this->repo->matchSingleScalarResult(Argument::cetera())->willReturn(2);
 
-        $result = $this->service->listTags();
+        $result = $this->service->listTags(TagsParams::fromRawData([]));
 
-        self::assertEquals($expected, $result);
+        self::assertEquals($expected, $result->getCurrentPageResults());
         $match->shouldHaveBeenCalled();
+        $count->shouldHaveBeenCalled();
     }
 
     /**
      * @test
-     * @dataProvider provideAdminApiKeys
+     * @dataProvider provideApiKeysAndSearchTerm
      */
-    public function tagsInfoDelegatesOnRepository(?ApiKey $apiKey): void
-    {
+    public function tagsInfoDelegatesOnRepository(
+        ?ApiKey $apiKey,
+        TagsParams $params,
+        TagsListFiltering $expectedFiltering,
+        int $countCalls,
+    ): void {
         $expected = [new TagInfo(new Tag('foo'), 1, 1), new TagInfo(new Tag('bar'), 3, 10)];
 
-        $find = $this->repo->findTagsWithInfo($apiKey)->willReturn($expected);
+        $find = $this->repo->findTagsWithInfo($expectedFiltering)->willReturn($expected);
+        $count = $this->repo->matchSingleScalarResult(Argument::cetera())->willReturn(2);
 
-        $result = $this->service->tagsInfo($apiKey);
+        $result = $this->service->tagsInfo($params, $apiKey);
 
-        self::assertEquals($expected, $result);
-        $find->shouldHaveBeenCalled();
+        self::assertEquals($expected, $result->getCurrentPageResults());
+        $find->shouldHaveBeenCalledOnce();
+        $count->shouldHaveBeenCalledTimes($countCalls);
+    }
+
+    public function provideApiKeysAndSearchTerm(): iterable
+    {
+        yield 'no API key, no filter' => [
+            null,
+            TagsParams::fromRawData([]),
+            new TagsListFiltering(2, 0, null, null),
+            1,
+        ];
+        yield 'admin API key, no filter' => [
+            $apiKey = ApiKey::create(),
+            TagsParams::fromRawData([]),
+            new TagsListFiltering(2, 0, null, $apiKey),
+            1,
+        ];
+        yield 'no API key, search term' => [
+            null,
+            TagsParams::fromRawData(['searchTerm' => $searchTerm = 'foobar']),
+            new TagsListFiltering(2, 0, $searchTerm, null),
+            1,
+        ];
+        yield 'admin API key, limits' => [
+            $apiKey = ApiKey::create(),
+            TagsParams::fromRawData(['page' => 1, 'itemsPerPage' => 1]),
+            new TagsListFiltering(1, 0, null, $apiKey),
+            0,
+        ];
     }
 
     /**

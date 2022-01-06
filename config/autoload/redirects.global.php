@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use function Shlinkio\Shlink\Common\env;
+use function Shlinkio\Shlink\Config\env;
 
 use const Shlinkio\Shlink\DEFAULT_REDIRECT_CACHE_LIFETIME;
 use const Shlinkio\Shlink\DEFAULT_REDIRECT_STATUS_CODE;

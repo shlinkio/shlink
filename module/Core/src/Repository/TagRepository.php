@@ -8,6 +8,7 @@ use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Spec;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
+use Shlinkio\Shlink\Core\Tag\Model\TagsListFiltering;
 use Shlinkio\Shlink\Core\Tag\Spec\CountTagsWithName;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -32,24 +33,31 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
     /**
      * @return TagInfo[]
      */
-    public function findTagsWithInfo(?ApiKey $apiKey = null): array
+    public function findTagsWithInfo(?TagsListFiltering $filtering = null): array
     {
         $qb = $this->createQueryBuilder('t');
         $qb->select('t AS tag', 'COUNT(DISTINCT s.id) AS shortUrlsCount', 'COUNT(DISTINCT v.id) AS visitsCount')
            ->leftJoin('t.shortUrls', 's')
            ->leftJoin('s.visits', 'v')
            ->groupBy('t')
-           ->orderBy('t.name', 'ASC');
+           ->orderBy('t.name', 'ASC')
+           ->setMaxResults($filtering?->limit())
+           ->setFirstResult($filtering?->offset());
 
+        $searchTerm = $filtering?->searchTerm();
+        if ($searchTerm !== null) {
+            $qb->andWhere($qb->expr()->like('t.name', ':searchPattern'))
+               ->setParameter('searchPattern', '%' . $searchTerm . '%');
+        }
+
+        $apiKey = $filtering?->apiKey();
         if ($apiKey !== null) {
             $this->applySpecification($qb, $apiKey->spec(false, 'shortUrls'), 't');
         }
 
-        $query = $qb->getQuery();
-
         return map(
-            $query->getResult(),
-            fn (array $row) => new TagInfo($row['tag'], (int) $row['shortUrlsCount'], (int) $row['visitsCount']),
+            $qb->getQuery()->getResult(),
+            static fn (array $row) => new TagInfo($row['tag'], (int) $row['shortUrlsCount'], (int) $row['visitsCount']),
         );
     }
 
