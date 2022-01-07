@@ -55,7 +55,6 @@ $buildDbConnection = static function (): array {
             'user' => 'postgres',
             'password' => 'root',
             'dbname' => 'shlink_test',
-            'charset' => 'utf8',
         ],
         'mssql' => [
             'driver' => 'pdo_sqlsrv',
@@ -71,7 +70,6 @@ $buildDbConnection = static function (): array {
             'user' => 'root',
             'password' => 'root',
             'dbname' => 'shlink_test',
-            'charset' => 'utf8',
         ],
     };
 };

@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1293](https://github.com/shlinkio/shlink/issues/1293) Fixed error when trying to create/import short URLs with a too long title.
+
+
 ## [2.10.1] - 2021-12-21
 ### Added
 * *Nothing*
