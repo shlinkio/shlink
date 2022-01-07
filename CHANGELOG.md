@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1293](https://github.com/shlinkio/shlink/issues/1293) Fixed error when trying to create/import short URLs with a too long title.
+* [#1306](https://github.com/shlinkio/shlink/issues/1306) Ensured remote IP address is not logged when using swoole/openswoole.
 
 
 ## [2.10.1] - 2021-12-21
