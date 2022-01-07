@@ -123,8 +123,10 @@ class ShortUrlMetaTest extends TestCase
         yield [null, null];
         yield ['foo', 'foo'];
         yield [str_pad('bar', 600, ' ', STR_PAD_BOTH), 'bar'];
-        yield [str_pad('', 512, 'a'), str_pad('', 512, 'a')];
-        yield [str_pad('', 600, 'b'), str_pad('', 512, 'b')];
-        yield [str_pad('', 800, 'b'), str_pad('', 512, 'b')];
+        yield [str_pad('', 511, 'a'), str_pad('', 511, 'a')];
+        yield [str_pad('', 512, 'b'), str_pad('', 512, 'b')];
+        yield [str_pad('', 513, 'c'), str_pad('', 512, 'c')];
+        yield [str_pad('', 600, 'd'), str_pad('', 512, 'd')];
+        yield [str_pad('', 800, 'e'), str_pad('', 512, 'e')];
     }
 }
