@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [2.10.2] - 2022-01-07
 ### Added
 * *Nothing*
 
@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Fixed
 * [#1293](https://github.com/shlinkio/shlink/issues/1293) Fixed error when trying to create/import short URLs with a too long title.
 * [#1306](https://github.com/shlinkio/shlink/issues/1306) Ensured remote IP address is not logged when using swoole/openswoole.
+* [#1308](https://github.com/shlinkio/shlink/issues/1308) Fixed memory leak when using redis due to the amount of non-expiring keys created by doctrine. Now they have a 24h expiration by default.
 
 
 ## [2.10.1] - 2021-12-21
