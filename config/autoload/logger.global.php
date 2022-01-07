@@ -82,7 +82,7 @@ return [
         'swoole-http-server' => [
             'logger' => [
                 'logger-name' => 'Logger_Access',
-                'format' => '%h %l %u "%r" %>s %b',
+                'format' => '%u "%r" %>s %B',
             ],
         ],
     ],
