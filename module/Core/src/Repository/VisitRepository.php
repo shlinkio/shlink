@@ -210,7 +210,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
            ->setFirstResult($offset ?? 0);
         $subQuery = $qb->getQuery()->getSQL();
 
-        // A native query builder needs to be used here because DQL and ORM query builders do not accept
+        // A native query builder needs to be used here, because DQL and ORM query builders do not support
         // sub-queries at "from" and "join" level.
         // If no sub-query is used, then performance drops dramatically while the "offset" grows.
         $nativeQb = $this->getEntityManager()->getConnection()->createQueryBuilder();
