@@ -54,7 +54,7 @@ class TagRepositoryTest extends DatabaseTestCase
 
     /**
      * @test
-     * @dataProvider provideFilterings
+     * @dataProvider provideFilters
      */
     public function properTagsInfoIsReturned(?TagsListFiltering $filtering, callable $asserts): void
     {
@@ -84,7 +84,7 @@ class TagRepositoryTest extends DatabaseTestCase
         $asserts($result, $names);
     }
 
-    public function provideFilterings(): iterable
+    public function provideFilters(): iterable
     {
         $noFiltersAsserts = static function (array $result, array $tagNames): void {
             /** @var TagInfo[] $result */

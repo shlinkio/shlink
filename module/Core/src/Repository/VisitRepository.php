@@ -204,13 +204,13 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
         $qb->select('v.id')
            ->orderBy('v.id', 'DESC')
-           // Falling back to values that will behave as no limit/offset, but will workaround MS SQL not allowing
+           // Falling back to values that will behave as no limit/offset, but will work around MS SQL not allowing
            // order on sub-queries without offset
            ->setMaxResults($limit ?? PHP_INT_MAX)
            ->setFirstResult($offset ?? 0);
         $subQuery = $qb->getQuery()->getSQL();
 
-        // A native query builder needs to be used here because DQL and ORM query builders do not accept
+        // A native query builder needs to be used here, because DQL and ORM query builders do not support
         // sub-queries at "from" and "join" level.
         // If no sub-query is used, then performance drops dramatically while the "offset" grows.
         $nativeQb = $this->getEntityManager()->getConnection()->createQueryBuilder();

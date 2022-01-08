@@ -12,11 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     The `short-urls:list` command now accepts a `-i`/`--including-all-tags` flag which behaves the same.
 
-* [#1273](https://github.com/shlinkio/shlink/issues/1273) Added support for pagination in tags lists.
+* [#1273](https://github.com/shlinkio/shlink/issues/1273) Added support for pagination in tags lists, allowing to improve performance by loading subsets of tags.
 
     For backwards compatibility, lists continue returning all items by default, but the `GET /tags` endpoint now supports `page` and `itemsPerPage` query params, to make sure only a subset of the tags is returned.
 
-    This is supported both when invoking the endpoint with and without `withStats=true`.
+    This is supported both when invoking the endpoint with and without `withStats=true` query param.
 
     Additionally, the endpoint also supports filtering by `searchTerm` query param. When provided, only tags matching it will be returned.
 

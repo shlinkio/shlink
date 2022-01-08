@@ -23,11 +23,18 @@ abstract class AbstractTagsPaginatorAdapter implements AdapterInterface
 
     public function getNbResults(): int
     {
-        return (int) $this->repo->matchSingleScalarResult(Spec::andX(
-            // FIXME I don't think using Spec::selectNew is the correct thing here, ideally it should be Spec::select,
-            //       but seems to be the only way to use Spec::COUNT(...)
+        $conditions = [
+            // FIXME I don't think using Spec::selectNew is the correct thing in this context.
+            //       Ideally it should be Spec::select, but seems to be the only way to use Spec::COUNT(...).
             Spec::selectNew(Tag::class, Spec::COUNT('id', true)),
             new WithApiKeySpecsEnsuringJoin($this->apiKey),
-        ));
+        ];
+
+        $searchTerm = $this->params->searchTerm();
+        if ($searchTerm !== null) {
+            $conditions[] = Spec::like('name', $searchTerm);
+        }
+
+        return (int) $this->repo->matchSingleScalarResult(Spec::andX(...$conditions));
     }
 }
