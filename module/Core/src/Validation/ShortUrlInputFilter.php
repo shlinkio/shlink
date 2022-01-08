@@ -6,12 +6,15 @@ namespace Shlinkio\Shlink\Core\Validation;
 
 use Cocur\Slugify\Slugify;
 use DateTime;
+use Laminas\Filter;
 use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
 use Shlinkio\Shlink\Core\Util\CocurSymfonySluggerBridge;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
+
+use function substr;
 
 use const Shlinkio\Shlink\CUSTOM_SLUGS_REGEXP;
 use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
@@ -107,7 +110,11 @@ class ShortUrlInputFilter extends InputFilter
 
         $this->add($this->createTagsInput(self::TAGS, false));
 
-        $this->add($this->createInput(self::TITLE, false));
+        $title = $this->createInput(self::TITLE, false);
+        $title->getFilterChain()->attach(new Filter\Callback(
+            static fn (?string $value) => $value === null ? $value : substr($value, 0, 512),
+        ));
+        $this->add($title);
 
         $this->add($this->createBooleanInput(self::CRAWLABLE, false));
     }

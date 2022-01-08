@@ -8,20 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Added
 * [#1274](https://github.com/shlinkio/shlink/issues/1274) Added support to filter short URLs lists by all provided tags.
 
-    The `GET /short-urls` endpoint now accepts a `tagsMode=all` param which will make only short URLs matching **all** the tags in the `tags[]` query param, to be returned.
+  The `GET /short-urls` endpoint now accepts a `tagsMode=all` param which will make only short URLs matching **all** the tags in the `tags[]` query param, to be returned.
 
-    The `short-urls:list` command now accepts a `-i`/`--including-all-tags` flag which behaves the same.
+  The `short-urls:list` command now accepts a `-i`/`--including-all-tags` flag which behaves the same.
 
 * [#1273](https://github.com/shlinkio/shlink/issues/1273) Added support for pagination in tags lists, allowing to improve performance by loading subsets of tags.
 
-    For backwards compatibility, lists continue returning all items by default, but the `GET /tags` endpoint now supports `page` and `itemsPerPage` query params, to make sure only a subset of the tags is returned.
+  For backwards compatibility, lists continue returning all items by default, but the `GET /tags` endpoint now supports `page` and `itemsPerPage` query params, to make sure only a subset of the tags is returned.
 
-    This is supported both when invoking the endpoint with and without `withStats=true` query param.
+  This is supported both when invoking the endpoint with and without `withStats=true` query param.
 
-    Additionally, the endpoint also supports filtering by `searchTerm` query param. When provided, only tags matching it will be returned.
+  Additionally, the endpoint also supports filtering by `searchTerm` query param. When provided, only tags matching it will be returned.
 
 ### Changed
-* [#1277](https://github.com/shlinkio/shlink/issues/1277) Reduced docker image size to 45% the original size.
+* [#1277](https://github.com/shlinkio/shlink/issues/1277) Reduced docker image size to 45% of the original size.
 * [#1268](https://github.com/shlinkio/shlink/issues/1268) Updated dependencies, including symfony/console 6 and mezzio/mezzio-swoole 4.
 * [#1283](https://github.com/shlinkio/shlink/issues/1283) Changed behavior of `DELETE_SHORT_URL_THRESHOLD` env var, disabling the feature if a value was not provided.
 * [#1300](https://github.com/shlinkio/shlink/issues/1300) Changed default ordering for short URLs list, returning always from newest to oldest.
@@ -36,6 +36,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * *Nothing*
+
+
+## [2.10.2] - 2022-01-07
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1293](https://github.com/shlinkio/shlink/issues/1293) Fixed error when trying to create/import short URLs with a too long title.
+* [#1306](https://github.com/shlinkio/shlink/issues/1306) Ensured remote IP address is not logged when using swoole/openswoole.
+* [#1308](https://github.com/shlinkio/shlink/issues/1308) Fixed memory leak when using redis due to the amount of non-expiring keys created by doctrine. Now they have a 24h expiration by default.
 
 
 ## [2.10.1] - 2021-12-21

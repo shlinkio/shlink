@@ -11,6 +11,10 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use stdClass;
 
+use function str_pad;
+
+use const STR_PAD_BOTH;
+
 class ShortUrlMetaTest extends TestCase
 {
     /**
@@ -98,5 +102,31 @@ class ShortUrlMetaTest extends TestCase
         yield ['グーグル', 'グーグル'];
         yield ['谷歌', '谷歌'];
         yield ['гугл', 'гугл'];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideTitles
+     */
+    public function titleIsCroppedIfTooLong(?string $title, ?string $expectedTitle): void
+    {
+        $meta = ShortUrlMeta::fromRawData([
+            'title' => $title,
+            'longUrl' => '',
+        ]);
+
+        self::assertEquals($expectedTitle, $meta->getTitle());
+    }
+
+    public function provideTitles(): iterable
+    {
+        yield [null, null];
+        yield ['foo', 'foo'];
+        yield [str_pad('bar', 600, ' ', STR_PAD_BOTH), 'bar'];
+        yield [str_pad('', 511, 'a'), str_pad('', 511, 'a')];
+        yield [str_pad('', 512, 'b'), str_pad('', 512, 'b')];
+        yield [str_pad('', 513, 'c'), str_pad('', 512, 'c')];
+        yield [str_pad('', 600, 'd'), str_pad('', 512, 'd')];
+        yield [str_pad('', 800, 'e'), str_pad('', 512, 'e')];
     }
 }
