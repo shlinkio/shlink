@@ -50,7 +50,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $conn = $this->getEntityManager()->getConnection();
         $subQb = $this->createQueryBuilder('t');
         $subQb->select('t.id', 't.name')
-              ->orderBy('t.name', 'ASC') // TODO Make dynamic
+              ->orderBy('t.name', $filtering?->orderBy()?->orderDirection() ?? 'ASC') // TODO Make filed dynamic
               ->setMaxResults($filtering?->limit() ?? PHP_INT_MAX)
               ->setFirstResult($filtering?->offset() ?? 0);
 
@@ -96,7 +96,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             ->leftJoin('st', 'short_urls', 's', $nativeQb->expr()->eq('s.id', 'st.short_url_id'))
             ->leftJoin('st', 'visits', 'v', $nativeQb->expr()->eq('s.id', 'v.short_url_id'))
             ->groupBy('t.id_0', 't.name_1')
-            ->orderBy('t.name_1', 'ASC'); // TODO Make dynamic
+            ->orderBy('t.name_1', $filtering?->orderBy()?->orderDirection() ?? 'ASC'); // TODO Make field dynamic
 
         // Apply API key role conditions to the native query too, as they will affect the amounts on the aggregates
         $apiKey?->mapRoles(fn (string $roleName, array $meta) => match ($roleName) {

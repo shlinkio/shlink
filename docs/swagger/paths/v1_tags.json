@@ -54,6 +54,19 @@
                 "schema": {
                     "type": "string"
                 }
+            },
+            {
+                "name": "orderBy",
+                "in": "query",
+                "description": "To determine how to order the results.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "tag-ASC",
+                        "tag-DESC"
+                    ]
+                }
             }
         ],
         "responses": {

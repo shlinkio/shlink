@@ -61,9 +61,9 @@ class TagsPaginatorAdapterTest extends DatabaseTestCase
         yield ['ba', null, 0, 1, ['bar'], 2];
         yield ['foo', null, 0, 10, ['foo'], 1];
         yield ['a', null, 0, 10, ['another', 'bar', 'baz'], 3];
-        yield [null, 'name-DESC', 0, 10, ['foo', 'baz', 'bar', 'another'], 4];
-        yield [null, 'name-ASC', 0, 10, ['another', 'bar', 'baz', 'foo'], 4];
-        yield [null, 'name-DESC', 0, 2, ['foo', 'baz'], 4];
-        yield ['ba', 'name-DESC', 0, 1, ['baz'], 2];
+        yield [null, 'tag-DESC', 0, 10, ['foo', 'baz', 'bar', 'another'], 4];
+        yield [null, 'tag-ASC', 0, 10, ['another', 'bar', 'baz', 'foo'], 4];
+        yield [null, 'tag-DESC', 0, 2, ['foo', 'baz'], 4];
+        yield ['ba', 'tag-DESC', 0, 1, ['baz'], 2];
     }
 }

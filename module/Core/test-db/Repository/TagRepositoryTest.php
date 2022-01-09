@@ -8,6 +8,7 @@ use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
@@ -86,7 +87,7 @@ class TagRepositoryTest extends DatabaseTestCase
 
     public function provideFilters(): iterable
     {
-        $noFiltersAsserts = static function (array $result, array $tagNames): void {
+        $defaultAsserts = static function (array $result, array $tagNames): void {
             /** @var TagInfo[] $result */
             self::assertCount(4, $result);
             self::assertEquals(0, $result[0]->shortUrlsCount());
@@ -106,8 +107,8 @@ class TagRepositoryTest extends DatabaseTestCase
             self::assertEquals($tagNames[0], $result[3]->tag()->__toString());
         };
 
-        yield 'no filter' => [null, $noFiltersAsserts];
-        yield 'empty filter' => [new TagsListFiltering(), $noFiltersAsserts];
+        yield 'no filter' => [null, $defaultAsserts];
+        yield 'empty filter' => [new TagsListFiltering(), $defaultAsserts];
         yield 'limit' => [new TagsListFiltering(2), static function (array $result, array $tagNames): void {
             /** @var TagInfo[] $result */
             self::assertCount(2, $result);
@@ -152,6 +153,32 @@ class TagRepositoryTest extends DatabaseTestCase
                 self::assertEquals(1, $result[1]->shortUrlsCount());
                 self::assertEquals(3, $result[1]->visitsCount());
                 self::assertEquals($tagNames[2], $result[1]->tag()->__toString());
+            },
+        ];
+        yield 'ASC ordering' => [
+            new TagsListFiltering(null, null, null, Ordering::fromTuple(['tag', 'ASC'])),
+            $defaultAsserts,
+        ];
+        yield 'DESC ordering' => [
+            new TagsListFiltering(null, null, null, Ordering::fromTuple(['tag', 'DESC'])),
+            static function (array $result, array $tagNames): void {
+                /** @var TagInfo[] $result */
+                self::assertCount(4, $result);
+                self::assertEquals(0, $result[3]->shortUrlsCount());
+                self::assertEquals(0, $result[3]->visitsCount());
+                self::assertEquals($tagNames[3], $result[3]->tag()->__toString());
+
+                self::assertEquals(1, $result[2]->shortUrlsCount());
+                self::assertEquals(3, $result[2]->visitsCount());
+                self::assertEquals($tagNames[1], $result[2]->tag()->__toString());
+
+                self::assertEquals(1, $result[1]->shortUrlsCount());
+                self::assertEquals(3, $result[1]->visitsCount());
+                self::assertEquals($tagNames[2], $result[1]->tag()->__toString());
+
+                self::assertEquals(2, $result[0]->shortUrlsCount());
+                self::assertEquals(4, $result[0]->visitsCount());
+                self::assertEquals($tagNames[0], $result[0]->tag()->__toString());
             },
         ];
     }
