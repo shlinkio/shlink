@@ -11,7 +11,7 @@ class TagsInfoPaginatorAdapter extends AbstractTagsPaginatorAdapter
     public function getSlice(int $offset, int $length): iterable
     {
         return $this->repo->findTagsWithInfo(
-            new TagsListFiltering($length, $offset, $this->params->searchTerm(), $this->apiKey),
+            TagsListFiltering::fromRangeAndParams($length, $offset, $this->params, $this->apiKey),
         );
     }
 }

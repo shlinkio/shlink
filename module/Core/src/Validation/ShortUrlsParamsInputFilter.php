@@ -21,6 +21,7 @@ class ShortUrlsParamsInputFilter extends InputFilter
     public const END_DATE = 'endDate';
     public const ITEMS_PER_PAGE = 'itemsPerPage';
     public const TAGS_MODE = 'tagsMode';
+    public const ORDER_BY = 'orderBy';
 
     public function __construct(array $data)
     {
@@ -46,5 +47,7 @@ class ShortUrlsParamsInputFilter extends InputFilter
             'strict' => InArray::COMPARE_STRICT,
         ]));
         $this->add($tagsMode);
+
+        $this->add($this->createOrderByInput(self::ORDER_BY, ShortUrlsParams::ORDERABLE_FIELDS));
     }
 }

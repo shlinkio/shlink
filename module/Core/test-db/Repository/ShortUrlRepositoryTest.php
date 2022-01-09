@@ -11,9 +11,9 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
@@ -128,9 +128,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         self::assertCount(1, $this->repo->findList(2, 2));
 
-        $result = $this->repo->findList(null, null, null, [], null, ShortUrlsOrdering::fromRawData([
-            'orderBy' => 'visits-DESC',
-        ]));
+        $result = $this->repo->findList(null, null, null, [], null, Ordering::fromTuple(['visits', 'DESC']));
         self::assertCount(3, $result);
         self::assertSame($bar, $result[0]);
 
@@ -164,9 +162,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $result = $this->repo->findList(null, null, null, [], null, ShortUrlsOrdering::fromRawData([
-            'orderBy' => 'longUrl-ASC',
-        ]));
+        $result = $this->repo->findList(null, null, null, [], null, Ordering::fromTuple(['longUrl', 'ASC']));
 
         self::assertCount(count($urls), $result);
         self::assertEquals('a', $result[0]->getLongUrl());

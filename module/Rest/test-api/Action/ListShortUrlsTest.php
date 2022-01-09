@@ -242,20 +242,29 @@ class ListShortUrlsTest extends ApiTestCase
         ];
     }
 
-    /** @test */
-    public function errorIsReturnedWhenProvidingInvalidValues(): void
+    /**
+     * @test
+     * @dataProvider provideInvalidFiltering
+     */
+    public function errorIsReturnedWhenProvidingInvalidValues(array $query, array $expectedInvalidElements): void
     {
-        $query = ['tagsMode' => 'invalid'];
         $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls', [RequestOptions::QUERY => $query]);
         $respPayload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(400, $resp->getStatusCode());
         self::assertEquals([
-            'invalidElements' => ['tagsMode'],
+            'invalidElements' => $expectedInvalidElements,
             'title' => 'Invalid data',
             'type' => 'INVALID_ARGUMENT',
             'status' => 400,
             'detail' => 'Provided data is not valid',
         ], $respPayload);
+    }
+
+    public function provideInvalidFiltering(): iterable
+    {
+        yield [['tagsMode' => 'invalid'], ['tagsMode']];
+        yield [['orderBy' => 'invalid'], ['orderBy']];
+        yield [['orderBy' => 'invalid', 'tagsMode' => 'invalid'], ['tagsMode', 'orderBy']];
     }
 }

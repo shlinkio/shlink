@@ -263,10 +263,10 @@ class ListShortUrlsCommandTest extends TestCase
     public function provideOrderBy(): iterable
     {
         yield [[], null];
-        yield [['--order-by' => 'foo'], 'foo'];
-        yield [['--order-by' => 'foo,ASC'], 'foo-ASC'];
-        yield [['--order-by' => 'bar,DESC'], 'bar-DESC'];
-        yield [['--order-by' => 'baz-DESC'], 'baz-DESC'];
+        yield [['--order-by' => 'visits'], 'visits'];
+        yield [['--order-by' => 'longUrl,ASC'], 'longUrl-ASC'];
+        yield [['--order-by' => 'shortCode,DESC'], 'shortCode-DESC'];
+        yield [['--order-by' => 'title-DESC'], 'title-DESC'];
     }
 
     /** @test */

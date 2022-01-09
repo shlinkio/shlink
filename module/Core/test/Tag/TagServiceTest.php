@@ -83,26 +83,26 @@ class TagServiceTest extends TestCase
     {
         yield 'no API key, no filter' => [
             null,
-            TagsParams::fromRawData([]),
-            new TagsListFiltering(2, 0, null, null),
+            $params = TagsParams::fromRawData([]),
+            TagsListFiltering::fromRangeAndParams(2, 0, $params, null),
             1,
         ];
         yield 'admin API key, no filter' => [
             $apiKey = ApiKey::create(),
-            TagsParams::fromRawData([]),
-            new TagsListFiltering(2, 0, null, $apiKey),
+            $params = TagsParams::fromRawData([]),
+            TagsListFiltering::fromRangeAndParams(2, 0, $params, $apiKey),
             1,
         ];
         yield 'no API key, search term' => [
             null,
-            TagsParams::fromRawData(['searchTerm' => $searchTerm = 'foobar']),
-            new TagsListFiltering(2, 0, $searchTerm, null),
+            $params = TagsParams::fromRawData(['searchTerm' => 'foobar']),
+            TagsListFiltering::fromRangeAndParams(2, 0, $params, null),
             1,
         ];
         yield 'admin API key, limits' => [
             $apiKey = ApiKey::create(),
-            TagsParams::fromRawData(['page' => 1, 'itemsPerPage' => 1]),
-            new TagsListFiltering(1, 0, null, $apiKey),
+            $params = TagsParams::fromRawData(['page' => 1, 'itemsPerPage' => 1]),
+            TagsListFiltering::fromRangeAndParams(1, 0, $params, $apiKey),
             0,
         ];
     }

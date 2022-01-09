@@ -13,9 +13,9 @@ use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
@@ -35,7 +35,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         ?string $searchTerm = null,
         array $tags = [],
         ?string $tagsMode = null,
-        ?ShortUrlsOrdering $orderBy = null,
+        ?Ordering $orderBy = null,
         ?DateRange $dateRange = null,
         ?Specification $spec = null,
     ): array {
@@ -53,13 +53,14 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $qb->orderBy('s.dateCreated', 'DESC')->getQuery()->getResult();
     }
 
-    private function processOrderByForList(QueryBuilder $qb, ShortUrlsOrdering $orderBy): array
+    private function processOrderByForList(QueryBuilder $qb, Ordering $orderBy): array
     {
         $fieldName = $orderBy->orderField();
         $order = $orderBy->orderDirection();
 
         if ($fieldName === 'visits') {
-            // FIXME This query is inefficient. Debug it.
+            // FIXME This query is inefficient.
+            //       Diagnostic: It might need to use a sub-query, as done with the tags list query.
             $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
                ->leftJoin('s.visits', 'v')
                ->groupBy('s')

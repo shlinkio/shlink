@@ -9,9 +9,9 @@ use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterfa
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
@@ -22,7 +22,7 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
         ?string $searchTerm = null,
         array $tags = [],
         ?string $tagsMode = null,
-        ?ShortUrlsOrdering $orderBy = null,
+        ?Ordering $orderBy = null,
         ?DateRange $dateRange = null,
         ?Specification $spec = null,
     ): array;

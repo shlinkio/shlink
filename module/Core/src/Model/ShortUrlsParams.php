@@ -13,6 +13,7 @@ use function Shlinkio\Shlink\Core\parseDateField;
 
 final class ShortUrlsParams
 {
+    public const ORDERABLE_FIELDS = ['longUrl', 'shortCode', 'dateCreated', 'title', 'visits'];
     public const DEFAULT_ITEMS_PER_PAGE = 10;
     public const TAGS_MODE_ANY = 'any';
     public const TAGS_MODE_ALL = 'all';
@@ -23,7 +24,7 @@ final class ShortUrlsParams
     private array $tags;
     /** @var self::TAGS_MODE_ANY|self::TAGS_MODE_ALL */
     private string $tagsMode = self::TAGS_MODE_ANY;
-    private ShortUrlsOrdering $orderBy;
+    private Ordering $orderBy;
     private ?DateRange $dateRange;
 
     private function __construct()
@@ -63,7 +64,7 @@ final class ShortUrlsParams
             parseDateField($inputFilter->getValue(ShortUrlsParamsInputFilter::START_DATE)),
             parseDateField($inputFilter->getValue(ShortUrlsParamsInputFilter::END_DATE)),
         );
-        $this->orderBy = ShortUrlsOrdering::fromRawData($query);
+        $this->orderBy = Ordering::fromTuple($inputFilter->getValue(ShortUrlsParamsInputFilter::ORDER_BY));
         $this->itemsPerPage = (int) (
             $inputFilter->getValue(ShortUrlsParamsInputFilter::ITEMS_PER_PAGE) ?? self::DEFAULT_ITEMS_PER_PAGE
         );
@@ -90,7 +91,7 @@ final class ShortUrlsParams
         return $this->tags;
     }
 
-    public function orderBy(): ShortUrlsOrdering
+    public function orderBy(): Ordering
     {
         return $this->orderBy;
     }

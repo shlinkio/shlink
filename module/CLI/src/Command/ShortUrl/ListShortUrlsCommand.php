@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\Validation\ShortUrlsParamsInputFilter;
@@ -135,7 +134,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
             ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
             ShortUrlsParamsInputFilter::TAGS => $tags,
             ShortUrlsParamsInputFilter::TAGS_MODE => $tagsMode,
-            ShortUrlsOrdering::ORDER_BY => $orderBy,
+            ShortUrlsParamsInputFilter::ORDER_BY => $orderBy,
             ShortUrlsParamsInputFilter::START_DATE => $startDate?->toAtomString(),
             ShortUrlsParamsInputFilter::END_DATE => $endDate?->toAtomString(),
         ];
