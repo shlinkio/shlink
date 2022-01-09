@@ -82,6 +82,9 @@
         "/rest/v{version}/tags": {
             "$ref": "paths/v1_tags.json"
         },
+        "/rest/v{version}/tags/stats": {
+            "$ref": "paths/v2_tags_stats.json"
+        },
 
         "/rest/v{version}/visits": {
             "$ref": "paths/v2_visits.json"

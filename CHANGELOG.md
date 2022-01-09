@@ -27,10 +27,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1300](https://github.com/shlinkio/shlink/issues/1300) Changed default ordering for short URLs list, returning always from newest to oldest.
 
 ### Deprecated
-* *Nothing*
+* [#1315](https://github.com/shlinkio/shlink/issues/1315) Deprecated `GET /tags?withStats=true` endpoint. Use `GET /tags/stats` instead.
 
 ### Removed
-* [#1275](https://github.com/shlinkio/shlink/issues/1275) Removed everything that was deprecated.
+* [#1275](https://github.com/shlinkio/shlink/issues/1275) Removed everything that was deprecated in Shlink 2.x.
 
   See [UPGRADE](UPGRADE.md#from-v2x-to-v3x) doc in order to get details on how to migrate to this version.
 

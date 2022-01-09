@@ -5,7 +5,7 @@
             "Tags"
         ],
         "summary": "List existing tags",
-        "description": "Returns the list of all tags used in any short URL, ordered by name",
+        "description": "Returns the list of all tags used in any short URL",
         "security": [
             {
                 "ApiKey": []
@@ -17,7 +17,8 @@
             },
             {
                 "name": "withStats",
-                "description": "Whether you want to include also a list with general stats by tag or not. Defaults to false.",
+                "deprecated": true,
+                "description": "**[Deprecated]** Use [GET /tags/stats](#/Tags/tagsWithStats) endpoint to get tags with their stats.",
                 "in": "query",
                 "required": false,
                 "schema": {
@@ -101,53 +102,20 @@
                                 }
                             }
                         },
-                        "examples": {
-                            "Without stats": {
-                                "value": {
-                                    "tags": {
-                                        "data": [
-                                            "games",
-                                            "php",
-                                            "shlink",
-                                            "tech"
-                                        ],
-                                        "pagination": {
-                                            "currentPage": 5,
-                                            "pagesCount": 10,
-                                            "itemsPerPage": 4,
-                                            "itemsInCurrentPage": 4,
-                                            "totalItems": 38
-                                        }
-                                    }
-                                }
-                            },
-                            "With stats": {
-                                "value": {
-                                    "tags": {
-                                        "data": [
-                                            "games",
-                                            "shlink"
-                                        ],
-                                        "stats": [
-                                            {
-                                                "tag": "games",
-                                                "shortUrlsCount": 10,
-                                                "visitsCount": 521
-                                            },
-                                            {
-                                                "tag": "shlink",
-                                                "shortUrlsCount": 7,
-                                                "visitsCount": 1087
-                                            }
-                                        ],
-                                        "pagination": {
-                                            "currentPage": 5,
-                                            "pagesCount": 5,
-                                            "itemsPerPage": 10,
-                                            "itemsInCurrentPage": 2,
-                                            "totalItems": 42
-                                        }
-                                    }
+                        "example": {
+                            "tags": {
+                                "data": [
+                                    "games",
+                                    "php",
+                                    "shlink",
+                                    "tech"
+                                ],
+                                "pagination": {
+                                    "currentPage": 5,
+                                    "pagesCount": 10,
+                                    "itemsPerPage": 4,
+                                    "itemsInCurrentPage": 4,
+                                    "totalItems": 38
                                 }
                             }
                         }
