@@ -37,6 +37,7 @@ return [
 
         // Tags
         Action\Tag\ListTagsAction::getRouteDef(),
+        Action\Tag\TagsStatsAction::getRouteDef(),
         Action\Tag\DeleteTagsAction::getRouteDef(),
         Action\Tag\UpdateTagAction::getRouteDef(),
 
