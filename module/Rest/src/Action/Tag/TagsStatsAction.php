@@ -26,8 +26,7 @@ class TagsStatsAction extends AbstractRestAction
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $query = $request->getQueryParams();
-        $params = TagsParams::fromRawData($query);
+        $params = TagsParams::fromRawData($request->getQueryParams());
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
         $tagsInfo = $this->tagService->tagsInfo($params, $apiKey);
 

@@ -29,8 +29,7 @@ class ListTagsAction extends AbstractRestAction
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $query = $request->getQueryParams();
-        $params = TagsParams::fromRawData($query);
+        $params = TagsParams::fromRawData($request->getQueryParams());
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
         if (! $params->withStats()) {
