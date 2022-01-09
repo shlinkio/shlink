@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
-use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -52,7 +52,8 @@ class ListShortUrlsActionTest extends TestCase
         ?string $endDate = null,
     ): void {
         $apiKey = ApiKey::create();
-        $request = (new ServerRequest())->withQueryParams($query)->withAttribute(ApiKey::class, $apiKey);
+        $request = ServerRequestFactory::fromGlobals()->withQueryParams($query)
+                                                      ->withAttribute(ApiKey::class, $apiKey);
         $listShortUrls = $this->service->listShortUrls(ShortUrlsParams::fromRawData([
             'page' => $expectedPage,
             'searchTerm' => $expectedSearchTerm,
@@ -81,10 +82,10 @@ class ListShortUrlsActionTest extends TestCase
         yield [['page' => '8'], 8, null, [], null];
         yield [['searchTerm' => $searchTerm = 'foo'], 1, $searchTerm, [], null];
         yield [['tags' => $tags = ['foo','bar']], 1, null, $tags, null];
-        yield [['orderBy' => $orderBy = 'something'], 1, null, [], $orderBy];
+        yield [['orderBy' => $orderBy = 'longUrl'], 1, null, [], $orderBy];
         yield [[
             'page' => '2',
-            'orderBy' => $orderBy = 'something',
+            'orderBy' => $orderBy = 'visits',
             'tags' => $tags = ['one', 'two'],
         ], 2, null, $tags, $orderBy];
         yield [
