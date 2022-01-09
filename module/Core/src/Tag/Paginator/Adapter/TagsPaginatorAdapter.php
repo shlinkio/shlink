@@ -13,7 +13,10 @@ class TagsPaginatorAdapter extends AbstractTagsPaginatorAdapter
     {
         $conditions = [
             new WithApiKeySpecsEnsuringJoin($this->apiKey),
-            Spec::orderBy('name'),
+            Spec::orderBy(
+                'name', // Ordering by other fields makes no sense here
+                $this->params->orderBy()->orderDirection(),
+            ),
             Spec::limit($length),
             Spec::offset($offset),
         ];

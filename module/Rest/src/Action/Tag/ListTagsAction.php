@@ -30,11 +30,10 @@ class ListTagsAction extends AbstractRestAction
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $query = $request->getQueryParams();
-        $withStats = ($query['withStats'] ?? null) === 'true';
-        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
         $params = TagsParams::fromRawData($query);
+        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
-        if (! $withStats) {
+        if (! $params->withStats()) {
             return new JsonResponse([
                 'tags' => $this->serializePaginator($this->tagService->listTags($params, $apiKey)),
             ]);
