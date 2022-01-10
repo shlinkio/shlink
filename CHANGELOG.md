@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
+* [#767](https://github.com/shlinkio/shlink/issues/767) Added full support to use emojis everywhere, whether it is custom slugs, titles, referrers, etc.
 * [#1274](https://github.com/shlinkio/shlink/issues/1274) Added support to filter short URLs lists by all provided tags.
 
   The `GET /short-urls` endpoint now accepts a `tagsMode=all` param which will make only short URLs matching **all** the tags in the `tags[]` query param, to be returned.
