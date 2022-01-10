@@ -9,7 +9,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
-use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsForTagPaginatorAdapter;
+use Shlinkio\Shlink\Core\Paginator\Adapter\TagVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
@@ -63,9 +63,9 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         $countVisits->shouldHaveBeenCalledOnce();
     }
 
-    private function createAdapter(?ApiKey $apiKey): VisitsForTagPaginatorAdapter
+    private function createAdapter(?ApiKey $apiKey): TagVisitsPaginatorAdapter
     {
-        return new VisitsForTagPaginatorAdapter(
+        return new TagVisitsPaginatorAdapter(
             $this->repo->reveal(),
             'foo',
             VisitsParams::fromRawData([]),

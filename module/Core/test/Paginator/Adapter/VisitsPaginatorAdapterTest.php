@@ -10,7 +10,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
-use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
+use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
@@ -64,9 +64,9 @@ class VisitsPaginatorAdapterTest extends TestCase
         $countVisits->shouldHaveBeenCalledOnce();
     }
 
-    private function createAdapter(?ApiKey $apiKey): VisitsPaginatorAdapter
+    private function createAdapter(?ApiKey $apiKey): ShortUrlVisitsPaginatorAdapter
     {
-        return new VisitsPaginatorAdapter(
+        return new ShortUrlVisitsPaginatorAdapter(
             $this->repo->reveal(),
             new ShortUrlIdentifier(''),
             VisitsParams::fromRawData([]),

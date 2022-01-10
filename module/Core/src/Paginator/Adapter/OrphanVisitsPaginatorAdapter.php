@@ -23,7 +23,7 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
         ));
     }
 
-    public function getSlice($offset, $length): iterable // phpcs:ignore
+    public function getSlice(int $offset, int $length): iterable
     {
         return $this->repo->findOrphanVisits(new VisitsListFiltering(
             $this->params->getDateRange(),

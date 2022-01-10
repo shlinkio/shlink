@@ -53,10 +53,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     public function findAllVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('v')
-           ->from(Visit::class, 'v');
-
+        $qb = $this->createQueryBuilder('v');
         return $this->visitsIterableForQuery($qb, $blockSize);
     }
 
@@ -189,11 +186,13 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     private function applyDatesInline(QueryBuilder $qb, ?DateRange $dateRange): void
     {
+        $conn = $this->getEntityManager()->getConnection();
+
         if ($dateRange?->startDate() !== null) {
-            $qb->andWhere($qb->expr()->gte('v.date', '\'' . $dateRange->startDate()->toDateTimeString() . '\''));
+            $qb->andWhere($qb->expr()->gte('v.date', $conn->quote($dateRange->startDate()->toDateTimeString())));
         }
         if ($dateRange?->endDate() !== null) {
-            $qb->andWhere($qb->expr()->lte('v.date', '\'' . $dateRange->endDate()->toDateTimeString() . '\''));
+            $qb->andWhere($qb->expr()->lte('v.date', $conn->quote($dateRange->endDate()->toDateTimeString())));
         }
     }
 

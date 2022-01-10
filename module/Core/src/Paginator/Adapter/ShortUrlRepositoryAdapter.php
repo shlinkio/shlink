@@ -18,7 +18,7 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
     ) {
     }
 
-    public function getSlice($offset, $length): array // phpcs:ignore
+    public function getSlice(int $offset, int $length): iterable
     {
         return $this->repository->findList(
             $length,

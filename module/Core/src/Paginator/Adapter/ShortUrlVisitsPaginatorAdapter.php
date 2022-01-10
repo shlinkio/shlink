@@ -4,30 +4,31 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
+use Happyr\DoctrineSpecification\Specification\Specification;
+use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
-use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class VisitsForTagPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
+class ShortUrlVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
     public function __construct(
         private VisitRepositoryInterface $visitRepository,
-        private string $tag,
+        private ShortUrlIdentifier $identifier,
         private VisitsParams $params,
-        private ?ApiKey $apiKey,
+        private ?Specification $spec,
     ) {
     }
 
-    public function getSlice($offset, $length): array // phpcs:ignore
+    public function getSlice(int $offset, int $length): iterable
     {
-        return $this->visitRepository->findVisitsByTag(
-            $this->tag,
+        return $this->visitRepository->findVisitsByShortCode(
+            $this->identifier,
             new VisitsListFiltering(
                 $this->params->getDateRange(),
                 $this->params->excludeBots(),
-                $this->apiKey?->spec(true),
+                $this->spec,
                 $length,
                 $offset,
             ),
@@ -36,12 +37,12 @@ class VisitsForTagPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
 
     protected function doCount(): int
     {
-        return $this->visitRepository->countVisitsByTag(
-            $this->tag,
+        return $this->visitRepository->countVisitsByShortCode(
+            $this->identifier,
             new VisitsCountFiltering(
                 $this->params->getDateRange(),
                 $this->params->excludeBots(),
-                $this->apiKey?->spec(true),
+                $this->spec,
             ),
         );
     }
