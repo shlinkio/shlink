@@ -17,19 +17,17 @@ class ShortUrlStringifier implements ShortUrlStringifierInterface
 
     public function stringify(ShortUrl $shortUrl): string
     {
-        return (new Uri())->withPath($shortUrl->getShortCode())
-                          ->withScheme($this->domainConfig['schema'] ?? 'http')
-                          ->withHost($this->resolveDomain($shortUrl))
-                          ->__toString();
+        $uriWithoutShortCode = (new Uri())->withScheme($this->domainConfig['schema'] ?? 'http')
+            ->withHost($this->resolveDomain($shortUrl))
+            ->withPath($this->basePath)
+            ->__toString();
+
+        // The short code needs to be appended to avoid it from being URL-encoded
+        return sprintf('%s/%s', $uriWithoutShortCode, $shortUrl->getShortCode());
     }
 
     private function resolveDomain(ShortUrl $shortUrl): string
     {
-        $domain = $shortUrl->getDomain();
-        if ($domain === null) {
-            return $this->domainConfig['hostname'] ?? '';
-        }
-
-        return sprintf('%s%s', $domain->getAuthority(), $this->basePath);
+        return $shortUrl->getDomain()?->getAuthority() ?? $this->domainConfig['hostname'] ?? '';
     }
 }
