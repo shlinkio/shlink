@@ -7,6 +7,7 @@
     "timeout": 5,
     "logs": {
         "text": "build/infection-api/infection-log.txt",
+        "html": "build/infection-api/infection-log.html",
         "summary": "build/infection-api/summary-log.txt",
         "debug": "build/infection-api/debug-log.txt"
     },
