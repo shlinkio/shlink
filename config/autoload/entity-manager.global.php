@@ -21,6 +21,13 @@ return (static function (): array {
         'mssql' => '1433',
         default => '3306',
     };
+    $resolveCharset = static fn () => match ($driver) {
+        // This does not determine charsets or collations in tables or columns, but the charset used in the data
+        // flowing in the connection, so it has to match what has been set in the database.
+        'maria', 'mysql' => 'utf8mb4',
+        'postgres' => 'utf8',
+        default => null,
+    };
     $resolveConnection = static fn () => match ($driver) {
         null, 'sqlite' => [
             'driver' => 'pdo_sqlite',
@@ -34,7 +41,7 @@ return (static function (): array {
             'host' => env('DB_HOST', $driver === 'postgres' ? env('DB_UNIX_SOCKET') : null),
             'port' => env('DB_PORT', $resolveDefaultPort()),
             'unix_socket' => $isMysqlCompatible ? env('DB_UNIX_SOCKET') : null,
-            'charset' => 'utf8',
+            'charset' => $resolveCharset(),
         ],
     };
 

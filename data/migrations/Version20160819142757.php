@@ -11,7 +11,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\Migrations\AbstractMigration;
 
-use function get_class;
+use function is_subclass_of;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -24,13 +24,15 @@ class Version20160819142757 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $platformClass = get_class($this->connection->getDatabasePlatform());
+        $platformClass = $this->connection->getDatabasePlatform();
         $table = $schema->getTable('short_urls');
         $column = $table->getColumn('short_code');
 
-        match ($platformClass) {
-            MySQLPlatform::class => $column->setPlatformOption('collation', 'utf8_bin'),
-            SqlitePlatform::class => $column->setPlatformOption('collate', 'BINARY'),
+        match (true) {
+            is_subclass_of($platformClass, MySQLPlatform::class) => $column
+                ->setPlatformOption('charset', 'utf8mb4')
+                ->setPlatformOption('collation', 'utf8mb4_bin'),
+            is_subclass_of($platformClass, SqlitePlatform::class) => $column->setPlatformOption('collate', 'BINARY'),
             default => null,
         };
     }
