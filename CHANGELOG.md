@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1268](https://github.com/shlinkio/shlink/issues/1268) Updated dependencies, including symfony/console 6 and mezzio/mezzio-swoole 4.
 * [#1283](https://github.com/shlinkio/shlink/issues/1283) Changed behavior of `DELETE_SHORT_URL_THRESHOLD` env var, disabling the feature if a value was not provided.
 * [#1300](https://github.com/shlinkio/shlink/issues/1300) Changed default ordering for short URLs list, returning always from newest to oldest.
+* [#1299](https://github.com/shlinkio/shlink/issues/1299) Updated to the latest base docker images, based in PHP 8.1.1, and bumped openswoole to v4.9.1.
 
 ### Deprecated
 * [#1315](https://github.com/shlinkio/shlink/issues/1315) Deprecated `GET /tags?withStats=true` endpoint. Use `GET /tags/stats` instead.
