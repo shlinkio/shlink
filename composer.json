@@ -65,7 +65,7 @@
         "devster/ubench": "^2.1",
         "dms/phpunit-arraysubset-asserts": "^0.3.0",
         "eaglewu/swoole-ide-helper": "dev-master",
-        "infection/infection": "^0.25.4",
+        "infection/infection": "^0.26",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^1.2",
         "phpstan/phpstan-doctrine": "^1.0",
