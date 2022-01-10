@@ -52,10 +52,10 @@ interface VisitRepositoryInterface extends ObjectRepository, EntitySpecification
 
     public function countOrphanVisits(VisitsCountFiltering $filtering): int;
 
-//    /**
-//     * @return Visit[]
-//     */
-//    public function findExistingVisits(VisitsListFiltering $filtering): array;
+    /**
+     * @return Visit[]
+     */
+    public function findNonOrphanVisits(VisitsListFiltering $filtering): array;
 
     public function countVisits(?ApiKey $apiKey = null): int;
 }

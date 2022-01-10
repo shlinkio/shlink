@@ -104,8 +104,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     ): QueryBuilder {
         /** @var ShortUrlRepositoryInterface $shortUrlRepo */
         $shortUrlRepo = $this->getEntityManager()->getRepository(ShortUrl::class);
-        $shortUrl = $shortUrlRepo->findOne($identifier, $filtering->spec());
-        $shortUrlId = $shortUrl?->getId() ?? '-1';
+        $shortUrlId = $shortUrlRepo->findOne($identifier, $filtering->spec())?->getId() ?? '-1';
 
         // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later
         // Since they are not strictly provided by the caller, it's reasonably safe
@@ -139,8 +138,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     private function createVisitsByTagQueryBuilder(string $tag, VisitsCountFiltering $filtering): QueryBuilder
     {
-        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
-        // Since they are not strictly provided by the caller, it's reasonably safe
+        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later.
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
            ->join('v.shortUrl', 's')
@@ -152,25 +150,15 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         }
 
         $this->applyDatesInline($qb, $filtering->dateRange());
-        $this->applySpecification($qb, $filtering->spec(), 'v');
+        $this->applySpecification($qb, $filtering->spec(), 'v'); // FIXME This is actually binding arguments
 
         return $qb;
     }
 
     public function findOrphanVisits(VisitsListFiltering $filtering): array
     {
-        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
-        // Since they are not strictly provided by the caller, it's reasonably safe
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from(Visit::class, 'v')
-           ->where($qb->expr()->isNull('v.shortUrl'));
-
-        if ($filtering->excludeBots()) {
-            $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
-        }
-
-        $this->applyDatesInline($qb, $filtering->dateRange());
-
+        $qb = $this->createAllVisitsQueryBuilder($filtering);
+        $qb->andWhere($qb->expr()->isNull('v.shortUrl'));
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit(), $filtering->offset());
     }
 
@@ -179,9 +167,38 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits($filtering));
     }
 
+    /**
+     * @return Visit[]
+     */
+    public function findNonOrphanVisits(VisitsListFiltering $filtering): array
+    {
+        $qb = $this->createAllVisitsQueryBuilder($filtering);
+        $qb->andWhere($qb->expr()->isNotNull('v.shortUrl'));
+
+        $this->applySpecification($qb, $filtering->spec());
+
+        return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit(), $filtering->offset());
+    }
+
     public function countVisits(?ApiKey $apiKey = null): int
     {
         return (int) $this->matchSingleScalarResult(new CountOfShortUrlVisits($apiKey));
+    }
+
+    private function createAllVisitsQueryBuilder(VisitsListFiltering $filtering): QueryBuilder
+    {
+        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
+        // Since they are not strictly provided by the caller, it's reasonably safe
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(Visit::class, 'v');
+
+        if ($filtering->excludeBots()) {
+            $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
+        }
+
+        $this->applyDatesInline($qb, $filtering->dateRange());
+
+        return $qb;
     }
 
     private function applyDatesInline(QueryBuilder $qb, ?DateRange $dateRange): void

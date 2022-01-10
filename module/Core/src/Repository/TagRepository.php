@@ -60,9 +60,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         }
 
         $apiKey = $filtering?->apiKey();
-        if ($apiKey !== null) {
-            $this->applySpecification($subQb, $apiKey->spec(false, 'shortUrls'), 't');
-        }
+        $this->applySpecification($subQb, $apiKey?->spec(false, 'shortUrls'), 't');
 
         $subQuery = $subQb->getQuery();
         $subQuerySql = $subQuery->getSQL();
