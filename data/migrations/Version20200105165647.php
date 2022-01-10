@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkMigrations;
 
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
@@ -38,7 +40,7 @@ final class Version20200105165647 extends AbstractMigration
                    'zeroValue' => '0',
                    'emptyString' => '',
                ])
-               ->execute();
+               ->executeStatement();
         }
     }
 
@@ -61,14 +63,14 @@ final class Version20200105165647 extends AbstractMigration
      */
     public function postUp(Schema $schema): void
     {
-        $platformName = $this->connection->getDatabasePlatform()->getName();
-        $castType = $platformName === 'postgres' ? 'DOUBLE PRECISION' : 'DECIMAL(9,2)';
+        $isPostgres = $this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform;
+        $castType = $isPostgres ? 'DOUBLE PRECISION' : 'DECIMAL(9,2)';
 
         foreach (self::COLUMNS as $newName => $oldName) {
             $qb = $this->connection->createQueryBuilder();
             $qb->update('visit_locations')
                ->set($newName, 'CAST(' . $oldName . ' AS ' . $castType . ')')
-               ->execute();
+               ->executeStatement();
         }
     }
 
@@ -78,7 +80,7 @@ final class Version20200105165647 extends AbstractMigration
             $qb = $this->connection->createQueryBuilder();
             $qb->update('visit_locations')
                ->set($oldName, $newName)
-               ->execute();
+               ->executeStatement();
         }
     }
 
@@ -96,6 +98,6 @@ final class Version20200105165647 extends AbstractMigration
 
     public function isTransactional(): bool
     {
-        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+        return ! ($this->connection->getDatabasePlatform() instanceof MySQLPlatform);
     }
 }

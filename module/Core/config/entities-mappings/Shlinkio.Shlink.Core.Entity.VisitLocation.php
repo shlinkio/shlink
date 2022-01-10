@@ -29,7 +29,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     ];
 
     foreach ($columns as $columnName => $fieldName) {
-        $builder->createField($fieldName, Types::STRING)
+        fieldWithUtf8Charset($builder->createField($fieldName, Types::STRING), $emConfig)
                 ->columnName($columnName)
                 ->nullable()
                 ->build();

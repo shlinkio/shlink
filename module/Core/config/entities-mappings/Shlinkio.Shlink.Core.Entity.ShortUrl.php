@@ -23,12 +23,12 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->option('unsigned', true)
             ->build();
 
-    $builder->createField('longUrl', Types::STRING)
+    fieldWithUtf8Charset($builder->createField('longUrl', Types::STRING), $emConfig)
             ->columnName('original_url')
             ->length(2048)
             ->build();
 
-    $builder->createField('shortCode', Types::STRING)
+    fieldWithUtf8Charset($builder->createField('shortCode', Types::STRING), $emConfig, 'bin')
             ->columnName('short_code')
             ->length(255)
             ->build();
@@ -57,7 +57,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->nullable()
             ->build();
 
-    $builder->createField('importOriginalShortCode', Types::STRING)
+    fieldWithUtf8Charset($builder->createField('importOriginalShortCode', Types::STRING), $emConfig)
             ->columnName('import_original_short_code')
             ->nullable()
             ->build();
@@ -85,7 +85,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
 
     $builder->addUniqueConstraint(['short_code', 'domain_id'], 'unique_short_code_plus_domain');
 
-    $builder->createField('title', Types::STRING)
+    fieldWithUtf8Charset($builder->createField('title', Types::STRING), $emConfig)
             ->columnName('title')
             ->length(512)
             ->nullable()
