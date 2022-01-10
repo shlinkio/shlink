@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkMigrations;
 
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
@@ -47,6 +48,6 @@ final class Version20200106215144 extends AbstractMigration
 
     public function isTransactional(): bool
     {
-        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+        return ! ($this->connection->getDatabasePlatform() instanceof MySQLPlatform);
     }
 }
