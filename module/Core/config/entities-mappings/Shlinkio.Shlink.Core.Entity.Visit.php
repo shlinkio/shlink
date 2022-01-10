@@ -23,7 +23,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->option('unsigned', true)
             ->build();
 
-    $builder->createField('referer', Types::STRING)
+    fieldWithUtf8Charset($builder->createField('referer', Types::STRING), $emConfig)
             ->nullable()
             ->length(Visitor::REFERER_MAX_LENGTH)
             ->build();
@@ -40,7 +40,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->nullable()
             ->build();
 
-    $builder->createField('userAgent', Types::STRING)
+    fieldWithUtf8Charset($builder->createField('userAgent', Types::STRING), $emConfig)
             ->columnName('user_agent')
             ->length(Visitor::USER_AGENT_MAX_LENGTH)
             ->nullable()
@@ -55,7 +55,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->cascadePersist()
             ->build();
 
-    $builder->createField('visitedUrl', Types::STRING)
+    fieldWithUtf8Charset($builder->createField('visitedUrl', Types::STRING), $emConfig)
             ->columnName('visited_url')
             ->length(Visitor::VISITED_URL_MAX_LENGTH)
             ->nullable()

@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core;
 
 use Cake\Chronos\Chronos;
 use DateTimeInterface;
+use Doctrine\ORM\Mapping\Builder\FieldBuilder;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Laminas\InputFilter\InputFilter;
 use PUGX\Shortid\Factory as ShortIdFactory;
@@ -13,13 +14,10 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 
 use function Functional\reduce_left;
 use function is_array;
-use function lcfirst;
 use function print_r;
 use function Shlinkio\Shlink\Common\buildDateRange;
 use function sprintf;
 use function str_repeat;
-use function str_replace;
-use function ucwords;
 
 function generateRandomShortCode(int $length): string
 {
@@ -34,7 +32,7 @@ function generateRandomShortCode(int $length): string
 
 function parseDateFromQuery(array $query, string $dateName): ?Chronos
 {
-    return ! isset($query[$dateName]) || empty($query[$dateName]) ? null : Chronos::parse($query[$dateName]);
+    return empty($query[$dateName] ?? null) ? null : Chronos::parse($query[$dateName]);
 }
 
 function parseDateRangeFromQuery(array $query, string $startDateName, string $endDateName): DateRange
@@ -100,11 +98,6 @@ function arrayToString(array $array, int $indentSize = 4): string
     }, '');
 }
 
-function kebabCaseToCamelCase(string $name): string
-{
-    return lcfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $name))));
-}
-
 function isCrawler(string $userAgent): bool
 {
     static $detector;
@@ -113,4 +106,13 @@ function isCrawler(string $userAgent): bool
     }
 
     return $detector->isCrawler($userAgent);
+}
+
+function fieldWithUtf8Charset(FieldBuilder $field, array $emConfig, string $collation = 'unicode_ci'): FieldBuilder
+{
+    return match ($emConfig['connection']['driver'] ?? null) {
+        'pdo_mysql' => $field->option('charset', 'utf8mb4')
+                             ->option('collation', 'utf8mb4_' . $collation),
+        default => $field,
+    };
 }

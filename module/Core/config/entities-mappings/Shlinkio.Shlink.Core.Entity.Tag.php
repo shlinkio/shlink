@@ -21,7 +21,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->option('unsigned', true)
             ->build();
 
-    $builder->createField('name', Types::STRING)
+    fieldWithUtf8Charset($builder->createField('name', Types::STRING), $emConfig)
             ->unique()
             ->build();
 
