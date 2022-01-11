@@ -37,7 +37,7 @@ return (new ConfigAggregator\ConfigAggregator([
     new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
     env('APP_ENV') === 'test'
         ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')
-        : new ConfigAggregator\LaminasConfigProvider('config/params/generated_config.php'),
+        : new ConfigAggregator\PhpFileProvider('config/params/generated_config.php'),
 ], 'data/cache/app_config.php', [
     Core\Config\BasePathPrefixer::class,
 ]))->getMergedConfig();
