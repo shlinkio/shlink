@@ -34,6 +34,7 @@ Then Shlink reads this as the first config file, which sets the values as env va
 
 * Good because it would not require any change in the installer.
 * Bad because it requires moving all env var reading logic somewhere else, while having it together with their contextual config is quite convenient.
+* Bad because it requires defining a map between the config path from the installer and the env var to set.
 
 ### Make the installer generate a config file which also reads env vars
 
