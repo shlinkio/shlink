@@ -18,6 +18,8 @@ services:
         build:
             context: .
             dockerfile: ./data/infra/php.Dockerfile
+        ports:
+            - '8888:8888'
         volumes:
             - ./:/home/shlink/www
             - ./data/infra/php.ini:/usr/local/etc/php/php.ini
