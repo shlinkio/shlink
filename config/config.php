@@ -9,10 +9,10 @@ use Laminas\Diactoros;
 use Mezzio;
 use Mezzio\ProblemDetails;
 use Mezzio\Swoole;
+use Shlinkio\Shlink\Config\ConfigAggregator\EnvVarLoaderProvider;
 
 use function class_exists;
 use function Shlinkio\Shlink\Config\env;
-use function Shlinkio\Shlink\Core\putNotYetDefinedEnv;
 
 use const PHP_SAPI;
 
@@ -21,15 +21,7 @@ $isTestEnv = env('APP_ENV') === 'test';
 
 return (new ConfigAggregator\ConfigAggregator([
     ! $isTestEnv
-        ? new ConfigAggregator\ArrayProvider((new ConfigAggregator\ConfigAggregator([
-            new ConfigAggregator\PhpFileProvider('config/params/generated_config.php'),
-        ], null, [function (array $generatedConfig) {
-            foreach ($generatedConfig as $envVar => $value) {
-                putNotYetDefinedEnv($envVar, $value);
-            }
-
-            return [];
-        }]))->getMergedConfig())
+        ? new EnvVarLoaderProvider('config/params/generated_config.php')
         : new ConfigAggregator\ArrayProvider([]),
     Mezzio\ConfigProvider::class,
     Mezzio\Router\ConfigProvider::class,
