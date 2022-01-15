@@ -38,7 +38,7 @@ return (static function (): array {
             'dbname' => env('DB_NAME', 'shlink'),
             'user' => env('DB_USER'),
             'password' => env('DB_PASSWORD'),
-            'host' => env('DB_HOST', $driver === 'postgres' ? env('DB_UNIX_SOCKET') : null),
+            'host' => env('DB_HOST', env('DB_UNIX_SOCKET')),
             'port' => env('DB_PORT', $resolveDefaultPort()),
             'unix_socket' => $isMysqlCompatible ? env('DB_UNIX_SOCKET') : null,
             'charset' => $resolveCharset(),

@@ -51,7 +51,7 @@
         "shlinkio/shlink-config": "^1.5",
         "shlinkio/shlink-event-dispatcher": "^2.3",
         "shlinkio/shlink-importer": "^2.5",
-        "shlinkio/shlink-installer": "dev-develop#a008036 as 7.0",
+        "shlinkio/shlink-installer": "dev-develop#ba32503 as 7.0",
         "shlinkio/shlink-ip-geolocation": "^2.2",
         "symfony/console": "^6.0",
         "symfony/filesystem": "^6.0",

@@ -13,9 +13,13 @@ use PUGX\Shortid\Factory as ShortIdFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 
 use function Functional\reduce_left;
+use function implode;
 use function is_array;
+use function is_scalar;
 use function print_r;
+use function putenv;
 use function Shlinkio\Shlink\Common\buildDateRange;
+use function Shlinkio\Shlink\Config\env;
 use function sprintf;
 use function str_repeat;
 
@@ -115,4 +119,19 @@ function fieldWithUtf8Charset(FieldBuilder $field, array $emConfig, string $coll
                              ->option('collation', 'utf8mb4_' . $collation),
         default => $field,
     };
+}
+
+function putNotYetDefinedEnv(string $key, mixed $value): void
+{
+    $isArray = is_array($value);
+    if (!($isArray || is_scalar($value)) || env($key) !== null) {
+        return;
+    }
+
+    $normalizedValue = $isArray ? implode(',', $value) : match ($value) {
+        true => 'true',
+        false => 'false',
+        default => $value,
+    };
+    putenv(sprintf('%s=%s', $key, $normalizedValue));
 }

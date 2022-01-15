@@ -8,7 +8,9 @@ use Laminas\Stdlib\AbstractOptions;
 
 use function array_key_exists;
 use function explode;
+use function Functional\map;
 use function is_array;
+use function trim;
 
 class TrackingOptions extends AbstractOptions
 {
@@ -108,10 +110,10 @@ class TrackingOptions extends AbstractOptions
 
     protected function setDisableTrackingFrom(string|array|null $disableTrackingFrom): void
     {
-        if (is_array($disableTrackingFrom)) {
-            $this->disableTrackingFrom = $disableTrackingFrom;
-        } else {
-            $this->disableTrackingFrom = $disableTrackingFrom === null ? [] : explode(',', $disableTrackingFrom);
-        }
+        $this->disableTrackingFrom = match (true) {
+            is_array($disableTrackingFrom) => $disableTrackingFrom,
+            $disableTrackingFrom === null => [],
+            default => map(explode(',', $disableTrackingFrom), static fn (string $value) => trim($value)),
+        };
     }
 }
