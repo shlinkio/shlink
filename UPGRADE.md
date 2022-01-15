@@ -38,6 +38,7 @@
   * `VALIDATE_URLS`: There's no replacement. URLs are not validated, unless explicitly requested during creation or edition.
 * The next env vars behavior has changed:
   * `DELETE_SHORT_URL_THRESHOLD`: Now, if this env var is not provided, the "visits threshold" won't be checked at all when deleting short URLs. Make sure you explicitly provide a value if you want to enable this feature.
+* Environment variables now have precedence over configuration set via the installer tool.
 
 ### Other changes
 
