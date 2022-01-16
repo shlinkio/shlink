@@ -16,6 +16,11 @@ class VisitsCountFiltering
     ) {
     }
 
+    public static function withApiKey(?ApiKey $apiKey): self
+    {
+        return new self(null, false, $apiKey);
+    }
+
     public function dateRange(): ?DateRange
     {
         return $this->dateRange;

@@ -16,7 +16,6 @@ use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfOrphanVisits;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfShortUrlVisits;
-use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use const PHP_INT_MAX;
 
@@ -181,10 +180,9 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     }
 
     // TODO This should support counting in a date range or excluding bots
-    // TODO Rename to countNonOrphanVisits
-    public function countVisits(?ApiKey $apiKey = null): int
+    public function countNonOrphanVisits(VisitsCountFiltering $filtering): int
     {
-        return (int) $this->matchSingleScalarResult(new CountOfShortUrlVisits($apiKey));
+        return (int) $this->matchSingleScalarResult(new CountOfShortUrlVisits($filtering->apiKey()));
     }
 
     private function createAllVisitsQueryBuilder(VisitsListFiltering $filtering): QueryBuilder

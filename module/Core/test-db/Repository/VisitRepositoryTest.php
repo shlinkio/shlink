@@ -297,10 +297,10 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertEquals(4 + 5 + 7, $this->repo->countVisits());
-        self::assertEquals(4, $this->repo->countVisits($apiKey1));
-        self::assertEquals(5 + 7, $this->repo->countVisits($apiKey2));
-        self::assertEquals(4 + 7, $this->repo->countVisits($domainApiKey));
+        self::assertEquals(4 + 5 + 7, $this->repo->countNonOrphanVisits(new VisitsCountFiltering()));
+        self::assertEquals(4, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey1)));
+        self::assertEquals(5 + 7, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey2)));
+        self::assertEquals(4 + 7, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($domainApiKey)));
         self::assertEquals(4, $this->repo->countOrphanVisits(new VisitsCountFiltering()));
         self::assertEquals(3, $this->repo->countOrphanVisits(new VisitsCountFiltering(null, true)));
     }

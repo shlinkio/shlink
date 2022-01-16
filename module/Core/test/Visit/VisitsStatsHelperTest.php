@@ -53,7 +53,7 @@ class VisitsStatsHelperTest extends TestCase
     public function returnsExpectedVisitsStats(int $expectedCount): void
     {
         $repo = $this->prophesize(VisitRepository::class);
-        $count = $repo->countVisits(null)->willReturn($expectedCount * 3);
+        $count = $repo->countNonOrphanVisits(new VisitsCountFiltering())->willReturn($expectedCount * 3);
         $countOrphan = $repo->countOrphanVisits(Argument::type(VisitsCountFiltering::class))->willReturn(
             $expectedCount,
         );

@@ -37,7 +37,7 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
         $visitsRepo = $this->em->getRepository(Visit::class);
 
         return new VisitsStats(
-            $visitsRepo->countVisits($apiKey),
+            $visitsRepo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey)),
             $visitsRepo->countOrphanVisits(new VisitsCountFiltering()),
         );
     }

@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
-use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 // TODO Split into VisitsListsRepository and VisitsLocationRepository
 interface VisitRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
@@ -58,5 +57,5 @@ interface VisitRepositoryInterface extends ObjectRepository, EntitySpecification
      */
     public function findNonOrphanVisits(VisitsListFiltering $filtering): array;
 
-    public function countVisits(?ApiKey $apiKey = null): int;
+    public function countNonOrphanVisits(VisitsCountFiltering $filtering): int;
 }
