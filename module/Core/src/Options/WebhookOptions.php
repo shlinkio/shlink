@@ -10,22 +10,22 @@ class WebhookOptions extends AbstractOptions
 {
     protected $__strictMode__ = false; // phpcs:ignore
 
-    private array $visitsWebhooks = [];
+    private array $webhooks = [];
     private bool $notifyOrphanVisitsToWebhooks = false;
 
     public function webhooks(): array
     {
-        return $this->visitsWebhooks;
+        return $this->webhooks;
     }
 
     public function hasWebhooks(): bool
     {
-        return ! empty($this->visitsWebhooks);
+        return ! empty($this->webhooks);
     }
 
-    protected function setVisitsWebhooks(array $visitsWebhooks): void
+    protected function setWebhooks(array $webhooks): void
     {
-        $this->visitsWebhooks = $visitsWebhooks;
+        $this->webhooks = $webhooks;
     }
 
     public function notifyOrphanVisits(): bool

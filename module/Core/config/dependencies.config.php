@@ -23,6 +23,7 @@ return [
             Options\AppOptions::class => ConfigAbstractFactory::class,
             Options\DeleteShortUrlsOptions::class => ConfigAbstractFactory::class,
             Options\NotFoundRedirectOptions::class => ConfigAbstractFactory::class,
+            Options\RedirectOptions::class => ConfigAbstractFactory::class,
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
             Options\TrackingOptions::class => ConfigAbstractFactory::class,
             Options\QrCodeOptions::class => ConfigAbstractFactory::class,
@@ -86,10 +87,11 @@ return [
         Options\AppOptions::class => ['config.app_options'],
         Options\DeleteShortUrlsOptions::class => ['config.delete_short_urls'],
         Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
+        Options\RedirectOptions::class => ['config.redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
         Options\TrackingOptions::class => ['config.tracking'],
         Options\QrCodeOptions::class => ['config.qr_codes'],
-        Options\WebhookOptions::class => ['config.url_shortener'], // TODO This config is currently under url_shortener
+        Options\WebhookOptions::class => ['config.visits_webhooks'],
 
         Service\UrlShortener::class => [
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
@@ -123,7 +125,7 @@ return [
 
         Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
         Util\DoctrineBatchHelper::class => ['em'],
-        Util\RedirectResponseHelper::class => [Options\UrlShortenerOptions::class],
+        Util\RedirectResponseHelper::class => [Options\RedirectOptions::class],
 
         Config\NotFoundRedirectResolver::class => [Util\RedirectResponseHelper::class, 'Logger_Shlink'],
 

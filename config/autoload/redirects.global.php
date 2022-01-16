@@ -15,8 +15,7 @@ return [
         'base_url' => env('DEFAULT_BASE_URL_REDIRECT'),
     ],
 
-    'url_shortener' => [
-        // TODO Move these options to their own config namespace. Maybe "redirects".
+    'redirects' => [
         'redirect_status_code' => (int) env('REDIRECT_STATUS_CODE', DEFAULT_REDIRECT_STATUS_CODE),
         'redirect_cache_lifetime' => (int) env('REDIRECT_CACHE_LIFETIME', DEFAULT_REDIRECT_CACHE_LIFETIME),
     ],

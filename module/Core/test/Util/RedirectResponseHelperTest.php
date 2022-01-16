@@ -6,17 +6,17 @@ namespace ShlinkioTest\Shlink\Core\Util;
 
 use Laminas\Diactoros\Response\RedirectResponse;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Core\Options\RedirectOptions;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelper;
 
 class RedirectResponseHelperTest extends TestCase
 {
     private RedirectResponseHelper $helper;
-    private UrlShortenerOptions $shortenerOpts;
+    private RedirectOptions $shortenerOpts;
 
     protected function setUp(): void
     {
-        $this->shortenerOpts = new UrlShortenerOptions();
+        $this->shortenerOpts = new RedirectOptions();
         $this->helper = new RedirectResponseHelper($this->shortenerOpts);
     }
 

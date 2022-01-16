@@ -7,13 +7,13 @@ namespace Shlinkio\Shlink\Core\Util;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
-use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Core\Options\RedirectOptions;
 
 use function sprintf;
 
 class RedirectResponseHelper implements RedirectResponseHelperInterface
 {
-    public function __construct(private UrlShortenerOptions $options)
+    public function __construct(private RedirectOptions $options)
     {
     }
 
