@@ -104,10 +104,10 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     ): QueryBuilder {
         /** @var ShortUrlRepositoryInterface $shortUrlRepo */
         $shortUrlRepo = $this->getEntityManager()->getRepository(ShortUrl::class);
-        $shortUrlId = $shortUrlRepo->findOne($identifier, $filtering->spec())?->getId() ?? '-1';
+        $shortUrlId = $shortUrlRepo->findOne($identifier, $filtering->apiKey()?->spec())?->getId() ?? '-1';
 
         // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later
-        // Since they are not strictly provided by the caller, it's reasonably safe
+        // Since they are not provided by the caller, it's reasonably safe
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
            ->where($qb->expr()->eq('v.shortUrl', $shortUrlId));
@@ -150,7 +150,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         }
 
         $this->applyDatesInline($qb, $filtering->dateRange());
-        $this->applySpecification($qb, $filtering->spec(), 'v'); // FIXME This is actually binding arguments
+        $this->applySpecification($qb, $filtering->apiKey()?->spec(true), 'v');
 
         return $qb;
     }
@@ -175,11 +175,13 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $qb = $this->createAllVisitsQueryBuilder($filtering);
         $qb->andWhere($qb->expr()->isNotNull('v.shortUrl'));
 
-        $this->applySpecification($qb, $filtering->spec());
+        $this->applySpecification($qb, $filtering->apiKey()?->spec(true));
 
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit(), $filtering->offset());
     }
 
+    // TODO This should support counting in a date range or excluding bots
+    // TODO Rename to countNonOrphanVisits
     public function countVisits(?ApiKey $apiKey = null): int
     {
         return (int) $this->matchSingleScalarResult(new CountOfShortUrlVisits($apiKey));
@@ -188,7 +190,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     private function createAllVisitsQueryBuilder(VisitsListFiltering $filtering): QueryBuilder
     {
         // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
-        // Since they are not strictly provided by the caller, it's reasonably safe
+        // Since they are not provided by the caller, it's reasonably safe
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v');
 

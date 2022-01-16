@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Visit\Paginator\Adapter;
 
-use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Paginator\Adapter\AbstractCacheableCountPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
@@ -18,7 +18,7 @@ class ShortUrlVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdap
         private VisitRepositoryInterface $visitRepository,
         private ShortUrlIdentifier $identifier,
         private VisitsParams $params,
-        private ?Specification $spec,
+        private ?ApiKey $apiKey,
     ) {
     }
 
@@ -29,7 +29,7 @@ class ShortUrlVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdap
             new VisitsListFiltering(
                 $this->params->getDateRange(),
                 $this->params->excludeBots(),
-                $this->spec,
+                $this->apiKey,
                 $length,
                 $offset,
             ),
@@ -43,7 +43,7 @@ class ShortUrlVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdap
             new VisitsCountFiltering(
                 $this->params->getDateRange(),
                 $this->params->excludeBots(),
-                $this->spec,
+                $this->apiKey,
             ),
         );
     }

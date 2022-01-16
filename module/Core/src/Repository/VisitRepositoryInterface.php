@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+// TODO Split into VisitsListsRepository and VisitsLocationRepository
 interface VisitRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
     public const DEFAULT_BLOCK_SIZE = 10000;

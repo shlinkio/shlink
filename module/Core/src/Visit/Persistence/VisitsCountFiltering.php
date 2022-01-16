@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Visit\Persistence;
 
-use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsCountFiltering
 {
     public function __construct(
         private ?DateRange $dateRange = null,
         private bool $excludeBots = false,
-        private ?Specification $spec = null,
+        private ?ApiKey $apiKey = null,
     ) {
     }
 
@@ -26,8 +26,8 @@ class VisitsCountFiltering
         return $this->excludeBots;
     }
 
-    public function spec(): ?Specification
+    public function apiKey(): ?ApiKey
     {
-        return $this->spec;
+        return $this->apiKey;
     }
 }

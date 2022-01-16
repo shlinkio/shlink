@@ -53,7 +53,7 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         $adapter = $this->createAdapter($apiKey);
         $countVisits = $this->repo->countVisitsByTag(
             'foo',
-            new VisitsCountFiltering(DateRange::emptyInstance(), false, $apiKey->spec()),
+            new VisitsCountFiltering(DateRange::emptyInstance(), false, $apiKey),
         )->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {

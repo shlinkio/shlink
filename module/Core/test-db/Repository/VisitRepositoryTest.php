@@ -192,19 +192,19 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         self::assertNotEmpty($this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode1),
-            new VisitsListFiltering(null, false, $adminApiKey->spec()),
+            new VisitsListFiltering(null, false, $adminApiKey),
         ));
         self::assertNotEmpty($this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode2),
-            new VisitsListFiltering(null, false, $adminApiKey->spec()),
+            new VisitsListFiltering(null, false, $adminApiKey),
         ));
         self::assertEmpty($this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode1),
-            new VisitsListFiltering(null, false, $restrictedApiKey->spec()),
+            new VisitsListFiltering(null, false, $restrictedApiKey),
         ));
         self::assertNotEmpty($this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode2),
-            new VisitsListFiltering(null, false, $restrictedApiKey->spec()),
+            new VisitsListFiltering(null, false, $restrictedApiKey),
         ));
     }
 

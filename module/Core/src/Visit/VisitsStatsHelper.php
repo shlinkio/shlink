@@ -51,18 +51,19 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
         VisitsParams $params,
         ?ApiKey $apiKey = null,
     ): Paginator {
-        $spec = $apiKey?->spec();
-
         /** @var ShortUrlRepositoryInterface $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        if (! $repo->shortCodeIsInUse($identifier, $spec)) {
+        if (! $repo->shortCodeIsInUse($identifier, $apiKey?->spec())) {
             throw ShortUrlNotFoundException::fromNotFound($identifier);
         }
 
         /** @var VisitRepositoryInterface $repo */
         $repo = $this->em->getRepository(Visit::class);
 
-        return $this->createPaginator(new ShortUrlVisitsPaginatorAdapter($repo, $identifier, $params, $spec), $params);
+        return $this->createPaginator(
+            new ShortUrlVisitsPaginatorAdapter($repo, $identifier, $params, $apiKey),
+            $params,
+        );
     }
 
     /**

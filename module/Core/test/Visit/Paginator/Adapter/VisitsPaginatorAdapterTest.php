@@ -54,7 +54,7 @@ class VisitsPaginatorAdapterTest extends TestCase
         $adapter = $this->createAdapter($apiKey);
         $countVisits = $this->repo->countVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain(''),
-            new VisitsCountFiltering(DateRange::emptyInstance(), false, $apiKey->spec()),
+            new VisitsCountFiltering(DateRange::emptyInstance(), false, $apiKey),
         )->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
@@ -70,7 +70,7 @@ class VisitsPaginatorAdapterTest extends TestCase
             $this->repo->reveal(),
             new ShortUrlIdentifier(''),
             VisitsParams::fromRawData([]),
-            $apiKey?->spec(),
+            $apiKey,
         );
     }
 }
