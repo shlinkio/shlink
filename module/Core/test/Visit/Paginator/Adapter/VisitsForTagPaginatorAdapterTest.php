@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Paginator\Adapter;
+namespace ShlinkioTest\Shlink\Core\Visit\Paginator\Adapter;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
-use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsForTagPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\TagVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -53,7 +53,7 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         $adapter = $this->createAdapter($apiKey);
         $countVisits = $this->repo->countVisitsByTag(
             'foo',
-            new VisitsCountFiltering(DateRange::emptyInstance(), false, $apiKey->spec()),
+            new VisitsCountFiltering(DateRange::emptyInstance(), false, $apiKey),
         )->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
@@ -63,9 +63,9 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         $countVisits->shouldHaveBeenCalledOnce();
     }
 
-    private function createAdapter(?ApiKey $apiKey): VisitsForTagPaginatorAdapter
+    private function createAdapter(?ApiKey $apiKey): TagVisitsPaginatorAdapter
     {
-        return new VisitsForTagPaginatorAdapter(
+        return new TagVisitsPaginatorAdapter(
             $this->repo->reveal(),
             'foo',
             VisitsParams::fromRawData([]),

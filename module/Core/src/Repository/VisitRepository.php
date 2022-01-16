@@ -14,9 +14,8 @@ use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Spec\CountOfNonOrphanVisits;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfOrphanVisits;
-use Shlinkio\Shlink\Core\Visit\Spec\CountOfShortUrlVisits;
-use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use const PHP_INT_MAX;
 
@@ -53,10 +52,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     public function findAllVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('v')
-           ->from(Visit::class, 'v');
-
+        $qb = $this->createQueryBuilder('v');
         return $this->visitsIterableForQuery($qb, $blockSize);
     }
 
@@ -107,11 +103,10 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     ): QueryBuilder {
         /** @var ShortUrlRepositoryInterface $shortUrlRepo */
         $shortUrlRepo = $this->getEntityManager()->getRepository(ShortUrl::class);
-        $shortUrl = $shortUrlRepo->findOne($identifier, $filtering->spec());
-        $shortUrlId = $shortUrl?->getId() ?? '-1';
+        $shortUrlId = $shortUrlRepo->findOne($identifier, $filtering->apiKey()?->spec())?->getId() ?? '-1';
 
         // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later
-        // Since they are not strictly provided by the caller, it's reasonably safe
+        // Since they are not provided by the caller, it's reasonably safe
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
            ->where($qb->expr()->eq('v.shortUrl', $shortUrlId));
@@ -142,8 +137,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     private function createVisitsByTagQueryBuilder(string $tag, VisitsCountFiltering $filtering): QueryBuilder
     {
-        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
-        // Since they are not strictly provided by the caller, it's reasonably safe
+        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later.
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
            ->join('v.shortUrl', 's')
@@ -155,25 +149,15 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         }
 
         $this->applyDatesInline($qb, $filtering->dateRange());
-        $this->applySpecification($qb, $filtering->spec(), 'v');
+        $this->applySpecification($qb, $filtering->apiKey()?->spec(true), 'v');
 
         return $qb;
     }
 
     public function findOrphanVisits(VisitsListFiltering $filtering): array
     {
-        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
-        // Since they are not strictly provided by the caller, it's reasonably safe
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from(Visit::class, 'v')
-           ->where($qb->expr()->isNull('v.shortUrl'));
-
-        if ($filtering->excludeBots()) {
-            $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
-        }
-
-        $this->applyDatesInline($qb, $filtering->dateRange());
-
+        $qb = $this->createAllVisitsQueryBuilder($filtering);
+        $qb->andWhere($qb->expr()->isNull('v.shortUrl'));
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit(), $filtering->offset());
     }
 
@@ -182,18 +166,49 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits($filtering));
     }
 
-    public function countVisits(?ApiKey $apiKey = null): int
+    /**
+     * @return Visit[]
+     */
+    public function findNonOrphanVisits(VisitsListFiltering $filtering): array
     {
-        return (int) $this->matchSingleScalarResult(new CountOfShortUrlVisits($apiKey));
+        $qb = $this->createAllVisitsQueryBuilder($filtering);
+        $qb->andWhere($qb->expr()->isNotNull('v.shortUrl'));
+
+        $this->applySpecification($qb, $filtering->apiKey()?->spec(true));
+
+        return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit(), $filtering->offset());
+    }
+
+    public function countNonOrphanVisits(VisitsCountFiltering $filtering): int
+    {
+        return (int) $this->matchSingleScalarResult(new CountOfNonOrphanVisits($filtering));
+    }
+
+    private function createAllVisitsQueryBuilder(VisitsListFiltering $filtering): QueryBuilder
+    {
+        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
+        // Since they are not provided by the caller, it's reasonably safe
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(Visit::class, 'v');
+
+        if ($filtering->excludeBots()) {
+            $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
+        }
+
+        $this->applyDatesInline($qb, $filtering->dateRange());
+
+        return $qb;
     }
 
     private function applyDatesInline(QueryBuilder $qb, ?DateRange $dateRange): void
     {
+        $conn = $this->getEntityManager()->getConnection();
+
         if ($dateRange?->startDate() !== null) {
-            $qb->andWhere($qb->expr()->gte('v.date', '\'' . $dateRange->startDate()->toDateTimeString() . '\''));
+            $qb->andWhere($qb->expr()->gte('v.date', $conn->quote($dateRange->startDate()->toDateTimeString())));
         }
         if ($dateRange?->endDate() !== null) {
-            $qb->andWhere($qb->expr()->lte('v.date', '\'' . $dateRange->endDate()->toDateTimeString() . '\''));
+            $qb->andWhere($qb->expr()->lte('v.date', $conn->quote($dateRange->endDate()->toDateTimeString())));
         }
     }
 

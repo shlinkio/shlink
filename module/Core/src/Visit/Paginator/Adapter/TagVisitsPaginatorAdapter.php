@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Paginator\Adapter;
+namespace Shlinkio\Shlink\Core\Visit\Paginator\Adapter;
 
 use Shlinkio\Shlink\Core\Model\VisitsParams;
+use Shlinkio\Shlink\Core\Paginator\Adapter\AbstractCacheableCountPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class VisitsForTagPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
+class TagVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
     public function __construct(
         private VisitRepositoryInterface $visitRepository,
@@ -20,14 +21,14 @@ class VisitsForTagPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
     ) {
     }
 
-    public function getSlice($offset, $length): array // phpcs:ignore
+    public function getSlice(int $offset, int $length): iterable
     {
         return $this->visitRepository->findVisitsByTag(
             $this->tag,
             new VisitsListFiltering(
                 $this->params->getDateRange(),
                 $this->params->excludeBots(),
-                $this->apiKey?->spec(true),
+                $this->apiKey,
                 $length,
                 $offset,
             ),
@@ -41,7 +42,7 @@ class VisitsForTagPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
             new VisitsCountFiltering(
                 $this->params->getDateRange(),
                 $this->params->excludeBots(),
-                $this->apiKey?->spec(true),
+                $this->apiKey,
             ),
         );
     }

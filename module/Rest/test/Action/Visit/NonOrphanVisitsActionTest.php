@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
+use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
@@ -13,36 +14,36 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
-use Shlinkio\Shlink\Rest\Action\Visit\TagVisitsAction;
+use Shlinkio\Shlink\Rest\Action\Visit\NonOrphanVisitsAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class TagVisitsActionTest extends TestCase
+class NonOrphanVisitsActionTest extends TestCase
 {
     use ProphecyTrait;
 
-    private TagVisitsAction $action;
+    private NonOrphanVisitsAction $action;
     private ObjectProphecy $visitsHelper;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
-        $this->action = new TagVisitsAction($this->visitsHelper->reveal());
+        $this->action = new NonOrphanVisitsAction($this->visitsHelper->reveal());
     }
 
     /** @test */
-    public function providingCorrectTagReturnsVisits(): void
+    public function requestIsHandled(): void
     {
-        $tag = 'foo';
         $apiKey = ApiKey::create();
-        $getVisits = $this->visitsHelper->visitsForTag($tag, Argument::type(VisitsParams::class), $apiKey)->willReturn(
+        $getVisits = $this->visitsHelper->nonOrphanVisits(Argument::type(VisitsParams::class), $apiKey)->willReturn(
             new Paginator(new ArrayAdapter([])),
         );
 
-        $response = $this->action->handle(
-            ServerRequestFactory::fromGlobals()->withAttribute('tag', $tag)->withAttribute(ApiKey::class, $apiKey),
-        );
+        /** @var JsonResponse $response */
+        $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, $apiKey));
+        $payload = $response->getPayload();
 
         self::assertEquals(200, $response->getStatusCode());
+        self::assertArrayHasKey('visits', $payload);
         $getVisits->shouldHaveBeenCalledOnce();
     }
 }

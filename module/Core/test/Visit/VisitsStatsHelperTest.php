@@ -53,7 +53,7 @@ class VisitsStatsHelperTest extends TestCase
     public function returnsExpectedVisitsStats(int $expectedCount): void
     {
         $repo = $this->prophesize(VisitRepository::class);
-        $count = $repo->countVisits(null)->willReturn($expectedCount * 3);
+        $count = $repo->countNonOrphanVisits(new VisitsCountFiltering())->willReturn($expectedCount * 3);
         $countOrphan = $repo->countOrphanVisits(Argument::type(VisitsCountFiltering::class))->willReturn(
             $expectedCount,
         );
@@ -168,6 +168,25 @@ class VisitsStatsHelperTest extends TestCase
         $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
 
         $paginator = $this->helper->orphanVisits(new VisitsParams());
+
+        self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
+        $listVisits->shouldHaveBeenCalledOnce();
+        $countVisits->shouldHaveBeenCalledOnce();
+        $getRepo->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
+    public function nonOrphanVisitsAreReturnedAsExpected(): void
+    {
+        $list = map(range(0, 3), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
+        $repo = $this->prophesize(VisitRepository::class);
+        $countVisits = $repo->countNonOrphanVisits(Argument::type(VisitsCountFiltering::class))->willReturn(
+            count($list),
+        );
+        $listVisits = $repo->findNonOrphanVisits(Argument::type(VisitsListFiltering::class))->willReturn($list);
+        $getRepo = $this->em->getRepository(Visit::class)->willReturn($repo->reveal());
+
+        $paginator = $this->helper->nonOrphanVisits(new VisitsParams());
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
         $listVisits->shouldHaveBeenCalledOnce();

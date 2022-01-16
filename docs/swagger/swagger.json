@@ -98,6 +98,9 @@
         "/rest/v{version}/visits/orphan": {
             "$ref": "paths/v2_visits_orphan.json"
         },
+        "/rest/v{version}/visits/non-orphan": {
+            "$ref": "paths/v2_visits_non-orphan.json"
+        },
 
         "/rest/v{version}/domains": {
             "$ref": "paths/v2_domains.json"

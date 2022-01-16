@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Paginator\Adapter;
+namespace ShlinkioTest\Shlink\Core\Visit\Paginator\Adapter;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -10,13 +10,13 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
-use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\ShortUrlVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class VisitsPaginatorAdapterTest extends TestCase
+class ShortUrlVisitsPaginatorAdapterTest extends TestCase
 {
     use ProphecyTrait;
 
@@ -54,7 +54,7 @@ class VisitsPaginatorAdapterTest extends TestCase
         $adapter = $this->createAdapter($apiKey);
         $countVisits = $this->repo->countVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain(''),
-            new VisitsCountFiltering(DateRange::emptyInstance(), false, $apiKey->spec()),
+            new VisitsCountFiltering(DateRange::emptyInstance(), false, $apiKey),
         )->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
@@ -64,13 +64,13 @@ class VisitsPaginatorAdapterTest extends TestCase
         $countVisits->shouldHaveBeenCalledOnce();
     }
 
-    private function createAdapter(?ApiKey $apiKey): VisitsPaginatorAdapter
+    private function createAdapter(?ApiKey $apiKey): ShortUrlVisitsPaginatorAdapter
     {
-        return new VisitsPaginatorAdapter(
+        return new ShortUrlVisitsPaginatorAdapter(
             $this->repo->reveal(),
             new ShortUrlIdentifier(''),
             VisitsParams::fromRawData([]),
-            $apiKey?->spec(),
+            $apiKey,
         );
     }
 }
