@@ -21,6 +21,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   Additionally, the endpoint also supports filtering by `searchTerm` query param. When provided, only tags matching it will be returned.
 
+* [#1063](https://github.com/shlinkio/shlink/issues/1063) Added new endpoint that allows fetching all existing non-orphan visits, in case you need a global view of all visits received by your Shlink instance.
+
+  This can be achieved using the `GET /visits/non-orphan` endpoint.
+
 ### Changed
 * [#1277](https://github.com/shlinkio/shlink/issues/1277) Reduced docker image size to 45% of the original size.
 * [#1268](https://github.com/shlinkio/shlink/issues/1268) Updated dependencies, including symfony/console 6 and mezzio/mezzio-swoole 4.
