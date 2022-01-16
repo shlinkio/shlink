@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class VisitsPaginatorAdapterTest extends TestCase
+class ShortUrlVisitsPaginatorAdapterTest extends TestCase
 {
     use ProphecyTrait;
 
