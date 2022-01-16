@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
-use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeUniquenessHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 
@@ -20,7 +20,7 @@ class UrlShortener implements UrlShortenerInterface
         private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
         private EntityManagerInterface $em,
         private ShortUrlRelationResolverInterface $relationResolver,
-        private ShortCodeHelperInterface $shortCodeHelper,
+        private ShortCodeUniquenessHelperInterface $shortCodeHelper,
     ) {
     }
 

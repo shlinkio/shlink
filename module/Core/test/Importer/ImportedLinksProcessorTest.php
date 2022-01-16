@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Importer\ImportedLinksProcessor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
-use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeUniquenessHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -46,7 +46,7 @@ class ImportedLinksProcessorTest extends TestCase
         $this->repo = $this->prophesize(ShortUrlRepositoryInterface::class);
         $this->em->getRepository(ShortUrl::class)->willReturn($this->repo->reveal());
 
-        $this->shortCodeHelper = $this->prophesize(ShortCodeHelperInterface::class);
+        $this->shortCodeHelper = $this->prophesize(ShortCodeUniquenessHelperInterface::class);
         $batchHelper = $this->prophesize(DoctrineBatchHelperInterface::class);
         $batchHelper->wrapIterable(Argument::cetera())->willReturnArgument(0);
 

@@ -12,20 +12,20 @@ use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
-use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelper;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeUniquenessHelper;
 
-class ShortCodeHelperTest extends TestCase
+class ShortCodeUniquenessHelperTest extends TestCase
 {
     use ProphecyTrait;
 
-    private ShortCodeHelper $helper;
+    private ShortCodeUniquenessHelper $helper;
     private ObjectProphecy $em;
     private ObjectProphecy $shortUrl;
 
     protected function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->helper = new ShortCodeHelper($this->em->reveal());
+        $this->helper = new ShortCodeUniquenessHelper($this->em->reveal());
 
         $this->shortUrl = $this->prophesize(ShortUrl::class);
         $this->shortUrl->getShortCode()->willReturn('abc123');
