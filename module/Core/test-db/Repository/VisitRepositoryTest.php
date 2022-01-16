@@ -301,6 +301,16 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(4, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey1)));
         self::assertEquals(5 + 7, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey2)));
         self::assertEquals(4 + 7, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($domainApiKey)));
+        self::assertEquals(4, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::withStartDate(
+            Chronos::parse('2016-01-05')->startOfDay(),
+        ))));
+        self::assertEquals(2, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::withStartDate(
+            Chronos::parse('2016-01-03')->startOfDay(),
+        ), false, $apiKey1)));
+        self::assertEquals(1, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::withStartDate(
+            Chronos::parse('2016-01-07')->startOfDay(),
+        ), false, $apiKey2)));
+        self::assertEquals(3 + 5, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(null, true, $apiKey2)));
         self::assertEquals(4, $this->repo->countOrphanVisits(new VisitsCountFiltering()));
         self::assertEquals(3, $this->repo->countOrphanVisits(new VisitsCountFiltering(null, true)));
     }
