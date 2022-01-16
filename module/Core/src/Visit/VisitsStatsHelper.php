@@ -19,6 +19,7 @@ use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
+use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\NonOrphanVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\OrphanVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\ShortUrlVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\TagVisitsPaginatorAdapter;
@@ -93,6 +94,14 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
         $repo = $this->em->getRepository(Visit::class);
 
         return $this->createPaginator(new OrphanVisitsPaginatorAdapter($repo, $params), $params);
+    }
+
+    public function nonOrphanVisits(VisitsParams $params, ?ApiKey $apiKey = null): Paginator
+    {
+        /** @var VisitRepositoryInterface $repo */
+        $repo = $this->em->getRepository(Visit::class);
+
+        return $this->createPaginator(new NonOrphanVisitsPaginatorAdapter($repo, $params, $apiKey), $params);
     }
 
     private function createPaginator(AdapterInterface $adapter, VisitsParams $params): Paginator
