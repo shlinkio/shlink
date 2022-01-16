@@ -70,7 +70,10 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
             $replacePlaceholderForPattern(self::DOMAIN_PLACEHOLDER, $domain, $modifier),
             $replacePlaceholderForPattern(self::ORIGINAL_PATH_PLACEHOLDER, $path, $modifier),
         );
-        $replacePlaceholdersInPath = $replacePlaceholders('\Functional\id');
+        $replacePlaceholdersInPath = compose(
+            $replacePlaceholders('\Functional\id'),
+            static fn (?string $path) => $path === null ? null : str_replace('//', '/', $path), // Fix duplicated bars
+        );
         $replacePlaceholdersInQuery = $replacePlaceholders('\urlencode');
 
         return $redirectUri

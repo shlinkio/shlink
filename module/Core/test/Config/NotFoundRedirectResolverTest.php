@@ -99,7 +99,7 @@ class NotFoundRedirectResolverTest extends TestCase
             new NotFoundRedirectOptions([
                 'regular404' => 'https://redirect-here.com/{ORIGINAL_PATH}/{DOMAIN}/?d={DOMAIN}&p={ORIGINAL_PATH}',
             ]),
-            'https://redirect-here.com//foo/bar/doma.in/?d=doma.in&p=%2Ffoo%2Fbar', // TODO Fix duplicated slash
+            'https://redirect-here.com/foo/bar/doma.in/?d=doma.in&p=%2Ffoo%2Fbar',
         ];
         yield 'invalid short URL' => [
             new Uri('/foo'),
@@ -111,7 +111,7 @@ class NotFoundRedirectResolverTest extends TestCase
             new Uri('/foo'),
             $this->notFoundType($this->requestForRoute(RedirectAction::class)),
             new NotFoundRedirectOptions(['invalidShortUrl' => 'https://redirect-here.com/{ORIGINAL_PATH}']),
-            'https://redirect-here.com//foo', // TODO Fix duplicated slash
+            'https://redirect-here.com/foo',
         ];
     }
 
