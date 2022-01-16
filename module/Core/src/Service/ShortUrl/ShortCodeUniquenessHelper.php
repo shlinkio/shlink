@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 
-class ShortCodeHelper implements ShortCodeHelperInterface // TODO Rename to ShortCodeUniquenessHelper
+class ShortCodeUniquenessHelper implements ShortCodeUniquenessHelperInterface
 {
     public function __construct(private EntityManagerInterface $em)
     {

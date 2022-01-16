@@ -9,9 +9,8 @@ return (static function (): array {
 
     return [
 
-        'url_shortener' => [
-            // TODO Move these options to their own config namespace
-            'visits_webhooks' => $webhooks === null ? [] : explode(',', $webhooks),
+        'visits_webhooks' => [
+            'webhooks' => $webhooks === null ? [] : explode(',', $webhooks),
             'notify_orphan_visits_to_webhooks' => (bool) env('NOTIFY_ORPHAN_VISITS_TO_WEBHOOKS', false),
         ],
 

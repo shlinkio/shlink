@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
-use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeHelperInterface;
+use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeUniquenessHelperInterface;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
@@ -48,7 +48,7 @@ class UrlShortenerTest extends TestCase
         $repo = $this->prophesize(ShortUrlRepository::class);
         $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $this->shortCodeHelper = $this->prophesize(ShortCodeHelperInterface::class);
+        $this->shortCodeHelper = $this->prophesize(ShortCodeUniquenessHelperInterface::class);
         $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
 
         $this->urlShortener = new UrlShortener(
