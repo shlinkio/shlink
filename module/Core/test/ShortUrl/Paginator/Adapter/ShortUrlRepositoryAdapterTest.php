@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Paginator\Adapter;
+namespace ShlinkioTest\Shlink\Core\ShortUrl\Paginator\Adapter;
 
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
-use Shlinkio\Shlink\Core\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Paginator\Adapter\ShortUrlRepositoryAdapter;
+use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
+use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlRepositoryAdapterTest extends TestCase
@@ -46,8 +48,9 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         $orderBy = $params->orderBy();
         $dateRange = $params->dateRange();
 
-        $this->repo->findList(10, 5, $searchTerm, $tags, ShortUrlsParams::TAGS_MODE_ANY, $orderBy, $dateRange, null)
-            ->shouldBeCalledOnce();
+        $this->repo->findList(
+            new ShortUrlsListFiltering(10, 5, $orderBy, $searchTerm, $tags, ShortUrlsParams::TAGS_MODE_ANY, $dateRange),
+        )->shouldBeCalledOnce();
         $adapter->getSlice(5, 10);
     }
 
@@ -71,8 +74,9 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $params, $apiKey);
         $dateRange = $params->dateRange();
 
-        $this->repo->countList($searchTerm, $tags, ShortUrlsParams::TAGS_MODE_ANY, $dateRange, $apiKey->spec())
-            ->shouldBeCalledOnce();
+        $this->repo->countList(
+            new ShortUrlsCountFiltering($searchTerm, $tags, ShortUrlsParams::TAGS_MODE_ANY, $dateRange, $apiKey),
+        )->shouldBeCalledOnce();
         $adapter->getNbResults();
     }
 
