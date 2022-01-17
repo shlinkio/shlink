@@ -9,7 +9,7 @@
 [![Twitter](https://img.shields.io/twitter/follow/shlinkio?color=blue&label=follow&logo=twitter&style=flat-square)](https://twitter.com/shlinkio)
 [![Paypal donate](https://img.shields.io/badge/Donate-paypal-blue.svg?style=flat-square&logo=paypal&colorA=aaaaaa)](https://slnk.to/donate)
 
-A PHP-based self-hosted URL shortener that can be used to serve shortened URLs under your own custom domain.
+A PHP-based self-hosted URL shortener that can be used to serve shortened URLs under your own domain.
 
 ## Table of Contents
 
@@ -27,7 +27,7 @@ This document contains the very basics to get started with Shlink. If you want t
 
 ## Docker image
 
-Starting with version 1.15.0, an official docker image is provided. You can learn how to use it by reading [the docs](https://shlink.io/documentation/install-docker-image/).
+You can learn how to use the official docker image by reading [the docs](https://shlink.io/documentation/install-docker-image/).
 
 The idea is that you can just generate a container using the image and provide the custom config via env vars.
 
@@ -61,7 +61,7 @@ In order to run Shlink, you will need a built version of the project. There are 
 
     * Clone the project with git (`git clone https://github.com/shlinkio/shlink.git`), or download it by clicking the **Clone or download** green button.
     * Download the [Composer](https://getcomposer.org/download/) PHP package manager inside the project folder.
-    * Run `./build.sh 1.0.0`, replacing the version with the version number you are going to build (the version number is used as part of the generated dist file name, and to set the value returned when running `shlink -V` from the command line).
+    * Run `./build.sh 3.0.0`, replacing the version with the version number you are going to build (the version number is used as part of the generated dist file name, and to set the value returned when running `shlink -V` from the command line).
 
     After that, you will have a dist file inside the `build` directory, that you need to decompress in the location of your choice.
 
@@ -73,24 +73,24 @@ Despite how you built the project, you now need to configure it, by following th
 
 * If you are going to use MySQL, MariaDB, PostgreSQL or Microsoft SQL Server, create an empty database with the name of your choice.
 * Recursively grant write permissions to the `data` directory. Shlink uses it to cache some information.
-* Setup the application by running the `bin/install` script. It is a command line tool that will guide you through the installation process. **Take into account that this tool has to be run directly on the server where you plan to host Shlink. Do not run it before uploading/moving it there.**
-* Generate your first API key by running `bin/cli api-key:generate`. You will need the key in order to interact with shlink's API.
+* Set up the application by running the `vendor/bin/shlink-installer install` script. It is a command line tool that will guide you through the installation process. **Take into account that this tool has to be run directly on the server where you plan to host Shlink. Do not run it before uploading/moving it there.**
+* Generate your first API key by running `bin/cli api-key:generate`. You will need the key in order to interact with Shlink's API.
 
 ## Using shlink
 
 Once shlink is installed, there are two main ways to interact with it:
 
-* **The command line**. Try running `bin/cli` and see all the [available commands](#shlink-cli-help).
+* **The command line**: Try running `bin/cli` to see all the available commands.
 
-    All of those commands can be run with the `--help`/`-h` flag in order to see how to use them and all the available options.
+    All of them can be run with the `--help`/`-h` flag in order to see how to use them and all the available options.
 
     It is probably a good idea to symlink the CLI entry point (`bin/cli`) to somewhere in your path, so that you can run shlink from any directory.
 
-* **The REST API**. The complete docs on how to use the API can be found [here](https://shlink.io/documentation/api-docs), and a sandbox which also documents every endpoint can be found in the [API Spec](https://api-spec.shlink.io/) portal.
+* **The REST API**: The complete docs on how to use the API can be found [here](https://shlink.io/documentation/api-docs), and a sandbox which also documents every endpoint can be found in the [API Spec](https://api-spec.shlink.io/) portal.
 
     However, you probably don't want to consume the raw API yourself. That's why a nice [web client](https://github.com/shlinkio/shlink-web-client) is provided that can be directly used from [https://app.shlink.io](https://app.shlink.io), or hosted by yourself.
 
-Both the API and CLI allow you to do the same operations, except for API key management, which can be done from the command line interface only.
+Both the API and CLI allow you to do mostly the same operations, except for API key management, which can be done from the command line interface only.
 
 ## Contributing
 
