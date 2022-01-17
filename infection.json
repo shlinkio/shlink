@@ -11,7 +11,7 @@
         "summary": "build/infection-unit/summary-log.txt",
         "debug": "build/infection-unit/debug-log.txt",
         "stryker": {
-            "badge": "develop"
+            "report": "develop"
         }
     },
     "tmpDir": "build/infection-unit/temp",
