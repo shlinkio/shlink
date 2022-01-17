@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Paginator\Adapter;
+namespace Shlinkio\Shlink\Core\ShortUrl\Paginator\Adapter;
 
 use Pagerfanta\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
+use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlRepositoryAdapter implements AdapterInterface
@@ -21,25 +23,12 @@ class ShortUrlRepositoryAdapter implements AdapterInterface
     public function getSlice(int $offset, int $length): iterable
     {
         return $this->repository->findList(
-            $length,
-            $offset,
-            $this->params->searchTerm(),
-            $this->params->tags(),
-            $this->params->tagsMode(),
-            $this->params->orderBy(),
-            $this->params->dateRange(),
-            $this->apiKey?->spec(),
+            ShortUrlsListFiltering::fromLimitsAndParams($length, $offset, $this->params, $this->apiKey),
         );
     }
 
     public function getNbResults(): int
     {
-        return $this->repository->countList(
-            $this->params->searchTerm(),
-            $this->params->tags(),
-            $this->params->tagsMode(),
-            $this->params->dateRange(),
-            $this->apiKey?->spec(),
-        );
+        return $this->repository->countList(ShortUrlsCountFiltering::fromParams($this->params, $this->apiKey));
     }
 }

@@ -18,6 +18,11 @@ final class Ordering
         return new self($field, $dir ?? self::DEFAULT_DIR);
     }
 
+    public static function emptyInstance(): self
+    {
+        return self::fromTuple([null, null]);
+    }
+
     public function orderField(): ?string
     {
         return $this->field;
