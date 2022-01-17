@@ -57,25 +57,32 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertSame($regularOne, $this->repo->findOneWithDomainFallback($regularOne->getShortCode()));
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
-            $withDomainDuplicatingRegular->getShortCode(),
+            ShortUrlIdentifier::fromShortCodeAndDomain($regularOne->getShortCode()),
+        ));
+        self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain($withDomainDuplicatingRegular->getShortCode()),
         ));
         self::assertSame($withDomain, $this->repo->findOneWithDomainFallback(
-            $withDomain->getShortCode(),
-            'example.com',
+            ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->getShortCode(), 'example.com'),
         ));
         self::assertSame(
             $withDomainDuplicatingRegular,
-            $this->repo->findOneWithDomainFallback($withDomainDuplicatingRegular->getShortCode(), 'doma.in'),
+            $this->repo->findOneWithDomainFallback(
+                ShortUrlIdentifier::fromShortCodeAndDomain($withDomainDuplicatingRegular->getShortCode(), 'doma.in'),
+            ),
         );
-        self::assertSame(
-            $regularOne,
-            $this->repo->findOneWithDomainFallback($withDomainDuplicatingRegular->getShortCode(), 'other-domain.com'),
-        );
-        self::assertNull($this->repo->findOneWithDomainFallback('invalid'));
-        self::assertNull($this->repo->findOneWithDomainFallback($withDomain->getShortCode()));
-        self::assertNull($this->repo->findOneWithDomainFallback($withDomain->getShortCode(), 'other-domain.com'));
+        self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(ShortUrlIdentifier::fromShortCodeAndDomain(
+            $withDomainDuplicatingRegular->getShortCode(),
+            'other-domain.com',
+        )));
+        self::assertNull($this->repo->findOneWithDomainFallback(ShortUrlIdentifier::fromShortCodeAndDomain('invalid')));
+        self::assertNull($this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->getShortCode()),
+        ));
+        self::assertNull($this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->getShortCode(), 'other-domain.com'),
+        ));
     }
 
     /** @test */

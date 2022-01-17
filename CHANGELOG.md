@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1300](https://github.com/shlinkio/shlink/issues/1300) Changed default ordering for short URLs list, returning always from newest to oldest.
 * [#1299](https://github.com/shlinkio/shlink/issues/1299) Updated to the latest base docker images, based in PHP 8.1.1, and bumped openswoole to v4.9.1.
 * [#1282](https://github.com/shlinkio/shlink/issues/1282) Env vars now have precedence over installer options.
+* [#1328](https://github.com/shlinkio/shlink/issues/1328) Refactored ShortUrlsRepository to use DTOs in methods with too many arguments.
 
 ### Deprecated
 * [#1315](https://github.com/shlinkio/shlink/issues/1315) Deprecated `GET /tags?withStats=true` endpoint. Use `GET /tags/stats` instead.

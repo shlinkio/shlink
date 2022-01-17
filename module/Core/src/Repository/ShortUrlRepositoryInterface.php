@@ -20,8 +20,7 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
 
     public function countList(ShortUrlsCountFiltering $filtering): int;
 
-    // TODO Use ShortUrlIdentifier here
-    public function findOneWithDomainFallback(string $shortCode, ?string $domain = null): ?ShortUrl;
+    public function findOneWithDomainFallback(ShortUrlIdentifier $identifier): ?ShortUrl;
 
     public function findOne(ShortUrlIdentifier $identifier, ?Specification $spec = null): ?ShortUrl;
 

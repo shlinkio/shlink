@@ -127,7 +127,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $qb;
     }
 
-    public function findOneWithDomainFallback(string $shortCode, ?string $domain = null): ?ShortUrl
+    public function findOneWithDomainFallback(ShortUrlIdentifier $identifier): ?ShortUrl
     {
         // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
         // the bottom
@@ -146,8 +146,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         $query = $this->getEntityManager()->createQuery($dql);
         $query->setMaxResults(1)
               ->setParameters([
-                  'shortCode' => $shortCode,
-                  'domain' => $domain,
+                  'shortCode' => $identifier->shortCode(),
+                  'domain' => $identifier->domain(),
               ]);
 
         // Since we ordered by domain, we will have first the URL matching provided domain, followed by the one
