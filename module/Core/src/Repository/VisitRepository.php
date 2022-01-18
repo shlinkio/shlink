@@ -105,7 +105,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $shortUrlRepo = $this->getEntityManager()->getRepository(ShortUrl::class);
         $shortUrlId = $shortUrlRepo->findOne($identifier, $filtering->apiKey()?->spec())?->getId() ?? '-1';
 
-        // Parameters in this query need to be part of the query itself, as we need to use it a sub-query later
+        // Parameters in this query need to be part of the query itself, as we need to use it as sub-query later
         // Since they are not provided by the caller, it's reasonably safe
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
@@ -142,14 +142,14 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $qb->from(Visit::class, 'v')
            ->join('v.shortUrl', 's')
            ->join('s.tags', 't')
-           ->where($qb->expr()->eq('t.name', '\'' . $tag . '\'')); // This needs to be concatenated, not bound
+           ->where($qb->expr()->eq('t.name', $this->getEntityManager()->getConnection()->quote($tag)));
 
         if ($filtering->excludeBots()) {
             $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
         }
 
         $this->applyDatesInline($qb, $filtering->dateRange());
-        $this->applySpecification($qb, $filtering->apiKey()?->spec(true), 'v');
+        $this->applySpecification($qb, $filtering->apiKey()?->inlinedSpec(), 'v');
 
         return $qb;
     }
@@ -174,7 +174,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $qb = $this->createAllVisitsQueryBuilder($filtering);
         $qb->andWhere($qb->expr()->isNotNull('v.shortUrl'));
 
-        $this->applySpecification($qb, $filtering->apiKey()?->spec(true));
+        $this->applySpecification($qb, $filtering->apiKey()?->inlinedSpec());
 
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit(), $filtering->offset());
     }

@@ -21,36 +21,47 @@ class RoleTest extends TestCase
      * @test
      * @dataProvider provideRoles
      */
-    public function returnsExpectedSpec(ApiKeyRole $apiKeyRole, bool $inlined, Specification $expected): void
+    public function returnsExpectedSpec(ApiKeyRole $apiKeyRole, Specification $expected): void
     {
-        self::assertEquals($expected, Role::toSpec($apiKeyRole, $inlined));
+        self::assertEquals($expected, Role::toSpec($apiKeyRole));
     }
 
     public function provideRoles(): iterable
     {
         $apiKey = ApiKey::create();
 
-        yield 'inline invalid role' => [new ApiKeyRole('invalid', [], $apiKey), true, Spec::andX()];
-        yield 'not inline invalid role' => [new ApiKeyRole('invalid', [], $apiKey), false, Spec::andX()];
-        yield 'inline author role' => [
+        yield 'invalid role' => [new ApiKeyRole('invalid', [], $apiKey), Spec::andX()];
+        yield 'author role' => [
             new ApiKeyRole(Role::AUTHORED_SHORT_URLS, [], $apiKey),
-            true,
-            Spec::andX(new BelongsToApiKeyInlined($apiKey)),
-        ];
-        yield 'not inline author role' => [
-            new ApiKeyRole(Role::AUTHORED_SHORT_URLS, [], $apiKey),
-            false,
             new BelongsToApiKey($apiKey),
         ];
-        yield 'inline domain role' => [
-            new ApiKeyRole(Role::DOMAIN_SPECIFIC, ['domain_id' => '123'], $apiKey),
-            true,
-            Spec::andX(new BelongsToDomainInlined('123')),
-        ];
-        yield 'not inline domain role' => [
+        yield 'domain role' => [
             new ApiKeyRole(Role::DOMAIN_SPECIFIC, ['domain_id' => '456'], $apiKey),
-            false,
             new BelongsToDomain('456'),
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideInlinedRoles
+     */
+    public function returnsExpectedInlinedSpec(ApiKeyRole $apiKeyRole, Specification $expected): void
+    {
+        self::assertEquals($expected, Role::toInlinedSpec($apiKeyRole));
+    }
+
+    public function provideInlinedRoles(): iterable
+    {
+        $apiKey = ApiKey::create();
+
+        yield 'invalid role' => [new ApiKeyRole('invalid', [], $apiKey), Spec::andX()];
+        yield 'author role' => [
+            new ApiKeyRole(Role::AUTHORED_SHORT_URLS, [], $apiKey),
+            Spec::andX(new BelongsToApiKeyInlined($apiKey)),
+        ];
+        yield 'domain role' => [
+            new ApiKeyRole(Role::DOMAIN_SPECIFIC, ['domain_id' => '123'], $apiKey),
+            Spec::andX(new BelongsToDomainInlined('123')),
         ];
     }
 

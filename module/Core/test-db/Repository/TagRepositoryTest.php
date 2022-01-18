@@ -63,19 +63,27 @@ class TagRepositoryTest extends DatabaseTestCase
         foreach ($names as $name) {
             $this->getEntityManager()->persist(new Tag($name));
         }
+
+        $apiKey = $filtering?->apiKey();
+        if ($apiKey !== null) {
+            $this->getEntityManager()->persist($apiKey);
+        }
+
         $this->getEntityManager()->flush();
 
         [$firstUrlTags] = array_chunk($names, 3);
         $secondUrlTags = [$names[0]];
-        $metaWithTags = fn (array $tags) => ShortUrlMeta::fromRawData(['longUrl' => '', 'tags' => $tags]);
+        $metaWithTags = fn (array $tags, ?ApiKey $apiKey) => ShortUrlMeta::fromRawData(
+            ['longUrl' => '', 'tags' => $tags, 'apiKey' => $apiKey],
+        );
 
-        $shortUrl = ShortUrl::fromMeta($metaWithTags($firstUrlTags), $this->relationResolver);
+        $shortUrl = ShortUrl::fromMeta($metaWithTags($firstUrlTags, $apiKey), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl);
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
 
-        $shortUrl2 = ShortUrl::fromMeta($metaWithTags($secondUrlTags), $this->relationResolver);
+        $shortUrl2 = ShortUrl::fromMeta($metaWithTags($secondUrlTags, null), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl2);
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
         $this->getEntityManager()->flush();
@@ -181,6 +189,23 @@ class TagRepositoryTest extends DatabaseTestCase
                 self::assertEquals($tagNames[0], $result[0]->tag()->__toString());
             },
         ];
+        yield 'api key' => [new TagsListFiltering(null, null, null, null, ApiKey::fromMeta(
+            ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()),
+        )), static function (array $result, array $tagNames): void {
+            /** @var TagInfo[] $result */
+            self::assertCount(3, $result);
+            self::assertEquals(1, $result[0]->shortUrlsCount());
+            self::assertEquals(3, $result[0]->visitsCount());
+            self::assertEquals($tagNames[1], $result[0]->tag()->__toString());
+
+            self::assertEquals(1, $result[1]->shortUrlsCount());
+            self::assertEquals(3, $result[1]->visitsCount());
+            self::assertEquals($tagNames[2], $result[1]->tag()->__toString());
+
+            self::assertEquals(1, $result[2]->shortUrlsCount());
+            self::assertEquals(3, $result[2]->visitsCount());
+            self::assertEquals($tagNames[0], $result[2]->tag()->__toString());
+        }];
     }
 
     /** @test */

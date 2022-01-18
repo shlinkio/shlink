@@ -13,22 +13,15 @@ use Shlinkio\Shlink\Core\Tag\Model\TagsListFiltering;
 use Shlinkio\Shlink\Core\Tag\Spec\CountTagsWithName;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
+use Shlinkio\Shlink\Rest\ApiKey\Spec\WithInlinedApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function Functional\map;
-use function is_object;
-use function method_exists;
-use function sprintf;
-use function strlen;
-use function strpos;
-use function substr_replace;
 
 use const PHP_INT_MAX;
 
 class TagRepository extends EntitySpecificationRepository implements TagRepositoryInterface
 {
-    private const PARAM_PLACEHOLDER = '?';
-
     public function deleteByName(array $names): int
     {
         if (empty($names)) {
@@ -60,23 +53,10 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         }
 
         $apiKey = $filtering?->apiKey();
-        $this->applySpecification($subQb, $apiKey?->spec(false, 'shortUrls'), 't');
+        $this->applySpecification($subQb, new WithInlinedApiKeySpecsEnsuringJoin($apiKey, 'shortUrls'), 't');
 
         $subQuery = $subQb->getQuery();
         $subQuerySql = $subQuery->getSQL();
-
-        // Sadly, we need to manually interpolate the params in the query replacing the placeholders, as this is going
-        // to be used as a sub-query in a native query. There's no need to sanitize, though.
-        foreach ($subQuery->getParameters() as $param) {
-            $value = $param->getValue();
-            $pos = strpos($subQuerySql, self::PARAM_PLACEHOLDER);
-            $subQuerySql = substr_replace(
-                $subQuerySql,
-                sprintf('\'%s\'', is_object($value) && method_exists($value, 'getId') ? $value->getId() : $value),
-                $pos === false ? -1 : $pos,
-                strlen(self::PARAM_PLACEHOLDER),
-            );
-        }
 
         // A native query builder needs to be used here, because DQL and ORM query builders do not support
         // sub-queries at "from" and "join" level.
