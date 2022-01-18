@@ -142,7 +142,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $qb->from(Visit::class, 'v')
            ->join('v.shortUrl', 's')
            ->join('s.tags', 't')
-           ->where($qb->expr()->eq('t.name', '\'' . $tag . '\'')); // This needs to be concatenated, not bound
+           ->where($qb->expr()->eq('t.name', $this->getEntityManager()->getConnection()->quote($tag)));
 
         if ($filtering->excludeBots()) {
             $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
