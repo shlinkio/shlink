@@ -9,7 +9,7 @@ use Happyr\DoctrineSpecification\Specification\BaseSpecification;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class WithApiKeySpecsEnsuringJoin extends BaseSpecification
+class WithInlinedApiKeySpecsEnsuringJoin extends BaseSpecification
 {
     public function __construct(private ?ApiKey $apiKey, private string $fieldToJoin = 'shortUrls')
     {
@@ -20,7 +20,7 @@ class WithApiKeySpecsEnsuringJoin extends BaseSpecification
     {
         return $this->apiKey === null || $this->apiKey->isAdmin() ? Spec::andX() : Spec::andX(
             Spec::join($this->fieldToJoin, 's'),
-            $this->apiKey->spec($this->fieldToJoin),
+            $this->apiKey->inlinedSpec(),
         );
     }
 }

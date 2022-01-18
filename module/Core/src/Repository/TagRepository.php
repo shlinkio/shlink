@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Tag\Model\TagsListFiltering;
 use Shlinkio\Shlink\Core\Tag\Spec\CountTagsWithName;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
+use Shlinkio\Shlink\Rest\ApiKey\Spec\WithInlinedApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function Functional\map;
@@ -21,8 +22,6 @@ use const PHP_INT_MAX;
 
 class TagRepository extends EntitySpecificationRepository implements TagRepositoryInterface
 {
-    private const PARAM_PLACEHOLDER = '?';
-
     public function deleteByName(array $names): int
     {
         if (empty($names)) {
@@ -54,7 +53,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         }
 
         $apiKey = $filtering?->apiKey();
-        $this->applySpecification($subQb, new WithApiKeySpecsEnsuringJoin($apiKey, 'shortUrls', true), 't');
+        $this->applySpecification($subQb, new WithInlinedApiKeySpecsEnsuringJoin($apiKey, 'shortUrls'), 't');
 
         $subQuery = $subQb->getQuery();
         $subQuerySql = $subQuery->getSQL();
