@@ -11,8 +11,11 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class WithApiKeySpecsEnsuringJoin extends BaseSpecification
 {
-    public function __construct(private ?ApiKey $apiKey, private string $fieldToJoin = 'shortUrls')
-    {
+    public function __construct(
+        private ?ApiKey $apiKey,
+        private string $fieldToJoin = 'shortUrls',
+        private bool $inlined = false,
+    ) {
         parent::__construct();
     }
 
@@ -20,7 +23,7 @@ class WithApiKeySpecsEnsuringJoin extends BaseSpecification
     {
         return $this->apiKey === null || $this->apiKey->isAdmin() ? Spec::andX() : Spec::andX(
             Spec::join($this->fieldToJoin, 's'),
-            $this->apiKey->spec(false, $this->fieldToJoin),
+            $this->inlined ? $this->apiKey->inlinedSpec() : $this->apiKey->spec($this->fieldToJoin),
         );
     }
 }
