@@ -24,7 +24,7 @@ return [
             LOCAL_LOCK_FACTORY => ConfigAbstractFactory::class,
         ],
         'aliases' => [
-            'lock_store' => EnvVars::REDIS_SERVERS()->existsInEnv() ? 'local_lock_store' : 'redis_lock_store',
+            'lock_store' => EnvVars::REDIS_SERVERS()->existsInEnv() ? 'redis_lock_store' : 'local_lock_store',
 
             'redis_lock_store' => Lock\Store\RedisStore::class,
             'local_lock_store' => Lock\Store\FlockStore::class,
