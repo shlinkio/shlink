@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 use Laminas\ServiceManager\Proxy\LazyServiceFactory;
 use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 use Symfony\Component\Mercure\Hub;
 use Symfony\Component\Mercure\HubInterface;
 
-use function Shlinkio\Shlink\Config\env;
-
 return (static function (): array {
-    $publicUrl = env('MERCURE_PUBLIC_HUB_URL');
+    $publicUrl = EnvVars::MERCURE_PUBLIC_HUB_URL()->loadFromEnv();
 
     return [
 
         'mercure' => [
             'public_hub_url' => $publicUrl,
-            'internal_hub_url' => env('MERCURE_INTERNAL_HUB_URL', $publicUrl),
-            'jwt_secret' => env('MERCURE_JWT_SECRET'),
+            'internal_hub_url' => EnvVars::MERCURE_INTERNAL_HUB_URL()->loadFromEnv($publicUrl),
+            'jwt_secret' => EnvVars::MERCURE_JWT_SECRET()->loadFromEnv(),
             'jwt_issuer' => 'Shlink',
         ],
 

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use function Shlinkio\Shlink\Config\env;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 
 use const Shlinkio\Shlink\MIN_TASK_WORKERS;
 
 return (static function () {
-    $taskWorkers = (int) env('TASK_WORKER_NUM', 16);
+    $taskWorkers = (int) EnvVars::TASK_WORKER_NUM()->loadFromEnv(16);
 
     return [
 
@@ -17,11 +17,11 @@ return (static function () {
 
             'swoole-http-server' => [
                 'host' => '0.0.0.0',
-                'port' => (int) env('PORT', 8080),
+                'port' => (int) EnvVars::PORT()->loadFromEnv(8080),
                 'process-name' => 'shlink',
 
                 'options' => [
-                    'worker_num' => (int) env('WEB_WORKER_NUM', 16),
+                    'worker_num' => (int) EnvVars::WEB_WORKER_NUM()->loadFromEnv(16),
                     'task_worker_num' => max($taskWorkers, MIN_TASK_WORKERS),
                 ],
             ],

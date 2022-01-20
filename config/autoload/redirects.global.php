@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use function Shlinkio\Shlink\Config\env;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 
 use const Shlinkio\Shlink\DEFAULT_REDIRECT_CACHE_LIFETIME;
 use const Shlinkio\Shlink\DEFAULT_REDIRECT_STATUS_CODE;
@@ -10,14 +10,16 @@ use const Shlinkio\Shlink\DEFAULT_REDIRECT_STATUS_CODE;
 return [
 
     'not_found_redirects' => [
-        'invalid_short_url' => env('DEFAULT_INVALID_SHORT_URL_REDIRECT'),
-        'regular_404' => env('DEFAULT_REGULAR_404_REDIRECT'),
-        'base_url' => env('DEFAULT_BASE_URL_REDIRECT'),
+        'invalid_short_url' => EnvVars::DEFAULT_INVALID_SHORT_URL_REDIRECT()->loadFromEnv(),
+        'regular_404' => EnvVars::DEFAULT_REGULAR_404_REDIRECT()->loadFromEnv(),
+        'base_url' => EnvVars::DEFAULT_BASE_URL_REDIRECT()->loadFromEnv(),
     ],
 
     'redirects' => [
-        'redirect_status_code' => (int) env('REDIRECT_STATUS_CODE', DEFAULT_REDIRECT_STATUS_CODE),
-        'redirect_cache_lifetime' => (int) env('REDIRECT_CACHE_LIFETIME', DEFAULT_REDIRECT_CACHE_LIFETIME),
+        'redirect_status_code' => (int) EnvVars::REDIRECT_STATUS_CODE()->loadFromEnv(DEFAULT_REDIRECT_STATUS_CODE),
+        'redirect_cache_lifetime' => (int) EnvVars::REDIRECT_CACHE_LIFETIME()->loadFromEnv(
+            DEFAULT_REDIRECT_CACHE_LIFETIME,
+        ),
     ],
 
 ];
