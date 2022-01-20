@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 
 use function Functional\contains;
-use function Shlinkio\Shlink\Config\env;
 
 return (static function (): array {
-    $driver = env('DB_DRIVER');
+    $driver = EnvVars::DB_DRIVER()->loadFromEnv();
     $isMysqlCompatible = contains(['maria', 'mysql'], $driver);
 
     $resolveDriver = static fn () => match ($driver) {
@@ -35,12 +35,12 @@ return (static function (): array {
         ],
         default => [
             'driver' => $resolveDriver(),
-            'dbname' => env('DB_NAME', 'shlink'),
-            'user' => env('DB_USER'),
-            'password' => env('DB_PASSWORD'),
-            'host' => env('DB_HOST', env('DB_UNIX_SOCKET')),
-            'port' => env('DB_PORT', $resolveDefaultPort()),
-            'unix_socket' => $isMysqlCompatible ? env('DB_UNIX_SOCKET') : null,
+            'dbname' => EnvVars::DB_NAME()->loadFromEnv('shlink'),
+            'user' => EnvVars::DB_USER()->loadFromEnv(),
+            'password' => EnvVars::DB_PASSWORD()->loadFromEnv(),
+            'host' => EnvVars::DB_HOST()->loadFromEnv(EnvVars::DB_UNIX_SOCKET()->loadFromEnv()),
+            'port' => EnvVars::DB_PORT()->loadFromEnv($resolveDefaultPort()),
+            'unix_socket' => $isMysqlCompatible ? EnvVars::DB_UNIX_SOCKET()->loadFromEnv() : null,
             'charset' => $resolveCharset(),
         ],
     };

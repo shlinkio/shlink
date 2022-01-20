@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink;
 
-use function Shlinkio\Shlink\Config\env;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 
 return (static function (): array {
-    $threshold = env('DELETE_SHORT_URL_THRESHOLD');
+    $threshold = EnvVars::DELETE_SHORT_URL_THRESHOLD()->loadFromEnv();
 
     return [
 

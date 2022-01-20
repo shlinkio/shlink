@@ -5,9 +5,8 @@ declare(strict_types=1);
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Predis\ClientInterface as PredisClient;
 use Shlinkio\Shlink\Common\Logger\LoggerAwareDelegatorFactory;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 use Symfony\Component\Lock;
-
-use function Shlinkio\Shlink\Config\env;
 
 use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
 
@@ -25,7 +24,7 @@ return [
             LOCAL_LOCK_FACTORY => ConfigAbstractFactory::class,
         ],
         'aliases' => [
-            'lock_store' => env('REDIS_SERVERS') === null ? 'local_lock_store' : 'redis_lock_store',
+            'lock_store' => EnvVars::REDIS_SERVERS()->existsInEnv() ? 'local_lock_store' : 'redis_lock_store',
 
             'redis_lock_store' => Lock\Store\RedisStore::class,
             'local_lock_store' => Lock\Store\FlockStore::class,

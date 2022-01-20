@@ -21,7 +21,7 @@ $isTestEnv = env('APP_ENV') === 'test';
 
 return (new ConfigAggregator\ConfigAggregator([
     ! $isTestEnv
-        ? new EnvVarLoaderProvider('config/params/generated_config.php')
+        ? new EnvVarLoaderProvider('config/params/generated_config.php', Core\Config\EnvVars::cases())
         : new ConfigAggregator\ArrayProvider([]),
     Mezzio\ConfigProvider::class,
     Mezzio\Router\ConfigProvider::class,

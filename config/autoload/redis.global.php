@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use function Shlinkio\Shlink\Config\env;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 
 return (static function (): array {
-    $redisServers = env('REDIS_SERVERS');
+    $redisServers = EnvVars::REDIS_SERVERS()->loadFromEnv();
 
     return match ($redisServers) {
         null => [],
@@ -14,7 +14,7 @@ return (static function (): array {
                 'default_lifetime' => 86400, // 24h
                 'redis' => [
                     'servers' => $redisServers,
-                    'sentinel_service' => env('REDIS_SENTINEL_SERVICE'),
+                    'sentinel_service' => EnvVars::REDIS_SENTINEL_SERVICE()->loadFromEnv(),
                 ],
             ],
         ],
