@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
-use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagsListFiltering;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -21,6 +20,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 use function array_chunk;
+use function count;
 
 class TagRepositoryTest extends DatabaseTestCase
 {
@@ -57,7 +57,7 @@ class TagRepositoryTest extends DatabaseTestCase
      * @test
      * @dataProvider provideFilters
      */
-    public function properTagsInfoIsReturned(?TagsListFiltering $filtering, callable $asserts): void
+    public function properTagsInfoIsReturned(?TagsListFiltering $filtering, array $expectedList): void
     {
         $names = ['foo', 'bar', 'baz', 'another'];
         foreach ($names as $name) {
@@ -92,231 +92,114 @@ class TagRepositoryTest extends DatabaseTestCase
             ShortUrl::fromMeta($metaWithTags(['bar'], null), $this->relationResolver),
         );
         $this->getEntityManager()->persist(
-            ShortUrl::fromMeta($metaWithTags(['bar'], null), $this->relationResolver),
+            ShortUrl::fromMeta($metaWithTags(['bar'], $apiKey), $this->relationResolver),
         );
 
         $this->getEntityManager()->flush();
 
         $result = $this->repo->findTagsWithInfo($filtering);
 
-        $asserts($result, $names);
+        self::assertCount(count($expectedList), $result);
+        foreach ($expectedList as $index => [$tag, $shortUrlsCount, $visitsCount]) {
+            self::assertEquals($shortUrlsCount, $result[$index]->shortUrlsCount());
+            self::assertEquals($visitsCount, $result[$index]->visitsCount());
+            self::assertEquals($tag, $result[$index]->tag()->__toString());
+        }
     }
 
     public function provideFilters(): iterable
     {
-        $defaultAsserts = static function (array $result, array $tagNames): void {
-            /** @var TagInfo[] $result */
-            self::assertCount(4, $result);
-            self::assertEquals(0, $result[0]->shortUrlsCount());
-            self::assertEquals(0, $result[0]->visitsCount());
-            self::assertEquals($tagNames[3], $result[0]->tag()->__toString());
-
-            self::assertEquals(3, $result[1]->shortUrlsCount());
-            self::assertEquals(3, $result[1]->visitsCount());
-            self::assertEquals($tagNames[1], $result[1]->tag()->__toString());
-
-            self::assertEquals(1, $result[2]->shortUrlsCount());
-            self::assertEquals(3, $result[2]->visitsCount());
-            self::assertEquals($tagNames[2], $result[2]->tag()->__toString());
-
-            self::assertEquals(2, $result[3]->shortUrlsCount());
-            self::assertEquals(4, $result[3]->visitsCount());
-            self::assertEquals($tagNames[0], $result[3]->tag()->__toString());
-        };
-
-        yield 'no filter' => [null, $defaultAsserts];
-        yield 'empty filter' => [new TagsListFiltering(), $defaultAsserts];
-        yield 'limit' => [new TagsListFiltering(2), static function (array $result, array $tagNames): void {
-            /** @var TagInfo[] $result */
-            self::assertCount(2, $result);
-            self::assertEquals(0, $result[0]->shortUrlsCount());
-            self::assertEquals(0, $result[0]->visitsCount());
-            self::assertEquals($tagNames[3], $result[0]->tag()->__toString());
-
-            self::assertEquals(3, $result[1]->shortUrlsCount());
-            self::assertEquals(3, $result[1]->visitsCount());
-            self::assertEquals($tagNames[1], $result[1]->tag()->__toString());
-        }];
-        yield 'offset' => [new TagsListFiltering(null, 3), static function (array $result, array $tagNames): void {
-            /** @var TagInfo[] $result */
-            self::assertCount(1, $result);
-            self::assertEquals(2, $result[0]->shortUrlsCount());
-            self::assertEquals(4, $result[0]->visitsCount());
-            self::assertEquals($tagNames[0], $result[0]->tag()->__toString());
-        }];
-        yield 'limit and offset' => [
-            new TagsListFiltering(2, 1),
-            static function (array $result, array $tagNames): void {
-                /** @var TagInfo[] $result */
-                self::assertCount(2, $result);
-                self::assertEquals(3, $result[0]->shortUrlsCount());
-                self::assertEquals(3, $result[0]->visitsCount());
-                self::assertEquals($tagNames[1], $result[0]->tag()->__toString());
-
-                self::assertEquals(1, $result[1]->shortUrlsCount());
-                self::assertEquals(3, $result[1]->visitsCount());
-                self::assertEquals($tagNames[2], $result[1]->tag()->__toString());
-            },
+        $defaultList = [
+            ['another', 0, 0],
+            ['bar', 3, 3],
+            ['baz', 1, 3],
+            ['foo', 2, 4],
         ];
-        yield 'search term' => [
-            new TagsListFiltering(null, null, 'ba'),
-            static function (array $result, array $tagNames): void {
-                /** @var TagInfo[] $result */
-                self::assertCount(2, $result);
-                self::assertEquals(3, $result[0]->shortUrlsCount());
-                self::assertEquals(3, $result[0]->visitsCount());
-                self::assertEquals($tagNames[1], $result[0]->tag()->__toString());
 
-                self::assertEquals(1, $result[1]->shortUrlsCount());
-                self::assertEquals(3, $result[1]->visitsCount());
-                self::assertEquals($tagNames[2], $result[1]->tag()->__toString());
-            },
-        ];
+        yield 'no filter' => [null, $defaultList];
+        yield 'empty filter' => [new TagsListFiltering(), $defaultList];
+        yield 'limit' => [new TagsListFiltering(2), [
+            ['another', 0, 0],
+            ['bar', 3, 3],
+        ]];
+        yield 'offset' => [new TagsListFiltering(null, 3), [
+            ['foo', 2, 4],
+        ]];
+        yield 'limit and offset' => [new TagsListFiltering(2, 1), [
+            ['bar', 3, 3],
+            ['baz', 1, 3],
+        ]];
+        yield 'search term' => [new TagsListFiltering(null, null, 'ba'), [
+            ['bar', 3, 3],
+            ['baz', 1, 3],
+        ]];
         yield 'ASC ordering' => [
             new TagsListFiltering(null, null, null, Ordering::fromTuple(['tag', 'ASC'])),
-            $defaultAsserts,
+            $defaultList,
         ];
-        yield 'DESC ordering' => [
-            new TagsListFiltering(null, null, null, Ordering::fromTuple(['tag', 'DESC'])),
-            static function (array $result, array $tagNames): void {
-                /** @var TagInfo[] $result */
-                self::assertCount(4, $result);
-                self::assertEquals(0, $result[3]->shortUrlsCount());
-                self::assertEquals(0, $result[3]->visitsCount());
-                self::assertEquals($tagNames[3], $result[3]->tag()->__toString());
-
-                self::assertEquals(3, $result[2]->shortUrlsCount());
-                self::assertEquals(3, $result[2]->visitsCount());
-                self::assertEquals($tagNames[1], $result[2]->tag()->__toString());
-
-                self::assertEquals(1, $result[1]->shortUrlsCount());
-                self::assertEquals(3, $result[1]->visitsCount());
-                self::assertEquals($tagNames[2], $result[1]->tag()->__toString());
-
-                self::assertEquals(2, $result[0]->shortUrlsCount());
-                self::assertEquals(4, $result[0]->visitsCount());
-                self::assertEquals($tagNames[0], $result[0]->tag()->__toString());
-            },
-        ];
+        yield 'DESC ordering' => [new TagsListFiltering(null, null, null, Ordering::fromTuple(['tag', 'DESC'])), [
+            ['foo', 2, 4],
+            ['baz', 1, 3],
+            ['bar', 3, 3],
+            ['another', 0, 0],
+        ]];
         yield 'short URLs count ASC ordering' => [
             new TagsListFiltering(null, null, null, Ordering::fromTuple(['shortUrlsCount', 'ASC'])),
-            static function (array $result, array $tagNames): void {
-                /** @var TagInfo[] $result */
-                self::assertCount(4, $result);
-                self::assertEquals(0, $result[0]->shortUrlsCount());
-                self::assertEquals(0, $result[0]->visitsCount());
-                self::assertEquals($tagNames[3], $result[0]->tag()->__toString());
-
-                self::assertEquals(1, $result[1]->shortUrlsCount());
-                self::assertEquals(3, $result[1]->visitsCount());
-                self::assertEquals($tagNames[2], $result[1]->tag()->__toString());
-
-                self::assertEquals(2, $result[2]->shortUrlsCount());
-                self::assertEquals(4, $result[2]->visitsCount());
-                self::assertEquals($tagNames[0], $result[2]->tag()->__toString());
-
-                self::assertEquals(3, $result[3]->shortUrlsCount());
-                self::assertEquals(3, $result[3]->visitsCount());
-                self::assertEquals($tagNames[1], $result[3]->tag()->__toString());
-            },
+            [
+                ['another', 0, 0],
+                ['baz', 1, 3],
+                ['foo', 2, 4],
+                ['bar', 3, 3],
+            ],
         ];
         yield 'short URLs count DESC ordering' => [
             new TagsListFiltering(null, null, null, Ordering::fromTuple(['shortUrlsCount', 'DESC'])),
-            static function (array $result, array $tagNames): void {
-                /** @var TagInfo[] $result */
-                self::assertCount(4, $result);
-                self::assertEquals(3, $result[0]->shortUrlsCount());
-                self::assertEquals(3, $result[0]->visitsCount());
-                self::assertEquals($tagNames[1], $result[0]->tag()->__toString());
-
-                self::assertEquals(2, $result[1]->shortUrlsCount());
-                self::assertEquals(4, $result[1]->visitsCount());
-                self::assertEquals($tagNames[0], $result[1]->tag()->__toString());
-
-                self::assertEquals(1, $result[2]->shortUrlsCount());
-                self::assertEquals(3, $result[2]->visitsCount());
-                self::assertEquals($tagNames[2], $result[2]->tag()->__toString());
-
-                self::assertEquals(0, $result[3]->shortUrlsCount());
-                self::assertEquals(0, $result[3]->visitsCount());
-                self::assertEquals($tagNames[3], $result[3]->tag()->__toString());
-            },
+            [
+                ['bar', 3, 3],
+                ['foo', 2, 4],
+                ['baz', 1, 3],
+                ['another', 0, 0],
+            ],
         ];
         yield 'visits count ASC ordering' => [
             new TagsListFiltering(null, null, null, Ordering::fromTuple(['visitsCount', 'ASC'])),
-            static function (array $result, array $tagNames): void {
-                /** @var TagInfo[] $result */
-                self::assertCount(4, $result);
-                self::assertEquals(0, $result[0]->shortUrlsCount());
-                self::assertEquals(0, $result[0]->visitsCount());
-                self::assertEquals($tagNames[3], $result[0]->tag()->__toString());
-
-                self::assertEquals(3, $result[1]->shortUrlsCount());
-                self::assertEquals(3, $result[1]->visitsCount());
-                self::assertEquals($tagNames[1], $result[1]->tag()->__toString());
-
-                self::assertEquals(1, $result[2]->shortUrlsCount());
-                self::assertEquals(3, $result[2]->visitsCount());
-                self::assertEquals($tagNames[2], $result[2]->tag()->__toString());
-
-                self::assertEquals(2, $result[3]->shortUrlsCount());
-                self::assertEquals(4, $result[3]->visitsCount());
-                self::assertEquals($tagNames[0], $result[3]->tag()->__toString());
-            },
+            [
+                ['another', 0, 0],
+                ['bar', 3, 3],
+                ['baz', 1, 3],
+                ['foo', 2, 4],
+            ],
         ];
         yield 'visits count DESC ordering' => [
             new TagsListFiltering(null, null, null, Ordering::fromTuple(['visitsCount', 'DESC'])),
-            static function (array $result, array $tagNames): void {
-                /** @var TagInfo[] $result */
-                self::assertCount(4, $result);
-                self::assertEquals(2, $result[0]->shortUrlsCount());
-                self::assertEquals(4, $result[0]->visitsCount());
-                self::assertEquals($tagNames[0], $result[0]->tag()->__toString());
-
-                self::assertEquals(3, $result[1]->shortUrlsCount());
-                self::assertEquals(3, $result[1]->visitsCount());
-                self::assertEquals($tagNames[1], $result[1]->tag()->__toString());
-
-                self::assertEquals(1, $result[2]->shortUrlsCount());
-                self::assertEquals(3, $result[2]->visitsCount());
-                self::assertEquals($tagNames[2], $result[2]->tag()->__toString());
-
-                self::assertEquals(0, $result[3]->shortUrlsCount());
-                self::assertEquals(0, $result[3]->visitsCount());
-                self::assertEquals($tagNames[3], $result[3]->tag()->__toString());
-            },
+            [
+                ['foo', 2, 4],
+                ['bar', 3, 3],
+                ['baz', 1, 3],
+                ['another', 0, 0],
+            ],
         ];
         yield 'visits count DESC ordering and limit' => [
             new TagsListFiltering(2, null, null, Ordering::fromTuple(['visitsCount', 'DESC'])),
-            static function (array $result, array $tagNames): void {
-                /** @var TagInfo[] $result */
-                self::assertCount(2, $result);
-                self::assertEquals(2, $result[0]->shortUrlsCount());
-                self::assertEquals(4, $result[0]->visitsCount());
-                self::assertEquals($tagNames[0], $result[0]->tag()->__toString());
-
-                self::assertEquals(3, $result[1]->shortUrlsCount());
-                self::assertEquals(3, $result[1]->visitsCount());
-                self::assertEquals($tagNames[1], $result[1]->tag()->__toString());
-            },
+            [
+                ['foo', 2, 4],
+                ['bar', 3, 3],
+            ],
         ];
         yield 'api key' => [new TagsListFiltering(null, null, null, null, ApiKey::fromMeta(
             ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()),
-        )), static function (array $result, array $tagNames): void {
-            /** @var TagInfo[] $result */
-            self::assertCount(3, $result);
-            self::assertEquals(1, $result[0]->shortUrlsCount());
-            self::assertEquals(3, $result[0]->visitsCount());
-            self::assertEquals($tagNames[1], $result[0]->tag()->__toString());
-
-            self::assertEquals(1, $result[1]->shortUrlsCount());
-            self::assertEquals(3, $result[1]->visitsCount());
-            self::assertEquals($tagNames[2], $result[1]->tag()->__toString());
-
-            self::assertEquals(1, $result[2]->shortUrlsCount());
-            self::assertEquals(3, $result[2]->visitsCount());
-            self::assertEquals($tagNames[0], $result[2]->tag()->__toString());
-        }];
+        )), [
+            ['bar', 2, 3],
+            ['baz', 1, 3],
+            ['foo', 1, 3],
+        ]];
+        yield 'combined' => [new TagsListFiltering(1, null, null, Ordering::fromTuple(
+            ['shortUrls', 'DESC'],
+        ), ApiKey::fromMeta(
+            ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()),
+        )), [
+            ['foo', 1, 3],
+        ]];
     }
 
     /** @test */
