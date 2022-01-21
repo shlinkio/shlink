@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithInlinedApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+use function Functional\contains;
 use function Functional\map;
 
 use const PHP_INT_MAX;
@@ -40,12 +41,19 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
      */
     public function findTagsWithInfo(?TagsListFiltering $filtering = null): array
     {
+        $orderBy = $filtering?->orderBy();
+        $orderField = $orderBy?->orderField();
+        $orderMainQuery = contains(['shortUrlsCount', 'visitsCount'], $orderField);
+
         $conn = $this->getEntityManager()->getConnection();
         $subQb = $this->createQueryBuilder('t');
-        $subQb->select('t.id', 't.name')
-              ->orderBy('t.name', $filtering?->orderBy()?->orderDirection() ?? 'ASC') // TODO Make filed dynamic
-              ->setMaxResults($filtering?->limit() ?? PHP_INT_MAX)
-              ->setFirstResult($filtering?->offset() ?? 0);
+        $subQb->select('t.id', 't.name');
+
+        if (! $orderMainQuery) {
+            $subQb->orderBy('t.name', $orderBy?->orderDirection() ?? 'ASC')
+                  ->setMaxResults($filtering?->limit() ?? PHP_INT_MAX)
+                  ->setFirstResult($filtering?->offset() ?? 0);
+        }
 
         $searchTerm = $filtering?->searchTerm();
         if ($searchTerm !== null) {
@@ -74,7 +82,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             ->leftJoin('st', 'short_urls', 's', $nativeQb->expr()->eq('s.id', 'st.short_url_id'))
             ->leftJoin('st', 'visits', 'v', $nativeQb->expr()->eq('s.id', 'v.short_url_id'))
             ->groupBy('t.id_0', 't.name_1')
-            ->orderBy('t.name_1', $filtering?->orderBy()?->orderDirection() ?? 'ASC'); // TODO Make field dynamic
+            ->orderBy('t.name_1', $orderBy?->orderDirection() ?? 'ASC'); // TODO Make field dynamic
 
         // Apply API key role conditions to the native query too, as they will affect the amounts on the aggregates
         $apiKey?->mapRoles(fn (string $roleName, array $meta) => match ($roleName) {
@@ -86,6 +94,16 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             ),
             default => $nativeQb,
         });
+
+        if ($orderMainQuery) {
+            $nativeQb
+                ->orderBy(
+                    $orderField === 'shortUrlsCount' ? 'short_urls_count' : 'visits_count',
+                    $orderBy?->orderDirection() ?? 'ASC',
+                )
+                ->setMaxResults($filtering?->limit() ?? PHP_INT_MAX)
+                ->setFirstResult($filtering?->offset() ?? 0);
+        }
 
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
         $rsm->addRootEntityFromClassMetadata(Tag::class, 't');
