@@ -101,6 +101,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
                     $orderField === 'shortUrlsCount' ? 'short_urls_count' : 'visits_count',
                     $orderBy?->orderDirection() ?? 'ASC',
                 )
+                ->addOrderBy('t.name_1', 'ASC') // In case of same amount, order by tag too
                 ->setMaxResults($filtering?->limit() ?? PHP_INT_MAX)
                 ->setFirstResult($filtering?->offset() ?? 0);
         }
