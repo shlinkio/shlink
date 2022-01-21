@@ -286,6 +286,20 @@ class TagRepositoryTest extends DatabaseTestCase
                 self::assertEquals($tagNames[3], $result[3]->tag()->__toString());
             },
         ];
+        yield 'visits count DESC ordering and limit' => [
+            new TagsListFiltering(2, null, null, Ordering::fromTuple(['visitsCount', 'DESC'])),
+            static function (array $result, array $tagNames): void {
+                /** @var TagInfo[] $result */
+                self::assertCount(2, $result);
+                self::assertEquals(2, $result[0]->shortUrlsCount());
+                self::assertEquals(4, $result[0]->visitsCount());
+                self::assertEquals($tagNames[0], $result[0]->tag()->__toString());
+
+                self::assertEquals(3, $result[1]->shortUrlsCount());
+                self::assertEquals(3, $result[1]->visitsCount());
+                self::assertEquals($tagNames[1], $result[1]->tag()->__toString());
+            },
+        ];
         yield 'api key' => [new TagsListFiltering(null, null, null, null, ApiKey::fromMeta(
             ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()),
         )), static function (array $result, array $tagNames): void {
