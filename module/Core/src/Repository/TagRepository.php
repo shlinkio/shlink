@@ -43,6 +43,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
     {
         $orderBy = $filtering?->orderBy();
         $orderField = $orderBy?->orderField();
+        $orderDir = $orderBy?->orderDirection();
         $orderMainQuery = contains(['shortUrlsCount', 'visitsCount'], $orderField);
 
         $conn = $this->getEntityManager()->getConnection();
@@ -50,7 +51,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $subQb->select('t.id', 't.name');
 
         if (! $orderMainQuery) {
-            $subQb->orderBy('t.name', $orderBy?->orderDirection() ?? 'ASC')
+            $subQb->orderBy('t.name', $orderDir ?? 'ASC')
                   ->setMaxResults($filtering?->limit() ?? PHP_INT_MAX)
                   ->setFirstResult($filtering?->offset() ?? 0);
         }
@@ -81,8 +82,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             ->leftJoin('t', 'short_urls_in_tags', 'st', $nativeQb->expr()->eq('t.id_0', 'st.tag_id'))
             ->leftJoin('st', 'short_urls', 's', $nativeQb->expr()->eq('s.id', 'st.short_url_id'))
             ->leftJoin('st', 'visits', 'v', $nativeQb->expr()->eq('s.id', 'v.short_url_id'))
-            ->groupBy('t.id_0', 't.name_1')
-            ->orderBy('t.name_1', $orderBy?->orderDirection() ?? 'ASC'); // TODO Make field dynamic
+            ->groupBy('t.id_0', 't.name_1');
 
         // Apply API key role conditions to the native query too, as they will affect the amounts on the aggregates
         $apiKey?->mapRoles(fn (string $roleName, array $meta) => match ($roleName) {
@@ -99,12 +99,14 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             $nativeQb
                 ->orderBy(
                     $orderField === 'shortUrlsCount' ? 'short_urls_count' : 'visits_count',
-                    $orderBy?->orderDirection() ?? 'ASC',
+                    $orderDir ?? 'ASC',
                 )
-                ->addOrderBy('t.name_1', 'ASC') // In case of same amount, order by tag too
                 ->setMaxResults($filtering?->limit() ?? PHP_INT_MAX)
                 ->setFirstResult($filtering?->offset() ?? 0);
         }
+
+        // Add ordering by tag name, as a fallback in case of same amount, or as default ordering
+        $nativeQb->addOrderBy('t.name_1', $orderMainQuery || $orderDir === null ? 'ASC' : $orderDir);
 
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
         $rsm->addRootEntityFromClassMetadata(Tag::class, 't');
