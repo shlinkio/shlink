@@ -27,7 +27,7 @@ class TagRepositoryTest extends DatabaseTestCase
     private TagRepository $repo;
     private PersistenceShortUrlRelationResolver $relationResolver;
 
-    protected function beforeEach(): void
+    protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Tag::class);
         $this->relationResolver = new PersistenceShortUrlRelationResolver($this->getEntityManager());

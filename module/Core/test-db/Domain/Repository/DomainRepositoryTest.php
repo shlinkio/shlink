@@ -21,7 +21,7 @@ class DomainRepositoryTest extends DatabaseTestCase
 {
     private DomainRepository $repo;
 
-    protected function beforeEach(): void
+    protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Domain::class);
     }
