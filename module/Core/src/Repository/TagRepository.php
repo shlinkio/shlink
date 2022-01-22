@@ -41,9 +41,8 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
      */
     public function findTagsWithInfo(?TagsListFiltering $filtering = null): array
     {
-        $orderBy = $filtering?->orderBy();
-        $orderField = $orderBy?->orderField();
-        $orderDir = $orderBy?->orderDirection();
+        $orderField = $filtering?->orderBy()?->orderField();
+        $orderDir = $filtering?->orderBy()?->orderDirection();
         $orderMainQuery = contains(['shortUrlsCount', 'visitsCount'], $orderField);
 
         $conn = $this->getEntityManager()->getConnection();
