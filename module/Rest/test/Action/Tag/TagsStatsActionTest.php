@@ -13,7 +13,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
-use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\Tag\TagsStatsAction;
@@ -38,8 +37,8 @@ class TagsStatsActionTest extends TestCase
     public function returnsTagsStatsWhenRequested(): void
     {
         $stats = [
-            new TagInfo(new Tag('foo'), 1, 1),
-            new TagInfo(new Tag('bar'), 3, 10),
+            new TagInfo('foo', 1, 1),
+            new TagInfo('bar', 3, 10),
         ];
         $itemsCount = count($stats);
         $tagsInfo = $this->tagService->tagsInfo(Argument::any(), Argument::type(ApiKey::class))->willReturn(

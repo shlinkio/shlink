@@ -103,7 +103,7 @@ class TagRepositoryTest extends DatabaseTestCase
         foreach ($expectedList as $index => [$tag, $shortUrlsCount, $visitsCount]) {
             self::assertEquals($shortUrlsCount, $result[$index]->shortUrlsCount());
             self::assertEquals($visitsCount, $result[$index]->visitsCount());
-            self::assertEquals($tag, $result[$index]->tag()->__toString());
+            self::assertEquals($tag, $result[$index]->tag());
         }
     }
 

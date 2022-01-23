@@ -76,8 +76,8 @@ class ListTagsActionTest extends TestCase
     public function returnsStatsWhenRequested(): void
     {
         $stats = [
-            new TagInfo(new Tag('foo'), 1, 1),
-            new TagInfo(new Tag('bar'), 3, 10),
+            new TagInfo('foo', 1, 1),
+            new TagInfo('bar', 3, 10),
         ];
         $itemsCount = count($stats);
         $tagsInfo = $this->tagService->tagsInfo(Argument::any(), Argument::type(ApiKey::class))->willReturn(

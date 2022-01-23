@@ -108,13 +108,13 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $nativeQb->addOrderBy('t.name_1', $orderMainQuery || $orderDir === null ? 'ASC' : $orderDir);
 
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-        $rsm->addRootEntityFromClassMetadata(Tag::class, 't');
+        $rsm->addScalarResult('name', 'tag');
         $rsm->addScalarResult('short_urls_count', 'shortUrlsCount');
         $rsm->addScalarResult('visits_count', 'visitsCount');
 
         return map(
             $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm)->getResult(),
-            static fn (array $row) => new TagInfo($row[0], (int) $row['shortUrlsCount'], (int) $row['visitsCount']),
+            static fn (array $row) => new TagInfo($row['tag'], (int) $row['shortUrlsCount'], (int) $row['visitsCount']),
         );
     }
 
