@@ -10,7 +10,7 @@ fi
 version=$1
 noSwoole=$2
 phpVersion=$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;')
-[[ $noSwoole ]] && swooleSuffix="" || swooleSuffix="_swoole"
+[[ $noSwoole ]] && swooleSuffix="" || swooleSuffix="_openswoole"
 distId="shlink${version}_php${phpVersion}${swooleSuffix}_dist"
 builtContent="./build/${distId}"
 projectdir=$(pwd)
@@ -34,7 +34,7 @@ ${composerBin} self-update
 ${composerBin} install --no-dev --prefer-dist $composerFlags
 
 if [[ $noSwoole ]]; then
-  # If generating a dist not for swoole, uninstall mezzio-swoole
+  # If generating a dist not for openswoole, uninstall mezzio-swoole
   ${composerBin} remove mezzio/mezzio-swoole --with-all-dependencies --update-no-dev $composerFlags
 fi
 

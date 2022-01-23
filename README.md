@@ -37,11 +37,11 @@ First, make sure the host where you are going to run shlink fulfills these requi
 
 * PHP 8.0 or 8.1
 * The next PHP extensions: json, curl, pdo, intl, gd and gmp.
-    * apcu extension is recommended if you don't plan to use swoole or openswoole.
+    * apcu extension is recommended if you don't plan to use openswoole.
     * xml extension is required if you want to generate QR codes in svg format.
     * sockets and bcmath extensions are required if you want to integrate with a RabbitMQ instance.
 * MySQL, MariaDB, PostgreSQL, Microsoft SQL Server or SQLite.
-* The web server of your choice with PHP integration (Apache or Nginx recommended).
+* [Openswoole](https://openswoole.com/) or the web server of your choice with PHP integration (Apache or Nginx recommended).
 
 ### Download
 
@@ -51,7 +51,7 @@ In order to run Shlink, you will need a built version of the project. There are 
 
     The easiest way to install shlink is by using one of the pre-bundled distributable packages.
 
-    Go to the [latest version](https://github.com/shlinkio/shlink/releases/latest) and download the `shlink*_dist.zip` file that suits your needs. You will find one for every supported PHP version and with/without swoole/openswoole integration.
+    Go to the [latest version](https://github.com/shlinkio/shlink/releases/latest) and download the `shlink*_dist.zip` file that suits your needs. You will find one for every supported PHP version and with/without openswoole integration.
 
     Finally, decompress the file in the location of your choice.
 

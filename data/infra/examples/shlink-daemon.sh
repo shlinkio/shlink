@@ -1,26 +1,26 @@
 #!/bin/bash
 ### BEGIN INIT INFO
-# Provides:          shlink_swoole
+# Provides:          shlink_openswoole
 # Required-Start:    $local_fs $network $named $time $syslog
 # Required-Stop:     $local_fs $network $named $time $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Description:       Shlink non-blocking server with swoole
+# Description:       Shlink non-blocking server with openswoole
 ### END INIT INFO
 
 SCRIPT=/path/to/shlink/vendor/bin/laminas\ mezzio:swoole:start
 RUNAS=root
 
-PIDFILE=/var/run/shlink_swoole.pid
+PIDFILE=/var/run/shlink_openswoole.pid
 LOGDIR=/var/log/shlink
-LOGFILE=${LOGDIR}/shlink_swoole.log
+LOGFILE=${LOGDIR}/shlink_openswoole.log
 
 start() {
   if [[ -f "$PIDFILE" ]] && kill -0 $(cat "$PIDFILE"); then
-    echo 'Shlink with swoole already running' >&2
+    echo 'Shlink with openswoole already running' >&2
     return 1
   fi
-  echo 'Starting shlink with swoole' >&2
+  echo 'Starting shlink with openswoole' >&2
   mkdir -p "$LOGDIR"
   touch "$LOGFILE"
   local CMD="$SCRIPT &> \"$LOGFILE\" & echo \$!"
@@ -30,10 +30,10 @@ start() {
 
 stop() {
   if [[ ! -f "$PIDFILE" ]] || ! kill -0 $(cat "$PIDFILE"); then
-    echo 'Shlink with swoole not running' >&2
+    echo 'Shlink with openswoole not running' >&2
     return 1
   fi
-  echo 'Stopping shlink with swoole' >&2
+  echo 'Stopping shlink with openswoole' >&2
   kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
   echo 'Shlink stopped' >&2
 }
