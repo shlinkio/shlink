@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.10.3] - 2022-01-23
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1349](https://github.com/shlinkio/shlink/issues/1349) Fixed memory leak in cache implementation.
+
+
 ## [2.10.2] - 2022-01-07
 ### Added
 * *Nothing*
