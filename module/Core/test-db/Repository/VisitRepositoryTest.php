@@ -38,7 +38,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     private VisitRepository $repo;
     private PersistenceShortUrlRelationResolver $relationResolver;
 
-    protected function beforeEach(): void
+    protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Visit::class);
         $this->relationResolver = new PersistenceShortUrlRelationResolver($this->getEntityManager());

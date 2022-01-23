@@ -10,7 +10,6 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\ListTagsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
-use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
@@ -45,8 +44,8 @@ class ListTagsCommandTest extends TestCase
     public function listOfTagsIsPrinted(): void
     {
         $tagsInfo = $this->tagService->tagsInfo(Argument::any())->willReturn(new Paginator(new ArrayAdapter([
-            new TagInfo(new Tag('foo'), 10, 2),
-            new TagInfo(new Tag('bar'), 7, 32),
+            new TagInfo('foo', 10, 2),
+            new TagInfo('bar', 7, 32),
         ])));
 
         $this->commandTester->execute([]);

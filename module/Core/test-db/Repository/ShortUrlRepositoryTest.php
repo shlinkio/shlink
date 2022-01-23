@@ -33,7 +33,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     private ShortUrlRepository $repo;
     private PersistenceShortUrlRelationResolver $relationResolver;
 
-    public function beforeEach(): void
+    protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(ShortUrl::class);
         $this->relationResolver = new PersistenceShortUrlRelationResolver($this->getEntityManager());

@@ -16,7 +16,7 @@ class TagsPaginatorAdapterTest extends DatabaseTestCase
 {
     private TagRepository $repo;
 
-    protected function beforeEach(): void
+    protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Tag::class);
     }

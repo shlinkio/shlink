@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithInlinedApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+use function Functional\contains;
 use function Functional\map;
 
 use const PHP_INT_MAX;
@@ -40,12 +41,19 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
      */
     public function findTagsWithInfo(?TagsListFiltering $filtering = null): array
     {
+        $orderField = $filtering?->orderBy()?->orderField();
+        $orderDir = $filtering?->orderBy()?->orderDirection();
+        $orderMainQuery = contains(['shortUrlsCount', 'visitsCount'], $orderField);
+
         $conn = $this->getEntityManager()->getConnection();
         $subQb = $this->createQueryBuilder('t');
-        $subQb->select('t.id', 't.name')
-              ->orderBy('t.name', $filtering?->orderBy()?->orderDirection() ?? 'ASC') // TODO Make filed dynamic
-              ->setMaxResults($filtering?->limit() ?? PHP_INT_MAX)
-              ->setFirstResult($filtering?->offset() ?? 0);
+        $subQb->select('t.id', 't.name');
+
+        if (! $orderMainQuery) {
+            $subQb->orderBy('t.name', $orderDir ?? 'ASC')
+                  ->setMaxResults($filtering?->limit() ?? PHP_INT_MAX)
+                  ->setFirstResult($filtering?->offset() ?? 0);
+        }
 
         $searchTerm = $filtering?->searchTerm();
         if ($searchTerm !== null) {
@@ -53,7 +61,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         }
 
         $apiKey = $filtering?->apiKey();
-        $this->applySpecification($subQb, new WithInlinedApiKeySpecsEnsuringJoin($apiKey, 'shortUrls'), 't');
+        $this->applySpecification($subQb, new WithInlinedApiKeySpecsEnsuringJoin($apiKey), 't');
 
         $subQuery = $subQb->getQuery();
         $subQuerySql = $subQuery->getSQL();
@@ -73,11 +81,10 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             ->leftJoin('t', 'short_urls_in_tags', 'st', $nativeQb->expr()->eq('t.id_0', 'st.tag_id'))
             ->leftJoin('st', 'short_urls', 's', $nativeQb->expr()->eq('s.id', 'st.short_url_id'))
             ->leftJoin('st', 'visits', 'v', $nativeQb->expr()->eq('s.id', 'v.short_url_id'))
-            ->groupBy('t.id_0', 't.name_1')
-            ->orderBy('t.name_1', $filtering?->orderBy()?->orderDirection() ?? 'ASC'); // TODO Make field dynamic
+            ->groupBy('t.id_0', 't.name_1');
 
         // Apply API key role conditions to the native query too, as they will affect the amounts on the aggregates
-        $apiKey?->mapRoles(fn (string $roleName, array $meta) => match ($roleName) {
+        $apiKey?->mapRoles(static fn (string $roleName, array $meta) => match ($roleName) {
             Role::DOMAIN_SPECIFIC => $nativeQb->andWhere(
                 $nativeQb->expr()->eq('s.domain_id', $conn->quote(Role::domainIdFromMeta($meta))),
             ),
@@ -87,14 +94,27 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             default => $nativeQb,
         });
 
+        if ($orderMainQuery) {
+            $nativeQb
+                ->orderBy(
+                    $orderField === 'shortUrlsCount' ? 'short_urls_count' : 'visits_count',
+                    $orderDir ?? 'ASC',
+                )
+                ->setMaxResults($filtering?->limit() ?? PHP_INT_MAX)
+                ->setFirstResult($filtering?->offset() ?? 0);
+        }
+
+        // Add ordering by tag name, as a fallback in case of same amount, or as default ordering
+        $nativeQb->addOrderBy('t.name_1', $orderMainQuery || $orderDir === null ? 'ASC' : $orderDir);
+
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-        $rsm->addRootEntityFromClassMetadata(Tag::class, 't');
+        $rsm->addScalarResult('name', 'tag');
         $rsm->addScalarResult('short_urls_count', 'shortUrlsCount');
         $rsm->addScalarResult('visits_count', 'visitsCount');
 
         return map(
             $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm)->getResult(),
-            static fn (array $row) => new TagInfo($row[0], (int) $row['shortUrlsCount'], (int) $row['visitsCount']),
+            static fn (array $row) => new TagInfo($row['tag'], (int) $row['shortUrlsCount'], (int) $row['visitsCount']),
         );
     }
 

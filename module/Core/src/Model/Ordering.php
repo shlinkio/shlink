@@ -12,6 +12,9 @@ final class Ordering
     {
     }
 
+    /**
+     * @param array{string|null, string|null} $props
+     */
     public static function fromTuple(array $props): self
     {
         [$field, $dir] = $props;

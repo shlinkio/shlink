@@ -45,13 +45,17 @@
             {
                 "name": "orderBy",
                 "in": "query",
-                "description": "To determine how to order the results.",
+                "description": "To determine how to order the results.<br /><br />**Important!** Ordering by `shortUrlsCount` or `visitsCount` has a [known performance issue](https://github.com/shlinkio/shlink/issues/1346) which makes loading a subset of the list take as much as loading the whole list.<br />If you plan to order by any of these fields, it's worth loading the whole list with no pagination.",
                 "required": false,
                 "schema": {
                     "type": "string",
                     "enum": [
                         "tag-ASC",
-                        "tag-DESC"
+                        "tag-DESC",
+                        "shortUrlsCount-ASC",
+                        "shortUrlsCount-DESC",
+                        "visitsCount-ASC",
+                        "visitsCount-DESC"
                     ]
                 }
             }

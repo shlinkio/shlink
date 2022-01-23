@@ -67,7 +67,7 @@ class TagServiceTest extends TestCase
         TagsListFiltering $expectedFiltering,
         int $countCalls,
     ): void {
-        $expected = [new TagInfo(new Tag('foo'), 1, 1), new TagInfo(new Tag('bar'), 3, 10)];
+        $expected = [new TagInfo('foo', 1, 1), new TagInfo('bar', 3, 10)];
 
         $find = $this->repo->findTagsWithInfo($expectedFiltering)->willReturn($expected);
         $count = $this->repo->matchSingleScalarResult(Argument::cetera())->willReturn(2);
