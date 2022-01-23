@@ -11,7 +11,6 @@ return (static function (): array {
         null => [],
         default => [
             'cache' => [
-                'default_lifetime' => 86400, // 24h
                 'redis' => [
                     'servers' => $redisServers,
                     'sentinel_service' => EnvVars::REDIS_SENTINEL_SERVICE()->loadFromEnv(),
