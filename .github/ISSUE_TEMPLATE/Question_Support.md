@@ -18,7 +18,7 @@ With that said, please fill in the information requested next. More information 
 
 * Shlink Version: x.y.z
 * PHP Version: x.y.z
-* How do you serve Shlink: Self-hosted Apache|Self-hosted nginx|Self-hosted swoole|Docker image
+* How do you serve Shlink: Self-hosted Apache|Self-hosted nginx|Self-hosted openswoole|Docker image
 * Database engine used: MySQL|MariaDB|PostgreSQL|MicrosoftSQL|SQLite (x.y.z)
 
 #### Summary
