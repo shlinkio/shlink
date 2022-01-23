@@ -46,6 +46,7 @@
 * The docker image no longer accepts providing configuration via json files mounted in the `config/params` folder. Only env vars are supported now.
 * If you were manually serving Shlink with swoole, the entry script has to be changed from `/path/to/shlink/vendor/bin/mezzio-swoole start` to `/path/to/shlink/vendor/bin/laminas mezzio:swoole:start`
 * The `GET /{shortCode}/qr-code/{size}` url has been removed. Use `GET /{shortCode}/qr-code?size={size}` instead.
+* Regular swoole extension is no longer supported. Use openswoole instead, as a direct replacement. In most of the cases you just need to uninstall one and install the other, the rest is transparent.
 
 ## From v1.x to v2.x
 

@@ -42,6 +42,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   See [UPGRADE](UPGRADE.md#from-v2x-to-v3x) doc in order to get details on how to migrate to this version.
 
+* [#1347](https://github.com/shlinkio/shlink/issues/1347) Dropped support for regular swoole in favor of openswoole.
+
+  Since openswoole support was introduced in the previous release version, Shlink will still consider the swoole extension as openswoole, as at the moment functionality hasn't deviated too much, and will simplify migrating to Shlink 3.0.0
+
+  However, there's no longer active testing with regular swoole, and it is considered no longer supported. If some incompatibility arises, the only supported solution will be to migrate to openswoole.
+
 ### Fixed
 * *Nothing*
 
