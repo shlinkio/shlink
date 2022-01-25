@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - develop
+      - 2.x
 
 jobs:
   static-analysis:
