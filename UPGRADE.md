@@ -4,12 +4,12 @@
 
 ### Changes in REST API
 
-* The `type` property returned when trying to delete a URL that reached the visits threshold, when using the `DELETE /short-urls/{shortCode}` endpoint, is now `INVALID_SHORT_URL_DELETION` instead pf `INVALID_SHORTCODE_DELETION`.
+* The `type` property returned when trying to delete a URL that reached the visits threshold, when using the `DELETE /short-urls/{shortCode}` endpoint, is now `INVALID_SHORT_URL_DELETION` instead of `INVALID_SHORTCODE_DELETION`.
 * The `INVALID_AUTHORIZATION` error no longer includes the `expectedTypes` property. Use `expectedHeaders` one instead.
 * The `GET /rest/v2/short-urls` endpoint no longer allows ordering by `visitsCount`, `visitCount` or `originalUrl`. Use `visits` instead of the first two, and `longUrl` instead of the last one.
 * The `GET /rest/v2/short-urls` endpoint no longer allows providing the ordering params with array notation, as in `/shortUrls?orderBy[longUrl]=DESC`. Instead, use the following notation `/shortUrls?orderBy?longUrl-DESC`.
 * The `GET /rest/v2/short-urls` endpoint now has a default ordering of newest-to-oldest. Use `/shortUrls?orderBy=dateCreated-ASC` in order to keep the oldest-to-newest behavior.
-* Requests expecting a body no longer support url-encoded payloads. Instead, always use JSON bodies.
+* Requests expecting a body no longer support url-encoded payloads. Instead, always use JSON bodies with `Content-Type: application/json`.
 * The next endpoints have been removed:
   * `PUT /rest/v2/short-urls/{shortCode}/tags`: Use the `PATCH /rest/v2/short-urls/{shortCode}` endpoint to set the short URL tags.
   * `POST /rest/v2/tags`: Use `POST /rest/v2/short-urls` or `PATCH /rest/v2/short-urls/{shortCodes}` to create new tags already attached to a short URL. Creating orphan tags makes no sense.
