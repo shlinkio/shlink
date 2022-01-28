@@ -63,9 +63,6 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $apiKey = $filtering?->apiKey();
         $this->applySpecification($subQb, new WithInlinedApiKeySpecsEnsuringJoin($apiKey), 't');
 
-        $subQuery = $subQb->getQuery();
-        $subQuerySql = $subQuery->getSQL();
-
         // A native query builder needs to be used here, because DQL and ORM query builders do not support
         // sub-queries at "from" and "join" level.
         // If no sub-query is used, the whole list is loaded even with pagination, making it very inefficient.
@@ -77,7 +74,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
                 'COUNT(DISTINCT s.id) AS short_urls_count',
                 'COUNT(DISTINCT v.id) AS visits_count',
             )
-            ->from('(' . $subQuerySql . ')', 't')
+            ->from('(' . $subQb->getQuery()->getSQL() . ')', 't')
             ->leftJoin('t', 'short_urls_in_tags', 'st', $nativeQb->expr()->eq('t.id_0', 'st.tag_id'))
             ->leftJoin('st', 'short_urls', 's', $nativeQb->expr()->eq('s.id', 'st.short_url_id'))
             ->leftJoin('st', 'visits', 'v', $nativeQb->expr()->eq('s.id', 'v.short_url_id'))
