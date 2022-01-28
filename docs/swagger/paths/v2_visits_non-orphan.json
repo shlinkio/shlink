@@ -1,0 +1,146 @@
+{
+    "get": {
+        "operationId": "getNonOrphanVisits",
+        "tags": [
+            "Visits"
+        ],
+        "summary": "List non-orphan visits",
+        "description": "Get the list of visits to any short URL.",
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            },
+            {
+                "name": "startDate",
+                "in": "query",
+                "description": "The date (in ISO-8601 format) from which we want to get visits.",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "endDate",
+                "in": "query",
+                "description": "The date (in ISO-8601 format) until which we want to get visits.",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "page",
+                "in": "query",
+                "description": "The page to display. Defaults to 1",
+                "required": false,
+                "schema": {
+                    "type": "number"
+                }
+            },
+            {
+                "name": "itemsPerPage",
+                "in": "query",
+                "description": "The amount of items to return on every page. Defaults to all the items",
+                "required": false,
+                "schema": {
+                    "type": "number"
+                }
+            },
+            {
+                "name": "excludeBots",
+                "in": "query",
+                "description": "Tells if visits from potential bots should be excluded from the result set",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": ["true"]
+                }
+            }
+        ],
+        "security": [
+            {
+                "ApiKey": []
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "List of visits.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "visits": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "../definitions/Visit.json"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "../definitions/Pagination.json"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "example": {
+                            "visits": {
+                                "data": [
+                                    {
+                                        "referer": "https://twitter.com",
+                                        "date": "2015-08-20T05:05:03+04:00",
+                                        "userAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
+                                        "visitLocation": null,
+                                        "potentialBot": false
+                                    },
+                                    {
+                                        "referer": "https://t.co",
+                                        "date": "2015-08-20T05:05:03+04:00",
+                                        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
+                                        "visitLocation": {
+                                            "cityName": "Cupertino",
+                                            "countryCode": "US",
+                                            "countryName": "United States",
+                                            "latitude": 37.3042,
+                                            "longitude": -122.0946,
+                                            "regionName": "California",
+                                            "timezone": "America/Los_Angeles"
+                                        },
+                                        "potentialBot": false
+                                    },
+                                    {
+                                        "referer": null,
+                                        "date": "2015-08-20T05:05:03+04:00",
+                                        "userAgent": "some_web_crawler/1.4",
+                                        "visitLocation": null,
+                                        "potentialBot": true
+                                    }
+                                ],
+                                "pagination": {
+                                    "currentPage": 5,
+                                    "pagesCount": 12,
+                                    "itemsPerPage": 10,
+                                    "itemsInCurrentPage": 10,
+                                    "totalItems": 115
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "default": {
+                "description": "Unexpected error.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

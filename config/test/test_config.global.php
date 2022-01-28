@@ -22,7 +22,7 @@ use SebastianBergmann\CodeCoverage\Report\PHP;
 use SebastianBergmann\CodeCoverage\Report\Xml\Facade as Xml;
 
 use function Laminas\Stratigility\middleware;
-use function Shlinkio\Shlink\Common\env;
+use function Shlinkio\Shlink\Config\env;
 use function sprintf;
 use function sys_get_temp_dir;
 
@@ -55,6 +55,7 @@ $buildDbConnection = static function (): array {
             'user' => 'postgres',
             'password' => 'root',
             'dbname' => 'shlink_test',
+            'charset' => 'utf8',
         ],
         'mssql' => [
             'driver' => 'pdo_sqlsrv',
@@ -70,6 +71,7 @@ $buildDbConnection = static function (): array {
             'user' => 'root',
             'password' => 'root',
             'dbname' => 'shlink_test',
+            'charset' => 'utf8mb4',
         ],
     };
 };
@@ -107,6 +109,7 @@ return [
             'process-name' => 'shlink_test',
             'options' => [
                 'pid_file' => sys_get_temp_dir() . '/shlink-test-swoole.pid',
+                'log_file' => __DIR__ . '/../../data/log/api-tests/output.log',
                 'enable_coroutine' => false,
             ],
         ],

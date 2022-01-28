@@ -78,12 +78,12 @@
         "/rest/v{version}/short-urls/{shortCode}": {
             "$ref": "paths/v1_short-urls_{shortCode}.json"
         },
-        "/rest/v{version}/short-urls/{shortCode}/tags": {
-            "$ref": "paths/v1_short-urls_{shortCode}_tags.json"
-        },
 
         "/rest/v{version}/tags": {
             "$ref": "paths/v1_tags.json"
+        },
+        "/rest/v{version}/tags/stats": {
+            "$ref": "paths/v2_tags_stats.json"
         },
 
         "/rest/v{version}/visits": {
@@ -97,6 +97,9 @@
         },
         "/rest/v{version}/visits/orphan": {
             "$ref": "paths/v2_visits_orphan.json"
+        },
+        "/rest/v{version}/visits/non-orphan": {
+            "$ref": "paths/v2_visits_non-orphan.json"
         },
 
         "/rest/v{version}/domains": {
@@ -122,9 +125,6 @@
         },
         "/{shortCode}/qr-code": {
             "$ref": "paths/{shortCode}_qr-code.json"
-        },
-        "/{shortCode}/qr-code/{size}": {
-            "$ref": "paths/{shortCode}_qr-code_{size}.json"
         }
     }
 }

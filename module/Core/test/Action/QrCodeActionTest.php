@@ -154,17 +154,11 @@ class QrCodeActionTest extends TestCase
         ];
         yield 'no size' => [[], ServerRequestFactory::fromGlobals(), 300];
         yield 'no size, different default' => [['size' => 500], ServerRequestFactory::fromGlobals(), 500];
-        yield 'size in attr' => [[], ServerRequestFactory::fromGlobals()->withAttribute('size', '400'), 400];
         yield 'size in query' => [[], ServerRequestFactory::fromGlobals()->withQueryParams(['size' => '123']), 123];
         yield 'size in query, default margin' => [
             ['margin' => 25],
             ServerRequestFactory::fromGlobals()->withQueryParams(['size' => '123']),
             173,
-        ];
-        yield 'size in query and attr' => [
-            [],
-            ServerRequestFactory::fromGlobals()->withAttribute('size', '350')->withQueryParams(['size' => '123']),
-            350,
         ];
         yield 'margin' => [[], ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '35']), 370];
         yield 'margin and different default' => [

@@ -5,7 +5,7 @@
             "Tags"
         ],
         "summary": "List existing tags",
-        "description": "Returns the list of all tags used in any short URL, ordered by name",
+        "description": "Returns the list of all tags used in any short URL",
         "security": [
             {
                 "ApiKey": []
@@ -17,7 +17,8 @@
             },
             {
                 "name": "withStats",
-                "description": "Whether you want to include also a list with general stats by tag or not.",
+                "deprecated": true,
+                "description": "**[Deprecated]** Use [GET /tags/stats](#/Tags/tagsWithStats) endpoint to get tags with their stats.",
                 "in": "query",
                 "required": false,
                 "schema": {
@@ -25,6 +26,46 @@
                     "enum": [
                         "true",
                         "false"
+                    ]
+                }
+            },
+            {
+                "name": "page",
+                "in": "query",
+                "description": "The page to display. Defaults to 1",
+                "required": false,
+                "schema": {
+                    "type": "number"
+                }
+            },
+            {
+                "name": "itemsPerPage",
+                "in": "query",
+                "description": "The amount of items to return on every page. Defaults to all the items",
+                "required": false,
+                "schema": {
+                    "type": "number"
+                }
+            },
+            {
+                "name": "searchTerm",
+                "in": "query",
+                "description": "A query used to filter results by searching for it on the tag name.",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "orderBy",
+                "in": "query",
+                "description": "To determine how to order the results.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "tag-ASC",
+                        "tag-DESC"
                     ]
                 }
             }
@@ -53,122 +94,28 @@
                                             "items": {
                                                 "$ref": "../definitions/TagInfo.json"
                                             }
+                                        },
+                                        "pagination": {
+                                            "$ref": "../definitions/Pagination.json"
                                         }
                                     }
                                 }
                             }
                         },
-                        "examples": {
-                            "Without stats": {
-                                "value": {
-                                    "tags": {
-                                        "data": [
-                                            "games",
-                                            "php",
-                                            "shlink",
-                                            "tech"
-                                        ]
-                                    }
-                                }
-                            },
-                            "With stats": {
-                                "value": {
-                                    "tags": {
-                                        "data": [
-                                            "games",
-                                            "shlink"
-                                        ],
-                                        "stats": [
-                                            {
-                                                "tag": "games",
-                                                "shortUrlsCount": 10,
-                                                "visitsCount": 521
-                                            },
-                                            {
-                                                "tag": "shlink",
-                                                "shortUrlsCount": 7,
-                                                "visitsCount": 1087
-                                            }
-                                        ]
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "default": {
-                "description": "Unexpected error.",
-                "content": {
-                    "application/problem+json": {
-                        "schema": {
-                            "$ref": "../definitions/Error.json"
-                        }
-                    }
-                }
-            }
-        }
-    },
-
-    "post": {
-        "deprecated": true,
-        "operationId": "createTags",
-        "tags": [
-            "Tags"
-        ],
-        "summary": "Create tags",
-        "description": "Provided a list of tags, creates all that do not yet exist<br />This endpoint is deprecated, as tags are automatically created while creating a short URL",
-        "security": [
-            {
-                "ApiKey": []
-            }
-        ],
-        "parameters": [
-            {
-                "$ref": "../parameters/version.json"
-            }
-        ],
-        "requestBody": {
-            "description": "Request body.",
-            "required": true,
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "type": "object",
-                        "required": [
-                            "tags"
-                        ],
-                        "properties": {
+                        "example": {
                             "tags": {
-                                "description": "The list of tag names to create",
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "responses": {
-            "200": {
-                "description": "The list of tags",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "tags": {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
+                                "data": [
+                                    "games",
+                                    "php",
+                                    "shlink",
+                                    "tech"
+                                ],
+                                "pagination": {
+                                    "currentPage": 5,
+                                    "pagesCount": 10,
+                                    "itemsPerPage": 4,
+                                    "itemsInCurrentPage": 4,
+                                    "totalItems": 38
                                 }
                             }
                         }

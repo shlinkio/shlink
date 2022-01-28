@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Repository;
+namespace ShlinkioDbTest\Shlink\Core\Repository;
 
 use Cake\Chronos\Chronos;
 use ReflectionObject;
@@ -29,13 +29,16 @@ use function Functional\map;
 use function is_string;
 use function range;
 use function sprintf;
+use function str_pad;
+
+use const STR_PAD_LEFT;
 
 class VisitRepositoryTest extends DatabaseTestCase
 {
     private VisitRepository $repo;
     private PersistenceShortUrlRelationResolver $relationResolver;
 
-    protected function beforeEach(): void
+    protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Visit::class);
         $this->relationResolver = new PersistenceShortUrlRelationResolver($this->getEntityManager());
@@ -189,19 +192,19 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         self::assertNotEmpty($this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode1),
-            new VisitsListFiltering(null, false, $adminApiKey->spec()),
+            new VisitsListFiltering(null, false, $adminApiKey),
         ));
         self::assertNotEmpty($this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode2),
-            new VisitsListFiltering(null, false, $adminApiKey->spec()),
+            new VisitsListFiltering(null, false, $adminApiKey),
         ));
         self::assertEmpty($this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode1),
-            new VisitsListFiltering(null, false, $restrictedApiKey->spec()),
+            new VisitsListFiltering(null, false, $restrictedApiKey),
         ));
         self::assertNotEmpty($this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode2),
-            new VisitsListFiltering(null, false, $restrictedApiKey->spec()),
+            new VisitsListFiltering(null, false, $restrictedApiKey),
         ));
     }
 
@@ -294,10 +297,20 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertEquals(4 + 5 + 7, $this->repo->countVisits());
-        self::assertEquals(4, $this->repo->countVisits($apiKey1));
-        self::assertEquals(5 + 7, $this->repo->countVisits($apiKey2));
-        self::assertEquals(4 + 7, $this->repo->countVisits($domainApiKey));
+        self::assertEquals(4 + 5 + 7, $this->repo->countNonOrphanVisits(new VisitsCountFiltering()));
+        self::assertEquals(4, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey1)));
+        self::assertEquals(5 + 7, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey2)));
+        self::assertEquals(4 + 7, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($domainApiKey)));
+        self::assertEquals(4, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::withStartDate(
+            Chronos::parse('2016-01-05')->startOfDay(),
+        ))));
+        self::assertEquals(2, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::withStartDate(
+            Chronos::parse('2016-01-03')->startOfDay(),
+        ), false, $apiKey1)));
+        self::assertEquals(1, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::withStartDate(
+            Chronos::parse('2016-01-07')->startOfDay(),
+        ), false, $apiKey2)));
+        self::assertEquals(3 + 5, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(null, true, $apiKey2)));
         self::assertEquals(4, $this->repo->countOrphanVisits(new VisitsCountFiltering()));
         self::assertEquals(3, $this->repo->countOrphanVisits(new VisitsCountFiltering(null, true)));
     }
@@ -388,6 +401,49 @@ class VisitRepositoryTest extends DatabaseTestCase
         ));
     }
 
+    /** @test */
+    public function findNonOrphanVisitsReturnsExpectedResult(): void
+    {
+        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['longUrl' => '1']));
+        $this->getEntityManager()->persist($shortUrl);
+        $this->createVisitsForShortUrl($shortUrl, 7);
+
+        $shortUrl2 = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['longUrl' => '2']));
+        $this->getEntityManager()->persist($shortUrl2);
+        $this->createVisitsForShortUrl($shortUrl2, 4);
+
+        $shortUrl3 = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['longUrl' => '3']));
+        $this->getEntityManager()->persist($shortUrl3);
+        $this->createVisitsForShortUrl($shortUrl3, 10);
+
+        $this->getEntityManager()->flush();
+
+        self::assertCount(21, $this->repo->findNonOrphanVisits(new VisitsListFiltering()));
+        self::assertCount(21, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::emptyInstance())));
+        self::assertCount(7, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::withStartDate(
+            Chronos::parse('2016-01-05')->endOfDay(),
+        ))));
+        self::assertCount(12, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::withEndDate(
+            Chronos::parse('2016-01-04')->endOfDay(),
+        ))));
+        self::assertCount(6, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::withStartAndEndDate(
+            Chronos::parse('2016-01-03')->startOfDay(),
+            Chronos::parse('2016-01-04')->endOfDay(),
+        ))));
+        self::assertCount(13, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::withStartAndEndDate(
+            Chronos::parse('2016-01-03')->startOfDay(),
+            Chronos::parse('2016-01-08')->endOfDay(),
+        ))));
+        self::assertCount(3, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::withStartAndEndDate(
+            Chronos::parse('2016-01-03')->startOfDay(),
+            Chronos::parse('2016-01-08')->endOfDay(),
+        ), false, null, 10, 10)));
+        self::assertCount(15, $this->repo->findNonOrphanVisits(new VisitsListFiltering(null, true)));
+        self::assertCount(10, $this->repo->findNonOrphanVisits(new VisitsListFiltering(null, false, null, 10)));
+        self::assertCount(1, $this->repo->findNonOrphanVisits(new VisitsListFiltering(null, false, null, 10, 20)));
+        self::assertCount(5, $this->repo->findNonOrphanVisits(new VisitsListFiltering(null, false, null, 5, 5)));
+    }
+
     /**
      * @return array{string, string, ShortUrl}
      */
@@ -429,7 +485,7 @@ class VisitRepositoryTest extends DatabaseTestCase
                     $shortUrl,
                     $botsAmount < 1 ? Visitor::emptyInstance() : Visitor::botInstance(),
                 ),
-                Chronos::parse(sprintf('2016-01-0%s', $i + 1)),
+                Chronos::parse(sprintf('2016-01-%s', str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT)))->startOfDay(),
             );
             $botsAmount--;
 

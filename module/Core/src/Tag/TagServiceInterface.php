@@ -4,39 +4,33 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Tag;
 
-use Doctrine\Common\Collections\Collection;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
+use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface TagServiceInterface
 {
     /**
-     * @return Tag[]
+     * @return Tag[]|Paginator
      */
-    public function listTags(?ApiKey $apiKey = null): array;
+    public function listTags(TagsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
-     * @return TagInfo[]
+     * @return TagInfo[]|Paginator
      */
-    public function tagsInfo(?ApiKey $apiKey = null): array;
+    public function tagsInfo(TagsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
      * @param string[] $tagNames
      * @throws ForbiddenTagOperationException
      */
     public function deleteTags(array $tagNames, ?ApiKey $apiKey = null): void;
-
-    /**
-     * @deprecated
-     * @param string[] $tagNames
-     * @return Collection|Tag[]
-     */
-    public function createTags(array $tagNames): Collection;
 
     /**
      * @throws TagNotFoundException

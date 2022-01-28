@@ -5,16 +5,19 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Repository;
 
 use Doctrine\DBAL\LockMode;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
-use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
+use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
+use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
+use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function array_column;
@@ -24,41 +27,32 @@ use function Functional\contains;
 class ShortUrlRepository extends EntitySpecificationRepository implements ShortUrlRepositoryInterface
 {
     /**
-     * @param string[] $tags
      * @return ShortUrl[]
      */
-    public function findList(
-        ?int $limit = null,
-        ?int $offset = null,
-        ?string $searchTerm = null,
-        array $tags = [],
-        ?ShortUrlsOrdering $orderBy = null,
-        ?DateRange $dateRange = null,
-        ?Specification $spec = null,
-    ): array {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
+    public function findList(ShortUrlsListFiltering $filtering): array
+    {
+        $qb = $this->createListQueryBuilder($filtering);
         $qb->select('DISTINCT s')
-           ->setMaxResults($limit)
-           ->setFirstResult($offset);
+           ->setMaxResults($filtering->limit())
+           ->setFirstResult($filtering->offset());
 
         // In case the ordering has been specified, the query could be more complex. Process it
-        if ($orderBy?->hasOrderField()) {
-            return $this->processOrderByForList($qb, $orderBy);
+        if ($filtering->orderBy()->hasOrderField()) {
+            return $this->processOrderByForList($qb, $filtering->orderBy());
         }
 
-        // With no order by, order by date and just return the list of ShortUrls
-        $qb->orderBy('s.dateCreated');
-        return $qb->getQuery()->getResult();
+        // With no explicit order by, fallback to dateCreated-DESC
+        return $qb->orderBy('s.dateCreated', 'DESC')->getQuery()->getResult();
     }
 
-    private function processOrderByForList(QueryBuilder $qb, ShortUrlsOrdering $orderBy): array
+    private function processOrderByForList(QueryBuilder $qb, Ordering $orderBy): array
     {
         $fieldName = $orderBy->orderField();
         $order = $orderBy->orderDirection();
 
-        // visitsCount and visitCount are deprecated. Only visits should work
-        if (contains(['visits', 'visitsCount', 'visitCount'], $fieldName)) {
-            // FIXME This query is inefficient. Debug it.
+        if ($fieldName === 'visits') {
+            // FIXME This query is inefficient.
+            //       Diagnostic: It might need to use a sub-query, as done with the tags list query.
             $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
                ->leftJoin('s.visits', 'v')
                ->groupBy('s')
@@ -67,44 +61,29 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             return array_column($qb->getQuery()->getResult(), 0);
         }
 
-        // Map public field names to column names
-        $fieldNameMap = [
-            'originalUrl' => 'longUrl', // Deprecated
-            'longUrl' => 'longUrl',
-            'shortCode' => 'shortCode',
-            'dateCreated' => 'dateCreated',
-            'title' => 'title',
-        ];
-        $resolvedFieldName = $fieldNameMap[$fieldName] ?? null;
-        if ($resolvedFieldName !== null) {
-            $qb->orderBy('s.' . $resolvedFieldName, $order);
+        $orderableFields = ['longUrl', 'shortCode', 'dateCreated', 'title'];
+        if (contains($orderableFields, $fieldName)) {
+            $qb->orderBy('s.' . $fieldName, $order);
         }
 
         return $qb->getQuery()->getResult();
     }
 
-    public function countList(
-        ?string $searchTerm = null,
-        array $tags = [],
-        ?DateRange $dateRange = null,
-        ?Specification $spec = null,
-    ): int {
-        $qb = $this->createListQueryBuilder($searchTerm, $tags, $dateRange, $spec);
+    public function countList(ShortUrlsCountFiltering $filtering): int
+    {
+        $qb = $this->createListQueryBuilder($filtering);
         $qb->select('COUNT(DISTINCT s)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    private function createListQueryBuilder(
-        ?string $searchTerm,
-        array $tags,
-        ?DateRange $dateRange,
-        ?Specification $spec,
-    ): QueryBuilder {
+    private function createListQueryBuilder(ShortUrlsCountFiltering $filtering): QueryBuilder
+    {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
            ->where('1=1');
 
+        $dateRange = $filtering->dateRange();
         if ($dateRange?->startDate() !== null) {
             $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
             $qb->setParameter('startDate', $dateRange->startDate(), ChronosDateTimeType::CHRONOS_DATETIME);
@@ -114,6 +93,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             $qb->setParameter('endDate', $dateRange->endDate(), ChronosDateTimeType::CHRONOS_DATETIME);
         }
 
+        $searchTerm = $filtering->searchTerm();
+        $tags = $filtering->tags();
         // Apply search term to every searchable field if not empty
         if (! empty($searchTerm)) {
             // Left join with tags only if no tags were provided. In case of tags, an inner join will be done later
@@ -135,21 +116,23 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         // Filter by tags if provided
         if (! empty($tags)) {
-            $qb->join('s.tags', 't')
-               ->andWhere($qb->expr()->in('t.name', $tags));
+            $tagsMode = $filtering->tagsMode() ?? ShortUrlsParams::TAGS_MODE_ANY;
+            $tagsMode === ShortUrlsParams::TAGS_MODE_ANY
+                ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
+                : $this->joinAllTags($qb, $tags);
         }
 
-        $this->applySpecification($qb, $spec, 's');
+        $this->applySpecification($qb, $filtering->apiKey()?->spec(), 's');
 
         return $qb;
     }
 
-    public function findOneWithDomainFallback(string $shortCode, ?string $domain = null): ?ShortUrl
+    public function findOneWithDomainFallback(ShortUrlIdentifier $identifier): ?ShortUrl
     {
         // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
         // the bottom
-        $dbPlatform = $this->getEntityManager()->getConnection()->getDatabasePlatform()->getName();
-        $ordering = $dbPlatform === 'postgresql' ? 'ASC' : 'DESC';
+        $dbPlatform = $this->getEntityManager()->getConnection()->getDatabasePlatform();
+        $ordering = $dbPlatform instanceof PostgreSQLPlatform ? 'ASC' : 'DESC';
 
         $dql = <<<DQL
             SELECT s
@@ -163,8 +146,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         $query = $this->getEntityManager()->createQuery($dql);
         $query->setMaxResults(1)
               ->setParameters([
-                  'shortCode' => $shortCode,
-                  'domain' => $domain,
+                  'shortCode' => $identifier->shortCode(),
+                  'domain' => $identifier->domain(),
               ]);
 
         // Since we ordered by domain, we will have first the URL matching provided domain, followed by the one
@@ -269,11 +252,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             return $qb->getQuery()->getOneOrNullResult();
         }
 
-        foreach ($tags as $index => $tag) {
-            $alias = 't_' . $index;
-            $qb->join('s.tags', $alias, Join::WITH, $alias . '.name = :tag' . $index)
-               ->setParameter('tag' . $index, $tag);
-        }
+        $this->joinAllTags($qb, $tags);
 
         // If tags where provided, we need an extra join to see the amount of tags that every short URL has, so that we
         // can discard those that also have more tags, making sure only those fully matching are included.
@@ -283,6 +262,15 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
            ->setParameter('tagsAmount', $tagsAmount);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    private function joinAllTags(QueryBuilder $qb, array $tags): void
+    {
+        foreach ($tags as $index => $tag) {
+            $alias = 't_' . $index;
+            $qb->join('s.tags', $alias, Join::WITH, $alias . '.name = :tag' . $index)
+               ->setParameter('tag' . $index, $tag);
+        }
     }
 
     public function findOneByImportedUrl(ImportedShlinkUrl $url): ?ShortUrl

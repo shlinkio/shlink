@@ -14,14 +14,15 @@ use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
-use Shlinkio\Shlink\Core\Paginator\Adapter\OrphanVisitsPaginatorAdapter;
-use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsForTagPaginatorAdapter;
-use Shlinkio\Shlink\Core\Paginator\Adapter\VisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
+use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\NonOrphanVisitsPaginatorAdapter;
+use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\OrphanVisitsPaginatorAdapter;
+use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\ShortUrlVisitsPaginatorAdapter;
+use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\TagVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -37,7 +38,7 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
         $visitsRepo = $this->em->getRepository(Visit::class);
 
         return new VisitsStats(
-            $visitsRepo->countVisits($apiKey),
+            $visitsRepo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey)),
             $visitsRepo->countOrphanVisits(new VisitsCountFiltering()),
         );
     }
@@ -51,18 +52,19 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
         VisitsParams $params,
         ?ApiKey $apiKey = null,
     ): Paginator {
-        $spec = $apiKey?->spec();
-
         /** @var ShortUrlRepositoryInterface $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        if (! $repo->shortCodeIsInUse($identifier, $spec)) {
+        if (! $repo->shortCodeIsInUse($identifier, $apiKey?->spec())) {
             throw ShortUrlNotFoundException::fromNotFound($identifier);
         }
 
         /** @var VisitRepositoryInterface $repo */
         $repo = $this->em->getRepository(Visit::class);
 
-        return $this->createPaginator(new VisitsPaginatorAdapter($repo, $identifier, $params, $spec), $params);
+        return $this->createPaginator(
+            new ShortUrlVisitsPaginatorAdapter($repo, $identifier, $params, $apiKey),
+            $params,
+        );
     }
 
     /**
@@ -80,7 +82,7 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
         /** @var VisitRepositoryInterface $repo */
         $repo = $this->em->getRepository(Visit::class);
 
-        return $this->createPaginator(new VisitsForTagPaginatorAdapter($repo, $tag, $params, $apiKey), $params);
+        return $this->createPaginator(new TagVisitsPaginatorAdapter($repo, $tag, $params, $apiKey), $params);
     }
 
     /**
@@ -92,6 +94,14 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
         $repo = $this->em->getRepository(Visit::class);
 
         return $this->createPaginator(new OrphanVisitsPaginatorAdapter($repo, $params), $params);
+    }
+
+    public function nonOrphanVisits(VisitsParams $params, ?ApiKey $apiKey = null): Paginator
+    {
+        /** @var VisitRepositoryInterface $repo */
+        $repo = $this->em->getRepository(Visit::class);
+
+        return $this->createPaginator(new NonOrphanVisitsPaginatorAdapter($repo, $params, $apiKey), $params);
     }
 
     private function createPaginator(AdapterInterface $adapter, VisitsParams $params): Paginator

@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 
 use function Functional\contains;
-use function Shlinkio\Shlink\Common\env;
 
 return (static function (): array {
-    $driver = env('DB_DRIVER');
+    $driver = EnvVars::DB_DRIVER()->loadFromEnv();
     $isMysqlCompatible = contains(['maria', 'mysql'], $driver);
 
     $resolveDriver = static fn () => match ($driver) {
@@ -21,20 +21,27 @@ return (static function (): array {
         'mssql' => '1433',
         default => '3306',
     };
-    $resolveConnection = static fn () => match (true) {
-        $driver === null || $driver === 'sqlite' => [
+    $resolveCharset = static fn () => match ($driver) {
+        // This does not determine charsets or collations in tables or columns, but the charset used in the data
+        // flowing in the connection, so it has to match what has been set in the database.
+        'maria', 'mysql' => 'utf8mb4',
+        'postgres' => 'utf8',
+        default => null,
+    };
+    $resolveConnection = static fn () => match ($driver) {
+        null, 'sqlite' => [
             'driver' => 'pdo_sqlite',
             'path' => 'data/database.sqlite',
         ],
         default => [
             'driver' => $resolveDriver(),
-            'dbname' => env('DB_NAME', 'shlink'),
-            'user' => env('DB_USER'),
-            'password' => env('DB_PASSWORD'),
-            'host' => env('DB_HOST', $driver === 'postgres' ? env('DB_UNIX_SOCKET') : null),
-            'port' => env('DB_PORT', $resolveDefaultPort()),
-            'unix_socket' => $isMysqlCompatible ? env('DB_UNIX_SOCKET') : null,
-            'charset' => 'utf8',
+            'dbname' => EnvVars::DB_NAME()->loadFromEnv('shlink'),
+            'user' => EnvVars::DB_USER()->loadFromEnv(),
+            'password' => EnvVars::DB_PASSWORD()->loadFromEnv(),
+            'host' => EnvVars::DB_HOST()->loadFromEnv(EnvVars::DB_UNIX_SOCKET()->loadFromEnv()),
+            'port' => EnvVars::DB_PORT()->loadFromEnv($resolveDefaultPort()),
+            'unix_socket' => $isMysqlCompatible ? EnvVars::DB_UNIX_SOCKET()->loadFromEnv() : null,
+            'charset' => $resolveCharset(),
         ],
     };
 

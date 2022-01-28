@@ -6,6 +6,7 @@ namespace ShlinkMigrations;
 
 use Cake\Chronos\Chronos;
 use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
@@ -86,6 +87,6 @@ final class Version20201102113208 extends AbstractMigration
 
     public function isTransactional(): bool
     {
-        return $this->connection->getDatabasePlatform()->getName() !== 'mysql';
+        return ! ($this->connection->getDatabasePlatform() instanceof MySQLPlatform);
     }
 }

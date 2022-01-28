@@ -42,6 +42,9 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
         $e->invalidElements = $invalidData;
         $e->additional = ['invalidElements' => array_keys($invalidData)];
 
+        // TODO Expose reasons for the validation to fail
+        // $e->additional = ['invalidElements' => array_keys($invalidData), 'reasons' => $invalidData];
+
         return $e;
     }
 

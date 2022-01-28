@@ -9,6 +9,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Tester\CommandTester;
 
 trait CliTestUtilsTrait
@@ -25,6 +26,7 @@ trait CliTestUtilsTrait
         $command->getDefinition()->willReturn($name);
         $command->isEnabled()->willReturn(true);
         $command->getAliases()->willReturn([]);
+        $command->getDefinition()->willReturn(new InputDefinition());
         $command->setApplication(Argument::type(Application::class))->willReturn(function (): void {
         });
 

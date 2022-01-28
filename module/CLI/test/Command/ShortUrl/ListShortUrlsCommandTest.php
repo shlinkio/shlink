@@ -184,6 +184,7 @@ class ListShortUrlsCommandTest extends TestCase
         ?int $page,
         ?string $searchTerm,
         array $tags,
+        string $tagsMode,
         ?string $startDate = null,
         ?string $endDate = null,
     ): void {
@@ -191,6 +192,7 @@ class ListShortUrlsCommandTest extends TestCase
             'page' => $page,
             'searchTerm' => $searchTerm,
             'tags' => $tags,
+            'tagsMode' => $tagsMode,
             'startDate' => $startDate !== null ? Chronos::parse($startDate)->toAtomString() : null,
             'endDate' => $endDate !== null ? Chronos::parse($endDate)->toAtomString() : null,
         ]))->willReturn(new Paginator(new ArrayAdapter([])));
@@ -203,20 +205,23 @@ class ListShortUrlsCommandTest extends TestCase
 
     public function provideArgs(): iterable
     {
-        yield [[], 1, null, []];
-        yield [['--page' => $page = 3], $page, null, []];
-        yield [['--search-term' => $searchTerm = 'search this'], 1, $searchTerm, []];
+        yield [[], 1, null, [], ShortUrlsParams::TAGS_MODE_ANY];
+        yield [['--page' => $page = 3], $page, null, [], ShortUrlsParams::TAGS_MODE_ANY];
+        yield [['--including-all-tags' => true], 1, null, [], ShortUrlsParams::TAGS_MODE_ALL];
+        yield [['--search-term' => $searchTerm = 'search this'], 1, $searchTerm, [], ShortUrlsParams::TAGS_MODE_ANY];
         yield [
             ['--page' => $page = 3, '--search-term' => $searchTerm = 'search this', '--tags' => $tags = 'foo,bar'],
             $page,
             $searchTerm,
             explode(',', $tags),
+            ShortUrlsParams::TAGS_MODE_ANY,
         ];
         yield [
             ['--start-date' => $startDate = '2019-01-01'],
             1,
             null,
             [],
+            ShortUrlsParams::TAGS_MODE_ANY,
             $startDate,
         ];
         yield [
@@ -224,6 +229,7 @@ class ListShortUrlsCommandTest extends TestCase
             1,
             null,
             [],
+            ShortUrlsParams::TAGS_MODE_ANY,
             null,
             $endDate,
         ];
@@ -232,6 +238,7 @@ class ListShortUrlsCommandTest extends TestCase
             1,
             null,
             [],
+            ShortUrlsParams::TAGS_MODE_ANY,
             $startDate,
             $endDate,
         ];
@@ -241,7 +248,7 @@ class ListShortUrlsCommandTest extends TestCase
      * @test
      * @dataProvider provideOrderBy
      */
-    public function orderByIsProperlyComputed(array $commandArgs, string|array|null $expectedOrderBy): void
+    public function orderByIsProperlyComputed(array $commandArgs, ?string $expectedOrderBy): void
     {
         $listShortUrls = $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData([
             'orderBy' => $expectedOrderBy,
@@ -256,9 +263,10 @@ class ListShortUrlsCommandTest extends TestCase
     public function provideOrderBy(): iterable
     {
         yield [[], null];
-        yield [['--order-by' => 'foo'], 'foo'];
-        yield [['--order-by' => 'foo,ASC'], ['foo' => 'ASC']];
-        yield [['--order-by' => 'bar,DESC'], ['bar' => 'DESC']];
+        yield [['--order-by' => 'visits'], 'visits'];
+        yield [['--order-by' => 'longUrl,ASC'], 'longUrl-ASC'];
+        yield [['--order-by' => 'shortCode,DESC'], 'shortCode-DESC'];
+        yield [['--order-by' => 'title-DESC'], 'title-DESC'];
     }
 
     /** @test */
@@ -268,6 +276,7 @@ class ListShortUrlsCommandTest extends TestCase
             'page' => 1,
             'searchTerm' => null,
             'tags' => [],
+            'tagsMode' => ShortUrlsParams::TAGS_MODE_ANY,
             'startDate' => null,
             'endDate' => null,
             'orderBy' => null,

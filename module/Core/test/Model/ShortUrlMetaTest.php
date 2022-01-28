@@ -30,34 +30,39 @@ class ShortUrlMetaTest extends TestCase
 
     public function provideInvalidData(): iterable
     {
+        yield [[]];
         yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::VALID_SINCE => '',
             ShortUrlInputFilter::VALID_UNTIL => '',
             ShortUrlInputFilter::CUSTOM_SLUG => 'foobar',
             ShortUrlInputFilter::MAX_VISITS => 'invalid',
         ]];
         yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::VALID_SINCE => '2017',
             ShortUrlInputFilter::MAX_VISITS => 5,
         ]];
         yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::VALID_SINCE => new stdClass(),
             ShortUrlInputFilter::VALID_UNTIL => 'foo',
         ]];
         yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::VALID_UNTIL => 500,
             ShortUrlInputFilter::DOMAIN => 4,
         ]];
         yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::SHORT_CODE_LENGTH => 3,
         ]];
         yield [[
-            ShortUrlInputFilter::CUSTOM_SLUG => '/',
-        ]];
-        yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::CUSTOM_SLUG => '',
         ]];
         yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::CUSTOM_SLUG => '   ',
         ]];
         yield [[
@@ -92,12 +97,16 @@ class ShortUrlMetaTest extends TestCase
 
     public function provideCustomSlugs(): iterable
     {
+        yield ['🔥', '🔥'];
+        yield ['🦣 🍅', '🦣-🍅'];
         yield ['foobar', 'foobar'];
         yield ['foo bar', 'foo-bar'];
+        yield ['foo bar baz', 'foo-bar-baz'];
+        yield ['foo bar-baz', 'foo-bar-baz'];
+        yield ['foo/bar/baz', 'foo-bar-baz'];
         yield ['wp-admin.php', 'wp-admin.php'];
         yield ['UPPER_lower', 'UPPER_lower'];
         yield ['more~url_special.chars', 'more~url_special.chars'];
-        yield ['äéñ', 'äen'];
         yield ['구글', '구글'];
         yield ['グーグル', 'グーグル'];
         yield ['谷歌', '谷歌'];

@@ -79,35 +79,6 @@ class BodyParserMiddlewareTest extends TestCase
         $body = new Stream('php://temp', 'wr');
         $body->write('{"foo": "bar", "bar": ["one", 5]}');
         $request = (new ServerRequest())->withMethod('PUT')
-                                        ->withBody($body)
-                                        ->withHeader('content-type', 'application/json');
-        $delegate = $this->prophesize(RequestHandlerInterface::class);
-        $process = $delegate->handle(Argument::type(ServerRequestInterface::class))->will(
-            function (array $args) use ($test) {
-                /** @var ServerRequestInterface $req */
-                $req = array_shift($args);
-
-                $test->assertEquals([
-                    'foo' => 'bar',
-                    'bar' => ['one', 5],
-                ], $req->getParsedBody());
-
-                return new Response();
-            },
-        );
-
-        $this->middleware->process($request, $delegate->reveal());
-
-        $process->shouldHaveBeenCalledOnce();
-    }
-
-    /** @test */
-    public function regularRequestsAreUrlDecoded(): void
-    {
-        $test = $this;
-        $body = new Stream('php://temp', 'wr');
-        $body->write('foo=bar&bar[]=one&bar[]=5');
-        $request = (new ServerRequest())->withMethod('PUT')
                                         ->withBody($body);
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle(Argument::type(ServerRequestInterface::class))->will(

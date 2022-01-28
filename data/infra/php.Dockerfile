@@ -1,4 +1,4 @@
-FROM php:8.1.0-fpm-alpine3.15
+FROM php:8.1.1-fpm-alpine3.15
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.21
@@ -30,9 +30,6 @@ RUN docker-php-ext-install gd
 
 RUN apk add --no-cache postgresql-dev
 RUN docker-php-ext-install pdo_pgsql
-
-RUN apk add --no-cache gmp-dev
-RUN docker-php-ext-install gmp
 
 RUN docker-php-ext-install sockets
 RUN docker-php-ext-install bcmath

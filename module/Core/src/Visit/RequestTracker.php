@@ -83,10 +83,9 @@ class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
         $disableTrackingFrom = $this->trackingOptions->disableTrackingFrom();
 
         return some($disableTrackingFrom, function (string $value) use ($ip, $remoteAddrParts): bool {
-            $range = match (true) {
-                str_contains($value, '*') => $this->parseValueWithWildcards($value, $remoteAddrParts),
-                default => Factory::parseRangeString($value),
-            };
+            $range = str_contains($value, '*')
+                ? $this->parseValueWithWildcards($value, $remoteAddrParts)
+                : Factory::parseRangeString($value);
 
             return $range !== null && $ip->matches($range);
         });

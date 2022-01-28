@@ -24,10 +24,7 @@ class MissingAuthenticationException extends RuntimeException implements Problem
             'Expected one of the following authentication headers, ["%s"], but none were provided',
             implode('", "', $expectedHeaders),
         ));
-        $e->additional = [
-            'expectedTypes' => $expectedHeaders, // Deprecated
-            'expectedHeaders' => $expectedHeaders,
-        ];
+        $e->additional = ['expectedHeaders' => $expectedHeaders];
 
         return $e;
     }

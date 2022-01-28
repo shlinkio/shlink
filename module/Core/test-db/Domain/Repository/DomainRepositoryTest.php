@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Domain\Repository;
+namespace ShlinkioDbTest\Shlink\Core\Domain\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,7 +21,7 @@ class DomainRepositoryTest extends DatabaseTestCase
 {
     private DomainRepository $repo;
 
-    protected function beforeEach(): void
+    protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Domain::class);
     }

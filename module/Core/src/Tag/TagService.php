@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Tag;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM;
-use Happyr\DoctrineSpecification\Spec;
+use Pagerfanta\Adapter\AdapterInterface;
+use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
@@ -15,41 +15,42 @@ use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
-use Shlinkio\Shlink\Core\Util\TagManagerTrait;
-use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
+use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
+use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsInfoPaginatorAdapter;
+use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsPaginatorAdapter;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class TagService implements TagServiceInterface
 {
-    use TagManagerTrait;
-
     public function __construct(private ORM\EntityManagerInterface $em)
     {
     }
 
     /**
-     * @return Tag[]
+     * @return Tag[]|Paginator
      */
-    public function listTags(?ApiKey $apiKey = null): array
+    public function listTags(TagsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
-        /** @var Tag[] $tags */
-        $tags = $repo->match(Spec::andX(
-            Spec::orderBy('name'),
-            new WithApiKeySpecsEnsuringJoin($apiKey),
-        ));
-        return $tags;
+        return $this->createPaginator(new TagsPaginatorAdapter($repo, $params, $apiKey), $params);
     }
 
     /**
-     * @return TagInfo[]
+     * @return TagInfo[]|Paginator
      */
-    public function tagsInfo(?ApiKey $apiKey = null): array
+    public function tagsInfo(TagsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         /** @var TagRepositoryInterface $repo */
         $repo = $this->em->getRepository(Tag::class);
-        return $repo->findTagsWithInfo($apiKey);
+        return $this->createPaginator(new TagsInfoPaginatorAdapter($repo, $params, $apiKey), $params);
+    }
+
+    private function createPaginator(AdapterInterface $adapter, TagsParams $params): Paginator
+    {
+        return (new Paginator($adapter))
+            ->setMaxPerPage($params->getItemsPerPage())
+            ->setCurrentPage($params->getPage());
     }
 
     /**
@@ -65,21 +66,6 @@ class TagService implements TagServiceInterface
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
         $repo->deleteByName($tagNames);
-    }
-
-    /**
-     * Provided a list of tag names, creates all that do not exist yet
-     *
-     * @deprecated
-     * @param string[] $tagNames
-     * @return Collection|Tag[]
-     */
-    public function createTags(array $tagNames): Collection
-    {
-        $tags = $this->tagNamesToEntities($this->em, $tagNames);
-        $this->em->flush();
-
-        return $tags;
     }
 
     /**

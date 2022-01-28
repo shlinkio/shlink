@@ -1,9 +1,9 @@
-FROM php:8.1.0-alpine3.15
+FROM php:8.1.1-alpine3.15
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.21
 ENV INOTIFY_VERSION 3.0.0
-ENV OPENSWOOLE_VERSION 4.8.1
+ENV OPENSWOOLE_VERSION 4.9.1
 ENV PDO_SQLSRV_VERSION 5.10.0beta2
 ENV MS_ODBC_SQL_VERSION 17.5.2.2
 
@@ -32,9 +32,6 @@ RUN docker-php-ext-install gd
 
 RUN apk add --no-cache postgresql-dev
 RUN docker-php-ext-install pdo_pgsql
-
-RUN apk add --no-cache gmp-dev
-RUN docker-php-ext-install gmp
 
 RUN docker-php-ext-install sockets
 RUN docker-php-ext-install bcmath

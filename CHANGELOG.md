@@ -4,6 +4,54 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.0.0] - 2022-01-28
+### Added
+* [#767](https://github.com/shlinkio/shlink/issues/767) Added full support to use emojis everywhere, whether it is custom slugs, titles, referrers, etc.
+* [#1274](https://github.com/shlinkio/shlink/issues/1274) Added support to filter short URLs lists by all provided tags.
+
+  The `GET /short-urls` endpoint now accepts a `tagsMode=all` param which will make only short URLs matching **all** the tags in the `tags[]` query param, to be returned.
+
+  The `short-urls:list` command now accepts a `-i`/`--including-all-tags` flag which behaves the same.
+
+* [#1273](https://github.com/shlinkio/shlink/issues/1273) Added support for pagination in tags lists, allowing to improve performance by loading subsets of tags.
+
+  For backwards compatibility, lists continue returning all items by default, but the `GET /tags` endpoint now supports `page` and `itemsPerPage` query params, to make sure only a subset of the tags is returned.
+
+  This is supported both when invoking the endpoint with and without `withStats=true` query param.
+
+  Additionally, the endpoint also supports filtering by `searchTerm` query param. When provided, only tags matching it will be returned.
+
+* [#1063](https://github.com/shlinkio/shlink/issues/1063) Added new endpoint that allows fetching all existing non-orphan visits, in case you need a global view of all visits received by your Shlink instance.
+
+  This can be achieved using the `GET /visits/non-orphan` endpoint.
+
+### Changed
+* [#1277](https://github.com/shlinkio/shlink/issues/1277) Reduced docker image size to 45% of the original size.
+* [#1268](https://github.com/shlinkio/shlink/issues/1268) Updated dependencies, including symfony/console 6 and mezzio/mezzio-swoole 4.
+* [#1283](https://github.com/shlinkio/shlink/issues/1283) Changed behavior of `DELETE_SHORT_URL_THRESHOLD` env var, disabling the feature if a value was not provided.
+* [#1300](https://github.com/shlinkio/shlink/issues/1300) Changed default ordering for short URLs list, returning always from newest to oldest.
+* [#1299](https://github.com/shlinkio/shlink/issues/1299) Updated to the latest base docker images, based in PHP 8.1.1, and bumped openswoole to v4.9.1.
+* [#1282](https://github.com/shlinkio/shlink/issues/1282) Env vars now have precedence over installer options.
+* [#1328](https://github.com/shlinkio/shlink/issues/1328) Refactored ShortUrlsRepository to use DTOs in methods with too many arguments.
+
+### Deprecated
+* [#1315](https://github.com/shlinkio/shlink/issues/1315) Deprecated `GET /tags?withStats=true` endpoint. Use `GET /tags/stats` instead.
+
+### Removed
+* [#1275](https://github.com/shlinkio/shlink/issues/1275) Removed everything that was deprecated in Shlink 2.x.
+
+  See [UPGRADE](UPGRADE.md#from-v2x-to-v3x) doc in order to get details on how to migrate to this version.
+
+* [#1347](https://github.com/shlinkio/shlink/issues/1347) Dropped support for regular swoole in favor of openswoole.
+
+  Since openswoole support was introduced in the previous release version, Shlink will still consider the swoole extension as openswoole, as at the moment, functionality hasn't deviated too much, and will simplify migrating to Shlink 3.0.0
+
+  However, there's no longer active testing with regular swoole, and it is considered no longer supported. If some incompatibility arises, the only supported solution will be to migrate to openswoole.
+
+### Fixed
+* *Nothing*
+
+
 ## [2.10.3] - 2022-01-23
 ### Added
 * *Nothing*
@@ -906,7 +954,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * Preview generation feature completely removed.
     * Authentication against REST API using JWT is no longer supported.
 
-    See [UPGRADE](UPGRADE.md) doc in order to get details on how to migrate to this version.
+    See [UPGRADE](UPGRADE.md#from-v1x-to-v2x) doc in order to get details on how to migrate to this version.
 
 ### Fixed
 * [#600](https://github.com/shlinkio/shlink/issues/600) Fixed health action so that it works with and without version in the path.

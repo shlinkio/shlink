@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Shlinkio\Shlink\CLI\Command\BaseCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
@@ -12,6 +11,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -22,11 +22,9 @@ use function array_map;
 use function Functional\curry;
 use function Functional\flatten;
 use function Functional\unique;
-use function method_exists;
 use function sprintf;
-use function str_contains;
 
-class CreateShortUrlCommand extends BaseCommand
+class CreateShortUrlCommand extends Command
 {
     public const NAME = 'short-url:create';
 
@@ -45,7 +43,6 @@ class CreateShortUrlCommand extends BaseCommand
     {
         $this
             ->setName(self::NAME)
-            ->setAliases(['short-url:generate']) // Deprecated
             ->setDescription('Generates a short URL for provided long URL and returns it')
             ->addArgument('longUrl', InputArgument::REQUIRED, 'The long URL to parse')
             ->addOption(
@@ -54,33 +51,33 @@ class CreateShortUrlCommand extends BaseCommand
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Tags to apply to the new short URL',
             )
-            ->addOptionWithDeprecatedFallback(
+            ->addOption(
                 'valid-since',
                 's',
                 InputOption::VALUE_REQUIRED,
                 'The date from which this short URL will be valid. '
                 . 'If someone tries to access it before this date, it will not be found.',
             )
-            ->addOptionWithDeprecatedFallback(
+            ->addOption(
                 'valid-until',
                 'u',
                 InputOption::VALUE_REQUIRED,
                 'The date until which this short URL will be valid. '
                 . 'If someone tries to access it after this date, it will not be found.',
             )
-            ->addOptionWithDeprecatedFallback(
+            ->addOption(
                 'custom-slug',
                 'c',
                 InputOption::VALUE_REQUIRED,
                 'If provided, this slug will be used instead of generating a short code',
             )
-            ->addOptionWithDeprecatedFallback(
+            ->addOption(
                 'max-visits',
                 'm',
                 InputOption::VALUE_REQUIRED,
                 'This will limit the number of visits for this short URL.',
             )
-            ->addOptionWithDeprecatedFallback(
+            ->addOption(
                 'find-if-exists',
                 'f',
                 InputOption::VALUE_NONE,
@@ -92,7 +89,7 @@ class CreateShortUrlCommand extends BaseCommand
                 InputOption::VALUE_REQUIRED,
                 'The domain to which this short URL will be attached.',
             )
-            ->addOptionWithDeprecatedFallback(
+            ->addOption(
                 'short-code-length',
                 'l',
                 InputOption::VALUE_REQUIRED,
@@ -103,12 +100,6 @@ class CreateShortUrlCommand extends BaseCommand
                 null,
                 InputOption::VALUE_NONE,
                 'Forces the long URL to be validated, regardless what is globally configured.',
-            )
-            ->addOption(
-                'no-validate-url',
-                null,
-                InputOption::VALUE_NONE,
-                '[DEPRECATED] Forces the long URL to not be validated, regardless what is globally configured.',
             )
             ->addOption(
                 'crawlable',
@@ -161,25 +152,19 @@ class CreateShortUrlCommand extends BaseCommand
 
         $explodeWithComma = curry('explode')(',');
         $tags = unique(flatten(array_map($explodeWithComma, $input->getOption('tags'))));
-        $customSlug = $this->getOptionWithDeprecatedFallback($input, 'custom-slug');
-        $maxVisits = $this->getOptionWithDeprecatedFallback($input, 'max-visits');
-        $shortCodeLength = $this->getOptionWithDeprecatedFallback(
-            $input,
-            'short-code-length',
-        ) ?? $this->defaultShortCodeLength;
-        $doValidateUrl = $this->doValidateUrl($input);
+        $customSlug = $input->getOption('custom-slug');
+        $maxVisits = $input->getOption('max-visits');
+        $shortCodeLength = $input->getOption('short-code-length') ?? $this->defaultShortCodeLength;
+        $doValidateUrl = $input->getOption('validate-url');
 
         try {
             $shortUrl = $this->urlShortener->shorten(ShortUrlMeta::fromRawData([
                 ShortUrlInputFilter::LONG_URL => $longUrl,
-                ShortUrlInputFilter::VALID_SINCE => $this->getOptionWithDeprecatedFallback($input, 'valid-since'),
-                ShortUrlInputFilter::VALID_UNTIL => $this->getOptionWithDeprecatedFallback($input, 'valid-until'),
+                ShortUrlInputFilter::VALID_SINCE => $input->getOption('valid-since'),
+                ShortUrlInputFilter::VALID_UNTIL => $input->getOption('valid-until'),
                 ShortUrlInputFilter::CUSTOM_SLUG => $customSlug,
                 ShortUrlInputFilter::MAX_VISITS => $maxVisits !== null ? (int) $maxVisits : null,
-                ShortUrlInputFilter::FIND_IF_EXISTS => $this->getOptionWithDeprecatedFallback(
-                    $input,
-                    'find-if-exists',
-                ),
+                ShortUrlInputFilter::FIND_IF_EXISTS => $input->getOption('find-if-exists'),
                 ShortUrlInputFilter::DOMAIN => $input->getOption('domain'),
                 ShortUrlInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
                 ShortUrlInputFilter::VALIDATE_URL => $doValidateUrl,
@@ -197,20 +182,6 @@ class CreateShortUrlCommand extends BaseCommand
             $io->error($e->getMessage());
             return ExitCodes::EXIT_FAILURE;
         }
-    }
-
-    private function doValidateUrl(InputInterface $input): ?bool
-    {
-        $rawInput = method_exists($input, '__toString') ? $input->__toString() : '';
-
-        if (str_contains($rawInput, '--no-validate-url')) {
-            return false;
-        }
-        if (str_contains($rawInput, '--validate-url')) {
-            return true;
-        }
-
-        return null;
     }
 
     private function getIO(InputInterface $input, OutputInterface $output): SymfonyStyle

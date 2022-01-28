@@ -11,6 +11,7 @@ return [
             'driver' => 'pdo_mysql',
             'host' => 'shlink_db_mysql',
             'dbname' => 'shlink',
+            'charset' => 'utf8mb4',
         ],
     ],
 

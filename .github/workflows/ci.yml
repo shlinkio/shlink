@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - develop
+      - 2.x
 
 jobs:
   static-analysis:
@@ -22,7 +23,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.8.1
+          extensions: openswoole-4.9.1
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer ${{ matrix.command }}
@@ -44,7 +45,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.8.1
+          extensions: openswoole-4.9.1
           coverage: pcov
           ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist
@@ -79,7 +80,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.8.1, pdo_sqlsrv-5.10.0beta2
+          extensions: openswoole-4.9.1, pdo_sqlsrv-5.10.0beta2
           coverage: pcov
           ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist
@@ -114,7 +115,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.8.1
+          extensions: openswoole-4.9.1
           coverage: pcov
           ini-values: pcov.directory=module
       - run: composer install --no-interaction --prefer-dist

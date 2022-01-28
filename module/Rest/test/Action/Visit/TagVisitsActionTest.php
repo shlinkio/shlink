@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
-use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -30,7 +30,7 @@ class TagVisitsActionTest extends TestCase
     }
 
     /** @test */
-    public function providingCorrectShortCodeReturnsVisits(): void
+    public function providingCorrectTagReturnsVisits(): void
     {
         $tag = 'foo';
         $apiKey = ApiKey::create();
@@ -39,7 +39,7 @@ class TagVisitsActionTest extends TestCase
         );
 
         $response = $this->action->handle(
-            (new ServerRequest())->withAttribute('tag', $tag)->withAttribute(ApiKey::class, $apiKey),
+            ServerRequestFactory::fromGlobals()->withAttribute('tag', $tag)->withAttribute(ApiKey::class, $apiKey),
         );
 
         self::assertEquals(200, $response->getStatusCode());

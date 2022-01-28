@@ -149,7 +149,7 @@ class CreateShortUrlCommandTest extends TestCase
      * @test
      * @dataProvider provideFlags
      */
-    public function urlValidationHasExpectedValueBasedOnProvidedTags(array $options, ?bool $expectedValidateUrl): void
+    public function urlValidationHasExpectedValueBasedOnProvidedFlags(array $options, ?bool $expectedValidateUrl): void
     {
         $shortUrl = ShortUrl::createEmpty();
         $urlToShortCode = $this->urlShortener->shorten(
@@ -168,8 +168,6 @@ class CreateShortUrlCommandTest extends TestCase
     public function provideFlags(): iterable
     {
         yield 'no flags' => [[], null];
-        yield 'no-validate-url only' => [['--no-validate-url' => true], false];
         yield 'validate-url' => [['--validate-url' => true], true];
-        yield 'both flags' => [['--validate-url' => true, '--no-validate-url' => true], false];
     }
 }

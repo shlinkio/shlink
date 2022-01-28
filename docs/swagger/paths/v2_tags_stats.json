@@ -1,0 +1,127 @@
+{
+    "get": {
+        "operationId": "tagsWithStats",
+        "tags": [
+            "Tags"
+        ],
+        "summary": "Get tags with stats",
+        "description": "Returns the list of all tags used in any short URL, together with the amount of short URLs and visits for it",
+        "security": [
+            {
+                "ApiKey": []
+            }
+        ],
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            },
+            {
+                "name": "page",
+                "in": "query",
+                "description": "The page to display. Defaults to 1",
+                "required": false,
+                "schema": {
+                    "type": "number"
+                }
+            },
+            {
+                "name": "itemsPerPage",
+                "in": "query",
+                "description": "The amount of items to return on every page. Defaults to all the items",
+                "required": false,
+                "schema": {
+                    "type": "number"
+                }
+            },
+            {
+                "name": "searchTerm",
+                "in": "query",
+                "description": "A query used to filter results by searching for it on the tag name.",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "orderBy",
+                "in": "query",
+                "description": "To determine how to order the results.<br /><br />**Important!** Ordering by `shortUrlsCount` or `visitsCount` has a [known performance issue](https://github.com/shlinkio/shlink/issues/1346) which makes loading a subset of the list take as much as loading the whole list.<br />If you plan to order by any of these fields, it's worth loading the whole list with no pagination.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "tag-ASC",
+                        "tag-DESC",
+                        "shortUrlsCount-ASC",
+                        "shortUrlsCount-DESC",
+                        "visitsCount-ASC",
+                        "visitsCount-DESC"
+                    ]
+                }
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The list of tags",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "tags": {
+                                    "type": "object",
+                                    "required": ["data"],
+                                    "properties": {
+                                        "data": {
+                                            "description": "The tag stats will be returned only if the withStats param was provided with value 'true'",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "../definitions/TagInfo.json"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "../definitions/Pagination.json"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "example": {
+                            "tags": {
+                                "data": [
+                                    {
+                                        "tag": "games",
+                                        "shortUrlsCount": 10,
+                                        "visitsCount": 521
+                                    },
+                                    {
+                                        "tag": "shlink",
+                                        "shortUrlsCount": 7,
+                                        "visitsCount": 1087
+                                    }
+                                ],
+                                "pagination": {
+                                    "currentPage": 5,
+                                    "pagesCount": 5,
+                                    "itemsPerPage": 10,
+                                    "itemsInCurrentPage": 2,
+                                    "totalItems": 42
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "default": {
+                "description": "Unexpected error.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -7,33 +7,20 @@ namespace Shlinkio\Shlink\Core\Repository;
 use Doctrine\Persistence\ObjectRepository;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterface;
 use Happyr\DoctrineSpecification\Specification\Specification;
-use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Model\ShortUrlsOrdering;
+use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
+use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
-    public function findList(
-        ?int $limit = null,
-        ?int $offset = null,
-        ?string $searchTerm = null,
-        array $tags = [],
-        ?ShortUrlsOrdering $orderBy = null,
-        ?DateRange $dateRange = null,
-        ?Specification $spec = null,
-    ): array;
+    public function findList(ShortUrlsListFiltering $filtering): array;
 
-    public function countList(
-        ?string $searchTerm = null,
-        array $tags = [],
-        ?DateRange $dateRange = null,
-        ?Specification $spec = null,
-    ): int;
+    public function countList(ShortUrlsCountFiltering $filtering): int;
 
-    public function findOneWithDomainFallback(string $shortCode, ?string $domain = null): ?ShortUrl;
+    public function findOneWithDomainFallback(ShortUrlIdentifier $identifier): ?ShortUrl;
 
     public function findOne(ShortUrlIdentifier $identifier, ?Specification $spec = null): ?ShortUrl;
 

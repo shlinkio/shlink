@@ -9,15 +9,20 @@ use Laminas\Diactoros;
 use Mezzio;
 use Mezzio\ProblemDetails;
 use Mezzio\Swoole;
+use Shlinkio\Shlink\Config\ConfigAggregator\EnvVarLoaderProvider;
 
 use function class_exists;
-use function Shlinkio\Shlink\Common\env;
+use function Shlinkio\Shlink\Config\env;
 
 use const PHP_SAPI;
 
 $isCli = PHP_SAPI === 'cli';
+$isTestEnv = env('APP_ENV') === 'test';
 
 return (new ConfigAggregator\ConfigAggregator([
+    ! $isTestEnv
+        ? new EnvVarLoaderProvider('config/params/generated_config.php', Core\Config\EnvVars::cases())
+        : new ConfigAggregator\ArrayProvider([]),
     Mezzio\ConfigProvider::class,
     Mezzio\Router\ConfigProvider::class,
     Mezzio\Router\FastRouteRouter\ConfigProvider::class,
@@ -35,12 +40,9 @@ return (new ConfigAggregator\ConfigAggregator([
     CLI\ConfigProvider::class,
     Rest\ConfigProvider::class,
     new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
-    env('APP_ENV') === 'test'
+    $isTestEnv
         ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')
-        // Deprecated. When the SimplifiedConfigParser is removed, load only generated_config.php here
-        : new ConfigAggregator\LaminasConfigProvider('config/params/{generated_config.php,*.config.{php,json}}'),
+        : new ConfigAggregator\ArrayProvider([]),
 ], 'data/cache/app_config.php', [
-    Core\Config\SimplifiedConfigParser::class,
     Core\Config\BasePathPrefixer::class,
-    Core\Config\DeprecatedConfigParser::class,
 ]))->getMergedConfig();
