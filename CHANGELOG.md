@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* [#1359](https://github.com/shlinkio/shlink/issues/1359) Hidden database commands.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 ## [3.0.0] - 2022-01-28
 ### Added
 * [#767](https://github.com/shlinkio/shlink/issues/767) Added full support to use emojis everywhere, whether it is custom slugs, titles, referrers, etc.

@@ -19,6 +19,7 @@ class MigrateDatabaseCommand extends AbstractDatabaseCommand
     {
         $this
             ->setName(self::NAME)
+            ->setHidden()
             ->setDescription('Runs database migrations, which will ensure the shlink database is up to date.');
     }
 
