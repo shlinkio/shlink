@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1359](https://github.com/shlinkio/shlink/issues/1359) Hidden database commands.
 
 ### Deprecated
-* *Nothing*
+* [#1340](https://github.com/shlinkio/shlink/issues/1340) Deprecated webhooks. New events will only be added to other real-time updates approaches, and webhooks will be completely removed in Shlink 4.0.0.
 
 ### Removed
 * *Nothing*
