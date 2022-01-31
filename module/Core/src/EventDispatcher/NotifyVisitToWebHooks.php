@@ -21,6 +21,7 @@ use Throwable;
 
 use function Functional\map;
 
+/** @deprecated */
 class NotifyVisitToWebHooks
 {
     public function __construct(

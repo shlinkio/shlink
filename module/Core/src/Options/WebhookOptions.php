@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Options;
 
 use Laminas\Stdlib\AbstractOptions;
 
+/** @deprecated */
 class WebhookOptions extends AbstractOptions
 {
     protected $__strictMode__ = false; // phpcs:ignore

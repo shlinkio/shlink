@@ -114,7 +114,9 @@ final class EnvVars
     public const DEFAULT_DOMAIN = 'DEFAULT_DOMAIN';
     public const AUTO_RESOLVE_TITLES = 'AUTO_RESOLVE_TITLES';
     public const REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
+    /** @deprecated */
     public const VISITS_WEBHOOKS = 'VISITS_WEBHOOKS';
+    /** @deprecated */
     public const NOTIFY_ORPHAN_VISITS_TO_WEBHOOKS = 'NOTIFY_ORPHAN_VISITS_TO_WEBHOOKS';
 
     /**

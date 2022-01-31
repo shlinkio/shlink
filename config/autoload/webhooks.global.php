@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
+// Deprecated. Webhooks are no longer supported. To be removed in Shlink 4.0.0
 return (static function (): array {
     $webhooks = EnvVars::VISITS_WEBHOOKS()->loadFromEnv();
 
