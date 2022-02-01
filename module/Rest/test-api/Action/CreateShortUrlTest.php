@@ -230,7 +230,7 @@ class CreateShortUrlTest extends ApiTestCase
     {
         $expectedDetail = sprintf('Provided URL %s is invalid. Try with a different one.', $url);
 
-        [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $url]);
+        [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $url, 'validateUrl' => true]);
 
         self::assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
         self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);

@@ -82,6 +82,7 @@ class EditShortUrlTest extends ApiTestCase
 
         $resp = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => [
             'longUrl' => $longUrl,
+            'validateUrl' => true,
         ]]);
 
         self::assertEquals($expectedStatus, $resp->getStatusCode());

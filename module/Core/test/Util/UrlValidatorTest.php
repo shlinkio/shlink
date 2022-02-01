@@ -42,7 +42,7 @@ class UrlValidatorTest extends TestCase
         $request->shouldBeCalledOnce();
         $this->expectException(InvalidUrlException::class);
 
-        $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar', null);
+        $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar', true);
     }
 
     /** @test */
@@ -65,48 +65,31 @@ class UrlValidatorTest extends TestCase
             }),
         )->willReturn(new Response());
 
-        $this->urlValidator->validateUrl($expectedUrl, null);
+        $this->urlValidator->validateUrl($expectedUrl, true);
 
         $request->shouldHaveBeenCalledOnce();
     }
 
-    /**
-     * @test
-     * @dataProvider provideDisabledCombinations
-     */
-    public function noCheckIsPerformedWhenUrlValidationIsDisabled(?bool $doValidate, bool $validateUrl): void
+    /** @test */
+    public function noCheckIsPerformedWhenUrlValidationIsDisabled(): void
     {
         $request = $this->httpClient->request(Argument::cetera())->willReturn(new Response());
-        $this->options->validateUrl = $validateUrl;
 
-        $this->urlValidator->validateUrl('', $doValidate);
+        $this->urlValidator->validateUrl('', false);
 
         $request->shouldNotHaveBeenCalled();
     }
 
-    /**
-     * @test
-     * @dataProvider provideDisabledCombinations
-     */
-    public function validateUrlWithTitleReturnsNullWhenRequestFailsAndValidationIsDisabled(
-        ?bool $doValidate,
-        bool $validateUrl,
-    ): void {
+    /** @test */
+    public function validateUrlWithTitleReturnsNullWhenRequestFailsAndValidationIsDisabled(): void
+    {
         $request = $this->httpClient->request(Argument::cetera())->willThrow(ClientException::class);
-        $this->options->validateUrl = $validateUrl;
         $this->options->autoResolveTitles = true;
 
-        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', $doValidate);
+        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', false);
 
         self::assertNull($result);
         $request->shouldHaveBeenCalledOnce();
-    }
-
-    public function provideDisabledCombinations(): iterable
-    {
-        yield 'config is disabled and no runtime option is provided' => [null, false];
-        yield 'config is enabled but runtime option is disabled' => [false, true];
-        yield 'both config and runtime option are disabled' => [false, false];
     }
 
     /** @test */
@@ -119,6 +102,18 @@ class UrlValidatorTest extends TestCase
 
         self::assertNull($result);
         $request->shouldNotHaveBeenCalled();
+    }
+
+    /** @test */
+    public function validateUrlWithTitleReturnsNullWhenAutoResolutionIsDisabledAndValidationIsEnabled(): void
+    {
+        $request = $this->httpClient->request(Argument::cetera())->willReturn($this->respWithTitle());
+        $this->options->autoResolveTitles = false;
+
+        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
+
+        self::assertNull($result);
+        $request->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
