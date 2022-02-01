@@ -105,6 +105,18 @@ class UrlValidatorTest extends TestCase
     }
 
     /** @test */
+    public function validateUrlWithTitleReturnsNullWhenAutoResolutionIsDisabledAndValidationIsEnabled(): void
+    {
+        $request = $this->httpClient->request(Argument::cetera())->willReturn($this->respWithTitle());
+        $this->options->autoResolveTitles = false;
+
+        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
+
+        self::assertNull($result);
+        $request->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
     public function validateUrlWithTitleResolvesTitleWhenAutoResolutionIsEnabled(): void
     {
         $request = $this->httpClient->request(Argument::cetera())->willReturn($this->respWithTitle());
