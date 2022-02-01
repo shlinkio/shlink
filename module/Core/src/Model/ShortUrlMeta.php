@@ -26,7 +26,7 @@ final class ShortUrlMeta implements TitleResolutionModelInterface
     private ?bool $findIfExists = null;
     private ?string $domain = null;
     private int $shortCodeLength = 5;
-    private ?bool $validateUrl = null;
+    private bool $validateUrl = false;
     private ?ApiKey $apiKey = null;
     private array $tags = [];
     private ?string $title = null;
@@ -73,7 +73,7 @@ final class ShortUrlMeta implements TitleResolutionModelInterface
         $this->customSlug = $inputFilter->getValue(ShortUrlInputFilter::CUSTOM_SLUG);
         $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlInputFilter::MAX_VISITS);
         $this->findIfExists = $inputFilter->getValue(ShortUrlInputFilter::FIND_IF_EXISTS);
-        $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL);
+        $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL) ?? false;
         $this->domain = $inputFilter->getValue(ShortUrlInputFilter::DOMAIN);
         $this->shortCodeLength = getOptionalIntFromInputFilter(
             $inputFilter,
@@ -151,7 +151,7 @@ final class ShortUrlMeta implements TitleResolutionModelInterface
         return $this->shortCodeLength;
     }
 
-    public function doValidateUrl(): ?bool
+    public function doValidateUrl(): bool
     {
         return $this->validateUrl;
     }

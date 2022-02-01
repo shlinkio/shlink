@@ -35,10 +35,10 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
             ShortUrlMeta::fromRawData(['longUrl' => $longUrl, 'title' => $title]),
         );
 
-        $this->urlValidator->validateUrlWithTitle($longUrl, null)->shouldHaveBeenCalledTimes(
+        $this->urlValidator->validateUrlWithTitle($longUrl, false)->shouldHaveBeenCalledTimes(
             $validateWithTitleCallsNum,
         );
-        $this->urlValidator->validateUrl($longUrl, null)->shouldHaveBeenCalledTimes($validateCallsNum);
+        $this->urlValidator->validateUrl($longUrl, false)->shouldHaveBeenCalledTimes($validateCallsNum);
     }
 
     public function provideTitles(): iterable

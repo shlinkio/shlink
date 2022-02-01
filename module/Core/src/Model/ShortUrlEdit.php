@@ -29,7 +29,7 @@ final class ShortUrlEdit implements TitleResolutionModelInterface
     private bool $titlePropWasProvided = false;
     private ?string $title = null;
     private bool $titleWasAutoResolved = false;
-    private ?bool $validateUrl = null;
+    private bool $validateUrl = false;
     private bool $crawlablePropWasProvided = false;
     private bool $crawlable = false;
     private bool $forwardQueryPropWasProvided = false;
@@ -72,7 +72,7 @@ final class ShortUrlEdit implements TitleResolutionModelInterface
         $this->validSince = parseDateField($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
         $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL));
         $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlInputFilter::MAX_VISITS);
-        $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL);
+        $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL) ?? false;
         $this->tags = $inputFilter->getValue(ShortUrlInputFilter::TAGS);
         $this->title = $inputFilter->getValue(ShortUrlInputFilter::TITLE);
         $this->crawlable = $inputFilter->getValue(ShortUrlInputFilter::CRAWLABLE);
@@ -166,7 +166,7 @@ final class ShortUrlEdit implements TitleResolutionModelInterface
         return $copy;
     }
 
-    public function doValidateUrl(): ?bool
+    public function doValidateUrl(): bool
     {
         return $this->validateUrl;
     }
