@@ -18,7 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* [#1363](https://github.com/shlinkio/shlink/issues/1363) Fixed titles being resolved no matter what when `validateUrl` is not set or is explicity set to true.
+* [#1363](https://github.com/shlinkio/shlink/issues/1363) Fixed titles being resolved no matter what when `validateUrl` is not set or is explicitly set to true.
+* [#1352](https://github.com/shlinkio/shlink/issues/1352) Updated to stable pdo_sqlsrv in docker image.
 
 
 ## [3.0.0] - 2022-01-28
