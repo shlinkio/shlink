@@ -2,7 +2,7 @@ FROM php:8.1.1-fpm-alpine3.15
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.21
-ENV PDO_SQLSRV_VERSION 5.10.0beta2
+ENV PDO_SQLSRV_VERSION 5.10.0
 ENV MS_ODBC_SQL_VERSION 17.5.2.2
 
 RUN apk update

@@ -30,10 +30,8 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
     /**
      * @throws InvalidUrlException
      */
-    public function validateUrl(string $url, ?bool $doValidate): void
+    public function validateUrl(string $url, bool $doValidate): void
     {
-        // If the URL validation is not enabled, or it was explicitly set to not validate, skip check
-        $doValidate = $doValidate ?? $this->options->isUrlValidationEnabled();
         if (! $doValidate) {
             return;
         }
@@ -41,15 +39,14 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
         $this->validateUrlAndGetResponse($url, true);
     }
 
-    public function validateUrlWithTitle(string $url, ?bool $doValidate): ?string
+    public function validateUrlWithTitle(string $url, bool $doValidate): ?string
     {
-        $doValidate = $doValidate ?? $this->options->isUrlValidationEnabled();
         if (! $doValidate && ! $this->options->autoResolveTitles()) {
             return null;
         }
 
         $response = $this->validateUrlAndGetResponse($url, $doValidate);
-        if ($response === null) {
+        if ($response === null || ! $this->options->autoResolveTitles()) {
             return null;
         }
 
