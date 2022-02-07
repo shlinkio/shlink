@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#1359](https://github.com/shlinkio/shlink/issues/1359) Hidden database commands.
+* [#1369](https://github.com/shlinkio/shlink/issues/1369) Improved performance on regexes used in bundled `.htaccess` file.
 
 ### Deprecated
 * [#1340](https://github.com/shlinkio/shlink/issues/1340) Deprecated webhooks. New events will only be added to other real-time updates approaches, and webhooks will be completely removed in Shlink 4.0.0.
