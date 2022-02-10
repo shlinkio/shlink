@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.0.2] - 2022-02-10
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1373](https://github.com/shlinkio/shlink/issues/1373) Fixed incorrect config import when updating from Shlink 2.x using SQLite.
+* [#1369](https://github.com/shlinkio/shlink/issues/1369) Fixed slow regexps in `.htaccess` file.
+
+
 ## [3.0.1] - 2022-02-04
 ### Added
 * *Nothing*
