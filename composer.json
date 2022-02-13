@@ -92,6 +92,7 @@
     "autoload-dev": {
         "psr-4": {
             "ShlinkioTest\\Shlink\\CLI\\": "module/CLI/test",
+            "ShlinkioCliTest\\Shlink\\CLI\\": "module/CLI/test-cli",
             "ShlinkioTest\\Shlink\\Rest\\": "module/Rest/test",
             "ShlinkioApiTest\\Shlink\\Rest\\": "module/Rest/test-api",
             "ShlinkioTest\\Shlink\\Core\\": "module/Core/test",
@@ -138,6 +139,8 @@
         "test:db:ms": "DB_DRIVER=mssql composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
         "test:api:ci": "GENERATE_COVERAGE=yes composer test:api",
+        "test:cli": "APP_ENV=test DB_DRIVER=maria TEST_ENV=cli php vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-cli.xml",
+        "test:cli:ci": "GENERATE_COVERAGE=yes composer test:cli",
         "infect:ci:base": "infection --threads=4 --log-verbosity=default --only-covered --only-covering-test-cases --skip-initial-tests",
         "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=80",
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json",

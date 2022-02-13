@@ -178,6 +178,7 @@ return [
 
     'data_fixtures' => [
         'paths' => [
+            // TODO These are used for CLI tests too, so maybe should be somewhere else
             __DIR__ . '/../../module/Rest/test-api/Fixtures',
         ],
     ],

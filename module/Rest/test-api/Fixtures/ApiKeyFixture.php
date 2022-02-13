@@ -25,7 +25,7 @@ class ApiKeyFixture extends AbstractFixture implements DependentFixtureInterface
     {
         $manager->persist($this->buildApiKey('valid_api_key', true));
         $manager->persist($this->buildApiKey('disabled_api_key', false));
-        $manager->persist($this->buildApiKey('expired_api_key', true, Chronos::now()->subDay()));
+        $manager->persist($this->buildApiKey('expired_api_key', true, Chronos::now()->subDay()->startOfDay()));
 
         $authorApiKey = $this->buildApiKey('author_api_key', true);
         $authorApiKey->registerRole(RoleDefinition::forAuthoredShortUrls());
