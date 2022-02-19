@@ -46,9 +46,7 @@ This is a simplified version of the project structure:
 ```
 shlink
 ├── bin
-│   ├── cli
-│   ├── install
-│   └── update
+│   └── cli
 ├── config
 │   ├── autoload
 │   ├── params
@@ -75,11 +73,11 @@ shlink
 
 The purposes of every folder are:
 
-* `bin`: It contains the CLI tools. The `cli` one is the main entry point to run shlink from the command line, while `install` and `update` are helper tools used to install and update shlink when not using the docker image.
+* `bin`: It contains the CLI tools. The `cli` one is the main entry point to run shlink from the command line.
 * `config`: Contains application-wide configurations, which are later merged with the ones provided by every module.
 * `data`: Common runtime-generated git-ignored assets, like logs, caches, etc.
 * `docs`: Any project documentation is stored here, like API spec definitions or architectural decision records.
-* `module`: Contains a subfolder for every module in the project. Modules contain the source code, tests and configurations for every context in the project.
+* `module`: Contains a sub-folder for every module in the project. Modules contain the source code, tests and configurations for every context in the project.
 * `public`: Few assets (like `favicon.ico` or `robots.txt`) and the web entry point are stored here. This web entry point is not used when serving the app with openswoole.
 
 ## Project tests
