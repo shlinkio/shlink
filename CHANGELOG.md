@@ -21,6 +21,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 
+## [3.0.3] - 2022-02-19
+### Added
+* *Nothing*
+
+### Changed
+* [#1382](https://github.com/shlinkio/shlink/issues/1382) Updated docker image to PHP 8.1.3.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1377](https://github.com/shlinkio/shlink/issues/1377) Fixed installer always setting delete threshold with value 1.
+* [#1379](https://github.com/shlinkio/shlink/issues/1379) Ensured API keys cannot be created with a domain-only role linked to default domain.
+
+
 ## [3.0.2] - 2022-02-10
 ### Added
 * *Nothing*
