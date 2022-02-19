@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolver;
+use Shlinkio\Shlink\CLI\Exception\InvalidRoleConfigException;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -23,7 +24,7 @@ class RoleResolverTest extends TestCase
     protected function setUp(): void
     {
         $this->domainService = $this->prophesize(DomainServiceInterface::class);
-        $this->resolver = new RoleResolver($this->domainService->reveal());
+        $this->resolver = new RoleResolver($this->domainService->reveal(), 'default.com');
     }
 
     /**
@@ -93,5 +94,17 @@ class RoleResolverTest extends TestCase
             [RoleDefinition::forAuthoredShortUrls(), RoleDefinition::forDomain($domain)],
             1,
         ];
+    }
+
+    /** @test */
+    public function exceptionIsThrownWhenTryingToAddDomainOnlyLinkedToDefaultDomain(): void
+    {
+        $input = $this->prophesize(InputInterface::class);
+        $input->getOption(RoleResolver::DOMAIN_ONLY_PARAM)->willReturn('default.com');
+        $input->getOption(RoleResolver::AUTHOR_ONLY_PARAM)->willReturn(null);
+
+        $this->expectException(InvalidRoleConfigException::class);
+
+        $this->resolver->determineRoles($input->reveal());
     }
 }
