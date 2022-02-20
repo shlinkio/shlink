@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest;
 
+use Shlinkio\Shlink\Rest\Middleware\Mercure\NotConfiguredMercureErrorHandler;
+
 $contentNegotiationMiddleware = Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class;
 $dropDomainMiddleware = Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class;
 $overrideDomainMiddleware = Middleware\ShortUrl\OverrideDomainMiddleware::class;
@@ -46,7 +48,7 @@ return [
         Action\Domain\ListDomainsAction::getRouteDef(),
         Action\Domain\DomainRedirectsAction::getRouteDef(),
 
-        Action\MercureInfoAction::getRouteDef(),
+        Action\MercureInfoAction::getRouteDef([NotConfiguredMercureErrorHandler::class]),
     ],
 
 ];
