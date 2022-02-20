@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use RuntimeException;
 use Shlinkio\Shlink\Common\Mercure\JwtProviderInterface;
 use Shlinkio\Shlink\Rest\Action\MercureInfoAction;
 use Shlinkio\Shlink\Rest\Exception\MercureException;
@@ -47,24 +46,6 @@ class MercureInfoActionTest extends TestCase
     {
         yield 'host not defined' => [[]];
         yield 'host is null' => [['public_hub_url' => null]];
-    }
-
-    /**
-     * @test
-     * @dataProvider provideValidConfigs
-     */
-    public function throwsExceptionWhenBuildingTokenFails(array $mercureConfig): void
-    {
-        $buildToken = $this->provider->buildSubscriptionToken(Argument::any())->willThrow(
-            new RuntimeException('Error'),
-        );
-
-        $action = new MercureInfoAction($this->provider->reveal(), $mercureConfig);
-
-        $this->expectException(MercureException::class);
-        $buildToken->shouldBeCalledOnce();
-
-        $action->handle(ServerRequestFactory::fromGlobals());
     }
 
     public function provideValidConfigs(): iterable
