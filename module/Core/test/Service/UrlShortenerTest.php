@@ -39,7 +39,7 @@ class UrlShortenerTest extends TestCase
             [$shortUrl] = $arguments;
             $shortUrl->setId('10');
         });
-        $this->em->transactional(Argument::type('callable'))->will(function (array $args) {
+        $this->em->wrapInTransaction(Argument::type('callable'))->will(function (array $args) {
             /** @var callable $callback */
             [$callback] = $args;
 

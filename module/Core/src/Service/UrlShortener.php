@@ -39,7 +39,7 @@ class UrlShortener implements UrlShortenerInterface
         /** @var ShortUrlMeta $meta */
         $meta = $this->titleResolutionHelper->processTitleAndValidateUrl($meta);
 
-        return $this->em->transactional(function () use ($meta) {
+        return $this->em->wrapInTransaction(function () use ($meta) {
             $shortUrl = ShortUrl::fromMeta($meta, $this->relationResolver);
 
             $this->verifyShortCodeUniqueness($meta, $shortUrl);
