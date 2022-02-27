@@ -8,9 +8,11 @@ use GuzzleHttp\Client;
 use Laminas\ConfigAggregator\ConfigAggregator;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
+use League\Event\EventDispatcher;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use PHPUnit\Runner\Version;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -20,6 +22,10 @@ use SebastianBergmann\CodeCoverage\Filter;
 use SebastianBergmann\CodeCoverage\Report\Html\Facade as Html;
 use SebastianBergmann\CodeCoverage\Report\PHP;
 use SebastianBergmann\CodeCoverage\Report\Xml\Facade as Xml;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Event\ConsoleCommandEvent;
+use Symfony\Component\Console\Event\ConsoleTerminateEvent;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
@@ -30,13 +36,38 @@ use const ShlinkioTest\Shlink\SWOOLE_TESTING_HOST;
 use const ShlinkioTest\Shlink\SWOOLE_TESTING_PORT;
 
 $isApiTest = env('TEST_ENV') === 'api';
+$isCliTest = env('TEST_ENV') === 'cli';
+$isE2eTest = $isApiTest || $isCliTest;
 $generateCoverage = env('GENERATE_COVERAGE') === 'yes';
-if ($isApiTest && $generateCoverage) {
+
+$coverage = null;
+if ($isE2eTest && $generateCoverage) {
     $filter = new Filter();
     $filter->includeDirectory(__DIR__ . '/../../module/Core/src');
-    $filter->includeDirectory(__DIR__ . '/../../module/Rest/src');
+    $filter->includeDirectory(__DIR__ . '/../../module/' . ($isApiTest ? 'Rest' : 'CLI') . '/src');
     $coverage = new CodeCoverage((new Selector())->forLineCoverage($filter), $filter);
 }
+
+/**
+ * @param 'api'|'cli' $type
+ * @param array<'cov'|'xml'|'html'> $formats
+ */
+$exportCoverage = static function (string $type = 'api', array $formats = ['cov', 'xml', 'html']) use (&$coverage): void {
+    if ($coverage === null) {
+        return;
+    }
+
+    $basePath = __DIR__ . '/../../build/coverage-' . $type;
+
+    foreach ($formats as $format) {
+        match ($format) {
+            'cov' => (new PHP())->process($coverage, $basePath . '.cov'),
+            'xml' => (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml'),
+            'html' => (new Html())->process($coverage, $basePath . '/coverage-html'),
+            default => null,
+        };
+    }
+};
 
 $buildDbConnection = static function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
@@ -119,17 +150,10 @@ return [
         [
             'name' => 'dump_coverage',
             'path' => '/api-tests/stop-coverage',
-            'middleware' => middleware(static function () use (&$coverage) {
+            'middleware' => middleware(static function () use ($exportCoverage) {
                 // TODO I have tried moving this block to a listener so that it's invoked automatically,
                 //      but then the coverage is generated empty ¯\_(ツ)_/¯
-                if ($coverage) { // @phpstan-ignore-line
-                    $basePath = __DIR__ . '/../../build/coverage-api';
-
-                    (new PHP())->process($coverage, $basePath . '.cov');
-                    (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
-                    (new Html())->process($coverage, $basePath . '/coverage-html');
-                }
-
+                $exportCoverage();
                 return new EmptyResponse();
             }),
             'allowed_methods' => ['GET'],
@@ -170,6 +194,60 @@ return [
         'factories' => [
             TestUtils\Helper\TestHelper::class => InvokableFactory::class,
         ],
+        'delegators' => $isCliTest ? [
+            Application::class => [
+                static function (
+                    ContainerInterface $c,
+                    string $serviceName,
+                    callable $callback,
+                ) use (
+                    &$coverage,
+                    $exportCoverage,
+                ) {
+                    /** @var Application $app */
+                    $app = $callback();
+                    $wrappedEventDispatcher = new EventDispatcher();
+
+                    $wrappedEventDispatcher->subscribeTo(
+                        ConsoleCommandEvent::class,
+                        static function () use (&$coverage): void {
+                            $id = env('COVERAGE_ID');
+                            if ($id === null) {
+                                return;
+                            }
+
+                            $coverage?->start($id);
+                        },
+                    );
+                    $wrappedEventDispatcher->subscribeTo(
+                        ConsoleTerminateEvent::class,
+                        static function () use (&$coverage, $exportCoverage): void {
+                            $id = env('COVERAGE_ID');
+                            if ($id === null) {
+                                return;
+                            }
+
+                            $coverage?->stop();
+                            $exportCoverage('cli');
+                        },
+                    );
+
+                    $app->setDispatcher(new class ($wrappedEventDispatcher) implements EventDispatcherInterface {
+                        public function __construct(private EventDispatcher $wrappedDispatcher)
+                        {
+                        }
+
+                        public function dispatch(object $event, ?string $eventName = null): object
+                        {
+                            $this->wrappedDispatcher->dispatch($event);
+                            return $event;
+                        }
+                    });
+
+                    return $app;
+                },
+            ],
+        ] : [],
     ],
 
     'entity_manager' => [

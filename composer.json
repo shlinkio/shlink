@@ -61,9 +61,9 @@
         "symfony/string": "^6.0"
     },
     "require-dev": {
-        "cebe/php-openapi": "^1.5",
+        "cebe/php-openapi": "^1.6",
         "devster/ubench": "^2.1",
-        "dms/phpunit-arraysubset-asserts": "^0.3.0",
+        "dms/phpunit-arraysubset-asserts": "^0.4.0",
         "infection/infection": "^0.26",
         "openswoole/ide-helper": "~4.9.1",
         "phpspec/prophecy-phpunit": "^2.0",
