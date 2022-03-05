@@ -19,6 +19,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
+use const Shlinkio\Shlink\MIGRATIONS_TABLE;
 
 class CreateDatabaseCommandTest extends TestCase
 {
@@ -89,7 +90,7 @@ class CreateDatabaseCommandTest extends TestCase
         $listDatabases = $this->schemaManager->listDatabases()->willReturn(['foo', 'bar']);
         $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function (): void {
         });
-        $listTables = $this->schemaManager->listTableNames()->willReturn(['foo_table', 'bar_table']);
+        $listTables = $this->schemaManager->listTableNames()->willReturn(['foo_table', 'bar_table', MIGRATIONS_TABLE]);
 
         $this->commandTester->execute([]);
 
@@ -99,15 +100,18 @@ class CreateDatabaseCommandTest extends TestCase
         $listTables->shouldHaveBeenCalledOnce();
     }
 
-    /** @test */
-    public function tablesAreCreatedIfDatabaseIsEmpty(): void
+    /**
+     * @test
+     * @dataProvider provideEmptyDatabase
+     */
+    public function tablesAreCreatedIfDatabaseIsEmpty(array $tables): void
     {
         $shlinkDatabase = 'shlink_database';
         $getDatabase = $this->regularConn->getDatabase()->willReturn($shlinkDatabase);
         $listDatabases = $this->schemaManager->listDatabases()->willReturn(['foo', $shlinkDatabase, 'bar']);
         $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function (): void {
         });
-        $listTables = $this->schemaManager->listTableNames()->willReturn([]);
+        $listTables = $this->schemaManager->listTableNames()->willReturn($tables);
         $runCommand = $this->processHelper->run(Argument::type(OutputInterface::class), [
             '/usr/local/bin/php',
             CreateDatabaseCommand::DOCTRINE_SCRIPT,
@@ -125,6 +129,12 @@ class CreateDatabaseCommandTest extends TestCase
         $createDatabase->shouldNotHaveBeenCalled();
         $listTables->shouldHaveBeenCalledOnce();
         $runCommand->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideEmptyDatabase(): iterable
+    {
+        yield 'no tables' => [[]];
+        yield 'migrations table' => [[MIGRATIONS_TABLE]];
     }
 
     /** @test */

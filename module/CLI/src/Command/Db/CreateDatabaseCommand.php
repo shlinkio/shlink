@@ -15,6 +15,9 @@ use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 
 use function Functional\contains;
+use function Functional\filter;
+
+use const Shlinkio\Shlink\MIGRATIONS_TABLE;
 
 class CreateDatabaseCommand extends AbstractDatabaseCommand
 {
@@ -81,8 +84,9 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     private function schemaExists(): bool
     {
         // If at least one of the shlink tables exist, we will consider the database exists somehow.
-        // Any inconsistency should be taken care by the migrations
+        // We exclude the migrations table, in case db:migrate was run first by mistake.
+        // Any other inconsistency will be taken care by the migrations.
         $schemaManager = $this->regularConn->createSchemaManager();
-        return ! empty($schemaManager->listTableNames());
+        return ! empty(filter($schemaManager->listTableNames(), fn (string $table) => $table !== MIGRATIONS_TABLE));
     }
 }
