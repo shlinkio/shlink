@@ -19,6 +19,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
+
 use const Shlinkio\Shlink\MIGRATIONS_TABLE;
 
 class CreateDatabaseCommandTest extends TestCase
