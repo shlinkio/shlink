@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\Db;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -27,7 +28,6 @@ class CreateDatabaseCommandTest extends TestCase
     private ObjectProphecy $processHelper;
     private ObjectProphecy $regularConn;
     private ObjectProphecy $schemaManager;
-    private ObjectProphecy $databasePlatform;
 
     public function setUp(): void
     {
@@ -43,11 +43,10 @@ class CreateDatabaseCommandTest extends TestCase
 
         $this->processHelper = $this->prophesize(ProcessRunnerInterface::class);
         $this->schemaManager = $this->prophesize(AbstractSchemaManager::class);
-        $this->databasePlatform = $this->prophesize(AbstractPlatform::class);
 
         $this->regularConn = $this->prophesize(Connection::class);
         $this->regularConn->createSchemaManager()->willReturn($this->schemaManager->reveal());
-        $this->regularConn->getDatabasePlatform()->willReturn($this->databasePlatform->reveal());
+        $this->regularConn->getDatabasePlatform()->willReturn($this->prophesize(AbstractPlatform::class)->reveal());
         $noDbNameConn = $this->prophesize(Connection::class);
         $noDbNameConn->createSchemaManager()->willReturn($this->schemaManager->reveal());
 
@@ -131,7 +130,7 @@ class CreateDatabaseCommandTest extends TestCase
     /** @test */
     public function databaseCheckIsSkippedForSqlite(): void
     {
-        $this->databasePlatform->getName()->willReturn('sqlite');
+        $this->regularConn->getDatabasePlatform()->willReturn($this->prophesize(SqlitePlatform::class)->reveal());
 
         $shlinkDatabase = 'shlink_database';
         $getDatabase = $this->regularConn->getDatabase()->willReturn($shlinkDatabase);

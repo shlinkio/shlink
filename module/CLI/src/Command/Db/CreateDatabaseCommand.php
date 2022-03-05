@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Db;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -62,7 +63,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
     private function checkDbExists(): void
     {
-        if ($this->regularConn->getDatabasePlatform()->getName() === 'sqlite') {
+        if ($this->regularConn->getDatabasePlatform() instanceof SqlitePlatform) {
             return;
         }
 
