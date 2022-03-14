@@ -139,7 +139,7 @@
         "test:api": "bin/test/run-api-tests.sh",
         "test:api:ci": "GENERATE_COVERAGE=yes composer test:api",
         "infect:ci:base": "infection --threads=4 --log-verbosity=default --only-covered --only-covering-test-cases --skip-initial-tests",
-        "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=85",
+        "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=84",
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json",
         "infect:ci:api": "@infect:ci:base --coverage=build/coverage-api --min-msi=80 --configuration=infection-api.json",
         "infect:ci": "@parallel infect:ci:unit infect:ci:db infect:ci:api",

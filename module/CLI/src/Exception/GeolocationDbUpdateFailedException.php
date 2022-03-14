@@ -13,7 +13,7 @@ class GeolocationDbUpdateFailedException extends RuntimeException implements Exc
 {
     private bool $olderDbExists;
 
-    private function __construct(string $message, int $code = 0, ?Throwable $previous = null)
+    private function __construct(string $message, int $code, ?Throwable $previous)
     {
         parent::__construct($message, $code, $previous);
     }
@@ -47,7 +47,7 @@ class GeolocationDbUpdateFailedException extends RuntimeException implements Exc
         $e = new self(sprintf(
             'Build epoch with value "%s" from existing geolocation database, could not be parsed to integer.',
             $buildEpoch,
-        ));
+        ), 0, null);
         $e->olderDbExists = true;
 
         return $e;

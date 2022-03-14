@@ -30,6 +30,7 @@ class GeolocationDbUpdaterTest extends TestCase
     private ObjectProphecy $dbUpdater;
     private ObjectProphecy $geoLiteDbReader;
     private TrackingOptions $trackingOptions;
+    private ObjectProphecy $lock;
 
     public function setUp(): void
     {
@@ -38,11 +39,11 @@ class GeolocationDbUpdaterTest extends TestCase
         $this->trackingOptions = new TrackingOptions();
 
         $locker = $this->prophesize(Lock\LockFactory::class);
-        $lock = $this->prophesize(Lock\LockInterface::class);
-        $lock->acquire(true)->willReturn(true);
-        $lock->release()->will(function (): void {
+        $this->lock = $this->prophesize(Lock\LockInterface::class);
+        $this->lock->acquire(true)->willReturn(true);
+        $this->lock->release()->will(function (): void {
         });
-        $locker->createLock(Argument::type('string'))->willReturn($lock->reveal());
+        $locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
 
         $this->geolocationDbUpdater = new GeolocationDbUpdater(
             $this->dbUpdater->reveal(),
@@ -75,6 +76,8 @@ class GeolocationDbUpdaterTest extends TestCase
         $fileExists->shouldHaveBeenCalledOnce();
         $getMeta->shouldNotHaveBeenCalled();
         $download->shouldHaveBeenCalledOnce();
+        $this->lock->acquire(true)->shouldHaveBeenCalledOnce();
+        $this->lock->release()->shouldHaveBeenCalledOnce();
     }
 
     /**
