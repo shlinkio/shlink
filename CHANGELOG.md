@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1397](https://github.com/shlinkio/shlink/issues/1397) Fixed `db:create` command always reporting the schema exists if the `db:migrate` command has been run before by mistake.
+* [#1402](https://github.com/shlinkio/shlink/issues/1402) Fixed the base path getting appended with the default domain by mistake, causing multiple side effects in several places.
 
 
 ## [3.0.3] - 2022-02-19
