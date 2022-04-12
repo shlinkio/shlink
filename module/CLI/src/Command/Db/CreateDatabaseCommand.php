@@ -66,7 +66,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
     private function checkDbExists(): void
     {
-        if ($this->regularConn->getDatabasePlatform() instanceof SqlitePlatform) {
+        if ($this->regularConn->getDriver()->getDatabasePlatform() instanceof SqlitePlatform) {
             return;
         }
 
@@ -74,7 +74,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
         // Otherwise, it will fail to connect and will not be able to create the new database
         $schemaManager = $this->noDbNameConn->createSchemaManager();
         $databases = $schemaManager->listDatabases();
-        $shlinkDatabase = $this->regularConn->getDatabase();
+        $shlinkDatabase = $this->regularConn->getParams()['dbname'] ?? null;
 
         if ($shlinkDatabase !== null && ! contains($databases, $shlinkDatabase)) {
             $schemaManager->createDatabase($shlinkDatabase);

@@ -123,12 +123,6 @@ Depending on the kind of contribution, maybe not all kinds of tests are needed, 
 * Run `./indocker composer ci` to run all previous commands together. This command is run during the project's continuous integration.
 * Run `./indocker composer ci:parallel` to do the same as in previous case, but parallelizing non-conflicting tasks as much as possible.
 
-> Note: Due to some limitations in the tooling used by shlink, the testing databases need to exist beforehand, both for db and api tests (except sqlite).
->
-> However, they just need to be created empty, with no tables. Also, once created, they are automatically reset before every new execution.
->
-> The testing database is always called `shlink_test`. You can create it using the database client of your choice. [DBeaver](https://dbeaver.io/) is a good multi-platform desktop database client which supports all the engines supported by shlink.
-
 ## Pull request process
 
 **Important!**: Before starting to work on a pull request, make sure you always [open an issue](https://github.com/shlinkio/shlink/issues/new/choose) first.

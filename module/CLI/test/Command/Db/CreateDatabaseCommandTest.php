@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Db;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
@@ -30,6 +31,7 @@ class CreateDatabaseCommandTest extends TestCase
     private ObjectProphecy $processHelper;
     private ObjectProphecy $regularConn;
     private ObjectProphecy $schemaManager;
+    private ObjectProphecy $driver;
 
     public function setUp(): void
     {
@@ -48,7 +50,9 @@ class CreateDatabaseCommandTest extends TestCase
 
         $this->regularConn = $this->prophesize(Connection::class);
         $this->regularConn->createSchemaManager()->willReturn($this->schemaManager->reveal());
-        $this->regularConn->getDatabasePlatform()->willReturn($this->prophesize(AbstractPlatform::class)->reveal());
+        $this->driver = $this->prophesize(Driver::class);
+        $this->regularConn->getDriver()->willReturn($this->driver->reveal());
+        $this->driver->getDatabasePlatform()->willReturn($this->prophesize(AbstractPlatform::class)->reveal());
         $noDbNameConn = $this->prophesize(Connection::class);
         $noDbNameConn->createSchemaManager()->willReturn($this->schemaManager->reveal());
 
@@ -67,7 +71,7 @@ class CreateDatabaseCommandTest extends TestCase
     public function successMessageIsPrintedIfDatabaseAlreadyExists(): void
     {
         $shlinkDatabase = 'shlink_database';
-        $getDatabase = $this->regularConn->getDatabase()->willReturn($shlinkDatabase);
+        $getDatabase = $this->regularConn->getParams()->willReturn(['dbname' => $shlinkDatabase]);
         $listDatabases = $this->schemaManager->listDatabases()->willReturn(['foo', $shlinkDatabase, 'bar']);
         $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function (): void {
         });
@@ -87,7 +91,7 @@ class CreateDatabaseCommandTest extends TestCase
     public function databaseIsCreatedIfItDoesNotExist(): void
     {
         $shlinkDatabase = 'shlink_database';
-        $getDatabase = $this->regularConn->getDatabase()->willReturn($shlinkDatabase);
+        $getDatabase = $this->regularConn->getParams()->willReturn(['dbname' => $shlinkDatabase]);
         $listDatabases = $this->schemaManager->listDatabases()->willReturn(['foo', 'bar']);
         $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function (): void {
         });
@@ -108,7 +112,7 @@ class CreateDatabaseCommandTest extends TestCase
     public function tablesAreCreatedIfDatabaseIsEmpty(array $tables): void
     {
         $shlinkDatabase = 'shlink_database';
-        $getDatabase = $this->regularConn->getDatabase()->willReturn($shlinkDatabase);
+        $getDatabase = $this->regularConn->getParams()->willReturn(['dbname' => $shlinkDatabase]);
         $listDatabases = $this->schemaManager->listDatabases()->willReturn(['foo', $shlinkDatabase, 'bar']);
         $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function (): void {
         });
@@ -141,10 +145,10 @@ class CreateDatabaseCommandTest extends TestCase
     /** @test */
     public function databaseCheckIsSkippedForSqlite(): void
     {
-        $this->regularConn->getDatabasePlatform()->willReturn($this->prophesize(SqlitePlatform::class)->reveal());
+        $this->driver->getDatabasePlatform()->willReturn($this->prophesize(SqlitePlatform::class)->reveal());
 
         $shlinkDatabase = 'shlink_database';
-        $getDatabase = $this->regularConn->getDatabase()->willReturn($shlinkDatabase);
+        $getDatabase = $this->regularConn->getParams()->willReturn(['dbname' => $shlinkDatabase]);
         $listDatabases = $this->schemaManager->listDatabases()->willReturn(['foo', 'bar']);
         $createDatabase = $this->schemaManager->createDatabase($shlinkDatabase)->will(function (): void {
         });
