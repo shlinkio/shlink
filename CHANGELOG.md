@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#1294](https://github.com/shlinkio/shlink/issues/1294) Allowed to specify a specific domain when importing URLs from YOURLS.
 
 ### Changed
 * [#1359](https://github.com/shlinkio/shlink/issues/1359) Hidden database commands.
