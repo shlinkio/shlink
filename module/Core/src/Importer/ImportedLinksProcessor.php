@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Symfony\Component\Console\Style\StyleInterface;
 
@@ -34,10 +35,10 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     /**
      * @param iterable|ImportedShlinkUrl[] $shlinkUrls
      */
-    public function process(StyleInterface $io, iterable $shlinkUrls, array $params): void
+    public function process(StyleInterface $io, iterable $shlinkUrls, ImportParams $params): void
     {
-        $importShortCodes = $params['import_short_codes'];
-        $source = $params['source'];
+        $importShortCodes = $params->importShortCodes();
+        $source = $params->source();
         $iterable = $this->batchHelper->wrapIterable($shlinkUrls, $source === ImportSources::SHLINK ? 10 : 100);
 
         /** @var ImportedShlinkUrl $importedUrl */
