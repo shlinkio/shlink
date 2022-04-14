@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ## [Unreleased]
 ### Added
 * [#1294](https://github.com/shlinkio/shlink/issues/1294) Allowed to specify a specific domain when importing URLs from YOURLS.
+* [#1416](https://github.com/shlinkio/shlink/issues/1416) Added support to import URLs from Kutt.it.
 
 ### Changed
 * [#1359](https://github.com/shlinkio/shlink/issues/1359) Hidden database commands.
