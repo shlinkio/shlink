@@ -77,6 +77,7 @@ class EnvVarsTest extends TestCase
             EnvVars::DEFAULT_DOMAIN,
             EnvVars::AUTO_RESOLVE_TITLES,
             EnvVars::REDIRECT_APPEND_EXTRA_PATH,
+            EnvVars::TIMEZONE,
             EnvVars::VISITS_WEBHOOKS,
             EnvVars::NOTIFY_ORPHAN_VISITS_TO_WEBHOOKS,
         ], $list);
