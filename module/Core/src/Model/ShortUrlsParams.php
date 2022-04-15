@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Validation\ShortUrlsParamsInputFilter;
 
 use function Shlinkio\Shlink\Common\buildDateRange;
-use function Shlinkio\Shlink\Core\parseDateField;
+use function Shlinkio\Shlink\Core\normalizeDate;
 
 final class ShortUrlsParams
 {
@@ -61,8 +61,8 @@ final class ShortUrlsParams
         $this->searchTerm = $inputFilter->getValue(ShortUrlsParamsInputFilter::SEARCH_TERM);
         $this->tags = (array) $inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS);
         $this->dateRange = buildDateRange(
-            parseDateField($inputFilter->getValue(ShortUrlsParamsInputFilter::START_DATE)),
-            parseDateField($inputFilter->getValue(ShortUrlsParamsInputFilter::END_DATE)),
+            normalizeDate($inputFilter->getValue(ShortUrlsParamsInputFilter::START_DATE)),
+            normalizeDate($inputFilter->getValue(ShortUrlsParamsInputFilter::END_DATE)),
         );
         $this->orderBy = Ordering::fromTuple($inputFilter->getValue(ShortUrlsParamsInputFilter::ORDER_BY));
         $this->itemsPerPage = (int) (

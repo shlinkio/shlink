@@ -12,6 +12,7 @@ use Laminas\InputFilter\InputFilter;
 use PUGX\Shortid\Factory as ShortIdFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 
+use function date_default_timezone_get;
 use function Functional\reduce_left;
 use function is_array;
 use function print_r;
@@ -32,7 +33,7 @@ function generateRandomShortCode(int $length): string
 
 function parseDateFromQuery(array $query, string $dateName): ?Chronos
 {
-    return empty($query[$dateName] ?? null) ? null : Chronos::parse($query[$dateName]);
+    return normalizeDate(empty($query[$dateName] ?? null) ? null : Chronos::parse($query[$dateName]));
 }
 
 function parseDateRangeFromQuery(array $query, string $startDateName, string $endDateName): DateRange
@@ -43,29 +44,15 @@ function parseDateRangeFromQuery(array $query, string $startDateName, string $en
     return buildDateRange($startDate, $endDate);
 }
 
-function parseDateField(string|DateTimeInterface|Chronos|null $date): ?Chronos
+function normalizeDate(string|DateTimeInterface|Chronos|null $date): ?Chronos
 {
-    if ($date === null || $date instanceof Chronos) {
-        return $date;
-    }
+    $parsedDate = match (true) {
+        $date === null || $date instanceof Chronos => $date,
+        $date instanceof DateTimeInterface => Chronos::instance($date),
+        default => Chronos::parse($date),
+    };
 
-    if ($date instanceof DateTimeInterface) {
-        return Chronos::instance($date);
-    }
-
-    return Chronos::parse($date);
-}
-
-function determineTableName(string $tableName, array $emConfig = []): string
-{
-    $schema = $emConfig['connection']['schema'] ?? null;
-//    $tablePrefix = $emConfig['connection']['table_prefix'] ?? null; // TODO
-
-    if ($schema === null) {
-        return $tableName;
-    }
-
-    return sprintf('%s.%s', $schema, $tableName);
+    return $parsedDate?->setTimezone(date_default_timezone_get());
 }
 
 function getOptionalIntFromInputFilter(InputFilter $inputFilter, string $fieldName): ?int
@@ -106,6 +93,18 @@ function isCrawler(string $userAgent): bool
     }
 
     return $detector->isCrawler($userAgent);
+}
+
+function determineTableName(string $tableName, array $emConfig = []): string
+{
+    $schema = $emConfig['connection']['schema'] ?? null;
+//    $tablePrefix = $emConfig['connection']['table_prefix'] ?? null; // TODO
+
+    if ($schema === null) {
+        return $tableName;
+    }
+
+    return sprintf('%s.%s', $schema, $tableName);
 }
 
 function fieldWithUtf8Charset(FieldBuilder $field, array $emConfig, string $collation = 'unicode_ci'): FieldBuilder
