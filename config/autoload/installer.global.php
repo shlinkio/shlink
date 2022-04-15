@@ -27,6 +27,7 @@ return [
             Option\Redirect\Regular404RedirectConfigOption::class,
             Option\Visit\VisitsThresholdConfigOption::class,
             Option\BasePathConfigOption::class,
+            Option\TimezoneConfigOption::class,
             Option\Worker\TaskWorkerNumConfigOption::class,
             Option\Worker\WebWorkerNumConfigOption::class,
             Option\Redis\RedisServersConfigOption::class,
