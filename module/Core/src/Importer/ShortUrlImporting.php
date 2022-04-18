@@ -29,7 +29,7 @@ final class ShortUrlImporting
     }
 
     /**
-     * @param iterable|ImportedShlinkVisit[] $visits
+     * @param iterable<ImportedShlinkVisit> $visits
      */
     public function importVisits(iterable $visits, EntityManagerInterface $em): string
     {
