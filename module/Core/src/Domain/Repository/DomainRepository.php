@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Domain\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Spec;
 use Shlinkio\Shlink\Core\Domain\Spec\IsDomain;
@@ -40,8 +41,25 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
 
     public function findOneByAuthority(string $authority, ?ApiKey $apiKey = null): ?Domain
     {
-        $qb = $this->createQueryBuilder('d');
-        $qb->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
+        $qb = $this->createDomainQueryBuilder($authority, $apiKey);
+        $qb->select('d');
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function domainExists(string $authority, ?ApiKey $apiKey = null): bool
+    {
+        $qb = $this->createDomainQueryBuilder($authority, $apiKey);
+        $qb->select('COUNT(d.id)');
+
+        return ((int) $qb->getQuery()->getSingleScalarResult()) > 0;
+    }
+
+    private function createDomainQueryBuilder(string $authority, ?ApiKey $apiKey): QueryBuilder
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(Domain::class, 'd')
+           ->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
            ->where($qb->expr()->eq('d.authority', ':authority'))
            ->setParameter('authority', $authority)
            ->setMaxResults(1);
@@ -51,7 +69,7 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
             $this->applySpecification($qb, $spec, $alias);
         }
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb;
     }
 
     private function determineExtraSpecs(?ApiKey $apiKey): iterable

@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Visit;
 
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
@@ -32,6 +33,12 @@ interface VisitsStatsHelperInterface
      * @throws TagNotFoundException
      */
     public function visitsForTag(string $tag, VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
+
+    /**
+     * @return Visit[]|Paginator
+     * @throws DomainNotFoundException
+     */
+    public function visitsForDomain(string $domain, VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
      * @return Visit[]|Paginator

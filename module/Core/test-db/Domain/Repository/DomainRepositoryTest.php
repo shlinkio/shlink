@@ -55,6 +55,10 @@ class DomainRepositoryTest extends DatabaseTestCase
         self::assertEquals($detachedWithRedirects, $this->repo->findOneByAuthority('detached-with-redirects.com'));
         self::assertNull($this->repo->findOneByAuthority('does-not-exist.com'));
         self::assertEquals($detachedDomain, $this->repo->findOneByAuthority('detached.com'));
+        self::assertTrue($this->repo->domainExists('bar.com'));
+        self::assertTrue($this->repo->domainExists('detached-with-redirects.com'));
+        self::assertFalse($this->repo->domainExists('does-not-exist.com'));
+        self::assertTrue($this->repo->domainExists('detached.com'));
     }
 
     /** @test */
@@ -115,6 +119,12 @@ class DomainRepositoryTest extends DatabaseTestCase
             $this->repo->findOneByAuthority('detached-with-redirects.com', $detachedWithRedirectsApiKey),
         );
         self::assertNull($this->repo->findOneByAuthority('foo.com', $detachedWithRedirectsApiKey));
+
+        self::assertTrue($this->repo->domainExists('foo.com', $authorApiKey));
+        self::assertFalse($this->repo->domainExists('bar.com', $authorApiKey));
+        self::assertTrue($this->repo->domainExists('bar.com', $barDomainApiKey));
+        self::assertTrue($this->repo->domainExists('detached-with-redirects.com', $detachedWithRedirectsApiKey));
+        self::assertFalse($this->repo->domainExists('foo.com', $detachedWithRedirectsApiKey));
     }
 
     private function createShortUrl(Domain $domain, ?ApiKey $apiKey = null): ShortUrl

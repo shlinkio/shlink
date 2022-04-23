@@ -16,7 +16,7 @@ return (static function (): array {
     return [
 
         'url_shortener' => [
-            'domain' => [
+            'domain' => [ // TODO Refactor this structure to url_shortener.schema and url_shortener.default_domain
                 'schema' => ((bool) EnvVars::IS_HTTPS_ENABLED()->loadFromEnv(true)) ? 'https' : 'http',
                 'hostname' => EnvVars::DEFAULT_DOMAIN()->loadFromEnv(''),
             ],

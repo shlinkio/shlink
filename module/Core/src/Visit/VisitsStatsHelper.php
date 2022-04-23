@@ -7,9 +7,12 @@ namespace Shlinkio\Shlink\Core\Visit;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
+use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
+use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
@@ -19,6 +22,7 @@ use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
+use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\DomainVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\NonOrphanVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\OrphanVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\ShortUrlVisitsPaginatorAdapter;
@@ -83,6 +87,24 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
         $repo = $this->em->getRepository(Visit::class);
 
         return $this->createPaginator(new TagVisitsPaginatorAdapter($repo, $tag, $params, $apiKey), $params);
+    }
+
+    /**
+     * @return Visit[]|Paginator
+     * @throws DomainNotFoundException
+     */
+    public function visitsForDomain(string $domain, VisitsParams $params, ?ApiKey $apiKey = null): Paginator
+    {
+        /** @var DomainRepository $domainRepo */
+        $domainRepo = $this->em->getRepository(Domain::class);
+        if ($domain !== 'DEFAULT' && ! $domainRepo->domainExists($domain, $apiKey)) {
+            throw DomainNotFoundException::fromAuthority($domain);
+        }
+
+        /** @var VisitRepositoryInterface $repo */
+        $repo = $this->em->getRepository(Visit::class);
+
+        return $this->createPaginator(new DomainVisitsPaginatorAdapter($repo, $domain, $params, $apiKey), $params);
     }
 
     /**

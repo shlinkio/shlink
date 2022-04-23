@@ -10,9 +10,12 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
+use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
@@ -155,6 +158,69 @@ class VisitsStatsHelperTest extends TestCase
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
         $tagExists->shouldHaveBeenCalledOnce();
+        $getRepo->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
+    public function throwsExceptionWhenRequestingVisitsForInvalidDomain(): void
+    {
+        $domain = 'foo.com';
+        $apiKey = ApiKey::create();
+        $repo = $this->prophesize(DomainRepository::class);
+        $domainExists = $repo->domainExists($domain, $apiKey)->willReturn(false);
+        $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
+
+        $this->expectException(DomainNotFoundException::class);
+        $domainExists->shouldBeCalledOnce();
+        $getRepo->shouldBeCalledOnce();
+
+        $this->helper->visitsForDomain($domain, new VisitsParams(), $apiKey);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideAdminApiKeys
+     */
+    public function visitsForNonDefaultDomainAreReturnedAsExpected(?ApiKey $apiKey): void
+    {
+        $domain = 'foo.com';
+        $repo = $this->prophesize(DomainRepository::class);
+        $domainExists = $repo->domainExists($domain, $apiKey)->willReturn(true);
+        $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
+
+        $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
+        $repo2 = $this->prophesize(VisitRepository::class);
+        $repo2->findVisitsByDomain($domain, Argument::type(VisitsListFiltering::class))->willReturn($list);
+        $repo2->countVisitsByDomain($domain, Argument::type(VisitsCountFiltering::class))->willReturn(1);
+        $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
+
+        $paginator = $this->helper->visitsForDomain($domain, new VisitsParams(), $apiKey);
+
+        self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
+        $domainExists->shouldHaveBeenCalledOnce();
+        $getRepo->shouldHaveBeenCalledOnce();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideAdminApiKeys
+     */
+    public function visitsForDefaultDomainAreReturnedAsExpected(?ApiKey $apiKey): void
+    {
+        $repo = $this->prophesize(DomainRepository::class);
+        $domainExists = $repo->domainExists(Argument::cetera());
+        $getRepo = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
+
+        $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
+        $repo2 = $this->prophesize(VisitRepository::class);
+        $repo2->findVisitsByDomain('DEFAULT', Argument::type(VisitsListFiltering::class))->willReturn($list);
+        $repo2->countVisitsByDomain('DEFAULT', Argument::type(VisitsCountFiltering::class))->willReturn(1);
+        $this->em->getRepository(Visit::class)->willReturn($repo2->reveal())->shouldBeCalledOnce();
+
+        $paginator = $this->helper->visitsForDomain('DEFAULT', new VisitsParams(), $apiKey);
+
+        self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
+        $domainExists->shouldNotHaveBeenCalled();
         $getRepo->shouldHaveBeenCalledOnce();
     }
 

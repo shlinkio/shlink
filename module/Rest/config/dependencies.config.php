@@ -34,6 +34,7 @@ return [
             Action\ShortUrl\ListShortUrlsAction::class => ConfigAbstractFactory::class,
             Action\Visit\ShortUrlVisitsAction::class => ConfigAbstractFactory::class,
             Action\Visit\TagVisitsAction::class => ConfigAbstractFactory::class,
+            Action\Visit\DomainVisitsAction::class => ConfigAbstractFactory::class,
             Action\Visit\GlobalVisitsAction::class => ConfigAbstractFactory::class,
             Action\Visit\OrphanVisitsAction::class => ConfigAbstractFactory::class,
             Action\Visit\NonOrphanVisitsAction::class => ConfigAbstractFactory::class,
@@ -73,6 +74,10 @@ return [
         ],
         Action\Visit\ShortUrlVisitsAction::class => [Visit\VisitsStatsHelper::class],
         Action\Visit\TagVisitsAction::class => [Visit\VisitsStatsHelper::class],
+        Action\Visit\DomainVisitsAction::class => [
+            Visit\VisitsStatsHelper::class,
+            'config.url_shortener.domain.hostname',
+        ],
         Action\Visit\GlobalVisitsAction::class => [Visit\VisitsStatsHelper::class],
         Action\Visit\OrphanVisitsAction::class => [
             Visit\VisitsStatsHelper::class,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application as CliApp;
 
-return (static function () {
+return (static function (): CliApp {
     /** @var ContainerInterface $container */
     $container = include __DIR__ . '/container.php';
     return $container->get(CliApp::class);
