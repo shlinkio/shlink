@@ -97,7 +97,7 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
     {
         /** @var DomainRepository $domainRepo */
         $domainRepo = $this->em->getRepository(Domain::class);
-        if ($domain !== 'DEFAULT' && $domainRepo->count(['authority' => $domain]) === 0) {
+        if ($domain !== 'DEFAULT' && ! $domainRepo->domainExists($domain, $apiKey)) {
             throw DomainNotFoundException::fromAuthority($domain);
         }
 
