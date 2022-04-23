@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1294](https://github.com/shlinkio/shlink/issues/1294) Allowed to specify a specific domain when importing URLs from YOURLS.
 * [#1416](https://github.com/shlinkio/shlink/issues/1416) Added support to import URLs from Kutt.it.
 * [#1418](https://github.com/shlinkio/shlink/issues/1418) Added support to customize the timezone used by Shlink, falling back to the default one set in PHP config.
+* [#1309](https://github.com/shlinkio/shlink/issues/1309) Improved URL importing, ensuring individual errors do not make the whole process fail, and instead, failing URLs are skipped.
 
 ### Changed
 * [#1359](https://github.com/shlinkio/shlink/issues/1359) Hidden database commands.
