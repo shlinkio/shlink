@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
@@ -44,7 +45,7 @@ class OrphanVisitDataTransformerTest extends TestCase
                 'visitLocation' => null,
                 'potentialBot' => false,
                 'visitedUrl' => '',
-                'type' => Visit::TYPE_BASE_URL,
+                'type' => VisitType::BASE_URL->value,
             ],
         ];
         yield 'invalid short url visit' => [
@@ -60,7 +61,7 @@ class OrphanVisitDataTransformerTest extends TestCase
                 'visitLocation' => null,
                 'potentialBot' => false,
                 'visitedUrl' => 'https://example.com/foo',
-                'type' => Visit::TYPE_INVALID_SHORT_URL,
+                'type' => VisitType::INVALID_SHORT_URL->value,
             ],
         ];
         yield 'regular 404 visit' => [
@@ -78,7 +79,7 @@ class OrphanVisitDataTransformerTest extends TestCase
                 'visitLocation' => $location,
                 'potentialBot' => false,
                 'visitedUrl' => 'https://doma.in/foo/bar',
-                'type' => Visit::TYPE_REGULAR_404,
+                'type' => VisitType::REGULAR_404->value,
             ],
         ];
     }

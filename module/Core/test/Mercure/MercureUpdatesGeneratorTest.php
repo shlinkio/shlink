@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
+use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
 
 use function Shlinkio\Shlink\Common\json_decode;
@@ -95,7 +96,7 @@ class MercureUpdatesGeneratorTest extends TestCase
                 'date' => $orphanVisit->getDate()->toAtomString(),
                 'potentialBot' => false,
                 'visitedUrl' => $orphanVisit->visitedUrl(),
-                'type' => $orphanVisit->type(),
+                'type' => $orphanVisit->type()->value,
             ],
         ], json_decode($update->getData()));
     }
@@ -104,8 +105,8 @@ class MercureUpdatesGeneratorTest extends TestCase
     {
         $visitor = Visitor::emptyInstance();
 
-        yield Visit::TYPE_REGULAR_404 => [Visit::forRegularNotFound($visitor)];
-        yield Visit::TYPE_INVALID_SHORT_URL => [Visit::forInvalidShortUrl($visitor)];
-        yield Visit::TYPE_BASE_URL => [Visit::forBasePath($visitor)];
+        yield VisitType::REGULAR_404->value => [Visit::forRegularNotFound($visitor)];
+        yield VisitType::INVALID_SHORT_URL->value => [Visit::forInvalidShortUrl($visitor)];
+        yield VisitType::BASE_URL->value => [Visit::forBasePath($visitor)];
     }
 }

@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\EventDispatcher\NotifyVisitToMercure;
 use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 
@@ -160,8 +161,8 @@ class NotifyVisitToMercureTest extends TestCase
     {
         $visitor = Visitor::emptyInstance();
 
-        yield Visit::TYPE_REGULAR_404 => [Visit::forRegularNotFound($visitor)];
-        yield Visit::TYPE_INVALID_SHORT_URL => [Visit::forInvalidShortUrl($visitor)];
-        yield Visit::TYPE_BASE_URL => [Visit::forBasePath($visitor)];
+        yield VisitType::REGULAR_404->value => [Visit::forRegularNotFound($visitor)];
+        yield VisitType::INVALID_SHORT_URL->value => [Visit::forInvalidShortUrl($visitor)];
+        yield VisitType::BASE_URL->value => [Visit::forBasePath($visitor)];
     }
 }
