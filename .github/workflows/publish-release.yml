@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['8.0', '8.1']
+        php-version: ['8.1']
         swoole: ['yes', 'no']
     steps:
       - name: Checkout code
@@ -53,8 +53,8 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1' ]
-        swoole: [ 'yes', 'no' ]
+        php-version: ['8.1']
+        swoole: ['yes', 'no']
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:

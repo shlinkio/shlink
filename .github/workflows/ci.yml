@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['8.0']
+        php-version: ['8.1']
         command: ['cs', 'stan', 'swagger:validate']
     steps:
       - name: Checkout code
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['8.0', '8.1']
+        php-version: ['8.1']
         test-group: ['unit', 'api']
     steps:
       - name: Checkout code
@@ -51,7 +51,7 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - run: composer test:${{ matrix.test-group }}:ci
       - uses: actions/upload-artifact@v2
-        if: ${{ matrix.php-version == '8.0' }}
+        if: ${{ matrix.php-version == '8.1' }}
         with:
           name: coverage-${{ matrix.test-group }}
           path: |
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['8.0', '8.1']
+        php-version: ['8.1']
         platform: ['sqlite:ci', 'mysql', 'maria', 'postgres', 'ms']
     env:
       LC_ALL: C
@@ -91,7 +91,7 @@ jobs:
         run: composer test:db:${{ matrix.platform }}
       - name: Upload code coverage
         uses: actions/upload-artifact@v2
-        if: ${{ matrix.php-version == '8.0' && matrix.platform == 'sqlite:ci' }}
+        if: ${{ matrix.php-version == '8.1' && matrix.platform == 'sqlite:ci' }}
         with:
           name: coverage-db
           path: |
@@ -105,7 +105,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['8.0', '8.1']
+        php-version: ['8.1']
         test-group: ['unit', 'db', 'api']
     steps:
       - name: Checkout code
@@ -136,7 +136,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php-version: ['8.0']
+        php-version: ['8.1']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
