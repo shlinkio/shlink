@@ -48,12 +48,12 @@ class ListDomainsCommand extends Command
         $table->render(
             $showRedirects ? [...$commonFields, '"Not found" redirects'] : $commonFields,
             map($domains, function (DomainItem $domain) use ($showRedirects) {
-                $commonValues = [$domain->toString(), $domain->isDefault() ? 'Yes' : 'No'];
+                $commonValues = [$domain->toString(), $domain->isDefault ? 'Yes' : 'No'];
 
                 return $showRedirects
                     ? [
                         ...$commonValues,
-                        $this->notFoundRedirectsToString($domain->notFoundRedirectConfig()),
+                        $this->notFoundRedirectsToString($domain->notFoundRedirectConfig),
                       ]
                     : $commonValues;
             }),

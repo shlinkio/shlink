@@ -8,7 +8,7 @@ use Shlinkio\Shlink\Core\Config\EnvVars;
 return [
 
     'router' => [
-        'base_path' => EnvVars::BASE_PATH()->loadFromEnv(''),
+        'base_path' => EnvVars::BASE_PATH->loadFromEnv(''),
 
         'fastroute' => [
             FastRouteRouter::CONFIG_CACHE_ENABLED => true,

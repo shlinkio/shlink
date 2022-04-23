@@ -38,7 +38,7 @@ class ShortUrlVisitsActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->visitsHelper->visitsForShortUrl(
-            new ShortUrlIdentifier($shortCode),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             Argument::type(VisitsParams::class),
             Argument::type(ApiKey::class),
         )->willReturn(new Paginator(new ArrayAdapter([])))
@@ -52,7 +52,7 @@ class ShortUrlVisitsActionTest extends TestCase
     public function paramsAreReadFromQuery(): void
     {
         $shortCode = 'abc123';
-        $this->visitsHelper->visitsForShortUrl(new ShortUrlIdentifier($shortCode), new VisitsParams(
+        $this->visitsHelper->visitsForShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode), new VisitsParams(
             DateRange::withEndDate(Chronos::parse('2016-01-01 00:00:00')),
             3,
             10,

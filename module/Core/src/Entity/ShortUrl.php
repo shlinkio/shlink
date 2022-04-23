@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
+use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -174,7 +175,7 @@ class ShortUrl extends AbstractEntity
     {
         /** @var Selectable $visits */
         $visits = $this->visits;
-        $criteria = Criteria::create()->where(Criteria::expr()->eq('type', Visit::TYPE_IMPORTED))
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('type', VisitType::IMPORTED))
                                       ->orderBy(['id' => 'DESC'])
                                       ->setMaxResults(1);
 

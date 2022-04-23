@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -205,23 +206,23 @@ class ListShortUrlsCommandTest extends TestCase
 
     public function provideArgs(): iterable
     {
-        yield [[], 1, null, [], ShortUrlsParams::TAGS_MODE_ANY];
-        yield [['--page' => $page = 3], $page, null, [], ShortUrlsParams::TAGS_MODE_ANY];
-        yield [['--including-all-tags' => true], 1, null, [], ShortUrlsParams::TAGS_MODE_ALL];
-        yield [['--search-term' => $searchTerm = 'search this'], 1, $searchTerm, [], ShortUrlsParams::TAGS_MODE_ANY];
+        yield [[], 1, null, [], TagsMode::ANY->value];
+        yield [['--page' => $page = 3], $page, null, [], TagsMode::ANY->value];
+        yield [['--including-all-tags' => true], 1, null, [], TagsMode::ALL->value];
+        yield [['--search-term' => $searchTerm = 'search this'], 1, $searchTerm, [], TagsMode::ANY->value];
         yield [
             ['--page' => $page = 3, '--search-term' => $searchTerm = 'search this', '--tags' => $tags = 'foo,bar'],
             $page,
             $searchTerm,
             explode(',', $tags),
-            ShortUrlsParams::TAGS_MODE_ANY,
+            TagsMode::ANY->value,
         ];
         yield [
             ['--start-date' => $startDate = '2019-01-01'],
             1,
             null,
             [],
-            ShortUrlsParams::TAGS_MODE_ANY,
+            TagsMode::ANY->value,
             $startDate,
         ];
         yield [
@@ -229,7 +230,7 @@ class ListShortUrlsCommandTest extends TestCase
             1,
             null,
             [],
-            ShortUrlsParams::TAGS_MODE_ANY,
+            TagsMode::ANY->value,
             null,
             $endDate,
         ];
@@ -238,7 +239,7 @@ class ListShortUrlsCommandTest extends TestCase
             1,
             null,
             [],
-            ShortUrlsParams::TAGS_MODE_ANY,
+            TagsMode::ANY->value,
             $startDate,
             $endDate,
         ];
@@ -276,7 +277,7 @@ class ListShortUrlsCommandTest extends TestCase
             'page' => 1,
             'searchTerm' => null,
             'tags' => [],
-            'tagsMode' => ShortUrlsParams::TAGS_MODE_ANY,
+            'tagsMode' => TagsMode::ANY->value,
             'startDate' => null,
             'endDate' => null,
             'orderBy' => null,

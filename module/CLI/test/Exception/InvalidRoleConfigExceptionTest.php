@@ -20,7 +20,7 @@ class InvalidRoleConfigExceptionTest extends TestCase
         self::assertEquals(sprintf(
             'You cannot create an API key with the "%s" role attached to the default domain. '
             . 'The role is currently limited to non-default domains.',
-            Role::DOMAIN_SPECIFIC,
+            Role::DOMAIN_SPECIFIC->value,
         ), $e->getMessage());
     }
 }

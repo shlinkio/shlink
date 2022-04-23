@@ -9,9 +9,9 @@ use JsonSerializable;
 final class NotFoundRedirects implements JsonSerializable
 {
     private function __construct(
-        private ?string $baseUrlRedirect,
-        private ?string $regular404Redirect,
-        private ?string $invalidShortUrlRedirect,
+        public readonly ?string $baseUrlRedirect,
+        public readonly ?string $regular404Redirect,
+        public readonly ?string $invalidShortUrlRedirect,
     ) {
     }
 
@@ -31,21 +31,6 @@ final class NotFoundRedirects implements JsonSerializable
     public static function fromConfig(NotFoundRedirectConfigInterface $config): self
     {
         return new self($config->baseUrlRedirect(), $config->regular404Redirect(), $config->invalidShortUrlRedirect());
-    }
-
-    public function baseUrlRedirect(): ?string
-    {
-        return $this->baseUrlRedirect;
-    }
-
-    public function regular404Redirect(): ?string
-    {
-        return $this->regular404Redirect;
-    }
-
-    public function invalidShortUrlRedirect(): ?string
-    {
-        return $this->invalidShortUrlRedirect;
     }
 
     public function jsonSerialize(): array

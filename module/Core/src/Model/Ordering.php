@@ -8,7 +8,7 @@ final class Ordering
 {
     private const DEFAULT_DIR = 'ASC';
 
-    private function __construct(private ?string $field, private string $dir)
+    private function __construct(public readonly ?string $field, public readonly string $direction)
     {
     }
 
@@ -24,16 +24,6 @@ final class Ordering
     public static function emptyInstance(): self
     {
         return self::fromTuple([null, null]);
-    }
-
-    public function orderField(): ?string
-    {
-        return $this->field;
-    }
-
-    public function orderDirection(): string
-    {
-        return $this->dir;
     }
 
     public function hasOrderField(): bool

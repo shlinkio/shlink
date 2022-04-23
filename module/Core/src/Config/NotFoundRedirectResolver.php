@@ -13,7 +13,9 @@ use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 
 use function Functional\compose;
+use function Functional\id;
 use function str_replace;
+use function urlencode;
 
 class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
 {
@@ -71,10 +73,10 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
             $replacePlaceholderForPattern(self::ORIGINAL_PATH_PLACEHOLDER, $path, $modifier),
         );
         $replacePlaceholdersInPath = compose(
-            $replacePlaceholders('\Functional\id'),
-            static fn (?string $path) => $path === null ? null : str_replace('//', '/', $path), // Fix duplicated bars
+            $replacePlaceholders(id(...)),
+            static fn (?string $path) => $path === null ? null : str_replace('//', '/', $path),
         );
-        $replacePlaceholdersInQuery = $replacePlaceholders('\urlencode');
+        $replacePlaceholdersInQuery = $replacePlaceholders(urlencode(...));
 
         return $redirectUri
             ->withPath($replacePlaceholdersInPath($redirectUri->getPath()))

@@ -20,8 +20,8 @@ class DeleteShortUrlException extends DomainException implements ProblemDetailsE
 
     public static function fromVisitsThreshold(int $threshold, ShortUrlIdentifier $identifier): self
     {
-        $shortCode = $identifier->shortCode();
-        $domain = $identifier->domain();
+        $shortCode = $identifier->shortCode;
+        $domain = $identifier->domain;
         $suffix = $domain === null ? '' : sprintf(' for domain "%s"', $domain);
         $e = new self(sprintf(
             'Impossible to delete short URL with short code "%s"%s, since it has more than "%s" visits.',

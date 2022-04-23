@@ -10,13 +10,13 @@ use function Shlinkio\Shlink\Core\parseDateRangeFromQuery;
 
 final class VisitsParams extends AbstractInfinitePaginableListParams
 {
-    private DateRange $dateRange;
+    public readonly DateRange $dateRange;
 
     public function __construct(
         ?DateRange $dateRange = null,
         ?int $page = null,
         ?int $itemsPerPage = null,
-        private bool $excludeBots = false,
+        public readonly bool $excludeBots = false,
     ) {
         parent::__construct($page, $itemsPerPage);
         $this->dateRange = $dateRange ?? DateRange::emptyInstance();
@@ -30,15 +30,5 @@ final class VisitsParams extends AbstractInfinitePaginableListParams
             isset($query['itemsPerPage']) ? (int) $query['itemsPerPage'] : null,
             isset($query['excludeBots']),
         );
-    }
-
-    public function getDateRange(): DateRange
-    {
-        return $this->dateRange;
-    }
-
-    public function excludeBots(): bool
-    {
-        return $this->excludeBots;
     }
 }

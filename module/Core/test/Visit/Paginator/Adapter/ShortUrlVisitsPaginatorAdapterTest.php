@@ -68,7 +68,7 @@ class ShortUrlVisitsPaginatorAdapterTest extends TestCase
     {
         return new ShortUrlVisitsPaginatorAdapter(
             $this->repo->reveal(),
-            new ShortUrlIdentifier(''),
+            ShortUrlIdentifier::fromShortCodeAndDomain(''),
             VisitsParams::fromRawData([]),
             $apiKey,
         );

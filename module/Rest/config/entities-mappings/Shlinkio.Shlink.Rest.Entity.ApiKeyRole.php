@@ -6,7 +6,9 @@ namespace Shlinkio\Shlink\Rest;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
+use Doctrine\ORM\Mapping\Builder\FieldBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function Shlinkio\Shlink\Core\determineTableName;
@@ -22,11 +24,14 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->option('unsigned', true)
             ->build();
 
-    $builder->createField('roleName', Types::STRING)
-            ->columnName('role_name')
-            ->length(255)
-            ->nullable(false)
-            ->build();
+    (new FieldBuilder($builder, [
+        'fieldName' => 'roleName',
+        'type' => Types::STRING,
+        'enumType' => Role::class,
+    ]))->columnName('role_name')
+       ->length(255)
+       ->nullable(false)
+       ->build();
 
     $builder->createField('meta', Types::JSON)
             ->columnName('meta')

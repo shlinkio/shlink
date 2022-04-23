@@ -15,7 +15,7 @@ final class ShlinkTable
     private const DEFAULT_STYLE_NAME = 'default';
     private const TABLE_TITLE_STYLE = '<options=bold> %s </>';
 
-    private function __construct(private Table $baseTable, private bool $withRowSeparators)
+    private function __construct(private readonly Table $baseTable, private readonly bool $withRowSeparators)
     {
     }
 

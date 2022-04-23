@@ -10,7 +10,7 @@ use function sprintf;
 
 final class TagRenaming
 {
-    private function __construct(private string $oldName, private string $newName)
+    private function __construct(public readonly string $oldName, public readonly string $newName)
     {
     }
 
@@ -29,16 +29,6 @@ final class TagRenaming
         }
 
         return self::fromNames($payload['oldName'], $payload['newName']);
-    }
-
-    public function oldName(): string
-    {
-        return $this->oldName;
-    }
-
-    public function newName(): string
-    {
-        return $this->newName;
     }
 
     public function nameChanged(): bool

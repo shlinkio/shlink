@@ -22,14 +22,14 @@ class CountOfNonOrphanVisits extends BaseSpecification
     {
         $conditions = [
             Spec::isNotNull('shortUrl'),
-            new InDateRange($this->filtering->dateRange()),
+            new InDateRange($this->filtering->dateRange),
         ];
 
-        if ($this->filtering->excludeBots()) {
+        if ($this->filtering->excludeBots) {
             $conditions[] = Spec::eq('potentialBot', false);
         }
 
-        $apiKey = $this->filtering->apiKey();
+        $apiKey = $this->filtering->apiKey;
         if ($apiKey !== null) {
             $conditions[] = new WithApiKeySpecsEnsuringJoin($apiKey, 'shortUrl');
         }

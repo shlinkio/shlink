@@ -66,8 +66,8 @@ class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirec
 
     public function configureNotFoundRedirects(NotFoundRedirects $redirects): void
     {
-        $this->baseUrlRedirect = $redirects->baseUrlRedirect();
-        $this->regular404Redirect = $redirects->regular404Redirect();
-        $this->invalidShortUrlRedirect = $redirects->invalidShortUrlRedirect();
+        $this->baseUrlRedirect = $redirects->baseUrlRedirect;
+        $this->regular404Redirect = $redirects->regular404Redirect;
+        $this->invalidShortUrlRedirect = $redirects->invalidShortUrlRedirect;
     }
 }

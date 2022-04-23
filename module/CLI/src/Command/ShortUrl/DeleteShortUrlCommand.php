@@ -81,6 +81,6 @@ class DeleteShortUrlCommand extends Command
     private function runDelete(SymfonyStyle $io, ShortUrlIdentifier $identifier, bool $ignoreThreshold): void
     {
         $this->deleteShortUrlService->deleteByShortCode($identifier, $ignoreThreshold);
-        $io->success(sprintf('Short URL with short code "%s" successfully deleted.', $identifier->shortCode()));
+        $io->success(sprintf('Short URL with short code "%s" successfully deleted.', $identifier->shortCode));
     }
 }

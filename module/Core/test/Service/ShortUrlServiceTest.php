@@ -88,7 +88,7 @@ class ShortUrlServiceTest extends TestCase
         $shortUrl = ShortUrl::withLongUrl($originalLongUrl);
 
         $findShortUrl = $this->urlResolver->resolveShortUrl(
-            new ShortUrlIdentifier('abc123'),
+            ShortUrlIdentifier::fromShortCodeAndDomain('abc123'),
             $apiKey,
         )->willReturn($shortUrl);
         $flush = $this->em->flush()->willReturn(null);
@@ -97,7 +97,11 @@ class ShortUrlServiceTest extends TestCase
             $shortUrlEdit,
         );
 
-        $result = $this->service->updateShortUrl(new ShortUrlIdentifier('abc123'), $shortUrlEdit, $apiKey);
+        $result = $this->service->updateShortUrl(
+            ShortUrlIdentifier::fromShortCodeAndDomain('abc123'),
+            $shortUrlEdit,
+            $apiKey,
+        );
 
         self::assertSame($shortUrl, $result);
         self::assertEquals($shortUrlEdit->validSince(), $shortUrl->getValidSince());
