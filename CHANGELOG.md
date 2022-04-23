@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1416](https://github.com/shlinkio/shlink/issues/1416) Added support to import URLs from Kutt.it.
 * [#1418](https://github.com/shlinkio/shlink/issues/1418) Added support to customize the timezone used by Shlink, falling back to the default one set in PHP config.
 * [#1309](https://github.com/shlinkio/shlink/issues/1309) Improved URL importing, ensuring individual errors do not make the whole process fail, and instead, failing URLs are skipped.
+* [#1162](https://github.com/shlinkio/shlink/issues/1162) Added new endpoint to get visits by domain.
+
+  The endpoint is `GET /domains/{domain}/visits`, and it has the same capabilities as any other visits endpoint, allowing pagination and filtering.
 
 ### Changed
 * [#1359](https://github.com/shlinkio/shlink/issues/1359) Hidden database commands.
