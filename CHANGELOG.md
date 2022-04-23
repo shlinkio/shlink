@@ -4,11 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.1.0] - 2022-04-23
 ### Added
-* [#1294](https://github.com/shlinkio/shlink/issues/1294) Allowed to specify a specific domain when importing URLs from YOURLS.
+* [#1294](https://github.com/shlinkio/shlink/issues/1294) Allowed to provide a specific domain when importing URLs from YOURLS.
 * [#1416](https://github.com/shlinkio/shlink/issues/1416) Added support to import URLs from Kutt.it.
 * [#1418](https://github.com/shlinkio/shlink/issues/1418) Added support to customize the timezone used by Shlink, falling back to the default one set in PHP config.
+
+  The timezone can be set via the `TIMEZONE` env var, or using the installer tool.
+
 * [#1309](https://github.com/shlinkio/shlink/issues/1309) Improved URL importing, ensuring individual errors do not make the whole process fail, and instead, failing URLs are skipped.
 * [#1162](https://github.com/shlinkio/shlink/issues/1162) Added new endpoint to get visits by domain.
 
