@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
+use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -116,8 +116,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         // Filter by tags if provided
         if (! empty($tags)) {
-            $tagsMode = $filtering->tagsMode() ?? ShortUrlsParams::TAGS_MODE_ANY;
-            $tagsMode === ShortUrlsParams::TAGS_MODE_ANY
+            $tagsMode = $filtering->tagsMode() ?? TagsMode::ANY;
+            $tagsMode === TagsMode::ANY
                 ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
                 : $this->joinAllTags($qb, $tags);
         }

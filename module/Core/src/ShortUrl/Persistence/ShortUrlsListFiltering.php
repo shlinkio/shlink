@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Persistence;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
+use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlsListFiltering extends ShortUrlsCountFiltering
@@ -17,7 +18,7 @@ class ShortUrlsListFiltering extends ShortUrlsCountFiltering
         private Ordering $orderBy,
         ?string $searchTerm = null,
         array $tags = [],
-        ?string $tagsMode = null,
+        ?TagsMode $tagsMode = null,
         ?DateRange $dateRange = null,
         ?ApiKey $apiKey = null,
     ) {

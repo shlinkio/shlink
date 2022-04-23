@@ -10,6 +10,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
@@ -49,7 +50,7 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         $dateRange = $params->dateRange();
 
         $this->repo->findList(
-            new ShortUrlsListFiltering(10, 5, $orderBy, $searchTerm, $tags, ShortUrlsParams::TAGS_MODE_ANY, $dateRange),
+            new ShortUrlsListFiltering(10, 5, $orderBy, $searchTerm, $tags, TagsMode::ANY, $dateRange),
         )->shouldBeCalledOnce();
         $adapter->getSlice(5, 10);
     }
@@ -75,7 +76,7 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         $dateRange = $params->dateRange();
 
         $this->repo->countList(
-            new ShortUrlsCountFiltering($searchTerm, $tags, ShortUrlsParams::TAGS_MODE_ANY, $dateRange, $apiKey),
+            new ShortUrlsCountFiltering($searchTerm, $tags, TagsMode::ANY, $dateRange, $apiKey),
         )->shouldBeCalledOnce();
         $adapter->getNbResults();
     }

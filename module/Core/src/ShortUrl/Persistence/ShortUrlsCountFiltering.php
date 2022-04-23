@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Persistence;
 
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
+use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlsCountFiltering
@@ -13,7 +14,7 @@ class ShortUrlsCountFiltering
     public function __construct(
         private ?string $searchTerm = null,
         private array $tags = [],
-        private ?string $tagsMode = null,
+        private ?TagsMode $tagsMode = null,
         private ?DateRange $dateRange = null,
         private ?ApiKey $apiKey = null,
     ) {
@@ -34,7 +35,7 @@ class ShortUrlsCountFiltering
         return $this->tags;
     }
 
-    public function tagsMode(): ?string
+    public function tagsMode(): ?TagsMode
     {
         return $this->tagsMode;
     }

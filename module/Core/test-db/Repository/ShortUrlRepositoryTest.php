@@ -14,9 +14,9 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
+use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
@@ -227,7 +227,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             Ordering::emptyInstance(),
             null,
             ['foo', 'bar'],
-            ShortUrlsParams::TAGS_MODE_ANY,
+            TagsMode::ANY,
         )));
         self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(
             null,
@@ -235,15 +235,11 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             Ordering::emptyInstance(),
             null,
             ['foo', 'bar'],
-            ShortUrlsParams::TAGS_MODE_ALL,
+            TagsMode::ALL,
         )));
         self::assertEquals(5, $this->repo->countList(new ShortUrlsCountFiltering(null, ['foo', 'bar'])));
-        self::assertEquals(5, $this->repo->countList(
-            new ShortUrlsCountFiltering(null, ['foo', 'bar'], ShortUrlsParams::TAGS_MODE_ANY),
-        ));
-        self::assertEquals(1, $this->repo->countList(
-            new ShortUrlsCountFiltering(null, ['foo', 'bar'], ShortUrlsParams::TAGS_MODE_ALL),
-        ));
+        self::assertEquals(5, $this->repo->countList(new ShortUrlsCountFiltering(null, ['foo', 'bar'], TagsMode::ANY)));
+        self::assertEquals(1, $this->repo->countList(new ShortUrlsCountFiltering(null, ['foo', 'bar'], TagsMode::ALL)));
 
         self::assertCount(4, $this->repo->findList(
             new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, ['bar', 'baz']),
@@ -254,7 +250,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             Ordering::emptyInstance(),
             null,
             ['bar', 'baz'],
-            ShortUrlsParams::TAGS_MODE_ANY,
+            TagsMode::ANY,
         )));
         self::assertCount(2, $this->repo->findList(new ShortUrlsListFiltering(
             null,
@@ -262,14 +258,14 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             Ordering::emptyInstance(),
             null,
             ['bar', 'baz'],
-            ShortUrlsParams::TAGS_MODE_ALL,
+            TagsMode::ALL,
         )));
         self::assertEquals(4, $this->repo->countList(new ShortUrlsCountFiltering(null, ['bar', 'baz'])));
         self::assertEquals(4, $this->repo->countList(
-            new ShortUrlsCountFiltering(null, ['bar', 'baz'], ShortUrlsParams::TAGS_MODE_ANY),
+            new ShortUrlsCountFiltering(null, ['bar', 'baz'], TagsMode::ANY),
         ));
         self::assertEquals(2, $this->repo->countList(
-            new ShortUrlsCountFiltering(null, ['bar', 'baz'], ShortUrlsParams::TAGS_MODE_ALL),
+            new ShortUrlsCountFiltering(null, ['bar', 'baz'], TagsMode::ALL),
         ));
 
         self::assertCount(5, $this->repo->findList(
@@ -281,7 +277,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             Ordering::emptyInstance(),
             null,
             ['foo', 'bar', 'baz'],
-            ShortUrlsParams::TAGS_MODE_ANY,
+            TagsMode::ANY,
         )));
         self::assertCount(0, $this->repo->findList(new ShortUrlsListFiltering(
             null,
@@ -289,14 +285,14 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             Ordering::emptyInstance(),
             null,
             ['foo', 'bar', 'baz'],
-            ShortUrlsParams::TAGS_MODE_ALL,
+            TagsMode::ALL,
         )));
         self::assertEquals(5, $this->repo->countList(new ShortUrlsCountFiltering(null, ['foo', 'bar', 'baz'])));
         self::assertEquals(5, $this->repo->countList(
-            new ShortUrlsCountFiltering(null, ['foo', 'bar', 'baz'], ShortUrlsParams::TAGS_MODE_ANY),
+            new ShortUrlsCountFiltering(null, ['foo', 'bar', 'baz'], TagsMode::ANY),
         ));
         self::assertEquals(0, $this->repo->countList(
-            new ShortUrlsCountFiltering(null, ['foo', 'bar', 'baz'], ShortUrlsParams::TAGS_MODE_ALL),
+            new ShortUrlsCountFiltering(null, ['foo', 'bar', 'baz'], TagsMode::ALL),
         ));
     }
 

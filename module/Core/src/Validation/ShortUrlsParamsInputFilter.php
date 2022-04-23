@@ -9,6 +9,7 @@ use Laminas\Validator\InArray;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Validation;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
+use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 
 class ShortUrlsParamsInputFilter extends InputFilter
 {
@@ -43,7 +44,7 @@ class ShortUrlsParamsInputFilter extends InputFilter
 
         $tagsMode = $this->createInput(self::TAGS_MODE, false);
         $tagsMode->getValidatorChain()->attach(new InArray([
-            'haystack' => [ShortUrlsParams::TAGS_MODE_ALL, ShortUrlsParams::TAGS_MODE_ANY],
+            'haystack' => [TagsMode::ALL->value, TagsMode::ANY->value],
             'strict' => InArray::COMPARE_STRICT,
         ]));
         $this->add($tagsMode);
