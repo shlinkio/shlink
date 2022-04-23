@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 
 final class ShortUrlIdentifier
 {
-    public function __construct(public readonly string $shortCode, public readonly ?string $domain = null)
+    private function __construct(public readonly string $shortCode, public readonly ?string $domain = null)
     {
     }
 
