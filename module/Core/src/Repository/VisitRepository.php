@@ -154,6 +154,47 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $qb;
     }
 
+    /**
+     * @return Visit[]
+     */
+    public function findVisitsByDomain(string $domain, VisitsListFiltering $filtering): array
+    {
+        $qb = $this->createVisitsByDomainQueryBuilder($domain, $filtering);
+        return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit(), $filtering->offset());
+    }
+
+    public function countVisitsByDomain(string $domain, VisitsCountFiltering $filtering): int
+    {
+        $qb = $this->createVisitsByDomainQueryBuilder($domain, $filtering);
+        $qb->select('COUNT(v.id)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    private function createVisitsByDomainQueryBuilder(string $domain, VisitsCountFiltering $filtering): QueryBuilder
+    {
+        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later.
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(Visit::class, 'v')
+           ->join('v.shortUrl', 's');
+
+        if ($domain === 'DEFAULT') {
+            $qb->where($qb->expr()->isNull('s.domain'));
+        } else {
+            $qb->join('s.domain', 'd')
+               ->where($qb->expr()->eq('d.authority', $this->getEntityManager()->getConnection()->quote($domain)));
+        }
+
+        if ($filtering->excludeBots()) {
+            $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
+        }
+
+        $this->applyDatesInline($qb, $filtering->dateRange());
+        $this->applySpecification($qb, $filtering->apiKey()?->inlinedSpec(), 'v');
+
+        return $qb;
+    }
+
     public function findOrphanVisits(VisitsListFiltering $filtering): array
     {
         $qb = $this->createAllVisitsQueryBuilder($filtering);

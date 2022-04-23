@@ -95,7 +95,7 @@
         "/rest/v{version}/tags/{tag}/visits": {
             "$ref": "paths/v2_tags_{tag}_visits.json"
         },
-        "/rest/v{version}/domain/{domain}/visits": {
+        "/rest/v{version}/domains/{domain}/visits": {
             "$ref": "paths/v2_domains_{domain}_visits.json"
         },
         "/rest/v{version}/visits/orphan": {

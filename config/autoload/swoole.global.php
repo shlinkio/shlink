@@ -6,7 +6,7 @@ use Shlinkio\Shlink\Core\Config\EnvVars;
 
 use const Shlinkio\Shlink\MIN_TASK_WORKERS;
 
-return (static function () {
+return (static function (): array {
     $taskWorkers = (int) EnvVars::TASK_WORKER_NUM()->loadFromEnv(16);
 
     return [
