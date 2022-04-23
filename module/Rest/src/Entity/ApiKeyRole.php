@@ -18,12 +18,6 @@ class ApiKeyRole extends AbstractEntity
         return $this->roleName;
     }
 
-    /** @deprecated Use role() instead */
-    public function name(): Role
-    {
-        return $this->role();
-    }
-
     public function meta(): array
     {
         return $this->meta;
