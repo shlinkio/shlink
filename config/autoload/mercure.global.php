@@ -9,14 +9,14 @@ use Symfony\Component\Mercure\Hub;
 use Symfony\Component\Mercure\HubInterface;
 
 return (static function (): array {
-    $publicUrl = EnvVars::MERCURE_PUBLIC_HUB_URL()->loadFromEnv();
+    $publicUrl = EnvVars::MERCURE_PUBLIC_HUB_URL->loadFromEnv();
 
     return [
 
         'mercure' => [
             'public_hub_url' => $publicUrl,
-            'internal_hub_url' => EnvVars::MERCURE_INTERNAL_HUB_URL()->loadFromEnv($publicUrl),
-            'jwt_secret' => EnvVars::MERCURE_JWT_SECRET()->loadFromEnv(),
+            'internal_hub_url' => EnvVars::MERCURE_INTERNAL_HUB_URL->loadFromEnv($publicUrl),
+            'jwt_secret' => EnvVars::MERCURE_JWT_SECRET->loadFromEnv(),
             'jwt_issuer' => 'Shlink',
         ],
 

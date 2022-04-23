@@ -17,6 +17,7 @@ use function Shlinkio\Shlink\Core\isCrawler;
 
 class Visit extends AbstractEntity implements JsonSerializable
 {
+    // TODO Convert to enum
     public const TYPE_VALID_SHORT_URL = 'valid_short_url';
     public const TYPE_IMPORTED = 'imported';
     public const TYPE_INVALID_SHORT_URL = 'invalid_short_url';

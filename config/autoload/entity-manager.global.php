@@ -8,7 +8,7 @@ use Shlinkio\Shlink\Core\Config\EnvVars;
 use function Functional\contains;
 
 return (static function (): array {
-    $driver = EnvVars::DB_DRIVER()->loadFromEnv();
+    $driver = EnvVars::DB_DRIVER->loadFromEnv();
     $isMysqlCompatible = contains(['maria', 'mysql'], $driver);
 
     $resolveDriver = static fn () => match ($driver) {
@@ -35,12 +35,12 @@ return (static function (): array {
         ],
         default => [
             'driver' => $resolveDriver(),
-            'dbname' => EnvVars::DB_NAME()->loadFromEnv('shlink'),
-            'user' => EnvVars::DB_USER()->loadFromEnv(),
-            'password' => EnvVars::DB_PASSWORD()->loadFromEnv(),
-            'host' => EnvVars::DB_HOST()->loadFromEnv(EnvVars::DB_UNIX_SOCKET()->loadFromEnv()),
-            'port' => EnvVars::DB_PORT()->loadFromEnv($resolveDefaultPort()),
-            'unix_socket' => $isMysqlCompatible ? EnvVars::DB_UNIX_SOCKET()->loadFromEnv() : null,
+            'dbname' => EnvVars::DB_NAME->loadFromEnv('shlink'),
+            'user' => EnvVars::DB_USER->loadFromEnv(),
+            'password' => EnvVars::DB_PASSWORD->loadFromEnv(),
+            'host' => EnvVars::DB_HOST->loadFromEnv(EnvVars::DB_UNIX_SOCKET->loadFromEnv()),
+            'port' => EnvVars::DB_PORT->loadFromEnv($resolveDefaultPort()),
+            'unix_socket' => $isMysqlCompatible ? EnvVars::DB_UNIX_SOCKET->loadFromEnv() : null,
             'charset' => $resolveCharset(),
         ],
     };

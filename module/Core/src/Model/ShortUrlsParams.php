@@ -15,6 +15,8 @@ final class ShortUrlsParams
 {
     public const ORDERABLE_FIELDS = ['longUrl', 'shortCode', 'dateCreated', 'title', 'visits'];
     public const DEFAULT_ITEMS_PER_PAGE = 10;
+
+    // TODO Convert to enum
     public const TAGS_MODE_ANY = 'any';
     public const TAGS_MODE_ALL = 'all';
 

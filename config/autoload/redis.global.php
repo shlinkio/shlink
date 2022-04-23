@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
 return (static function (): array {
-    $redisServers = EnvVars::REDIS_SERVERS()->loadFromEnv();
+    $redisServers = EnvVars::REDIS_SERVERS->loadFromEnv();
 
     return match ($redisServers) {
         null => [],
@@ -13,7 +13,7 @@ return (static function (): array {
             'cache' => [
                 'redis' => [
                     'servers' => $redisServers,
-                    'sentinel_service' => EnvVars::REDIS_SENTINEL_SERVICE()->loadFromEnv(),
+                    'sentinel_service' => EnvVars::REDIS_SENTINEL_SERVICE->loadFromEnv(),
                 ],
             ],
         ],

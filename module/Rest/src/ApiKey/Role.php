@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Spec\BelongsToDomain;
 use Shlinkio\Shlink\Core\ShortUrl\Spec\BelongsToDomainInlined;
 use Shlinkio\Shlink\Rest\Entity\ApiKeyRole;
 
+// TODO Convert to enum
 class Role
 {
     public const AUTHORED_SHORT_URLS = 'AUTHORED_SHORT_URLS';
