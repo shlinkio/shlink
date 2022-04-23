@@ -13,7 +13,6 @@ class BasePathPrefixer
     public function __invoke(array $config): array
     {
         $basePath = $config['router']['base_path'] ?? '';
-        $config['url_shortener']['domain']['hostname'] .= $basePath;
 
         foreach (self::ELEMENTS_WITH_PATH as $configKey) {
             $config[$configKey] = $this->prefixPathsWithBasePath($configKey, $config, $basePath);

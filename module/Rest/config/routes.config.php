@@ -4,49 +4,54 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest;
 
-$contentNegotiationMiddleware = Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class;
-$dropDomainMiddleware = Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class;
-$overrideDomainMiddleware = Middleware\ShortUrl\OverrideDomainMiddleware::class;
+use Shlinkio\Shlink\Rest\Middleware\Mercure\NotConfiguredMercureErrorHandler;
 
-return [
+return (static function (): array {
+    $contentNegotiationMiddleware = Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class;
+    $dropDomainMiddleware = Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class;
+    $overrideDomainMiddleware = Middleware\ShortUrl\OverrideDomainMiddleware::class;
 
-    'routes' => [
-        Action\HealthAction::getRouteDef(),
+    return [
 
-        // Short URLs
-        Action\ShortUrl\CreateShortUrlAction::getRouteDef([
-            $contentNegotiationMiddleware,
-            $dropDomainMiddleware,
-            $overrideDomainMiddleware,
-            Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class,
-        ]),
-        Action\ShortUrl\SingleStepCreateShortUrlAction::getRouteDef([
-            $contentNegotiationMiddleware,
-            $overrideDomainMiddleware,
-        ]),
-        Action\ShortUrl\EditShortUrlAction::getRouteDef([$dropDomainMiddleware]),
-        Action\ShortUrl\DeleteShortUrlAction::getRouteDef([$dropDomainMiddleware]),
-        Action\ShortUrl\ResolveShortUrlAction::getRouteDef([$dropDomainMiddleware]),
-        Action\ShortUrl\ListShortUrlsAction::getRouteDef(),
+        'routes' => [
+            Action\HealthAction::getRouteDef(),
 
-        // Visits
-        Action\Visit\ShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
-        Action\Visit\TagVisitsAction::getRouteDef(),
-        Action\Visit\GlobalVisitsAction::getRouteDef(),
-        Action\Visit\OrphanVisitsAction::getRouteDef(),
-        Action\Visit\NonOrphanVisitsAction::getRouteDef(),
+            // Short URLs
+            Action\ShortUrl\CreateShortUrlAction::getRouteDef([
+                $contentNegotiationMiddleware,
+                $dropDomainMiddleware,
+                $overrideDomainMiddleware,
+                Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class,
+            ]),
+            Action\ShortUrl\SingleStepCreateShortUrlAction::getRouteDef([
+                $contentNegotiationMiddleware,
+                $overrideDomainMiddleware,
+            ]),
+            Action\ShortUrl\EditShortUrlAction::getRouteDef([$dropDomainMiddleware]),
+            Action\ShortUrl\DeleteShortUrlAction::getRouteDef([$dropDomainMiddleware]),
+            Action\ShortUrl\ResolveShortUrlAction::getRouteDef([$dropDomainMiddleware]),
+            Action\ShortUrl\ListShortUrlsAction::getRouteDef(),
 
-        // Tags
-        Action\Tag\ListTagsAction::getRouteDef(),
-        Action\Tag\TagsStatsAction::getRouteDef(),
-        Action\Tag\DeleteTagsAction::getRouteDef(),
-        Action\Tag\UpdateTagAction::getRouteDef(),
+            // Visits
+            Action\Visit\ShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
+            Action\Visit\TagVisitsAction::getRouteDef(),
+            Action\Visit\DomainVisitsAction::getRouteDef(),
+            Action\Visit\GlobalVisitsAction::getRouteDef(),
+            Action\Visit\OrphanVisitsAction::getRouteDef(),
+            Action\Visit\NonOrphanVisitsAction::getRouteDef(),
 
-        // Domains
-        Action\Domain\ListDomainsAction::getRouteDef(),
-        Action\Domain\DomainRedirectsAction::getRouteDef(),
+            // Tags
+            Action\Tag\ListTagsAction::getRouteDef(),
+            Action\Tag\TagsStatsAction::getRouteDef(),
+            Action\Tag\DeleteTagsAction::getRouteDef(),
+            Action\Tag\UpdateTagAction::getRouteDef(),
 
-        Action\MercureInfoAction::getRouteDef(),
-    ],
+            // Domains
+            Action\Domain\ListDomainsAction::getRouteDef(),
+            Action\Domain\DomainRedirectsAction::getRouteDef(),
 
-];
+            Action\MercureInfoAction::getRouteDef([NotConfiguredMercureErrorHandler::class]),
+        ],
+
+    ];
+})();

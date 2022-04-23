@@ -48,6 +48,13 @@ interface VisitRepositoryInterface extends ObjectRepository, EntitySpecification
     /**
      * @return Visit[]
      */
+    public function findVisitsByDomain(string $domain, VisitsListFiltering $filtering): array;
+
+    public function countVisitsByDomain(string $domain, VisitsCountFiltering $filtering): int;
+
+    /**
+     * @return Visit[]
+     */
     public function findOrphanVisits(VisitsListFiltering $filtering): array;
 
     public function countOrphanVisits(VisitsCountFiltering $filtering): int;

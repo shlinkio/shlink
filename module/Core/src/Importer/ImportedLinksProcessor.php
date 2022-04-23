@@ -13,8 +13,11 @@ use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Symfony\Component\Console\Style\OutputStyle;
 use Symfony\Component\Console\Style\StyleInterface;
+use Throwable;
 
 use function sprintf;
 
@@ -32,32 +35,36 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     }
 
     /**
-     * @param iterable|ImportedShlinkUrl[] $shlinkUrls
+     * @param iterable<ImportedShlinkUrl> $shlinkUrls
      */
-    public function process(StyleInterface $io, iterable $shlinkUrls, array $params): void
+    public function process(StyleInterface $io, iterable $shlinkUrls, ImportParams $params): void
     {
-        $importShortCodes = $params['import_short_codes'];
-        $source = $params['source'];
+        $importShortCodes = $params->importShortCodes();
+        $source = $params->source();
         $iterable = $this->batchHelper->wrapIterable($shlinkUrls, $source === ImportSources::SHLINK ? 10 : 100);
 
         /** @var ImportedShlinkUrl $importedUrl */
         foreach ($iterable as $importedUrl) {
-            $skipOnShortCodeConflict = static function () use ($io, $importedUrl): bool {
-                $action = $io->choice(sprintf(
-                    'Failed to import URL "%s" because its short-code "%s" is already in use. Do you want to generate '
-                    . 'a new one or skip it?',
-                    $importedUrl->longUrl(),
-                    $importedUrl->shortCode(),
-                ), ['Generate new short-code', 'Skip'], 1);
-
-                return $action === 'Skip';
-            };
+            $skipOnShortCodeConflict = static fn (): bool => $io->choice(sprintf(
+                'Failed to import URL "%s" because its short-code "%s" is already in use. Do you want to generate '
+                . 'a new one or skip it?',
+                $importedUrl->longUrl(),
+                $importedUrl->shortCode(),
+            ), ['Generate new short-code', 'Skip'], 1) === 'Skip';
             $longUrl = $importedUrl->longUrl();
 
             try {
                 $shortUrlImporting = $this->resolveShortUrl($importedUrl, $importShortCodes, $skipOnShortCodeConflict);
             } catch (NonUniqueSlugException) {
                 $io->text(sprintf('%s: <fg=red>Error</>', $longUrl));
+                continue;
+            } catch (Throwable $e) {
+                $io->text(sprintf('%s: <comment>Skipped</comment>. Reason: %s.', $longUrl, $e->getMessage()));
+
+                if ($io instanceof OutputStyle && $io->isVerbose()) {
+                    $io->text($e->__toString());
+                }
+
                 continue;
             }
 

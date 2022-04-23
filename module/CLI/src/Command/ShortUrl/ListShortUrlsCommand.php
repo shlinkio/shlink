@@ -209,7 +209,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         }
         if ($input->getOption('show-api-key')) {
             $columnsMap['API Key'] = static fn (array $_, ShortUrl $shortUrl): string =>
-                (string) $shortUrl->authorApiKey();
+                $shortUrl->authorApiKey()?->__toString() ?? '';
         }
         if ($input->getOption('show-api-key-name')) {
             $columnsMap['API Key Name'] = static fn (array $_, ShortUrl $shortUrl): ?string =>

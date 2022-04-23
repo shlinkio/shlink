@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Db;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,6 +15,9 @@ use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 
 use function Functional\contains;
+use function Functional\filter;
+
+use const Shlinkio\Shlink\MIGRATIONS_TABLE;
 
 class CreateDatabaseCommand extends AbstractDatabaseCommand
 {
@@ -35,6 +39,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     {
         $this
             ->setName(self::NAME)
+            ->setHidden()
             ->setDescription(
                 'Creates the database needed for shlink to work. It will do nothing if the database already exists',
             );
@@ -61,7 +66,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
     private function checkDbExists(): void
     {
-        if ($this->regularConn->getDatabasePlatform()->getName() === 'sqlite') {
+        if ($this->regularConn->getDriver()->getDatabasePlatform() instanceof SqlitePlatform) {
             return;
         }
 
@@ -69,7 +74,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
         // Otherwise, it will fail to connect and will not be able to create the new database
         $schemaManager = $this->noDbNameConn->createSchemaManager();
         $databases = $schemaManager->listDatabases();
-        $shlinkDatabase = $this->regularConn->getDatabase();
+        $shlinkDatabase = $this->regularConn->getParams()['dbname'] ?? null;
 
         if ($shlinkDatabase !== null && ! contains($databases, $shlinkDatabase)) {
             $schemaManager->createDatabase($shlinkDatabase);
@@ -79,8 +84,9 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     private function schemaExists(): bool
     {
         // If at least one of the shlink tables exist, we will consider the database exists somehow.
-        // Any inconsistency should be taken care by the migrations
+        // We exclude the migrations table, in case db:migrate was run first by mistake.
+        // Any other inconsistency will be taken care by the migrations.
         $schemaManager = $this->regularConn->createSchemaManager();
-        return ! empty($schemaManager->listTableNames());
+        return ! empty(filter($schemaManager->listTableNames(), fn (string $table) => $table !== MIGRATIONS_TABLE));
     }
 }

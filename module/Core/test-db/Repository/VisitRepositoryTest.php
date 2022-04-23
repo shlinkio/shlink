@@ -52,7 +52,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     {
         $shortUrl = ShortUrl::createEmpty();
         $this->getEntityManager()->persist($shortUrl);
-        $countIterable = function (iterable $results): int {
+        $countIterable = static function (iterable $results): int {
             $resultsCount = 0;
             foreach ($results as $value) {
                 $resultsCount++;
@@ -252,6 +252,54 @@ class VisitRepositoryTest extends DatabaseTestCase
             DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
         self::assertEquals(8, $this->repo->countVisitsByTag($foo, new VisitsCountFiltering(
+            DateRange::withStartDate(Chronos::parse('2016-01-03')),
+        )));
+    }
+
+    /** @test */
+    public function findVisitsByDomainReturnsProperData(): void
+    {
+        $this->createShortUrlsAndVisits('doma.in');
+        $this->getEntityManager()->flush();
+
+        self::assertCount(0, $this->repo->findVisitsByDomain('invalid', new VisitsListFiltering()));
+        self::assertCount(6, $this->repo->findVisitsByDomain('DEFAULT', new VisitsListFiltering()));
+        self::assertCount(3, $this->repo->findVisitsByDomain('doma.in', new VisitsListFiltering()));
+        self::assertCount(1, $this->repo->findVisitsByDomain('doma.in', new VisitsListFiltering(null, true)));
+        self::assertCount(2, $this->repo->findVisitsByDomain('doma.in', new VisitsListFiltering(
+            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+        )));
+        self::assertCount(1, $this->repo->findVisitsByDomain('doma.in', new VisitsListFiltering(
+            DateRange::withStartDate(Chronos::parse('2016-01-03')),
+        )));
+        self::assertCount(2, $this->repo->findVisitsByDomain('DEFAULT', new VisitsListFiltering(
+            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+        )));
+        self::assertCount(4, $this->repo->findVisitsByDomain('DEFAULT', new VisitsListFiltering(
+            DateRange::withStartDate(Chronos::parse('2016-01-03')),
+        )));
+    }
+
+    /** @test */
+    public function countVisitsByDomainReturnsProperData(): void
+    {
+        $this->createShortUrlsAndVisits('doma.in');
+        $this->getEntityManager()->flush();
+
+        self::assertEquals(0, $this->repo->countVisitsByDomain('invalid', new VisitsListFiltering()));
+        self::assertEquals(6, $this->repo->countVisitsByDomain('DEFAULT', new VisitsListFiltering()));
+        self::assertEquals(3, $this->repo->countVisitsByDomain('doma.in', new VisitsListFiltering()));
+        self::assertEquals(1, $this->repo->countVisitsByDomain('doma.in', new VisitsListFiltering(null, true)));
+        self::assertEquals(2, $this->repo->countVisitsByDomain('doma.in', new VisitsListFiltering(
+            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+        )));
+        self::assertEquals(1, $this->repo->countVisitsByDomain('doma.in', new VisitsListFiltering(
+            DateRange::withStartDate(Chronos::parse('2016-01-03')),
+        )));
+        self::assertEquals(2, $this->repo->countVisitsByDomain('DEFAULT', new VisitsListFiltering(
+            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+        )));
+        self::assertEquals(4, $this->repo->countVisitsByDomain('DEFAULT', new VisitsListFiltering(
             DateRange::withStartDate(Chronos::parse('2016-01-03')),
         )));
     }

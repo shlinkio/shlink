@@ -12,7 +12,7 @@ use function array_values;
 use function Functional\contains;
 use function Shlinkio\Shlink\Config\env;
 
-// TODO Convert to enum
+// TODO Convert to enum after dropping PHP 8.0 support
 
 /**
  * @method static EnvVars DELETE_SHORT_URL_THRESHOLD()
@@ -62,6 +62,7 @@ use function Shlinkio\Shlink\Config\env;
  * @method static EnvVars DEFAULT_DOMAIN()
  * @method static EnvVars AUTO_RESOLVE_TITLES()
  * @method static EnvVars REDIRECT_APPEND_EXTRA_PATH()
+ * @method static EnvVars TIMEZONE()
  * @method static EnvVars VISITS_WEBHOOKS()
  * @method static EnvVars NOTIFY_ORPHAN_VISITS_TO_WEBHOOKS()
  */
@@ -114,7 +115,10 @@ final class EnvVars
     public const DEFAULT_DOMAIN = 'DEFAULT_DOMAIN';
     public const AUTO_RESOLVE_TITLES = 'AUTO_RESOLVE_TITLES';
     public const REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
+    public const TIMEZONE = 'TIMEZONE';
+    /** @deprecated */
     public const VISITS_WEBHOOKS = 'VISITS_WEBHOOKS';
+    /** @deprecated */
     public const NOTIFY_ORPHAN_VISITS_TO_WEBHOOKS = 'NOTIFY_ORPHAN_VISITS_TO_WEBHOOKS';
 
     /**

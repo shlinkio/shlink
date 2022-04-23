@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.1.0] - 2022-04-23
+### Added
+* [#1294](https://github.com/shlinkio/shlink/issues/1294) Allowed to provide a specific domain when importing URLs from YOURLS.
+* [#1416](https://github.com/shlinkio/shlink/issues/1416) Added support to import URLs from Kutt.it.
+* [#1418](https://github.com/shlinkio/shlink/issues/1418) Added support to customize the timezone used by Shlink, falling back to the default one set in PHP config.
+
+  The timezone can be set via the `TIMEZONE` env var, or using the installer tool.
+
+* [#1309](https://github.com/shlinkio/shlink/issues/1309) Improved URL importing, ensuring individual errors do not make the whole process fail, and instead, failing URLs are skipped.
+* [#1162](https://github.com/shlinkio/shlink/issues/1162) Added new endpoint to get visits by domain.
+
+  The endpoint is `GET /domains/{domain}/visits`, and it has the same capabilities as any other visits endpoint, allowing pagination and filtering.
+
+### Changed
+* [#1359](https://github.com/shlinkio/shlink/issues/1359) Hidden database commands.
+* [#1385](https://github.com/shlinkio/shlink/issues/1385) Prevented a big error message from being logged when using Shlink without mercure.
+* [#1398](https://github.com/shlinkio/shlink/issues/1398) Increased required mutation score for unit tests to 85%.
+* [#1419](https://github.com/shlinkio/shlink/issues/1419) Input dates are now parsed to Shlink's configured timezone or default timezone before using them for database queries.
+* [#1428](https://github.com/shlinkio/shlink/issues/1428) Updated native dependencies in docker image and base image to PHP v8.1.5.
+
+### Deprecated
+* [#1340](https://github.com/shlinkio/shlink/issues/1340) Deprecated webhooks. New events will only be added to other real-time updates approaches, and webhooks will be completely removed in Shlink 4.0.0.
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1397](https://github.com/shlinkio/shlink/issues/1397) Fixed `db:create` command always reporting the schema exists if the `db:migrate` command has been run before by mistake.
+* [#1402](https://github.com/shlinkio/shlink/issues/1402) Fixed the base path getting appended with the default domain by mistake, causing multiple side effects in several places.
+
+
 ## [3.0.3] - 2022-02-19
 ### Added
 * *Nothing*

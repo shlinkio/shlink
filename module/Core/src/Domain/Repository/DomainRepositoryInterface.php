@@ -17,4 +17,6 @@ interface DomainRepositoryInterface extends ObjectRepository, EntitySpecificatio
     public function findDomains(?ApiKey $apiKey = null): array;
 
     public function findOneByAuthority(string $authority, ?ApiKey $apiKey = null): ?Domain;
+
+    public function domainExists(string $authority, ?ApiKey $apiKey = null): bool;
 }
