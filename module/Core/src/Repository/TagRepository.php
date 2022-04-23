@@ -81,14 +81,13 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             ->groupBy('t.id_0', 't.name_1');
 
         // Apply API key role conditions to the native query too, as they will affect the amounts on the aggregates
-        $apiKey?->mapRoles(static fn (string $roleName, array $meta) => match ($roleName) {
+        $apiKey?->mapRoles(static fn (Role $role, array $meta) => match ($role) {
             Role::DOMAIN_SPECIFIC => $nativeQb->andWhere(
                 $nativeQb->expr()->eq('s.domain_id', $conn->quote(Role::domainIdFromMeta($meta))),
             ),
             Role::AUTHORED_SHORT_URLS => $nativeQb->andWhere(
                 $nativeQb->expr()->eq('s.author_api_key_id', $conn->quote($apiKey->getId())),
             ),
-            default => $nativeQb,
         });
 
         if ($orderMainQuery) {

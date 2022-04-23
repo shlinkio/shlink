@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Rest\ApiKey\Role;
 
 final class RoleDefinition
 {
-    private function __construct(public readonly string $roleName, public readonly array $meta)
+    private function __construct(public readonly Role $role, public readonly array $meta)
     {
     }
 

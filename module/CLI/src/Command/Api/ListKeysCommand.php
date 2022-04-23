@@ -60,10 +60,10 @@ class ListKeysCommand extends Command
             }
             $rowData[] = $expiration?->toAtomString() ?? '-';
             $rowData[] = $apiKey->isAdmin() ? 'Admin' : implode("\n", $apiKey->mapRoles(
-                fn (string $roleName, array $meta) =>
+                fn (Role $role, array $meta) =>
                     empty($meta)
-                        ? Role::toFriendlyName($roleName)
-                        : sprintf('%s: %s', Role::toFriendlyName($roleName), Role::domainAuthorityFromMeta($meta)),
+                        ? Role::toFriendlyName($role)
+                        : sprintf('%s: %s', Role::toFriendlyName($role), Role::domainAuthorityFromMeta($meta)),
             ));
 
             return $rowData;

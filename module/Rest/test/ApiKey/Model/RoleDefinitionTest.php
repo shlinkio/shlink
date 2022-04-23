@@ -16,7 +16,7 @@ class RoleDefinitionTest extends TestCase
     {
         $definition = RoleDefinition::forAuthoredShortUrls();
 
-        self::assertEquals(Role::AUTHORED_SHORT_URLS, $definition->roleName);
+        self::assertEquals(Role::AUTHORED_SHORT_URLS, $definition->role);
         self::assertEquals([], $definition->meta);
     }
 
@@ -26,7 +26,7 @@ class RoleDefinitionTest extends TestCase
         $domain = Domain::withAuthority('foo.com')->setId('123');
         $definition = RoleDefinition::forDomain($domain);
 
-        self::assertEquals(Role::DOMAIN_SPECIFIC, $definition->roleName);
+        self::assertEquals(Role::DOMAIN_SPECIFIC, $definition->role);
         self::assertEquals(['domain_id' => '123', 'authority' => 'foo.com'], $definition->meta);
     }
 }

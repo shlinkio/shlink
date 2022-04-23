@@ -30,7 +30,6 @@ class RoleTest extends TestCase
     {
         $apiKey = ApiKey::create();
 
-        yield 'invalid role' => [new ApiKeyRole('invalid', [], $apiKey), Spec::andX()];
         yield 'author role' => [
             new ApiKeyRole(Role::AUTHORED_SHORT_URLS, [], $apiKey),
             new BelongsToApiKey($apiKey),
@@ -54,7 +53,6 @@ class RoleTest extends TestCase
     {
         $apiKey = ApiKey::create();
 
-        yield 'invalid role' => [new ApiKeyRole('invalid', [], $apiKey), Spec::andX()];
         yield 'author role' => [
             new ApiKeyRole(Role::AUTHORED_SHORT_URLS, [], $apiKey),
             Spec::andX(new BelongsToApiKeyInlined($apiKey)),
@@ -101,15 +99,14 @@ class RoleTest extends TestCase
      * @test
      * @dataProvider provideRoleNames
      */
-    public function getsExpectedRoleFriendlyName(string $roleName, string $expectedFriendlyName): void
+    public function getsExpectedRoleFriendlyName(Role $roleName, string $expectedFriendlyName): void
     {
         self::assertEquals($expectedFriendlyName, Role::toFriendlyName($roleName));
     }
 
     public function provideRoleNames(): iterable
     {
-        yield 'unknown' => ['unknown', ''];
-        yield Role::AUTHORED_SHORT_URLS => [Role::AUTHORED_SHORT_URLS, 'Author only'];
-        yield Role::DOMAIN_SPECIFIC => [Role::DOMAIN_SPECIFIC, 'Domain only'];
+        yield Role::AUTHORED_SHORT_URLS->value => [Role::AUTHORED_SHORT_URLS, 'Author only'];
+        yield Role::DOMAIN_SPECIFIC->value => [Role::DOMAIN_SPECIFIC, 'Domain only'];
     }
 }

@@ -113,40 +113,40 @@ class ApiKey extends AbstractEntity
         return $this->roles->isEmpty();
     }
 
-    public function hasRole(string $roleName): bool
+    public function hasRole(Role $role): bool
     {
-        return $this->roles->containsKey($roleName);
+        return $this->roles->containsKey($role->value);
     }
 
-    public function getRoleMeta(string $roleName): array
+    public function getRoleMeta(Role $role): array
     {
-        /** @var ApiKeyRole|null $role */
-        $role = $this->roles->get($roleName);
-        return $role?->meta() ?? [];
+        /** @var ApiKeyRole|null $apiKeyRole */
+        $apiKeyRole = $this->roles->get($role->value);
+        return $apiKeyRole?->meta() ?? [];
     }
 
     /**
      * @template T
-     * @param callable(string $roleName, array $meta): T $fun
+     * @param callable(Role $role, array $meta): T $fun
      * @return T[]
      */
     public function mapRoles(callable $fun): array
     {
-        return $this->roles->map(fn (ApiKeyRole $role) => $fun($role->name(), $role->meta()))->getValues();
+        return $this->roles->map(fn (ApiKeyRole $role) => $fun($role->role(), $role->meta()))->getValues();
     }
 
     public function registerRole(RoleDefinition $roleDefinition): void
     {
-        $roleName = $roleDefinition->roleName;
+        $role = $roleDefinition->role;
         $meta = $roleDefinition->meta;
 
-        if ($this->hasRole($roleName)) {
-            /** @var ApiKeyRole $role */
-            $role = $this->roles->get($roleName);
-            $role->updateMeta($meta);
+        if ($this->hasRole($role)) {
+            /** @var ApiKeyRole $apiKeyRole */
+            $apiKeyRole = $this->roles->get($role);
+            $apiKeyRole->updateMeta($meta);
         } else {
-            $role = new ApiKeyRole($roleDefinition->roleName, $roleDefinition->meta, $this);
-            $this->roles[$roleName] = $role;
+            $apiKeyRole = new ApiKeyRole($roleDefinition->role, $roleDefinition->meta, $this);
+            $this->roles[$role->value] = $apiKeyRole;
         }
     }
 }

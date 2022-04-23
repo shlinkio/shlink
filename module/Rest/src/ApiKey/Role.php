@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+// phpcs:disable
+// TODO Enable coding style checks again once code sniffer 3.7 is released https://github.com/squizlabs/PHP_CodeSniffer/issues/3474
 namespace Shlinkio\Shlink\Rest\ApiKey;
 
 use Happyr\DoctrineSpecification\Spec;
@@ -12,31 +14,24 @@ use Shlinkio\Shlink\Core\ShortUrl\Spec\BelongsToDomain;
 use Shlinkio\Shlink\Core\ShortUrl\Spec\BelongsToDomainInlined;
 use Shlinkio\Shlink\Rest\Entity\ApiKeyRole;
 
-// TODO Convert to enum
-class Role
+enum Role: string
 {
-    public const AUTHORED_SHORT_URLS = 'AUTHORED_SHORT_URLS';
-    public const DOMAIN_SPECIFIC = 'DOMAIN_SPECIFIC';
-    private const ROLE_FRIENDLY_NAMES = [
-        self::AUTHORED_SHORT_URLS => 'Author only',
-        self::DOMAIN_SPECIFIC => 'Domain only',
-    ];
+    case AUTHORED_SHORT_URLS = 'AUTHORED_SHORT_URLS';
+    case DOMAIN_SPECIFIC = 'DOMAIN_SPECIFIC';
 
     public static function toSpec(ApiKeyRole $role, ?string $context = null): Specification
     {
-        return match ($role->name()) {
+        return match ($role->role()) {
             self::AUTHORED_SHORT_URLS => new BelongsToApiKey($role->apiKey(), $context),
             self::DOMAIN_SPECIFIC => new BelongsToDomain(self::domainIdFromMeta($role->meta()), $context),
-            default => Spec::andX(),
         };
     }
 
     public static function toInlinedSpec(ApiKeyRole $role): Specification
     {
-        return match ($role->name()) {
+        return match ($role->role()) {
             self::AUTHORED_SHORT_URLS => Spec::andX(new BelongsToApiKeyInlined($role->apiKey())),
             self::DOMAIN_SPECIFIC => Spec::andX(new BelongsToDomainInlined(self::domainIdFromMeta($role->meta()))),
-            default => Spec::andX(),
         };
     }
 
@@ -50,8 +45,11 @@ class Role
         return $meta['authority'] ?? '';
     }
 
-    public static function toFriendlyName(string $roleName): string
+    public static function toFriendlyName(Role $role): string
     {
-        return self::ROLE_FRIENDLY_NAMES[$roleName] ?? '';
+        return match ($role) {
+            self::AUTHORED_SHORT_URLS => 'Author only',
+            self::DOMAIN_SPECIFIC => 'Domain only',
+        };
     }
 }
