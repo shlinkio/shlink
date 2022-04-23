@@ -89,10 +89,10 @@ class Visit extends AbstractEntity implements JsonSerializable
 
     private function hydrateFromVisitor(Visitor $visitor, bool $anonymize = true): void
     {
-        $this->userAgent = $visitor->getUserAgent();
-        $this->referer = $visitor->getReferer();
-        $this->remoteAddr = $this->processAddress($anonymize, $visitor->getRemoteAddress());
-        $this->visitedUrl = $visitor->getVisitedUrl();
+        $this->userAgent = $visitor->userAgent;
+        $this->referer = $visitor->referer;
+        $this->remoteAddr = $this->processAddress($anonymize, $visitor->remoteAddress);
+        $this->visitedUrl = $visitor->visitedUrl;
         $this->potentialBot = $visitor->isPotentialBot();
     }
 

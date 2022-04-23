@@ -42,11 +42,11 @@ class QrCodeAction implements MiddlewareInterface
         $params = QrCodeParams::fromRequest($request, $this->defaultOptions);
         $qrCodeBuilder = Builder::create()
             ->data($this->stringifier->stringify($shortUrl))
-            ->size($params->size())
-            ->margin($params->margin())
-            ->writer($params->writer())
-            ->errorCorrectionLevel($params->errorCorrectionLevel())
-            ->roundBlockSizeMode($params->roundBlockSizeMode());
+            ->size($params->size)
+            ->margin($params->margin)
+            ->writer($params->writer)
+            ->errorCorrectionLevel($params->errorCorrectionLevel)
+            ->roundBlockSizeMode($params->roundBlockSizeMode);
 
         return new QrCodeResponse($qrCodeBuilder->build());
     }

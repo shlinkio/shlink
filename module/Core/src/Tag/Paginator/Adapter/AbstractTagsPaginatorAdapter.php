@@ -30,7 +30,7 @@ abstract class AbstractTagsPaginatorAdapter implements AdapterInterface
             new WithApiKeySpecsEnsuringJoin($this->apiKey),
         ];
 
-        $searchTerm = $this->params->searchTerm();
+        $searchTerm = $this->params->searchTerm;
         if ($searchTerm !== null) {
             $conditions[] = Spec::like('name', $searchTerm);
         }

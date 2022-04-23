@@ -49,7 +49,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
             throw VerifyAuthenticationException::forInvalidApiKey();
         }
 
-        return $handler->handle($request->withAttribute(ApiKey::class, $result->apiKey()));
+        return $handler->handle($request->withAttribute(ApiKey::class, $result->apiKey));
     }
 
     public static function apiKeyFromRequest(Request $request): ApiKey

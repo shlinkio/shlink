@@ -36,10 +36,11 @@ class DeleteShortUrlCommandTest extends TestCase
     public function successMessageIsPrintedIfUrlIsProperlyDeleted(): void
     {
         $shortCode = 'abc123';
-        $deleteByShortCode = $this->service->deleteByShortCode(new ShortUrlIdentifier($shortCode), false)->will(
-            function (): void {
-            },
-        );
+        $deleteByShortCode = $this->service->deleteByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            false,
+        )->will(function (): void {
+        });
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
@@ -55,7 +56,7 @@ class DeleteShortUrlCommandTest extends TestCase
     public function invalidShortCodePrintsMessage(): void
     {
         $shortCode = 'abc123';
-        $identifier = new ShortUrlIdentifier($shortCode);
+        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
         $deleteByShortCode = $this->service->deleteByShortCode($identifier, false)->willThrow(
             Exception\ShortUrlNotFoundException::fromNotFound($identifier),
         );
@@ -77,7 +78,7 @@ class DeleteShortUrlCommandTest extends TestCase
         string $expectedMessage,
     ): void {
         $shortCode = 'abc123';
-        $identifier = new ShortUrlIdentifier($shortCode);
+        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
         $deleteByShortCode = $this->service->deleteByShortCode($identifier, Argument::type('bool'))->will(
             function (array $args) use ($shortCode): void {
                 $ignoreThreshold = array_pop($args);
@@ -114,12 +115,13 @@ class DeleteShortUrlCommandTest extends TestCase
     public function deleteIsNotRetriedWhenThresholdIsReachedAndQuestionIsDeclined(): void
     {
         $shortCode = 'abc123';
-        $deleteByShortCode = $this->service->deleteByShortCode(new ShortUrlIdentifier($shortCode), false)->willThrow(
-            Exception\DeleteShortUrlException::fromVisitsThreshold(
-                10,
-                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            ),
-        );
+        $deleteByShortCode = $this->service->deleteByShortCode(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            false,
+        )->willThrow(Exception\DeleteShortUrlException::fromVisitsThreshold(
+            10,
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+        ));
         $this->commandTester->setInputs(['no']);
 
         $this->commandTester->execute(['shortCode' => $shortCode]);

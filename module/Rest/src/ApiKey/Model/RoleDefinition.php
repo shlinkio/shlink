@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Rest\ApiKey\Role;
 
 final class RoleDefinition
 {
-    private function __construct(private string $roleName, private array $meta)
+    private function __construct(public readonly string $roleName, public readonly array $meta)
     {
     }
 
@@ -24,15 +24,5 @@ final class RoleDefinition
             Role::DOMAIN_SPECIFIC,
             ['domain_id' => $domain->getId(), 'authority' => $domain->getAuthority()],
         );
-    }
-
-    public function roleName(): string
-    {
-        return $this->roleName;
-    }
-
-    public function meta(): array
-    {
-        return $this->meta;
     }
 }

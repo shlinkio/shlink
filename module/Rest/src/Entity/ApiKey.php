@@ -44,8 +44,8 @@ class ApiKey extends AbstractEntity
 
     public static function fromMeta(ApiKeyMeta $meta): self
     {
-        $apiKey = new self($meta->name(), $meta->expirationDate());
-        foreach ($meta->roleDefinitions() as $roleDefinition) {
+        $apiKey = new self($meta->name, $meta->expirationDate);
+        foreach ($meta->roleDefinitions as $roleDefinition) {
             $apiKey->registerRole($roleDefinition);
         }
 
@@ -137,21 +137,16 @@ class ApiKey extends AbstractEntity
 
     public function registerRole(RoleDefinition $roleDefinition): void
     {
-        $roleName = $roleDefinition->roleName();
-        $meta = $roleDefinition->meta();
+        $roleName = $roleDefinition->roleName;
+        $meta = $roleDefinition->meta;
 
         if ($this->hasRole($roleName)) {
             /** @var ApiKeyRole $role */
             $role = $this->roles->get($roleName);
             $role->updateMeta($meta);
         } else {
-            $role = new ApiKeyRole($roleDefinition->roleName(), $roleDefinition->meta(), $this);
+            $role = new ApiKeyRole($roleDefinition->roleName, $roleDefinition->meta, $this);
             $this->roles[$roleName] = $role;
         }
-    }
-
-    public function removeRole(string $roleName): void
-    {
-        $this->roles->remove($roleName);
     }
 }

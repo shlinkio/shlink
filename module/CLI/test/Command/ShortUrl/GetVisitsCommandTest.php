@@ -44,7 +44,7 @@ class GetVisitsCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->visitsHelper->visitsForShortUrl(
-            new ShortUrlIdentifier($shortCode),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             new VisitsParams(DateRange::emptyInstance()),
         )
             ->willReturn(new Paginator(new ArrayAdapter([])))
@@ -60,7 +60,7 @@ class GetVisitsCommandTest extends TestCase
         $startDate = '2016-01-01';
         $endDate = '2016-02-01';
         $this->visitsHelper->visitsForShortUrl(
-            new ShortUrlIdentifier($shortCode),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             new VisitsParams(DateRange::withStartAndEndDate(Chronos::parse($startDate), Chronos::parse($endDate))),
         )
             ->willReturn(new Paginator(new ArrayAdapter([])))
@@ -79,7 +79,7 @@ class GetVisitsCommandTest extends TestCase
         $shortCode = 'abc123';
         $startDate = 'foo';
         $info = $this->visitsHelper->visitsForShortUrl(
-            new ShortUrlIdentifier($shortCode),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             new VisitsParams(DateRange::emptyInstance()),
         )->willReturn(new Paginator(new ArrayAdapter([])));
 
@@ -100,7 +100,10 @@ class GetVisitsCommandTest extends TestCase
     public function outputIsProperlyGenerated(): void
     {
         $shortCode = 'abc123';
-        $this->visitsHelper->visitsForShortUrl(new ShortUrlIdentifier($shortCode), Argument::any())->willReturn(
+        $this->visitsHelper->visitsForShortUrl(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            Argument::any(),
+        )->willReturn(
             new Paginator(new ArrayAdapter([
                 Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('bar', 'foo', '', ''))->locate(
                     VisitLocation::fromGeolocation(new Location('', 'Spain', '', '', 0, 0, '')),

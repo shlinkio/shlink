@@ -47,8 +47,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
     private function processOrderByForList(QueryBuilder $qb, Ordering $orderBy): array
     {
-        $fieldName = $orderBy->orderField();
-        $order = $orderBy->orderDirection();
+        $fieldName = $orderBy->field;
+        $order = $orderBy->direction;
 
         if ($fieldName === 'visits') {
             // FIXME This query is inefficient.
@@ -146,8 +146,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         $query = $this->getEntityManager()->createQuery($dql);
         $query->setMaxResults(1)
               ->setParameters([
-                  'shortCode' => $identifier->shortCode(),
-                  'domain' => $identifier->domain(),
+                  'shortCode' => $identifier->shortCode,
+                  'domain' => $identifier->domain,
               ]);
 
         // Since we ordered by domain, we will have first the URL matching provided domain, followed by the one
@@ -198,10 +198,10 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         $qb->from(ShortUrl::class, 's')
            ->where($qb->expr()->isNotNull('s.shortCode'))
            ->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
-           ->setParameter('slug', $identifier->shortCode())
+           ->setParameter('slug', $identifier->shortCode)
            ->setMaxResults(1);
 
-        $this->whereDomainIs($qb, $identifier->domain());
+        $this->whereDomainIs($qb, $identifier->domain);
 
         $this->applySpecification($qb, $spec, 's');
 

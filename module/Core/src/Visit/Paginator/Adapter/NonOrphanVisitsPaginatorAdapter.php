@@ -23,8 +23,8 @@ class NonOrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAda
     protected function doCount(): int
     {
         return $this->repo->countNonOrphanVisits(new VisitsCountFiltering(
-            $this->params->getDateRange(),
-            $this->params->excludeBots(),
+            $this->params->dateRange,
+            $this->params->excludeBots,
             $this->apiKey,
         ));
     }
@@ -32,8 +32,8 @@ class NonOrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAda
     public function getSlice(int $offset, int $length): iterable
     {
         return $this->repo->findNonOrphanVisits(new VisitsListFiltering(
-            $this->params->getDateRange(),
-            $this->params->excludeBots(),
+            $this->params->dateRange,
+            $this->params->excludeBots,
             $this->apiKey,
             $length,
             $offset,

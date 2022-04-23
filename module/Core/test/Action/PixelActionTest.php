@@ -37,9 +37,10 @@ class PixelActionTest extends TestCase
     public function imageIsReturned(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))->willReturn(
-            ShortUrl::withLongUrl('http://domain.com/foo/bar'),
-        )->shouldBeCalledOnce();
+        $this->urlResolver->resolveEnabledShortUrl(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
+        )->willReturn(ShortUrl::withLongUrl('http://domain.com/foo/bar'))
+         ->shouldBeCalledOnce();
         $this->requestTracker->trackIfApplicable(Argument::cetera())->shouldBeCalledOnce();
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);

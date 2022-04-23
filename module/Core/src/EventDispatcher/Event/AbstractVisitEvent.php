@@ -8,13 +8,8 @@ use JsonSerializable;
 
 abstract class AbstractVisitEvent implements JsonSerializable
 {
-    public function __construct(protected string $visitId)
+    public function __construct(public readonly string $visitId)
     {
-    }
-
-    public function visitId(): string
-    {
-        return $this->visitId;
     }
 
     public function jsonSerialize(): array

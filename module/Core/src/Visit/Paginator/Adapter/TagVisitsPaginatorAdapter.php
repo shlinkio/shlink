@@ -26,8 +26,8 @@ class TagVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
         return $this->visitRepository->findVisitsByTag(
             $this->tag,
             new VisitsListFiltering(
-                $this->params->getDateRange(),
-                $this->params->excludeBots(),
+                $this->params->dateRange,
+                $this->params->excludeBots,
                 $this->apiKey,
                 $length,
                 $offset,
@@ -40,8 +40,8 @@ class TagVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
         return $this->visitRepository->countVisitsByTag(
             $this->tag,
             new VisitsCountFiltering(
-                $this->params->getDateRange(),
-                $this->params->excludeBots(),
+                $this->params->dateRange,
+                $this->params->excludeBots,
                 $this->apiKey,
             ),
         );

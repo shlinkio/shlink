@@ -30,7 +30,7 @@ class LocateVisit
 
     public function __invoke(UrlVisited $shortUrlVisited): void
     {
-        $visitId = $shortUrlVisited->visitId();
+        $visitId = $shortUrlVisited->visitId;
 
         /** @var Visit|null $visit */
         $visit = $this->em->find(Visit::class, $visitId);
@@ -41,7 +41,7 @@ class LocateVisit
             return;
         }
 
-        $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress(), $visit);
+        $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress, $visit);
         $this->eventDispatcher->dispatch(new VisitLocated($visitId));
     }
 

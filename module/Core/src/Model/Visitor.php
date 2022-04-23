@@ -18,10 +18,10 @@ final class Visitor
     public const REMOTE_ADDRESS_MAX_LENGTH = 256;
     public const VISITED_URL_MAX_LENGTH = 2048;
 
-    private string $userAgent;
-    private string $referer;
-    private string $visitedUrl;
-    private ?string $remoteAddress;
+    public readonly string $userAgent;
+    public readonly string $referer;
+    public readonly string $visitedUrl;
+    public readonly ?string $remoteAddress;
     private bool $potentialBot;
 
     public function __construct(string $userAgent, string $referer, ?string $remoteAddress, string $visitedUrl)
@@ -59,26 +59,6 @@ final class Visitor
     public static function botInstance(): self
     {
         return new self('cf-facebook', '', null, '');
-    }
-
-    public function getUserAgent(): string
-    {
-        return $this->userAgent;
-    }
-
-    public function getReferer(): string
-    {
-        return $this->referer;
-    }
-
-    public function getRemoteAddress(): ?string
-    {
-        return $this->remoteAddress;
-    }
-
-    public function getVisitedUrl(): string
-    {
-        return $this->visitedUrl;
     }
 
     public function isPotentialBot(): bool

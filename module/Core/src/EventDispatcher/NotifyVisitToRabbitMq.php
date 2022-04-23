@@ -37,7 +37,7 @@ class NotifyVisitToRabbitMq
             return;
         }
 
-        $visitId = $shortUrlLocated->visitId();
+        $visitId = $shortUrlLocated->visitId;
         $visit = $this->em->find(Visit::class, $visitId);
 
         if ($visit === null) {

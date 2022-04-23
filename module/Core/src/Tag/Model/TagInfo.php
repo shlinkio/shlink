@@ -8,23 +8,11 @@ use JsonSerializable;
 
 final class TagInfo implements JsonSerializable
 {
-    public function __construct(private string $tag, private int $shortUrlsCount, private int $visitsCount)
-    {
-    }
-
-    public function tag(): string
-    {
-        return $this->tag;
-    }
-
-    public function shortUrlsCount(): int
-    {
-        return $this->shortUrlsCount;
-    }
-
-    public function visitsCount(): int
-    {
-        return $this->visitsCount;
+    public function __construct(
+        public readonly string $tag,
+        public readonly int $shortUrlsCount,
+        public readonly int $visitsCount,
+    ) {
     }
 
     public function jsonSerialize(): array

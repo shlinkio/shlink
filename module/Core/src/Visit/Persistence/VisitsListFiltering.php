@@ -13,19 +13,9 @@ final class VisitsListFiltering extends VisitsCountFiltering
         ?DateRange $dateRange = null,
         bool $excludeBots = false,
         ?ApiKey $apiKey = null,
-        private ?int $limit = null,
-        private ?int $offset = null,
+        public readonly ?int $limit = null,
+        public readonly ?int $offset = null,
     ) {
         parent::__construct($dateRange, $excludeBots, $apiKey);
-    }
-
-    public function limit(): ?int
-    {
-        return $this->limit;
-    }
-
-    public function offset(): ?int
-    {
-        return $this->offset;
     }
 }

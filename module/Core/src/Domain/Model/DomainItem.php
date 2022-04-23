@@ -12,9 +12,9 @@ use Shlinkio\Shlink\Core\Entity\Domain;
 final class DomainItem implements JsonSerializable
 {
     private function __construct(
-        private string $authority,
-        private NotFoundRedirectConfigInterface $notFoundRedirectConfig,
-        private bool $isDefault,
+        private readonly string $authority,
+        public readonly NotFoundRedirectConfigInterface $notFoundRedirectConfig,
+        public readonly bool $isDefault,
     ) {
     }
 
@@ -23,9 +23,9 @@ final class DomainItem implements JsonSerializable
         return new self($domain->getAuthority(), $domain, false);
     }
 
-    public static function forDefaultDomain(string $authority, NotFoundRedirectConfigInterface $config): self
+    public static function forDefaultDomain(string $defaultDomain, NotFoundRedirectConfigInterface $config): self
     {
-        return new self($authority, $config, true);
+        return new self($defaultDomain, $config, true);
     }
 
     public function jsonSerialize(): array
@@ -40,15 +40,5 @@ final class DomainItem implements JsonSerializable
     public function toString(): string
     {
         return $this->authority;
-    }
-
-    public function isDefault(): bool
-    {
-        return $this->isDefault;
-    }
-
-    public function notFoundRedirectConfig(): NotFoundRedirectConfigInterface
-    {
-        return $this->notFoundRedirectConfig;
     }
 }

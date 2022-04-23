@@ -21,10 +21,10 @@ class CountOfOrphanVisits extends BaseSpecification
     {
         $conditions = [
             Spec::isNull('shortUrl'),
-            new InDateRange($this->filtering->dateRange()),
+            new InDateRange($this->filtering->dateRange),
         ];
 
-        if ($this->filtering->excludeBots()) {
+        if ($this->filtering->excludeBots) {
             $conditions[] = Spec::eq('potentialBot', false);
         }
 
