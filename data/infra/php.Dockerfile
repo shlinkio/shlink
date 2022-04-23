@@ -1,4 +1,4 @@
-FROM php:8.1.3-fpm-alpine3.15
+FROM php:8.1.5-fpm-alpine3.15
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.21
@@ -9,7 +9,6 @@ RUN apk update
 
 # Install common php extensions
 RUN docker-php-ext-install pdo_mysql
-RUN docker-php-ext-install iconv
 RUN docker-php-ext-install calendar
 
 RUN apk add --no-cache oniguruma-dev

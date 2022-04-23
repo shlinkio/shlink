@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1385](https://github.com/shlinkio/shlink/issues/1385) Prevented a big error message from being logged when using Shlink without mercure.
 * [#1398](https://github.com/shlinkio/shlink/issues/1398) Increased required mutation score for unit tests to 85%.
 * [#1419](https://github.com/shlinkio/shlink/issues/1419) Input dates are now parsed to Shlink's configured timezone or default timezone before using them for database quieries.
+* [#1428](https://github.com/shlinkio/shlink/issues/1428) Updated native dependencies in docker image and base image to PHP v8.1.5.
 
 ### Deprecated
 * [#1340](https://github.com/shlinkio/shlink/issues/1340) Deprecated webhooks. New events will only be added to other real-time updates approaches, and webhooks will be completely removed in Shlink 4.0.0.
