@@ -107,7 +107,9 @@ class UrlValidatorTest extends TestCase
     /** @test */
     public function validateUrlWithTitleReturnsNullWhenAutoResolutionIsDisabledAndValidationIsEnabled(): void
     {
-        $request = $this->httpClient->request(Argument::cetera())->willReturn($this->respWithTitle());
+        $request = $this->httpClient->request(RequestMethodInterface::METHOD_HEAD, Argument::cetera())->willReturn(
+            $this->respWithTitle(),
+        );
         $this->options->autoResolveTitles = false;
 
         $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
@@ -119,7 +121,9 @@ class UrlValidatorTest extends TestCase
     /** @test */
     public function validateUrlWithTitleResolvesTitleWhenAutoResolutionIsEnabled(): void
     {
-        $request = $this->httpClient->request(Argument::cetera())->willReturn($this->respWithTitle());
+        $request = $this->httpClient->request(RequestMethodInterface::METHOD_GET, Argument::cetera())->willReturn(
+            $this->respWithTitle(),
+        );
         $this->options->autoResolveTitles = true;
 
         $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
@@ -128,11 +132,46 @@ class UrlValidatorTest extends TestCase
         $request->shouldHaveBeenCalledOnce();
     }
 
+    /** @test */
+    public function validateUrlWithTitleReturnsNullWhenAutoResolutionIsEnabledAndReturnedContentTypeIsInvalid(): void
+    {
+        $request = $this->httpClient->request(RequestMethodInterface::METHOD_GET, Argument::cetera())->willReturn(
+            new Response('php://memory', 200, ['Content-Type' => 'application/octet-stream']),
+        );
+        $this->options->autoResolveTitles = true;
+
+        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
+
+        self::assertNull($result);
+        $request->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
+    public function validateUrlWithTitleReturnsNullWhenAutoResolutionIsEnabledAndBodyDoesNotContainTitle(): void
+    {
+        $request = $this->httpClient->request(RequestMethodInterface::METHOD_GET, Argument::cetera())->willReturn(
+            new Response($this->createStreamWithContent('<body>No title</body>'), 200, ['Content-Type' => 'text/html']),
+        );
+        $this->options->autoResolveTitles = true;
+
+        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
+
+        self::assertNull($result);
+        $request->shouldHaveBeenCalledOnce();
+    }
+
     private function respWithTitle(): Response
     {
-        $body = new Stream('php://temp', 'wr');
-        $body->write('<title>  Resolved title</title>');
+        $body = $this->createStreamWithContent('<title data-foo="bar">  Resolved title</title>');
+        return new Response($body, 200, ['Content-Type' => 'TEXT/html; charset=utf-8']);
+    }
 
-        return new Response($body);
+    private function createStreamWithContent(string $content): Stream
+    {
+        $body = new Stream('php://temp', 'wr');
+        $body->write($content);
+        $body->rewind();
+
+        return $body;
     }
 }
