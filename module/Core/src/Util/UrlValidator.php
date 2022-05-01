@@ -14,6 +14,9 @@ use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Throwable;
 
 use function preg_match;
+use function str_contains;
+use function str_starts_with;
+use function strtolower;
 use function trim;
 
 use const Shlinkio\Shlink\TITLE_TAG_VALUE;
@@ -56,8 +59,18 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
             return null;
         }
 
-        $body = $response->getBody()->__toString();
-        preg_match(TITLE_TAG_VALUE, $body, $matches);
+        $contentType = strtolower($response->getHeaderLine('Content-Type'));
+        if (! str_starts_with($contentType, 'text/html')) {
+            return null;
+        }
+
+        $collectedBody = '';
+        $body = $response->getBody();
+        // With streaming enabled, we can walk the body until the </title> tag is found, and then stop
+        while (! str_contains($collectedBody, '</title>') && ! $body->eof()) {
+            $collectedBody .= $body->read(1024);
+        }
+        preg_match(TITLE_TAG_VALUE, $collectedBody, $matches);
         return isset($matches[1]) ? trim($matches[1]) : null;
     }
 
@@ -73,6 +86,7 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
                 RequestOptions::IDN_CONVERSION => true,
                 // Making the request with a browser's user agent makes the validation closer to a real user
                 RequestOptions::HEADERS => ['User-Agent' => self::CHROME_USER_AGENT],
+                RequestOptions::STREAM => true, // This ensures large files are not fully downloaded if not needed
             ]);
         } catch (GuzzleException $e) {
             throw InvalidUrlException::fromUrl($url, $e);
