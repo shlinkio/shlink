@@ -107,7 +107,9 @@ class UrlValidatorTest extends TestCase
     /** @test */
     public function validateUrlWithTitleReturnsNullWhenAutoResolutionIsDisabledAndValidationIsEnabled(): void
     {
-        $request = $this->httpClient->request(Argument::cetera())->willReturn($this->respWithTitle());
+        $request = $this->httpClient->request(RequestMethodInterface::METHOD_HEAD, Argument::cetera())->willReturn(
+            $this->respWithTitle(),
+        );
         $this->options->autoResolveTitles = false;
 
         $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
@@ -119,7 +121,9 @@ class UrlValidatorTest extends TestCase
     /** @test */
     public function validateUrlWithTitleResolvesTitleWhenAutoResolutionIsEnabled(): void
     {
-        $request = $this->httpClient->request(Argument::cetera())->willReturn($this->respWithTitle());
+        $request = $this->httpClient->request(RequestMethodInterface::METHOD_GET, Argument::cetera())->willReturn(
+            $this->respWithTitle(),
+        );
         $this->options->autoResolveTitles = true;
 
         $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
@@ -131,7 +135,7 @@ class UrlValidatorTest extends TestCase
     private function respWithTitle(): Response
     {
         $body = new Stream('php://temp', 'wr');
-        $body->write('<title>  Resolved title</title>');
+        $body->write('<title data-foo="bar">  Resolved title</title>');
 
         return new Response($body);
     }

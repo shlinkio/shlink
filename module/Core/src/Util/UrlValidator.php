@@ -11,6 +11,7 @@ use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
+use Throwable;
 
 use function preg_match;
 use function trim;
@@ -36,7 +37,7 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
             return;
         }
 
-        $this->validateUrlAndGetResponse($url, true);
+        $this->validateUrlAndGetResponse($url);
     }
 
     public function validateUrlWithTitle(string $url, bool $doValidate): ?string
@@ -45,8 +46,13 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
             return null;
         }
 
-        $response = $this->validateUrlAndGetResponse($url, $doValidate);
-        if ($response === null || ! $this->options->autoResolveTitles()) {
+        if (! $this->options->autoResolveTitles()) {
+            $this->validateUrlAndGetResponse($url, self::METHOD_HEAD);
+            return null;
+        }
+
+        $response = $doValidate ? $this->validateUrlAndGetResponse($url) : $this->getResponse($url);
+        if ($response === null) {
             return null;
         }
 
@@ -55,20 +61,29 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
         return isset($matches[1]) ? trim($matches[1]) : null;
     }
 
-    private function validateUrlAndGetResponse(string $url, bool $throwOnError): ?ResponseInterface
+    /**
+     * @param self::METHOD_GET|self::METHOD_HEAD $method
+     * @throws InvalidUrlException
+     */
+    private function validateUrlAndGetResponse(string $url, string $method = self::METHOD_GET): ResponseInterface
     {
         try {
-            return $this->httpClient->request(self::METHOD_GET, $url, [
+            return $this->httpClient->request($method, $url, [
                 RequestOptions::ALLOW_REDIRECTS => ['max' => self::MAX_REDIRECTS],
                 RequestOptions::IDN_CONVERSION => true,
                 // Making the request with a browser's user agent makes the validation closer to a real user
                 RequestOptions::HEADERS => ['User-Agent' => self::CHROME_USER_AGENT],
             ]);
         } catch (GuzzleException $e) {
-            if ($throwOnError) {
-                throw InvalidUrlException::fromUrl($url, $e);
-            }
+            throw InvalidUrlException::fromUrl($url, $e);
+        }
+    }
 
+    private function getResponse(string $url): ?ResponseInterface
+    {
+        try {
+            return $this->validateUrlAndGetResponse($url);
+        } catch (Throwable) {
             return null;
         }
     }
