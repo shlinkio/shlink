@@ -65,7 +65,7 @@
         "devster/ubench": "^2.1",
         "dms/phpunit-arraysubset-asserts": "^0.3.0",
         "infection/infection": "^0.26.5",
-        "openswoole/ide-helper": "~4.11.0",
+        "openswoole/ide-helper": "~4.11.1",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^1.2",
         "phpstan/phpstan-doctrine": "^1.0",

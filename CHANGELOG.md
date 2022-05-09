@@ -4,12 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.1.1] - 2022-05-09
 ### Added
 * *Nothing*
 
 ### Changed
-* *Nothing*
+* [#1444](https://github.com/shlinkio/shlink/issues/1444) Updated docker image to openswoole 4.11.1, in an attempt to fix error.
 
 ### Deprecated
 * *Nothing*
