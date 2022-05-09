@@ -21,6 +21,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 
+## [3.1.1] - 2022-05-09
+### Added
+* *Nothing*
+
+### Changed
+* [#1444](https://github.com/shlinkio/shlink/issues/1444) Updated docker image to openswoole 4.11.1, in an attempt to fix error.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1439](https://github.com/shlinkio/shlink/issues/1439) Fixed crash when trying to auto-resolve titles for URLs which serve large binary files.
+
+
 ## [3.1.0] - 2022-04-23
 ### Added
 * [#1294](https://github.com/shlinkio/shlink/issues/1294) Allowed to provide a specific domain when importing URLs from YOURLS.

@@ -23,7 +23,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.11.0
+          extensions: openswoole-4.11.1
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer swagger:inline
