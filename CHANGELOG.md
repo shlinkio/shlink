@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1448](https://github.com/shlinkio/shlink/issues/1448) Fixed HTML entities not being properly parsed when auto-resolving page titles.
+
+
 ## [3.1.1] - 2022-05-09
 ### Added
 * *Nothing*
