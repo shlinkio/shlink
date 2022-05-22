@@ -24,6 +24,7 @@ return [
             Command\Tag\ListTagsCommand::NAME => Command\Tag\ListTagsCommand::class,
             Command\Tag\RenameTagCommand::NAME => Command\Tag\RenameTagCommand::class,
             Command\Tag\DeleteTagsCommand::NAME => Command\Tag\DeleteTagsCommand::class,
+            Command\Tag\TagVisitsCommand::NAME => Command\Tag\TagVisitsCommand::class,
 
             Command\Domain\ListDomainsCommand::NAME => Command\Domain\ListDomainsCommand::class,
             Command\Domain\DomainRedirectsCommand::NAME => Command\Domain\DomainRedirectsCommand::class,

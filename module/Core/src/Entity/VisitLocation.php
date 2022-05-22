@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Entity;
 
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
-use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
-class VisitLocation extends AbstractEntity implements VisitLocationInterface
+class VisitLocation extends AbstractEntity
 {
     private string $countryCode;
     private string $countryName;

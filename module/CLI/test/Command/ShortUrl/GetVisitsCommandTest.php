@@ -106,7 +106,7 @@ class GetVisitsCommandTest extends TestCase
         )->willReturn(
             new Paginator(new ArrayAdapter([
                 Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('bar', 'foo', '', ''))->locate(
-                    VisitLocation::fromGeolocation(new Location('', 'Spain', '', '', 0, 0, '')),
+                    VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
                 ),
             ])),
         )->shouldBeCalledOnce();
@@ -115,6 +115,7 @@ class GetVisitsCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
         self::assertStringContainsString('foo', $output);
         self::assertStringContainsString('Spain', $output);
+        self::assertStringContainsString('Madrid', $output);
         self::assertStringContainsString('bar', $output);
     }
 }

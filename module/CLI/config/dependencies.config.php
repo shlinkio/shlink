@@ -55,6 +55,7 @@ return [
             Command\Tag\ListTagsCommand::class => ConfigAbstractFactory::class,
             Command\Tag\RenameTagCommand::class => ConfigAbstractFactory::class,
             Command\Tag\DeleteTagsCommand::class => ConfigAbstractFactory::class,
+            Command\Tag\TagVisitsCommand::class => ConfigAbstractFactory::class,
 
             Command\Db\CreateDatabaseCommand::class => ConfigAbstractFactory::class,
             Command\Db\MigrateDatabaseCommand::class => ConfigAbstractFactory::class,
@@ -102,6 +103,7 @@ return [
         Command\Tag\ListTagsCommand::class => [TagService::class],
         Command\Tag\RenameTagCommand::class => [TagService::class],
         Command\Tag\DeleteTagsCommand::class => [TagService::class],
+        Command\Tag\TagVisitsCommand::class => [Visit\VisitsStatsHelper::class],
 
         Command\Domain\ListDomainsCommand::class => [DomainService::class],
         Command\Domain\DomainRedirectsCommand::class => [DomainService::class],

@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Model\Visitor;
-use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 
@@ -119,7 +118,7 @@ class Visit extends AbstractEntity implements JsonSerializable
         return $this->shortUrl;
     }
 
-    public function getVisitLocation(): ?VisitLocationInterface
+    public function getVisitLocation(): ?VisitLocation
     {
         return $this->visitLocation;
     }
