@@ -16,6 +16,8 @@ return [
 
             Command\Visit\LocateVisitsCommand::NAME => Command\Visit\LocateVisitsCommand::class,
             Command\Visit\DownloadGeoLiteDbCommand::NAME => Command\Visit\DownloadGeoLiteDbCommand::class,
+            Command\Visit\GetOrphanVisitsCommand::NAME => Command\Visit\GetOrphanVisitsCommand::class,
+            Command\Visit\GetNonOrphanVisitsCommand::NAME => Command\Visit\GetNonOrphanVisitsCommand::class,
 
             Command\Api\GenerateKeyCommand::NAME => Command\Api\GenerateKeyCommand::class,
             Command\Api\DisableKeyCommand::NAME => Command\Api\DisableKeyCommand::class,
@@ -28,6 +30,7 @@ return [
 
             Command\Domain\ListDomainsCommand::NAME => Command\Domain\ListDomainsCommand::class,
             Command\Domain\DomainRedirectsCommand::NAME => Command\Domain\DomainRedirectsCommand::class,
+            Command\Domain\GetDomainVisitsCommand::NAME => Command\Domain\GetDomainVisitsCommand::class,
 
             Command\Db\CreateDatabaseCommand::NAME => Command\Db\CreateDatabaseCommand::class,
             Command\Db\MigrateDatabaseCommand::NAME => Command\Db\MigrateDatabaseCommand::class,

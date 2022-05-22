@@ -47,6 +47,8 @@ return [
 
             Command\Visit\DownloadGeoLiteDbCommand::class => ConfigAbstractFactory::class,
             Command\Visit\LocateVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\Visit\GetOrphanVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\Visit\GetNonOrphanVisitsCommand::class => ConfigAbstractFactory::class,
 
             Command\Api\GenerateKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\DisableKeyCommand::class => ConfigAbstractFactory::class,
@@ -62,6 +64,7 @@ return [
 
             Command\Domain\ListDomainsCommand::class => ConfigAbstractFactory::class,
             Command\Domain\DomainRedirectsCommand::class => ConfigAbstractFactory::class,
+            Command\Domain\GetDomainVisitsCommand::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -95,6 +98,8 @@ return [
             IpLocationResolverInterface::class,
             LockFactory::class,
         ],
+        Command\Visit\GetOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class],
+        Command\Visit\GetNonOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class],
 
         Command\Api\GenerateKeyCommand::class => [ApiKeyService::class, ApiKey\RoleResolver::class],
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class],
@@ -107,6 +112,7 @@ return [
 
         Command\Domain\ListDomainsCommand::class => [DomainService::class],
         Command\Domain\DomainRedirectsCommand::class => [DomainService::class],
+        Command\Domain\GetDomainVisitsCommand::class => [Visit\VisitsStatsHelper::class],
 
         Command\Db\CreateDatabaseCommand::class => [
             LockFactory::class,
