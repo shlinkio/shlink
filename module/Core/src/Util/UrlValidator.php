@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Throwable;
 
+use function html_entity_decode;
 use function preg_match;
 use function str_contains;
 use function str_starts_with;
@@ -71,7 +72,7 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
             $collectedBody .= $body->read(1024);
         }
         preg_match(TITLE_TAG_VALUE, $collectedBody, $matches);
-        return isset($matches[1]) ? trim($matches[1]) : null;
+        return isset($matches[1]) ? $this->normalizeTitle($matches[1]) : null;
     }
 
     /**
@@ -100,5 +101,10 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
         } catch (Throwable) {
             return null;
         }
+    }
+
+    private function normalizeTitle(string $title): string
+    {
+        return html_entity_decode(trim($title));
     }
 }
