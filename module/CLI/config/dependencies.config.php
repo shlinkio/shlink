@@ -99,7 +99,7 @@ return [
             LockFactory::class,
         ],
         Command\Visit\GetOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class],
-        Command\Visit\GetNonOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class],
+        Command\Visit\GetNonOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
 
         Command\Api\GenerateKeyCommand::class => [ApiKeyService::class, ApiKey\RoleResolver::class],
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class],
@@ -108,11 +108,11 @@ return [
         Command\Tag\ListTagsCommand::class => [TagService::class],
         Command\Tag\RenameTagCommand::class => [TagService::class],
         Command\Tag\DeleteTagsCommand::class => [TagService::class],
-        Command\Tag\GetTagVisitsCommand::class => [Visit\VisitsStatsHelper::class],
+        Command\Tag\GetTagVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
 
         Command\Domain\ListDomainsCommand::class => [DomainService::class],
         Command\Domain\DomainRedirectsCommand::class => [DomainService::class],
-        Command\Domain\GetDomainVisitsCommand::class => [Visit\VisitsStatsHelper::class],
+        Command\Domain\GetDomainVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
 
         Command\Db\CreateDatabaseCommand::class => [
             LockFactory::class,

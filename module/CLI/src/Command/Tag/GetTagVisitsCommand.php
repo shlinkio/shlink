@@ -7,13 +7,23 @@ namespace Shlinkio\Shlink\CLI\Command\Tag;
 use Shlinkio\Shlink\CLI\Command\Visit\AbstractVisitsListCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
+use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 
 class GetTagVisitsCommand extends AbstractVisitsListCommand
 {
     public const NAME = 'tag:visits';
+
+    public function __construct(
+        VisitsStatsHelperInterface $visitsHelper,
+        private readonly ShortUrlStringifierInterface $shortUrlStringifier,
+    ) {
+        parent::__construct($visitsHelper);
+    }
 
     protected function doConfigure(): void
     {
@@ -27,5 +37,14 @@ class GetTagVisitsCommand extends AbstractVisitsListCommand
     {
         $tag = $input->getArgument('tag');
         return $this->visitsHelper->visitsForTag($tag, new VisitsParams($dateRange));
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function mapExtraFields(Visit $visit): array
+    {
+        $shortUrl = $visit->getShortUrl();
+        return $shortUrl === null ? [] : ['shortUrl' => $this->shortUrlStringifier->stringify($shortUrl)];
     }
 }

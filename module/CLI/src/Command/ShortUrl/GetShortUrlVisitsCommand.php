@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 use Shlinkio\Shlink\CLI\Command\Visit\AbstractVisitsListCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Symfony\Component\Console\Input\InputArgument;
@@ -46,5 +47,13 @@ class GetShortUrlVisitsCommand extends AbstractVisitsListCommand
     {
         $identifier = ShortUrlIdentifier::fromCli($input);
         return $this->visitsHelper->visitsForShortUrl($identifier, new VisitsParams($dateRange));
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function mapExtraFields(Visit $visit): array
+    {
+        return [];
     }
 }
