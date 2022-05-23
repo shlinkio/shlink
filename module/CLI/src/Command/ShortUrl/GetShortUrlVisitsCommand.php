@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class GetVisitsCommand extends AbstractVisitsListCommand
+class GetShortUrlVisitsCommand extends AbstractVisitsListCommand
 {
     public const NAME = 'short-url:visits';
 

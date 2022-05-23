@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Core\Model\VisitsParams;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 
-class TagVisitsCommand extends AbstractVisitsListCommand
+class GetTagVisitsCommand extends AbstractVisitsListCommand
 {
     public const NAME = 'tag:visits';
 

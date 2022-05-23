@@ -42,7 +42,7 @@ return [
             Command\ShortUrl\CreateShortUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ResolveUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ListShortUrlsCommand::class => ConfigAbstractFactory::class,
-            Command\ShortUrl\GetVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\GetShortUrlVisitsCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\DeleteShortUrlCommand::class => ConfigAbstractFactory::class,
 
             Command\Visit\DownloadGeoLiteDbCommand::class => ConfigAbstractFactory::class,
@@ -57,7 +57,7 @@ return [
             Command\Tag\ListTagsCommand::class => ConfigAbstractFactory::class,
             Command\Tag\RenameTagCommand::class => ConfigAbstractFactory::class,
             Command\Tag\DeleteTagsCommand::class => ConfigAbstractFactory::class,
-            Command\Tag\TagVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\Tag\GetTagVisitsCommand::class => ConfigAbstractFactory::class,
 
             Command\Db\CreateDatabaseCommand::class => ConfigAbstractFactory::class,
             Command\Db\MigrateDatabaseCommand::class => ConfigAbstractFactory::class,
@@ -89,7 +89,7 @@ return [
             Service\ShortUrlService::class,
             ShortUrlDataTransformer::class,
         ],
-        Command\ShortUrl\GetVisitsCommand::class => [Visit\VisitsStatsHelper::class],
+        Command\ShortUrl\GetShortUrlVisitsCommand::class => [Visit\VisitsStatsHelper::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
 
         Command\Visit\DownloadGeoLiteDbCommand::class => [Util\GeolocationDbUpdater::class],
@@ -108,7 +108,7 @@ return [
         Command\Tag\ListTagsCommand::class => [TagService::class],
         Command\Tag\RenameTagCommand::class => [TagService::class],
         Command\Tag\DeleteTagsCommand::class => [TagService::class],
-        Command\Tag\TagVisitsCommand::class => [Visit\VisitsStatsHelper::class],
+        Command\Tag\GetTagVisitsCommand::class => [Visit\VisitsStatsHelper::class],
 
         Command\Domain\ListDomainsCommand::class => [DomainService::class],
         Command\Domain\DomainRedirectsCommand::class => [DomainService::class],

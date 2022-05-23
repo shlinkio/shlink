@@ -9,7 +9,7 @@ use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Command\ShortUrl\GetVisitsCommand;
+use Shlinkio\Shlink\CLI\Command\ShortUrl\GetShortUrlVisitsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -35,7 +35,7 @@ class GetVisitsCommandTest extends TestCase
     public function setUp(): void
     {
         $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
-        $command = new GetVisitsCommand($this->visitsHelper->reveal());
+        $command = new GetShortUrlVisitsCommand($this->visitsHelper->reveal());
         $this->commandTester = $this->testerForCommand($command);
     }
 

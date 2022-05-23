@@ -11,7 +11,7 @@ return [
             Command\ShortUrl\CreateShortUrlCommand::NAME => Command\ShortUrl\CreateShortUrlCommand::class,
             Command\ShortUrl\ResolveUrlCommand::NAME => Command\ShortUrl\ResolveUrlCommand::class,
             Command\ShortUrl\ListShortUrlsCommand::NAME => Command\ShortUrl\ListShortUrlsCommand::class,
-            Command\ShortUrl\GetVisitsCommand::NAME => Command\ShortUrl\GetVisitsCommand::class,
+            Command\ShortUrl\GetShortUrlVisitsCommand::NAME => Command\ShortUrl\GetShortUrlVisitsCommand::class,
             Command\ShortUrl\DeleteShortUrlCommand::NAME => Command\ShortUrl\DeleteShortUrlCommand::class,
 
             Command\Visit\LocateVisitsCommand::NAME => Command\Visit\LocateVisitsCommand::class,
@@ -26,7 +26,7 @@ return [
             Command\Tag\ListTagsCommand::NAME => Command\Tag\ListTagsCommand::class,
             Command\Tag\RenameTagCommand::NAME => Command\Tag\RenameTagCommand::class,
             Command\Tag\DeleteTagsCommand::NAME => Command\Tag\DeleteTagsCommand::class,
-            Command\Tag\TagVisitsCommand::NAME => Command\Tag\TagVisitsCommand::class,
+            Command\Tag\GetTagVisitsCommand::NAME => Command\Tag\GetTagVisitsCommand::class,
 
             Command\Domain\ListDomainsCommand::NAME => Command\Domain\ListDomainsCommand::class,
             Command\Domain\DomainRedirectsCommand::NAME => Command\Domain\DomainRedirectsCommand::class,
