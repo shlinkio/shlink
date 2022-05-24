@@ -114,8 +114,6 @@ class GetShortUrlVisitsCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        echo $output;
-
         self::assertEquals(
             <<<OUTPUT
             +---------+---------------------------+------------+---------+--------+
