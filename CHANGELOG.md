@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#1280](https://github.com/shlinkio/shlink/issues/1280) Added missing visit-related commands.
+
+  Now you can run `tag:visits`, `domain:visits`, `visit:orphan` or `visit:non-orphan` to get the corresponding list of visits from the command line.
 
 ### Changed
 * *Nothing*

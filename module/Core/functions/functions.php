@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\Builder\FieldBuilder;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
+use Laminas\Filter\Word\CamelCaseToSeparator;
 use Laminas\InputFilter\InputFilter;
 use PUGX\Shortid\Factory as ShortIdFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
@@ -19,6 +20,7 @@ use function print_r;
 use function Shlinkio\Shlink\Common\buildDateRange;
 use function sprintf;
 use function str_repeat;
+use function ucfirst;
 
 function generateRandomShortCode(int $length): string
 {
@@ -114,4 +116,14 @@ function fieldWithUtf8Charset(FieldBuilder $field, array $emConfig, string $coll
                              ->option('collation', 'utf8mb4_' . $collation),
         default => $field,
     };
+}
+
+function camelCaseToHumanFriendly(string $value): string
+{
+    static $filter;
+    if ($filter === null) {
+        $filter = new CamelCaseToSeparator(' ');
+    }
+
+    return ucfirst($filter->filter($value));
 }

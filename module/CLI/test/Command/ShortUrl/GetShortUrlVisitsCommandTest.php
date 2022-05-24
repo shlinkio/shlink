@@ -9,7 +9,7 @@ use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\CLI\Command\ShortUrl\GetVisitsCommand;
+use Shlinkio\Shlink\CLI\Command\ShortUrl\GetShortUrlVisitsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -23,9 +23,10 @@ use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
+use function Shlinkio\Shlink\Common\buildDateRange;
 use function sprintf;
 
-class GetVisitsCommandTest extends TestCase
+class GetShortUrlVisitsCommandTest extends TestCase
 {
     use CliTestUtilsTrait;
 
@@ -35,7 +36,7 @@ class GetVisitsCommandTest extends TestCase
     public function setUp(): void
     {
         $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
-        $command = new GetVisitsCommand($this->visitsHelper->reveal());
+        $command = new GetShortUrlVisitsCommand($this->visitsHelper->reveal());
         $this->commandTester = $this->testerForCommand($command);
     }
 
@@ -61,7 +62,7 @@ class GetVisitsCommandTest extends TestCase
         $endDate = '2016-02-01';
         $this->visitsHelper->visitsForShortUrl(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            new VisitsParams(DateRange::withStartAndEndDate(Chronos::parse($startDate), Chronos::parse($endDate))),
+            new VisitsParams(buildDateRange(Chronos::parse($startDate), Chronos::parse($endDate))),
         )
             ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
@@ -99,22 +100,30 @@ class GetVisitsCommandTest extends TestCase
     /** @test */
     public function outputIsProperlyGenerated(): void
     {
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('bar', 'foo', '', ''))->locate(
+            VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
+        );
         $shortCode = 'abc123';
         $this->visitsHelper->visitsForShortUrl(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             Argument::any(),
         )->willReturn(
-            new Paginator(new ArrayAdapter([
-                Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('bar', 'foo', '', ''))->locate(
-                    VisitLocation::fromGeolocation(new Location('', 'Spain', '', '', 0, 0, '')),
-                ),
-            ])),
+            new Paginator(new ArrayAdapter([$visit])),
         )->shouldBeCalledOnce();
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
-        self::assertStringContainsString('foo', $output);
-        self::assertStringContainsString('Spain', $output);
-        self::assertStringContainsString('bar', $output);
+
+        self::assertEquals(
+            <<<OUTPUT
+            +---------+---------------------------+------------+---------+--------+
+            | Referer | Date                      | User agent | Country | City   |
+            +---------+---------------------------+------------+---------+--------+
+            | foo     | {$visit->getDate()->toAtomString()} | bar        | Spain   | Madrid |
+            +---------+---------------------------+------------+---------+--------+
+
+            OUTPUT,
+            $output,
+        );
     }
 }
