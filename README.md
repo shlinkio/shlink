@@ -68,7 +68,7 @@ In order to run Shlink, you will need a built version of the project. There are 
 
     > **Note**
     >
-    > This is the process used when releasing new Shlink versions. After tagging the new version with git, the Github release is automatically created by a [GitHub workflow](https://github.com/shlinkio/shlink/actions?query=workflow%3A%22Publish+release%22), attaching the generated dist file to it.
+    > This is the process used when releasing new Shlink versions. After tagging the new version with git, the GitHub release is automatically created by a [GitHub workflow](https://github.com/shlinkio/shlink/actions?query=workflow%3A%22Publish+release%22), attaching the generated dist file to it.
 
 ### Configure
 
