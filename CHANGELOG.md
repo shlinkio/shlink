@@ -1254,7 +1254,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Endpoints and commands which create short URLs support providing the `domain` now (via query param or CLI flag). If not provided, the short URLs will still be "attached" to the default domain.
 
-    Custom slugs can be created on multiple domains, allowing to share links like `https://doma.in/my-compaign` and `https://example.com/my-campaign`, under the same shlink instance.
+    Custom slugs can be created on multiple domains, allowing to share links like `https://doma.in/my-campaign` and `https://example.com/my-campaign`, under the same shlink instance.
 
     When resolving a short URL to redirect end users, the following rules are applied:
 
