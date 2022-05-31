@@ -176,7 +176,7 @@
         "test:db:mysql": "<fg=blue;options=bold>Runs database test suites on a MySQL database</>",
         "test:db:maria": "<fg=blue;options=bold>Runs database test suites on a MariaDB database</>",
         "test:db:postgres": "<fg=blue;options=bold>Runs database test suites on a PostgreSQL database</>",
-        "test:db:ms": "<fg=blue;options=bold>Runs database test suites on a Miscrosoft SQL Server database</>",
+        "test:db:ms": "<fg=blue;options=bold>Runs database test suites on a Microsoft SQL Server database</>",
         "test:api": "<fg=blue;options=bold>Runs API test suites</>",
         "test:api:ci": "<fg=blue;options=bold>Runs API test suites, and generates code coverage reports</>",
         "infect:ci": "<fg=blue;options=bold>Checks unit and db tests quality applying mutation testing with existing reports and logs</>",
