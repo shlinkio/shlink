@@ -312,7 +312,7 @@
                                         },
                                         "threshold": {
                                             "type": "number",
-                                            "description": "The amount of visits currently configured as threshold to allow deleting short UYRLs or not"
+                                            "description": "The amount of visits currently configured as threshold to allow deleting short URLs or not"
                                         }
                                     }
                                 }
