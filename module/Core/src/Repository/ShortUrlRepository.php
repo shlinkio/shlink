@@ -102,15 +102,22 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
                 $qb->leftJoin('s.tags', 't');
             }
 
-            // Apply search conditions
+            // Apply general search conditions
+            $conditions = [
+                $qb->expr()->like('s.longUrl', ':searchPattern'),
+                $qb->expr()->like('s.shortCode', ':searchPattern'),
+                $qb->expr()->like('s.title', ':searchPattern'),
+                $qb->expr()->like('d.authority', ':searchPattern'),
+            ];
+
+            // Apply tag conditions, only when not filtering by all provided tags
+            $tagsMode = $filtering->tagsMode() ?? ShortUrlsParams::TAGS_MODE_ANY;
+            if (empty($tags) || $tagsMode === ShortUrlsParams::TAGS_MODE_ANY) {
+                $conditions[] = $qb->expr()->like('t.name', ':searchPattern');
+            }
+
             $qb->leftJoin('s.domain', 'd')
-               ->andWhere($qb->expr()->orX(
-                   $qb->expr()->like('s.longUrl', ':searchPattern'),
-                   $qb->expr()->like('s.shortCode', ':searchPattern'),
-                   $qb->expr()->like('s.title', ':searchPattern'),
-                   $qb->expr()->like('t.name', ':searchPattern'),
-                   $qb->expr()->like('d.authority', ':searchPattern'),
-               ))
+               ->andWhere($qb->expr()->orX(...$conditions))
                ->setParameter('searchPattern', '%' . $searchTerm . '%');
         }
 

@@ -125,8 +125,14 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), 'foo', ['bar']),
         );
         self::assertCount(1, $result);
-        self::assertEquals(1, $this->repo->countList(new ShortUrlsCountFiltering('foo', ['bar'])));
         self::assertSame($foo, $result[0]);
+
+        // Assert searched text also applies to tags
+        $result = $this->repo->findList(new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), 'bar'));
+        self::assertCount(2, $result);
+        self::assertContains($foo, $result);
+
+        self::assertEquals(1, $this->repo->countList(new ShortUrlsCountFiltering('foo', ['bar'])));
 
         $result = $this->repo->findList(new ShortUrlsListFiltering(null, null, Ordering::emptyInstance()));
         self::assertCount(3, $result);
