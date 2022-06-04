@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.1.2] - 2022-06-04
 ### Added
 * *Nothing*
 
@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1448](https://github.com/shlinkio/shlink/issues/1448) Fixed HTML entities not being properly parsed when auto-resolving page titles.
+* [#1458](https://github.com/shlinkio/shlink/issues/1458) Fixed 500 error when filtering short URLs by ALL tags and search term.
 
 
 ## [3.1.1] - 2022-05-09
