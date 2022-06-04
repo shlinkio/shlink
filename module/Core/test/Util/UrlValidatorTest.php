@@ -128,7 +128,7 @@ class UrlValidatorTest extends TestCase
 
         $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
 
-        self::assertEquals('Resolved title', $result);
+        self::assertEquals('Resolved "title"', $result);
         $request->shouldHaveBeenCalledOnce();
     }
 
@@ -162,7 +162,7 @@ class UrlValidatorTest extends TestCase
 
     private function respWithTitle(): Response
     {
-        $body = $this->createStreamWithContent('<title data-foo="bar">  Resolved title</title>');
+        $body = $this->createStreamWithContent('<title data-foo="bar">  Resolved &quot;title&quot; </title>');
         return new Response($body, 200, ['Content-Type' => 'TEXT/html; charset=utf-8']);
     }
 
