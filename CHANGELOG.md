@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   Now you can run `tag:visits`, `domain:visits`, `visit:orphan` or `visit:non-orphan` to get the corresponding list of visits from the command line.
 
 ### Changed
-* *Nothing*
+* [#1452](https://github.com/shlinkio/shlink/issues/1452) Updated to monolog 3
 
 ### Deprecated
 * *Nothing*
