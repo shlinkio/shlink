@@ -8,8 +8,7 @@ use GuzzleHttp\Client;
 use Laminas\ConfigAggregator\ConfigAggregator;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
+use Monolog\Level;
 use PHPUnit\Runner\Version;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,6 +19,7 @@ use SebastianBergmann\CodeCoverage\Filter;
 use SebastianBergmann\CodeCoverage\Report\Html\Facade as Html;
 use SebastianBergmann\CodeCoverage\Report\PHP;
 use SebastianBergmann\CodeCoverage\Report\Xml\Facade as Xml;
+use Shlinkio\Shlink\Common\Logger\LoggerType;
 
 use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
@@ -76,16 +76,10 @@ $buildDbConnection = static function (): array {
     };
 };
 
-$buildTestLoggerConfig = fn (string $handlerName, string $filename) => [
-    'handlers' => [
-        $handlerName => [
-            'name' => StreamHandler::class,
-            'params' => [
-                'level' => Logger::DEBUG,
-                'stream' => sprintf('data/log/api-tests/%s', $filename),
-            ],
-        ],
-    ],
+$buildTestLoggerConfig = static fn (string $filename) => [
+    'level' => Level::Debug->value,
+    'type' => LoggerType::STREAM->value,
+    'destination' => sprintf('data/log/api-tests/%s', $filename),
 ];
 
 return [
@@ -183,8 +177,8 @@ return [
     ],
 
     'logger' => [
-        'Shlink' => $buildTestLoggerConfig('shlink_handler', 'shlink.log'),
-        'Access' => $buildTestLoggerConfig('access_handler', 'access.log'),
+        'Shlink' => $buildTestLoggerConfig('shlink.log'),
+        'Access' => $buildTestLoggerConfig('access.log'),
     ],
 
 ];
