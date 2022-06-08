@@ -101,7 +101,7 @@
                     },
                     "visitsCount": {
                         "type": "integer",
-                        "description": "The number of visits that this short URL has recieved."
+                        "description": "The number of visits that this short URL has received."
                     },
                     "tags": {
                         "type": "array",

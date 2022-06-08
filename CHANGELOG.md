@@ -624,7 +624,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* [#979](https://github.com/shlinkio/shlink/issues/979) Added missing `itemsPerPage` query param to swagger docs for short RULs list.
+* [#979](https://github.com/shlinkio/shlink/issues/979) Added missing `itemsPerPage` query param to swagger docs for short URLs list.
 * [#980](https://github.com/shlinkio/shlink/issues/980) Fixed value used for `Access-Control-Allow-Origin`, that could not work as expected when including an IP address.
 * [#947](https://github.com/shlinkio/shlink/issues/947) Fixed incorrect value returned in `Access-Control-Allow-Methods` header, which always contained all methods.
 
@@ -1272,7 +1272,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Endpoints and commands which create short URLs support providing the `domain` now (via query param or CLI flag). If not provided, the short URLs will still be "attached" to the default domain.
 
-    Custom slugs can be created on multiple domains, allowing to share links like `https://doma.in/my-compaign` and `https://example.com/my-campaign`, under the same shlink instance.
+    Custom slugs can be created on multiple domains, allowing to share links like `https://doma.in/my-campaign` and `https://example.com/my-campaign`, under the same shlink instance.
 
     When resolving a short URL to redirect end users, the following rules are applied:
 
@@ -1522,7 +1522,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#309](https://github.com/shlinkio/shlink/issues/309) Added missing favicon to prevent 404 errors logged when an error page is loaded in a browser.
-* [#310](https://github.com/shlinkio/shlink/issues/310) Fixed execution context not being properly detected, making `CloseDbConnectionMiddlware` to be always piped. Now the check is not even made, which simplifies everything.
+* [#310](https://github.com/shlinkio/shlink/issues/310) Fixed execution context not being properly detected, making `CloseDbConnectionMiddleware` to be always piped. Now the check is not even made, which simplifies everything.
 
 
 ## [1.15.0] - 2018-12-02
@@ -1587,7 +1587,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#241](https://github.com/shlinkio/shlink/issues/241) Fixed columns in `visit_locations` table, to be snake_case instead of camelCase.
-* [#228](https://github.com/shlinkio/shlink/issues/228) Updated how exceptions are serialized into logs, by using monlog's `PsrLogMessageProcessor`.
+* [#228](https://github.com/shlinkio/shlink/issues/228) Updated how exceptions are serialized into logs, by using monolog's `PsrLogMessageProcessor`.
 * [#225](https://github.com/shlinkio/shlink/issues/225) Performance and maintainability slightly improved by enforcing via code sniffer that all global namespace classes, functions and constants are explicitly imported.
 * [#196](https://github.com/shlinkio/shlink/issues/196) Reduced anemic model in entities, defining more expressive public APIs instead.
 * [#249](https://github.com/shlinkio/shlink/issues/249) Added [functional-php](https://github.com/lstrojny/functional-php) to ease collections handling.
