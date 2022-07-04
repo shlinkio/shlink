@@ -272,6 +272,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $nativeQb = $this->getEntityManager()->getConnection()->createQueryBuilder();
         $nativeQb->select('v.id AS visit_id', 'v.*', 'vl.*')
                  ->from('visits', 'v')
+                 // @phpstan-ignore-next-line
                  ->join('v', '(' . $subQuery . ')', 'sq', $nativeQb->expr()->eq('sq.id_0', 'v.id'))
                  ->leftJoin('v', 'visit_locations', 'vl', $nativeQb->expr()->eq('v.visit_location_id', 'vl.id'))
                  ->orderBy('v.id', 'DESC');

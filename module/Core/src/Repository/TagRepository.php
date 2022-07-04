@@ -74,7 +74,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
                 'COUNT(DISTINCT s.id) AS short_urls_count',
                 'COUNT(DISTINCT v.id) AS visits_count',
             )
-            ->from('(' . $subQb->getQuery()->getSQL() . ')', 't')
+            ->from('(' . $subQb->getQuery()->getSQL() . ')', 't') // @phpstan-ignore-line
             ->leftJoin('t', 'short_urls_in_tags', 'st', $nativeQb->expr()->eq('t.id_0', 'st.tag_id'))
             ->leftJoin('st', 'short_urls', 's', $nativeQb->expr()->eq('s.id', 'st.short_url_id'))
             ->leftJoin('st', 'visits', 'v', $nativeQb->expr()->eq('s.id', 'v.short_url_id'))
