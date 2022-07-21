@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\EventDispatcher;
+namespace ShlinkioTest\Shlink\Core\EventDispatcher\RabbitMq;
 
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
@@ -18,7 +18,7 @@ use RuntimeException;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
-use Shlinkio\Shlink\Core\EventDispatcher\NotifyVisitToRabbitMq;
+use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyVisitToRabbitMq;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
@@ -61,7 +61,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
     /** @test */
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
-        $listener = new NotifyVisitToRabbitMq(
+        $listener = new \Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyVisitToRabbitMq(
             $this->connection->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),

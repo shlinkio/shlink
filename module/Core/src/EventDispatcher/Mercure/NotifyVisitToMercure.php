@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\EventDispatcher;
+namespace Shlinkio\Shlink\Core\EventDispatcher\Mercure;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;

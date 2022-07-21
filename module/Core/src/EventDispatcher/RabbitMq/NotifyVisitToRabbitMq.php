@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\EventDispatcher;
+namespace Shlinkio\Shlink\Core\EventDispatcher\RabbitMq;
 
 use Doctrine\ORM\EntityManagerInterface;
 use PhpAmqpLib\Connection\AMQPStreamConnection;

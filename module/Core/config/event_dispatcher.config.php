@@ -22,11 +22,15 @@ return [
         ],
         'async' => [
             EventDispatcher\Event\VisitLocated::class => [
-                EventDispatcher\NotifyVisitToMercure::class,
-                EventDispatcher\NotifyVisitToRabbitMq::class,
+                EventDispatcher\Mercure\NotifyVisitToMercure::class,
+                EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class,
                 EventDispatcher\NotifyVisitToWebHooks::class,
                 EventDispatcher\UpdateGeoLiteDb::class,
             ],
+//            EventDispatcher\Event\ShortUrlCreated::class => [
+//                EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class,
+//                EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class,
+//            ],
         ],
     ],
 
@@ -34,16 +38,16 @@ return [
         'factories' => [
             EventDispatcher\LocateVisit::class => ConfigAbstractFactory::class,
             EventDispatcher\NotifyVisitToWebHooks::class => ConfigAbstractFactory::class,
-            EventDispatcher\NotifyVisitToMercure::class => ConfigAbstractFactory::class,
-            EventDispatcher\NotifyVisitToRabbitMq::class => ConfigAbstractFactory::class,
+            EventDispatcher\Mercure\NotifyVisitToMercure::class => ConfigAbstractFactory::class,
+            EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class => ConfigAbstractFactory::class,
             EventDispatcher\UpdateGeoLiteDb::class => ConfigAbstractFactory::class,
         ],
 
         'delegators' => [
-            EventDispatcher\NotifyVisitToMercure::class => [
+            EventDispatcher\Mercure\NotifyVisitToMercure::class => [
                 EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
             ],
-            EventDispatcher\NotifyVisitToRabbitMq::class => [
+            EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class => [
                 EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
             ],
             EventDispatcher\NotifyVisitToWebHooks::class => [
@@ -68,13 +72,13 @@ return [
             ShortUrl\Transformer\ShortUrlDataTransformer::class,
             Options\AppOptions::class,
         ],
-        EventDispatcher\NotifyVisitToMercure::class => [
+        EventDispatcher\Mercure\NotifyVisitToMercure::class => [
             Hub::class,
             Mercure\MercureUpdatesGenerator::class,
             'em',
             'Logger_Shlink',
         ],
-        EventDispatcher\NotifyVisitToRabbitMq::class => [
+        EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class => [
             AMQPStreamConnection::class,
             'em',
             'Logger_Shlink',
