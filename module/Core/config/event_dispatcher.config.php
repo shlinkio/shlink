@@ -40,6 +40,7 @@ return [
             EventDispatcher\NotifyVisitToWebHooks::class => ConfigAbstractFactory::class,
             EventDispatcher\Mercure\NotifyVisitToMercure::class => ConfigAbstractFactory::class,
             EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class => ConfigAbstractFactory::class,
+            EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => ConfigAbstractFactory::class,
             EventDispatcher\UpdateGeoLiteDb::class => ConfigAbstractFactory::class,
         ],
 
@@ -48,6 +49,9 @@ return [
                 EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
             ],
             EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class => [
+                EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
+            ],
+            EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => [
                 EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
             ],
             EventDispatcher\NotifyVisitToWebHooks::class => [
@@ -83,6 +87,13 @@ return [
             'em',
             'Logger_Shlink',
             Visit\Transformer\OrphanVisitDataTransformer::class,
+            'config.rabbitmq.enabled',
+        ],
+        EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => [
+            RabbitMqPublishingHelper::class,
+            'em',
+            'Logger_Shlink',
+            ShortUrl\Transformer\ShortUrlDataTransformer::class,
             'config.rabbitmq.enabled',
         ],
         EventDispatcher\UpdateGeoLiteDb::class => [GeolocationDbUpdater::class, 'Logger_Shlink'],
