@@ -28,7 +28,7 @@ return [
                 EventDispatcher\UpdateGeoLiteDb::class,
             ],
             EventDispatcher\Event\ShortUrlCreated::class => [
-//                EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class,
+                EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class,
                 EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class,
             ],
         ],
@@ -39,6 +39,7 @@ return [
             EventDispatcher\LocateVisit::class => ConfigAbstractFactory::class,
             EventDispatcher\NotifyVisitToWebHooks::class => ConfigAbstractFactory::class,
             EventDispatcher\Mercure\NotifyVisitToMercure::class => ConfigAbstractFactory::class,
+            EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => ConfigAbstractFactory::class,
             EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class => ConfigAbstractFactory::class,
             EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => ConfigAbstractFactory::class,
             EventDispatcher\UpdateGeoLiteDb::class => ConfigAbstractFactory::class,
@@ -46,6 +47,9 @@ return [
 
         'delegators' => [
             EventDispatcher\Mercure\NotifyVisitToMercure::class => [
+                EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
+            ],
+            EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => [
                 EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
             ],
             EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class => [
@@ -77,6 +81,12 @@ return [
             Options\AppOptions::class,
         ],
         EventDispatcher\Mercure\NotifyVisitToMercure::class => [
+            Hub::class,
+            Mercure\MercureUpdatesGenerator::class,
+            'em',
+            'Logger_Shlink',
+        ],
+        EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => [
             Hub::class,
             Mercure\MercureUpdatesGenerator::class,
             'em',
