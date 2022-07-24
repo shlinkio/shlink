@@ -7,14 +7,13 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\RabbitMq;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 use Exception;
-use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelperInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
@@ -32,25 +31,19 @@ class NotifyVisitToRabbitMqTest extends TestCase
     use ProphecyTrait;
 
     private NotifyVisitToRabbitMq $listener;
-    private ObjectProphecy $connection;
+    private ObjectProphecy $helper;
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
     private ObjectProphecy $orphanVisitTransformer;
-    private ObjectProphecy $channel;
 
     protected function setUp(): void
     {
-        $this->channel = $this->prophesize(AMQPChannel::class);
-
-        $this->connection = $this->prophesize(AMQPStreamConnection::class);
-        $this->connection->isConnected()->willReturn(false);
-        $this->connection->channel()->willReturn($this->channel->reveal());
-
+        $this->helper = $this->prophesize(RabbitMqPublishingHelperInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
 
         $this->listener = new NotifyVisitToRabbitMq(
-            $this->connection->reveal(),
+            $this->helper->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),
             new OrphanVisitDataTransformer(),
@@ -61,8 +54,8 @@ class NotifyVisitToRabbitMqTest extends TestCase
     /** @test */
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
-        $listener = new \Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyVisitToRabbitMq(
-            $this->connection->reveal(),
+        $listener = new NotifyVisitToRabbitMq(
+            $this->helper->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),
             new OrphanVisitDataTransformer(),
@@ -74,8 +67,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $this->em->find(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->connection->isConnected()->shouldNotHaveBeenCalled();
-        $this->connection->close()->shouldNotHaveBeenCalled();
+        $this->helper->publishPayloadInQueue(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /** @test */
@@ -93,8 +85,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $findVisit->shouldHaveBeenCalledOnce();
         $logWarning->shouldHaveBeenCalledOnce();
         $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->connection->isConnected()->shouldNotHaveBeenCalled();
-        $this->connection->close()->shouldNotHaveBeenCalled();
+        $this->helper->publishPayloadInQueue(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /**
@@ -105,27 +96,17 @@ class NotifyVisitToRabbitMqTest extends TestCase
     {
         $visitId = '123';
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn($visit);
-        $argumentWithExpectedChannel = Argument::that(fn (string $channel) => contains($expectedChannels, $channel));
+        $argumentWithExpectedChannels = Argument::that(
+            static fn (string $channel) => contains($expectedChannels, $channel),
+        );
 
         ($this->listener)(new VisitLocated($visitId));
 
         $findVisit->shouldHaveBeenCalledOnce();
-        $this->channel->exchange_declare($argumentWithExpectedChannel, Argument::cetera())->shouldHaveBeenCalledTimes(
-            count($expectedChannels),
-        );
-        $this->channel->queue_declare($argumentWithExpectedChannel, Argument::cetera())->shouldHaveBeenCalledTimes(
-            count($expectedChannels),
-        );
-        $this->channel->queue_bind(
-            $argumentWithExpectedChannel,
-            $argumentWithExpectedChannel,
+        $this->helper->publishPayloadInQueue(
+            Argument::type('array'),
+            $argumentWithExpectedChannels,
         )->shouldHaveBeenCalledTimes(count($expectedChannels));
-        $this->channel->basic_publish(Argument::any(), $argumentWithExpectedChannel)->shouldHaveBeenCalledTimes(
-            count($expectedChannels),
-        );
-        $this->channel->close()->shouldHaveBeenCalledOnce();
-        $this->connection->reconnect()->shouldHaveBeenCalledOnce();
-        $this->connection->close()->shouldHaveBeenCalledOnce();
         $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
@@ -154,7 +135,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
     {
         $visitId = '123';
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn(Visit::forBasePath(Visitor::emptyInstance()));
-        $channel = $this->connection->channel()->willThrow($e);
+        $channel = $this->helper->publishPayloadInQueue(Argument::cetera())->willThrow($e);
 
         ($this->listener)(new VisitLocated($visitId));
 
@@ -162,11 +143,8 @@ class NotifyVisitToRabbitMqTest extends TestCase
             'Error while trying to notify RabbitMQ with new visit. {e}',
             ['e' => $e],
         )->shouldHaveBeenCalledOnce();
-        $this->connection->close()->shouldHaveBeenCalledOnce();
-        $this->connection->reconnect()->shouldHaveBeenCalledOnce();
         $findVisit->shouldHaveBeenCalledOnce();
         $channel->shouldHaveBeenCalledOnce();
-        $this->channel->close()->shouldNotHaveBeenCalled();
     }
 
     public function provideExceptions(): iterable

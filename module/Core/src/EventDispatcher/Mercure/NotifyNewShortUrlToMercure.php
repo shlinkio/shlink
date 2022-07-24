@@ -8,7 +8,7 @@ use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 
 class NotifyNewShortUrlToMercure
 {
-    public function __invoke(ShortUrlCreated $shortUrlCreated)
+    public function __invoke(ShortUrlCreated $shortUrlCreated): void
     {
         // TODO: Implement __invoke() method.
     }

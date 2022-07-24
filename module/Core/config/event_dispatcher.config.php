@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core;
 
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
+use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelper;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Mercure\Hub;
@@ -27,10 +27,10 @@ return [
                 EventDispatcher\NotifyVisitToWebHooks::class,
                 EventDispatcher\UpdateGeoLiteDb::class,
             ],
-//            EventDispatcher\Event\ShortUrlCreated::class => [
-//                EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class,
-//                EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class,
-//            ],
+            EventDispatcher\Event\ShortUrlCreated::class => [
+                EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class,
+                EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class,
+            ],
         ],
     ],
 
@@ -79,7 +79,7 @@ return [
             'Logger_Shlink',
         ],
         EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class => [
-            AMQPStreamConnection::class,
+            RabbitMqPublishingHelper::class,
             'em',
             'Logger_Shlink',
             Visit\Transformer\OrphanVisitDataTransformer::class,
