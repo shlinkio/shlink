@@ -10,12 +10,11 @@ use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelperInterface;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
+use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 use Throwable;
 
 class NotifyNewShortUrlToRabbitMq
 {
-    private const NEW_SHORT_URL_QUEUE = 'https://shlink.io/new-short-url';
-
     public function __construct(
         private readonly RabbitMqPublishingHelperInterface $rabbitMqHelper,
         private readonly EntityManagerInterface $em,
@@ -45,7 +44,7 @@ class NotifyNewShortUrlToRabbitMq
         try {
             $this->rabbitMqHelper->publishPayloadInQueue(
                 $this->shortUrlTransformer->transform($shortUrl),
-                self::NEW_SHORT_URL_QUEUE,
+                Topic::NEW_SHORT_URL->value,
             );
         } catch (Throwable $e) {
             $this->logger->debug('Error while trying to notify RabbitMQ with new short URL. {e}', ['e' => $e]);

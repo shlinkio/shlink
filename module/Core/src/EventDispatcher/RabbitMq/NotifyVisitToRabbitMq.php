@@ -10,15 +10,11 @@ use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelperInterface;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
+use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 use Throwable;
-
-use function sprintf;
 
 class NotifyVisitToRabbitMq
 {
-    private const NEW_VISIT_QUEUE = 'https://shlink.io/new-visit';
-    private const NEW_ORPHAN_VISIT_QUEUE = 'https://shlink.io/new-orphan-visit';
-
     public function __construct(
         private readonly RabbitMqPublishingHelperInterface $rabbitMqHelper,
         private readonly EntityManagerInterface $em,
@@ -62,12 +58,12 @@ class NotifyVisitToRabbitMq
     private function determineQueuesToPublishTo(Visit $visit): array
     {
         if ($visit->isOrphan()) {
-            return [self::NEW_ORPHAN_VISIT_QUEUE];
+            return [Topic::NEW_ORPHAN_VISIT->value];
         }
 
         return [
-            self::NEW_VISIT_QUEUE,
-            sprintf('%s/%s', self::NEW_VISIT_QUEUE, $visit->getShortUrl()?->getShortCode()),
+            Topic::NEW_VISIT->value,
+            Topic::newShortUrlVisit($visit->getShortUrl()?->getShortCode()),
         ];
     }
 
