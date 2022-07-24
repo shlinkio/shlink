@@ -43,7 +43,7 @@ class NotifyNewShortUrlToRabbitMq
 
         try {
             $this->rabbitMqHelper->publishPayloadInQueue(
-                $this->shortUrlTransformer->transform($shortUrl),
+                ['shortUrl' => $this->shortUrlTransformer->transform($shortUrl)],
                 Topic::NEW_SHORT_URL->value,
             );
         } catch (Throwable $e) {

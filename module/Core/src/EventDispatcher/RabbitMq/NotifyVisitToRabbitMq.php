@@ -20,6 +20,7 @@ class NotifyVisitToRabbitMq
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
         private readonly DataTransformerInterface $orphanVisitTransformer,
+        private readonly DataTransformerInterface $shortUrlTransformer, // @phpstan-ignore-line
         private readonly bool $isEnabled,
     ) {
     }
@@ -69,6 +70,20 @@ class NotifyVisitToRabbitMq
 
     private function visitToPayload(Visit $visit): array
     {
+        // FIXME This was defined incorrectly.
+        //       According to the spec, both the visit and the short URL it belongs to, should be published.
+        //       The shape should be ['visit' => [...], 'shortUrl' => ?[...]]
+        //       However, this would be a breaking change, so we need a flag that determines the shape of the payload.
+
         return ! $visit->isOrphan() ? $visit->jsonSerialize() : $this->orphanVisitTransformer->transform($visit);
+
+        if ($visit->isOrphan()) { // @phpstan-ignore-line
+            return ['visit' => $this->orphanVisitTransformer->transform($visit)];
+        }
+
+        return [
+            'visit' => $visit->jsonSerialize(),
+            'shortUrl' => $this->shortUrlTransformer->transform($visit->getShortUrl()),
+        ];
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Mercure;
 
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
+use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 use Symfony\Component\Mercure\Update;
@@ -14,8 +15,8 @@ use function Shlinkio\Shlink\Common\json_encode;
 final class MercureUpdatesGenerator implements MercureUpdatesGeneratorInterface
 {
     public function __construct(
-        private DataTransformerInterface $shortUrlTransformer,
-        private DataTransformerInterface $orphanVisitTransformer,
+        private readonly DataTransformerInterface $shortUrlTransformer,
+        private readonly DataTransformerInterface $orphanVisitTransformer,
     ) {
     }
 
@@ -42,6 +43,13 @@ final class MercureUpdatesGenerator implements MercureUpdatesGeneratorInterface
         return new Update($topic, json_encode([
             'shortUrl' => $this->shortUrlTransformer->transform($shortUrl),
             'visit' => $visit,
+        ]));
+    }
+
+    public function newShortUrlUpdate(ShortUrl $shortUrl): Update
+    {
+        return new Update(Topic::NEW_SHORT_URL->value, json_encode([
+            'shortUrl' => $this->shortUrlTransformer->transform($shortUrl),
         ]));
     }
 }

@@ -87,6 +87,7 @@ return [
             'em',
             'Logger_Shlink',
             Visit\Transformer\OrphanVisitDataTransformer::class,
+            ShortUrl\Transformer\ShortUrlDataTransformer::class,
             'config.rabbitmq.enabled',
         ],
         EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => [
