@@ -15,22 +15,17 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelperInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Entity\Visit;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
-use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyVisitToRabbitMq;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Model\Visitor;
-use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
+use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Throwable;
 
-use function count;
-use function Functional\contains;
-
-class NotifyVisitToRabbitMqTest extends TestCase
+class NotifyNewShortUrlToRabbitMqTest extends TestCase
 {
     use ProphecyTrait;
 
-    private NotifyVisitToRabbitMq $listener;
+    private NotifyNewShortUrlToRabbitMq $listener;
     private ObjectProphecy $helper;
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
@@ -41,11 +36,11 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
 
-        $this->listener = new NotifyVisitToRabbitMq(
+        $this->listener = new NotifyNewShortUrlToRabbitMq(
             $this->helper->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),
-            new OrphanVisitDataTransformer(),
+            new ShortUrlDataTransformer(new ShortUrlStringifier([])),
             true,
         );
     }
@@ -53,15 +48,15 @@ class NotifyVisitToRabbitMqTest extends TestCase
     /** @test */
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
-        $listener = new NotifyVisitToRabbitMq(
+        $listener = new NotifyNewShortUrlToRabbitMq(
             $this->helper->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),
-            new OrphanVisitDataTransformer(),
+            new ShortUrlDataTransformer(new ShortUrlStringifier([])),
             false,
         );
 
-        $listener(new VisitLocated('123'));
+        $listener(new ShortUrlCreated('123'));
 
         $this->em->find(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
@@ -70,60 +65,37 @@ class NotifyVisitToRabbitMqTest extends TestCase
     }
 
     /** @test */
-    public function notificationsAreNotSentWhenVisitCannotBeFound(): void
+    public function notificationsAreNotSentWhenShortUrlCannotBeFound(): void
     {
-        $visitId = '123';
-        $findVisit = $this->em->find(Visit::class, $visitId)->willReturn(null);
+        $shortUrlId = '123';
+        $find = $this->em->find(ShortUrl::class, $shortUrlId)->willReturn(null);
         $logWarning = $this->logger->warning(
-            'Tried to notify RabbitMQ for visit with id "{visitId}", but it does not exist.',
-            ['visitId' => $visitId],
+            'Tried to notify RabbitMQ for new short URL with id "{shortUrlId}", but it does not exist.',
+            ['shortUrlId' => $shortUrlId],
         );
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener)(new ShortUrlCreated($shortUrlId));
 
-        $findVisit->shouldHaveBeenCalledOnce();
+        $find->shouldHaveBeenCalledOnce();
         $logWarning->shouldHaveBeenCalledOnce();
         $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->helper->publishPayloadInQueue(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
-    /**
-     * @test
-     * @dataProvider provideVisits
-     */
-    public function expectedChannelsAreNotifiedBasedOnTheVisitType(Visit $visit, array $expectedChannels): void
+    /** @test */
+    public function expectedChannelIsNotified(): void
     {
-        $visitId = '123';
-        $findVisit = $this->em->find(Visit::class, $visitId)->willReturn($visit);
-        $argumentWithExpectedChannels = Argument::that(
-            static fn (string $channel) => contains($expectedChannels, $channel),
-        );
+        $shortUrlId = '123';
+        $find = $this->em->find(ShortUrl::class, $shortUrlId)->willReturn(ShortUrl::withLongUrl(''));
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener)(new ShortUrlCreated($shortUrlId));
 
-        $findVisit->shouldHaveBeenCalledOnce();
+        $find->shouldHaveBeenCalledOnce();
         $this->helper->publishPayloadInQueue(
             Argument::type('array'),
-            $argumentWithExpectedChannels,
-        )->shouldHaveBeenCalledTimes(count($expectedChannels));
+            'https://shlink.io/new-short-url',
+        )->shouldHaveBeenCalledOnce();
         $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
-    }
-
-    public function provideVisits(): iterable
-    {
-        $visitor = Visitor::emptyInstance();
-
-        yield 'orphan visit' => [Visit::forBasePath($visitor), ['https://shlink.io/new-orphan-visit']];
-        yield 'non-orphan visit' => [
-            Visit::forValidShortUrl(
-                ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
-                    'longUrl' => 'foo',
-                    'customSlug' => 'bar',
-                ])),
-                $visitor,
-            ),
-            ['https://shlink.io/new-visit', 'https://shlink.io/new-visit/bar'],
-        ];
     }
 
     /**
@@ -132,17 +104,17 @@ class NotifyVisitToRabbitMqTest extends TestCase
      */
     public function printsDebugMessageInCaseOfError(Throwable $e): void
     {
-        $visitId = '123';
-        $findVisit = $this->em->find(Visit::class, $visitId)->willReturn(Visit::forBasePath(Visitor::emptyInstance()));
+        $shortUrlId = '123';
+        $find = $this->em->find(ShortUrl::class, $shortUrlId)->willReturn(ShortUrl::withLongUrl(''));
         $publish = $this->helper->publishPayloadInQueue(Argument::cetera())->willThrow($e);
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener)(new ShortUrlCreated($shortUrlId));
 
         $this->logger->debug(
-            'Error while trying to notify RabbitMQ with new visit. {e}',
+            'Error while trying to notify RabbitMQ with new short URL. {e}',
             ['e' => $e],
         )->shouldHaveBeenCalledOnce();
-        $findVisit->shouldHaveBeenCalledOnce();
+        $find->shouldHaveBeenCalledOnce();
         $publish->shouldHaveBeenCalledOnce();
     }
 
