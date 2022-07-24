@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
@@ -17,10 +19,11 @@ use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 class UrlShortener implements UrlShortenerInterface
 {
     public function __construct(
-        private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
-        private EntityManagerInterface $em,
-        private ShortUrlRelationResolverInterface $relationResolver,
-        private ShortCodeUniquenessHelperInterface $shortCodeHelper,
+        private readonly ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
+        private readonly EntityManagerInterface $em,
+        private readonly ShortUrlRelationResolverInterface $relationResolver,
+        private readonly ShortCodeUniquenessHelperInterface $shortCodeHelper,
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -39,7 +42,8 @@ class UrlShortener implements UrlShortenerInterface
         /** @var ShortUrlMeta $meta */
         $meta = $this->titleResolutionHelper->processTitleAndValidateUrl($meta);
 
-        return $this->em->transactional(function () use ($meta) {
+        /** @var ShortUrl $newShortUrl */
+        $newShortUrl = $this->em->wrapInTransaction(function () use ($meta) {
             $shortUrl = ShortUrl::fromMeta($meta, $this->relationResolver);
 
             $this->verifyShortCodeUniqueness($meta, $shortUrl);
@@ -47,6 +51,10 @@ class UrlShortener implements UrlShortenerInterface
 
             return $shortUrl;
         });
+
+        $this->eventDispatcher->dispatch(new ShortUrlCreated($newShortUrl->getId()));
+
+        return $newShortUrl;
     }
 
     private function findExistingShortUrlIfExists(ShortUrlMeta $meta): ?ShortUrl

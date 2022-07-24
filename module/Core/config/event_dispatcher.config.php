@@ -28,7 +28,7 @@ return [
                 EventDispatcher\UpdateGeoLiteDb::class,
             ],
             EventDispatcher\Event\ShortUrlCreated::class => [
-                EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class,
+//                EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class,
                 EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class,
             ],
         ],
