@@ -31,34 +31,30 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
     private ObjectProphecy $helper;
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
+    private RabbitMqOptions $options;
 
     protected function setUp(): void
     {
         $this->helper = $this->prophesize(RabbitMqPublishingHelperInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
+        $this->options = new RabbitMqOptions(['enabled' => true]);
 
         $this->listener = new NotifyNewShortUrlToRabbitMq(
             $this->helper->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
-            new RabbitMqOptions(['enabled' => true]),
+            $this->options,
         );
     }
 
     /** @test */
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
-        $listener = new NotifyNewShortUrlToRabbitMq(
-            $this->helper->reveal(),
-            $this->em->reveal(),
-            $this->logger->reveal(),
-            new ShortUrlDataTransformer(new ShortUrlStringifier([])),
-            new RabbitMqOptions(['enabled' => false]),
-        );
+        $this->options->enabled = false;
 
-        $listener(new ShortUrlCreated('123'));
+        ($this->listener)(new ShortUrlCreated('123'));
 
         $this->em->find(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
