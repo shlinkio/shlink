@@ -20,6 +20,7 @@ use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyVisitToRabbitMq;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
@@ -49,7 +50,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
             $this->logger->reveal(),
             new OrphanVisitDataTransformer(),
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
-            true,
+            new RabbitMqOptions(['enabled' => true, 'legacy_visits_publishing' => true]),
         );
     }
 
@@ -62,7 +63,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
             $this->logger->reveal(),
             new OrphanVisitDataTransformer(),
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
-            false,
+            new RabbitMqOptions(['enabled' => false, 'legacy_visits_publishing' => true]),
         );
 
         $listener(new VisitLocated('123'));

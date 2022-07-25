@@ -27,6 +27,7 @@ return [
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
             Options\TrackingOptions::class => ConfigAbstractFactory::class,
             Options\QrCodeOptions::class => ConfigAbstractFactory::class,
+            Options\RabbitMqOptions::class => ConfigAbstractFactory::class,
             Options\WebhookOptions::class => ConfigAbstractFactory::class,
 
             Service\UrlShortener::class => ConfigAbstractFactory::class,
@@ -91,6 +92,7 @@ return [
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
         Options\TrackingOptions::class => ['config.tracking'],
         Options\QrCodeOptions::class => ['config.qr_codes'],
+        Options\RabbitMqOptions::class => ['config.rabbitmq'],
         Options\WebhookOptions::class => ['config.visits_webhooks'],
 
         Service\UrlShortener::class => [

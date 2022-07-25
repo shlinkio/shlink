@@ -13,6 +13,9 @@ return [
         'user' => EnvVars::RABBITMQ_USER->loadFromEnv(),
         'password' => EnvVars::RABBITMQ_PASSWORD->loadFromEnv(),
         'vhost' => EnvVars::RABBITMQ_VHOST->loadFromEnv('/'),
+
+        // Deprecated
+        'legacy_visits_publishing' => (bool) EnvVars::RABBITMQ_LEGACY_VISITS_PUBLISHING->loadFromEnv(false),
     ],
 
 ];

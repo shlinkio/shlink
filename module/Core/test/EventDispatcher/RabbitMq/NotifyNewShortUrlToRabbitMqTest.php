@@ -18,6 +18,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
+use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Throwable;
@@ -42,7 +43,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
             $this->em->reveal(),
             $this->logger->reveal(),
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
-            true,
+            new RabbitMqOptions(['enabled' => true]),
         );
     }
 
@@ -54,7 +55,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
             $this->em->reveal(),
             $this->logger->reveal(),
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
-            false,
+            new RabbitMqOptions(['enabled' => false]),
         );
 
         $listener(new ShortUrlCreated('123'));
