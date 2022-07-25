@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\Mercure;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGenerator;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
@@ -108,5 +109,36 @@ class MercureUpdatesGeneratorTest extends TestCase
         yield VisitType::REGULAR_404->value => [Visit::forRegularNotFound($visitor)];
         yield VisitType::INVALID_SHORT_URL->value => [Visit::forInvalidShortUrl($visitor)];
         yield VisitType::BASE_URL->value => [Visit::forBasePath($visitor)];
+    }
+
+    /** @test */
+    public function shortUrlIsProperlySerializedIntoUpdate(): void
+    {
+        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+            'customSlug' => 'foo',
+            'longUrl' => '',
+            'title' => 'The title',
+        ]));
+
+        $update = $this->generator->newShortUrlUpdate($shortUrl);
+
+        self::assertEquals([Topic::NEW_SHORT_URL->value], $update->getTopics());
+        self::assertEquals(['shortUrl' => [
+            'shortCode' => $shortUrl->getShortCode(),
+            'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
+            'longUrl' => '',
+            'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
+            'visitsCount' => 0,
+            'tags' => [],
+            'meta' => [
+                'validSince' => null,
+                'validUntil' => null,
+                'maxVisits' => null,
+            ],
+            'domain' => null,
+            'title' => $shortUrl->title(),
+            'crawlable' => false,
+            'forwardQuery' => true,
+        ],], json_decode($update->getData()));
     }
 }

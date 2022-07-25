@@ -1,8 +1,8 @@
 {
-    "asyncapi": "2.0.0",
+    "asyncapi": "2.4.0",
     "info": {
         "title": "Shlink",
-        "version": "2.0.0",
+        "version": "3.0.0",
         "description": "Shlink, the self-hosted URL shortener",
         "license": {
             "name": "MIT",
