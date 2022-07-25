@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelperInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq;
+use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Throwable;
@@ -93,7 +94,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         $find->shouldHaveBeenCalledOnce();
         $this->helper->publishPayloadInQueue(
             Argument::type('array'),
-            'https://shlink.io/new-short-url',
+            Topic::NEW_SHORT_URL->value,
         )->shouldHaveBeenCalledOnce();
         $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
     }

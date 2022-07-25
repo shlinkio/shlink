@@ -38,9 +38,7 @@ class NotifyNewShortUrlToMercure
         try {
             $this->hub->publish($this->updatesGenerator->newShortUrlUpdate($shortUrl));
         } catch (Throwable $e) {
-            $this->logger->debug('Error while trying to notify mercure hub with new short URL. {e}', [
-                'e' => $e,
-            ]);
+            $this->logger->debug('Error while trying to notify mercure hub with new short URL. {e}', ['e' => $e]);
         }
     }
 }
