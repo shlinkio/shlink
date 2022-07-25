@@ -45,10 +45,11 @@ class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
         $notFoundType = $request->getAttribute(NotFoundType::class);
         $visitor = Visitor::fromRequest($request);
 
-        match (true) { // @phpstan-ignore-line
+        match (true) {
             $notFoundType?->isBaseUrl() => $this->visitsTracker->trackBaseUrlVisit($visitor),
             $notFoundType?->isRegularNotFound() => $this->visitsTracker->trackRegularNotFoundVisit($visitor),
             $notFoundType?->isInvalidShortUrl() => $this->visitsTracker->trackInvalidShortUrlVisit($visitor),
+            default => null,
         };
     }
 
