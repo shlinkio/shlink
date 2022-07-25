@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
+use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 use Throwable;
 
 class NotifyVisitToRabbitMq
@@ -20,14 +21,14 @@ class NotifyVisitToRabbitMq
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
         private readonly DataTransformerInterface $orphanVisitTransformer,
-        private readonly DataTransformerInterface $shortUrlTransformer, // @phpstan-ignore-line
-        private readonly bool $isEnabled,
+        private readonly DataTransformerInterface $shortUrlTransformer,
+        private readonly RabbitMqOptions $options,
     ) {
     }
 
     public function __invoke(VisitLocated $shortUrlLocated): void
     {
-        if (! $this->isEnabled) {
+        if (! $this->options->isEnabled()) {
             return;
         }
 
@@ -70,14 +71,15 @@ class NotifyVisitToRabbitMq
 
     private function visitToPayload(Visit $visit): array
     {
-        // FIXME This was defined incorrectly.
-        //       According to the spec, both the visit and the short URL it belongs to, should be published.
-        //       The shape should be ['visit' => [...], 'shortUrl' => ?[...]]
-        //       However, this would be a breaking change, so we need a flag that determines the shape of the payload.
+        // This was defined incorrectly.
+        // According to the spec, both the visit and the short URL it belongs to, should be published.
+        // The shape should be ['visit' => [...], 'shortUrl' => ?[...]]
+        // However, this would be a breaking change, so we need a flag that determines the shape of the payload.
+        if ($this->options->legacyVisitsPublishing()) {
+            return ! $visit->isOrphan() ? $visit->jsonSerialize() : $this->orphanVisitTransformer->transform($visit);
+        }
 
-        return ! $visit->isOrphan() ? $visit->jsonSerialize() : $this->orphanVisitTransformer->transform($visit);
-
-        if ($visit->isOrphan()) { // @phpstan-ignore-line
+        if ($visit->isOrphan()) {
             return ['visit' => $this->orphanVisitTransformer->transform($visit)];
         }
 

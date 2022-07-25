@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
+use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 use Throwable;
 
 class NotifyNewShortUrlToRabbitMq
@@ -20,13 +21,13 @@ class NotifyNewShortUrlToRabbitMq
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
         private readonly DataTransformerInterface $shortUrlTransformer,
-        private readonly bool $isEnabled,
+        private readonly RabbitMqOptions $options,
     ) {
     }
 
     public function __invoke(ShortUrlCreated $shortUrlCreated): void
     {
-        if (! $this->isEnabled) {
+        if (! $this->options->isEnabled()) {
             return;
         }
 

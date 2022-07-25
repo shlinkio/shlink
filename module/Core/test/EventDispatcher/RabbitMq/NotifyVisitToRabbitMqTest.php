@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\RabbitMq;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 use Exception;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -20,6 +21,7 @@ use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyVisitToRabbitMq;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
@@ -36,12 +38,14 @@ class NotifyVisitToRabbitMqTest extends TestCase
     private ObjectProphecy $helper;
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
+    private RabbitMqOptions $options;
 
     protected function setUp(): void
     {
         $this->helper = $this->prophesize(RabbitMqPublishingHelperInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
+        $this->options = new RabbitMqOptions(['enabled' => true, 'legacy_visits_publishing' => true]);
 
         $this->listener = new NotifyVisitToRabbitMq(
             $this->helper->reveal(),
@@ -49,23 +53,16 @@ class NotifyVisitToRabbitMqTest extends TestCase
             $this->logger->reveal(),
             new OrphanVisitDataTransformer(),
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
-            true,
+            $this->options,
         );
     }
 
     /** @test */
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
-        $listener = new NotifyVisitToRabbitMq(
-            $this->helper->reveal(),
-            $this->em->reveal(),
-            $this->logger->reveal(),
-            new OrphanVisitDataTransformer(),
-            new ShortUrlDataTransformer(new ShortUrlStringifier([])),
-            false,
-        );
+        $this->options->enabled = false;
 
-        $listener(new VisitLocated('123'));
+        ($this->listener)(new VisitLocated('123'));
 
         $this->em->find(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
@@ -155,5 +152,80 @@ class NotifyVisitToRabbitMqTest extends TestCase
         yield [new RuntimeException('RuntimeException Error')];
         yield [new Exception('Exception Error')];
         yield [new DomainException('DomainException Error')];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideLegacyPayloads
+     */
+    public function expectedPayloadIsPublishedDependingOnConfig(
+        bool $legacy,
+        Visit $visit,
+        callable $assertPayload,
+    ): void {
+        $this->options->legacyVisitsPublishing = $legacy;
+
+        $visitId = '123';
+        $findVisit = $this->em->find(Visit::class, $visitId)->willReturn($visit);
+
+        ($this->listener)(new VisitLocated($visitId));
+
+        $findVisit->shouldHaveBeenCalledOnce();
+        $this->helper->publishPayloadInQueue(Argument::that($assertPayload), Argument::type('string'))
+                     ->shouldHaveBeenCalled();
+    }
+
+    public function provideLegacyPayloads(): iterable
+    {
+        yield 'non-legacy non-orphan visit' => [
+            true,
+            $visit = Visit::forValidShortUrl(ShortUrl::withLongUrl(''), Visitor::emptyInstance()),
+            function (array $payload) use ($visit): bool {
+                Assert::assertEquals($payload, $visit->jsonSerialize());
+                Assert::assertArrayNotHasKey('visitedUrl', $payload);
+                Assert::assertArrayNotHasKey('type', $payload);
+                Assert::assertArrayNotHasKey('visit', $payload);
+                Assert::assertArrayNotHasKey('shortUrl', $payload);
+
+                return true;
+            },
+        ];
+        yield 'non-legacy orphan visit' => [
+            true,
+            Visit::forBasePath(Visitor::emptyInstance()),
+            function (array $payload): bool {
+                Assert::assertArrayHasKey('visitedUrl', $payload);
+                Assert::assertArrayHasKey('type', $payload);
+
+                return true;
+            },
+        ];
+        yield 'legacy non-orphan visit' => [
+            false,
+            $visit = Visit::forValidShortUrl(ShortUrl::withLongUrl(''), Visitor::emptyInstance()),
+            function (array $payload) use ($visit): bool {
+                Assert::assertArrayHasKey('visit', $payload);
+                Assert::assertArrayHasKey('shortUrl', $payload);
+                Assert::assertIsArray($payload['visit']);
+                Assert::assertEquals($payload['visit'], $visit->jsonSerialize());
+                Assert::assertArrayNotHasKey('visitedUrl', ['visit']);
+                Assert::assertArrayNotHasKey('type', ['visit']);
+
+                return true;
+            },
+        ];
+        yield 'legacy orphan visit' => [
+            false,
+            Visit::forBasePath(Visitor::emptyInstance()),
+            function (array $payload): bool {
+                Assert::assertArrayHasKey('visit', $payload);
+                Assert::assertArrayNotHasKey('shortUrl', $payload);
+                Assert::assertIsArray($payload['visit']);
+                Assert::assertArrayHasKey('visitedUrl', $payload['visit']);
+                Assert::assertArrayHasKey('type', $payload['visit']);
+
+                return true;
+            },
+        ];
     }
 }

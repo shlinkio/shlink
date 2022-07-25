@@ -16,6 +16,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#1452](https://github.com/shlinkio/shlink/issues/1452) Updated to monolog 3
+* [#1485](https://github.com/shlinkio/shlink/issues/1485) Changed payload published in RabbitMQ for all visits events, in order to conform with the Async API spec.
+
+  Since this is a breaking change, also provided a new `RABBITMQ_LEGACY_VISITS_PUBLISHING=true` env var that can be provided in order to keep the old payload.
+
+  This env var is considered deprecated and will be removed in Shlink 4, when the legacy format will no longer be supported.
 
 ### Deprecated
 * *Nothing*
