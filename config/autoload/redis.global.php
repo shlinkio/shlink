@@ -14,6 +14,7 @@ return (static function (): array {
                 'redis' => [
                     'servers' => $redisServers,
                     'sentinel_service' => EnvVars::REDIS_SENTINEL_SERVICE->loadFromEnv(),
+                    'pub_sub_enabled' => (bool) EnvVars::REDIS_PUB_SUB_ENABLED->loadFromEnv(false),
                 ],
             ],
         ],

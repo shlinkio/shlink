@@ -24,12 +24,14 @@ return [
             EventDispatcher\Event\VisitLocated::class => [
                 EventDispatcher\Mercure\NotifyVisitToMercure::class,
                 EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class,
+                EventDispatcher\RedisPubSub\NotifyVisitToRedis::class,
                 EventDispatcher\NotifyVisitToWebHooks::class,
                 EventDispatcher\UpdateGeoLiteDb::class,
             ],
             EventDispatcher\Event\ShortUrlCreated::class => [
                 EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class,
                 EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class,
+                EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class,
             ],
         ],
     ],
@@ -42,6 +44,8 @@ return [
             EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => ConfigAbstractFactory::class,
             EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class => ConfigAbstractFactory::class,
             EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => ConfigAbstractFactory::class,
+            EventDispatcher\RedisPubSub\NotifyVisitToRedis::class => ConfigAbstractFactory::class,
+            EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => ConfigAbstractFactory::class,
             EventDispatcher\UpdateGeoLiteDb::class => ConfigAbstractFactory::class,
         ],
 
@@ -56,6 +60,12 @@ return [
                 EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
             ],
             EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => [
+                EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
+            ],
+            EventDispatcher\RedisPubSub\NotifyVisitToRedis::class => [
+                EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
+            ],
+            EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => [
                 EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
             ],
             EventDispatcher\NotifyVisitToWebHooks::class => [
@@ -107,6 +117,8 @@ return [
             ShortUrl\Transformer\ShortUrlDataTransformer::class,
             Options\RabbitMqOptions::class,
         ],
+        EventDispatcher\RedisPubSub\NotifyVisitToRedis::class => [],
+        EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => [],
         EventDispatcher\UpdateGeoLiteDb::class => [GeolocationDbUpdater::class, 'Logger_Shlink'],
     ],
 

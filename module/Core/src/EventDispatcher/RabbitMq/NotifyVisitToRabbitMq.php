@@ -26,13 +26,13 @@ class NotifyVisitToRabbitMq
     ) {
     }
 
-    public function __invoke(VisitLocated $shortUrlLocated): void
+    public function __invoke(VisitLocated $visitLocated): void
     {
         if (! $this->options->isEnabled()) {
             return;
         }
 
-        $visitId = $shortUrlLocated->visitId;
+        $visitId = $visitLocated->visitId;
         $visit = $this->em->find(Visit::class, $visitId);
 
         if ($visit === null) {

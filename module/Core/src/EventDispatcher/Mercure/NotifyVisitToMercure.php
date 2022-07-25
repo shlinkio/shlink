@@ -25,9 +25,9 @@ class NotifyVisitToMercure
     ) {
     }
 
-    public function __invoke(VisitLocated $shortUrlLocated): void
+    public function __invoke(VisitLocated $visitLocated): void
     {
-        $visitId = $shortUrlLocated->visitId;
+        $visitId = $visitLocated->visitId;
 
         /** @var Visit|null $visit */
         $visit = $this->em->find(Visit::class, $visitId);

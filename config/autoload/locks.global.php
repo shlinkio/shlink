@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
-use Predis\ClientInterface as PredisClient;
+use Shlinkio\Shlink\Common\Cache\RedisFactory;
 use Shlinkio\Shlink\Common\Logger\LoggerAwareDelegatorFactory;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 use Symfony\Component\Lock;
@@ -38,7 +38,7 @@ return [
 
     ConfigAbstractFactory::class => [
         Lock\Store\FlockStore::class => ['config.locks.locks_dir'],
-        Lock\Store\RedisStore::class => [PredisClient::class],
+        Lock\Store\RedisStore::class => [RedisFactory::SERVICE_NAME],
         Lock\LockFactory::class => ['lock_store'],
         LOCAL_LOCK_FACTORY => ['local_lock_store'],
     ],

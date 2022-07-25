@@ -32,6 +32,7 @@ return [
             Option\Worker\WebWorkerNumConfigOption::class,
             Option\Redis\RedisServersConfigOption::class,
             Option\Redis\RedisSentinelServiceConfigOption::class,
+            Option\Redis\RedisPubSubConfigOption::class,
             Option\UrlShortener\ShortCodeLengthOption::class,
             Option\Mercure\EnableMercureConfigOption::class,
             Option\Mercure\MercurePublicUrlConfigOption::class,
