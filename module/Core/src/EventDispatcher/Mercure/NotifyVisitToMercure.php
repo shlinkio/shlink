@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\EventDispatcher;
+namespace Shlinkio\Shlink\Core\EventDispatcher\Mercure;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -18,10 +18,10 @@ use function Functional\each;
 class NotifyVisitToMercure
 {
     public function __construct(
-        private HubInterface $hub,
-        private MercureUpdatesGeneratorInterface $updatesGenerator,
-        private EntityManagerInterface $em,
-        private LoggerInterface $logger,
+        private readonly HubInterface $hub,
+        private readonly MercureUpdatesGeneratorInterface $updatesGenerator,
+        private readonly EntityManagerInterface $em,
+        private readonly LoggerInterface $logger,
     ) {
     }
 

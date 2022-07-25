@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   Now you can run `tag:visits`, `domain:visits`, `visit:orphan` or `visit:non-orphan` to get the corresponding list of visits from the command line.
 
+* [#962](https://github.com/shlinkio/shlink/issues/962) Added new real-time update for new short URLs.
+
+  You can now subscribe to the `https://shlink.io/new-short-url` topic on any of the supported async updates technologies in order to get notified when a short URL is created.
+
 ### Changed
 * [#1452](https://github.com/shlinkio/shlink/issues/1452) Updated to monolog 3
 
