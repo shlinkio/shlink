@@ -75,6 +75,23 @@
                     }
                 }
             }
+        },
+        "https://shlink.io/new-short-url": {
+            "subscribe": {
+                "summary": "Receive information about any new short URL.",
+                "operationId": "newshortUrl",
+                "message": {
+                    "payload": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "shortUrl": {
+                                "$ref": "#/components/schemas/ShortUrl"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
