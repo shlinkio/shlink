@@ -6,16 +6,16 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\Mercure;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGeneratorInterface;
-use Symfony\Component\Mercure\HubInterface;
 use Throwable;
 
 class NotifyNewShortUrlToMercure
 {
     public function __construct(
-        private readonly HubInterface $hub,
+        private readonly PublishingHelperInterface $mercureHelper,
         private readonly MercureUpdatesGeneratorInterface $updatesGenerator,
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
@@ -36,7 +36,7 @@ class NotifyNewShortUrlToMercure
         }
 
         try {
-            $this->hub->publish($this->updatesGenerator->newShortUrlUpdate($shortUrl));
+            $this->mercureHelper->publishUpdate($this->updatesGenerator->newShortUrlUpdate($shortUrl));
         } catch (Throwable $e) {
             $this->logger->debug('Error while trying to notify mercure hub with new short URL. {e}', ['e' => $e]);
         }

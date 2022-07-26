@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Mercure;
 
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
@@ -15,8 +16,6 @@ use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
-
-use function Shlinkio\Shlink\Common\json_decode;
 
 class MercureUpdatesGeneratorTest extends TestCase
 {
@@ -43,9 +42,10 @@ class MercureUpdatesGeneratorTest extends TestCase
         ]));
         $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
 
+        /** @var Update $update */
         $update = $this->generator->{$method}($visit);
 
-        self::assertEquals([$expectedTopic], $update->getTopics());
+        self::assertEquals($expectedTopic, $update->topic);
         self::assertEquals([
             'shortUrl' => [
                 'shortCode' => $shortUrl->getShortCode(),
@@ -71,7 +71,7 @@ class MercureUpdatesGeneratorTest extends TestCase
                 'date' => $visit->getDate()->toAtomString(),
                 'potentialBot' => false,
             ],
-        ], json_decode($update->getData()));
+        ], $update->payload);
     }
 
     public function provideMethod(): iterable
@@ -88,7 +88,7 @@ class MercureUpdatesGeneratorTest extends TestCase
     {
         $update = $this->generator->newOrphanVisitUpdate($orphanVisit);
 
-        self::assertEquals(['https://shlink.io/new-orphan-visit'], $update->getTopics());
+        self::assertEquals('https://shlink.io/new-orphan-visit', $update->topic);
         self::assertEquals([
             'visit' => [
                 'referer' => '',
@@ -99,7 +99,7 @@ class MercureUpdatesGeneratorTest extends TestCase
                 'visitedUrl' => $orphanVisit->visitedUrl(),
                 'type' => $orphanVisit->type()->value,
             ],
-        ], json_decode($update->getData()));
+        ], $update->payload);
     }
 
     public function provideOrphanVisits(): iterable
@@ -122,7 +122,7 @@ class MercureUpdatesGeneratorTest extends TestCase
 
         $update = $this->generator->newShortUrlUpdate($shortUrl);
 
-        self::assertEquals([Topic::NEW_SHORT_URL->value], $update->getTopics());
+        self::assertEquals(Topic::NEW_SHORT_URL->value, $update->topic);
         self::assertEquals(['shortUrl' => [
             'shortCode' => $shortUrl->getShortCode(),
             'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
@@ -139,6 +139,6 @@ class MercureUpdatesGeneratorTest extends TestCase
             'title' => $shortUrl->title(),
             'crawlable' => false,
             'forwardQuery' => true,
-        ],], json_decode($update->getData()));
+        ]], $update->payload);
     }
 }

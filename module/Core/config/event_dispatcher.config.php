@@ -8,10 +8,10 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\Cache\RedisPublishingHelper;
+use Shlinkio\Shlink\Common\Mercure\MercureHubPublishingHelper;
 use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelper;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
-use Symfony\Component\Mercure\Hub;
 
 return [
 
@@ -92,13 +92,13 @@ return [
             Options\AppOptions::class,
         ],
         EventDispatcher\Mercure\NotifyVisitToMercure::class => [
-            Hub::class,
+            MercureHubPublishingHelper::class,
             Mercure\MercureUpdatesGenerator::class,
             'em',
             'Logger_Shlink',
         ],
         EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => [
-            Hub::class,
+            MercureHubPublishingHelper::class,
             Mercure\MercureUpdatesGenerator::class,
             'em',
             'Logger_Shlink',
