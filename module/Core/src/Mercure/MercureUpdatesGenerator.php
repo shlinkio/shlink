@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 
+// TODO This class can now be use in an agnostic way on all listeners
 final class MercureUpdatesGenerator implements MercureUpdatesGeneratorInterface
 {
     public function __construct(
