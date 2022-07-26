@@ -7,10 +7,11 @@ return [
     'cache' => [
         'redis' => [
             'servers' => 'tcp://shlink_redis:6379',
-//            'servers' => [
-//                'tcp://shlink_redis:6379',
-//            ],
         ],
+    ],
+
+    'redis' => [
+        'pub_sub_enabled' => true,
     ],
 
     'dependencies' => [
