@@ -6,8 +6,9 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Common\Cache\RedisPublishingHelperInterface;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
@@ -18,7 +19,7 @@ use function Functional\each;
 class NotifyVisitToRedis
 {
     public function __construct(
-        private readonly RedisPublishingHelperInterface $redisHelper,
+        private readonly PublishingHelperInterface $redisHelper,
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
         private readonly DataTransformerInterface $orphanVisitTransformer,
@@ -48,7 +49,9 @@ class NotifyVisitToRedis
         $payload = $this->visitToPayload($visit);
 
         try {
-            each($queues, fn (string $queue) => $this->redisHelper->publishPayloadInQueue($payload, $queue));
+            each($queues, fn (string $queue) => $this->redisHelper->publishUpdate(
+                Update::forTopicAndPayload($queue, $payload),
+            ));
         } catch (Throwable $e) {
             $this->logger->debug('Error while trying to notify Redis pub/sub with new visit. {e}', ['e' => $e]);
         }

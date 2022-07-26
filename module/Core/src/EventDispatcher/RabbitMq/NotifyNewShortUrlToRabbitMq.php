@@ -6,8 +6,9 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\RabbitMq;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelperInterface;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
@@ -17,7 +18,7 @@ use Throwable;
 class NotifyNewShortUrlToRabbitMq
 {
     public function __construct(
-        private readonly RabbitMqPublishingHelperInterface $rabbitMqHelper,
+        private readonly PublishingHelperInterface $rabbitMqHelper,
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
         private readonly DataTransformerInterface $shortUrlTransformer,
@@ -43,10 +44,10 @@ class NotifyNewShortUrlToRabbitMq
         }
 
         try {
-            $this->rabbitMqHelper->publishPayloadInQueue(
-                ['shortUrl' => $this->shortUrlTransformer->transform($shortUrl)],
+            $this->rabbitMqHelper->publishUpdate(Update::forTopicAndPayload(
                 Topic::NEW_SHORT_URL->value,
-            );
+                ['shortUrl' => $this->shortUrlTransformer->transform($shortUrl)],
+            ));
         } catch (Throwable $e) {
             $this->logger->debug('Error while trying to notify RabbitMQ with new short URL. {e}', ['e' => $e]);
         }

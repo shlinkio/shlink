@@ -43,18 +43,17 @@
         "php-middleware/request-id": "^4.1",
         "pugx/shortid-php": "^1.0",
         "ramsey/uuid": "^4.2",
-        "shlinkio/shlink-common": "dev-main#4019020 as 4.5",
+        "shlinkio/shlink-common": "dev-main#b3848ad as 4.5",
         "shlinkio/shlink-config": "^1.6",
         "shlinkio/shlink-event-dispatcher": "^2.4",
         "shlinkio/shlink-importer": "^3.0",
         "shlinkio/shlink-installer": "dev-develop#f76e9aa as 7.2",
         "shlinkio/shlink-ip-geolocation": "^2.2",
-        "symfony/console": "^6.0",
-        "symfony/filesystem": "^6.0",
-        "symfony/lock": "^6.0",
-        "symfony/mercure": "^0.6",
-        "symfony/process": "^6.0",
-        "symfony/string": "^6.0"
+        "symfony/console": "^6.1",
+        "symfony/filesystem": "^6.1",
+        "symfony/lock": "^6.1",
+        "symfony/process": "^6.1",
+        "symfony/string": "^6.1"
     },
     "require-dev": {
         "cebe/php-openapi": "^1.7",
@@ -71,7 +70,7 @@
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.3.0",
         "shlinkio/shlink-test-utils": "^3.0.1",
-        "symfony/var-dumper": "^6.0",
+        "symfony/var-dumper": "^6.1",
         "veewee/composer-run-parallel": "^1.1"
     },
     "autoload": {

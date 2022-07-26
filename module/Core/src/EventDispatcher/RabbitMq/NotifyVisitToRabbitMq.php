@@ -6,8 +6,9 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\RabbitMq;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelperInterface;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
@@ -19,7 +20,7 @@ use function Functional\each;
 class NotifyVisitToRabbitMq
 {
     public function __construct(
-        private readonly RabbitMqPublishingHelperInterface $rabbitMqHelper,
+        private readonly PublishingHelperInterface $rabbitMqHelper,
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
         private readonly DataTransformerInterface $orphanVisitTransformer,
@@ -48,7 +49,9 @@ class NotifyVisitToRabbitMq
         $payload = $this->visitToPayload($visit);
 
         try {
-            each($queues, fn (string $queue) => $this->rabbitMqHelper->publishPayloadInQueue($payload, $queue));
+            each($queues, fn (string $queue) => $this->rabbitMqHelper->publishUpdate(
+                Update::forTopicAndPayload($queue, $payload),
+            ));
         } catch (Throwable $e) {
             $this->logger->debug('Error while trying to notify RabbitMQ with new visit. {e}', ['e' => $e]);
         }

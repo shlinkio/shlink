@@ -6,8 +6,9 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Common\Cache\RedisPublishingHelperInterface;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
@@ -16,7 +17,7 @@ use Throwable;
 class NotifyNewShortUrlToRedis
 {
     public function __construct(
-        private readonly RedisPublishingHelperInterface $redisHelper,
+        private readonly PublishingHelperInterface $redisHelper,
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
         private readonly DataTransformerInterface $shortUrlTransformer,
@@ -42,10 +43,10 @@ class NotifyNewShortUrlToRedis
         }
 
         try {
-            $this->redisHelper->publishPayloadInQueue(
-                ['shortUrl' => $this->shortUrlTransformer->transform($shortUrl)],
+            $this->redisHelper->publishUpdate(Update::forTopicAndPayload(
                 Topic::NEW_SHORT_URL->value,
-            );
+                ['shortUrl' => $this->shortUrlTransformer->transform($shortUrl)],
+            ));
         } catch (Throwable $e) {
             $this->logger->debug('Error while trying to notify Redis pub/sub with new short URL. {e}', ['e' => $e]);
         }
