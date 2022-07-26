@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
+use Shlinkio\Shlink\Common\Cache\RedisPublishingHelper;
 use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelper;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
@@ -117,8 +118,21 @@ return [
             ShortUrl\Transformer\ShortUrlDataTransformer::class,
             Options\RabbitMqOptions::class,
         ],
-        EventDispatcher\RedisPubSub\NotifyVisitToRedis::class => [],
-        EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => [],
+        EventDispatcher\RedisPubSub\NotifyVisitToRedis::class => [
+            RedisPublishingHelper::class,
+            'em',
+            'Logger_Shlink',
+            Visit\Transformer\OrphanVisitDataTransformer::class,
+            ShortUrl\Transformer\ShortUrlDataTransformer::class,
+            'config.redis.pub_sub_enabled',
+        ],
+        EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => [
+            RedisPublishingHelper::class,
+            'em',
+            'Logger_Shlink',
+            ShortUrl\Transformer\ShortUrlDataTransformer::class,
+            'config.redis.pub_sub_enabled',
+        ],
         EventDispatcher\UpdateGeoLiteDb::class => [GeolocationDbUpdater::class, 'Logger_Shlink'],
     ],
 

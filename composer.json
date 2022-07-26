@@ -36,7 +36,7 @@
         "mezzio/mezzio": "^3.7",
         "mezzio/mezzio-fastroute": "^3.3",
         "mezzio/mezzio-problem-details": "^1.5",
-        "mezzio/mezzio-swoole": "^4.0",
+        "mezzio/mezzio-swoole": "^4.3",
         "mlocati/ip-lib": "^1.17",
         "ocramius/proxy-manager": "^2.11",
         "pagerfanta/core": "^3.5",

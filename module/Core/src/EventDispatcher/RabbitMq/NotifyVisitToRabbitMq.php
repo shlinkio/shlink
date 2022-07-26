@@ -14,6 +14,8 @@ use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 use Throwable;
 
+use function Functional\each;
+
 class NotifyVisitToRabbitMq
 {
     public function __construct(
@@ -46,9 +48,7 @@ class NotifyVisitToRabbitMq
         $payload = $this->visitToPayload($visit);
 
         try {
-            foreach ($queues as $queue) {
-                $this->rabbitMqHelper->publishPayloadInQueue($payload, $queue);
-            }
+            each($queues, fn (string $queue) => $this->rabbitMqHelper->publishPayloadInQueue($payload, $queue));
         } catch (Throwable $e) {
             $this->logger->debug('Error while trying to notify RabbitMQ with new visit. {e}', ['e' => $e]);
         }
