@@ -17,11 +17,10 @@ use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
+use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
-use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
-use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Throwable;
 
 class NotifyNewShortUrlToRabbitMqTest extends TestCase
@@ -30,6 +29,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
 
     private NotifyNewShortUrlToRabbitMq $listener;
     private ObjectProphecy $helper;
+    private ObjectProphecy $updatesGenerator;
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
     private RabbitMqOptions $options;
@@ -37,15 +37,16 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
     protected function setUp(): void
     {
         $this->helper = $this->prophesize(PublishingHelperInterface::class);
+        $this->updatesGenerator = $this->prophesize(PublishingUpdatesGeneratorInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
         $this->options = new RabbitMqOptions(['enabled' => true]);
 
         $this->listener = new NotifyNewShortUrlToRabbitMq(
             $this->helper->reveal(),
+            $this->updatesGenerator->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),
-            new ShortUrlDataTransformer(new ShortUrlStringifier([])),
             $this->options,
         );
     }
@@ -85,14 +86,17 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
     public function expectedChannelIsNotified(): void
     {
         $shortUrlId = '123';
+        $update = Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, []);
         $find = $this->em->find(ShortUrl::class, $shortUrlId)->willReturn(ShortUrl::withLongUrl(''));
+        $generateUpdate = $this->updatesGenerator->newShortUrlUpdate(Argument::type(ShortUrl::class))->willReturn(
+            $update,
+        );
 
         ($this->listener)(new ShortUrlCreated($shortUrlId));
 
         $find->shouldHaveBeenCalledOnce();
-        $this->helper->publishUpdate(
-            Argument::that(fn (Update $update) => $update->topic === Topic::NEW_SHORT_URL->value),
-        )->shouldHaveBeenCalledOnce();
+        $generateUpdate->shouldHaveBeenCalledOnce();
+        $this->helper->publishUpdate($update)->shouldHaveBeenCalledOnce();
         $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 

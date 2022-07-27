@@ -113,9 +113,9 @@ return [
         ],
         EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => [
             RabbitMqPublishingHelper::class,
+            EventDispatcher\PublishingUpdatesGenerator::class,
             'em',
             'Logger_Shlink',
-            ShortUrl\Transformer\ShortUrlDataTransformer::class,
             Options\RabbitMqOptions::class,
         ],
         EventDispatcher\RedisPubSub\NotifyVisitToRedis::class => [
