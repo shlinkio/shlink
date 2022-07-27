@@ -11,7 +11,6 @@ class OrphanVisitDataTransformer implements DataTransformerInterface
 {
     /**
      * @param Visit $visit
-     * @return array
      */
     public function transform($visit): array // phpcs:ignore
     {

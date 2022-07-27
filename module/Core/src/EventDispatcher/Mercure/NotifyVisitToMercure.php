@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
-use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGeneratorInterface;
+use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Throwable;
 
 use function Functional\each;
@@ -19,7 +19,7 @@ class NotifyVisitToMercure
 {
     public function __construct(
         private readonly PublishingHelperInterface $mercureHelper,
-        private readonly MercureUpdatesGeneratorInterface $updatesGenerator,
+        private readonly PublishingUpdatesGeneratorInterface $updatesGenerator,
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
     ) {

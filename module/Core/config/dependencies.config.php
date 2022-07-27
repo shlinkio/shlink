@@ -64,7 +64,7 @@ return [
             ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => ConfigAbstractFactory::class,
 
-            Mercure\MercureUpdatesGenerator::class => ConfigAbstractFactory::class,
+            EventDispatcher\PublishingUpdatesGenerator::class => ConfigAbstractFactory::class,
 
             Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
 
@@ -160,7 +160,7 @@ return [
             Options\UrlShortenerOptions::class,
         ],
 
-        Mercure\MercureUpdatesGenerator::class => [
+        EventDispatcher\PublishingUpdatesGenerator::class => [
             ShortUrl\Transformer\ShortUrlDataTransformer::class,
             Visit\Transformer\OrphanVisitDataTransformer::class,
         ],

@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\Mercure\NotifyNewShortUrlToMercure;
-use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGeneratorInterface;
+use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 
 class NotifyNewShortUrlToMercureTest extends TestCase
 {
@@ -31,7 +31,7 @@ class NotifyNewShortUrlToMercureTest extends TestCase
     protected function setUp(): void
     {
         $this->helper = $this->prophesize(PublishingHelperInterface::class);
-        $this->updatesGenerator = $this->prophesize(MercureUpdatesGeneratorInterface::class);
+        $this->updatesGenerator = $this->prophesize(PublishingUpdatesGeneratorInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
 

@@ -2,16 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Mercure;
+namespace Shlinkio\Shlink\Core\EventDispatcher;
 
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
-use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 
-// TODO This class can now be use in an agnostic way on all listeners
-final class MercureUpdatesGenerator implements MercureUpdatesGeneratorInterface
+final class PublishingUpdatesGenerator implements PublishingUpdatesGeneratorInterface
 {
     public function __construct(
         private readonly DataTransformerInterface $shortUrlTransformer,

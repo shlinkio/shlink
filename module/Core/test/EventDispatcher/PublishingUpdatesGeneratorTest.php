@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Mercure;
+namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGenerator;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
-use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGenerator;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
@@ -17,13 +17,13 @@ use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
 
-class MercureUpdatesGeneratorTest extends TestCase
+class PublishingUpdatesGeneratorTest extends TestCase
 {
-    private MercureUpdatesGenerator $generator;
+    private PublishingUpdatesGenerator $generator;
 
     public function setUp(): void
     {
-        $this->generator = new MercureUpdatesGenerator(
+        $this->generator = new PublishingUpdatesGenerator(
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
             new OrphanVisitDataTransformer(),
         );

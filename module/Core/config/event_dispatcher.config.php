@@ -93,13 +93,13 @@ return [
         ],
         EventDispatcher\Mercure\NotifyVisitToMercure::class => [
             MercureHubPublishingHelper::class,
-            Mercure\MercureUpdatesGenerator::class,
+            EventDispatcher\PublishingUpdatesGenerator::class,
             'em',
             'Logger_Shlink',
         ],
         EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => [
             MercureHubPublishingHelper::class,
-            Mercure\MercureUpdatesGenerator::class,
+            EventDispatcher\PublishingUpdatesGenerator::class,
             'em',
             'Logger_Shlink',
         ],

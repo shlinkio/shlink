@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\EventDispatcher\Mercure\NotifyVisitToMercure;
-use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGeneratorInterface;
+use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 
@@ -34,7 +34,7 @@ class NotifyVisitToMercureTest extends TestCase
     public function setUp(): void
     {
         $this->helper = $this->prophesize(PublishingHelperInterface::class);
-        $this->updatesGenerator = $this->prophesize(MercureUpdatesGeneratorInterface::class);
+        $this->updatesGenerator = $this->prophesize(PublishingUpdatesGeneratorInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
 

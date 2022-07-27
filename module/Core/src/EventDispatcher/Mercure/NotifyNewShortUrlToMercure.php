@@ -9,14 +9,14 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
-use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGeneratorInterface;
+use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Throwable;
 
 class NotifyNewShortUrlToMercure
 {
     public function __construct(
         private readonly PublishingHelperInterface $mercureHelper,
-        private readonly MercureUpdatesGeneratorInterface $updatesGenerator,
+        private readonly PublishingUpdatesGeneratorInterface $updatesGenerator,
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
     ) {
