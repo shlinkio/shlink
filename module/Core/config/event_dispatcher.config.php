@@ -105,10 +105,10 @@ return [
         ],
         EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class => [
             RabbitMqPublishingHelper::class,
+            EventDispatcher\PublishingUpdatesGenerator::class,
             'em',
             'Logger_Shlink',
             Visit\Transformer\OrphanVisitDataTransformer::class,
-            ShortUrl\Transformer\ShortUrlDataTransformer::class,
             Options\RabbitMqOptions::class,
         ],
         EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => [

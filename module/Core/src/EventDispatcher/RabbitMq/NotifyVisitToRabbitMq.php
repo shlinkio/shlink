@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
+use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 use Throwable;
@@ -21,10 +22,10 @@ class NotifyVisitToRabbitMq
 {
     public function __construct(
         private readonly PublishingHelperInterface $rabbitMqHelper,
+        private readonly PublishingUpdatesGeneratorInterface $updatesGenerator,
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
         private readonly DataTransformerInterface $orphanVisitTransformer,
-        private readonly DataTransformerInterface $shortUrlTransformer,
         private readonly RabbitMqOptions $options,
     ) {
     }
@@ -45,50 +46,45 @@ class NotifyVisitToRabbitMq
             return;
         }
 
-        $queues = $this->determineQueuesToPublishTo($visit);
-        $payload = $this->visitToPayload($visit);
+        $updates = $this->determineUpdatesForVisit($visit);
 
         try {
-            each($queues, fn (string $queue) => $this->rabbitMqHelper->publishUpdate(
-                Update::forTopicAndPayload($queue, $payload),
-            ));
+            each($updates, fn (Update $update) => $this->rabbitMqHelper->publishUpdate($update));
         } catch (Throwable $e) {
             $this->logger->debug('Error while trying to notify RabbitMQ with new visit. {e}', ['e' => $e]);
         }
     }
 
     /**
-     * @return string[]
+     * @return Update[]
      */
-    private function determineQueuesToPublishTo(Visit $visit): array
+    private function determineUpdatesForVisit(Visit $visit): array
     {
-        if ($visit->isOrphan()) {
-            return [Topic::NEW_ORPHAN_VISIT->value];
-        }
+        return match (true) {
+            // This was defined incorrectly.
+            // According to the spec, both the visit and the short URL it belongs to, should be published.
+            // The shape should be ['visit' => [...], 'shortUrl' => ?[...]]
+            // However, this would be a breaking change, so we need a flag that determines the shape of the payload.
+            $this->options->legacyVisitsPublishing() && $visit->isOrphan() => [
+                Update::forTopicAndPayload(
+                    Topic::NEW_ORPHAN_VISIT->value,
+                    $this->orphanVisitTransformer->transform($visit),
+                ),
+            ],
+            $this->options->legacyVisitsPublishing() && ! $visit->isOrphan() => [
+                Update::forTopicAndPayload(Topic::NEW_VISIT->value, $visit->jsonSerialize()),
+                Update::forTopicAndPayload(
+                    Topic::newShortUrlVisit($visit->getShortUrl()?->getShortCode()),
+                    $visit->jsonSerialize(),
+                ),
+            ],
 
-        return [
-            Topic::NEW_VISIT->value,
-            Topic::newShortUrlVisit($visit->getShortUrl()?->getShortCode()),
-        ];
-    }
-
-    private function visitToPayload(Visit $visit): array
-    {
-        // This was defined incorrectly.
-        // According to the spec, both the visit and the short URL it belongs to, should be published.
-        // The shape should be ['visit' => [...], 'shortUrl' => ?[...]]
-        // However, this would be a breaking change, so we need a flag that determines the shape of the payload.
-        if ($this->options->legacyVisitsPublishing()) {
-            return ! $visit->isOrphan() ? $visit->jsonSerialize() : $this->orphanVisitTransformer->transform($visit);
-        }
-
-        if ($visit->isOrphan()) {
-            return ['visit' => $this->orphanVisitTransformer->transform($visit)];
-        }
-
-        return [
-            'visit' => $visit->jsonSerialize(),
-            'shortUrl' => $this->shortUrlTransformer->transform($visit->getShortUrl()),
-        ];
+            // Once the two deprecated cases above have been remove, replace this with a simple "if" and early return.
+            $visit->isOrphan() => [$this->updatesGenerator->newOrphanVisitUpdate($visit)],
+            default => [
+                $this->updatesGenerator->newShortUrlVisitUpdate($visit),
+                $this->updatesGenerator->newVisitUpdate($visit),
+            ],
+        };
     }
 }
