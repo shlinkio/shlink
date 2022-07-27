@@ -128,9 +128,9 @@ return [
         ],
         EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => [
             RedisPublishingHelper::class,
+            EventDispatcher\PublishingUpdatesGenerator::class,
             'em',
             'Logger_Shlink',
-            ShortUrl\Transformer\ShortUrlDataTransformer::class,
             'config.redis.pub_sub_enabled',
         ],
         EventDispatcher\UpdateGeoLiteDb::class => [GeolocationDbUpdater::class, 'Logger_Shlink'],
