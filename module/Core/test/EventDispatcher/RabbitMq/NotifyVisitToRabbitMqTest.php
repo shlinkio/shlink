@@ -79,8 +79,8 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $visitId = '123';
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn(null);
         $logWarning = $this->logger->warning(
-            'Tried to notify RabbitMQ for visit with id "{visitId}", but it does not exist.',
-            ['visitId' => $visitId],
+            'Tried to notify {name} for visit with id "{visitId}", but it does not exist.',
+            ['visitId' => $visitId, 'name' => 'RabbitMQ'],
         );
 
         ($this->listener)(new VisitLocated($visitId));
@@ -147,8 +147,8 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ($this->listener)(new VisitLocated($visitId));
 
         $this->logger->debug(
-            'Error while trying to notify RabbitMQ with new visit. {e}',
-            ['e' => $e],
+            'Error while trying to notify {name} with new visit. {e}',
+            ['e' => $e, 'name' => 'RabbitMQ'],
         )->shouldHaveBeenCalledOnce();
         $findVisit->shouldHaveBeenCalledOnce();
         $generateUpdate->shouldHaveBeenCalledOnce();

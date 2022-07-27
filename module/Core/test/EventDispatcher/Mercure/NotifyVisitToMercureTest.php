@@ -52,8 +52,8 @@ class NotifyVisitToMercureTest extends TestCase
         $visitId = '123';
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn(null);
         $logWarning = $this->logger->warning(
-            'Tried to notify mercure for visit with id "{visitId}", but it does not exist.',
-            ['visitId' => $visitId],
+            'Tried to notify {name} for visit with id "{visitId}", but it does not exist.',
+            ['visitId' => $visitId, 'name' => 'Mercure'],
         );
         $logDebug = $this->logger->debug(Argument::cetera());
         $buildNewShortUrlVisitUpdate = $this->updatesGenerator->newShortUrlVisitUpdate(
@@ -110,8 +110,9 @@ class NotifyVisitToMercureTest extends TestCase
 
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn($visit);
         $logWarning = $this->logger->warning(Argument::cetera());
-        $logDebug = $this->logger->debug('Error while trying to notify mercure hub with new visit. {e}', [
+        $logDebug = $this->logger->debug('Error while trying to notify {name} with new visit. {e}', [
             'e' => $e,
+            'name' => 'Mercure',
         ]);
         $buildNewShortUrlVisitUpdate = $this->updatesGenerator->newShortUrlVisitUpdate($visit)->willReturn($update);
         $buildNewOrphanVisitUpdate = $this->updatesGenerator->newOrphanVisitUpdate($visit)->willReturn($update);

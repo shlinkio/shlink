@@ -7,63 +7,28 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
-use Shlinkio\Shlink\Common\UpdatePublishing\Update;
-use Shlinkio\Shlink\Core\Entity\Visit;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
+use Shlinkio\Shlink\Core\EventDispatcher\Async\AbstractNotifyVisitListener;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
-use Throwable;
 
-use function Functional\each;
-
-class NotifyVisitToRedis
+class NotifyVisitToRedis extends AbstractNotifyVisitListener
 {
     public function __construct(
-        private readonly PublishingHelperInterface $redisHelper,
-        private readonly PublishingUpdatesGeneratorInterface $updatesGenerator,
-        private readonly EntityManagerInterface $em,
-        private readonly LoggerInterface $logger,
+        PublishingHelperInterface $redisHelper,
+        PublishingUpdatesGeneratorInterface $updatesGenerator,
+        EntityManagerInterface $em,
+        LoggerInterface $logger,
         private readonly bool $enabled,
     ) {
+        parent::__construct($redisHelper, $updatesGenerator, $em, $logger);
     }
 
-    public function __invoke(VisitLocated $visitLocated): void
+    protected function isEnabled(): bool
     {
-        if (! $this->enabled) {
-            return;
-        }
-
-        $visitId = $visitLocated->visitId;
-        $visit = $this->em->find(Visit::class, $visitId);
-
-        if ($visit === null) {
-            $this->logger->warning(
-                'Tried to notify Redis pub/sub for visit with id "{visitId}", but it does not exist.',
-                ['visitId' => $visitId],
-            );
-            return;
-        }
-
-        $updates = $this->determineUpdatesForVisit($visit);
-
-        try {
-            each($updates, fn (Update $update) => $this->redisHelper->publishUpdate($update));
-        } catch (Throwable $e) {
-            $this->logger->debug('Error while trying to notify Redis pub/sub with new visit. {e}', ['e' => $e]);
-        }
+        return $this->enabled;
     }
 
-    /**
-     * @return Update[]
-     */
-    private function determineUpdatesForVisit(Visit $visit): array
+    protected function getRemoteSystemName(): string
     {
-        if ($visit->isOrphan()) {
-            return [$this->updatesGenerator->newOrphanVisitUpdate($visit)];
-        }
-
-        return [
-            $this->updatesGenerator->newShortUrlVisitUpdate($visit),
-            $this->updatesGenerator->newVisitUpdate($visit),
-        ];
+        return 'Redis pub/sub';
     }
 }

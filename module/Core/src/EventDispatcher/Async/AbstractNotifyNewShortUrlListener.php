@@ -12,10 +12,10 @@ use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Throwable;
 
-abstract class AbstractNotifyNewShortUrlListener
+abstract class AbstractNotifyNewShortUrlListener extends AbstractAsyncListener
 {
     public function __construct(
-        private readonly PublishingHelperInterface $mercureHelper,
+        private readonly PublishingHelperInterface $publishingHelper,
         private readonly PublishingUpdatesGeneratorInterface $updatesGenerator,
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
@@ -41,7 +41,7 @@ abstract class AbstractNotifyNewShortUrlListener
         }
 
         try {
-            $this->mercureHelper->publishUpdate($this->updatesGenerator->newShortUrlUpdate($shortUrl));
+            $this->publishingHelper->publishUpdate($this->updatesGenerator->newShortUrlUpdate($shortUrl));
         } catch (Throwable $e) {
             $this->logger->debug(
                 'Error while trying to notify {name} with new short URL. {e}',
@@ -49,8 +49,4 @@ abstract class AbstractNotifyNewShortUrlListener
             );
         }
     }
-
-    abstract protected function isEnabled(): bool;
-
-    abstract protected function getRemoteSystemName(): string;
 }
