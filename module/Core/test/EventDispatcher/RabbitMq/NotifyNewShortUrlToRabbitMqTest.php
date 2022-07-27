@@ -70,8 +70,8 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         $shortUrlId = '123';
         $find = $this->em->find(ShortUrl::class, $shortUrlId)->willReturn(null);
         $logWarning = $this->logger->warning(
-            'Tried to notify RabbitMQ for new short URL with id "{shortUrlId}", but it does not exist.',
-            ['shortUrlId' => $shortUrlId],
+            'Tried to notify {name} for new short URL with id "{shortUrlId}", but it does not exist.',
+            ['shortUrlId' => $shortUrlId, 'name' => 'RabbitMQ'],
         );
 
         ($this->listener)(new ShortUrlCreated($shortUrlId));
@@ -117,8 +117,8 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         ($this->listener)(new ShortUrlCreated($shortUrlId));
 
         $this->logger->debug(
-            'Error while trying to notify RabbitMQ with new short URL. {e}',
-            ['e' => $e],
+            'Error while trying to notify {name} with new short URL. {e}',
+            ['e' => $e, 'name' => 'RabbitMQ'],
         )->shouldHaveBeenCalledOnce();
         $find->shouldHaveBeenCalledOnce();
         $generateUpdate->shouldHaveBeenCalledOnce();

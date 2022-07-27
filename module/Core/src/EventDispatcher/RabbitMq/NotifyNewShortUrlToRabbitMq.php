@@ -7,44 +7,29 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\RabbitMq;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
+use Shlinkio\Shlink\Core\EventDispatcher\Async\AbstractNotifyNewShortUrlListener;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
-use Throwable;
 
-class NotifyNewShortUrlToRabbitMq
+class NotifyNewShortUrlToRabbitMq extends AbstractNotifyNewShortUrlListener
 {
     public function __construct(
-        private readonly PublishingHelperInterface $rabbitMqHelper,
-        private readonly PublishingUpdatesGeneratorInterface $updatesGenerator,
-        private readonly EntityManagerInterface $em,
-        private readonly LoggerInterface $logger,
+        PublishingHelperInterface $rabbitMqHelper,
+        PublishingUpdatesGeneratorInterface $updatesGenerator,
+        EntityManagerInterface $em,
+        LoggerInterface $logger,
         private readonly RabbitMqOptions $options,
     ) {
+        parent::__construct($rabbitMqHelper, $updatesGenerator, $em, $logger);
     }
 
-    public function __invoke(ShortUrlCreated $shortUrlCreated): void
+    protected function isEnabled(): bool
     {
-        if (! $this->options->isEnabled()) {
-            return;
-        }
+        return $this->options->isEnabled();
+    }
 
-        $shortUrlId = $shortUrlCreated->shortUrlId;
-        $shortUrl = $this->em->find(ShortUrl::class, $shortUrlId);
-
-        if ($shortUrl === null) {
-            $this->logger->warning(
-                'Tried to notify RabbitMQ for new short URL with id "{shortUrlId}", but it does not exist.',
-                ['shortUrlId' => $shortUrlId],
-            );
-            return;
-        }
-
-        try {
-            $this->rabbitMqHelper->publishUpdate($this->updatesGenerator->newShortUrlUpdate($shortUrl));
-        } catch (Throwable $e) {
-            $this->logger->debug('Error while trying to notify RabbitMQ with new short URL. {e}', ['e' => $e]);
-        }
+    protected function getRemoteSystemName(): string
+    {
+        return 'RabbitMQ';
     }
 }

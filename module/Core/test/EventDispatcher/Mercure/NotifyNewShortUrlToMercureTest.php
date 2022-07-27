@@ -52,8 +52,8 @@ class NotifyNewShortUrlToMercureTest extends TestCase
 
         $find->shouldHaveBeenCalledOnce();
         $this->logger->warning(
-            'Tried to notify Mercure for new short URL with id "{shortUrlId}", but it does not exist.',
-            ['shortUrlId' => '123'],
+            'Tried to notify {name} for new short URL with id "{shortUrlId}", but it does not exist.',
+            ['shortUrlId' => '123', 'name' => 'Mercure'],
         )->shouldHaveBeenCalledOnce();
         $this->helper->publishUpdate(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->updatesGenerator->newShortUrlUpdate(Argument::cetera())->shouldNotHaveBeenCalled();
@@ -96,8 +96,8 @@ class NotifyNewShortUrlToMercureTest extends TestCase
         $publish->shouldHaveBeenCalledOnce();
         $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->logger->debug(
-            'Error while trying to notify mercure hub with new short URL. {e}',
-            ['e' => $e],
+            'Error while trying to notify {name} with new short URL. {e}',
+            ['e' => $e, 'name' => 'Mercure'],
         )->shouldHaveBeenCalledOnce();
     }
 }
