@@ -107,8 +107,12 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
     public function printsDebugMessageInCaseOfError(Throwable $e): void
     {
         $shortUrlId = '123';
+        $update = Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, []);
         $find = $this->em->find(ShortUrl::class, $shortUrlId)->willReturn(ShortUrl::withLongUrl(''));
-        $publish = $this->helper->publishUpdate(Argument::cetera())->willThrow($e);
+        $generateUpdate = $this->updatesGenerator->newShortUrlUpdate(Argument::type(ShortUrl::class))->willReturn(
+            $update,
+        );
+        $publish = $this->helper->publishUpdate($update)->willThrow($e);
 
         ($this->listener)(new ShortUrlCreated($shortUrlId));
 
@@ -117,6 +121,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
             ['e' => $e],
         )->shouldHaveBeenCalledOnce();
         $find->shouldHaveBeenCalledOnce();
+        $generateUpdate->shouldHaveBeenCalledOnce();
         $publish->shouldHaveBeenCalledOnce();
     }
 
