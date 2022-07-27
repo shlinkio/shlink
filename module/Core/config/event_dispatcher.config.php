@@ -120,10 +120,9 @@ return [
         ],
         EventDispatcher\RedisPubSub\NotifyVisitToRedis::class => [
             RedisPublishingHelper::class,
+            EventDispatcher\PublishingUpdatesGenerator::class,
             'em',
             'Logger_Shlink',
-            Visit\Transformer\OrphanVisitDataTransformer::class,
-            ShortUrl\Transformer\ShortUrlDataTransformer::class,
             'config.redis.pub_sub_enabled',
         ],
         EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => [
