@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\EventDispatcher\RabbitMq;
+namespace ShlinkioTest\Shlink\Core\EventDispatcher\RedisPubSub;
 
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
@@ -18,21 +18,18 @@ use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
-use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq;
+use Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
-use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 use Throwable;
 
-class NotifyNewShortUrlToRabbitMqTest extends TestCase
+class NotifyNewShortUrlToRedisTest extends TestCase
 {
     use ProphecyTrait;
 
-    private NotifyNewShortUrlToRabbitMq $listener;
     private ObjectProphecy $helper;
     private ObjectProphecy $updatesGenerator;
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
-    private RabbitMqOptions $options;
 
     protected function setUp(): void
     {
@@ -40,64 +37,17 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         $this->updatesGenerator = $this->prophesize(PublishingUpdatesGeneratorInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
-        $this->options = new RabbitMqOptions(['enabled' => true]);
-
-        $this->listener = new NotifyNewShortUrlToRabbitMq(
-            $this->helper->reveal(),
-            $this->updatesGenerator->reveal(),
-            $this->em->reveal(),
-            $this->logger->reveal(),
-            $this->options,
-        );
     }
 
     /** @test */
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
-        $this->options->enabled = false;
-
-        ($this->listener)(new ShortUrlCreated('123'));
+        $this->createListener(false)(new ShortUrlCreated('123'));
 
         $this->em->find(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->helper->publishUpdate(Argument::cetera())->shouldNotHaveBeenCalled();
-    }
-
-    /** @test */
-    public function notificationsAreNotSentWhenShortUrlCannotBeFound(): void
-    {
-        $shortUrlId = '123';
-        $find = $this->em->find(ShortUrl::class, $shortUrlId)->willReturn(null);
-        $logWarning = $this->logger->warning(
-            'Tried to notify {name} for new short URL with id "{shortUrlId}", but it does not exist.',
-            ['shortUrlId' => $shortUrlId, 'name' => 'RabbitMQ'],
-        );
-
-        ($this->listener)(new ShortUrlCreated($shortUrlId));
-
-        $find->shouldHaveBeenCalledOnce();
-        $logWarning->shouldHaveBeenCalledOnce();
-        $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->helper->publishUpdate(Argument::cetera())->shouldNotHaveBeenCalled();
-    }
-
-    /** @test */
-    public function expectedChannelIsNotified(): void
-    {
-        $shortUrlId = '123';
-        $update = Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, []);
-        $find = $this->em->find(ShortUrl::class, $shortUrlId)->willReturn(ShortUrl::withLongUrl(''));
-        $generateUpdate = $this->updatesGenerator->newShortUrlUpdate(Argument::type(ShortUrl::class))->willReturn(
-            $update,
-        );
-
-        ($this->listener)(new ShortUrlCreated($shortUrlId));
-
-        $find->shouldHaveBeenCalledOnce();
-        $generateUpdate->shouldHaveBeenCalledOnce();
-        $this->helper->publishUpdate($update)->shouldHaveBeenCalledOnce();
-        $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /**
@@ -114,11 +64,11 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         );
         $publish = $this->helper->publishUpdate($update)->willThrow($e);
 
-        ($this->listener)(new ShortUrlCreated($shortUrlId));
+        $this->createListener()(new ShortUrlCreated($shortUrlId));
 
         $this->logger->debug(
             'Error while trying to notify {name} with new short URL. {e}',
-            ['e' => $e, 'name' => 'RabbitMQ'],
+            ['e' => $e, 'name' => 'Redis pub/sub'],
         )->shouldHaveBeenCalledOnce();
         $find->shouldHaveBeenCalledOnce();
         $generateUpdate->shouldHaveBeenCalledOnce();
@@ -130,5 +80,16 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         yield [new RuntimeException('RuntimeException Error')];
         yield [new Exception('Exception Error')];
         yield [new DomainException('DomainException Error')];
+    }
+
+    private function createListener(bool $enabled = true): NotifyNewShortUrlToRedis
+    {
+        return new NotifyNewShortUrlToRedis(
+            $this->helper->reveal(),
+            $this->updatesGenerator->reveal(),
+            $this->em->reveal(),
+            $this->logger->reveal(),
+            $enabled,
+        );
     }
 }

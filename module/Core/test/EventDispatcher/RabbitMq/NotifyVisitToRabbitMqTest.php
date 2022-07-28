@@ -14,21 +14,22 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelperInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
+use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyVisitToRabbitMq;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
-use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
-use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
 use Throwable;
 
 use function count;
-use function Functional\contains;
+use function Functional\each;
+use function Functional\noop;
 
 class NotifyVisitToRabbitMqTest extends TestCase
 {
@@ -36,23 +37,25 @@ class NotifyVisitToRabbitMqTest extends TestCase
 
     private NotifyVisitToRabbitMq $listener;
     private ObjectProphecy $helper;
+    private ObjectProphecy $updatesGenerator;
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
     private RabbitMqOptions $options;
 
     protected function setUp(): void
     {
-        $this->helper = $this->prophesize(RabbitMqPublishingHelperInterface::class);
+        $this->helper = $this->prophesize(PublishingHelperInterface::class);
+        $this->updatesGenerator = $this->prophesize(PublishingUpdatesGeneratorInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
-        $this->options = new RabbitMqOptions(['enabled' => true, 'legacy_visits_publishing' => true]);
+        $this->options = new RabbitMqOptions(['enabled' => true, 'legacy_visits_publishing' => false]);
 
         $this->listener = new NotifyVisitToRabbitMq(
             $this->helper->reveal(),
+            $this->updatesGenerator->reveal(),
             $this->em->reveal(),
             $this->logger->reveal(),
             new OrphanVisitDataTransformer(),
-            new ShortUrlDataTransformer(new ShortUrlStringifier([])),
             $this->options,
         );
     }
@@ -67,7 +70,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $this->em->find(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->helper->publishPayloadInQueue(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->helper->publishUpdate(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /** @test */
@@ -76,8 +79,8 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $visitId = '123';
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn(null);
         $logWarning = $this->logger->warning(
-            'Tried to notify RabbitMQ for visit with id "{visitId}", but it does not exist.',
-            ['visitId' => $visitId],
+            'Tried to notify {name} for visit with id "{visitId}", but it does not exist.',
+            ['visitId' => $visitId, 'name' => 'RabbitMQ'],
         );
 
         ($this->listener)(new VisitLocated($visitId));
@@ -85,7 +88,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $findVisit->shouldHaveBeenCalledOnce();
         $logWarning->shouldHaveBeenCalledOnce();
         $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->helper->publishPayloadInQueue(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->helper->publishUpdate(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /**
@@ -96,17 +99,18 @@ class NotifyVisitToRabbitMqTest extends TestCase
     {
         $visitId = '123';
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn($visit);
-        $argumentWithExpectedChannels = Argument::that(
-            static fn (string $channel) => contains($expectedChannels, $channel),
-        );
+        each($expectedChannels, function (string $method): void {
+            $this->updatesGenerator->{$method}(Argument::type(Visit::class))->willReturn(
+                Update::forTopicAndPayload('', []),
+            )->shouldBeCalledOnce();
+        });
 
         ($this->listener)(new VisitLocated($visitId));
 
         $findVisit->shouldHaveBeenCalledOnce();
-        $this->helper->publishPayloadInQueue(
-            Argument::type('array'),
-            $argumentWithExpectedChannels,
-        )->shouldHaveBeenCalledTimes(count($expectedChannels));
+        $this->helper->publishUpdate(Argument::type(Update::class))->shouldHaveBeenCalledTimes(
+            count($expectedChannels),
+        );
         $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
@@ -114,7 +118,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
     {
         $visitor = Visitor::emptyInstance();
 
-        yield 'orphan visit' => [Visit::forBasePath($visitor), ['https://shlink.io/new-orphan-visit']];
+        yield 'orphan visit' => [Visit::forBasePath($visitor), ['newOrphanVisitUpdate']];
         yield 'non-orphan visit' => [
             Visit::forValidShortUrl(
                 ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
@@ -123,7 +127,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
                 ])),
                 $visitor,
             ),
-            ['https://shlink.io/new-visit', 'https://shlink.io/new-visit/bar'],
+            ['newShortUrlVisitUpdate', 'newVisitUpdate'],
         ];
     }
 
@@ -135,15 +139,19 @@ class NotifyVisitToRabbitMqTest extends TestCase
     {
         $visitId = '123';
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn(Visit::forBasePath(Visitor::emptyInstance()));
-        $publish = $this->helper->publishPayloadInQueue(Argument::cetera())->willThrow($e);
+        $generateUpdate = $this->updatesGenerator->newOrphanVisitUpdate(Argument::type(Visit::class))->willReturn(
+            Update::forTopicAndPayload('', []),
+        );
+        $publish = $this->helper->publishUpdate(Argument::cetera())->willThrow($e);
 
         ($this->listener)(new VisitLocated($visitId));
 
         $this->logger->debug(
-            'Error while trying to notify RabbitMQ with new visit. {e}',
-            ['e' => $e],
+            'Error while trying to notify {name} with new visit. {e}',
+            ['e' => $e, 'name' => 'RabbitMQ'],
         )->shouldHaveBeenCalledOnce();
         $findVisit->shouldHaveBeenCalledOnce();
+        $generateUpdate->shouldHaveBeenCalledOnce();
         $publish->shouldHaveBeenCalledOnce();
     }
 
@@ -161,70 +169,81 @@ class NotifyVisitToRabbitMqTest extends TestCase
     public function expectedPayloadIsPublishedDependingOnConfig(
         bool $legacy,
         Visit $visit,
-        callable $assertPayload,
+        callable $assert,
+        callable $setup,
     ): void {
         $this->options->legacyVisitsPublishing = $legacy;
 
         $visitId = '123';
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn($visit);
+        $setup($this->updatesGenerator);
 
         ($this->listener)(new VisitLocated($visitId));
 
         $findVisit->shouldHaveBeenCalledOnce();
-        $this->helper->publishPayloadInQueue(Argument::that($assertPayload), Argument::type('string'))
-                     ->shouldHaveBeenCalled();
+        $assert($this->helper, $this->updatesGenerator);
     }
 
     public function provideLegacyPayloads(): iterable
     {
-        yield 'non-legacy non-orphan visit' => [
+        yield 'legacy non-orphan visit' => [
             true,
             $visit = Visit::forValidShortUrl(ShortUrl::withLongUrl(''), Visitor::emptyInstance()),
-            function (array $payload) use ($visit): bool {
-                Assert::assertEquals($payload, $visit->jsonSerialize());
-                Assert::assertArrayNotHasKey('visitedUrl', $payload);
-                Assert::assertArrayNotHasKey('type', $payload);
-                Assert::assertArrayNotHasKey('visit', $payload);
-                Assert::assertArrayNotHasKey('shortUrl', $payload);
+            function (ObjectProphecy|PublishingHelperInterface $helper) use ($visit): void {
+                $helper->publishUpdate(Argument::that(function (Update $update) use ($visit): bool {
+                    $payload = $update->payload;
+                    Assert::assertEquals($payload, $visit->jsonSerialize());
+                    Assert::assertArrayNotHasKey('visitedUrl', $payload);
+                    Assert::assertArrayNotHasKey('type', $payload);
+                    Assert::assertArrayNotHasKey('visit', $payload);
+                    Assert::assertArrayNotHasKey('shortUrl', $payload);
 
-                return true;
+                    return true;
+                }));
+            },
+            noop(...),
+        ];
+        yield 'legacy orphan visit' => [
+            true,
+            Visit::forBasePath(Visitor::emptyInstance()),
+            function (ObjectProphecy|PublishingHelperInterface $helper): void {
+                $helper->publishUpdate(Argument::that(function (Update $update): bool {
+                    $payload = $update->payload;
+                    Assert::assertArrayHasKey('visitedUrl', $payload);
+                    Assert::assertArrayHasKey('type', $payload);
+
+                    return true;
+                }));
+            },
+            noop(...),
+        ];
+        yield 'non-legacy non-orphan visit' => [
+            false,
+            Visit::forValidShortUrl(ShortUrl::withLongUrl(''), Visitor::emptyInstance()),
+            function (ObjectProphecy|PublishingHelperInterface $helper): void {
+                $helper->publishUpdate(Argument::type(Update::class))->shouldHaveBeenCalledTimes(2);
+            },
+            function (ObjectProphecy|PublishingUpdatesGeneratorInterface $updatesGenerator): void {
+                $update = Update::forTopicAndPayload('', []);
+                $updatesGenerator->newOrphanVisitUpdate(Argument::cetera())->shouldNotBeCalled();
+                $updatesGenerator->newVisitUpdate(Argument::cetera())->willReturn($update)
+                                                                     ->shouldBeCalledOnce();
+                $updatesGenerator->newShortUrlVisitUpdate(Argument::cetera())->willReturn($update)
+                                                                             ->shouldBeCalledOnce();
             },
         ];
         yield 'non-legacy orphan visit' => [
-            true,
-            Visit::forBasePath(Visitor::emptyInstance()),
-            function (array $payload): bool {
-                Assert::assertArrayHasKey('visitedUrl', $payload);
-                Assert::assertArrayHasKey('type', $payload);
-
-                return true;
-            },
-        ];
-        yield 'legacy non-orphan visit' => [
-            false,
-            $visit = Visit::forValidShortUrl(ShortUrl::withLongUrl(''), Visitor::emptyInstance()),
-            function (array $payload) use ($visit): bool {
-                Assert::assertArrayHasKey('visit', $payload);
-                Assert::assertArrayHasKey('shortUrl', $payload);
-                Assert::assertIsArray($payload['visit']);
-                Assert::assertEquals($payload['visit'], $visit->jsonSerialize());
-                Assert::assertArrayNotHasKey('visitedUrl', ['visit']);
-                Assert::assertArrayNotHasKey('type', ['visit']);
-
-                return true;
-            },
-        ];
-        yield 'legacy orphan visit' => [
             false,
             Visit::forBasePath(Visitor::emptyInstance()),
-            function (array $payload): bool {
-                Assert::assertArrayHasKey('visit', $payload);
-                Assert::assertArrayNotHasKey('shortUrl', $payload);
-                Assert::assertIsArray($payload['visit']);
-                Assert::assertArrayHasKey('visitedUrl', $payload['visit']);
-                Assert::assertArrayHasKey('type', $payload['visit']);
-
-                return true;
+            function (ObjectProphecy|PublishingHelperInterface $helper): void {
+                $helper->publishUpdate(Argument::type(Update::class))->shouldHaveBeenCalledOnce();
+            },
+            function (ObjectProphecy|PublishingUpdatesGeneratorInterface $updatesGenerator): void {
+                $update = Update::forTopicAndPayload('', []);
+                $updatesGenerator->newOrphanVisitUpdate(Argument::cetera())->willReturn($update)
+                                                                           ->shouldBeCalledOnce();
+                $updatesGenerator->newVisitUpdate(Argument::cetera())->shouldNotBeCalled();
+                $updatesGenerator->newShortUrlVisitUpdate(Argument::cetera())->shouldNotBeCalled();
             },
         ];
     }

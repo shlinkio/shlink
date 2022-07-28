@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   You can now subscribe to the `https://shlink.io/new-short-url` topic on any of the supported async updates technologies in order to get notified when a short URL is created.
 
+* [#1367](https://github.com/shlinkio/shlink/issues/1367) Added support to publish real-time updates in redis pub/sub.
+
+  The publishing will happen in the same redis instance/cluster configured for caching.
+
 ### Changed
 * [#1452](https://github.com/shlinkio/shlink/issues/1452) Updated to monolog 3
 * [#1485](https://github.com/shlinkio/shlink/issues/1485) Changed payload published in RabbitMQ for all visits events, in order to conform with the Async API spec.

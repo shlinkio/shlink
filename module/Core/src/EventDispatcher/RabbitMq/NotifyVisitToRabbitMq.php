@@ -6,86 +6,66 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\RabbitMq;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelperInterface;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
+use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\Visit;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
+use Shlinkio\Shlink\Core\EventDispatcher\Async\AbstractNotifyVisitListener;
+use Shlinkio\Shlink\Core\EventDispatcher\Async\RemoteSystem;
+use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
-use Throwable;
 
-class NotifyVisitToRabbitMq
+class NotifyVisitToRabbitMq extends AbstractNotifyVisitListener
 {
     public function __construct(
-        private readonly RabbitMqPublishingHelperInterface $rabbitMqHelper,
-        private readonly EntityManagerInterface $em,
-        private readonly LoggerInterface $logger,
+        PublishingHelperInterface $rabbitMqHelper,
+        PublishingUpdatesGeneratorInterface $updatesGenerator,
+        EntityManagerInterface $em,
+        LoggerInterface $logger,
         private readonly DataTransformerInterface $orphanVisitTransformer,
-        private readonly DataTransformerInterface $shortUrlTransformer,
         private readonly RabbitMqOptions $options,
     ) {
-    }
-
-    public function __invoke(VisitLocated $shortUrlLocated): void
-    {
-        if (! $this->options->isEnabled()) {
-            return;
-        }
-
-        $visitId = $shortUrlLocated->visitId;
-        $visit = $this->em->find(Visit::class, $visitId);
-
-        if ($visit === null) {
-            $this->logger->warning('Tried to notify RabbitMQ for visit with id "{visitId}", but it does not exist.', [
-                'visitId' => $visitId,
-            ]);
-            return;
-        }
-
-        $queues = $this->determineQueuesToPublishTo($visit);
-        $payload = $this->visitToPayload($visit);
-
-        try {
-            foreach ($queues as $queue) {
-                $this->rabbitMqHelper->publishPayloadInQueue($payload, $queue);
-            }
-        } catch (Throwable $e) {
-            $this->logger->debug('Error while trying to notify RabbitMQ with new visit. {e}', ['e' => $e]);
-        }
+        parent::__construct($rabbitMqHelper, $updatesGenerator, $em, $logger);
     }
 
     /**
-     * @return string[]
+     * @return Update[]
      */
-    private function determineQueuesToPublishTo(Visit $visit): array
+    protected function determineUpdatesForVisit(Visit $visit): array
     {
-        if ($visit->isOrphan()) {
-            return [Topic::NEW_ORPHAN_VISIT->value];
+        // Once the two deprecated cases below have been removed, make parent method private
+        if (! $this->options->legacyVisitsPublishing()) {
+            return parent::determineUpdatesForVisit($visit);
         }
 
-        return [
-            Topic::NEW_VISIT->value,
-            Topic::newShortUrlVisit($visit->getShortUrl()?->getShortCode()),
-        ];
-    }
-
-    private function visitToPayload(Visit $visit): array
-    {
         // This was defined incorrectly.
         // According to the spec, both the visit and the short URL it belongs to, should be published.
         // The shape should be ['visit' => [...], 'shortUrl' => ?[...]]
         // However, this would be a breaking change, so we need a flag that determines the shape of the payload.
-        if ($this->options->legacyVisitsPublishing()) {
-            return ! $visit->isOrphan() ? $visit->jsonSerialize() : $this->orphanVisitTransformer->transform($visit);
-        }
+        return $visit->isOrphan()
+            ? [
+                Update::forTopicAndPayload(
+                    Topic::NEW_ORPHAN_VISIT->value,
+                    $this->orphanVisitTransformer->transform($visit),
+                ),
+            ]
+            : [
+                Update::forTopicAndPayload(Topic::NEW_VISIT->value, $visit->jsonSerialize()),
+                Update::forTopicAndPayload(
+                    Topic::newShortUrlVisit($visit->getShortUrl()?->getShortCode()),
+                    $visit->jsonSerialize(),
+                ),
+            ];
+    }
 
-        if ($visit->isOrphan()) {
-            return ['visit' => $this->orphanVisitTransformer->transform($visit)];
-        }
+    protected function isEnabled(): bool
+    {
+        return $this->options->isEnabled();
+    }
 
-        return [
-            'visit' => $visit->jsonSerialize(),
-            'shortUrl' => $this->shortUrlTransformer->transform($visit->getShortUrl()),
-        ];
+    protected function getRemoteSystem(): RemoteSystem
+    {
+        return RemoteSystem::RABBIT_MQ;
     }
 }
