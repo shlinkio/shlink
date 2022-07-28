@@ -34,28 +34,29 @@ class NotifyVisitToRabbitMq extends AbstractNotifyVisitListener
      */
     protected function determineUpdatesForVisit(Visit $visit): array
     {
-        return match (true) {
-            // This was defined incorrectly.
-            // According to the spec, both the visit and the short URL it belongs to, should be published.
-            // The shape should be ['visit' => [...], 'shortUrl' => ?[...]]
-            // However, this would be a breaking change, so we need a flag that determines the shape of the payload.
-            $this->options->legacyVisitsPublishing() && $visit->isOrphan() => [
+        // Once the two deprecated cases below have been removed, make parent method private
+        if (! $this->options->legacyVisitsPublishing()) {
+            return parent::determineUpdatesForVisit($visit);
+        }
+
+        // This was defined incorrectly.
+        // According to the spec, both the visit and the short URL it belongs to, should be published.
+        // The shape should be ['visit' => [...], 'shortUrl' => ?[...]]
+        // However, this would be a breaking change, so we need a flag that determines the shape of the payload.
+        return $visit->isOrphan()
+            ? [
                 Update::forTopicAndPayload(
                     Topic::NEW_ORPHAN_VISIT->value,
                     $this->orphanVisitTransformer->transform($visit),
                 ),
-            ],
-            $this->options->legacyVisitsPublishing() && ! $visit->isOrphan() => [
+            ]
+            : [
                 Update::forTopicAndPayload(Topic::NEW_VISIT->value, $visit->jsonSerialize()),
                 Update::forTopicAndPayload(
                     Topic::newShortUrlVisit($visit->getShortUrl()?->getShortCode()),
                     $visit->jsonSerialize(),
                 ),
-            ],
-
-            // Once the two deprecated cases above have been remove, make parent method private
-            default => parent::determineUpdatesForVisit($visit),
-        };
+            ];
     }
 
     protected function isEnabled(): bool
