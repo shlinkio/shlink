@@ -33,7 +33,7 @@ abstract class AbstractNotifyVisitListener extends AbstractAsyncListener
 
         $visitId = $visitLocated->visitId;
         $visit = $this->em->find(Visit::class, $visitId);
-        $name = $this->getRemoteSystemName();
+        $name = $this->getRemoteSystem()->value;
 
         if ($visit === null) {
             $this->logger->warning(

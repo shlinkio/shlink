@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Async\AbstractNotifyVisitListener;
+use Shlinkio\Shlink\Core\EventDispatcher\Async\RemoteSystem;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
@@ -62,8 +63,8 @@ class NotifyVisitToRabbitMq extends AbstractNotifyVisitListener
         return $this->options->isEnabled();
     }
 
-    protected function getRemoteSystemName(): string
+    protected function getRemoteSystem(): RemoteSystem
     {
-        return 'RabbitMQ';
+        return RemoteSystem::RABBIT_MQ;
     }
 }

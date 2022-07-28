@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\Async\AbstractNotifyNewShortUrlListener;
+use Shlinkio\Shlink\Core\EventDispatcher\Async\RemoteSystem;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 
@@ -28,8 +29,8 @@ class NotifyNewShortUrlToRabbitMq extends AbstractNotifyNewShortUrlListener
         return $this->options->isEnabled();
     }
 
-    protected function getRemoteSystemName(): string
+    protected function getRemoteSystem(): RemoteSystem
     {
-        return 'RabbitMQ';
+        return RemoteSystem::RABBIT_MQ;
     }
 }

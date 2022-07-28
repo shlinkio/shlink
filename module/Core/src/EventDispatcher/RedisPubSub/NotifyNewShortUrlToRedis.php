@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\Async\AbstractNotifyNewShortUrlListener;
+use Shlinkio\Shlink\Core\EventDispatcher\Async\RemoteSystem;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 
 class NotifyNewShortUrlToRedis extends AbstractNotifyNewShortUrlListener
@@ -27,8 +28,8 @@ class NotifyNewShortUrlToRedis extends AbstractNotifyNewShortUrlListener
         return $this->enabled;
     }
 
-    protected function getRemoteSystemName(): string
+    protected function getRemoteSystem(): RemoteSystem
     {
-        return 'Redis pub/sub';
+        return RemoteSystem::REDIS_PUB_SUB;
     }
 }

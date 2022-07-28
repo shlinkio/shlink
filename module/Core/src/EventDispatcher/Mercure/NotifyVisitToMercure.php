@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\EventDispatcher\Mercure;
 
 use Shlinkio\Shlink\Core\EventDispatcher\Async\AbstractNotifyVisitListener;
+use Shlinkio\Shlink\Core\EventDispatcher\Async\RemoteSystem;
 
 class NotifyVisitToMercure extends AbstractNotifyVisitListener
 {
@@ -13,8 +14,8 @@ class NotifyVisitToMercure extends AbstractNotifyVisitListener
         return true;
     }
 
-    protected function getRemoteSystemName(): string
+    protected function getRemoteSystem(): RemoteSystem
     {
-        return 'Mercure';
+        return RemoteSystem::MERCURE;
     }
 }

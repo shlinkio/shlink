@@ -8,5 +8,5 @@ abstract class AbstractAsyncListener
 {
     abstract protected function isEnabled(): bool;
 
-    abstract protected function getRemoteSystemName(): string;
+    abstract protected function getRemoteSystem(): RemoteSystem;
 }

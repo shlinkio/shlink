@@ -30,7 +30,7 @@ abstract class AbstractNotifyNewShortUrlListener extends AbstractAsyncListener
 
         $shortUrlId = $shortUrlCreated->shortUrlId;
         $shortUrl = $this->em->find(ShortUrl::class, $shortUrlId);
-        $name = $this->getRemoteSystemName();
+        $name = $this->getRemoteSystem()->value;
 
         if ($shortUrl === null) {
             $this->logger->warning(
