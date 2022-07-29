@@ -26,11 +26,11 @@ use function trim;
 class ExtraPathRedirectMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private ShortUrlResolverInterface $resolver,
-        private RequestTrackerInterface $requestTracker,
-        private ShortUrlRedirectionBuilderInterface $redirectionBuilder,
-        private RedirectResponseHelperInterface $redirectResponseHelper,
-        private UrlShortenerOptions $urlShortenerOptions,
+        private readonly ShortUrlResolverInterface $resolver,
+        private readonly RequestTrackerInterface $requestTracker,
+        private readonly ShortUrlRedirectionBuilderInterface $redirectionBuilder,
+        private readonly RedirectResponseHelperInterface $redirectResponseHelper,
+        private readonly UrlShortenerOptions $urlShortenerOptions,
     ) {
     }
 
@@ -39,7 +39,7 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
         /** @var NotFoundType|null $notFoundType */
         $notFoundType = $request->getAttribute(NotFoundType::class);
 
-        // We'll apply this logic only if actively opted in and current URL is potentially /{shortCode}/[...]
+        // This logic is applied only if actively opted in and current URL is potentially /{shortCode}/[...]
         if (! $notFoundType?->isRegularNotFound() || ! $this->urlShortenerOptions->appendExtraPath()) {
             return $handler->handle($request);
         }
@@ -50,6 +50,7 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($potentialShortCode, $uri->getAuthority());
 
         try {
+            // TODO Try pieces of the URL in order to match multi-segment slugs too
             $shortUrl = $this->resolver->resolveEnabledShortUrl($identifier);
             $this->requestTracker->trackIfApplicable($shortUrl, $request);
 

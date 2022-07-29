@@ -65,13 +65,13 @@ return [
         ],
 
         'installation_commands' => [
-            InstallationCommand::DB_CREATE_SCHEMA => [
+            InstallationCommand::DB_CREATE_SCHEMA->value => [
                 'command' => 'bin/cli ' . Command\Db\CreateDatabaseCommand::NAME,
             ],
-            InstallationCommand::DB_MIGRATE => [
+            InstallationCommand::DB_MIGRATE->value => [
                 'command' => 'bin/cli ' . Command\Db\MigrateDatabaseCommand::NAME,
             ],
-            InstallationCommand::GEOLITE_DOWNLOAD_DB => [
+            InstallationCommand::GEOLITE_DOWNLOAD_DB->value => [
                 'command' => 'bin/cli ' . Command\Visit\DownloadGeoLiteDbCommand::NAME,
             ],
         ],

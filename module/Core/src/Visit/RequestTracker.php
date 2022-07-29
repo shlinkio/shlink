@@ -24,8 +24,10 @@ use function str_contains;
 
 class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
 {
-    public function __construct(private VisitsTrackerInterface $visitsTracker, private TrackingOptions $trackingOptions)
-    {
+    public function __construct(
+        private readonly VisitsTrackerInterface $visitsTracker,
+        private readonly TrackingOptions $trackingOptions,
+    ) {
     }
 
     public function trackIfApplicable(ShortUrl $shortUrl, ServerRequestInterface $request): void
