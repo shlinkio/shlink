@@ -17,6 +17,7 @@ use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Console\Exception\RuntimeException;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -80,12 +81,12 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
             );
         }
 
-        if ($all && $retry && ! $this->warnAndVerifyContinue($input)) {
+        if ($all && $retry && ! $this->warnAndVerifyContinue()) {
             throw new RuntimeException('Execution aborted');
         }
     }
 
-    private function warnAndVerifyContinue(InputInterface $input): bool
+    private function warnAndVerifyContinue(): bool
     {
         $this->io->warning([
             'You are about to process the location of all existing visits your short URLs received.',
@@ -103,7 +104,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         $all = $retry && $input->getOption('all');
 
         try {
-            $this->checkDbUpdate($input);
+            $this->checkDbUpdate();
 
             if ($all) {
                 $this->visitLocator->locateAllVisits($this);
@@ -166,7 +167,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         $this->io->writeln($message);
     }
 
-    private function checkDbUpdate(InputInterface $input): void
+    private function checkDbUpdate(): void
     {
         $cliApp = $this->getApplication();
         if ($cliApp === null) {
@@ -174,7 +175,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         }
 
         $downloadDbCommand = $cliApp->find(DownloadGeoLiteDbCommand::NAME);
-        $exitCode = $downloadDbCommand->run($input, $this->io);
+        $exitCode = $downloadDbCommand->run(new ArrayInput([]), $this->io);
 
         if ($exitCode === ExitCodes::EXIT_FAILURE) {
             throw new RuntimeException('It is not possible to locate visits without a GeoLite2 db file.');
