@@ -33,7 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1280](https://github.com/shlinkio/shlink/issues/1280) Dropped support for PHP 8.0
 
 ### Fixed
-* *Nothing*
+* [#1471](https://github.com/shlinkio/shlink/issues/1471) Fixed error when running `visit:locate` command with any extra parameter (like `--retry`).
 
 
 ## [3.1.2] - 2022-06-04
