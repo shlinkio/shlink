@@ -10,7 +10,7 @@ on:
 
 jobs:
   static-analysis:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         php-version: ['8.1']
@@ -25,11 +25,12 @@ jobs:
           tools: composer
           extensions: openswoole-4.11.1
           coverage: none
-      - run: composer install --no-interaction --prefer-dist
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
       - run: composer ${{ matrix.command }}
 
   tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         php-version: ['8.1']
@@ -48,7 +49,8 @@ jobs:
           extensions: openswoole-4.11.1
           coverage: pcov
           ini-values: pcov.directory=module
-      - run: composer install --no-interaction --prefer-dist
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
       - run: composer test:${{ matrix.test-group }}:ci
       - uses: actions/upload-artifact@v2
         if: ${{ matrix.php-version == '8.1' }}
@@ -59,7 +61,7 @@ jobs:
             build/coverage-${{ matrix.test-group }}.cov
 
   db-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         php-version: ['8.1']
@@ -83,7 +85,8 @@ jobs:
           extensions: openswoole-4.11.1, pdo_sqlsrv-5.10.0
           coverage: pcov
           ini-values: pcov.directory=module
-      - run: composer install --no-interaction --prefer-dist
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
       - name: Create test database
         if: ${{ matrix.platform == 'ms' }}
         run: docker-compose exec -T shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
@@ -102,7 +105,7 @@ jobs:
     needs:
       - tests
       - db-tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         php-version: ['8.1']
@@ -118,7 +121,8 @@ jobs:
           extensions: openswoole-4.11.1
           coverage: pcov
           ini-values: pcov.directory=module
-      - run: composer install --no-interaction --prefer-dist
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
       - uses: actions/download-artifact@v2
         with:
           path: build
@@ -133,7 +137,7 @@ jobs:
     needs:
       - tests
       - db-tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         php-version: ['8.1']
@@ -163,7 +167,7 @@ jobs:
     needs:
       - mutation-tests
       - upload-coverage
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:
@@ -173,7 +177,7 @@ jobs:
             coverage-api
 
   build-docker-image:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
