@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Common\Validation;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function is_string;
+use function ltrim;
 use function str_replace;
 use function substr;
 
@@ -77,7 +78,7 @@ class ShortUrlInputFilter extends InputFilter
         //       empty, is by using the deprecated setContinueIfEmpty
         $customSlug = $this->createInput(self::CUSTOM_SLUG, false)->setContinueIfEmpty(true);
         $customSlug->getFilterChain()->attach(new Filter\Callback(
-            static fn (mixed $value) => is_string($value) ? str_replace([' ', '/'], '-', $value) : $value,
+            static fn (mixed $value) => is_string($value) ? ltrim(str_replace(' ', '-', $value), '/') : $value,
         ));
         $customSlug->getValidatorChain()->attach(new Validator\NotEmpty([
             Validator\NotEmpty::STRING,

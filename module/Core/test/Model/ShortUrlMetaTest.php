@@ -103,7 +103,8 @@ class ShortUrlMetaTest extends TestCase
         yield ['foo bar', 'foo-bar'];
         yield ['foo bar baz', 'foo-bar-baz'];
         yield ['foo bar-baz', 'foo-bar-baz'];
-        yield ['foo/bar/baz', 'foo-bar-baz'];
+        yield ['foo/bar/baz', 'foo/bar/baz'];
+        yield ['/foo/bar/baz', 'foo/bar/baz'];
         yield ['wp-admin.php', 'wp-admin.php'];
         yield ['UPPER_lower', 'UPPER_lower'];
         yield ['more~url_special.chars', 'more~url_special.chars'];
