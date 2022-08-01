@@ -25,7 +25,17 @@ jobs:
           tools: composer
           extensions: openswoole-4.11.1
           coverage: none
-      - run: composer install --no-interaction --prefer-dist
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
       - run: composer ${{ matrix.command }}
 
   tests:
@@ -48,7 +58,17 @@ jobs:
           extensions: openswoole-4.11.1
           coverage: pcov
           ini-values: pcov.directory=module
-      - run: composer install --no-interaction --prefer-dist
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
       - run: composer test:${{ matrix.test-group }}:ci
       - uses: actions/upload-artifact@v2
         if: ${{ matrix.php-version == '8.1' }}
@@ -83,7 +103,17 @@ jobs:
           extensions: openswoole-4.11.1, pdo_sqlsrv-5.10.0
           coverage: pcov
           ini-values: pcov.directory=module
-      - run: composer install --no-interaction --prefer-dist
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
       - name: Create test database
         if: ${{ matrix.platform == 'ms' }}
         run: docker-compose exec -T shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
@@ -118,7 +148,17 @@ jobs:
           extensions: openswoole-4.11.1
           coverage: pcov
           ini-values: pcov.directory=module
-      - run: composer install --no-interaction --prefer-dist
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
       - uses: actions/download-artifact@v2
         with:
           path: build
