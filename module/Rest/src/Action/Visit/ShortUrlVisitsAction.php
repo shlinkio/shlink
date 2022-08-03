@@ -18,7 +18,7 @@ class ShortUrlVisitsAction extends AbstractRestAction
 {
     use PagerfantaUtilsTrait;
 
-    protected const ROUTE_PATH = '/short-urls/{shortCode}/visits';
+    protected const ROUTE_PATH = '/short-urls/{shortCode:.+}/visits';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     public function __construct(private VisitsStatsHelperInterface $visitsHelper)

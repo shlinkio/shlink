@@ -16,6 +16,14 @@ return (static function (): array {
         'routes' => [
             Action\HealthAction::getRouteDef(),
 
+            // Visits
+            Action\Visit\ShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
+            Action\Visit\TagVisitsAction::getRouteDef(),
+            Action\Visit\DomainVisitsAction::getRouteDef(),
+            Action\Visit\GlobalVisitsAction::getRouteDef(),
+            Action\Visit\OrphanVisitsAction::getRouteDef(),
+            Action\Visit\NonOrphanVisitsAction::getRouteDef(),
+
             // Short URLs
             Action\ShortUrl\CreateShortUrlAction::getRouteDef([
                 $contentNegotiationMiddleware,
@@ -31,14 +39,6 @@ return (static function (): array {
             Action\ShortUrl\DeleteShortUrlAction::getRouteDef([$dropDomainMiddleware]),
             Action\ShortUrl\ResolveShortUrlAction::getRouteDef([$dropDomainMiddleware]),
             Action\ShortUrl\ListShortUrlsAction::getRouteDef(),
-
-            // Visits
-            Action\Visit\ShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
-            Action\Visit\TagVisitsAction::getRouteDef(),
-            Action\Visit\DomainVisitsAction::getRouteDef(),
-            Action\Visit\GlobalVisitsAction::getRouteDef(),
-            Action\Visit\OrphanVisitsAction::getRouteDef(),
-            Action\Visit\NonOrphanVisitsAction::getRouteDef(),
 
             // Tags
             Action\Tag\ListTagsAction::getRouteDef(),

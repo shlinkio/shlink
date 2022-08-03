@@ -16,8 +16,8 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class EditShortUrlAction extends AbstractRestAction
 {
-    protected const ROUTE_PATH = '/short-urls/{shortCode}';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PATCH, self::METHOD_PUT];
+    protected const ROUTE_PATH = '/short-urls/{shortCode:.+}';
+    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PATCH];
 
     public function __construct(
         private ShortUrlServiceInterface $shortUrlService,

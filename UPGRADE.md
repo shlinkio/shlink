@@ -76,7 +76,7 @@ These routes have been removed, but have a direct replacement:
 * `/qr/{shortCode}[/{size}]` -> `/{shortCode}/qr-code[/{size}]`
 * `PUT /rest/v{version}/short-urls/{shortCode}` -> `PATCH /rest/v{version}/short-urls/{shortCode}`
 
-When using the old ones, a 404 status will me returned now.
+When using the old ones, a 404 status will be returned now.
 
 ### Removed command and route aliases
 
