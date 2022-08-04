@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink;
 
-use Fig\Http\Message\RequestMethodInterface as RequestMethod;
+use Fig\Http\Message\RequestMethodInterface;
 use RKA\Middleware\IpAddress;
 use Shlinkio\Shlink\Core\Action as CoreAction;
 use Shlinkio\Shlink\Rest\Action;
@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Rest\ConfigProvider;
 use Shlinkio\Shlink\Rest\Middleware;
 use Shlinkio\Shlink\Rest\Middleware\Mercure\NotConfiguredMercureErrorHandler;
 
+// The order of the routes defined here matters. Changing it might cause path conflicts
 return (static function (): array {
     $contentNegotiationMiddleware = Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class;
     $dropDomainMiddleware = Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class;
@@ -20,6 +21,7 @@ return (static function (): array {
     return [
 
         'routes' => [
+            // Rest
             ...ConfigProvider::applyRoutesPrefix([
                 Action\HealthAction::getRouteDef(),
 
@@ -67,7 +69,7 @@ return (static function (): array {
                 'middleware' => [
                     CoreAction\RobotsAction::class,
                 ],
-                'allowed_methods' => [RequestMethod::METHOD_GET],
+                'allowed_methods' => [RequestMethodInterface::METHOD_GET],
             ],
             [
                 'name' => CoreAction\PixelAction::class,
@@ -76,7 +78,7 @@ return (static function (): array {
                     IpAddress::class,
                     CoreAction\PixelAction::class,
                 ],
-                'allowed_methods' => [RequestMethod::METHOD_GET],
+                'allowed_methods' => [RequestMethodInterface::METHOD_GET],
             ],
             [
                 'name' => CoreAction\QrCodeAction::class,
@@ -84,7 +86,7 @@ return (static function (): array {
                 'middleware' => [
                     CoreAction\QrCodeAction::class,
                 ],
-                'allowed_methods' => [RequestMethod::METHOD_GET],
+                'allowed_methods' => [RequestMethodInterface::METHOD_GET],
             ],
             [
                 'name' => CoreAction\RedirectAction::class,
@@ -93,7 +95,7 @@ return (static function (): array {
                     IpAddress::class,
                     CoreAction\RedirectAction::class,
                 ],
-                'allowed_methods' => [RequestMethod::METHOD_GET],
+                'allowed_methods' => [RequestMethodInterface::METHOD_GET],
             ],
         ],
 

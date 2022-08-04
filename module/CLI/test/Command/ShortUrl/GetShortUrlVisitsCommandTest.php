@@ -46,7 +46,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
         $shortCode = 'abc123';
         $this->visitsHelper->visitsForShortUrl(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            new VisitsParams(DateRange::emptyInstance()),
+            new VisitsParams(DateRange::allTime()),
         )
             ->willReturn(new Paginator(new ArrayAdapter([])))
             ->shouldBeCalledOnce();
@@ -81,7 +81,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
         $startDate = 'foo';
         $info = $this->visitsHelper->visitsForShortUrl(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            new VisitsParams(DateRange::emptyInstance()),
+            new VisitsParams(DateRange::allTime()),
         )->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute([

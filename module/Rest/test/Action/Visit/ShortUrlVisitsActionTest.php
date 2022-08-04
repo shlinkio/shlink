@@ -53,7 +53,7 @@ class ShortUrlVisitsActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->visitsHelper->visitsForShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode), new VisitsParams(
-            DateRange::withEndDate(Chronos::parse('2016-01-01 00:00:00')),
+            DateRange::until(Chronos::parse('2016-01-01 00:00:00')),
             3,
             10,
         ), Argument::type(ApiKey::class))

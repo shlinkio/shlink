@@ -114,16 +114,16 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertCount(2, $this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             new VisitsListFiltering(
-                DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+                DateRange::between(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
             ),
         ));
         self::assertCount(4, $this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            new VisitsListFiltering(DateRange::withStartDate(Chronos::parse('2016-01-03'))),
+            new VisitsListFiltering(DateRange::since(Chronos::parse('2016-01-03'))),
         ));
         self::assertCount(1, $this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
-            new VisitsListFiltering(DateRange::withStartDate(Chronos::parse('2016-01-03'))),
+            new VisitsListFiltering(DateRange::since(Chronos::parse('2016-01-03'))),
         ));
         self::assertCount(3, $this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
@@ -163,16 +163,16 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(2, $this->repo->countVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             new VisitsCountFiltering(
-                DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+                DateRange::between(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
             ),
         ));
         self::assertEquals(4, $this->repo->countVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            new VisitsCountFiltering(DateRange::withStartDate(Chronos::parse('2016-01-03'))),
+            new VisitsCountFiltering(DateRange::since(Chronos::parse('2016-01-03'))),
         ));
         self::assertEquals(1, $this->repo->countVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
-            new VisitsCountFiltering(DateRange::withStartDate(Chronos::parse('2016-01-03'))),
+            new VisitsCountFiltering(DateRange::since(Chronos::parse('2016-01-03'))),
         ));
     }
 
@@ -227,10 +227,10 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertCount(18, $this->repo->findVisitsByTag($foo, new VisitsListFiltering()));
         self::assertCount(12, $this->repo->findVisitsByTag($foo, new VisitsListFiltering(null, true)));
         self::assertCount(6, $this->repo->findVisitsByTag($foo, new VisitsListFiltering(
-            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+            DateRange::between(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
         self::assertCount(12, $this->repo->findVisitsByTag($foo, new VisitsListFiltering(
-            DateRange::withStartDate(Chronos::parse('2016-01-03')),
+            DateRange::since(Chronos::parse('2016-01-03')),
         )));
     }
 
@@ -249,10 +249,10 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(12, $this->repo->countVisitsByTag($foo, new VisitsCountFiltering()));
         self::assertEquals(8, $this->repo->countVisitsByTag($foo, new VisitsCountFiltering(null, true)));
         self::assertEquals(4, $this->repo->countVisitsByTag($foo, new VisitsCountFiltering(
-            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+            DateRange::between(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
         self::assertEquals(8, $this->repo->countVisitsByTag($foo, new VisitsCountFiltering(
-            DateRange::withStartDate(Chronos::parse('2016-01-03')),
+            DateRange::since(Chronos::parse('2016-01-03')),
         )));
     }
 
@@ -267,16 +267,16 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertCount(3, $this->repo->findVisitsByDomain('doma.in', new VisitsListFiltering()));
         self::assertCount(1, $this->repo->findVisitsByDomain('doma.in', new VisitsListFiltering(null, true)));
         self::assertCount(2, $this->repo->findVisitsByDomain('doma.in', new VisitsListFiltering(
-            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+            DateRange::between(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
         self::assertCount(1, $this->repo->findVisitsByDomain('doma.in', new VisitsListFiltering(
-            DateRange::withStartDate(Chronos::parse('2016-01-03')),
+            DateRange::since(Chronos::parse('2016-01-03')),
         )));
         self::assertCount(2, $this->repo->findVisitsByDomain('DEFAULT', new VisitsListFiltering(
-            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+            DateRange::between(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
         self::assertCount(4, $this->repo->findVisitsByDomain('DEFAULT', new VisitsListFiltering(
-            DateRange::withStartDate(Chronos::parse('2016-01-03')),
+            DateRange::since(Chronos::parse('2016-01-03')),
         )));
     }
 
@@ -291,16 +291,16 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(3, $this->repo->countVisitsByDomain('doma.in', new VisitsListFiltering()));
         self::assertEquals(1, $this->repo->countVisitsByDomain('doma.in', new VisitsListFiltering(null, true)));
         self::assertEquals(2, $this->repo->countVisitsByDomain('doma.in', new VisitsListFiltering(
-            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+            DateRange::between(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
         self::assertEquals(1, $this->repo->countVisitsByDomain('doma.in', new VisitsListFiltering(
-            DateRange::withStartDate(Chronos::parse('2016-01-03')),
+            DateRange::since(Chronos::parse('2016-01-03')),
         )));
         self::assertEquals(2, $this->repo->countVisitsByDomain('DEFAULT', new VisitsListFiltering(
-            DateRange::withStartAndEndDate(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
+            DateRange::between(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
         self::assertEquals(4, $this->repo->countVisitsByDomain('DEFAULT', new VisitsListFiltering(
-            DateRange::withStartDate(Chronos::parse('2016-01-03')),
+            DateRange::since(Chronos::parse('2016-01-03')),
         )));
     }
 
@@ -349,13 +349,13 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(4, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey1)));
         self::assertEquals(5 + 7, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey2)));
         self::assertEquals(4 + 7, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($domainApiKey)));
-        self::assertEquals(4, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::withStartDate(
+        self::assertEquals(4, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::since(
             Chronos::parse('2016-01-05')->startOfDay(),
         ))));
-        self::assertEquals(2, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::withStartDate(
+        self::assertEquals(2, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::since(
             Chronos::parse('2016-01-03')->startOfDay(),
         ), false, $apiKey1)));
-        self::assertEquals(1, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::withStartDate(
+        self::assertEquals(1, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::since(
             Chronos::parse('2016-01-07')->startOfDay(),
         ), false, $apiKey2)));
         self::assertEquals(3 + 5, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(null, true, $apiKey2)));
@@ -395,20 +395,20 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertCount(5, $this->repo->findOrphanVisits(new VisitsListFiltering(null, false, null, 5)));
         self::assertCount(10, $this->repo->findOrphanVisits(new VisitsListFiltering(null, false, null, 15, 8)));
         self::assertCount(9, $this->repo->findOrphanVisits(new VisitsListFiltering(
-            DateRange::withStartDate(Chronos::parse('2020-01-04')),
+            DateRange::since(Chronos::parse('2020-01-04')),
             false,
             null,
             15,
         )));
         self::assertCount(2, $this->repo->findOrphanVisits(new VisitsListFiltering(
-            DateRange::withStartAndEndDate(Chronos::parse('2020-01-02'), Chronos::parse('2020-01-03')),
+            DateRange::between(Chronos::parse('2020-01-02'), Chronos::parse('2020-01-03')),
             false,
             null,
             6,
             4,
         )));
         self::assertCount(3, $this->repo->findOrphanVisits(new VisitsListFiltering(
-            DateRange::withEndDate(Chronos::parse('2020-01-01')),
+            DateRange::until(Chronos::parse('2020-01-01')),
         )));
     }
 
@@ -437,15 +437,15 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         self::assertEquals(18, $this->repo->countOrphanVisits(new VisitsCountFiltering()));
-        self::assertEquals(18, $this->repo->countOrphanVisits(new VisitsCountFiltering(DateRange::emptyInstance())));
+        self::assertEquals(18, $this->repo->countOrphanVisits(new VisitsCountFiltering(DateRange::allTime())));
         self::assertEquals(9, $this->repo->countOrphanVisits(
-            new VisitsCountFiltering(DateRange::withStartDate(Chronos::parse('2020-01-04'))),
+            new VisitsCountFiltering(DateRange::since(Chronos::parse('2020-01-04'))),
         ));
         self::assertEquals(6, $this->repo->countOrphanVisits(new VisitsCountFiltering(
-            DateRange::withStartAndEndDate(Chronos::parse('2020-01-02'), Chronos::parse('2020-01-03')),
+            DateRange::between(Chronos::parse('2020-01-02'), Chronos::parse('2020-01-03')),
         )));
         self::assertEquals(3, $this->repo->countOrphanVisits(
-            new VisitsCountFiltering(DateRange::withEndDate(Chronos::parse('2020-01-01'))),
+            new VisitsCountFiltering(DateRange::until(Chronos::parse('2020-01-01'))),
         ));
     }
 
@@ -467,22 +467,22 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         self::assertCount(21, $this->repo->findNonOrphanVisits(new VisitsListFiltering()));
-        self::assertCount(21, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::emptyInstance())));
-        self::assertCount(7, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::withStartDate(
+        self::assertCount(21, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::allTime())));
+        self::assertCount(7, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::since(
             Chronos::parse('2016-01-05')->endOfDay(),
         ))));
-        self::assertCount(12, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::withEndDate(
+        self::assertCount(12, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::until(
             Chronos::parse('2016-01-04')->endOfDay(),
         ))));
-        self::assertCount(6, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::withStartAndEndDate(
+        self::assertCount(6, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::between(
             Chronos::parse('2016-01-03')->startOfDay(),
             Chronos::parse('2016-01-04')->endOfDay(),
         ))));
-        self::assertCount(13, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::withStartAndEndDate(
+        self::assertCount(13, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::between(
             Chronos::parse('2016-01-03')->startOfDay(),
             Chronos::parse('2016-01-08')->endOfDay(),
         ))));
-        self::assertCount(3, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::withStartAndEndDate(
+        self::assertCount(3, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::between(
             Chronos::parse('2016-01-03')->startOfDay(),
             Chronos::parse('2016-01-08')->endOfDay(),
         ), false, null, 10, 10)));

@@ -152,23 +152,23 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         self::assertSame($bar, $result[0]);
 
         $result = $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, [], null, DateRange::withEndDate(
+            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, [], null, DateRange::until(
                 Chronos::now()->subDays(2),
             )),
         );
         self::assertCount(1, $result);
-        self::assertEquals(1, $this->repo->countList(new ShortUrlsCountFiltering(null, [], null, DateRange::withEndDate(
+        self::assertEquals(1, $this->repo->countList(new ShortUrlsCountFiltering(null, [], null, DateRange::until(
             Chronos::now()->subDays(2),
         ))));
         self::assertSame($foo2, $result[0]);
 
         self::assertCount(2, $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, [], null, DateRange::withStartDate(
+            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, [], null, DateRange::since(
                 Chronos::now()->subDays(2),
             )),
         ));
         self::assertEquals(2, $this->repo->countList(
-            new ShortUrlsCountFiltering(null, [], null, DateRange::withStartDate(Chronos::now()->subDays(2))),
+            new ShortUrlsCountFiltering(null, [], null, DateRange::since(Chronos::now()->subDays(2))),
         ));
     }
 
