@@ -22,8 +22,7 @@ class ConfigProviderTest extends TestCase
     {
         $config = ($this->configProvider)();
 
-        self::assertCount(5, $config);
-        self::assertArrayHasKey('routes', $config);
+        self::assertCount(4, $config);
         self::assertArrayHasKey('dependencies', $config);
         self::assertArrayHasKey('auth', $config);
         self::assertArrayHasKey('entity_manager', $config);
@@ -36,11 +35,7 @@ class ConfigProviderTest extends TestCase
      */
     public function routesAreProperlyPrefixed(array $routes, array $expected): void
     {
-        $configProvider = new ConfigProvider(fn () => ['routes' => $routes]);
-
-        $config = $configProvider();
-
-        self::assertEquals($expected, $config['routes']);
+        self::assertEquals($expected, ConfigProvider::applyRoutesPrefix($routes));
     }
 
     public function provideRoutesConfig(): iterable

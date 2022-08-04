@@ -36,14 +36,15 @@ return (new ConfigAggregator\ConfigAggregator([
     Importer\ConfigProvider::class,
     IpGeolocation\ConfigProvider::class,
     EventDispatcher\ConfigProvider::class,
-    CLI\ConfigProvider::class,
-    Rest\ConfigProvider::class, // Load rest before Core, to prevent conflicting routes when multi-segment is enabled
     Core\ConfigProvider::class,
+    CLI\ConfigProvider::class,
+    Rest\ConfigProvider::class,
     new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
     $isTestEnv
-        // TODO Test routes must be loaded before core config
         ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')
         : new ConfigAggregator\ArrayProvider([]),
+    // Routes have to be loaded last
+    new ConfigAggregator\PhpFileProvider('config/autoload/routes.config.php'),
 ], 'data/cache/app_config.php', [
     Core\Config\BasePathPrefixer::class,
 ]))->getMergedConfig();
