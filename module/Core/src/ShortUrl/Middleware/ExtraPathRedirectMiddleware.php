@@ -18,8 +18,10 @@ use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlRedirectionBuilderInterface;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
 
-use function array_pad;
+use function array_slice;
+use function count;
 use function explode;
+use function implode;
 use function sprintf;
 use function trim;
 
@@ -42,21 +44,7 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $uri = $request->getUri();
-        $query = $request->getQueryParams();
-        [$potentialShortCode, $extraPath] = $this->resolvePotentialShortCodeAndExtraPath($uri);
-        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($potentialShortCode, $uri->getAuthority());
-
-        try {
-            // TODO Try pieces of the URL in order to match multi-segment slugs too
-            $shortUrl = $this->resolver->resolveEnabledShortUrl($identifier);
-            $this->requestTracker->trackIfApplicable($shortUrl, $request);
-
-            $longUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $query, $extraPath);
-            return $this->redirectResponseHelper->buildRedirectResponse($longUrl);
-        } catch (ShortUrlNotFoundException) {
-            return $handler->handle($request);
-        }
+        return $this->tryToResolveRedirect($request, $handler);
     }
 
     private function shouldApplyLogic(?NotFoundType $notFoundType): bool
@@ -74,14 +62,40 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
         );
     }
 
+    private function tryToResolveRedirect(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler,
+        int $shortCodeSegments = 1,
+    ): ResponseInterface {
+        $uri = $request->getUri();
+        $query = $request->getQueryParams();
+        [$potentialShortCode, $extraPath] = $this->resolvePotentialShortCodeAndExtraPath($uri, $shortCodeSegments);
+        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($potentialShortCode, $uri->getAuthority());
+
+        try {
+            $shortUrl = $this->resolver->resolveEnabledShortUrl($identifier);
+            $this->requestTracker->trackIfApplicable($shortUrl, $request);
+
+            $longUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $query, $extraPath);
+            return $this->redirectResponseHelper->buildRedirectResponse($longUrl);
+        } catch (ShortUrlNotFoundException) {
+            if ($extraPath === null || ! $this->urlShortenerOptions->multiSegmentSlugsEnabled()) {
+                return $handler->handle($request);
+            }
+
+            return $this->tryToResolveRedirect($request, $handler, $shortCodeSegments + 1);
+        }
+    }
+
     /**
      * @return array{0: string, 1: string|null}
      */
-    private function resolvePotentialShortCodeAndExtraPath(UriInterface $uri): array
+    private function resolvePotentialShortCodeAndExtraPath(UriInterface $uri, int $shortCodeSegments): array
     {
-        $pathParts = explode('/', trim($uri->getPath(), '/'), 2);
-        [$potentialShortCode, $extraPath] = array_pad($pathParts, 2, null);
+        $parts = explode('/', trim($uri->getPath(), '/'));
+        $shortCode = array_slice($parts, 0, $shortCodeSegments);
+        $extraPath = array_slice($parts, $shortCodeSegments);
 
-        return [$potentialShortCode, $extraPath === null ? null : sprintf('/%s', $extraPath)];
+        return [implode('/', $shortCode), count($extraPath) > 0 ? sprintf('/%s', implode('/', $extraPath)) : null];
     }
 }
