@@ -12,6 +12,7 @@ class UrlShortenerOptions extends AbstractOptions
 
     private bool $autoResolveTitles = false;
     private bool $appendExtraPath = false;
+    private bool $multiSegmentSlugsEnabled = false;
 
     public function autoResolveTitles(): bool
     {
@@ -31,5 +32,15 @@ class UrlShortenerOptions extends AbstractOptions
     protected function setAppendExtraPath(bool $appendExtraPath): void
     {
         $this->appendExtraPath = $appendExtraPath;
+    }
+
+    public function multiSegmentSlugsEnabled(): bool
+    {
+        return $this->multiSegmentSlugsEnabled;
+    }
+
+    protected function setMultiSegmentSlugsEnabled(bool $multiSegmentSlugsEnabled): void
+    {
+        $this->multiSegmentSlugsEnabled = $multiSegmentSlugsEnabled;
     }
 }

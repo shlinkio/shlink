@@ -23,6 +23,7 @@ return (static function (): array {
             'default_short_codes_length' => $shortCodesLength,
             'auto_resolve_titles' => (bool) EnvVars::AUTO_RESOLVE_TITLES->loadFromEnv(false),
             'append_extra_path' => (bool) EnvVars::REDIRECT_APPEND_EXTRA_PATH->loadFromEnv(false),
+            'multi_segment_slugs_enabled' => (bool) EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->loadFromEnv(false),
         ],
 
     ];

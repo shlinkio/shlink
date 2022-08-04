@@ -38,9 +38,7 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
     {
         /** @var NotFoundType|null $notFoundType */
         $notFoundType = $request->getAttribute(NotFoundType::class);
-
-        // This logic is applied only if actively opted in and current URL is potentially /{shortCode}/[...]
-        if (! $notFoundType?->isRegularNotFound() || ! $this->urlShortenerOptions->appendExtraPath()) {
+        if (! $this->shouldApplyLogic($notFoundType)) {
             return $handler->handle($request);
         }
 
@@ -59,6 +57,21 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
         } catch (ShortUrlNotFoundException) {
             return $handler->handle($request);
         }
+    }
+
+    private function shouldApplyLogic(?NotFoundType $notFoundType): bool
+    {
+        if ($notFoundType === null || ! $this->urlShortenerOptions->appendExtraPath()) {
+            return false;
+        }
+
+        return (
+            // If multi-segment slugs are enabled, the appropriate not-found type is "invalid_short_url"
+            $this->urlShortenerOptions->multiSegmentSlugsEnabled() && $notFoundType->isInvalidShortUrl()
+        ) || (
+            // If multi-segment slugs are disabled, the appropriate not-found type is "regular_404"
+            ! $this->urlShortenerOptions->multiSegmentSlugsEnabled() && $notFoundType->isRegularNotFound()
+        );
     }
 
     /**

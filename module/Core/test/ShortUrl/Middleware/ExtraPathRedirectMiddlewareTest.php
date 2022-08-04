@@ -16,6 +16,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
@@ -65,9 +66,11 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
      */
     public function handlerIsCalledWhenConfigPreventsRedirectWithExtraPath(
         bool $appendExtraPath,
+        bool $multiSegmentEnabled,
         ServerRequestInterface $request,
     ): void {
         $this->options->appendExtraPath = $appendExtraPath;
+        $this->options->multiSegmentSlugsEnabled = $multiSegmentEnabled;
 
         $this->middleware->process($request, $this->handler->reveal());
 
@@ -83,20 +86,30 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $buildReq = static fn (?NotFoundType $type): ServerRequestInterface =>
             $baseReq->withAttribute(NotFoundType::class, $type);
 
-        yield 'disabled option' => [false, $buildReq(NotFoundType::fromRequest($baseReq, '/foo/bar'))];
-        yield 'base_url error' => [true, $buildReq(NotFoundType::fromRequest($baseReq, ''))];
+        yield 'disabled option' => [false, false, $buildReq(NotFoundType::fromRequest($baseReq, '/foo/bar'))];
+        yield 'no error type' => [true, false, $buildReq(null)];
+        yield 'base_url error' => [true, false, $buildReq(NotFoundType::fromRequest($baseReq, ''))];
         yield 'invalid_short_url error' => [
             true,
-            $buildReq(NotFoundType::fromRequest($baseReq, ''))->withAttribute(
+            false,
+            $buildReq(NotFoundType::fromRequest($baseReq->withUri(new Uri('/foo'))->withAttribute(
                 RouteResult::class,
                 RouteResult::fromRoute(new Route(
-                    '',
+                    '/foo',
                     $this->prophesize(MiddlewareInterface::class)->reveal(),
                     ['GET'],
+                    RedirectAction::class,
                 )),
-            ),
+            ), '')),
         ];
-        yield 'no error type' => [true, $buildReq(null)];
+        yield 'regular_404 error with multi-segment slugs' => [
+            true,
+            true,
+            $buildReq(NotFoundType::fromRequest($baseReq->withUri(new Uri('/foo'))->withAttribute(
+                RouteResult::class,
+                RouteResult::fromRouteFailure(['GET']),
+            ), '')),
+        ];
     }
 
     /** @test */
