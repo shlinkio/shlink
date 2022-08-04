@@ -71,7 +71,7 @@ class CorsTest extends ApiTestCase
 
     public function providePreflightEndpoints(): iterable
     {
-//        yield 'invalid route' => ['/foo/bar', 'GET,POST,PUT,PATCH,DELETE']; // TODO This won't work with multi-segment
+        yield 'invalid route' => ['/foo/bar', 'GET,POST,PUT,PATCH,DELETE']; // TODO This won't work with multi-segment
         yield 'short URLs route' => ['/short-urls', 'GET,POST'];
         yield 'tags route' => ['/tags', 'GET,DELETE,PUT'];
         yield 'health route' => ['/health', 'GET'];

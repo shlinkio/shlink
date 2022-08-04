@@ -7,16 +7,20 @@ namespace Shlinkio\Shlink;
 use Fig\Http\Message\RequestMethodInterface;
 use RKA\Middleware\IpAddress;
 use Shlinkio\Shlink\Core\Action as CoreAction;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Rest\Action;
 use Shlinkio\Shlink\Rest\ConfigProvider;
 use Shlinkio\Shlink\Rest\Middleware;
 use Shlinkio\Shlink\Rest\Middleware\Mercure\NotConfiguredMercureErrorHandler;
+
+use function sprintf;
 
 // The order of the routes defined here matters. Changing it might cause path conflicts
 return (static function (): array {
     $contentNegotiationMiddleware = Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class;
     $dropDomainMiddleware = Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class;
     $overrideDomainMiddleware = Middleware\ShortUrl\OverrideDomainMiddleware::class;
+    $multiSegment = (bool) EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->loadFromEnv(false);
 
     return [
 
@@ -60,7 +64,7 @@ return (static function (): array {
                 Action\Domain\DomainRedirectsAction::getRouteDef(),
 
                 Action\MercureInfoAction::getRouteDef([NotConfiguredMercureErrorHandler::class]),
-            ]),
+            ], $multiSegment),
 
             // Non-rest
             [
@@ -73,7 +77,7 @@ return (static function (): array {
             ],
             [
                 'name' => CoreAction\PixelAction::class,
-                'path' => '/{shortCode:.+}/track',
+                'path' => sprintf('/{shortCode%s}/track', $multiSegment ? ':.+' : ''),
                 'middleware' => [
                     IpAddress::class,
                     CoreAction\PixelAction::class,
@@ -82,7 +86,7 @@ return (static function (): array {
             ],
             [
                 'name' => CoreAction\QrCodeAction::class,
-                'path' => '/{shortCode:.+}/qr-code',
+                'path' => sprintf('/{shortCode%s}/qr-code', $multiSegment ? ':.+' : ''),
                 'middleware' => [
                     CoreAction\QrCodeAction::class,
                 ],
@@ -90,7 +94,7 @@ return (static function (): array {
             ],
             [
                 'name' => CoreAction\RedirectAction::class,
-                'path' => '/{shortCode:.+}',
+                'path' => sprintf('/{shortCode%s}', $multiSegment ? ':.+' : ''),
                 'middleware' => [
                     IpAddress::class,
                     CoreAction\RedirectAction::class,
