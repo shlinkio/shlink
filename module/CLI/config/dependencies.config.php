@@ -11,6 +11,7 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
@@ -81,8 +82,7 @@ return [
         Command\ShortUrl\CreateShortUrlCommand::class => [
             Service\UrlShortener::class,
             ShortUrlStringifier::class,
-            'config.url_shortener.default_short_codes_length',
-            'config.url_shortener.domain.hostname',
+            UrlShortenerOptions::class,
         ],
         Command\ShortUrl\ResolveUrlCommand::class => [Service\ShortUrl\ShortUrlResolver::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [

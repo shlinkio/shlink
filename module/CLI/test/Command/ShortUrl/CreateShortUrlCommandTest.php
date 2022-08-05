@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
@@ -38,8 +39,7 @@ class CreateShortUrlCommandTest extends TestCase
         $command = new CreateShortUrlCommand(
             $this->urlShortener->reveal(),
             $this->stringifier->reveal(),
-            5,
-            self::DEFAULT_DOMAIN,
+            new UrlShortenerOptions(['defaultShortCodesLength' => 5, 'domain' => ['hostname' => self::DEFAULT_DOMAIN]]),
         );
         $this->commandTester = $this->testerForCommand($command);
     }

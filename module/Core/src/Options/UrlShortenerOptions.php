@@ -6,13 +6,39 @@ namespace Shlinkio\Shlink\Core\Options;
 
 use Laminas\Stdlib\AbstractOptions;
 
+use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
+
 class UrlShortenerOptions extends AbstractOptions
 {
     protected $__strictMode__ = false; // phpcs:ignore
 
+    private array $domain = [];
+    private int $defaultShortCodesLength = DEFAULT_SHORT_CODES_LENGTH;
     private bool $autoResolveTitles = false;
     private bool $appendExtraPath = false;
     private bool $multiSegmentSlugsEnabled = false;
+
+    public function domain(): array
+    {
+        return $this->domain;
+    }
+
+    protected function setDomain(array $domain): self
+    {
+        $this->domain = $domain;
+        return $this;
+    }
+
+    public function defaultShortCodesLength(): int
+    {
+        return $this->defaultShortCodesLength;
+    }
+
+    protected function setDefaultShortCodesLength(int $defaultShortCodesLength): self
+    {
+        $this->defaultShortCodesLength = $defaultShortCodesLength;
+        return $this;
+    }
 
     public function autoResolveTitles(): bool
     {

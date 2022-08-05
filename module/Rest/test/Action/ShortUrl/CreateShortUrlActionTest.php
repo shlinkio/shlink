@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -34,7 +35,11 @@ class CreateShortUrlActionTest extends TestCase
         $this->transformer = $this->prophesize(DataTransformerInterface::class);
         $this->transformer->transform(Argument::type(ShortUrl::class))->willReturn([]);
 
-        $this->action = new CreateShortUrlAction($this->urlShortener->reveal(), $this->transformer->reveal());
+        $this->action = new CreateShortUrlAction(
+            $this->urlShortener->reveal(),
+            $this->transformer->reveal(),
+            new UrlShortenerOptions(),
+        );
     }
 
     /** @test */

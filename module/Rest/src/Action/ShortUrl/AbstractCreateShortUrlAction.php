@@ -10,14 +10,16 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 
 abstract class AbstractCreateShortUrlAction extends AbstractRestAction
 {
     public function __construct(
-        private UrlShortenerInterface $urlShortener,
-        private DataTransformerInterface $transformer,
+        private readonly UrlShortenerInterface $urlShortener,
+        private readonly DataTransformerInterface $transformer,
+        protected readonly UrlShortenerOptions $urlShortenerOptions,
     ) {
     }
 

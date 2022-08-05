@@ -16,6 +16,7 @@ use function Shlinkio\Shlink\Core\normalizeDate;
 
 use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
+// TODO Rename to ShortUrlCreation
 final class ShortUrlMeta implements TitleResolutionModelInterface
 {
     private string $longUrl;

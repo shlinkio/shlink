@@ -14,6 +14,7 @@ use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
 use function Shlinkio\Shlink\Core\normalizeDate;
 
+// TODO Rename to ShortUrlEdition
 final class ShortUrlEdit implements TitleResolutionModelInterface
 {
     private bool $longUrlPropWasProvided = false;

@@ -12,6 +12,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -33,6 +34,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
         $this->action = new SingleStepCreateShortUrlAction(
             $this->urlShortener->reveal(),
             $this->transformer->reveal(),
+            new UrlShortenerOptions(),
         );
     }
 

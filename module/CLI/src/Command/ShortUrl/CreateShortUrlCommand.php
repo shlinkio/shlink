@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
@@ -19,6 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function array_map;
+use function explode;
 use function Functional\curry;
 use function Functional\flatten;
 use function Functional\unique;
@@ -29,14 +32,15 @@ class CreateShortUrlCommand extends Command
     public const NAME = 'short-url:create';
 
     private ?SymfonyStyle $io;
+    private string $defaultDomain;
 
     public function __construct(
-        private UrlShortenerInterface $urlShortener,
-        private ShortUrlStringifierInterface $stringifier,
-        private int $defaultShortCodeLength,
-        private string $defaultDomain,
+        private readonly UrlShortenerInterface $urlShortener,
+        private readonly ShortUrlStringifierInterface $stringifier,
+        private readonly UrlShortenerOptions $options,
     ) {
         parent::__construct();
+        $this->defaultDomain = $this->options->domain()['hostname'] ?? '';
     }
 
     protected function configure(): void
@@ -150,11 +154,11 @@ class CreateShortUrlCommand extends Command
             return ExitCodes::EXIT_FAILURE;
         }
 
-        $explodeWithComma = curry('explode')(',');
+        $explodeWithComma = curry(explode(...))(',');
         $tags = unique(flatten(array_map($explodeWithComma, $input->getOption('tags'))));
         $customSlug = $input->getOption('custom-slug');
         $maxVisits = $input->getOption('max-visits');
-        $shortCodeLength = $input->getOption('short-code-length') ?? $this->defaultShortCodeLength;
+        $shortCodeLength = $input->getOption('short-code-length') ?? $this->options->defaultShortCodesLength();
         $doValidateUrl = $input->getOption('validate-url');
 
         try {
@@ -171,6 +175,7 @@ class CreateShortUrlCommand extends Command
                 ShortUrlInputFilter::TAGS => $tags,
                 ShortUrlInputFilter::CRAWLABLE => $input->getOption('crawlable'),
                 ShortUrlInputFilter::FORWARD_QUERY => !$input->getOption('no-forward-query'),
+                EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value => $this->options->multiSegmentSlugsEnabled(),
             ]));
 
             $io->writeln([

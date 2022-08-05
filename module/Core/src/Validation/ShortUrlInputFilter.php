@@ -10,12 +10,13 @@ use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function is_string;
-use function ltrim;
 use function str_replace;
 use function substr;
+use function trim;
 
 use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
@@ -40,7 +41,7 @@ class ShortUrlInputFilter extends InputFilter
 
     private function __construct(array $data, bool $requireLongUrl)
     {
-        $this->initialize($requireLongUrl);
+        $this->initialize($requireLongUrl, $data[EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value] ?? false);
         $this->setData($data);
     }
 
@@ -54,7 +55,7 @@ class ShortUrlInputFilter extends InputFilter
         return new self($data, false);
     }
 
-    private function initialize(bool $requireLongUrl): void
+    private function initialize(bool $requireLongUrl, bool $multiSegmentEnabled): void
     {
         $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
         $longUrlInput->getValidatorChain()->attach(new Validator\NotEmpty([
@@ -77,9 +78,10 @@ class ShortUrlInputFilter extends InputFilter
         // FIXME The only way to enforce the NotEmpty validator to be evaluated when the value is provided but it's
         //       empty, is by using the deprecated setContinueIfEmpty
         $customSlug = $this->createInput(self::CUSTOM_SLUG, false)->setContinueIfEmpty(true);
-        $customSlug->getFilterChain()->attach(new Filter\Callback(
-            static fn (mixed $value) => is_string($value) ? ltrim(str_replace(' ', '-', $value), '/') : $value,
-        ));
+        $customSlug->getFilterChain()->attach(new Filter\Callback(match ($multiSegmentEnabled) {
+            true => static fn (mixed $v) => is_string($v) ? trim(str_replace(' ', '-', $v), '/') : $v,
+            false => static fn (mixed $v) => is_string($v) ? str_replace([' ', '/'], '-', $v) : $v,
+        }));
         $customSlug->getValidatorChain()->attach(new Validator\NotEmpty([
             Validator\NotEmpty::STRING,
             Validator\NotEmpty::SPACE,
