@@ -26,8 +26,8 @@ class DomainVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
         return $this->visitRepository->countVisitsByDomain(
             $this->domain,
             new VisitsCountFiltering(
-                $this->params->getDateRange(),
-                $this->params->excludeBots(),
+                $this->params->dateRange,
+                $this->params->excludeBots,
                 $this->apiKey,
             ),
         );
@@ -38,8 +38,8 @@ class DomainVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
         return $this->visitRepository->findVisitsByDomain(
             $this->domain,
             new VisitsListFiltering(
-                $this->params->getDateRange(),
-                $this->params->excludeBots(),
+                $this->params->dateRange,
+                $this->params->excludeBots,
                 $this->apiKey,
                 $length,
                 $offset,

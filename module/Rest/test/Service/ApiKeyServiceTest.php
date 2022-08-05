@@ -46,7 +46,7 @@ class ApiKeyServiceTest extends TestCase
         self::assertEquals($date, $key->getExpirationDate());
         self::assertEquals($name, $key->name());
         foreach ($roles as $roleDefinition) {
-            self::assertTrue($key->hasRole($roleDefinition->roleName()));
+            self::assertTrue($key->hasRole($roleDefinition->role));
         }
     }
 
@@ -77,7 +77,7 @@ class ApiKeyServiceTest extends TestCase
         $result = $this->service->check('12345');
 
         self::assertFalse($result->isValid());
-        self::assertSame($invalidKey, $result->apiKey());
+        self::assertSame($invalidKey, $result->apiKey);
     }
 
     public function provideInvalidApiKeys(): iterable
@@ -100,7 +100,7 @@ class ApiKeyServiceTest extends TestCase
         $result = $this->service->check('12345');
 
         self::assertTrue($result->isValid());
-        self::assertSame($apiKey, $result->apiKey());
+        self::assertSame($apiKey, $result->apiKey);
     }
 
     /** @test */

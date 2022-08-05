@@ -13,7 +13,7 @@ chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
 
 // This is one of the first files loaded. Configure the timezone here
-date_default_timezone_set(EnvVars::TIMEZONE()->loadFromEnv(date_default_timezone_get()));
+date_default_timezone_set(EnvVars::TIMEZONE->loadFromEnv(date_default_timezone_get()));
 
 // This class alias tricks the ConfigAbstractFactory to return Lock\Factory instances even with a different service name
 // It needs to be placed here as individual config files will not be loaded once config is cached

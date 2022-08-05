@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
@@ -27,6 +28,7 @@ class UrlShortenerTest extends TestCase
     private ObjectProphecy $em;
     private ObjectProphecy $titleResolutionHelper;
     private ObjectProphecy $shortCodeHelper;
+    private ObjectProphecy $eventDispatcher;
 
     public function setUp(): void
     {
@@ -39,7 +41,7 @@ class UrlShortenerTest extends TestCase
             [$shortUrl] = $arguments;
             $shortUrl->setId('10');
         });
-        $this->em->transactional(Argument::type('callable'))->will(function (array $args) {
+        $this->em->wrapInTransaction(Argument::type('callable'))->will(function (array $args) {
             /** @var callable $callback */
             [$callback] = $args;
 
@@ -51,11 +53,14 @@ class UrlShortenerTest extends TestCase
         $this->shortCodeHelper = $this->prophesize(ShortCodeUniquenessHelperInterface::class);
         $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
 
+        $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
+
         $this->urlShortener = new UrlShortener(
             $this->titleResolutionHelper->reveal(),
             $this->em->reveal(),
             new SimpleShortUrlRelationResolver(),
             $this->shortCodeHelper->reveal(),
+            $this->eventDispatcher->reveal(),
         );
     }
 

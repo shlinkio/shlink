@@ -32,7 +32,7 @@ class ListTagsAction extends AbstractRestAction
         $params = TagsParams::fromRawData($request->getQueryParams());
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
-        if (! $params->withStats()) {
+        if (! $params->withStats) {
             return new JsonResponse([
                 'tags' => $this->serializePaginator($this->tagService->listTags($params, $apiKey)),
             ]);
@@ -41,7 +41,7 @@ class ListTagsAction extends AbstractRestAction
         // This part is deprecated. To get tags with stats, the /tags/stats endpoint should be used instead
         $tagsInfo = $this->tagService->tagsInfo($params, $apiKey);
         $rawTags = $this->serializePaginator($tagsInfo, null, 'stats');
-        $rawTags['data'] = map($tagsInfo, static fn (TagInfo $info) => $info->tag());
+        $rawTags['data'] = map($tagsInfo, static fn (TagInfo $info) => $info->tag);
 
         return new JsonResponse(['tags' => $rawTags]);
     }

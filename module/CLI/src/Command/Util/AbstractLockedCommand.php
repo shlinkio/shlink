@@ -14,7 +14,7 @@ use function sprintf;
 
 abstract class AbstractLockedCommand extends Command
 {
-    public function __construct(private LockFactory $locker)
+    public function __construct(private readonly LockFactory $locker)
     {
         parent::__construct();
     }
@@ -22,11 +22,11 @@ abstract class AbstractLockedCommand extends Command
     final protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $lockConfig = $this->getLockConfig();
-        $lock = $this->locker->createLock($lockConfig->lockName(), $lockConfig->ttl(), $lockConfig->isBlocking());
+        $lock = $this->locker->createLock($lockConfig->lockName, $lockConfig->ttl, $lockConfig->isBlocking);
 
-        if (! $lock->acquire($lockConfig->isBlocking())) {
+        if (! $lock->acquire($lockConfig->isBlocking)) {
             $output->writeln(
-                sprintf('<comment>Command "%s" is already in progress. Skipping.</comment>', $lockConfig->lockName()),
+                sprintf('<comment>Command "%s" is already in progress. Skipping.</comment>', $lockConfig->lockName),
             );
             return ExitCodes::EXIT_WARNING;
         }

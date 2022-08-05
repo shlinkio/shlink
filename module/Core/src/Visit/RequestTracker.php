@@ -24,8 +24,10 @@ use function str_contains;
 
 class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
 {
-    public function __construct(private VisitsTrackerInterface $visitsTracker, private TrackingOptions $trackingOptions)
-    {
+    public function __construct(
+        private readonly VisitsTrackerInterface $visitsTracker,
+        private readonly TrackingOptions $trackingOptions,
+    ) {
     }
 
     public function trackIfApplicable(ShortUrl $shortUrl, ServerRequestInterface $request): void
@@ -45,10 +47,11 @@ class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
         $notFoundType = $request->getAttribute(NotFoundType::class);
         $visitor = Visitor::fromRequest($request);
 
-        match (true) { // @phpstan-ignore-line
+        match (true) {
             $notFoundType?->isBaseUrl() => $this->visitsTracker->trackBaseUrlVisit($visitor),
             $notFoundType?->isRegularNotFound() => $this->visitsTracker->trackRegularNotFoundVisit($visitor),
             $notFoundType?->isInvalidShortUrl() => $this->visitsTracker->trackInvalidShortUrlVisit($visitor),
+            default => null,
         };
     }
 

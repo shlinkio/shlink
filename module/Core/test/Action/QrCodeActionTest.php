@@ -59,7 +59,7 @@ class QrCodeActionTest extends TestCase
     public function aNotFoundShortCodeWillDelegateIntoNextMiddleware(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))
+        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''))
             ->willThrow(ShortUrlNotFoundException::class)
             ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
@@ -74,7 +74,7 @@ class QrCodeActionTest extends TestCase
     public function aCorrectRequestReturnsTheQrCodeResponse(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))
+        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''))
             ->willReturn(ShortUrl::createEmpty())
             ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
@@ -100,7 +100,7 @@ class QrCodeActionTest extends TestCase
     ): void {
         $this->options->setFromArray(['format' => $defaultFormat]);
         $code = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($code, ''))->willReturn(
+        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($code, ''))->willReturn(
             ShortUrl::createEmpty(),
         );
         $delegate = $this->prophesize(RequestHandlerInterface::class);
@@ -134,7 +134,7 @@ class QrCodeActionTest extends TestCase
     ): void {
         $this->options->setFromArray($defaults);
         $code = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($code, ''))->willReturn(
+        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($code, ''))->willReturn(
             ShortUrl::createEmpty(),
         );
         $delegate = $this->prophesize(RequestHandlerInterface::class);
@@ -214,7 +214,7 @@ class QrCodeActionTest extends TestCase
             ->withQueryParams(['size' => 250, 'roundBlockSize' => $roundBlockSize])
             ->withAttribute('shortCode', $code);
 
-        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($code, ''))->willReturn(
+        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($code, ''))->willReturn(
             ShortUrl::withLongUrl('https://shlink.io'),
         );
         $delegate = $this->prophesize(RequestHandlerInterface::class);

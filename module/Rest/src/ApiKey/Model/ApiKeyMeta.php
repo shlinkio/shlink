@@ -8,11 +8,13 @@ use Cake\Chronos\Chronos;
 
 final class ApiKeyMeta
 {
+    /**
+     * @param RoleDefinition[] $roleDefinitions
+     */
     private function __construct(
-        private ?string $name,
-        private ?Chronos $expirationDate,
-        /** @var RoleDefinition[] */
-        private array $roleDefinitions,
+        public readonly ?string $name,
+        public readonly ?Chronos $expirationDate,
+        public readonly array $roleDefinitions,
     ) {
     }
 
@@ -34,23 +36,5 @@ final class ApiKeyMeta
     public static function withRoles(RoleDefinition ...$roleDefinitions): self
     {
         return new self(null, null, $roleDefinitions);
-    }
-
-    public function name(): ?string
-    {
-        return $this->name;
-    }
-
-    public function expirationDate(): ?Chronos
-    {
-        return $this->expirationDate;
-    }
-
-    /**
-     * @return RoleDefinition[]
-     */
-    public function roleDefinitions(): array
-    {
-        return $this->roleDefinitions;
     }
 }

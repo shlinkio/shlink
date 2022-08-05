@@ -54,7 +54,7 @@ class RedirectActionTest extends TestCase
         $shortCode = 'abc123';
         $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
         $shortCodeToUrl = $this->urlResolver->resolveEnabledShortUrl(
-            new ShortUrlIdentifier($shortCode, ''),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
         )->willReturn($shortUrl);
         $track = $this->requestTracker->trackIfApplicable(Argument::cetera())->will(function (): void {
         });
@@ -74,7 +74,7 @@ class RedirectActionTest extends TestCase
     public function nextMiddlewareIsInvokedIfLongUrlIsNotFound(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode, ''))
+        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''))
             ->willThrow(ShortUrlNotFoundException::class)
             ->shouldBeCalledOnce();
         $this->requestTracker->trackIfApplicable(Argument::cetera())->shouldNotBeCalled();

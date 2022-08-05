@@ -35,7 +35,7 @@ The idea is that you can just generate a container using the image and provide t
 
 First, make sure the host where you are going to run shlink fulfills these requirements:
 
-* PHP 8.0 or 8.1
+* PHP 8.1
 * The next PHP extensions: json, curl, pdo, intl, gd and gmp/bcmath.
     * apcu extension is recommended if you don't plan to use openswoole.
     * xml extension is required if you want to generate QR codes in svg format.
@@ -66,7 +66,9 @@ In order to run Shlink, you will need a built version of the project. There are 
 
     After that, you will have a dist file inside the `build` directory, that you need to decompress in the location of your choice.
 
-    > This is the process used when releasing new shlink versions. After tagging the new version with git, the Github release is automatically created by a [GitHub workflow](https://github.com/shlinkio/shlink/actions?query=workflow%3A%22Publish+release%22), attaching the generated dist file to it.
+    > **Note**
+    >
+    > This is the process used when releasing new Shlink versions. After tagging the new version with git, the GitHub release is automatically created by a [GitHub workflow](https://github.com/shlinkio/shlink/actions?query=workflow%3A%22Publish+release%22), attaching the generated dist file to it.
 
 ### Configure
 

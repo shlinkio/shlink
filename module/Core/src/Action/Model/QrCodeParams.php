@@ -29,11 +29,11 @@ final class QrCodeParams
     private const SUPPORTED_FORMATS = ['png', 'svg'];
 
     private function __construct(
-        private int $size,
-        private int $margin,
-        private WriterInterface $writer,
-        private ErrorCorrectionLevelInterface $errorCorrectionLevel,
-        private RoundBlockSizeModeInterface $roundBlockSizeMode,
+        public readonly int $size,
+        public readonly int $margin,
+        public readonly WriterInterface $writer,
+        public readonly ErrorCorrectionLevelInterface $errorCorrectionLevel,
+        public readonly RoundBlockSizeModeInterface $roundBlockSizeMode,
     ) {
     }
 
@@ -104,30 +104,5 @@ final class QrCodeParams
     private static function normalizeParam(string $param): string
     {
         return strtolower(trim($param));
-    }
-
-    public function size(): int
-    {
-        return $this->size;
-    }
-
-    public function margin(): int
-    {
-        return $this->margin;
-    }
-
-    public function writer(): WriterInterface
-    {
-        return $this->writer;
-    }
-
-    public function errorCorrectionLevel(): ErrorCorrectionLevelInterface
-    {
-        return $this->errorCorrectionLevel;
-    }
-
-    public function roundBlockSizeMode(): RoundBlockSizeModeInterface
-    {
-        return $this->roundBlockSizeMode;
     }
 }

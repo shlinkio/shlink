@@ -19,7 +19,7 @@ class RenameTagCommand extends Command
 {
     public const NAME = 'tag:rename';
 
-    public function __construct(private TagServiceInterface $tagService)
+    public function __construct(private readonly TagServiceInterface $tagService)
     {
         parent::__construct();
     }

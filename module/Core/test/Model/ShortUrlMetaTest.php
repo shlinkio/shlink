@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Model;
 
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
@@ -74,12 +75,16 @@ class ShortUrlMetaTest extends TestCase
      * @test
      * @dataProvider provideCustomSlugs
      */
-    public function properlyCreatedInstanceReturnsValues(string $customSlug, string $expectedSlug): void
-    {
+    public function properlyCreatedInstanceReturnsValues(
+        string $customSlug,
+        string $expectedSlug,
+        bool $multiSegmentEnabled = false,
+    ): void {
         $meta = ShortUrlMeta::fromRawData([
             'validSince' => Chronos::parse('2015-01-01')->toAtomString(),
             'customSlug' => $customSlug,
             'longUrl' => '',
+            EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value => $multiSegmentEnabled,
         ]);
 
         self::assertTrue($meta->hasValidSince());
@@ -103,7 +108,10 @@ class ShortUrlMetaTest extends TestCase
         yield ['foo bar', 'foo-bar'];
         yield ['foo bar baz', 'foo-bar-baz'];
         yield ['foo bar-baz', 'foo-bar-baz'];
+        yield ['foo/bar/baz', 'foo/bar/baz', true];
+        yield ['/foo/bar/baz', 'foo/bar/baz', true];
         yield ['foo/bar/baz', 'foo-bar-baz'];
+        yield ['/foo/bar/baz', '-foo-bar-baz'];
         yield ['wp-admin.php', 'wp-admin.php'];
         yield ['UPPER_lower', 'UPPER_lower'];
         yield ['more~url_special.chars', 'more~url_special.chars'];

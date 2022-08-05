@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
+use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -47,8 +47,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
     private function processOrderByForList(QueryBuilder $qb, Ordering $orderBy): array
     {
-        $fieldName = $orderBy->orderField();
-        $order = $orderBy->orderDirection();
+        $fieldName = $orderBy->field;
+        $order = $orderBy->direction;
 
         if ($fieldName === 'visits') {
             // FIXME This query is inefficient.
@@ -111,8 +111,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             ];
 
             // Apply tag conditions, only when not filtering by all provided tags
-            $tagsMode = $filtering->tagsMode() ?? ShortUrlsParams::TAGS_MODE_ANY;
-            if (empty($tags) || $tagsMode === ShortUrlsParams::TAGS_MODE_ANY) {
+            $tagsMode = $filtering->tagsMode() ?? TagsMode::ANY;
+            if (empty($tags) || $tagsMode === TagsMode::ANY) {
                 $conditions[] = $qb->expr()->like('t.name', ':searchPattern');
             }
 
@@ -123,8 +123,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         // Filter by tags if provided
         if (! empty($tags)) {
-            $tagsMode = $filtering->tagsMode() ?? ShortUrlsParams::TAGS_MODE_ANY;
-            $tagsMode === ShortUrlsParams::TAGS_MODE_ANY
+            $tagsMode = $filtering->tagsMode() ?? TagsMode::ANY;
+            $tagsMode === TagsMode::ANY
                 ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
                 : $this->joinAllTags($qb, $tags);
         }
@@ -153,8 +153,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         $query = $this->getEntityManager()->createQuery($dql);
         $query->setMaxResults(1)
               ->setParameters([
-                  'shortCode' => $identifier->shortCode(),
-                  'domain' => $identifier->domain(),
+                  'shortCode' => $identifier->shortCode,
+                  'domain' => $identifier->domain,
               ]);
 
         // Since we ordered by domain, we will have first the URL matching provided domain, followed by the one
@@ -205,10 +205,10 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         $qb->from(ShortUrl::class, 's')
            ->where($qb->expr()->isNotNull('s.shortCode'))
            ->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
-           ->setParameter('slug', $identifier->shortCode())
+           ->setParameter('slug', $identifier->shortCode)
            ->setMaxResults(1);
 
-        $this->whereDomainIs($qb, $identifier->domain());
+        $this->whereDomainIs($qb, $identifier->domain);
 
         $this->applySpecification($qb, $spec, 's');
 

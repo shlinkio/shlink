@@ -53,7 +53,7 @@ class DomainRedirectsCommand extends Command
 
         /** @var string[] $availableDomains */
         $availableDomains = invoke(
-            filter($this->domainService->listDomains(), static fn (DomainItem $item) => ! $item->isDefault()),
+            filter($this->domainService->listDomains(), static fn (DomainItem $item) => ! $item->isDefault),
             'toString',
         );
         if (empty($availableDomains)) {

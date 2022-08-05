@@ -35,7 +35,7 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     {
         $expectedCount = 5;
         $repoCount = $this->repo->countOrphanVisits(
-            new VisitsCountFiltering($this->params->getDateRange()),
+            new VisitsCountFiltering($this->params->dateRange),
         )->willReturn($expectedCount);
 
         $result = $this->adapter->getNbResults();
@@ -53,7 +53,7 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
         $visitor = Visitor::emptyInstance();
         $list = [Visit::forRegularNotFound($visitor), Visit::forInvalidShortUrl($visitor)];
         $repoFind = $this->repo->findOrphanVisits(
-            new VisitsListFiltering($this->params->getDateRange(), $this->params->excludeBots(), null, $limit, $offset),
+            new VisitsListFiltering($this->params->dateRange, $this->params->excludeBots, null, $limit, $offset),
         )->willReturn($list);
 
         $result = $this->adapter->getSlice($offset, $limit);

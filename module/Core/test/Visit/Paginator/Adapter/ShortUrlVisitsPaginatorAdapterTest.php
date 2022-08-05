@@ -36,7 +36,7 @@ class ShortUrlVisitsPaginatorAdapterTest extends TestCase
         $adapter = $this->createAdapter(null);
         $findVisits = $this->repo->findVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain(''),
-            new VisitsListFiltering(DateRange::emptyInstance(), false, null, $limit, $offset),
+            new VisitsListFiltering(DateRange::allTime(), false, null, $limit, $offset),
         )->willReturn([]);
 
         for ($i = 0; $i < $count; $i++) {
@@ -54,7 +54,7 @@ class ShortUrlVisitsPaginatorAdapterTest extends TestCase
         $adapter = $this->createAdapter($apiKey);
         $countVisits = $this->repo->countVisitsByShortCode(
             ShortUrlIdentifier::fromShortCodeAndDomain(''),
-            new VisitsCountFiltering(DateRange::emptyInstance(), false, $apiKey),
+            new VisitsCountFiltering(DateRange::allTime(), false, $apiKey),
         )->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
@@ -68,7 +68,7 @@ class ShortUrlVisitsPaginatorAdapterTest extends TestCase
     {
         return new ShortUrlVisitsPaginatorAdapter(
             $this->repo->reveal(),
-            new ShortUrlIdentifier(''),
+            ShortUrlIdentifier::fromShortCodeAndDomain(''),
             VisitsParams::fromRawData([]),
             $apiKey,
         );

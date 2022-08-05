@@ -49,8 +49,8 @@ class TagService implements TagServiceInterface
     private function createPaginator(AdapterInterface $adapter, TagsParams $params): Paginator
     {
         return (new Paginator($adapter))
-            ->setMaxPerPage($params->getItemsPerPage())
-            ->setCurrentPage($params->getPage());
+            ->setMaxPerPage($params->itemsPerPage)
+            ->setCurrentPage($params->page);
     }
 
     /**
@@ -83,17 +83,17 @@ class TagService implements TagServiceInterface
         $repo = $this->em->getRepository(Tag::class);
 
         /** @var Tag|null $tag */
-        $tag = $repo->findOneBy(['name' => $renaming->oldName()]);
+        $tag = $repo->findOneBy(['name' => $renaming->oldName]);
         if ($tag === null) {
-            throw TagNotFoundException::fromTag($renaming->oldName());
+            throw TagNotFoundException::fromTag($renaming->oldName);
         }
 
-        $newNameExists = $renaming->nameChanged() && $repo->count(['name' => $renaming->newName()]) > 0;
+        $newNameExists = $renaming->nameChanged() && $repo->count(['name' => $renaming->newName]) > 0;
         if ($newNameExists) {
             throw TagConflictException::forExistingTag($renaming);
         }
 
-        $tag->rename($renaming->newName());
+        $tag->rename($renaming->newName);
         $this->em->flush();
 
         return $tag;

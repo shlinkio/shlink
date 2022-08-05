@@ -16,6 +16,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
@@ -26,6 +27,8 @@ use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlRedirectionBuilderInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Middleware\ExtraPathRedirectMiddleware;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
+
+use function str_starts_with;
 
 class ExtraPathRedirectMiddlewareTest extends TestCase
 {
@@ -65,12 +68,15 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
      */
     public function handlerIsCalledWhenConfigPreventsRedirectWithExtraPath(
         bool $appendExtraPath,
+        bool $multiSegmentEnabled,
         ServerRequestInterface $request,
     ): void {
         $this->options->appendExtraPath = $appendExtraPath;
+        $this->options->multiSegmentSlugsEnabled = $multiSegmentEnabled;
 
         $this->middleware->process($request, $this->handler->reveal());
 
+        $this->handler->handle($request)->shouldHaveBeenCalledOnce();
         $this->resolver->resolveEnabledShortUrl(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->requestTracker->trackIfApplicable(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->redirectionBuilder->buildShortUrlRedirect(Argument::cetera())->shouldNotHaveBeenCalled();
@@ -83,65 +89,109 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $buildReq = static fn (?NotFoundType $type): ServerRequestInterface =>
             $baseReq->withAttribute(NotFoundType::class, $type);
 
-        yield 'disabled option' => [false, $buildReq(NotFoundType::fromRequest($baseReq, '/foo/bar'))];
-        yield 'base_url error' => [true, $buildReq(NotFoundType::fromRequest($baseReq, ''))];
+        yield 'disabled option' => [false, false, $buildReq(NotFoundType::fromRequest($baseReq, '/foo/bar'))];
+        yield 'no error type' => [true, false, $buildReq(null)];
+        yield 'base_url error' => [true, false, $buildReq(NotFoundType::fromRequest($baseReq, ''))];
         yield 'invalid_short_url error' => [
             true,
-            $buildReq(NotFoundType::fromRequest($baseReq, ''))->withAttribute(
+            false,
+            $buildReq(NotFoundType::fromRequest($baseReq->withUri(new Uri('/foo'))->withAttribute(
                 RouteResult::class,
                 RouteResult::fromRoute(new Route(
-                    '',
+                    '/foo',
                     $this->prophesize(MiddlewareInterface::class)->reveal(),
                     ['GET'],
+                    RedirectAction::class,
                 )),
-            ),
+            ), '')),
         ];
-        yield 'no error type' => [true, $buildReq(null)];
+        yield 'regular_404 error with multi-segment slugs' => [
+            true,
+            true,
+            $buildReq(NotFoundType::fromRequest($baseReq->withUri(new Uri('/foo'))->withAttribute(
+                RouteResult::class,
+                RouteResult::fromRouteFailure(['GET']),
+            ), '')),
+        ];
     }
 
-    /** @test */
-    public function handlerIsCalledWhenNoShortUrlIsFound(): void
-    {
+    /**
+     * @test
+     * @dataProvider provideResolves
+     */
+    public function handlerIsCalledWhenNoShortUrlIsFoundAfterExpectedAmountOfIterations(
+        bool $multiSegmentEnabled,
+        int $expectedResolveCalls,
+    ): void {
+        $this->options->multiSegmentSlugsEnabled = $multiSegmentEnabled;
+
         $type = $this->prophesize(NotFoundType::class);
         $type->isRegularNotFound()->willReturn(true);
+        $type->isInvalidShortUrl()->willReturn(true);
         $request = ServerRequestFactory::fromGlobals()->withAttribute(NotFoundType::class, $type->reveal())
                                                       ->withUri(new Uri('/shortCode/bar/baz'));
 
-        $resolve = $this->resolver->resolveEnabledShortUrl(Argument::cetera())->willThrow(
-            ShortUrlNotFoundException::class,
-        );
+        $resolve = $this->resolver->resolveEnabledShortUrl(
+            Argument::that(fn (ShortUrlIdentifier $identifier) => str_starts_with($identifier->shortCode, 'shortCode')),
+        )->willThrow(ShortUrlNotFoundException::class);
 
         $this->middleware->process($request, $this->handler->reveal());
 
-        $resolve->shouldHaveBeenCalledOnce();
+        $resolve->shouldHaveBeenCalledTimes($expectedResolveCalls);
         $this->requestTracker->trackIfApplicable(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->redirectionBuilder->buildShortUrlRedirect(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->redirectResponseHelper->buildRedirectResponse(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
-    /** @test */
-    public function visitIsTrackedAndRedirectIsReturnedWhenShortUrlIsFound(): void
-    {
+    /**
+     * @test
+     * @dataProvider provideResolves
+     */
+    public function visitIsTrackedAndRedirectIsReturnedWhenShortUrlIsFoundAfterExpectedAmountOfIterations(
+        bool $multiSegmentEnabled,
+        int $expectedResolveCalls,
+        ?string $expectedExtraPath,
+    ): void {
+        $this->options->multiSegmentSlugsEnabled = $multiSegmentEnabled;
+
         $type = $this->prophesize(NotFoundType::class);
         $type->isRegularNotFound()->willReturn(true);
+        $type->isInvalidShortUrl()->willReturn(true);
         $request = ServerRequestFactory::fromGlobals()->withAttribute(NotFoundType::class, $type->reveal())
                                                       ->withUri(new Uri('https://doma.in/shortCode/bar/baz'));
         $shortUrl = ShortUrl::withLongUrl('');
-        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain('shortCode', 'doma.in');
-
-        $resolve = $this->resolver->resolveEnabledShortUrl($identifier)->willReturn($shortUrl);
-        $buildLongUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, [], '/bar/baz')->willReturn(
-            'the_built_long_url',
+        $identifier = Argument::that(
+            fn (ShortUrlIdentifier $identifier) => str_starts_with($identifier->shortCode, 'shortCode'),
         );
+
+        $currentIteration = 1;
+        $resolve = $this->resolver->resolveEnabledShortUrl($identifier)->will(
+            function () use ($shortUrl, &$currentIteration, $expectedResolveCalls): ShortUrl {
+                if ($expectedResolveCalls === $currentIteration) {
+                    return $shortUrl;
+                }
+
+                $currentIteration++;
+                throw ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortUrl($shortUrl));
+            },
+        );
+        $buildLongUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, [], $expectedExtraPath)
+                                                 ->willReturn('the_built_long_url');
         $buildResp = $this->redirectResponseHelper->buildRedirectResponse('the_built_long_url')->willReturn(
             new RedirectResponse(''),
         );
 
         $this->middleware->process($request, $this->handler->reveal());
 
-        $resolve->shouldHaveBeenCalledOnce();
+        $resolve->shouldHaveBeenCalledTimes($expectedResolveCalls);
         $buildLongUrl->shouldHaveBeenCalledOnce();
         $buildResp->shouldHaveBeenCalledOnce();
         $this->requestTracker->trackIfApplicable($shortUrl, $request)->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideResolves(): iterable
+    {
+        yield [false, 1, '/bar/baz'];
+        yield [true, 3, null];
     }
 }

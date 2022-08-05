@@ -16,7 +16,7 @@ The intention is to implement a system that allows adding to API keys as many of
 
 Supporting more restrictions in the future is also desirable.
 
-## Considered option
+## Considered options
 
 * Using an ACL/RBAC library, and checking roles in a middleware.
 * Using a service that, provided an API key, tells if certain resource is reachable while it also allows building queries dynamically.

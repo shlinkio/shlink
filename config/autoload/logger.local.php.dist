@@ -2,33 +2,18 @@
 
 declare(strict_types=1);
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
+use Monolog\Level;
+use Shlinkio\Shlink\Common\Logger\LoggerType;
 
 $isSwoole = extension_loaded('openswoole');
-
-// For swoole, send logs to standard output
-$handler = $isSwoole
-    ? [
-        'name' => StreamHandler::class,
-        'params' => [
-            'level' => Logger::DEBUG,
-            'stream' => 'php://stdout',
-        ],
-    ]
-    : [
-        'params' => [
-            'level' => Logger::DEBUG,
-        ],
-    ];
 
 return [
 
     'logger' => [
         'Shlink' => [
-            'handlers' => [
-                'shlink_handler' => $handler,
-            ],
+            // For swoole, send logs as stream
+            'type' => $isSwoole ? LoggerType::STREAM->value : LoggerType::FILE->value,
+            'level' => Level::Debug->value,
         ],
     ],
 

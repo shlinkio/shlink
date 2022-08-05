@@ -61,10 +61,15 @@ return [
 
         Action\HealthAction::class => ['em', Options\AppOptions::class],
         Action\MercureInfoAction::class => [LcobucciJwtProvider::class, 'config.mercure'],
-        Action\ShortUrl\CreateShortUrlAction::class => [Service\UrlShortener::class, ShortUrlDataTransformer::class],
+        Action\ShortUrl\CreateShortUrlAction::class => [
+            Service\UrlShortener::class,
+            ShortUrlDataTransformer::class,
+            Options\UrlShortenerOptions::class,
+        ],
         Action\ShortUrl\SingleStepCreateShortUrlAction::class => [
             Service\UrlShortener::class,
             ShortUrlDataTransformer::class,
+            Options\UrlShortenerOptions::class,
         ],
         Action\ShortUrl\EditShortUrlAction::class => [Service\ShortUrlService::class, ShortUrlDataTransformer::class],
         Action\ShortUrl\DeleteShortUrlAction::class => [Service\ShortUrl\DeleteShortUrlService::class],

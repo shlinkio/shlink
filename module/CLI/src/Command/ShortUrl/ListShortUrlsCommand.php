@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\Validation\ShortUrlsParamsInputFilter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -120,9 +121,7 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $page = (int) $input->getOption('page');
         $searchTerm = $input->getOption('search-term');
         $tags = $input->getOption('tags');
-        $tagsMode = $input->getOption('including-all-tags') === true
-            ? ShortUrlsParams::TAGS_MODE_ALL
-            : ShortUrlsParams::TAGS_MODE_ANY;
+        $tagsMode = $input->getOption('including-all-tags') === true ? TagsMode::ALL->value : TagsMode::ANY->value;
         $tags = ! empty($tags) ? explode(',', $tags) : [];
         $all = $input->getOption('all');
         $startDate = $this->getStartDateOption($input, $output);

@@ -27,8 +27,8 @@ class ShortUrlVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdap
         return $this->visitRepository->findVisitsByShortCode(
             $this->identifier,
             new VisitsListFiltering(
-                $this->params->getDateRange(),
-                $this->params->excludeBots(),
+                $this->params->dateRange,
+                $this->params->excludeBots,
                 $this->apiKey,
                 $length,
                 $offset,
@@ -41,8 +41,8 @@ class ShortUrlVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdap
         return $this->visitRepository->countVisitsByShortCode(
             $this->identifier,
             new VisitsCountFiltering(
-                $this->params->getDateRange(),
-                $this->params->excludeBots(),
+                $this->params->dateRange,
+                $this->params->excludeBots,
                 $this->apiKey,
             ),
         );

@@ -1,8 +1,8 @@
 {
-    "asyncapi": "2.0.0",
+    "asyncapi": "2.4.0",
     "info": {
         "title": "Shlink",
-        "version": "2.0.0",
+        "version": "3.0.0",
         "description": "Shlink, the self-hosted URL shortener",
         "license": {
             "name": "MIT",
@@ -75,6 +75,23 @@
                     }
                 }
             }
+        },
+        "https://shlink.io/new-short-url": {
+            "subscribe": {
+                "summary": "Receive information about any new short URL.",
+                "operationId": "newshortUrl",
+                "message": {
+                    "payload": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "shortUrl": {
+                                "$ref": "#/components/schemas/ShortUrl"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -101,7 +118,7 @@
                     },
                     "visitsCount": {
                         "type": "integer",
-                        "description": "The number of visits that this short URL has recieved."
+                        "description": "The number of visits that this short URL has received."
                     },
                     "tags": {
                         "type": "array",

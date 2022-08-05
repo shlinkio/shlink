@@ -14,7 +14,7 @@ use function sprintf;
 
 final class ShortUrlImporting
 {
-    private function __construct(private ShortUrl $shortUrl, private bool $isNew)
+    private function __construct(private readonly ShortUrl $shortUrl, private readonly bool $isNew)
     {
     }
 
