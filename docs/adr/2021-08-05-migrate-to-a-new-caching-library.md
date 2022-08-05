@@ -13,7 +13,7 @@ However, after the creation of the caching PSRs ([PSR-6 - Cache](https://www.php
 
 Also, Shlink needs support for Redis clusters and Redis sentinels, which is not supported by `doctrine/cache` Redis adapters.
 
-## Considered option
+## Considered options
 
 After some research, the only packages that seem to support the capabilities required by Shlink and also seem healthy, are these:
 

@@ -11,7 +11,7 @@ It is potentially possible to combine both, but if you do so, you will find out 
 
 A [Twitter survey](https://twitter.com/shlinkio/status/1480614855006732289) has also showed up all participants also found the behavior should be the opposite.
 
-## Considered option
+## Considered options
 
 * Move the logic to read env vars to another config file which always overrides installer options.
 * Move the logic to read env vars to a config post-processor which overrides config dynamically, only if the appropriate env var had been defined.
