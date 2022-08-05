@@ -82,7 +82,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.11.1, pdo_sqlsrv-5.10.0
+          extensions: openswoole-4.11.1, pdo_sqlsrv-5.10.1
           coverage: pcov
           ini-values: pcov.directory=module
       - name: Install dependencies
