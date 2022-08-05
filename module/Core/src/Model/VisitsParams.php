@@ -19,7 +19,7 @@ final class VisitsParams extends AbstractInfinitePaginableListParams
         public readonly bool $excludeBots = false,
     ) {
         parent::__construct($page, $itemsPerPage);
-        $this->dateRange = $dateRange ?? DateRange::emptyInstance();
+        $this->dateRange = $dateRange ?? DateRange::allTime();
     }
 
     public static function fromRawData(array $query): self

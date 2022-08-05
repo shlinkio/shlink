@@ -59,6 +59,7 @@ enum EnvVars: string
     case AUTO_RESOLVE_TITLES = 'AUTO_RESOLVE_TITLES';
     case REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
     case TIMEZONE = 'TIMEZONE';
+    case MULTI_SEGMENT_SLUGS_ENABLED = 'MULTI_SEGMENT_SLUGS_ENABLED';
     /** @deprecated */
     case VISITS_WEBHOOKS = 'VISITS_WEBHOOKS';
     /** @deprecated */

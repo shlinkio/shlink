@@ -22,8 +22,7 @@ class ConfigProviderTest extends TestCase
     {
         $config = ($this->configProvider)();
 
-        self::assertCount(5, $config);
-        self::assertArrayHasKey('routes', $config);
+        self::assertCount(4, $config);
         self::assertArrayHasKey('dependencies', $config);
         self::assertArrayHasKey('auth', $config);
         self::assertArrayHasKey('entity_manager', $config);
@@ -34,13 +33,9 @@ class ConfigProviderTest extends TestCase
      * @test
      * @dataProvider provideRoutesConfig
      */
-    public function routesAreProperlyPrefixed(array $routes, array $expected): void
+    public function routesAreProperlyPrefixed(array $routes, bool $multiSegmentEnabled, array $expected): void
     {
-        $configProvider = new ConfigProvider(fn () => ['routes' => $routes]);
-
-        $config = $configProvider();
-
-        self::assertEquals($expected, $config['routes']);
+        self::assertEquals($expected, ConfigProvider::applyRoutesPrefix($routes, $multiSegmentEnabled));
     }
 
     public function provideRoutesConfig(): iterable
@@ -52,6 +47,7 @@ class ConfigProviderTest extends TestCase
                 ['path' => '/baz/foo'],
                 ['path' => '/health'],
             ],
+            false,
             [
                 ['path' => '/rest/v{version:1|2}/foo'],
                 ['path' => '/rest/v{version:1|2}/bar'],
@@ -66,10 +62,24 @@ class ConfigProviderTest extends TestCase
                 ['path' => '/bar'],
                 ['path' => '/baz/foo'],
             ],
+            false,
             [
                 ['path' => '/rest/v{version:1|2}/foo'],
                 ['path' => '/rest/v{version:1|2}/bar'],
                 ['path' => '/rest/v{version:1|2}/baz/foo'],
+            ],
+        ];
+        yield 'multi-segment enabled' => [
+            [
+                ['path' => '/foo'],
+                ['path' => '/bar/{shortCode}'],
+                ['path' => '/baz/{shortCode}/foo'],
+            ],
+            true,
+            [
+                ['path' => '/rest/v{version:1|2}/foo'],
+                ['path' => '/rest/v{version:1|2}/bar/{shortCode:.+}'],
+                ['path' => '/rest/v{version:1|2}/baz/{shortCode:.+}/foo'],
             ],
         ];
     }

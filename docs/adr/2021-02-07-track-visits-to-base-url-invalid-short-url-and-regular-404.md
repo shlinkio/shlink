@@ -11,7 +11,7 @@ However, it does not track visits to any of those, just to valid short URLs.
 
 The intention is to change that, and allow users to track the cases mentioned above.
 
-## Considered option
+## Considered options
 
 * Create a new table to track visits o this kind.
 * Reuse the existing `visits` table, by making `short_url_id` nullable and adding a couple of other fields.

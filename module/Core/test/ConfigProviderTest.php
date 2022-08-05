@@ -22,8 +22,7 @@ class ConfigProviderTest extends TestCase
     {
         $config = ($this->configProvider)();
 
-        self::assertCount(5, $config);
-        self::assertArrayHasKey('routes', $config);
+        self::assertCount(4, $config);
         self::assertArrayHasKey('dependencies', $config);
         self::assertArrayHasKey('entity_manager', $config);
         self::assertArrayHasKey('events', $config);

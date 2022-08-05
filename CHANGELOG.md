@@ -4,8 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.2.0] - 2022-08-05
 ### Added
+* [#854](https://github.com/shlinkio/shlink/issues/854) Added support for multi-segment custom slugs.
+
+  The feature is disabled by default, but you can optionally opt in. If you do, you will be able to create short URLs with multiple segments in the custom slug, like `https://example.com/foo/bar/baz`.
+
 * [#1280](https://github.com/shlinkio/shlink/issues/1280) Added missing visit-related commands.
 
   Now you can run `tag:visits`, `domain:visits`, `visit:orphan` or `visit:non-orphan` to get the corresponding list of visits from the command line.
