@@ -33,9 +33,9 @@ class ConfigProviderTest extends TestCase
      * @test
      * @dataProvider provideRoutesConfig
      */
-    public function routesAreProperlyPrefixed(array $routes, bool $multiSegmentEnabled, array $expected): void
+    public function routesAreProperlyPrefixed(array $routes, array $expected): void
     {
-        self::assertEquals($expected, ConfigProvider::applyRoutesPrefix($routes, $multiSegmentEnabled));
+        self::assertEquals($expected, ConfigProvider::applyRoutesPrefix($routes));
     }
 
     public function provideRoutesConfig(): iterable
@@ -47,7 +47,6 @@ class ConfigProviderTest extends TestCase
                 ['path' => '/baz/foo'],
                 ['path' => '/health'],
             ],
-            false,
             [
                 ['path' => '/rest/v{version:1|2}/foo'],
                 ['path' => '/rest/v{version:1|2}/bar'],
@@ -62,24 +61,10 @@ class ConfigProviderTest extends TestCase
                 ['path' => '/bar'],
                 ['path' => '/baz/foo'],
             ],
-            false,
             [
                 ['path' => '/rest/v{version:1|2}/foo'],
                 ['path' => '/rest/v{version:1|2}/bar'],
                 ['path' => '/rest/v{version:1|2}/baz/foo'],
-            ],
-        ];
-        yield 'multi-segment enabled' => [
-            [
-                ['path' => '/foo'],
-                ['path' => '/bar/{shortCode}'],
-                ['path' => '/baz/{shortCode}/foo'],
-            ],
-            true,
-            [
-                ['path' => '/rest/v{version:1|2}/foo'],
-                ['path' => '/rest/v{version:1|2}/bar/{shortCode:.+}'],
-                ['path' => '/rest/v{version:1|2}/baz/{shortCode:.+}/foo'],
             ],
         ];
     }

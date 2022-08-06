@@ -47,4 +47,5 @@ return (new ConfigAggregator\ConfigAggregator([
     new ConfigAggregator\PhpFileProvider('config/autoload/routes.config.php'),
 ], 'data/cache/app_config.php', [
     Core\Config\BasePathPrefixer::class,
+    Core\Config\MultiSegmentSlugProcessor::class,
 ]))->getMergedConfig();
