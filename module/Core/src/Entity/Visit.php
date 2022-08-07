@@ -45,12 +45,12 @@ class Visit extends AbstractEntity implements JsonSerializable
     public static function fromImport(ShortUrl $shortUrl, ImportedShlinkVisit $importedVisit): self
     {
         $instance = new self($shortUrl, VisitType::IMPORTED);
-        $instance->userAgent = $importedVisit->userAgent();
+        $instance->userAgent = $importedVisit->userAgent;
         $instance->potentialBot = isCrawler($instance->userAgent);
-        $instance->referer = $importedVisit->referer();
-        $instance->date = Chronos::instance($importedVisit->date());
+        $instance->referer = $importedVisit->referer;
+        $instance->date = Chronos::instance($importedVisit->date);
 
-        $importedLocation = $importedVisit->location();
+        $importedLocation = $importedVisit->location;
         $instance->visitLocation = $importedLocation !== null ? VisitLocation::fromImport($importedLocation) : null;
 
         return $instance;

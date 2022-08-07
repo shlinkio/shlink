@@ -28,13 +28,13 @@ class VisitLocation extends AbstractEntity implements JsonSerializable
     {
         $instance = new self();
 
-        $instance->countryCode = $location->countryCode();
-        $instance->countryName = $location->countryName();
-        $instance->regionName = $location->regionName();
-        $instance->cityName = $location->city();
-        $instance->latitude = $location->latitude();
-        $instance->longitude = $location->longitude();
-        $instance->timezone = $location->timeZone();
+        $instance->countryCode = $location->countryCode;
+        $instance->countryName = $location->countryName;
+        $instance->regionName = $location->regionName;
+        $instance->cityName = $location->city;
+        $instance->latitude = $location->latitude;
+        $instance->longitude = $location->longitude;
+        $instance->timezone = $location->timeZone;
         $instance->computeIsEmpty();
 
         return $instance;
@@ -44,13 +44,13 @@ class VisitLocation extends AbstractEntity implements JsonSerializable
     {
         $instance = new self();
 
-        $instance->countryCode = $location->countryCode();
-        $instance->countryName = $location->countryName();
-        $instance->regionName = $location->regionName();
-        $instance->cityName = $location->cityName();
-        $instance->latitude = $location->latitude();
-        $instance->longitude = $location->longitude();
-        $instance->timezone = $location->timeZone();
+        $instance->countryCode = $location->countryCode;
+        $instance->countryName = $location->countryName;
+        $instance->regionName = $location->regionName;
+        $instance->cityName = $location->cityName;
+        $instance->latitude = $location->latitude;
+        $instance->longitude = $location->longitude;
+        $instance->timezone = $location->timezone;
         $instance->computeIsEmpty();
 
         return $instance;
