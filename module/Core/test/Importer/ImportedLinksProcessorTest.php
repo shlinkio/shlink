@@ -22,7 +22,7 @@ use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Symfony\Component\Console\Style\StyleInterface;
 
 use function count;
@@ -64,9 +64,9 @@ class ImportedLinksProcessorTest extends TestCase
     public function newUrlsWithNoErrorsAreAllPersisted(): void
     {
         $urls = [
-            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), null, 'foo', null),
-            new ImportedShlinkUrl('', 'bar', [], Chronos::now(), null, 'bar', 'foo'),
-            new ImportedShlinkUrl('', 'baz', [], Chronos::now(), null, 'baz', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'foo', [], Chronos::now(), null, 'foo', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'bar', [], Chronos::now(), null, 'bar', 'foo'),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'baz', [], Chronos::now(), null, 'baz', null),
         ];
         $expectedCalls = count($urls);
 
@@ -86,9 +86,9 @@ class ImportedLinksProcessorTest extends TestCase
     public function newUrlsWithErrorsAreSkipped(): void
     {
         $urls = [
-            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), null, 'foo', null),
-            new ImportedShlinkUrl('', 'bar', [], Chronos::now(), null, 'bar', 'foo'),
-            new ImportedShlinkUrl('', 'baz', [], Chronos::now(), null, 'baz', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'foo', [], Chronos::now(), null, 'foo', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'bar', [], Chronos::now(), null, 'bar', 'foo'),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'baz', [], Chronos::now(), null, 'baz', null),
         ];
 
         $importedUrlExists = $this->repo->findOneByImportedUrl(Argument::cetera())->willReturn(null);
@@ -117,11 +117,11 @@ class ImportedLinksProcessorTest extends TestCase
     public function alreadyImportedUrlsAreSkipped(): void
     {
         $urls = [
-            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), null, 'foo', null),
-            new ImportedShlinkUrl('', 'bar', [], Chronos::now(), null, 'bar', null),
-            new ImportedShlinkUrl('', 'baz', [], Chronos::now(), null, 'baz', null),
-            new ImportedShlinkUrl('', 'baz2', [], Chronos::now(), null, 'baz2', null),
-            new ImportedShlinkUrl('', 'baz3', [], Chronos::now(), null, 'baz3', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'foo', [], Chronos::now(), null, 'foo', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'bar', [], Chronos::now(), null, 'bar', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'baz', [], Chronos::now(), null, 'baz', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'baz2', [], Chronos::now(), null, 'baz2', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'baz3', [], Chronos::now(), null, 'baz3', null),
         ];
 
         $importedUrlExists = $this->repo->findOneByImportedUrl(Argument::cetera())->will(
@@ -129,7 +129,7 @@ class ImportedLinksProcessorTest extends TestCase
                 /** @var ImportedShlinkUrl $url */
                 [$url] = $args;
 
-                return contains(['foo', 'baz2', 'baz3'], $url->longUrl()) ? ShortUrl::fromImport($url, true) : null;
+                return contains(['foo', 'baz2', 'baz3'], $url->longUrl) ? ShortUrl::fromImport($url, true) : null;
             },
         );
         $ensureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
@@ -148,11 +148,11 @@ class ImportedLinksProcessorTest extends TestCase
     public function nonUniqueShortCodesAreAskedToUser(): void
     {
         $urls = [
-            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), null, 'foo', null),
-            new ImportedShlinkUrl('', 'bar', [], Chronos::now(), null, 'bar', null),
-            new ImportedShlinkUrl('', 'baz', [], Chronos::now(), null, 'baz', 'foo'),
-            new ImportedShlinkUrl('', 'baz2', [], Chronos::now(), null, 'baz2', null),
-            new ImportedShlinkUrl('', 'baz3', [], Chronos::now(), null, 'baz3', 'bar'),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'foo', [], Chronos::now(), null, 'foo', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'bar', [], Chronos::now(), null, 'bar', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'baz', [], Chronos::now(), null, 'baz', 'foo'),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'baz2', [], Chronos::now(), null, 'baz2', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'baz3', [], Chronos::now(), null, 'baz3', 'bar'),
         ];
 
         $importedUrlExists = $this->repo->findOneByImportedUrl(Argument::cetera())->willReturn(null);
@@ -210,7 +210,8 @@ class ImportedLinksProcessorTest extends TestCase
     public function provideUrlsWithVisits(): iterable
     {
         $now = Chronos::now();
-        $createImportedUrl = fn (array $visits) => new ImportedShlinkUrl('', 's', [], $now, null, 's', null, $visits);
+        $createImportedUrl = static fn (array $visits) =>
+            new ImportedShlinkUrl(ImportSource::BITLY, 's', [], $now, null, 's', null, $visits);
 
         yield 'new short URL' => [$createImportedUrl([
             new ImportedShlinkVisit('', '', $now, null),
@@ -248,9 +249,6 @@ class ImportedLinksProcessorTest extends TestCase
 
     private function buildParams(): ImportParams
     {
-        return ImportParams::fromSourceAndCallableMap(
-            ImportSources::BITLY,
-            ['import_short_codes' => static fn () => true],
-        );
+        return ImportSource::BITLY->toParamsWithCallableMap(['import_short_codes' => static fn () => true]);
     }
 }

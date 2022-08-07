@@ -94,31 +94,31 @@ class ShortUrl extends AbstractEntity
     ): self {
         $meta = [
             ShortUrlInputFilter::VALIDATE_URL => false,
-            ShortUrlInputFilter::LONG_URL => $url->longUrl(),
-            ShortUrlInputFilter::DOMAIN => $url->domain(),
-            ShortUrlInputFilter::TAGS => $url->tags(),
-            ShortUrlInputFilter::TITLE => $url->title(),
-            ShortUrlInputFilter::MAX_VISITS => $url->meta()->maxVisits(),
+            ShortUrlInputFilter::LONG_URL => $url->longUrl,
+            ShortUrlInputFilter::DOMAIN => $url->domain,
+            ShortUrlInputFilter::TAGS => $url->tags,
+            ShortUrlInputFilter::TITLE => $url->title,
+            ShortUrlInputFilter::MAX_VISITS => $url->meta->maxVisits,
         ];
         if ($importShortCode) {
-            $meta[ShortUrlInputFilter::CUSTOM_SLUG] = $url->shortCode();
+            $meta[ShortUrlInputFilter::CUSTOM_SLUG] = $url->shortCode;
         }
 
         $instance = self::fromMeta(ShortUrlMeta::fromRawData($meta), $relationResolver);
 
-        $validSince = $url->meta()->validSince();
+        $validSince = $url->meta->validSince;
         if ($validSince !== null) {
             $instance->validSince = Chronos::instance($validSince);
         }
 
-        $validUntil = $url->meta()->validUntil();
+        $validUntil = $url->meta->validUntil;
         if ($validUntil !== null) {
             $instance->validUntil = Chronos::instance($validUntil);
         }
 
-        $instance->importSource = $url->source();
-        $instance->importOriginalShortCode = $url->shortCode();
-        $instance->dateCreated = Chronos::instance($url->createdAt());
+        $instance->importSource = $url->source->value;
+        $instance->importOriginalShortCode = $url->shortCode;
+        $instance->dateCreated = Chronos::instance($url->createdAt);
 
         return $instance;
     }

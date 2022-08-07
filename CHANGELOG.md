@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#1495](https://github.com/shlinkio/shlink/issues/1495) Centralized how routes are configured to support multi-segment slugs.
+* [#1497](https://github.com/shlinkio/shlink/issues/1497) Updated to latest shlink dependencies with support for PHP 8.1 only.
 
 ### Deprecated
 * *Nothing*

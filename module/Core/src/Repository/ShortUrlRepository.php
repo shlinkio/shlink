@@ -284,12 +284,12 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     {
         $qb = $this->createQueryBuilder('s');
         $qb->andWhere($qb->expr()->eq('s.importOriginalShortCode', ':shortCode'))
-           ->setParameter('shortCode', $url->shortCode())
+           ->setParameter('shortCode', $url->shortCode)
            ->andWhere($qb->expr()->eq('s.importSource', ':importSource'))
-           ->setParameter('importSource', $url->source())
+           ->setParameter('importSource', $url->source->value)
            ->setMaxResults(1);
 
-        $this->whereDomainIs($qb, $url->domain());
+        $this->whereDomainIs($qb, $url->domain);
 
         return $qb->getQuery()->getOneOrNullResult();
     }

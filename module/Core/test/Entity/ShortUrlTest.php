@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
 use function Functional\map;
 use function range;
@@ -63,9 +64,10 @@ class ShortUrlTest extends TestCase
     public function provideValidShortUrls(): iterable
     {
         yield 'no custom slug' => [ShortUrl::createEmpty()];
-        yield 'imported with custom slug' => [
-            ShortUrl::fromImport(new ImportedShlinkUrl('', '', [], Chronos::now(), null, 'custom-slug', null), true),
-        ];
+        yield 'imported with custom slug' => [ShortUrl::fromImport(
+            new ImportedShlinkUrl(ImportSource::BITLY, '', [], Chronos::now(), null, 'custom-slug', null),
+            true,
+        )];
     }
 
     /**
