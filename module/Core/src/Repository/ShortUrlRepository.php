@@ -84,13 +84,13 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
            ->where('1=1');
 
         $dateRange = $filtering->dateRange();
-        if ($dateRange?->startDate() !== null) {
+        if ($dateRange?->startDate !== null) {
             $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
-            $qb->setParameter('startDate', $dateRange->startDate(), ChronosDateTimeType::CHRONOS_DATETIME);
+            $qb->setParameter('startDate', $dateRange->startDate, ChronosDateTimeType::CHRONOS_DATETIME);
         }
-        if ($dateRange?->endDate() !== null) {
+        if ($dateRange?->endDate !== null) {
             $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
-            $qb->setParameter('endDate', $dateRange->endDate(), ChronosDateTimeType::CHRONOS_DATETIME);
+            $qb->setParameter('endDate', $dateRange->endDate, ChronosDateTimeType::CHRONOS_DATETIME);
         }
 
         $searchTerm = $filtering->searchTerm();
@@ -284,12 +284,12 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     {
         $qb = $this->createQueryBuilder('s');
         $qb->andWhere($qb->expr()->eq('s.importOriginalShortCode', ':shortCode'))
-           ->setParameter('shortCode', $url->shortCode())
+           ->setParameter('shortCode', $url->shortCode)
            ->andWhere($qb->expr()->eq('s.importSource', ':importSource'))
-           ->setParameter('importSource', $url->source())
+           ->setParameter('importSource', $url->source->value)
            ->setMaxResults(1);
 
-        $this->whereDomainIs($qb, $url->domain());
+        $this->whereDomainIs($qb, $url->domain);
 
         return $qb->getQuery()->getOneOrNullResult();
     }

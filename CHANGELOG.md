@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.2.1] - 2022-08-08
+### Added
+* *Nothing*
+
+### Changed
+* [#1495](https://github.com/shlinkio/shlink/issues/1495) Centralized how routes are configured to support multi-segment slugs.
+* [#1497](https://github.com/shlinkio/shlink/issues/1497) Updated to latest shlink dependencies with support for PHP 8.1 only.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1499](https://github.com/shlinkio/shlink/issues/1499) Fixed loading of config options as env vars, which was making all default configurations to be loaded unless env vars were explicitly provided.
+
+
 ## [3.2.0] - 2022-08-05
 ### Added
 * [#854](https://github.com/shlinkio/shlink/issues/854) Added support for multi-segment custom slugs.

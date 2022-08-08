@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Symfony\Component\Console\Style\OutputStyle;
 use Symfony\Component\Console\Style\StyleInterface;
 use Throwable;
@@ -26,10 +26,10 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     private ShortUrlRepositoryInterface $shortUrlRepo;
 
     public function __construct(
-        private EntityManagerInterface $em,
-        private ShortUrlRelationResolverInterface $relationResolver,
-        private ShortCodeUniquenessHelperInterface $shortCodeHelper,
-        private DoctrineBatchHelperInterface $batchHelper,
+        private readonly EntityManagerInterface $em,
+        private readonly ShortUrlRelationResolverInterface $relationResolver,
+        private readonly ShortCodeUniquenessHelperInterface $shortCodeHelper,
+        private readonly DoctrineBatchHelperInterface $batchHelper,
     ) {
         $this->shortUrlRepo = $this->em->getRepository(ShortUrl::class);
     }
@@ -39,19 +39,19 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
      */
     public function process(StyleInterface $io, iterable $shlinkUrls, ImportParams $params): void
     {
-        $importShortCodes = $params->importShortCodes();
-        $source = $params->source();
-        $iterable = $this->batchHelper->wrapIterable($shlinkUrls, $source === ImportSources::SHLINK ? 10 : 100);
+        $importShortCodes = $params->importShortCodes;
+        $source = $params->source;
+        $iterable = $this->batchHelper->wrapIterable($shlinkUrls, $source === ImportSource::SHLINK ? 10 : 100);
 
         /** @var ImportedShlinkUrl $importedUrl */
         foreach ($iterable as $importedUrl) {
             $skipOnShortCodeConflict = static fn (): bool => $io->choice(sprintf(
                 'Failed to import URL "%s" because its short-code "%s" is already in use. Do you want to generate '
                 . 'a new one or skip it?',
-                $importedUrl->longUrl(),
-                $importedUrl->shortCode(),
+                $importedUrl->longUrl,
+                $importedUrl->shortCode,
             ), ['Generate new short-code', 'Skip'], 1) === 'Skip';
-            $longUrl = $importedUrl->longUrl();
+            $longUrl = $importedUrl->longUrl;
 
             try {
                 $shortUrlImporting = $this->resolveShortUrl($importedUrl, $importShortCodes, $skipOnShortCodeConflict);
@@ -68,7 +68,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
                 continue;
             }
 
-            $resultMessage = $shortUrlImporting->importVisits($importedUrl->visits(), $this->em);
+            $resultMessage = $shortUrlImporting->importVisits($importedUrl->visits, $this->em);
             $io->text(sprintf('%s: %s', $longUrl, $resultMessage));
         }
     }

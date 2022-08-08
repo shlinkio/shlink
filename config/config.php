@@ -21,7 +21,7 @@ $isTestEnv = env('APP_ENV') === 'test';
 
 return (new ConfigAggregator\ConfigAggregator([
     ! $isTestEnv
-        ? new EnvVarLoaderProvider('config/params/generated_config.php', Core\Config\EnvVars::cases())
+        ? new EnvVarLoaderProvider('config/params/generated_config.php', Core\Config\EnvVars::values())
         : new ConfigAggregator\ArrayProvider([]),
     Mezzio\ConfigProvider::class,
     Mezzio\Router\ConfigProvider::class,
@@ -47,4 +47,5 @@ return (new ConfigAggregator\ConfigAggregator([
     new ConfigAggregator\PhpFileProvider('config/autoload/routes.config.php'),
 ], 'data/cache/app_config.php', [
     Core\Config\BasePathPrefixer::class,
+    Core\Config\MultiSegmentSlugProcessor::class,
 ]))->getMergedConfig();

@@ -245,11 +245,11 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     {
         $conn = $this->getEntityManager()->getConnection();
 
-        if ($dateRange?->startDate() !== null) {
-            $qb->andWhere($qb->expr()->gte('v.date', $conn->quote($dateRange->startDate()->toDateTimeString())));
+        if ($dateRange?->startDate !== null) {
+            $qb->andWhere($qb->expr()->gte('v.date', $conn->quote($dateRange->startDate->toDateTimeString())));
         }
-        if ($dateRange?->endDate() !== null) {
-            $qb->andWhere($qb->expr()->lte('v.date', $conn->quote($dateRange->endDate()->toDateTimeString())));
+        if ($dateRange?->endDate !== null) {
+            $qb->andWhere($qb->expr()->lte('v.date', $conn->quote($dateRange->endDate->toDateTimeString())));
         }
     }
 

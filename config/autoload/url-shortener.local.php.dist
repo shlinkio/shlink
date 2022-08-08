@@ -12,6 +12,7 @@ return [
             'hostname' => sprintf('localhost:%s', $isSwoole ? '8080' : '8000'),
         ],
         'auto_resolve_titles' => true,
+//        'multi_segment_slugs_enabled' => true,
     ],
 
 ];

@@ -8,7 +8,6 @@ use function Functional\first;
 use function Functional\map;
 use function Shlinkio\Shlink\Config\loadConfigFromGlob;
 use function sprintf;
-use function str_replace;
 
 class ConfigProvider
 {
@@ -21,16 +20,12 @@ class ConfigProvider
         return loadConfigFromGlob(__DIR__ . '/../config/{,*.}config.php');
     }
 
-    public static function applyRoutesPrefix(array $routes, bool $multiSegmentEnabled): array
+    public static function applyRoutesPrefix(array $routes): array
     {
         $healthRoute = self::buildUnversionedHealthRouteFromExistingRoutes($routes);
-        $prefixedRoutes = map($routes, static function (array $route) use ($multiSegmentEnabled) {
+        $prefixedRoutes = map($routes, static function (array $route) {
             ['path' => $path] = $route;
-            if ($multiSegmentEnabled) {
-                $path = str_replace('{shortCode}', '{shortCode:.+}', $path);
-            }
             $route['path'] = sprintf('%s%s', self::ROUTES_PREFIX, $path);
-
             return $route;
         });
 

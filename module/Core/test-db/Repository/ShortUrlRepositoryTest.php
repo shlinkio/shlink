@@ -21,6 +21,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -601,7 +602,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     public function importedShortUrlsAreFoundWhenExpected(): void
     {
         $buildImported = static fn (string $shortCode, ?String $domain = null) =>
-            new ImportedShlinkUrl('', 'foo', [], Chronos::now(), $domain, $shortCode, null);
+            new ImportedShlinkUrl(ImportSource::BITLY, 'foo', [], Chronos::now(), $domain, $shortCode, null);
 
         $shortUrlWithoutDomain = ShortUrl::fromImport($buildImported('my-cool-slug'), true);
         $this->getEntityManager()->persist($shortUrlWithoutDomain);
