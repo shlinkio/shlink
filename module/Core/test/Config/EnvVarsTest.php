@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\Config;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
+use function Functional\map;
 use function putenv;
 
 class EnvVarsTest extends TestCase
@@ -57,5 +58,12 @@ class EnvVarsTest extends TestCase
         yield 'BASE_PATH with default' => [EnvVars::BASE_PATH, 'the_base_path', 'foobar'];
         yield 'DB_DRIVER without default' => [EnvVars::DB_DRIVER, null, null];
         yield 'DB_DRIVER with default' => [EnvVars::DB_DRIVER, 'foobar', 'foobar'];
+    }
+
+    /** @test */
+    public function allValuesCanBeListed(): void
+    {
+        $expected = map(EnvVars::cases(), static fn (EnvVars $envVar) => $envVar->value);
+        self::assertEquals(EnvVars::values(), $expected);
     }
 }
