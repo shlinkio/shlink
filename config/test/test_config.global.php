@@ -9,7 +9,6 @@ use Laminas\ConfigAggregator\ConfigAggregator;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use League\Event\EventDispatcher;
-use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use PHPUnit\Runner\Version;
 use Psr\Container\ContainerInterface;
@@ -22,11 +21,11 @@ use SebastianBergmann\CodeCoverage\Filter;
 use SebastianBergmann\CodeCoverage\Report\Html\Facade as Html;
 use SebastianBergmann\CodeCoverage\Report\PHP;
 use SebastianBergmann\CodeCoverage\Report\Xml\Facade as Xml;
+use Shlinkio\Shlink\Common\Logger\LoggerType;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Shlinkio\Shlink\Common\Logger\LoggerType;
 
 use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
@@ -51,23 +50,16 @@ if ($isE2eTest && $generateCoverage) {
 
 /**
  * @param 'api'|'cli' $type
- * @param array<'cov'|'xml'|'html'> $formats
  */
-$exportCoverage = static function (string $type = 'api', array $formats = ['cov', 'xml', 'html']) use (&$coverage): void {
+$exportCoverage = static function (string $type = 'api') use (&$coverage): void {
     if ($coverage === null) {
         return;
     }
 
     $basePath = __DIR__ . '/../../build/coverage-' . $type;
-
-    foreach ($formats as $format) {
-        match ($format) {
-            'cov' => (new PHP())->process($coverage, $basePath . '.cov'),
-            'xml' => (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml'),
-            'html' => (new Html())->process($coverage, $basePath . '/coverage-html'),
-            default => null,
-        };
-    }
+    (new PHP())->process($coverage, $basePath . '.cov');
+    (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
+    (new Html())->process($coverage, $basePath . '/coverage-html');
 };
 
 $buildDbConnection = static function (): array {

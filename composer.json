@@ -107,7 +107,7 @@
         ],
         "ci:parallel": [
             "@parallel cs stan swagger:validate test:unit:ci test:db:sqlite:ci test:db:mysql test:db:maria test:db:postgres test:db:ms",
-            "@parallel infect:test:api infect:ci:unit infect:ci:db"
+            "@parallel infect:test:api infect:test:cli infect:ci:unit infect:ci:db"
         ],
         "cs": "phpcs",
         "cs:fix": "phpcbf",
@@ -143,7 +143,7 @@
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json",
         "infect:ci:api": "@infect:ci:base --coverage=build/coverage-api --min-msi=80 --configuration=infection-api.json",
         "infect:ci:cli": "@infect:ci:base --coverage=build/coverage-cli --min-msi=95 --configuration=infection-cli.json",
-        "infect:ci": "@parallel infect:ci:unit infect:ci:db infect:ci:api",
+        "infect:ci": "@parallel infect:ci:unit infect:ci:db infect:ci:api infect:ci:cli",
         "infect:test": [
             "@parallel test:unit:ci test:db:sqlite:ci test:api:ci",
             "@infect:ci"
