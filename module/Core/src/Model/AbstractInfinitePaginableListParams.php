@@ -10,8 +10,8 @@ abstract class AbstractInfinitePaginableListParams
 {
     private const FIRST_PAGE = 1;
 
-    private int $page;
-    private int $itemsPerPage;
+    public readonly int $page;
+    public readonly int $itemsPerPage;
 
     protected function __construct(?int $page, ?int $itemsPerPage)
     {
@@ -27,15 +27,5 @@ abstract class AbstractInfinitePaginableListParams
     private function determineItemsPerPage(?int $itemsPerPage): int
     {
         return $itemsPerPage === null || $itemsPerPage < 0 ? Paginator::ALL_ITEMS : $itemsPerPage;
-    }
-
-    public function getPage(): int
-    {
-        return $this->page;
-    }
-
-    public function getItemsPerPage(): int
-    {
-        return $this->itemsPerPage;
     }
 }

@@ -8,8 +8,8 @@ use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
-use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 
 final class Version20210207100807 extends AbstractMigration
 {
@@ -27,7 +27,7 @@ final class Version20210207100807 extends AbstractMigration
         ]);
         $visits->addColumn('type', Types::STRING, [
             'length' => 255,
-            'default' => Visit::TYPE_VALID_SHORT_URL,
+            'default' => VisitType::VALID_SHORT_URL->value,
         ]);
     }
 

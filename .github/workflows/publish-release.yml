@@ -7,10 +7,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.0', '8.1']
+        php-version: ['8.1']
         swoole: ['yes', 'no']
     steps:
       - name: Checkout code
@@ -20,7 +20,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.9.1
+          extensions: openswoole-4.11.1
       - if: ${{ matrix.swoole == 'yes' }}
         run: ./build.sh ${GITHUB_REF#refs/tags/v}
       - if: ${{ matrix.swoole == 'no' }}
@@ -32,7 +32,7 @@ jobs:
 
   publish:
     needs: ['build']
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -50,11 +50,11 @@ jobs:
 
   delete-artifacts:
     needs: ['publish']
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1' ]
-        swoole: [ 'yes', 'no' ]
+        php-version: ['8.1']
+        swoole: ['yes', 'no']
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:

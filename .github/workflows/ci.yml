@@ -10,10 +10,10 @@ on:
 
 jobs:
   static-analysis:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.0']
+        php-version: ['8.1']
         command: ['cs', 'stan', 'swagger:validate']
     steps:
       - name: Checkout code
@@ -23,16 +23,17 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.9.1
+          extensions: openswoole-4.11.1
           coverage: none
-      - run: composer install --no-interaction --prefer-dist
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
       - run: composer ${{ matrix.command }}
 
   tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.0', '8.1']
+        php-version: ['8.1']
         test-group: ['unit', 'api']
     steps:
       - name: Checkout code
@@ -45,13 +46,14 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.9.1
+          extensions: openswoole-4.11.1
           coverage: pcov
           ini-values: pcov.directory=module
-      - run: composer install --no-interaction --prefer-dist
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
       - run: composer test:${{ matrix.test-group }}:ci
       - uses: actions/upload-artifact@v2
-        if: ${{ matrix.php-version == '8.0' }}
+        if: ${{ matrix.php-version == '8.1' }}
         with:
           name: coverage-${{ matrix.test-group }}
           path: |
@@ -59,10 +61,10 @@ jobs:
             build/coverage-${{ matrix.test-group }}.cov
 
   db-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.0', '8.1']
+        php-version: ['8.1']
         platform: ['sqlite:ci', 'mysql', 'maria', 'postgres', 'ms']
     env:
       LC_ALL: C
@@ -80,10 +82,11 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.9.1, pdo_sqlsrv-5.10.0
+          extensions: openswoole-4.11.1, pdo_sqlsrv-5.10.1
           coverage: pcov
           ini-values: pcov.directory=module
-      - run: composer install --no-interaction --prefer-dist
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
       - name: Create test database
         if: ${{ matrix.platform == 'ms' }}
         run: docker-compose exec -T shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
@@ -91,7 +94,7 @@ jobs:
         run: composer test:db:${{ matrix.platform }}
       - name: Upload code coverage
         uses: actions/upload-artifact@v2
-        if: ${{ matrix.php-version == '8.0' && matrix.platform == 'sqlite:ci' }}
+        if: ${{ matrix.php-version == '8.1' && matrix.platform == 'sqlite:ci' }}
         with:
           name: coverage-db
           path: |
@@ -102,10 +105,10 @@ jobs:
     needs:
       - tests
       - db-tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.0', '8.1']
+        php-version: ['8.1']
         test-group: ['unit', 'db', 'api']
     steps:
       - name: Checkout code
@@ -115,10 +118,11 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.9.1
+          extensions: openswoole-4.11.1
           coverage: pcov
           ini-values: pcov.directory=module
-      - run: composer install --no-interaction --prefer-dist
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
       - uses: actions/download-artifact@v2
         with:
           path: build
@@ -133,10 +137,10 @@ jobs:
     needs:
       - tests
       - db-tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.0']
+        php-version: ['8.1']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -152,8 +156,8 @@ jobs:
       - run: mv build/coverage-unit/coverage-unit.cov build/coverage-unit.cov
       - run: mv build/coverage-db/coverage-db.cov build/coverage-db.cov
       - run: mv build/coverage-api/coverage-api.cov build/coverage-api.cov
-      - run: wget https://phar.phpunit.de/phpcov-8.2.0.phar
-      - run: php phpcov-8.2.0.phar merge build --clover build/clover.xml
+      - run: wget https://phar.phpunit.de/phpcov-8.2.1.phar
+      - run: php phpcov-8.2.1.phar merge build --clover build/clover.xml
       - name: Publish coverage
         uses: codecov/codecov-action@v1
         with:
@@ -163,7 +167,7 @@ jobs:
     needs:
       - mutation-tests
       - upload-coverage
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:
@@ -173,7 +177,7 @@ jobs:
             coverage-api
 
   build-docker-image:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

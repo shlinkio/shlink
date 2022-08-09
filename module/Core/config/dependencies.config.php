@@ -27,6 +27,7 @@ return [
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
             Options\TrackingOptions::class => ConfigAbstractFactory::class,
             Options\QrCodeOptions::class => ConfigAbstractFactory::class,
+            Options\RabbitMqOptions::class => ConfigAbstractFactory::class,
             Options\WebhookOptions::class => ConfigAbstractFactory::class,
 
             Service\UrlShortener::class => ConfigAbstractFactory::class,
@@ -63,7 +64,7 @@ return [
             ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => ConfigAbstractFactory::class,
 
-            Mercure\MercureUpdatesGenerator::class => ConfigAbstractFactory::class,
+            EventDispatcher\PublishingUpdatesGenerator::class => ConfigAbstractFactory::class,
 
             Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
 
@@ -91,6 +92,7 @@ return [
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
         Options\TrackingOptions::class => ['config.tracking'],
         Options\QrCodeOptions::class => ['config.qr_codes'],
+        Options\RabbitMqOptions::class => ['config.rabbitmq'],
         Options\WebhookOptions::class => ['config.visits_webhooks'],
 
         Service\UrlShortener::class => [
@@ -98,6 +100,7 @@ return [
             'em',
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
             Service\ShortUrl\ShortCodeUniquenessHelper::class,
+            EventDispatcherInterface::class,
         ],
         Visit\VisitsTracker::class => [
             'em',
@@ -157,7 +160,7 @@ return [
             Options\UrlShortenerOptions::class,
         ],
 
-        Mercure\MercureUpdatesGenerator::class => [
+        EventDispatcher\PublishingUpdatesGenerator::class => [
             ShortUrl\Transformer\ShortUrlDataTransformer::class,
             Visit\Transformer\OrphanVisitDataTransformer::class,
         ],

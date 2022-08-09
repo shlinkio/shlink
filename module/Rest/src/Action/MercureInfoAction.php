@@ -10,7 +10,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Mercure\JwtProviderInterface;
 use Shlinkio\Shlink\Rest\Exception\MercureException;
-use Throwable;
 
 use function sprintf;
 
@@ -32,12 +31,7 @@ class MercureInfoAction extends AbstractRestAction
 
         $days = $this->mercureConfig['jwt_days_duration'] ?? 1;
         $expiresAt = Chronos::now()->addDays($days);
-
-        try {
-            $jwt = $this->jwtProvider->buildSubscriptionToken($expiresAt);
-        } catch (Throwable $e) {
-            throw MercureException::mercureNotConfigured($e);
-        }
+        $jwt = $this->jwtProvider->buildSubscriptionToken($expiresAt);
 
         return new JsonResponse([
             'mercureHubUrl' => sprintf('%s/.well-known/mercure', $hubUrl),

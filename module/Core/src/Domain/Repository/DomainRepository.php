@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Domain\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
-use Happyr\DoctrineSpecification\Spec;
 use Shlinkio\Shlink\Core\Domain\Spec\IsDomain;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -40,8 +40,25 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
 
     public function findOneByAuthority(string $authority, ?ApiKey $apiKey = null): ?Domain
     {
-        $qb = $this->createQueryBuilder('d');
-        $qb->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
+        $qb = $this->createDomainQueryBuilder($authority, $apiKey);
+        $qb->select('d');
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function domainExists(string $authority, ?ApiKey $apiKey = null): bool
+    {
+        $qb = $this->createDomainQueryBuilder($authority, $apiKey);
+        $qb->select('COUNT(d.id)');
+
+        return ((int) $qb->getQuery()->getSingleScalarResult()) > 0;
+    }
+
+    private function createDomainQueryBuilder(string $authority, ?ApiKey $apiKey): QueryBuilder
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(Domain::class, 'd')
+           ->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
            ->where($qb->expr()->eq('d.authority', ':authority'))
            ->setParameter('authority', $authority)
            ->setMaxResults(1);
@@ -51,7 +68,7 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
             $this->applySpecification($qb, $spec, $alias);
         }
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb;
     }
 
     private function determineExtraSpecs(?ApiKey $apiKey): iterable
@@ -59,10 +76,9 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
         // FIXME The $apiKey->spec() method cannot be used here, as it returns a single spec which assumes the
         //       ShortUrl is the root entity. Here, the Domain is the root entity.
         //       Think on a way to centralize the conditional behavior and make $apiKey->spec() more flexible.
-        yield from $apiKey?->mapRoles(fn (string $roleName, array $meta) => match ($roleName) {
+        yield from $apiKey?->mapRoles(fn (Role $role, array $meta) => match ($role) {
             Role::DOMAIN_SPECIFIC => ['d', new IsDomain(Role::domainIdFromMeta($meta))],
             Role::AUTHORED_SHORT_URLS => ['s', new BelongsToApiKey($apiKey)],
-            default => [null, Spec::andX()],
         }) ?? [];
     }
 }

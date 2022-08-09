@@ -73,13 +73,16 @@ class GenerateKeyCommand extends Command
                 $authorOnly,
                 'a',
                 InputOption::VALUE_NONE,
-                sprintf('Adds the "%s" role to the new API key.', Role::AUTHORED_SHORT_URLS),
+                sprintf('Adds the "%s" role to the new API key.', Role::AUTHORED_SHORT_URLS->value),
             )
             ->addOption(
                 $domainOnly,
                 'd',
                 InputOption::VALUE_REQUIRED,
-                sprintf('Adds the "%s" role to the new API key, with the domain provided.', Role::DOMAIN_SPECIFIC),
+                sprintf(
+                    'Adds the "%s" role to the new API key, with the domain provided.',
+                    Role::DOMAIN_SPECIFIC->value,
+                ),
             )
             ->setHelp($help);
     }
@@ -99,7 +102,7 @@ class GenerateKeyCommand extends Command
         if (! $apiKey->isAdmin()) {
             ShlinkTable::default($io)->render(
                 ['Role name', 'Role metadata'],
-                $apiKey->mapRoles(fn (string $name, array $meta) => [$name, arrayToString($meta, 0)]),
+                $apiKey->mapRoles(fn (Role $role, array $meta) => [$role->value, arrayToString($meta, 0)]),
                 null,
                 'Roles',
             );

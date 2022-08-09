@@ -24,9 +24,9 @@ class VisitorTest extends TestCase
         $visitor = new Visitor(...$params);
         ['userAgent' => $userAgent, 'referer' => $referer, 'remoteAddress' => $remoteAddress] = $expected;
 
-        self::assertEquals($userAgent, $visitor->getUserAgent());
-        self::assertEquals($referer, $visitor->getReferer());
-        self::assertEquals($remoteAddress, $visitor->getRemoteAddress());
+        self::assertEquals($userAgent, $visitor->userAgent);
+        self::assertEquals($referer, $visitor->referer);
+        self::assertEquals($remoteAddress, $visitor->remoteAddress);
     }
 
     public function provideParams(): iterable
@@ -89,11 +89,11 @@ class VisitorTest extends TestCase
         ]));
 
         self::assertNotSame($visitor, $normalizedVisitor);
-        self::assertEmpty($normalizedVisitor->getUserAgent());
-        self::assertNotEmpty($visitor->getUserAgent());
-        self::assertEmpty($normalizedVisitor->getReferer());
-        self::assertNotEmpty($visitor->getReferer());
-        self::assertNull($normalizedVisitor->getRemoteAddress());
-        self::assertNotNull($visitor->getRemoteAddress());
+        self::assertEmpty($normalizedVisitor->userAgent);
+        self::assertNotEmpty($visitor->userAgent);
+        self::assertEmpty($normalizedVisitor->referer);
+        self::assertNotEmpty($visitor->referer);
+        self::assertNull($normalizedVisitor->remoteAddress);
+        self::assertNotNull($visitor->remoteAddress);
     }
 }

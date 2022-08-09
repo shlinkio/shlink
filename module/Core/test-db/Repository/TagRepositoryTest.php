@@ -64,7 +64,7 @@ class TagRepositoryTest extends DatabaseTestCase
             $this->getEntityManager()->persist(new Tag($name));
         }
 
-        $apiKey = $filtering?->apiKey();
+        $apiKey = $filtering?->apiKey;
         if ($apiKey !== null) {
             $this->getEntityManager()->persist($apiKey);
         }
@@ -101,9 +101,9 @@ class TagRepositoryTest extends DatabaseTestCase
 
         self::assertCount(count($expectedList), $result);
         foreach ($expectedList as $index => [$tag, $shortUrlsCount, $visitsCount]) {
-            self::assertEquals($shortUrlsCount, $result[$index]->shortUrlsCount());
-            self::assertEquals($visitsCount, $result[$index]->visitsCount());
-            self::assertEquals($tag, $result[$index]->tag());
+            self::assertEquals($shortUrlsCount, $result[$index]->shortUrlsCount);
+            self::assertEquals($visitsCount, $result[$index]->visitsCount);
+            self::assertEquals($tag, $result[$index]->tag);
         }
     }
 

@@ -6,9 +6,11 @@ namespace Shlinkio\Shlink\Core;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
+use Doctrine\ORM\Mapping\Builder\FieldBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Core\Model\Visitor;
+use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 
 return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
@@ -61,10 +63,13 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->nullable()
             ->build();
 
-    $builder->createField('type', Types::STRING)
-            ->columnName('type')
-            ->length(255)
-            ->build();
+    (new FieldBuilder($builder, [
+        'fieldName' => 'type',
+        'type' => Types::STRING,
+        'enumType' => VisitType::class,
+    ]))->columnName('type')
+       ->length(255)
+       ->build();
 
     $builder->createField('potentialBot', Types::BOOLEAN)
             ->columnName('potential_bot')

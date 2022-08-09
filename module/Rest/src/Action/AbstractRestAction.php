@@ -8,8 +8,6 @@ use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-use function array_merge;
-
 abstract class AbstractRestAction implements RequestHandlerInterface, RequestMethodInterface, StatusCodeInterface
 {
     protected const ROUTE_PATH = '';
@@ -19,7 +17,7 @@ abstract class AbstractRestAction implements RequestHandlerInterface, RequestMet
     {
         return [
             'name' => static::class,
-            'middleware' => array_merge($prevMiddleware, [static::class], $postMiddleware),
+            'middleware' => [...$prevMiddleware, static::class, ...$postMiddleware],
             'path' => static::ROUTE_PATH,
             'allowed_methods' => static::ROUTE_ALLOWED_METHODS,
         ];

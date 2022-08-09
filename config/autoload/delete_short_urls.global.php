@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
 return (static function (): array {
-    $threshold = EnvVars::DELETE_SHORT_URL_THRESHOLD()->loadFromEnv();
+    $threshold = EnvVars::DELETE_SHORT_URL_THRESHOLD->loadFromEnv();
 
     return [
 

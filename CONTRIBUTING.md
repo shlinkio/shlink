@@ -46,9 +46,7 @@ This is a simplified version of the project structure:
 ```
 shlink
 ├── bin
-│   ├── cli
-│   ├── install
-│   └── update
+│   └── cli
 ├── config
 │   ├── autoload
 │   ├── params
@@ -75,11 +73,11 @@ shlink
 
 The purposes of every folder are:
 
-* `bin`: It contains the CLI tools. The `cli` one is the main entry point to run shlink from the command line, while `install` and `update` are helper tools used to install and update shlink when not using the docker image.
+* `bin`: It contains the CLI tools. The `cli` one is the main entry point to run shlink from the command line.
 * `config`: Contains application-wide configurations, which are later merged with the ones provided by every module.
 * `data`: Common runtime-generated git-ignored assets, like logs, caches, etc.
 * `docs`: Any project documentation is stored here, like API spec definitions or architectural decision records.
-* `module`: Contains a subfolder for every module in the project. Modules contain the source code, tests and configurations for every context in the project.
+* `module`: Contains a sub-folder for every module in the project. Modules contain the source code, tests and configurations for every context in the project.
 * `public`: Few assets (like `favicon.ico` or `robots.txt`) and the web entry point are stored here. This web entry point is not used when serving the app with openswoole.
 
 ## Project tests
@@ -124,12 +122,6 @@ Depending on the kind of contribution, maybe not all kinds of tests are needed, 
 * Run `./indocker composer infect:test` to run both unit and database tests (over sqlite) and then apply mutations to them with [infection](https://infection.github.io/).
 * Run `./indocker composer ci` to run all previous commands together. This command is run during the project's continuous integration.
 * Run `./indocker composer ci:parallel` to do the same as in previous case, but parallelizing non-conflicting tasks as much as possible.
-
-> Note: Due to some limitations in the tooling used by shlink, the testing databases need to exist beforehand, both for db and api tests (except sqlite).
->
-> However, they just need to be created empty, with no tables. Also, once created, they are automatically reset before every new execution.
->
-> The testing database is always called `shlink_test`. You can create it using the database client of your choice. [DBeaver](https://dbeaver.io/) is a good multi-platform desktop database client which supports all the engines supported by shlink.
 
 ## Pull request process
 

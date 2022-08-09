@@ -6,24 +6,22 @@ namespace Shlinkio\Shlink\Core\Model;
 
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\Validation\ShortUrlsParamsInputFilter;
 
 use function Shlinkio\Shlink\Common\buildDateRange;
-use function Shlinkio\Shlink\Core\parseDateField;
+use function Shlinkio\Shlink\Core\normalizeDate;
 
 final class ShortUrlsParams
 {
     public const ORDERABLE_FIELDS = ['longUrl', 'shortCode', 'dateCreated', 'title', 'visits'];
     public const DEFAULT_ITEMS_PER_PAGE = 10;
-    public const TAGS_MODE_ANY = 'any';
-    public const TAGS_MODE_ALL = 'all';
 
     private int $page;
     private int $itemsPerPage;
     private ?string $searchTerm;
     private array $tags;
-    /** @var self::TAGS_MODE_ANY|self::TAGS_MODE_ALL */
-    private string $tagsMode = self::TAGS_MODE_ANY;
+    private TagsMode $tagsMode = TagsMode::ANY;
     private Ordering $orderBy;
     private ?DateRange $dateRange;
 
@@ -61,14 +59,23 @@ final class ShortUrlsParams
         $this->searchTerm = $inputFilter->getValue(ShortUrlsParamsInputFilter::SEARCH_TERM);
         $this->tags = (array) $inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS);
         $this->dateRange = buildDateRange(
-            parseDateField($inputFilter->getValue(ShortUrlsParamsInputFilter::START_DATE)),
-            parseDateField($inputFilter->getValue(ShortUrlsParamsInputFilter::END_DATE)),
+            normalizeDate($inputFilter->getValue(ShortUrlsParamsInputFilter::START_DATE)),
+            normalizeDate($inputFilter->getValue(ShortUrlsParamsInputFilter::END_DATE)),
         );
         $this->orderBy = Ordering::fromTuple($inputFilter->getValue(ShortUrlsParamsInputFilter::ORDER_BY));
         $this->itemsPerPage = (int) (
             $inputFilter->getValue(ShortUrlsParamsInputFilter::ITEMS_PER_PAGE) ?? self::DEFAULT_ITEMS_PER_PAGE
         );
-        $this->tagsMode = $inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS_MODE) ?? self::TAGS_MODE_ANY;
+        $this->tagsMode = $this->resolveTagsMode($inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS_MODE));
+    }
+
+    private function resolveTagsMode(?string $rawTagsMode): TagsMode
+    {
+        if ($rawTagsMode === null) {
+            return TagsMode::ANY;
+        }
+
+        return TagsMode::tryFrom($rawTagsMode) ?? TagsMode::ANY;
     }
 
     public function page(): int
@@ -101,10 +108,7 @@ final class ShortUrlsParams
         return $this->dateRange;
     }
 
-    /**
-     * @return self::TAGS_MODE_ANY|self::TAGS_MODE_ALL
-     */
-    public function tagsMode(): string
+    public function tagsMode(): TagsMode
     {
         return $this->tagsMode;
     }

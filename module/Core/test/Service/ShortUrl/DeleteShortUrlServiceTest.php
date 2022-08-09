@@ -55,7 +55,7 @@ class DeleteShortUrlServiceTest extends TestCase
             $this->shortCode,
         ));
 
-        $service->deleteByShortCode(new ShortUrlIdentifier($this->shortCode));
+        $service->deleteByShortCode(ShortUrlIdentifier::fromShortCodeAndDomain($this->shortCode));
     }
 
     /** @test */
@@ -66,7 +66,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
         $flush = $this->em->flush()->willReturn(null);
 
-        $service->deleteByShortCode(new ShortUrlIdentifier($this->shortCode), true);
+        $service->deleteByShortCode(ShortUrlIdentifier::fromShortCodeAndDomain($this->shortCode), true);
 
         $remove->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
@@ -80,7 +80,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
         $flush = $this->em->flush()->willReturn(null);
 
-        $service->deleteByShortCode(new ShortUrlIdentifier($this->shortCode));
+        $service->deleteByShortCode(ShortUrlIdentifier::fromShortCodeAndDomain($this->shortCode));
 
         $remove->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();
@@ -94,7 +94,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
         $flush = $this->em->flush()->willReturn(null);
 
-        $service->deleteByShortCode(new ShortUrlIdentifier($this->shortCode));
+        $service->deleteByShortCode(ShortUrlIdentifier::fromShortCodeAndDomain($this->shortCode));
 
         $remove->shouldHaveBeenCalledOnce();
         $flush->shouldHaveBeenCalledOnce();

@@ -10,7 +10,7 @@ use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use League\Event\EventDispatcher;
 use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
+use Monolog\Level;
 use PHPUnit\Runner\Version;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -26,6 +26,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Shlinkio\Shlink\Common\Logger\LoggerType;
 
 use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
@@ -107,16 +108,10 @@ $buildDbConnection = static function (): array {
     };
 };
 
-$buildTestLoggerConfig = fn (string $handlerName, string $filename) => [
-    'handlers' => [
-        $handlerName => [
-            'name' => StreamHandler::class,
-            'params' => [
-                'level' => Logger::DEBUG,
-                'stream' => sprintf('data/log/api-tests/%s', $filename),
-            ],
-        ],
-    ],
+$buildTestLoggerConfig = static fn (string $filename) => [
+    'level' => Level::Debug->value,
+    'type' => LoggerType::STREAM->value,
+    'destination' => sprintf('data/log/api-tests/%s', $filename),
 ];
 
 return [
@@ -262,8 +257,8 @@ return [
     ],
 
     'logger' => [
-        'Shlink' => $buildTestLoggerConfig('shlink_handler', 'shlink.log'),
-        'Access' => $buildTestLoggerConfig('access_handler', 'access.log'),
+        'Shlink' => $buildTestLoggerConfig('shlink.log'),
+        'Access' => $buildTestLoggerConfig('access.log'),
     ],
 
 ];

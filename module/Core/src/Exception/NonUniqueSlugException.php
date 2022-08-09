@@ -38,6 +38,6 @@ class NonUniqueSlugException extends InvalidArgumentException implements Problem
 
     public static function fromImport(ImportedShlinkUrl $importedUrl): self
     {
-        return self::fromSlug($importedUrl->shortCode(), $importedUrl->domain());
+        return self::fromSlug($importedUrl->shortCode, $importedUrl->domain);
     }
 }

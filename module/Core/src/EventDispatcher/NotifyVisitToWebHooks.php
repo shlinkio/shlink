@@ -40,7 +40,7 @@ class NotifyVisitToWebHooks
             return;
         }
 
-        $visitId = $shortUrlLocated->visitId();
+        $visitId = $shortUrlLocated->visitId;
 
         /** @var Visit|null $visit */
         $visit = $this->em->find(Visit::class, $visitId);

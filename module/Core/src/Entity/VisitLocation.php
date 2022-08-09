@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Entity;
 
+use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
-use Shlinkio\Shlink\Core\Visit\Model\VisitLocationInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
-class VisitLocation extends AbstractEntity implements VisitLocationInterface
+class VisitLocation extends AbstractEntity implements JsonSerializable
 {
     private string $countryCode;
     private string $countryName;
@@ -28,13 +28,13 @@ class VisitLocation extends AbstractEntity implements VisitLocationInterface
     {
         $instance = new self();
 
-        $instance->countryCode = $location->countryCode();
-        $instance->countryName = $location->countryName();
-        $instance->regionName = $location->regionName();
-        $instance->cityName = $location->city();
-        $instance->latitude = $location->latitude();
-        $instance->longitude = $location->longitude();
-        $instance->timezone = $location->timeZone();
+        $instance->countryCode = $location->countryCode;
+        $instance->countryName = $location->countryName;
+        $instance->regionName = $location->regionName;
+        $instance->cityName = $location->city;
+        $instance->latitude = $location->latitude;
+        $instance->longitude = $location->longitude;
+        $instance->timezone = $location->timeZone;
         $instance->computeIsEmpty();
 
         return $instance;
@@ -44,13 +44,13 @@ class VisitLocation extends AbstractEntity implements VisitLocationInterface
     {
         $instance = new self();
 
-        $instance->countryCode = $location->countryCode();
-        $instance->countryName = $location->countryName();
-        $instance->regionName = $location->regionName();
-        $instance->cityName = $location->cityName();
-        $instance->latitude = $location->latitude();
-        $instance->longitude = $location->longitude();
-        $instance->timezone = $location->timeZone();
+        $instance->countryCode = $location->countryCode;
+        $instance->countryName = $location->countryName;
+        $instance->regionName = $location->regionName;
+        $instance->cityName = $location->cityName;
+        $instance->latitude = $location->latitude;
+        $instance->longitude = $location->longitude;
+        $instance->timezone = $location->timezone;
         $instance->computeIsEmpty();
 
         return $instance;

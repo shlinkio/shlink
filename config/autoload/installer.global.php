@@ -27,10 +27,12 @@ return [
             Option\Redirect\Regular404RedirectConfigOption::class,
             Option\Visit\VisitsThresholdConfigOption::class,
             Option\BasePathConfigOption::class,
+            Option\TimezoneConfigOption::class,
             Option\Worker\TaskWorkerNumConfigOption::class,
             Option\Worker\WebWorkerNumConfigOption::class,
             Option\Redis\RedisServersConfigOption::class,
             Option\Redis\RedisSentinelServiceConfigOption::class,
+            Option\Redis\RedisPubSubConfigOption::class,
             Option\UrlShortener\ShortCodeLengthOption::class,
             Option\Mercure\EnableMercureConfigOption::class,
             Option\Mercure\MercurePublicUrlConfigOption::class,
@@ -41,6 +43,7 @@ return [
             Option\UrlShortener\RedirectCacheLifeTimeConfigOption::class,
             Option\UrlShortener\AutoResolveTitlesConfigOption::class,
             Option\UrlShortener\AppendExtraPathConfigOption::class,
+            Option\UrlShortener\EnableMultiSegmentSlugsConfigOption::class,
             Option\Tracking\IpAnonymizationConfigOption::class,
             Option\Tracking\OrphanVisitsTrackingConfigOption::class,
             Option\Tracking\DisableTrackParamConfigOption::class,
@@ -63,13 +66,13 @@ return [
         ],
 
         'installation_commands' => [
-            InstallationCommand::DB_CREATE_SCHEMA => [
+            InstallationCommand::DB_CREATE_SCHEMA->value => [
                 'command' => 'bin/cli ' . Command\Db\CreateDatabaseCommand::NAME,
             ],
-            InstallationCommand::DB_MIGRATE => [
+            InstallationCommand::DB_MIGRATE->value => [
                 'command' => 'bin/cli ' . Command\Db\MigrateDatabaseCommand::NAME,
             ],
-            InstallationCommand::GEOLITE_DOWNLOAD_DB => [
+            InstallationCommand::GEOLITE_DOWNLOAD_DB->value => [
                 'command' => 'bin/cli ' . Command\Visit\DownloadGeoLiteDbCommand::NAME,
             ],
         ],

@@ -14,7 +14,7 @@ use function sprintf;
 
 final class ShortUrlImporting
 {
-    private function __construct(private ShortUrl $shortUrl, private bool $isNew)
+    private function __construct(private readonly ShortUrl $shortUrl, private readonly bool $isNew)
     {
     }
 
@@ -29,7 +29,7 @@ final class ShortUrlImporting
     }
 
     /**
-     * @param iterable|ImportedShlinkVisit[] $visits
+     * @param iterable<ImportedShlinkVisit> $visits
      */
     public function importVisits(iterable $visits, EntityManagerInterface $em): string
     {
@@ -38,7 +38,7 @@ final class ShortUrlImporting
         $importedVisits = 0;
         foreach ($visits as $importedVisit) {
             // Skip visits which are older than the most recent already imported visit's date
-            if ($mostRecentImportedDate?->gte(Chronos::instance($importedVisit->date()))) {
+            if ($mostRecentImportedDate?->gte(Chronos::instance($importedVisit->date))) {
                 continue;
             }
 

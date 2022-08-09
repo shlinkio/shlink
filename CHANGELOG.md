@@ -4,12 +4,114 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.2.1] - 2022-08-08
 ### Added
 * *Nothing*
 
 ### Changed
+* [#1495](https://github.com/shlinkio/shlink/issues/1495) Centralized how routes are configured to support multi-segment slugs.
+* [#1497](https://github.com/shlinkio/shlink/issues/1497) Updated to latest shlink dependencies with support for PHP 8.1 only.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1499](https://github.com/shlinkio/shlink/issues/1499) Fixed loading of config options as env vars, which was making all default configurations to be loaded unless env vars were explicitly provided.
+
+
+## [3.2.0] - 2022-08-05
+### Added
+* [#854](https://github.com/shlinkio/shlink/issues/854) Added support for multi-segment custom slugs.
+
+  The feature is disabled by default, but you can optionally opt in. If you do, you will be able to create short URLs with multiple segments in the custom slug, like `https://example.com/foo/bar/baz`.
+
+* [#1280](https://github.com/shlinkio/shlink/issues/1280) Added missing visit-related commands.
+
+  Now you can run `tag:visits`, `domain:visits`, `visit:orphan` or `visit:non-orphan` to get the corresponding list of visits from the command line.
+
+* [#962](https://github.com/shlinkio/shlink/issues/962) Added new real-time update for new short URLs.
+
+  You can now subscribe to the `https://shlink.io/new-short-url` topic on any of the supported async updates technologies in order to get notified when a short URL is created.
+
+* [#1367](https://github.com/shlinkio/shlink/issues/1367) Added support to publish real-time updates in redis pub/sub.
+
+  The publishing will happen in the same redis instance/cluster configured for caching.
+
+### Changed
+* [#1452](https://github.com/shlinkio/shlink/issues/1452) Updated to monolog 3
+* [#1485](https://github.com/shlinkio/shlink/issues/1485) Changed payload published in RabbitMQ for all visits events, in order to conform with the Async API spec.
+
+  Since this is a breaking change, also provided a new `RABBITMQ_LEGACY_VISITS_PUBLISHING=true` env var that can be provided in order to keep the old payload.
+
+  This env var is considered deprecated and will be removed in Shlink 4, when the legacy format will no longer be supported.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* [#1280](https://github.com/shlinkio/shlink/issues/1280) Dropped support for PHP 8.0
+
+### Fixed
+* [#1471](https://github.com/shlinkio/shlink/issues/1471) Fixed error when running `visit:locate` command with any extra parameter (like `--retry`).
+
+
+## [3.1.2] - 2022-06-04
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1448](https://github.com/shlinkio/shlink/issues/1448) Fixed HTML entities not being properly parsed when auto-resolving page titles.
+* [#1458](https://github.com/shlinkio/shlink/issues/1458) Fixed 500 error when filtering short URLs by ALL tags and search term.
+
+
+## [3.1.1] - 2022-05-09
+### Added
+* *Nothing*
+
+### Changed
+* [#1444](https://github.com/shlinkio/shlink/issues/1444) Updated docker image to openswoole 4.11.1, in an attempt to fix error.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1439](https://github.com/shlinkio/shlink/issues/1439) Fixed crash when trying to auto-resolve titles for URLs which serve large binary files.
+
+
+## [3.1.0] - 2022-04-23
+### Added
+* [#1294](https://github.com/shlinkio/shlink/issues/1294) Allowed to provide a specific domain when importing URLs from YOURLS.
+* [#1416](https://github.com/shlinkio/shlink/issues/1416) Added support to import URLs from Kutt.it.
+* [#1418](https://github.com/shlinkio/shlink/issues/1418) Added support to customize the timezone used by Shlink, falling back to the default one set in PHP config.
+
+  The timezone can be set via the `TIMEZONE` env var, or using the installer tool.
+
+* [#1309](https://github.com/shlinkio/shlink/issues/1309) Improved URL importing, ensuring individual errors do not make the whole process fail, and instead, failing URLs are skipped.
+* [#1162](https://github.com/shlinkio/shlink/issues/1162) Added new endpoint to get visits by domain.
+
+  The endpoint is `GET /domains/{domain}/visits`, and it has the same capabilities as any other visits endpoint, allowing pagination and filtering.
+
+### Changed
 * [#1359](https://github.com/shlinkio/shlink/issues/1359) Hidden database commands.
+* [#1385](https://github.com/shlinkio/shlink/issues/1385) Prevented a big error message from being logged when using Shlink without mercure.
+* [#1398](https://github.com/shlinkio/shlink/issues/1398) Increased required mutation score for unit tests to 85%.
+* [#1419](https://github.com/shlinkio/shlink/issues/1419) Input dates are now parsed to Shlink's configured timezone or default timezone before using them for database queries.
+* [#1428](https://github.com/shlinkio/shlink/issues/1428) Updated native dependencies in docker image and base image to PHP v8.1.5.
 
 ### Deprecated
 * [#1340](https://github.com/shlinkio/shlink/issues/1340) Deprecated webhooks. New events will only be added to other real-time updates approaches, and webhooks will be completely removed in Shlink 4.0.0.
@@ -18,7 +120,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
+* [#1397](https://github.com/shlinkio/shlink/issues/1397) Fixed `db:create` command always reporting the schema exists if the `db:migrate` command has been run before by mistake.
+* [#1402](https://github.com/shlinkio/shlink/issues/1402) Fixed the base path getting appended with the default domain by mistake, causing multiple side effects in several places.
+
+
+## [3.0.3] - 2022-02-19
+### Added
 * *Nothing*
+
+### Changed
+* [#1382](https://github.com/shlinkio/shlink/issues/1382) Updated docker image to PHP 8.1.3.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1377](https://github.com/shlinkio/shlink/issues/1377) Fixed installer always setting delete threshold with value 1.
+* [#1379](https://github.com/shlinkio/shlink/issues/1379) Ensured API keys cannot be created with a domain-only role linked to default domain.
 
 
 ## [3.0.2] - 2022-02-10
@@ -538,7 +659,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* [#979](https://github.com/shlinkio/shlink/issues/979) Added missing `itemsPerPage` query param to swagger docs for short RULs list.
+* [#979](https://github.com/shlinkio/shlink/issues/979) Added missing `itemsPerPage` query param to swagger docs for short URLs list.
 * [#980](https://github.com/shlinkio/shlink/issues/980) Fixed value used for `Access-Control-Allow-Origin`, that could not work as expected when including an IP address.
 * [#947](https://github.com/shlinkio/shlink/issues/947) Fixed incorrect value returned in `Access-Control-Allow-Methods` header, which always contained all methods.
 
@@ -1186,7 +1307,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Endpoints and commands which create short URLs support providing the `domain` now (via query param or CLI flag). If not provided, the short URLs will still be "attached" to the default domain.
 
-    Custom slugs can be created on multiple domains, allowing to share links like `https://doma.in/my-compaign` and `https://example.com/my-campaign`, under the same shlink instance.
+    Custom slugs can be created on multiple domains, allowing to share links like `https://doma.in/my-campaign` and `https://example.com/my-campaign`, under the same shlink instance.
 
     When resolving a short URL to redirect end users, the following rules are applied:
 
@@ -1436,7 +1557,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#309](https://github.com/shlinkio/shlink/issues/309) Added missing favicon to prevent 404 errors logged when an error page is loaded in a browser.
-* [#310](https://github.com/shlinkio/shlink/issues/310) Fixed execution context not being properly detected, making `CloseDbConnectionMiddlware` to be always piped. Now the check is not even made, which simplifies everything.
+* [#310](https://github.com/shlinkio/shlink/issues/310) Fixed execution context not being properly detected, making `CloseDbConnectionMiddleware` to be always piped. Now the check is not even made, which simplifies everything.
 
 
 ## [1.15.0] - 2018-12-02
@@ -1501,7 +1622,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#241](https://github.com/shlinkio/shlink/issues/241) Fixed columns in `visit_locations` table, to be snake_case instead of camelCase.
-* [#228](https://github.com/shlinkio/shlink/issues/228) Updated how exceptions are serialized into logs, by using monlog's `PsrLogMessageProcessor`.
+* [#228](https://github.com/shlinkio/shlink/issues/228) Updated how exceptions are serialized into logs, by using monolog's `PsrLogMessageProcessor`.
 * [#225](https://github.com/shlinkio/shlink/issues/225) Performance and maintainability slightly improved by enforcing via code sniffer that all global namespace classes, functions and constants are explicitly imported.
 * [#196](https://github.com/shlinkio/shlink/issues/196) Reduced anemic model in entities, defining more expressive public APIs instead.
 * [#249](https://github.com/shlinkio/shlink/issues/249) Added [functional-php](https://github.com/lstrojny/functional-php) to ease collections handling.

@@ -91,7 +91,7 @@ class ShortUrlResolverTest extends TestCase
         )->willReturn($shortUrl);
         $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
 
-        $result = $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode));
+        $result = $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode));
 
         self::assertSame($shortUrl, $result);
         $findOneByShortCode->shouldHaveBeenCalledOnce();
@@ -116,7 +116,7 @@ class ShortUrlResolverTest extends TestCase
         $findOneByShortCode->shouldBeCalledOnce();
         $getRepo->shouldBeCalledOnce();
 
-        $this->urlResolver->resolveEnabledShortUrl(new ShortUrlIdentifier($shortCode));
+        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode));
     }
 
     public function provideDisabledShortUrls(): iterable

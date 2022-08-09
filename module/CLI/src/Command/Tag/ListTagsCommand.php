@@ -46,7 +46,7 @@ class ListTagsCommand extends Command
 
         return map(
             $tags,
-            static fn (TagInfo $tagInfo) => [$tagInfo->tag(), $tagInfo->shortUrlsCount(), $tagInfo->visitsCount()],
+            static fn (TagInfo $tagInfo) => [$tagInfo->tag, $tagInfo->shortUrlsCount, $tagInfo->visitsCount],
         );
     }
 }

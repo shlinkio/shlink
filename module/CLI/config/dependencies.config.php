@@ -11,6 +11,7 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
@@ -42,11 +43,13 @@ return [
             Command\ShortUrl\CreateShortUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ResolveUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ListShortUrlsCommand::class => ConfigAbstractFactory::class,
-            Command\ShortUrl\GetVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\GetShortUrlVisitsCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\DeleteShortUrlCommand::class => ConfigAbstractFactory::class,
 
             Command\Visit\DownloadGeoLiteDbCommand::class => ConfigAbstractFactory::class,
             Command\Visit\LocateVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\Visit\GetOrphanVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\Visit\GetNonOrphanVisitsCommand::class => ConfigAbstractFactory::class,
 
             Command\Api\GenerateKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\DisableKeyCommand::class => ConfigAbstractFactory::class,
@@ -55,12 +58,14 @@ return [
             Command\Tag\ListTagsCommand::class => ConfigAbstractFactory::class,
             Command\Tag\RenameTagCommand::class => ConfigAbstractFactory::class,
             Command\Tag\DeleteTagsCommand::class => ConfigAbstractFactory::class,
+            Command\Tag\GetTagVisitsCommand::class => ConfigAbstractFactory::class,
 
             Command\Db\CreateDatabaseCommand::class => ConfigAbstractFactory::class,
             Command\Db\MigrateDatabaseCommand::class => ConfigAbstractFactory::class,
 
             Command\Domain\ListDomainsCommand::class => ConfigAbstractFactory::class,
             Command\Domain\DomainRedirectsCommand::class => ConfigAbstractFactory::class,
+            Command\Domain\GetDomainVisitsCommand::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -72,20 +77,19 @@ return [
             TrackingOptions::class,
         ],
         Util\ProcessRunner::class => [SymfonyCli\Helper\ProcessHelper::class],
-        ApiKey\RoleResolver::class => [DomainService::class],
+        ApiKey\RoleResolver::class => [DomainService::class, 'config.url_shortener.domain.hostname'],
 
         Command\ShortUrl\CreateShortUrlCommand::class => [
             Service\UrlShortener::class,
             ShortUrlStringifier::class,
-            'config.url_shortener.default_short_codes_length',
-            'config.url_shortener.domain.hostname',
+            UrlShortenerOptions::class,
         ],
         Command\ShortUrl\ResolveUrlCommand::class => [Service\ShortUrl\ShortUrlResolver::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [
             Service\ShortUrlService::class,
             ShortUrlDataTransformer::class,
         ],
-        Command\ShortUrl\GetVisitsCommand::class => [Visit\VisitsStatsHelper::class],
+        Command\ShortUrl\GetShortUrlVisitsCommand::class => [Visit\VisitsStatsHelper::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
 
         Command\Visit\DownloadGeoLiteDbCommand::class => [Util\GeolocationDbUpdater::class],
@@ -94,6 +98,8 @@ return [
             IpLocationResolverInterface::class,
             LockFactory::class,
         ],
+        Command\Visit\GetOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class],
+        Command\Visit\GetNonOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
 
         Command\Api\GenerateKeyCommand::class => [ApiKeyService::class, ApiKey\RoleResolver::class],
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class],
@@ -102,9 +108,11 @@ return [
         Command\Tag\ListTagsCommand::class => [TagService::class],
         Command\Tag\RenameTagCommand::class => [TagService::class],
         Command\Tag\DeleteTagsCommand::class => [TagService::class],
+        Command\Tag\GetTagVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
 
         Command\Domain\ListDomainsCommand::class => [DomainService::class],
         Command\Domain\DomainRedirectsCommand::class => [DomainService::class],
+        Command\Domain\GetDomainVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
 
         Command\Db\CreateDatabaseCommand::class => [
             LockFactory::class,

@@ -53,7 +53,7 @@
             {
                 "name": "errorCorrection",
                 "in": "query",
-                "description": "The error correction level to apply to the the QR code: **[L]**ow, **[M]**edium, **[Q]**uartile or **[H]**igh. See [docs](https://www.qrcode.com/en/about/error_correction.html).",
+                "description": "The error correction level to apply to the QR code: **[L]**ow, **[M]**edium, **[Q]**uartile or **[H]**igh. See [docs](https://www.qrcode.com/en/about/error_correction.html).",
                 "required": false,
                 "schema": {
                     "type": "string",

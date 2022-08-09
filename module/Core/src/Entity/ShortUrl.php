@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
+use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -93,31 +94,31 @@ class ShortUrl extends AbstractEntity
     ): self {
         $meta = [
             ShortUrlInputFilter::VALIDATE_URL => false,
-            ShortUrlInputFilter::LONG_URL => $url->longUrl(),
-            ShortUrlInputFilter::DOMAIN => $url->domain(),
-            ShortUrlInputFilter::TAGS => $url->tags(),
-            ShortUrlInputFilter::TITLE => $url->title(),
-            ShortUrlInputFilter::MAX_VISITS => $url->meta()->maxVisits(),
+            ShortUrlInputFilter::LONG_URL => $url->longUrl,
+            ShortUrlInputFilter::DOMAIN => $url->domain,
+            ShortUrlInputFilter::TAGS => $url->tags,
+            ShortUrlInputFilter::TITLE => $url->title,
+            ShortUrlInputFilter::MAX_VISITS => $url->meta->maxVisits,
         ];
         if ($importShortCode) {
-            $meta[ShortUrlInputFilter::CUSTOM_SLUG] = $url->shortCode();
+            $meta[ShortUrlInputFilter::CUSTOM_SLUG] = $url->shortCode;
         }
 
         $instance = self::fromMeta(ShortUrlMeta::fromRawData($meta), $relationResolver);
 
-        $validSince = $url->meta()->validSince();
+        $validSince = $url->meta->validSince;
         if ($validSince !== null) {
             $instance->validSince = Chronos::instance($validSince);
         }
 
-        $validUntil = $url->meta()->validUntil();
+        $validUntil = $url->meta->validUntil;
         if ($validUntil !== null) {
             $instance->validUntil = Chronos::instance($validUntil);
         }
 
-        $instance->importSource = $url->source();
-        $instance->importOriginalShortCode = $url->shortCode();
-        $instance->dateCreated = Chronos::instance($url->createdAt());
+        $instance->importSource = $url->source->value;
+        $instance->importOriginalShortCode = $url->shortCode;
+        $instance->dateCreated = Chronos::instance($url->createdAt);
 
         return $instance;
     }
@@ -174,7 +175,7 @@ class ShortUrl extends AbstractEntity
     {
         /** @var Selectable $visits */
         $visits = $this->visits;
-        $criteria = Criteria::create()->where(Criteria::expr()->eq('type', Visit::TYPE_IMPORTED))
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('type', VisitType::IMPORTED))
                                       ->orderBy(['id' => 'DESC'])
                                       ->setMaxResults(1);
 

@@ -12,10 +12,11 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
-use function Shlinkio\Shlink\Core\parseDateField;
+use function Shlinkio\Shlink\Core\normalizeDate;
 
 use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
+// TODO Rename to ShortUrlCreation
 final class ShortUrlMeta implements TitleResolutionModelInterface
 {
     private string $longUrl;
@@ -68,8 +69,8 @@ final class ShortUrlMeta implements TitleResolutionModelInterface
         }
 
         $this->longUrl = $inputFilter->getValue(ShortUrlInputFilter::LONG_URL);
-        $this->validSince = parseDateField($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
-        $this->validUntil = parseDateField($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL));
+        $this->validSince = normalizeDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
+        $this->validUntil = normalizeDate($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL));
         $this->customSlug = $inputFilter->getValue(ShortUrlInputFilter::CUSTOM_SLUG);
         $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlInputFilter::MAX_VISITS);
         $this->findIfExists = $inputFilter->getValue(ShortUrlInputFilter::FIND_IF_EXISTS);

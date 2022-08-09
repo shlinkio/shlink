@@ -41,8 +41,8 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
      */
     public function findTagsWithInfo(?TagsListFiltering $filtering = null): array
     {
-        $orderField = $filtering?->orderBy()?->orderField();
-        $orderDir = $filtering?->orderBy()?->orderDirection();
+        $orderField = $filtering?->orderBy?->field;
+        $orderDir = $filtering?->orderBy?->direction;
         $orderMainQuery = contains(['shortUrlsCount', 'visitsCount'], $orderField);
 
         $conn = $this->getEntityManager()->getConnection();
@@ -51,16 +51,16 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
 
         if (! $orderMainQuery) {
             $subQb->orderBy('t.name', $orderDir ?? 'ASC')
-                  ->setMaxResults($filtering?->limit() ?? PHP_INT_MAX)
-                  ->setFirstResult($filtering?->offset() ?? 0);
+                  ->setMaxResults($filtering?->limit ?? PHP_INT_MAX)
+                  ->setFirstResult($filtering?->offset ?? 0);
         }
 
-        $searchTerm = $filtering?->searchTerm();
+        $searchTerm = $filtering?->searchTerm;
         if ($searchTerm !== null) {
             $subQb->andWhere($subQb->expr()->like('t.name', $conn->quote('%' . $searchTerm . '%')));
         }
 
-        $apiKey = $filtering?->apiKey();
+        $apiKey = $filtering?->apiKey;
         $this->applySpecification($subQb, new WithInlinedApiKeySpecsEnsuringJoin($apiKey), 't');
 
         // A native query builder needs to be used here, because DQL and ORM query builders do not support
@@ -74,21 +74,20 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
                 'COUNT(DISTINCT s.id) AS short_urls_count',
                 'COUNT(DISTINCT v.id) AS visits_count',
             )
-            ->from('(' . $subQb->getQuery()->getSQL() . ')', 't')
+            ->from('(' . $subQb->getQuery()->getSQL() . ')', 't') // @phpstan-ignore-line
             ->leftJoin('t', 'short_urls_in_tags', 'st', $nativeQb->expr()->eq('t.id_0', 'st.tag_id'))
             ->leftJoin('st', 'short_urls', 's', $nativeQb->expr()->eq('s.id', 'st.short_url_id'))
             ->leftJoin('st', 'visits', 'v', $nativeQb->expr()->eq('s.id', 'v.short_url_id'))
             ->groupBy('t.id_0', 't.name_1');
 
         // Apply API key role conditions to the native query too, as they will affect the amounts on the aggregates
-        $apiKey?->mapRoles(static fn (string $roleName, array $meta) => match ($roleName) {
+        $apiKey?->mapRoles(static fn (Role $role, array $meta) => match ($role) {
             Role::DOMAIN_SPECIFIC => $nativeQb->andWhere(
                 $nativeQb->expr()->eq('s.domain_id', $conn->quote(Role::domainIdFromMeta($meta))),
             ),
             Role::AUTHORED_SHORT_URLS => $nativeQb->andWhere(
                 $nativeQb->expr()->eq('s.author_api_key_id', $conn->quote($apiKey->getId())),
             ),
-            default => $nativeQb,
         });
 
         if ($orderMainQuery) {
@@ -97,8 +96,8 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
                     $orderField === 'shortUrlsCount' ? 'short_urls_count' : 'visits_count',
                     $orderDir ?? 'ASC',
                 )
-                ->setMaxResults($filtering?->limit() ?? PHP_INT_MAX)
-                ->setFirstResult($filtering?->offset() ?? 0);
+                ->setMaxResults($filtering?->limit ?? PHP_INT_MAX)
+                ->setFirstResult($filtering?->offset ?? 0);
         }
 
         // Add ordering by tag name, as a fallback in case of same amount, or as default ordering

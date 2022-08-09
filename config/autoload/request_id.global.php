@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use PhpMiddleware\RequestId;
+use Shlinkio\Shlink\Common\Logger\Processor\BackwardsCompatibleMonologProcessorDelegator;
 
 return [
 
@@ -19,6 +20,11 @@ return [
             RequestId\RequestIdProviderFactory::class => ConfigAbstractFactory::class,
             RequestId\RequestIdMiddleware::class => ConfigAbstractFactory::class,
             RequestId\MonologProcessor::class => ConfigAbstractFactory::class,
+        ],
+        'delegators' => [
+            RequestId\MonologProcessor::class => [
+                BackwardsCompatibleMonologProcessorDelegator::class,
+            ],
         ],
     ],
 

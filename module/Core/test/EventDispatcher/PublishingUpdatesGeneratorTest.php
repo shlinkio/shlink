@@ -2,27 +2,28 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Mercure;
+namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
-use Shlinkio\Shlink\Core\Mercure\MercureUpdatesGenerator;
+use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGenerator;
+use Shlinkio\Shlink\Core\EventDispatcher\Topic;
 use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
+use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
 
-use function Shlinkio\Shlink\Common\json_decode;
-
-class MercureUpdatesGeneratorTest extends TestCase
+class PublishingUpdatesGeneratorTest extends TestCase
 {
-    private MercureUpdatesGenerator $generator;
+    private PublishingUpdatesGenerator $generator;
 
     public function setUp(): void
     {
-        $this->generator = new MercureUpdatesGenerator(
+        $this->generator = new PublishingUpdatesGenerator(
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
             new OrphanVisitDataTransformer(),
         );
@@ -41,9 +42,10 @@ class MercureUpdatesGeneratorTest extends TestCase
         ]));
         $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
 
+        /** @var Update $update */
         $update = $this->generator->{$method}($visit);
 
-        self::assertEquals([$expectedTopic], $update->getTopics());
+        self::assertEquals($expectedTopic, $update->topic);
         self::assertEquals([
             'shortUrl' => [
                 'shortCode' => $shortUrl->getShortCode(),
@@ -69,7 +71,7 @@ class MercureUpdatesGeneratorTest extends TestCase
                 'date' => $visit->getDate()->toAtomString(),
                 'potentialBot' => false,
             ],
-        ], json_decode($update->getData()));
+        ], $update->payload);
     }
 
     public function provideMethod(): iterable
@@ -86,7 +88,7 @@ class MercureUpdatesGeneratorTest extends TestCase
     {
         $update = $this->generator->newOrphanVisitUpdate($orphanVisit);
 
-        self::assertEquals(['https://shlink.io/new-orphan-visit'], $update->getTopics());
+        self::assertEquals('https://shlink.io/new-orphan-visit', $update->topic);
         self::assertEquals([
             'visit' => [
                 'referer' => '',
@@ -95,17 +97,48 @@ class MercureUpdatesGeneratorTest extends TestCase
                 'date' => $orphanVisit->getDate()->toAtomString(),
                 'potentialBot' => false,
                 'visitedUrl' => $orphanVisit->visitedUrl(),
-                'type' => $orphanVisit->type(),
+                'type' => $orphanVisit->type()->value,
             ],
-        ], json_decode($update->getData()));
+        ], $update->payload);
     }
 
     public function provideOrphanVisits(): iterable
     {
         $visitor = Visitor::emptyInstance();
 
-        yield Visit::TYPE_REGULAR_404 => [Visit::forRegularNotFound($visitor)];
-        yield Visit::TYPE_INVALID_SHORT_URL => [Visit::forInvalidShortUrl($visitor)];
-        yield Visit::TYPE_BASE_URL => [Visit::forBasePath($visitor)];
+        yield VisitType::REGULAR_404->value => [Visit::forRegularNotFound($visitor)];
+        yield VisitType::INVALID_SHORT_URL->value => [Visit::forInvalidShortUrl($visitor)];
+        yield VisitType::BASE_URL->value => [Visit::forBasePath($visitor)];
+    }
+
+    /** @test */
+    public function shortUrlIsProperlySerializedIntoUpdate(): void
+    {
+        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+            'customSlug' => 'foo',
+            'longUrl' => '',
+            'title' => 'The title',
+        ]));
+
+        $update = $this->generator->newShortUrlUpdate($shortUrl);
+
+        self::assertEquals(Topic::NEW_SHORT_URL->value, $update->topic);
+        self::assertEquals(['shortUrl' => [
+            'shortCode' => $shortUrl->getShortCode(),
+            'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
+            'longUrl' => '',
+            'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
+            'visitsCount' => 0,
+            'tags' => [],
+            'meta' => [
+                'validSince' => null,
+                'validUntil' => null,
+                'maxVisits' => null,
+            ],
+            'domain' => null,
+            'title' => $shortUrl->title(),
+            'crawlable' => false,
+            'forwardQuery' => true,
+        ]], $update->payload);
     }
 }

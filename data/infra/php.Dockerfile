@@ -1,15 +1,14 @@
-FROM php:8.1.1-fpm-alpine3.15
+FROM php:8.1.9-fpm-alpine3.16
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.21
-ENV PDO_SQLSRV_VERSION 5.10.0
+ENV PDO_SQLSRV_VERSION 5.10.1
 ENV MS_ODBC_SQL_VERSION 17.5.2.2
 
 RUN apk update
 
 # Install common php extensions
 RUN docker-php-ext-install pdo_mysql
-RUN docker-php-ext-install iconv
 RUN docker-php-ext-install calendar
 
 RUN apk add --no-cache oniguruma-dev

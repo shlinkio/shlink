@@ -24,7 +24,7 @@ class ShortUrlNotFoundExceptionTest extends TestCase
             $expectedAdditional['domain'] = $domain;
         }
 
-        $e = ShortUrlNotFoundException::fromNotFound(new ShortUrlIdentifier($shortCode, $domain));
+        $e = ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain));
 
         self::assertEquals($expectedMessage, $e->getMessage());
         self::assertEquals($expectedMessage, $e->getDetail());

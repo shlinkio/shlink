@@ -7,10 +7,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.0']
+        php-version: ['8.1']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -23,7 +23,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.9.1
+          extensions: openswoole-4.11.1
           coverage: none
       - run: composer install --no-interaction --prefer-dist
       - run: composer swagger:inline

@@ -20,8 +20,8 @@ class ShortUrlNotFoundException extends DomainException implements ProblemDetail
 
     public static function fromNotFound(ShortUrlIdentifier $identifier): self
     {
-        $shortCode = $identifier->shortCode();
-        $domain = $identifier->domain();
+        $shortCode = $identifier->shortCode;
+        $domain = $identifier->domain;
         $suffix = $domain === null ? '' : sprintf(' for domain "%s"', $domain);
         $e = new self(sprintf('No URL found with short code "%s"%s', $shortCode, $suffix));
 
