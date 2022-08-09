@@ -57,8 +57,8 @@
     },
     "require-dev": {
         "cebe/php-openapi": "^1.7",
-        "dms/phpunit-arraysubset-asserts": "^0.4.0",
         "devster/ubench": "^2.1",
+        "dms/phpunit-arraysubset-asserts": "^0.4.0",
         "infection/infection": "^0.26.5",
         "openswoole/ide-helper": "~4.11.1",
         "phpspec/prophecy-phpunit": "^2.0",
@@ -115,12 +115,14 @@
         "test": [
             "@test:unit",
             "@test:db",
-            "@test:api"
+            "@test:api",
+            "@test:cli"
         ],
         "test:ci": [
             "@test:unit:ci",
             "@test:db",
-            "@test:api:ci"
+            "@test:api:ci",
+            "@test:cli:ci"
         ],
         "test:unit": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
         "test:unit:ci": "@test:unit --coverage-xml=build/coverage-unit/coverage-xml --log-junit=build/coverage-unit/junit.xml",
@@ -135,11 +137,12 @@
         "test:api": "bin/test/run-api-tests.sh",
         "test:api:ci": "GENERATE_COVERAGE=yes composer test:api",
         "test:cli": "APP_ENV=test DB_DRIVER=maria TEST_ENV=cli php vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-cli.xml",
-        "test:cli:ci": "GENERATE_COVERAGE=yes composer test:cli",
+        "test:cli:ci": "GENERATE_COVERAGE=yes composer test:cli -- --log-junit=build/coverage-cli/junit.xml",
         "infect:ci:base": "infection --threads=4 --log-verbosity=default --only-covered --only-covering-test-cases --skip-initial-tests",
         "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=84",
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json",
         "infect:ci:api": "@infect:ci:base --coverage=build/coverage-api --min-msi=80 --configuration=infection-api.json",
+        "infect:ci:cli": "@infect:ci:base --coverage=build/coverage-cli --min-msi=95 --configuration=infection-cli.json",
         "infect:ci": "@parallel infect:ci:unit infect:ci:db infect:ci:api",
         "infect:test": [
             "@parallel test:unit:ci test:db:sqlite:ci test:api:ci",
@@ -152,6 +155,10 @@
         "infect:test:api": [
             "@test:api:ci",
             "@infect:ci:api"
+        ],
+        "infect:test:cli": [
+            "@test:cli:ci",
+            "@infect:ci:cli"
         ],
         "swagger:validate": "php-openapi validate docs/swagger/swagger.json",
         "swagger:inline": "php-openapi inline docs/swagger/swagger.json docs/swagger/swagger-inlined.json",
