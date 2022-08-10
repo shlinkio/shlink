@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\TestUtils;
 
 use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
+
 use function file_exists;
 use function unlink;
 

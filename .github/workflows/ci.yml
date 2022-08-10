@@ -112,7 +112,7 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.1']
-        test-group: ['unit', 'db', 'api']
+        test-group: ['unit', 'db', 'api', 'cli']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
