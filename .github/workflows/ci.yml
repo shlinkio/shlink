@@ -34,13 +34,16 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.1']
-        test-group: ['unit', 'api']
+        test-group: ['unit', 'api', 'cli']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Start database server
+      - name: Start postgres database server
         if: ${{ matrix.test-group == 'api' }}
         run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
+      - name: Start maria database server
+        if: ${{ matrix.test-group == 'cli' }}
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_maria
       - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -156,6 +159,7 @@ jobs:
       - run: mv build/coverage-unit/coverage-unit.cov build/coverage-unit.cov
       - run: mv build/coverage-db/coverage-db.cov build/coverage-db.cov
       - run: mv build/coverage-api/coverage-api.cov build/coverage-api.cov
+      - run: mv build/coverage-cli/coverage-cli.cov build/coverage-cli.cov
       - run: wget https://phar.phpunit.de/phpcov-8.2.1.phar
       - run: php phpcov-8.2.1.phar merge build --clover build/clover.xml
       - name: Publish coverage
@@ -175,6 +179,7 @@ jobs:
             coverage-unit
             coverage-db
             coverage-api
+            coverage-cli
 
   build-docker-image:
     runs-on: ubuntu-22.04
