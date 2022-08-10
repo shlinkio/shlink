@@ -27,6 +27,7 @@ use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+use function file_exists;
 use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
 use function sprintf;
@@ -57,7 +58,15 @@ $exportCoverage = static function (string $type = 'api') use (&$coverage): void 
     }
 
     $basePath = __DIR__ . '/../../build/coverage-' . $type;
-    (new PHP())->process($coverage, $basePath . '.cov');
+    $covPath = $basePath . '.cov';
+
+    // Every CLI test runs on its own process and dumps the coverage afterwards.
+    // Try to load it and merge it, so that we end up with the whole coverage at the end.
+    if ($type === 'cli' && file_exists($covPath)) {
+        $coverage->merge(require $covPath);
+    }
+
+    (new PHP())->process($coverage, $covPath);
     (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
     (new Html())->process($coverage, $basePath . '/coverage-html');
 };
@@ -195,6 +204,7 @@ return [
                     $app = $callback();
                     $wrappedEventDispatcher = new EventDispatcher();
 
+                    // When the command starts, start collecting coverage
                     $wrappedEventDispatcher->subscribeTo(
                         ConsoleCommandEvent::class,
                         static function () use (&$coverage): void {
@@ -206,6 +216,7 @@ return [
                             $coverage?->start($id);
                         },
                     );
+                    // When the command ends, stop collecting coverage
                     $wrappedEventDispatcher->subscribeTo(
                         ConsoleTerminateEvent::class,
                         static function () use (&$coverage, $exportCoverage): void {
