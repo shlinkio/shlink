@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    bootstrap="./config/test/bootstrap_cli_tests.php"
+    colors="true"
+>
+    <testsuites>
+        <testsuite name="Shlink CLI tests">
+            <directory>./module/*/test-cli</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./module/CLI/src</directory>
+            <directory suffix=".php">./module/Core/src</directory>
+        </include>
+    </coverage>
+</phpunit>

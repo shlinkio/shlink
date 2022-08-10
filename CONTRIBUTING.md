@@ -102,7 +102,9 @@ In order to ensure stability and no regressions are introduced while developing 
 
     Since the app instance is run on a process different from the one running the tests, when a test fails it might not be obvious why. To help debugging that, the app will dump all its logs inside `data/log/api-tests`, where you will find the `shlink.log` and `access.log` files.
 
-* **CLI tests**: *TBD. Once included, its purpose will be the same as API tests, but running through the command line*
+* **CLI tests**: These are E2E tests too, but they test console commands instead of REST endpoints.
+
+    They use Maria DB as the database engine, and include the same fixtures as the API tests, that ensure the same data exists at the beginning of the execution.
 
 Depending on the kind of contribution, maybe not all kinds of tests are needed, but the more you provide, the better.
 
@@ -119,6 +121,7 @@ Depending on the kind of contribution, maybe not all kinds of tests are needed, 
     For example, `test:db:postgres`.
 
 * Run `./indocker composer test:api` to run API E2E tests. For these, the Postgres database engine is used.
+* Run `./indocker composer test:cli` to run CLI E2E tests. For these, the Maria DB database engine is used.
 * Run `./indocker composer infect:test` to run both unit and database tests (over sqlite) and then apply mutations to them with [infection](https://infection.github.io/).
 * Run `./indocker composer ci` to run all previous commands together. This command is run during the project's continuous integration.
 * Run `./indocker composer ci:parallel` to do the same as in previous case, but parallelizing non-conflicting tasks as much as possible.
