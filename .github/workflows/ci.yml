@@ -30,17 +30,17 @@ jobs:
       - run: composer ${{ matrix.command }}
 
   unit-tests:
-    uses: './.github/workflows/ci/tests.yml'
+    uses: './.github/workflows/ci-tests.yml'
     with:
       test-group: unit
 
   api-tests:
-    uses: './.github/workflows/ci/tests.yml'
+    uses: './.github/workflows/ci-tests.yml'
     with:
       test-group: api
 
   cli-tests:
-    uses: './.github/workflows/ci/tests.yml'
+    uses: './.github/workflows/ci-tests.yml'
     with:
       test-group: cli
 
