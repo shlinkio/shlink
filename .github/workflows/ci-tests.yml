@@ -14,6 +14,8 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.1']
+    env:
+      extensions: openswoole-4.11.1
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -23,12 +25,25 @@ jobs:
       - name: Start maria database server
         if: ${{ inputs.test-group == 'cli' }}
         run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_maria
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: ${{ env.extensions }}
+          key: tests-extensions
+      - name: Cache extensions
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ steps.extcache.outputs.key }}
+          restore-keys: ${{ steps.extcache.outputs.key }}
       - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.11.1
+          extensions: ${{ env.extensions }}
           coverage: pcov
           ini-values: pcov.directory=module
       - name: Install dependencies
