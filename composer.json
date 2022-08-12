@@ -99,13 +99,6 @@
     },
     "scripts": {
         "ci": [
-            "@cs",
-            "@stan",
-            "@swagger:validate",
-            "@test:ci",
-            "@infect:ci"
-        ],
-        "ci:parallel": [
             "@parallel cs stan swagger:validate test:unit:ci test:db:sqlite:ci test:db:mysql test:db:maria test:db:postgres test:db:ms",
             "@parallel infect:test:api infect:test:cli infect:ci:unit infect:ci:db"
         ],
@@ -113,19 +106,11 @@
         "cs:fix": "phpcbf",
         "stan": "APP_ENV=test php vendor/bin/phpstan analyse module/*/src module/*/config config docker/config data/migrations --level=8",
         "test": [
-            "@test:unit",
-            "@test:db",
-            "@test:api",
-            "@test:cli"
+            "@parallel test:unit test:db",
+            "@parallel test:api test:cli"
         ],
-        "test:ci": [
-            "@test:unit:ci",
-            "@test:db",
-            "@test:api:ci",
-            "@test:cli:ci"
-        ],
-        "test:unit": "@php vendor/bin/phpunit --order-by=random --colors=always --coverage-php build/coverage-unit.cov --testdox",
-        "test:unit:ci": "@test:unit --coverage-xml=build/coverage-unit/coverage-xml --log-junit=build/coverage-unit/junit.xml",
+        "test:unit": "@php vendor/bin/phpunit --order-by=random --colors=always --testdox",
+        "test:unit:ci": "@test:unit --coverage-php=build/coverage-unit.cov --coverage-xml=build/coverage-unit/coverage-xml --log-junit=build/coverage-unit/junit.xml",
         "test:unit:pretty": "@test:unit --coverage-html build/coverage-unit/coverage-html",
         "test:db": "@parallel test:db:sqlite:ci test:db:mysql test:db:maria test:db:postgres test:db:ms",
         "test:db:sqlite": "APP_ENV=test php vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-db.xml",
@@ -136,8 +121,10 @@
         "test:db:ms": "DB_DRIVER=mssql composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
         "test:api:ci": "GENERATE_COVERAGE=yes composer test:api",
-        "test:cli": "APP_ENV=test DB_DRIVER=maria TEST_ENV=cli php vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-cli.xml",
-        "test:cli:ci": "GENERATE_COVERAGE=yes composer test:cli -- --log-junit=build/coverage-cli/junit.xml",
+        "test:api:pretty": "GENERATE_COVERAGE=pretty composer test:api",
+        "test:cli": "APP_ENV=test DB_DRIVER=maria TEST_ENV=cli php vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-cli.xml --log-junit=build/coverage-cli/junit.xml",
+        "test:cli:ci": "GENERATE_COVERAGE=yes composer test:cli",
+        "test:cli:pretty": "GENERATE_COVERAGE=pretty composer test:cli",
         "infect:ci:base": "infection --threads=4 --log-verbosity=default --only-covered --only-covering-test-cases --skip-initial-tests",
         "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=84",
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json",
@@ -166,12 +153,10 @@
     },
     "scripts-descriptions": {
         "ci": "<fg=blue;options=bold>Alias for \"cs\", \"stan\", \"swagger:validate\", \"test:ci\" and \"infect:ci\"</>",
-        "ci:parallel": "<fg=blue;options=bold>Same as \"ci\", but parallelizing tasks as much as possible</>",
         "cs": "<fg=blue;options=bold>Checks coding styles</>",
         "cs:fix": "<fg=blue;options=bold>Fixes coding styles, when possible</>",
         "stan": "<fg=blue;options=bold>Inspects code with phpstan</>",
         "test": "<fg=blue;options=bold>Runs all test suites</>",
-        "test:ci": "<fg=blue;options=bold>Runs all test suites, generating all needed reports and logs for CI envs</>",
         "test:unit": "<fg=blue;options=bold>Runs unit test suites</>",
         "test:unit:ci": "<fg=blue;options=bold>Runs unit test suites, generating all needed reports and logs for CI envs</>",
         "test:unit:pretty": "<fg=blue;options=bold>Runs unit test suites and generates an HTML code coverage report</>",
@@ -183,7 +168,11 @@
         "test:db:postgres": "<fg=blue;options=bold>Runs database test suites on a PostgreSQL database</>",
         "test:db:ms": "<fg=blue;options=bold>Runs database test suites on a Microsoft SQL Server database</>",
         "test:api": "<fg=blue;options=bold>Runs API test suites</>",
-        "test:api:ci": "<fg=blue;options=bold>Runs API test suites, and generates code coverage reports</>",
+        "test:api:ci": "<fg=blue;options=bold>Runs API test suites, and generates code coverage for CI</>",
+        "test:api:pretty": "<fg=blue;options=bold>Runs API test suites, and generates code coverage in HTML format</>",
+        "test:cli": "<fg=blue;options=bold>Runs CLI test suites</>",
+        "test:cli:ci": "<fg=blue;options=bold>Runs CLI test suites, and generates code coverage for CI</>",
+        "test:cli:pretty": "<fg=blue;options=bold>Runs CLI test suites, and generates code coverage in HTML format</>",
         "infect:ci": "<fg=blue;options=bold>Checks unit and db tests quality applying mutation testing with existing reports and logs</>",
         "infect:ci:unit": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing with existing reports and logs</>",
         "infect:ci:db": "<fg=blue;options=bold>Checks db tests quality applying mutation testing with existing reports and logs</>",

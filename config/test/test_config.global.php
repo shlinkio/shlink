@@ -28,6 +28,7 @@ use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 use function file_exists;
+use function Functional\contains;
 use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
 use function sprintf;
@@ -39,7 +40,8 @@ use const ShlinkioTest\Shlink\SWOOLE_TESTING_PORT;
 $isApiTest = env('TEST_ENV') === 'api';
 $isCliTest = env('TEST_ENV') === 'cli';
 $isE2eTest = $isApiTest || $isCliTest;
-$generateCoverage = env('GENERATE_COVERAGE') === 'yes';
+$coverageType = env('GENERATE_COVERAGE');
+$generateCoverage = contains(['yes', 'pretty'], $coverageType);
 
 $coverage = null;
 if ($isE2eTest && $generateCoverage) {
@@ -52,7 +54,7 @@ if ($isE2eTest && $generateCoverage) {
 /**
  * @param 'api'|'cli' $type
  */
-$exportCoverage = static function (string $type = 'api') use (&$coverage): void {
+$exportCoverage = static function (string $type = 'api') use (&$coverage, $coverageType): void {
     if ($coverage === null) {
         return;
     }
@@ -66,9 +68,12 @@ $exportCoverage = static function (string $type = 'api') use (&$coverage): void 
         $coverage->merge(require $covPath);
     }
 
-    (new PHP())->process($coverage, $covPath);
-    (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
-    (new Html())->process($coverage, $basePath . '/coverage-html');
+    if ($coverageType === 'pretty') {
+        (new Html())->process($coverage, $basePath . '/coverage-html');
+    } else {
+        (new PHP())->process($coverage, $covPath);
+        (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
+    }
 };
 
 $buildDbConnection = static function (): array {

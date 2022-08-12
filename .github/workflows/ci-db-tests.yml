@@ -16,6 +16,7 @@ jobs:
         php-version: [ '8.1' ]
     env:
       LC_ALL: C
+      extensions: openswoole-4.11.1, pdo_sqlsrv-5.10.1
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -25,12 +26,25 @@ jobs:
       - name: Start database server
         if: ${{ inputs.platform != 'sqlite:ci' }}
         run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_${{ inputs.platform }}
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: ${{ env.extensions }}
+          key: db-tests-extensions-${{ inputs.platform }}
+      - name: Cache extensions
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ steps.extcache.outputs.key }}
+          restore-keys: ${{ steps.extcache.outputs.key }}
       - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.11.1, pdo_sqlsrv-5.10.1
+          extensions: ${{ env.extensions }}
           coverage: pcov
           ini-values: pcov.directory=module
       - name: Install dependencies
@@ -41,7 +55,7 @@ jobs:
       - name: Run tests
         run: composer test:db:${{ inputs.platform }}
       - name: Upload code coverage
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: ${{ matrix.php-version == '8.1' && inputs.platform == 'sqlite:ci' }}
         with:
           name: coverage-db

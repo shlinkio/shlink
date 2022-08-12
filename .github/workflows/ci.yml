@@ -15,15 +15,30 @@ jobs:
       matrix:
         php-version: ['8.1']
         command: ['cs', 'stan', 'swagger:validate']
+    env:
+      extensions: openswoole-4.11.1
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: ${{ env.extensions }}
+          key: tests-extensions-${{ matrix.command }}
+      - name: Cache extensions
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ steps.extcache.outputs.key }}
+          restore-keys: ${{ steps.extcache.outputs.key }}
       - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-          extensions: openswoole-4.11.1
+          extensions: ${{ env.extensions }}
           coverage: none
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
@@ -116,7 +131,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           coverage: pcov
           ini-values: pcov.directory=module
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           path: build
       - run: mv build/coverage-unit/coverage-unit.cov build/coverage-unit.cov
