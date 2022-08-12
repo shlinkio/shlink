@@ -32,7 +32,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           extensions: ${{ env.extensions }}
-          key: db-tests-extensions
+          key: db-tests-extensions-${{ inputs.platform }}
       - name: Cache extensions
         uses: actions/cache@v2
         with:
