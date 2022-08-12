@@ -1,0 +1,38 @@
+name: Mutation tests
+
+on:
+  workflow_call:
+    inputs:
+      test-group:
+        type: string
+        required: true
+        description: One of unit, db, api or cli
+
+jobs:
+  mutation-tests:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        php-version: [ '8.1' ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: openswoole-4.11.1
+          coverage: pcov
+          ini-values: pcov.directory=module
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+      - uses: actions/download-artifact@v2
+        with:
+          path: build
+      - if: ${{ inputs.test-group == 'unit' }}
+        run: composer infect:ci:unit
+        env:
+          INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
+      - if: ${{ inputs.test-group != 'unit' }}
+        run: composer infect:ci:${{ inputs.test-group }}
