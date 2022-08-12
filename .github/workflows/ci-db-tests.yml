@@ -1,0 +1,50 @@
+name: Database tests
+
+on:
+  workflow_call:
+    inputs:
+      platform:
+        type: string
+        required: true
+        description: One of sqlite:ci, mysql, maria, postgres or ms
+
+jobs:
+  db-tests:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        php-version: [ '8.1' ]
+    env:
+      LC_ALL: C
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install MSSQL ODBC
+        if: ${{ inputs.platform == 'ms' }}
+        run: sudo ./data/infra/ci/install-ms-odbc.sh
+      - name: Start database server
+        if: ${{ inputs.platform != 'sqlite:ci' }}
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_${{ inputs.platform }}
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+          extensions: openswoole-4.11.1, pdo_sqlsrv-5.10.1
+          coverage: pcov
+          ini-values: pcov.directory=module
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+      - name: Create test database
+        if: ${{ inputs.platform == 'ms' }}
+        run: docker-compose exec -T shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
+      - name: Run tests
+        run: composer test:db:${{ inputs.platform }}
+      - name: Upload code coverage
+        uses: actions/upload-artifact@v2
+        if: ${{ matrix.php-version == '8.1' && inputs.platform == 'sqlite:ci' }}
+        with:
+          name: coverage-db
+          path: |
+            build/coverage-db
+            build/coverage-db.cov
