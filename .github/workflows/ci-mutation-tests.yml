@@ -27,7 +27,7 @@ jobs:
           ini-values: pcov.directory=module
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           path: build
       - if: ${{ inputs.test-group == 'unit' }}

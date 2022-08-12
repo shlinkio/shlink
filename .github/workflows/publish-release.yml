@@ -25,7 +25,7 @@ jobs:
         run: ./build.sh ${GITHUB_REF#refs/tags/v}
       - if: ${{ matrix.swoole == 'no' }}
         run: ./build.sh ${GITHUB_REF#refs/tags/v} --no-swoole
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: dist-files-${{ matrix.php-version }}-${{ matrix.swoole }}
           path: build
@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           path: build
       - name: Publish release with assets

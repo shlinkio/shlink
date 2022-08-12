@@ -116,7 +116,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           coverage: pcov
           ini-values: pcov.directory=module
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           path: build
       - run: mv build/coverage-unit/coverage-unit.cov build/coverage-unit.cov

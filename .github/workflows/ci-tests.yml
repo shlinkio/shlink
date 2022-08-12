@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
       - run: composer test:${{ inputs.test-group }}:ci
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: ${{ matrix.php-version == '8.1' }}
         with:
           name: coverage-${{ inputs.test-group }}
