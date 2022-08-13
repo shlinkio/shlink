@@ -16,7 +16,7 @@ class TagConflictException extends RuntimeException implements ProblemDetailsExc
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Tag conflict';
-    private const TYPE = 'TAG_CONFLICT';
+    public const TYPE = 'https://shlink.io/api/error/tag-conflict';
 
     public static function forExistingTag(TagRenaming $renaming): self
     {

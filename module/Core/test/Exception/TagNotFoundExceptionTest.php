@@ -21,7 +21,7 @@ class TagNotFoundExceptionTest extends TestCase
         self::assertEquals($expectedMessage, $e->getMessage());
         self::assertEquals($expectedMessage, $e->getDetail());
         self::assertEquals('Tag not found', $e->getTitle());
-        self::assertEquals('TAG_NOT_FOUND', $e->getType());
+        self::assertEquals('https://shlink.io/api/error/tag-not-found', $e->getType());
         self::assertEquals(['tag' => $tag], $e->getAdditionalData());
         self::assertEquals(404, $e->getStatus());
     }

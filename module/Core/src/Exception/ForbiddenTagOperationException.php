@@ -13,7 +13,7 @@ class ForbiddenTagOperationException extends DomainException implements ProblemD
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Forbidden tag operation';
-    private const TYPE = 'FORBIDDEN_OPERATION';
+    public const TYPE = 'https://shlink.io/api/error/forbidden-tag-operation';
 
     public static function forDeletion(): self
     {

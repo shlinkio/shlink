@@ -48,10 +48,10 @@ class ConfigProviderTest extends TestCase
                 ['path' => '/health'],
             ],
             [
-                ['path' => '/rest/v{version:1|2}/foo'],
-                ['path' => '/rest/v{version:1|2}/bar'],
-                ['path' => '/rest/v{version:1|2}/baz/foo'],
-                ['path' => '/rest/v{version:1|2}/health'],
+                ['path' => '/rest/v{version:1|2|3}/foo'],
+                ['path' => '/rest/v{version:1|2|3}/bar'],
+                ['path' => '/rest/v{version:1|2|3}/baz/foo'],
+                ['path' => '/rest/v{version:1|2|3}/health'],
                 ['path' => '/rest/health', 'name' => ConfigProvider::UNVERSIONED_HEALTH_ENDPOINT_NAME],
             ],
         ];
@@ -62,9 +62,9 @@ class ConfigProviderTest extends TestCase
                 ['path' => '/baz/foo'],
             ],
             [
-                ['path' => '/rest/v{version:1|2}/foo'],
-                ['path' => '/rest/v{version:1|2}/bar'],
-                ['path' => '/rest/v{version:1|2}/baz/foo'],
+                ['path' => '/rest/v{version:1|2|3}/foo'],
+                ['path' => '/rest/v{version:1|2|3}/bar'],
+                ['path' => '/rest/v{version:1|2|3}/baz/foo'],
             ],
         ];
     }

@@ -16,7 +16,7 @@ class ShortUrlNotFoundException extends DomainException implements ProblemDetail
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Short URL not found';
-    private const TYPE = 'INVALID_SHORTCODE';
+    public const TYPE = 'https://shlink.io/api/error/short-url-not-found';
 
     public static function fromNotFound(ShortUrlIdentifier $identifier): self
     {

@@ -16,7 +16,7 @@ class MissingAuthenticationException extends RuntimeException implements Problem
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Invalid authorization';
-    private const TYPE = 'INVALID_AUTHORIZATION';
+    public const TYPE = 'https://shlink.io/api/error/missing-authentication';
 
     public static function forHeaders(array $expectedHeaders): self
     {

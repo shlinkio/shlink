@@ -15,7 +15,7 @@ class TagNotFoundException extends DomainException implements ProblemDetailsExce
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Tag not found';
-    private const TYPE = 'TAG_NOT_FOUND';
+    public const TYPE = 'https://shlink.io/api/error/tag-not-found';
 
     public static function fromTag(string $tag): self
     {

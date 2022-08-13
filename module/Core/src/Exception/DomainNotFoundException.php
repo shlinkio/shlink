@@ -15,7 +15,7 @@ class DomainNotFoundException extends DomainException implements ProblemDetailsE
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Domain not found';
-    private const TYPE = 'DOMAIN_NOT_FOUND';
+    public const TYPE = 'https://shlink.io/api/error/domain-not-found';
 
     private function __construct(string $message, array $additional)
     {

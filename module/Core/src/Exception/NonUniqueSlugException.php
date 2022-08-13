@@ -16,7 +16,7 @@ class NonUniqueSlugException extends InvalidArgumentException implements Problem
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Invalid custom slug';
-    private const TYPE = 'INVALID_SLUG';
+    public const TYPE = 'https://shlink.io/api/error/non-unique-slug';
 
     public static function fromSlug(string $slug, ?string $domain = null): self
     {

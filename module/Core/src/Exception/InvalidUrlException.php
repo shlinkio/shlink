@@ -16,7 +16,7 @@ class InvalidUrlException extends DomainException implements ProblemDetailsExcep
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Invalid URL';
-    private const TYPE = 'INVALID_URL';
+    public const TYPE = 'https://shlink.io/api/error/invalid-url';
 
     public static function fromUrl(string $url, ?Throwable $previous = null): self
     {

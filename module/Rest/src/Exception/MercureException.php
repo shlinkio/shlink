@@ -13,7 +13,7 @@ class MercureException extends RuntimeException implements ProblemDetailsExcepti
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Mercure integration not configured';
-    private const TYPE = 'MERCURE_NOT_CONFIGURED';
+    public const TYPE = 'https://shlink.io/api/error/mercure-not-configured';
 
     public static function mercureNotConfigured(): self
     {

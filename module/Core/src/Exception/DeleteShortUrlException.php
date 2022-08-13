@@ -16,7 +16,7 @@ class DeleteShortUrlException extends DomainException implements ProblemDetailsE
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Cannot delete short URL';
-    private const TYPE = 'INVALID_SHORT_URL_DELETION';
+    public const TYPE = 'https://shlink.io/api/error/invalid-short-url-deletion';
 
     public static function fromVisitsThreshold(int $threshold, ShortUrlIdentifier $identifier): self
     {
