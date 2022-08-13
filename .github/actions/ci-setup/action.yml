@@ -23,7 +23,7 @@ runs:
     - name: Compute extensions
       id: compute_extensions
       run: |
-        COMPUTED_EXTENSIONS="${{ concat(inputs.php-extensions != '' && ['openswoole-4.11.1', inputs.php-extensions] || ['openswoole-4.11.1'], ', ') }}" && \
+        COMPUTED_EXTENSIONS="${{ join(inputs.php-extensions != '' && ['openswoole-4.11.1', inputs.php-extensions] || ['openswoole-4.11.1'], ', ') }}" && \
         echo "##[set-output name=php-extensions;]$COMPUTED_EXTENSIONS"
       shell: bash
     - name: Setup cache environment
