@@ -31,7 +31,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           extensions: ${{ env.extensions }}
-          key: tests-extensions-${{ inputs.test-group }}
+          key: tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
       - name: Cache extensions
         uses: actions/cache@v2
         with:
