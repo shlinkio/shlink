@@ -20,7 +20,6 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-4.11.1
           extensions-cache-key: publish-swagger-spec-extensions-${{ matrix.php-version }}
       - run: composer swagger:inline
       - run: mkdir ${{ steps.determine_version.outputs.version }}

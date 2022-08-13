@@ -10,7 +10,7 @@ inputs:
     description: 'The PHP version to be setup'
     required: true
   php-extensions:
-    description: 'The PHP extensions to install'
+    description: 'The PHP extensions to install, other than openswoole, which gets installed by default'
     required: true
     default: ''
   extensions-cache-key:
@@ -20,25 +20,31 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Compute extensions
+      id: compute_extensions
+      run: |
+        COMPUTED_EXTENSIONS="${{ concat(inputs.php-extensions != '' && ['openswoole-4.11.1', inputs.php-extensions] || ['openswoole-4.11.1'], ', ') }}" && \
+        echo "##[set-output name=php-extensions;]$COMPUTED_EXTENSIONS"
+      shell: bash
     - name: Setup cache environment
-      id: extcache
+      id: extensions_cache
       uses: shivammathur/cache-extensions@v1
       with:
         php-version: ${{ inputs.php-version }}
-        extensions: ${{ inputs.php-extensions }}
+        extensions: ${{ steps.compute_extensions.outputs.php-extensions }}
         key: ${{ inputs.extensions-cache-key }}
     - name: Cache extensions
       uses: actions/cache@v2
       with:
-        path: ${{ steps.extcache.outputs.dir }}
-        key: ${{ steps.extcache.outputs.key }}
-        restore-keys: ${{ steps.extcache.outputs.key }}
+        path: ${{ steps.extensions_cache.outputs.dir }}
+        key: ${{ steps.extensions_cache.outputs.key }}
+        restore-keys: ${{ steps.extensions_cache.outputs.key }}
     - name: Use PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ inputs.php-version }}
         tools: composer
-        extensions: ${{ inputs.php-extensions }}
+        extensions: ${{ steps.compute_extensions.outputs.php-extensions }}
         coverage: pcov
         ini-values: pcov.directory=module
     - name: Install dependencies

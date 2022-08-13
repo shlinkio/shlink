@@ -20,7 +20,6 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-4.11.1
           extensions-cache-key: tests-extensions-${{ matrix.php-version }}-${{ matrix.command }}
       - run: composer ${{ matrix.command }}
 
