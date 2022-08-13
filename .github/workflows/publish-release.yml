@@ -12,30 +12,14 @@ jobs:
       matrix:
         php-version: ['8.1']
         swoole: ['yes', 'no']
-    env:
-      extensions: openswoole-4.11.1
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup cache environment
-        id: extcache
-        uses: shivammathur/cache-extensions@v1
+      - uses: actions/checkout@v3
+      - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          extensions: ${{ env.extensions }}
-          key: publish-release-extensions-${{ matrix.php-version }}-${{ matrix.swoole }}
-      - name: Cache extensions
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ steps.extcache.outputs.key }}
-          restore-keys: ${{ steps.extcache.outputs.key }}
-      - name: Use PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          tools: composer
-          extensions: ${{ env.extensions }}
+          php-extensions: openswoole-4.11.1
+          extensions-cache-key: publish-swagger-spec-extensions-${{ matrix.php-version }}
+          install-deps: 'no'
       - if: ${{ matrix.swoole == 'yes' }}
         run: ./build.sh ${GITHUB_REF#refs/tags/v}
       - if: ${{ matrix.swoole == 'no' }}
@@ -49,8 +33,7 @@ jobs:
     needs: ['build']
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
         with:
           path: build

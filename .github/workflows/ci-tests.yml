@@ -14,40 +14,19 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.1']
-    env:
-      extensions: openswoole-4.11.1
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       - name: Start postgres database server
         if: ${{ inputs.test-group == 'api' }}
         run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
       - name: Start maria database server
         if: ${{ inputs.test-group == 'cli' }}
         run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_maria
-      - name: Setup cache environment
-        id: extcache
-        uses: shivammathur/cache-extensions@v1
+      - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          extensions: ${{ env.extensions }}
-          key: tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
-      - name: Cache extensions
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ steps.extcache.outputs.key }}
-          restore-keys: ${{ steps.extcache.outputs.key }}
-      - name: Use PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          tools: composer
-          extensions: ${{ env.extensions }}
-          coverage: pcov
-          ini-values: pcov.directory=module
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist
+          php-extensions: openswoole-4.11.1
+          extensions-cache-key: tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
       - run: composer test:${{ inputs.test-group }}:ci
       - uses: actions/upload-artifact@v3
         if: ${{ matrix.php-version == '8.1' }}
