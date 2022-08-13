@@ -1,0 +1,47 @@
+name: CI setup
+description: 'Sets up the environment to run CI actions for Shlink'
+
+inputs:
+  install-deps:
+    description: 'Tells if dependencies should be installed with composer. Default value is "yes"'
+    required: true
+    default: 'yes'
+  php-version:
+    description: 'The PHP version to be setup'
+    required: true
+  php-extensions:
+    description: 'The PHP extensions to install'
+    required: true
+    default: ''
+  extensions-cache-key:
+    description: 'The key used to cache PHP extensions. If empty value is provided, extension caching is disabled'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup cache environment
+      id: extcache
+      uses: shivammathur/cache-extensions@v1
+      with:
+        php-version: ${{ inputs.php-version }}
+        extensions: ${{ inputs.php-extensions }}
+        key: ${{ inputs.extensions-cache-key }}
+    - name: Cache extensions
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.extcache.outputs.dir }}
+        key: ${{ steps.extcache.outputs.key }}
+        restore-keys: ${{ steps.extcache.outputs.key }}
+    - name: Use PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php-version }}
+        tools: composer
+        extensions: ${{ inputs.php-extensions }}
+        coverage: pcov
+        ini-values: pcov.directory=module
+    - name: Install dependencies
+      if: ${{ inputs.install-deps == 'yes' }}
+      run: composer install --no-interaction --prefer-dist
+      shell: bash

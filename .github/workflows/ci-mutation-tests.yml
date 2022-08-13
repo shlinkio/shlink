@@ -14,34 +14,13 @@ jobs:
     strategy:
       matrix:
         php-version: [ '8.1' ]
-    env:
-      extensions: openswoole-4.11.1
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup cache environment
-        id: extcache
-        uses: shivammathur/cache-extensions@v1
+      - uses: actions/checkout@v3
+      - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          extensions: ${{ env.extensions }}
-          key: mutation-tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
-      - name: Cache extensions
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ steps.extcache.outputs.key }}
-          restore-keys: ${{ steps.extcache.outputs.key }}
-      - name: Use PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          tools: composer
-          extensions: ${{ env.extensions }}
-          coverage: pcov
-          ini-values: pcov.directory=module
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist
+          php-extensions: openswoole-4.11.1
+          extensions-cache-key: mutation-tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
       - uses: actions/download-artifact@v3
         with:
           path: build
