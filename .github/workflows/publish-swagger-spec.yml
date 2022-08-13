@@ -26,7 +26,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           extensions: ${{ env.extensions }}
-          key: publish-release-extensions-${{ matrix.php-version }}
+          key: publish-swagger-spec-extensions-${{ matrix.php-version }}
       - name: Cache extensions
         uses: actions/cache@v2
         with:
