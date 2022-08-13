@@ -125,7 +125,7 @@
         "test:cli": "APP_ENV=test DB_DRIVER=maria TEST_ENV=cli php vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-cli.xml --log-junit=build/coverage-cli/junit.xml",
         "test:cli:ci": "GENERATE_COVERAGE=yes composer test:cli",
         "test:cli:pretty": "GENERATE_COVERAGE=pretty composer test:cli",
-        "infect:ci:base": "infection --threads=4 --log-verbosity=default --only-covered --only-covering-test-cases --skip-initial-tests",
+        "infect:ci:base": "infection --threads=4 --only-covered --only-covering-test-cases --skip-initial-tests",
         "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=84",
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json",
         "infect:ci:api": "@infect:ci:base --coverage=build/coverage-api --min-msi=80 --configuration=infection-api.json",

@@ -25,8 +25,8 @@ jobs:
         with:
           path: build
       - if: ${{ inputs.test-group == 'unit' }}
-        run: composer infect:ci:unit
+        run: composer infect:ci:unit -- --git-diff-lines --logger-github=false
         env:
           INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
       - if: ${{ inputs.test-group != 'unit' }}
-        run: composer infect:ci:${{ inputs.test-group }}
+        run: composer infect:ci:${{ inputs.test-group }} -- --git-diff-lines --logger-github=false
