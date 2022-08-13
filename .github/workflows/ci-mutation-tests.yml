@@ -17,6 +17,7 @@ jobs:
     env:
       extensions: openswoole-4.11.1
     steps:
+      - uses: actions/checkout@v3
       - name: Setup
         uses: './.github/actions/ci-setup'
         with:

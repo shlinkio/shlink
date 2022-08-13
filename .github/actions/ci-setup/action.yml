@@ -18,8 +18,6 @@ inputs:
 runs:
   uses: composite
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
     - name: Setup cache environment
       id: extcache
       uses: shivammathur/cache-extensions@v1
