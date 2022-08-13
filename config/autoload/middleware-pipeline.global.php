@@ -26,6 +26,7 @@ return [
             'path' => '/rest',
             'middleware' => [
                 ProblemDetails\ProblemDetailsMiddleware::class,
+                Rest\Middleware\ErrorHandler\BackwardsCompatibleProblemDetailsHandler::class,
             ],
         ],
 

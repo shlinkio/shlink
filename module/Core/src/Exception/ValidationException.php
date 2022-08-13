@@ -21,7 +21,7 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Invalid data';
-    private const TYPE = 'INVALID_ARGUMENT';
+    public const TYPE = 'https://shlink.io/api/error/invalid-data';
 
     private array $invalidElements;
 
