@@ -18,14 +18,14 @@ jobs:
       extensions: openswoole-4.11.1
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup cache environment
         id: extcache
         uses: shivammathur/cache-extensions@v1
         with:
           php-version: ${{ matrix.php-version }}
           extensions: ${{ env.extensions }}
-          key: mutation-tests-extensions-${{ inputs.test-group }}
+          key: mutation-tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
       - name: Cache extensions
         uses: actions/cache@v2
         with:
