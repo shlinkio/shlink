@@ -1,22 +1,24 @@
 name: CI setup
+description: 'Sets up the environment to run CI actions for Shlink'
 
 inputs:
   install-deps:
-    type: boolean
+    description: 'Tells if dependencies should be installed with composer. Default value is "yes"'
     required: true
-    default: true
+    default: 'yes'
   php-version:
-    type: string
+    description: 'The PHP version to be setup'
     required: true
   php-extensions:
-    type: string
+    description: 'The PHP extensions to install'
     required: true
+    default: ''
   extensions-cache-key:
-    type: string
+    description: 'The key used to cache PHP extensions. If empty value is provided, extension caching is disabled'
     required: true
 
 runs:
-  uses: composite
+  using: composite
   steps:
     - name: Setup cache environment
       id: extcache
@@ -40,5 +42,6 @@ runs:
         coverage: pcov
         ini-values: pcov.directory=module
     - name: Install dependencies
-      if: ${{ inputs.install-deps }}
+      if: ${{ inputs.install-deps == 'yes' }}
       run: composer install --no-interaction --prefer-dist
+      shell: bash
