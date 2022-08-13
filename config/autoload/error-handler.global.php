@@ -10,8 +10,8 @@ return [
 
     'problem-details' => [
         'default_types_map' => [
-            404 => 'NOT_FOUND',
-            500 => 'INTERNAL_SERVER_ERROR',
+            404 => 'NOT_FOUND', // TODO Define new values, with backwards compatibility if possible
+            500 => 'INTERNAL_SERVER_ERROR', // TODO Define new values, with backwards compatibility if possible
         ],
     ],
 

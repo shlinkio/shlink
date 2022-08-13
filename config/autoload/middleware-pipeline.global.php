@@ -26,7 +26,6 @@ return [
             'path' => '/rest',
             'middleware' => [
                 ProblemDetails\ProblemDetailsMiddleware::class,
-                Rest\Middleware\ErrorHandler\BackwardsCompatibleProblemDetailsHandler::class,
             ],
         ],
 
@@ -46,6 +45,7 @@ return [
         'rest' => [
             'path' => '/rest',
             'middleware' => [
+                Rest\Middleware\ErrorHandler\BackwardsCompatibleProblemDetailsHandler::class,
                 Router\Middleware\ImplicitOptionsMiddleware::class,
                 Rest\Middleware\BodyParserMiddleware::class,
                 Rest\Middleware\AuthenticationMiddleware::class,
