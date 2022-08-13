@@ -18,7 +18,7 @@ jobs:
       extensions: openswoole-4.11.1
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup cache environment
         id: extcache
         uses: shivammathur/cache-extensions@v1

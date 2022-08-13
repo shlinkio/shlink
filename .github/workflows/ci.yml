@@ -19,7 +19,7 @@ jobs:
       extensions: openswoole-4.11.1
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup cache environment
         id: extcache
         uses: shivammathur/cache-extensions@v1
@@ -124,7 +124,7 @@ jobs:
         php-version: ['8.1']
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -166,7 +166,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 100
       - uses: marceloprado/has-changed-path@v1

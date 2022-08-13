@@ -18,7 +18,7 @@ jobs:
       extensions: openswoole-4.11.1
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Start postgres database server
         if: ${{ inputs.test-group == 'api' }}
         run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres

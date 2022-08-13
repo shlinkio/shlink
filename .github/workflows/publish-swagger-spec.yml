@@ -15,7 +15,7 @@ jobs:
       extensions: openswoole-4.11.1
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Determine version
         id: determine_version
         run: echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
