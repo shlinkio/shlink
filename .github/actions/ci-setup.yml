@@ -1,0 +1,46 @@
+name: CI setup
+
+inputs:
+  install-deps:
+    type: boolean
+    required: true
+    default: true
+  php-version:
+    type: string
+    required: true
+  php-extensions:
+    type: string
+    required: true
+  extensions-cache-key:
+    type: string
+    required: true
+
+runs:
+  uses: composite
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Setup cache environment
+      id: extcache
+      uses: shivammathur/cache-extensions@v1
+      with:
+        php-version: ${{ inputs.php-version }}
+        extensions: ${{ inputs.extensions }}
+        key: ${{ inputs.extensions-cache-key }}
+    - name: Cache extensions
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.extcache.outputs.dir }}
+        key: ${{ steps.extcache.outputs.key }}
+        restore-keys: ${{ steps.extcache.outputs.key }}
+    - name: Use PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php-version }}
+        tools: composer
+        extensions: ${{ inputs.extensions }}
+        coverage: pcov
+        ini-values: pcov.directory=module
+    - name: Install dependencies
+      if: ${{ inputs.install-deps }}
+      run: composer install --no-interaction --prefer-dist
