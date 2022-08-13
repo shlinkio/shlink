@@ -18,7 +18,7 @@ jobs:
       extensions: openswoole-4.11.1
     steps:
       - name: Setup
-        uses: './.github/actions/ci-setup.yml'
+        uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
           php-extensions: ${{ env.extensions }}
