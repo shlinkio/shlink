@@ -151,8 +151,11 @@
                             "$ref": "../definitions/Error.json"
                         },
                         "examples": {
-                            "Short URL not found": {
-                                "$ref": "../examples/short-url-not-found.json"
+                            "Short URL not found with API v3 and newer": {
+                                "$ref": "../examples/short-url-not-found-v3.json"
+                            },
+                            "Short URL not found previous to API v3": {
+                                "$ref": "../examples/short-url-not-found-v2.json"
                             }
                         }
                     }

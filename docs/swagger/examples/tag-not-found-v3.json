@@ -1,0 +1,9 @@
+{
+    "value": {
+        "detail": "Tag with name \"foo\" could not be found",
+        "title": "Tag not found",
+        "type": "https://shlink.io/api/error/tag-not-found",
+        "status": 404,
+        "tag":  "foo"
+    }
+}

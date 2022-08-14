@@ -39,11 +39,23 @@
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         },
-                        "example": {
-                            "title": "Mercure integration not configured",
-                            "type": "MERCURE_NOT_CONFIGURED",
-                            "detail": "This Shlink instance is not integrated with a mercure hub.",
-                            "status": 501
+                        "examples": {
+                            "API v3 and newer": {
+                                "value": {
+                                    "title": "Mercure integration not configured",
+                                    "type": "https://shlink.io/api/error/mercure-not-configured",
+                                    "detail": "This Shlink instance is not integrated with a mercure hub.",
+                                    "status": 501
+                                }
+                            },
+                            "Previous to API v3": {
+                                "value": {
+                                    "title": "Mercure integration not configured",
+                                    "type": "MERCURE_NOT_CONFIGURED",
+                                    "detail": "This Shlink instance is not integrated with a mercure hub.",
+                                    "status": 501
+                                }
+                            }
                         }
                     }
                 }
