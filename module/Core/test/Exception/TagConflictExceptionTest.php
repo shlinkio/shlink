@@ -23,7 +23,7 @@ class TagConflictExceptionTest extends TestCase
         self::assertEquals($expectedMessage, $e->getMessage());
         self::assertEquals($expectedMessage, $e->getDetail());
         self::assertEquals('Tag conflict', $e->getTitle());
-        self::assertEquals('TAG_CONFLICT', $e->getType());
+        self::assertEquals('https://shlink.io/api/error/tag-conflict', $e->getType());
         self::assertEquals(['oldName' => $oldName, 'newName' => $newName], $e->getAdditionalData());
         self::assertEquals(409, $e->getStatus());
     }

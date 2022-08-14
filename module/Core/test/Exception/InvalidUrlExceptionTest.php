@@ -27,7 +27,7 @@ class InvalidUrlExceptionTest extends TestCase
         self::assertEquals($expectedMessage, $e->getMessage());
         self::assertEquals($expectedMessage, $e->getDetail());
         self::assertEquals('Invalid URL', $e->getTitle());
-        self::assertEquals('INVALID_URL', $e->getType());
+        self::assertEquals('https://shlink.io/api/error/invalid-url', $e->getType());
         self::assertEquals(['url' => $url], $e->getAdditionalData());
         self::assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getCode());
         self::assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getStatus());

@@ -25,7 +25,7 @@ class NonUniqueSlugExceptionTest extends TestCase
         self::assertEquals($expectedMessage, $e->getMessage());
         self::assertEquals($expectedMessage, $e->getDetail());
         self::assertEquals('Invalid custom slug', $e->getTitle());
-        self::assertEquals('INVALID_SLUG', $e->getType());
+        self::assertEquals('https://shlink.io/api/error/non-unique-slug', $e->getType());
         self::assertEquals(400, $e->getStatus());
         self::assertEquals($expectedAdditional, $e->getAdditionalData());
     }

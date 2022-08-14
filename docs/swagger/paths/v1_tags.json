@@ -188,12 +188,25 @@
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         },
-                        "example": {
-                            "title": "Invalid data",
-                            "type": "INVALID_ARGUMENT",
-                            "detail": "Provided data is not valid",
-                            "status": 400,
-                            "invalidElements": ["oldName", "newName"]
+                        "examples": {
+                            "API v3 and newer": {
+                                "value": {
+                                    "title": "Invalid data",
+                                    "type": "https://shlink.io/api/error/invalid-data",
+                                    "detail": "Provided data is not valid",
+                                    "status": 400,
+                                    "invalidElements": ["oldName", "newName"]
+                                }
+                            },
+                            "Previous to API v3": {
+                                "value": {
+                                    "title": "Invalid data",
+                                    "type": "INVALID_ARGUMENT",
+                                    "detail": "Provided data is not valid",
+                                    "status": 400,
+                                    "invalidElements": ["oldName", "newName"]
+                                }
+                            }
                         }
                     }
                 }
@@ -205,11 +218,23 @@
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         },
-                        "example": {
-                            "detail": "You are not allowed to rename tags",
-                            "title": "Forbidden tag operation",
-                            "type": "FORBIDDEN_OPERATION",
-                            "status": 403
+                        "examples": {
+                            "API v3 and newer": {
+                                "value": {
+                                    "detail": "You are not allowed to rename tags",
+                                    "title": "Forbidden tag operation",
+                                    "type": "https://shlink.io/api/error/forbidden-tag-operation",
+                                    "status": 403
+                                }
+                            },
+                            "Previous to API v3": {
+                                "value": {
+                                    "detail": "You are not allowed to rename tags",
+                                    "title": "Forbidden tag operation",
+                                    "type": "FORBIDDEN_OPERATION",
+                                    "status": 403
+                                }
+                            }
                         }
                     }
                 }
@@ -222,8 +247,11 @@
                             "$ref": "../definitions/Error.json"
                         },
                         "examples": {
-                            "Tag not found": {
-                                "$ref": "../examples/tag-not-found.json"
+                            "API v3 and newer": {
+                                "$ref": "../examples/tag-not-found-v3.json"
+                            },
+                            "Previous to API v3": {
+                                "$ref": "../examples/tag-not-found-v2.json"
                             }
                         }
                     }
@@ -236,13 +264,27 @@
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         },
-                        "example": {
-                            "detail": "You cannot rename tag foo, because it already exists",
-                            "title": "Tag conflict",
-                            "type": "TAG_CONFLICT",
-                            "status": 409,
-                            "oldName": "bar",
-                            "newName": "foo"
+                        "examples": {
+                            "API v3 and newer": {
+                                "value": {
+                                    "detail": "You cannot rename tag foo, because it already exists",
+                                    "title": "Tag conflict",
+                                    "type": "https://shlink.io/api/error/tag-conflict",
+                                    "status": 409,
+                                    "oldName": "bar",
+                                    "newName": "foo"
+                                }
+                            },
+                            "Previous to API v3": {
+                                "value": {
+                                    "detail": "You cannot rename tag foo, because it already exists",
+                                    "title": "Tag conflict",
+                                    "type": "TAG_CONFLICT",
+                                    "status": 409,
+                                    "oldName": "bar",
+                                    "newName": "foo"
+                                }
+                            }
                         }
                     }
                 }
@@ -300,11 +342,23 @@
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         },
-                        "example": {
-                            "detail": "You are not allowed to delete tags",
-                            "title": "Forbidden tag operation",
-                            "type": "FORBIDDEN_OPERATION",
-                            "status": 403
+                        "examples": {
+                            "API v3 and newer": {
+                                "value": {
+                                    "detail": "You are not allowed to delete tags",
+                                    "title": "Forbidden tag operation",
+                                    "type": "https://shlink.io/api/error/forbidden-tag-operation",
+                                    "status": 403
+                                }
+                            },
+                            "Previous to API v3": {
+                                "value": {
+                                    "detail": "You are not allowed to delete tags",
+                                    "title": "Forbidden tag operation",
+                                    "type": "FORBIDDEN_OPERATION",
+                                    "status": 403
+                                }
+                            }
                         }
                     }
                 }

@@ -29,7 +29,7 @@ class ShortUrlNotFoundExceptionTest extends TestCase
         self::assertEquals($expectedMessage, $e->getMessage());
         self::assertEquals($expectedMessage, $e->getDetail());
         self::assertEquals('Short URL not found', $e->getTitle());
-        self::assertEquals('INVALID_SHORTCODE', $e->getType());
+        self::assertEquals('https://shlink.io/api/error/short-url-not-found', $e->getType());
         self::assertEquals(404, $e->getStatus());
         self::assertEquals($expectedAdditional, $e->getAdditionalData());
     }

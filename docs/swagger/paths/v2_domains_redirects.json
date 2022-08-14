@@ -94,12 +94,25 @@
                                 }
                             ]
                         },
-                        "example": {
-                            "title": "Invalid data",
-                            "type": "INVALID_ARGUMENT",
-                            "detail": "Provided data is not valid",
-                            "status": 400,
-                            "invalidElements": ["domain", "invalidShortUrlRedirect"]
+                        "examples": {
+                            "API v3 and newer": {
+                                "value": {
+                                    "title": "Invalid data",
+                                    "type": "https://shlink.io/api/error/invalid-data",
+                                    "detail": "Provided data is not valid",
+                                    "status": 400,
+                                    "invalidElements": ["domain", "invalidShortUrlRedirect"]
+                                }
+                            },
+                            "Previous to API v3": {
+                                "value": {
+                                    "title": "Invalid data",
+                                    "type": "INVALID_ARGUMENT",
+                                    "detail": "Provided data is not valid",
+                                    "status": 400,
+                                    "invalidElements": ["domain", "invalidShortUrlRedirect"]
+                                }
+                            }
                         }
                     }
                 }

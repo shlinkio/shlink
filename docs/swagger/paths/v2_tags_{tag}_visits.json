@@ -148,8 +148,12 @@
                             "$ref": "../definitions/Error.json"
                         },
                         "examples": {
-                            "Tag not found": {
-                                "$ref": "../examples/tag-not-found.json"
+
+                            "API v3 and newer": {
+                                "$ref": "../examples/tag-not-found-v3.json"
+                            },
+                            "Previous to API v3": {
+                                "$ref": "../examples/tag-not-found-v2.json"
                             }
                         }
                     }

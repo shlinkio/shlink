@@ -9,6 +9,7 @@ use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 
+use function Shlinkio\Shlink\Core\toProblemDetailsType;
 use function sprintf;
 
 class DeleteShortUrlException extends DomainException implements ProblemDetailsExceptionInterface
@@ -16,7 +17,7 @@ class DeleteShortUrlException extends DomainException implements ProblemDetailsE
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Cannot delete short URL';
-    private const TYPE = 'INVALID_SHORT_URL_DELETION';
+    public const ERROR_CODE = 'invalid-short-url-deletion';
 
     public static function fromVisitsThreshold(int $threshold, ShortUrlIdentifier $identifier): self
     {
@@ -32,7 +33,7 @@ class DeleteShortUrlException extends DomainException implements ProblemDetailsE
 
         $e->detail = $e->getMessage();
         $e->title = self::TITLE;
-        $e->type = self::TYPE;
+        $e->type = toProblemDetailsType(self::ERROR_CODE);
         $e->status = StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY;
         $e->additional = [
             'shortCode' => $shortCode,

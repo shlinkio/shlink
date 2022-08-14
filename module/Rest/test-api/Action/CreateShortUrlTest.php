@@ -62,6 +62,25 @@ class CreateShortUrlTest extends ApiTestCase
 
     /**
      * @test
+     * @dataProvider provideDuplicatedSlugApiVersions
+     */
+    public function expectedTypeIsReturnedForConflictingSlugBasedOnApiVersion(
+        string $version,
+        string $expectedType,
+    ): void {
+        [, $payload] = $this->createShortUrl(['customSlug' => 'custom'], version: $version);
+        self::assertEquals($expectedType, $payload['type']);
+    }
+
+    public function provideDuplicatedSlugApiVersions(): iterable
+    {
+        yield ['1', 'INVALID_SLUG'];
+        yield ['2', 'INVALID_SLUG'];
+        yield ['3', 'https://shlink.io/api/error/non-unique-slug'];
+    }
+
+    /**
+     * @test
      * @dataProvider provideTags
      */
     public function createsNewShortUrlWithTags(array $providedTags, array $expectedTags): void
@@ -226,15 +245,15 @@ class CreateShortUrlTest extends ApiTestCase
      * @test
      * @dataProvider provideInvalidUrls
      */
-    public function failsToCreateShortUrlWithInvalidLongUrl(string $url): void
+    public function failsToCreateShortUrlWithInvalidLongUrl(string $url, string $version, string $expectedType): void
     {
         $expectedDetail = sprintf('Provided URL %s is invalid. Try with a different one.', $url);
 
-        [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $url, 'validateUrl' => true]);
+        [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $url, 'validateUrl' => true], version: $version);
 
         self::assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
         self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
-        self::assertEquals('INVALID_URL', $payload['type']);
+        self::assertEquals($expectedType, $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Invalid URL', $payload['title']);
         self::assertEquals($url, $payload['url']);
@@ -242,21 +261,35 @@ class CreateShortUrlTest extends ApiTestCase
 
     public function provideInvalidUrls(): iterable
     {
-        yield 'empty URL' => [''];
-        yield 'non-reachable URL' => ['https://this-has-to-be-invalid.com'];
+        yield 'empty URL' => ['', '2', 'INVALID_URL'];
+        yield 'non-reachable URL' => ['https://this-has-to-be-invalid.com', '2', 'INVALID_URL'];
+        yield 'API version 3' => ['', '3', 'https://shlink.io/api/error/invalid-url'];
     }
 
-    /** @test */
-    public function failsToCreateShortUrlWithoutLongUrl(): void
+    /**
+     * @test
+     * @dataProvider provideInvalidArgumentApiVersions
+     */
+    public function failsToCreateShortUrlWithoutLongUrl(string $version, string $expectedType): void
     {
-        $resp = $this->callApiWithKey(self::METHOD_POST, '/short-urls', [RequestOptions::JSON => []]);
+        $resp = $this->callApiWithKey(
+            self::METHOD_POST,
+            sprintf('/rest/v%s/short-urls', $version),
+            [RequestOptions::JSON => []],
+        );
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
         self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
-        self::assertEquals('INVALID_ARGUMENT', $payload['type']);
+        self::assertEquals($expectedType, $payload['type']);
         self::assertEquals('Provided data is not valid', $payload['detail']);
         self::assertEquals('Invalid data', $payload['title']);
+    }
+
+    public function provideInvalidArgumentApiVersions(): iterable
+    {
+        yield ['2', 'INVALID_ARGUMENT'];
+        yield ['3', 'https://shlink.io/api/error/invalid-data'];
     }
 
     /** @test */
@@ -332,12 +365,17 @@ class CreateShortUrlTest extends ApiTestCase
     /**
      * @return array{int $statusCode, array $payload}
      */
-    private function createShortUrl(array $body = [], string $apiKey = 'valid_api_key'): array
+    private function createShortUrl(array $body = [], string $apiKey = 'valid_api_key', string $version = '2'): array
     {
         if (! isset($body['longUrl'])) {
             $body['longUrl'] = 'https://app.shlink.io';
         }
-        $resp = $this->callApiWithKey(self::METHOD_POST, '/short-urls', [RequestOptions::JSON => $body], $apiKey);
+        $resp = $this->callApiWithKey(
+            self::METHOD_POST,
+            sprintf('/rest/v%s/short-urls', $version),
+            [RequestOptions::JSON => $body],
+            $apiKey,
+        );
         $payload = $this->getJsonResponsePayload($resp);
 
         return [$resp->getStatusCode(), $payload];

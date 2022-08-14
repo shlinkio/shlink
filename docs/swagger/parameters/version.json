@@ -6,6 +6,7 @@
     "schema": {
         "type": "string",
         "enum": [
+            "3",
             "2",
             "1"
         ]
