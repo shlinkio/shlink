@@ -8,11 +8,13 @@ use Fig\Http\Message\StatusCodeInterface;
 use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
+use function Shlinkio\Shlink\Core\toProblemDetailsType;
+
 class VerifyAuthenticationException extends RuntimeException implements ProblemDetailsExceptionInterface
 {
     use CommonProblemDetailsExceptionTrait;
 
-    public const TYPE = 'https://shlink.io/api/error/invalid-api-key';
+    public const ERROR_CODE = 'invalid-api-key';
 
     public static function forInvalidApiKey(): self
     {
@@ -20,7 +22,7 @@ class VerifyAuthenticationException extends RuntimeException implements ProblemD
 
         $e->detail = $e->getMessage();
         $e->title = 'Invalid API key';
-        $e->type = self::TYPE;
+        $e->type = toProblemDetailsType(self::ERROR_CODE);
         $e->status = StatusCodeInterface::STATUS_UNAUTHORIZED;
 
         return $e;

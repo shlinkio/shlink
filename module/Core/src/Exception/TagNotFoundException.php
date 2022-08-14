@@ -8,6 +8,7 @@ use Fig\Http\Message\StatusCodeInterface;
 use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
+use function Shlinkio\Shlink\Core\toProblemDetailsType;
 use function sprintf;
 
 class TagNotFoundException extends DomainException implements ProblemDetailsExceptionInterface
@@ -15,7 +16,7 @@ class TagNotFoundException extends DomainException implements ProblemDetailsExce
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Tag not found';
-    public const TYPE = 'https://shlink.io/api/error/tag-not-found';
+    public const ERROR_CODE = 'tag-not-found';
 
     public static function fromTag(string $tag): self
     {
@@ -23,7 +24,7 @@ class TagNotFoundException extends DomainException implements ProblemDetailsExce
 
         $e->detail = $e->getMessage();
         $e->title = self::TITLE;
-        $e->type = self::TYPE;
+        $e->type = toProblemDetailsType(self::ERROR_CODE);
         $e->status = StatusCodeInterface::STATUS_NOT_FOUND;
         $e->additional = ['tag' => $tag];
 

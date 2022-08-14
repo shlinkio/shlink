@@ -98,17 +98,17 @@ class BackwardsCompatibleProblemDetailsExceptionTest extends TestCase
     {
         yield ['foo', 'foo', true];
         yield ['bar', 'bar', true];
-        yield [ValidationException::TYPE, 'INVALID_ARGUMENT'];
-        yield [DeleteShortUrlException::TYPE, 'INVALID_SHORT_URL_DELETION'];
-        yield [DomainNotFoundException::TYPE, 'DOMAIN_NOT_FOUND'];
-        yield [ForbiddenTagOperationException::TYPE, 'FORBIDDEN_OPERATION'];
-        yield [InvalidUrlException::TYPE, 'INVALID_URL'];
-        yield [NonUniqueSlugException::TYPE, 'INVALID_SLUG'];
-        yield [ShortUrlNotFoundException::TYPE, 'INVALID_SHORTCODE'];
-        yield [TagConflictException::TYPE, 'TAG_CONFLICT'];
-        yield [TagNotFoundException::TYPE, 'TAG_NOT_FOUND'];
-        yield [MercureException::TYPE, 'MERCURE_NOT_CONFIGURED'];
-        yield [MissingAuthenticationException::TYPE, 'INVALID_AUTHORIZATION'];
-        yield [VerifyAuthenticationException::TYPE, 'INVALID_API_KEY'];
+        yield [ValidationException::ERROR_CODE, 'INVALID_ARGUMENT'];
+        yield [DeleteShortUrlException::ERROR_CODE, 'INVALID_SHORT_URL_DELETION'];
+        yield [DomainNotFoundException::ERROR_CODE, 'DOMAIN_NOT_FOUND'];
+        yield [ForbiddenTagOperationException::ERROR_CODE, 'FORBIDDEN_OPERATION'];
+        yield [InvalidUrlException::ERROR_CODE, 'INVALID_URL'];
+        yield [NonUniqueSlugException::ERROR_CODE, 'INVALID_SLUG'];
+        yield [ShortUrlNotFoundException::ERROR_CODE, 'INVALID_SHORTCODE'];
+        yield [TagConflictException::ERROR_CODE, 'TAG_CONFLICT'];
+        yield [TagNotFoundException::ERROR_CODE, 'TAG_NOT_FOUND'];
+        yield [MercureException::ERROR_CODE, 'MERCURE_NOT_CONFIGURED'];
+        yield [MissingAuthenticationException::ERROR_CODE, 'INVALID_AUTHORIZATION'];
+        yield [VerifyAuthenticationException::ERROR_CODE, 'INVALID_API_KEY'];
     }
 }

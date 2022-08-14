@@ -8,12 +8,14 @@ use Fig\Http\Message\StatusCodeInterface;
 use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
+use function Shlinkio\Shlink\Core\toProblemDetailsType;
+
 class MercureException extends RuntimeException implements ProblemDetailsExceptionInterface
 {
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Mercure integration not configured';
-    public const TYPE = 'https://shlink.io/api/error/mercure-not-configured';
+    public const ERROR_CODE = 'mercure-not-configured';
 
     public static function mercureNotConfigured(): self
     {
@@ -21,7 +23,7 @@ class MercureException extends RuntimeException implements ProblemDetailsExcepti
 
         $e->detail = $e->getMessage();
         $e->title = self::TITLE;
-        $e->type = self::TYPE;
+        $e->type = toProblemDetailsType(self::ERROR_CODE);
         $e->status = StatusCodeInterface::STATUS_NOT_IMPLEMENTED;
 
         return $e;

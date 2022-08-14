@@ -9,6 +9,7 @@ use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
+use function Shlinkio\Shlink\Core\toProblemDetailsType;
 use function sprintf;
 
 class NonUniqueSlugException extends InvalidArgumentException implements ProblemDetailsExceptionInterface
@@ -16,7 +17,7 @@ class NonUniqueSlugException extends InvalidArgumentException implements Problem
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Invalid custom slug';
-    public const TYPE = 'https://shlink.io/api/error/non-unique-slug';
+    public const ERROR_CODE = 'non-unique-slug';
 
     public static function fromSlug(string $slug, ?string $domain = null): self
     {
@@ -25,7 +26,7 @@ class NonUniqueSlugException extends InvalidArgumentException implements Problem
 
         $e->detail = $e->getMessage();
         $e->title = self::TITLE;
-        $e->type = self::TYPE;
+        $e->type = toProblemDetailsType(self::ERROR_CODE);
         $e->status = StatusCodeInterface::STATUS_BAD_REQUEST;
         $e->additional = ['customSlug' => $slug];
 

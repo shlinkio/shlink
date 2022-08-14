@@ -8,6 +8,7 @@ use Fig\Http\Message\StatusCodeInterface;
 use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
+use function Shlinkio\Shlink\Core\toProblemDetailsType;
 use function sprintf;
 
 class DomainNotFoundException extends DomainException implements ProblemDetailsExceptionInterface
@@ -15,7 +16,7 @@ class DomainNotFoundException extends DomainException implements ProblemDetailsE
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Domain not found';
-    public const TYPE = 'https://shlink.io/api/error/domain-not-found';
+    public const ERROR_CODE = 'domain-not-found';
 
     private function __construct(string $message, array $additional)
     {
@@ -23,7 +24,7 @@ class DomainNotFoundException extends DomainException implements ProblemDetailsE
 
         $this->detail = $message;
         $this->title = self::TITLE;
-        $this->type = self::TYPE;
+        $this->type = toProblemDetailsType(self::ERROR_CODE);
         $this->status = StatusCodeInterface::STATUS_NOT_FOUND;
         $this->additional = $additional;
     }

@@ -12,6 +12,7 @@ use Throwable;
 
 use function array_keys;
 use function Shlinkio\Shlink\Core\arrayToString;
+use function Shlinkio\Shlink\Core\toProblemDetailsType;
 use function sprintf;
 
 use const PHP_EOL;
@@ -21,7 +22,7 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Invalid data';
-    public const TYPE = 'https://shlink.io/api/error/invalid-data';
+    public const ERROR_CODE = 'invalid-data';
 
     private array $invalidElements;
 
@@ -37,7 +38,7 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
 
         $e->detail = $e->getMessage();
         $e->title = self::TITLE;
-        $e->type = self::TYPE;
+        $e->type = toProblemDetailsType(self::ERROR_CODE);
         $e->status = StatusCodeInterface::STATUS_BAD_REQUEST;
         $e->invalidElements = $invalidData;
         $e->additional = ['invalidElements' => array_keys($invalidData)];
