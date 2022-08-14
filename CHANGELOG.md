@@ -27,6 +27,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   Non-error responses are not affected.
 
+* [#1513](https://github.com/shlinkio/shlink/issues/1513) Added publishing of the docker image in GHCR.
+
 ### Changed
 * [#1339](https://github.com/shlinkio/shlink/issues/1339) Added new test suite for CLI E2E tests.
 * [#1503](https://github.com/shlinkio/shlink/issues/1503) Drastically improved build time in GitHub Actions, by optimizing parallelization, adding php extensions cache and running mutation tests only for changed files.
