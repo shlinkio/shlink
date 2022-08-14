@@ -24,9 +24,19 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           path: build
+      - name: Resolve infection args
+        id: infection_args
+        run: |
+          BRANCH="${GITHUB_REF#refs/heads/}" |
+          if [[ $BRANCH == 'main' || $BRANCH == 'develop' ]]; then
+            echo "::set-output name=args::--logger-github=false"
+          else
+            echo "::set-output name=args::--logger-github=false --git-diff-lines --git-diff-base=develop"
+          fi;
+        shell: bash
       - if: ${{ inputs.test-group == 'unit' }}
-        run: composer infect:ci:unit -- --git-diff-lines --logger-github=false
+        run: composer infect:ci:unit -- ${{ steps.infection_args.outputs.args }}
         env:
           INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
       - if: ${{ inputs.test-group != 'unit' }}
-        run: composer infect:ci:${{ inputs.test-group }} -- --git-diff-lines --logger-github=false
+        run: composer infect:ci:${{ inputs.test-group }} -- ${{ steps.infection_args.outputs.args }}
