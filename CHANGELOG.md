@@ -6,7 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#1406](https://github.com/shlinkio/shlink/issues/1406) Added new REST API version 3.
+
+  When making requests to the REST API with `/rest/v3/...` and an error occurs, all error types will be different, with the next correlation:
+
+  * `INVALID_ARGUMENT` -> `https://shlink.io/api/error/invalid-data`
+  * `INVALID_SHORT_URL_DELETION` -> `https://shlink.io/api/error/invalid-short-url-deletion`
+  * `DOMAIN_NOT_FOUND` -> `https://shlink.io/api/error/domain-not-found`
+  * `FORBIDDEN_OPERATION` -> `https://shlink.io/api/error/forbidden-tag-operation`
+  * `INVALID_URL` -> `https://shlink.io/api/error/invalid-url`
+  * `INVALID_SLUG` -> `https://shlink.io/api/error/non-unique-slug`
+  * `INVALID_SHORTCODE` -> `https://shlink.io/api/error/short-url-not-found`
+  * `TAG_CONFLICT` -> `https://shlink.io/api/error/tag-conflict`
+  * `TAG_NOT_FOUND` -> `https://shlink.io/api/error/tag-not-found`
+  * `MERCURE_NOT_CONFIGURED` -> `https://shlink.io/api/error/mercure-not-configured`
+  * `INVALID_AUTHORIZATION` -> `https://shlink.io/api/error/missing-authentication`
+  * `INVALID_API_KEY` -> `https://shlink.io/api/error/invalid-api-key`
+
+  If you make a request to the API with v2 or v1, the old error types will be returned, until Shlink 4 is released, when only the new ones will be used.
+
+  Non-error responses are not affected.
 
 ### Changed
 * [#1339](https://github.com/shlinkio/shlink/issues/1339) Added new test suite for CLI E2E tests.
