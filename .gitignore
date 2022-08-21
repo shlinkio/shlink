@@ -1,4 +1,6 @@
 .idea
+bin/.rr.*
+bin/rr
 build
 !docker/build
 composer.lock

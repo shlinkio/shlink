@@ -1,0 +1,32 @@
+version: '2.7'
+
+server:
+  command: 'php -dopcache.enable_cli=1 -dopcache.validate_timestamps=0 ../../bin/roadrunner-worker.php'
+
+http:
+  address: '0.0.0.0:8080'
+  static:
+    dir: ../../public
+    forbid:
+      - .php
+      - .htaccess
+  pool:
+    num_workers: 16 # TODO Make configurable
+    supervisor:
+      max_worker_memory: 100
+
+jobs:
+  pool:
+    num_workers: 16 # TODO Make configurable
+    max_worker_memory: 100
+  consume: {  }
+
+logs:
+  mode: production
+  channels:
+    http:
+      level: info # Log all http requests, set to info to disable
+    server:
+      level: debug # Everything written to worker stderr is logged
+    metrics:
+      level: error

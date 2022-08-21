@@ -1,0 +1,41 @@
+version: '2.7'
+
+server:
+  command: 'php ../../bin/roadrunner-worker.php'
+
+http:
+  address: '0.0.0.0:8080'
+  static:
+    dir: ../../public
+    forbid:
+      - .php
+      - .htaccess
+  pool:
+    num_workers: 1
+    supervisor:
+      max_worker_memory: 100
+
+jobs:
+  pool:
+    num_workers: 2
+    max_worker_memory: 100
+  consume: {  }
+
+logs:
+  mode: development
+  channels:
+    http:
+      level: debug # Log all http requests, set to info to disable
+    server:
+      level: debug # Everything written to worker stderr is logged
+    metrics:
+      level: debug
+
+reload:
+  enabled: true
+  interval: 1s
+  patterns: ['.php', '.yml', '.yaml']
+  services:
+    http:
+      dirs: ['.']
+      recursive: true

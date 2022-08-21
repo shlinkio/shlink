@@ -2,14 +2,18 @@
 
 declare(strict_types=1);
 
-$isSwoole = extension_loaded('openswoole');
+use function Shlinkio\Shlink\Config\swooleIsInstalled;
 
 return [
 
     'url_shortener' => [
         'domain' => [
             'schema' => 'http',
-            'hostname' => sprintf('localhost:%s', $isSwoole ? '8080' : '8000'),
+            'hostname' => sprintf('localhost:%s', match (true) {
+                swooleIsInstalled() => '8080', // Swoole
+                PHP_SAPI === 'cli' => '8800', // Roadrunner
+                default => '8000', // FPM
+            }),
         ],
         'auto_resolve_titles' => true,
 //        'multi_segment_slugs_enabled' => true,
