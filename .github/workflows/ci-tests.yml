@@ -35,3 +35,10 @@ jobs:
           path: |
             build/coverage-${{ inputs.test-group }}
             build/coverage-${{ inputs.test-group }}.cov
+
+  mutation-tests:
+    needs:
+      - tests
+    uses: './.github/workflows/ci-mutation-tests.yml'
+    with:
+      test-group: ${{ inputs.test-group }}

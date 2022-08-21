@@ -42,3 +42,11 @@ jobs:
           path: |
             build/coverage-db
             build/coverage-db.cov
+
+  db-mutation-tests:
+    if: ${{ inputs.platform == 'sqlite:ci' }}
+    needs:
+      - db-tests
+    uses: './.github/workflows/ci-mutation-tests.yml'
+    with:
+      test-group: db
