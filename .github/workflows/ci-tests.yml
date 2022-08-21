@@ -39,6 +39,13 @@ jobs:
   mutation-tests:
     needs:
       - tests
-    uses: './.github/workflows/ci-mutation-tests.yml'
-    with:
-      test-group: ${{ inputs.test-group }}
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        php-version: [ '8.1' ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: './.github/actions/ci-mutation-tests'
+        with:
+          php-version: ${{ matrix.php-version }}
+          test-group: ${{ inputs.test-group }}

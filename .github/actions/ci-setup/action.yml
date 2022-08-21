@@ -4,14 +4,14 @@ description: 'Sets up the environment to run CI actions for Shlink'
 inputs:
   install-deps:
     description: 'Tells if dependencies should be installed with composer. Default value is "yes"'
-    required: true
+    required: false
     default: 'yes'
   php-version:
     description: 'The PHP version to be setup'
     required: true
   php-extensions:
     description: 'The PHP extensions to install'
-    required: true
+    required: false
     default: ''
   extensions-cache-key:
     description: 'The key used to cache PHP extensions. If empty value is provided, extension caching is disabled'
