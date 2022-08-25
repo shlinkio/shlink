@@ -6,6 +6,10 @@ set -e
 
 cd /etc/shlink
 
+echo "Linking previous database if needed..."
+[ -f "data/database.sqlite" ] && ln -s "../database.sqlite" "data/db/"
+[ -f "data/GeoLite2-City.mmdb" ] && ln -s "../GeoLite2-City.mmdb" "data/db/"
+
 echo "Creating fresh database if needed..."
 php bin/cli db:create -n ${flags}
 

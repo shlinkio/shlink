@@ -7,6 +7,7 @@ vendor/
 data/database.sqlite
 data/shlink-tests.db
 data/GeoLite2-City.*
+data/db/*
 docs/swagger-ui*
 docs/mercure.html
 docker-compose.override.yml

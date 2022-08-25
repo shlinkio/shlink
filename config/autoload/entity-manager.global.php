@@ -31,7 +31,7 @@ return (static function (): array {
     $resolveConnection = static fn () => match ($driver) {
         null, 'sqlite' => [
             'driver' => 'pdo_sqlite',
-            'path' => 'data/database.sqlite',
+            'path' => 'data/db/database.sqlite',
         ],
         default => [
             'driver' => $resolveDriver(),
