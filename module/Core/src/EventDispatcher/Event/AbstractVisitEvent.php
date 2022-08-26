@@ -9,7 +9,7 @@ use Shlinkio\Shlink\EventDispatcher\Util\JsonUnserializable;
 
 abstract class AbstractVisitEvent implements JsonSerializable, JsonUnserializable
 {
-    public function __construct(public readonly string $visitId)
+    final public function __construct(public readonly string $visitId)
     {
     }
 

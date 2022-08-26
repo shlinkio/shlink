@@ -42,10 +42,12 @@ logs:
       level: debug
 
 reload:
-  enabled: true
   interval: 1s
   patterns: ['.php', '.yml', '.yaml']
   services:
     http:
-      dirs: ['.']
+      dirs: ['../..']
+      recursive: true
+    jobs:
+      dirs: ['../..']
       recursive: true

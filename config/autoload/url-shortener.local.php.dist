@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use function Shlinkio\Shlink\Config\env;
 use function Shlinkio\Shlink\Config\swooleIsInstalled;
 
 return [
@@ -10,8 +11,8 @@ return [
         'domain' => [
             'schema' => 'http',
             'hostname' => sprintf('localhost:%s', match (true) {
+                PHP_SAPI === 'cli' && env('RR_MODE') !== null => '8800', // Roadrunner
                 swooleIsInstalled() => '8080', // Swoole
-                PHP_SAPI === 'cli' => '8800', // Roadrunner
                 default => '8000', // FPM
             }),
         ],
