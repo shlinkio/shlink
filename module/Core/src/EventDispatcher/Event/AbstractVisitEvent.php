@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\EventDispatcher\Event;
 
 use JsonSerializable;
+use Shlinkio\Shlink\EventDispatcher\Util\JsonUnserializable;
 
-abstract class AbstractVisitEvent implements JsonSerializable
+abstract class AbstractVisitEvent implements JsonSerializable, JsonUnserializable
 {
     public function __construct(public readonly string $visitId)
     {
@@ -15,5 +16,10 @@ abstract class AbstractVisitEvent implements JsonSerializable
     public function jsonSerialize(): array
     {
         return ['visitId' => $this->visitId];
+    }
+
+    public static function fromPayload(array $payload): self
+    {
+        return new static($payload['visitId'] ?? '');
     }
 }

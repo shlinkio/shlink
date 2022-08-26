@@ -1,5 +1,8 @@
 version: '2.7'
 
+rpc:
+  listen: tcp://127.0.0.1:6001
+
 server:
   command: 'php -dopcache.enable_cli=1 -dopcache.validate_timestamps=0 ../../bin/roadrunner-worker.php'
 
@@ -16,10 +19,17 @@ http:
       max_worker_memory: 100
 
 jobs:
+  timeout: 300
   pool:
     num_workers: 16 # TODO Make configurable
     max_worker_memory: 100
-  consume: {  }
+  consume: ['shlink']
+  pipelines:
+    shlink:
+      driver: memory
+      config:
+        priority: 10
+        prefetch: 10
 
 logs:
   mode: production

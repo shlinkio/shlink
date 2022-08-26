@@ -1,5 +1,8 @@
 version: '2.7'
 
+rpc:
+  listen: tcp://127.0.0.1:6001
+
 server:
   command: 'php ../../bin/roadrunner-worker.php'
 
@@ -11,7 +14,7 @@ http:
       - .php
       - .htaccess
   pool:
-    num_workers: 1
+    num_workers: 3
     supervisor:
       max_worker_memory: 100
 
@@ -19,15 +22,22 @@ jobs:
   pool:
     num_workers: 2
     max_worker_memory: 100
-  consume: {  }
+  timeout: 300
+  consume: ['shlink']
+  pipelines:
+    shlink:
+      driver: memory
+      config:
+        priority: 10
+        prefetch: 10
 
 logs:
   mode: development
   channels:
     http:
-      level: debug # Log all http requests, set to info to disable
+      level: debug
     server:
-      level: debug # Everything written to worker stderr is logged
+      level: debug
     metrics:
       level: debug
 

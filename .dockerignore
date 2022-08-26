@@ -22,4 +22,5 @@ infection*
 **/test*
 build*
 **/.*
+!config/roadrunner/.rr.yml
 bin/helper
