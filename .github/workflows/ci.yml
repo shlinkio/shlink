@@ -29,12 +29,12 @@ jobs:
     with:
       test-group: unit
 
-  api-tests-openswoole:
+  openswoole-api-tests:
     uses: './.github/workflows/ci-tests.yml'
     with:
       test-group: api
 
-  api-tests-roadrunner:
+  roadrunner-api-tests:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -96,7 +96,7 @@ jobs:
 
   api-mutation-tests:
     needs:
-      - api-tests-openswoole
+      - openswoole-api-tests
     uses: './.github/workflows/ci-mutation-tests.yml'
     with:
       test-group: api
@@ -111,7 +111,7 @@ jobs:
   upload-coverage:
     needs:
       - unit-tests
-      - api-tests
+      - openswoole-api-tests
       - cli-tests
       - sqlite-db-tests
     runs-on: ubuntu-22.04
