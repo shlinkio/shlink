@@ -60,7 +60,7 @@ LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 COPY --from=builder /etc/shlink .
 RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink && \
     if [ "$SHLINK_RUNTIME" == 'rr' ]; then \
-      php ./vendor/bin/rr get --location bin/ && chmod +x bin/rr ; \
+      php ./vendor/bin/rr get --no-interaction --location bin/ && chmod +x bin/rr ; \
     fi;
 
 # Expose default port

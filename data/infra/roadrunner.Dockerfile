@@ -68,6 +68,6 @@ CMD \
     # Install dependencies if the vendor dir does not exist
     if [[ ! -d "./vendor" ]]; then /usr/local/bin/composer install ; fi && \
     # Download roadrunner binary
-    if [[ ! -f "./bin/rr" ]]; then ./vendor/bin/rr get --location bin/ && chmod +x bin/rr ; fi && \
+    if [[ ! -f "./bin/rr" ]]; then ./vendor/bin/rr get --no-interaction --location bin/ && chmod +x bin/rr ; fi && \
     # This forces the app to be started every second until the exit code is 0
     until ./bin/rr serve -c config/roadrunner/.rr.dev.yml; do sleep 1 ; done

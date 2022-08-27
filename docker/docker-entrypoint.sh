@@ -31,6 +31,11 @@ if [ $ENABLE_PERIODIC_VISIT_LOCATE ]; then
   /usr/sbin/crond &
 fi
 
+# RoadRunner config needs these to have been set, so falling back to default values if not set yet
+export PORT="${PORT:-"8765"}"
+export WEB_WORKER_NUM="${WEB_WORKER_NUM:-"16"}"
+export TASK_WORKER_NUM="${TASK_WORKER_NUM:-"16"}"
+
 if [ "$SHLINK_RUNTIME" == 'openswoole' ]; then
   # When restarting the container, openswoole might think it is already in execution
   # This forces the app to be started every second until the exit code is 0
