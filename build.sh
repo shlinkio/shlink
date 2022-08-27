@@ -30,7 +30,7 @@ cd "${builtContent}"
 
 # Install dependencies
 echo "Installing dependencies with $composerBin..."
-composerFlags="--optimize-autoloader --no-progress --no-interaction --ignore-platform-reqs"
+composerFlags="--optimize-autoloader --no-progress --no-interaction"
 ${composerBin} self-update
 ${composerBin} install --no-dev --prefer-dist $composerFlags
 
