@@ -17,8 +17,9 @@ use function Shlinkio\Shlink\Config\swooleIsInstalled;
 
 use const PHP_SAPI;
 
-$enableSwoole = PHP_SAPI === 'cli' && swooleIsInstalled();
 $isTestEnv = env('APP_ENV') === 'test';
+$isRR = env('RR_MODE') !== null;
+$enableSwoole = PHP_SAPI === 'cli' && ! $isRR && swooleIsInstalled();
 
 return (new ConfigAggregator\ConfigAggregator([
     ! $isTestEnv

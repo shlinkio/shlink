@@ -5,9 +5,4 @@ if ! [[ $(docker ps | grep shlink) ]]; then
     docker-compose up -d
 fi
 
-if [[ "$*" == *"test:api:rr"* ]]; then
-  # API tests should be run inside the RoadRunner container when the test runtime is RoadRunner
-  docker exec -it shlink_roadrunner /bin/sh -c "$*"
-else
-  docker exec -it shlink_swoole /bin/sh -c "$*"
-fi
+docker exec -it shlink_swoole /bin/sh -c "$*"
