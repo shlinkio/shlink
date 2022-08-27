@@ -13,14 +13,11 @@ use Shlinkio\Shlink\Config\ConfigAggregator\EnvVarLoaderProvider;
 
 use function class_exists;
 use function Shlinkio\Shlink\Config\env;
-use function Shlinkio\Shlink\Config\openswooleIsInstalled;
+use function Shlinkio\Shlink\Config\runningInOpenswoole;
 use function Shlinkio\Shlink\Config\runningInRoadRunner;
 
-use const PHP_SAPI;
-
 $isTestEnv = env('APP_ENV') === 'test';
-// TODO Could check for actual openswoole with runningInOpenswoole()??
-$enableSwoole = PHP_SAPI === 'cli' && ! runningInRoadRunner() && openswooleIsInstalled();
+$enableSwoole = ! runningInRoadRunner() && runningInOpenswoole();
 
 return (new ConfigAggregator\ConfigAggregator([
     ! $isTestEnv
