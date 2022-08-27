@@ -34,5 +34,3 @@ logs:
       level: info # Log all http requests, set to info to disable
     server:
       level: debug # Everything written to worker stderr is logged
-    metrics:
-      level: error
