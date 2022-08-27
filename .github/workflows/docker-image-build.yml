@@ -21,6 +21,7 @@ jobs:
     with:
       image-name: shlinkio/shlink
       version-arg-name: SHLINK_VERSION
+      platforms: 'linux/arm64/v8,linux/amd64'
       tags-suffix: roadrunner
       extra-build-args: |
         SHLINK_RUNTIME=rr
