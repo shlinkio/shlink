@@ -29,6 +29,11 @@ jobs:
     with:
       test-group: unit
 
+  cli-tests:
+    uses: './.github/workflows/ci-tests.yml'
+    with:
+      test-group: cli
+
   openswoole-api-tests:
     uses: './.github/workflows/ci-tests.yml'
     with:
@@ -49,11 +54,6 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - run: ./vendor/bin/rr get --no-interaction --location bin/ && chmod +x bin/rr
       - run: composer test:api:rr
-
-  cli-tests:
-    uses: './.github/workflows/ci-tests.yml'
-    with:
-      test-group: cli
 
   sqlite-db-tests:
     uses: './.github/workflows/ci-db-tests.yml'

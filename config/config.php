@@ -13,11 +13,12 @@ use Shlinkio\Shlink\Config\ConfigAggregator\EnvVarLoaderProvider;
 
 use function class_exists;
 use function Shlinkio\Shlink\Config\env;
-use function Shlinkio\Shlink\Config\runningInOpenswoole;
 use function Shlinkio\Shlink\Config\runningInRoadRunner;
 
+use const PHP_SAPI;
+
 $isTestEnv = env('APP_ENV') === 'test';
-$enableSwoole = ! runningInRoadRunner() && runningInOpenswoole();
+$enableSwoole = PHP_SAPI === 'cli' && ! runningInRoadRunner();
 
 return (new ConfigAggregator\ConfigAggregator([
     ! $isTestEnv
