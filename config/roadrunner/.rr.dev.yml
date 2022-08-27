@@ -46,8 +46,8 @@ reload:
   patterns: ['.php', '.yml', '.yaml']
   services:
     http:
-      dirs: ['../..']
+      dirs: ['../../bin', '../../config', '../../data/migrations', '../../docker', '../../module', '../../vendor']
       recursive: true
     jobs:
-      dirs: ['../..']
+      dirs: ['../../bin', '../../config', '../../data/migrations', '../../docker', '../../module', '../../vendor']
       recursive: true
