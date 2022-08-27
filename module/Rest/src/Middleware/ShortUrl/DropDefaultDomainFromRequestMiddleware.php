@@ -11,14 +11,14 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class DropDefaultDomainFromRequestMiddleware implements MiddlewareInterface
 {
-    public function __construct(private string $defaultDomain)
+    public function __construct(private readonly string $defaultDomain)
     {
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /** @var array $body */
-        $body = $request->getParsedBody();
+        $body = $request->getParsedBody() ?? [];
         $request = $request->withQueryParams($this->sanitizeDomainFromPayload($request->getQueryParams()))
                            ->withParsedBody($this->sanitizeDomainFromPayload($body));
 

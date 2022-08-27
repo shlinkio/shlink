@@ -41,7 +41,7 @@ class LocateVisit
             return;
         }
 
-        $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress, $visit);
+        $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress(), $visit);
         $this->eventDispatcher->dispatch(new VisitLocated($visitId));
     }
 

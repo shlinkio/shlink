@@ -8,9 +8,19 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  build-openswool:
     uses: shlinkio/github-actions/.github/workflows/docker-build-and-publish.yml@main
     secrets: inherit
     with:
       image-name: shlinkio/shlink
       version-arg-name: SHLINK_VERSION
+
+  build-roadrunner:
+    uses: shlinkio/github-actions/.github/workflows/docker-build-and-publish.yml@main
+    secrets: inherit
+    with:
+      image-name: shlinkio/shlink
+      version-arg-name: SHLINK_VERSION
+      tags-suffix: roadrunner
+      extra-build-args: |
+        SHLINK_RUNTIME=rr

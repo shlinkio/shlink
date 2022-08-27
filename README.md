@@ -15,7 +15,7 @@ A PHP-based self-hosted URL shortener that can be used to serve shortened URLs u
 
 - [Full documentation](#full-documentation)
 - [Docker image](#docker-image)
-- [Self hosted](#self-hosted)
+- [Self-hosted](#self-hosted)
     - [Download](#download)
     - [Configure](#configure)
 - [Using shlink](#using-shlink)

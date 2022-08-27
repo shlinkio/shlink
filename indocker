@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Run docker containers if they are not up yet
-if ! [[ $(docker ps | grep shlink_swoole) ]]; then
+if ! [[ $(docker ps | grep shlink) ]]; then
     docker-compose up -d
 fi
 

@@ -11,7 +11,7 @@ inputs:
     required: true
   php-extensions:
     description: 'The PHP extensions to install'
-    required: true
+    required: false
     default: ''
   extensions-cache-key:
     description: 'The key used to cache PHP extensions. If empty value is provided, extension caching is disabled'
