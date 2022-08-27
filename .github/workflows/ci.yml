@@ -29,10 +29,26 @@ jobs:
     with:
       test-group: unit
 
-  api-tests:
+  api-tests-openswoole:
     uses: './.github/workflows/ci-tests.yml'
     with:
       test-group: api
+
+  api-tests-roadrunner:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        php-version: [ '8.1' ]
+    steps:
+      - uses: actions/checkout@v3
+      - run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php-version }}
+          tools: composer
+      - run: composer install --no-interaction --prefer-dist
+      - run: ./vendor/bin/rr get --location bin/ && chmod +x bin/rr
+      - run: composer test:api:rr
 
   cli-tests:
     uses: './.github/workflows/ci-tests.yml'
