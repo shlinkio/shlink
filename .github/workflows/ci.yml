@@ -44,7 +44,7 @@ jobs:
       - run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ inputs.php-version }}
+          php-version: ${{ matrix.php-version }}
           tools: composer
       - run: composer install --no-interaction --prefer-dist
       - run: ./vendor/bin/rr get --location bin/ && chmod +x bin/rr
