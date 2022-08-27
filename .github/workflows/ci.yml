@@ -96,7 +96,7 @@ jobs:
 
   api-mutation-tests:
     needs:
-      - api-tests
+      - api-tests-openswoole
     uses: './.github/workflows/ci-mutation-tests.yml'
     with:
       test-group: api
