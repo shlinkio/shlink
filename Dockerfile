@@ -2,6 +2,8 @@ FROM php:8.1.9-alpine3.16 as base
 
 ARG SHLINK_VERSION=latest
 ENV SHLINK_VERSION ${SHLINK_VERSION}
+ARG SHLINK_RUNTIME=openswoole
+ENV SHLINK_RUNTIME ${SHLINK_RUNTIME}
 ENV OPENSWOOLE_VERSION 4.11.1
 ENV PDO_SQLSRV_VERSION 5.10.1
 ENV MS_ODBC_SQL_VERSION 17.5.2.2
@@ -22,8 +24,10 @@ RUN \
 
 # Install openswoole and sqlsrv driver for x86_64 builds
 RUN apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} unixodbc-dev && \
-    pecl install openswoole-${OPENSWOOLE_VERSION} && \
-    docker-php-ext-enable openswoole && \
+    if [ "$SHLINK_RUNTIME" == 'openswoole' ]; then \
+        pecl install openswoole-${OPENSWOOLE_VERSION} && \
+        docker-php-ext-enable openswoole ; \
+    fi; \
     if [ $(uname -m) == "x86_64" ]; then \
       wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
       apk add --no-cache --allow-untrusted msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
@@ -38,7 +42,12 @@ FROM base as builder
 COPY . .
 COPY --from=composer:2 /usr/bin/composer ./composer.phar
 RUN apk add --no-cache git && \
-    php composer.phar install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction && \
+    php composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction && \
+    if [ "$SHLINK_RUNTIME" == 'openswoole' ]; then \
+        php composer.phar remove spiral/roadrunner spiral/roadrunner-jobs --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interactionc ; \
+    elif [ $SHLINK_RUNTIME == 'rr' ]; then \
+        php composer.phar remove mezzio/mezzio-swoole --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interaction ; \
+    fi; \
     php composer.phar clear-cache && \
     rm -r docker composer.* && \
     sed -i "s/%SHLINK_VERSION%/${SHLINK_VERSION}/g" config/autoload/app_options.global.php
@@ -49,9 +58,12 @@ FROM base
 LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 
 COPY --from=builder /etc/shlink .
-RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink
+RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink && \
+    if [ "$SHLINK_RUNTIME" == 'rr' ]; then \
+      php ./vendor/bin/rr get --location bin/ && chmod +x bin/rr ; \
+    fi;
 
-# Expose default openswoole port
+# Expose default port
 EXPOSE 8080
 
 # Copy config specific for the image

@@ -31,6 +31,10 @@ if [ $ENABLE_PERIODIC_VISIT_LOCATE ]; then
   /usr/sbin/crond &
 fi
 
-# When restarting the container, openswoole might think it is already in execution
-# This forces the app to be started every second until the exit code is 0
-until php vendor/bin/laminas mezzio:swoole:start; do sleep 1 ; done
+if [ "$SHLINK_RUNTIME" == 'openswoole' ]; then
+  # When restarting the container, openswoole might think it is already in execution
+  # This forces the app to be started every second until the exit code is 0
+  until php vendor/bin/laminas mezzio:swoole:start; do sleep 1 ; done
+elif [ "$SHLINK_RUNTIME" == 'rr' ]; then
+  ./bin/rr serve -c config/roadrunner/.rr.yml
+fi
