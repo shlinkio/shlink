@@ -28,6 +28,7 @@ jobs:
           php-extensions: openswoole-4.11.1
           extensions-cache-key: tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
       - run: composer test:${{ inputs.test-group }}:ci
+        shell: bash
       - uses: actions/upload-artifact@v3
         if: ${{ matrix.php-version == '8.1' }}
         with:
