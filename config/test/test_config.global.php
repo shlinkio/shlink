@@ -34,8 +34,8 @@ use function Shlinkio\Shlink\Config\env;
 use function sprintf;
 use function sys_get_temp_dir;
 
-use const ShlinkioTest\Shlink\SWOOLE_TESTING_HOST;
-use const ShlinkioTest\Shlink\SWOOLE_TESTING_PORT;
+use const ShlinkioTest\Shlink\API_TESTS_HOST;
+use const ShlinkioTest\Shlink\API_TESTS_PORT;
 
 $isApiTest = env('TEST_ENV') === 'api';
 $isCliTest = env('TEST_ENV') === 'cli';
@@ -136,8 +136,8 @@ return [
     'mezzio-swoole' => [
         'enable_coroutine' => false,
         'swoole-http-server' => [
-            'host' => SWOOLE_TESTING_HOST,
-            'port' => SWOOLE_TESTING_PORT,
+            'host' => API_TESTS_HOST,
+            'port' => API_TESTS_PORT,
             'process-name' => 'shlink_test',
             'options' => [
                 'pid_file' => sys_get_temp_dir() . '/shlink-test-swoole.pid',
@@ -188,7 +188,7 @@ return [
     'dependencies' => [
         'services' => [
             'shlink_test_api_client' => new Client([
-                'base_uri' => sprintf('http://%s:%s/', SWOOLE_TESTING_HOST, SWOOLE_TESTING_PORT),
+                'base_uri' => sprintf('http://%s:%s/', API_TESTS_HOST, API_TESTS_PORT),
                 'http_errors' => false,
             ]),
         ],

@@ -43,7 +43,7 @@ logs:
 
 reload:
   interval: 1s
-  patterns: ['.php', '.yml', '.yaml']
+  patterns: ['.php']
   services:
     http:
       dirs: ['../../bin', '../../config', '../../data/migrations', '../../docker', '../../module', '../../vendor']
