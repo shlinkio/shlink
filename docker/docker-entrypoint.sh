@@ -32,7 +32,7 @@ if [ $ENABLE_PERIODIC_VISIT_LOCATE ]; then
 fi
 
 # RoadRunner config needs these to have been set, so falling back to default values if not set yet
-export PORT="${PORT:-"8765"}"
+export PORT="${PORT:-"8080"}"
 export WEB_WORKER_NUM="${WEB_WORKER_NUM:-"16"}"
 export TASK_WORKER_NUM="${TASK_WORKER_NUM:-"16"}"
 
