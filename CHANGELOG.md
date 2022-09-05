@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
+* [#1221](https://github.com/shlinkio/shlink/issues/1221) Added experimental support to run Shlink with [RoadRunner](https://roadrunner.dev) instead of openswoole.
+* [#1531](https://github.com/shlinkio/shlink/issues/1531) and [#1090](https://github.com/shlinkio/shlink/issues/1090) Added support for trailing slashes in short URLs.
 * [#1406](https://github.com/shlinkio/shlink/issues/1406) Added new REST API version 3.
 
   When making requests to the REST API with `/rest/v3/...` and an error occurs, all error types will be different, with the next correlation:
@@ -28,7 +30,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   Non-error responses are not affected.
 
 * [#1513](https://github.com/shlinkio/shlink/issues/1513) Added publishing of the docker image in GHCR.
-* [#1221](https://github.com/shlinkio/shlink/issues/1221) Added experimental support to run Shlink with [RoadRunner](https://roadrunner.dev) instead of openswoole.
 
 ### Changed
 * [#1339](https://github.com/shlinkio/shlink/issues/1339) Added new test suite for CLI E2E tests.
