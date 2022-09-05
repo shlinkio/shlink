@@ -44,6 +44,7 @@ return [
             Option\UrlShortener\AutoResolveTitlesConfigOption::class,
             Option\UrlShortener\AppendExtraPathConfigOption::class,
             Option\UrlShortener\EnableMultiSegmentSlugsConfigOption::class,
+            Option\UrlShortener\EnableTrailingSlashConfigOption::class,
             Option\Tracking\IpAnonymizationConfigOption::class,
             Option\Tracking\OrphanVisitsTrackingConfigOption::class,
             Option\Tracking\DisableTrackParamConfigOption::class,
