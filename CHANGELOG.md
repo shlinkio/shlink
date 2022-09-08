@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Changed
 * [#1339](https://github.com/shlinkio/shlink/issues/1339) Added new test suite for CLI E2E tests.
 * [#1503](https://github.com/shlinkio/shlink/issues/1503) Drastically improved build time in GitHub Actions, by optimizing parallelization, adding php extensions cache and running mutation tests only for changed files.
+* [#1525](https://github.com/shlinkio/shlink/issues/1525) Migrated to custom doctrine CLI entry point.
 
 ### Deprecated
 * *Nothing*
