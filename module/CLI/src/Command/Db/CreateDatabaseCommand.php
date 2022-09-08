@@ -22,7 +22,7 @@ use const Shlinkio\Shlink\MIGRATIONS_TABLE;
 class CreateDatabaseCommand extends AbstractDatabaseCommand
 {
     public const NAME = 'db:create';
-    public const DOCTRINE_SCRIPT = 'vendor/doctrine/orm/bin/doctrine.php';
+    public const DOCTRINE_SCRIPT = 'bin/doctrine';
     public const DOCTRINE_CREATE_SCHEMA_COMMAND = 'orm:schema-tool:create';
 
     public function __construct(

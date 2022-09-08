@@ -73,6 +73,12 @@ return [
             InstallationCommand::DB_MIGRATE->value => [
                 'command' => 'bin/cli ' . Command\Db\MigrateDatabaseCommand::NAME,
             ],
+            InstallationCommand::ORM_PROXIES->value => [
+                'command' => 'bin/doctrine orm:generate-proxies',
+            ],
+            InstallationCommand::ORM_CLEAR_CACHE->value => [
+                'command' => 'bin/doctrine orm:clear-cache:metadata',
+            ],
             InstallationCommand::GEOLITE_DOWNLOAD_DB->value => [
                 'command' => 'bin/cli ' . Command\Visit\DownloadGeoLiteDbCommand::NAME,
             ],
