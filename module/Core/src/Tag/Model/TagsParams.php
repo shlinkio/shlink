@@ -14,6 +14,7 @@ final class TagsParams extends AbstractInfinitePaginableListParams
     private function __construct(
         public readonly ?string $searchTerm,
         public readonly Ordering $orderBy,
+        /** @deprecated */
         public readonly bool $withStats,
         ?int $page,
         ?int $itemsPerPage,
