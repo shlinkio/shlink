@@ -13,10 +13,10 @@ echo "Updating database..."
 php bin/cli db:migrate -n ${flags}
 
 echo "Generating proxies..."
-php vendor/doctrine/orm/bin/doctrine.php orm:generate-proxies -n ${flags}
+php bin/doctrine orm:generate-proxies -n ${flags}
 
 echo "Clearing entities cache..."
-php vendor/doctrine/orm/bin/doctrine.php orm:clear-cache:metadata -n ${flags}
+php bin/doctrine orm:clear-cache:metadata -n ${flags}
 
 # Try to download GeoLite2 db file only if the license key env var was defined
 if [ ! -z "${GEOLITE_LICENSE_KEY}" ]; then

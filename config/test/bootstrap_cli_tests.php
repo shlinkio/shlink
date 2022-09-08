@@ -22,7 +22,12 @@ if (file_exists($covFile)) {
     unlink($covFile);
 }
 
-$testHelper->createTestDb(['bin/cli', 'db:create'], ['bin/cli', 'db:migrate']);
+$testHelper->createTestDb(
+    ['bin/cli', 'db:create'],
+    ['bin/cli', 'db:migrate'],
+    ['bin/doctrine', 'orm:schema-tool:drop'],
+    ['bin/doctrine', 'dbal:run-sql'],
+);
 CliTest\CliTestCase::setSeedFixturesCallback(
     static fn () => $testHelper->seedFixtures($em, $config['data_fixtures'] ?? []),
 );

@@ -71,7 +71,7 @@
         "phpunit/phpunit": "^9.5",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.3.0",
-        "shlinkio/shlink-test-utils": "^3.2",
+        "shlinkio/shlink-test-utils": "dev-main#404fdf6 as 3.3",
         "symfony/var-dumper": "^6.1",
         "veewee/composer-run-parallel": "^1.1"
     },
