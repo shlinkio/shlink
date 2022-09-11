@@ -28,7 +28,7 @@ class ListTagsActionTest extends TestCase
     private ListTagsAction $action;
     private ObjectProphecy $tagService;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
         $this->action = new ListTagsAction($this->tagService->reveal());

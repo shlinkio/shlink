@@ -38,7 +38,7 @@ class NotifyVisitToWebHooksTest extends TestCase
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->httpClient = $this->prophesize(ClientInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);

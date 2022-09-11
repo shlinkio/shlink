@@ -11,7 +11,7 @@ class BasePathPrefixerTest extends TestCase
 {
     private BasePathPrefixer $prefixer;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->prefixer = new BasePathPrefixer();
     }

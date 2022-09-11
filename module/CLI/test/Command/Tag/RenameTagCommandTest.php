@@ -21,7 +21,7 @@ class RenameTagCommandTest extends TestCase
     private CommandTester $commandTester;
     private ObjectProphecy $tagService;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->tagService = $this->prophesize(TagServiceInterface::class);
         $this->commandTester = $this->testerForCommand(new RenameTagCommand($this->tagService->reveal()));

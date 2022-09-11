@@ -21,7 +21,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
 {
     private PublishingUpdatesGenerator $generator;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->generator = new PublishingUpdatesGenerator(
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),

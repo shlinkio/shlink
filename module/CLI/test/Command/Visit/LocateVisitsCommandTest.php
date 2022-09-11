@@ -40,7 +40,7 @@ class LocateVisitsCommandTest extends TestCase
     private ObjectProphecy $lock;
     private ObjectProphecy $downloadDbCommand;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->visitService = $this->prophesize(VisitLocator::class);
         $this->ipResolver = $this->prophesize(IpLocationResolverInterface::class);

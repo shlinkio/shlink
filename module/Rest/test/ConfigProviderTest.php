@@ -12,7 +12,7 @@ class ConfigProviderTest extends TestCase
 {
     private ConfigProvider $configProvider;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->configProvider = new ConfigProvider();
     }

@@ -23,7 +23,7 @@ class ListDomainsCommandTest extends TestCase
     private CommandTester $commandTester;
     private ObjectProphecy $domainService;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->domainService = $this->prophesize(DomainServiceInterface::class);
         $this->commandTester = $this->testerForCommand(new ListDomainsCommand($this->domainService->reveal()));

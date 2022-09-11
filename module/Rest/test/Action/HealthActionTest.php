@@ -25,7 +25,7 @@ class HealthActionTest extends TestCase
     private HealthAction $action;
     private ObjectProphecy $conn;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->conn = $this->prophesize(Connection::class);
         $this->conn->executeQuery(Argument::cetera())->willReturn($this->prophesize(Result::class)->reveal());

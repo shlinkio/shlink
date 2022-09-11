@@ -25,7 +25,7 @@ class ListDomainsActionTest extends TestCase
     private ObjectProphecy $domainService;
     private NotFoundRedirectOptions $options;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->domainService = $this->prophesize(DomainServiceInterface::class);
         $this->options = new NotFoundRedirectOptions();

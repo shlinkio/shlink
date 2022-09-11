@@ -39,7 +39,7 @@ class QrCodeActionTest extends TestCase
     private ObjectProphecy $urlResolver;
     private QrCodeOptions $options;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $router = $this->prophesize(RouterInterface::class);
         $router->generateUri(Argument::cetera())->willReturn('/foo/bar');

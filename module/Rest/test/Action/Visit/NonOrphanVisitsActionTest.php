@@ -24,7 +24,7 @@ class NonOrphanVisitsActionTest extends TestCase
     private NonOrphanVisitsAction $action;
     private ObjectProphecy $visitsHelper;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
         $this->action = new NonOrphanVisitsAction($this->visitsHelper->reveal());

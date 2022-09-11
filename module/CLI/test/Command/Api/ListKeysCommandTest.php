@@ -23,7 +23,7 @@ class ListKeysCommandTest extends TestCase
     private CommandTester $commandTester;
     private ObjectProphecy $apiKeyService;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
         $this->commandTester = $this->testerForCommand(new ListKeysCommand($this->apiKeyService->reveal()));

@@ -20,7 +20,7 @@ class CrossDomainMiddlewareTest extends TestCase
     private CrossDomainMiddleware $middleware;
     private ObjectProphecy $handler;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->middleware = new CrossDomainMiddleware(['max_age' => 1000]);
         $this->handler = $this->prophesize(RequestHandlerInterface::class);

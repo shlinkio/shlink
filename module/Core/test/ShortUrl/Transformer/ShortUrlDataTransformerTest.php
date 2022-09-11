@@ -17,7 +17,7 @@ class ShortUrlDataTransformerTest extends TestCase
 {
     private ShortUrlDataTransformer $transformer;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->transformer = new ShortUrlDataTransformer(new ShortUrlStringifier([]));
     }

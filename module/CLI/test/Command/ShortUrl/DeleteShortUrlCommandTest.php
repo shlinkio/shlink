@@ -26,7 +26,7 @@ class DeleteShortUrlCommandTest extends TestCase
     private CommandTester $commandTester;
     private ObjectProphecy $service;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->service = $this->prophesize(DeleteShortUrlServiceInterface::class);
         $this->commandTester = $this->testerForCommand(new DeleteShortUrlCommand($this->service->reveal()));

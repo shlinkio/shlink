@@ -36,7 +36,7 @@ class LocateVisitTest extends TestCase
     private ObjectProphecy $dbUpdater;
     private ObjectProphecy $eventDispatcher;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->ipLocationResolver = $this->prophesize(IpLocationResolverInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);

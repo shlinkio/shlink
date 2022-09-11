@@ -23,7 +23,7 @@ class BodyParserMiddlewareTest extends TestCase
 
     private BodyParserMiddleware $middleware;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->middleware = new BodyParserMiddleware();
     }
