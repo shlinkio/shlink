@@ -92,6 +92,7 @@
             "ShlinkioCliTest\\Shlink\\CLI\\": "module/CLI/test-cli",
             "ShlinkioTest\\Shlink\\Rest\\": "module/Rest/test",
             "ShlinkioApiTest\\Shlink\\Rest\\": "module/Rest/test-api",
+            "ShlinkioDbTest\\Shlink\\Rest\\": "module/Rest/test-db",
             "ShlinkioTest\\Shlink\\Core\\": "module/Core/test",
             "ShlinkioDbTest\\Shlink\\Core\\": "module/Core/test-db"
         },
