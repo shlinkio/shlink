@@ -25,7 +25,7 @@ class ResolveUrlCommandTest extends TestCase
     private CommandTester $commandTester;
     private ObjectProphecy $urlResolver;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
         $this->commandTester = $this->testerForCommand(new ResolveUrlCommand($this->urlResolver->reveal()));

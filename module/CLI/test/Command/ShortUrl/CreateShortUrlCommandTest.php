@@ -30,7 +30,7 @@ class CreateShortUrlCommandTest extends TestCase
     private ObjectProphecy $urlShortener;
     private ObjectProphecy $stringifier;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortener::class);
         $this->stringifier = $this->prophesize(ShortUrlStringifierInterface::class);

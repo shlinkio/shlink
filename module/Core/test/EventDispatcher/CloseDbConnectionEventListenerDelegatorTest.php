@@ -18,7 +18,7 @@ class CloseDbConnectionEventListenerDelegatorTest extends TestCase
     private CloseDbConnectionEventListenerDelegator $delegator;
     private ObjectProphecy $container;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->container = $this->prophesize(ContainerInterface::class);
         $this->delegator = new CloseDbConnectionEventListenerDelegator();

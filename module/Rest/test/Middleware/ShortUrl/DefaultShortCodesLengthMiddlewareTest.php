@@ -23,7 +23,7 @@ class DefaultShortCodesLengthMiddlewareTest extends TestCase
     private DefaultShortCodesLengthMiddleware $middleware;
     private ObjectProphecy $handler;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->handler = $this->prophesize(RequestHandlerInterface::class);
         $this->middleware = new DefaultShortCodesLengthMiddleware(8);

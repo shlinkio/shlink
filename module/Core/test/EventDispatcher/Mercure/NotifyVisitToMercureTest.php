@@ -31,7 +31,7 @@ class NotifyVisitToMercureTest extends TestCase
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->helper = $this->prophesize(PublishingHelperInterface::class);
         $this->updatesGenerator = $this->prophesize(PublishingUpdatesGeneratorInterface::class);

@@ -31,7 +31,7 @@ class DeleteShortUrlServiceTest extends TestCase
     private ObjectProphecy $urlResolver;
     private string $shortCode;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $shortUrl = ShortUrl::createEmpty()->setVisits(new ArrayCollection(
             map(range(0, 10), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance())),

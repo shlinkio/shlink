@@ -22,7 +22,7 @@ class ShortUrlRepositoryAdapterTest extends TestCase
 
     private ObjectProphecy $repo;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->repo = $this->prophesize(ShortUrlRepositoryInterface::class);
     }

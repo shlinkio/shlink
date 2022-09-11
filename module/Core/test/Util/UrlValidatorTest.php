@@ -27,7 +27,7 @@ class UrlValidatorTest extends TestCase
     private ObjectProphecy $httpClient;
     private UrlShortenerOptions $options;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->httpClient = $this->prophesize(ClientInterface::class);
         $this->options = new UrlShortenerOptions(['validate_url' => true]);

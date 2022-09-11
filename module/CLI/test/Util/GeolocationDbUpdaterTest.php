@@ -32,7 +32,7 @@ class GeolocationDbUpdaterTest extends TestCase
     private TrackingOptions $trackingOptions;
     private ObjectProphecy $lock;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->dbUpdater = $this->prophesize(DbUpdaterInterface::class);
         $this->geoLiteDbReader = $this->prophesize(Reader::class);

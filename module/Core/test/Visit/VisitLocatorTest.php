@@ -38,7 +38,7 @@ class VisitLocatorTest extends TestCase
     private ObjectProphecy $em;
     private ObjectProphecy $repo;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->em = $this->prophesize(EntityManager::class);
         $this->repo = $this->prophesize(VisitRepositoryInterface::class);

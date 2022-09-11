@@ -27,7 +27,7 @@ class ShortUrlVisitsActionTest extends TestCase
     private ShortUrlVisitsAction $action;
     private ObjectProphecy $visitsHelper;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
         $this->action = new ShortUrlVisitsAction($this->visitsHelper->reveal());

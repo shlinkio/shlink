@@ -25,7 +25,7 @@ class PixelActionTest extends TestCase
     private ObjectProphecy $urlResolver;
     private ObjectProphecy $requestTracker;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
         $this->requestTracker = $this->prophesize(RequestTrackerInterface::class);

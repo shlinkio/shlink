@@ -24,7 +24,7 @@ class DomainRedirectsCommandTest extends TestCase
     private CommandTester $commandTester;
     private ObjectProphecy $domainService;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->domainService = $this->prophesize(DomainServiceInterface::class);
         $this->commandTester = $this->testerForCommand(new DomainRedirectsCommand($this->domainService->reveal()));

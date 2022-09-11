@@ -20,7 +20,7 @@ class CloseDbConnectionEventListenerTest extends TestCase
 
     private ObjectProphecy $em;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->em = $this->prophesize(ReopeningEntityManagerInterface::class);
     }

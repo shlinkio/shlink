@@ -16,7 +16,7 @@ class ApplicationFactoryTest extends TestCase
 
     private ApplicationFactory $factory;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->factory = new ApplicationFactory();
     }

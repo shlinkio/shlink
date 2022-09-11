@@ -21,7 +21,7 @@ class ShlinkTableTest extends TestCase
     private ShlinkTable $shlinkTable;
     private ObjectProphecy $baseTable;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->baseTable = $this->prophesize(Table::class);
         $this->shlinkTable = ShlinkTable::fromBaseTable($this->baseTable->reveal());

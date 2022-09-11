@@ -23,16 +23,14 @@ class ApiKey extends AbstractEntity
     private bool $enabled;
     /** @var Collection|ApiKeyRole[] */
     private Collection $roles;
-    private ?string $name;
+    private ?string $name = null;
 
     /**
      * @throws Exception
      */
-    private function __construct(?string $name = null, ?Chronos $expirationDate = null)
+    private function __construct(?string $key = null)
     {
-        $this->key = Uuid::uuid4()->toString();
-        $this->expirationDate = $expirationDate;
-        $this->name = $name;
+        $this->key = $key ?? Uuid::uuid4()->toString();
         $this->enabled = true;
         $this->roles = new ArrayCollection();
     }
@@ -44,12 +42,20 @@ class ApiKey extends AbstractEntity
 
     public static function fromMeta(ApiKeyMeta $meta): self
     {
-        $apiKey = new self($meta->name, $meta->expirationDate);
+        $apiKey = self::create();
+        $apiKey->name = $meta->name;
+        $apiKey->expirationDate = $meta->expirationDate;
+
         foreach ($meta->roleDefinitions as $roleDefinition) {
             $apiKey->registerRole($roleDefinition);
         }
 
         return $apiKey;
+    }
+
+    public static function fromKey(string $key): self
+    {
+        return new self($key);
     }
 
     public function getExpirationDate(): ?Chronos

@@ -22,7 +22,7 @@ class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
     private DropDefaultDomainFromRequestMiddleware $middleware;
     private ObjectProphecy $next;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->next = $this->prophesize(RequestHandlerInterface::class);
         $this->middleware = new DropDefaultDomainFromRequestMiddleware('doma.in');

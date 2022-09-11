@@ -21,7 +21,7 @@ class GlobalVisitsActionTest extends TestCase
     private GlobalVisitsAction $action;
     private ObjectProphecy $helper;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->helper = $this->prophesize(VisitsStatsHelperInterface::class);
         $this->action = new GlobalVisitsAction($this->helper->reveal());

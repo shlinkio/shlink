@@ -32,7 +32,7 @@ class ShortUrlResolverTest extends TestCase
     private ShortUrlResolver $urlResolver;
     private ObjectProphecy $em;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->urlResolver = new ShortUrlResolver($this->em->reveal());

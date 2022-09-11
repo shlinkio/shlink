@@ -15,6 +15,11 @@ final class TagInfo implements JsonSerializable
     ) {
     }
 
+    public static function fromRawData(array $data): self
+    {
+        return new self($data['tag'], (int) $data['shortUrlsCount'], (int) $data['visitsCount']);
+    }
+
     public function jsonSerialize(): array
     {
         return [

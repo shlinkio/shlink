@@ -33,7 +33,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
     private CommandTester $commandTester;
     private ObjectProphecy $visitsHelper;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
         $command = new GetShortUrlVisitsCommand($this->visitsHelper->reveal());

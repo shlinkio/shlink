@@ -25,7 +25,7 @@ class ApiKeyServiceTest extends TestCase
     private ApiKeyService $service;
     private ObjectProphecy $em;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->em = $this->prophesize(EntityManager::class);
         $this->service = new ApiKeyService($this->em->reveal());

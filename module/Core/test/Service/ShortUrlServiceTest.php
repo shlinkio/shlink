@@ -34,7 +34,7 @@ class ShortUrlServiceTest extends TestCase
     private ObjectProphecy $urlResolver;
     private ObjectProphecy $titleResolutionHelper;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->em->persist(Argument::any())->willReturn(null);

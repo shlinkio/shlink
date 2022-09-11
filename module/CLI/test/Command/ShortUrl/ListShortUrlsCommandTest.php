@@ -33,7 +33,7 @@ class ListShortUrlsCommandTest extends TestCase
     private CommandTester $commandTester;
     private ObjectProphecy $shortUrlService;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
         $command = new ListShortUrlsCommand($this->shortUrlService->reveal(), new ShortUrlDataTransformer(

@@ -26,7 +26,7 @@ class VisitsTrackerTest extends TestCase
     private ObjectProphecy $eventDispatcher;
     private TrackingOptions $options;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->em = $this->prophesize(EntityManager::class);
 

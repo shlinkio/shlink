@@ -27,7 +27,7 @@ class DomainServiceTest extends TestCase
     private DomainService $domainService;
     private ObjectProphecy $em;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->domainService = new DomainService($this->em->reveal(), 'default.com');
