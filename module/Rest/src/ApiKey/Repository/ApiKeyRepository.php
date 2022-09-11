@@ -12,17 +12,17 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
 {
     public function createInitialApiKey(string $apiKey): void
     {
-        $this->getEntityManager()->wrapInTransaction(function () use ($apiKey): void {
-            $qb = $this->getEntityManager()->createQueryBuilder();
-            $amountOfApiKeys = $qb->select('COUNT(a.id)')
-                                  ->from(ApiKey::class, 'a')
-                                  ->getQuery()
-                                  ->setLockMode(LockMode::PESSIMISTIC_WRITE)
-                                  ->getSingleScalarResult();
+        $em = $this->getEntityManager();
+        $em->wrapInTransaction(function () use ($apiKey, $em): void {
+            $amountOfApiKeys = $em->createQueryBuilder()->select('COUNT(a.id)')
+                                                        ->from(ApiKey::class, 'a')
+                                                        ->getQuery()
+                                                        ->setLockMode(LockMode::PESSIMISTIC_WRITE)
+                                                        ->getSingleScalarResult();
 
             if ($amountOfApiKeys === 0) {
-                $this->getEntityManager()->persist(ApiKey::fromKey($apiKey));
-                $this->getEntityManager()->flush();
+                $em->persist(ApiKey::fromKey($apiKey));
+                $em->flush();
             }
         });
     }
