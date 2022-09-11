@@ -14,13 +14,16 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     {
         $em = $this->getEntityManager();
         $em->wrapInTransaction(function () use ($apiKey, $em): void {
-            $amountOfApiKeys = $em->createQueryBuilder()->select('COUNT(a.id)')
-                                                        ->from(ApiKey::class, 'a')
-                                                        ->getQuery()
-                                                        ->setLockMode(LockMode::PESSIMISTIC_WRITE)
-                                                        ->getSingleScalarResult();
+            // Ideally this would be a SELECT COUNT(...), but MsSQL and Postgres do not allow locking on aggregates
+            // Because of that we check if at least one result exists
+            $firstResult = $em->createQueryBuilder()->select('a.id')
+                                                    ->from(ApiKey::class, 'a')
+                                                    ->setMaxResults(1)
+                                                    ->getQuery()
+                                                    ->setLockMode(LockMode::PESSIMISTIC_WRITE)
+                                                    ->getOneOrNullResult();
 
-            if ($amountOfApiKeys === 0) {
+            if ($firstResult === null) {
                 $em->persist(ApiKey::fromKey($apiKey));
                 $em->flush();
             }
