@@ -30,6 +30,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   Non-error responses are not affected.
 
 * [#1513](https://github.com/shlinkio/shlink/issues/1513) Added publishing of the docker image in GHCR.
+* [#1114](https://github.com/shlinkio/shlink/issues/1114) Added support to provide an initial API key via `INITIAL_API_KEY` env var, when running Shlink with openswoole or RoadRunner.
+
+  Also, the installer tool now allows to generate an initial API key that can be copy-pasted (this tool is run interactively), in case you use php-fpm or you don't want to use env vars.
 
 ### Changed
 * [#1339](https://github.com/shlinkio/shlink/issues/1339) Added new test suite for CLI E2E tests.
