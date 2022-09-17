@@ -102,9 +102,9 @@ class DeleteShortUrlServiceTest extends TestCase
 
     private function createService(bool $checkVisitsThreshold = true, int $visitsThreshold = 5): DeleteShortUrlService
     {
-        return new DeleteShortUrlService($this->em->reveal(), new DeleteShortUrlsOptions([
-            'visitsThreshold' => $visitsThreshold,
-            'checkVisitsThreshold' => $checkVisitsThreshold,
-        ]), $this->urlResolver->reveal());
+        return new DeleteShortUrlService($this->em->reveal(), new DeleteShortUrlsOptions(
+            $visitsThreshold,
+            $checkVisitsThreshold,
+        ), $this->urlResolver->reveal());
     }
 }

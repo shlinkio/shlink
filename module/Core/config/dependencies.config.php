@@ -22,7 +22,7 @@ return [
             ErrorHandler\NotFoundTemplateHandler::class => InvokableFactory::class,
 
             Options\AppOptions::class => [ValinorConfigFactory::class, 'config.app_options'],
-            Options\DeleteShortUrlsOptions::class => ConfigAbstractFactory::class,
+            Options\DeleteShortUrlsOptions::class => [ValinorConfigFactory::class, 'config.delete_short_urls'],
             Options\NotFoundRedirectOptions::class => ConfigAbstractFactory::class,
             Options\RedirectOptions::class => ConfigAbstractFactory::class,
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
@@ -86,7 +86,6 @@ return [
             Domain\DomainService::class,
         ],
 
-        Options\DeleteShortUrlsOptions::class => ['config.delete_short_urls'],
         Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
         Options\RedirectOptions::class => ['config.redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
