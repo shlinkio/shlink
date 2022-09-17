@@ -19,9 +19,9 @@ class RedirectResponseHelper implements RedirectResponseHelperInterface
 
     public function buildRedirectResponse(string $location): ResponseInterface
     {
-        $statusCode = $this->options->redirectStatusCode();
+        $statusCode = $this->options->redirectStatusCode;
         $headers = $statusCode === StatusCodeInterface::STATUS_FOUND ? [] : [
-            'Cache-Control' => sprintf('private,max-age=%s', $this->options->redirectCacheLifetime()),
+            'Cache-Control' => sprintf('private,max-age=%s', $this->options->redirectCacheLifetime),
         ];
 
         return new RedirectResponse($location, $statusCode, $headers);
