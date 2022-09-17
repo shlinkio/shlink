@@ -23,7 +23,7 @@ return [
 
             Options\AppOptions::class => [ValinorConfigFactory::class, 'config.app_options'],
             Options\DeleteShortUrlsOptions::class => [ValinorConfigFactory::class, 'config.delete_short_urls'],
-            Options\NotFoundRedirectOptions::class => ConfigAbstractFactory::class,
+            Options\NotFoundRedirectOptions::class => [ValinorConfigFactory::class, 'config.not_found_redirects'],
             Options\RedirectOptions::class => ConfigAbstractFactory::class,
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
             Options\TrackingOptions::class => [ValinorConfigFactory::class, 'config.tracking'],
@@ -86,7 +86,6 @@ return [
             Domain\DomainService::class,
         ],
 
-        Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
         Options\RedirectOptions::class => ['config.redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
         Options\QrCodeOptions::class => ['config.qr_codes'],

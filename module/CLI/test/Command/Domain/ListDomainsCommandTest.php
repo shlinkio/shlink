@@ -43,10 +43,10 @@ class ListDomainsCommandTest extends TestCase
         ));
 
         $listDomains = $this->domainService->listDomains()->willReturn([
-            DomainItem::forDefaultDomain('foo.com', new NotFoundRedirectOptions([
-                'base_url' => 'https://foo.com/default/base',
-                'invalid_short_url' => 'https://foo.com/default/invalid',
-            ])),
+            DomainItem::forDefaultDomain('foo.com', new NotFoundRedirectOptions(
+                invalidShortUrl: 'https://foo.com/default/invalid',
+                baseUrl: 'https://foo.com/default/base',
+            )),
             DomainItem::forNonDefaultDomain(Domain::withAuthority('bar.com')),
             DomainItem::forNonDefaultDomain($bazDomain),
         ]);
