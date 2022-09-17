@@ -28,7 +28,7 @@ return [
             Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
             Options\TrackingOptions::class => [ValinorConfigFactory::class, 'config.tracking'],
             Options\QrCodeOptions::class => [ValinorConfigFactory::class, 'config.qr_codes'],
-            Options\RabbitMqOptions::class => ConfigAbstractFactory::class,
+            Options\RabbitMqOptions::class => [ValinorConfigFactory::class, 'config.rabbitmq'],
             Options\WebhookOptions::class => ConfigAbstractFactory::class,
 
             Service\UrlShortener::class => ConfigAbstractFactory::class,
@@ -88,7 +88,6 @@ return [
 
         Options\RedirectOptions::class => ['config.redirects'],
         Options\UrlShortenerOptions::class => ['config.url_shortener'],
-        Options\RabbitMqOptions::class => ['config.rabbitmq'],
         Options\WebhookOptions::class => ['config.visits_webhooks'],
 
         Service\UrlShortener::class => [

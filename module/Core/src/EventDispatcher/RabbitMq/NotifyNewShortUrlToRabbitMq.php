@@ -26,7 +26,7 @@ class NotifyNewShortUrlToRabbitMq extends AbstractNotifyNewShortUrlListener
 
     protected function isEnabled(): bool
     {
-        return $this->options->isEnabled();
+        return $this->options->enabled;
     }
 
     protected function getRemoteSystem(): RemoteSystem
