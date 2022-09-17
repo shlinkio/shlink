@@ -25,7 +25,7 @@ return [
             Options\DeleteShortUrlsOptions::class => [ValinorConfigFactory::class, 'config.delete_short_urls'],
             Options\NotFoundRedirectOptions::class => [ValinorConfigFactory::class, 'config.not_found_redirects'],
             Options\RedirectOptions::class => [ValinorConfigFactory::class, 'config.redirects'],
-            Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
+            Options\UrlShortenerOptions::class => [ValinorConfigFactory::class, 'config.url_shortener'],
             Options\TrackingOptions::class => [ValinorConfigFactory::class, 'config.tracking'],
             Options\QrCodeOptions::class => [ValinorConfigFactory::class, 'config.qr_codes'],
             Options\RabbitMqOptions::class => [ValinorConfigFactory::class, 'config.rabbitmq'],
@@ -86,7 +86,6 @@ return [
             Domain\DomainService::class,
         ],
 
-        Options\UrlShortenerOptions::class => ['config.url_shortener'],
         Options\WebhookOptions::class => ['config.visits_webhooks'],
 
         Service\UrlShortener::class => [

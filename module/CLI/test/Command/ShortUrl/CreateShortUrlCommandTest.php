@@ -39,7 +39,7 @@ class CreateShortUrlCommandTest extends TestCase
         $command = new CreateShortUrlCommand(
             $this->urlShortener->reveal(),
             $this->stringifier->reveal(),
-            new UrlShortenerOptions(['defaultShortCodesLength' => 5, 'domain' => ['hostname' => self::DEFAULT_DOMAIN]]),
+            new UrlShortenerOptions(domain: ['hostname' => self::DEFAULT_DOMAIN], defaultShortCodesLength: 5),
         );
         $this->commandTester = $this->testerForCommand($command);
     }

@@ -34,12 +34,10 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
 {
     use ProphecyTrait;
 
-    private ExtraPathRedirectMiddleware $middleware;
     private ObjectProphecy $resolver;
     private ObjectProphecy $requestTracker;
     private ObjectProphecy $redirectionBuilder;
     private ObjectProphecy $redirectResponseHelper;
-    private UrlShortenerOptions $options;
     private ObjectProphecy $handler;
 
     protected function setUp(): void
@@ -48,16 +46,6 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $this->requestTracker = $this->prophesize(RequestTrackerInterface::class);
         $this->redirectionBuilder = $this->prophesize(ShortUrlRedirectionBuilderInterface::class);
         $this->redirectResponseHelper = $this->prophesize(RedirectResponseHelperInterface::class);
-        $this->options = new UrlShortenerOptions(['append_extra_path' => true]);
-
-        $this->middleware = new ExtraPathRedirectMiddleware(
-            $this->resolver->reveal(),
-            $this->requestTracker->reveal(),
-            $this->redirectionBuilder->reveal(),
-            $this->redirectResponseHelper->reveal(),
-            $this->options,
-        );
-
         $this->handler = $this->prophesize(RequestHandlerInterface::class);
         $this->handler->handle(Argument::cetera())->willReturn(new RedirectResponse(''));
     }
@@ -71,10 +59,12 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         bool $multiSegmentEnabled,
         ServerRequestInterface $request,
     ): void {
-        $this->options->appendExtraPath = $appendExtraPath;
-        $this->options->multiSegmentSlugsEnabled = $multiSegmentEnabled;
+        $options = new UrlShortenerOptions(
+            appendExtraPath: $appendExtraPath,
+            multiSegmentSlugsEnabled: $multiSegmentEnabled,
+        );
 
-        $this->middleware->process($request, $this->handler->reveal());
+        $this->middleware($options)->process($request, $this->handler->reveal());
 
         $this->handler->handle($request)->shouldHaveBeenCalledOnce();
         $this->resolver->resolveEnabledShortUrl(Argument::cetera())->shouldNotHaveBeenCalled();
@@ -123,7 +113,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         bool $multiSegmentEnabled,
         int $expectedResolveCalls,
     ): void {
-        $this->options->multiSegmentSlugsEnabled = $multiSegmentEnabled;
+        $options = new UrlShortenerOptions(appendExtraPath: true, multiSegmentSlugsEnabled: $multiSegmentEnabled);
 
         $type = $this->prophesize(NotFoundType::class);
         $type->isRegularNotFound()->willReturn(true);
@@ -135,7 +125,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
             Argument::that(fn (ShortUrlIdentifier $identifier) => str_starts_with($identifier->shortCode, 'shortCode')),
         )->willThrow(ShortUrlNotFoundException::class);
 
-        $this->middleware->process($request, $this->handler->reveal());
+        $this->middleware($options)->process($request, $this->handler->reveal());
 
         $resolve->shouldHaveBeenCalledTimes($expectedResolveCalls);
         $this->requestTracker->trackIfApplicable(Argument::cetera())->shouldNotHaveBeenCalled();
@@ -152,7 +142,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         int $expectedResolveCalls,
         ?string $expectedExtraPath,
     ): void {
-        $this->options->multiSegmentSlugsEnabled = $multiSegmentEnabled;
+        $options = new UrlShortenerOptions(appendExtraPath: true, multiSegmentSlugsEnabled: $multiSegmentEnabled);
 
         $type = $this->prophesize(NotFoundType::class);
         $type->isRegularNotFound()->willReturn(true);
@@ -181,7 +171,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
             new RedirectResponse(''),
         );
 
-        $this->middleware->process($request, $this->handler->reveal());
+        $this->middleware($options)->process($request, $this->handler->reveal());
 
         $resolve->shouldHaveBeenCalledTimes($expectedResolveCalls);
         $buildLongUrl->shouldHaveBeenCalledOnce();
@@ -193,5 +183,16 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
     {
         yield [false, 1, '/bar/baz'];
         yield [true, 3, null];
+    }
+
+    private function middleware(?UrlShortenerOptions $options = null): ExtraPathRedirectMiddleware
+    {
+        return new ExtraPathRedirectMiddleware(
+            $this->resolver->reveal(),
+            $this->requestTracker->reveal(),
+            $this->redirectionBuilder->reveal(),
+            $this->redirectResponseHelper->reveal(),
+            $options ?? new UrlShortenerOptions(appendExtraPath: true),
+        );
     }
 }

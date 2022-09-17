@@ -23,15 +23,11 @@ class UrlValidatorTest extends TestCase
 {
     use ProphecyTrait;
 
-    private UrlValidator $urlValidator;
     private ObjectProphecy $httpClient;
-    private UrlShortenerOptions $options;
 
     protected function setUp(): void
     {
         $this->httpClient = $this->prophesize(ClientInterface::class);
-        $this->options = new UrlShortenerOptions(['validate_url' => true]);
-        $this->urlValidator = new UrlValidator($this->httpClient->reveal(), $this->options);
     }
 
     /** @test */
@@ -42,7 +38,7 @@ class UrlValidatorTest extends TestCase
         $request->shouldBeCalledOnce();
         $this->expectException(InvalidUrlException::class);
 
-        $this->urlValidator->validateUrl('http://foobar.com/12345/hello?foo=bar', true);
+        $this->urlValidator()->validateUrl('http://foobar.com/12345/hello?foo=bar', true);
     }
 
     /** @test */
@@ -65,7 +61,7 @@ class UrlValidatorTest extends TestCase
             }),
         )->willReturn(new Response());
 
-        $this->urlValidator->validateUrl($expectedUrl, true);
+        $this->urlValidator()->validateUrl($expectedUrl, true);
 
         $request->shouldHaveBeenCalledOnce();
     }
@@ -75,7 +71,7 @@ class UrlValidatorTest extends TestCase
     {
         $request = $this->httpClient->request(Argument::cetera())->willReturn(new Response());
 
-        $this->urlValidator->validateUrl('', false);
+        $this->urlValidator()->validateUrl('', false);
 
         $request->shouldNotHaveBeenCalled();
     }
@@ -84,9 +80,8 @@ class UrlValidatorTest extends TestCase
     public function validateUrlWithTitleReturnsNullWhenRequestFailsAndValidationIsDisabled(): void
     {
         $request = $this->httpClient->request(Argument::cetera())->willThrow(ClientException::class);
-        $this->options->autoResolveTitles = true;
 
-        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', false);
+        $result = $this->urlValidator(true)->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', false);
 
         self::assertNull($result);
         $request->shouldHaveBeenCalledOnce();
@@ -96,9 +91,8 @@ class UrlValidatorTest extends TestCase
     public function validateUrlWithTitleReturnsNullWhenAutoResolutionIsDisabled(): void
     {
         $request = $this->httpClient->request(Argument::cetera())->willReturn($this->respWithTitle());
-        $this->options->autoResolveTitles = false;
 
-        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', false);
+        $result = $this->urlValidator()->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', false);
 
         self::assertNull($result);
         $request->shouldNotHaveBeenCalled();
@@ -110,9 +104,8 @@ class UrlValidatorTest extends TestCase
         $request = $this->httpClient->request(RequestMethodInterface::METHOD_HEAD, Argument::cetera())->willReturn(
             $this->respWithTitle(),
         );
-        $this->options->autoResolveTitles = false;
 
-        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
+        $result = $this->urlValidator()->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
 
         self::assertNull($result);
         $request->shouldHaveBeenCalledOnce();
@@ -124,9 +117,8 @@ class UrlValidatorTest extends TestCase
         $request = $this->httpClient->request(RequestMethodInterface::METHOD_GET, Argument::cetera())->willReturn(
             $this->respWithTitle(),
         );
-        $this->options->autoResolveTitles = true;
 
-        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
+        $result = $this->urlValidator(true)->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
 
         self::assertEquals('Resolved "title"', $result);
         $request->shouldHaveBeenCalledOnce();
@@ -138,9 +130,8 @@ class UrlValidatorTest extends TestCase
         $request = $this->httpClient->request(RequestMethodInterface::METHOD_GET, Argument::cetera())->willReturn(
             new Response('php://memory', 200, ['Content-Type' => 'application/octet-stream']),
         );
-        $this->options->autoResolveTitles = true;
 
-        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
+        $result = $this->urlValidator(true)->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
 
         self::assertNull($result);
         $request->shouldHaveBeenCalledOnce();
@@ -152,9 +143,8 @@ class UrlValidatorTest extends TestCase
         $request = $this->httpClient->request(RequestMethodInterface::METHOD_GET, Argument::cetera())->willReturn(
             new Response($this->createStreamWithContent('<body>No title</body>'), 200, ['Content-Type' => 'text/html']),
         );
-        $this->options->autoResolveTitles = true;
 
-        $result = $this->urlValidator->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
+        $result = $this->urlValidator(true)->validateUrlWithTitle('http://foobar.com/12345/hello?foo=bar', true);
 
         self::assertNull($result);
         $request->shouldHaveBeenCalledOnce();
@@ -173,5 +163,13 @@ class UrlValidatorTest extends TestCase
         $body->rewind();
 
         return $body;
+    }
+
+    public function urlValidator(bool $autoResolveTitles = false): UrlValidator
+    {
+        return new UrlValidator(
+            $this->httpClient->reveal(),
+            new UrlShortenerOptions(autoResolveTitles: $autoResolveTitles),
+        );
     }
 }
