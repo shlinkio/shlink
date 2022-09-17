@@ -38,6 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1339](https://github.com/shlinkio/shlink/issues/1339) Added new test suite for CLI E2E tests.
 * [#1503](https://github.com/shlinkio/shlink/issues/1503) Drastically improved build time in GitHub Actions, by optimizing parallelization and adding php extensions cache.
 * [#1525](https://github.com/shlinkio/shlink/issues/1525) Migrated to custom doctrine CLI entry point.
+* [#1492](https://github.com/shlinkio/shlink/issues/1492) Migrated to immutable options objects, mapped with [cuyz/valinor](https://github.com/CuyZ/Valinor).
 
 ### Deprecated
 * *Nothing*

@@ -32,7 +32,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
      */
     public function checkDbUpdate(?callable $beforeDownload = null, ?callable $handleProgress = null): void
     {
-        if ($this->trackingOptions->disableTracking() || $this->trackingOptions->disableIpTracking()) {
+        if ($this->trackingOptions->disableTracking || $this->trackingOptions->disableIpTracking) {
             return;
         }
 

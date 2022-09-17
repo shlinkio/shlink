@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Shlinkio\Shlink\Config\Factory\ValinorConfigFactory;
 use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
@@ -20,14 +21,14 @@ return [
             ErrorHandler\NotFoundRedirectHandler::class => ConfigAbstractFactory::class,
             ErrorHandler\NotFoundTemplateHandler::class => InvokableFactory::class,
 
-            Options\AppOptions::class => ConfigAbstractFactory::class,
-            Options\DeleteShortUrlsOptions::class => ConfigAbstractFactory::class,
-            Options\NotFoundRedirectOptions::class => ConfigAbstractFactory::class,
-            Options\RedirectOptions::class => ConfigAbstractFactory::class,
-            Options\UrlShortenerOptions::class => ConfigAbstractFactory::class,
-            Options\TrackingOptions::class => ConfigAbstractFactory::class,
-            Options\QrCodeOptions::class => ConfigAbstractFactory::class,
-            Options\RabbitMqOptions::class => ConfigAbstractFactory::class,
+            Options\AppOptions::class => [ValinorConfigFactory::class, 'config.app_options'],
+            Options\DeleteShortUrlsOptions::class => [ValinorConfigFactory::class, 'config.delete_short_urls'],
+            Options\NotFoundRedirectOptions::class => [ValinorConfigFactory::class, 'config.not_found_redirects'],
+            Options\RedirectOptions::class => [ValinorConfigFactory::class, 'config.redirects'],
+            Options\UrlShortenerOptions::class => [ValinorConfigFactory::class, 'config.url_shortener'],
+            Options\TrackingOptions::class => [ValinorConfigFactory::class, 'config.tracking'],
+            Options\QrCodeOptions::class => [ValinorConfigFactory::class, 'config.qr_codes'],
+            Options\RabbitMqOptions::class => [ValinorConfigFactory::class, 'config.rabbitmq'],
             Options\WebhookOptions::class => ConfigAbstractFactory::class,
 
             Service\UrlShortener::class => ConfigAbstractFactory::class,
@@ -85,14 +86,6 @@ return [
             Domain\DomainService::class,
         ],
 
-        Options\AppOptions::class => ['config.app_options'],
-        Options\DeleteShortUrlsOptions::class => ['config.delete_short_urls'],
-        Options\NotFoundRedirectOptions::class => ['config.not_found_redirects'],
-        Options\RedirectOptions::class => ['config.redirects'],
-        Options\UrlShortenerOptions::class => ['config.url_shortener'],
-        Options\TrackingOptions::class => ['config.tracking'],
-        Options\QrCodeOptions::class => ['config.qr_codes'],
-        Options\RabbitMqOptions::class => ['config.rabbitmq'],
         Options\WebhookOptions::class => ['config.visits_webhooks'],
 
         Service\UrlShortener::class => [

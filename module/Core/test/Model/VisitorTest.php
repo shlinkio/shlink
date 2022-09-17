@@ -82,11 +82,11 @@ class VisitorTest extends TestCase
             $this->generateRandomString(2000),
             $this->generateRandomString(2000),
         );
-        $normalizedVisitor = $visitor->normalizeForTrackingOptions(new TrackingOptions([
-            'disableIpTracking' => true,
-            'disableReferrerTracking' => true,
-            'disableUaTracking' => true,
-        ]));
+        $normalizedVisitor = $visitor->normalizeForTrackingOptions(new TrackingOptions(
+            disableIpTracking: true,
+            disableReferrerTracking: true,
+            disableUaTracking: true,
+        ));
 
         self::assertNotSame($visitor, $normalizedVisitor);
         self::assertEmpty($normalizedVisitor->userAgent);

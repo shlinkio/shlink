@@ -7,7 +7,6 @@ namespace ShlinkioTest\Shlink\Core\Action;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
-use Mezzio\Router\RouterInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -35,24 +34,11 @@ class QrCodeActionTest extends TestCase
     private const WHITE = 0xFFFFFF;
     private const BLACK = 0x0;
 
-    private QrCodeAction $action;
     private ObjectProphecy $urlResolver;
-    private QrCodeOptions $options;
 
     protected function setUp(): void
     {
-        $router = $this->prophesize(RouterInterface::class);
-        $router->generateUri(Argument::cetera())->willReturn('/foo/bar');
-
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
-        $this->options = new QrCodeOptions();
-
-        $this->action = new QrCodeAction(
-            $this->urlResolver->reveal(),
-            new ShortUrlStringifier(['domain' => 'doma.in']),
-            new NullLogger(),
-            $this->options,
-        );
     }
 
     /** @test */
@@ -65,7 +51,7 @@ class QrCodeActionTest extends TestCase
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $process = $delegate->handle(Argument::any())->willReturn(new Response());
 
-        $this->action->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate->reveal());
+        $this->action()->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate->reveal());
 
         $process->shouldHaveBeenCalledOnce();
     }
@@ -79,7 +65,7 @@ class QrCodeActionTest extends TestCase
             ->shouldBeCalledOnce();
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 
-        $resp = $this->action->process(
+        $resp = $this->action()->process(
             (new ServerRequest())->withAttribute('shortCode', $shortCode),
             $delegate->reveal(),
         );
@@ -98,7 +84,6 @@ class QrCodeActionTest extends TestCase
         array $query,
         string $expectedContentType,
     ): void {
-        $this->options->setFromArray(['format' => $defaultFormat]);
         $code = 'abc123';
         $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($code, ''))->willReturn(
             ShortUrl::createEmpty(),
@@ -106,7 +91,7 @@ class QrCodeActionTest extends TestCase
         $delegate = $this->prophesize(RequestHandlerInterface::class);
         $req = (new ServerRequest())->withAttribute('shortCode', $code)->withQueryParams($query);
 
-        $resp = $this->action->process($req, $delegate->reveal());
+        $resp = $this->action(new QrCodeOptions(format: $defaultFormat))->process($req, $delegate->reveal());
 
         self::assertEquals($expectedContentType, $resp->getHeaderLine('Content-Type'));
     }
@@ -128,18 +113,17 @@ class QrCodeActionTest extends TestCase
      * @dataProvider provideRequestsWithSize
      */
     public function imageIsReturnedWithExpectedSize(
-        array $defaults,
+        QrCodeOptions $defaultOptions,
         ServerRequestInterface $req,
         int $expectedSize,
     ): void {
-        $this->options->setFromArray($defaults);
         $code = 'abc123';
         $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($code, ''))->willReturn(
             ShortUrl::createEmpty(),
         );
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 
-        $resp = $this->action->process($req->withAttribute('shortCode', $code), $delegate->reveal());
+        $resp = $this->action($defaultOptions)->process($req->withAttribute('shortCode', $code), $delegate->reveal());
         [$size] = getimagesizefromstring($resp->getBody()->__toString());
 
         self::assertEquals($expectedSize, $size);
@@ -148,52 +132,64 @@ class QrCodeActionTest extends TestCase
     public function provideRequestsWithSize(): iterable
     {
         yield 'different margin and size defaults' => [
-            ['size' => 660, 'margin' => 40],
+            new QrCodeOptions(size: 660, margin: 40),
             ServerRequestFactory::fromGlobals(),
             740,
         ];
-        yield 'no size' => [[], ServerRequestFactory::fromGlobals(), 300];
-        yield 'no size, different default' => [['size' => 500], ServerRequestFactory::fromGlobals(), 500];
-        yield 'size in query' => [[], ServerRequestFactory::fromGlobals()->withQueryParams(['size' => '123']), 123];
+        yield 'no size' => [new QrCodeOptions(), ServerRequestFactory::fromGlobals(), 300];
+        yield 'no size, different default' => [new QrCodeOptions(size: 500), ServerRequestFactory::fromGlobals(), 500];
+        yield 'size in query' => [
+            new QrCodeOptions(),
+            ServerRequestFactory::fromGlobals()->withQueryParams(['size' => '123']),
+            123,
+        ];
         yield 'size in query, default margin' => [
-            ['margin' => 25],
+            new QrCodeOptions(margin: 25),
             ServerRequestFactory::fromGlobals()->withQueryParams(['size' => '123']),
             173,
         ];
-        yield 'margin' => [[], ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '35']), 370];
+        yield 'margin' => [
+            new QrCodeOptions(),
+            ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '35']),
+            370,
+        ];
         yield 'margin and different default' => [
-            ['size' => 400],
+            new QrCodeOptions(size: 400),
             ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '35']),
             470,
         ];
         yield 'margin and size' => [
-            [],
+            new QrCodeOptions(),
             ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '100', 'size' => '200']),
             400,
         ];
-        yield 'negative margin' => [[], ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '-50']), 300];
+        yield 'negative margin' => [
+            new QrCodeOptions(),
+            ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '-50']),
+            300,
+        ];
         yield 'negative margin, default margin' => [
-            ['margin' => 10],
+            new QrCodeOptions(margin: 10),
             ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '-50']),
             300,
         ];
         yield 'non-numeric margin' => [
-            [],
+            new QrCodeOptions(),
             ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => 'foo']),
             300,
         ];
         yield 'negative margin and size' => [
-            [],
+            new QrCodeOptions(),
             ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '-1', 'size' => '150']),
             150,
         ];
         yield 'negative margin and size, default margin' => [
-            ['margin' => 5],
+            new QrCodeOptions(margin: 5),
             ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => '-1', 'size' => '150']),
             150,
         ];
         yield 'non-numeric margin and size' => [
-            [],
+            new QrCodeOptions(),
             ServerRequestFactory::fromGlobals()->withQueryParams(['margin' => 'foo', 'size' => '538']),
             538,
         ];
@@ -204,11 +200,10 @@ class QrCodeActionTest extends TestCase
      * @dataProvider provideRoundBlockSize
      */
     public function imageCanRemoveExtraMarginWhenBlockRoundIsDisabled(
-        array $defaults,
+        QrCodeOptions $defaultOptions,
         ?string $roundBlockSize,
         int $expectedColor,
     ): void {
-        $this->options->setFromArray($defaults);
         $code = 'abc123';
         $req = ServerRequestFactory::fromGlobals()
             ->withQueryParams(['size' => 250, 'roundBlockSize' => $roundBlockSize])
@@ -219,7 +214,7 @@ class QrCodeActionTest extends TestCase
         );
         $delegate = $this->prophesize(RequestHandlerInterface::class);
 
-        $resp = $this->action->process($req, $delegate->reveal());
+        $resp = $this->action($defaultOptions)->process($req, $delegate->reveal());
         $image = imagecreatefromstring($resp->getBody()->__toString());
         $color = imagecolorat($image, 1, 1);
 
@@ -228,11 +223,33 @@ class QrCodeActionTest extends TestCase
 
     public function provideRoundBlockSize(): iterable
     {
-        yield 'no round block param' => [[], null, self::WHITE];
-        yield 'no round block param, but disabled by default' => [['round_block_size' => false], null, self::BLACK];
-        yield 'round block: "true"' => [[], 'true', self::WHITE];
-        yield 'round block: "true", but disabled by default' => [['round_block_size' => false], 'true', self::WHITE];
-        yield 'round block: "false"' => [[], 'false', self::BLACK];
-        yield 'round block: "false", but enabled by default' => [['round_block_size' => true], 'false', self::BLACK];
+        yield 'no round block param' => [new QrCodeOptions(), null, self::WHITE];
+        yield 'no round block param, but disabled by default' => [
+            new QrCodeOptions(roundBlockSize: false),
+            null,
+            self::BLACK,
+        ];
+        yield 'round block: "true"' => [new QrCodeOptions(), 'true', self::WHITE];
+        yield 'round block: "true", but disabled by default' => [
+            new QrCodeOptions(roundBlockSize: false),
+            'true',
+            self::WHITE,
+        ];
+        yield 'round block: "false"' => [new QrCodeOptions(), 'false', self::BLACK];
+        yield 'round block: "false", but enabled by default' => [
+            new QrCodeOptions(roundBlockSize: true),
+            'false',
+            self::BLACK,
+        ];
+    }
+
+    public function action(?QrCodeOptions $options = null): QrCodeAction
+    {
+        return new QrCodeAction(
+            $this->urlResolver->reveal(),
+            new ShortUrlStringifier(['domain' => 'doma.in']),
+            new NullLogger(),
+            $options ?? new QrCodeOptions(),
+        );
     }
 }

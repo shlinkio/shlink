@@ -35,7 +35,7 @@ class NotifyVisitToRabbitMq extends AbstractNotifyVisitListener
     protected function determineUpdatesForVisit(Visit $visit): array
     {
         // Once the two deprecated cases below have been removed, make parent method private
-        if (! $this->options->legacyVisitsPublishing()) {
+        if (! $this->options->legacyVisitsPublishing) {
             return parent::determineUpdatesForVisit($visit);
         }
 
@@ -61,7 +61,7 @@ class NotifyVisitToRabbitMq extends AbstractNotifyVisitListener
 
     protected function isEnabled(): bool
     {
-        return $this->options->isEnabled();
+        return $this->options->enabled;
     }
 
     protected function getRemoteSystem(): RemoteSystem

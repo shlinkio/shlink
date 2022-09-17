@@ -165,7 +165,7 @@ class NotifyVisitToWebHooksTest extends TestCase
                 ['webhooks' => $webhooks, 'notify_orphan_visits_to_webhooks' => $notifyOrphanVisits],
             ),
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
-            new AppOptions(['name' => 'Shlink', 'version' => '1.2.3']),
+            new AppOptions('Shlink', '1.2.3'),
         );
     }
 }

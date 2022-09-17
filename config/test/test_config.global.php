@@ -130,7 +130,6 @@ return [
             'schema' => 'http',
             'hostname' => 'doma.in',
         ],
-        'validate_url' => true,
     ],
 
     'mezzio-swoole' => [

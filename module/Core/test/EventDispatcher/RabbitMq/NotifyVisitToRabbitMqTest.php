@@ -35,12 +35,10 @@ class NotifyVisitToRabbitMqTest extends TestCase
 {
     use ProphecyTrait;
 
-    private NotifyVisitToRabbitMq $listener;
     private ObjectProphecy $helper;
     private ObjectProphecy $updatesGenerator;
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
-    private RabbitMqOptions $options;
 
     protected function setUp(): void
     {
@@ -48,24 +46,12 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $this->updatesGenerator = $this->prophesize(PublishingUpdatesGeneratorInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
-        $this->options = new RabbitMqOptions(['enabled' => true, 'legacy_visits_publishing' => false]);
-
-        $this->listener = new NotifyVisitToRabbitMq(
-            $this->helper->reveal(),
-            $this->updatesGenerator->reveal(),
-            $this->em->reveal(),
-            $this->logger->reveal(),
-            new OrphanVisitDataTransformer(),
-            $this->options,
-        );
     }
 
     /** @test */
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
-        $this->options->enabled = false;
-
-        ($this->listener)(new VisitLocated('123'));
+        ($this->listener(new RabbitMqOptions(enabled: false)))(new VisitLocated('123'));
 
         $this->em->find(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
@@ -83,7 +69,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
             ['visitId' => $visitId, 'name' => 'RabbitMQ'],
         );
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener())(new VisitLocated($visitId));
 
         $findVisit->shouldHaveBeenCalledOnce();
         $logWarning->shouldHaveBeenCalledOnce();
@@ -105,7 +91,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
             )->shouldBeCalledOnce();
         });
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener())(new VisitLocated($visitId));
 
         $findVisit->shouldHaveBeenCalledOnce();
         $this->helper->publishUpdate(Argument::type(Update::class))->shouldHaveBeenCalledTimes(
@@ -144,7 +130,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         );
         $publish = $this->helper->publishUpdate(Argument::cetera())->willThrow($e);
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener())(new VisitLocated($visitId));
 
         $this->logger->debug(
             'Error while trying to notify {name} with new visit. {e}',
@@ -172,13 +158,11 @@ class NotifyVisitToRabbitMqTest extends TestCase
         callable $assert,
         callable $setup,
     ): void {
-        $this->options->legacyVisitsPublishing = $legacy;
-
         $visitId = '123';
         $findVisit = $this->em->find(Visit::class, $visitId)->willReturn($visit);
         $setup($this->updatesGenerator);
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener(new RabbitMqOptions(true, $legacy)))(new VisitLocated($visitId));
 
         $findVisit->shouldHaveBeenCalledOnce();
         $assert($this->helper, $this->updatesGenerator);
@@ -246,5 +230,17 @@ class NotifyVisitToRabbitMqTest extends TestCase
                 $updatesGenerator->newShortUrlVisitUpdate(Argument::cetera())->shouldNotBeCalled();
             },
         ];
+    }
+
+    private function listener(?RabbitMqOptions $options = null): NotifyVisitToRabbitMq
+    {
+        return new NotifyVisitToRabbitMq(
+            $this->helper->reveal(),
+            $this->updatesGenerator->reveal(),
+            $this->em->reveal(),
+            $this->logger->reveal(),
+            new OrphanVisitDataTransformer(),
+            $options ?? new RabbitMqOptions(enabled: true, legacyVisitsPublishing:  false),
+        );
     }
 }

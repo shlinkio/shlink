@@ -32,7 +32,7 @@ class DeleteShortUrlService implements DeleteShortUrlServiceInterface
         $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
         if (! $ignoreThreshold && $this->isThresholdReached($shortUrl)) {
             throw Exception\DeleteShortUrlException::fromVisitsThreshold(
-                $this->deleteShortUrlsOptions->getVisitsThreshold(),
+                $this->deleteShortUrlsOptions->visitsThreshold,
                 $identifier,
             );
         }
@@ -43,10 +43,10 @@ class DeleteShortUrlService implements DeleteShortUrlServiceInterface
 
     private function isThresholdReached(ShortUrl $shortUrl): bool
     {
-        if (! $this->deleteShortUrlsOptions->doCheckVisitsThreshold()) {
+        if (! $this->deleteShortUrlsOptions->checkVisitsThreshold) {
             return false;
         }
 
-        return $shortUrl->getVisitsCount() >= $this->deleteShortUrlsOptions->getVisitsThreshold();
+        return $shortUrl->getVisitsCount() >= $this->deleteShortUrlsOptions->visitsThreshold;
     }
 }

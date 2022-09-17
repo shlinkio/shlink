@@ -17,7 +17,7 @@ class ApplicationFactory
         $appOptions = $container->get(AppOptions::class);
 
         $commands = $config['commands'] ?? [];
-        $app = new CliApp($appOptions->getName(), $appOptions->getVersion());
+        $app = new CliApp($appOptions->name, $appOptions->version);
         $app->setCommandLoader(new ContainerCommandLoader($container, $commands));
 
         return $app;

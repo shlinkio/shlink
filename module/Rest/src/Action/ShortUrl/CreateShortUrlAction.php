@@ -23,7 +23,7 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
     {
         $payload = (array) $request->getParsedBody();
         $payload[ShortUrlInputFilter::API_KEY] = AuthenticationMiddleware::apiKeyFromRequest($request);
-        $payload[EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value] = $this->urlShortenerOptions->multiSegmentSlugsEnabled();
+        $payload[EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value] = $this->urlShortenerOptions->multiSegmentSlugsEnabled;
 
         return ShortUrlMeta::fromRawData($payload);
     }
