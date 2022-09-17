@@ -38,10 +38,10 @@ class RequestTrackerTest extends TestCase
 
         $this->requestTracker = new RequestTracker(
             $this->visitsTracker->reveal(),
-            new TrackingOptions([
-                'disable_track_param' => 'foobar',
-                'disable_tracking_from' => ['80.90.100.110', '192.168.10.0/24', '1.2.*.*'],
-            ]),
+            new TrackingOptions(
+                disableTrackParam: 'foobar',
+                disableTrackingFrom: ['80.90.100.110', '192.168.10.0/24', '1.2.*.*'],
+            ),
         );
 
         $this->request = ServerRequestFactory::fromGlobals()->withAttribute(

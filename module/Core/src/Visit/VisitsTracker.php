@@ -24,7 +24,7 @@ class VisitsTracker implements VisitsTrackerInterface
     public function track(ShortUrl $shortUrl, Visitor $visitor): void
     {
         $this->trackVisit(
-            fn (Visitor $v) => Visit::forValidShortUrl($shortUrl, $v, $this->options->anonymizeRemoteAddr()),
+            fn (Visitor $v) => Visit::forValidShortUrl($shortUrl, $v, $this->options->anonymizeRemoteAddr),
             $visitor,
         );
     }
@@ -32,7 +32,7 @@ class VisitsTracker implements VisitsTrackerInterface
     public function trackInvalidShortUrlVisit(Visitor $visitor): void
     {
         $this->trackOrphanVisit(
-            fn (Visitor $v) => Visit::forInvalidShortUrl($v, $this->options->anonymizeRemoteAddr()),
+            fn (Visitor $v) => Visit::forInvalidShortUrl($v, $this->options->anonymizeRemoteAddr),
             $visitor,
         );
     }
@@ -40,7 +40,7 @@ class VisitsTracker implements VisitsTrackerInterface
     public function trackBaseUrlVisit(Visitor $visitor): void
     {
         $this->trackOrphanVisit(
-            fn (Visitor $v) => Visit::forBasePath($v, $this->options->anonymizeRemoteAddr()),
+            fn (Visitor $v) => Visit::forBasePath($v, $this->options->anonymizeRemoteAddr),
             $visitor,
         );
     }
@@ -48,14 +48,14 @@ class VisitsTracker implements VisitsTrackerInterface
     public function trackRegularNotFoundVisit(Visitor $visitor): void
     {
         $this->trackOrphanVisit(
-            fn (Visitor $v) => Visit::forRegularNotFound($v, $this->options->anonymizeRemoteAddr()),
+            fn (Visitor $v) => Visit::forRegularNotFound($v, $this->options->anonymizeRemoteAddr),
             $visitor,
         );
     }
 
     private function trackOrphanVisit(callable $createVisit, Visitor $visitor): void
     {
-        if (! $this->options->trackOrphanVisits()) {
+        if (! $this->options->trackOrphanVisits) {
             return;
         }
 
@@ -64,7 +64,7 @@ class VisitsTracker implements VisitsTrackerInterface
 
     private function trackVisit(callable $createVisit, Visitor $visitor): void
     {
-        if ($this->options->disableTracking()) {
+        if ($this->options->disableTracking) {
             return;
         }
 

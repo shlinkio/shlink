@@ -29,7 +29,6 @@ class GeolocationDbUpdaterTest extends TestCase
     private GeolocationDbUpdater $geolocationDbUpdater;
     private ObjectProphecy $dbUpdater;
     private ObjectProphecy $geoLiteDbReader;
-    private TrackingOptions $trackingOptions;
     private ObjectProphecy $lock;
 
     protected function setUp(): void
@@ -38,19 +37,10 @@ class GeolocationDbUpdaterTest extends TestCase
         $this->geoLiteDbReader = $this->prophesize(Reader::class);
         $this->trackingOptions = new TrackingOptions();
 
-        $locker = $this->prophesize(Lock\LockFactory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
         $this->lock->acquire(true)->willReturn(true);
         $this->lock->release()->will(function (): void {
         });
-        $locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
-
-        $this->geolocationDbUpdater = new GeolocationDbUpdater(
-            $this->dbUpdater->reveal(),
-            $this->geoLiteDbReader->reveal(),
-            $locker->reveal(),
-            $this->trackingOptions,
-        );
     }
 
     /** @test */
@@ -64,7 +54,7 @@ class GeolocationDbUpdaterTest extends TestCase
         $download = $this->dbUpdater->downloadFreshCopy(null)->willThrow($prev);
 
         try {
-            $this->geolocationDbUpdater->checkDbUpdate($mustBeUpdated);
+            $this->geolocationDbUpdater()->checkDbUpdate($mustBeUpdated);
             self::assertTrue(false); // If this is reached, the test will fail
         } catch (Throwable $e) {
             /** @var GeolocationDbUpdateFailedException $e */
@@ -94,7 +84,7 @@ class GeolocationDbUpdaterTest extends TestCase
         $download = $this->dbUpdater->downloadFreshCopy(null)->willThrow($prev);
 
         try {
-            $this->geolocationDbUpdater->checkDbUpdate();
+            $this->geolocationDbUpdater()->checkDbUpdate();
             self::assertTrue(false); // If this is reached, the test will fail
         } catch (Throwable $e) {
             /** @var GeolocationDbUpdateFailedException $e */
@@ -127,7 +117,7 @@ class GeolocationDbUpdaterTest extends TestCase
         $download = $this->dbUpdater->downloadFreshCopy(null)->will(function (): void {
         });
 
-        $this->geolocationDbUpdater->checkDbUpdate();
+        $this->geolocationDbUpdater()->checkDbUpdate();
 
         $fileExists->shouldHaveBeenCalledOnce();
         $getMeta->shouldHaveBeenCalledOnce();
@@ -160,7 +150,7 @@ class GeolocationDbUpdaterTest extends TestCase
         $getMeta->shouldBeCalledOnce();
         $download->shouldNotBeCalled();
 
-        $this->geolocationDbUpdater->checkDbUpdate();
+        $this->geolocationDbUpdater()->checkDbUpdate();
     }
 
     private function buildMetaWithBuildEpoch(string|int $buildEpoch): Metadata
@@ -182,13 +172,9 @@ class GeolocationDbUpdaterTest extends TestCase
      * @test
      * @dataProvider provideTrackingOptions
      */
-    public function downloadDbIsSkippedIfTrackingIsDisabled(array $props): void
+    public function downloadDbIsSkippedIfTrackingIsDisabled(TrackingOptions $options): void
     {
-        foreach ($props as $prop) {
-            $this->trackingOptions->{$prop} = true;
-        }
-
-        $this->geolocationDbUpdater->checkDbUpdate();
+        $this->geolocationDbUpdater($options)->checkDbUpdate();
 
         $this->dbUpdater->databaseFileExists(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->geoLiteDbReader->metadata(Argument::cetera())->shouldNotHaveBeenCalled();
@@ -196,8 +182,21 @@ class GeolocationDbUpdaterTest extends TestCase
 
     public function provideTrackingOptions(): iterable
     {
-        yield 'disableTracking' => [['disableTracking']];
-        yield 'disableIpTracking' => [['disableIpTracking']];
-        yield 'both' => [['disableTracking', 'disableIpTracking']];
+        yield 'disableTracking' => [new TrackingOptions(disableTracking: true)];
+        yield 'disableIpTracking' => [new TrackingOptions(disableIpTracking: true)];
+        yield 'both' => [new TrackingOptions(disableTracking: true, disableIpTracking: true)];
+    }
+
+    private function geolocationDbUpdater(?TrackingOptions $options = null): GeolocationDbUpdater
+    {
+        $locker = $this->prophesize(Lock\LockFactory::class);
+        $locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
+
+        return new GeolocationDbUpdater(
+            $this->dbUpdater->reveal(),
+            $this->geoLiteDbReader->reveal(),
+            $locker->reveal(),
+            $options ?? new TrackingOptions(),
+        );
     }
 }

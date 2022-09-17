@@ -69,9 +69,9 @@ final class Visitor
     public function normalizeForTrackingOptions(TrackingOptions $options): self
     {
         $instance = new self(
-            $options->disableUaTracking() ? '' : $this->userAgent,
-            $options->disableReferrerTracking() ? '' : $this->referer,
-            $options->disableIpTracking() ? null : $this->remoteAddress,
+            $options->disableUaTracking ? '' : $this->userAgent,
+            $options->disableReferrerTracking ? '' : $this->referer,
+            $options->disableIpTracking ? null : $this->remoteAddress,
             $this->visitedUrl,
         );
 

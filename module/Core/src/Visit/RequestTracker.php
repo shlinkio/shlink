@@ -83,7 +83,7 @@ class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
         }
 
         $remoteAddrParts = explode('.', $remoteAddr);
-        $disableTrackingFrom = $this->trackingOptions->disableTrackingFrom();
+        $disableTrackingFrom = $this->trackingOptions->disableTrackingFrom;
 
         return some($disableTrackingFrom, function (string $value) use ($ip, $remoteAddrParts): bool {
             $range = str_contains($value, '*')

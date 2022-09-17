@@ -34,7 +34,9 @@ return (static function (): array {
             'disable_ua_tracking' => (bool) EnvVars::DISABLE_UA_TRACKING->loadFromEnv(false),
 
             // A list of IP addresses, patterns or CIDR blocks from which tracking is disabled by default
-            'disable_tracking_from' => $disableTrackingFrom === null ? [] : explode(',', $disableTrackingFrom),
+            'disable_tracking_from' => $disableTrackingFrom === null
+                ? []
+                : array_map(trim(...), explode(',', $disableTrackingFrom)),
         ],
 
     ];
