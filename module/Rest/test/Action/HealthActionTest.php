@@ -36,7 +36,7 @@ class HealthActionTest extends TestCase
         $em = $this->prophesize(EntityManagerInterface::class);
         $em->getConnection()->willReturn($this->conn->reveal());
 
-        $this->action = new HealthAction($em->reveal(), new AppOptions(['version' => '1.2.3']));
+        $this->action = new HealthAction($em->reveal(), new AppOptions(version: '1.2.3'));
     }
 
     /** @test */
