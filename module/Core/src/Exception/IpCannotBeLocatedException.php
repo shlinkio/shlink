@@ -4,35 +4,40 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Exception;
 
+use Shlinkio\Shlink\Core\Visit\Model\UnlocatableIpType;
 use Throwable;
 
 class IpCannotBeLocatedException extends RuntimeException
 {
-    private bool $isNonLocatableAddress = true;
+    private function __construct(
+        string $message,
+        public readonly UnlocatableIpType $type,
+        int $code = 0,
+        ?Throwable $previous = null,
+    ) {
+        parent::__construct($message, $code, $previous);
+    }
 
     public static function forEmptyAddress(): self
     {
-        return new self('Ignored visit with no IP address');
+        return new self('Ignored visit with no IP address', UnlocatableIpType::EMPTY_ADDRESS);
     }
 
     public static function forLocalhost(): self
     {
-        return new self('Ignored localhost address');
+        return new self('Ignored localhost address', UnlocatableIpType::LOCALHOST);
     }
 
     public static function forError(Throwable $e): self
     {
-        $e = new self('An error occurred while locating IP', $e->getCode(), $e);
-        $e->isNonLocatableAddress = false;
-
-        return $e;
+        return new self('An error occurred while locating IP', UnlocatableIpType::ERROR, $e->getCode(), $e);
     }
 
     /**
-     * Tells if this error belongs to an address that will never be possible locate
+     * Tells if this belongs to an address that will never be possible to locate
      */
     public function isNonLocatableAddress(): bool
     {
-        return $this->isNonLocatableAddress;
+        return $this->type !== UnlocatableIpType::ERROR;
     }
 }
