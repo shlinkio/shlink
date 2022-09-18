@@ -10,6 +10,7 @@ use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\Cache\RedisPublishingHelper;
 use Shlinkio\Shlink\Common\Mercure\MercureHubPublishingHelper;
 use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelper;
+use Shlinkio\Shlink\Core\Visit\VisitLocator;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
@@ -21,7 +22,7 @@ return [
                 EventDispatcher\LocateVisit::class,
             ],
             EventDispatcher\Event\GeoLiteDbCreated::class => [
-//                EventDispatcher\LocateUnloctedVisits::class,
+                EventDispatcher\LocateUnlocatedVisits::class,
             ],
         ],
         'async' => [
@@ -43,6 +44,7 @@ return [
     'dependencies' => [
         'factories' => [
             EventDispatcher\LocateVisit::class => ConfigAbstractFactory::class,
+            EventDispatcher\LocateUnlocatedVisits::class => ConfigAbstractFactory::class,
             EventDispatcher\NotifyVisitToWebHooks::class => ConfigAbstractFactory::class,
             EventDispatcher\Mercure\NotifyVisitToMercure::class => ConfigAbstractFactory::class,
             EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => ConfigAbstractFactory::class,
@@ -72,6 +74,9 @@ return [
             EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => [
                 EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
             ],
+            EventDispatcher\LocateUnlocatedVisits::class => [
+                EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
+            ],
             EventDispatcher\NotifyVisitToWebHooks::class => [
                 EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
             ],
@@ -86,6 +91,7 @@ return [
             DbUpdater::class,
             EventDispatcherInterface::class,
         ],
+        EventDispatcher\LocateUnlocatedVisits::class => [VisitLocator::class, IpLocationResolverInterface::class],
         EventDispatcher\NotifyVisitToWebHooks::class => [
             'httpClient',
             'em',

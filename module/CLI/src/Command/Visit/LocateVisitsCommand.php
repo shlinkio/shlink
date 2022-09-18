@@ -34,8 +34,8 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
     private SymfonyStyle $io;
 
     public function __construct(
-        private VisitLocatorInterface $visitLocator,
-        private IpLocationResolverInterface $ipLocationResolver,
+        private readonly VisitLocatorInterface $visitLocator,
+        private readonly IpLocationResolverInterface $ipLocationResolver,
         LockFactory $locker,
     ) {
         parent::__construct($locker);

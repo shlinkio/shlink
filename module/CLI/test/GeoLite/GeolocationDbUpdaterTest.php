@@ -15,7 +15,7 @@ use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdater;
 use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
-use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
+use Shlinkio\Shlink\IpGeolocation\Exception\DbUpdateException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock;
 use Throwable;
@@ -48,7 +48,7 @@ class GeolocationDbUpdaterTest extends TestCase
     public function exceptionIsThrownWhenOlderDbDoesNotExistAndDownloadFails(): void
     {
         $mustBeUpdated = fn () => self::assertTrue(true);
-        $prev = new RuntimeException('');
+        $prev = new DbUpdateException('');
 
         $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(false);
         $getMeta = $this->geoLiteDbReader->metadata();
@@ -81,7 +81,7 @@ class GeolocationDbUpdaterTest extends TestCase
         $getMeta = $this->geoLiteDbReader->metadata()->willReturn($this->buildMetaWithBuildEpoch(
             Chronos::now()->subDays($days)->getTimestamp(),
         ));
-        $prev = new RuntimeException('');
+        $prev = new DbUpdateException('');
         $download = $this->dbUpdater->downloadFreshCopy(null)->willThrow($prev);
 
         try {

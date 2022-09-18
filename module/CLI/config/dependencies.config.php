@@ -19,6 +19,7 @@ use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Installer\Factory\ProcessHelperFactory;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
+use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console as SymfonyCli;
@@ -75,6 +76,7 @@ return [
             Reader::class,
             LOCAL_LOCK_FACTORY,
             TrackingOptions::class,
+            GeoLite2Options::class,
         ],
         Util\ProcessRunner::class => [SymfonyCli\Helper\ProcessHelper::class],
         ApiKey\RoleResolver::class => [DomainService::class, 'config.url_shortener.domain.hostname'],
