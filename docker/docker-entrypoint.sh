@@ -18,14 +18,14 @@ php bin/doctrine orm:generate-proxies -n ${flags}
 echo "Clearing entities cache..."
 php bin/doctrine orm:clear-cache:metadata -n ${flags}
 
-# Try to download GeoLite2 db file only if the license key env var was defined
-if [ ! -z "${GEOLITE_LICENSE_KEY}" ]; then
+# Try to download GeoLite2 db file only if the license key env var was defined and skipping was not explicitly set
+if [ ! -z "${GEOLITE_LICENSE_KEY}" ] && [ "${SKIP_INITIAL_GEOLITE_DOWNLOAD}" != "true" ]; then
   echo "Downloading GeoLite2 db file..."
   php bin/cli visit:download-db -n ${flags}
 fi
 
 # Periodically run visit:locate every hour, if ENABLE_PERIODIC_VISIT_LOCATE=true was provided
-if [ $ENABLE_PERIODIC_VISIT_LOCATE ]; then
+if [ "${ENABLE_PERIODIC_VISIT_LOCATE}" = "true" ]; then
   echo "Configuring periodic visit location..."
   echo "0 * * * * php /etc/shlink/bin/cli visit:locate -q" > /etc/crontabs/root
   /usr/sbin/crond &

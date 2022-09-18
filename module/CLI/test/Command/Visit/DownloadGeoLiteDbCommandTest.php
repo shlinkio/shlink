@@ -9,8 +9,9 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\DownloadGeoLiteDbCommand;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
+use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -97,11 +98,12 @@ class DownloadGeoLiteDbCommandTest extends TestCase
 
     public function provideSuccessParams(): iterable
     {
-        yield 'up to date db' => [function (): void {
-        }, '[INFO] GeoLite2 db file is up to date.'];
-        yield 'outdated db' => [function (array $args): void {
+        yield 'up to date db' => [fn () => GeolocationResult::CHECK_SKIPPED, '[INFO] GeoLite2 db file is up to date.'];
+        yield 'outdated db' => [function (array $args): GeolocationResult {
             [$beforeDownload] = $args;
             $beforeDownload(true);
+
+            return GeolocationResult::DB_CREATED;
         }, '[OK] GeoLite2 db file properly downloaded.'];
     }
 }

@@ -129,7 +129,7 @@ class VisitLocatorTest extends TestCase
                 public function geolocateVisit(Visit $visit): Location
                 {
                     throw $this->isNonLocatableAddress
-                        ? new IpCannotBeLocatedException('Cannot be located')
+                        ? IpCannotBeLocatedException::forEmptyAddress()
                         : IpCannotBeLocatedException::forError(new Exception(''));
                 }
 

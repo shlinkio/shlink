@@ -9,6 +9,7 @@ use LogicException;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Exception\RuntimeException;
+use Shlinkio\Shlink\Core\Visit\Model\UnlocatableIpType;
 use Throwable;
 
 class IpCannotBeLocatedExceptionTest extends TestCase
@@ -22,6 +23,7 @@ class IpCannotBeLocatedExceptionTest extends TestCase
         self::assertEquals('Ignored visit with no IP address', $e->getMessage());
         self::assertEquals(0, $e->getCode());
         self::assertNull($e->getPrevious());
+        self::assertEquals(UnlocatableIpType::EMPTY_ADDRESS, $e->type);
     }
 
     /** @test */
@@ -33,6 +35,7 @@ class IpCannotBeLocatedExceptionTest extends TestCase
         self::assertEquals('Ignored localhost address', $e->getMessage());
         self::assertEquals(0, $e->getCode());
         self::assertNull($e->getPrevious());
+        self::assertEquals(UnlocatableIpType::LOCALHOST, $e->type);
     }
 
     /**
@@ -47,6 +50,7 @@ class IpCannotBeLocatedExceptionTest extends TestCase
         self::assertEquals('An error occurred while locating IP', $e->getMessage());
         self::assertEquals($prev->getCode(), $e->getCode());
         self::assertSame($prev, $e->getPrevious());
+        self::assertEquals(UnlocatableIpType::ERROR, $e->type);
     }
 
     public function provideErrors(): iterable

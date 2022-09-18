@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.3.0] - 2022-09-18
 ### Added
 * [#1221](https://github.com/shlinkio/shlink/issues/1221) Added experimental support to run Shlink with [RoadRunner](https://roadrunner.dev) instead of openswoole.
 * [#1531](https://github.com/shlinkio/shlink/issues/1531) and [#1090](https://github.com/shlinkio/shlink/issues/1090) Added support for trailing slashes in short URLs.
@@ -33,6 +33,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1114](https://github.com/shlinkio/shlink/issues/1114) Added support to provide an initial API key via `INITIAL_API_KEY` env var, when running Shlink with openswoole or RoadRunner.
 
   Also, the installer tool now allows to generate an initial API key that can be copy-pasted (this tool is run interactively), in case you use php-fpm or you don't want to use env vars.
+
+* [#1528](https://github.com/shlinkio/shlink/issues/1528) Added support to delay when the GeoLite2 DB file is downloaded in docker images, speeding up its startup time.
+
+  In order to do it, pass `SKIP_INITIAL_GEOLITE_DOWNLOAD=true` when creating the container.
 
 ### Changed
 * [#1339](https://github.com/shlinkio/shlink/issues/1339) Added new test suite for CLI E2E tests.

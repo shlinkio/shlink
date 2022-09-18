@@ -8,10 +8,15 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\GeoLiteDbCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\UpdateGeoLiteDb;
+
+use function Functional\map;
 
 class UpdateGeoLiteDbTest extends TestCase
 {
@@ -20,13 +25,19 @@ class UpdateGeoLiteDbTest extends TestCase
     private UpdateGeoLiteDb $listener;
     private ObjectProphecy $dbUpdater;
     private ObjectProphecy $logger;
+    private ObjectProphecy $eventDispatcher;
 
     protected function setUp(): void
     {
         $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
+        $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
 
-        $this->listener = new UpdateGeoLiteDb($this->dbUpdater->reveal(), $this->logger->reveal());
+        $this->listener = new UpdateGeoLiteDb(
+            $this->dbUpdater->reveal(),
+            $this->logger->reveal(),
+            $this->eventDispatcher->reveal(),
+        );
     }
 
     /** @test */
@@ -42,6 +53,7 @@ class UpdateGeoLiteDbTest extends TestCase
         $checkDbUpdate->shouldHaveBeenCalledOnce();
         $logError->shouldHaveBeenCalledOnce();
         $this->logger->notice(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /**
@@ -51,9 +63,11 @@ class UpdateGeoLiteDbTest extends TestCase
     public function noticeMessageIsPrintedWhenFirstCallbackIsInvoked(bool $oldDbExists, string $expectedMessage): void
     {
         $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
-            function (array $args) use ($oldDbExists): void {
+            function (array $args) use ($oldDbExists): GeolocationResult {
                 [$firstCallback] = $args;
                 $firstCallback($oldDbExists);
+
+                return GeolocationResult::DB_IS_UP_TO_DATE;
             },
         );
         $logNotice = $this->logger->notice($expectedMessage);
@@ -63,6 +77,7 @@ class UpdateGeoLiteDbTest extends TestCase
         $checkDbUpdate->shouldHaveBeenCalledOnce();
         $logNotice->shouldHaveBeenCalledOnce();
         $this->logger->error(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     public function provideFlags(): iterable
@@ -82,13 +97,15 @@ class UpdateGeoLiteDbTest extends TestCase
         ?string $expectedMessage,
     ): void {
         $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
-            function (array $args) use ($total, $downloaded, $oldDbExists): void {
+            function (array $args) use ($total, $downloaded, $oldDbExists): GeolocationResult {
                 [, $secondCallback] = $args;
 
                 // Invoke several times to ensure the log is printed only once
                 $secondCallback($total, $downloaded, $oldDbExists);
                 $secondCallback($total, $downloaded, $oldDbExists);
                 $secondCallback($total, $downloaded, $oldDbExists);
+
+                return GeolocationResult::DB_UPDATED;
             },
         );
         $logNotice = $this->logger->notice($expectedMessage ?? Argument::cetera());
@@ -102,6 +119,7 @@ class UpdateGeoLiteDbTest extends TestCase
         }
         $checkDbUpdate->shouldHaveBeenCalledOnce();
         $this->logger->error(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     public function provideDownloaded(): iterable
@@ -114,5 +132,29 @@ class UpdateGeoLiteDbTest extends TestCase
         yield [100, 100, false, 'Finished downloading GeoLite2 db file'];
         yield [100, 101, true, 'Finished updating GeoLite2 db file'];
         yield [100, 101, false, 'Finished downloading GeoLite2 db file'];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideGeolocationResults
+     */
+    public function dispatchesEventOnlyWhenDbFileHasBeenCreatedForTheFirstTime(
+        GeolocationResult $result,
+        int $expectedDispatches,
+    ): void {
+        $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willReturn($result);
+
+        ($this->listener)();
+
+        $checkDbUpdate->shouldHaveBeenCalledOnce();
+        $this->eventDispatcher->dispatch(new GeoLiteDbCreated())->shouldHaveBeenCalledTimes($expectedDispatches);
+    }
+
+    public function provideGeolocationResults(): iterable
+    {
+        return map(GeolocationResult::cases(), static fn (GeolocationResult $value) => [
+            $value,
+            $value === GeolocationResult::DB_CREATED ? 1 : 0,
+        ]);
     }
 }
