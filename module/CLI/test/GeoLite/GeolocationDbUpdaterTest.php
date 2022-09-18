@@ -13,6 +13,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdater;
+use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
@@ -110,15 +111,16 @@ class GeolocationDbUpdaterTest extends TestCase
      * @test
      * @dataProvider provideSmallDays
      */
-    public function databaseIsNotUpdatedIfItIsYoungerThanOneWeek(string|int $buildEpoch): void
+    public function databaseIsNotUpdatedIfItIsNewEnough(string|int $buildEpoch): void
     {
         $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(true);
         $getMeta = $this->geoLiteDbReader->metadata()->willReturn($this->buildMetaWithBuildEpoch($buildEpoch));
         $download = $this->dbUpdater->downloadFreshCopy(null)->will(function (): void {
         });
 
-        $this->geolocationDbUpdater()->checkDbUpdate();
+        $result = $this->geolocationDbUpdater()->checkDbUpdate();
 
+        self::assertEquals(GeolocationResult::DB_IS_UP_TO_DATE, $result);
         $fileExists->shouldHaveBeenCalledOnce();
         $getMeta->shouldHaveBeenCalledOnce();
         $download->shouldNotHaveBeenCalled();
@@ -174,8 +176,9 @@ class GeolocationDbUpdaterTest extends TestCase
      */
     public function downloadDbIsSkippedIfTrackingIsDisabled(TrackingOptions $options): void
     {
-        $this->geolocationDbUpdater($options)->checkDbUpdate();
+        $result = $this->geolocationDbUpdater($options)->checkDbUpdate();
 
+        self::assertEquals(GeolocationResult::CHECK_SKIPPED, $result);
         $this->dbUpdater->databaseFileExists(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->geoLiteDbReader->metadata(Argument::cetera())->shouldNotHaveBeenCalled();
     }

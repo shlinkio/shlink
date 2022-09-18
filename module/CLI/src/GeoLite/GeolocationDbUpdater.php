@@ -30,17 +30,17 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    public function checkDbUpdate(?callable $beforeDownload = null, ?callable $handleProgress = null): void
+    public function checkDbUpdate(?callable $beforeDownload = null, ?callable $handleProgress = null): GeolocationResult
     {
         if ($this->trackingOptions->disableTracking || $this->trackingOptions->disableIpTracking) {
-            return;
+            return GeolocationResult::CHECK_SKIPPED;
         }
 
         $lock = $this->locker->createLock(self::LOCK_NAME);
         $lock->acquire(true); // Block until lock is released
 
         try {
-            $this->downloadIfNeeded($beforeDownload, $handleProgress);
+            return $this->downloadIfNeeded($beforeDownload, $handleProgress);
         } finally {
             $lock->release();
         }
@@ -49,17 +49,20 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    private function downloadIfNeeded(?callable $beforeDownload, ?callable $handleProgress): void
+    private function downloadIfNeeded(?callable $beforeDownload, ?callable $handleProgress): GeolocationResult
     {
         if (! $this->dbUpdater->databaseFileExists()) {
             $this->downloadNewDb(false, $beforeDownload, $handleProgress);
-            return;
+            return GeolocationResult::DB_CREATED;
         }
 
         $meta = $this->geoLiteDbReader->metadata();
         if ($this->buildIsTooOld($meta)) {
             $this->downloadNewDb(true, $beforeDownload, $handleProgress);
+            return GeolocationResult::DB_UPDATED;
         }
+
+        return GeolocationResult::DB_IS_UP_TO_DATE;
     }
 
     private function buildIsTooOld(Metadata $meta): bool

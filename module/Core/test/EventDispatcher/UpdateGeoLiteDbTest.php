@@ -11,6 +11,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
 use Shlinkio\Shlink\Core\EventDispatcher\UpdateGeoLiteDb;
 
 class UpdateGeoLiteDbTest extends TestCase
@@ -51,9 +52,11 @@ class UpdateGeoLiteDbTest extends TestCase
     public function noticeMessageIsPrintedWhenFirstCallbackIsInvoked(bool $oldDbExists, string $expectedMessage): void
     {
         $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
-            function (array $args) use ($oldDbExists): void {
+            function (array $args) use ($oldDbExists): GeolocationResult {
                 [$firstCallback] = $args;
                 $firstCallback($oldDbExists);
+
+                return GeolocationResult::DB_CREATED;
             },
         );
         $logNotice = $this->logger->notice($expectedMessage);
@@ -82,13 +85,15 @@ class UpdateGeoLiteDbTest extends TestCase
         ?string $expectedMessage,
     ): void {
         $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
-            function (array $args) use ($total, $downloaded, $oldDbExists): void {
+            function (array $args) use ($total, $downloaded, $oldDbExists): GeolocationResult {
                 [, $secondCallback] = $args;
 
                 // Invoke several times to ensure the log is printed only once
                 $secondCallback($total, $downloaded, $oldDbExists);
                 $secondCallback($total, $downloaded, $oldDbExists);
                 $secondCallback($total, $downloaded, $oldDbExists);
+
+                return GeolocationResult::DB_CREATED;
             },
         );
         $logNotice = $this->logger->notice($expectedMessage ?? Argument::cetera());
