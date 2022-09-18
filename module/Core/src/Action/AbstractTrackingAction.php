@@ -19,8 +19,8 @@ use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
 abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMethodInterface
 {
     public function __construct(
-        private ShortUrlResolverInterface $urlResolver,
-        private RequestTrackerInterface $requestTracker,
+        private readonly ShortUrlResolverInterface $urlResolver,
+        private readonly RequestTrackerInterface $requestTracker,
     ) {
     }
 

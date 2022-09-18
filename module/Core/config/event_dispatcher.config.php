@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core;
 
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
+use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\Cache\RedisPublishingHelper;
 use Shlinkio\Shlink\Common\Mercure\MercureHubPublishingHelper;
 use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelper;

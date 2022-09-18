@@ -9,8 +9,8 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\DownloadGeoLiteDbCommand;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
+use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 

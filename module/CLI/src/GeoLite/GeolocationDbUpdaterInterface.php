@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Util;
+namespace Shlinkio\Shlink\CLI\GeoLite;
 
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 

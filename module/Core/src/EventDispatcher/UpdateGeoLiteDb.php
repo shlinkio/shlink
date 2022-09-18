@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\EventDispatcher;
 
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
 use Throwable;
 
 use function sprintf;

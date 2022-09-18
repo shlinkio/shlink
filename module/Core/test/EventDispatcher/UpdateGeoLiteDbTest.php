@@ -10,7 +10,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\UpdateGeoLiteDb;
 
 class UpdateGeoLiteDbTest extends TestCase

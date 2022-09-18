@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\CLI\Util;
+namespace ShlinkioTest\Shlink\CLI\GeoLite;
 
 use Cake\Chronos\Chronos;
 use GeoIp2\Database\Reader;
@@ -12,7 +12,7 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
-use Shlinkio\Shlink\CLI\Util\GeolocationDbUpdater;
+use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdater;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
