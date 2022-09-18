@@ -20,6 +20,9 @@ return [
             EventDispatcher\Event\UrlVisited::class => [
                 EventDispatcher\LocateVisit::class,
             ],
+            EventDispatcher\Event\GeoLiteDbCreated::class => [
+//                EventDispatcher\LocateUnloctedVisits::class,
+            ],
         ],
         'async' => [
             EventDispatcher\Event\VisitLocated::class => [
@@ -132,7 +135,11 @@ return [
             'Logger_Shlink',
             'config.redis.pub_sub_enabled',
         ],
-        EventDispatcher\UpdateGeoLiteDb::class => [GeolocationDbUpdater::class, 'Logger_Shlink'],
+        EventDispatcher\UpdateGeoLiteDb::class => [
+            GeolocationDbUpdater::class,
+            'Logger_Shlink',
+            EventDispatcherInterface::class,
+        ],
     ],
 
 ];

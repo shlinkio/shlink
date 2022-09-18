@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\EventDispatcher;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\GeoLiteDbCreated;
 use Throwable;
 
 use function sprintf;
 
 class UpdateGeoLiteDb
 {
-    public function __construct(private GeolocationDbUpdaterInterface $dbUpdater, private LoggerInterface $logger)
-    {
+    public function __construct(
+        private readonly GeolocationDbUpdaterInterface $dbUpdater,
+        private readonly LoggerInterface $logger,
+        private readonly EventDispatcherInterface $eventDispatcher,
+    ) {
     }
 
     public function __invoke(): void
@@ -32,7 +38,10 @@ class UpdateGeoLiteDb
         };
 
         try {
-            $this->dbUpdater->checkDbUpdate($beforeDownload, $handleProgress);
+            $result = $this->dbUpdater->checkDbUpdate($beforeDownload, $handleProgress);
+            if ($result === GeolocationResult::DB_CREATED) {
+                $this->eventDispatcher->dispatch(new GeoLiteDbCreated());
+            }
         } catch (Throwable $e) {
             $this->logger->error('GeoLite2 database download failed. {e}', ['e' => $e]);
         }

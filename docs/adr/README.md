@@ -2,6 +2,7 @@
 
 Here listed you will find the different architectural decisions taken in the project, including all the reasoning behind it, options considered, and final outcome.
 
+* [2022-09-18 Allow delaying initial GeoLite2 DB download in docker images](2022-09-18-allow-delaying-initial-geolite2-db-download-in-docker-images.md)
 * [2022-08-05 Support multi-segment custom slugs](2022-08-05-support-multi-segment-custom-slugs.md)
 * [2022-01-15 Update env vars behavior to have precedence over installer options](2022-01-15-update-env-vars-behavior-to-have-precedence-over-installer-options.md)
 * [2021-08-05 Migrate to a new caching library](2021-08-05-migrate-to-a-new-caching-library.md)
