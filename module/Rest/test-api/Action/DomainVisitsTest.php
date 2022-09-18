@@ -65,4 +65,23 @@ class DomainVisitsTest extends ApiTestCase
         yield 'domain API key with not-owned valid domain' => ['domain_api_key', 'this_domain_is_detached.com'];
         yield 'author API key with valid domain not used in URLs' => ['author_api_key', 'this_domain_is_detached.com'];
     }
+
+    /**
+     * @test
+     * @dataProvider provideApiVersions
+     */
+    public function expectedNotFoundTypeIsReturnedForApiVersion(string $version, string $expectedType): void
+    {
+        $resp = $this->callApiWithKey(self::METHOD_GET, sprintf('/rest/v%s/domains/invalid.com/visits', $version));
+        $payload = $this->getJsonResponsePayload($resp);
+
+        self::assertEquals($expectedType, $payload['type']);
+    }
+
+    public function provideApiVersions(): iterable
+    {
+        yield ['1', 'DOMAIN_NOT_FOUND'];
+        yield ['2', 'DOMAIN_NOT_FOUND'];
+        yield ['3', 'https://shlink.io/api/error/domain-not-found'];
+    }
 }

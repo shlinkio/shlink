@@ -4,6 +4,56 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.3.0] - 2022-09-18
+### Added
+* [#1221](https://github.com/shlinkio/shlink/issues/1221) Added experimental support to run Shlink with [RoadRunner](https://roadrunner.dev) instead of openswoole.
+* [#1531](https://github.com/shlinkio/shlink/issues/1531) and [#1090](https://github.com/shlinkio/shlink/issues/1090) Added support for trailing slashes in short URLs.
+* [#1406](https://github.com/shlinkio/shlink/issues/1406) Added new REST API version 3.
+
+  When making requests to the REST API with `/rest/v3/...` and an error occurs, all error types will be different, with the next correlation:
+
+  * `INVALID_ARGUMENT` -> `https://shlink.io/api/error/invalid-data`
+  * `INVALID_SHORT_URL_DELETION` -> `https://shlink.io/api/error/invalid-short-url-deletion`
+  * `DOMAIN_NOT_FOUND` -> `https://shlink.io/api/error/domain-not-found`
+  * `FORBIDDEN_OPERATION` -> `https://shlink.io/api/error/forbidden-tag-operation`
+  * `INVALID_URL` -> `https://shlink.io/api/error/invalid-url`
+  * `INVALID_SLUG` -> `https://shlink.io/api/error/non-unique-slug`
+  * `INVALID_SHORTCODE` -> `https://shlink.io/api/error/short-url-not-found`
+  * `TAG_CONFLICT` -> `https://shlink.io/api/error/tag-conflict`
+  * `TAG_NOT_FOUND` -> `https://shlink.io/api/error/tag-not-found`
+  * `MERCURE_NOT_CONFIGURED` -> `https://shlink.io/api/error/mercure-not-configured`
+  * `INVALID_AUTHORIZATION` -> `https://shlink.io/api/error/missing-authentication`
+  * `INVALID_API_KEY` -> `https://shlink.io/api/error/invalid-api-key`
+
+  If you make a request to the API with v2 or v1, the old error types will be returned, until Shlink 4 is released, when only the new ones will be used.
+
+  Non-error responses are not affected.
+
+* [#1513](https://github.com/shlinkio/shlink/issues/1513) Added publishing of the docker image in GHCR.
+* [#1114](https://github.com/shlinkio/shlink/issues/1114) Added support to provide an initial API key via `INITIAL_API_KEY` env var, when running Shlink with openswoole or RoadRunner.
+
+  Also, the installer tool now allows to generate an initial API key that can be copy-pasted (this tool is run interactively), in case you use php-fpm or you don't want to use env vars.
+
+* [#1528](https://github.com/shlinkio/shlink/issues/1528) Added support to delay when the GeoLite2 DB file is downloaded in docker images, speeding up its startup time.
+
+  In order to do it, pass `SKIP_INITIAL_GEOLITE_DOWNLOAD=true` when creating the container.
+
+### Changed
+* [#1339](https://github.com/shlinkio/shlink/issues/1339) Added new test suite for CLI E2E tests.
+* [#1503](https://github.com/shlinkio/shlink/issues/1503) Drastically improved build time in GitHub Actions, by optimizing parallelization and adding php extensions cache.
+* [#1525](https://github.com/shlinkio/shlink/issues/1525) Migrated to custom doctrine CLI entry point.
+* [#1492](https://github.com/shlinkio/shlink/issues/1492) Migrated to immutable options objects, mapped with [cuyz/valinor](https://github.com/CuyZ/Valinor).
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 ## [3.2.1] - 2022-08-08
 ### Added
 * *Nothing*

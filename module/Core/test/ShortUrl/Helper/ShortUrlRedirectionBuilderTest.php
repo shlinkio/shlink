@@ -16,7 +16,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
 
     protected function setUp(): void
     {
-        $trackingOptions = new TrackingOptions(['disable_track_param' => 'foobar']);
+        $trackingOptions = new TrackingOptions(disableTrackParam: 'foobar');
         $this->redirectionBuilder = new ShortUrlRedirectionBuilder($trackingOptions);
     }
 

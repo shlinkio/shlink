@@ -36,7 +36,7 @@ class LocateVisitTest extends TestCase
     private ObjectProphecy $dbUpdater;
     private ObjectProphecy $eventDispatcher;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->ipLocationResolver = $this->prophesize(IpLocationResolverInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
@@ -193,7 +193,7 @@ class LocateVisitTest extends TestCase
     {
         $ipAddr = $originalIpAddress ?? $visit->getRemoteAddr();
         $location = new Location('', '', '', '', 0.0, 0.0, '');
-        $event = new UrlVisited('123', $originalIpAddress);
+        $event = UrlVisited::withOriginalIpAddress('123', $originalIpAddress);
 
         $findVisit = $this->em->find(Visit::class, '123')->willReturn($visit);
         $flush = $this->em->flush()->will(function (): void {

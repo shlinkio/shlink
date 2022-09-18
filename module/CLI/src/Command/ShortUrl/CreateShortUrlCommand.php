@@ -40,7 +40,7 @@ class CreateShortUrlCommand extends Command
         private readonly UrlShortenerOptions $options,
     ) {
         parent::__construct();
-        $this->defaultDomain = $this->options->domain()['hostname'] ?? '';
+        $this->defaultDomain = $this->options->domain['hostname'] ?? '';
     }
 
     protected function configure(): void
@@ -158,7 +158,7 @@ class CreateShortUrlCommand extends Command
         $tags = unique(flatten(array_map($explodeWithComma, $input->getOption('tags'))));
         $customSlug = $input->getOption('custom-slug');
         $maxVisits = $input->getOption('max-visits');
-        $shortCodeLength = $input->getOption('short-code-length') ?? $this->options->defaultShortCodesLength();
+        $shortCodeLength = $input->getOption('short-code-length') ?? $this->options->defaultShortCodesLength;
         $doValidateUrl = $input->getOption('validate-url');
 
         try {
@@ -175,7 +175,7 @@ class CreateShortUrlCommand extends Command
                 ShortUrlInputFilter::TAGS => $tags,
                 ShortUrlInputFilter::CRAWLABLE => $input->getOption('crawlable'),
                 ShortUrlInputFilter::FORWARD_QUERY => !$input->getOption('no-forward-query'),
-                EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value => $this->options->multiSegmentSlugsEnabled(),
+                EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value => $this->options->multiSegmentSlugsEnabled,
             ]));
 
             $io->writeln([

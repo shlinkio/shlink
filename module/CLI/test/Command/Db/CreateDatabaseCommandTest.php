@@ -33,7 +33,7 @@ class CreateDatabaseCommandTest extends TestCase
     private ObjectProphecy $schemaManager;
     private ObjectProphecy $driver;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $locker = $this->prophesize(LockFactory::class);
         $lock = $this->prophesize(LockInterface::class);

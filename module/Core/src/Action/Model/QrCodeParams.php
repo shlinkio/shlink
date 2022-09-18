@@ -52,7 +52,7 @@ final class QrCodeParams
 
     private static function resolveSize(array $query, QrCodeOptions $defaults): int
     {
-        $size = (int) ($query['size'] ?? $defaults->size());
+        $size = (int) ($query['size'] ?? $defaults->size);
         if ($size < self::MIN_SIZE) {
             return self::MIN_SIZE;
         }
@@ -62,7 +62,7 @@ final class QrCodeParams
 
     private static function resolveMargin(array $query, QrCodeOptions $defaults): int
     {
-        $margin = $query['margin'] ?? (string) $defaults->margin();
+        $margin = $query['margin'] ?? (string) $defaults->margin;
         $intMargin = (int) $margin;
         if ($margin !== (string) $intMargin) {
             return 0;
@@ -74,7 +74,7 @@ final class QrCodeParams
     private static function resolveWriter(array $query, QrCodeOptions $defaults): WriterInterface
     {
         $qFormat = self::normalizeParam($query['format'] ?? '');
-        $format = contains(self::SUPPORTED_FORMATS, $qFormat) ? $qFormat : self::normalizeParam($defaults->format());
+        $format = contains(self::SUPPORTED_FORMATS, $qFormat) ? $qFormat : self::normalizeParam($defaults->format);
 
         return match ($format) {
             'svg' => new SvgWriter(),
@@ -84,7 +84,7 @@ final class QrCodeParams
 
     private static function resolveErrorCorrection(array $query, QrCodeOptions $defaults): ErrorCorrectionLevelInterface
     {
-        $errorCorrectionLevel = self::normalizeParam($query['errorCorrection'] ?? $defaults->errorCorrection());
+        $errorCorrectionLevel = self::normalizeParam($query['errorCorrection'] ?? $defaults->errorCorrection);
         return match ($errorCorrectionLevel) {
             'h' => new ErrorCorrectionLevelHigh(),
             'q' => new ErrorCorrectionLevelQuartile(),
@@ -97,7 +97,7 @@ final class QrCodeParams
     {
         $doNotRoundBlockSize = isset($query['roundBlockSize'])
             ? $query['roundBlockSize'] === 'false'
-            : ! $defaults->roundBlockSize();
+            : ! $defaults->roundBlockSize;
         return $doNotRoundBlockSize ? new RoundBlockSizeModeNone() : new RoundBlockSizeModeMargin();
     }
 

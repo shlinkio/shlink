@@ -6,32 +6,47 @@ namespace ShlinkioApiTest\Shlink\Rest\Middleware;
 
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
+use function sprintf;
+
 class AuthenticationTest extends ApiTestCase
 {
-    /** @test */
-    public function authorizationErrorIsReturnedIfNoApiKeyIsSent(): void
+    /**
+     * @test
+     * @dataProvider provideApiVersions
+     */
+    public function authorizationErrorIsReturnedIfNoApiKeyIsSent(string $version, string $expectedType): void
     {
         $expectedDetail = 'Expected one of the following authentication headers, ["X-Api-Key"], but none were provided';
 
-        $resp = $this->callApi(self::METHOD_GET, '/short-urls');
+        $resp = $this->callApi(self::METHOD_GET, sprintf('/rest/v%s/short-urls', $version));
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_UNAUTHORIZED, $resp->getStatusCode());
         self::assertEquals(self::STATUS_UNAUTHORIZED, $payload['status']);
-        self::assertEquals('INVALID_AUTHORIZATION', $payload['type']);
+        self::assertEquals($expectedType, $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Invalid authorization', $payload['title']);
+    }
+
+    public function provideApiVersions(): iterable
+    {
+        yield 'version 1' => ['1', 'INVALID_AUTHORIZATION'];
+        yield 'version 2' => ['2', 'INVALID_AUTHORIZATION'];
+        yield 'version 3' => ['3', 'https://shlink.io/api/error/missing-authentication'];
     }
 
     /**
      * @test
      * @dataProvider provideInvalidApiKeys
      */
-    public function apiKeyErrorIsReturnedWhenProvidedApiKeyIsInvalid(string $apiKey): void
-    {
+    public function apiKeyErrorIsReturnedWhenProvidedApiKeyIsInvalid(
+        string $apiKey,
+        string $version,
+        string $expectedType,
+    ): void {
         $expectedDetail = 'Provided API key does not exist or is invalid.';
 
-        $resp = $this->callApi(self::METHOD_GET, '/short-urls', [
+        $resp = $this->callApi(self::METHOD_GET, sprintf('/rest/v%s/short-urls', $version), [
             'headers' => [
                 'X-Api-Key' => $apiKey,
             ],
@@ -40,15 +55,16 @@ class AuthenticationTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_UNAUTHORIZED, $resp->getStatusCode());
         self::assertEquals(self::STATUS_UNAUTHORIZED, $payload['status']);
-        self::assertEquals('INVALID_API_KEY', $payload['type']);
+        self::assertEquals($expectedType, $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Invalid API key', $payload['title']);
     }
 
     public function provideInvalidApiKeys(): iterable
     {
-        yield 'key which does not exist' => ['invalid'];
-        yield 'key which is expired' => ['expired_api_key'];
-        yield 'key which is disabled' => ['disabled_api_key'];
+        yield 'key which does not exist' => ['invalid', '2', 'INVALID_API_KEY'];
+        yield 'key which is expired' => ['expired_api_key', '2', 'INVALID_API_KEY'];
+        yield 'key which is disabled' => ['disabled_api_key', '2', 'INVALID_API_KEY'];
+        yield 'version 3' => ['disabled_api_key', '3', 'https://shlink.io/api/error/invalid-api-key'];
     }
 }

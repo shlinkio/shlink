@@ -25,7 +25,7 @@ class ForbiddenTagOperationExceptionTest extends TestCase
         self::assertEquals($expectedMessage, $e->getMessage());
         self::assertEquals($expectedMessage, $e->getDetail());
         self::assertEquals('Forbidden tag operation', $e->getTitle());
-        self::assertEquals('FORBIDDEN_OPERATION', $e->getType());
+        self::assertEquals('https://shlink.io/api/error/forbidden-tag-operation', $e->getType());
         self::assertEquals(403, $e->getStatus());
     }
 

@@ -21,7 +21,7 @@ class MercureInfoActionTest extends TestCase
 
     private ObjectProphecy $provider;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->provider = $this->prophesize(JwtProviderInterface::class);
     }

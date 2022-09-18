@@ -25,7 +25,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     private PersistenceShortUrlRelationResolver $resolver;
     private ObjectProphecy $em;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->em->getEventManager()->willReturn(new EventManager());

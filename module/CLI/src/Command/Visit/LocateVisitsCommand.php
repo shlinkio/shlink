@@ -11,11 +11,11 @@ use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
+use Shlinkio\Shlink\Core\Visit\Model\UnlocatableIpType;
 use Shlinkio\Shlink\Core\Visit\VisitGeolocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\VisitLocatorInterface;
-use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
+use Shlinkio\Shlink\Core\Visit\VisitToLocationHelperInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
-use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,8 +34,8 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
     private SymfonyStyle $io;
 
     public function __construct(
-        private VisitLocatorInterface $visitLocator,
-        private IpLocationResolverInterface $ipLocationResolver,
+        private readonly VisitLocatorInterface $visitLocator,
+        private readonly VisitToLocationHelperInterface $visitToLocation,
         LockFactory $locker,
     ) {
         parent::__construct($locker);
@@ -132,39 +132,33 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
      */
     public function geolocateVisit(Visit $visit): Location
     {
-        if (! $visit->hasRemoteAddr()) {
-            $this->io->writeln(
-                '<comment>Ignored visit with no IP address</comment>',
-                OutputInterface::VERBOSITY_VERBOSE,
-            );
-            throw IpCannotBeLocatedException::forEmptyAddress();
-        }
-
-        $ipAddr = $visit->getRemoteAddr() ?? '';
+        $ipAddr = $visit->getRemoteAddr() ?? '?';
         $this->io->write(sprintf('Processing IP <fg=blue>%s</>', $ipAddr));
-        if ($ipAddr === IpAddress::LOCALHOST) {
-            $this->io->writeln(' [<comment>Ignored localhost address</comment>]');
-            throw IpCannotBeLocatedException::forLocalhost();
-        }
 
         try {
-            return $this->ipLocationResolver->resolveIpLocation($ipAddr);
-        } catch (WrongIpException $e) {
-            $this->io->writeln(' [<fg=red>An error occurred while locating IP. Skipped</>]');
-            if ($this->io->isVerbose()) {
+            return $this->visitToLocation->resolveVisitLocation($visit);
+        } catch (IpCannotBeLocatedException $e) {
+            $this->io->writeln(match ($e->type) {
+                UnlocatableIpType::EMPTY_ADDRESS => ' [<comment>Ignored visit with no IP address</comment>]',
+                UnlocatableIpType::LOCALHOST => ' [<comment>Ignored localhost address</comment>]',
+                UnlocatableIpType::ERROR => ' [<fg=red>An error occurred while locating IP. Skipped</>]',
+            });
+
+            if ($e->type === UnlocatableIpType::ERROR && $this->io->isVerbose()) {
                 $this->getApplication()?->renderThrowable($e, $this->io);
             }
 
-            throw IpCannotBeLocatedException::forError($e);
+            throw $e;
         }
     }
 
     public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void
     {
-        $message = ! $visitLocation->isEmpty()
-            ? sprintf(' [<info>Address located in "%s"</info>]', $visitLocation->getCountryName())
-            : ' [<comment>Address not found</comment>]';
-        $this->io->writeln($message);
+        if (! $visitLocation->isEmpty()) {
+            $this->io->writeln(sprintf(' [<info>Address located in "%s"</info>]', $visitLocation->getCountryName()));
+        } elseif ($visit->hasRemoteAddr() && $visit->getRemoteAddr() !== IpAddress::LOCALHOST) {
+            $this->io->writeln(' <comment>[Could not locate address]</comment>');
+        }
     }
 
     private function checkDbUpdate(): void

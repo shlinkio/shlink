@@ -38,7 +38,7 @@ class NotifyVisitToWebHooksTest extends TestCase
     private ObjectProphecy $em;
     private ObjectProphecy $logger;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->httpClient = $this->prophesize(ClientInterface::class);
         $this->em = $this->prophesize(EntityManagerInterface::class);
@@ -165,7 +165,7 @@ class NotifyVisitToWebHooksTest extends TestCase
                 ['webhooks' => $webhooks, 'notify_orphan_visits_to_webhooks' => $notifyOrphanVisits],
             ),
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
-            new AppOptions(['name' => 'Shlink', 'version' => '1.2.3']),
+            new AppOptions('Shlink', '1.2.3'),
         );
     }
 }

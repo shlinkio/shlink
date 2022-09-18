@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Util;
+namespace Shlinkio\Shlink\CLI\GeoLite;
 
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 
@@ -11,5 +11,8 @@ interface GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    public function checkDbUpdate(?callable $beforeDownload = null, ?callable $handleProgress = null): void;
+    public function checkDbUpdate(
+        ?callable $beforeDownload = null,
+        ?callable $handleProgress = null,
+    ): GeolocationResult;
 }

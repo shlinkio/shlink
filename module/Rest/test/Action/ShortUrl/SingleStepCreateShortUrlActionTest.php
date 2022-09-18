@@ -25,7 +25,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
     private ObjectProphecy $urlShortener;
     private ObjectProphecy $transformer;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->urlShortener = $this->prophesize(UrlShortenerInterface::class);
         $this->transformer = $this->prophesize(DataTransformerInterface::class);

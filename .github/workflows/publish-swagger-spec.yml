@@ -12,20 +12,16 @@ jobs:
       matrix:
         php-version: ['8.1']
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Determine version
         id: determine_version
         run: echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
         shell: bash
-      - name: Use PHP
-        uses: shivammathur/setup-php@v2
+      - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          tools: composer
-          extensions: openswoole-4.11.1
-          coverage: none
-      - run: composer install --no-interaction --prefer-dist
+          php-extensions: openswoole-4.11.1
+          extensions-cache-key: publish-swagger-spec-extensions-${{ matrix.php-version }}
       - run: composer swagger:inline
       - run: mkdir ${{ steps.determine_version.outputs.version }}
       - run: mv docs/swagger/swagger-inlined.json ${{ steps.determine_version.outputs.version }}/open-api-spec.json

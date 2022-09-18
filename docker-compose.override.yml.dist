@@ -13,6 +13,12 @@ services:
             - /etc/passwd:/etc/passwd:ro
             - /etc/group:/etc/group:ro
 
+    shlink_roadrunner:
+        user: 1000:1000
+        volumes:
+            - /etc/passwd:/etc/passwd:ro
+            - /etc/group:/etc/group:ro
+
     shlink_db_mysql:
         user: 1000:1000
         volumes:

@@ -1,0 +1,9 @@
+{
+    "value": {
+        "title": "Invalid data",
+        "type": "https://shlink.io/api/error/invalid-data",
+        "detail": "Provided data is not valid",
+        "status": 400,
+        "invalidElements": ["maxVisits", "validSince"]
+    }
+}

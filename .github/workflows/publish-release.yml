@@ -13,19 +13,18 @@ jobs:
         php-version: ['8.1']
         swoole: ['yes', 'no']
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Use PHP
-        uses: shivammathur/setup-php@v2
+      - uses: actions/checkout@v3
+      - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          tools: composer
-          extensions: openswoole-4.11.1
+          php-extensions: openswoole-4.11.1
+          extensions-cache-key: publish-swagger-spec-extensions-${{ matrix.php-version }}
+          install-deps: 'no'
       - if: ${{ matrix.swoole == 'yes' }}
         run: ./build.sh ${GITHUB_REF#refs/tags/v}
       - if: ${{ matrix.swoole == 'no' }}
         run: ./build.sh ${GITHUB_REF#refs/tags/v} --no-swoole
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: dist-files-${{ matrix.php-version }}-${{ matrix.swoole }}
           path: build
@@ -34,9 +33,8 @@ jobs:
     needs: ['build']
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
         with:
           path: build
       - name: Publish release with assets

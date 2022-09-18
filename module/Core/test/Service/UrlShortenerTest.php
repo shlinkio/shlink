@@ -30,7 +30,7 @@ class UrlShortenerTest extends TestCase
     private ObjectProphecy $shortCodeHelper;
     private ObjectProphecy $eventDispatcher;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->titleResolutionHelper = $this->prophesize(ShortUrlTitleResolutionHelperInterface::class);
         $this->titleResolutionHelper->processTitleAndValidateUrl(Argument::cetera())->willReturnArgument();

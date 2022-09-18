@@ -25,7 +25,7 @@ class HealthActionTest extends TestCase
     private HealthAction $action;
     private ObjectProphecy $conn;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->conn = $this->prophesize(Connection::class);
         $this->conn->executeQuery(Argument::cetera())->willReturn($this->prophesize(Result::class)->reveal());
@@ -36,7 +36,7 @@ class HealthActionTest extends TestCase
         $em = $this->prophesize(EntityManagerInterface::class);
         $em->getConnection()->willReturn($this->conn->reveal());
 
-        $this->action = new HealthAction($em->reveal(), new AppOptions(['version' => '1.2.3']));
+        $this->action = new HealthAction($em->reveal(), new AppOptions(version: '1.2.3'));
     }
 
     /** @test */

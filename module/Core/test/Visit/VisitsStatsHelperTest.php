@@ -43,7 +43,7 @@ class VisitsStatsHelperTest extends TestCase
     private VisitsStatsHelper $helper;
     private ObjectProphecy $em;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->em = $this->prophesize(EntityManagerInterface::class);
         $this->helper = new VisitsStatsHelper($this->em->reveal());

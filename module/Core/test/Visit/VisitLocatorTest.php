@@ -38,7 +38,7 @@ class VisitLocatorTest extends TestCase
     private ObjectProphecy $em;
     private ObjectProphecy $repo;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->em = $this->prophesize(EntityManager::class);
         $this->repo = $this->prophesize(VisitRepositoryInterface::class);
@@ -129,7 +129,7 @@ class VisitLocatorTest extends TestCase
                 public function geolocateVisit(Visit $visit): Location
                 {
                     throw $this->isNonLocatableAddress
-                        ? new IpCannotBeLocatedException('Cannot be located')
+                        ? IpCannotBeLocatedException::forEmptyAddress()
                         : IpCannotBeLocatedException::forError(new Exception(''));
                 }
 

@@ -21,7 +21,7 @@ class NotFoundTemplateHandlerTest extends TestCase
     private NotFoundTemplateHandler $handler;
     private bool $readFileCalled;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->readFileCalled = false;
         $readFile = function (string $fileName): string {

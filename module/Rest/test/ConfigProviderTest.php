@@ -12,7 +12,7 @@ class ConfigProviderTest extends TestCase
 {
     private ConfigProvider $configProvider;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->configProvider = new ConfigProvider();
     }
@@ -22,10 +22,11 @@ class ConfigProviderTest extends TestCase
     {
         $config = ($this->configProvider)();
 
-        self::assertCount(4, $config);
+        self::assertCount(5, $config);
         self::assertArrayHasKey('dependencies', $config);
         self::assertArrayHasKey('auth', $config);
         self::assertArrayHasKey('entity_manager', $config);
+        self::assertArrayHasKey('initial_api_key', $config);
         self::assertArrayHasKey(ConfigAbstractFactory::class, $config);
     }
 
@@ -48,10 +49,10 @@ class ConfigProviderTest extends TestCase
                 ['path' => '/health'],
             ],
             [
-                ['path' => '/rest/v{version:1|2}/foo'],
-                ['path' => '/rest/v{version:1|2}/bar'],
-                ['path' => '/rest/v{version:1|2}/baz/foo'],
-                ['path' => '/rest/v{version:1|2}/health'],
+                ['path' => '/rest/v{version:1|2|3}/foo'],
+                ['path' => '/rest/v{version:1|2|3}/bar'],
+                ['path' => '/rest/v{version:1|2|3}/baz/foo'],
+                ['path' => '/rest/v{version:1|2|3}/health'],
                 ['path' => '/rest/health', 'name' => ConfigProvider::UNVERSIONED_HEALTH_ENDPOINT_NAME],
             ],
         ];
@@ -62,9 +63,9 @@ class ConfigProviderTest extends TestCase
                 ['path' => '/baz/foo'],
             ],
             [
-                ['path' => '/rest/v{version:1|2}/foo'],
-                ['path' => '/rest/v{version:1|2}/bar'],
-                ['path' => '/rest/v{version:1|2}/baz/foo'],
+                ['path' => '/rest/v{version:1|2|3}/foo'],
+                ['path' => '/rest/v{version:1|2|3}/bar'],
+                ['path' => '/rest/v{version:1|2|3}/baz/foo'],
             ],
         ];
     }

@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Util;
+namespace Shlinkio\Shlink\CLI\GeoLite;
 
 use Cake\Chronos\Chronos;
 use GeoIp2\Database\Reader;
 use MaxMind\Db\Reader\Metadata;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
-use Shlinkio\Shlink\IpGeolocation\Exception\RuntimeException;
+use Shlinkio\Shlink\IpGeolocation\Exception\DbUpdateException;
+use Shlinkio\Shlink\IpGeolocation\Exception\MissingLicenseException;
+use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock\LockFactory;
 
@@ -20,27 +22,27 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     private const LOCK_NAME = 'geolocation-db-update';
 
     public function __construct(
-        private DbUpdaterInterface $dbUpdater,
-        private Reader $geoLiteDbReader,
-        private LockFactory $locker,
-        private TrackingOptions $trackingOptions,
+        private readonly DbUpdaterInterface $dbUpdater,
+        private readonly Reader $geoLiteDbReader,
+        private readonly LockFactory $locker,
+        private readonly TrackingOptions $trackingOptions,
     ) {
     }
 
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    public function checkDbUpdate(?callable $beforeDownload = null, ?callable $handleProgress = null): void
+    public function checkDbUpdate(?callable $beforeDownload = null, ?callable $handleProgress = null): GeolocationResult
     {
-        if ($this->trackingOptions->disableTracking() || $this->trackingOptions->disableIpTracking()) {
-            return;
+        if ($this->trackingOptions->disableTracking || $this->trackingOptions->disableIpTracking) {
+            return GeolocationResult::CHECK_SKIPPED;
         }
 
         $lock = $this->locker->createLock(self::LOCK_NAME);
         $lock->acquire(true); // Block until lock is released
 
         try {
-            $this->downloadIfNeeded($beforeDownload, $handleProgress);
+            return $this->downloadIfNeeded($beforeDownload, $handleProgress);
         } finally {
             $lock->release();
         }
@@ -49,17 +51,18 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    private function downloadIfNeeded(?callable $beforeDownload, ?callable $handleProgress): void
+    private function downloadIfNeeded(?callable $beforeDownload, ?callable $handleProgress): GeolocationResult
     {
         if (! $this->dbUpdater->databaseFileExists()) {
-            $this->downloadNewDb(false, $beforeDownload, $handleProgress);
-            return;
+            return $this->downloadNewDb(false, $beforeDownload, $handleProgress);
         }
 
         $meta = $this->geoLiteDbReader->metadata();
         if ($this->buildIsTooOld($meta)) {
-            $this->downloadNewDb(true, $beforeDownload, $handleProgress);
+            return $this->downloadNewDb(true, $beforeDownload, $handleProgress);
         }
+
+        return GeolocationResult::DB_IS_UP_TO_DATE;
     }
 
     private function buildIsTooOld(Metadata $meta): bool
@@ -92,15 +95,22 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    private function downloadNewDb(bool $olderDbExists, ?callable $beforeDownload, ?callable $handleProgress): void
-    {
+    private function downloadNewDb(
+        bool $olderDbExists,
+        ?callable $beforeDownload,
+        ?callable $handleProgress,
+    ): GeolocationResult {
         if ($beforeDownload !== null) {
             $beforeDownload($olderDbExists);
         }
 
         try {
             $this->dbUpdater->downloadFreshCopy($this->wrapHandleProgressCallback($handleProgress, $olderDbExists));
-        } catch (RuntimeException $e) {
+            return $olderDbExists ? GeolocationResult::DB_UPDATED : GeolocationResult::DB_CREATED;
+        } catch (MissingLicenseException) {
+            // If there's no license key, just ignore the error
+            return GeolocationResult::CHECK_SKIPPED;
+        } catch (DbUpdateException | WrongIpException $e) {
             throw $olderDbExists
                 ? GeolocationDbUpdateFailedException::withOlderDb($e)
                 : GeolocationDbUpdateFailedException::withoutOlderDb($e);
@@ -113,6 +123,6 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
             return null;
         }
 
-        return fn (int $total, int $downloaded) => $handleProgress($total, $downloaded, $olderDbExists);
+        return static fn (int $total, int $downloaded) => $handleProgress($total, $downloaded, $olderDbExists);
     }
 }

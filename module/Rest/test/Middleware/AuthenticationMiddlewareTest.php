@@ -35,7 +35,7 @@ class AuthenticationMiddlewareTest extends TestCase
     private ObjectProphecy $apiKeyService;
     private ObjectProphecy $handler;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
         $this->middleware = new AuthenticationMiddleware(

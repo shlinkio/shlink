@@ -44,6 +44,7 @@ return [
             Option\UrlShortener\AutoResolveTitlesConfigOption::class,
             Option\UrlShortener\AppendExtraPathConfigOption::class,
             Option\UrlShortener\EnableMultiSegmentSlugsConfigOption::class,
+            Option\UrlShortener\EnableTrailingSlashConfigOption::class,
             Option\Tracking\IpAnonymizationConfigOption::class,
             Option\Tracking\OrphanVisitsTrackingConfigOption::class,
             Option\Tracking\DisableTrackParamConfigOption::class,
@@ -72,8 +73,17 @@ return [
             InstallationCommand::DB_MIGRATE->value => [
                 'command' => 'bin/cli ' . Command\Db\MigrateDatabaseCommand::NAME,
             ],
+            InstallationCommand::ORM_PROXIES->value => [
+                'command' => 'bin/doctrine orm:generate-proxies',
+            ],
+            InstallationCommand::ORM_CLEAR_CACHE->value => [
+                'command' => 'bin/doctrine orm:clear-cache:metadata',
+            ],
             InstallationCommand::GEOLITE_DOWNLOAD_DB->value => [
                 'command' => 'bin/cli ' . Command\Visit\DownloadGeoLiteDbCommand::NAME,
+            ],
+            InstallationCommand::API_KEY_GENERATE->value => [
+                'command' => 'bin/cli ' . Command\Api\GenerateKeyCommand::NAME,
             ],
         ],
     ],

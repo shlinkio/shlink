@@ -10,8 +10,8 @@ use Psr\Container\ContainerInterface;
 use function register_shutdown_function;
 use function sprintf;
 
-use const ShlinkioTest\Shlink\SWOOLE_TESTING_HOST;
-use const ShlinkioTest\Shlink\SWOOLE_TESTING_PORT;
+use const ShlinkioTest\Shlink\API_TESTS_HOST;
+use const ShlinkioTest\Shlink\API_TESTS_PORT;
 
 /** @var ContainerInterface $container */
 $container = require __DIR__ . '/../container.php';
@@ -24,10 +24,15 @@ $httpClient = $container->get('shlink_test_api_client');
 register_shutdown_function(function () use ($httpClient): void {
     $httpClient->request(
         'GET',
-        sprintf('http://%s:%s/api-tests/stop-coverage', SWOOLE_TESTING_HOST, SWOOLE_TESTING_PORT),
+        sprintf('http://%s:%s/api-tests/stop-coverage', API_TESTS_HOST, API_TESTS_PORT),
     );
 });
 
-$testHelper->createTestDb(['bin/cli', 'db:create'], ['bin/cli', 'db:migrate']);
+$testHelper->createTestDb(
+    ['bin/cli', 'db:create'],
+    ['bin/cli', 'db:migrate'],
+    ['bin/doctrine', 'orm:schema-tool:drop'],
+    ['bin/doctrine', 'dbal:run-sql'],
+);
 ApiTest\ApiTestCase::setApiClient($httpClient);
 ApiTest\ApiTestCase::setSeedFixturesCallback(fn () => $testHelper->seedFixtures($em, $config['data_fixtures'] ?? []));

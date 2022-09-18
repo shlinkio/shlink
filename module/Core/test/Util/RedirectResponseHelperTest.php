@@ -11,15 +11,6 @@ use Shlinkio\Shlink\Core\Util\RedirectResponseHelper;
 
 class RedirectResponseHelperTest extends TestCase
 {
-    private RedirectResponseHelper $helper;
-    private RedirectOptions $shortenerOpts;
-
-    protected function setUp(): void
-    {
-        $this->shortenerOpts = new RedirectOptions();
-        $this->helper = new RedirectResponseHelper($this->shortenerOpts);
-    }
-
     /**
      * @test
      * @dataProvider provideRedirectConfigs
@@ -30,10 +21,9 @@ class RedirectResponseHelperTest extends TestCase
         int $expectedStatus,
         ?string $expectedCacheControl,
     ): void {
-        $this->shortenerOpts->redirectStatusCode = $configuredStatus;
-        $this->shortenerOpts->redirectCacheLifetime = $configuredLifetime;
+        $options = new RedirectOptions($configuredStatus, $configuredLifetime);
 
-        $response = $this->helper->buildRedirectResponse('destination');
+        $response = $this->helper($options)->buildRedirectResponse('destination');
 
         self::assertInstanceOf(RedirectResponse::class, $response);
         self::assertEquals($expectedStatus, $response->getStatusCode());
@@ -51,5 +41,10 @@ class RedirectResponseHelperTest extends TestCase
         yield 'status 301 with valid expiration' => [301, 20, 301, 'private,max-age=20'];
         yield 'status 301 with zero expiration' => [301, 0, 301, 'private,max-age=30'];
         yield 'status 301 with negative expiration' => [301, -20, 301, 'private,max-age=30'];
+    }
+
+    private function helper(?RedirectOptions $options = null): RedirectResponseHelper
+    {
+        return new RedirectResponseHelper($options ?? new RedirectOptions());
     }
 }

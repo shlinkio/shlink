@@ -13,7 +13,7 @@ class SimpleShortUrlRelationResolverTest extends TestCase
 {
     private SimpleShortUrlRelationResolver $resolver;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->resolver = new SimpleShortUrlRelationResolver();
     }

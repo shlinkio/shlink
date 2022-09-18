@@ -42,7 +42,7 @@ class HealthAction extends AbstractRestAction
         $statusCode = $connected ? self::STATUS_OK : self::STATUS_SERVICE_UNAVAILABLE;
         return new JsonResponse([
             'status' => $connected ? self::STATUS_PASS : self::STATUS_FAIL,
-            'version' => $this->options->getVersion(),
+            'version' => $this->options->version,
             'links' => [
                 'about' => 'https://shlink.io',
                 'project' => 'https://github.com/shlinkio/shlink',

@@ -127,3 +127,8 @@ function camelCaseToHumanFriendly(string $value): string
 
     return ucfirst($filter->filter($value));
 }
+
+function toProblemDetailsType(string $errorCode): string
+{
+    return sprintf('https://shlink.io/api/error/%s', $errorCode);
+}

@@ -73,6 +73,30 @@ services:
         extra_hosts:
             - 'host.docker.internal:host-gateway'
 
+    shlink_roadrunner:
+        container_name: shlink_roadrunner
+        build:
+            context: .
+            dockerfile: ./data/infra/roadrunner.Dockerfile
+        ports:
+            - "8800:8080"
+        volumes:
+            - ./:/home/shlink
+            - ./data/infra/php.ini:/usr/local/etc/php/php.ini
+        links:
+            - shlink_db_mysql
+            - shlink_db_postgres
+            - shlink_db_maria
+            - shlink_db_ms
+            - shlink_redis
+            - shlink_mercure
+            - shlink_mercure_proxy
+            - shlink_rabbitmq
+        environment:
+            LC_ALL: C
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+
     shlink_db_mysql:
         container_name: shlink_db_mysql
         image: mysql:5.7
@@ -144,8 +168,8 @@ services:
             - "3080:80"
         environment:
             SERVER_NAME: ":80"
-            MERCURE_PUBLISHER_JWT_KEY: mercure_jwt_key
-            MERCURE_SUBSCRIBER_JWT_KEY: mercure_jwt_key
+            MERCURE_PUBLISHER_JWT_KEY: mercure_jwt_key_long_enough_to_avoid_error
+            MERCURE_SUBSCRIBER_JWT_KEY: mercure_jwt_key_long_enough_to_avoid_error
             MERCURE_EXTRA_DIRECTIVES: "cors_origins https://app.shlink.io http://localhost:3000 http://127.0.0.1:3000"
 
     shlink_rabbitmq:

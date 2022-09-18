@@ -7,6 +7,8 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 use GuzzleHttp\RequestOptions;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
+use function sprintf;
+
 class UpdateTagTest extends ApiTestCase
 {
     /**
@@ -34,12 +36,15 @@ class UpdateTagTest extends ApiTestCase
         yield [['newName' => 'foo']];
     }
 
-    /** @test */
-    public function tryingToRenameInvalidTagReturnsNotFound(): void
+    /**
+     * @test
+     * @dataProvider provideTagNotFoundApiVersions
+     */
+    public function tryingToRenameInvalidTagReturnsNotFound(string $version, string $expectedType): void
     {
         $expectedDetail = 'Tag with name "invalid_tag" could not be found';
 
-        $resp = $this->callApiWithKey(self::METHOD_PUT, '/tags', [RequestOptions::JSON => [
+        $resp = $this->callApiWithKey(self::METHOD_PUT, sprintf('/rest/v%s/tags', $version), [RequestOptions::JSON => [
             'oldName' => 'invalid_tag',
             'newName' => 'foo',
         ]]);
@@ -47,17 +52,27 @@ class UpdateTagTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
         self::assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
-        self::assertEquals('TAG_NOT_FOUND', $payload['type']);
+        self::assertEquals($expectedType, $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Tag not found', $payload['title']);
     }
 
-    /** @test */
-    public function errorIsThrownWhenTryingToRenameTagToAnotherTagName(): void
+    public function provideTagNotFoundApiVersions(): iterable
+    {
+        yield 'version 1' => ['1', 'TAG_NOT_FOUND'];
+        yield 'version 2' => ['2', 'TAG_NOT_FOUND'];
+        yield 'version 3' => ['3', 'https://shlink.io/api/error/tag-not-found'];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideTagConflictsApiVersions
+     */
+    public function errorIsThrownWhenTryingToRenameTagToAnotherTagName(string $version, string $expectedType): void
     {
         $expectedDetail = 'You cannot rename tag foo to bar, because it already exists';
 
-        $resp = $this->callApiWithKey(self::METHOD_PUT, '/tags', [RequestOptions::JSON => [
+        $resp = $this->callApiWithKey(self::METHOD_PUT, sprintf('/rest/v%s/tags', $version), [RequestOptions::JSON => [
             'oldName' => 'foo',
             'newName' => 'bar',
         ]]);
@@ -65,9 +80,16 @@ class UpdateTagTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_CONFLICT, $resp->getStatusCode());
         self::assertEquals(self::STATUS_CONFLICT, $payload['status']);
-        self::assertEquals('TAG_CONFLICT', $payload['type']);
+        self::assertEquals($expectedType, $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Tag conflict', $payload['title']);
+    }
+
+    public function provideTagConflictsApiVersions(): iterable
+    {
+        yield 'version 1' => ['1', 'TAG_CONFLICT'];
+        yield 'version 2' => ['2', 'TAG_CONFLICT'];
+        yield 'version 3' => ['3', 'https://shlink.io/api/error/tag-conflict'];
     }
 
     /** @test */

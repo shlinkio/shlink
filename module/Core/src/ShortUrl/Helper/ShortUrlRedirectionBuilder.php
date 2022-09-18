@@ -33,7 +33,7 @@ class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
     {
         $hardcodedQuery = Query::parse($uri->getQuery() ?? '');
 
-        $disableTrackParam = $this->trackingOptions->getDisableTrackParam();
+        $disableTrackParam = $this->trackingOptions->disableTrackParam;
         if ($disableTrackParam !== null) {
             unset($currentQuery[$disableTrackParam]);
         }

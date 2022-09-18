@@ -65,7 +65,7 @@ class MissingAuthenticationExceptionTest extends TestCase
     private function assertCommonExceptionShape(MissingAuthenticationException $e): void
     {
         self::assertEquals('Invalid authorization', $e->getTitle());
-        self::assertEquals('INVALID_AUTHORIZATION', $e->getType());
+        self::assertEquals('https://shlink.io/api/error/missing-authentication', $e->getType());
         self::assertEquals(401, $e->getStatus());
     }
 }

@@ -13,11 +13,13 @@ use Shlinkio\Shlink\Config\ConfigAggregator\EnvVarLoaderProvider;
 
 use function class_exists;
 use function Shlinkio\Shlink\Config\env;
+use function Shlinkio\Shlink\Config\openswooleIsInstalled;
+use function Shlinkio\Shlink\Config\runningInRoadRunner;
 
 use const PHP_SAPI;
 
-$isCli = PHP_SAPI === 'cli';
 $isTestEnv = env('APP_ENV') === 'test';
+$enableSwoole = PHP_SAPI === 'cli' && openswooleIsInstalled() && ! runningInRoadRunner();
 
 return (new ConfigAggregator\ConfigAggregator([
     ! $isTestEnv
@@ -26,7 +28,7 @@ return (new ConfigAggregator\ConfigAggregator([
     Mezzio\ConfigProvider::class,
     Mezzio\Router\ConfigProvider::class,
     Mezzio\Router\FastRouteRouter\ConfigProvider::class,
-    $isCli && class_exists(Swoole\ConfigProvider::class)
+    $enableSwoole && class_exists(Swoole\ConfigProvider::class)
         ? Swoole\ConfigProvider::class
         : new ConfigAggregator\ArrayProvider([]),
     ProblemDetails\ConfigProvider::class,

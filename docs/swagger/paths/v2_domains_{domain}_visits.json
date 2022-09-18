@@ -147,12 +147,25 @@
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         },
-                        "example": {
-                            "detail": "Domain with authority \"example.com\" could not be found",
-                            "title": "Domain not found",
-                            "type": "DOMAIN_NOT_FOUND",
-                            "status": 404,
-                            "authority": "example.com"
+                        "examples": {
+                            "API v3 and newer": {
+                                "value": {
+                                    "detail": "Domain with authority \"example.com\" could not be found",
+                                    "title": "Domain not found",
+                                    "type": "https://shlink.io/api/error/domain-not-found",
+                                    "status": 404,
+                                    "authority": "example.com"
+                                }
+                            },
+                            "Previous to API v3": {
+                                "value": {
+                                    "detail": "Domain with authority \"example.com\" could not be found",
+                                    "title": "Domain not found",
+                                    "type": "DOMAIN_NOT_FOUND",
+                                    "status": 404,
+                                    "authority": "example.com"
+                                }
+                            }
                         }
                     }
                 }

@@ -7,7 +7,7 @@ return [
     'mercure' => [
         'public_hub_url' => 'http://localhost:8001',
         'internal_hub_url' => 'http://shlink_mercure_proxy',
-        'jwt_secret' => 'mercure_jwt_key',
+        'jwt_secret' => 'mercure_jwt_key_long_enough_to_avoid_error',
     ],
 
 ];

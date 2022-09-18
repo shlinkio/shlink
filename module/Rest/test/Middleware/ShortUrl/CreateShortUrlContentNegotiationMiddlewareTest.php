@@ -22,7 +22,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
     private CreateShortUrlContentNegotiationMiddleware $middleware;
     private ObjectProphecy $requestHandler;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->middleware = new CreateShortUrlContentNegotiationMiddleware();
         $this->requestHandler = $this->prophesize(RequestHandlerInterface::class);

@@ -31,7 +31,7 @@ class NotFoundRedirectHandlerTest extends TestCase
     private ObjectProphecy $next;
     private ServerRequestInterface $req;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->redirectOptions = new NotFoundRedirectOptions();
         $this->resolver = $this->prophesize(NotFoundRedirectResolverInterface::class);

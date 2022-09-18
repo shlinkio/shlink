@@ -31,7 +31,7 @@ class RedirectActionTest extends TestCase
     private ObjectProphecy $requestTracker;
     private ObjectProphecy $redirectRespHelper;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
         $this->requestTracker = $this->prophesize(RequestTrackerInterface::class);

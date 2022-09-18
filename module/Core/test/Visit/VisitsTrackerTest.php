@@ -24,16 +24,11 @@ class VisitsTrackerTest extends TestCase
     private VisitsTracker $visitsTracker;
     private ObjectProphecy $em;
     private ObjectProphecy $eventDispatcher;
-    private TrackingOptions $options;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->em = $this->prophesize(EntityManager::class);
-
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
-        $this->options = new TrackingOptions();
-
-        $this->visitsTracker = new VisitsTracker($this->em->reveal(), $this->eventDispatcher->reveal(), $this->options);
     }
 
     /**
@@ -45,7 +40,7 @@ class VisitsTrackerTest extends TestCase
         $persist = $this->em->persist(Argument::that(fn (Visit $visit) => $visit->setId('1')))->will(function (): void {
         });
 
-        $this->visitsTracker->{$method}(...$args);
+        $this->visitsTracker()->{$method}(...$args);
 
         $persist->shouldHaveBeenCalledOnce();
         $this->em->flush()->shouldHaveBeenCalledOnce();
@@ -58,9 +53,7 @@ class VisitsTrackerTest extends TestCase
      */
     public function trackingIsSkippedCompletelyWhenDisabledFromOptions(string $method, array $args): void
     {
-        $this->options->disableTracking = true;
-
-        $this->visitsTracker->{$method}(...$args);
+        $this->visitsTracker(new TrackingOptions(disableTracking: true))->{$method}(...$args);
 
         $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
@@ -81,9 +74,7 @@ class VisitsTrackerTest extends TestCase
      */
     public function orphanVisitsAreNotTrackedWhenDisabled(string $method): void
     {
-        $this->options->trackOrphanVisits = false;
-
-        $this->visitsTracker->{$method}(Visitor::emptyInstance());
+        $this->visitsTracker(new TrackingOptions(trackOrphanVisits: false))->{$method}(Visitor::emptyInstance());
 
         $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
@@ -95,5 +86,14 @@ class VisitsTrackerTest extends TestCase
         yield 'trackInvalidShortUrlVisit' => ['trackInvalidShortUrlVisit'];
         yield 'trackBaseUrlVisit' => ['trackBaseUrlVisit'];
         yield 'trackRegularNotFoundVisit' => ['trackRegularNotFoundVisit'];
+    }
+
+    private function visitsTracker(?TrackingOptions $options = null): VisitsTracker
+    {
+        return new VisitsTracker(
+            $this->em->reveal(),
+            $this->eventDispatcher->reveal(),
+            $options ?? new TrackingOptions(),
+        );
     }
 }

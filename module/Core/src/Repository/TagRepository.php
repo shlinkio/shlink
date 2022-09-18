@@ -110,7 +110,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
 
         return map(
             $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm)->getResult(),
-            static fn (array $row) => new TagInfo($row['tag'], (int) $row['shortUrlsCount'], (int) $row['visitsCount']),
+            TagInfo::fromRawData(...),
         );
     }
 

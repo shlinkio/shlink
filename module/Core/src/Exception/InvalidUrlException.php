@@ -9,6 +9,7 @@ use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 use Throwable;
 
+use function Shlinkio\Shlink\Core\toProblemDetailsType;
 use function sprintf;
 
 class InvalidUrlException extends DomainException implements ProblemDetailsExceptionInterface
@@ -16,7 +17,7 @@ class InvalidUrlException extends DomainException implements ProblemDetailsExcep
     use CommonProblemDetailsExceptionTrait;
 
     private const TITLE = 'Invalid URL';
-    private const TYPE = 'INVALID_URL';
+    public const ERROR_CODE = 'invalid-url';
 
     public static function fromUrl(string $url, ?Throwable $previous = null): self
     {
@@ -25,7 +26,7 @@ class InvalidUrlException extends DomainException implements ProblemDetailsExcep
 
         $e->detail = $e->getMessage();
         $e->title = self::TITLE;
-        $e->type = self::TYPE;
+        $e->type = toProblemDetailsType(self::ERROR_CODE);
         $e->status = $status;
         $e->additional = ['url' => $url];
 

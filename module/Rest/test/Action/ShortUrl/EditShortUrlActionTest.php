@@ -24,7 +24,7 @@ class EditShortUrlActionTest extends TestCase
     private EditShortUrlAction $action;
     private ObjectProphecy $shortUrlService;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
         $this->action = new EditShortUrlAction($this->shortUrlService->reveal(), new ShortUrlDataTransformer(

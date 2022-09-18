@@ -60,57 +60,57 @@ class NotFoundRedirectResolverTest extends TestCase
         yield 'base URL with trailing slash' => [
             $uri = new Uri('/'),
             $this->notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(['baseUrl' => 'baseUrl']),
+            new NotFoundRedirectOptions(baseUrl: 'baseUrl'),
             'baseUrl',
         ];
         yield 'base URL with domain placeholder' => [
             $uri = new Uri('https://doma.in'),
             $this->notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(['baseUrl' => 'https://redirect-here.com/{DOMAIN}']),
+            new NotFoundRedirectOptions(baseUrl: 'https://redirect-here.com/{DOMAIN}'),
             'https://redirect-here.com/doma.in',
         ];
         yield 'base URL with domain placeholder in query' => [
             $uri = new Uri('https://doma.in'),
             $this->notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(['baseUrl' => 'https://redirect-here.com/?domain={DOMAIN}']),
+            new NotFoundRedirectOptions(baseUrl: 'https://redirect-here.com/?domain={DOMAIN}'),
             'https://redirect-here.com/?domain=doma.in',
         ];
         yield 'base URL without trailing slash' => [
             $uri = new Uri(''),
             $this->notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(['baseUrl' => 'baseUrl']),
+            new NotFoundRedirectOptions(baseUrl: 'baseUrl'),
             'baseUrl',
         ];
         yield 'regular 404' => [
             $uri = new Uri('/foo/bar'),
             $this->notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(['regular404' => 'regular404']),
+            new NotFoundRedirectOptions(regular404: 'regular404'),
             'regular404',
         ];
         yield 'regular 404 with path placeholder in query' => [
             $uri = new Uri('/foo/bar'),
             $this->notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(['regular404' => 'https://redirect-here.com/?path={ORIGINAL_PATH}']),
+            new NotFoundRedirectOptions(regular404: 'https://redirect-here.com/?path={ORIGINAL_PATH}'),
             'https://redirect-here.com/?path=%2Ffoo%2Fbar',
         ];
         yield 'regular 404 with multiple placeholders' => [
             $uri = new Uri('https://doma.in/foo/bar'),
             $this->notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions([
-                'regular404' => 'https://redirect-here.com/{ORIGINAL_PATH}/{DOMAIN}/?d={DOMAIN}&p={ORIGINAL_PATH}',
-            ]),
+            new NotFoundRedirectOptions(
+                regular404: 'https://redirect-here.com/{ORIGINAL_PATH}/{DOMAIN}/?d={DOMAIN}&p={ORIGINAL_PATH}',
+            ),
             'https://redirect-here.com/foo/bar/doma.in/?d=doma.in&p=%2Ffoo%2Fbar',
         ];
         yield 'invalid short URL' => [
             new Uri('/foo'),
             $this->notFoundType($this->requestForRoute(RedirectAction::class)),
-            new NotFoundRedirectOptions(['invalidShortUrl' => 'invalidShortUrl']),
+            new NotFoundRedirectOptions(invalidShortUrl: 'invalidShortUrl'),
             'invalidShortUrl',
         ];
         yield 'invalid short URL with path placeholder' => [
             new Uri('/foo'),
             $this->notFoundType($this->requestForRoute(RedirectAction::class)),
-            new NotFoundRedirectOptions(['invalidShortUrl' => 'https://redirect-here.com/{ORIGINAL_PATH}']),
+            new NotFoundRedirectOptions(invalidShortUrl: 'https://redirect-here.com/{ORIGINAL_PATH}'),
             'https://redirect-here.com/foo',
         ];
     }

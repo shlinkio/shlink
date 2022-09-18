@@ -1,0 +1,45 @@
+name: Mutation tests
+
+on:
+  workflow_call:
+    inputs:
+      test-group:
+        type: string
+        required: true
+        description: One of unit, db, api or cli
+
+jobs:
+  mutation-tests:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        php-version: [ '8.1' ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: './.github/actions/ci-setup'
+        with:
+          php-version: ${{ matrix.php-version }}
+          php-extensions: openswoole-4.11.1
+          extensions-cache-key: mutation-tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: coverage-${{ inputs.test-group }}
+          path: build
+      - name: Resolve infection args
+        id: infection_args
+        run: echo "::set-output name=args::--logger-github=false"
+#        TODO Try to filter mutation tests to improve execution times. Investigate why --git-diff-lines --git-diff-base=develop does not work
+#        run: |
+#          BRANCH="${GITHUB_REF#refs/heads/}" |
+#          if [[ $BRANCH == 'main' || $BRANCH == 'develop' ]]; then
+#            echo "::set-output name=args::--logger-github=false"
+#          else
+#            echo "::set-output name=args::--logger-github=false --git-diff-lines --git-diff-base=develop"
+#          fi;
+        shell: bash
+      - if: ${{ inputs.test-group == 'unit' }}
+        run: composer infect:ci:unit -- ${{ steps.infection_args.outputs.args }}
+        env:
+          INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
+      - if: ${{ inputs.test-group != 'unit' }}
+        run: composer infect:ci:${{ inputs.test-group }} -- ${{ steps.infection_args.outputs.args }}

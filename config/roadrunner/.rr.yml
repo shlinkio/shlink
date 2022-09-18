@@ -1,0 +1,36 @@
+version: '2.7'
+
+rpc:
+  listen: tcp://127.0.0.1:6001
+
+server:
+  command: 'php -dopcache.enable_cli=1 -dopcache.validate_timestamps=0 ../../bin/roadrunner-worker.php'
+
+http:
+  address: '0.0.0.0:${PORT}'
+  middleware: ['static']
+  static:
+    dir: '../../public'
+    forbid: ['.php', '.htaccess']
+  pool:
+    num_workers: ${WEB_WORKER_NUM}
+
+jobs:
+  timeout: 300 # 5 minutes
+  pool:
+    num_workers: ${TASK_WORKER_NUM}
+  consume: ['shlink']
+  pipelines:
+    shlink:
+      driver: memory
+      config:
+        priority: 10
+        prefetch: 10
+
+logs:
+  mode: production
+  channels:
+    http:
+      level: info # Log all http requests, set to info to disable
+    server:
+      level: debug # Everything written to worker stderr is logged

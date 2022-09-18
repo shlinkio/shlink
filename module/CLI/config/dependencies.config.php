@@ -19,7 +19,6 @@ use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Installer\Factory\ProcessHelperFactory;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
-use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console as SymfonyCli;
 use Symfony\Component\Lock\LockFactory;
@@ -35,7 +34,7 @@ return [
             SymfonyCli\Helper\ProcessHelper::class => ProcessHelperFactory::class,
             PhpExecutableFinder::class => InvokableFactory::class,
 
-            Util\GeolocationDbUpdater::class => ConfigAbstractFactory::class,
+            GeoLite\GeolocationDbUpdater::class => ConfigAbstractFactory::class,
             Util\ProcessRunner::class => ConfigAbstractFactory::class,
 
             ApiKey\RoleResolver::class => ConfigAbstractFactory::class,
@@ -70,7 +69,7 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        Util\GeolocationDbUpdater::class => [
+        GeoLite\GeolocationDbUpdater::class => [
             DbUpdater::class,
             Reader::class,
             LOCAL_LOCK_FACTORY,
@@ -92,10 +91,10 @@ return [
         Command\ShortUrl\GetShortUrlVisitsCommand::class => [Visit\VisitsStatsHelper::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
 
-        Command\Visit\DownloadGeoLiteDbCommand::class => [Util\GeolocationDbUpdater::class],
+        Command\Visit\DownloadGeoLiteDbCommand::class => [GeoLite\GeolocationDbUpdater::class],
         Command\Visit\LocateVisitsCommand::class => [
             Visit\VisitLocator::class,
-            IpLocationResolverInterface::class,
+            Visit\VisitToLocationHelper::class,
             LockFactory::class,
         ],
         Command\Visit\GetOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class],

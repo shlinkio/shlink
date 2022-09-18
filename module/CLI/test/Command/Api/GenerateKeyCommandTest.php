@@ -23,7 +23,7 @@ class GenerateKeyCommandTest extends TestCase
     private CommandTester $commandTester;
     private ObjectProphecy $apiKeyService;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
         $roleResolver = $this->prophesize(RoleResolverInterface::class);

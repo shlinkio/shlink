@@ -85,19 +85,39 @@
                         "schema": {
                             "$ref": "../definitions/Error.json"
                         },
-                        "example": {
-                            "title": "Invalid URL",
-                            "type": "INVALID_URL",
-                            "detail": "Provided URL foo is invalid. Try with a different one.",
-                            "status": 400,
-                            "url": "https://invalid-url.com"
+                        "examples": {
+                            "API v3 and newer": {
+                                "value": {
+                                    "title": "Invalid URL",
+                                    "type": "https://shlink.io/api/error/invalid-url",
+                                    "detail": "Provided URL foo is invalid. Try with a different one.",
+                                    "status": 400,
+                                    "url": "https://invalid-url.com"
+                                }
+                            },
+                            "Previous to API v3": {
+                                "value": {
+                                    "title": "Invalid URL",
+                                    "type": "INVALID_URL",
+                                    "detail": "Provided URL foo is invalid. Try with a different one.",
+                                    "status": 400,
+                                    "url": "https://invalid-url.com"
+                                }
+                            }
                         }
                     },
                     "text/plain": {
                         "schema": {
                             "type": "string"
                         },
-                        "example": "INVALID_URL"
+                        "examples": {
+                            "API v3 and newer": {
+                                "value": "https://shlink.io/api/error/invalid-url"
+                            },
+                            "Previous to API v3": {
+                                "value": "INVALID_URL"
+                            }
+                        }
                     }
                 }
             },

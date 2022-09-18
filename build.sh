@@ -24,6 +24,7 @@ rsync -av * "${builtContent}" \
     --exclude=*docker* \
     --exclude=Dockerfile \
     --include=.htaccess \
+    --include=config/roadrunner/.rr.yml \
     --exclude-from=./.dockerignore
 cd "${builtContent}"
 
@@ -36,6 +37,9 @@ ${composerBin} install --no-dev --prefer-dist $composerFlags
 if [[ $noSwoole ]]; then
   # If generating a dist not for openswoole, uninstall mezzio-swoole
   ${composerBin} remove mezzio/mezzio-swoole --with-all-dependencies --update-no-dev $composerFlags
+else
+  # If generating a dist for openswoole, uninstall RoadRunner
+  ${composerBin} remove spiral/roadrunner spiral/roadrunner-jobs --with-all-dependencies --update-no-dev $composerFlags
 fi
 
 # Delete development files

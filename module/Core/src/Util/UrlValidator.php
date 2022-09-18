@@ -46,11 +46,11 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
 
     public function validateUrlWithTitle(string $url, bool $doValidate): ?string
     {
-        if (! $doValidate && ! $this->options->autoResolveTitles()) {
+        if (! $doValidate && ! $this->options->autoResolveTitles) {
             return null;
         }
 
-        if (! $this->options->autoResolveTitles()) {
+        if (! $this->options->autoResolveTitles) {
             $this->validateUrlAndGetResponse($url, self::METHOD_HEAD);
             return null;
         }
