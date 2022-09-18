@@ -10,16 +10,16 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\DownloadGeoLiteDbCommand;
 use Shlinkio\Shlink\CLI\Command\Visit\LocateVisitsCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\VisitGeolocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\VisitLocator;
+use Shlinkio\Shlink\Core\Visit\VisitToLocationHelperInterface;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
-use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,14 +36,14 @@ class LocateVisitsCommandTest extends TestCase
 
     private CommandTester $commandTester;
     private ObjectProphecy $visitService;
-    private ObjectProphecy $ipResolver;
+    private ObjectProphecy $visitToLocation;
     private ObjectProphecy $lock;
     private ObjectProphecy $downloadDbCommand;
 
     protected function setUp(): void
     {
         $this->visitService = $this->prophesize(VisitLocator::class);
-        $this->ipResolver = $this->prophesize(IpLocationResolverInterface::class);
+        $this->visitToLocation = $this->prophesize(VisitToLocationHelperInterface::class);
 
         $locker = $this->prophesize(Lock\LockFactory::class);
         $this->lock = $this->prophesize(Lock\LockInterface::class);
@@ -54,7 +54,7 @@ class LocateVisitsCommandTest extends TestCase
 
         $command = new LocateVisitsCommand(
             $this->visitService->reveal(),
-            $this->ipResolver->reveal(),
+            $this->visitToLocation->reveal(),
             $locker->reveal(),
         );
 
@@ -84,7 +84,7 @@ class LocateVisitsCommandTest extends TestCase
             $mockMethodBehavior,
         );
         $locateAllVisits = $this->visitService->locateAllVisits(Argument::cetera())->will($mockMethodBehavior);
-        $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn(
+        $resolveIpLocation = $this->visitToLocation->resolveVisitLocation(Argument::any())->willReturn(
             Location::emptyInstance(),
         );
 
@@ -117,36 +117,29 @@ class LocateVisitsCommandTest extends TestCase
      * @test
      * @dataProvider provideIgnoredAddresses
      */
-    public function localhostAndEmptyAddressesAreIgnored(?string $address, string $message): void
+    public function localhostAndEmptyAddressesAreIgnored(IpCannotBeLocatedException $e, string $message): void
     {
-        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', $address, ''));
+        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance());
         $location = VisitLocation::fromGeolocation(Location::emptyInstance());
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
             $this->invokeHelperMethods($visit, $location),
         );
-        $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn(
-            Location::emptyInstance(),
-        );
+        $resolveIpLocation = $this->visitToLocation->resolveVisitLocation(Argument::any())->willThrow($e);
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
 
         $output = $this->commandTester->getDisplay();
+        self::assertStringContainsString('Processing IP', $output);
         self::assertStringContainsString($message, $output);
-        if (empty($address)) {
-            self::assertStringNotContainsString('Processing IP', $output);
-        } else {
-            self::assertStringContainsString('Processing IP', $output);
-        }
         $locateVisits->shouldHaveBeenCalledOnce();
-        $resolveIpLocation->shouldNotHaveBeenCalled();
+        $resolveIpLocation->shouldHaveBeenCalledOnce();
     }
 
     public function provideIgnoredAddresses(): iterable
     {
-        yield 'with empty address' => ['', 'Ignored visit with no IP address'];
-        yield 'with null address' => [null, 'Ignored visit with no IP address'];
-        yield 'with localhost address' => [IpAddress::LOCALHOST, 'Ignored localhost address'];
+        yield 'empty address' => [IpCannotBeLocatedException::forEmptyAddress(), 'Ignored visit with no IP address'];
+        yield 'localhost address' => [IpCannotBeLocatedException::forLocalhost(), 'Ignored localhost address'];
     }
 
     /** @test */
@@ -158,7 +151,9 @@ class LocateVisitsCommandTest extends TestCase
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(
             $this->invokeHelperMethods($visit, $location),
         );
-        $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willThrow(WrongIpException::class);
+        $resolveIpLocation = $this->visitToLocation->resolveVisitLocation(Argument::any())->willThrow(
+            IpCannotBeLocatedException::forError(WrongIpException::fromIpAddress('1.2.3.4')),
+        );
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
 
@@ -187,7 +182,7 @@ class LocateVisitsCommandTest extends TestCase
 
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(function (): void {
         });
-        $resolveIpLocation = $this->ipResolver->resolveIpLocation(Argument::any())->willReturn([]);
+        $resolveIpLocation = $this->visitToLocation->resolveVisitLocation(Argument::any());
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $output = $this->commandTester->getDisplay();
