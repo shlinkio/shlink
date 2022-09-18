@@ -15,7 +15,7 @@ class InitialApiKeyDelegator
     public function __invoke(ContainerInterface $container, string $serviceName, callable $callback): Application
     {
         $initialApiKey = $container->get('config')['initial_api_key'] ?? null;
-        if ($initialApiKey !== null) {
+        if (! empty($initialApiKey)) {
             $this->createInitialApiKey($initialApiKey, $container);
         }
 

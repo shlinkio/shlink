@@ -54,8 +54,9 @@ class InitialApiKeyDelegatorTest extends TestCase
 
     public function provideConfigs(): iterable
     {
-        yield [[], 0];
-        yield [['initial_api_key' => null], 0];
-        yield [['initial_api_key' => 'the_initial_key'], 1];
+        yield 'no api key' => [[], 0];
+        yield 'null api key' => [['initial_api_key' => null], 0];
+        yield 'empty api key' => [['initial_api_key' => ''], 0];
+        yield 'valid api key' => [['initial_api_key' => 'the_initial_key'], 1];
     }
 }
