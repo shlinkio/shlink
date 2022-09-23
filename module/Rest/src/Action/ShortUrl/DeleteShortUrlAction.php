@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
+use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;

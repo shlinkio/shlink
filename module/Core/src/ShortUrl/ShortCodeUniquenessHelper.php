@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Service\ShortUrl;
+namespace Shlinkio\Shlink\Core\ShortUrl;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 
 class ShortCodeUniquenessHelper implements ShortCodeUniquenessHelperInterface
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
     }
 

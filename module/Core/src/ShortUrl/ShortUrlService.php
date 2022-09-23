@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Service;
+namespace Shlinkio\Shlink\Core\ShortUrl;
 
 use Doctrine\ORM;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
-use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -22,10 +21,10 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ShortUrlService implements ShortUrlServiceInterface
 {
     public function __construct(
-        private ORM\EntityManagerInterface $em,
-        private ShortUrlResolverInterface $urlResolver,
-        private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
-        private ShortUrlRelationResolverInterface $relationResolver,
+        private readonly ORM\EntityManagerInterface $em,
+        private readonly ShortUrlResolverInterface $urlResolver,
+        private readonly ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
+        private readonly ShortUrlRelationResolverInterface $relationResolver,
     ) {
     }
 

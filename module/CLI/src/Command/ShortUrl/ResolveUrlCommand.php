@@ -6,8 +6,8 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
-use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,7 +21,7 @@ class ResolveUrlCommand extends Command
 {
     public const NAME = 'short-url:parse';
 
-    public function __construct(private ShortUrlResolverInterface $urlResolver)
+    public function __construct(private readonly ShortUrlResolverInterface $urlResolver)
     {
         parent::__construct();
     }

@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Exception;
-use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
+use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,7 +21,7 @@ class DeleteShortUrlCommand extends Command
 {
     public const NAME = 'short-url:delete';
 
-    public function __construct(private DeleteShortUrlServiceInterface $deleteShortUrlService)
+    public function __construct(private readonly DeleteShortUrlServiceInterface $deleteShortUrlService)
     {
         parent::__construct();
     }

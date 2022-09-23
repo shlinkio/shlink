@@ -9,7 +9,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\DeleteShortUrlCommand;
 use Shlinkio\Shlink\Core\Exception;
-use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlServiceInterface;
+use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;

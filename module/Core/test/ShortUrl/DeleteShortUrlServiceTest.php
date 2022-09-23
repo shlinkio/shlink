@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Service\ShortUrl;
+namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,9 +14,9 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
 use Shlinkio\Shlink\Core\Options\DeleteShortUrlsOptions;
-use Shlinkio\Shlink\Core\Service\ShortUrl\DeleteShortUrlService;
-use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
+use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlService;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
 use function Functional\map;

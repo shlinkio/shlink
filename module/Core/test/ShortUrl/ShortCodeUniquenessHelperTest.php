@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Service\ShortUrl;
+namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -10,9 +10,9 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeUniquenessHelper;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
+use Shlinkio\Shlink\Core\ShortUrl\ShortCodeUniquenessHelper;
 
 class ShortCodeUniquenessHelperTest extends TestCase
 {
