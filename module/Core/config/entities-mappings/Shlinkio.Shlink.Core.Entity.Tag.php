@@ -12,7 +12,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
     $builder->setTable(determineTableName('tags', $emConfig))
-            ->setCustomRepositoryClass(Repository\TagRepository::class);
+            ->setCustomRepositoryClass(Tag\Repository\TagRepository::class);
 
     $builder->createField('id', Types::BIGINT)
             ->columnName('id')

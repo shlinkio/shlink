@@ -14,7 +14,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
     $builder->setTable(determineTableName('short_urls', $emConfig))
-            ->setCustomRepositoryClass(Repository\ShortUrlRepository::class);
+            ->setCustomRepositoryClass(ShortUrl\Repository\ShortUrlRepository::class);
 
     $builder->createField('id', Types::BIGINT)
             ->columnName('id')

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ShlinkioDbTest\Shlink\Core\Tag\Paginator\Adapter;
 
 use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsPaginatorAdapter;
+use Shlinkio\Shlink\Core\Tag\Repository\TagRepository;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 use function Functional\map;

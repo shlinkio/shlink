@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Repository;
+namespace Shlinkio\Shlink\Core\Tag\Repository;
 
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;

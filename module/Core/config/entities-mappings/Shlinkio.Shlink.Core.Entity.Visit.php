@@ -16,7 +16,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
     $builder->setTable(determineTableName('visits', $emConfig))
-            ->setCustomRepositoryClass(Repository\VisitRepository::class);
+            ->setCustomRepositoryClass(Visit\Repository\VisitRepository::class);
 
     $builder->createField('id', Types::BIGINT)
             ->columnName('id')
