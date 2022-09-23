@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Entity;
+namespace ShlinkioTest\Shlink\Core\Visit\Entity;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocationTest extends TestCase

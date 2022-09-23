@@ -25,5 +25,5 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->unique()
             ->build();
 
-    $builder->addInverseManyToMany('shortUrls', Entity\ShortUrl::class, 'tags');
+    $builder->addInverseManyToMany('shortUrls', ShortUrl\Entity\ShortUrl::class, 'tags');
 };

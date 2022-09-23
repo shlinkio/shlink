@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Entity;
+namespace ShlinkioTest\Shlink\Core\Visit\Entity;
 
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Util\IpAddress;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
 class VisitTest extends TestCase

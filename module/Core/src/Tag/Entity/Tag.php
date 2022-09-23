@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Entity;
+namespace Shlinkio\Shlink\Core\Tag\Entity;
 
 use Doctrine\Common\Collections;
 use JsonSerializable;

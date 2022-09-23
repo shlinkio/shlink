@@ -7,9 +7,9 @@ namespace Shlinkio\Shlink\Core\Domain;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Config\EmptyNotFoundRedirectConfig;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
-use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -20,7 +20,7 @@ use function Functional\map;
 
 class DomainService implements DomainServiceInterface
 {
-    public function __construct(private EntityManagerInterface $em, private string $defaultDomain)
+    public function __construct(private readonly EntityManagerInterface $em, private readonly string $defaultDomain)
     {
     }
 

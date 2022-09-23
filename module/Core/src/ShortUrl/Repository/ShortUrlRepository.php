@@ -11,8 +11,8 @@ use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Model\Ordering;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
@@ -143,7 +143,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         $dql = <<<DQL
             SELECT s
-              FROM Shlinkio\Shlink\Core\Entity\ShortUrl AS s
+              FROM Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl AS s
          LEFT JOIN s.domain AS d
              WHERE s.shortCode = :shortCode
                AND (s.domain IS NULL OR d.authority = :domain)

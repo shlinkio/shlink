@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Entity;
+namespace ShlinkioTest\Shlink\Core\ShortUrl\Entity;
 
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -51,8 +51,9 @@ class ShortUrlTest extends TestCase
      * @test
      * @dataProvider provideValidShortUrls
      */
-    public function regenerateShortCodeProperlyChangesTheValueOnValidShortUrls(ShortUrl $shortUrl): void
-    {
+    public function regenerateShortCodeProperlyChangesTheValueOnValidShortUrls(
+        ShortUrl $shortUrl,
+    ): void {
         $firstShortCode = $shortUrl->getShortCode();
 
         $shortUrl->regenerateShortCode();

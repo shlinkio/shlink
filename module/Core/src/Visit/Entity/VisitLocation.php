@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Entity;
+namespace Shlinkio\Shlink\Core\Visit\Entity;
 
 use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;

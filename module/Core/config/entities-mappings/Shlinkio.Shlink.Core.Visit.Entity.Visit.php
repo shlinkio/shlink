@@ -48,11 +48,11 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->nullable()
             ->build();
 
-    $builder->createManyToOne('shortUrl', Entity\ShortUrl::class)
+    $builder->createManyToOne('shortUrl', ShortUrl\Entity\ShortUrl::class)
             ->addJoinColumn('short_url_id', 'id', true, false, 'CASCADE')
             ->build();
 
-    $builder->createManyToOne('visitLocation', Entity\VisitLocation::class)
+    $builder->createManyToOne('visitLocation', Visit\Entity\VisitLocation::class)
             ->addJoinColumn('visit_location_id', 'id', true, false, 'Set NULL')
             ->cascadePersist()
             ->build();

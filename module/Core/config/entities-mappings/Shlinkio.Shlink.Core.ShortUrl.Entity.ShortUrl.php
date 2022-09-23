@@ -62,19 +62,19 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->nullable()
             ->build();
 
-    $builder->createOneToMany('visits', Entity\Visit::class)
+    $builder->createOneToMany('visits', Visit\Entity\Visit::class)
             ->mappedBy('shortUrl')
             ->fetchExtraLazy()
             ->build();
 
-    $builder->createManyToMany('tags', Entity\Tag::class)
+    $builder->createManyToMany('tags', Tag\Entity\Tag::class)
             ->setJoinTable(determineTableName('short_urls_in_tags', $emConfig))
             ->addInverseJoinColumn('tag_id', 'id', true, false, 'CASCADE')
             ->addJoinColumn('short_url_id', 'id', true, false, 'CASCADE')
             ->setOrderBy(['name' => 'ASC'])
             ->build();
 
-    $builder->createManyToOne('domain', Entity\Domain::class)
+    $builder->createManyToOne('domain', Domain\Entity\Domain::class)
             ->addJoinColumn('domain_id', 'id', true, false, 'RESTRICT')
             ->cascadePersist()
             ->build();

@@ -2,13 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Entity;
+namespace Shlinkio\Shlink\Core\Visit\Entity;
 
 use Cake\Chronos\Chronos;
 use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
