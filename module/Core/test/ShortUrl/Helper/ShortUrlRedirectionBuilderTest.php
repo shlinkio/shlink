@@ -6,9 +6,9 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlRedirectionBuilder;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 
 class ShortUrlRedirectionBuilderTest extends TestCase
 {
@@ -30,7 +30,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         ?string $extraPath,
         ?bool $forwardQuery,
     ): void {
-        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+        $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
             'longUrl' => 'https://domain.com/foo/bar?some=thing',
             'forwardQuery' => $forwardQuery,
         ]));

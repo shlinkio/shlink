@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Model;
+namespace Shlinkio\Shlink\Core\Visit\Model;
 
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Model\AbstractInfinitePaginableListParams;
 
 use function Shlinkio\Shlink\Core\parseDateRangeFromQuery;
 

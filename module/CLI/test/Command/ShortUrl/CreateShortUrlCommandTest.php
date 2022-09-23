@@ -13,10 +13,10 @@ use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortener;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -97,7 +97,7 @@ class CreateShortUrlCommandTest extends TestCase
     {
         $shortUrl = ShortUrl::createEmpty();
         $urlToShortCode = $this->urlShortener->shorten(
-            Argument::that(function (ShortUrlMeta $meta) {
+            Argument::that(function (ShortUrlCreation $meta) {
                 $tags = $meta->getTags();
                 Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $tags);
                 return true;
@@ -124,7 +124,7 @@ class CreateShortUrlCommandTest extends TestCase
     public function properlyProcessesProvidedDomain(array $input, ?string $expectedDomain): void
     {
         $shorten = $this->urlShortener->shorten(
-            Argument::that(function (ShortUrlMeta $meta) use ($expectedDomain) {
+            Argument::that(function (ShortUrlCreation $meta) use ($expectedDomain) {
                 Assert::assertEquals($expectedDomain, $meta->getDomain());
                 return true;
             }),
@@ -153,7 +153,7 @@ class CreateShortUrlCommandTest extends TestCase
     {
         $shortUrl = ShortUrl::createEmpty();
         $urlToShortCode = $this->urlShortener->shorten(
-            Argument::that(function (ShortUrlMeta $meta) use ($expectedValidateUrl) {
+            Argument::that(function (ShortUrlCreation $meta) use ($expectedValidateUrl) {
                 Assert::assertEquals($expectedValidateUrl, $meta->doValidateUrl());
                 return $meta;
             }),

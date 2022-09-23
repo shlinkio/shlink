@@ -8,8 +8,8 @@ use Doctrine\Persistence\ObjectRepository;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterface;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -28,7 +28,7 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
 
     public function shortCodeIsInUseWithLock(ShortUrlIdentifier $identifier, ?Specification $spec = null): bool;
 
-    public function findOneMatching(ShortUrlMeta $meta): ?ShortUrl;
+    public function findOneMatching(ShortUrlCreation $meta): ?ShortUrl;
 
     public function findOneByImportedUrl(ImportedShlinkUrl $url): ?ShortUrl;
 

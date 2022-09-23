@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Model;
+namespace ShlinkioTest\Shlink\Core\Visit\Model;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
 use function random_int;
 use function str_repeat;

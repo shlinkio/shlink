@@ -8,7 +8,7 @@ use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
@@ -38,7 +38,7 @@ class ShortUrlTest extends TestCase
     public function provideInvalidShortUrls(): iterable
     {
         yield 'with custom slug' => [
-            ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['customSlug' => 'custom-slug', 'longUrl' => ''])),
+            ShortUrl::fromMeta(ShortUrlCreation::fromRawData(['customSlug' => 'custom-slug', 'longUrl' => ''])),
             'The short code cannot be regenerated on ShortUrls where a custom slug was provided.',
         ];
         yield 'already persisted' => [
@@ -76,7 +76,7 @@ class ShortUrlTest extends TestCase
      */
     public function shortCodesHaveExpectedLength(?int $length, int $expectedLength): void
     {
-        $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
+        $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData(
             [ShortUrlInputFilter::SHORT_CODE_LENGTH => $length, 'longUrl' => ''],
         ));
 

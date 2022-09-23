@@ -9,11 +9,11 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Tag;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Model\Ordering;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\TagRepository;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Tag\Model\TagsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -73,7 +73,7 @@ class TagRepositoryTest extends DatabaseTestCase
 
         [$firstUrlTags] = array_chunk($names, 3);
         $secondUrlTags = [$names[0]];
-        $metaWithTags = fn (array $tags, ?ApiKey $apiKey) => ShortUrlMeta::fromRawData(
+        $metaWithTags = fn (array $tags, ?ApiKey $apiKey) => ShortUrlCreation::fromRawData(
             ['longUrl' => '', 'tags' => $tags, 'apiKey' => $apiKey],
         );
 
@@ -223,13 +223,15 @@ class TagRepositoryTest extends DatabaseTestCase
         [$firstUrlTags, $secondUrlTags] = array_chunk($names, 3);
 
         $shortUrl = ShortUrl::fromMeta(
-            ShortUrlMeta::fromRawData(['apiKey' => $authorApiKey, 'longUrl' => '', 'tags' => $firstUrlTags]),
+            ShortUrlCreation::fromRawData(['apiKey' => $authorApiKey, 'longUrl' => '', 'tags' => $firstUrlTags]),
             $this->relationResolver,
         );
         $this->getEntityManager()->persist($shortUrl);
 
         $shortUrl2 = ShortUrl::fromMeta(
-            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority(), 'longUrl' => '', 'tags' => $secondUrlTags]),
+            ShortUrlCreation::fromRawData(
+                ['domain' => $domain->getAuthority(), 'longUrl' => '', 'tags' => $secondUrlTags],
+            ),
             $this->relationResolver,
         );
         $this->getEntityManager()->persist($shortUrl2);

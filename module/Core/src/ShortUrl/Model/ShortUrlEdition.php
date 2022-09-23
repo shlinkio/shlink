@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Model;
+namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -14,8 +14,7 @@ use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
 use function Shlinkio\Shlink\Core\normalizeDate;
 
-// TODO Rename to ShortUrlEdition
-final class ShortUrlEdit implements TitleResolutionModelInterface
+final class ShortUrlEdition implements TitleResolutionModelInterface
 {
     private bool $longUrlPropWasProvided = false;
     private ?string $longUrl = null;

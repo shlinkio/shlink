@@ -12,10 +12,10 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
@@ -115,7 +115,7 @@ class ListShortUrlsCommandTest extends TestCase
     ): void {
         $this->shortUrlService->listShortUrls(ShortUrlsParams::emptyInstance())
             ->willReturn(new Paginator(new ArrayAdapter([
-                ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+                ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
                     'longUrl' => 'foo.com',
                     'tags' => ['foo', 'bar', 'baz'],
                     'apiKey' => $apiKey,

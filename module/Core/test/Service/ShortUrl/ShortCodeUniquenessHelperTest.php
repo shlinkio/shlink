@@ -10,9 +10,9 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\Domain;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeUniquenessHelper;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 
 class ShortCodeUniquenessHelperTest extends TestCase
 {

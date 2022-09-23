@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Model;
+namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -16,8 +16,7 @@ use function Shlinkio\Shlink\Core\normalizeDate;
 
 use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
-// TODO Rename to ShortUrlCreation
-final class ShortUrlMeta implements TitleResolutionModelInterface
+final class ShortUrlCreation implements TitleResolutionModelInterface
 {
     private string $longUrl;
     private ?Chronos $validSince = null;

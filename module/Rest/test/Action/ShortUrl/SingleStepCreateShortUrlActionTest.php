@@ -11,9 +11,9 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -47,7 +47,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
             'longUrl' => 'http://foobar.com',
         ])->withAttribute(ApiKey::class, $apiKey);
         $generateShortCode = $this->urlShortener->shorten(
-            ShortUrlMeta::fromRawData(['apiKey' => $apiKey, 'longUrl' => 'http://foobar.com']),
+            ShortUrlCreation::fromRawData(['apiKey' => $apiKey, 'longUrl' => 'http://foobar.com']),
         )->willReturn(ShortUrl::createEmpty());
 
         $resp = $this->action->handle($request);

@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Core\Service;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 
 interface UrlShortenerInterface
 {
@@ -15,5 +15,5 @@ interface UrlShortenerInterface
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      */
-    public function shorten(ShortUrlMeta $meta): ShortUrl;
+    public function shorten(ShortUrlCreation $meta): ShortUrl;
 }

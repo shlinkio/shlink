@@ -10,10 +10,10 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortCodeUniquenessHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 
 class UrlShortener implements UrlShortenerInterface
@@ -31,7 +31,7 @@ class UrlShortener implements UrlShortenerInterface
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      */
-    public function shorten(ShortUrlMeta $meta): ShortUrl
+    public function shorten(ShortUrlCreation $meta): ShortUrl
     {
         // First, check if a short URL exists for all provided params
         $existingShortUrl = $this->findExistingShortUrlIfExists($meta);
@@ -39,7 +39,7 @@ class UrlShortener implements UrlShortenerInterface
             return $existingShortUrl;
         }
 
-        /** @var ShortUrlMeta $meta */
+        /** @var \Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation $meta */
         $meta = $this->titleResolutionHelper->processTitleAndValidateUrl($meta);
 
         /** @var ShortUrl $newShortUrl */
@@ -57,7 +57,7 @@ class UrlShortener implements UrlShortenerInterface
         return $newShortUrl;
     }
 
-    private function findExistingShortUrlIfExists(ShortUrlMeta $meta): ?ShortUrl
+    private function findExistingShortUrlIfExists(ShortUrlCreation $meta): ?ShortUrl
     {
         if (! $meta->findIfExists()) {
             return null;
@@ -68,7 +68,7 @@ class UrlShortener implements UrlShortenerInterface
         return $repo->findOneMatching($meta);
     }
 
-    private function verifyShortCodeUniqueness(ShortUrlMeta $meta, ShortUrl $shortUrlToBeCreated): void
+    private function verifyShortCodeUniqueness(ShortUrlCreation $meta, ShortUrl $shortUrlToBeCreated): void
     {
         $couldBeMadeUnique = $this->shortCodeHelper->ensureShortCodeUniqueness(
             $shortUrlToBeCreated,

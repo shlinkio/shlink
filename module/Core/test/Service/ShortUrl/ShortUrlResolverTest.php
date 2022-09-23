@@ -13,11 +13,11 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
-use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
-use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolver;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
 
@@ -124,7 +124,7 @@ class ShortUrlResolverTest extends TestCase
         $now = Chronos::now();
 
         yield 'maxVisits reached' => [(function () {
-            $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData(['maxVisits' => 3, 'longUrl' => '']));
+            $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => '']));
             $shortUrl->setVisits(new ArrayCollection(map(
                 range(0, 4),
                 fn () => Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
@@ -132,14 +132,14 @@ class ShortUrlResolverTest extends TestCase
 
             return $shortUrl;
         })()];
-        yield 'future validSince' => [ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
+        yield 'future validSince' => [ShortUrl::fromMeta(ShortUrlCreation::fromRawData(
             ['validSince' => $now->addMonth()->toAtomString(), 'longUrl' => ''],
         ))];
-        yield 'past validUntil' => [ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
+        yield 'past validUntil' => [ShortUrl::fromMeta(ShortUrlCreation::fromRawData(
             ['validUntil' => $now->subMonth()->toAtomString(), 'longUrl' => ''],
         ))];
         yield 'mixed' => [(function () use ($now) {
-            $shortUrl = ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+            $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
                 'maxVisits' => 3,
                 'validUntil' => $now->subMonth()->toAtomString(),
                 'longUrl' => '',

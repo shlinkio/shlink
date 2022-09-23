@@ -6,8 +6,8 @@ namespace Shlinkio\Shlink\Core\Service\ShortUrl;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 
 class ShortCodeUniquenessHelper implements ShortCodeUniquenessHelperInterface
 {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Model;
+namespace ShlinkioTest\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
 use stdClass;
 
@@ -16,7 +16,7 @@ use function str_pad;
 
 use const STR_PAD_BOTH;
 
-class ShortUrlMetaTest extends TestCase
+class ShortUrlCreationTest extends TestCase
 {
     /**
      * @param array $data
@@ -26,7 +26,7 @@ class ShortUrlMetaTest extends TestCase
     public function exceptionIsThrownIfProvidedDataIsInvalid(array $data): void
     {
         $this->expectException(ValidationException::class);
-        ShortUrlMeta::fromRawData($data);
+        ShortUrlCreation::fromRawData($data);
     }
 
     public function provideInvalidData(): iterable
@@ -80,7 +80,7 @@ class ShortUrlMetaTest extends TestCase
         string $expectedSlug,
         bool $multiSegmentEnabled = false,
     ): void {
-        $meta = ShortUrlMeta::fromRawData([
+        $meta = ShortUrlCreation::fromRawData([
             'validSince' => Chronos::parse('2015-01-01')->toAtomString(),
             'customSlug' => $customSlug,
             'longUrl' => '',
@@ -127,7 +127,7 @@ class ShortUrlMetaTest extends TestCase
      */
     public function titleIsCroppedIfTooLong(?string $title, ?string $expectedTitle): void
     {
-        $meta = ShortUrlMeta::fromRawData([
+        $meta = ShortUrlCreation::fromRawData([
             'title' => $title,
             'longUrl' => '',
         ]);

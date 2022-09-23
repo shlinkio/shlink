@@ -11,8 +11,8 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
-use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
@@ -52,16 +52,16 @@ class ShortUrl extends AbstractEntity
 
     public static function createEmpty(): self
     {
-        return self::fromMeta(ShortUrlMeta::createEmpty());
+        return self::fromMeta(ShortUrlCreation::createEmpty());
     }
 
     public static function withLongUrl(string $longUrl): self
     {
-        return self::fromMeta(ShortUrlMeta::fromRawData([ShortUrlInputFilter::LONG_URL => $longUrl]));
+        return self::fromMeta(ShortUrlCreation::fromRawData([ShortUrlInputFilter::LONG_URL => $longUrl]));
     }
 
     public static function fromMeta(
-        ShortUrlMeta $meta,
+        ShortUrlCreation $meta,
         ?ShortUrlRelationResolverInterface $relationResolver = null,
     ): self {
         $instance = new self();
@@ -104,7 +104,7 @@ class ShortUrl extends AbstractEntity
             $meta[ShortUrlInputFilter::CUSTOM_SLUG] = $url->shortCode;
         }
 
-        $instance = self::fromMeta(ShortUrlMeta::fromRawData($meta), $relationResolver);
+        $instance = self::fromMeta(ShortUrlCreation::fromRawData($meta), $relationResolver);
 
         $validSince = $url->meta->validSince;
         if ($validSince !== null) {
@@ -216,7 +216,7 @@ class ShortUrl extends AbstractEntity
     }
 
     public function update(
-        ShortUrlEdit $shortUrlEdit,
+        ShortUrlEdition $shortUrlEdit,
         ?ShortUrlRelationResolverInterface $relationResolver = null,
     ): void {
         if ($shortUrlEdit->validSinceWasProvided()) {

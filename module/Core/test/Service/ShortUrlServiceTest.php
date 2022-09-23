@@ -11,13 +11,13 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Model\ShortUrlEdit;
-use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Service\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Service\ShortUrlService;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
@@ -81,7 +81,7 @@ class ShortUrlServiceTest extends TestCase
      */
     public function updateShortUrlUpdatesProvidedData(
         int $expectedValidateCalls,
-        ShortUrlEdit $shortUrlEdit,
+        ShortUrlEdition $shortUrlEdit,
         ?ApiKey $apiKey,
     ): void {
         $originalLongUrl = 'originalLongUrl';
@@ -115,21 +115,21 @@ class ShortUrlServiceTest extends TestCase
 
     public function provideShortUrlEdits(): iterable
     {
-        yield 'no long URL' => [0, ShortUrlEdit::fromRawData(
+        yield 'no long URL' => [0, ShortUrlEdition::fromRawData(
             [
                 'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
                 'validUntil' => Chronos::parse('2017-01-05 00:00:00')->toAtomString(),
                 'maxVisits' => 5,
             ],
         ), null];
-        yield 'long URL' => [1, ShortUrlEdit::fromRawData(
+        yield 'long URL' => [1, ShortUrlEdition::fromRawData(
             [
                 'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
                 'maxVisits' => 10,
                 'longUrl' => 'modifiedLongUrl',
             ],
         ), ApiKey::create()];
-        yield 'long URL with validation' => [1, ShortUrlEdit::fromRawData(
+        yield 'long URL with validation' => [1, ShortUrlEdition::fromRawData(
             [
                 'longUrl' => 'modifiedLongUrl',
                 'validateUrl' => true,

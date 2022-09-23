@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Model;
+namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;

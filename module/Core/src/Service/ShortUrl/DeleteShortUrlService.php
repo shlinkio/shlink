@@ -7,8 +7,8 @@ namespace Shlinkio\Shlink\Core\Service\ShortUrl;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Exception;
-use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Options\DeleteShortUrlsOptions;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class DeleteShortUrlService implements DeleteShortUrlServiceInterface

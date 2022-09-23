@@ -8,7 +8,7 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Validator\InArray;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Validation;
-use Shlinkio\Shlink\Core\Model\ShortUrlsParams;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 
 class ShortUrlsParamsInputFilter extends InputFilter
