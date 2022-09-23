@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Service\ShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
-use Shlinkio\Shlink\Core\Validation\ShortUrlsParamsInputFilter;
+use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlsParamsInputFilter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;

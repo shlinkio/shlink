@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
-use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
+use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use stdClass;
 
 use function str_pad;

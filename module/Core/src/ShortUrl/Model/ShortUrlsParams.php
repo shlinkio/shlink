@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\Ordering;
-use Shlinkio\Shlink\Core\Validation\ShortUrlsParamsInputFilter;
+use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlsParamsInputFilter;
 
 use function Shlinkio\Shlink\Common\buildDateRange;
 use function Shlinkio\Shlink\Core\normalizeDate;

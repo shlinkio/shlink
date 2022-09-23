@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Validation;
+namespace Shlinkio\Shlink\Core\ShortUrl\Model\Validation;
 
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator\InArray;

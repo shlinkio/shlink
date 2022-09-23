@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
-use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
+use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 
 use function array_key_exists;
 use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;

@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
-use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
+use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
