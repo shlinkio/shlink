@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Visit;
+namespace ShlinkioTest\Shlink\Core\Visit\Geolocation;
 
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -18,8 +18,8 @@ use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Model\Visitor;
 use Shlinkio\Shlink\Core\Repository\VisitRepositoryInterface;
-use Shlinkio\Shlink\Core\Visit\VisitGeolocationHelperInterface;
-use Shlinkio\Shlink\Core\Visit\VisitLocator;
+use Shlinkio\Shlink\Core\Visit\Geolocation\VisitGeolocationHelperInterface;
+use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocator;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use function array_shift;

@@ -44,8 +44,8 @@ return [
 
             Visit\VisitsTracker::class => ConfigAbstractFactory::class,
             Visit\RequestTracker::class => ConfigAbstractFactory::class,
-            Visit\VisitLocator::class => ConfigAbstractFactory::class,
-            Visit\VisitToLocationHelper::class => ConfigAbstractFactory::class,
+            Visit\Geolocation\VisitLocator::class => ConfigAbstractFactory::class,
+            Visit\Geolocation\VisitToLocationHelper::class => ConfigAbstractFactory::class,
             Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
             Visit\Transformer\OrphanVisitDataTransformer::class => InvokableFactory::class,
 
@@ -109,8 +109,8 @@ return [
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
         ],
-        Visit\VisitLocator::class => ['em'],
-        Visit\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
+        Visit\Geolocation\VisitLocator::class => ['em'],
+        Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
         Visit\VisitsStatsHelper::class => ['em'],
         Tag\TagService::class => ['em'],
         Service\ShortUrl\DeleteShortUrlService::class => [

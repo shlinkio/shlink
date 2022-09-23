@@ -8,9 +8,9 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\GeoLiteDbCreated;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
-use Shlinkio\Shlink\Core\Visit\VisitGeolocationHelperInterface;
-use Shlinkio\Shlink\Core\Visit\VisitLocatorInterface;
-use Shlinkio\Shlink\Core\Visit\VisitToLocationHelperInterface;
+use Shlinkio\Shlink\Core\Visit\Geolocation\VisitGeolocationHelperInterface;
+use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocatorInterface;
+use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelperInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class LocateUnlocatedVisits implements VisitGeolocationHelperInterface
