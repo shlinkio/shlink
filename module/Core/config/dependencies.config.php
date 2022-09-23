@@ -36,7 +36,7 @@ return [
             ShortUrl\ShortUrlService::class => ConfigAbstractFactory::class,
             ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
             ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
-            ShortUrl\ShortCodeUniquenessHelper::class => ConfigAbstractFactory::class,
+            ShortUrl\Helper\ShortCodeUniquenessHelper::class => ConfigAbstractFactory::class,
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortUrlStringifier::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => ConfigAbstractFactory::class,
@@ -93,7 +93,7 @@ return [
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
             'em',
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
-            ShortUrl\ShortCodeUniquenessHelper::class,
+            ShortUrl\Helper\ShortCodeUniquenessHelper::class,
             EventDispatcherInterface::class,
         ],
         Visit\VisitsTracker::class => [
@@ -118,7 +118,7 @@ return [
             ShortUrl\ShortUrlResolver::class,
         ],
         ShortUrl\ShortUrlResolver::class => ['em'],
-        ShortUrl\ShortCodeUniquenessHelper::class => ['em'],
+        ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em'],
         Domain\DomainService::class => ['em', 'config.url_shortener.domain.hostname'],
 
         Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
@@ -163,7 +163,7 @@ return [
         Importer\ImportedLinksProcessor::class => [
             'em',
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
-            ShortUrl\ShortCodeUniquenessHelper::class,
+            ShortUrl\Helper\ShortCodeUniquenessHelper::class,
             Util\DoctrineBatchHelper::class,
         ],
 
