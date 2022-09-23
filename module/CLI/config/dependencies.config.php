@@ -93,8 +93,8 @@ return [
 
         Command\Visit\DownloadGeoLiteDbCommand::class => [GeoLite\GeolocationDbUpdater::class],
         Command\Visit\LocateVisitsCommand::class => [
-            Visit\VisitLocator::class,
-            Visit\VisitToLocationHelper::class,
+            Visit\Geolocation\VisitLocator::class,
+            Visit\Geolocation\VisitToLocationHelper::class,
             LockFactory::class,
         ],
         Command\Visit\GetOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class],

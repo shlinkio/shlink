@@ -11,8 +11,8 @@ use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\GeoLiteDbCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\LocateUnlocatedVisits;
 use Shlinkio\Shlink\Core\Model\Visitor;
-use Shlinkio\Shlink\Core\Visit\VisitLocatorInterface;
-use Shlinkio\Shlink\Core\Visit\VisitToLocationHelperInterface;
+use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocatorInterface;
+use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelperInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class LocateUnlocatedVisitsTest extends TestCase

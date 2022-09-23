@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Visit;
+namespace Shlinkio\Shlink\Core\Visit\Geolocation;
 
 interface VisitLocatorInterface
 {

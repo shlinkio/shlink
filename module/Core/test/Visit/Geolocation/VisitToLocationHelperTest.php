@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Visit;
+namespace ShlinkioTest\Shlink\Core\Visit\Geolocation;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Model\Visitor;
-use Shlinkio\Shlink\Core\Visit\VisitToLocationHelper;
+use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelper;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 

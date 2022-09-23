@@ -10,8 +10,8 @@ use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\Cache\RedisPublishingHelper;
 use Shlinkio\Shlink\Common\Mercure\MercureHubPublishingHelper;
 use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelper;
-use Shlinkio\Shlink\Core\Visit\VisitLocator;
-use Shlinkio\Shlink\Core\Visit\VisitToLocationHelper;
+use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocator;
+use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelper;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
