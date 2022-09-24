@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#1474](https://github.com/shlinkio/shlink/issues/1474) Added preliminary support for PHP 8.2 during CI workflow.
 
 ### Changed
 * [#1551](https://github.com/shlinkio/shlink/issues/1551) Moved services related to geolocating visits to the `Visit\Geolocation` namespace.
