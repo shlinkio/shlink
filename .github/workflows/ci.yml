@@ -43,7 +43,8 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: [ '8.1' ]
+        php-version: ['8.1', '8.2']
+    continue-on-error: ${{ matrix.php-version == '8.2' }}
     steps:
       - uses: actions/checkout@v3
       - run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
