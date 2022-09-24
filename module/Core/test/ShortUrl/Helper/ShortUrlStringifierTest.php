@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 
 class ShortUrlStringifierTest extends TestCase
 {
@@ -29,7 +29,7 @@ class ShortUrlStringifierTest extends TestCase
     public function provideConfigAndShortUrls(): iterable
     {
         $shortUrlWithShortCode = fn (string $shortCode, ?string $domain = null) => ShortUrl::fromMeta(
-            ShortUrlMeta::fromRawData([
+            ShortUrlCreation::fromRawData([
                 'longUrl' => '',
                 'customSlug' => $shortCode,
                 'domain' => $domain,

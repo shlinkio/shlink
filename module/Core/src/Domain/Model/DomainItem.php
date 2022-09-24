@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Core\Domain\Model;
 use JsonSerializable;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
-use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 
 final class DomainItem implements JsonSerializable
 {

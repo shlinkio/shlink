@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#1551](https://github.com/shlinkio/shlink/issues/1551) Moved services related to geolocating visits to the `Visit\Geolocation` namespace.
+* [#1550](https://github.com/shlinkio/shlink/issues/1550) Reorganized main namespaces from Core module.
 
 ### Deprecated
 * *Nothing*

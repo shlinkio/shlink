@@ -7,9 +7,9 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\Async;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Throwable;
 
 abstract class AbstractNotifyNewShortUrlListener extends AbstractAsyncListener

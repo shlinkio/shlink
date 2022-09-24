@@ -1,0 +1,26 @@
+{
+    source: {
+        directories: [
+            'module/*/src'
+        ]
+    },
+    timeout: 5,
+    logs: {
+        text: 'build/infection-unit/infection-log.txt',
+        html: 'build/infection-unit/infection-log.html',
+        summary: 'build/infection-unit/summary-log.txt',
+        debug: 'build/infection-unit/debug-log.txt',
+        stryker: {
+            report: 'develop'
+        }
+    },
+    tmpDir: 'build/infection-unit/temp',
+    phpUnit: {
+        configDir: '.'
+    },
+    mutators: {
+        '@default': true,
+        IdenticalEqual: false,
+        NotIdenticalNotEqual: false
+    }
+}

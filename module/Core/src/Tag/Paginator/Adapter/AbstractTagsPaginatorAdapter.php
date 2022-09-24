@@ -6,9 +6,9 @@ namespace Shlinkio\Shlink\Core\Tag\Paginator\Adapter;
 
 use Happyr\DoctrineSpecification\Spec;
 use Pagerfanta\Adapter\AdapterInterface;
-use Shlinkio\Shlink\Core\Entity\Tag;
-use Shlinkio\Shlink\Core\Repository\TagRepositoryInterface;
+use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
+use Shlinkio\Shlink\Core\Tag\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 

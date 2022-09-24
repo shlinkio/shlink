@@ -6,8 +6,8 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Resolver;
 
 use Doctrine\Common\Collections;
 use Doctrine\Common\Collections\Collection;
-use Shlinkio\Shlink\Core\Entity\Domain;
-use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
+use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 
 use function Functional\map;
 

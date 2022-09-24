@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Core\Exception;
 use Fig\Http\Message\StatusCodeInterface;
 use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
-use Shlinkio\Shlink\Core\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 
 use function Shlinkio\Shlink\Core\toProblemDetailsType;
 use function sprintf;

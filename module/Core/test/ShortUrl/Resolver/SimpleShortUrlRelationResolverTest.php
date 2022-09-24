@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Resolver;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Entity\Domain;
-use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
+use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 
 class SimpleShortUrlRelationResolverTest extends TestCase
 {

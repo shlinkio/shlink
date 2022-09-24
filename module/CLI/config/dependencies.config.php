@@ -12,9 +12,8 @@ use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
-use Shlinkio\Shlink\Core\Service;
+use Shlinkio\Shlink\Core\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
-use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Installer\Factory\ProcessHelperFactory;
@@ -79,17 +78,17 @@ return [
         ApiKey\RoleResolver::class => [DomainService::class, 'config.url_shortener.domain.hostname'],
 
         Command\ShortUrl\CreateShortUrlCommand::class => [
-            Service\UrlShortener::class,
+            ShortUrl\UrlShortener::class,
             ShortUrlStringifier::class,
             UrlShortenerOptions::class,
         ],
-        Command\ShortUrl\ResolveUrlCommand::class => [Service\ShortUrl\ShortUrlResolver::class],
+        Command\ShortUrl\ResolveUrlCommand::class => [ShortUrl\ShortUrlResolver::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [
-            Service\ShortUrlService::class,
-            ShortUrlDataTransformer::class,
+            ShortUrl\ShortUrlService::class,
+            ShortUrl\Transformer\ShortUrlDataTransformer::class,
         ],
         Command\ShortUrl\GetShortUrlVisitsCommand::class => [Visit\VisitsStatsHelper::class],
-        Command\ShortUrl\DeleteShortUrlCommand::class => [Service\ShortUrl\DeleteShortUrlService::class],
+        Command\ShortUrl\DeleteShortUrlCommand::class => [ShortUrl\DeleteShortUrlService::class],
 
         Command\Visit\DownloadGeoLiteDbCommand::class => [GeoLite\GeolocationDbUpdater::class],
         Command\Visit\LocateVisitsCommand::class => [

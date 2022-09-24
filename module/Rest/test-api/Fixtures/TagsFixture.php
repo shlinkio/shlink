@@ -6,7 +6,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Fixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
-use Shlinkio\Shlink\Core\Entity\Tag;
+use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 
 class TagsFixture extends AbstractFixture
 {

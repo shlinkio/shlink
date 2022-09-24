@@ -7,8 +7,8 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Helper;
 use GuzzleHttp\Psr7\Query;
 use Laminas\Stdlib\ArrayUtils;
 use League\Uri\Uri;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 use function sprintf;
 

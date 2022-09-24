@@ -8,11 +8,11 @@ use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
-use Shlinkio\Shlink\Core\Service\UrlShortenerInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
-use Shlinkio\Shlink\Core\Validation\ShortUrlInputFilter;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
+use Shlinkio\Shlink\Core\ShortUrl\UrlShortenerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -162,7 +162,7 @@ class CreateShortUrlCommand extends Command
         $doValidateUrl = $input->getOption('validate-url');
 
         try {
-            $shortUrl = $this->urlShortener->shorten(ShortUrlMeta::fromRawData([
+            $shortUrl = $this->urlShortener->shorten(ShortUrlCreation::fromRawData([
                 ShortUrlInputFilter::LONG_URL => $longUrl,
                 ShortUrlInputFilter::VALID_SINCE => $input->getOption('valid-since'),
                 ShortUrlInputFilter::VALID_UNTIL => $input->getOption('valid-until'),

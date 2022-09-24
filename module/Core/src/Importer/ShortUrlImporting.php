@@ -6,8 +6,8 @@ namespace Shlinkio\Shlink\Core\Importer;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 
 use function sprintf;

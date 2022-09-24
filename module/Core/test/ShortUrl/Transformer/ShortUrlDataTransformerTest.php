@@ -6,9 +6,9 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Transformer;
 
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 
 use function random_int;
@@ -43,7 +43,7 @@ class ShortUrlDataTransformerTest extends TestCase
             'validUntil' => null,
             'maxVisits' => null,
         ]];
-        yield 'max visits only' => [ShortUrl::fromMeta(ShortUrlMeta::fromRawData([
+        yield 'max visits only' => [ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
             'maxVisits' => $maxVisits,
             'longUrl' => '',
         ])), [
@@ -52,7 +52,7 @@ class ShortUrlDataTransformerTest extends TestCase
             'maxVisits' => $maxVisits,
         ]];
         yield 'max visits and valid since' => [
-            ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
+            ShortUrl::fromMeta(ShortUrlCreation::fromRawData(
                 ['validSince' => $now, 'maxVisits' => $maxVisits, 'longUrl' => ''],
             )),
             [
@@ -62,7 +62,7 @@ class ShortUrlDataTransformerTest extends TestCase
             ],
         ];
         yield 'both dates' => [
-            ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
+            ShortUrl::fromMeta(ShortUrlCreation::fromRawData(
                 ['validSince' => $now, 'validUntil' => $now->subDays(10), 'longUrl' => ''],
             )),
             [
@@ -72,7 +72,7 @@ class ShortUrlDataTransformerTest extends TestCase
             ],
         ];
         yield 'everything' => [
-            ShortUrl::fromMeta(ShortUrlMeta::fromRawData(
+            ShortUrl::fromMeta(ShortUrlCreation::fromRawData(
                 ['validSince' => $now, 'validUntil' => $now->subDays(5), 'maxVisits' => $maxVisits, 'longUrl' => ''],
             )),
             [
