@@ -52,7 +52,10 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-      - run: composer install --no-interaction --prefer-dist
+      - run: echo "::set-output name=composerArgs::${{ inputs.php-version == '8.2' && '--ignore-platform-req=php' || '' }}"
+        id: composer_args
+        shell: bash
+      - run: composer install --no-interaction --prefer-dist ${{ steps.composer_args.outputs.composerArgs }}
       - run: ./vendor/bin/rr get --no-interaction --location bin/ && chmod +x bin/rr
       - run: composer test:api:rr
 
