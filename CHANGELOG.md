@@ -4,11 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.3.1] - 2022-09-30
 ### Added
-* [#1474](https://github.com/shlinkio/shlink/issues/1474) Added preliminary support for PHP 8.2 during CI workflow.
+* *Nothing*
 
 ### Changed
+* [#1474](https://github.com/shlinkio/shlink/issues/1474) Added preliminary support for PHP 8.2 during CI workflow.
 * [#1551](https://github.com/shlinkio/shlink/issues/1551) Moved services related to geolocating visits to the `Visit\Geolocation` namespace.
 * [#1550](https://github.com/shlinkio/shlink/issues/1550) Reorganized main namespaces from Core module.
 
@@ -19,7 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#1556](https://github.com/shlinkio/shlink/issues/1556) Fixed trailing slash not working when enabling multi-segment slashes.
 
 
 ## [3.3.0] - 2022-09-18

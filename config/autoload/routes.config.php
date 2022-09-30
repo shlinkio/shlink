@@ -8,6 +8,7 @@ use Fig\Http\Message\RequestMethodInterface;
 use RKA\Middleware\IpAddress;
 use Shlinkio\Shlink\Core\Action as CoreAction;
 use Shlinkio\Shlink\Core\Config\EnvVars;
+use Shlinkio\Shlink\Core\ShortUrl\Middleware\TrimTrailingSlashMiddleware;
 use Shlinkio\Shlink\Rest\Action;
 use Shlinkio\Shlink\Rest\ConfigProvider;
 use Shlinkio\Shlink\Rest\Middleware;
@@ -19,6 +20,8 @@ return (static function (): array {
     $contentNegotiationMiddleware = Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class;
     $dropDomainMiddleware = Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class;
     $overrideDomainMiddleware = Middleware\ShortUrl\OverrideDomainMiddleware::class;
+
+    // TODO This should be based on config, not the env var
     $shortUrlRouteSuffix = EnvVars::SHORT_URL_TRAILING_SLASH->loadFromEnv(false) ? '[/]' : '';
 
     return [
@@ -97,6 +100,7 @@ return (static function (): array {
                 'path' => sprintf('/{shortCode}%s', $shortUrlRouteSuffix),
                 'middleware' => [
                     IpAddress::class,
+                    TrimTrailingSlashMiddleware::class,
                     CoreAction\RedirectAction::class,
                 ],
                 'allowed_methods' => [RequestMethodInterface::METHOD_GET],

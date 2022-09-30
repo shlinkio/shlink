@@ -18,6 +18,7 @@ return [
         ],
         'auto_resolve_titles' => true,
 //        'multi_segment_slugs_enabled' => true,
+//        'trailing_slash_enabled' => true,
     ],
 
 ];
