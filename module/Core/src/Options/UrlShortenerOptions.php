@@ -15,6 +15,7 @@ final class UrlShortenerOptions
         public readonly bool $autoResolveTitles = false,
         public readonly bool $appendExtraPath = false,
         public readonly bool $multiSegmentSlugsEnabled = false,
+        public readonly bool $trailingSlashEnabled = false,
     ) {
     }
 }

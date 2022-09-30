@@ -24,6 +24,7 @@ return (static function (): array {
             'auto_resolve_titles' => (bool) EnvVars::AUTO_RESOLVE_TITLES->loadFromEnv(false),
             'append_extra_path' => (bool) EnvVars::REDIRECT_APPEND_EXTRA_PATH->loadFromEnv(false),
             'multi_segment_slugs_enabled' => (bool) EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->loadFromEnv(false),
+            'trailing_slash_enabled' => (bool) EnvVars::SHORT_URL_TRAILING_SLASH->loadFromEnv(false),
         ],
 
     ];

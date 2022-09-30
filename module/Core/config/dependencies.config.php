@@ -43,6 +43,7 @@ return [
             ShortUrl\Helper\ShortUrlRedirectionBuilder::class => ConfigAbstractFactory::class,
             ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => ConfigAbstractFactory::class,
+            ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => ConfigAbstractFactory::class,
 
             Tag\TagService::class => ConfigAbstractFactory::class,
 
@@ -154,6 +155,7 @@ return [
             Util\RedirectResponseHelper::class,
             Options\UrlShortenerOptions::class,
         ],
+        ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => [Options\UrlShortenerOptions::class],
 
         EventDispatcher\PublishingUpdatesGenerator::class => [
             ShortUrl\Transformer\ShortUrlDataTransformer::class,
