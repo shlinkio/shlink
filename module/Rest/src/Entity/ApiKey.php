@@ -148,7 +148,7 @@ class ApiKey extends AbstractEntity
 
         if ($this->hasRole($role)) {
             /** @var ApiKeyRole $apiKeyRole */
-            $apiKeyRole = $this->roles->get($role);
+            $apiKeyRole = $this->roles->get($role->value);
             $apiKeyRole->updateMeta($meta);
         } else {
             $apiKeyRole = new ApiKeyRole($roleDefinition->role, $roleDefinition->meta, $this);
