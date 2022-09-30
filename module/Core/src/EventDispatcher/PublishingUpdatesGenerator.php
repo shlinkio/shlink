@@ -6,8 +6,8 @@ namespace Shlinkio\Shlink\Core\EventDispatcher;
 
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Entity\Visit;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
 final class PublishingUpdatesGenerator implements PublishingUpdatesGeneratorInterface
 {

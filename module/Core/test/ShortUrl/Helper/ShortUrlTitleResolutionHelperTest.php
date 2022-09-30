@@ -7,8 +7,8 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelper;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 
 class ShortUrlTitleResolutionHelperTest extends TestCase
@@ -32,7 +32,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     {
         $longUrl = 'http://foobar.com/12345/hello?foo=bar';
         $this->helper->processTitleAndValidateUrl(
-            ShortUrlMeta::fromRawData(['longUrl' => $longUrl, 'title' => $title]),
+            ShortUrlCreation::fromRawData(['longUrl' => $longUrl, 'title' => $title]),
         );
 
         $this->urlValidator->validateUrlWithTitle($longUrl, false)->shouldHaveBeenCalledTimes(

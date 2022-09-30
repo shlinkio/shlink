@@ -13,10 +13,10 @@ use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\RequestOptions;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
-use Shlinkio\Shlink\Core\Entity\Visit;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\Options\AppOptions;
 use Shlinkio\Shlink\Core\Options\WebhookOptions;
+use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Throwable;
 
 use function Functional\map;

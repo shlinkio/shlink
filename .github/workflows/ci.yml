@@ -43,7 +43,8 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: [ '8.1' ]
+        php-version: ['8.1', '8.2']
+    continue-on-error: ${{ matrix.php-version == '8.2' }}
     steps:
       - uses: actions/checkout@v3
       - run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
@@ -51,7 +52,10 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-      - run: composer install --no-interaction --prefer-dist
+      - run: echo "::set-output name=composerArgs::${{ matrix.php-version == '8.2' && '--ignore-platform-req=php' || '' }}"
+        id: composer_args
+        shell: bash
+      - run: composer install --no-interaction --prefer-dist ${{ steps.composer_args.outputs.composerArgs }}
       - run: ./vendor/bin/rr get --no-interaction --location bin/ && chmod +x bin/rr
       - run: composer test:api:rr
 

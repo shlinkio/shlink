@@ -32,11 +32,18 @@ return [
             Options\RabbitMqOptions::class => [ValinorConfigFactory::class, 'config.rabbitmq'],
             Options\WebhookOptions::class => ConfigAbstractFactory::class,
 
-            Service\UrlShortener::class => ConfigAbstractFactory::class,
-            Service\ShortUrlService::class => ConfigAbstractFactory::class,
-            Service\ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
-            Service\ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
-            Service\ShortUrl\ShortCodeUniquenessHelper::class => ConfigAbstractFactory::class,
+            ShortUrl\UrlShortener::class => ConfigAbstractFactory::class,
+            ShortUrl\ShortUrlService::class => ConfigAbstractFactory::class,
+            ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
+            ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
+            ShortUrl\Helper\ShortCodeUniquenessHelper::class => ConfigAbstractFactory::class,
+            ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ConfigAbstractFactory::class,
+            ShortUrl\Helper\ShortUrlStringifier::class => ConfigAbstractFactory::class,
+            ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => ConfigAbstractFactory::class,
+            ShortUrl\Helper\ShortUrlRedirectionBuilder::class => ConfigAbstractFactory::class,
+            ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
+            ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => ConfigAbstractFactory::class,
+            ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => ConfigAbstractFactory::class,
 
             Tag\TagService::class => ConfigAbstractFactory::class,
 
@@ -44,8 +51,8 @@ return [
 
             Visit\VisitsTracker::class => ConfigAbstractFactory::class,
             Visit\RequestTracker::class => ConfigAbstractFactory::class,
-            Visit\VisitLocator::class => ConfigAbstractFactory::class,
-            Visit\VisitToLocationHelper::class => ConfigAbstractFactory::class,
+            Visit\Geolocation\VisitLocator::class => ConfigAbstractFactory::class,
+            Visit\Geolocation\VisitToLocationHelper::class => ConfigAbstractFactory::class,
             Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
             Visit\Transformer\OrphanVisitDataTransformer::class => InvokableFactory::class,
 
@@ -59,13 +66,6 @@ return [
             Action\PixelAction::class => ConfigAbstractFactory::class,
             Action\QrCodeAction::class => ConfigAbstractFactory::class,
             Action\RobotsAction::class => ConfigAbstractFactory::class,
-
-            ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ConfigAbstractFactory::class,
-            ShortUrl\Helper\ShortUrlStringifier::class => ConfigAbstractFactory::class,
-            ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => ConfigAbstractFactory::class,
-            ShortUrl\Helper\ShortUrlRedirectionBuilder::class => ConfigAbstractFactory::class,
-            ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
-            ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => ConfigAbstractFactory::class,
 
             EventDispatcher\PublishingUpdatesGenerator::class => ConfigAbstractFactory::class,
 
@@ -90,11 +90,11 @@ return [
 
         Options\WebhookOptions::class => ['config.visits_webhooks'],
 
-        Service\UrlShortener::class => [
+        ShortUrl\UrlShortener::class => [
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
             'em',
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
-            Service\ShortUrl\ShortCodeUniquenessHelper::class,
+            ShortUrl\Helper\ShortCodeUniquenessHelper::class,
             EventDispatcherInterface::class,
         ],
         Visit\VisitsTracker::class => [
@@ -103,23 +103,23 @@ return [
             Options\TrackingOptions::class,
         ],
         Visit\RequestTracker::class => [Visit\VisitsTracker::class, Options\TrackingOptions::class],
-        Service\ShortUrlService::class => [
+        ShortUrl\ShortUrlService::class => [
             'em',
-            Service\ShortUrl\ShortUrlResolver::class,
+            ShortUrl\ShortUrlResolver::class,
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
         ],
-        Visit\VisitLocator::class => ['em'],
-        Visit\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
+        Visit\Geolocation\VisitLocator::class => ['em'],
+        Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
         Visit\VisitsStatsHelper::class => ['em'],
         Tag\TagService::class => ['em'],
-        Service\ShortUrl\DeleteShortUrlService::class => [
+        ShortUrl\DeleteShortUrlService::class => [
             'em',
             Options\DeleteShortUrlsOptions::class,
-            Service\ShortUrl\ShortUrlResolver::class,
+            ShortUrl\ShortUrlResolver::class,
         ],
-        Service\ShortUrl\ShortUrlResolver::class => ['em'],
-        Service\ShortUrl\ShortCodeUniquenessHelper::class => ['em'],
+        ShortUrl\ShortUrlResolver::class => ['em'],
+        ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em'],
         Domain\DomainService::class => ['em', 'config.url_shortener.domain.hostname'],
 
         Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
@@ -129,14 +129,14 @@ return [
         Config\NotFoundRedirectResolver::class => [Util\RedirectResponseHelper::class, 'Logger_Shlink'],
 
         Action\RedirectAction::class => [
-            Service\ShortUrl\ShortUrlResolver::class,
+            ShortUrl\ShortUrlResolver::class,
             Visit\RequestTracker::class,
             ShortUrl\Helper\ShortUrlRedirectionBuilder::class,
             Util\RedirectResponseHelper::class,
         ],
-        Action\PixelAction::class => [Service\ShortUrl\ShortUrlResolver::class, Visit\RequestTracker::class],
+        Action\PixelAction::class => [ShortUrl\ShortUrlResolver::class, Visit\RequestTracker::class],
         Action\QrCodeAction::class => [
-            Service\ShortUrl\ShortUrlResolver::class,
+            ShortUrl\ShortUrlResolver::class,
             ShortUrl\Helper\ShortUrlStringifier::class,
             'Logger_Shlink',
             Options\QrCodeOptions::class,
@@ -149,12 +149,13 @@ return [
         ShortUrl\Helper\ShortUrlRedirectionBuilder::class => [Options\TrackingOptions::class],
         ShortUrl\Transformer\ShortUrlDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
         ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => [
-            Service\ShortUrl\ShortUrlResolver::class,
+            ShortUrl\ShortUrlResolver::class,
             Visit\RequestTracker::class,
             ShortUrl\Helper\ShortUrlRedirectionBuilder::class,
             Util\RedirectResponseHelper::class,
             Options\UrlShortenerOptions::class,
         ],
+        ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => [Options\UrlShortenerOptions::class],
 
         EventDispatcher\PublishingUpdatesGenerator::class => [
             ShortUrl\Transformer\ShortUrlDataTransformer::class,
@@ -164,7 +165,7 @@ return [
         Importer\ImportedLinksProcessor::class => [
             'em',
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
-            Service\ShortUrl\ShortCodeUniquenessHelper::class,
+            ShortUrl\Helper\ShortCodeUniquenessHelper::class,
             Util\DoctrineBatchHelper::class,
         ],
 

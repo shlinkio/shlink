@@ -7,10 +7,10 @@ namespace ShlinkioDbTest\Shlink\Core\Domain\Repository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
-use Shlinkio\Shlink\Core\Entity\Domain;
-use Shlinkio\Shlink\Core\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Model\ShortUrlMeta;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -130,7 +130,9 @@ class DomainRepositoryTest extends DatabaseTestCase
     private function createShortUrl(Domain $domain, ?ApiKey $apiKey = null): ShortUrl
     {
         return ShortUrl::fromMeta(
-            ShortUrlMeta::fromRawData(['domain' => $domain->getAuthority(), 'apiKey' => $apiKey, 'longUrl' => 'foo']),
+            ShortUrlCreation::fromRawData(
+                ['domain' => $domain->getAuthority(), 'apiKey' => $apiKey, 'longUrl' => 'foo'],
+            ),
             new class ($domain) implements ShortUrlRelationResolverInterface {
                 public function __construct(private Domain $domain)
                 {

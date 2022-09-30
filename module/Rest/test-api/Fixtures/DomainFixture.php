@@ -7,7 +7,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Fixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
-use Shlinkio\Shlink\Core\Entity\Domain;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 
 class DomainFixture extends AbstractFixture
 {
