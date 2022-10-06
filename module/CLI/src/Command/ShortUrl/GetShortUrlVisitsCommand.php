@@ -20,7 +20,7 @@ class GetShortUrlVisitsCommand extends AbstractVisitsListCommand
 {
     public const NAME = 'short-url:visits';
 
-    protected function doConfigure(): void
+    protected function configure(): void
     {
         $this
             ->setName(self::NAME)

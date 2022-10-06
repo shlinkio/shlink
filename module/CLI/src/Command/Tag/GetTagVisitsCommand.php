@@ -25,7 +25,7 @@ class GetTagVisitsCommand extends AbstractVisitsListCommand
         parent::__construct($visitsHelper);
     }
 
-    protected function doConfigure(): void
+    protected function configure(): void
     {
         $this
             ->setName(self::NAME)
