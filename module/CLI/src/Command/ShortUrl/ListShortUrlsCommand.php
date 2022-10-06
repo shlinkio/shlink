@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Shlinkio\Shlink\CLI\Command\Util\AbstractWithDateRangeCommand;
+use Shlinkio\Shlink\CLI\Option\EndDateOption;
+use Shlinkio\Shlink\CLI\Option\StartDateOption;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
@@ -15,6 +16,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlsParamsInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlServiceInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,20 +29,25 @@ use function Functional\map;
 use function implode;
 use function sprintf;
 
-class ListShortUrlsCommand extends AbstractWithDateRangeCommand
+class ListShortUrlsCommand extends Command
 {
     use PagerfantaUtilsTrait;
 
     public const NAME = 'short-url:list';
 
+    private readonly StartDateOption $startDateOption;
+    private readonly EndDateOption $endDateOption;
+
     public function __construct(
-        private ShortUrlServiceInterface $shortUrlService,
-        private DataTransformerInterface $transformer,
+        private readonly ShortUrlServiceInterface $shortUrlService,
+        private readonly DataTransformerInterface $transformer,
     ) {
         parent::__construct();
+        $this->startDateOption = new StartDateOption($this, 'short URLs');
+        $this->endDateOption = new EndDateOption($this, 'short URLs');
     }
 
-    protected function doConfigure(): void
+    protected function configure(): void
     {
         $this
             ->setName(self::NAME)
@@ -104,16 +111,6 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
             );
     }
 
-    protected function getStartDateDesc(string $optionName): string
-    {
-        return sprintf('Allows to filter short URLs, returning only those created after "%s".', $optionName);
-    }
-
-    protected function getEndDateDesc(string $optionName): string
-    {
-        return sprintf('Allows to filter short URLs, returning only those created before "%s".', $optionName);
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
@@ -124,8 +121,8 @@ class ListShortUrlsCommand extends AbstractWithDateRangeCommand
         $tagsMode = $input->getOption('including-all-tags') === true ? TagsMode::ALL->value : TagsMode::ANY->value;
         $tags = ! empty($tags) ? explode(',', $tags) : [];
         $all = $input->getOption('all');
-        $startDate = $this->getStartDateOption($input, $output);
-        $endDate = $this->getEndDateOption($input, $output);
+        $startDate = $this->startDateOption->get($input, $output);
+        $endDate = $this->endDateOption->get($input, $output);
         $orderBy = $this->processOrderBy($input);
         $columnsMap = $this->resolveColumnsMap($input);
 
