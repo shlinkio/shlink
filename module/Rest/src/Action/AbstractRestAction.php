@@ -19,7 +19,7 @@ abstract class AbstractRestAction implements RequestHandlerInterface, RequestMet
 
     public static function register(Application $app, array $prevMiddleware = [], array $postMiddleware = []): void
     {
-        static::doRegister($app, self::ROUTES_PREFIX, '', $prevMiddleware, $postMiddleware);
+        self::doRegister($app, self::ROUTES_PREFIX, '', $prevMiddleware, $postMiddleware);
     }
 
     public static function registerUnversioned(
@@ -27,7 +27,7 @@ abstract class AbstractRestAction implements RequestHandlerInterface, RequestMet
         array $prevMiddleware = [],
         array $postMiddleware = [],
     ): void {
-        static::doRegister(
+        self::doRegister(
             $app,
             self::UNVERSIONED_ROUTES_PREFIX,
             self::UNVERSIONED_NAME_PREFIX,
