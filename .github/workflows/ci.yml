@@ -52,7 +52,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-      - run: echo "::set-output name=composerArgs::${{ matrix.php-version == '8.2' && '--ignore-platform-req=php' || '' }}"
+      - run: echo "::set-output name=composerArgs::${{ matrix.php-version == '8.2' && '--ignore-platform-req=php+' || '' }}"
         id: composer_args
         shell: bash
       - run: composer install --no-interaction --prefer-dist ${{ steps.composer_args.outputs.composerArgs }}

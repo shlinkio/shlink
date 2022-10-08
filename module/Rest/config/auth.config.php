@@ -11,7 +11,8 @@ return [
     'auth' => [
         'routes_without_api_key' => [
             Action\HealthAction::class,
-            ConfigProvider::UNVERSIONED_HEALTH_ENDPOINT_NAME,
+            // TODO Find a way to make this more transparent and not having to expose the prefix
+            Action\AbstractRestAction::UNVERSIONED_NAME_PREFIX . Action\HealthAction::class,
         ],
 
         'routes_with_query_api_key' => [
