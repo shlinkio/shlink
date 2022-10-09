@@ -6,9 +6,12 @@ namespace ShlinkioTest\Shlink\Rest\Action\Domain;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use Mezzio\Application;
+use Mezzio\Router\Route;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Server\MiddlewareInterface;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -53,5 +56,47 @@ class ListDomainsActionTest extends TestCase
             ],
         ], $payload);
         $listDomains->shouldHaveBeenCalledOnce();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideMiddlewares
+     */
+    public function routeIsProperlyRegistered(array $extraArgs, array $expectedMiddlewares): void
+    {
+        $app = $this->prophesize(Application::class);
+        $route = $app->route('/rest/v{version:1|2|3}/domains', $expectedMiddlewares, ['GET'], ListDomainsAction::class)
+                     ->willReturn(new Route('', $this->prophesize(MiddlewareInterface::class)->reveal()));
+
+        ListDomainsAction::register($app->reveal(), ...$extraArgs);
+
+        $route->shouldHaveBeenCalledOnce();
+    }
+
+    /**
+     * @test
+     * @dataProvider provideMiddlewares
+     */
+    public function unversionedRouteIsProperlyRegistered(array $extraArgs, array $expectedMiddlewares): void
+    {
+        $app = $this->prophesize(Application::class);
+        $route = $app->route(
+            '/rest/domains',
+            $expectedMiddlewares,
+            ['GET'],
+            'unversioned_health' . ListDomainsAction::class,
+        )->willReturn(new Route('', $this->prophesize(MiddlewareInterface::class)->reveal()));
+
+        ListDomainsAction::registerUnversioned($app->reveal(), ...$extraArgs);
+
+        $route->shouldHaveBeenCalledOnce();
+    }
+
+    public function provideMiddlewares(): iterable
+    {
+        yield 'no middlewares' => [[], [ListDomainsAction::class]];
+        yield 'prev middlewares' => [[['foo']], ['foo', ListDomainsAction::class]];
+        yield 'next middlewares' => [[[], ['foo']], [ListDomainsAction::class, 'foo']];
+        yield 'both middlewares' => [[['bar'], ['foo', 'baz']], ['bar', ListDomainsAction::class, 'foo', 'baz']];
     }
 }
