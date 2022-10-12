@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Core\Crawling;
 interface CrawlingHelperInterface
 {
     /**
-     * @return string[]|iterable
+     * @return iterable<string>
      */
     public function listCrawlableShortCodes(): iterable;
 }
