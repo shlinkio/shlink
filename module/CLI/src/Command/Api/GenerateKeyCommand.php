@@ -32,8 +32,8 @@ class GenerateKeyCommand extends Command
 
     protected function configure(): void
     {
-        $authorOnly = RoleResolverInterface::AUTHOR_ONLY_PARAM;
-        $domainOnly = RoleResolverInterface::DOMAIN_ONLY_PARAM;
+        $authorOnly = Role::AUTHORED_SHORT_URLS->paramName();
+        $domainOnly = Role::DOMAIN_SPECIFIC->paramName();
         $help = <<<HELP
         The <info>%command.name%</info> generates a new valid API key.
 

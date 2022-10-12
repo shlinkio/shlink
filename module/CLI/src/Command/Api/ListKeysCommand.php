@@ -62,8 +62,8 @@ class ListKeysCommand extends Command
             $rowData[] = $apiKey->isAdmin() ? 'Admin' : implode("\n", $apiKey->mapRoles(
                 fn (Role $role, array $meta) =>
                     empty($meta)
-                        ? Role::toFriendlyName($role)
-                        : sprintf('%s: %s', Role::toFriendlyName($role), Role::domainAuthorityFromMeta($meta)),
+                        ? $role->toFriendlyName()
+                        : sprintf('%s: %s', $role->toFriendlyName(), Role::domainAuthorityFromMeta($meta)),
             ));
 
             return $rowData;
