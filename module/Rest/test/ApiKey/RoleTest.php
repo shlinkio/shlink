@@ -99,9 +99,9 @@ class RoleTest extends TestCase
      * @test
      * @dataProvider provideRoleNames
      */
-    public function getsExpectedRoleFriendlyName(Role $roleName, string $expectedFriendlyName): void
+    public function getsExpectedRoleFriendlyName(Role $role, string $expectedFriendlyName): void
     {
-        self::assertEquals($expectedFriendlyName, Role::toFriendlyName($roleName));
+        self::assertEquals($expectedFriendlyName, $role->toFriendlyName());
     }
 
     public function provideRoleNames(): iterable
