@@ -50,7 +50,7 @@
         "shlinkio/shlink-event-dispatcher": "^2.6",
         "shlinkio/shlink-importer": "^4.0",
         "shlinkio/shlink-installer": "^8.2",
-        "shlinkio/shlink-ip-geolocation": "^3.1",
+        "shlinkio/shlink-ip-geolocation": "dev-main#e208963 as 3.2",
         "spiral/roadrunner": "^2.11",
         "spiral/roadrunner-jobs": "^2.5",
         "symfony/console": "^6.1",
