@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.3.2] - 2022-10-18
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1576](https://github.com/shlinkio/shlink/issues/1576) Fixed error when trying to retry visits location from CLI.
+
+
 ## [3.3.1] - 2022-09-30
 ### Added
 * *Nothing*
