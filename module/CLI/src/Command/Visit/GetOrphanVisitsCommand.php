@@ -14,7 +14,7 @@ class GetOrphanVisitsCommand extends AbstractVisitsListCommand
 {
     public const NAME = 'visit:orphan';
 
-    protected function doConfigure(): void
+    protected function configure(): void
     {
         $this
             ->setName(self::NAME)

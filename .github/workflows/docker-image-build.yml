@@ -8,7 +8,7 @@ on:
       - 'v*'
 
 jobs:
-  build-openswool:
+  build-openswoole:
     uses: shlinkio/github-actions/.github/workflows/docker-build-and-publish.yml@main
     secrets: inherit
     with:
