@@ -7,10 +7,8 @@ namespace ShlinkioTest\Shlink\Core\Action;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\NullLogger;
@@ -29,50 +27,43 @@ use function imagecreatefromstring;
 
 class QrCodeActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private const WHITE = 0xFFFFFF;
     private const BLACK = 0x0;
 
-    private ObjectProphecy $urlResolver;
+    private MockObject $urlResolver;
 
     protected function setUp(): void
     {
-        $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
+        $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
     }
 
     /** @test */
     public function aNotFoundShortCodeWillDelegateIntoNextMiddleware(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''))
-            ->willThrow(ShortUrlNotFoundException::class)
-            ->shouldBeCalledOnce();
-        $delegate = $this->prophesize(RequestHandlerInterface::class);
-        $process = $delegate->handle(Argument::any())->willReturn(new Response());
+        $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
+            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''))
+        )->willThrowException(ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain('')));
+        $delegate = $this->createMock(RequestHandlerInterface::class);
+        $delegate->expects($this->once())->method('handle')->withAnyParameters()->willReturn(new Response());
 
-        $this->action()->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate->reveal());
-
-        $process->shouldHaveBeenCalledOnce();
+        $this->action()->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate);
     }
 
     /** @test */
     public function aCorrectRequestReturnsTheQrCodeResponse(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''))
-            ->willReturn(ShortUrl::createEmpty())
-            ->shouldBeCalledOnce();
-        $delegate = $this->prophesize(RequestHandlerInterface::class);
+        $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
+            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, '')),
+        )->willReturn(ShortUrl::createEmpty());
+        $delegate = $this->createMock(RequestHandlerInterface::class);
+        $delegate->expects($this->never())->method('handle');
 
-        $resp = $this->action()->process(
-            (new ServerRequest())->withAttribute('shortCode', $shortCode),
-            $delegate->reveal(),
-        );
+        $resp = $this->action()->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate);
 
         self::assertInstanceOf(QrCodeResponse::class, $resp);
         self::assertEquals(200, $resp->getStatusCode());
-        $delegate->handle(Argument::any())->shouldHaveBeenCalledTimes(0);
     }
 
     /**
@@ -85,13 +76,13 @@ class QrCodeActionTest extends TestCase
         string $expectedContentType,
     ): void {
         $code = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($code, ''))->willReturn(
-            ShortUrl::createEmpty(),
-        );
-        $delegate = $this->prophesize(RequestHandlerInterface::class);
+        $this->urlResolver->method('resolveEnabledShortUrl')->with(
+            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($code, '')),
+        )->willReturn(ShortUrl::createEmpty());
+        $delegate = $this->createMock(RequestHandlerInterface::class);
         $req = (new ServerRequest())->withAttribute('shortCode', $code)->withQueryParams($query);
 
-        $resp = $this->action(new QrCodeOptions(format: $defaultFormat))->process($req, $delegate->reveal());
+        $resp = $this->action(new QrCodeOptions(format: $defaultFormat))->process($req, $delegate);
 
         self::assertEquals($expectedContentType, $resp->getHeaderLine('Content-Type'));
     }
@@ -118,12 +109,12 @@ class QrCodeActionTest extends TestCase
         int $expectedSize,
     ): void {
         $code = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($code, ''))->willReturn(
-            ShortUrl::createEmpty(),
-        );
-        $delegate = $this->prophesize(RequestHandlerInterface::class);
+        $this->urlResolver->method('resolveEnabledShortUrl')->with(
+            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($code, '')),
+        )->willReturn(ShortUrl::createEmpty());
+        $delegate = $this->createMock(RequestHandlerInterface::class);
 
-        $resp = $this->action($defaultOptions)->process($req->withAttribute('shortCode', $code), $delegate->reveal());
+        $resp = $this->action($defaultOptions)->process($req->withAttribute('shortCode', $code), $delegate);
         [$size] = getimagesizefromstring($resp->getBody()->__toString());
 
         self::assertEquals($expectedSize, $size);
@@ -209,12 +200,12 @@ class QrCodeActionTest extends TestCase
             ->withQueryParams(['size' => 250, 'roundBlockSize' => $roundBlockSize])
             ->withAttribute('shortCode', $code);
 
-        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($code, ''))->willReturn(
-            ShortUrl::withLongUrl('https://shlink.io'),
-        );
-        $delegate = $this->prophesize(RequestHandlerInterface::class);
+        $this->urlResolver->method('resolveEnabledShortUrl')->with(
+            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($code, '')),
+        )->willReturn(ShortUrl::withLongUrl('https://shlink.io'));
+        $delegate = $this->createMock(RequestHandlerInterface::class);
 
-        $resp = $this->action($defaultOptions)->process($req, $delegate->reveal());
+        $resp = $this->action($defaultOptions)->process($req, $delegate);
         $image = imagecreatefromstring($resp->getBody()->__toString());
         $color = imagecolorat($image, 1, 1);
 
@@ -246,7 +237,7 @@ class QrCodeActionTest extends TestCase
     public function action(?QrCodeOptions $options = null): QrCodeAction
     {
         return new QrCodeAction(
-            $this->urlResolver->reveal(),
+            $this->urlResolver,
             new ShortUrlStringifier(['domain' => 'doma.in']),
             new NullLogger(),
             $options ?? new QrCodeOptions(),
