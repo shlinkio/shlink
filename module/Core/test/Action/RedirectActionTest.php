@@ -69,7 +69,7 @@ class RedirectActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''))
+            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, '')),
         )->willThrowException(ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain('')));
         $this->requestTracker->expects($this->never())->method('trackIfApplicable');
 

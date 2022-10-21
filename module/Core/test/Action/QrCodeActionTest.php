@@ -42,7 +42,7 @@ class QrCodeActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''))
+            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, '')),
         )->willThrowException(ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain('')));
         $delegate = $this->createMock(RequestHandlerInterface::class);
         $delegate->expects($this->once())->method('handle')->withAnyParameters()->willReturn(new Response());
