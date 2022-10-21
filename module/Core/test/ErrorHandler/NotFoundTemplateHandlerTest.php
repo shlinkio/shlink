@@ -56,7 +56,7 @@ class NotFoundTemplateHandlerTest extends TestCase
                 RouteResult::fromRoute(
                     new Route(
                         '',
-                        $this->prophesize(MiddlewareInterface::class)->reveal(),
+                        $this->createMock(MiddlewareInterface::class),
                         ['GET'],
                         RedirectAction::class,
                     ),
