@@ -9,10 +9,8 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -25,15 +23,13 @@ use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 
 class NotFoundRedirectResolverTest extends TestCase
 {
-    use ProphecyTrait;
-
     private NotFoundRedirectResolver $resolver;
-    private ObjectProphecy $helper;
+    private MockObject $helper;
 
     protected function setUp(): void
     {
-        $this->helper = $this->prophesize(RedirectResponseHelperInterface::class);
-        $this->resolver = new NotFoundRedirectResolver($this->helper->reveal(), new NullLogger());
+        $this->helper = $this->createMock(RedirectResponseHelperInterface::class);
+        $this->resolver = new NotFoundRedirectResolver($this->helper, new NullLogger());
     }
 
     /**
@@ -47,12 +43,13 @@ class NotFoundRedirectResolverTest extends TestCase
         string $expectedRedirectTo,
     ): void {
         $expectedResp = new Response();
-        $buildResp = $this->helper->buildRedirectResponse($expectedRedirectTo)->willReturn($expectedResp);
+        $this->helper->expects($this->once())->method('buildRedirectResponse')->with(
+            $this->equalTo($expectedRedirectTo),
+        )->willReturn($expectedResp);
 
         $resp = $this->resolver->resolveRedirectResponse($notFoundType, $redirectConfig, $uri);
 
         self::assertSame($expectedResp, $resp);
-        $buildResp->shouldHaveBeenCalledOnce();
     }
 
     public function provideRedirects(): iterable
@@ -119,11 +116,11 @@ class NotFoundRedirectResolverTest extends TestCase
     public function noResponseIsReturnedIfNoConditionsMatch(): void
     {
         $notFoundType = $this->notFoundType($this->requestForRoute('foo'));
+        $this->helper->expects($this->never())->method('buildRedirectResponse');
 
         $result = $this->resolver->resolveRedirectResponse($notFoundType, new NotFoundRedirectOptions(), new Uri());
 
         self::assertNull($result);
-        $this->helper->buildRedirectResponse(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     private function notFoundType(ServerRequestInterface $req): NotFoundType
@@ -139,7 +136,7 @@ class NotFoundRedirectResolverTest extends TestCase
                 RouteResult::fromRoute(
                     new Route(
                         '',
-                        $this->prophesize(MiddlewareInterface::class)->reveal(),
+                        $this->createMock(MiddlewareInterface::class),
                         ['GET'],
                         $routeName,
                     ),
