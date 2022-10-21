@@ -6,10 +6,8 @@ namespace ShlinkioTest\Shlink\Core\Action;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
@@ -22,29 +20,27 @@ use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
 
 class RedirectActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private const LONG_URL = 'https://domain.com/foo/bar?some=thing';
 
     private RedirectAction $action;
-    private ObjectProphecy $urlResolver;
-    private ObjectProphecy $requestTracker;
-    private ObjectProphecy $redirectRespHelper;
+    private MockObject $urlResolver;
+    private MockObject $requestTracker;
+    private MockObject $redirectRespHelper;
 
     protected function setUp(): void
     {
-        $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
-        $this->requestTracker = $this->prophesize(RequestTrackerInterface::class);
-        $this->redirectRespHelper = $this->prophesize(RedirectResponseHelperInterface::class);
+        $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
+        $this->requestTracker = $this->createMock(RequestTrackerInterface::class);
+        $this->redirectRespHelper = $this->createMock(RedirectResponseHelperInterface::class);
 
-        $redirectBuilder = $this->prophesize(ShortUrlRedirectionBuilderInterface::class);
-        $redirectBuilder->buildShortUrlRedirect(Argument::cetera())->willReturn(self::LONG_URL);
+        $redirectBuilder = $this->createMock(ShortUrlRedirectionBuilderInterface::class);
+        $redirectBuilder->method('buildShortUrlRedirect')->withAnyParameters()->willReturn(self::LONG_URL);
 
         $this->action = new RedirectAction(
-            $this->urlResolver->reveal(),
-            $this->requestTracker->reveal(),
-            $redirectBuilder->reveal(),
-            $this->redirectRespHelper->reveal(),
+            $this->urlResolver,
+            $this->requestTracker,
+            $redirectBuilder,
+            $this->redirectRespHelper,
         );
     }
 
@@ -53,38 +49,34 @@ class RedirectActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
-        $shortCodeToUrl = $this->urlResolver->resolveEnabledShortUrl(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
+        $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
+            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, '')),
         )->willReturn($shortUrl);
-        $track = $this->requestTracker->trackIfApplicable(Argument::cetera())->will(function (): void {
-        });
+        $this->requestTracker->expects($this->once())->method('trackIfApplicable');
         $expectedResp = new Response\RedirectResponse(self::LONG_URL);
-        $buildResp = $this->redirectRespHelper->buildRedirectResponse(self::LONG_URL)->willReturn($expectedResp);
+        $this->redirectRespHelper->expects($this->once())->method('buildRedirectResponse')->with(
+            $this->equalTo(self::LONG_URL),
+        )->willReturn($expectedResp);
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
-        $response = $this->action->process($request, $this->prophesize(RequestHandlerInterface::class)->reveal());
+        $response = $this->action->process($request, $this->createMock(RequestHandlerInterface::class));
 
         self::assertSame($expectedResp, $response);
-        $buildResp->shouldHaveBeenCalledOnce();
-        $shortCodeToUrl->shouldHaveBeenCalledOnce();
-        $track->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
     public function nextMiddlewareIsInvokedIfLongUrlIsNotFound(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''))
-            ->willThrow(ShortUrlNotFoundException::class)
-            ->shouldBeCalledOnce();
-        $this->requestTracker->trackIfApplicable(Argument::cetera())->shouldNotBeCalled();
+        $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
+            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''))
+        )->willThrowException(ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain('')));
+        $this->requestTracker->expects($this->never())->method('trackIfApplicable');
 
-        $handler = $this->prophesize(RequestHandlerInterface::class);
-        $handle = $handler->handle(Argument::any())->willReturn(new Response());
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->once())->method('handle')->withAnyParameters()->willReturn(new Response());
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
-        $this->action->process($request, $handler->reveal());
-
-        $handle->shouldHaveBeenCalledOnce();
+        $this->action->process($request, $handler);
     }
 }
