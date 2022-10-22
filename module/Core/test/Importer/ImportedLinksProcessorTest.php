@@ -231,7 +231,7 @@ class ImportedLinksProcessorTest extends TestCase
         $counts->skippedCount = 0;
 
         $this->io->method('text')->willReturnCallback(
-            function (string $output) use ($counts, $skippedText, $importedText) {
+            function (string $output) use ($counts, $skippedText, $importedText): void {
                 if (str_contains($output, $skippedText)) {
                     $counts->skippedCount++;
                 } elseif (str_contains($output, $importedText)) {
