@@ -12,10 +12,8 @@ use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Promise\RejectedPromise;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
 use Shlinkio\Shlink\Core\EventDispatcher\NotifyVisitToWebHooks;
@@ -32,66 +30,52 @@ use function Functional\contains;
 
 class NotifyVisitToWebHooksTest extends TestCase
 {
-    use ProphecyTrait;
-
-    private ObjectProphecy $httpClient;
-    private ObjectProphecy $em;
-    private ObjectProphecy $logger;
+    private MockObject $httpClient;
+    private MockObject $em;
+    private MockObject $logger;
 
     protected function setUp(): void
     {
-        $this->httpClient = $this->prophesize(ClientInterface::class);
-        $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->logger = $this->prophesize(LoggerInterface::class);
+        $this->httpClient = $this->createMock(ClientInterface::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     /** @test */
     public function emptyWebhooksMakeNoFurtherActions(): void
     {
-        $find = $this->em->find(Visit::class, '1')->willReturn(null);
+        $this->em->expects($this->never())->method('find');
 
         $this->createListener([])(new VisitLocated('1'));
-
-        $find->shouldNotHaveBeenCalled();
     }
 
     /** @test */
     public function invalidVisitDoesNotPerformAnyRequest(): void
     {
-        $find = $this->em->find(Visit::class, '1')->willReturn(null);
-        $requestAsync = $this->httpClient->requestAsync(
-            RequestMethodInterface::METHOD_POST,
-            Argument::type('string'),
-            Argument::type('array'),
-        )->willReturn(new FulfilledPromise(''));
-        $logWarning = $this->logger->warning(
-            'Tried to notify webhooks for visit with id "{visitId}", but it does not exist.',
-            ['visitId' => '1'],
+        $this->em->expects($this->once())->method('find')->with(
+            $this->equalTo(Visit::class),
+            $this->equalTo('1'),
+        )->willReturn(null);
+        $this->httpClient->expects($this->never())->method('requestAsync');
+        $this->logger->expects($this->once())->method('warning')->with(
+            $this->equalTo('Tried to notify webhooks for visit with id "{visitId}", but it does not exist.'),
+            $this->equalTo(['visitId' => '1']),
         );
 
         $this->createListener(['foo', 'bar'])(new VisitLocated('1'));
-
-        $find->shouldHaveBeenCalledOnce();
-        $logWarning->shouldHaveBeenCalledOnce();
-        $requestAsync->shouldNotHaveBeenCalled();
     }
 
     /** @test */
     public function orphanVisitDoesNotPerformAnyRequestWhenDisabled(): void
     {
-        $find = $this->em->find(Visit::class, '1')->willReturn(Visit::forBasePath(Visitor::emptyInstance()));
-        $requestAsync = $this->httpClient->requestAsync(
-            RequestMethodInterface::METHOD_POST,
-            Argument::type('string'),
-            Argument::type('array'),
-        )->willReturn(new FulfilledPromise(''));
-        $logWarning = $this->logger->warning(Argument::cetera());
+        $this->em->expects($this->once())->method('find')->with(
+            $this->equalTo(Visit::class),
+            $this->equalTo('1'),
+        )->willReturn(Visit::forBasePath(Visitor::emptyInstance()));
+        $this->httpClient->expects($this->never())->method('requestAsync');
+        $this->logger->expects($this->never())->method('warning');
 
         $this->createListener(['foo', 'bar'], false)(new VisitLocated('1'));
-
-        $find->shouldHaveBeenCalledOnce();
-        $logWarning->shouldNotHaveBeenCalled();
-        $requestAsync->shouldNotHaveBeenCalled();
     }
 
     /**
@@ -103,16 +87,19 @@ class NotifyVisitToWebHooksTest extends TestCase
         $webhooks = ['foo', 'invalid', 'bar', 'baz'];
         $invalidWebhooks = ['invalid', 'baz'];
 
-        $find = $this->em->find(Visit::class, '1')->willReturn($visit);
-        $requestAsync = $this->httpClient->requestAsync(
-            RequestMethodInterface::METHOD_POST,
-            Argument::type('string'),
-            Argument::that(function (array $requestOptions) use ($expectedResponseKeys) {
+        $this->em->expects($this->once())->method('find')->with(
+            $this->equalTo(Visit::class),
+            $this->equalTo('1'),
+        )->willReturn($visit);
+        $this->httpClient->expects($this->exactly(count($webhooks)))->method('requestAsync')->with(
+            $this->equalTo(RequestMethodInterface::METHOD_POST),
+            $this->istype('string'),
+            $this->callback(function (array $requestOptions) use ($expectedResponseKeys) {
                 Assert::assertArrayHasKey(RequestOptions::HEADERS, $requestOptions);
                 Assert::assertArrayHasKey(RequestOptions::JSON, $requestOptions);
                 Assert::assertArrayHasKey(RequestOptions::TIMEOUT, $requestOptions);
-                Assert::assertEquals($requestOptions[RequestOptions::TIMEOUT], 10);
-                Assert::assertEquals($requestOptions[RequestOptions::HEADERS], ['User-Agent' => 'Shlink:v1.2.3']);
+                Assert::assertEquals(10, $requestOptions[RequestOptions::TIMEOUT]);
+                Assert::assertEquals(['User-Agent' => 'Shlink:v1.2.3'], $requestOptions[RequestOptions::HEADERS]);
 
                 $json = $requestOptions[RequestOptions::JSON];
                 Assert::assertCount(count($expectedResponseKeys), $json);
@@ -120,30 +107,24 @@ class NotifyVisitToWebHooksTest extends TestCase
                     Assert::assertArrayHasKey($key, $json);
                 }
 
-                return $requestOptions;
+                return true;
             }),
-        )->will(function (array $args) use ($invalidWebhooks) {
-            [, $webhook] = $args;
+        )->willReturnCallback(function ($_, $webhook) use ($invalidWebhooks) {
             $shouldReject = contains($invalidWebhooks, $webhook);
-
             return $shouldReject ? new RejectedPromise(new Exception('')) : new FulfilledPromise('');
         });
-        $logWarning = $this->logger->warning(
-            'Failed to notify visit with id "{visitId}" to webhook "{webhook}". {e}',
-            Argument::that(function (array $extra) {
+        $this->logger->expects($this->exactly(count($invalidWebhooks)))->method('warning')->with(
+            $this->equalTo('Failed to notify visit with id "{visitId}" to webhook "{webhook}". {e}'),
+            $this->callback(function (array $extra): bool {
                 Assert::assertArrayHasKey('webhook', $extra);
                 Assert::assertArrayHasKey('visitId', $extra);
                 Assert::assertArrayHasKey('e', $extra);
 
-                return $extra;
+                return true;
             }),
         );
 
         $this->createListener($webhooks)(new VisitLocated('1'));
-
-        $find->shouldHaveBeenCalledOnce();
-        $requestAsync->shouldHaveBeenCalledTimes(count($webhooks));
-        $logWarning->shouldHaveBeenCalledTimes(count($invalidWebhooks));
     }
 
     public function provideVisits(): iterable
@@ -158,9 +139,9 @@ class NotifyVisitToWebHooksTest extends TestCase
     private function createListener(array $webhooks, bool $notifyOrphanVisits = true): NotifyVisitToWebHooks
     {
         return new NotifyVisitToWebHooks(
-            $this->httpClient->reveal(),
-            $this->em->reveal(),
-            $this->logger->reveal(),
+            $this->httpClient,
+            $this->em,
+            $this->logger,
             new WebhookOptions(
                 ['webhooks' => $webhooks, 'notify_orphan_visits_to_webhooks' => $notifyOrphanVisits],
             ),
