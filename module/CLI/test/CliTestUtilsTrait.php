@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\CLI;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -14,8 +13,6 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 trait CliTestUtilsTrait
 {
-    use ProphecyTrait; // TODO Remove
-
     /**
      * @return MockObject & Command
      */
