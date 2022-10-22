@@ -40,7 +40,7 @@ class ProcessRunnerTest extends TestCase
         $this->output->expects($this->exactly(2))->method('isVeryVerbose')->with()->willReturn(false);
         $this->output->expects($this->once())->method('isDebug')->with()->willReturn(false);
         $this->output->expects($this->never())->method('write');
-        $this->process->expects($this->once())->method('mustRun')->withAnyParameters()->willReturn($this->process);
+        $this->process->expects($this->once())->method('mustRun')->withAnyParameters()->willReturnSelf();
         $this->process->expects($this->never())->method('isSuccessful');
         $this->process->expects($this->never())->method('getCommandLine');
         $this->helper->expects($this->never())->method('wrapCallback');
@@ -56,7 +56,7 @@ class ProcessRunnerTest extends TestCase
         $this->output->expects($this->exactly(2))->method('isVeryVerbose')->with()->willReturn(true);
         $this->output->expects($this->once())->method('isDebug')->with()->willReturn(false);
         $this->output->expects($this->exactly(2))->method('write')->withAnyParameters();
-        $this->process->expects($this->once())->method('mustRun')->withAnyParameters()->willReturn($this->process);
+        $this->process->expects($this->once())->method('mustRun')->withAnyParameters()->willReturnSelf();
         $this->process->expects($this->exactly(2))->method('isSuccessful')->with()->willReturn(true);
         $this->process->expects($this->once())->method('getCommandLine')->with()->willReturn('true');
         $this->formatter->expects($this->once())->method('start')->withAnyParameters()->willReturn('');
@@ -72,7 +72,7 @@ class ProcessRunnerTest extends TestCase
         $this->output->expects($this->exactly(2))->method('isVeryVerbose')->with()->willReturn(false);
         $this->output->expects($this->once())->method('isDebug')->with()->willReturn(true);
         $this->output->expects($this->never())->method('write');
-        $this->process->expects($this->once())->method('mustRun')->withAnyParameters()->willReturn($this->process);
+        $this->process->expects($this->once())->method('mustRun')->withAnyParameters()->willReturnSelf();
         $this->process->expects($this->never())->method('isSuccessful');
         $this->process->expects($this->never())->method('getCommandLine');
         $this->helper->expects($this->once())->method('wrapCallback')->withAnyParameters()->willReturn(
