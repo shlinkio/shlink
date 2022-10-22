@@ -73,7 +73,7 @@ class ListShortUrlsCommandTest extends TestCase
         }
 
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
-            $this->equalTo(ShortUrlsParams::emptyInstance())
+            $this->equalTo(ShortUrlsParams::emptyInstance()),
         )->willReturn(new Paginator(new ArrayAdapter($data)));
 
         $this->commandTester->setInputs(['n']);

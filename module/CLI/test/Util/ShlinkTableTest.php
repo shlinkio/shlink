@@ -32,7 +32,7 @@ class ShlinkTableTest extends TestCase
         $footerTitle = 'Footer';
 
         $this->baseTable->expects($this->once())->method('setStyle')->with(
-            $this->isInstanceOf(TableStyle::class)
+            $this->isInstanceOf(TableStyle::class),
         )->willReturnSelf();
         $this->baseTable->expects($this->once())->method('setHeaders')->with(
             $this->equalTo($headers),

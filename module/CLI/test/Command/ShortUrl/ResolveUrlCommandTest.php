@@ -53,7 +53,7 @@ class ResolveUrlCommandTest extends TestCase
         $shortCode = $identifier->shortCode;
 
         $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
-            $this->equalTo($identifier)
+            $this->equalTo($identifier),
         )->willThrowException(ShortUrlNotFoundException::fromNotFound($identifier));
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
