@@ -7,10 +7,8 @@ namespace ShlinkioTest\Shlink\CLI\GeoLite;
 use Cake\Chronos\Chronos;
 use GeoIp2\Database\Reader;
 use MaxMind\Db\Reader\Metadata;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdater;
 use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
@@ -25,23 +23,18 @@ use function range;
 
 class GeolocationDbUpdaterTest extends TestCase
 {
-    use ProphecyTrait;
-
-    private GeolocationDbUpdater $geolocationDbUpdater;
-    private ObjectProphecy $dbUpdater;
-    private ObjectProphecy $geoLiteDbReader;
-    private ObjectProphecy $lock;
+    private MockObject $dbUpdater;
+    private MockObject $geoLiteDbReader;
+    private MockObject $lock;
 
     protected function setUp(): void
     {
-        $this->dbUpdater = $this->prophesize(DbUpdaterInterface::class);
-        $this->geoLiteDbReader = $this->prophesize(Reader::class);
+        $this->dbUpdater = $this->createMock(DbUpdaterInterface::class);
+        $this->geoLiteDbReader = $this->createMock(Reader::class);
         $this->trackingOptions = new TrackingOptions();
 
-        $this->lock = $this->prophesize(Lock\LockInterface::class);
-        $this->lock->acquire(true)->willReturn(true);
-        $this->lock->release()->will(function (): void {
-        });
+        $this->lock = $this->createMock(Lock\LockInterface::class);
+        $this->lock->method('acquire')->with($this->isTrue())->willReturn(true);
     }
 
     /** @test */
@@ -50,25 +43,21 @@ class GeolocationDbUpdaterTest extends TestCase
         $mustBeUpdated = fn () => self::assertTrue(true);
         $prev = new DbUpdateException('');
 
-        $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(false);
-        $getMeta = $this->geoLiteDbReader->metadata();
-        $download = $this->dbUpdater->downloadFreshCopy(null)->willThrow($prev);
+        $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(false);
+        $this->dbUpdater->expects($this->once())->method('downloadFreshCopy')->with(
+            $this->isNull(),
+        )->willThrowException($prev);
+        $this->geoLiteDbReader->expects($this->never())->method('metadata');
 
         try {
             $this->geolocationDbUpdater()->checkDbUpdate($mustBeUpdated);
-            self::assertTrue(false); // If this is reached, the test will fail
+            self::fail();
         } catch (Throwable $e) {
             /** @var GeolocationDbUpdateFailedException $e */
             self::assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
             self::assertSame($prev, $e->getPrevious());
             self::assertFalse($e->olderDbExists());
         }
-
-        $fileExists->shouldHaveBeenCalledOnce();
-        $getMeta->shouldNotHaveBeenCalled();
-        $download->shouldHaveBeenCalledOnce();
-        $this->lock->acquire(true)->shouldHaveBeenCalledOnce();
-        $this->lock->release()->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -77,26 +66,24 @@ class GeolocationDbUpdaterTest extends TestCase
      */
     public function exceptionIsThrownWhenOlderDbIsTooOldAndDownloadFails(int $days): void
     {
-        $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(true);
-        $getMeta = $this->geoLiteDbReader->metadata()->willReturn($this->buildMetaWithBuildEpoch(
-            Chronos::now()->subDays($days)->getTimestamp(),
-        ));
         $prev = new DbUpdateException('');
-        $download = $this->dbUpdater->downloadFreshCopy(null)->willThrow($prev);
+        $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
+        $this->dbUpdater->expects($this->once())->method('downloadFreshCopy')->with(
+            $this->isNull(),
+        )->willThrowException($prev);
+        $this->geoLiteDbReader->expects($this->once())->method('metadata')->with()->willReturn(
+            $this->buildMetaWithBuildEpoch(Chronos::now()->subDays($days)->getTimestamp()),
+        );
 
         try {
             $this->geolocationDbUpdater()->checkDbUpdate();
-            self::assertTrue(false); // If this is reached, the test will fail
+            self::fail();
         } catch (Throwable $e) {
             /** @var GeolocationDbUpdateFailedException $e */
             self::assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
             self::assertSame($prev, $e->getPrevious());
             self::assertTrue($e->olderDbExists());
         }
-
-        $fileExists->shouldHaveBeenCalledOnce();
-        $getMeta->shouldHaveBeenCalledOnce();
-        $download->shouldHaveBeenCalledOnce();
     }
 
     public function provideBigDays(): iterable
@@ -113,17 +100,15 @@ class GeolocationDbUpdaterTest extends TestCase
      */
     public function databaseIsNotUpdatedIfItIsNewEnough(string|int $buildEpoch): void
     {
-        $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(true);
-        $getMeta = $this->geoLiteDbReader->metadata()->willReturn($this->buildMetaWithBuildEpoch($buildEpoch));
-        $download = $this->dbUpdater->downloadFreshCopy(null)->will(function (): void {
-        });
+        $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
+        $this->dbUpdater->expects($this->never())->method('downloadFreshCopy');
+        $this->geoLiteDbReader->expects($this->once())->method('metadata')->with()->willReturn(
+            $this->buildMetaWithBuildEpoch($buildEpoch),
+        );
 
         $result = $this->geolocationDbUpdater()->checkDbUpdate();
 
         self::assertEquals(GeolocationResult::DB_IS_UP_TO_DATE, $result);
-        $fileExists->shouldHaveBeenCalledOnce();
-        $getMeta->shouldHaveBeenCalledOnce();
-        $download->shouldNotHaveBeenCalled();
     }
 
     public function provideSmallDays(): iterable
@@ -139,18 +124,16 @@ class GeolocationDbUpdaterTest extends TestCase
     /** @test */
     public function exceptionIsThrownWhenCheckingExistingDatabaseWithInvalidBuildEpoch(): void
     {
-        $fileExists = $this->dbUpdater->databaseFileExists()->willReturn(true);
-        $getMeta = $this->geoLiteDbReader->metadata()->willReturn($this->buildMetaWithBuildEpoch('invalid'));
-        $download = $this->dbUpdater->downloadFreshCopy(null)->will(function (): void {
-        });
+        $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
+        $this->dbUpdater->expects($this->never())->method('downloadFreshCopy');
+        $this->geoLiteDbReader->expects($this->once())->method('metadata')->with()->willReturn(
+            $this->buildMetaWithBuildEpoch('invalid'),
+        );
 
         $this->expectException(GeolocationDbUpdateFailedException::class);
         $this->expectExceptionMessage(
             'Build epoch with value "invalid" from existing geolocation database, could not be parsed to integer.',
         );
-        $fileExists->shouldBeCalledOnce();
-        $getMeta->shouldBeCalledOnce();
-        $download->shouldNotBeCalled();
 
         $this->geolocationDbUpdater()->checkDbUpdate();
     }
@@ -177,10 +160,10 @@ class GeolocationDbUpdaterTest extends TestCase
     public function downloadDbIsSkippedIfTrackingIsDisabled(TrackingOptions $options): void
     {
         $result = $this->geolocationDbUpdater($options)->checkDbUpdate();
+        $this->dbUpdater->expects($this->never())->method('databaseFileExists');
+        $this->geoLiteDbReader->expects($this->never())->method('metadata');
 
         self::assertEquals(GeolocationResult::CHECK_SKIPPED, $result);
-        $this->dbUpdater->databaseFileExists(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->geoLiteDbReader->metadata(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     public function provideTrackingOptions(): iterable
@@ -192,13 +175,13 @@ class GeolocationDbUpdaterTest extends TestCase
 
     private function geolocationDbUpdater(?TrackingOptions $options = null): GeolocationDbUpdater
     {
-        $locker = $this->prophesize(Lock\LockFactory::class);
-        $locker->createLock(Argument::type('string'))->willReturn($this->lock->reveal());
+        $locker = $this->createMock(Lock\LockFactory::class);
+        $locker->method('createLock')->with($this->isType('string'))->willReturn($this->lock);
 
         return new GeolocationDbUpdater(
-            $this->dbUpdater->reveal(),
-            $this->geoLiteDbReader->reveal(),
-            $locker->reveal(),
+            $this->dbUpdater,
+            $this->geoLiteDbReader,
+            $locker,
             $options ?? new TrackingOptions(),
         );
     }
