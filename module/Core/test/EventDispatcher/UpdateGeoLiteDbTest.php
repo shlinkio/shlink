@@ -123,7 +123,7 @@ class UpdateGeoLiteDbTest extends TestCase
     ): void {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturn($result);
         $this->eventDispatcher->expects($this->exactly($expectedDispatches))->method('dispatch')->with(
-            $this->equalTo(new GeoLiteDbCreated())
+            $this->equalTo(new GeoLiteDbCreated()),
         );
 
         ($this->listener)();
