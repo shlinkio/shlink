@@ -6,10 +6,8 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\Mercure;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
@@ -20,44 +18,43 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 class NotifyNewShortUrlToMercureTest extends TestCase
 {
-    use ProphecyTrait;
-
     private NotifyNewShortUrlToMercure $listener;
-    private ObjectProphecy $helper;
-    private ObjectProphecy $updatesGenerator;
-    private ObjectProphecy $em;
-    private ObjectProphecy $logger;
+    private MockObject $helper;
+    private MockObject $updatesGenerator;
+    private MockObject $em;
+    private MockObject $logger;
 
     protected function setUp(): void
     {
-        $this->helper = $this->prophesize(PublishingHelperInterface::class);
-        $this->updatesGenerator = $this->prophesize(PublishingUpdatesGeneratorInterface::class);
-        $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->logger = $this->prophesize(LoggerInterface::class);
+        $this->helper = $this->createMock(PublishingHelperInterface::class);
+        $this->updatesGenerator = $this->createMock(PublishingUpdatesGeneratorInterface::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->listener = new NotifyNewShortUrlToMercure(
-            $this->helper->reveal(),
-            $this->updatesGenerator->reveal(),
-            $this->em->reveal(),
-            $this->logger->reveal(),
+            $this->helper,
+            $this->updatesGenerator,
+            $this->em,
+            $this->logger,
         );
     }
 
     /** @test */
     public function messageIsLoggedWhenShortUrlIsNotFound(): void
     {
-        $find = $this->em->find(ShortUrl::class, '123')->willReturn(null);
+        $this->em->expects($this->once())->method('find')->with(
+            $this->equalTo(ShortUrl::class),
+            $this->equalTo('123'),
+        )->willReturn(null);
+        $this->helper->expects($this->never())->method('publishUpdate');
+        $this->updatesGenerator->expects($this->never())->method('newShortUrlUpdate');
+        $this->logger->expects($this->once())->method('warning')->with(
+            $this->equalTo('Tried to notify {name} for new short URL with id "{shortUrlId}", but it does not exist.'),
+            $this->equalTo(['shortUrlId' => '123', 'name' => 'Mercure']),
+        );
+        $this->logger->expects($this->never())->method('debug');
 
         ($this->listener)(new ShortUrlCreated('123'));
-
-        $find->shouldHaveBeenCalledOnce();
-        $this->logger->warning(
-            'Tried to notify {name} for new short URL with id "{shortUrlId}", but it does not exist.',
-            ['shortUrlId' => '123', 'name' => 'Mercure'],
-        )->shouldHaveBeenCalledOnce();
-        $this->helper->publishUpdate(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->updatesGenerator->newShortUrlUpdate(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /** @test */
@@ -66,16 +63,18 @@ class NotifyNewShortUrlToMercureTest extends TestCase
         $shortUrl = ShortUrl::withLongUrl('');
         $update = Update::forTopicAndPayload('', []);
 
-        $find = $this->em->find(ShortUrl::class, '123')->willReturn($shortUrl);
-        $newUpdate = $this->updatesGenerator->newShortUrlUpdate($shortUrl)->willReturn($update);
+        $this->em->expects($this->once())->method('find')->with(
+            $this->equalTo(ShortUrl::class),
+            $this->equalTo('123'),
+        )->willReturn($shortUrl);
+        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with(
+            $this->equalTo($shortUrl),
+        )->willReturn($update);
+        $this->helper->expects($this->once())->method('publishUpdate')->with($this->equalTo($update));
+        $this->logger->expects($this->never())->method('warning');
+        $this->logger->expects($this->never())->method('debug');
 
         ($this->listener)(new ShortUrlCreated('123'));
-
-        $find->shouldHaveBeenCalledOnce();
-        $newUpdate->shouldHaveBeenCalledOnce();
-        $this->helper->publishUpdate($update)->shouldHaveBeenCalledOnce();
-        $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /** @test */
@@ -85,19 +84,22 @@ class NotifyNewShortUrlToMercureTest extends TestCase
         $update = Update::forTopicAndPayload('', []);
         $e = new Exception('Error');
 
-        $find = $this->em->find(ShortUrl::class, '123')->willReturn($shortUrl);
-        $newUpdate = $this->updatesGenerator->newShortUrlUpdate($shortUrl)->willReturn($update);
-        $publish = $this->helper->publishUpdate($update)->willThrow($e);
+        $this->em->expects($this->once())->method('find')->with(
+            $this->equalTo(ShortUrl::class),
+            $this->equalTo('123'),
+        )->willReturn($shortUrl);
+        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with(
+            $this->equalTo($shortUrl),
+        )->willReturn($update);
+        $this->helper->expects($this->once())->method('publishUpdate')->with(
+            $this->equalTo($update),
+        )->willThrowException($e);
+        $this->logger->expects($this->never())->method('warning');
+        $this->logger->expects($this->once())->method('debug')->with(
+            $this->equalTo('Error while trying to notify {name} with new short URL. {e}'),
+            $this->equalTo(['e' => $e, 'name' => 'Mercure']),
+        );
 
         ($this->listener)(new ShortUrlCreated('123'));
-
-        $find->shouldHaveBeenCalledOnce();
-        $newUpdate->shouldHaveBeenCalledOnce();
-        $publish->shouldHaveBeenCalledOnce();
-        $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->logger->debug(
-            'Error while trying to notify {name} with new short URL. {e}',
-            ['e' => $e, 'name' => 'Mercure'],
-        )->shouldHaveBeenCalledOnce();
     }
 }
