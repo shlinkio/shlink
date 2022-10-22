@@ -31,8 +31,8 @@ class ApplicationFactoryTest extends TestCase
                 'baz' => 'baz',
             ],
         ]);
-        $sm->setService('foo', $this->createCommandMock('foo')->reveal());
-        $sm->setService('bar', $this->createCommandMock('bar')->reveal());
+        $sm->setService('foo', $this->createCommandMock('foo'));
+        $sm->setService('bar', $this->createCommandMock('bar'));
 
         $instance = ($this->factory)($sm);
 

@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Domain;
 
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Domain\GetDomainVisitsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -25,16 +24,16 @@ class GetDomainVisitsCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private ObjectProphecy $visitsHelper;
-    private ObjectProphecy $stringifier;
+    private MockObject $visitsHelper;
+    private MockObject $stringifier;
 
     protected function setUp(): void
     {
-        $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
-        $this->stringifier = $this->prophesize(ShortUrlStringifierInterface::class);
+        $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
+        $this->stringifier = $this->createMock(ShortUrlStringifierInterface::class);
 
         $this->commandTester = $this->testerForCommand(
-            new GetDomainVisitsCommand($this->visitsHelper->reveal(), $this->stringifier->reveal()),
+            new GetDomainVisitsCommand($this->visitsHelper, $this->stringifier),
         );
     }
 
@@ -46,10 +45,13 @@ class GetDomainVisitsCommandTest extends TestCase
             VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
         $domain = 'doma.in';
-        $getVisits = $this->visitsHelper->visitsForDomain($domain, Argument::any())->willReturn(
-            new Paginator(new ArrayAdapter([$visit])),
+        $this->visitsHelper->expects($this->once())->method('visitsForDomain')->with(
+            $this->equalTo($domain),
+            $this->anything(),
+        )->willReturn(new Paginator(new ArrayAdapter([$visit])));
+        $this->stringifier->expects($this->once())->method('stringify')->with($this->equalTo($shortUrl))->willReturn(
+            'the_short_url',
         );
-        $stringify = $this->stringifier->stringify($shortUrl)->willReturn('the_short_url');
 
         $this->commandTester->execute(['domain' => $domain]);
         $output = $this->commandTester->getDisplay();
@@ -65,7 +67,5 @@ class GetDomainVisitsCommandTest extends TestCase
             OUTPUT,
             $output,
         );
-        $getVisits->shouldHaveBeenCalledOnce();
-        $stringify->shouldHaveBeenCalledOnce();
     }
 }

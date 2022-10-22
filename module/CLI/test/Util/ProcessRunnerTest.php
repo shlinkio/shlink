@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Util;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Util\ProcessRunner;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -17,90 +15,73 @@ use Symfony\Component\Process\Process;
 
 class ProcessRunnerTest extends TestCase
 {
-    use ProphecyTrait;
-
     private ProcessRunner $runner;
-    private ObjectProphecy $helper;
-    private ObjectProphecy $formatter;
-    private ObjectProphecy $process;
-    private ObjectProphecy $output;
+    private MockObject $helper;
+    private MockObject $formatter;
+    private MockObject $process;
+    private MockObject $output;
 
     protected function setUp(): void
     {
-        $this->helper = $this->prophesize(ProcessHelper::class);
-        $this->formatter = $this->prophesize(DebugFormatterHelper::class);
-        $helperSet = $this->prophesize(HelperSet::class);
-        $helperSet->get('debug_formatter')->willReturn($this->formatter->reveal());
-        $this->helper->getHelperSet()->willReturn($helperSet->reveal());
-        $this->process = $this->prophesize(Process::class);
+        $this->helper = $this->createMock(ProcessHelper::class);
+        $this->formatter = $this->createMock(DebugFormatterHelper::class);
+        $helperSet = $this->createMock(HelperSet::class);
+        $helperSet->method('get')->with($this->equalTo('debug_formatter'))->willReturn($this->formatter);
+        $this->helper->method('getHelperSet')->with()->willReturn($helperSet);
+        $this->process = $this->createMock(Process::class);
+        $this->output = $this->createMock(OutputInterface::class);
 
-        $this->runner = new ProcessRunner($this->helper->reveal(), fn () => $this->process->reveal());
-        $this->output = $this->prophesize(OutputInterface::class);
+        $this->runner = new ProcessRunner($this->helper, fn () => $this->process);
     }
 
     /** @test */
     public function noMessagesAreWrittenWhenOutputIsNotVerbose(): void
     {
-        $isVeryVerbose = $this->output->isVeryVerbose()->willReturn(false);
-        $isDebug = $this->output->isDebug()->willReturn(false);
-        $mustRun = $this->process->mustRun(Argument::cetera())->willReturn($this->process->reveal());
+        $this->output->expects($this->exactly(2))->method('isVeryVerbose')->with()->willReturn(false);
+        $this->output->expects($this->once())->method('isDebug')->with()->willReturn(false);
+        $this->output->expects($this->never())->method('write');
+        $this->process->expects($this->once())->method('mustRun')->withAnyParameters()->willReturnSelf();
+        $this->process->expects($this->never())->method('isSuccessful');
+        $this->process->expects($this->never())->method('getCommandLine');
+        $this->helper->expects($this->never())->method('wrapCallback');
+        $this->formatter->expects($this->never())->method('start');
+        $this->formatter->expects($this->never())->method('stop');
 
-        $this->runner->run($this->output->reveal(), []);
-
-        $isVeryVerbose->shouldHaveBeenCalledTimes(2);
-        $isDebug->shouldHaveBeenCalledOnce();
-        $mustRun->shouldHaveBeenCalledOnce();
-        $this->process->isSuccessful()->shouldNotHaveBeenCalled();
-        $this->process->getCommandLine()->shouldNotHaveBeenCalled();
-        $this->output->write(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->helper->wrapCallback(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->formatter->start(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->formatter->stop(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->runner->run($this->output, []);
     }
 
     /** @test */
     public function someMessagesAreWrittenWhenOutputIsVerbose(): void
     {
-        $isVeryVerbose = $this->output->isVeryVerbose()->willReturn(true);
-        $isDebug = $this->output->isDebug()->willReturn(false);
-        $mustRun = $this->process->mustRun(Argument::cetera())->willReturn($this->process->reveal());
-        $isSuccessful = $this->process->isSuccessful()->willReturn(true);
-        $getCommandLine = $this->process->getCommandLine()->willReturn('true');
-        $start = $this->formatter->start(Argument::cetera())->willReturn('');
-        $stop = $this->formatter->stop(Argument::cetera())->willReturn('');
+        $this->output->expects($this->exactly(2))->method('isVeryVerbose')->with()->willReturn(true);
+        $this->output->expects($this->once())->method('isDebug')->with()->willReturn(false);
+        $this->output->expects($this->exactly(2))->method('write')->withAnyParameters();
+        $this->process->expects($this->once())->method('mustRun')->withAnyParameters()->willReturnSelf();
+        $this->process->expects($this->exactly(2))->method('isSuccessful')->with()->willReturn(true);
+        $this->process->expects($this->once())->method('getCommandLine')->with()->willReturn('true');
+        $this->formatter->expects($this->once())->method('start')->withAnyParameters()->willReturn('');
+        $this->formatter->expects($this->once())->method('stop')->withAnyParameters()->willReturn('');
+        $this->helper->expects($this->never())->method('wrapCallback');
 
-        $this->runner->run($this->output->reveal(), []);
-
-        $isVeryVerbose->shouldHaveBeenCalledTimes(2);
-        $isDebug->shouldHaveBeenCalledOnce();
-        $mustRun->shouldHaveBeenCalledOnce();
-        $this->output->write(Argument::cetera())->shouldHaveBeenCalledTimes(2);
-        $this->helper->wrapCallback(Argument::cetera())->shouldNotHaveBeenCalled();
-        $isSuccessful->shouldHaveBeenCalledTimes(2);
-        $getCommandLine->shouldHaveBeenCalledOnce();
-        $start->shouldHaveBeenCalledOnce();
-        $stop->shouldHaveBeenCalledOnce();
+        $this->runner->run($this->output, []);
     }
 
     /** @test */
     public function wrapsCallbackWhenOutputIsDebug(): void
     {
-        $isVeryVerbose = $this->output->isVeryVerbose()->willReturn(false);
-        $isDebug = $this->output->isDebug()->willReturn(true);
-        $mustRun = $this->process->mustRun(Argument::cetera())->willReturn($this->process->reveal());
-        $wrapCallback = $this->helper->wrapCallback(Argument::cetera())->willReturn(function (): void {
-        });
+        $this->output->expects($this->exactly(2))->method('isVeryVerbose')->with()->willReturn(false);
+        $this->output->expects($this->once())->method('isDebug')->with()->willReturn(true);
+        $this->output->expects($this->never())->method('write');
+        $this->process->expects($this->once())->method('mustRun')->withAnyParameters()->willReturnSelf();
+        $this->process->expects($this->never())->method('isSuccessful');
+        $this->process->expects($this->never())->method('getCommandLine');
+        $this->helper->expects($this->once())->method('wrapCallback')->withAnyParameters()->willReturn(
+            function (): void {
+            },
+        );
+        $this->formatter->expects($this->never())->method('start');
+        $this->formatter->expects($this->never())->method('stop');
 
-        $this->runner->run($this->output->reveal(), []);
-
-        $isVeryVerbose->shouldHaveBeenCalledTimes(2);
-        $isDebug->shouldHaveBeenCalledOnce();
-        $mustRun->shouldHaveBeenCalledOnce();
-        $wrapCallback->shouldHaveBeenCalledOnce();
-        $this->process->isSuccessful()->shouldNotHaveBeenCalled();
-        $this->process->getCommandLine()->shouldNotHaveBeenCalled();
-        $this->output->write(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->formatter->start(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->formatter->stop(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->runner->run($this->output, []);
     }
 }
