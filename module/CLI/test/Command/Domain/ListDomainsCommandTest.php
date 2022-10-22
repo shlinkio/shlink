@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Domain;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Domain\ListDomainsCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
@@ -21,12 +21,12 @@ class ListDomainsCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private ObjectProphecy $domainService;
+    private MockObject $domainService;
 
     protected function setUp(): void
     {
-        $this->domainService = $this->prophesize(DomainServiceInterface::class);
-        $this->commandTester = $this->testerForCommand(new ListDomainsCommand($this->domainService->reveal()));
+        $this->domainService = $this->createMock(DomainServiceInterface::class);
+        $this->commandTester = $this->testerForCommand(new ListDomainsCommand($this->domainService));
     }
 
     /**
@@ -42,7 +42,7 @@ class ListDomainsCommandTest extends TestCase
             'https://foo.com/baz-domain/invalid',
         ));
 
-        $listDomains = $this->domainService->listDomains()->willReturn([
+        $this->domainService->expects($this->once())->method('listDomains')->with()->willReturn([
             DomainItem::forDefaultDomain('foo.com', new NotFoundRedirectOptions(
                 invalidShortUrl: 'https://foo.com/default/invalid',
                 baseUrl: 'https://foo.com/default/base',
@@ -55,7 +55,6 @@ class ListDomainsCommandTest extends TestCase
 
         self::assertEquals($expectedOutput, $this->commandTester->getDisplay());
         self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
-        $listDomains->shouldHaveBeenCalledOnce();
     }
 
     public function provideInputsAndOutputs(): iterable
