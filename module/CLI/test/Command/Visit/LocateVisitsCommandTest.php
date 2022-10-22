@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -38,7 +39,7 @@ class LocateVisitsCommandTest extends TestCase
     private ObjectProphecy $visitService;
     private ObjectProphecy $visitToLocation;
     private ObjectProphecy $lock;
-    private ObjectProphecy $downloadDbCommand;
+    private MockObject $downloadDbCommand;
 
     protected function setUp(): void
     {
@@ -59,9 +60,7 @@ class LocateVisitsCommandTest extends TestCase
         );
 
         $this->downloadDbCommand = $this->createCommandMock(DownloadGeoLiteDbCommand::NAME);
-        $this->downloadDbCommand->run(Argument::cetera())->willReturn(ExitCodes::EXIT_SUCCESS);
-
-        $this->commandTester = $this->testerForCommand($command, $this->downloadDbCommand->reveal());
+        $this->commandTester = $this->testerForCommand($command, $this->downloadDbCommand);
     }
 
     /**
@@ -87,6 +86,7 @@ class LocateVisitsCommandTest extends TestCase
         $resolveIpLocation = $this->visitToLocation->resolveVisitLocation(Argument::any())->willReturn(
             Location::emptyInstance(),
         );
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
 
         $this->commandTester->setInputs(['y']);
         $this->commandTester->execute($args);
@@ -126,6 +126,7 @@ class LocateVisitsCommandTest extends TestCase
             $this->invokeHelperMethods($visit, $location),
         );
         $resolveIpLocation = $this->visitToLocation->resolveVisitLocation(Argument::any())->willThrow($e);
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
 
@@ -154,6 +155,7 @@ class LocateVisitsCommandTest extends TestCase
         $resolveIpLocation = $this->visitToLocation->resolveVisitLocation(Argument::any())->willThrow(
             IpCannotBeLocatedException::forError(WrongIpException::fromIpAddress('1.2.3.4')),
         );
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
 
@@ -183,6 +185,7 @@ class LocateVisitsCommandTest extends TestCase
         $locateVisits = $this->visitService->locateUnlocatedVisits(Argument::cetera())->will(function (): void {
         });
         $resolveIpLocation = $this->visitToLocation->resolveVisitLocation(Argument::any());
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $output = $this->commandTester->getDisplay();
@@ -198,7 +201,7 @@ class LocateVisitsCommandTest extends TestCase
     /** @test */
     public function showsProperMessageWhenGeoLiteUpdateFails(): void
     {
-        $this->downloadDbCommand->run(Argument::cetera())->willReturn(ExitCodes::EXIT_FAILURE);
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_FAILURE);
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
@@ -210,6 +213,8 @@ class LocateVisitsCommandTest extends TestCase
     /** @test */
     public function providingAllFlagOnItsOwnDisplaysNotice(): void
     {
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
+
         $this->commandTester->execute(['--all' => true]);
         $output = $this->commandTester->getDisplay();
 
@@ -222,6 +227,8 @@ class LocateVisitsCommandTest extends TestCase
      */
     public function processingAllCancelsCommandIfUserDoesNotActivelyAgreeToConfirmation(array $inputs): void
     {
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
+
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Execution aborted');
 
