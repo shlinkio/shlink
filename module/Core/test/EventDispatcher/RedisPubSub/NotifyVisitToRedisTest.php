@@ -7,10 +7,8 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\RedisPubSub;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 use Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
@@ -24,30 +22,28 @@ use Throwable;
 
 class NotifyVisitToRedisTest extends TestCase
 {
-    use ProphecyTrait;
-
-    private ObjectProphecy $helper;
-    private ObjectProphecy $updatesGenerator;
-    private ObjectProphecy $em;
-    private ObjectProphecy $logger;
+    private MockObject $helper;
+    private MockObject $updatesGenerator;
+    private MockObject $em;
+    private MockObject $logger;
 
     protected function setUp(): void
     {
-        $this->helper = $this->prophesize(PublishingHelperInterface::class);
-        $this->updatesGenerator = $this->prophesize(PublishingUpdatesGeneratorInterface::class);
-        $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->logger = $this->prophesize(LoggerInterface::class);
+        $this->helper = $this->createMock(PublishingHelperInterface::class);
+        $this->updatesGenerator = $this->createMock(PublishingUpdatesGeneratorInterface::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     /** @test */
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
-        $this->createListener(false)(new VisitLocated('123'));
+        $this->helper->expects($this->never())->method('publishUpdate');
+        $this->em->expects($this->never())->method('find');
+        $this->logger->expects($this->never())->method('warning');
+        $this->logger->expects($this->never())->method('debug');
 
-        $this->em->find(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->helper->publishUpdate(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->createListener(false)(new VisitLocated('123'));
     }
 
     /**
@@ -57,21 +53,20 @@ class NotifyVisitToRedisTest extends TestCase
     public function printsDebugMessageInCaseOfError(Throwable $e): void
     {
         $visitId = '123';
-        $findVisit = $this->em->find(Visit::class, $visitId)->willReturn(Visit::forBasePath(Visitor::emptyInstance()));
-        $generateUpdate = $this->updatesGenerator->newOrphanVisitUpdate(Argument::type(Visit::class))->willReturn(
-            Update::forTopicAndPayload('', []),
+        $this->em->expects($this->once())->method('find')->with(
+            $this->equalTo(Visit::class),
+            $this->equalTo($visitId),
+        )->willReturn(Visit::forBasePath(Visitor::emptyInstance()));
+        $this->updatesGenerator->expects($this->once())->method('newOrphanVisitUpdate')->with(
+            $this->isInstanceOf(Visit::class),
+        )->willReturn(Update::forTopicAndPayload('', []));
+        $this->helper->expects($this->once())->method('publishUpdate')->withAnyParameters()->willThrowException($e);
+        $this->logger->expects($this->once())->method('debug')->with(
+            $this->equalTo('Error while trying to notify {name} with new visit. {e}'),
+            $this->equalTo(['e' => $e, 'name' => 'Redis pub/sub']),
         );
-        $publish = $this->helper->publishUpdate(Argument::cetera())->willThrow($e);
 
         $this->createListener()(new VisitLocated($visitId));
-
-        $this->logger->debug(
-            'Error while trying to notify {name} with new visit. {e}',
-            ['e' => $e, 'name' => 'Redis pub/sub'],
-        )->shouldHaveBeenCalledOnce();
-        $findVisit->shouldHaveBeenCalledOnce();
-        $generateUpdate->shouldHaveBeenCalledOnce();
-        $publish->shouldHaveBeenCalledOnce();
     }
 
     public function provideExceptions(): iterable
@@ -83,12 +78,6 @@ class NotifyVisitToRedisTest extends TestCase
 
     private function createListener(bool $enabled = true): NotifyVisitToRedis
     {
-        return new NotifyVisitToRedis(
-            $this->helper->reveal(),
-            $this->updatesGenerator->reveal(),
-            $this->em->reveal(),
-            $this->logger->reveal(),
-            $enabled,
-        );
+        return new NotifyVisitToRedis($this->helper, $this->updatesGenerator, $this->em, $this->logger, $enabled);
     }
 }
