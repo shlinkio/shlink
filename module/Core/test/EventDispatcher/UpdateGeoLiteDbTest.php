@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -20,24 +18,18 @@ use function Functional\map;
 
 class UpdateGeoLiteDbTest extends TestCase
 {
-    use ProphecyTrait;
-
     private UpdateGeoLiteDb $listener;
-    private ObjectProphecy $dbUpdater;
-    private ObjectProphecy $logger;
-    private ObjectProphecy $eventDispatcher;
+    private MockObject $dbUpdater;
+    private MockObject $logger;
+    private MockObject $eventDispatcher;
 
     protected function setUp(): void
     {
-        $this->dbUpdater = $this->prophesize(GeolocationDbUpdaterInterface::class);
-        $this->logger = $this->prophesize(LoggerInterface::class);
-        $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->dbUpdater = $this->createMock(GeolocationDbUpdaterInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->listener = new UpdateGeoLiteDb(
-            $this->dbUpdater->reveal(),
-            $this->logger->reveal(),
-            $this->eventDispatcher->reveal(),
-        );
+        $this->listener = new UpdateGeoLiteDb($this->dbUpdater, $this->logger, $this->eventDispatcher);
     }
 
     /** @test */
@@ -45,15 +37,15 @@ class UpdateGeoLiteDbTest extends TestCase
     {
         $e = new RuntimeException();
 
-        $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willThrow($e);
-        $logError = $this->logger->error('GeoLite2 database download failed. {e}', ['e' => $e]);
+        $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willThrowException($e);
+        $this->logger->expects($this->once())->method('error')->with(
+            $this->equalTo('GeoLite2 database download failed. {e}'),
+            $this->equalTo(['e' => $e]),
+        );
+        $this->logger->expects($this->never())->method('notice');
+        $this->eventDispatcher->expects($this->never())->method('dispatch');
 
         ($this->listener)();
-
-        $checkDbUpdate->shouldHaveBeenCalledOnce();
-        $logError->shouldHaveBeenCalledOnce();
-        $this->logger->notice(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /**
@@ -62,22 +54,17 @@ class UpdateGeoLiteDbTest extends TestCase
      */
     public function noticeMessageIsPrintedWhenFirstCallbackIsInvoked(bool $oldDbExists, string $expectedMessage): void
     {
-        $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
-            function (array $args) use ($oldDbExists): GeolocationResult {
-                [$firstCallback] = $args;
+        $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(
+            function (callable $firstCallback) use ($oldDbExists): GeolocationResult {
                 $firstCallback($oldDbExists);
-
                 return GeolocationResult::DB_IS_UP_TO_DATE;
             },
         );
-        $logNotice = $this->logger->notice($expectedMessage);
+        $this->logger->expects($this->once())->method('notice')->with($this->equalTo($expectedMessage));
+        $this->logger->expects($this->never())->method('error');
+        $this->eventDispatcher->expects($this->never())->method('dispatch');
 
         ($this->listener)();
-
-        $checkDbUpdate->shouldHaveBeenCalledOnce();
-        $logNotice->shouldHaveBeenCalledOnce();
-        $this->logger->error(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     public function provideFlags(): iterable
@@ -96,10 +83,8 @@ class UpdateGeoLiteDbTest extends TestCase
         bool $oldDbExists,
         ?string $expectedMessage,
     ): void {
-        $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->will(
-            function (array $args) use ($total, $downloaded, $oldDbExists): GeolocationResult {
-                [, $secondCallback] = $args;
-
+        $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(
+            function ($_, callable $secondCallback) use ($total, $downloaded, $oldDbExists): GeolocationResult {
                 // Invoke several times to ensure the log is printed only once
                 $secondCallback($total, $downloaded, $oldDbExists);
                 $secondCallback($total, $downloaded, $oldDbExists);
@@ -108,18 +93,12 @@ class UpdateGeoLiteDbTest extends TestCase
                 return GeolocationResult::DB_UPDATED;
             },
         );
-        $logNotice = $this->logger->notice($expectedMessage ?? Argument::cetera());
+        $logNoticeExpectation = $expectedMessage !== null ? $this->once() : $this->never();
+        $this->logger->expects($logNoticeExpectation)->method('notice')->with($this->equalTo($expectedMessage));
+        $this->logger->expects($this->never())->method('error');
+        $this->eventDispatcher->expects($this->never())->method('dispatch');
 
         ($this->listener)();
-
-        if ($expectedMessage !== null) {
-            $logNotice->shouldHaveBeenCalledOnce();
-        } else {
-            $logNotice->shouldNotHaveBeenCalled();
-        }
-        $checkDbUpdate->shouldHaveBeenCalledOnce();
-        $this->logger->error(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     public function provideDownloaded(): iterable
@@ -142,12 +121,12 @@ class UpdateGeoLiteDbTest extends TestCase
         GeolocationResult $result,
         int $expectedDispatches,
     ): void {
-        $checkDbUpdate = $this->dbUpdater->checkDbUpdate(Argument::cetera())->willReturn($result);
+        $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturn($result);
+        $this->eventDispatcher->expects($this->exactly($expectedDispatches))->method('dispatch')->with(
+            $this->equalTo(new GeoLiteDbCreated())
+        );
 
         ($this->listener)();
-
-        $checkDbUpdate->shouldHaveBeenCalledOnce();
-        $this->eventDispatcher->dispatch(new GeoLiteDbCreated())->shouldHaveBeenCalledTimes($expectedDispatches);
     }
 
     public function provideGeolocationResults(): iterable
