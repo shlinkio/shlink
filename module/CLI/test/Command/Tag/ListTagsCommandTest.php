@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\ListTagsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
@@ -20,33 +19,36 @@ class ListTagsCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private ObjectProphecy $tagService;
+    private MockObject $tagService;
 
     protected function setUp(): void
     {
-        $this->tagService = $this->prophesize(TagServiceInterface::class);
-        $this->commandTester = $this->testerForCommand(new ListTagsCommand($this->tagService->reveal()));
+        $this->tagService = $this->createMock(TagServiceInterface::class);
+        $this->commandTester = $this->testerForCommand(new ListTagsCommand($this->tagService));
     }
 
     /** @test */
     public function noTagsPrintsEmptyMessage(): void
     {
-        $tagsInfo = $this->tagService->tagsInfo(Argument::any())->willReturn(new Paginator(new ArrayAdapter([])));
+        $this->tagService->expects($this->once())->method('tagsInfo')->withAnyParameters()->willReturn(
+            new Paginator(new ArrayAdapter([])),
+        );
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString('No tags found', $output);
-        $tagsInfo->shouldHaveBeenCalled();
     }
 
     /** @test */
     public function listOfTagsIsPrinted(): void
     {
-        $tagsInfo = $this->tagService->tagsInfo(Argument::any())->willReturn(new Paginator(new ArrayAdapter([
-            new TagInfo('foo', 10, 2),
-            new TagInfo('bar', 7, 32),
-        ])));
+        $this->tagService->expects($this->once())->method('tagsInfo')->withAnyParameters()->willReturn(
+            new Paginator(new ArrayAdapter([
+                new TagInfo('foo', 10, 2),
+                new TagInfo('bar', 7, 32),
+            ])),
+        );
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
@@ -63,6 +65,5 @@ class ListTagsCommandTest extends TestCase
             OUTPUT,
             $output,
         );
-        $tagsInfo->shouldHaveBeenCalled();
     }
 }
