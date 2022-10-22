@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ResolveUrlCommand;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -23,12 +23,12 @@ class ResolveUrlCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private ObjectProphecy $urlResolver;
+    private MockObject $urlResolver;
 
     protected function setUp(): void
     {
-        $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
-        $this->commandTester = $this->testerForCommand(new ResolveUrlCommand($this->urlResolver->reveal()));
+        $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
+        $this->commandTester = $this->testerForCommand(new ResolveUrlCommand($this->urlResolver));
     }
 
     /** @test */
@@ -37,9 +37,9 @@ class ResolveUrlCommandTest extends TestCase
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
         $shortUrl = ShortUrl::withLongUrl($expectedUrl);
-        $this->urlResolver->resolveShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode))->willReturn(
-            $shortUrl,
-        )->shouldBeCalledOnce();
+        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
+            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode)),
+        )->willReturn($shortUrl);
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
@@ -52,9 +52,9 @@ class ResolveUrlCommandTest extends TestCase
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain('abc123');
         $shortCode = $identifier->shortCode;
 
-        $this->urlResolver->resolveShortUrl($identifier)
-            ->willThrow(ShortUrlNotFoundException::fromNotFound($identifier))
-            ->shouldBeCalledOnce();
+        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
+            $this->equalTo($identifier)
+        )->willThrowException(ShortUrlNotFoundException::fromNotFound($identifier));
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();
