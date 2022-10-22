@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
 use Cake\Chronos\Chronos;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Api\ListKeysCommand;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
@@ -21,12 +21,12 @@ class ListKeysCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private ObjectProphecy $apiKeyService;
+    private MockObject $apiKeyService;
 
     protected function setUp(): void
     {
-        $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
-        $this->commandTester = $this->testerForCommand(new ListKeysCommand($this->apiKeyService->reveal()));
+        $this->apiKeyService = $this->createMock(ApiKeyServiceInterface::class);
+        $this->commandTester = $this->testerForCommand(new ListKeysCommand($this->apiKeyService));
     }
 
     /**
@@ -35,13 +35,14 @@ class ListKeysCommandTest extends TestCase
      */
     public function returnsExpectedOutput(array $keys, bool $enabledOnly, string $expected): void
     {
-        $listKeys = $this->apiKeyService->listKeys($enabledOnly)->willReturn($keys);
+        $this->apiKeyService->expects($this->once())->method('listKeys')->with(
+            $this->equalTo($enabledOnly),
+        )->willReturn($keys);
 
         $this->commandTester->execute(['--enabled-only' => $enabledOnly]);
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals($expected, $output);
-        $listKeys->shouldHaveBeenCalledOnce();
     }
 
     public function provideKeysAndOutputs(): iterable
