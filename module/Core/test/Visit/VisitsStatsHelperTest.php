@@ -57,7 +57,7 @@ class VisitsStatsHelperTest extends TestCase
             $expectedCount * 3,
         );
         $repo->expects($this->once())->method('countOrphanVisits')->with(
-            $this->isInstanceOf(VisitsCountFiltering::class)
+            $this->isInstanceOf(VisitsCountFiltering::class),
         )->willReturn($expectedCount);
         $this->em->expects($this->once())->method('getRepository')->with(Visit::class)->willReturn($repo);
 
@@ -92,7 +92,7 @@ class VisitsStatsHelperTest extends TestCase
         )->willReturn($list);
         $repo2->method('countVisitsByShortCode')->with(
             $identifier,
-            $this->isInstanceOf(VisitsCountFiltering::class)
+            $this->isInstanceOf(VisitsCountFiltering::class),
         )->willReturn(1);
 
         $this->em->expects($this->exactly(2))->method('getRepository')->willReturnMap([

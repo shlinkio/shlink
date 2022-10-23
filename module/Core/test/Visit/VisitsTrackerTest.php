@@ -33,7 +33,7 @@ class VisitsTrackerTest extends TestCase
     public function trackPersistsVisitAndDispatchesEvent(string $method, array $args): void
     {
         $this->em->expects($this->once())->method('persist')->with(
-            $this->callback(fn (Visit $visit) => $visit->setId('1') !== null)
+            $this->callback(fn (Visit $visit) => $visit->setId('1') !== null),
         );
         $this->em->expects($this->once())->method('flush');
         $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
@@ -41,7 +41,6 @@ class VisitsTrackerTest extends TestCase
         );
 
         $this->visitsTracker()->{$method}(...$args);
-
     }
 
     /**
