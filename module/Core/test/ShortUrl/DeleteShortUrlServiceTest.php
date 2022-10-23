@@ -6,10 +6,8 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
 use Shlinkio\Shlink\Core\Options\DeleteShortUrlsOptions;
 use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlService;
@@ -25,10 +23,8 @@ use function sprintf;
 
 class DeleteShortUrlServiceTest extends TestCase
 {
-    use ProphecyTrait;
-
-    private ObjectProphecy $em;
-    private ObjectProphecy $urlResolver;
+    private MockObject $em;
+    private MockObject $urlResolver;
     private string $shortCode;
 
     protected function setUp(): void
@@ -38,10 +34,10 @@ class DeleteShortUrlServiceTest extends TestCase
         ));
         $this->shortCode = $shortUrl->getShortCode();
 
-        $this->em = $this->prophesize(EntityManagerInterface::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
 
-        $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
-        $this->urlResolver->resolveShortUrl(Argument::cetera())->willReturn($shortUrl);
+        $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
+        $this->urlResolver->method('resolveShortUrl')->willReturn($shortUrl);
     }
 
     /** @test */
@@ -63,13 +59,12 @@ class DeleteShortUrlServiceTest extends TestCase
     {
         $service = $this->createService();
 
-        $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
-        $flush = $this->em->flush()->willReturn(null);
+        $this->em->expects($this->once())->method('remove')->with($this->isInstanceOf(ShortUrl::class))->willReturn(
+            null,
+        );
+        $this->em->expects($this->once())->method('flush')->with()->willReturn(null);
 
         $service->deleteByShortCode(ShortUrlIdentifier::fromShortCodeAndDomain($this->shortCode), true);
-
-        $remove->shouldHaveBeenCalledOnce();
-        $flush->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
@@ -77,13 +72,12 @@ class DeleteShortUrlServiceTest extends TestCase
     {
         $service = $this->createService(false);
 
-        $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
-        $flush = $this->em->flush()->willReturn(null);
+        $this->em->expects($this->once())->method('remove')->with($this->isInstanceOf(ShortUrl::class))->willReturn(
+            null,
+        );
+        $this->em->expects($this->once())->method('flush')->with()->willReturn(null);
 
         $service->deleteByShortCode(ShortUrlIdentifier::fromShortCodeAndDomain($this->shortCode));
-
-        $remove->shouldHaveBeenCalledOnce();
-        $flush->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
@@ -91,20 +85,19 @@ class DeleteShortUrlServiceTest extends TestCase
     {
         $service = $this->createService(true, 100);
 
-        $remove = $this->em->remove(Argument::type(ShortUrl::class))->willReturn(null);
-        $flush = $this->em->flush()->willReturn(null);
+        $this->em->expects($this->once())->method('remove')->with($this->isInstanceOf(ShortUrl::class))->willReturn(
+            null,
+        );
+        $this->em->expects($this->once())->method('flush')->with()->willReturn(null);
 
         $service->deleteByShortCode(ShortUrlIdentifier::fromShortCodeAndDomain($this->shortCode));
-
-        $remove->shouldHaveBeenCalledOnce();
-        $flush->shouldHaveBeenCalledOnce();
     }
 
     private function createService(bool $checkVisitsThreshold = true, int $visitsThreshold = 5): DeleteShortUrlService
     {
-        return new DeleteShortUrlService($this->em->reveal(), new DeleteShortUrlsOptions(
+        return new DeleteShortUrlService($this->em, new DeleteShortUrlsOptions(
             $visitsThreshold,
             $checkVisitsThreshold,
-        ), $this->urlResolver->reveal());
+        ), $this->urlResolver);
     }
 }
