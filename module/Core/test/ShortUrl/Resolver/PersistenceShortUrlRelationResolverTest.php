@@ -6,10 +6,8 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Resolver;
 
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
@@ -20,26 +18,22 @@ use function count;
 
 class PersistenceShortUrlRelationResolverTest extends TestCase
 {
-    use ProphecyTrait;
-
     private PersistenceShortUrlRelationResolver $resolver;
-    private ObjectProphecy $em;
+    private MockObject $em;
 
     protected function setUp(): void
     {
-        $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->em->getEventManager()->willReturn(new EventManager());
+        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->em->method('getEventManager')->willReturn(new EventManager());
 
-        $this->resolver = new PersistenceShortUrlRelationResolver($this->em->reveal());
+        $this->resolver = new PersistenceShortUrlRelationResolver($this->em);
     }
 
     /** @test */
     public function returnsEmptyWhenNoDomainIsProvided(): void
     {
-        $getRepository = $this->em->getRepository(Domain::class);
-
+        $this->em->expects($this->never())->method('getRepository')->with(Domain::class);
         self::assertNull($this->resolver->resolveDomain(null));
-        $getRepository->shouldNotHaveBeenCalled();
     }
 
     /**
@@ -48,9 +42,9 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
      */
     public function findsOrCreatesDomainWhenValueIsProvided(?Domain $foundDomain, string $authority): void
     {
-        $repo = $this->prophesize(DomainRepositoryInterface::class);
-        $findDomain = $repo->findOneBy(['authority' => $authority])->willReturn($foundDomain);
-        $getRepository = $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
+        $repo = $this->createMock(DomainRepositoryInterface::class);
+        $repo->expects($this->once())->method('findOneBy')->with(['authority' => $authority])->willReturn($foundDomain);
+        $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
 
         $result = $this->resolver->resolveDomain($authority);
 
@@ -59,8 +53,6 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         }
         self::assertInstanceOf(Domain::class, $result);
         self::assertEquals($authority, $result->getAuthority());
-        $findDomain->shouldHaveBeenCalledOnce();
-        $getRepository->shouldHaveBeenCalledOnce();
     }
 
     public function provideFoundDomains(): iterable
@@ -79,21 +71,22 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     {
         $expectedPersistedTags = count($expectedTags);
 
-        $tagRepo = $this->prophesize(TagRepositoryInterface::class);
-        $findTag = $tagRepo->findOneBy(Argument::type('array'))->will(function (array $args): ?Tag {
-            ['name' => $name] = $args[0];
+        $tagRepo = $this->createMock(TagRepositoryInterface::class);
+        $tagRepo->expects($this->exactly($expectedPersistedTags))->method('findOneBy')->with(
+            $this->isType('array'),
+        )->willReturnCallback(function (array $criteria): ?Tag {
+            ['name' => $name] = $criteria;
             return $name === 'foo' ? new Tag($name) : null;
         });
-        $getRepo = $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
-        $persist = $this->em->persist(Argument::type(Tag::class));
+        $this->em->expects($this->once())->method('getRepository')->with(Tag::class)->willReturn($tagRepo);
+        $this->em->expects($this->exactly($expectedPersistedTags))->method('persist')->with(
+            $this->isInstanceOf(Tag::class),
+        );
 
         $result = $this->resolver->resolveTags($tags);
 
         self::assertCount($expectedPersistedTags, $result);
         self::assertEquals($expectedTags, $result->toArray());
-        $findTag->shouldHaveBeenCalledTimes($expectedPersistedTags);
-        $getRepo->shouldHaveBeenCalledOnce();
-        $persist->shouldHaveBeenCalledTimes($expectedPersistedTags);
     }
 
     public function provideTags(): iterable
@@ -105,25 +98,20 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     /** @test */
     public function returnsEmptyCollectionWhenProvidingEmptyListOfTags(): void
     {
-        $tagRepo = $this->prophesize(TagRepositoryInterface::class);
-        $findTag = $tagRepo->findOneBy(Argument::type('array'))->willReturn(null);
-        $getRepo = $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
-        $persist = $this->em->persist(Argument::type(Tag::class));
+        $this->em->expects($this->never())->method('getRepository')->with(Tag::class);
+        $this->em->expects($this->never())->method('persist');
 
         $result = $this->resolver->resolveTags([]);
 
         self::assertEmpty($result);
-        $findTag->shouldNotHaveBeenCalled();
-        $getRepo->shouldNotHaveBeenCalled();
-        $persist->shouldNotHaveBeenCalled();
     }
 
     /** @test */
     public function newDomainsAreMemoizedUntilStateIsCleared(): void
     {
-        $repo = $this->prophesize(DomainRepositoryInterface::class);
-        $repo->findOneBy(Argument::type('array'))->willReturn(null);
-        $this->em->getRepository(Domain::class)->willReturn($repo->reveal());
+        $repo = $this->createMock(DomainRepositoryInterface::class);
+        $repo->expects($this->exactly(3))->method('findOneBy')->with($this->isType('array'))->willReturn(null);
+        $this->em->method('getRepository')->with(Domain::class)->willReturn($repo);
 
         $authority = 'foo.com';
         $domain1 = $this->resolver->resolveDomain($authority);
@@ -140,11 +128,9 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     /** @test */
     public function newTagsAreMemoizedUntilStateIsCleared(): void
     {
-        $tagRepo = $this->prophesize(TagRepositoryInterface::class);
-        $tagRepo->findOneBy(Argument::type('array'))->willReturn(null);
-        $this->em->getRepository(Tag::class)->willReturn($tagRepo->reveal());
-        $this->em->persist(Argument::type(Tag::class))->will(function (): void {
-        });
+        $tagRepo = $this->createMock(TagRepositoryInterface::class);
+        $tagRepo->expects($this->exactly(6))->method('findOneBy')->with($this->isType('array'))->willReturn(null);
+        $this->em->method('getRepository')->with(Tag::class)->willReturn($tagRepo);
 
         $tags = ['foo', 'bar'];
         [$foo1, $bar1] = $this->resolver->resolveTags($tags);
