@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
@@ -19,15 +17,13 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class UpdateTagActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private UpdateTagAction $action;
-    private ObjectProphecy $tagService;
+    private MockObject $tagService;
 
     protected function setUp(): void
     {
-        $this->tagService = $this->prophesize(TagServiceInterface::class);
-        $this->action = new UpdateTagAction($this->tagService->reveal());
+        $this->tagService = $this->createMock(TagServiceInterface::class);
+        $this->action = new UpdateTagAction($this->tagService);
     }
 
     /**
@@ -57,15 +53,14 @@ class UpdateTagActionTest extends TestCase
             'oldName' => 'foo',
             'newName' => 'bar',
         ]);
-        $rename = $this->tagService->renameTag(
+        $this->tagService->expects($this->once())->method('renameTag')->with(
             TagRenaming::fromNames('foo', 'bar'),
-            Argument::type(ApiKey::class),
+            $this->isInstanceOf(ApiKey::class),
         )->willReturn(new Tag('bar'));
 
         $resp = $this->action->handle($request);
 
         self::assertEquals(204, $resp->getStatusCode());
-        $rename->shouldHaveBeenCalled();
     }
 
     private function requestWithApiKey(): ServerRequestInterface
