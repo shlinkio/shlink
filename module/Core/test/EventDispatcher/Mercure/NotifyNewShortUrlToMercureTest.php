@@ -82,7 +82,9 @@ class NotifyNewShortUrlToMercureTest extends TestCase
             ShortUrl::class,
             '123',
         )->willReturn($shortUrl);
-        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with($shortUrl)->willReturn($update);
+        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with($shortUrl)->willReturn(
+            $update,
+        );
         $this->helper->expects($this->once())->method('publishUpdate')->with($update)->willThrowException($e);
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->once())->method('debug')->with(
