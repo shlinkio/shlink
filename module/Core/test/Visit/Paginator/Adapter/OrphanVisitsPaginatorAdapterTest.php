@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Visit\Paginator\Adapter;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
@@ -17,31 +16,28 @@ use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
 
 class OrphanVisitsPaginatorAdapterTest extends TestCase
 {
-    use ProphecyTrait;
-
     private OrphanVisitsPaginatorAdapter $adapter;
-    private ObjectProphecy $repo;
+    private MockObject $repo;
     private VisitsParams $params;
 
     protected function setUp(): void
     {
-        $this->repo = $this->prophesize(VisitRepositoryInterface::class);
+        $this->repo = $this->createMock(VisitRepositoryInterface::class);
         $this->params = VisitsParams::fromRawData([]);
-        $this->adapter = new OrphanVisitsPaginatorAdapter($this->repo->reveal(), $this->params);
+        $this->adapter = new OrphanVisitsPaginatorAdapter($this->repo, $this->params);
     }
 
     /** @test */
     public function countDelegatesToRepository(): void
     {
         $expectedCount = 5;
-        $repoCount = $this->repo->countOrphanVisits(
+        $this->repo->expects($this->once())->method('countOrphanVisits')->with(
             new VisitsCountFiltering($this->params->dateRange),
         )->willReturn($expectedCount);
 
         $result = $this->adapter->getNbResults();
 
         self::assertEquals($expectedCount, $result);
-        $repoCount->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -52,14 +48,13 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     {
         $visitor = Visitor::emptyInstance();
         $list = [Visit::forRegularNotFound($visitor), Visit::forInvalidShortUrl($visitor)];
-        $repoFind = $this->repo->findOrphanVisits(
+        $this->repo->expects($this->once())->method('findOrphanVisits')->with(
             new VisitsListFiltering($this->params->dateRange, $this->params->excludeBots, null, $limit, $offset),
         )->willReturn($list);
 
         $result = $this->adapter->getSlice($offset, $limit);
 
         self::assertEquals($list, $result);
-        $repoFind->shouldHaveBeenCalledOnce();
     }
 
     public function provideLimitAndOffset(): iterable

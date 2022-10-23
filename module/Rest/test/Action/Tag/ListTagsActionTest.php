@@ -7,10 +7,8 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
@@ -23,15 +21,13 @@ use function count;
 
 class ListTagsActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private ListTagsAction $action;
-    private ObjectProphecy $tagService;
+    private MockObject $tagService;
 
     protected function setUp(): void
     {
-        $this->tagService = $this->prophesize(TagServiceInterface::class);
-        $this->action = new ListTagsAction($this->tagService->reveal());
+        $this->tagService = $this->createMock(TagServiceInterface::class);
+        $this->action = new ListTagsAction($this->tagService);
     }
 
     /**
@@ -42,9 +38,10 @@ class ListTagsActionTest extends TestCase
     {
         $tags = [new Tag('foo'), new Tag('bar')];
         $tagsCount = count($tags);
-        $listTags = $this->tagService->listTags(Argument::any(), Argument::type(ApiKey::class))->willReturn(
-            new Paginator(new ArrayAdapter($tags)),
-        );
+        $this->tagService->expects($this->once())->method('listTags')->with(
+            $this->anything(),
+            $this->isInstanceOf(ApiKey::class),
+        )->willReturn(new Paginator(new ArrayAdapter($tags)));
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle($this->requestWithApiKey()->withQueryParams($query));
@@ -62,7 +59,6 @@ class ListTagsActionTest extends TestCase
                 ],
             ],
         ], $payload);
-        $listTags->shouldHaveBeenCalled();
     }
 
     public function provideNoStatsQueries(): iterable
@@ -80,9 +76,10 @@ class ListTagsActionTest extends TestCase
             new TagInfo('bar', 3, 10),
         ];
         $itemsCount = count($stats);
-        $tagsInfo = $this->tagService->tagsInfo(Argument::any(), Argument::type(ApiKey::class))->willReturn(
-            new Paginator(new ArrayAdapter($stats)),
-        );
+        $this->tagService->expects($this->once())->method('tagsInfo')->with(
+            $this->anything(),
+            $this->isInstanceOf(ApiKey::class),
+        )->willReturn(new Paginator(new ArrayAdapter($stats)));
         $req = $this->requestWithApiKey()->withQueryParams(['withStats' => 'true']);
 
         /** @var JsonResponse $resp */
@@ -102,7 +99,6 @@ class ListTagsActionTest extends TestCase
                 ],
             ],
         ], $payload);
-        $tagsInfo->shouldHaveBeenCalled();
     }
 
     private function requestWithApiKey(): ServerRequestInterface

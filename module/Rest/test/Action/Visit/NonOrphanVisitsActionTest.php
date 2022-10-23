@@ -7,10 +7,8 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
@@ -19,24 +17,23 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class NonOrphanVisitsActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private NonOrphanVisitsAction $action;
-    private ObjectProphecy $visitsHelper;
+    private MockObject $visitsHelper;
 
     protected function setUp(): void
     {
-        $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
-        $this->action = new NonOrphanVisitsAction($this->visitsHelper->reveal());
+        $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
+        $this->action = new NonOrphanVisitsAction($this->visitsHelper);
     }
 
     /** @test */
     public function requestIsHandled(): void
     {
         $apiKey = ApiKey::create();
-        $getVisits = $this->visitsHelper->nonOrphanVisits(Argument::type(VisitsParams::class), $apiKey)->willReturn(
-            new Paginator(new ArrayAdapter([])),
-        );
+        $this->visitsHelper->expects($this->once())->method('nonOrphanVisits')->with(
+            $this->isInstanceOf(VisitsParams::class),
+            $apiKey,
+        )->willReturn(new Paginator(new ArrayAdapter([])));
 
         /** @var JsonResponse $response */
         $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, $apiKey));
@@ -44,6 +41,5 @@ class NonOrphanVisitsActionTest extends TestCase
 
         self::assertEquals(200, $response->getStatusCode());
         self::assertArrayHasKey('visits', $payload);
-        $getVisits->shouldHaveBeenCalledOnce();
     }
 }
