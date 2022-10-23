@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -18,15 +17,13 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ResolveShortUrlActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private ResolveShortUrlAction $action;
-    private ObjectProphecy $urlResolver;
+    private MockObject $urlResolver;
 
     protected function setUp(): void
     {
-        $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
-        $this->action = new ResolveShortUrlAction($this->urlResolver->reveal(), new ShortUrlDataTransformer(
+        $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
+        $this->action = new ResolveShortUrlAction($this->urlResolver, new ShortUrlDataTransformer(
             new ShortUrlStringifier([]),
         ));
     }
@@ -36,11 +33,10 @@ class ResolveShortUrlActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $apiKey = ApiKey::create();
-        $this->urlResolver->resolveShortUrl(
+        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             $apiKey,
-        )->willReturn(ShortUrl::withLongUrl('http://domain.com/foo/bar'))
-         ->shouldBeCalledOnce();
+        )->willReturn(ShortUrl::withLongUrl('http://domain.com/foo/bar'));
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)->withAttribute(ApiKey::class, $apiKey);
         $response = $this->action->handle($request);
