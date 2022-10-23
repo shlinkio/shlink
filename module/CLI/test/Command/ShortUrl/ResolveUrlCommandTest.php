@@ -38,7 +38,7 @@ class ResolveUrlCommandTest extends TestCase
         $expectedUrl = 'http://domain.com/foo/bar';
         $shortUrl = ShortUrl::withLongUrl($expectedUrl);
         $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode)),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
         )->willReturn($shortUrl);
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
@@ -52,9 +52,9 @@ class ResolveUrlCommandTest extends TestCase
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain('abc123');
         $shortCode = $identifier->shortCode;
 
-        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
-            $this->equalTo($identifier),
-        )->willThrowException(ShortUrlNotFoundException::fromNotFound($identifier));
+        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with($identifier)->willThrowException(
+            ShortUrlNotFoundException::fromNotFound($identifier),
+        );
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
         $output = $this->commandTester->getDisplay();

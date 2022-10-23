@@ -53,18 +53,13 @@ class LocateVisitTest extends TestCase
     public function invalidVisitLogsWarning(): void
     {
         $event = new UrlVisited('123');
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo('123'),
-        )->willReturn(null);
+        $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn(null);
         $this->em->expects($this->never())->method('flush');
         $this->logger->expects($this->once())->method('warning')->with(
-            $this->equalTo('Tried to locate visit with id "{visitId}", but it does not exist.'),
-            $this->equalTo(['visitId' => 123]),
+            'Tried to locate visit with id "{visitId}", but it does not exist.',
+            ['visitId' => 123],
         );
-        $this->eventDispatcher->expects($this->never())->method('dispatch')->with(
-            $this->equalTo(new VisitLocated('123')),
-        );
+        $this->eventDispatcher->expects($this->never())->method('dispatch')->with(new VisitLocated('123'));
         $this->ipLocationResolver->expects($this->never())->method('resolveIpLocation');
 
         ($this->locateVisit)($event);
@@ -74,19 +69,16 @@ class LocateVisitTest extends TestCase
     public function nonExistingGeoLiteDbLogsWarning(): void
     {
         $event = new UrlVisited('123');
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo('123'),
-        )->willReturn(Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')));
+        $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn(
+            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
+        );
         $this->em->expects($this->never())->method('flush');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->withAnyParameters()->willReturn(false);
         $this->logger->expects($this->once())->method('warning')->with(
-            $this->equalTo('Tried to locate visit with id "{visitId}", but a GeoLite2 db was not found.'),
-            $this->equalTo(['visitId' => 123]),
+            'Tried to locate visit with id "{visitId}", but a GeoLite2 db was not found.',
+            ['visitId' => 123],
         );
-        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            $this->equalTo(new VisitLocated('123')),
-        );
+        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(new VisitLocated('123'));
         $this->ipLocationResolver->expects($this->never())->method('resolveIpLocation');
 
         ($this->locateVisit)($event);
@@ -96,22 +88,19 @@ class LocateVisitTest extends TestCase
     public function invalidAddressLogsWarning(): void
     {
         $event = new UrlVisited('123');
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo('123'),
-        )->willReturn(Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')));
+        $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn(
+            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
+        );
         $this->em->expects($this->never())->method('flush');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->withAnyParameters()->willReturn(true);
         $this->ipLocationResolver->expects(
             $this->once(),
         )->method('resolveIpLocation')->withAnyParameters()->willThrowException(WrongIpException::fromIpAddress(''));
         $this->logger->expects($this->once())->method('warning')->with(
-            $this->equalTo('Tried to locate visit with id "{visitId}", but its address seems to be wrong. {e}'),
+            'Tried to locate visit with id "{visitId}", but its address seems to be wrong. {e}',
             $this->isType('array'),
         );
-        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            $this->equalTo(new VisitLocated('123')),
-        );
+        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(new VisitLocated('123'));
 
         ($this->locateVisit)($event);
     }
@@ -120,22 +109,19 @@ class LocateVisitTest extends TestCase
     public function unhandledExceptionLogsError(): void
     {
         $event = new UrlVisited('123');
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo('123'),
-        )->willReturn(Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')));
+        $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn(
+            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
+        );
         $this->em->expects($this->never())->method('flush');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->withAnyParameters()->willReturn(true);
         $this->ipLocationResolver->expects(
             $this->once(),
         )->method('resolveIpLocation')->withAnyParameters()->willThrowException(new OutOfRangeException());
         $this->logger->expects($this->once())->method('error')->with(
-            $this->equalTo('An unexpected error occurred while trying to locate visit with id "{visitId}". {e}'),
+            'An unexpected error occurred while trying to locate visit with id "{visitId}". {e}',
             $this->isType('array'),
         );
-        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            $this->equalTo(new VisitLocated('123')),
-        );
+        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(new VisitLocated('123'));
 
         ($this->locateVisit)($event);
     }
@@ -147,17 +133,12 @@ class LocateVisitTest extends TestCase
     public function nonLocatableVisitsResolveToEmptyLocations(Visit $visit): void
     {
         $event = new UrlVisited('123');
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo('123'),
-        )->willReturn($visit);
+        $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn($visit);
         $this->em->expects($this->once())->method('flush');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->withAnyParameters()->willReturn(true);
         $this->ipLocationResolver->expects($this->never())->method('resolveIpLocation');
 
-        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            $this->equalTo(new VisitLocated('123')),
-        );
+        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(new VisitLocated('123'));
         $this->logger->expects($this->never())->method('warning');
 
         ($this->locateVisit)($event);
@@ -184,19 +165,14 @@ class LocateVisitTest extends TestCase
         $location = new Location('', '', '', '', 0.0, 0.0, '');
         $event = UrlVisited::withOriginalIpAddress('123', $originalIpAddress);
 
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo('123'),
-        )->willReturn($visit);
+        $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn($visit);
         $this->em->expects($this->once())->method('flush');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->withAnyParameters()->willReturn(true);
-        $this->ipLocationResolver->expects($this->once())->method('resolveIpLocation')->with(
-            $this->equalTo($ipAddr),
-        )->willReturn($location);
-
-        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            $this->equalTo(new VisitLocated('123')),
+        $this->ipLocationResolver->expects($this->once())->method('resolveIpLocation')->with($ipAddr)->willReturn(
+            $location,
         );
+
+        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(new VisitLocated('123'));
         $this->logger->expects($this->never())->method('warning');
 
         ($this->locateVisit)($event);

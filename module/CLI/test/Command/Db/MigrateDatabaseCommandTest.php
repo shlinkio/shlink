@@ -41,15 +41,12 @@ class MigrateDatabaseCommandTest extends TestCase
     /** @test */
     public function migrationsCommandIsRunWithProperVerbosity(): void
     {
-        $this->processHelper->expects($this->once())->method('run')->with(
-            $this->isInstanceOf(OutputInterface::class),
-            $this->equalTo([
-                '/usr/local/bin/php',
-                MigrateDatabaseCommand::DOCTRINE_MIGRATIONS_SCRIPT,
-                MigrateDatabaseCommand::DOCTRINE_MIGRATE_COMMAND,
-                '--no-interaction',
-            ]),
-        );
+        $this->processHelper->expects($this->once())->method('run')->with($this->isInstanceOf(OutputInterface::class), [
+            '/usr/local/bin/php',
+            MigrateDatabaseCommand::DOCTRINE_MIGRATIONS_SCRIPT,
+            MigrateDatabaseCommand::DOCTRINE_MIGRATE_COMMAND,
+            '--no-interaction',
+        ]);
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();

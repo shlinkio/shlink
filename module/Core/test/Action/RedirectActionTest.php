@@ -50,12 +50,12 @@ class RedirectActionTest extends TestCase
         $shortCode = 'abc123';
         $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
         $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, '')),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
         )->willReturn($shortUrl);
         $this->requestTracker->expects($this->once())->method('trackIfApplicable');
         $expectedResp = new Response\RedirectResponse(self::LONG_URL);
         $this->redirectRespHelper->expects($this->once())->method('buildRedirectResponse')->with(
-            $this->equalTo(self::LONG_URL),
+            self::LONG_URL,
         )->willReturn($expectedResp);
 
         $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
@@ -69,7 +69,7 @@ class RedirectActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, '')),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
         )->willThrowException(ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain('')));
         $this->requestTracker->expects($this->never())->method('trackIfApplicable');
 

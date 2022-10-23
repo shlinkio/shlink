@@ -59,13 +59,10 @@ class NotifyVisitToRabbitMqTest extends TestCase
     public function notificationsAreNotSentWhenVisitCannotBeFound(): void
     {
         $visitId = '123';
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo($visitId),
-        )->willReturn(null);
+        $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn(null);
         $this->logger->expects($this->once())->method('warning')->with(
-            $this->equalTo('Tried to notify {name} for visit with id "{visitId}", but it does not exist.'),
-            $this->equalTo(['visitId' => $visitId, 'name' => 'RabbitMQ']),
+            'Tried to notify {name} for visit with id "{visitId}", but it does not exist.',
+            ['visitId' => $visitId, 'name' => 'RabbitMQ'],
         );
         $this->logger->expects($this->never())->method('debug');
         $this->helper->expects($this->never())->method('publishUpdate');
@@ -80,10 +77,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
     public function expectedChannelsAreNotifiedBasedOnTheVisitType(Visit $visit, array $expectedChannels): void
     {
         $visitId = '123';
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo($visitId),
-        )->willReturn($visit);
+        $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
         each($expectedChannels, function (string $method): void {
             $this->updatesGenerator->expects($this->once())->method($method)->with(
                 $this->isInstanceOf(Visit::class),
@@ -121,17 +115,16 @@ class NotifyVisitToRabbitMqTest extends TestCase
     public function printsDebugMessageInCaseOfError(Throwable $e): void
     {
         $visitId = '123';
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo($visitId),
-        )->willReturn(Visit::forBasePath(Visitor::emptyInstance()));
+        $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn(
+            Visit::forBasePath(Visitor::emptyInstance()),
+        );
         $this->updatesGenerator->expects($this->once())->method('newOrphanVisitUpdate')->with(
             $this->isInstanceOf(Visit::class),
         )->willReturn(Update::forTopicAndPayload('', []));
         $this->helper->expects($this->once())->method('publishUpdate')->withAnyParameters()->willThrowException($e);
         $this->logger->expects($this->once())->method('debug')->with(
-            $this->equalTo('Error while trying to notify {name} with new visit. {e}'),
-            $this->equalTo(['e' => $e, 'name' => 'RabbitMQ']),
+            'Error while trying to notify {name} with new visit. {e}',
+            ['e' => $e, 'name' => 'RabbitMQ'],
         );
 
         ($this->listener())(new VisitLocated($visitId));
@@ -155,10 +148,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         callable $expect,
     ): void {
         $visitId = '123';
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo($visitId),
-        )->willReturn($visit);
+        $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
         $setup($this->updatesGenerator);
         $expect($this->helper, $this->updatesGenerator);
 

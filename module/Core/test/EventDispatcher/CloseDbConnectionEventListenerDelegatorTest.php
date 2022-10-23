@@ -32,7 +32,7 @@ class CloseDbConnectionEventListenerDelegatorTest extends TestCase
             };
         };
 
-        $this->container->expects($this->once())->method('get')->with($this->equalTo('em'))->willReturn(
+        $this->container->expects($this->once())->method('get')->with('em')->willReturn(
             $this->createMock(ReopeningEntityManagerInterface::class),
         );
 

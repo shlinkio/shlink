@@ -14,7 +14,6 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.1', '8.2']
-    continue-on-error: ${{ matrix.php-version == '8.2' }}
     steps:
       - uses: actions/checkout@v3
       - uses: './.github/actions/ci-setup'

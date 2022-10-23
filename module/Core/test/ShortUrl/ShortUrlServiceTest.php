@@ -6,10 +6,8 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
@@ -27,26 +25,25 @@ use function count;
 class ShortUrlServiceTest extends TestCase
 {
     use ApiKeyHelpersTrait;
-    use ProphecyTrait;
 
     private ShortUrlService $service;
-    private ObjectProphecy $em;
-    private ObjectProphecy $urlResolver;
-    private ObjectProphecy $titleResolutionHelper;
+    private MockObject $em;
+    private MockObject $urlResolver;
+    private MockObject $titleResolutionHelper;
 
     protected function setUp(): void
     {
-        $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->em->persist(Argument::any())->willReturn(null);
-        $this->em->flush()->willReturn(null);
+        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->em->method('persist')->willReturn(null);
+        $this->em->method('flush')->willReturn(null);
 
-        $this->urlResolver = $this->prophesize(ShortUrlResolverInterface::class);
-        $this->titleResolutionHelper = $this->prophesize(ShortUrlTitleResolutionHelperInterface::class);
+        $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
+        $this->titleResolutionHelper = $this->createMock(ShortUrlTitleResolutionHelperInterface::class);
 
         $this->service = new ShortUrlService(
-            $this->em->reveal(),
-            $this->urlResolver->reveal(),
-            $this->titleResolutionHelper->reveal(),
+            $this->em,
+            $this->urlResolver,
+            $this->titleResolutionHelper,
             new SimpleShortUrlRelationResolver(),
         );
     }
@@ -64,10 +61,10 @@ class ShortUrlServiceTest extends TestCase
             ShortUrl::createEmpty(),
         ];
 
-        $repo = $this->prophesize(ShortUrlRepository::class);
-        $repo->findList(Argument::cetera())->willReturn($list)->shouldBeCalledOnce();
-        $repo->countList(Argument::cetera())->willReturn(count($list))->shouldBeCalledOnce();
-        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
+        $repo = $this->createMock(ShortUrlRepository::class);
+        $repo->expects($this->once())->method('findList')->willReturn($list);
+        $repo->expects($this->once())->method('countList')->willReturn(count($list));
+        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($repo);
 
         $paginator = $this->service->listShortUrls(ShortUrlsParams::emptyInstance(), $apiKey);
 
@@ -87,15 +84,15 @@ class ShortUrlServiceTest extends TestCase
         $originalLongUrl = 'originalLongUrl';
         $shortUrl = ShortUrl::withLongUrl($originalLongUrl);
 
-        $findShortUrl = $this->urlResolver->resolveShortUrl(
+        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain('abc123'),
             $apiKey,
         )->willReturn($shortUrl);
-        $flush = $this->em->flush()->willReturn(null);
 
-        $processTitle = $this->titleResolutionHelper->processTitleAndValidateUrl($shortUrlEdit)->willReturn(
-            $shortUrlEdit,
-        );
+        $this->titleResolutionHelper->expects($this->exactly($expectedValidateCalls))
+                                    ->method('processTitleAndValidateUrl')
+                                    ->with($shortUrlEdit)
+                                    ->willReturn($shortUrlEdit);
 
         $result = $this->service->updateShortUrl(
             ShortUrlIdentifier::fromShortCodeAndDomain('abc123'),
@@ -108,9 +105,6 @@ class ShortUrlServiceTest extends TestCase
         self::assertEquals($shortUrlEdit->validUntil(), $shortUrl->getValidUntil());
         self::assertEquals($shortUrlEdit->maxVisits(), $shortUrl->getMaxVisits());
         self::assertEquals($shortUrlEdit->longUrl() ?? $originalLongUrl, $shortUrl->getLongUrl());
-        $findShortUrl->shouldHaveBeenCalled();
-        $flush->shouldHaveBeenCalled();
-        $processTitle->shouldHaveBeenCalledTimes($expectedValidateCalls);
     }
 
     public function provideShortUrlEdits(): iterable

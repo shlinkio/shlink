@@ -27,9 +27,7 @@ class CrawlingHelperTest extends TestCase
     {
         $repo = $this->createMock(ShortUrlRepositoryInterface::class);
         $repo->expects($this->once())->method('findCrawlableShortCodes')->willReturn([]);
-        $this->em->expects($this->once())->method('getRepository')->with($this->equalTo(ShortUrl::class))->willReturn(
-            $repo,
-        );
+        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($repo);
 
         $result = $this->helper->listCrawlableShortCodes();
         foreach ($result as $shortCode) {

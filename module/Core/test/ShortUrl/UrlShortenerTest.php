@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Cake\Chronos\Chronos;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityManager;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -22,42 +20,29 @@ use Shlinkio\Shlink\Core\ShortUrl\UrlShortener;
 
 class UrlShortenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     private UrlShortener $urlShortener;
-    private ObjectProphecy $em;
-    private ObjectProphecy $titleResolutionHelper;
-    private ObjectProphecy $shortCodeHelper;
+    private MockObject $em;
+    private MockObject $titleResolutionHelper;
+    private MockObject $shortCodeHelper;
 
     protected function setUp(): void
     {
-        $this->titleResolutionHelper = $this->prophesize(ShortUrlTitleResolutionHelperInterface::class);
-        $this->titleResolutionHelper->processTitleAndValidateUrl(Argument::cetera())->willReturnArgument();
+        $this->titleResolutionHelper = $this->createMock(ShortUrlTitleResolutionHelperInterface::class);
+        $this->shortCodeHelper = $this->createMock(ShortCodeUniquenessHelperInterface::class);
 
-        $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->em->persist(Argument::any())->will(function ($arguments): void {
-            /** @var ShortUrl $shortUrl */
-            [$shortUrl] = $arguments;
-            $shortUrl->setId('10');
-        });
-        $this->em->wrapInTransaction(Argument::type('callable'))->will(function (array $args) {
-            /** @var callable $callback */
-            [$callback] = $args;
-
-            return $callback();
-        });
-        $repo = $this->prophesize(ShortUrlRepository::class);
-        $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
-
-        $this->shortCodeHelper = $this->prophesize(ShortCodeUniquenessHelperInterface::class);
-        $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(true);
+        // FIXME Should use the interface, but it doe snot define wrapInTransaction explicitly
+        $this->em = $this->createMock(EntityManager::class);
+        $this->em->method('persist')->willReturnCallback(fn (ShortUrl $shortUrl) => $shortUrl->setId('10'));
+        $this->em->method('wrapInTransaction')->with($this->isType('callable'))->willReturnCallback(
+            fn (callable $callback) => $callback(),
+        );
 
         $this->urlShortener = new UrlShortener(
-            $this->titleResolutionHelper->reveal(),
-            $this->em->reveal(),
+            $this->titleResolutionHelper,
+            $this->em,
             new SimpleShortUrlRelationResolver(),
-            $this->shortCodeHelper->reveal(),
-            $this->prophesize(EventDispatcherInterface::class)->reveal(),
+            $this->shortCodeHelper,
+            $this->createMock(EventDispatcherInterface::class),
         );
     }
 
@@ -66,23 +51,31 @@ class UrlShortenerTest extends TestCase
     {
         $longUrl = 'http://foobar.com/12345/hello?foo=bar';
         $meta = ShortUrlCreation::fromRawData(['longUrl' => $longUrl]);
+        $this->titleResolutionHelper->expects($this->once())->method('processTitleAndValidateUrl')->with(
+            $meta,
+        )->willReturnArgument(0);
+        $this->shortCodeHelper->method('ensureShortCodeUniqueness')->willReturn(true);
+
         $shortUrl = $this->urlShortener->shorten($meta);
 
         self::assertEquals($longUrl, $shortUrl->getLongUrl());
-        $this->titleResolutionHelper->processTitleAndValidateUrl($meta)->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
     public function exceptionIsThrownWhenNonUniqueSlugIsProvided(): void
     {
-        $ensureUniqueness = $this->shortCodeHelper->ensureShortCodeUniqueness(Argument::cetera())->willReturn(false);
+        $meta = ShortUrlCreation::fromRawData(
+            ['customSlug' => 'custom-slug', 'longUrl' => 'http://foobar.com/12345/hello?foo=bar'],
+        );
 
-        $ensureUniqueness->shouldBeCalledOnce();
+        $this->shortCodeHelper->expects($this->once())->method('ensureShortCodeUniqueness')->willReturn(false);
+        $this->titleResolutionHelper->expects($this->once())->method('processTitleAndValidateUrl')->with(
+            $meta,
+        )->willReturnArgument(0);
+
         $this->expectException(NonUniqueSlugException::class);
 
-        $this->urlShortener->shorten(ShortUrlCreation::fromRawData(
-            ['customSlug' => 'custom-slug', 'longUrl' => 'http://foobar.com/12345/hello?foo=bar'],
-        ));
+        $this->urlShortener->shorten($meta);
     }
 
     /**
@@ -91,16 +84,14 @@ class UrlShortenerTest extends TestCase
      */
     public function existingShortUrlIsReturnedWhenRequested(ShortUrlCreation $meta, ShortUrl $expected): void
     {
-        $repo = $this->prophesize(ShortUrlRepository::class);
-        $findExisting = $repo->findOneMatching(Argument::cetera())->willReturn($expected);
-        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
+        $repo = $this->createMock(ShortUrlRepository::class);
+        $repo->expects($this->once())->method('findOneMatching')->willReturn($expected);
+        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($repo);
+        $this->titleResolutionHelper->expects($this->never())->method('processTitleAndValidateUrl');
+        $this->shortCodeHelper->method('ensureShortCodeUniqueness')->willReturn(true);
 
         $result = $this->urlShortener->shorten($meta);
 
-        $findExisting->shouldHaveBeenCalledOnce();
-        $getRepo->shouldHaveBeenCalledOnce();
-        $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->titleResolutionHelper->processTitleAndValidateUrl(Argument::cetera())->shouldNotHaveBeenCalled();
         self::assertSame($expected, $result);
     }
 

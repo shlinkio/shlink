@@ -53,17 +53,16 @@ class NotifyVisitToRedisTest extends TestCase
     public function printsDebugMessageInCaseOfError(Throwable $e): void
     {
         $visitId = '123';
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo($visitId),
-        )->willReturn(Visit::forBasePath(Visitor::emptyInstance()));
+        $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn(
+            Visit::forBasePath(Visitor::emptyInstance()),
+        );
         $this->updatesGenerator->expects($this->once())->method('newOrphanVisitUpdate')->with(
             $this->isInstanceOf(Visit::class),
         )->willReturn(Update::forTopicAndPayload('', []));
         $this->helper->expects($this->once())->method('publishUpdate')->withAnyParameters()->willThrowException($e);
         $this->logger->expects($this->once())->method('debug')->with(
-            $this->equalTo('Error while trying to notify {name} with new visit. {e}'),
-            $this->equalTo(['e' => $e, 'name' => 'Redis pub/sub']),
+            'Error while trying to notify {name} with new visit. {e}',
+            ['e' => $e, 'name' => 'Redis pub/sub'],
         );
 
         $this->createListener()(new VisitLocated($visitId));

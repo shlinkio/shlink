@@ -39,8 +39,8 @@ class UpdateGeoLiteDbTest extends TestCase
 
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willThrowException($e);
         $this->logger->expects($this->once())->method('error')->with(
-            $this->equalTo('GeoLite2 database download failed. {e}'),
-            $this->equalTo(['e' => $e]),
+            'GeoLite2 database download failed. {e}',
+            ['e' => $e],
         );
         $this->logger->expects($this->never())->method('notice');
         $this->eventDispatcher->expects($this->never())->method('dispatch');
@@ -60,7 +60,7 @@ class UpdateGeoLiteDbTest extends TestCase
                 return GeolocationResult::DB_IS_UP_TO_DATE;
             },
         );
-        $this->logger->expects($this->once())->method('notice')->with($this->equalTo($expectedMessage));
+        $this->logger->expects($this->once())->method('notice')->with($expectedMessage);
         $this->logger->expects($this->never())->method('error');
         $this->eventDispatcher->expects($this->never())->method('dispatch');
 
@@ -94,7 +94,7 @@ class UpdateGeoLiteDbTest extends TestCase
             },
         );
         $logNoticeExpectation = $expectedMessage !== null ? $this->once() : $this->never();
-        $this->logger->expects($logNoticeExpectation)->method('notice')->with($this->equalTo($expectedMessage));
+        $this->logger->expects($logNoticeExpectation)->method('notice')->with($expectedMessage);
         $this->logger->expects($this->never())->method('error');
         $this->eventDispatcher->expects($this->never())->method('dispatch');
 
@@ -123,7 +123,7 @@ class UpdateGeoLiteDbTest extends TestCase
     ): void {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturn($result);
         $this->eventDispatcher->expects($this->exactly($expectedDispatches))->method('dispatch')->with(
-            $this->equalTo(new GeoLiteDbCreated()),
+            new GeoLiteDbCreated(),
         );
 
         ($this->listener)();

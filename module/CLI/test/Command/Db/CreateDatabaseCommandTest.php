@@ -87,7 +87,7 @@ class CreateDatabaseCommandTest extends TestCase
         $shlinkDatabase = 'shlink_database';
         $this->regularConn->expects($this->once())->method('getParams')->willReturn(['dbname' => $shlinkDatabase]);
         $this->schemaManager->expects($this->once())->method('listDatabases')->willReturn(['foo', 'bar']);
-        $this->schemaManager->expects($this->once())->method('createDatabase')->with($this->equalTo($shlinkDatabase));
+        $this->schemaManager->expects($this->once())->method('createDatabase')->with($shlinkDatabase);
         $this->schemaManager->expects($this->once())->method('listTableNames')->willReturn(
             ['foo_table', 'bar_table', MIGRATIONS_TABLE],
         );
@@ -109,15 +109,12 @@ class CreateDatabaseCommandTest extends TestCase
         );
         $this->schemaManager->expects($this->never())->method('createDatabase');
         $this->schemaManager->expects($this->once())->method('listTableNames')->willReturn($tables);
-        $this->processHelper->expects($this->once())->method('run')->with(
-            $this->isInstanceOf(OutputInterface::class),
-            $this->equalTo([
-                '/usr/local/bin/php',
-                CreateDatabaseCommand::DOCTRINE_SCRIPT,
-                CreateDatabaseCommand::DOCTRINE_CREATE_SCHEMA_COMMAND,
-                '--no-interaction',
-            ]),
-        );
+        $this->processHelper->expects($this->once())->method('run')->with($this->isInstanceOf(OutputInterface::class), [
+            '/usr/local/bin/php',
+            CreateDatabaseCommand::DOCTRINE_SCRIPT,
+            CreateDatabaseCommand::DOCTRINE_CREATE_SCHEMA_COMMAND,
+            '--no-interaction',
+        ]);
         $this->driver->method('getDatabasePlatform')->willReturn($this->createMock(AbstractPlatform::class));
 
         $this->commandTester->execute([]);

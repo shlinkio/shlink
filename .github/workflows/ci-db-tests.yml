@@ -14,7 +14,6 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.1', '8.2']
-    continue-on-error: ${{ matrix.php-version == '8.2' }}
     env:
       LC_ALL: C
     steps:

@@ -35,9 +35,7 @@ class ListKeysCommandTest extends TestCase
      */
     public function returnsExpectedOutput(array $keys, bool $enabledOnly, string $expected): void
     {
-        $this->apiKeyService->expects($this->once())->method('listKeys')->with(
-            $this->equalTo($enabledOnly),
-        )->willReturn($keys);
+        $this->apiKeyService->expects($this->once())->method('listKeys')->with($enabledOnly)->willReturn($keys);
 
         $this->commandTester->execute(['--enabled-only' => $enabledOnly]);
         $output = $this->commandTester->getDisplay();

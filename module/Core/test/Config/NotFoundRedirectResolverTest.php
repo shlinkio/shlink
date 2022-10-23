@@ -43,9 +43,9 @@ class NotFoundRedirectResolverTest extends TestCase
         string $expectedRedirectTo,
     ): void {
         $expectedResp = new Response();
-        $this->helper->expects($this->once())->method('buildRedirectResponse')->with(
-            $this->equalTo($expectedRedirectTo),
-        )->willReturn($expectedResp);
+        $this->helper->expects($this->once())->method('buildRedirectResponse')->with($expectedRedirectTo)->willReturn(
+            $expectedResp,
+        );
 
         $resp = $this->resolver->resolveRedirectResponse($notFoundType, $redirectConfig, $uri);
 

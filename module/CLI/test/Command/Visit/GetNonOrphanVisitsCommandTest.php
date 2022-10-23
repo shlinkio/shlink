@@ -47,9 +47,7 @@ class GetNonOrphanVisitsCommandTest extends TestCase
         $this->visitsHelper->expects($this->once())->method('nonOrphanVisits')->withAnyParameters()->willReturn(
             new Paginator(new ArrayAdapter([$visit])),
         );
-        $this->stringifier->expects($this->once())->method('stringify')->with($this->equalTo($shortUrl))->willReturn(
-            'the_short_url',
-        );
+        $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn('the_short_url');
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();

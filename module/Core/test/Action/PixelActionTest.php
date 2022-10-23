@@ -34,7 +34,7 @@ class PixelActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, '')),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
         )->willReturn(ShortUrl::withLongUrl('http://domain.com/foo/bar'));
         $this->requestTracker->expects($this->once())->method('trackIfApplicable')->withAnyParameters();
 

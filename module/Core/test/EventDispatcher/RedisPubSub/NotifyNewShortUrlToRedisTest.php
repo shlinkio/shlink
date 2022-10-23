@@ -54,19 +54,16 @@ class NotifyNewShortUrlToRedisTest extends TestCase
     {
         $shortUrlId = '123';
         $update = Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, []);
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(ShortUrl::class),
-            $this->equalTo($shortUrlId),
-        )->willReturn(ShortUrl::withLongUrl(''));
+        $this->em->expects($this->once())->method('find')->with(ShortUrl::class, $shortUrlId)->willReturn(
+            ShortUrl::withLongUrl(''),
+        );
         $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with(
             $this->isInstanceOf(ShortUrl::class),
         )->willReturn($update);
-        $this->helper->expects($this->once())->method('publishUpdate')->with(
-            $this->equalTo($update),
-        )->willThrowException($e);
+        $this->helper->expects($this->once())->method('publishUpdate')->with($update)->willThrowException($e);
         $this->logger->expects($this->once())->method('debug')->with(
-            $this->equalTo('Error while trying to notify {name} with new short URL. {e}'),
-            $this->equalTo(['e' => $e, 'name' => 'Redis pub/sub']),
+            'Error while trying to notify {name} with new short URL. {e}',
+            ['e' => $e, 'name' => 'Redis pub/sub'],
         );
 
         $this->createListener()(new ShortUrlCreated($shortUrlId));

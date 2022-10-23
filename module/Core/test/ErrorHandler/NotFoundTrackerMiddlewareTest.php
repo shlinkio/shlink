@@ -35,10 +35,8 @@ class NotFoundTrackerMiddlewareTest extends TestCase
     /** @test */
     public function delegatesIntoRequestTracker(): void
     {
-        $this->handler->expects($this->once())->method('handle')->with($this->equalTo($this->request));
-        $this->requestTracker->expects($this->once())->method('trackNotFoundIfApplicable')->with(
-            $this->equalTo($this->request),
-        );
+        $this->handler->expects($this->once())->method('handle')->with($this->request);
+        $this->requestTracker->expects($this->once())->method('trackNotFoundIfApplicable')->with($this->request);
 
         $this->middleware->process($this->request, $this->handler);
     }

@@ -29,7 +29,7 @@ class DisableKeyCommandTest extends TestCase
     public function providedApiKeyIsDisabled(): void
     {
         $apiKey = 'abcd1234';
-        $this->apiKeyService->expects($this->once())->method('disable')->with($this->equalTo($apiKey));
+        $this->apiKeyService->expects($this->once())->method('disable')->with($apiKey);
 
         $this->commandTester->execute([
             'apiKey' => $apiKey,
@@ -44,9 +44,9 @@ class DisableKeyCommandTest extends TestCase
     {
         $apiKey = 'abcd1234';
         $expectedMessage = 'API key "abcd1234" does not exist.';
-        $this->apiKeyService->expects($this->once())->method('disable')->with(
-            $this->equalTo($apiKey),
-        )->willThrowException(new InvalidArgumentException($expectedMessage));
+        $this->apiKeyService->expects($this->once())->method('disable')->with($apiKey)->willThrowException(
+            new InvalidArgumentException($expectedMessage),
+        );
 
         $this->commandTester->execute([
             'apiKey' => $apiKey,

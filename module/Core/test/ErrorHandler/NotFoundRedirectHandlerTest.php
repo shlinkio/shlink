@@ -51,9 +51,7 @@ class NotFoundRedirectHandlerTest extends TestCase
         $expectedResp = new Response();
 
         $setUp($this->domainService, $this->resolver);
-        $this->next->expects($this->once())->method('handle')->with($this->equalTo($this->req))->willReturn(
-            $expectedResp,
-        );
+        $this->next->expects($this->once())->method('handle')->with($this->req)->willReturn($expectedResp);
 
         $result = $this->middleware->process($this->req, $this->next);
 
@@ -105,7 +103,7 @@ class NotFoundRedirectHandlerTest extends TestCase
         $this->domainService->expects($this->once())->method('findByAuthority')->withAnyParameters()->willReturn(null);
         $this->resolver->expects($this->once())->method('resolveRedirectResponse')->with(
             $this->isInstanceOf(NotFoundType::class),
-            $this->equalTo($this->redirectOptions),
+            $this->redirectOptions,
             $this->isInstanceOf(UriInterface::class),
         )->willReturn($expectedResp);
         $this->next->expects($this->never())->method('handle');
@@ -126,7 +124,7 @@ class NotFoundRedirectHandlerTest extends TestCase
         );
         $this->resolver->expects($this->once())->method('resolveRedirectResponse')->with(
             $this->isInstanceOf(NotFoundType::class),
-            $this->equalTo($domain),
+            $domain,
             $this->isInstanceOf(UriInterface::class),
         )->willReturn($expectedResp);
         $this->next->expects($this->never())->method('handle');

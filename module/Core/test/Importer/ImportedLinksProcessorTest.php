@@ -41,7 +41,7 @@ class ImportedLinksProcessorTest extends TestCase
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
-        $this->em->method('getRepository')->with($this->equalTo(ShortUrl::class))->willReturn($this->repo);
+        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
         $this->shortCodeHelper = $this->createMock(ShortCodeUniquenessHelperInterface::class);
         $batchHelper = $this->createMock(DoctrineBatchHelperInterface::class);

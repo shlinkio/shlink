@@ -42,15 +42,12 @@ class NotifyNewShortUrlToMercureTest extends TestCase
     /** @test */
     public function messageIsLoggedWhenShortUrlIsNotFound(): void
     {
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(ShortUrl::class),
-            $this->equalTo('123'),
-        )->willReturn(null);
+        $this->em->expects($this->once())->method('find')->with(ShortUrl::class, '123')->willReturn(null);
         $this->helper->expects($this->never())->method('publishUpdate');
         $this->updatesGenerator->expects($this->never())->method('newShortUrlUpdate');
         $this->logger->expects($this->once())->method('warning')->with(
-            $this->equalTo('Tried to notify {name} for new short URL with id "{shortUrlId}", but it does not exist.'),
-            $this->equalTo(['shortUrlId' => '123', 'name' => 'Mercure']),
+            'Tried to notify {name} for new short URL with id "{shortUrlId}", but it does not exist.',
+            ['shortUrlId' => '123', 'name' => 'Mercure'],
         );
         $this->logger->expects($this->never())->method('debug');
 
@@ -63,14 +60,11 @@ class NotifyNewShortUrlToMercureTest extends TestCase
         $shortUrl = ShortUrl::withLongUrl('');
         $update = Update::forTopicAndPayload('', []);
 
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(ShortUrl::class),
-            $this->equalTo('123'),
-        )->willReturn($shortUrl);
-        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with(
-            $this->equalTo($shortUrl),
-        )->willReturn($update);
-        $this->helper->expects($this->once())->method('publishUpdate')->with($this->equalTo($update));
+        $this->em->expects($this->once())->method('find')->with(ShortUrl::class, '123')->willReturn($shortUrl);
+        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with($shortUrl)->willReturn(
+            $update,
+        );
+        $this->helper->expects($this->once())->method('publishUpdate')->with($update);
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->never())->method('debug');
 
@@ -85,19 +79,17 @@ class NotifyNewShortUrlToMercureTest extends TestCase
         $e = new Exception('Error');
 
         $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(ShortUrl::class),
-            $this->equalTo('123'),
+            ShortUrl::class,
+            '123',
         )->willReturn($shortUrl);
-        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with(
-            $this->equalTo($shortUrl),
-        )->willReturn($update);
-        $this->helper->expects($this->once())->method('publishUpdate')->with(
-            $this->equalTo($update),
-        )->willThrowException($e);
+        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with($shortUrl)->willReturn(
+            $update,
+        );
+        $this->helper->expects($this->once())->method('publishUpdate')->with($update)->willThrowException($e);
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->once())->method('debug')->with(
-            $this->equalTo('Error while trying to notify {name} with new short URL. {e}'),
-            $this->equalTo(['e' => $e, 'name' => 'Mercure']),
+            'Error while trying to notify {name} with new short URL. {e}',
+            ['e' => $e, 'name' => 'Mercure'],
         );
 
         ($this->listener)(new ShortUrlCreated('123'));
