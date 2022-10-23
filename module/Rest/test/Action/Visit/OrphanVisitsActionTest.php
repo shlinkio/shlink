@@ -7,10 +7,8 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -23,18 +21,16 @@ use function count;
 
 class OrphanVisitsActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private OrphanVisitsAction $action;
-    private ObjectProphecy $visitsHelper;
-    private ObjectProphecy $orphanVisitTransformer;
+    private MockObject $visitsHelper;
+    private MockObject $orphanVisitTransformer;
 
     protected function setUp(): void
     {
-        $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
-        $this->orphanVisitTransformer = $this->prophesize(DataTransformerInterface::class);
+        $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
+        $this->orphanVisitTransformer = $this->createMock(DataTransformerInterface::class);
 
-        $this->action = new OrphanVisitsAction($this->visitsHelper->reveal(), $this->orphanVisitTransformer->reveal());
+        $this->action = new OrphanVisitsAction($this->visitsHelper, $this->orphanVisitTransformer);
     }
 
     /** @test */
@@ -42,11 +38,13 @@ class OrphanVisitsActionTest extends TestCase
     {
         $visitor = Visitor::emptyInstance();
         $visits = [Visit::forInvalidShortUrl($visitor), Visit::forRegularNotFound($visitor)];
-        $orphanVisits = $this->visitsHelper->orphanVisits(Argument::type(VisitsParams::class))->willReturn(
-            new Paginator(new ArrayAdapter($visits)),
-        );
+        $this->visitsHelper->expects($this->once())->method('orphanVisits')->with(
+            $this->isInstanceOf(VisitsParams::class),
+        )->willReturn(new Paginator(new ArrayAdapter($visits)));
         $visitsAmount = count($visits);
-        $transform = $this->orphanVisitTransformer->transform(Argument::type(Visit::class))->willReturn([]);
+        $this->orphanVisitTransformer->expects($this->exactly($visitsAmount))->method('transform')->with(
+            $this->isInstanceOf(Visit::class),
+        )->willReturn([]);
 
         /** @var JsonResponse $response */
         $response = $this->action->handle(ServerRequestFactory::fromGlobals());
@@ -54,7 +52,5 @@ class OrphanVisitsActionTest extends TestCase
 
         self::assertCount($visitsAmount, $payload['visits']['data']);
         self::assertEquals(200, $response->getStatusCode());
-        $orphanVisits->shouldHaveBeenCalledOnce();
-        $transform->shouldHaveBeenCalledTimes($visitsAmount);
     }
 }
