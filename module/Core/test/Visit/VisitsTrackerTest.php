@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Visit;
 
 use Doctrine\ORM\EntityManager;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
@@ -19,16 +17,13 @@ use Shlinkio\Shlink\Core\Visit\VisitsTracker;
 
 class VisitsTrackerTest extends TestCase
 {
-    use ProphecyTrait;
-
-    private VisitsTracker $visitsTracker;
-    private ObjectProphecy $em;
-    private ObjectProphecy $eventDispatcher;
+    private MockObject $em;
+    private MockObject $eventDispatcher;
 
     protected function setUp(): void
     {
-        $this->em = $this->prophesize(EntityManager::class);
-        $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->em = $this->createMock(EntityManager::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     /**
@@ -37,14 +32,16 @@ class VisitsTrackerTest extends TestCase
      */
     public function trackPersistsVisitAndDispatchesEvent(string $method, array $args): void
     {
-        $persist = $this->em->persist(Argument::that(fn (Visit $visit) => $visit->setId('1')))->will(function (): void {
-        });
+        $this->em->expects($this->once())->method('persist')->with(
+            $this->callback(fn (Visit $visit) => $visit->setId('1') !== null)
+        );
+        $this->em->expects($this->once())->method('flush');
+        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
+            $this->isInstanceOf(UrlVisited::class),
+        );
 
         $this->visitsTracker()->{$method}(...$args);
 
-        $persist->shouldHaveBeenCalledOnce();
-        $this->em->flush()->shouldHaveBeenCalledOnce();
-        $this->eventDispatcher->dispatch(Argument::type(UrlVisited::class))->shouldHaveBeenCalled();
     }
 
     /**
@@ -53,11 +50,11 @@ class VisitsTrackerTest extends TestCase
      */
     public function trackingIsSkippedCompletelyWhenDisabledFromOptions(string $method, array $args): void
     {
-        $this->visitsTracker(new TrackingOptions(disableTracking: true))->{$method}(...$args);
+        $this->em->expects($this->never())->method('persist');
+        $this->em->expects($this->never())->method('flush');
+        $this->eventDispatcher->expects($this->never())->method('dispatch');
 
-        $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->em->flush()->shouldNotHaveBeenCalled();
+        $this->visitsTracker(new TrackingOptions(disableTracking: true))->{$method}(...$args);
     }
 
     public function provideTrackingMethodNames(): iterable
@@ -74,11 +71,11 @@ class VisitsTrackerTest extends TestCase
      */
     public function orphanVisitsAreNotTrackedWhenDisabled(string $method): void
     {
-        $this->visitsTracker(new TrackingOptions(trackOrphanVisits: false))->{$method}(Visitor::emptyInstance());
+        $this->em->expects($this->never())->method('persist');
+        $this->em->expects($this->never())->method('flush');
+        $this->eventDispatcher->expects($this->never())->method('dispatch');
 
-        $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->em->persist(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->em->flush()->shouldNotHaveBeenCalled();
+        $this->visitsTracker(new TrackingOptions(trackOrphanVisits: false))->{$method}(Visitor::emptyInstance());
     }
 
     public function provideOrphanTrackingMethodNames(): iterable
@@ -90,10 +87,6 @@ class VisitsTrackerTest extends TestCase
 
     private function visitsTracker(?TrackingOptions $options = null): VisitsTracker
     {
-        return new VisitsTracker(
-            $this->em->reveal(),
-            $this->eventDispatcher->reveal(),
-            $options ?? new TrackingOptions(),
-        );
+        return new VisitsTracker($this->em, $this->eventDispatcher, $options ?? new TrackingOptions());
     }
 }
