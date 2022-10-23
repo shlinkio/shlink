@@ -36,11 +36,9 @@ class RoleResolverTest extends TestCase
         array $expectedRoles,
         int $expectedDomainCalls,
     ): void {
-        $this->domainService
-            ->expects($this->exactly($expectedDomainCalls))
-            ->method('getOrCreate')
-            ->with($this->equalTo('example.com'))
-            ->willReturn(Domain::withAuthority('example.com')->setId('1'));
+        $this->domainService->expects($this->exactly($expectedDomainCalls))->method('getOrCreate')->with(
+            'example.com',
+        )->willReturn(Domain::withAuthority('example.com')->setId('1'));
 
         $result = $this->resolver->determineRoles($input);
 

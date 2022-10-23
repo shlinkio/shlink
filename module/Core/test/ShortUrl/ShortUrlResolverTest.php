@@ -48,13 +48,10 @@ class ShortUrlResolverTest extends TestCase
         $shortCode = $shortUrl->getShortCode();
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
 
-        $this->repo->expects($this->once())->method('findOne')->with(
-            $this->equalTo($identifier),
-            $this->equalTo($apiKey?->spec()),
-        )->willReturn($shortUrl);
-        $this->em->expects($this->once())->method('getRepository')->with($this->equalTo(ShortUrl::class))->willReturn(
-            $this->repo,
+        $this->repo->expects($this->once())->method('findOne')->with($identifier, $apiKey?->spec())->willReturn(
+            $shortUrl,
         );
+        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
         $result = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
 
@@ -70,13 +67,8 @@ class ShortUrlResolverTest extends TestCase
         $shortCode = 'abc123';
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
 
-        $this->repo->expects($this->once())->method('findOne')->with(
-            $this->equalTo($identifier),
-            $this->equalTo($apiKey?->spec()),
-        )->willReturn(null);
-        $this->em->expects($this->once())->method('getRepository')->with($this->equalTo(ShortUrl::class))->willReturn(
-            $this->repo,
-        );
+        $this->repo->expects($this->once())->method('findOne')->with($identifier, $apiKey?->spec())->willReturn(null);
+        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
         $this->expectException(ShortUrlNotFoundException::class);
 
@@ -90,11 +82,9 @@ class ShortUrlResolverTest extends TestCase
         $shortCode = $shortUrl->getShortCode();
 
         $this->repo->expects($this->once())->method('findOneWithDomainFallback')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode)),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
         )->willReturn($shortUrl);
-        $this->em->expects($this->once())->method('getRepository')->with($this->equalTo(ShortUrl::class))->willReturn(
-            $this->repo,
-        );
+        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
         $result = $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode));
 
@@ -110,11 +100,9 @@ class ShortUrlResolverTest extends TestCase
         $shortCode = $shortUrl->getShortCode();
 
         $this->repo->expects($this->once())->method('findOneWithDomainFallback')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode)),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
         )->willReturn($shortUrl);
-        $this->em->expects($this->once())->method('getRepository')->with($this->equalTo(ShortUrl::class))->willReturn(
-            $this->repo,
-        );
+        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
         $this->expectException(ShortUrlNotFoundException::class);
 

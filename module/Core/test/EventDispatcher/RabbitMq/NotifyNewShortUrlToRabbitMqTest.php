@@ -51,13 +51,10 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
     public function notificationsAreNotSentWhenShortUrlCannotBeFound(): void
     {
         $shortUrlId = '123';
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(ShortUrl::class),
-            $this->equalTo($shortUrlId),
-        )->willReturn(null);
+        $this->em->expects($this->once())->method('find')->with(ShortUrl::class, $shortUrlId)->willReturn(null);
         $this->logger->expects($this->once())->method('warning')->with(
-            $this->equalTo('Tried to notify {name} for new short URL with id "{shortUrlId}", but it does not exist.'),
-            $this->equalTo(['shortUrlId' => $shortUrlId, 'name' => 'RabbitMQ']),
+            'Tried to notify {name} for new short URL with id "{shortUrlId}", but it does not exist.',
+            ['shortUrlId' => $shortUrlId, 'name' => 'RabbitMQ'],
         );
         $this->logger->expects($this->never())->method('debug');
         $this->helper->expects($this->never())->method('publishUpdate');
@@ -70,14 +67,13 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
     {
         $shortUrlId = '123';
         $update = Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, []);
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(ShortUrl::class),
-            $this->equalTo($shortUrlId),
-        )->willReturn(ShortUrl::withLongUrl(''));
+        $this->em->expects($this->once())->method('find')->with(ShortUrl::class, $shortUrlId)->willReturn(
+            ShortUrl::withLongUrl(''),
+        );
         $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with(
             $this->isInstanceOf(ShortUrl::class),
         )->willReturn($update);
-        $this->helper->expects($this->once())->method('publishUpdate')->with($this->equalTo($update));
+        $this->helper->expects($this->once())->method('publishUpdate')->with($update);
         $this->logger->expects($this->never())->method('debug');
 
         ($this->listener())(new ShortUrlCreated($shortUrlId));
@@ -91,19 +87,16 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
     {
         $shortUrlId = '123';
         $update = Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, []);
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(ShortUrl::class),
-            $this->equalTo($shortUrlId),
-        )->willReturn(ShortUrl::withLongUrl(''));
+        $this->em->expects($this->once())->method('find')->with(ShortUrl::class, $shortUrlId)->willReturn(
+            ShortUrl::withLongUrl(''),
+        );
         $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with(
             $this->isInstanceOf(ShortUrl::class),
         )->willReturn($update);
-        $this->helper->expects($this->once())->method('publishUpdate')->with(
-            $this->equalTo($update),
-        )->willThrowException($e);
+        $this->helper->expects($this->once())->method('publishUpdate')->with($update)->willThrowException($e);
         $this->logger->expects($this->once())->method('debug')->with(
-            $this->equalTo('Error while trying to notify {name} with new short URL. {e}'),
-            $this->equalTo(['e' => $e, 'name' => 'RabbitMQ']),
+            'Error while trying to notify {name} with new short URL. {e}',
+            ['e' => $e, 'name' => 'RabbitMQ'],
         );
 
         ($this->listener())(new ShortUrlCreated($shortUrlId));

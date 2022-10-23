@@ -41,13 +41,10 @@ class NotifyVisitToMercureTest extends TestCase
     public function notificationsAreNotSentWhenVisitCannotBeFound(): void
     {
         $visitId = '123';
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo($visitId),
-        )->willReturn(null);
+        $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn(null);
         $this->logger->expects($this->once())->method('warning')->with(
-            $this->equalTo('Tried to notify {name} for visit with id "{visitId}", but it does not exist.'),
-            $this->equalTo(['visitId' => $visitId, 'name' => 'Mercure']),
+            'Tried to notify {name} for visit with id "{visitId}", but it does not exist.',
+            ['visitId' => $visitId, 'name' => 'Mercure'],
         );
         $this->logger->expects($this->never())->method('debug');
         $this->updatesGenerator->expects($this->never())->method('newShortUrlVisitUpdate');
@@ -65,20 +62,15 @@ class NotifyVisitToMercureTest extends TestCase
         $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance());
         $update = Update::forTopicAndPayload('', []);
 
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo($visitId),
-        )->willReturn($visit);
+        $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->never())->method('debug');
-        $this->updatesGenerator->expects($this->once())->method('newShortUrlVisitUpdate')->with(
-            $this->equalTo($visit),
-        )->willReturn($update);
+        $this->updatesGenerator->expects($this->once())->method('newShortUrlVisitUpdate')->with($visit)->willReturn(
+            $update,
+        );
         $this->updatesGenerator->expects($this->never())->method('newOrphanVisitUpdate');
-        $this->updatesGenerator->expects($this->once())->method('newVisitUpdate')->with(
-            $this->equalTo($visit),
-        )->willReturn($update);
-        $this->helper->expects($this->exactly(2))->method('publishUpdate')->with($this->equalTo($update));
+        $this->updatesGenerator->expects($this->once())->method('newVisitUpdate')->with($visit)->willReturn($update);
+        $this->helper->expects($this->exactly(2))->method('publishUpdate')->with($update);
 
         ($this->listener)(new VisitLocated($visitId));
     }
@@ -91,25 +83,18 @@ class NotifyVisitToMercureTest extends TestCase
         $update = Update::forTopicAndPayload('', []);
         $e = new RuntimeException('Error');
 
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo($visitId),
-        )->willReturn($visit);
+        $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->once())->method('debug')->with(
-            $this->equalTo('Error while trying to notify {name} with new visit. {e}'),
-            $this->equalTo(['e' => $e, 'name' => 'Mercure']),
+            'Error while trying to notify {name} with new visit. {e}',
+            ['e' => $e, 'name' => 'Mercure'],
         );
-        $this->updatesGenerator->expects($this->once())->method('newShortUrlVisitUpdate')->with(
-            $this->equalTo($visit),
-        )->willReturn($update);
+        $this->updatesGenerator->expects($this->once())->method('newShortUrlVisitUpdate')->with($visit)->willReturn(
+            $update,
+        );
         $this->updatesGenerator->expects($this->never())->method('newOrphanVisitUpdate');
-        $this->updatesGenerator->expects($this->once())->method('newVisitUpdate')->with(
-            $this->equalTo($visit),
-        )->willReturn($update);
-        $this->helper->expects($this->once())->method('publishUpdate')->with(
-            $this->equalTo($update),
-        )->willThrowException($e);
+        $this->updatesGenerator->expects($this->once())->method('newVisitUpdate')->with($visit)->willReturn($update);
+        $this->helper->expects($this->once())->method('publishUpdate')->with($update)->willThrowException($e);
 
         ($this->listener)(new VisitLocated($visitId));
     }
@@ -123,18 +108,15 @@ class NotifyVisitToMercureTest extends TestCase
         $visitId = '123';
         $update = Update::forTopicAndPayload('', []);
 
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo($visitId),
-        )->willReturn($visit);
+        $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->never())->method('debug');
         $this->updatesGenerator->expects($this->never())->method('newShortUrlVisitUpdate');
-        $this->updatesGenerator->expects($this->once())->method('newOrphanVisitUpdate')->with(
-            $this->equalTo($visit),
-        )->willReturn($update);
+        $this->updatesGenerator->expects($this->once())->method('newOrphanVisitUpdate')->with($visit)->willReturn(
+            $update,
+        );
         $this->updatesGenerator->expects($this->never())->method('newVisitUpdate');
-        $this->helper->expects($this->once())->method('publishUpdate')->with($this->equalTo($update));
+        $this->helper->expects($this->once())->method('publishUpdate')->with($update);
 
         ($this->listener)(new VisitLocated($visitId));
     }

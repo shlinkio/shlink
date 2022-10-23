@@ -45,13 +45,10 @@ class GetTagVisitsCommandTest extends TestCase
             VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
         $tag = 'abc123';
-        $this->visitsHelper->expects($this->once())->method('visitsForTag')->with(
-            $this->equalTo($tag),
-            $this->anything(),
-        )->willReturn(new Paginator(new ArrayAdapter([$visit])));
-        $this->stringifier->expects($this->once())->method('stringify')->with($this->equalTo($shortUrl))->willReturn(
-            'the_short_url',
+        $this->visitsHelper->expects($this->once())->method('visitsForTag')->with($tag, $this->anything())->willReturn(
+            new Paginator(new ArrayAdapter([$visit])),
         );
+        $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn('the_short_url');
 
         $this->commandTester->execute(['tag' => $tag]);
         $output = $this->commandTester->getDisplay();

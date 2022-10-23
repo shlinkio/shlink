@@ -47,7 +47,7 @@ class CreateShortUrlCommandTest extends TestCase
     {
         $shortUrl = ShortUrl::createEmpty();
         $this->urlShortener->expects($this->once())->method('shorten')->withAnyParameters()->willReturn($shortUrl);
-        $this->stringifier->expects($this->once())->method('stringify')->with($this->equalTo($shortUrl))->willReturn(
+        $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn(
             'stringified_short_url',
         );
 
@@ -103,7 +103,7 @@ class CreateShortUrlCommandTest extends TestCase
                 return true;
             }),
         )->willReturn($shortUrl);
-        $this->stringifier->expects($this->once())->method('stringify')->with($this->equalTo($shortUrl))->willReturn(
+        $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn(
             'stringified_short_url',
         );
 

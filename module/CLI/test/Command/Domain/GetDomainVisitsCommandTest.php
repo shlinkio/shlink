@@ -46,10 +46,10 @@ class GetDomainVisitsCommandTest extends TestCase
         );
         $domain = 'doma.in';
         $this->visitsHelper->expects($this->once())->method('visitsForDomain')->with(
-            $this->equalTo($domain),
+            $domain,
             $this->anything(),
         )->willReturn(new Paginator(new ArrayAdapter([$visit])));
-        $this->stringifier->expects($this->once())->method('stringify')->with($this->equalTo($shortUrl))->willReturn(
+        $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn(
             'the_short_url',
         );
 

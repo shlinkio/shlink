@@ -64,7 +64,7 @@ class ShortUrlServiceTest extends TestCase
         $repo = $this->createMock(ShortUrlRepository::class);
         $repo->expects($this->once())->method('findList')->willReturn($list);
         $repo->expects($this->once())->method('countList')->willReturn(count($list));
-        $this->em->method('getRepository')->with($this->equalTo(ShortUrl::class))->willReturn($repo);
+        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($repo);
 
         $paginator = $this->service->listShortUrls(ShortUrlsParams::emptyInstance(), $apiKey);
 
@@ -85,13 +85,13 @@ class ShortUrlServiceTest extends TestCase
         $shortUrl = ShortUrl::withLongUrl($originalLongUrl);
 
         $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain('abc123')),
-            $this->equalTo($apiKey),
+            ShortUrlIdentifier::fromShortCodeAndDomain('abc123'),
+            $apiKey,
         )->willReturn($shortUrl);
 
         $this->titleResolutionHelper->expects($this->exactly($expectedValidateCalls))
                                     ->method('processTitleAndValidateUrl')
-                                    ->with($this->equalTo($shortUrlEdit))
+                                    ->with($shortUrlEdit)
                                     ->willReturn($shortUrlEdit);
 
         $result = $this->service->updateShortUrl(

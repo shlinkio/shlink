@@ -73,7 +73,7 @@ class ListShortUrlsCommandTest extends TestCase
         }
 
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
-            $this->equalTo(ShortUrlsParams::emptyInstance()),
+            ShortUrlsParams::emptyInstance(),
         )->willReturn(new Paginator(new ArrayAdapter($data)));
 
         $this->commandTester->setInputs(['n']);
@@ -94,7 +94,7 @@ class ListShortUrlsCommandTest extends TestCase
     {
         $page = 5;
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
-            $this->equalTo(ShortUrlsParams::fromRawData(['page' => $page])),
+            ShortUrlsParams::fromRawData(['page' => $page]),
         )->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs(['y']);
@@ -112,7 +112,7 @@ class ListShortUrlsCommandTest extends TestCase
         ApiKey $apiKey,
     ): void {
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
-            $this->equalTo(ShortUrlsParams::emptyInstance()),
+            ShortUrlsParams::emptyInstance(),
         )->willReturn(new Paginator(new ArrayAdapter([
             ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
                 'longUrl' => 'foo.com',
@@ -187,16 +187,14 @@ class ListShortUrlsCommandTest extends TestCase
         ?string $startDate = null,
         ?string $endDate = null,
     ): void {
-        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
-            $this->equalTo(ShortUrlsParams::fromRawData([
-                'page' => $page,
-                'searchTerm' => $searchTerm,
-                'tags' => $tags,
-                'tagsMode' => $tagsMode,
-                'startDate' => $startDate !== null ? Chronos::parse($startDate)->toAtomString() : null,
-                'endDate' => $endDate !== null ? Chronos::parse($endDate)->toAtomString() : null,
-            ])),
-        )->willReturn(new Paginator(new ArrayAdapter([])));
+        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
+            'page' => $page,
+            'searchTerm' => $searchTerm,
+            'tags' => $tags,
+            'tagsMode' => $tagsMode,
+            'startDate' => $startDate !== null ? Chronos::parse($startDate)->toAtomString() : null,
+            'endDate' => $endDate !== null ? Chronos::parse($endDate)->toAtomString() : null,
+        ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute($commandArgs);
@@ -249,11 +247,9 @@ class ListShortUrlsCommandTest extends TestCase
      */
     public function orderByIsProperlyComputed(array $commandArgs, ?string $expectedOrderBy): void
     {
-        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
-            $this->equalTo(ShortUrlsParams::fromRawData([
-                'orderBy' => $expectedOrderBy,
-            ])),
-        )->willReturn(new Paginator(new ArrayAdapter([])));
+        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
+            'orderBy' => $expectedOrderBy,
+        ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute($commandArgs);
@@ -271,18 +267,16 @@ class ListShortUrlsCommandTest extends TestCase
     /** @test */
     public function requestingAllElementsWillSetItemsPerPage(): void
     {
-        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
-            $this->equalTo(ShortUrlsParams::fromRawData([
-                'page' => 1,
-                'searchTerm' => null,
-                'tags' => [],
-                'tagsMode' => TagsMode::ANY->value,
-                'startDate' => null,
-                'endDate' => null,
-                'orderBy' => null,
-                'itemsPerPage' => Paginator::ALL_ITEMS,
-            ])),
-        )->willReturn(new Paginator(new ArrayAdapter([])));
+        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
+            'page' => 1,
+            'searchTerm' => null,
+            'tags' => [],
+            'tagsMode' => TagsMode::ANY->value,
+            'startDate' => null,
+            'endDate' => null,
+            'orderBy' => null,
+            'itemsPerPage' => Paginator::ALL_ITEMS,
+        ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute(['--all' => true]);
     }

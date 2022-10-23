@@ -33,7 +33,7 @@ class RenameTagCommandTest extends TestCase
         $oldName = 'foo';
         $newName = 'bar';
         $this->tagService->expects($this->once())->method('renameTag')->with(
-            $this->equalTo(TagRenaming::fromNames($oldName, $newName)),
+            TagRenaming::fromNames($oldName, $newName),
         )->willThrowException(TagNotFoundException::fromTag('foo'));
 
         $this->commandTester->execute([
@@ -51,7 +51,7 @@ class RenameTagCommandTest extends TestCase
         $oldName = 'foo';
         $newName = 'bar';
         $this->tagService->expects($this->once())->method('renameTag')->with(
-            $this->equalTo(TagRenaming::fromNames($oldName, $newName)),
+            TagRenaming::fromNames($oldName, $newName),
         )->willReturn(new Tag($newName));
 
         $this->commandTester->execute([

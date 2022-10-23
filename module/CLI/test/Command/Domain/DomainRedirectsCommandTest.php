@@ -37,12 +37,12 @@ class DomainRedirectsCommandTest extends TestCase
     public function onlyPlainQuestionsAreAskedForNewDomainsAndDomainsWithNoRedirects(?Domain $domain): void
     {
         $domainAuthority = 'my-domain.com';
-        $this->domainService->expects($this->once())->method('findByAuthority')->with(
-            $this->equalTo($domainAuthority),
-        )->willReturn($domain);
+        $this->domainService->expects($this->once())->method('findByAuthority')->with($domainAuthority)->willReturn(
+            $domain,
+        );
         $this->domainService->expects($this->once())->method('configureNotFoundRedirects')->with(
-            $this->equalTo($domainAuthority),
-            $this->equalTo(NotFoundRedirects::withRedirects('foo.com', null, 'baz.com')),
+            $domainAuthority,
+            NotFoundRedirects::withRedirects('foo.com', null, 'baz.com'),
         )->willReturn(Domain::withAuthority(''));
         $this->domainService->expects($this->never())->method('listDomains');
 
@@ -73,12 +73,12 @@ class DomainRedirectsCommandTest extends TestCase
         $domain = Domain::withAuthority($domainAuthority);
         $domain->configureNotFoundRedirects(NotFoundRedirects::withRedirects('foo.com', 'bar.com', 'baz.com'));
 
-        $this->domainService->expects($this->once())->method('findByAuthority')->with(
-            $this->equalTo($domainAuthority),
-        )->willReturn($domain);
+        $this->domainService->expects($this->once())->method('findByAuthority')->with($domainAuthority)->willReturn(
+            $domain,
+        );
         $this->domainService->expects($this->once())->method('configureNotFoundRedirects')->with(
-            $this->equalTo($domainAuthority),
-            $this->equalTo(NotFoundRedirects::withRedirects(null, 'edited.com', 'baz.com')),
+            $domainAuthority,
+            NotFoundRedirects::withRedirects(null, 'edited.com', 'baz.com'),
         )->willReturn($domain);
         $this->domainService->expects($this->never())->method('listDomains');
 
@@ -102,12 +102,12 @@ class DomainRedirectsCommandTest extends TestCase
         $domain = Domain::withAuthority($domainAuthority);
 
         $this->domainService->expects($this->once())->method('listDomains')->with()->willReturn([]);
-        $this->domainService->expects($this->once())->method('findByAuthority')->with(
-            $this->equalTo($domainAuthority),
-        )->willReturn($domain);
+        $this->domainService->expects($this->once())->method('findByAuthority')->with($domainAuthority)->willReturn(
+            $domain,
+        );
         $this->domainService->expects($this->once())->method('configureNotFoundRedirects')->with(
-            $this->equalTo($domainAuthority),
-            $this->equalTo(NotFoundRedirects::withoutRedirects()),
+            $domainAuthority,
+            NotFoundRedirects::withoutRedirects(),
         )->willReturn($domain);
 
         $this->commandTester->setInputs([$domainAuthority, '', '', '']);
@@ -128,12 +128,12 @@ class DomainRedirectsCommandTest extends TestCase
             DomainItem::forNonDefaultDomain(Domain::withAuthority('existing-one.com')),
             DomainItem::forNonDefaultDomain(Domain::withAuthority($domainAuthority)),
         ]);
-        $this->domainService->expects($this->once())->method('findByAuthority')->with(
-            $this->equalTo($domainAuthority),
-        )->willReturn($domain);
+        $this->domainService->expects($this->once())->method('findByAuthority')->with($domainAuthority)->willReturn(
+            $domain,
+        );
         $this->domainService->expects($this->once())->method('configureNotFoundRedirects')->with(
-            $this->equalTo($domainAuthority),
-            $this->equalTo(NotFoundRedirects::withoutRedirects()),
+            $domainAuthority,
+            NotFoundRedirects::withoutRedirects(),
         )->willReturn($domain);
 
         $this->commandTester->setInputs(['1', '', '', '']);
@@ -157,12 +157,12 @@ class DomainRedirectsCommandTest extends TestCase
             DomainItem::forNonDefaultDomain(Domain::withAuthority('existing-one.com')),
             DomainItem::forNonDefaultDomain(Domain::withAuthority('existing-two.com')),
         ]);
-        $this->domainService->expects($this->once())->method('findByAuthority')->with(
-            $this->equalTo($domainAuthority),
-        )->willReturn($domain);
+        $this->domainService->expects($this->once())->method('findByAuthority')->with($domainAuthority)->willReturn(
+            $domain,
+        );
         $this->domainService->expects($this->once())->method('configureNotFoundRedirects')->with(
-            $this->equalTo($domainAuthority),
-            $this->equalTo(NotFoundRedirects::withoutRedirects()),
+            $domainAuthority,
+            NotFoundRedirects::withoutRedirects(),
         )->willReturn($domain);
 
         $this->commandTester->setInputs(['2', $domainAuthority, '', '', '']);

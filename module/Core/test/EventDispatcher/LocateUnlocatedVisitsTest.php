@@ -31,7 +31,7 @@ class LocateUnlocatedVisitsTest extends TestCase
     /** @test */
     public function locatorIsCalledWhenInvoked(): void
     {
-        $this->locator->expects($this->once())->method('locateUnlocatedVisits')->with($this->equalTo($this->listener));
+        $this->locator->expects($this->once())->method('locateUnlocatedVisits')->with($this->listener);
         ($this->listener)(new GeoLiteDbCreated());
     }
 
@@ -41,9 +41,9 @@ class LocateUnlocatedVisitsTest extends TestCase
         $visit = Visit::forBasePath(Visitor::emptyInstance());
         $location = Location::emptyInstance();
 
-        $this->visitToLocation->expects($this->once())->method('resolveVisitLocation')->with(
-            $this->equalTo($visit),
-        )->willReturn($location);
+        $this->visitToLocation->expects($this->once())->method('resolveVisitLocation')->with($visit)->willReturn(
+            $location,
+        );
 
         $result = $this->listener->geolocateVisit($visit);
 

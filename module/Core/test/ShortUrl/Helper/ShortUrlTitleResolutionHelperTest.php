@@ -29,11 +29,11 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     {
         $longUrl = 'http://foobar.com/12345/hello?foo=bar';
         $this->urlValidator->expects($this->exactly($validateWithTitleCallsNum))->method('validateUrlWithTitle')->with(
-            $this->equalTo($longUrl),
+            $longUrl,
             $this->isFalse(),
         );
         $this->urlValidator->expects($this->exactly($validateCallsNum))->method('validateUrl')->with(
-            $this->equalTo($longUrl),
+            $longUrl,
             $this->isFalse(),
         );
 

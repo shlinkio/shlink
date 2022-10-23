@@ -34,16 +34,10 @@ class ShlinkTableTest extends TestCase
         $this->baseTable->expects($this->once())->method('setStyle')->with(
             $this->isInstanceOf(TableStyle::class),
         )->willReturnSelf();
-        $this->baseTable->expects($this->once())->method('setHeaders')->with(
-            $this->equalTo($headers),
-        )->willReturnSelf();
-        $this->baseTable->expects($this->once())->method('setRows')->with($this->equalTo($rows))->willReturnSelf();
-        $this->baseTable->expects($this->once())->method('setFooterTitle')->with(
-            $this->equalTo($footerTitle),
-        )->willReturnSelf();
-        $this->baseTable->expects($this->once())->method('setHeaderTitle')->with(
-            $this->equalTo($headerTitle),
-        )->willReturnSelf();
+        $this->baseTable->expects($this->once())->method('setHeaders')->with($headers)->willReturnSelf();
+        $this->baseTable->expects($this->once())->method('setRows')->with($rows)->willReturnSelf();
+        $this->baseTable->expects($this->once())->method('setFooterTitle')->with($footerTitle)->willReturnSelf();
+        $this->baseTable->expects($this->once())->method('setHeaderTitle')->with($headerTitle)->willReturnSelf();
         $this->baseTable->expects($this->once())->method('render')->with()->willReturnSelf();
 
         $this->shlinkTable->render($headers, $rows, $footerTitle, $headerTitle);

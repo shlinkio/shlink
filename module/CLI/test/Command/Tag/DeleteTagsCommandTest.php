@@ -37,7 +37,7 @@ class DeleteTagsCommandTest extends TestCase
     public function serviceIsInvokedOnSuccess(): void
     {
         $tagNames = ['foo', 'bar'];
-        $this->tagService->expects($this->once())->method('deleteTags')->with($this->equalTo($tagNames));
+        $this->tagService->expects($this->once())->method('deleteTags')->with($tagNames);
 
         $this->commandTester->execute([
             '--name' => $tagNames,

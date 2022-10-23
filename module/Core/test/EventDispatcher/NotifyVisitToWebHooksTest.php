@@ -52,14 +52,11 @@ class NotifyVisitToWebHooksTest extends TestCase
     /** @test */
     public function invalidVisitDoesNotPerformAnyRequest(): void
     {
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo('1'),
-        )->willReturn(null);
+        $this->em->expects($this->once())->method('find')->with(Visit::class, '1')->willReturn(null);
         $this->httpClient->expects($this->never())->method('requestAsync');
         $this->logger->expects($this->once())->method('warning')->with(
-            $this->equalTo('Tried to notify webhooks for visit with id "{visitId}", but it does not exist.'),
-            $this->equalTo(['visitId' => '1']),
+            'Tried to notify webhooks for visit with id "{visitId}", but it does not exist.',
+            ['visitId' => '1'],
         );
 
         $this->createListener(['foo', 'bar'])(new VisitLocated('1'));
@@ -68,10 +65,9 @@ class NotifyVisitToWebHooksTest extends TestCase
     /** @test */
     public function orphanVisitDoesNotPerformAnyRequestWhenDisabled(): void
     {
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo('1'),
-        )->willReturn(Visit::forBasePath(Visitor::emptyInstance()));
+        $this->em->expects($this->once())->method('find')->with(Visit::class, '1')->willReturn(
+            Visit::forBasePath(Visitor::emptyInstance()),
+        );
         $this->httpClient->expects($this->never())->method('requestAsync');
         $this->logger->expects($this->never())->method('warning');
 
@@ -87,12 +83,9 @@ class NotifyVisitToWebHooksTest extends TestCase
         $webhooks = ['foo', 'invalid', 'bar', 'baz'];
         $invalidWebhooks = ['invalid', 'baz'];
 
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Visit::class),
-            $this->equalTo('1'),
-        )->willReturn($visit);
+        $this->em->expects($this->once())->method('find')->with(Visit::class, '1')->willReturn($visit);
         $this->httpClient->expects($this->exactly(count($webhooks)))->method('requestAsync')->with(
-            $this->equalTo(RequestMethodInterface::METHOD_POST),
+            RequestMethodInterface::METHOD_POST,
             $this->istype('string'),
             $this->callback(function (array $requestOptions) use ($expectedResponseKeys) {
                 Assert::assertArrayHasKey(RequestOptions::HEADERS, $requestOptions);
@@ -114,7 +107,7 @@ class NotifyVisitToWebHooksTest extends TestCase
             return $shouldReject ? new RejectedPromise(new Exception('')) : new FulfilledPromise('');
         });
         $this->logger->expects($this->exactly(count($invalidWebhooks)))->method('warning')->with(
-            $this->equalTo('Failed to notify visit with id "{visitId}" to webhook "{webhook}". {e}'),
+            'Failed to notify visit with id "{visitId}" to webhook "{webhook}". {e}',
             $this->callback(function (array $extra): bool {
                 Assert::assertArrayHasKey('webhook', $extra);
                 Assert::assertArrayHasKey('visitId', $extra);

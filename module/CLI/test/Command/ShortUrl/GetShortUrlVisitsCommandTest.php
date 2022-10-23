@@ -44,8 +44,8 @@ class GetShortUrlVisitsCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode)),
-            $this->equalTo(new VisitsParams(DateRange::allTime())),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            new VisitsParams(DateRange::allTime()),
         )->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute(['shortCode' => $shortCode]);
@@ -58,8 +58,8 @@ class GetShortUrlVisitsCommandTest extends TestCase
         $startDate = '2016-01-01';
         $endDate = '2016-02-01';
         $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode)),
-            $this->equalTo(new VisitsParams(buildDateRange(Chronos::parse($startDate), Chronos::parse($endDate)))),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            new VisitsParams(buildDateRange(Chronos::parse($startDate), Chronos::parse($endDate))),
         )->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute([
@@ -75,8 +75,8 @@ class GetShortUrlVisitsCommandTest extends TestCase
         $shortCode = 'abc123';
         $startDate = 'foo';
         $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode)),
-            $this->equalTo(new VisitsParams(DateRange::allTime())),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            new VisitsParams(DateRange::allTime()),
         )->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute([
@@ -99,7 +99,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
         );
         $shortCode = 'abc123';
         $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode)),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             $this->anything(),
         )->willReturn(new Paginator(new ArrayAdapter([$visit])));
 

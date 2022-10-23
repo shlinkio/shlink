@@ -35,7 +35,7 @@ class DeleteShortUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->service->expects($this->once())->method('deleteByShortCode')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode)),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             $this->isFalse(),
         );
 
@@ -54,7 +54,7 @@ class DeleteShortUrlCommandTest extends TestCase
         $shortCode = 'abc123';
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
         $this->service->expects($this->once())->method('deleteByShortCode')->with(
-            $this->equalTo($identifier),
+            $identifier,
             $this->isFalse(),
         )->willThrowException(Exception\ShortUrlNotFoundException::fromNotFound($identifier));
 
@@ -76,7 +76,7 @@ class DeleteShortUrlCommandTest extends TestCase
         $shortCode = 'abc123';
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
         $this->service->expects($this->exactly($expectedDeleteCalls))->method('deleteByShortCode')->with(
-            $this->equalTo($identifier),
+            $identifier,
             $this->isType('bool'),
         )->willReturnCallback(function ($_, bool $ignoreThreshold) use ($shortCode): void {
             if (!$ignoreThreshold) {
@@ -110,7 +110,7 @@ class DeleteShortUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $this->service->expects($this->once())->method('deleteByShortCode')->with(
-            $this->equalTo(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode)),
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             $this->isFalse(),
         )->willThrowException(Exception\DeleteShortUrlException::fromVisitsThreshold(
             10,

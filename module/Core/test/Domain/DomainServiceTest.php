@@ -36,10 +36,8 @@ class DomainServiceTest extends TestCase
     public function listDomainsDelegatesIntoRepository(array $domains, array $expectedResult, ?ApiKey $apiKey): void
     {
         $repo = $this->createMock(DomainRepositoryInterface::class);
-        $repo->expects($this->once())->method('findDomains')->with($this->equalTo($apiKey))->willReturn($domains);
-        $this->em->expects($this->once())->method('getRepository')->with($this->equalTo(Domain::class))->willReturn(
-            $repo,
-        );
+        $repo->expects($this->once())->method('findDomains')->with($apiKey)->willReturn($domains);
+        $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
 
         $result = $this->domainService->listDomains($apiKey);
 
@@ -105,10 +103,7 @@ class DomainServiceTest extends TestCase
     /** @test */
     public function getDomainThrowsExceptionWhenDomainIsNotFound(): void
     {
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Domain::class),
-            $this->equalTo('123'),
-        )->willReturn(null);
+        $this->em->expects($this->once())->method('find')->with(Domain::class, '123')->willReturn(null);
 
         $this->expectException(DomainNotFoundException::class);
 
@@ -119,10 +114,7 @@ class DomainServiceTest extends TestCase
     public function getDomainReturnsEntityWhenFound(): void
     {
         $domain = Domain::withAuthority('');
-        $this->em->expects($this->once())->method('find')->with(
-            $this->equalTo(Domain::class),
-            $this->equalTo('123'),
-        )->willReturn($domain);
+        $this->em->expects($this->once())->method('find')->with(Domain::class, '123')->willReturn($domain);
 
         $result = $this->domainService->getDomain('123');
 
@@ -137,15 +129,11 @@ class DomainServiceTest extends TestCase
     {
         $authority = 'example.com';
         $repo = $this->createMock(DomainRepositoryInterface::class);
-        $repo->method('findOneByAuthority')->with($this->equalTo($authority), $this->equalTo($apiKey))->willReturn(
+        $repo->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(
             $foundDomain,
         );
-        $this->em->expects($this->once())->method('getRepository')->with($this->equalTo(Domain::class))->willReturn(
-            $repo,
-        );
-        $this->em->expects($this->once())->method('persist')->with(
-            $foundDomain !== null ? $this->equalTo($foundDomain) : $this->isInstanceOf(Domain::class),
-        );
+        $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
+        $this->em->expects($this->once())->method('persist')->with($foundDomain ?? $this->isInstanceOf(Domain::class));
         $this->em->expects($this->once())->method('flush');
 
         $result = $this->domainService->getOrCreate($authority, $apiKey);
@@ -162,12 +150,8 @@ class DomainServiceTest extends TestCase
         $domain = Domain::withAuthority($authority)->setId('1');
         $apiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($domain)));
         $repo = $this->createMock(DomainRepositoryInterface::class);
-        $repo->method('findOneByAuthority')->with($this->equalTo($authority), $this->equalTo($apiKey))->willReturn(
-            null,
-        );
-        $this->em->expects($this->once())->method('getRepository')->with($this->equalTo(Domain::class))->willReturn(
-            $repo,
-        );
+        $repo->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(null);
+        $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
         $this->em->expects($this->never())->method('persist');
         $this->em->expects($this->never())->method('flush');
 
@@ -184,15 +168,9 @@ class DomainServiceTest extends TestCase
     {
         $authority = 'example.com';
         $repo = $this->createMock(DomainRepositoryInterface::class);
-        $repo->method('findOneByAuthority')->with($this->equalTo($authority), $this->equalTo($apiKey))->willReturn(
-            $foundDomain,
-        );
-        $this->em->expects($this->once())->method('getRepository')->with($this->equalTo(Domain::class))->willReturn(
-            $repo,
-        );
-        $this->em->expects($this->once())->method('persist')->with(
-            $foundDomain !== null ? $this->equalTo($foundDomain) : $this->isInstanceOf(Domain::class),
-        );
+        $repo->method('findOneByAuthority')->with($authority, $apiKey)->willReturn($foundDomain);
+        $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
+        $this->em->expects($this->once())->method('persist')->with($foundDomain ?? $this->isInstanceOf(Domain::class));
         $this->em->expects($this->once())->method('flush');
 
         $result = $this->domainService->configureNotFoundRedirects($authority, NotFoundRedirects::withRedirects(
