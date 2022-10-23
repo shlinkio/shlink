@@ -10,10 +10,8 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -29,21 +27,19 @@ use function Laminas\Stratigility\middleware;
 
 class AuthenticationMiddlewareTest extends TestCase
 {
-    use ProphecyTrait;
-
     private AuthenticationMiddleware $middleware;
-    private ObjectProphecy $apiKeyService;
-    private ObjectProphecy $handler;
+    private MockObject $apiKeyService;
+    private MockObject $handler;
 
     protected function setUp(): void
     {
-        $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
+        $this->apiKeyService = $this->createMock(ApiKeyServiceInterface::class);
         $this->middleware = new AuthenticationMiddleware(
-            $this->apiKeyService->reveal(),
+            $this->apiKeyService,
             [HealthAction::class],
             ['with_query_api_key'],
         );
-        $this->handler = $this->prophesize(RequestHandlerInterface::class);
+        $this->handler = $this->createMock(RequestHandlerInterface::class);
     }
 
     /**
@@ -52,13 +48,10 @@ class AuthenticationMiddlewareTest extends TestCase
      */
     public function someSituationsFallbackToNextMiddleware(ServerRequestInterface $request): void
     {
-        $handle = $this->handler->handle($request)->willReturn(new Response());
-        $checkApiKey = $this->apiKeyService->check(Argument::any());
+        $this->handler->expects($this->once())->method('handle')->with($request)->willReturn(new Response());
+        $this->apiKeyService->expects($this->never())->method('check');
 
-        $this->middleware->process($request, $this->handler->reveal());
-
-        $handle->shouldHaveBeenCalledOnce();
-        $checkApiKey->shouldNotHaveBeenCalled();
+        $this->middleware->process($request, $this->handler);
     }
 
     public function provideRequestsWithoutAuth(): iterable
@@ -90,12 +83,12 @@ class AuthenticationMiddlewareTest extends TestCase
         ServerRequestInterface $request,
         string $expectedMessage,
     ): void {
-        $this->apiKeyService->check(Argument::any())->shouldNotBeCalled();
-        $this->handler->handle($request)->shouldNotBeCalled();
+        $this->apiKeyService->expects($this->never())->method('check');
+        $this->handler->expects($this->never())->method('handle');
         $this->expectException(MissingAuthenticationException::class);
         $this->expectExceptionMessage($expectedMessage);
 
-        $this->middleware->process($request, $this->handler->reveal());
+        $this->middleware->process($request, $this->handler);
     }
 
     public function provideRequestsWithoutApiKey(): iterable
@@ -127,12 +120,14 @@ class AuthenticationMiddlewareTest extends TestCase
             )
             ->withHeader('X-Api-Key', $apiKey);
 
-        $this->apiKeyService->check($apiKey)->willReturn(new ApiKeyCheckResult())->shouldBeCalledOnce();
-        $this->handler->handle($request)->shouldNotBeCalled();
+        $this->apiKeyService->expects($this->once())->method('check')->with($apiKey)->willReturn(
+            new ApiKeyCheckResult(),
+        );
+        $this->handler->expects($this->never())->method('handle');
         $this->expectException(VerifyAuthenticationException::class);
         $this->expectExceptionMessage('Provided API key does not exist or is invalid');
 
-        $this->middleware->process($request, $this->handler->reveal());
+        $this->middleware->process($request, $this->handler);
     }
 
     /** @test */
@@ -147,13 +142,14 @@ class AuthenticationMiddlewareTest extends TestCase
             )
             ->withHeader('X-Api-Key', $key);
 
-        $handle = $this->handler->handle($request->withAttribute(ApiKey::class, $apiKey))->willReturn(new Response());
-        $checkApiKey = $this->apiKeyService->check($key)->willReturn(new ApiKeyCheckResult($apiKey));
+        $this->handler->expects($this->once())->method('handle')->with(
+            $request->withAttribute(ApiKey::class, $apiKey),
+        )->willReturn(new Response());
+        $this->apiKeyService->expects($this->once())->method('check')->with($key)->willReturn(
+            new ApiKeyCheckResult($apiKey),
+        );
 
-        $this->middleware->process($request, $this->handler->reveal());
-
-        $handle->shouldHaveBeenCalledOnce();
-        $checkApiKey->shouldHaveBeenCalledOnce();
+        $this->middleware->process($request, $this->handler);
     }
 
     private function getDummyMiddleware(): MiddlewareInterface
