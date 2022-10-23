@@ -7,24 +7,20 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware;
 
 class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
 {
-    use ProphecyTrait;
-
     private DropDefaultDomainFromRequestMiddleware $middleware;
-    private ObjectProphecy $next;
+    private MockObject $next;
 
     protected function setUp(): void
     {
-        $this->next = $this->prophesize(RequestHandlerInterface::class);
+        $this->next = $this->createMock(RequestHandlerInterface::class);
         $this->middleware = new DropDefaultDomainFromRequestMiddleware('doma.in');
     }
 
@@ -36,15 +32,15 @@ class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
     {
         $req = ServerRequestFactory::fromGlobals()->withQueryParams($providedPayload)->withParsedBody($providedPayload);
 
-        $handle = $this->next->handle(Argument::that(function (ServerRequestInterface $request) use ($expectedPayload) {
-            Assert::assertEquals($expectedPayload, $request->getQueryParams());
-            Assert::assertEquals($expectedPayload, $request->getParsedBody());
-            return $request;
-        }))->willReturn(new Response());
+        $this->next->expects($this->once())->method('handle')->with($this->callback(
+            function (ServerRequestInterface $request) use ($expectedPayload) {
+                Assert::assertEquals($expectedPayload, $request->getQueryParams());
+                Assert::assertEquals($expectedPayload, $request->getParsedBody());
+                return true;
+            },
+        ))->willReturn(new Response());
 
-        $this->middleware->process($req, $this->next->reveal());
-
-        $handle->shouldHaveBeenCalledOnce();
+        $this->middleware->process($req, $this->next);
     }
 
     public function provideQueryParams(): iterable
