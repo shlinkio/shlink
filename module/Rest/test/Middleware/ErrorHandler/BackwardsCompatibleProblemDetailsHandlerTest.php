@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\ErrorHandler;
 
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -16,8 +15,6 @@ use Throwable;
 
 class BackwardsCompatibleProblemDetailsHandlerTest extends TestCase
 {
-    use ProphecyTrait;
-
     private BackwardsCompatibleProblemDetailsHandler $handler;
 
     protected function setUp(): void
@@ -34,13 +31,12 @@ class BackwardsCompatibleProblemDetailsHandlerTest extends TestCase
         Throwable $thrownException,
         string $expectedException,
     ): void {
-        $handler = $this->prophesize(RequestHandlerInterface::class);
-        $handle = $handler->handle($request)->willThrow($thrownException);
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->once())->method('handle')->with($request)->willThrowException($thrownException);
 
         $this->expectException($expectedException);
-        $handle->shouldBeCalledOnce();
 
-        $this->handler->process($request, $handler->reveal());
+        $this->handler->process($request, $handler);
     }
 
     public function provideExceptions(): iterable
