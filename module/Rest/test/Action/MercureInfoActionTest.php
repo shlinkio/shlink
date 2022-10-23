@@ -7,23 +7,19 @@ namespace ShlinkioTest\Shlink\Rest\Action;
 use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Mercure\JwtProviderInterface;
 use Shlinkio\Shlink\Rest\Action\MercureInfoAction;
 use Shlinkio\Shlink\Rest\Exception\MercureException;
 
 class MercureInfoActionTest extends TestCase
 {
-    use ProphecyTrait;
-
-    private ObjectProphecy $provider;
+    private MockObject $provider;
 
     protected function setUp(): void
     {
-        $this->provider = $this->prophesize(JwtProviderInterface::class);
+        $this->provider = $this->createMock(JwtProviderInterface::class);
     }
 
     /**
@@ -32,12 +28,11 @@ class MercureInfoActionTest extends TestCase
      */
     public function throwsExceptionWhenConfigDoesNotHavePublicHost(array $mercureConfig): void
     {
-        $buildToken = $this->provider->buildSubscriptionToken(Argument::any())->willReturn('abc.123');
+        $this->provider->expects($this->never())->method('buildSubscriptionToken');
 
-        $action = new MercureInfoAction($this->provider->reveal(), $mercureConfig);
+        $action = new MercureInfoAction($this->provider, $mercureConfig);
 
         $this->expectException(MercureException::class);
-        $buildToken->shouldNotBeCalled();
 
         $action->handle(ServerRequestFactory::fromGlobals());
     }
@@ -60,9 +55,9 @@ class MercureInfoActionTest extends TestCase
      */
     public function returnsExpectedInfoWhenEverythingIsOk(?int $days): void
     {
-        $buildToken = $this->provider->buildSubscriptionToken(Argument::any())->willReturn('abc.123');
+        $this->provider->expects($this->once())->method('buildSubscriptionToken')->willReturn('abc.123');
 
-        $action = new MercureInfoAction($this->provider->reveal(), [
+        $action = new MercureInfoAction($this->provider, [
             'public_hub_url' => 'http://foobar.com',
             'jwt_days_duration' => $days,
         ]);
@@ -79,7 +74,6 @@ class MercureInfoActionTest extends TestCase
             Chronos::now()->addDays($days ?? 1)->startOfDay(),
             Chronos::parse($payload['jwtExpiration'])->startOfDay(),
         );
-        $buildToken->shouldHaveBeenCalledOnce();
     }
 
     public function provideDays(): iterable
