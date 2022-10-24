@@ -24,8 +24,8 @@ class GetDomainVisitsCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private MockObject $visitsHelper;
-    private MockObject $stringifier;
+    private MockObject & VisitsStatsHelperInterface $visitsHelper;
+    private MockObject & ShortUrlStringifierInterface $stringifier;
 
     protected function setUp(): void
     {

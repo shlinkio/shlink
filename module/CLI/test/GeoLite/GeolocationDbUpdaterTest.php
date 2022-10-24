@@ -23,9 +23,9 @@ use function range;
 
 class GeolocationDbUpdaterTest extends TestCase
 {
-    private MockObject $dbUpdater;
-    private MockObject $geoLiteDbReader;
-    private MockObject $lock;
+    private MockObject & DbUpdaterInterface $dbUpdater;
+    private MockObject & Reader $geoLiteDbReader;
+    private MockObject & Lock\LockInterface $lock;
 
     protected function setUp(): void
     {

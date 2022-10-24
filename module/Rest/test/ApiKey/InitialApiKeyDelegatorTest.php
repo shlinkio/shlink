@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class InitialApiKeyDelegatorTest extends TestCase
 {
     private InitialApiKeyDelegator $delegator;
-    private MockObject $container;
+    private MockObject & ContainerInterface $container;
 
     protected function setUp(): void
     {

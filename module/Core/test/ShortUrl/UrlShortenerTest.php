@@ -21,9 +21,9 @@ use Shlinkio\Shlink\Core\ShortUrl\UrlShortener;
 class UrlShortenerTest extends TestCase
 {
     private UrlShortener $urlShortener;
-    private MockObject $em;
-    private MockObject $titleResolutionHelper;
-    private MockObject $shortCodeHelper;
+    private MockObject & EntityManager $em;
+    private MockObject & ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
+    private MockObject & ShortCodeUniquenessHelperInterface $shortCodeHelper;
 
     protected function setUp(): void
     {

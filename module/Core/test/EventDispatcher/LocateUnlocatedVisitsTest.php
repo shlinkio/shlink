@@ -17,8 +17,8 @@ use Shlinkio\Shlink\IpGeolocation\Model\Location;
 class LocateUnlocatedVisitsTest extends TestCase
 {
     private LocateUnlocatedVisits $listener;
-    private MockObject $locator;
-    private MockObject $visitToLocation;
+    private MockObject & VisitLocatorInterface $locator;
+    private MockObject & VisitToLocationHelperInterface $visitToLocation;
 
     protected function setUp(): void
     {

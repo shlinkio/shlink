@@ -28,8 +28,8 @@ class ShortUrlResolverTest extends TestCase
     use ApiKeyHelpersTrait;
 
     private ShortUrlResolver $urlResolver;
-    private MockObject $em;
-    private MockObject $repo;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & ShortUrlRepositoryInterface $repo;
 
     protected function setUp(): void
     {

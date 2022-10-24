@@ -16,8 +16,8 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 class ShortCodeUniquenessHelperTest extends TestCase
 {
     private ShortCodeUniquenessHelper $helper;
-    private MockObject $em;
-    private MockObject $shortUrl;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & ShortUrl $shortUrl;
 
     protected function setUp(): void
     {

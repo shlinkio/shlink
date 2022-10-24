@@ -23,6 +23,7 @@ class BackwardsCompatibleProblemDetailsHandlerTest extends TestCase
     }
 
     /**
+     * @param class-string<Throwable> $expectedException
      * @test
      * @dataProvider provideExceptions
      */
