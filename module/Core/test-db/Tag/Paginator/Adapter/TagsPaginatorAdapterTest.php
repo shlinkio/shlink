@@ -22,6 +22,8 @@ class TagsPaginatorAdapterTest extends DatabaseTestCase
     }
 
     /**
+     * @param int<0, max> $offset
+     * @param int<0, max> $length
      * @test
      * @dataProvider provideFilters
      */
