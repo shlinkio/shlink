@@ -23,7 +23,7 @@ class ResolveUrlCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private MockObject $urlResolver;
+    private MockObject & ShortUrlResolverInterface $urlResolver;
 
     protected function setUp(): void
     {

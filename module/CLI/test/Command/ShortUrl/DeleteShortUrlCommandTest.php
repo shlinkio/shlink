@@ -22,7 +22,7 @@ class DeleteShortUrlCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private MockObject $service;
+    private MockObject & DeleteShortUrlServiceInterface $service;
 
     protected function setUp(): void
     {

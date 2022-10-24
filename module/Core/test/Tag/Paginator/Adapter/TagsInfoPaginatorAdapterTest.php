@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Core\Tag\Repository\TagRepositoryInterface;
 class TagsInfoPaginatorAdapterTest extends TestCase
 {
     private TagsInfoPaginatorAdapter $adapter;
-    private MockObject $repo;
+    private MockObject & TagRepositoryInterface $repo;
 
     protected function setUp(): void
     {

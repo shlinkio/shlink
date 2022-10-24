@@ -20,7 +20,7 @@ use Shlinkio\Shlink\Core\Util\UrlValidator;
 
 class UrlValidatorTest extends TestCase
 {
-    private MockObject $httpClient;
+    private MockObject & ClientInterface $httpClient;
 
     protected function setUp(): void
     {

@@ -30,8 +30,8 @@ use function sprintf;
 class VisitLocatorTest extends TestCase
 {
     private VisitLocator $visitService;
-    private MockObject $em;
-    private MockObject $repo;
+    private MockObject & EntityManager $em;
+    private MockObject & VisitRepositoryInterface $repo;
 
     protected function setUp(): void
     {

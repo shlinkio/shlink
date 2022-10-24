@@ -22,10 +22,10 @@ use Throwable;
 
 class NotifyNewShortUrlToRedisTest extends TestCase
 {
-    private MockObject $helper;
-    private MockObject $updatesGenerator;
-    private MockObject $em;
-    private MockObject $logger;
+    private MockObject & PublishingHelperInterface $helper;
+    private MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & LoggerInterface $logger;
 
     protected function setUp(): void
     {

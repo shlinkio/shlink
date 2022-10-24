@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class DeleteTagsActionTest extends TestCase
 {
     private DeleteTagsAction $action;
-    private MockObject $tagService;
+    private MockObject & TagServiceInterface $tagService;
 
     protected function setUp(): void
     {

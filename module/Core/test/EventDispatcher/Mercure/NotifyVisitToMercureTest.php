@@ -22,10 +22,10 @@ use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 class NotifyVisitToMercureTest extends TestCase
 {
     private NotifyVisitToMercure $listener;
-    private MockObject $helper;
-    private MockObject $updatesGenerator;
-    private MockObject $em;
-    private MockObject $logger;
+    private MockObject & PublishingHelperInterface $helper;
+    private MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & LoggerInterface $logger;
 
     protected function setUp(): void
     {

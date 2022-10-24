@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class SingleStepCreateShortUrlActionTest extends TestCase
 {
     private SingleStepCreateShortUrlAction $action;
-    private MockObject $urlShortener;
+    private MockObject & UrlShortenerInterface $urlShortener;
 
     protected function setUp(): void
     {

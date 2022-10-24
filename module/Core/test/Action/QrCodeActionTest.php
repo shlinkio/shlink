@@ -30,7 +30,7 @@ class QrCodeActionTest extends TestCase
     private const WHITE = 0xFFFFFF;
     private const BLACK = 0x0;
 
-    private MockObject $urlResolver;
+    private MockObject & ShortUrlResolverInterface $urlResolver;
 
     protected function setUp(): void
     {

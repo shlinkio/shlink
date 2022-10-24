@@ -21,7 +21,7 @@ use function array_key_exists;
 class DomainRedirectsActionTest extends TestCase
 {
     private DomainRedirectsAction $action;
-    private MockObject $domainService;
+    private MockObject & DomainServiceInterface $domainService;
 
     protected function setUp(): void
     {

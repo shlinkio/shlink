@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Rest\Action\HealthAction;
 class HealthActionTest extends TestCase
 {
     private HealthAction $action;
-    private MockObject $conn;
+    private MockObject & Connection $conn;
 
     protected function setUp(): void
     {

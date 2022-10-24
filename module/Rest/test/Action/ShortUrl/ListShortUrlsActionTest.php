@@ -21,7 +21,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ListShortUrlsActionTest extends TestCase
 {
     private ListShortUrlsAction $action;
-    private MockObject $service;
+    private MockObject & ShortUrlService $service;
 
     protected function setUp(): void
     {

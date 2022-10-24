@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Rest\Middleware\ShortUrl\DefaultShortCodesLengthMiddleware;
 class DefaultShortCodesLengthMiddlewareTest extends TestCase
 {
     private DefaultShortCodesLengthMiddleware $middleware;
-    private MockObject $handler;
+    private MockObject & RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
@@ -34,7 +34,7 @@ class DefaultShortCodesLengthMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);
         $this->handler->expects($this->once())->method('handle')->with($this->callback(
             function (ServerRequestInterface $req) use ($expectedLength) {
-                $parsedBody = $req->getParsedBody();
+                $parsedBody = (array) $req->getParsedBody();
                 Assert::assertArrayHasKey(ShortUrlInputFilter::SHORT_CODE_LENGTH, $parsedBody);
                 Assert::assertEquals($expectedLength, $parsedBody[ShortUrlInputFilter::SHORT_CODE_LENGTH]);
 

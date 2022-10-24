@@ -22,8 +22,8 @@ use function count;
 class OrphanVisitsActionTest extends TestCase
 {
     private OrphanVisitsAction $action;
-    private MockObject $visitsHelper;
-    private MockObject $orphanVisitTransformer;
+    private MockObject & VisitsStatsHelperInterface $visitsHelper;
+    private MockObject & DataTransformerInterface $orphanVisitTransformer;
 
     protected function setUp(): void
     {

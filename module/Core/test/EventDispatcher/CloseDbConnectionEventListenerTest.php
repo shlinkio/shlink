@@ -15,7 +15,7 @@ use Throwable;
 
 class CloseDbConnectionEventListenerTest extends TestCase
 {
-    private MockObject $em;
+    private MockObject & ReopeningEntityManagerInterface $em;
 
     protected function setUp(): void
     {

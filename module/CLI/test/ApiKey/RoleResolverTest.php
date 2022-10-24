@@ -19,7 +19,7 @@ use function Functional\map;
 class RoleResolverTest extends TestCase
 {
     private RoleResolver $resolver;
-    private MockObject $domainService;
+    private MockObject & DomainServiceInterface $domainService;
 
     protected function setUp(): void
     {

@@ -38,7 +38,7 @@ class VisitsStatsHelperTest extends TestCase
     use ApiKeyHelpersTrait;
 
     private VisitsStatsHelper $helper;
-    private MockObject $em;
+    private MockObject & EntityManagerInterface $em;
 
     protected function setUp(): void
     {

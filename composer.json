@@ -67,6 +67,7 @@
         "openswoole/ide-helper": "~4.11.5",
         "phpstan/phpstan": "^1.8",
         "phpstan/phpstan-doctrine": "^1.3",
+        "phpstan/phpstan-phpunit": "^1.1",
         "phpstan/phpstan-symfony": "^1.2",
         "phpunit/php-code-coverage": "^9.2",
         "phpunit/phpunit": "^9.5",
@@ -108,7 +109,7 @@
         ],
         "cs": "phpcs",
         "cs:fix": "phpcbf",
-        "stan": "APP_ENV=test php vendor/bin/phpstan analyse module/*/src module/*/config config docker/config data/migrations --level=8",
+        "stan": "APP_ENV=test php vendor/bin/phpstan analyse module/*/src module/*/test module/*/config config docker/config data/migrations --level=8",
         "test": [
             "@parallel test:unit test:db",
             "@parallel test:api test:cli"

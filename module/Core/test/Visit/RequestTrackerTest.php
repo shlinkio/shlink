@@ -23,8 +23,8 @@ class RequestTrackerTest extends TestCase
     private const LONG_URL = 'https://domain.com/foo/bar?some=thing';
 
     private RequestTracker $requestTracker;
-    private MockObject $notFoundType;
-    private MockObject $visitsTracker;
+    private MockObject & VisitsTrackerInterface $visitsTracker;
+    private MockObject & NotFoundType $notFoundType;
     private ServerRequestInterface $request;
 
     protected function setUp(): void

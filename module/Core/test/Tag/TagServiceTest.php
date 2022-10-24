@@ -27,8 +27,8 @@ class TagServiceTest extends TestCase
     use ApiKeyHelpersTrait;
 
     private TagService $service;
-    private MockObject $em;
-    private MockObject $repo;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & TagRepository $repo;
 
     protected function setUp(): void
     {

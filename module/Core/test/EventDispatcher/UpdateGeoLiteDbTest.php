@@ -19,9 +19,9 @@ use function Functional\map;
 class UpdateGeoLiteDbTest extends TestCase
 {
     private UpdateGeoLiteDb $listener;
-    private MockObject $dbUpdater;
-    private MockObject $logger;
-    private MockObject $eventDispatcher;
+    private MockObject & GeolocationDbUpdaterInterface $dbUpdater;
+    private MockObject & LoggerInterface $logger;
+    private MockObject & EventDispatcherInterface $eventDispatcher;
 
     protected function setUp(): void
     {

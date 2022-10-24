@@ -24,7 +24,7 @@ use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 class NotFoundRedirectResolverTest extends TestCase
 {
     private NotFoundRedirectResolver $resolver;
-    private MockObject $helper;
+    private MockObject & RedirectResponseHelperInterface $helper;
 
     protected function setUp(): void
     {

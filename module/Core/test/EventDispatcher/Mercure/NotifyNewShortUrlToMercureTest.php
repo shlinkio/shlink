@@ -19,10 +19,10 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 class NotifyNewShortUrlToMercureTest extends TestCase
 {
     private NotifyNewShortUrlToMercure $listener;
-    private MockObject $helper;
-    private MockObject $updatesGenerator;
-    private MockObject $em;
-    private MockObject $logger;
+    private MockObject & PublishingHelperInterface $helper;
+    private MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & LoggerInterface $logger;
 
     protected function setUp(): void
     {

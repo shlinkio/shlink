@@ -32,10 +32,10 @@ use function str_contains;
 class ImportedLinksProcessorTest extends TestCase
 {
     private ImportedLinksProcessor $processor;
-    private MockObject $em;
-    private MockObject $shortCodeHelper;
-    private MockObject $repo;
-    private MockObject $io;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & ShortCodeUniquenessHelperInterface $shortCodeHelper;
+    private MockObject & ShortUrlRepositoryInterface $repo;
+    private MockObject & StyleInterface $io;
 
     protected function setUp(): void
     {

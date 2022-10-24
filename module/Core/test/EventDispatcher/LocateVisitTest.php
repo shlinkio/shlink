@@ -26,11 +26,11 @@ use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 class LocateVisitTest extends TestCase
 {
     private LocateVisit $locateVisit;
-    private MockObject $ipLocationResolver;
-    private MockObject $em;
-    private MockObject $logger;
-    private MockObject $eventDispatcher;
-    private MockObject $dbUpdater;
+    private MockObject & IpLocationResolverInterface $ipLocationResolver;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & LoggerInterface $logger;
+    private MockObject & EventDispatcherInterface $eventDispatcher;
+    private MockObject & DbUpdaterInterface $dbUpdater;
 
     protected function setUp(): void
     {

@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class DomainVisitsActionTest extends TestCase
 {
     private DomainVisitsAction $action;
-    private MockObject $visitsHelper;
+    private MockObject & VisitsStatsHelperInterface $visitsHelper;
 
     protected function setUp(): void
     {

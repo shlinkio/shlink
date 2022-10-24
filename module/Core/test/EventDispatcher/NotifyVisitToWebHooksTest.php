@@ -30,9 +30,9 @@ use function Functional\contains;
 
 class NotifyVisitToWebHooksTest extends TestCase
 {
-    private MockObject $httpClient;
-    private MockObject $em;
-    private MockObject $logger;
+    private MockObject & ClientInterface $httpClient;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & LoggerInterface $logger;
 
     protected function setUp(): void
     {

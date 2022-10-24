@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlRepositoryAdapterTest extends TestCase
 {
-    private MockObject $repo;
+    private MockObject & ShortUrlRepositoryInterface $repo;
 
     protected function setUp(): void
     {

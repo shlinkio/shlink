@@ -21,7 +21,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class DomainServiceTest extends TestCase
 {
     private DomainService $domainService;
-    private MockObject $em;
+    private MockObject & EntityManagerInterface $em;
 
     protected function setUp(): void
     {

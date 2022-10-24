@@ -13,10 +13,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 trait CliTestUtilsTrait
 {
-    /**
-     * @return MockObject & Command
-     */
-    private function createCommandMock(string $name): MockObject
+    private function createCommandMock(string $name): MockObject & Command
     {
         $command = $this->createMock(Command::class);
         $command->method('getName')->willReturn($name);

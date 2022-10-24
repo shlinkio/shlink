@@ -27,10 +27,10 @@ class CreateDatabaseCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private MockObject $processHelper;
-    private MockObject $regularConn;
-    private MockObject $schemaManager;
-    private MockObject $driver;
+    private MockObject & ProcessRunnerInterface $processHelper;
+    private MockObject & Connection $regularConn;
+    private MockObject & AbstractSchemaManager $schemaManager;
+    private MockObject & Driver $driver;
 
     protected function setUp(): void
     {

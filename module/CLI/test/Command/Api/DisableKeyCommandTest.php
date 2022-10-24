@@ -17,7 +17,7 @@ class DisableKeyCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private MockObject $apiKeyService;
+    private MockObject & ApiKeyServiceInterface $apiKeyService;
 
     protected function setUp(): void
     {

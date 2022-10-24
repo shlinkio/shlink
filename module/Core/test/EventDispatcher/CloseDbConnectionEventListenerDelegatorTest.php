@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Core\EventDispatcher\CloseDbConnectionEventListenerDelegator
 class CloseDbConnectionEventListenerDelegatorTest extends TestCase
 {
     private CloseDbConnectionEventListenerDelegator $delegator;
-    private MockObject $container;
+    private MockObject & ContainerInterface $container;
 
     protected function setUp(): void
     {

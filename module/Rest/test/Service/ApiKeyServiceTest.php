@@ -19,8 +19,8 @@ use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 class ApiKeyServiceTest extends TestCase
 {
     private ApiKeyService $service;
-    private MockObject $em;
-    private MockObject $repo;
+    private MockObject & EntityManager $em;
+    private MockObject & EntityRepository $repo;
 
     protected function setUp(): void
     {
@@ -50,10 +50,13 @@ class ApiKeyServiceTest extends TestCase
 
     public function provideCreationDate(): iterable
     {
+        $domain = Domain::withAuthority('');
+        $domain->setId('123');
+
         yield 'no expiration date or name' => [null, null, []];
         yield 'expiration date' => [Chronos::parse('2030-01-01'), null, []];
         yield 'roles' => [null, null, [
-            RoleDefinition::forDomain(Domain::withAuthority('')->setId('123')),
+            RoleDefinition::forDomain($domain),
             RoleDefinition::forAuthoredShortUrls(),
         ]];
         yield 'single name' => [null, 'Alice', []];

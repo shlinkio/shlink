@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 class CrawlingHelperTest extends TestCase
 {
     private CrawlingHelper $helper;
-    private MockObject $em;
+    private MockObject & EntityManagerInterface $em;
 
     protected function setUp(): void
     {

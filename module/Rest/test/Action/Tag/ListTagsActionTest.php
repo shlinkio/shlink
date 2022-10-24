@@ -22,7 +22,7 @@ use function count;
 class ListTagsActionTest extends TestCase
 {
     private ListTagsAction $action;
-    private MockObject $tagService;
+    private MockObject & TagServiceInterface $tagService;
 
     protected function setUp(): void
     {

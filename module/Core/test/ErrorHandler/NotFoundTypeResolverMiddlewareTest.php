@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Core\ErrorHandler\NotFoundTypeResolverMiddleware;
 class NotFoundTypeResolverMiddlewareTest extends TestCase
 {
     private NotFoundTypeResolverMiddleware $middleware;
-    private MockObject $handler;
+    private MockObject & RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {

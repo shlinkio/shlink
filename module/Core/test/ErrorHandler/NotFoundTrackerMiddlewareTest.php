@@ -17,8 +17,8 @@ class NotFoundTrackerMiddlewareTest extends TestCase
 {
     private NotFoundTrackerMiddleware $middleware;
     private ServerRequestInterface $request;
-    private MockObject $handler;
-    private MockObject $requestTracker;
+    private MockObject & RequestHandlerInterface $handler;
+    private MockObject & RequestTrackerInterface $requestTracker;
 
     protected function setUp(): void
     {
