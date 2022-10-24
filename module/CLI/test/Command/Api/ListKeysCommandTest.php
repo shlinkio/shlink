@@ -21,7 +21,7 @@ class ListKeysCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private MockObject $apiKeyService;
+    private MockObject & ApiKeyServiceInterface $apiKeyService;
 
     protected function setUp(): void
     {
@@ -86,12 +86,12 @@ class ListKeysCommandTest extends TestCase
                 $apiKey1 = ApiKey::create(),
                 $apiKey2 = $this->apiKeyWithRoles([RoleDefinition::forAuthoredShortUrls()]),
                 $apiKey3 = $this->apiKeyWithRoles(
-                    [RoleDefinition::forDomain(Domain::withAuthority('example.com')->setId('1'))],
+                    [RoleDefinition::forDomain($this->domainWithId(Domain::withAuthority('example.com')))],
                 ),
                 $apiKey4 = ApiKey::create(),
                 $apiKey5 = $this->apiKeyWithRoles([
                     RoleDefinition::forAuthoredShortUrls(),
-                    RoleDefinition::forDomain(Domain::withAuthority('example.com')->setId('1')),
+                    RoleDefinition::forDomain($this->domainWithId(Domain::withAuthority('example.com'))),
                 ]),
                 $apiKey6 = ApiKey::create(),
             ],
@@ -149,5 +149,11 @@ class ListKeysCommandTest extends TestCase
         }
 
         return $apiKey;
+    }
+
+    private function domainWithId(Domain $domain): Domain
+    {
+        $domain->setId('1');
+        return $domain;
     }
 }

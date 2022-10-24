@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ListDomainsActionTest extends TestCase
 {
     private ListDomainsAction $action;
-    private MockObject $domainService;
+    private MockObject & DomainServiceInterface $domainService;
     private NotFoundRedirectOptions $options;
 
     protected function setUp(): void

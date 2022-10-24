@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Core\Util\DoctrineBatchHelper;
 class DoctrineBatchHelperTest extends TestCase
 {
     private DoctrineBatchHelper $helper;
-    private MockObject $em;
+    private MockObject & EntityManagerInterface $em;
 
     protected function setUp(): void
     {

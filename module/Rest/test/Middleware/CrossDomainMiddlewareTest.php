@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
 class CrossDomainMiddlewareTest extends TestCase
 {
     private CrossDomainMiddleware $middleware;
-    private MockObject $handler;
+    private MockObject & RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {

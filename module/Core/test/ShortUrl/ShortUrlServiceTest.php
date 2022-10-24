@@ -27,9 +27,9 @@ class ShortUrlServiceTest extends TestCase
     use ApiKeyHelpersTrait;
 
     private ShortUrlService $service;
-    private MockObject $em;
-    private MockObject $urlResolver;
-    private MockObject $titleResolutionHelper;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & ShortUrlResolverInterface $urlResolver;
+    private MockObject & ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
 
     protected function setUp(): void
     {

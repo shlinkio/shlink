@@ -18,8 +18,8 @@ use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
 class PixelActionTest extends TestCase
 {
     private PixelAction $action;
-    private MockObject $urlResolver;
-    private MockObject $requestTracker;
+    private MockObject & ShortUrlResolverInterface $urlResolver;
+    private MockObject & RequestTrackerInterface $requestTracker;
 
     protected function setUp(): void
     {

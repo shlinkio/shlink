@@ -23,9 +23,9 @@ class RedirectActionTest extends TestCase
     private const LONG_URL = 'https://domain.com/foo/bar?some=thing';
 
     private RedirectAction $action;
-    private MockObject $urlResolver;
-    private MockObject $requestTracker;
-    private MockObject $redirectRespHelper;
+    private MockObject & ShortUrlResolverInterface $urlResolver;
+    private MockObject & RequestTrackerInterface $requestTracker;
+    private MockObject & RedirectResponseHelperInterface $redirectRespHelper;
 
     protected function setUp(): void
     {

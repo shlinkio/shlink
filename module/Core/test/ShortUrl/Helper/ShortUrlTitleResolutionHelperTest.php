@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Core\Util\UrlValidatorInterface;
 class ShortUrlTitleResolutionHelperTest extends TestCase
 {
     private ShortUrlTitleResolutionHelper $helper;
-    private MockObject $urlValidator;
+    private MockObject & UrlValidatorInterface $urlValidator;
 
     protected function setUp(): void
     {

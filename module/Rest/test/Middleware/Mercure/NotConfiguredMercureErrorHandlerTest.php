@@ -17,9 +17,9 @@ use Shlinkio\Shlink\Rest\Middleware\Mercure\NotConfiguredMercureErrorHandler;
 class NotConfiguredMercureErrorHandlerTest extends TestCase
 {
     private NotConfiguredMercureErrorHandler $middleware;
-    private MockObject $respFactory;
-    private MockObject $logger;
-    private MockObject $handler;
+    private MockObject & ProblemDetailsResponseFactory $respFactory;
+    private MockObject & LoggerInterface $logger;
+    private MockObject & RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {

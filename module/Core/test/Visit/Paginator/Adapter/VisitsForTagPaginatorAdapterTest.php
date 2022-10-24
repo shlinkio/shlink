@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsForTagPaginatorAdapterTest extends TestCase
 {
-    private MockObject $repo;
+    private MockObject & VisitRepositoryInterface $repo;
 
     protected function setUp(): void
     {

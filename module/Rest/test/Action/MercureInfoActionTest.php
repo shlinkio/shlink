@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Rest\Exception\MercureException;
 
 class MercureInfoActionTest extends TestCase
 {
-    private MockObject $provider;
+    private MockObject & JwtProviderInterface $provider;
 
     protected function setUp(): void
     {

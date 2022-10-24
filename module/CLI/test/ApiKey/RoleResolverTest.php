@@ -19,7 +19,7 @@ use function Functional\map;
 class RoleResolverTest extends TestCase
 {
     private RoleResolver $resolver;
-    private MockObject $domainService;
+    private MockObject & DomainServiceInterface $domainService;
 
     protected function setUp(): void
     {
@@ -38,7 +38,7 @@ class RoleResolverTest extends TestCase
     ): void {
         $this->domainService->expects($this->exactly($expectedDomainCalls))->method('getOrCreate')->with(
             'example.com',
-        )->willReturn(Domain::withAuthority('example.com')->setId('1'));
+        )->willReturn($this->domainWithId(Domain::withAuthority('example.com')));
 
         $result = $this->resolver->determineRoles($input);
 
@@ -47,7 +47,7 @@ class RoleResolverTest extends TestCase
 
     public function provideRoles(): iterable
     {
-        $domain = Domain::withAuthority('example.com')->setId('1');
+        $domain = $this->domainWithId(Domain::withAuthority('example.com'));
         $buildInput = function (array $definition): InputInterface {
             $input = $this->createStub(InputInterface::class);
             $input->method('getOption')->willReturnMap(
@@ -112,5 +112,11 @@ class RoleResolverTest extends TestCase
         $this->expectException(InvalidRoleConfigException::class);
 
         $this->resolver->determineRoles($input);
+    }
+
+    private function domainWithId(Domain $domain): Domain
+    {
+        $domain->setId('1');
+        return $domain;
     }
 }

@@ -19,7 +19,7 @@ use function Functional\const_function;
 
 class TrimTrailingSlashMiddlewareTest extends TestCase
 {
-    private MockObject $requestHandler;
+    private MockObject & RequestHandlerInterface $requestHandler;
 
     protected function setUp(): void
     {

@@ -21,9 +21,9 @@ use Shlinkio\Shlink\Rest\Middleware\ShortUrl\OverrideDomainMiddleware;
 class OverrideDomainMiddlewareTest extends TestCase
 {
     private OverrideDomainMiddleware $middleware;
-    private MockObject $domainService;
-    private MockObject $apiKey;
-    private MockObject $handler;
+    private MockObject & DomainServiceInterface $domainService;
+    private MockObject & ApiKey $apiKey;
+    private MockObject & RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {

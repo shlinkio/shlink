@@ -23,7 +23,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
 
     public function load(ObjectManager $manager): void
     {
-        $relationResolver = new PersistenceShortUrlRelationResolver($manager);
+        $relationResolver = new PersistenceShortUrlRelationResolver($manager); // @phpstan-ignore-line
 
         /** @var ApiKey $authorApiKey */
         $authorApiKey = $this->getReference('author_api_key');

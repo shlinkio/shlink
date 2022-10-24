@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class NonOrphanVisitsPaginatorAdapterTest extends TestCase
 {
     private NonOrphanVisitsPaginatorAdapter $adapter;
-    private MockObject $repo;
+    private MockObject & VisitRepositoryInterface $repo;
     private VisitsParams $params;
     private ApiKey $apiKey;
 
@@ -45,6 +45,8 @@ class NonOrphanVisitsPaginatorAdapterTest extends TestCase
     }
 
     /**
+     * @param int<0, max> $limit
+     * @param int<0, max> $offset
      * @test
      * @dataProvider provideLimitAndOffset
      */

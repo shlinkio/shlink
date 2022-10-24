@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Rest\Middleware\ShortUrl\DropDefaultDomainFromRequestMiddlew
 class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
 {
     private DropDefaultDomainFromRequestMiddleware $middleware;
-    private MockObject $next;
+    private MockObject & RequestHandlerInterface $next;
 
     protected function setUp(): void
     {

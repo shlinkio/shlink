@@ -363,7 +363,7 @@ class CreateShortUrlTest extends ApiTestCase
     }
 
     /**
-     * @return array{int $statusCode, array $payload}
+     * @return array{int, array}
      */
     private function createShortUrl(array $body = [], string $apiKey = 'valid_api_key', string $version = '2'): array
     {

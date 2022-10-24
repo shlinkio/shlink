@@ -62,13 +62,13 @@ class EditShortUrlTest extends ApiTestCase
         ]];
     }
 
-    private function findShortUrlMetaByShortCode(string $shortCode): ?array
+    private function findShortUrlMetaByShortCode(string $shortCode): array
     {
         $matchingShortUrl = $this->getJsonResponsePayload(
             $this->callApiWithKey(self::METHOD_GET, '/short-urls/' . $shortCode),
         );
 
-        return $matchingShortUrl['meta'] ?? null;
+        return $matchingShortUrl['meta'] ?? [];
     }
 
     /**

@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class NonOrphanVisitsActionTest extends TestCase
 {
     private NonOrphanVisitsAction $action;
-    private MockObject $visitsHelper;
+    private MockObject & VisitsStatsHelperInterface $visitsHelper;
 
     protected function setUp(): void
     {

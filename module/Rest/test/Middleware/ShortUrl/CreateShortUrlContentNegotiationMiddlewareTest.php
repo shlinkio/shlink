@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Rest\Middleware\ShortUrl\CreateShortUrlContentNegotiationMid
 class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 {
     private CreateShortUrlContentNegotiationMiddleware $middleware;
-    private MockObject $requestHandler;
+    private MockObject & RequestHandlerInterface $requestHandler;
 
     protected function setUp(): void
     {

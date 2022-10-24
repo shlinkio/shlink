@@ -23,7 +23,8 @@ class RoleDefinitionTest extends TestCase
     /** @test */
     public function forDomainCreatesRoleDefinitionAsExpected(): void
     {
-        $domain = Domain::withAuthority('foo.com')->setId('123');
+        $domain = Domain::withAuthority('foo.com');
+        $domain->setId('123');
         $definition = RoleDefinition::forDomain($domain);
 
         self::assertEquals(Role::DOMAIN_SPECIFIC, $definition->role);

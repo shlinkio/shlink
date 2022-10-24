@@ -30,11 +30,11 @@ use function str_starts_with;
 
 class ExtraPathRedirectMiddlewareTest extends TestCase
 {
-    private MockObject $resolver;
-    private MockObject $requestTracker;
-    private MockObject $redirectionBuilder;
-    private MockObject $redirectResponseHelper;
-    private MockObject $handler;
+    private MockObject & ShortUrlResolverInterface $resolver;
+    private MockObject & RequestTrackerInterface $requestTracker;
+    private MockObject & ShortUrlRedirectionBuilderInterface $redirectionBuilder;
+    private MockObject & RedirectResponseHelperInterface $redirectResponseHelper;
+    private MockObject & RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {

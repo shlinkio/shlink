@@ -19,7 +19,7 @@ class RenameTagCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private MockObject $tagService;
+    private MockObject & TagServiceInterface $tagService;
 
     protected function setUp(): void
     {

@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ShlinkTableTest extends TestCase
 {
     private ShlinkTable $shlinkTable;
-    private MockObject $baseTable;
+    private MockObject & Table $baseTable;
 
     protected function setUp(): void
     {

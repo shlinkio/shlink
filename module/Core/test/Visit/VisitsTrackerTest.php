@@ -17,8 +17,8 @@ use Shlinkio\Shlink\Core\Visit\VisitsTracker;
 
 class VisitsTrackerTest extends TestCase
 {
-    private MockObject $em;
-    private MockObject $eventDispatcher;
+    private MockObject & EntityManager $em;
+    private MockObject & EventDispatcherInterface $eventDispatcher;
 
     protected function setUp(): void
     {

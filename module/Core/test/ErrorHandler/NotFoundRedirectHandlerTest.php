@@ -22,9 +22,9 @@ class NotFoundRedirectHandlerTest extends TestCase
 {
     private NotFoundRedirectHandler $middleware;
     private NotFoundRedirectOptions $redirectOptions;
-    private MockObject $resolver;
-    private MockObject $domainService;
-    private MockObject $next;
+    private MockObject & NotFoundRedirectResolverInterface $resolver;
+    private MockObject & DomainServiceInterface $domainService;
+    private MockObject & RequestHandlerInterface $next;
     private ServerRequestInterface $req;
 
     protected function setUp(): void

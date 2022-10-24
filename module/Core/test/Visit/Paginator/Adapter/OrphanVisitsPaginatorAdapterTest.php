@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
 class OrphanVisitsPaginatorAdapterTest extends TestCase
 {
     private OrphanVisitsPaginatorAdapter $adapter;
-    private MockObject $repo;
+    private MockObject & VisitRepositoryInterface $repo;
     private VisitsParams $params;
 
     protected function setUp(): void
@@ -41,6 +41,8 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     }
 
     /**
+     * @param int<0, max> $limit
+     * @param int<0, max> $offset
      * @test
      * @dataProvider provideLimitAndOffset
      */

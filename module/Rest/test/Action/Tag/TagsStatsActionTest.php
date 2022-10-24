@@ -21,7 +21,7 @@ use function count;
 class TagsStatsActionTest extends TestCase
 {
     private TagsStatsAction $action;
-    private MockObject $tagService;
+    private MockObject & TagServiceInterface $tagService;
 
     protected function setUp(): void
     {

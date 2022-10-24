@@ -23,8 +23,8 @@ use function sprintf;
 
 class DeleteShortUrlServiceTest extends TestCase
 {
-    private MockObject $em;
-    private MockObject $urlResolver;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & ShortUrlResolverInterface $urlResolver;
     private string $shortCode;
 
     protected function setUp(): void

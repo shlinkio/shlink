@@ -17,7 +17,7 @@ use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 class VisitToLocationHelperTest extends TestCase
 {
     private VisitToLocationHelper $helper;
-    private MockObject $ipLocationResolver;
+    private MockObject & IpLocationResolverInterface $ipLocationResolver;
 
     protected function setUp(): void
     {

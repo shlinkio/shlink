@@ -14,12 +14,13 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitGeolocationHelperInterface;
-use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocator;
+use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocatorInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -34,14 +35,14 @@ class LocateVisitsCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private MockObject $visitService;
-    private MockObject $visitToLocation;
-    private MockObject $lock;
-    private MockObject $downloadDbCommand;
+    private MockObject & VisitLocatorInterface $visitService;
+    private MockObject & VisitToLocationHelperInterface $visitToLocation;
+    private MockObject & Lock\LockInterface $lock;
+    private MockObject & Command $downloadDbCommand;
 
     protected function setUp(): void
     {
-        $this->visitService = $this->createMock(VisitLocator::class);
+        $this->visitService = $this->createMock(VisitLocatorInterface::class);
         $this->visitToLocation = $this->createMock(VisitToLocationHelperInterface::class);
 
         $locker = $this->createMock(Lock\LockFactory::class);

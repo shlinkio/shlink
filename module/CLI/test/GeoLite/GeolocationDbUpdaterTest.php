@@ -23,16 +23,14 @@ use function range;
 
 class GeolocationDbUpdaterTest extends TestCase
 {
-    private MockObject $dbUpdater;
-    private MockObject $geoLiteDbReader;
-    private MockObject $lock;
+    private MockObject & DbUpdaterInterface $dbUpdater;
+    private MockObject & Reader $geoLiteDbReader;
+    private MockObject & Lock\LockInterface $lock;
 
     protected function setUp(): void
     {
         $this->dbUpdater = $this->createMock(DbUpdaterInterface::class);
         $this->geoLiteDbReader = $this->createMock(Reader::class);
-        $this->trackingOptions = new TrackingOptions();
-
         $this->lock = $this->createMock(Lock\LockInterface::class);
         $this->lock->method('acquire')->with($this->isTrue())->willReturn(true);
     }

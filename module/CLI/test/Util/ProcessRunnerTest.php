@@ -16,10 +16,10 @@ use Symfony\Component\Process\Process;
 class ProcessRunnerTest extends TestCase
 {
     private ProcessRunner $runner;
-    private MockObject $helper;
-    private MockObject $formatter;
-    private MockObject $process;
-    private MockObject $output;
+    private MockObject & ProcessHelper $helper;
+    private MockObject & DebugFormatterHelper $formatter;
+    private MockObject & Process $process;
+    private MockObject & OutputInterface $output;
 
     protected function setUp(): void
     {

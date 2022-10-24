@@ -21,7 +21,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private MockObject $dbUpdater;
+    private MockObject & GeolocationDbUpdaterInterface $dbUpdater;
 
     protected function setUp(): void
     {

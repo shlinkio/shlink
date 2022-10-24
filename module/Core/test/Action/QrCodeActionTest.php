@@ -30,7 +30,7 @@ class QrCodeActionTest extends TestCase
     private const WHITE = 0xFFFFFF;
     private const BLACK = 0x0;
 
-    private MockObject $urlResolver;
+    private MockObject & ShortUrlResolverInterface $urlResolver;
 
     protected function setUp(): void
     {
@@ -115,8 +115,10 @@ class QrCodeActionTest extends TestCase
         $delegate = $this->createMock(RequestHandlerInterface::class);
 
         $resp = $this->action($defaultOptions)->process($req->withAttribute('shortCode', $code), $delegate);
-        [$size] = getimagesizefromstring($resp->getBody()->__toString());
+        $result = getimagesizefromstring($resp->getBody()->__toString());
+        self::assertNotFalse($result);
 
+        [$size] = $result;
         self::assertEquals($expectedSize, $size);
     }
 
@@ -207,8 +209,9 @@ class QrCodeActionTest extends TestCase
 
         $resp = $this->action($defaultOptions)->process($req, $delegate);
         $image = imagecreatefromstring($resp->getBody()->__toString());
-        $color = imagecolorat($image, 1, 1);
+        self::assertNotFalse($image);
 
+        $color = imagecolorat($image, 1, 1);
         self::assertEquals($color, $expectedColor);
     }
 

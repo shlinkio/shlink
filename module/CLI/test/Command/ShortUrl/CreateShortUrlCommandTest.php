@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
-use Shlinkio\Shlink\Core\ShortUrl\UrlShortener;
+use Shlinkio\Shlink\Core\ShortUrl\UrlShortenerInterface;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -26,18 +26,21 @@ class CreateShortUrlCommandTest extends TestCase
     private const DEFAULT_DOMAIN = 'default.com';
 
     private CommandTester $commandTester;
-    private MockObject $urlShortener;
-    private MockObject $stringifier;
+    private MockObject & UrlShortenerInterface $urlShortener;
+    private MockObject & ShortUrlStringifierInterface $stringifier;
 
     protected function setUp(): void
     {
-        $this->urlShortener = $this->createMock(UrlShortener::class);
+        $this->urlShortener = $this->createMock(UrlShortenerInterface::class);
         $this->stringifier = $this->createMock(ShortUrlStringifierInterface::class);
 
         $command = new CreateShortUrlCommand(
             $this->urlShortener,
             $this->stringifier,
-            new UrlShortenerOptions(domain: ['hostname' => self::DEFAULT_DOMAIN], defaultShortCodesLength: 5),
+            new UrlShortenerOptions(
+                domain: ['hostname' => self::DEFAULT_DOMAIN, 'schema' => ''],
+                defaultShortCodesLength: 5,
+            ),
         );
         $this->commandTester = $this->testerForCommand($command);
     }

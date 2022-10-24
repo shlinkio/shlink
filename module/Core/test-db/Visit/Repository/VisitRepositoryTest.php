@@ -213,7 +213,6 @@ class VisitRepositoryTest extends DatabaseTestCase
     {
         $foo = 'foo';
 
-        /** @var ShortUrl $shortUrl */
         $this->createShortUrlsAndVisits(false, [$foo]);
         $this->getEntityManager()->flush();
 

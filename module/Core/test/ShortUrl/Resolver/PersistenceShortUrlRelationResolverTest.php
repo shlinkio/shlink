@@ -19,7 +19,7 @@ use function count;
 class PersistenceShortUrlRelationResolverTest extends TestCase
 {
     private PersistenceShortUrlRelationResolver $resolver;
-    private MockObject $em;
+    private MockObject & EntityManagerInterface $em;
 
     protected function setUp(): void
     {

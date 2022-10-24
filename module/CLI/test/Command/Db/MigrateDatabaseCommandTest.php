@@ -20,7 +20,7 @@ class MigrateDatabaseCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private MockObject $processHelper;
+    private MockObject & ProcessRunnerInterface $processHelper;
 
     protected function setUp(): void
     {

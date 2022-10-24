@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Core\Crawling\CrawlingHelperInterface;
 class RobotsActionTest extends TestCase
 {
     private RobotsAction $action;
-    private MockObject $helper;
+    private MockObject & CrawlingHelperInterface $helper;
 
     protected function setUp(): void
     {

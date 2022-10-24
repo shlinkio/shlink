@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class UpdateTagActionTest extends TestCase
 {
     private UpdateTagAction $action;
-    private MockObject $tagService;
+    private MockObject & TagServiceInterface $tagService;
 
     protected function setUp(): void
     {

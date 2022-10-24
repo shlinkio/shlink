@@ -30,7 +30,7 @@ class ListShortUrlsCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private MockObject $shortUrlService;
+    private MockObject & ShortUrlServiceInterface $shortUrlService;
 
     protected function setUp(): void
     {

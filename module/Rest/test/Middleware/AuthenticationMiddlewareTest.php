@@ -28,8 +28,8 @@ use function Laminas\Stratigility\middleware;
 class AuthenticationMiddlewareTest extends TestCase
 {
     private AuthenticationMiddleware $middleware;
-    private MockObject $apiKeyService;
-    private MockObject $handler;
+    private MockObject & ApiKeyServiceInterface $apiKeyService;
+    private MockObject & RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
