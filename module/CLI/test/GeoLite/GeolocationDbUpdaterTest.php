@@ -31,8 +31,6 @@ class GeolocationDbUpdaterTest extends TestCase
     {
         $this->dbUpdater = $this->createMock(DbUpdaterInterface::class);
         $this->geoLiteDbReader = $this->createMock(Reader::class);
-        $this->trackingOptions = new TrackingOptions();
-
         $this->lock = $this->createMock(Lock\LockInterface::class);
         $this->lock->method('acquire')->with($this->isTrue())->willReturn(true);
     }

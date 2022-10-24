@@ -41,6 +41,8 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     }
 
     /**
+     * @param int<0, max> $limit
+     * @param int<0, max> $offset
      * @test
      * @dataProvider provideLimitAndOffset
      */

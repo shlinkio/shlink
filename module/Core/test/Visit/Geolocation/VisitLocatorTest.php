@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\Core\Visit\Geolocation;
 
 use Doctrine\ORM\EntityManager;
 use Exception;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
@@ -19,10 +18,8 @@ use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
-use function array_shift;
 use function count;
 use function floor;
-use function func_get_args;
 use function Functional\map;
 use function range;
 use function sprintf;
@@ -72,10 +69,6 @@ class VisitLocatorTest extends TestCase
 
             public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void
             {
-                $args = func_get_args();
-
-                Assert::assertInstanceOf(VisitLocation::class, array_shift($args));
-                Assert::assertInstanceOf(Visit::class, array_shift($args));
             }
         });
     }

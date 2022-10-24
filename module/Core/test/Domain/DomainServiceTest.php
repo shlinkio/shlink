@@ -48,8 +48,10 @@ class DomainServiceTest extends TestCase
     {
         $default = DomainItem::forDefaultDomain('default.com', new EmptyNotFoundRedirectConfig());
         $adminApiKey = ApiKey::create();
+        $domain = Domain::withAuthority('');
+        $domain->setId('123');
         $domainSpecificApiKey = ApiKey::fromMeta(
-            ApiKeyMeta::withRoles(RoleDefinition::forDomain(Domain::withAuthority('')->setId('123'))),
+            ApiKeyMeta::withRoles(RoleDefinition::forDomain($domain)),
         );
 
         yield 'empty list without API key' => [[], [$default], null];
@@ -147,7 +149,8 @@ class DomainServiceTest extends TestCase
     public function getOrCreateThrowsExceptionForApiKeysWithDomainRole(): void
     {
         $authority = 'example.com';
-        $domain = Domain::withAuthority($authority)->setId('1');
+        $domain = Domain::withAuthority($authority);
+        $domain->setId('1');
         $apiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($domain)));
         $repo = $this->createMock(DomainRepositoryInterface::class);
         $repo->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(null);
