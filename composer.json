@@ -132,7 +132,7 @@
         "test:cli:ci": "GENERATE_COVERAGE=yes composer test:cli",
         "test:cli:pretty": "GENERATE_COVERAGE=pretty composer test:cli",
         "infect:ci:base": "infection --threads=max --only-covered --only-covering-test-cases --skip-initial-tests",
-        "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=84",
+        "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=80",
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json5",
         "infect:ci:api": "@infect:ci:base --coverage=build/coverage-api --min-msi=80 --configuration=infection-api.json5",
         "infect:ci:cli": "@infect:ci:base --coverage=build/coverage-cli --min-msi=80 --configuration=infection-cli.json5",
