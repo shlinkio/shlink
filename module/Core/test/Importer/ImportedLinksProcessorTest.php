@@ -19,6 +19,7 @@ use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
+use Shlinkio\Shlink\Importer\Model\ImportResult;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use stdClass;
@@ -76,7 +77,7 @@ class ImportedLinksProcessorTest extends TestCase
         );
         $this->io->expects($this->exactly($expectedCalls))->method('text')->with($this->isType('string'));
 
-        $this->processor->process($this->io, $urls, $this->buildParams());
+        $this->processor->process($this->io, ImportResult::withShortUrls($urls), $this->buildParams());
     }
 
     /** @test */
@@ -99,7 +100,7 @@ class ImportedLinksProcessorTest extends TestCase
         });
         $textCalls = $this->setUpIoText('<comment>Skipped</comment>. Reason: Whatever error', '<info>Imported</info>');
 
-        $this->processor->process($this->io, $urls, $this->buildParams());
+        $this->processor->process($this->io, ImportResult::withShortUrls($urls), $this->buildParams());
 
         self::assertEquals(2, $textCalls->importedCount);
         self::assertEquals(1, $textCalls->skippedCount);
@@ -124,7 +125,7 @@ class ImportedLinksProcessorTest extends TestCase
         $this->em->expects($this->exactly(2))->method('persist')->with($this->isInstanceOf(ShortUrl::class));
         $textCalls = $this->setUpIoText();
 
-        $this->processor->process($this->io, $urls, $this->buildParams());
+        $this->processor->process($this->io, ImportResult::withShortUrls($urls), $this->buildParams());
 
         self::assertEquals(2, $textCalls->importedCount);
         self::assertEquals(3, $textCalls->skippedCount);
@@ -151,7 +152,7 @@ class ImportedLinksProcessorTest extends TestCase
         });
         $textCalls = $this->setUpIoText('Error');
 
-        $this->processor->process($this->io, $urls, $this->buildParams());
+        $this->processor->process($this->io, ImportResult::withShortUrls($urls), $this->buildParams());
 
         self::assertEquals(2, $textCalls->importedCount);
         self::assertEquals(3, $textCalls->skippedCount);
@@ -176,7 +177,7 @@ class ImportedLinksProcessorTest extends TestCase
         )->with($this->callback(fn (object $arg) => $arg instanceof ShortUrl || $arg instanceof Visit));
         $this->io->expects($this->once())->method('text')->with($this->stringContains($expectedOutput));
 
-        $this->processor->process($this->io, [$importedUrl], $this->buildParams());
+        $this->processor->process($this->io, ImportResult::withShortUrls([$importedUrl]), $this->buildParams());
     }
 
     public function provideUrlsWithVisits(): iterable
