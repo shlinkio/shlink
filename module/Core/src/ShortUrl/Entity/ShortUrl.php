@@ -25,6 +25,8 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function count;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
+use function Shlinkio\Shlink\Core\normalizeDate;
+use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 
 class ShortUrl extends AbstractEntity
 {
@@ -109,19 +111,11 @@ class ShortUrl extends AbstractEntity
 
         $instance = self::fromMeta(ShortUrlCreation::fromRawData($meta), $relationResolver);
 
-        $validSince = $url->meta->validSince;
-        if ($validSince !== null) {
-            $instance->validSince = Chronos::instance($validSince);
-        }
-
-        $validUntil = $url->meta->validUntil;
-        if ($validUntil !== null) {
-            $instance->validUntil = Chronos::instance($validUntil);
-        }
-
         $instance->importSource = $url->source->value;
         $instance->importOriginalShortCode = $url->shortCode;
-        $instance->dateCreated = Chronos::instance($url->createdAt);
+        $instance->validSince = normalizeOptionalDate($url->meta->validSince);
+        $instance->validUntil = normalizeOptionalDate($url->meta->validUntil);
+        $instance->dateCreated = normalizeDate($url->createdAt);
 
         return $instance;
     }
