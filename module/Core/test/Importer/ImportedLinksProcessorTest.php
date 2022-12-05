@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
+use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -235,6 +236,7 @@ class ImportedLinksProcessorTest extends TestCase
     public function properAmountOfOrphanVisitsIsImported(
         bool $importOrphanVisits,
         iterable $visits,
+        ?Visit $lastOrphanVisit,
         int $expectedImportedVisits,
     ): void {
         $this->io->expects($this->exactly($importOrphanVisits ? 2 : 1))->method('title');
@@ -245,7 +247,7 @@ class ImportedLinksProcessorTest extends TestCase
         $visitRepo = $this->createMock(VisitRepositoryInterface::class);
         $visitRepo->expects($importOrphanVisits ? $this->once() : $this->never())->method(
             'findMostRecentOrphanVisit',
-        )->willReturn(null);
+        )->willReturn($lastOrphanVisit);
         $this->em->expects($importOrphanVisits ? $this->once() : $this->never())->method('getRepository')->with(
             Visit::class,
         )->willReturn($visitRepo);
@@ -262,18 +264,25 @@ class ImportedLinksProcessorTest extends TestCase
 
     public function provideOrphanVisits(): iterable
     {
-        yield 'import orphan disable without visits' => [false, [], 0];
-        yield 'import orphan enabled without visits' => [true, [], 0];
+        yield 'import orphan disable without visits' => [false, [], null, 0];
+        yield 'import orphan enabled without visits' => [true, [], null, 0];
         yield 'import orphan disabled with visits' => [false, [
             new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
-        ], 0];
+        ], null, 0];
         yield 'import orphan enabled with visits' => [true, [
             new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
             new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
             new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
             new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
             new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
-        ], 5];
+        ], null, 5];
+        yield 'existing orphan visit' => [true, [
+            new ImportedShlinkOrphanVisit('', '', Chronos::now()->subDays(3), '', '', null),
+            new ImportedShlinkOrphanVisit('', '', Chronos::now()->subDays(2), '', '', null),
+            new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDay(), '', '', null),
+            new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDay(), '', '', null),
+            new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDay(), '', '', null),
+        ], Visit::forBasePath(Visitor::botInstance()), 3];
     }
 
     private function buildParams(bool $importOrphanVisits = false): ImportParams
