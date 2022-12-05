@@ -491,6 +491,24 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertCount(5, $this->repo->findNonOrphanVisits(new VisitsListFiltering(null, false, null, 5, 5)));
     }
 
+    /** @test */
+    public function findMostRecentOrphanVisitReturnsExpectedVisit(): void
+    {
+        $this->assertNull($this->repo->findMostRecentOrphanVisit());
+
+        $lastVisit = Visit::forBasePath(Visitor::emptyInstance());
+        $this->getEntityManager()->persist($lastVisit);
+        $this->getEntityManager()->flush();
+
+        $this->assertSame($lastVisit, $this->repo->findMostRecentOrphanVisit());
+
+        $lastVisit2 = Visit::forRegularNotFound(Visitor::botInstance());
+        $this->getEntityManager()->persist($lastVisit2);
+        $this->getEntityManager()->flush();
+
+        $this->assertSame($lastVisit2, $this->repo->findMostRecentOrphanVisit());
+    }
+
     /**
      * @return array{string, string, \Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl}
      */

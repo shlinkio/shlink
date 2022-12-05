@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use function array_key_exists;
 use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
-use function Shlinkio\Shlink\Core\normalizeDate;
+use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 
 final class ShortUrlEdition implements TitleResolutionModelInterface
 {
@@ -69,8 +69,8 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
         $this->forwardQueryPropWasProvided = array_key_exists(ShortUrlInputFilter::FORWARD_QUERY, $data);
 
         $this->longUrl = $inputFilter->getValue(ShortUrlInputFilter::LONG_URL);
-        $this->validSince = normalizeDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
-        $this->validUntil = normalizeDate($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL));
+        $this->validSince = normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
+        $this->validUntil = normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL));
         $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlInputFilter::MAX_VISITS);
         $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL) ?? false;
         $this->tags = $inputFilter->getValue(ShortUrlInputFilter::TAGS);

@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#1616](https://github.com/shlinkio/shlink/issues/1616) Added support to import orphan visits when importing short URLs from another Shlink instance.
 
 ### Changed
 * [#1563](https://github.com/shlinkio/shlink/issues/1563) Moved logic to reuse command options to option classes instead of base abstract command classes.
@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#1618](https://github.com/shlinkio/shlink/issues/1618) Fixed imported short URLs and visits dates not being set to the target server timezone.
 
 
 ## [3.3.2] - 2022-10-18

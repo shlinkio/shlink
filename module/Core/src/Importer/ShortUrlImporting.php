@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Importer;
 
-use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 
+use function Shlinkio\Shlink\Core\normalizeDate;
 use function sprintf;
 
 final class ShortUrlImporting
@@ -38,7 +38,7 @@ final class ShortUrlImporting
         $importedVisits = 0;
         foreach ($visits as $importedVisit) {
             // Skip visits which are older than the most recent already imported visit's date
-            if ($mostRecentImportedDate?->gte(Chronos::instance($importedVisit->date))) {
+            if ($mostRecentImportedDate?->gte(normalizeDate($importedVisit->date))) {
                 continue;
             }
 

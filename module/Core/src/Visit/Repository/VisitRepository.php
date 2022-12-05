@@ -286,4 +286,19 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
         return $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm)->getResult();
     }
+
+    public function findMostRecentOrphanVisit(): ?Visit
+    {
+        $dql = <<<DQL
+            SELECT v
+              FROM Shlinkio\Shlink\Core\Visit\Entity\Visit AS v
+             WHERE v.shortUrl IS NULL
+          ORDER BY v.id DESC
+        DQL;
+
+        $query = $this->getEntityManager()->createQuery($dql);
+        $query->setMaxResults(1);
+
+        return $query->getOneOrNullResult();
+    }
 }
