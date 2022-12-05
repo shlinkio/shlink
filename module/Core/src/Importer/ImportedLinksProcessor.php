@@ -28,15 +28,12 @@ use function sprintf;
 
 class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 {
-    private ShortUrlRepositoryInterface $shortUrlRepo;
-
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly ShortUrlRelationResolverInterface $relationResolver,
         private readonly ShortCodeUniquenessHelperInterface $shortCodeHelper,
         private readonly DoctrineBatchHelperInterface $batchHelper,
     ) {
-        $this->shortUrlRepo = $this->em->getRepository(ShortUrl::class);
     }
 
     public function process(StyleInterface $io, ImportResult $result, ImportParams $params): void
@@ -95,7 +92,9 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         bool $importShortCodes,
         callable $skipOnShortCodeConflict,
     ): ShortUrlImporting {
-        $alreadyImportedShortUrl = $this->shortUrlRepo->findOneByImportedUrl($importedUrl);
+        /** @var ShortUrlRepositoryInterface $shortUrlRepo */
+        $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
+        $alreadyImportedShortUrl = $shortUrlRepo->findOneByImportedUrl($importedUrl);
         if ($alreadyImportedShortUrl !== null) {
             return ShortUrlImporting::fromExistingShortUrl($alreadyImportedShortUrl);
         }

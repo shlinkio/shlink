@@ -17,6 +17,8 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
+use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 use Shlinkio\Shlink\Importer\Model\ImportResult;
@@ -28,6 +30,7 @@ use Symfony\Component\Console\Style\StyleInterface;
 use function count;
 use function Functional\contains;
 use function Functional\some;
+use function sprintf;
 use function str_contains;
 
 class ImportedLinksProcessorTest extends TestCase
@@ -42,7 +45,6 @@ class ImportedLinksProcessorTest extends TestCase
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
-        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
         $this->shortCodeHelper = $this->createMock(ShortCodeUniquenessHelperInterface::class);
         $batchHelper = $this->createMock(DoctrineBatchHelperInterface::class);
@@ -68,6 +70,7 @@ class ImportedLinksProcessorTest extends TestCase
         ];
         $expectedCalls = count($urls);
 
+        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
         $this->repo->expects($this->exactly($expectedCalls))->method('findOneByImportedUrl')->willReturn(null);
         $this->shortCodeHelper->expects($this->exactly($expectedCalls))
                               ->method('ensureShortCodeUniqueness')
@@ -89,6 +92,7 @@ class ImportedLinksProcessorTest extends TestCase
             new ImportedShlinkUrl(ImportSource::BITLY, 'baz', [], Chronos::now(), null, 'baz', null),
         ];
 
+        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
         $this->repo->expects($this->exactly(3))->method('findOneByImportedUrl')->willReturn(null);
         $this->shortCodeHelper->expects($this->exactly(3))->method('ensureShortCodeUniqueness')->willReturn(true);
         $this->em->expects($this->exactly(3))->method('persist')->with(
@@ -117,6 +121,7 @@ class ImportedLinksProcessorTest extends TestCase
             new ImportedShlinkUrl(ImportSource::BITLY, 'baz3', [], Chronos::now(), null, 'baz3', null),
         ];
 
+        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
         $this->repo->expects($this->exactly(count($urls)))->method('findOneByImportedUrl')->willReturnCallback(
             fn (ImportedShlinkUrl $url): ?ShortUrl
                 => contains(['foo', 'baz2', 'baz3'], $url->longUrl) ? ShortUrl::fromImport($url, true) : null,
@@ -142,6 +147,7 @@ class ImportedLinksProcessorTest extends TestCase
             new ImportedShlinkUrl(ImportSource::BITLY, 'baz3', [], Chronos::now(), null, 'baz3', 'bar'),
         ];
 
+        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
         $this->repo->expects($this->exactly(count($urls)))->method('findOneByImportedUrl')->willReturn(null);
         $this->shortCodeHelper->expects($this->exactly(7))->method('ensureShortCodeUniqueness')->willReturnCallback(
             fn ($_, bool $hasCustomSlug) => ! $hasCustomSlug,
@@ -168,6 +174,7 @@ class ImportedLinksProcessorTest extends TestCase
         int $amountOfPersistedVisits,
         ?ShortUrl $foundShortUrl,
     ): void {
+        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
         $this->repo->expects($this->once())->method('findOneByImportedUrl')->willReturn($foundShortUrl);
         $this->shortCodeHelper->expects($this->exactly($foundShortUrl === null ? 1 : 0))
                               ->method('ensureShortCodeUniqueness')
@@ -220,9 +227,61 @@ class ImportedLinksProcessorTest extends TestCase
         ];
     }
 
-    private function buildParams(): ImportParams
+    /**
+     * @param iterable<ImportedShlinkOrphanVisit> $visits
+     * @test
+     * @dataProvider provideOrphanVisits
+     */
+    public function properAmountOfOrphanVisitsIsImported(
+        bool $importOrphanVisits,
+        iterable $visits,
+        int $expectedImportedVisits,
+    ): void {
+        $this->io->expects($this->exactly($importOrphanVisits ? 2 : 1))->method('title');
+        $this->io->expects($importOrphanVisits ? $this->once() : $this->never())->method('text')->with(
+            sprintf('<info>Imported %s</info> orphan visits.', $expectedImportedVisits),
+        );
+
+        $visitRepo = $this->createMock(VisitRepositoryInterface::class);
+        $visitRepo->expects($importOrphanVisits ? $this->once() : $this->never())->method(
+            'findMostRecentOrphanVisit',
+        )->willReturn(null);
+        $this->em->expects($importOrphanVisits ? $this->once() : $this->never())->method('getRepository')->with(
+            Visit::class,
+        )->willReturn($visitRepo);
+        $this->em->expects($importOrphanVisits ? $this->exactly($expectedImportedVisits) : $this->never())->method(
+            'persist',
+        )->with($this->isInstanceOf(Visit::class));
+
+        $this->processor->process(
+            $this->io,
+            ImportResult::withShortUrlsAndOrphanVisits([], $visits),
+            $this->buildParams($importOrphanVisits),
+        );
+    }
+
+    public function provideOrphanVisits(): iterable
     {
-        return ImportSource::BITLY->toParamsWithCallableMap(['import_short_codes' => static fn () => true]);
+        yield 'import orphan disable without visits' => [false, [], 0];
+        yield 'import orphan enabled without visits' => [true, [], 0];
+        yield 'import orphan disabled with visits' => [false, [
+            new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
+        ], 0];
+        yield 'import orphan enabled with visits' => [true, [
+            new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
+            new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
+            new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
+            new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
+            new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
+        ], 5];
+    }
+
+    private function buildParams(bool $importOrphanVisits = false): ImportParams
+    {
+        return ImportSource::BITLY->toParamsWithCallableMap([
+            ImportParams::IMPORT_SHORT_CODES_PARAM => static fn () => true,
+            ImportParams::IMPORT_ORPHAN_VISITS_PARAM => static fn () => $importOrphanVisits,
+        ]);
     }
 
     public function setUpIoText(string $skippedText = 'Skipped', string $importedText = 'Imported'): stdClass
