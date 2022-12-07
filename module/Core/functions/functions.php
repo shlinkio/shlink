@@ -78,6 +78,12 @@ function getOptionalBoolFromInputFilter(InputFilter $inputFilter, string $fieldN
     return $value !== null ? (bool) $value : null;
 }
 
+function getNonEmptyOptionalValueFromInputFilter(InputFilter $inputFilter, string $fieldName): mixed
+{
+    $value = $inputFilter->getValue($fieldName);
+    return empty($value) ? null : $value;
+}
+
 function arrayToString(array $array, int $indentSize = 4): string
 {
     $indent = str_repeat(' ', $indentSize);
