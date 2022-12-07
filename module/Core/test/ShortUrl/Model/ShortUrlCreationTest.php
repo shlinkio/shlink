@@ -146,4 +146,26 @@ class ShortUrlCreationTest extends TestCase
         yield [str_pad('', 600, 'd'), str_pad('', 512, 'd')];
         yield [str_pad('', 800, 'e'), str_pad('', 512, 'e')];
     }
+
+    /**
+     * @test
+     * @dataProvider provideDomains
+     */
+    public function emptyDomainIsDiscarded(?string $domain, ?string $expectedDomain): void
+    {
+        $meta = ShortUrlCreation::fromRawData([
+            'domain' => $domain,
+            'longUrl' => '',
+        ]);
+
+        self::assertSame($expectedDomain, $meta->getDomain());
+    }
+
+    public function provideDomains(): iterable
+    {
+        yield 'null domain' => [null, null];
+        yield 'empty domain' => ['', null];
+        yield 'trimmable domain' => ['   ', null];
+        yield 'valid domain' => ['doma.in', 'doma.in'];
+    }
 }
