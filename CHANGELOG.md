@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1618](https://github.com/shlinkio/shlink/issues/1618) Fixed imported short URLs and visits dates not being set to the target server timezone.
+* [#1578](https://github.com/shlinkio/shlink/issues/1578) Fixed short URL allowing an empty string as the domain during creation.
 
 
 ## [3.3.2] - 2022-10-18
