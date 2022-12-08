@@ -304,6 +304,42 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
+    public function findListReturnsOnlyThoseWithMatchingDomains(): void
+    {
+        $shortUrl1 = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+            'longUrl' => 'foo1',
+            'domain' => null,
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl1);
+        $shortUrl2 = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+            'longUrl' => 'foo2',
+            'domain' => null,
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl2);
+        $shortUrl3 = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+            'longUrl' => 'foo3',
+            'domain' => 'another.com',
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl3);
+
+        $this->getEntityManager()->flush();
+
+        $buildFiltering = static fn (string $searchTerm) => new ShortUrlsListFiltering(
+            null,
+            null,
+            Ordering::emptyInstance(),
+            searchTerm: $searchTerm,
+            defaultDomain: 'deFaulT-domain.com',
+        );
+
+        self::assertCount(2, $this->repo->findList($buildFiltering('default-dom')));
+        self::assertCount(2, $this->repo->findList($buildFiltering('DOM')));
+        self::assertCount(1, $this->repo->findList($buildFiltering('another')));
+        self::assertCount(3, $this->repo->findList($buildFiltering('foo')));
+        self::assertCount(0, $this->repo->findList($buildFiltering('no results')));
+    }
+
+    /** @test */
     public function shortCodeIsInUseLooksForShortUrlInProperSetOfTables(): void
     {
         $shortUrlWithoutDomain = ShortUrl::fromMeta(
