@@ -9,44 +9,36 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+use function str_contains;
+use function strtolower;
+
 class ShortUrlsCountFiltering
 {
+    public readonly bool $searchIncludesDefaultDomain;
+
     public function __construct(
-        private ?string $searchTerm = null,
-        private array $tags = [],
-        private ?TagsMode $tagsMode = null,
-        private ?DateRange $dateRange = null,
-        private ?ApiKey $apiKey = null,
+        public readonly ?string $searchTerm = null,
+        public readonly array $tags = [],
+        public readonly ?TagsMode $tagsMode = null,
+        public readonly ?DateRange $dateRange = null,
+        public readonly ?ApiKey $apiKey = null,
+        ?string $defaultDomain = null,
     ) {
+        $this->searchIncludesDefaultDomain = !empty($searchTerm) && !empty($defaultDomain) && str_contains(
+            strtolower($defaultDomain),
+            strtolower($searchTerm),
+        );
     }
 
-    public static function fromParams(ShortUrlsParams $params, ?ApiKey $apiKey): self
+    public static function fromParams(ShortUrlsParams $params, ?ApiKey $apiKey, string $defaultDomain): self
     {
-        return new self($params->searchTerm(), $params->tags(), $params->tagsMode(), $params->dateRange(), $apiKey);
-    }
-
-    public function searchTerm(): ?string
-    {
-        return $this->searchTerm;
-    }
-
-    public function tags(): array
-    {
-        return $this->tags;
-    }
-
-    public function tagsMode(): ?TagsMode
-    {
-        return $this->tagsMode;
-    }
-
-    public function dateRange(): ?DateRange
-    {
-        return $this->dateRange;
-    }
-
-    public function apiKey(): ?ApiKey
-    {
-        return $this->apiKey;
+        return new self(
+            $params->searchTerm,
+            $params->tags,
+            $params->tagsMode,
+            $params->dateRange,
+            $apiKey,
+            $defaultDomain,
+        );
     }
 }

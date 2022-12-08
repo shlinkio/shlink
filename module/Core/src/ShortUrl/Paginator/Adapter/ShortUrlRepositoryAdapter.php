@@ -14,21 +14,28 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ShortUrlRepositoryAdapter implements AdapterInterface
 {
     public function __construct(
-        private ShortUrlRepositoryInterface $repository,
-        private ShortUrlsParams $params,
-        private ?ApiKey $apiKey,
+        private readonly ShortUrlRepositoryInterface $repository,
+        private readonly ShortUrlsParams $params,
+        private readonly ?ApiKey $apiKey,
+        private readonly string $defaultDomain,
     ) {
     }
 
     public function getSlice(int $offset, int $length): iterable
     {
-        return $this->repository->findList(
-            ShortUrlsListFiltering::fromLimitsAndParams($length, $offset, $this->params, $this->apiKey),
-        );
+        return $this->repository->findList(ShortUrlsListFiltering::fromLimitsAndParams(
+            $length,
+            $offset,
+            $this->params,
+            $this->apiKey,
+            $this->defaultDomain,
+        ));
     }
 
     public function getNbResults(): int
     {
-        return $this->repository->countList(ShortUrlsCountFiltering::fromParams($this->params, $this->apiKey));
+        return $this->repository->countList(
+            ShortUrlsCountFiltering::fromParams($this->params, $this->apiKey, $this->defaultDomain),
+        );
     }
 }

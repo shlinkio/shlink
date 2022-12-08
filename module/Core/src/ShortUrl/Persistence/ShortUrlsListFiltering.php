@@ -13,44 +13,36 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ShortUrlsListFiltering extends ShortUrlsCountFiltering
 {
     public function __construct(
-        private ?int $limit,
-        private ?int $offset,
-        private Ordering $orderBy,
+        public readonly ?int $limit,
+        public readonly ?int $offset,
+        public readonly Ordering $orderBy,
         ?string $searchTerm = null,
         array $tags = [],
         ?TagsMode $tagsMode = null,
         ?DateRange $dateRange = null,
         ?ApiKey $apiKey = null,
+        ?string $defaultDomain = null,
     ) {
-        parent::__construct($searchTerm, $tags, $tagsMode, $dateRange, $apiKey);
+        parent::__construct($searchTerm, $tags, $tagsMode, $dateRange, $apiKey, $defaultDomain);
     }
 
-    public static function fromLimitsAndParams(int $limit, int $offset, ShortUrlsParams $params, ?ApiKey $apiKey): self
-    {
+    public static function fromLimitsAndParams(
+        int $limit,
+        int $offset,
+        ShortUrlsParams $params,
+        ?ApiKey $apiKey,
+        string $defaultDomain,
+    ): self {
         return new self(
             $limit,
             $offset,
-            $params->orderBy(),
-            $params->searchTerm(),
-            $params->tags(),
-            $params->tagsMode(),
-            $params->dateRange(),
+            $params->orderBy,
+            $params->searchTerm,
+            $params->tags,
+            $params->tagsMode,
+            $params->dateRange,
             $apiKey,
+            $defaultDomain,
         );
-    }
-
-    public function offset(): ?int
-    {
-        return $this->offset;
-    }
-
-    public function limit(): ?int
-    {
-        return $this->limit;
-    }
-
-    public function orderBy(): Ordering
-    {
-        return $this->orderBy;
     }
 }
