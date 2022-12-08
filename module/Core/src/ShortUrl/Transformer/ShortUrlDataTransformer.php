@@ -13,7 +13,7 @@ use function Functional\invoke_if;
 
 class ShortUrlDataTransformer implements DataTransformerInterface
 {
-    public function __construct(private ShortUrlStringifierInterface $stringifier)
+    public function __construct(private readonly ShortUrlStringifierInterface $stringifier)
     {
     }
 
@@ -27,13 +27,17 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             'shortUrl' => $this->stringifier->stringify($shortUrl),
             'longUrl' => $shortUrl->getLongUrl(),
             'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
-            'visitsCount' => $shortUrl->getVisitsCount(),
+            'nonBotVisitsCount' => $shortUrl->nonBotVisitsCount(),
             'tags' => invoke($shortUrl->getTags(), '__toString'),
             'meta' => $this->buildMeta($shortUrl),
             'domain' => $shortUrl->getDomain(),
             'title' => $shortUrl->title(),
             'crawlable' => $shortUrl->crawlable(),
             'forwardQuery' => $shortUrl->forwardQuery(),
+            'visitsSummary' => $this->buildVisitsSummary($shortUrl),
+
+            // Deprecated
+            'visitsCount' => $shortUrl->getVisitsCount(),
         ];
     }
 
@@ -47,6 +51,18 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             'validSince' => invoke_if($validSince, 'toAtomString'),
             'validUntil' => invoke_if($validUntil, 'toAtomString'),
             'maxVisits' => $maxVisits,
+        ];
+    }
+
+    private function buildVisitsSummary(ShortUrl $shortUrl): array
+    {
+        $totalVisits = $shortUrl->getVisitsCount();
+        $nonBotVisits = $shortUrl->nonBotVisitsCount();
+
+        return [
+            'total' => $totalVisits,
+            'nonBots' => $nonBotVisits,
+            'bots' => $totalVisits - $nonBotVisits,
         ];
     }
 }
