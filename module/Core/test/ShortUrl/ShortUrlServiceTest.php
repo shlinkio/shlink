@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
@@ -45,6 +46,7 @@ class ShortUrlServiceTest extends TestCase
             $this->urlResolver,
             $this->titleResolutionHelper,
             new SimpleShortUrlRelationResolver(),
+            new UrlShortenerOptions(),
         );
     }
 

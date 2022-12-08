@@ -108,6 +108,7 @@ return [
             ShortUrl\ShortUrlResolver::class,
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
+            Options\UrlShortenerOptions::class,
         ],
         Visit\Geolocation\VisitLocator::class => ['em'],
         Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],

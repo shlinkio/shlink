@@ -33,12 +33,12 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     {
         $qb = $this->createListQueryBuilder($filtering);
         $qb->select('DISTINCT s')
-           ->setMaxResults($filtering->limit())
-           ->setFirstResult($filtering->offset());
+           ->setMaxResults($filtering->limit)
+           ->setFirstResult($filtering->offset);
 
         // In case the ordering has been specified, the query could be more complex. Process it
-        if ($filtering->orderBy()->hasOrderField()) {
-            return $this->processOrderByForList($qb, $filtering->orderBy());
+        if ($filtering->orderBy->hasOrderField()) {
+            return $this->processOrderByForList($qb, $filtering->orderBy);
         }
 
         // With no explicit order by, fallback to dateCreated-DESC
@@ -83,7 +83,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         $qb->from(ShortUrl::class, 's')
            ->where('1=1');
 
-        $dateRange = $filtering->dateRange();
+        $dateRange = $filtering->dateRange;
         if ($dateRange?->startDate !== null) {
             $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
             $qb->setParameter('startDate', $dateRange->startDate, ChronosDateTimeType::CHRONOS_DATETIME);
@@ -93,8 +93,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             $qb->setParameter('endDate', $dateRange->endDate, ChronosDateTimeType::CHRONOS_DATETIME);
         }
 
-        $searchTerm = $filtering->searchTerm();
-        $tags = $filtering->tags();
+        $searchTerm = $filtering->searchTerm;
+        $tags = $filtering->tags;
         // Apply search term to every searchable field if not empty
         if (! empty($searchTerm)) {
             // Left join with tags only if no tags were provided. In case of tags, an inner join will be done later
@@ -110,8 +110,13 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
                 $qb->expr()->like('d.authority', ':searchPattern'),
             ];
 
+            // Include default domain in search if provided
+            if ($filtering->searchIncludesDefaultDomain) {
+                $conditions[] = $qb->expr()->isNull('s.domain');
+            }
+
             // Apply tag conditions, only when not filtering by all provided tags
-            $tagsMode = $filtering->tagsMode() ?? TagsMode::ANY;
+            $tagsMode = $filtering->tagsMode ?? TagsMode::ANY;
             if (empty($tags) || $tagsMode === TagsMode::ANY) {
                 $conditions[] = $qb->expr()->like('t.name', ':searchPattern');
             }
@@ -123,13 +128,13 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         // Filter by tags if provided
         if (! empty($tags)) {
-            $tagsMode = $filtering->tagsMode() ?? TagsMode::ANY;
+            $tagsMode = $filtering->tagsMode ?? TagsMode::ANY;
             $tagsMode === TagsMode::ANY
                 ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
                 : $this->joinAllTags($qb, $tags);
         }
 
-        $this->applySpecification($qb, $filtering->apiKey()?->spec(), 's');
+        $this->applySpecification($qb, $filtering->apiKey?->spec(), 's');
 
         return $qb;
     }

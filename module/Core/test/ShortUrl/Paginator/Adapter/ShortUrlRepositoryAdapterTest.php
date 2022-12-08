@@ -42,9 +42,9 @@ class ShortUrlRepositoryAdapterTest extends TestCase
             'endDate' => $endDate,
             'orderBy' => $orderBy,
         ]);
-        $adapter = new ShortUrlRepositoryAdapter($this->repo, $params, null);
-        $orderBy = $params->orderBy();
-        $dateRange = $params->dateRange();
+        $adapter = new ShortUrlRepositoryAdapter($this->repo, $params, null, '');
+        $orderBy = $params->orderBy;
+        $dateRange = $params->dateRange;
 
         $this->repo->expects($this->once())->method('findList')->with(
             new ShortUrlsListFiltering(10, 5, $orderBy, $searchTerm, $tags, TagsMode::ANY, $dateRange),
@@ -70,8 +70,8 @@ class ShortUrlRepositoryAdapterTest extends TestCase
             'endDate' => $endDate,
         ]);
         $apiKey = ApiKey::create();
-        $adapter = new ShortUrlRepositoryAdapter($this->repo, $params, $apiKey);
-        $dateRange = $params->dateRange();
+        $adapter = new ShortUrlRepositoryAdapter($this->repo, $params, $apiKey, '');
+        $dateRange = $params->dateRange;
 
         $this->repo->expects($this->once())->method('countList')->with(
             new ShortUrlsCountFiltering($searchTerm, $tags, TagsMode::ANY, $dateRange, $apiKey),
