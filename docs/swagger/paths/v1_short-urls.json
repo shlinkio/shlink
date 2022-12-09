@@ -97,6 +97,32 @@
                 "schema": {
                     "type": "string"
                 }
+            },
+            {
+                "name": "excludeMaxVisitsReached",
+                "in": "query",
+                "description": "If true, short URLs which already reached their maximum amount of visits will be excluded.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "false",
+                        "true"
+                    ]
+                }
+            },
+            {
+                "name": "excludePastValidUntil",
+                "in": "query",
+                "description": "If true, short URLs which validUntil date is on the past will be excluded.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "false",
+                        "true"
+                    ]
+                }
             }
         ],
         "security": [
