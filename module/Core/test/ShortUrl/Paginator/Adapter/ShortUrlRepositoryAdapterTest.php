@@ -74,7 +74,7 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         $dateRange = $params->dateRange;
 
         $this->repo->expects($this->once())->method('countList')->with(
-            new ShortUrlsCountFiltering($searchTerm, $tags, TagsMode::ANY, $dateRange, $apiKey),
+            new ShortUrlsCountFiltering($searchTerm, $tags, TagsMode::ANY, $dateRange, apiKey: $apiKey),
         );
         $adapter->getNbResults();
     }
