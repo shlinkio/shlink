@@ -52,7 +52,7 @@ class ShortUrlsListFiltering extends ShortUrlsCountFiltering
             $params->tags,
             $params->tagsMode,
             $params->dateRange,
-            $params->excludePastValidUntil,
+            $params->excludeMaxVisitsReached,
             $params->excludePastValidUntil,
             $apiKey,
             $defaultDomain,
