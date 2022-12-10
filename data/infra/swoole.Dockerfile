@@ -1,4 +1,4 @@
-FROM php:8.2.0-alpine3.17
+FROM php:8.1.13-alpine3.17
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.21
