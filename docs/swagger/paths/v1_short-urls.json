@@ -106,8 +106,8 @@
                 "schema": {
                     "type": "string",
                     "enum": [
-                        "false",
-                        "true"
+                        "true",
+                        "false"
                     ]
                 }
             },
@@ -119,8 +119,8 @@
                 "schema": {
                     "type": "string",
                     "enum": [
-                        "false",
-                        "true"
+                        "true",
+                        "false"
                     ]
                 }
             }
