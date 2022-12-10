@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.1']
+        php-version: ['8.1', '8.2']
         swoole: ['yes', 'no']
     steps:
       - uses: actions/checkout@v3
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.1']
+        php-version: ['8.1', '8.2']
         swoole: ['yes', 'no']
     steps:
       - uses: geekyeggo/delete-artifact@v1
