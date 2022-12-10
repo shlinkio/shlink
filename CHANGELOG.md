@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Added
 * [#1616](https://github.com/shlinkio/shlink/issues/1616) Added support to import orphan visits when importing short URLs from another Shlink instance.
 * [#1519](https://github.com/shlinkio/shlink/issues/1519) Allowing to search short URLs by default domain.
+* [#1555](https://github.com/shlinkio/shlink/issues/1555) Added full support for PHP 8.2, pdating the dockr image to this version.
 
 ### Changed
 * [#1563](https://github.com/shlinkio/shlink/issues/1563) Moved logic to reuse command options to option classes instead of base abstract command classes.
