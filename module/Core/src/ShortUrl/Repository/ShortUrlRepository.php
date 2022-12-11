@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ShortUrl\Repository;
 
+use Cake\Chronos\Chronos;
 use Doctrine\DBAL\LockMode;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\ORM\Query\Expr\Join;
@@ -11,7 +12,6 @@ use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
-use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -38,43 +38,58 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         // In case the ordering has been specified, the query could be more complex. Process it
         if ($filtering->orderBy->hasOrderField()) {
-            return $this->processOrderByForList($qb, $filtering->orderBy);
+            $this->processOrderByForList($qb, $filtering);
         }
 
-        // With no explicit order by, fallback to dateCreated-DESC
-        return $qb->orderBy('s.dateCreated', 'DESC')->getQuery()->getResult();
+        $result = $qb->getQuery()->getResult();
+        if ($filtering->excludeMaxVisitsReached || $filtering->orderBy->field === 'visits') {
+            return array_column($result, 0);
+        }
+
+        return $result;
     }
 
-    private function processOrderByForList(QueryBuilder $qb, Ordering $orderBy): array
+    private function processOrderByForList(QueryBuilder $qb, ShortUrlsListFiltering $filtering): void
     {
-        $fieldName = $orderBy->field;
-        $order = $orderBy->direction;
+        $fieldName = $filtering->orderBy->field;
+        $order = $filtering->orderBy->direction;
 
         if ($fieldName === 'visits') {
             // FIXME This query is inefficient.
             //       Diagnostic: It might need to use a sub-query, as done with the tags list query.
-            $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
-               ->leftJoin('s.visits', 'v')
-               ->groupBy('s')
-               ->orderBy('totalVisits', $order);
+            if (! $filtering->excludeMaxVisitsReached) {
+                // Left join only if this was not true, otherwise this left join already happened
+                $this->leftJoinShortUrlsWithVisitsCount($qb);
+            }
 
-            return array_column($qb->getQuery()->getResult(), 0);
-        }
-
-        $orderableFields = ['longUrl', 'shortCode', 'dateCreated', 'title'];
-        if (contains($orderableFields, $fieldName)) {
+            $qb->orderBy('totalVisits', $order);
+        } elseif (contains(['longUrl', 'shortCode', 'dateCreated', 'title'], $fieldName)) {
             $qb->orderBy('s.' . $fieldName, $order);
+        } else {
+            // With no explicit order by, fallback to dateCreated-DESC
+            $qb->orderBy('s.dateCreated', 'DESC');
         }
-
-        return $qb->getQuery()->getResult();
     }
 
     public function countList(ShortUrlsCountFiltering $filtering): int
     {
         $qb = $this->createListQueryBuilder($filtering);
         $qb->select('COUNT(DISTINCT s)');
+        $query = $qb->getQuery();
 
-        return (int) $qb->getQuery()->getSingleScalarResult();
+//        dump($query->getSQL());
+
+        // TODO This is crap...
+        return $filtering->excludeMaxVisitsReached
+            ? count($query->getSingleColumnResult())
+            : (int) $query->getSingleScalarResult();
+    }
+
+    private function leftJoinShortUrlsWithVisitsCount(QueryBuilder $qb): void
+    {
+        $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
+           ->leftJoin('s.visits', 'v')
+           ->groupBy('s');
     }
 
     private function createListQueryBuilder(ShortUrlsCountFiltering $filtering): QueryBuilder
@@ -132,6 +147,22 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             $tagsMode === TagsMode::ANY
                 ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
                 : $this->joinAllTags($qb, $tags);
+        }
+
+        if ($filtering->excludeMaxVisitsReached) {
+            $this->leftJoinShortUrlsWithVisitsCount($qb);
+            $qb->having($qb->expr()->orX(
+                $qb->expr()->isNull('s.maxVisits'),
+                $qb->expr()->gt('s.maxVisits', 'COUNT(DISTINCT v)'),
+            ));
+        }
+
+        if ($filtering->excludePastValidUntil) {
+            $qb->andWhere($qb->expr()->orX(
+                   $qb->expr()->isNull('s.validUntil'),
+                   $qb->expr()->gte('s.validUntil', ':minValidSince'),
+               ))
+               ->setParameter('minValidSince', Chronos::now()->toDateTimeString());
         }
 
         $this->applySpecification($qb, $filtering->apiKey?->spec(), 's');
