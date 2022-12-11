@@ -340,6 +340,50 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     }
 
     /** @test */
+    public function findListReturnsOnlyThoseWithoutExcludedUrls(): void
+    {
+        $shortUrl1 = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+            'longUrl' => 'foo1',
+            'validUntil' => Chronos::now()->addDays(1)->toAtomString(),
+            'maxVisits' => 100,
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl1);
+        $shortUrl2 = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+            'longUrl' => 'foo2',
+            'validUntil' => Chronos::now()->subDays(1)->toAtomString(),
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl2);
+        $shortUrl3 = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+            'longUrl' => 'foo3',
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl3);
+        $shortUrl4 = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+            'longUrl' => 'foo4',
+            'maxVisits' => 3,
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl4);
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl4, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl4, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl4, Visitor::emptyInstance()));
+
+        $this->getEntityManager()->flush();
+
+        $filtering = static fn (bool $excludeMaxVisitsReached, bool $excludePastValidUntil) =>
+            new ShortUrlsListFiltering(
+                null,
+                null,
+                Ordering::emptyInstance(),
+                excludeMaxVisitsReached: $excludeMaxVisitsReached,
+                excludePastValidUntil: $excludePastValidUntil,
+            );
+
+        self::assertCount(4, $this->repo->findList($filtering(false, false)));
+        self::assertCount(3, $this->repo->findList($filtering(true, false)));
+        self::assertCount(3, $this->repo->findList($filtering(false, true)));
+        self::assertCount(2, $this->repo->findList($filtering(true, true)));
+    }
+
+    /** @test */
     public function shortCodeIsInUseLooksForShortUrlInProperSetOfTables(): void
     {
         $shortUrlWithoutDomain = ShortUrl::fromMeta(

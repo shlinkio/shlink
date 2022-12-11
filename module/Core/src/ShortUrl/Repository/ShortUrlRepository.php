@@ -36,6 +36,11 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
            ->setMaxResults($filtering->limit)
            ->setFirstResult($filtering->offset);
 
+        // Some DB engines (postgres and ms) require aggregates in the select for ordering and filtering
+        if ($filtering->excludeMaxVisitsReached || $filtering->orderBy->field === 'visits') {
+            $qb->addSelect('COUNT(DISTINCT v)');
+        }
+
         // In case the ordering has been specified, the query could be more complex. Process it
         if ($filtering->orderBy->hasOrderField()) {
             $this->processOrderByForList($qb, $filtering);
@@ -59,10 +64,10 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             //       Diagnostic: It might need to use a sub-query, as done with the tags list query.
             if (! $filtering->excludeMaxVisitsReached) {
                 // Left join only if this was not true, otherwise this left join already happened
-                $this->leftJoinShortUrlsWithVisitsCount($qb);
+                $this->leftJoinShortUrlsWithVisits($qb);
             }
 
-            $qb->orderBy('totalVisits', $order);
+            $qb->orderBy('COUNT(DISTINCT v)', $order);
         } elseif (contains(['longUrl', 'shortCode', 'dateCreated', 'title'], $fieldName)) {
             $qb->orderBy('s.' . $fieldName, $order);
         } else {
@@ -77,7 +82,10 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         $qb->select('COUNT(DISTINCT s)');
         $query = $qb->getQuery();
 
-//        dump($query->getSQL());
+        // TODO Check if this is needed
+//        if ($filtering->excludeMaxVisitsReached) {
+//            $qb->addSelect('COUNT(DISTINCT v)');
+//        }
 
         // TODO This is crap...
         return $filtering->excludeMaxVisitsReached
@@ -85,10 +93,9 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             : (int) $query->getSingleScalarResult();
     }
 
-    private function leftJoinShortUrlsWithVisitsCount(QueryBuilder $qb): void
+    private function leftJoinShortUrlsWithVisits(QueryBuilder $qb): void
     {
-        $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
-           ->leftJoin('s.visits', 'v')
+        $qb->leftJoin('s.visits', 'v')
            ->groupBy('s');
     }
 
@@ -150,7 +157,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         }
 
         if ($filtering->excludeMaxVisitsReached) {
-            $this->leftJoinShortUrlsWithVisitsCount($qb);
+            $this->leftJoinShortUrlsWithVisits($qb);
             $qb->having($qb->expr()->orX(
                 $qb->expr()->isNull('s.maxVisits'),
                 $qb->expr()->gt('s.maxVisits', 'COUNT(DISTINCT v)'),
