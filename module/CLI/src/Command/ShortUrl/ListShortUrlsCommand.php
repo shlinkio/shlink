@@ -79,13 +79,13 @@ class ListShortUrlsCommand extends Command
             )
             ->addOption(
                 'exclude-max-visits-reached',
-                null, // TODO
+                null,
                 InputOption::VALUE_NONE,
                 'Excludes short URLs which reached their max amount of visits.',
             )
             ->addOption(
                 'exclude-past-valid-until',
-                null, // TODO
+                null,
                 InputOption::VALUE_NONE,
                 'Excludes short URLs which have a "validUntil" date in the past.',
             )
@@ -145,6 +145,8 @@ class ListShortUrlsCommand extends Command
             ShortUrlsParamsInputFilter::ORDER_BY => $orderBy,
             ShortUrlsParamsInputFilter::START_DATE => $startDate?->toAtomString(),
             ShortUrlsParamsInputFilter::END_DATE => $endDate?->toAtomString(),
+            ShortUrlsParamsInputFilter::EXCLUDE_MAX_VISITS_REACHED => $input->getOption('exclude-max-visits-reached'),
+            ShortUrlsParamsInputFilter::EXCLUDE_PAST_VALID_UNTIL => $input->getOption('exclude-past-valid-until'),
         ];
 
         if ($all) {
