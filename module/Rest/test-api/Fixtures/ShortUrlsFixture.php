@@ -36,6 +36,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
                 'tags' => ['foo'],
                 'title' => 'My cool title',
                 'crawlable' => true,
+                'maxVisits' => 2,
             ]), $relationResolver),
             '2018-05-01',
         );
@@ -61,9 +62,11 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
         $manager->persist($customShortUrl);
 
         $ghiShortUrl = $this->setShortUrlDate(
-            ShortUrl::fromMeta(ShortUrlCreation::fromRawData(
-                ['customSlug' => 'ghi789', 'longUrl' => 'https://shlink.io/documentation/'],
-            )),
+            ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+                'customSlug' => 'ghi789',
+                'longUrl' => 'https://shlink.io/documentation/',
+                'validUntil' => Chronos::parse('2020-05-01'), // In the past
+            ])),
             '2018-05-01',
         );
         $manager->persist($ghiShortUrl);
