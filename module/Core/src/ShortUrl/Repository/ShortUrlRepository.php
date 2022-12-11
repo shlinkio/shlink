@@ -24,6 +24,7 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use function array_column;
 use function count;
 use function Functional\contains;
+use function sprintf;
 
 class ShortUrlRepository extends EntitySpecificationRepository implements ShortUrlRepositoryInterface
 {
@@ -136,10 +137,12 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         }
 
         if ($filtering->excludeMaxVisitsReached) {
-            $visitEntity = Visit::class;
             $qb->andWhere($qb->expr()->orX(
                 $qb->expr()->isNull('s.maxVisits'),
-                $qb->expr()->gt('s.maxVisits', "(SELECT COUNT(innerV.id) FROM $visitEntity as innerV WHERE innerV.shortUrl=s)"),
+                $qb->expr()->gt(
+                    's.maxVisits',
+                    sprintf('(SELECT COUNT(innerV.id) FROM %s as innerV WHERE innerV.shortUrl=s)', Visit::class),
+                ),
             ));
         }
 
