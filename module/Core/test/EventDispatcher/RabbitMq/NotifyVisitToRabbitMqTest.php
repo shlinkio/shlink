@@ -98,7 +98,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         yield 'orphan visit' => [Visit::forBasePath($visitor), ['newOrphanVisitUpdate']];
         yield 'non-orphan visit' => [
             Visit::forValidShortUrl(
-                ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+                ShortUrl::create(ShortUrlCreation::fromRawData([
                     'longUrl' => 'foo',
                     'customSlug' => 'bar',
                 ])),

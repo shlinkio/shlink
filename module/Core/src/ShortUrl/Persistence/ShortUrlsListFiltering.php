@@ -20,10 +20,21 @@ class ShortUrlsListFiltering extends ShortUrlsCountFiltering
         array $tags = [],
         ?TagsMode $tagsMode = null,
         ?DateRange $dateRange = null,
+        bool $excludeMaxVisitsReached = false,
+        bool $excludePastValidUntil = false,
         ?ApiKey $apiKey = null,
         ?string $defaultDomain = null,
     ) {
-        parent::__construct($searchTerm, $tags, $tagsMode, $dateRange, $apiKey, $defaultDomain);
+        parent::__construct(
+            $searchTerm,
+            $tags,
+            $tagsMode,
+            $dateRange,
+            $excludeMaxVisitsReached,
+            $excludePastValidUntil,
+            $apiKey,
+            $defaultDomain,
+        );
     }
 
     public static function fromLimitsAndParams(
@@ -41,6 +52,8 @@ class ShortUrlsListFiltering extends ShortUrlsCountFiltering
             $params->tags,
             $params->tagsMode,
             $params->dateRange,
+            $params->excludeMaxVisitsReached,
+            $params->excludePastValidUntil,
             $apiKey,
             $defaultDomain,
         );

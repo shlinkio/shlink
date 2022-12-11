@@ -35,7 +35,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
      */
     public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic, ?string $title): void
     {
-        $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'customSlug' => 'foo',
             'longUrl' => '',
             'title' => $title,
@@ -114,7 +114,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
     /** @test */
     public function shortUrlIsProperlySerializedIntoUpdate(): void
     {
-        $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'customSlug' => 'foo',
             'longUrl' => '',
             'title' => 'The title',

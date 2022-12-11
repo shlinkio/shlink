@@ -44,7 +44,7 @@ class UrlShortener implements UrlShortenerInterface
 
         /** @var ShortUrl $newShortUrl */
         $newShortUrl = $this->em->wrapInTransaction(function () use ($meta) {
-            $shortUrl = ShortUrl::fromMeta($meta, $this->relationResolver);
+            $shortUrl = ShortUrl::create($meta, $this->relationResolver);
 
             $this->verifyShortCodeUniqueness($meta, $shortUrl);
             $this->em->persist($shortUrl);

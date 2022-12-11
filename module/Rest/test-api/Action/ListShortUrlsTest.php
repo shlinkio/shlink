@@ -22,7 +22,7 @@ class ListShortUrlsTest extends ApiTestCase
         'meta' => [
             'validSince' => null,
             'validUntil' => null,
-            'maxVisits' => null,
+            'maxVisits' => 2,
         ],
         'domain' => null,
         'title' => 'My cool title',
@@ -38,7 +38,7 @@ class ListShortUrlsTest extends ApiTestCase
         'tags' => [],
         'meta' => [
             'validSince' => null,
-            'validUntil' => null,
+            'validUntil' => '2020-05-01T00:00:00+00:00',
             'maxVisits' => null,
         ],
         'domain' => null,
@@ -145,6 +145,20 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
             self::SHORT_URL_SHLINK_WITH_TITLE,
+            self::SHORT_URL_DOCS,
+        ], 'valid_api_key'];
+        yield [['excludePastValidUntil' => 'true'], [
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
+        ], 'valid_api_key'];
+        yield [['excludeMaxVisitsReached' => 'true'], [
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
             self::SHORT_URL_DOCS,
         ], 'valid_api_key'];
         yield [['orderBy' => 'shortCode'], [

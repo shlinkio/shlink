@@ -21,6 +21,8 @@ class ShortUrlsCountFiltering
         public readonly array $tags = [],
         public readonly ?TagsMode $tagsMode = null,
         public readonly ?DateRange $dateRange = null,
+        public readonly bool $excludeMaxVisitsReached = false,
+        public readonly bool $excludePastValidUntil = false,
         public readonly ?ApiKey $apiKey = null,
         ?string $defaultDomain = null,
     ) {
@@ -37,6 +39,8 @@ class ShortUrlsCountFiltering
             $params->tags,
             $params->tagsMode,
             $params->dateRange,
+            $params->excludeMaxVisitsReached,
+            $params->excludePastValidUntil,
             $apiKey,
             $defaultDomain,
         );

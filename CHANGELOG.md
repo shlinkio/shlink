@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
+* [#1612](https://github.com/shlinkio/shlink/issues/1612) Allowed to filter short URLs out of lists, when `validUntil` date is in the past or have reached their maximum amount of visits.
+
+  This can be done by:
+
+  * Providing `excludeMaxVisitsReached=true` and/or `excludePastValidUntil=true` to the `GET /short-urls` endpoint.
+  * Providing `--exclude-max-visits-reached` and/or `--exclude-past-valid-until` to the `short-urls:list` command.
+
 * [#1616](https://github.com/shlinkio/shlink/issues/1616) Added support to import orphan visits when importing short URLs from another Shlink instance.
 * [#1519](https://github.com/shlinkio/shlink/issues/1519) Allowing to search short URLs by default domain.
 * [#1555](https://github.com/shlinkio/shlink/issues/1555) Added full support for PHP 8.2, pdating the dockr image to this version.

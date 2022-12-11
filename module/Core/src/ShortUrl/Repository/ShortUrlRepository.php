@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ShortUrl\Repository;
 
+use Cake\Chronos\Chronos;
 use Doctrine\DBAL\LockMode;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\ORM\Query\Expr\Join;
@@ -11,18 +12,19 @@ use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
-use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function array_column;
 use function count;
 use function Functional\contains;
+use function sprintf;
 
 class ShortUrlRepository extends EntitySpecificationRepository implements ShortUrlRepositoryInterface
 {
@@ -37,36 +39,37 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
            ->setFirstResult($filtering->offset);
 
         // In case the ordering has been specified, the query could be more complex. Process it
-        if ($filtering->orderBy->hasOrderField()) {
-            return $this->processOrderByForList($qb, $filtering->orderBy);
+        $this->processOrderByForList($qb, $filtering);
+
+        $result = $qb->getQuery()->getResult();
+        if ($filtering->orderBy->field === 'visits') {
+            return array_column($result, 0);
         }
 
-        // With no explicit order by, fallback to dateCreated-DESC
-        return $qb->orderBy('s.dateCreated', 'DESC')->getQuery()->getResult();
+        return $result;
     }
 
-    private function processOrderByForList(QueryBuilder $qb, Ordering $orderBy): array
+    private function processOrderByForList(QueryBuilder $qb, ShortUrlsListFiltering $filtering): void
     {
-        $fieldName = $orderBy->field;
-        $order = $orderBy->direction;
+        // With no explicit order by, fallback to dateCreated-DESC
+        if (! $filtering->orderBy->hasOrderField()) {
+            $qb->orderBy('s.dateCreated', 'DESC');
+            return;
+        }
+
+        $fieldName = $filtering->orderBy->field;
+        $order = $filtering->orderBy->direction;
 
         if ($fieldName === 'visits') {
             // FIXME This query is inefficient.
             //       Diagnostic: It might need to use a sub-query, as done with the tags list query.
-            $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
+            $qb->addSelect('COUNT(DISTINCT v)')
                ->leftJoin('s.visits', 'v')
                ->groupBy('s')
-               ->orderBy('totalVisits', $order);
-
-            return array_column($qb->getQuery()->getResult(), 0);
-        }
-
-        $orderableFields = ['longUrl', 'shortCode', 'dateCreated', 'title'];
-        if (contains($orderableFields, $fieldName)) {
+               ->orderBy('COUNT(DISTINCT v)', $order);
+        } elseif (contains(['longUrl', 'shortCode', 'dateCreated', 'title'], $fieldName)) {
             $qb->orderBy('s.' . $fieldName, $order);
         }
-
-        return $qb->getQuery()->getResult();
     }
 
     public function countList(ShortUrlsCountFiltering $filtering): int
@@ -132,6 +135,25 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             $tagsMode === TagsMode::ANY
                 ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
                 : $this->joinAllTags($qb, $tags);
+        }
+
+        if ($filtering->excludeMaxVisitsReached) {
+            $qb->andWhere($qb->expr()->orX(
+                $qb->expr()->isNull('s.maxVisits'),
+                $qb->expr()->gt(
+                    's.maxVisits',
+                    sprintf('(SELECT COUNT(innerV.id) FROM %s as innerV WHERE innerV.shortUrl=s)', Visit::class),
+                ),
+            ));
+        }
+
+        if ($filtering->excludePastValidUntil) {
+            $qb
+                ->andWhere($qb->expr()->orX(
+                    $qb->expr()->isNull('s.validUntil'),
+                    $qb->expr()->gte('s.validUntil', ':minValidUntil'),
+                ))
+                ->setParameter('minValidUntil', Chronos::now()->toDateTimeString());
         }
 
         $this->applySpecification($qb, $filtering->apiKey?->spec(), 's');

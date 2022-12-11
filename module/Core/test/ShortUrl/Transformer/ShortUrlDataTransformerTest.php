@@ -43,7 +43,7 @@ class ShortUrlDataTransformerTest extends TestCase
             'validUntil' => null,
             'maxVisits' => null,
         ]];
-        yield 'max visits only' => [ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+        yield 'max visits only' => [ShortUrl::create(ShortUrlCreation::fromRawData([
             'maxVisits' => $maxVisits,
             'longUrl' => '',
         ])), [
@@ -52,7 +52,7 @@ class ShortUrlDataTransformerTest extends TestCase
             'maxVisits' => $maxVisits,
         ]];
         yield 'max visits and valid since' => [
-            ShortUrl::fromMeta(ShortUrlCreation::fromRawData(
+            ShortUrl::create(ShortUrlCreation::fromRawData(
                 ['validSince' => $now, 'maxVisits' => $maxVisits, 'longUrl' => ''],
             )),
             [
@@ -62,7 +62,7 @@ class ShortUrlDataTransformerTest extends TestCase
             ],
         ];
         yield 'both dates' => [
-            ShortUrl::fromMeta(ShortUrlCreation::fromRawData(
+            ShortUrl::create(ShortUrlCreation::fromRawData(
                 ['validSince' => $now, 'validUntil' => $now->subDays(10), 'longUrl' => ''],
             )),
             [
@@ -72,7 +72,7 @@ class ShortUrlDataTransformerTest extends TestCase
             ],
         ];
         yield 'everything' => [
-            ShortUrl::fromMeta(ShortUrlCreation::fromRawData(
+            ShortUrl::create(ShortUrlCreation::fromRawData(
                 ['validSince' => $now, 'validUntil' => $now->subDays(5), 'maxVisits' => $maxVisits, 'longUrl' => ''],
             )),
             [

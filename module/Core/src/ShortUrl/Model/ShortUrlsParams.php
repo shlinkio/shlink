@@ -24,6 +24,8 @@ final class ShortUrlsParams
         public readonly array $tags,
         public readonly Ordering $orderBy,
         public readonly ?DateRange $dateRange,
+        public readonly bool $excludeMaxVisitsReached,
+        public readonly bool $excludePastValidUntil,
         public readonly TagsMode $tagsMode = TagsMode::ANY,
     ) {
     }
@@ -55,6 +57,8 @@ final class ShortUrlsParams
                 normalizeOptionalDate($inputFilter->getValue(ShortUrlsParamsInputFilter::START_DATE)),
                 normalizeOptionalDate($inputFilter->getValue(ShortUrlsParamsInputFilter::END_DATE)),
             ),
+            excludeMaxVisitsReached: $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_MAX_VISITS_REACHED),
+            excludePastValidUntil: $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_PAST_VALID_UNTIL),
             tagsMode: self::resolveTagsMode($inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS_MODE)),
         );
     }
