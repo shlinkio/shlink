@@ -114,7 +114,7 @@ class ListShortUrlsCommandTest extends TestCase
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
             ShortUrlsParams::emptyInstance(),
         )->willReturn(new Paginator(new ArrayAdapter([
-            ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+            ShortUrl::create(ShortUrlCreation::fromRawData([
                 'longUrl' => 'foo.com',
                 'tags' => ['foo', 'bar', 'baz'],
                 'apiKey' => $apiKey,

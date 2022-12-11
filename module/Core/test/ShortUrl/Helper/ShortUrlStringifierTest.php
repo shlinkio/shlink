@@ -28,7 +28,7 @@ class ShortUrlStringifierTest extends TestCase
 
     public function provideConfigAndShortUrls(): iterable
     {
-        $shortUrlWithShortCode = fn (string $shortCode, ?string $domain = null) => ShortUrl::fromMeta(
+        $shortUrlWithShortCode = fn (string $shortCode, ?string $domain = null) => ShortUrl::create(
             ShortUrlCreation::fromRawData([
                 'longUrl' => '',
                 'customSlug' => $shortCode,

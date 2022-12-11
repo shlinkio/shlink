@@ -313,7 +313,7 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $apiKey1 = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($apiKey1);
-        $shortUrl = ShortUrl::fromMeta(
+        $shortUrl = ShortUrl::create(
             ShortUrlCreation::fromRawData(['apiKey' => $apiKey1, 'domain' => $domain->getAuthority(), 'longUrl' => '']),
             $this->relationResolver,
         );
@@ -322,11 +322,11 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $apiKey2 = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($apiKey2);
-        $shortUrl2 = ShortUrl::fromMeta(ShortUrlCreation::fromRawData(['apiKey' => $apiKey2, 'longUrl' => '']));
+        $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData(['apiKey' => $apiKey2, 'longUrl' => '']));
         $this->getEntityManager()->persist($shortUrl2);
         $this->createVisitsForShortUrl($shortUrl2, 5);
 
-        $shortUrl3 = ShortUrl::fromMeta(
+        $shortUrl3 = ShortUrl::create(
             ShortUrlCreation::fromRawData(['apiKey' => $apiKey2, 'domain' => $domain->getAuthority(), 'longUrl' => '']),
             $this->relationResolver,
         );
@@ -365,7 +365,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     /** @test */
     public function findOrphanVisitsReturnsExpectedResult(): void
     {
-        $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData(['longUrl' => '']));
+        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => '']));
         $this->getEntityManager()->persist($shortUrl);
         $this->createVisitsForShortUrl($shortUrl, 7);
 
@@ -414,7 +414,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     /** @test */
     public function countOrphanVisitsReturnsExpectedResult(): void
     {
-        $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData(['longUrl' => '']));
+        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => '']));
         $this->getEntityManager()->persist($shortUrl);
         $this->createVisitsForShortUrl($shortUrl, 7);
 
@@ -451,15 +451,15 @@ class VisitRepositoryTest extends DatabaseTestCase
     /** @test */
     public function findNonOrphanVisitsReturnsExpectedResult(): void
     {
-        $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData(['longUrl' => '1']));
+        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => '1']));
         $this->getEntityManager()->persist($shortUrl);
         $this->createVisitsForShortUrl($shortUrl, 7);
 
-        $shortUrl2 = ShortUrl::fromMeta(ShortUrlCreation::fromRawData(['longUrl' => '2']));
+        $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => '2']));
         $this->getEntityManager()->persist($shortUrl2);
         $this->createVisitsForShortUrl($shortUrl2, 4);
 
-        $shortUrl3 = ShortUrl::fromMeta(ShortUrlCreation::fromRawData(['longUrl' => '3']));
+        $shortUrl3 = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => '3']));
         $this->getEntityManager()->persist($shortUrl3);
         $this->createVisitsForShortUrl($shortUrl3, 10);
 
@@ -517,7 +517,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         array $tags = [],
         ?ApiKey $apiKey = null,
     ): array {
-        $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             ShortUrlInputFilter::LONG_URL => '',
             ShortUrlInputFilter::TAGS => $tags,
             ShortUrlInputFilter::API_KEY => $apiKey,
@@ -529,7 +529,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->createVisitsForShortUrl($shortUrl);
 
         if ($withDomain !== false) {
-            $shortUrlWithDomain = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+            $shortUrlWithDomain = ShortUrl::create(ShortUrlCreation::fromRawData([
                 'customSlug' => $shortCode,
                 'domain' => $domain,
                 'longUrl' => '',

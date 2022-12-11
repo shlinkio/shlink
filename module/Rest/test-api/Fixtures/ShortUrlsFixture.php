@@ -29,7 +29,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
         $authorApiKey = $this->getReference('author_api_key');
 
         $abcShortUrl = $this->setShortUrlDate(
-            ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+            ShortUrl::create(ShortUrlCreation::fromRawData([
                 'customSlug' => 'abc123',
                 'apiKey' => $authorApiKey,
                 'longUrl' => 'https://shlink.io',
@@ -42,7 +42,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
         );
         $manager->persist($abcShortUrl);
 
-        $defShortUrl = $this->setShortUrlDate(ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+        $defShortUrl = $this->setShortUrlDate(ShortUrl::create(ShortUrlCreation::fromRawData([
             'validSince' => Chronos::parse('2020-05-01'),
             'customSlug' => 'def456',
             'apiKey' => $authorApiKey,
@@ -52,7 +52,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
         ]), $relationResolver), '2019-01-01 00:00:10');
         $manager->persist($defShortUrl);
 
-        $customShortUrl = $this->setShortUrlDate(ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+        $customShortUrl = $this->setShortUrlDate(ShortUrl::create(ShortUrlCreation::fromRawData([
             'customSlug' => 'custom',
             'maxVisits' => 2,
             'apiKey' => $authorApiKey,
@@ -62,7 +62,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
         $manager->persist($customShortUrl);
 
         $ghiShortUrl = $this->setShortUrlDate(
-            ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+            ShortUrl::create(ShortUrlCreation::fromRawData([
                 'customSlug' => 'ghi789',
                 'longUrl' => 'https://shlink.io/documentation/',
                 'validUntil' => Chronos::parse('2020-05-01'), // In the past
@@ -71,7 +71,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
         );
         $manager->persist($ghiShortUrl);
 
-        $withDomainDuplicatingShortCode = $this->setShortUrlDate(ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+        $withDomainDuplicatingShortCode = $this->setShortUrlDate(ShortUrl::create(ShortUrlCreation::fromRawData([
             'domain' => 'example.com',
             'customSlug' => 'ghi789',
             'longUrl' => 'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-'
@@ -80,7 +80,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
         ]), $relationResolver), '2019-01-01 00:00:30');
         $manager->persist($withDomainDuplicatingShortCode);
 
-        $withDomainAndSlugShortUrl = $this->setShortUrlDate(ShortUrl::fromMeta(ShortUrlCreation::fromRawData(
+        $withDomainAndSlugShortUrl = $this->setShortUrlDate(ShortUrl::create(ShortUrlCreation::fromRawData(
             ['domain' => 'some-domain.com', 'customSlug' => 'custom-with-domain', 'longUrl' => 'https://google.com'],
         )), '2018-10-20');
         $manager->persist($withDomainAndSlugShortUrl);

@@ -129,7 +129,7 @@ class DomainRepositoryTest extends DatabaseTestCase
 
     private function createShortUrl(Domain $domain, ?ApiKey $apiKey = null): ShortUrl
     {
-        return ShortUrl::fromMeta(
+        return ShortUrl::create(
             ShortUrlCreation::fromRawData(
                 ['domain' => $domain->getAuthority(), 'apiKey' => $apiKey, 'longUrl' => 'foo'],
             ),

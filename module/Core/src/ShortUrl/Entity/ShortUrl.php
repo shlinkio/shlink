@@ -57,15 +57,15 @@ class ShortUrl extends AbstractEntity
 
     public static function createEmpty(): self
     {
-        return self::fromMeta(ShortUrlCreation::createEmpty());
+        return self::create(ShortUrlCreation::createEmpty());
     }
 
     public static function withLongUrl(string $longUrl): self
     {
-        return self::fromMeta(ShortUrlCreation::fromRawData([ShortUrlInputFilter::LONG_URL => $longUrl]));
+        return self::create(ShortUrlCreation::fromRawData([ShortUrlInputFilter::LONG_URL => $longUrl]));
     }
 
-    public static function fromMeta( // TODO Rename to create(...)
+    public static function create(
         ShortUrlCreation $creation,
         ?ShortUrlRelationResolverInterface $relationResolver = null,
     ): self {
@@ -109,7 +109,7 @@ class ShortUrl extends AbstractEntity
             $meta[ShortUrlInputFilter::CUSTOM_SLUG] = $url->shortCode;
         }
 
-        $instance = self::fromMeta(ShortUrlCreation::fromRawData($meta), $relationResolver);
+        $instance = self::create(ShortUrlCreation::fromRawData($meta), $relationResolver);
 
         $instance->importSource = $url->source->value;
         $instance->importOriginalShortCode = $url->shortCode;

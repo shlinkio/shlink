@@ -107,17 +107,17 @@ class UrlShortenerTest extends TestCase
         ), ShortUrl::withLongUrl($url)];
         yield [
             ShortUrlCreation::fromRawData(['findIfExists' => true, 'longUrl' => $url, 'tags' => ['foo', 'bar']]),
-            ShortUrl::fromMeta(ShortUrlCreation::fromRawData(['longUrl' => $url, 'tags' => ['foo', 'bar']])),
+            ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => $url, 'tags' => ['foo', 'bar']])),
         ];
         yield [
             ShortUrlCreation::fromRawData(['findIfExists' => true, 'maxVisits' => 3, 'longUrl' => $url]),
-            ShortUrl::fromMeta(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => $url])),
+            ShortUrl::create(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => $url])),
         ];
         yield [
             ShortUrlCreation::fromRawData(
                 ['findIfExists' => true, 'validSince' => Chronos::parse('2017-01-01'), 'longUrl' => $url],
             ),
-            ShortUrl::fromMeta(
+            ShortUrl::create(
                 ShortUrlCreation::fromRawData(['validSince' => Chronos::parse('2017-01-01'), 'longUrl' => $url]),
             ),
         ];
@@ -125,13 +125,13 @@ class UrlShortenerTest extends TestCase
             ShortUrlCreation::fromRawData(
                 ['findIfExists' => true, 'validUntil' => Chronos::parse('2017-01-01'), 'longUrl' => $url],
             ),
-            ShortUrl::fromMeta(
+            ShortUrl::create(
                 ShortUrlCreation::fromRawData(['validUntil' => Chronos::parse('2017-01-01'), 'longUrl' => $url]),
             ),
         ];
         yield [
             ShortUrlCreation::fromRawData(['findIfExists' => true, 'domain' => 'example.com', 'longUrl' => $url]),
-            ShortUrl::fromMeta(ShortUrlCreation::fromRawData(['domain' => 'example.com', 'longUrl' => $url])),
+            ShortUrl::create(ShortUrlCreation::fromRawData(['domain' => 'example.com', 'longUrl' => $url])),
         ];
         yield [
             ShortUrlCreation::fromRawData([
@@ -141,7 +141,7 @@ class UrlShortenerTest extends TestCase
                 'longUrl' => $url,
                 'tags' => ['baz', 'foo', 'bar'],
             ]),
-            ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+            ShortUrl::create(ShortUrlCreation::fromRawData([
                 'validUntil' => Chronos::parse('2017-01-01'),
                 'maxVisits' => 4,
                 'longUrl' => $url,
