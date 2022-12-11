@@ -378,9 +378,13 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             );
 
         self::assertCount(4, $this->repo->findList($filtering(false, false)));
+        self::assertEquals(4, $this->repo->countList($filtering(false, false)));
         self::assertCount(3, $this->repo->findList($filtering(true, false)));
+        self::assertEquals(3, $this->repo->countList($filtering(true, false)));
         self::assertCount(3, $this->repo->findList($filtering(false, true)));
+        self::assertEquals(3, $this->repo->countList($filtering(false, true)));
         self::assertCount(2, $this->repo->findList($filtering(true, true)));
+        self::assertEquals(2, $this->repo->countList($filtering(true, true)));
     }
 
     /** @test */

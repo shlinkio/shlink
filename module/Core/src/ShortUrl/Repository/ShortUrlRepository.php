@@ -82,11 +82,6 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         $qb->select('COUNT(DISTINCT s)');
         $query = $qb->getQuery();
 
-        // TODO Check if this is needed
-//        if ($filtering->excludeMaxVisitsReached) {
-//            $qb->addSelect('COUNT(DISTINCT v)');
-//        }
-
         // TODO This is crap...
         return $filtering->excludeMaxVisitsReached
             ? count($query->getSingleColumnResult())
