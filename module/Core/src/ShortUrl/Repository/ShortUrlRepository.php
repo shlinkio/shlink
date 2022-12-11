@@ -151,9 +151,9 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
             $qb
                 ->andWhere($qb->expr()->orX(
                     $qb->expr()->isNull('s.validUntil'),
-                    $qb->expr()->gte('s.validUntil', ':minValidSince'),
+                    $qb->expr()->gte('s.validUntil', ':minValidUntil'),
                 ))
-                ->setParameter('minValidSince', Chronos::now()->toDateTimeString());
+                ->setParameter('minValidUntil', Chronos::now()->toDateTimeString());
         }
 
         $this->applySpecification($qb, $filtering->apiKey?->spec(), 's');
