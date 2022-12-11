@@ -18,6 +18,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function array_column;
@@ -36,18 +37,13 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
            ->setMaxResults($filtering->limit)
            ->setFirstResult($filtering->offset);
 
-        // Some DB engines (postgres and ms) require aggregates in the select for ordering and filtering
-        if ($filtering->excludeMaxVisitsReached || $filtering->orderBy->field === 'visits') {
-            $qb->addSelect('COUNT(DISTINCT v)');
-        }
-
         // In case the ordering has been specified, the query could be more complex. Process it
         if ($filtering->orderBy->hasOrderField()) {
             $this->processOrderByForList($qb, $filtering);
         }
 
         $result = $qb->getQuery()->getResult();
-        if ($filtering->excludeMaxVisitsReached || $filtering->orderBy->field === 'visits') {
+        if ($filtering->orderBy->field === 'visits') {
             return array_column($result, 0);
         }
 
@@ -62,12 +58,10 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         if ($fieldName === 'visits') {
             // FIXME This query is inefficient.
             //       Diagnostic: It might need to use a sub-query, as done with the tags list query.
-            if (! $filtering->excludeMaxVisitsReached) {
-                // Left join only if this was not true, otherwise this left join already happened
-                $this->leftJoinShortUrlsWithVisits($qb);
-            }
-
-            $qb->orderBy('COUNT(DISTINCT v)', $order);
+            $qb->addSelect('COUNT(DISTINCT v)')
+               ->leftJoin('s.visits', 'v')
+               ->groupBy('s')
+               ->orderBy('COUNT(DISTINCT v)', $order);
         } elseif (contains(['longUrl', 'shortCode', 'dateCreated', 'title'], $fieldName)) {
             $qb->orderBy('s.' . $fieldName, $order);
         } else {
@@ -80,18 +74,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     {
         $qb = $this->createListQueryBuilder($filtering);
         $qb->select('COUNT(DISTINCT s)');
-        $query = $qb->getQuery();
 
-        // TODO This is crap...
-        return $filtering->excludeMaxVisitsReached
-            ? count($query->getSingleColumnResult())
-            : (int) $query->getSingleScalarResult();
-    }
-
-    private function leftJoinShortUrlsWithVisits(QueryBuilder $qb): void
-    {
-        $qb->leftJoin('s.visits', 'v')
-           ->groupBy('s');
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     private function createListQueryBuilder(ShortUrlsCountFiltering $filtering): QueryBuilder
@@ -152,10 +136,10 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         }
 
         if ($filtering->excludeMaxVisitsReached) {
-            $this->leftJoinShortUrlsWithVisits($qb);
-            $qb->having($qb->expr()->orX(
+            $visitEntity = Visit::class;
+            $qb->andWhere($qb->expr()->orX(
                 $qb->expr()->isNull('s.maxVisits'),
-                $qb->expr()->gt('s.maxVisits', 'COUNT(DISTINCT v)'),
+                $qb->expr()->gt('s.maxVisits', "(SELECT COUNT(innerV.id) FROM $visitEntity as innerV WHERE innerV.shortUrl=s)"),
             ));
         }
 
