@@ -39,9 +39,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
            ->setFirstResult($filtering->offset);
 
         // In case the ordering has been specified, the query could be more complex. Process it
-        if ($filtering->orderBy->hasOrderField()) {
-            $this->processOrderByForList($qb, $filtering);
-        }
+        $this->processOrderByForList($qb, $filtering);
 
         $result = $qb->getQuery()->getResult();
         if ($filtering->orderBy->field === 'visits') {
@@ -53,6 +51,12 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
     private function processOrderByForList(QueryBuilder $qb, ShortUrlsListFiltering $filtering): void
     {
+        // With no explicit order by, fallback to dateCreated-DESC
+        if (! $filtering->orderBy->hasOrderField()) {
+            $qb->orderBy('s.dateCreated', 'DESC');
+            return;
+        }
+
         $fieldName = $filtering->orderBy->field;
         $order = $filtering->orderBy->direction;
 
@@ -65,9 +69,6 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
                ->orderBy('COUNT(DISTINCT v)', $order);
         } elseif (contains(['longUrl', 'shortCode', 'dateCreated', 'title'], $fieldName)) {
             $qb->orderBy('s.' . $fieldName, $order);
-        } else {
-            // With no explicit order by, fallback to dateCreated-DESC
-            $qb->orderBy('s.dateCreated', 'DESC');
         }
     }
 
