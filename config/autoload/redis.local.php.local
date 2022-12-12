@@ -7,6 +7,8 @@ return [
     'cache' => [
         'redis' => [
             'servers' => 'tcp://shlink_redis:6379',
+//            'servers' => 'tcp://barbar@shlink_redis_acl:6379',
+//            'servers' => 'tcp://foo:bar@shlink_redis_acl:6379',
         ],
     ],
 
