@@ -29,6 +29,7 @@ services:
             - shlink_db_maria
             - shlink_db_ms
             - shlink_redis
+            - shlink_redis_acl
             - shlink_mercure
             - shlink_mercure_proxy
             - shlink_rabbitmq
@@ -65,6 +66,7 @@ services:
             - shlink_db_maria
             - shlink_db_ms
             - shlink_redis
+            - shlink_redis_acl
             - shlink_mercure
             - shlink_mercure_proxy
             - shlink_rabbitmq
@@ -89,6 +91,7 @@ services:
             - shlink_db_maria
             - shlink_db_ms
             - shlink_redis
+            - shlink_redis_acl
             - shlink_mercure
             - shlink_mercure_proxy
             - shlink_rabbitmq
@@ -146,9 +149,18 @@ services:
 
     shlink_redis:
         container_name: shlink_redis
-        image: redis:6.0-alpine
+        image: redis:6.2-alpine
         ports:
             - "6380:6379"
+
+    shlink_redis_acl:
+        container_name: shlink_redis_acl
+        image: redis:6.2-alpine
+        command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+        ports:
+            - "6382:6379"
+        volumes:
+            - ./data/infra/redis/redis-acl.conf:/usr/local/etc/redis/redis.conf
 
     shlink_mercure_proxy:
         container_name: shlink_mercure_proxy
