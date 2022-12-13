@@ -84,7 +84,7 @@ return [
         ],
         Command\ShortUrl\ResolveUrlCommand::class => [ShortUrl\ShortUrlResolver::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [
-            ShortUrl\ShortUrlService::class,
+            ShortUrl\ShortUrlListService::class,
             ShortUrl\Transformer\ShortUrlDataTransformer::class,
         ],
         Command\ShortUrl\GetShortUrlVisitsCommand::class => [Visit\VisitsStatsHelper::class],

@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
-use Shlinkio\Shlink\Core\ShortUrl\ShortUrlServiceInterface;
+use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -30,11 +30,11 @@ class ListShortUrlsCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private MockObject & ShortUrlServiceInterface $shortUrlService;
+    private MockObject & ShortUrlListServiceInterface $shortUrlService;
 
     protected function setUp(): void
     {
-        $this->shortUrlService = $this->createMock(ShortUrlServiceInterface::class);
+        $this->shortUrlService = $this->createMock(ShortUrlListServiceInterface::class);
         $command = new ListShortUrlsCommand($this->shortUrlService, new ShortUrlDataTransformer(
             new ShortUrlStringifier([]),
         ));

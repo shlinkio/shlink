@@ -8,20 +8,15 @@ use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlService;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
-
-use function count;
 
 class ShortUrlServiceTest extends TestCase
 {
@@ -46,32 +41,7 @@ class ShortUrlServiceTest extends TestCase
             $this->urlResolver,
             $this->titleResolutionHelper,
             new SimpleShortUrlRelationResolver(),
-            new UrlShortenerOptions(),
         );
-    }
-
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
-    public function listedUrlsAreReturnedFromEntityManager(?ApiKey $apiKey): void
-    {
-        $list = [
-            ShortUrl::createEmpty(),
-            ShortUrl::createEmpty(),
-            ShortUrl::createEmpty(),
-            ShortUrl::createEmpty(),
-        ];
-
-        $repo = $this->createMock(ShortUrlRepository::class);
-        $repo->expects($this->once())->method('findList')->willReturn($list);
-        $repo->expects($this->once())->method('countList')->willReturn(count($list));
-        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($repo);
-
-        $paginator = $this->service->listShortUrls(ShortUrlsParams::emptyInstance(), $apiKey);
-
-        self::assertCount(4, $paginator);
-        self::assertCount(4, $paginator->getCurrentPageResults());
     }
 
     /**
