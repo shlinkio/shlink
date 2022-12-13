@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Config\Factory\ValinorConfigFactory;
 use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
@@ -34,6 +35,7 @@ return [
 
             ShortUrl\UrlShortener::class => ConfigAbstractFactory::class,
             ShortUrl\ShortUrlService::class => ConfigAbstractFactory::class,
+            ShortUrl\ShortUrlListService::class => ConfigAbstractFactory::class,
             ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
             ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortCodeUniquenessHelper::class => ConfigAbstractFactory::class,
@@ -44,6 +46,10 @@ return [
             ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => ConfigAbstractFactory::class,
+            ShortUrl\Repository\ShortUrlListRepository::class => [
+                EntityRepositoryFactory::class,
+                ShortUrl\Entity\ShortUrl::class,
+            ],
 
             Tag\TagService::class => ConfigAbstractFactory::class,
 
@@ -108,6 +114,9 @@ return [
             ShortUrl\ShortUrlResolver::class,
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
+        ],
+        ShortUrl\ShortUrlListService::class => [
+            ShortUrl\Repository\ShortUrlListRepository::class,
             Options\UrlShortenerOptions::class,
         ],
         Visit\Geolocation\VisitLocator::class => ['em'],

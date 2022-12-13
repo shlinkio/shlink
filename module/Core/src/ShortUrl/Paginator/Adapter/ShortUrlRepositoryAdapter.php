@@ -8,13 +8,13 @@ use Pagerfanta\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlListRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlRepositoryAdapter implements AdapterInterface
 {
     public function __construct(
-        private readonly ShortUrlRepositoryInterface $repository,
+        private readonly ShortUrlListRepositoryInterface $repository,
         private readonly ShortUrlsParams $params,
         private readonly ?ApiKey $apiKey,
         private readonly string $defaultDomain,

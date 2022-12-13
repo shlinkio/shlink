@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlsParamsInputFilter;
-use Shlinkio\Shlink\Core\ShortUrl\ShortUrlServiceInterface;
+use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -39,7 +39,7 @@ class ListShortUrlsCommand extends Command
     private readonly EndDateOption $endDateOption;
 
     public function __construct(
-        private readonly ShortUrlServiceInterface $shortUrlService,
+        private readonly ShortUrlListServiceInterface $shortUrlService,
         private readonly DataTransformerInterface $transformer,
     ) {
         parent::__construct();

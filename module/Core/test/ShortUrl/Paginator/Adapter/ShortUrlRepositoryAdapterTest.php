@@ -12,16 +12,16 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlListRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlRepositoryAdapterTest extends TestCase
 {
-    private MockObject & ShortUrlRepositoryInterface $repo;
+    private MockObject & ShortUrlListRepositoryInterface $repo;
 
     protected function setUp(): void
     {
-        $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
+        $this->repo = $this->createMock(ShortUrlListRepositoryInterface::class);
     }
 
     /**
