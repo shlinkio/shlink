@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Changed
 * [#1563](https://github.com/shlinkio/shlink/issues/1563) Moved logic to reuse command options to option classes instead of base abstract command classes.
 * [#1569](https://github.com/shlinkio/shlink/issues/1569) Migrated test doubles from phpspec/prophecy to PHPUnit mocks.
+* [#1329](https://github.com/shlinkio/shlink/issues/1329) Split some logic from `VisitRepository` and `ShortUrlRepository` into separated repository classes.
 
 ### Deprecated
 * *Nothing*

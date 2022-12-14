@@ -8,18 +8,15 @@ use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
-use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Repository\VisitLocationRepositoryInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocator implements VisitLocatorInterface
 {
-    private VisitRepositoryInterface $repo;
-
-    public function __construct(private EntityManagerInterface $em)
-    {
-        /** @var VisitRepositoryInterface $repo */
-        $repo = $em->getRepository(Visit::class);
-        $this->repo = $repo;
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly VisitLocationRepositoryInterface $repo,
+    ) {
     }
 
     public function locateUnlocatedVisits(VisitGeolocationHelperInterface $helper): void
