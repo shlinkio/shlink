@@ -25,6 +25,4 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
     public function findOneMatching(ShortUrlCreation $meta): ?ShortUrl;
 
     public function findOneByImportedUrl(ImportedShlinkUrl $url): ?ShortUrl;
-
-    public function findCrawlableShortCodes(): iterable;
 }

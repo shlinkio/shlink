@@ -14,20 +14,16 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
-use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
-use function Functional\map;
 use function is_string;
-use function range;
 use function sprintf;
 use function str_pad;
 
@@ -42,52 +38,6 @@ class VisitRepositoryTest extends DatabaseTestCase
     {
         $this->repo = $this->getEntityManager()->getRepository(Visit::class);
         $this->relationResolver = new PersistenceShortUrlRelationResolver($this->getEntityManager());
-    }
-
-    /**
-     * @test
-     * @dataProvider provideBlockSize
-     */
-    public function findVisitsReturnsProperVisits(int $blockSize): void
-    {
-        $shortUrl = ShortUrl::createEmpty();
-        $this->getEntityManager()->persist($shortUrl);
-        $countIterable = static function (iterable $results): int {
-            $resultsCount = 0;
-            foreach ($results as $value) {
-                $resultsCount++;
-            }
-
-            return $resultsCount;
-        };
-
-        for ($i = 0; $i < 6; $i++) {
-            $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
-
-            if ($i >= 2) {
-                $location = VisitLocation::fromGeolocation(Location::emptyInstance());
-                $this->getEntityManager()->persist($location);
-                $visit->locate($location);
-            }
-
-            $this->getEntityManager()->persist($visit);
-        }
-        $this->getEntityManager()->flush();
-
-        $withEmptyLocation = $this->repo->findVisitsWithEmptyLocation($blockSize);
-        $unlocated = $this->repo->findUnlocatedVisits($blockSize);
-        $all = $this->repo->findAllVisits($blockSize);
-
-        // Important! assertCount will not work here, as this iterable object loads data dynamically and the count
-        // is 0 if not iterated
-        self::assertEquals(2, $countIterable($unlocated));
-        self::assertEquals(4, $countIterable($withEmptyLocation));
-        self::assertEquals(6, $countIterable($all));
-    }
-
-    public function provideBlockSize(): iterable
-    {
-        return map(range(1, 10), fn (int $value) => [$value]);
     }
 
     /** @test */

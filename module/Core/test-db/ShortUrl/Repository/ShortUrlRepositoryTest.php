@@ -391,37 +391,4 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         self::assertNull($this->repo->findOneByImportedUrl($buildImported('my-cool-slug', 'doma.in')));
         self::assertNull($this->repo->findOneByImportedUrl($buildImported('another-slug')));
     }
-
-    /** @test */
-    public function findCrawlableShortCodesReturnsExpectedResult(): void
-    {
-        $createShortUrl = fn (bool $crawlable) => ShortUrl::create(
-            ShortUrlCreation::fromRawData(['crawlable' => $crawlable, 'longUrl' => 'foo.com']),
-        );
-
-        $shortUrl1 = $createShortUrl(true);
-        $this->getEntityManager()->persist($shortUrl1);
-        $shortUrl2 = $createShortUrl(false);
-        $this->getEntityManager()->persist($shortUrl2);
-        $shortUrl3 = $createShortUrl(true);
-        $this->getEntityManager()->persist($shortUrl3);
-        $shortUrl4 = $createShortUrl(true);
-        $this->getEntityManager()->persist($shortUrl4);
-        $shortUrl5 = $createShortUrl(false);
-        $this->getEntityManager()->persist($shortUrl5);
-        $this->getEntityManager()->flush();
-
-        $iterable = $this->repo->findCrawlableShortCodes();
-        $results = [];
-        foreach ($iterable as $shortCode) {
-            $results[] = $shortCode;
-        }
-
-        self::assertCount(3, $results);
-        self::assertContains($shortUrl1->getShortCode(), $results);
-        self::assertContains($shortUrl3->getShortCode(), $results);
-        self::assertContains($shortUrl4->getShortCode(), $results);
-        self::assertNotContains($shortUrl2->getShortCode(), $results);
-        self::assertNotContains($shortUrl5->getShortCode(), $results);
-    }
 }

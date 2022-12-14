@@ -4,34 +4,26 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Crawling;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Crawling\CrawlingHelper;
-use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\CrawlableShortCodesQueryInterface;
 
 class CrawlingHelperTest extends TestCase
 {
     private CrawlingHelper $helper;
-    private MockObject & EntityManagerInterface $em;
+    private MockObject & CrawlableShortCodesQueryInterface $query;
 
     protected function setUp(): void
     {
-        $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->helper = new CrawlingHelper($this->em);
+        $this->query = $this->createMock(CrawlableShortCodesQueryInterface::class);
+        $this->helper = new CrawlingHelper($this->query);
     }
 
     /** @test */
     public function listCrawlableShortCodesDelegatesIntoRepository(): void
     {
-        $repo = $this->createMock(ShortUrlRepositoryInterface::class);
-        $repo->expects($this->once())->method('findCrawlableShortCodes')->willReturn([]);
-        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($repo);
-
-        $result = $this->helper->listCrawlableShortCodes();
-        foreach ($result as $shortCode) {
-            // $result is a generator and therefore, it needs to be iterated
-        }
+        $this->query->expects($this->once())->method('__invoke')->willReturn([]);
+        [...$this->helper->listCrawlableShortCodes()];
     }
 }

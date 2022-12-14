@@ -45,7 +45,7 @@
         "php-middleware/request-id": "^4.1",
         "pugx/shortid-php": "^1.1",
         "ramsey/uuid": "^4.5",
-        "shlinkio/shlink-common": "dev-main#e2a5bb7 as 5.2",
+        "shlinkio/shlink-common": "dev-main#107b753 as 5.2",
         "shlinkio/shlink-config": "dev-main#96c81fb as 2.3",
         "shlinkio/shlink-event-dispatcher": "^2.6",
         "shlinkio/shlink-importer": "dev-main#c97662b as 5.0",
@@ -135,7 +135,7 @@
         "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=80",
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json5",
         "infect:ci:api": "@infect:ci:base --coverage=build/coverage-api --min-msi=80 --configuration=infection-api.json5",
-        "infect:ci:cli": "@infect:ci:base --coverage=build/coverage-cli --min-msi=80 --configuration=infection-cli.json5",
+        "infect:ci:cli": "@infect:ci:base --coverage=build/coverage-cli --min-msi=90 --configuration=infection-cli.json5",
         "infect:ci": "@parallel infect:ci:unit infect:ci:db infect:ci:api infect:ci:cli",
         "infect:test": [
             "@parallel test:unit:ci test:db:sqlite:ci test:api:ci",
