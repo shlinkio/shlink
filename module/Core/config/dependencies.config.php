@@ -50,6 +50,10 @@ return [
                 EntityRepositoryFactory::class,
                 ShortUrl\Entity\ShortUrl::class,
             ],
+            ShortUrl\Repository\CrawlableShortCodesQuery::class => [
+                EntityRepositoryFactory::class,
+                ShortUrl\Entity\ShortUrl::class,
+            ],
 
             Tag\TagService::class => ConfigAbstractFactory::class,
 
