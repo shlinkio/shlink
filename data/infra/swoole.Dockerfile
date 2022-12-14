@@ -1,4 +1,4 @@
-FROM php:8.1.13-alpine3.17
+FROM php:8.2-alpine3.17
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV APCU_VERSION 5.1.21
@@ -33,7 +33,9 @@ RUN docker-php-ext-install gd
 RUN apk add --no-cache postgresql-dev
 RUN docker-php-ext-install pdo_pgsql
 
-RUN docker-php-ext-install sockets
+RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS linux-headers && \
+    docker-php-ext-install sockets && \
+    apk del .phpize-deps
 RUN docker-php-ext-install bcmath
 
 # Install APCu extension
