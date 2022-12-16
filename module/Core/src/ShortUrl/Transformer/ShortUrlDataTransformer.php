@@ -27,7 +27,6 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             'shortUrl' => $this->stringifier->stringify($shortUrl),
             'longUrl' => $shortUrl->getLongUrl(),
             'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
-            'nonBotVisitsCount' => $shortUrl->nonBotVisitsCount(),
             'tags' => invoke($shortUrl->getTags(), '__toString'),
             'meta' => $this->buildMeta($shortUrl),
             'domain' => $shortUrl->getDomain(),
