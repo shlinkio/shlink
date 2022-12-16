@@ -5,26 +5,23 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Paginator\Adapter;
 
 use Cake\Chronos\Chronos;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlListRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlRepositoryAdapterTest extends TestCase
 {
-    use ProphecyTrait;
-
-    private ObjectProphecy $repo;
+    private MockObject & ShortUrlListRepositoryInterface $repo;
 
     protected function setUp(): void
     {
-        $this->repo = $this->prophesize(ShortUrlRepositoryInterface::class);
+        $this->repo = $this->createMock(ShortUrlListRepositoryInterface::class);
     }
 
     /**
@@ -45,13 +42,14 @@ class ShortUrlRepositoryAdapterTest extends TestCase
             'endDate' => $endDate,
             'orderBy' => $orderBy,
         ]);
-        $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $params, null);
-        $orderBy = $params->orderBy();
-        $dateRange = $params->dateRange();
+        $adapter = new ShortUrlRepositoryAdapter($this->repo, $params, null, '');
+        $orderBy = $params->orderBy;
+        $dateRange = $params->dateRange;
 
-        $this->repo->findList(
+        $this->repo->expects($this->once())->method('findList')->with(
             new ShortUrlsListFiltering(10, 5, $orderBy, $searchTerm, $tags, TagsMode::ANY, $dateRange),
-        )->shouldBeCalledOnce();
+        );
+
         $adapter->getSlice(5, 10);
     }
 
@@ -72,12 +70,12 @@ class ShortUrlRepositoryAdapterTest extends TestCase
             'endDate' => $endDate,
         ]);
         $apiKey = ApiKey::create();
-        $adapter = new ShortUrlRepositoryAdapter($this->repo->reveal(), $params, $apiKey);
-        $dateRange = $params->dateRange();
+        $adapter = new ShortUrlRepositoryAdapter($this->repo, $params, $apiKey, '');
+        $dateRange = $params->dateRange;
 
-        $this->repo->countList(
-            new ShortUrlsCountFiltering($searchTerm, $tags, TagsMode::ANY, $dateRange, $apiKey),
-        )->shouldBeCalledOnce();
+        $this->repo->expects($this->once())->method('countList')->with(
+            new ShortUrlsCountFiltering($searchTerm, $tags, TagsMode::ANY, $dateRange, apiKey: $apiKey),
+        );
         $adapter->getNbResults();
     }
 

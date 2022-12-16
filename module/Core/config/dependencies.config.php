@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Config\Factory\ValinorConfigFactory;
 use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
@@ -34,6 +35,7 @@ return [
 
             ShortUrl\UrlShortener::class => ConfigAbstractFactory::class,
             ShortUrl\ShortUrlService::class => ConfigAbstractFactory::class,
+            ShortUrl\ShortUrlListService::class => ConfigAbstractFactory::class,
             ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
             ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortCodeUniquenessHelper::class => ConfigAbstractFactory::class,
@@ -44,6 +46,14 @@ return [
             ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => ConfigAbstractFactory::class,
+            ShortUrl\Repository\ShortUrlListRepository::class => [
+                EntityRepositoryFactory::class,
+                ShortUrl\Entity\ShortUrl::class,
+            ],
+            ShortUrl\Repository\CrawlableShortCodesQuery::class => [
+                EntityRepositoryFactory::class,
+                ShortUrl\Entity\ShortUrl::class,
+            ],
 
             Tag\TagService::class => ConfigAbstractFactory::class,
 
@@ -55,6 +65,10 @@ return [
             Visit\Geolocation\VisitToLocationHelper::class => ConfigAbstractFactory::class,
             Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
             Visit\Transformer\OrphanVisitDataTransformer::class => InvokableFactory::class,
+            Visit\Repository\VisitLocationRepository::class => [
+                EntityRepositoryFactory::class,
+                Visit\Entity\Visit::class,
+            ],
 
             Util\UrlValidator::class => ConfigAbstractFactory::class,
             Util\DoctrineBatchHelper::class => ConfigAbstractFactory::class,
@@ -109,7 +123,11 @@ return [
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
         ],
-        Visit\Geolocation\VisitLocator::class => ['em'],
+        ShortUrl\ShortUrlListService::class => [
+            ShortUrl\Repository\ShortUrlListRepository::class,
+            Options\UrlShortenerOptions::class,
+        ],
+        Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitLocationRepository::class],
         Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
         Visit\VisitsStatsHelper::class => ['em'],
         Tag\TagService::class => ['em'],

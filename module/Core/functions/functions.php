@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core;
 
 use Cake\Chronos\Chronos;
+use Cake\Chronos\ChronosInterface;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\Builder\FieldBuilder;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
@@ -35,7 +36,7 @@ function generateRandomShortCode(int $length): string
 
 function parseDateFromQuery(array $query, string $dateName): ?Chronos
 {
-    return normalizeDate(empty($query[$dateName] ?? null) ? null : Chronos::parse($query[$dateName]));
+    return normalizeOptionalDate(empty($query[$dateName] ?? null) ? null : Chronos::parse($query[$dateName]));
 }
 
 function parseDateRangeFromQuery(array $query, string $startDateName, string $endDateName): DateRange
@@ -46,7 +47,10 @@ function parseDateRangeFromQuery(array $query, string $startDateName, string $en
     return buildDateRange($startDate, $endDate);
 }
 
-function normalizeDate(string|DateTimeInterface|Chronos|null $date): ?Chronos
+/**
+ * @return ($date is null ? null : Chronos)
+ */
+function normalizeOptionalDate(string|DateTimeInterface|ChronosInterface|null $date): ?Chronos
 {
     $parsedDate = match (true) {
         $date === null || $date instanceof Chronos => $date,
@@ -55,6 +59,11 @@ function normalizeDate(string|DateTimeInterface|Chronos|null $date): ?Chronos
     };
 
     return $parsedDate?->setTimezone(date_default_timezone_get());
+}
+
+function normalizeDate(string|DateTimeInterface|ChronosInterface $date): Chronos
+{
+    return normalizeOptionalDate($date);
 }
 
 function getOptionalIntFromInputFilter(InputFilter $inputFilter, string $fieldName): ?int
@@ -67,6 +76,12 @@ function getOptionalBoolFromInputFilter(InputFilter $inputFilter, string $fieldN
 {
     $value = $inputFilter->getValue($fieldName);
     return $value !== null ? (bool) $value : null;
+}
+
+function getNonEmptyOptionalValueFromInputFilter(InputFilter $inputFilter, string $fieldName): mixed
+{
+    $value = $inputFilter->getValue($fieldName);
+    return empty($value) ? null : $value;
 }
 
 function arrayToString(array $array, int $indentSize = 4): string

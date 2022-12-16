@@ -10,12 +10,13 @@ use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 
 use function Shlinkio\Shlink\Core\isCrawler;
+use function Shlinkio\Shlink\Core\normalizeDate;
 
 class Visit extends AbstractEntity implements JsonSerializable
 {
@@ -46,11 +47,30 @@ class Visit extends AbstractEntity implements JsonSerializable
 
     public static function fromImport(ShortUrl $shortUrl, ImportedShlinkVisit $importedVisit): self
     {
-        $instance = new self($shortUrl, VisitType::IMPORTED);
+        return self::fromImportOrOrphanImport($importedVisit, VisitType::IMPORTED, $shortUrl);
+    }
+
+    public static function fromOrphanImport(ImportedShlinkOrphanVisit $importedVisit): self
+    {
+        $instance = self::fromImportOrOrphanImport(
+            $importedVisit,
+            VisitType::tryFrom($importedVisit->type) ?? VisitType::IMPORTED,
+        );
+        $instance->visitedUrl = $importedVisit->visitedUrl;
+
+        return $instance;
+    }
+
+    private static function fromImportOrOrphanImport(
+        ImportedShlinkVisit|ImportedShlinkOrphanVisit $importedVisit,
+        VisitType $type,
+        ?ShortUrl $shortUrl = null,
+    ): self {
+        $instance = new self($shortUrl, $type);
         $instance->userAgent = $importedVisit->userAgent;
         $instance->potentialBot = isCrawler($instance->userAgent);
         $instance->referer = $importedVisit->referer;
-        $instance->date = Chronos::instance($importedVisit->date);
+        $instance->date = normalizeDate($importedVisit->date);
 
         $importedLocation = $importedVisit->location;
         $instance->visitLocation = $importedLocation !== null ? VisitLocation::fromImport($importedLocation) : null;

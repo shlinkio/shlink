@@ -1,12 +1,13 @@
-FROM php:8.1.9-alpine3.16 as base
+FROM php:8.2-alpine3.17 as base
 
 ARG SHLINK_VERSION=latest
 ENV SHLINK_VERSION ${SHLINK_VERSION}
 ARG SHLINK_RUNTIME=openswoole
 ENV SHLINK_RUNTIME ${SHLINK_RUNTIME}
-ENV OPENSWOOLE_VERSION 4.11.1
+ENV OPENSWOOLE_VERSION 4.12.0
 ENV PDO_SQLSRV_VERSION 5.10.1
-ENV MS_ODBC_SQL_VERSION 17.5.2.2
+ENV MS_ODBC_DOWNLOAD 'b/9/f/b9f3cce4-3925-46d4-9f46-da08869c6486'
+ENV MS_ODBC_SQL_VERSION 18_18.1.1.1
 ENV LC_ALL "C"
 
 WORKDIR /etc/shlink
@@ -14,7 +15,7 @@ WORKDIR /etc/shlink
 # Install required PHP extensions
 RUN \
     # Temp install dev dependencies needed to compile the extensions
-    apk add --no-cache --virtual .dev-deps sqlite-dev postgresql-dev icu-dev libzip-dev zlib-dev libpng-dev && \
+    apk add --no-cache --virtual .dev-deps sqlite-dev postgresql-dev icu-dev libzip-dev zlib-dev libpng-dev linux-headers && \
     docker-php-ext-install -j"$(nproc)" pdo_mysql pdo_pgsql intl calendar sockets bcmath zip gd && \
     apk add --no-cache sqlite-libs && \
     docker-php-ext-install -j"$(nproc)" pdo_sqlite && \
@@ -29,11 +30,11 @@ RUN apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} unixodbc-dev && \
         docker-php-ext-enable openswoole ; \
     fi; \
     if [ $(uname -m) == "x86_64" ]; then \
-      wget https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
-      apk add --no-cache --allow-untrusted msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
+      wget https://download.microsoft.com/download/${MS_ODBC_DOWNLOAD}/msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
+      apk add --allow-untrusted msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
       pecl install pdo_sqlsrv-${PDO_SQLSRV_VERSION} && \
       docker-php-ext-enable pdo_sqlsrv && \
-      rm msodbcsql17_${MS_ODBC_SQL_VERSION}-1_amd64.apk ; \
+      rm msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk ; \
     fi; \
     apk del .phpize-deps
 

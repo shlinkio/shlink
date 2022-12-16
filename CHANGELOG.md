@@ -4,6 +4,41 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.4.0] - 2022-12-16
+### Added
+* [#1612](https://github.com/shlinkio/shlink/issues/1612) Allowed to filter short URLs out of lists, when `validUntil` date is in the past or have reached their maximum amount of visits.
+
+  This can be done by:
+
+  * Providing `excludeMaxVisitsReached=true` and/or `excludePastValidUntil=true` to the `GET /short-urls` endpoint.
+  * Providing `--exclude-max-visits-reached` and/or `--exclude-past-valid-until` to the `short-urls:list` command.
+
+* [#1613](https://github.com/shlinkio/shlink/issues/1613) Added amount of visits coming from bots, non-bots and total to every short URL in the short URLs list.
+
+  Additionally, added option to order by non-bot visits, by passing `nonBotVisits-DESC` or `nonBotVisits-ASC`.
+
+* [#1599](https://github.com/shlinkio/shlink/issues/1599) Added support for credentials on redis DSNs, either only password, or both username and password.
+* [#1616](https://github.com/shlinkio/shlink/issues/1616) Added support to import orphan visits when importing short URLs from another Shlink instance.
+* [#1519](https://github.com/shlinkio/shlink/issues/1519) Allowing to search short URLs by default domain.
+* [#1555](https://github.com/shlinkio/shlink/issues/1555) and [#1625](https://github.com/shlinkio/shlink/issues/1625) Added full support for PHP 8.2, updating the docker image to this version.
+
+### Changed
+* [#1563](https://github.com/shlinkio/shlink/issues/1563) Moved logic to reuse command options to option classes instead of base abstract command classes.
+* [#1569](https://github.com/shlinkio/shlink/issues/1569) Migrated test doubles from phpspec/prophecy to PHPUnit mocks.
+* [#1329](https://github.com/shlinkio/shlink/issues/1329) Split some logic from `VisitRepository` and `ShortUrlRepository` into separated repository classes.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1618](https://github.com/shlinkio/shlink/issues/1618) Fixed imported short URLs and visits dates not being set to the target server timezone.
+* [#1578](https://github.com/shlinkio/shlink/issues/1578) Fixed short URL allowing an empty string as the domain during creation.
+* [#1580](https://github.com/shlinkio/shlink/issues/1580) Fixed `FLUSHDB` being run on Shlink docker start-up when using redis, causing full cache to be flushed.
+
+
 ## [3.3.2] - 2022-10-18
 ### Added
 * *Nothing*

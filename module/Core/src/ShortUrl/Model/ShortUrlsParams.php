@@ -10,23 +10,23 @@ use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlsParamsInputFilter;
 
 use function Shlinkio\Shlink\Common\buildDateRange;
-use function Shlinkio\Shlink\Core\normalizeDate;
+use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 
 final class ShortUrlsParams
 {
-    public const ORDERABLE_FIELDS = ['longUrl', 'shortCode', 'dateCreated', 'title', 'visits'];
     public const DEFAULT_ITEMS_PER_PAGE = 10;
 
-    private int $page;
-    private int $itemsPerPage;
-    private ?string $searchTerm;
-    private array $tags;
-    private TagsMode $tagsMode = TagsMode::ANY;
-    private Ordering $orderBy;
-    private ?DateRange $dateRange;
-
-    private function __construct()
-    {
+    private function __construct(
+        public readonly int $page,
+        public readonly int $itemsPerPage,
+        public readonly ?string $searchTerm,
+        public readonly array $tags,
+        public readonly Ordering $orderBy,
+        public readonly ?DateRange $dateRange,
+        public readonly bool $excludeMaxVisitsReached,
+        public readonly bool $excludePastValidUntil,
+        public readonly TagsMode $tagsMode = TagsMode::ANY,
+    ) {
     }
 
     public static function emptyInstance(): self
@@ -39,77 +39,35 @@ final class ShortUrlsParams
      */
     public static function fromRawData(array $query): self
     {
-        $instance = new self();
-        $instance->validateAndInit($query);
-
-        return $instance;
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    private function validateAndInit(array $query): void
-    {
         $inputFilter = new ShortUrlsParamsInputFilter($query);
         if (! $inputFilter->isValid()) {
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
-        $this->page = (int) ($inputFilter->getValue(ShortUrlsParamsInputFilter::PAGE) ?? 1);
-        $this->searchTerm = $inputFilter->getValue(ShortUrlsParamsInputFilter::SEARCH_TERM);
-        $this->tags = (array) $inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS);
-        $this->dateRange = buildDateRange(
-            normalizeDate($inputFilter->getValue(ShortUrlsParamsInputFilter::START_DATE)),
-            normalizeDate($inputFilter->getValue(ShortUrlsParamsInputFilter::END_DATE)),
+        return new self(
+            page: (int) ($inputFilter->getValue(ShortUrlsParamsInputFilter::PAGE) ?? 1),
+            itemsPerPage: (int) (
+                $inputFilter->getValue(ShortUrlsParamsInputFilter::ITEMS_PER_PAGE) ?? self::DEFAULT_ITEMS_PER_PAGE
+            ),
+            searchTerm: $inputFilter->getValue(ShortUrlsParamsInputFilter::SEARCH_TERM),
+            tags: (array) $inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS),
+            orderBy: Ordering::fromTuple($inputFilter->getValue(ShortUrlsParamsInputFilter::ORDER_BY)),
+            dateRange: buildDateRange(
+                normalizeOptionalDate($inputFilter->getValue(ShortUrlsParamsInputFilter::START_DATE)),
+                normalizeOptionalDate($inputFilter->getValue(ShortUrlsParamsInputFilter::END_DATE)),
+            ),
+            excludeMaxVisitsReached: $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_MAX_VISITS_REACHED),
+            excludePastValidUntil: $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_PAST_VALID_UNTIL),
+            tagsMode: self::resolveTagsMode($inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS_MODE)),
         );
-        $this->orderBy = Ordering::fromTuple($inputFilter->getValue(ShortUrlsParamsInputFilter::ORDER_BY));
-        $this->itemsPerPage = (int) (
-            $inputFilter->getValue(ShortUrlsParamsInputFilter::ITEMS_PER_PAGE) ?? self::DEFAULT_ITEMS_PER_PAGE
-        );
-        $this->tagsMode = $this->resolveTagsMode($inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS_MODE));
     }
 
-    private function resolveTagsMode(?string $rawTagsMode): TagsMode
+    private static function resolveTagsMode(?string $rawTagsMode): TagsMode
     {
         if ($rawTagsMode === null) {
             return TagsMode::ANY;
         }
 
         return TagsMode::tryFrom($rawTagsMode) ?? TagsMode::ANY;
-    }
-
-    public function page(): int
-    {
-        return $this->page;
-    }
-
-    public function itemsPerPage(): int
-    {
-        return $this->itemsPerPage;
-    }
-
-    public function searchTerm(): ?string
-    {
-        return $this->searchTerm;
-    }
-
-    public function tags(): array
-    {
-        return $this->tags;
-    }
-
-    public function orderBy(): Ordering
-    {
-        return $this->orderBy;
-    }
-
-    public function dateRange(): ?DateRange
-    {
-        return $this->dateRange;
-    }
-
-    public function tagsMode(): TagsMode
-    {
-        return $this->tagsMode;
     }
 }

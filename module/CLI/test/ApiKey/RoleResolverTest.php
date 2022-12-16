@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\ApiKey;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolver;
 use Shlinkio\Shlink\CLI\Exception\InvalidRoleConfigException;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
+use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Symfony\Component\Console\Input\InputInterface;
+
+use function Functional\map;
 
 class RoleResolverTest extends TestCase
 {
-    use ProphecyTrait;
-
     private RoleResolver $resolver;
-    private ObjectProphecy $domainService;
+    private MockObject & DomainServiceInterface $domainService;
 
     protected function setUp(): void
     {
-        $this->domainService = $this->prophesize(DomainServiceInterface::class);
-        $this->resolver = new RoleResolver($this->domainService->reveal(), 'default.com');
+        $this->domainService = $this->createMock(DomainServiceInterface::class);
+        $this->resolver = new RoleResolver($this->domainService, 'default.com');
     }
 
     /**
@@ -36,61 +36,63 @@ class RoleResolverTest extends TestCase
         array $expectedRoles,
         int $expectedDomainCalls,
     ): void {
-        $getDomain = $this->domainService->getOrCreate('example.com')->willReturn(
-            Domain::withAuthority('example.com')->setId('1'),
-        );
+        $this->domainService->expects($this->exactly($expectedDomainCalls))->method('getOrCreate')->with(
+            'example.com',
+        )->willReturn($this->domainWithId(Domain::withAuthority('example.com')));
 
         $result = $this->resolver->determineRoles($input);
 
         self::assertEquals($expectedRoles, $result);
-        $getDomain->shouldHaveBeenCalledTimes($expectedDomainCalls);
     }
 
     public function provideRoles(): iterable
     {
-        $domain = Domain::withAuthority('example.com')->setId('1');
+        $domain = $this->domainWithId(Domain::withAuthority('example.com'));
         $buildInput = function (array $definition): InputInterface {
-            $input = $this->prophesize(InputInterface::class);
+            $input = $this->createStub(InputInterface::class);
+            $input->method('getOption')->willReturnMap(
+                map($definition, static fn (mixed $returnValue, string $param) => [$param, $returnValue]),
+            );
 
-            foreach ($definition as $name => $value) {
-                $input->getOption($name)->willReturn($value);
-            }
-
-            return $input->reveal();
+            return $input;
         };
 
         yield 'no roles' => [
-            $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => null, RoleResolver::AUTHOR_ONLY_PARAM => false]),
+            $buildInput([Role::DOMAIN_SPECIFIC->paramName() => null, Role::AUTHORED_SHORT_URLS->paramName() => false]),
             [],
             0,
         ];
         yield 'domain role only' => [
-            $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => 'example.com', RoleResolver::AUTHOR_ONLY_PARAM => false]),
+            $buildInput(
+                [Role::DOMAIN_SPECIFIC->paramName() => 'example.com', Role::AUTHORED_SHORT_URLS->paramName() => false],
+            ),
             [RoleDefinition::forDomain($domain)],
             1,
         ];
         yield 'false domain role' => [
-            $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => false]),
+            $buildInput([Role::DOMAIN_SPECIFIC->paramName() => false]),
             [],
             0,
         ];
         yield 'true domain role' => [
-            $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => true]),
+            $buildInput([Role::DOMAIN_SPECIFIC->paramName() => true]),
             [],
             0,
         ];
         yield 'string array domain role' => [
-            $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => ['foo', 'bar']]),
+            $buildInput([Role::DOMAIN_SPECIFIC->paramName() => ['foo', 'bar']]),
             [],
             0,
         ];
         yield 'author role only' => [
-            $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => null, RoleResolver::AUTHOR_ONLY_PARAM => true]),
+            $buildInput([Role::DOMAIN_SPECIFIC->paramName() => null, Role::AUTHORED_SHORT_URLS->paramName() => true]),
             [RoleDefinition::forAuthoredShortUrls()],
             0,
         ];
         yield 'both roles' => [
-            $buildInput([RoleResolver::DOMAIN_ONLY_PARAM => 'example.com', RoleResolver::AUTHOR_ONLY_PARAM => true]),
+            $buildInput(
+                [Role::DOMAIN_SPECIFIC->paramName() => 'example.com', Role::AUTHORED_SHORT_URLS->paramName() => true],
+            ),
             [RoleDefinition::forAuthoredShortUrls(), RoleDefinition::forDomain($domain)],
             1,
         ];
@@ -99,12 +101,22 @@ class RoleResolverTest extends TestCase
     /** @test */
     public function exceptionIsThrownWhenTryingToAddDomainOnlyLinkedToDefaultDomain(): void
     {
-        $input = $this->prophesize(InputInterface::class);
-        $input->getOption(RoleResolver::DOMAIN_ONLY_PARAM)->willReturn('default.com');
-        $input->getOption(RoleResolver::AUTHOR_ONLY_PARAM)->willReturn(null);
+        $input = $this->createStub(InputInterface::class);
+        $input
+            ->method('getOption')
+            ->willReturnMap([
+                [Role::DOMAIN_SPECIFIC->paramName(), 'default.com'],
+                [Role::AUTHORED_SHORT_URLS->paramName(), null],
+            ]);
 
         $this->expectException(InvalidRoleConfigException::class);
 
-        $this->resolver->determineRoles($input->reveal());
+        $this->resolver->determineRoles($input);
+    }
+
+    private function domainWithId(Domain $domain): Domain
+    {
+        $domain->setId('1');
+        return $domain;
     }
 }

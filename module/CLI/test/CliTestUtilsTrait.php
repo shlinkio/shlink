@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI;
 
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -14,21 +13,14 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 trait CliTestUtilsTrait
 {
-    use ProphecyTrait;
-
-    /**
-     * @return ObjectProphecy|Command
-     */
-    private function createCommandMock(string $name): ObjectProphecy
+    private function createCommandMock(string $name): MockObject & Command
     {
-        $command = $this->prophesize(Command::class);
-        $command->getName()->willReturn($name);
-        $command->getDefinition()->willReturn($name);
-        $command->isEnabled()->willReturn(true);
-        $command->getAliases()->willReturn([]);
-        $command->getDefinition()->willReturn(new InputDefinition());
-        $command->setApplication(Argument::type(Application::class))->willReturn(function (): void {
-        });
+        $command = $this->createMock(Command::class);
+        $command->method('getName')->willReturn($name);
+        $command->method('isEnabled')->willReturn(true);
+        $command->method('getAliases')->willReturn([]);
+        $command->method('getDefinition')->willReturn(new InputDefinition());
+        $command->method('setApplication')->with(Assert::isInstanceOf(Application::class));
 
         return $command;
     }

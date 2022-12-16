@@ -21,8 +21,9 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
     /** @var array<string, Tag> */
     private array $memoizedNewTags = [];
 
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
+        // Registering this as an event listener will make the postFlush method to be called automatically
         $this->em->getEventManager()->addEventListener(Events::postFlush, $this);
     }
 
@@ -61,7 +62,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
 
         return new Collections\ArrayCollection(map($tags, function (string $tagName) use ($repo): Tag {
             // Memoize only new tags, and let doctrine handle objects hydrated from persistence
-            $tag = $repo->findOneBy(['name' => $tagName])  ?? $this->memoizeNewTag($tagName);
+            $tag = $repo->findOneBy(['name' => $tagName]) ?? $this->memoizeNewTag($tagName);
             $this->em->persist($tag);
 
             return $tag;

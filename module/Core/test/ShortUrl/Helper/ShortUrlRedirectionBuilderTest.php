@@ -30,7 +30,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         ?string $extraPath,
         ?bool $forwardQuery,
     ): void {
-        $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'longUrl' => 'https://domain.com/foo/bar?some=thing',
             'forwardQuery' => $forwardQuery,
         ]));

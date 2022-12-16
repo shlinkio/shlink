@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\CLI\ApiKey;
 use Shlinkio\Shlink\CLI\Exception\InvalidRoleConfigException;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
+use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Symfony\Component\Console\Input\InputInterface;
 
 use function is_string;
@@ -19,8 +20,8 @@ class RoleResolver implements RoleResolverInterface
 
     public function determineRoles(InputInterface $input): array
     {
-        $domainAuthority = $input->getOption(self::DOMAIN_ONLY_PARAM);
-        $author = $input->getOption(self::AUTHOR_ONLY_PARAM);
+        $domainAuthority = $input->getOption(Role::DOMAIN_SPECIFIC->paramName());
+        $author = $input->getOption(Role::AUTHORED_SHORT_URLS->paramName());
 
         $roleDefinitions = [];
         if ($author) {

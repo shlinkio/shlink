@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\RenameTagCommand;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
@@ -19,12 +19,12 @@ class RenameTagCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private ObjectProphecy $tagService;
+    private MockObject & TagServiceInterface $tagService;
 
     protected function setUp(): void
     {
-        $this->tagService = $this->prophesize(TagServiceInterface::class);
-        $this->commandTester = $this->testerForCommand(new RenameTagCommand($this->tagService->reveal()));
+        $this->tagService = $this->createMock(TagServiceInterface::class);
+        $this->commandTester = $this->testerForCommand(new RenameTagCommand($this->tagService));
     }
 
     /** @test */
@@ -32,9 +32,9 @@ class RenameTagCommandTest extends TestCase
     {
         $oldName = 'foo';
         $newName = 'bar';
-        $renameTag = $this->tagService->renameTag(TagRenaming::fromNames($oldName, $newName))->willThrow(
-            TagNotFoundException::fromTag('foo'),
-        );
+        $this->tagService->expects($this->once())->method('renameTag')->with(
+            TagRenaming::fromNames($oldName, $newName),
+        )->willThrowException(TagNotFoundException::fromTag('foo'));
 
         $this->commandTester->execute([
             'oldName' => $oldName,
@@ -43,7 +43,6 @@ class RenameTagCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString('Tag with name "foo" could not be found', $output);
-        $renameTag->shouldHaveBeenCalled();
     }
 
     /** @test */
@@ -51,9 +50,9 @@ class RenameTagCommandTest extends TestCase
     {
         $oldName = 'foo';
         $newName = 'bar';
-        $renameTag = $this->tagService->renameTag(TagRenaming::fromNames($oldName, $newName))->willReturn(
-            new Tag($newName),
-        );
+        $this->tagService->expects($this->once())->method('renameTag')->with(
+            TagRenaming::fromNames($oldName, $newName),
+        )->willReturn(new Tag($newName));
 
         $this->commandTester->execute([
             'oldName' => $oldName,
@@ -62,6 +61,5 @@ class RenameTagCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString('Tag properly renamed', $output);
-        $renameTag->shouldHaveBeenCalled();
     }
 }

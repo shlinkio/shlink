@@ -41,10 +41,7 @@ runs:
         extensions: ${{ inputs.php-extensions }}
         coverage: pcov
         ini-values: pcov.directory=module
-    - run: echo "::set-output name=composerArgs::${{ inputs.php-version == '8.2' && '--ignore-platform-req=php' || '' }}"
-      id: composer_args
-      shell: bash
     - name: Install dependencies
       if: ${{ inputs.install-deps == 'yes' }}
-      run: composer install --no-interaction --prefer-dist ${{ steps.composer_args.outputs.composerArgs }}
+      run: composer install --no-interaction --prefer-dist
       shell: bash

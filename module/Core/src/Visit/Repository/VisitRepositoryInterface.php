@@ -11,26 +11,8 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 
-// TODO Split into VisitsListsRepository and VisitsLocationRepository
 interface VisitRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
-    public const DEFAULT_BLOCK_SIZE = 10000;
-
-    /**
-     * @return iterable|Visit[]
-     */
-    public function findUnlocatedVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
-
-    /**
-     * @return iterable|Visit[]
-     */
-    public function findVisitsWithEmptyLocation(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
-
-    /**
-     * @return iterable|Visit[]
-     */
-    public function findAllVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
-
     /**
      * @return Visit[]
      */
@@ -65,4 +47,6 @@ interface VisitRepositoryInterface extends ObjectRepository, EntitySpecification
     public function findNonOrphanVisits(VisitsListFiltering $filtering): array;
 
     public function countNonOrphanVisits(VisitsCountFiltering $filtering): int;
+
+    public function findMostRecentOrphanVisit(): ?Visit;
 }

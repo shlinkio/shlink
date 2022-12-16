@@ -5,39 +5,31 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\DeleteShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class DeleteShortUrlActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private DeleteShortUrlAction $action;
-    private ObjectProphecy $service;
+    private MockObject & DeleteShortUrlServiceInterface $service;
 
     protected function setUp(): void
     {
-        $this->service = $this->prophesize(DeleteShortUrlServiceInterface::class);
-        $this->action = new DeleteShortUrlAction($this->service->reveal());
+        $this->service = $this->createMock(DeleteShortUrlServiceInterface::class);
+        $this->action = new DeleteShortUrlAction($this->service);
     }
 
     /** @test */
     public function emptyResponseIsReturnedIfProperlyDeleted(): void
     {
         $apiKey = ApiKey::create();
-        $deleteByShortCode = $this->service->deleteByShortCode(Argument::any(), false, $apiKey)->will(
-            function (): void {
-            },
-        );
+        $this->service->expects($this->once())->method('deleteByShortCode');
 
         $resp = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, $apiKey));
 
         self::assertEquals(204, $resp->getStatusCode());
-        $deleteByShortCode->shouldHaveBeenCalledOnce();
     }
 }

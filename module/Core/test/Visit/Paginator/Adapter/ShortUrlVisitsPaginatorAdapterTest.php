@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Visit\Paginator\Adapter;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
@@ -18,13 +17,11 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlVisitsPaginatorAdapterTest extends TestCase
 {
-    use ProphecyTrait;
-
-    private ObjectProphecy $repo;
+    private MockObject & VisitRepositoryInterface $repo;
 
     protected function setUp(): void
     {
-        $this->repo = $this->prophesize(VisitRepositoryInterface::class);
+        $this->repo = $this->createMock(VisitRepositoryInterface::class);
     }
 
     /** @test */
@@ -34,7 +31,7 @@ class ShortUrlVisitsPaginatorAdapterTest extends TestCase
         $limit = 1;
         $offset = 5;
         $adapter = $this->createAdapter(null);
-        $findVisits = $this->repo->findVisitsByShortCode(
+        $this->repo->expects($this->exactly($count))->method('findVisitsByShortCode')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain(''),
             new VisitsListFiltering(DateRange::allTime(), false, null, $limit, $offset),
         )->willReturn([]);
@@ -42,8 +39,6 @@ class ShortUrlVisitsPaginatorAdapterTest extends TestCase
         for ($i = 0; $i < $count; $i++) {
             $adapter->getSlice($offset, $limit);
         }
-
-        $findVisits->shouldHaveBeenCalledTimes($count);
     }
 
     /** @test */
@@ -52,7 +47,7 @@ class ShortUrlVisitsPaginatorAdapterTest extends TestCase
         $count = 3;
         $apiKey = ApiKey::create();
         $adapter = $this->createAdapter($apiKey);
-        $countVisits = $this->repo->countVisitsByShortCode(
+        $this->repo->expects($this->once())->method('countVisitsByShortCode')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain(''),
             new VisitsCountFiltering(DateRange::allTime(), false, $apiKey),
         )->willReturn(3);
@@ -60,14 +55,12 @@ class ShortUrlVisitsPaginatorAdapterTest extends TestCase
         for ($i = 0; $i < $count; $i++) {
             $adapter->getNbResults();
         }
-
-        $countVisits->shouldHaveBeenCalledOnce();
     }
 
     private function createAdapter(?ApiKey $apiKey): ShortUrlVisitsPaginatorAdapter
     {
         return new ShortUrlVisitsPaginatorAdapter(
-            $this->repo->reveal(),
+            $this->repo,
             ShortUrlIdentifier::fromShortCodeAndDomain(''),
             VisitsParams::fromRawData([]),
             $apiKey,

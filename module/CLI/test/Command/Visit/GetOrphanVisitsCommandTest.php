@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\GetOrphanVisitsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -23,12 +22,12 @@ class GetOrphanVisitsCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private ObjectProphecy $visitsHelper;
+    private MockObject & VisitsStatsHelperInterface $visitsHelper;
 
     protected function setUp(): void
     {
-        $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
-        $this->commandTester = $this->testerForCommand(new GetOrphanVisitsCommand($this->visitsHelper->reveal()));
+        $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
+        $this->commandTester = $this->testerForCommand(new GetOrphanVisitsCommand($this->visitsHelper));
     }
 
     /** @test */
@@ -37,7 +36,7 @@ class GetOrphanVisitsCommandTest extends TestCase
         $visit = Visit::forBasePath(new Visitor('bar', 'foo', '', ''))->locate(
             VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
-        $getVisits = $this->visitsHelper->orphanVisits(Argument::any())->willReturn(
+        $this->visitsHelper->expects($this->once())->method('orphanVisits')->withAnyParameters()->willReturn(
             new Paginator(new ArrayAdapter([$visit])),
         );
 
@@ -55,6 +54,5 @@ class GetOrphanVisitsCommandTest extends TestCase
             OUTPUT,
             $output,
         );
-        $getVisits->shouldHaveBeenCalledOnce();
     }
 }

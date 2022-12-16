@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Util;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use ReflectionObject;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Symfony\Component\Console\Helper\Table;
@@ -16,15 +14,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ShlinkTableTest extends TestCase
 {
-    use ProphecyTrait;
-
     private ShlinkTable $shlinkTable;
-    private ObjectProphecy $baseTable;
+    private MockObject & Table $baseTable;
 
     protected function setUp(): void
     {
-        $this->baseTable = $this->prophesize(Table::class);
-        $this->shlinkTable = ShlinkTable::fromBaseTable($this->baseTable->reveal());
+        $this->baseTable = $this->createMock(Table::class);
+        $this->shlinkTable = ShlinkTable::fromBaseTable($this->baseTable);
     }
 
     /** @test */
@@ -35,29 +31,22 @@ class ShlinkTableTest extends TestCase
         $headerTitle = 'Header';
         $footerTitle = 'Footer';
 
-        $setStyle = $this->baseTable->setStyle(Argument::type(TableStyle::class))->willReturn(
-            $this->baseTable->reveal(),
-        );
-        $setHeaders = $this->baseTable->setHeaders($headers)->willReturn($this->baseTable->reveal());
-        $setRows = $this->baseTable->setRows($rows)->willReturn($this->baseTable->reveal());
-        $setFooterTitle = $this->baseTable->setFooterTitle($footerTitle)->willReturn($this->baseTable->reveal());
-        $setHeaderTitle = $this->baseTable->setHeaderTitle($headerTitle)->willReturn($this->baseTable->reveal());
-        $render = $this->baseTable->render()->willReturn($this->baseTable->reveal());
+        $this->baseTable->expects($this->once())->method('setStyle')->with(
+            $this->isInstanceOf(TableStyle::class),
+        )->willReturnSelf();
+        $this->baseTable->expects($this->once())->method('setHeaders')->with($headers)->willReturnSelf();
+        $this->baseTable->expects($this->once())->method('setRows')->with($rows)->willReturnSelf();
+        $this->baseTable->expects($this->once())->method('setFooterTitle')->with($footerTitle)->willReturnSelf();
+        $this->baseTable->expects($this->once())->method('setHeaderTitle')->with($headerTitle)->willReturnSelf();
+        $this->baseTable->expects($this->once())->method('render')->with()->willReturnSelf();
 
         $this->shlinkTable->render($headers, $rows, $footerTitle, $headerTitle);
-
-        $setStyle->shouldHaveBeenCalledOnce();
-        $setHeaders->shouldHaveBeenCalledOnce();
-        $setRows->shouldHaveBeenCalledOnce();
-        $setFooterTitle->shouldHaveBeenCalledOnce();
-        $setHeaderTitle->shouldHaveBeenCalledOnce();
-        $render->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
     public function newTableIsCreatedForFactoryMethod(): void
     {
-        $instance = ShlinkTable::default($this->prophesize(OutputInterface::class)->reveal());
+        $instance = ShlinkTable::default($this->createMock(OutputInterface::class));
 
         $ref = new ReflectionObject($instance);
         $baseTable = $ref->getProperty('baseTable');

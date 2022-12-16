@@ -17,7 +17,7 @@ use const PHP_EOL;
 
 class RobotsAction implements RequestHandlerInterface, StatusCodeInterface
 {
-    public function __construct(private CrawlingHelperInterface $crawlingHelper)
+    public function __construct(private readonly CrawlingHelperInterface $crawlingHelper)
     {
     }
 

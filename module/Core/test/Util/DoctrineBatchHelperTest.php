@@ -5,23 +5,20 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelper;
 
 class DoctrineBatchHelperTest extends TestCase
 {
-    use ProphecyTrait;
-
     private DoctrineBatchHelper $helper;
-    private ObjectProphecy $em;
+    private MockObject & EntityManagerInterface $em;
 
     protected function setUp(): void
     {
-        $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->helper = new DoctrineBatchHelper($this->em->reveal());
+        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->helper = new DoctrineBatchHelper($this->em);
     }
 
     /**
@@ -33,17 +30,17 @@ class DoctrineBatchHelperTest extends TestCase
         int $batchSize,
         int $expectedCalls,
     ): void {
+        $this->em->expects($this->once())->method('beginTransaction');
+        $this->em->expects($this->once())->method('commit');
+        $this->em->expects($this->never())->method('rollback');
+        $this->em->expects($this->exactly($expectedCalls))->method('flush');
+        $this->em->expects($this->exactly($expectedCalls))->method('clear');
+
         $wrappedIterable = $this->helper->wrapIterable($iterable, $batchSize);
 
         foreach ($wrappedIterable as $item) {
             // Iterable needs to be iterated for the logic to be invoked
         }
-
-        $this->em->beginTransaction()->shouldHaveBeenCalledOnce();
-        $this->em->commit()->shouldHaveBeenCalledOnce();
-        $this->em->rollback()->shouldNotHaveBeenCalled();
-        $this->em->flush()->shouldHaveBeenCalledTimes($expectedCalls);
-        $this->em->clear()->shouldHaveBeenCalledTimes($expectedCalls);
     }
 
     public function provideIterables(): iterable
@@ -56,15 +53,14 @@ class DoctrineBatchHelperTest extends TestCase
     /** @test */
     public function transactionIsRolledBackWhenAnErrorOccurs(): void
     {
-        $flush = $this->em->flush()->willThrow(RuntimeException::class);
+        $this->em->expects($this->once())->method('flush')->willThrowException(new RuntimeException());
+        $this->em->expects($this->once())->method('beginTransaction');
+        $this->em->expects($this->never())->method('commit');
+        $this->em->expects($this->once())->method('rollback');
 
         $wrappedIterable = $this->helper->wrapIterable([1, 2, 3], 1);
 
         self::expectException(RuntimeException::class);
-        $flush->shouldBeCalledOnce();
-        $this->em->beginTransaction()->shouldBeCalledOnce();
-        $this->em->commit()->shouldNotBeCalled();
-        $this->em->rollback()->shouldBeCalledOnce();
 
         foreach ($wrappedIterable as $item) {
             // Iterable needs to be iterated for the logic to be invoked

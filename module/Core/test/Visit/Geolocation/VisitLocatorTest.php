@@ -6,12 +6,8 @@ namespace ShlinkioTest\Shlink\Core\Visit\Geolocation;
 
 use Doctrine\ORM\EntityManager;
 use Exception;
-use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\MethodProphecy;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -19,32 +15,27 @@ use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitGeolocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocator;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
-use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Repository\VisitLocationRepositoryInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
-use function array_shift;
 use function count;
 use function floor;
-use function func_get_args;
 use function Functional\map;
 use function range;
 use function sprintf;
 
 class VisitLocatorTest extends TestCase
 {
-    use ProphecyTrait;
-
     private VisitLocator $visitService;
-    private ObjectProphecy $em;
-    private ObjectProphecy $repo;
+    private MockObject & EntityManager $em;
+    private MockObject & VisitLocationRepositoryInterface $repo;
 
     protected function setUp(): void
     {
-        $this->em = $this->prophesize(EntityManager::class);
-        $this->repo = $this->prophesize(VisitRepositoryInterface::class);
-        $this->em->getRepository(Visit::class)->willReturn($this->repo->reveal());
+        $this->em = $this->createMock(EntityManager::class);
+        $this->repo = $this->createMock(VisitLocationRepositoryInterface::class);
 
-        $this->visitService = new VisitLocator($this->em->reveal());
+        $this->visitService = new VisitLocator($this->em, $this->repo);
     }
 
     /**
@@ -61,14 +52,13 @@ class VisitLocatorTest extends TestCase
                 Visit::forValidShortUrl(ShortUrl::withLongUrl(sprintf('short_code_%s', $i)), Visitor::emptyInstance()),
         );
 
-        $findVisits = $this->mockRepoMethod($expectedRepoMethodName)->willReturn($unlocatedVisits);
+        $this->repo->expects($this->once())->method($expectedRepoMethodName)->willReturn($unlocatedVisits);
 
-        $persist = $this->em->persist(Argument::type(Visit::class))->will(function (): void {
-        });
-        $flush = $this->em->flush()->will(function (): void {
-        });
-        $clear = $this->em->clear()->will(function (): void {
-        });
+        $this->em->expects($this->exactly(count($unlocatedVisits)))->method('persist')->with(
+            $this->isInstanceOf(Visit::class),
+        );
+        $this->em->expects($this->exactly((int) floor(count($unlocatedVisits) / 200) + 1))->method('flush');
+        $this->em->expects($this->exactly((int) floor(count($unlocatedVisits) / 200) + 1))->method('clear');
 
         $this->visitService->{$serviceMethodName}(new class implements VisitGeolocationHelperInterface {
             public function geolocateVisit(Visit $visit): Location
@@ -78,17 +68,8 @@ class VisitLocatorTest extends TestCase
 
             public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void
             {
-                $args = func_get_args();
-
-                Assert::assertInstanceOf(VisitLocation::class, array_shift($args));
-                Assert::assertInstanceOf(Visit::class, array_shift($args));
             }
         });
-
-        $findVisits->shouldHaveBeenCalledOnce();
-        $persist->shouldHaveBeenCalledTimes(count($unlocatedVisits));
-        $flush->shouldHaveBeenCalledTimes(floor(count($unlocatedVisits) / 200) + 1);
-        $clear->shouldHaveBeenCalledTimes(floor(count($unlocatedVisits) / 200) + 1);
     }
 
     public function provideMethodNames(): iterable
@@ -111,18 +92,17 @@ class VisitLocatorTest extends TestCase
             Visit::forValidShortUrl(ShortUrl::withLongUrl('foo'), Visitor::emptyInstance()),
         ];
 
-        $findVisits = $this->mockRepoMethod($expectedRepoMethodName)->willReturn($unlocatedVisits);
+        $this->repo->expects($this->once())->method($expectedRepoMethodName)->willReturn($unlocatedVisits);
 
-        $persist = $this->em->persist(Argument::type(Visit::class))->will(function (): void {
-        });
-        $flush = $this->em->flush()->will(function (): void {
-        });
-        $clear = $this->em->clear()->will(function (): void {
-        });
+        $this->em->expects($this->exactly($isNonLocatableAddress ? 1 : 0))->method('persist')->with(
+            $this->isInstanceOf(Visit::class),
+        );
+        $this->em->expects($this->once())->method('flush');
+        $this->em->expects($this->once())->method('clear');
 
         $this->visitService->{$serviceMethodName}(
             new class ($isNonLocatableAddress) implements VisitGeolocationHelperInterface {
-                public function __construct(private bool $isNonLocatableAddress)
+                public function __construct(private readonly bool $isNonLocatableAddress)
                 {
                 }
 
@@ -138,11 +118,6 @@ class VisitLocatorTest extends TestCase
                 }
             },
         );
-
-        $findVisits->shouldHaveBeenCalledOnce();
-        $persist->shouldHaveBeenCalledTimes($isNonLocatableAddress ? 1 : 0);
-        $flush->shouldHaveBeenCalledOnce();
-        $clear->shouldHaveBeenCalledOnce();
     }
 
     public function provideIsNonLocatableAddress(): iterable
@@ -161,10 +136,5 @@ class VisitLocatorTest extends TestCase
         ];
         yield 'locateAllVisits - locatable address' => ['locateAllVisits', 'findAllVisits', false];
         yield 'locateAllVisits - non-locatable address' => ['locateAllVisits', 'findAllVisits', true];
-    }
-
-    private function mockRepoMethod(string $methodName): MethodProphecy
-    {
-        return (new MethodProphecy($this->repo, $methodName, new Argument\ArgumentsWildcard([])));
     }
 }

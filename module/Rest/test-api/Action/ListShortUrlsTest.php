@@ -18,11 +18,16 @@ class ListShortUrlsTest extends ApiTestCase
         'longUrl' => 'https://shlink.io',
         'dateCreated' => '2018-05-01T00:00:00+00:00',
         'visitsCount' => 3,
+        'visitsSummary' => [
+            'total' => 3,
+            'nonBots' => 3,
+            'bots' => 0,
+        ],
         'tags' => ['foo'],
         'meta' => [
             'validSince' => null,
             'validUntil' => null,
-            'maxVisits' => null,
+            'maxVisits' => 2,
         ],
         'domain' => null,
         'title' => 'My cool title',
@@ -35,10 +40,15 @@ class ListShortUrlsTest extends ApiTestCase
         'longUrl' => 'https://shlink.io/documentation/',
         'dateCreated' => '2018-05-01T00:00:00+00:00',
         'visitsCount' => 2,
+        'visitsSummary' => [
+            'total' => 2,
+            'nonBots' => 2,
+            'bots' => 0,
+        ],
         'tags' => [],
         'meta' => [
             'validSince' => null,
-            'validUntil' => null,
+            'validUntil' => '2020-05-01T00:00:00+00:00',
             'maxVisits' => null,
         ],
         'domain' => null,
@@ -52,6 +62,11 @@ class ListShortUrlsTest extends ApiTestCase
         'longUrl' => 'https://google.com',
         'dateCreated' => '2018-10-20T00:00:00+00:00',
         'visitsCount' => 0,
+        'visitsSummary' => [
+            'total' => 0,
+            'nonBots' => 0,
+            'bots' => 0,
+        ],
         'tags' => [],
         'meta' => [
             'validSince' => null,
@@ -71,6 +86,11 @@ class ListShortUrlsTest extends ApiTestCase
             . '/acmailer-7-0-the-most-important-release-in-a-long-time/',
         'dateCreated' => '2019-01-01T00:00:10+00:00',
         'visitsCount' => 2,
+        'visitsSummary' => [
+            'total' => 2,
+            'nonBots' => 1,
+            'bots' => 1,
+        ],
         'tags' => ['bar', 'foo'],
         'meta' => [
             'validSince' => '2020-05-01T00:00:00+00:00',
@@ -88,6 +108,11 @@ class ListShortUrlsTest extends ApiTestCase
         'longUrl' => 'https://shlink.io',
         'dateCreated' => '2019-01-01T00:00:20+00:00',
         'visitsCount' => 0,
+        'visitsSummary' => [
+            'total' => 0,
+            'nonBots' => 0,
+            'bots' => 0,
+        ],
         'tags' => [],
         'meta' => [
             'validSince' => null,
@@ -107,6 +132,11 @@ class ListShortUrlsTest extends ApiTestCase
             . '/considerations-to-properly-use-open-source-software-projects/',
         'dateCreated' => '2019-01-01T00:00:30+00:00',
         'visitsCount' => 0,
+        'visitsSummary' => [
+            'total' => 0,
+            'nonBots' => 0,
+            'bots' => 0,
+        ],
         'tags' => ['foo'],
         'meta' => [
             'validSince' => null,
@@ -145,6 +175,20 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
             self::SHORT_URL_SHLINK_WITH_TITLE,
+            self::SHORT_URL_DOCS,
+        ], 'valid_api_key'];
+        yield [['excludePastValidUntil' => 'true'], [
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
+        ], 'valid_api_key'];
+        yield [['excludeMaxVisitsReached' => 'true'], [
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
             self::SHORT_URL_DOCS,
         ], 'valid_api_key'];
         yield [['orderBy' => 'shortCode'], [

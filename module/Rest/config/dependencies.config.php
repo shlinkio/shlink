@@ -90,7 +90,10 @@ return [
             Visit\Transformer\OrphanVisitDataTransformer::class,
         ],
         Action\Visit\NonOrphanVisitsAction::class => [Visit\VisitsStatsHelper::class],
-        Action\ShortUrl\ListShortUrlsAction::class => [ShortUrl\ShortUrlService::class, ShortUrlDataTransformer::class],
+        Action\ShortUrl\ListShortUrlsAction::class => [
+            ShortUrl\ShortUrlListService::class,
+            ShortUrlDataTransformer::class,
+        ],
         Action\Tag\ListTagsAction::class => [TagService::class],
         Action\Tag\TagsStatsAction::class => [TagService::class],
         Action\Tag\DeleteTagsAction::class => [TagService::class],

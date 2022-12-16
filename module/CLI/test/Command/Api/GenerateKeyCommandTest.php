@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
 use Cake\Chronos\Chronos;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolverInterface;
 use Shlinkio\Shlink\CLI\Command\Api\GenerateKeyCommand;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -21,22 +20,25 @@ class GenerateKeyCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private ObjectProphecy $apiKeyService;
+    private MockObject & ApiKeyServiceInterface $apiKeyService;
 
     protected function setUp(): void
     {
-        $this->apiKeyService = $this->prophesize(ApiKeyServiceInterface::class);
-        $roleResolver = $this->prophesize(RoleResolverInterface::class);
-        $roleResolver->determineRoles(Argument::type(InputInterface::class))->willReturn([]);
+        $this->apiKeyService = $this->createMock(ApiKeyServiceInterface::class);
+        $roleResolver = $this->createMock(RoleResolverInterface::class);
+        $roleResolver->method('determineRoles')->with($this->isInstanceOf(InputInterface::class))->willReturn([]);
 
-        $command = new GenerateKeyCommand($this->apiKeyService->reveal(), $roleResolver->reveal());
+        $command = new GenerateKeyCommand($this->apiKeyService, $roleResolver);
         $this->commandTester = $this->testerForCommand($command);
     }
 
     /** @test */
     public function noExpirationDateIsDefinedIfNotProvided(): void
     {
-        $this->apiKeyService->create(null, null)->shouldBeCalledOnce()->willReturn(ApiKey::create());
+        $this->apiKeyService->expects($this->once())->method('create')->with(
+            $this->isNull(),
+            $this->isNull(),
+        )->willReturn(ApiKey::create());
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
@@ -47,9 +49,10 @@ class GenerateKeyCommandTest extends TestCase
     /** @test */
     public function expirationDateIsDefinedIfProvided(): void
     {
-        $this->apiKeyService->create(Argument::type(Chronos::class), null)->shouldBeCalledOnce()->willReturn(
-            ApiKey::create(),
-        );
+        $this->apiKeyService->expects($this->once())->method('create')->with(
+            $this->isInstanceOf(Chronos::class),
+            $this->isNull(),
+        )->willReturn(ApiKey::create());
 
         $this->commandTester->execute([
             '--expiration-date' => '2016-01-01',
@@ -59,9 +62,10 @@ class GenerateKeyCommandTest extends TestCase
     /** @test */
     public function nameIsDefinedIfProvided(): void
     {
-        $this->apiKeyService->create(null, Argument::type('string'))->shouldBeCalledOnce()->willReturn(
-            ApiKey::create(),
-        );
+        $this->apiKeyService->expects($this->once())->method('create')->with(
+            $this->isNull(),
+            $this->isType('string'),
+        )->willReturn(ApiKey::create());
 
         $this->commandTester->execute([
             '--name' => 'Alice',

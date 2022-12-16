@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// phpcs:disable
-// TODO Enable coding style checks again once code sniffer 3.7 is released https://github.com/squizlabs/PHP_CodeSniffer/issues/3474
 namespace Shlinkio\Shlink\Rest\ApiKey;
 
 use Happyr\DoctrineSpecification\Spec;
@@ -18,6 +16,22 @@ enum Role: string
 {
     case AUTHORED_SHORT_URLS = 'AUTHORED_SHORT_URLS';
     case DOMAIN_SPECIFIC = 'DOMAIN_SPECIFIC';
+
+    public function toFriendlyName(): string
+    {
+        return match ($this) {
+            self::AUTHORED_SHORT_URLS => 'Author only',
+            self::DOMAIN_SPECIFIC => 'Domain only',
+        };
+    }
+
+    public function paramName(): string
+    {
+        return match ($this) {
+            self::AUTHORED_SHORT_URLS => 'author-only',
+            self::DOMAIN_SPECIFIC => 'domain-only',
+        };
+    }
 
     public static function toSpec(ApiKeyRole $role, ?string $context = null): Specification
     {
@@ -43,13 +57,5 @@ enum Role: string
     public static function domainAuthorityFromMeta(array $meta): string
     {
         return $meta['authority'] ?? '';
-    }
-
-    public static function toFriendlyName(Role $role): string
-    {
-        return match ($role) {
-            self::AUTHORED_SHORT_URLS => 'Author only',
-            self::DOMAIN_SPECIFIC => 'Domain only',
-        };
     }
 }

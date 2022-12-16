@@ -6,9 +6,8 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\Visit\GlobalVisitsAction;
@@ -16,15 +15,13 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class GlobalVisitsActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private GlobalVisitsAction $action;
-    private ObjectProphecy $helper;
+    private MockObject & VisitsStatsHelperInterface $helper;
 
     protected function setUp(): void
     {
-        $this->helper = $this->prophesize(VisitsStatsHelperInterface::class);
-        $this->action = new GlobalVisitsAction($this->helper->reveal());
+        $this->helper = $this->createMock(VisitsStatsHelperInterface::class);
+        $this->action = new GlobalVisitsAction($this->helper);
     }
 
     /** @test */
@@ -32,13 +29,12 @@ class GlobalVisitsActionTest extends TestCase
     {
         $apiKey = ApiKey::create();
         $stats = new VisitsStats(5, 3);
-        $getStats = $this->helper->getVisitsStats($apiKey)->willReturn($stats);
+        $this->helper->expects($this->once())->method('getVisitsStats')->with($apiKey)->willReturn($stats);
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, $apiKey));
         $payload = $resp->getPayload();
 
         self::assertEquals($payload, ['visits' => $stats]);
-        $getStats->shouldHaveBeenCalledOnce();
     }
 }

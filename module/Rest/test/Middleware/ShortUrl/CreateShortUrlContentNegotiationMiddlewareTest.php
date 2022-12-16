@@ -7,34 +7,32 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware;
 
 class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 {
-    use ProphecyTrait;
-
     private CreateShortUrlContentNegotiationMiddleware $middleware;
-    private ObjectProphecy $requestHandler;
+    private MockObject & RequestHandlerInterface $requestHandler;
 
     protected function setUp(): void
     {
         $this->middleware = new CreateShortUrlContentNegotiationMiddleware();
-        $this->requestHandler = $this->prophesize(RequestHandlerInterface::class);
+        $this->requestHandler = $this->createMock(RequestHandlerInterface::class);
     }
 
     /** @test */
     public function whenNoJsonResponseIsReturnedNoFurtherOperationsArePerformed(): void
     {
         $expectedResp = new Response();
-        $this->requestHandler->handle(Argument::type(ServerRequestInterface::class))->willReturn($expectedResp);
+        $this->requestHandler->method('handle')->with($this->isInstanceOf(ServerRequestInterface::class))->willReturn(
+            $expectedResp,
+        );
 
-        $resp = $this->middleware->process(new ServerRequest(), $this->requestHandler->reveal());
+        $resp = $this->middleware->process(new ServerRequest(), $this->requestHandler);
 
         self::assertSame($expectedResp, $resp);
     }
@@ -51,14 +49,13 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
             $request = $request->withHeader('Accept', $accept);
         }
 
-        $handle = $this->requestHandler->handle(Argument::type(ServerRequestInterface::class))->willReturn(
-            new JsonResponse(['shortUrl' => 'http://doma.in/foo']),
-        );
+        $this->requestHandler->expects($this->once())->method('handle')->with(
+            $this->isInstanceOf(ServerRequestInterface::class),
+        )->willReturn(new JsonResponse(['shortUrl' => 'http://doma.in/foo']));
 
-        $response = $this->middleware->process($request, $this->requestHandler->reveal());
+        $response = $this->middleware->process($request, $this->requestHandler);
 
         self::assertEquals($expectedContentType, $response->getHeaderLine('Content-type'));
-        $handle->shouldHaveBeenCalled();
     }
 
     public function provideData(): iterable
@@ -82,14 +79,13 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
     {
         $request = (new ServerRequest())->withQueryParams(['format' => 'txt']);
 
-        $handle = $this->requestHandler->handle(Argument::type(ServerRequestInterface::class))->willReturn(
-            new JsonResponse($json),
-        );
+        $this->requestHandler->expects($this->once())->method('handle')->with(
+            $this->isInstanceOf(ServerRequestInterface::class),
+        )->willReturn(new JsonResponse($json));
 
-        $response = $this->middleware->process($request, $this->requestHandler->reveal());
+        $response = $this->middleware->process($request, $this->requestHandler);
 
         self::assertEquals($expectedBody, (string) $response->getBody());
-        $handle->shouldHaveBeenCalled();
     }
 
     public function provideTextBodies(): iterable

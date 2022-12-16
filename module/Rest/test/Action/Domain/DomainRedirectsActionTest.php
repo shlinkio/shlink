@@ -6,10 +6,8 @@ namespace ShlinkioTest\Shlink\Rest\Action\Domain;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -22,15 +20,13 @@ use function array_key_exists;
 
 class DomainRedirectsActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private DomainRedirectsAction $action;
-    private ObjectProphecy $domainService;
+    private MockObject & DomainServiceInterface $domainService;
 
     protected function setUp(): void
     {
-        $this->domainService = $this->prophesize(DomainServiceInterface::class);
-        $this->action = new DomainRedirectsAction($this->domainService->reveal());
+        $this->domainService = $this->createMock(DomainServiceInterface::class);
+        $this->action = new DomainRedirectsAction($this->domainService);
     }
 
     /**
@@ -42,8 +38,8 @@ class DomainRedirectsActionTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);
 
         $this->expectException(ValidationException::class);
-        $this->domainService->getOrCreate(Argument::cetera())->shouldNotBeCalled();
-        $this->domainService->configureNotFoundRedirects(Argument::cetera())->shouldNotBeCalled();
+        $this->domainService->expects($this->never())->method('getOrCreate');
+        $this->domainService->expects($this->never())->method('configureNotFoundRedirects');
 
         $this->action->handle($request);
     }
@@ -70,19 +66,19 @@ class DomainRedirectsActionTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($redirects)
                                                       ->withAttribute(ApiKey::class, $apiKey);
 
-        $getOrCreate = $this->domainService->getOrCreate($authority)->willReturn($domain);
-        $configureNotFoundRedirects = $this->domainService->configureNotFoundRedirects(
+        $this->domainService->expects($this->once())->method('getOrCreate')->with($authority)->willReturn($domain);
+        $this->domainService->expects($this->once())->method('configureNotFoundRedirects')->with(
             $authority,
             NotFoundRedirects::withRedirects(
                 array_key_exists(DomainRedirectsInputFilter::BASE_URL_REDIRECT, $redirects)
                     ? $redirects[DomainRedirectsInputFilter::BASE_URL_REDIRECT]
-                    : $domain?->baseUrlRedirect(),
+                    : $domain->baseUrlRedirect(),
                 array_key_exists(DomainRedirectsInputFilter::REGULAR_404_REDIRECT, $redirects)
                     ? $redirects[DomainRedirectsInputFilter::REGULAR_404_REDIRECT]
-                    : $domain?->regular404Redirect(),
+                    : $domain->regular404Redirect(),
                 array_key_exists(DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT, $redirects)
                     ? $redirects[DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT]
-                    : $domain?->invalidShortUrlRedirect(),
+                    : $domain->invalidShortUrlRedirect(),
             ),
             $apiKey,
         );
@@ -93,8 +89,6 @@ class DomainRedirectsActionTest extends TestCase
         $payload = $response->getPayload();
 
         self::assertEquals($expectedResult, $payload->jsonSerialize());
-        $getOrCreate->shouldHaveBeenCalledOnce();
-        $configureNotFoundRedirects->shouldHaveBeenCalledOnce();
     }
 
     public function provideDomainsAndRedirects(): iterable

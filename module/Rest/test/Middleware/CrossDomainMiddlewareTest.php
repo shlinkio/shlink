@@ -6,33 +6,29 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
 
 class CrossDomainMiddlewareTest extends TestCase
 {
-    use ProphecyTrait;
-
     private CrossDomainMiddleware $middleware;
-    private ObjectProphecy $handler;
+    private MockObject & RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
         $this->middleware = new CrossDomainMiddleware(['max_age' => 1000]);
-        $this->handler = $this->prophesize(RequestHandlerInterface::class);
+        $this->handler = $this->createMock(RequestHandlerInterface::class);
     }
 
     /** @test */
     public function nonCrossDomainRequestsAreNotAffected(): void
     {
         $originalResponse = (new Response())->withStatus(404);
-        $this->handler->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
+        $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
-        $response = $this->middleware->process(new ServerRequest(), $this->handler->reveal());
+        $response = $this->middleware->process(new ServerRequest(), $this->handler);
         $headers = $response->getHeaders();
 
         self::assertSame($originalResponse, $response);
@@ -47,12 +43,9 @@ class CrossDomainMiddlewareTest extends TestCase
     public function anyRequestIncludesTheAllowAccessHeader(): void
     {
         $originalResponse = new Response();
-        $this->handler->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
+        $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
-        $response = $this->middleware->process(
-            (new ServerRequest())->withHeader('Origin', 'local'),
-            $this->handler->reveal(),
-        );
+        $response = $this->middleware->process((new ServerRequest())->withHeader('Origin', 'local'), $this->handler);
         self::assertNotSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
@@ -71,9 +64,9 @@ class CrossDomainMiddlewareTest extends TestCase
             ->withMethod('OPTIONS')
             ->withHeader('Origin', 'local')
             ->withHeader('Access-Control-Request-Headers', 'foo, bar, baz');
-        $this->handler->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
+        $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
-        $response = $this->middleware->process($request, $this->handler->reveal());
+        $response = $this->middleware->process($request, $this->handler);
         self::assertNotSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
@@ -99,9 +92,9 @@ class CrossDomainMiddlewareTest extends TestCase
         }
         $request = (new ServerRequest())->withHeader('Origin', 'local')
                                         ->withMethod('OPTIONS');
-        $this->handler->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
+        $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
-        $response = $this->middleware->process($request, $this->handler->reveal());
+        $response = $this->middleware->process($request, $this->handler);
 
         self::assertEquals($response->getHeaderLine('Access-Control-Allow-Methods'), $expectedAllowedMethods);
         self::assertEquals(204, $response->getStatusCode());
@@ -126,9 +119,9 @@ class CrossDomainMiddlewareTest extends TestCase
         $originalResponse = (new Response())->withStatus($status);
         $request = (new ServerRequest())->withMethod($method)
                                         ->withHeader('Origin', 'local');
-        $this->handler->handle(Argument::any())->willReturn($originalResponse)->shouldBeCalledOnce();
+        $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
-        $response = $this->middleware->process($request, $this->handler->reveal());
+        $response = $this->middleware->process($request, $this->handler);
 
         self::assertEquals($expectedStatus, $response->getStatusCode());
     }

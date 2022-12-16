@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Crawling;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\CrawlableShortCodesQueryInterface;
 
 class CrawlingHelper implements CrawlingHelperInterface
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private readonly CrawlableShortCodesQueryInterface $query)
     {
     }
 
     public function listCrawlableShortCodes(): iterable
     {
-        /** @var ShortUrlRepositoryInterface $repo */
-        $repo = $this->em->getRepository(ShortUrl::class);
-        yield from $repo->findCrawlableShortCodes();
+        yield from ($this->query)();
     }
 }

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Visit\Paginator\Adapter;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
@@ -18,37 +17,36 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class NonOrphanVisitsPaginatorAdapterTest extends TestCase
 {
-    use ProphecyTrait;
-
     private NonOrphanVisitsPaginatorAdapter $adapter;
-    private ObjectProphecy $repo;
+    private MockObject & VisitRepositoryInterface $repo;
     private VisitsParams $params;
     private ApiKey $apiKey;
 
     protected function setUp(): void
     {
-        $this->repo = $this->prophesize(VisitRepositoryInterface::class);
+        $this->repo = $this->createMock(VisitRepositoryInterface::class);
         $this->params = VisitsParams::fromRawData([]);
         $this->apiKey = ApiKey::create();
 
-        $this->adapter = new NonOrphanVisitsPaginatorAdapter($this->repo->reveal(), $this->params, $this->apiKey);
+        $this->adapter = new NonOrphanVisitsPaginatorAdapter($this->repo, $this->params, $this->apiKey);
     }
 
     /** @test */
     public function countDelegatesToRepository(): void
     {
         $expectedCount = 5;
-        $repoCount = $this->repo->countNonOrphanVisits(
+        $this->repo->expects($this->once())->method('countNonOrphanVisits')->with(
             new VisitsCountFiltering($this->params->dateRange, $this->params->excludeBots, $this->apiKey),
         )->willReturn($expectedCount);
 
         $result = $this->adapter->getNbResults();
 
         self::assertEquals($expectedCount, $result);
-        $repoCount->shouldHaveBeenCalledOnce();
     }
 
     /**
+     * @param int<0, max> $limit
+     * @param int<0, max> $offset
      * @test
      * @dataProvider provideLimitAndOffset
      */
@@ -56,7 +54,7 @@ class NonOrphanVisitsPaginatorAdapterTest extends TestCase
     {
         $visitor = Visitor::emptyInstance();
         $list = [Visit::forRegularNotFound($visitor), Visit::forInvalidShortUrl($visitor)];
-        $repoFind = $this->repo->findNonOrphanVisits(new VisitsListFiltering(
+        $this->repo->expects($this->once())->method('findNonOrphanVisits')->with(new VisitsListFiltering(
             $this->params->dateRange,
             $this->params->excludeBots,
             $this->apiKey,
@@ -67,7 +65,6 @@ class NonOrphanVisitsPaginatorAdapterTest extends TestCase
         $result = $this->adapter->getSlice($offset, $limit);
 
         self::assertEquals($list, $result);
-        $repoFind->shouldHaveBeenCalledOnce();
     }
 
     public function provideLimitAndOffset(): iterable

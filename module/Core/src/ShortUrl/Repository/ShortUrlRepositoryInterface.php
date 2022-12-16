@@ -10,16 +10,10 @@ use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
-use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
-    public function findList(ShortUrlsListFiltering $filtering): array;
-
-    public function countList(ShortUrlsCountFiltering $filtering): int;
-
     public function findOneWithDomainFallback(ShortUrlIdentifier $identifier): ?ShortUrl;
 
     public function findOne(ShortUrlIdentifier $identifier, ?Specification $spec = null): ?ShortUrl;
@@ -31,6 +25,4 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
     public function findOneMatching(ShortUrlCreation $meta): ?ShortUrl;
 
     public function findOneByImportedUrl(ImportedShlinkUrl $url): ?ShortUrl;
-
-    public function findCrawlableShortCodes(): iterable;
 }

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\GeoLiteDbCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\LocateUnlocatedVisits;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -17,25 +16,23 @@ use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class LocateUnlocatedVisitsTest extends TestCase
 {
-    use ProphecyTrait;
-
     private LocateUnlocatedVisits $listener;
-    private ObjectProphecy $locator;
-    private ObjectProphecy $visitToLocation;
+    private MockObject & VisitLocatorInterface $locator;
+    private MockObject & VisitToLocationHelperInterface $visitToLocation;
 
     protected function setUp(): void
     {
-        $this->locator = $this->prophesize(VisitLocatorInterface::class);
-        $this->visitToLocation = $this->prophesize(VisitToLocationHelperInterface::class);
+        $this->locator = $this->createMock(VisitLocatorInterface::class);
+        $this->visitToLocation = $this->createMock(VisitToLocationHelperInterface::class);
 
-        $this->listener = new LocateUnlocatedVisits($this->locator->reveal(), $this->visitToLocation->reveal());
+        $this->listener = new LocateUnlocatedVisits($this->locator, $this->visitToLocation);
     }
 
     /** @test */
     public function locatorIsCalledWhenInvoked(): void
     {
+        $this->locator->expects($this->once())->method('locateUnlocatedVisits')->with($this->listener);
         ($this->listener)(new GeoLiteDbCreated());
-        $this->locator->locateUnlocatedVisits($this->listener)->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
@@ -44,11 +41,12 @@ class LocateUnlocatedVisitsTest extends TestCase
         $visit = Visit::forBasePath(Visitor::emptyInstance());
         $location = Location::emptyInstance();
 
-        $resolve = $this->visitToLocation->resolveVisitLocation($visit)->willReturn($location);
+        $this->visitToLocation->expects($this->once())->method('resolveVisitLocation')->with($visit)->willReturn(
+            $location,
+        );
 
         $result = $this->listener->geolocateVisit($visit);
 
         self::assertSame($location, $result);
-        $resolve->shouldHaveBeenCalledOnce();
     }
 }

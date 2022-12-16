@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortCodeUniquenessHelper;
@@ -16,19 +15,17 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 
 class ShortCodeUniquenessHelperTest extends TestCase
 {
-    use ProphecyTrait;
-
     private ShortCodeUniquenessHelper $helper;
-    private ObjectProphecy $em;
-    private ObjectProphecy $shortUrl;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & ShortUrl $shortUrl;
 
     protected function setUp(): void
     {
-        $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->helper = new ShortCodeUniquenessHelper($this->em->reveal());
+        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->helper = new ShortCodeUniquenessHelper($this->em);
 
-        $this->shortUrl = $this->prophesize(ShortUrl::class);
-        $this->shortUrl->getShortCode()->willReturn('abc123');
+        $this->shortUrl = $this->createMock(ShortUrl::class);
+        $this->shortUrl->method('getShortCode')->willReturn('abc123');
     }
 
     /**
@@ -39,22 +36,22 @@ class ShortCodeUniquenessHelperTest extends TestCase
     {
         $callIndex = 0;
         $expectedCalls = 3;
-        $repo = $this->prophesize(ShortUrlRepository::class);
-        $shortCodeIsInUse = $repo->shortCodeIsInUseWithLock(
+        $repo = $this->createMock(ShortUrlRepository::class);
+        $repo->expects($this->exactly($expectedCalls))->method('shortCodeIsInUseWithLock')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain('abc123', $expectedAuthority),
-        )->will(function () use (&$callIndex, $expectedCalls) {
+        )->willReturnCallback(function () use (&$callIndex, $expectedCalls) {
             $callIndex++;
             return $callIndex < $expectedCalls;
         });
-        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
-        $this->shortUrl->getDomain()->willReturn($domain);
+        $this->em->expects($this->exactly($expectedCalls))->method('getRepository')->with(ShortUrl::class)->willReturn(
+            $repo,
+        );
+        $this->shortUrl->method('getDomain')->willReturn($domain);
+        $this->shortUrl->expects($this->exactly($expectedCalls - 1))->method('regenerateShortCode')->with();
 
-        $result = $this->helper->ensureShortCodeUniqueness($this->shortUrl->reveal(), false);
+        $result = $this->helper->ensureShortCodeUniqueness($this->shortUrl, false);
 
         self::assertTrue($result);
-        $this->shortUrl->regenerateShortCode()->shouldHaveBeenCalledTimes($expectedCalls - 1);
-        $getRepo->shouldBeCalledTimes($expectedCalls);
-        $shortCodeIsInUse->shouldBeCalledTimes($expectedCalls);
     }
 
     public function provideDomains(): iterable
@@ -66,18 +63,16 @@ class ShortCodeUniquenessHelperTest extends TestCase
     /** @test */
     public function inUseSlugReturnsError(): void
     {
-        $repo = $this->prophesize(ShortUrlRepository::class);
-        $shortCodeIsInUse = $repo->shortCodeIsInUseWithLock(
+        $repo = $this->createMock(ShortUrlRepository::class);
+        $repo->expects($this->once())->method('shortCodeIsInUseWithLock')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain('abc123'),
         )->willReturn(true);
-        $getRepo = $this->em->getRepository(ShortUrl::class)->willReturn($repo->reveal());
-        $this->shortUrl->getDomain()->willReturn(null);
+        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($repo);
+        $this->shortUrl->method('getDomain')->willReturn(null);
+        $this->shortUrl->expects($this->never())->method('regenerateShortCode');
 
-        $result = $this->helper->ensureShortCodeUniqueness($this->shortUrl->reveal(), true);
+        $result = $this->helper->ensureShortCodeUniqueness($this->shortUrl, true);
 
         self::assertFalse($result);
-        $this->shortUrl->regenerateShortCode()->shouldNotHaveBeenCalled();
-        $getRepo->shouldBeCalledOnce();
-        $shortCodeIsInUse->shouldBeCalledOnce();
     }
 }

@@ -7,20 +7,14 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
 
-use function array_shift;
-
 class BodyParserMiddlewareTest extends TestCase
 {
-    use ProphecyTrait;
-
     private BodyParserMiddleware $middleware;
 
     protected function setUp(): void
@@ -34,11 +28,11 @@ class BodyParserMiddlewareTest extends TestCase
      */
     public function requestsFromOtherMethodsJustFallbackToNextMiddleware(string $method): void
     {
-        $request = $this->prophesize(ServerRequestInterface::class);
-        $request->getMethod()->willReturn($method);
-        $request->getParsedBody()->willReturn([]);
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getMethod')->willReturn($method);
+        $request->method('getParsedBody')->willReturn([]);
 
-        self::assertHandlingRequestJustFallsBackToNext($request);
+        $this->assertHandlingRequestJustFallsBackToNext($request);
     }
 
     public function provideIgnoredRequestMethods(): iterable
@@ -51,25 +45,21 @@ class BodyParserMiddlewareTest extends TestCase
     /** @test */
     public function requestsWithNonEmptyBodyJustFallbackToNextMiddleware(): void
     {
-        $request = $this->prophesize(ServerRequestInterface::class);
-        $request->getMethod()->willReturn('POST');
-        $request->getParsedBody()->willReturn(['foo' => 'bar']);
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getMethod')->willReturn('POST');
+        $request->method('getParsedBody')->willReturn(['foo' => 'bar']);
 
-        self::assertHandlingRequestJustFallsBackToNext($request);
+        $this->assertHandlingRequestJustFallsBackToNext($request);
     }
 
-    private function assertHandlingRequestJustFallsBackToNext(ProphecyInterface $requestMock): void
+    private function assertHandlingRequestJustFallsBackToNext(MockObject & ServerRequestInterface $request): void
     {
-        $getContentType = $requestMock->getHeaderLine('Content-type')->willReturn('');
-        $request = $requestMock->reveal();
+        $request->expects($this->never())->method('getHeaderLine');
 
-        $nextHandler = $this->prophesize(RequestHandlerInterface::class);
-        $handle = $nextHandler->handle($request)->willReturn(new Response());
+        $nextHandler = $this->createMock(RequestHandlerInterface::class);
+        $nextHandler->expects($this->once())->method('handle')->with($request)->willReturn(new Response());
 
-        $this->middleware->process($request, $nextHandler->reveal());
-
-        $handle->shouldHaveBeenCalledOnce();
-        $getContentType->shouldNotHaveBeenCalled();
+        $this->middleware->process($request, $nextHandler);
     }
 
     /** @test */
@@ -80,12 +70,11 @@ class BodyParserMiddlewareTest extends TestCase
         $body->write('{"foo": "bar", "bar": ["one", 5]}');
         $request = (new ServerRequest())->withMethod('PUT')
                                         ->withBody($body);
-        $delegate = $this->prophesize(RequestHandlerInterface::class);
-        $process = $delegate->handle(Argument::type(ServerRequestInterface::class))->will(
-            function (array $args) use ($test) {
-                /** @var ServerRequestInterface $req */
-                $req = array_shift($args);
-
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->once())->method('handle')->with(
+            $this->isInstanceOf(ServerRequestInterface::class),
+        )->willReturnCallback(
+            function (ServerRequestInterface $req) use ($test) {
                 $test->assertEquals([
                     'foo' => 'bar',
                     'bar' => ['one', 5],
@@ -95,8 +84,6 @@ class BodyParserMiddlewareTest extends TestCase
             },
         );
 
-        $this->middleware->process($request, $delegate->reveal());
-
-        $process->shouldHaveBeenCalledOnce();
+        $this->middleware->process($request, $handler);
     }
 }

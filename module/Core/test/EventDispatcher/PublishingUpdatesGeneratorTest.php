@@ -35,7 +35,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
      */
     public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic, ?string $title): void
     {
-        $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'customSlug' => 'foo',
             'longUrl' => '',
             'title' => $title,
@@ -63,6 +63,11 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'title' => $title,
                 'crawlable' => false,
                 'forwardQuery' => true,
+                'visitsSummary' => [
+                    'total' => 0,
+                    'nonBots' => 0,
+                    'bots' => 0,
+                ],
             ],
             'visit' => [
                 'referer' => '',
@@ -114,7 +119,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
     /** @test */
     public function shortUrlIsProperlySerializedIntoUpdate(): void
     {
-        $shortUrl = ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
+        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'customSlug' => 'foo',
             'longUrl' => '',
             'title' => 'The title',
@@ -139,6 +144,11 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'title' => $shortUrl->title(),
             'crawlable' => false,
             'forwardQuery' => true,
+            'visitsSummary' => [
+                'total' => 0,
+                'nonBots' => 0,
+                'bots' => 0,
+            ],
         ]], $update->payload);
     }
 }

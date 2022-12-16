@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Visit\GetNonOrphanVisitsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -25,16 +24,16 @@ class GetNonOrphanVisitsCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private ObjectProphecy $visitsHelper;
-    private ObjectProphecy $stringifier;
+    private MockObject & VisitsStatsHelperInterface $visitsHelper;
+    private MockObject & ShortUrlStringifierInterface $stringifier;
 
     protected function setUp(): void
     {
-        $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
-        $this->stringifier = $this->prophesize(ShortUrlStringifierInterface::class);
+        $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
+        $this->stringifier = $this->createMock(ShortUrlStringifierInterface::class);
 
         $this->commandTester = $this->testerForCommand(
-            new GetNonOrphanVisitsCommand($this->visitsHelper->reveal(), $this->stringifier->reveal()),
+            new GetNonOrphanVisitsCommand($this->visitsHelper, $this->stringifier),
         );
     }
 
@@ -45,10 +44,10 @@ class GetNonOrphanVisitsCommandTest extends TestCase
         $visit = Visit::forValidShortUrl($shortUrl, new Visitor('bar', 'foo', '', ''))->locate(
             VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
-        $getVisits = $this->visitsHelper->nonOrphanVisits(Argument::any())->willReturn(
+        $this->visitsHelper->expects($this->once())->method('nonOrphanVisits')->withAnyParameters()->willReturn(
             new Paginator(new ArrayAdapter([$visit])),
         );
-        $stringify = $this->stringifier->stringify($shortUrl)->willReturn('the_short_url');
+        $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn('the_short_url');
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
@@ -64,7 +63,5 @@ class GetNonOrphanVisitsCommandTest extends TestCase
             OUTPUT,
             $output,
         );
-        $getVisits->shouldHaveBeenCalledOnce();
-        $stringify->shouldHaveBeenCalledOnce();
     }
 }

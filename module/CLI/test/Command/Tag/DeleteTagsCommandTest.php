@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\Tag\DeleteTagsCommand;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
@@ -16,12 +16,12 @@ class DeleteTagsCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private ObjectProphecy $tagService;
+    private MockObject & TagServiceInterface $tagService;
 
     protected function setUp(): void
     {
-        $this->tagService = $this->prophesize(TagServiceInterface::class);
-        $this->commandTester = $this->testerForCommand(new DeleteTagsCommand($this->tagService->reveal()));
+        $this->tagService = $this->createMock(TagServiceInterface::class);
+        $this->commandTester = $this->testerForCommand(new DeleteTagsCommand($this->tagService));
     }
 
     /** @test */
@@ -37,8 +37,7 @@ class DeleteTagsCommandTest extends TestCase
     public function serviceIsInvokedOnSuccess(): void
     {
         $tagNames = ['foo', 'bar'];
-        $deleteTags = $this->tagService->deleteTags($tagNames)->will(function (): void {
-        });
+        $this->tagService->expects($this->once())->method('deleteTags')->with($tagNames);
 
         $this->commandTester->execute([
             '--name' => $tagNames,
@@ -46,6 +45,5 @@ class DeleteTagsCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString('Tags properly deleted', $output);
-        $deleteTags->shouldHaveBeenCalled();
     }
 }

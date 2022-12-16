@@ -25,15 +25,17 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function count;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
+use function Shlinkio\Shlink\Core\normalizeDate;
+use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 
 class ShortUrl extends AbstractEntity
 {
     private string $longUrl;
     private string $shortCode;
     private Chronos $dateCreated;
-    /** @var Collection|Visit[] */
+    /** @var Collection<int, Visit> */
     private Collection $visits;
-    /** @var Collection|Tag[] */
+    /** @var Collection<int, Tag> */
     private Collection $tags;
     private ?Chronos $validSince = null;
     private ?Chronos $validUntil = null;
@@ -55,37 +57,37 @@ class ShortUrl extends AbstractEntity
 
     public static function createEmpty(): self
     {
-        return self::fromMeta(ShortUrlCreation::createEmpty());
+        return self::create(ShortUrlCreation::createEmpty());
     }
 
     public static function withLongUrl(string $longUrl): self
     {
-        return self::fromMeta(ShortUrlCreation::fromRawData([ShortUrlInputFilter::LONG_URL => $longUrl]));
+        return self::create(ShortUrlCreation::fromRawData([ShortUrlInputFilter::LONG_URL => $longUrl]));
     }
 
-    public static function fromMeta(
-        ShortUrlCreation $meta,
+    public static function create(
+        ShortUrlCreation $creation,
         ?ShortUrlRelationResolverInterface $relationResolver = null,
     ): self {
         $instance = new self();
         $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
 
-        $instance->longUrl = $meta->getLongUrl();
+        $instance->longUrl = $creation->getLongUrl();
         $instance->dateCreated = Chronos::now();
         $instance->visits = new ArrayCollection();
-        $instance->tags = $relationResolver->resolveTags($meta->getTags());
-        $instance->validSince = $meta->getValidSince();
-        $instance->validUntil = $meta->getValidUntil();
-        $instance->maxVisits = $meta->getMaxVisits();
-        $instance->customSlugWasProvided = $meta->hasCustomSlug();
-        $instance->shortCodeLength = $meta->getShortCodeLength();
-        $instance->shortCode = $meta->getCustomSlug() ?? generateRandomShortCode($instance->shortCodeLength);
-        $instance->domain = $relationResolver->resolveDomain($meta->getDomain());
-        $instance->authorApiKey = $meta->getApiKey();
-        $instance->title = $meta->getTitle();
-        $instance->titleWasAutoResolved = $meta->titleWasAutoResolved();
-        $instance->crawlable = $meta->isCrawlable();
-        $instance->forwardQuery = $meta->forwardQuery();
+        $instance->tags = $relationResolver->resolveTags($creation->getTags());
+        $instance->validSince = $creation->getValidSince();
+        $instance->validUntil = $creation->getValidUntil();
+        $instance->maxVisits = $creation->getMaxVisits();
+        $instance->customSlugWasProvided = $creation->hasCustomSlug();
+        $instance->shortCodeLength = $creation->getShortCodeLength();
+        $instance->shortCode = $creation->getCustomSlug() ?? generateRandomShortCode($instance->shortCodeLength);
+        $instance->domain = $relationResolver->resolveDomain($creation->getDomain());
+        $instance->authorApiKey = $creation->getApiKey();
+        $instance->title = $creation->getTitle();
+        $instance->titleWasAutoResolved = $creation->titleWasAutoResolved();
+        $instance->crawlable = $creation->isCrawlable();
+        $instance->forwardQuery = $creation->forwardQuery();
 
         return $instance;
     }
@@ -107,21 +109,13 @@ class ShortUrl extends AbstractEntity
             $meta[ShortUrlInputFilter::CUSTOM_SLUG] = $url->shortCode;
         }
 
-        $instance = self::fromMeta(ShortUrlCreation::fromRawData($meta), $relationResolver);
-
-        $validSince = $url->meta->validSince;
-        if ($validSince !== null) {
-            $instance->validSince = Chronos::instance($validSince);
-        }
-
-        $validUntil = $url->meta->validUntil;
-        if ($validUntil !== null) {
-            $instance->validUntil = Chronos::instance($validUntil);
-        }
+        $instance = self::create(ShortUrlCreation::fromRawData($meta), $relationResolver);
 
         $instance->importSource = $url->source->value;
         $instance->importOriginalShortCode = $url->shortCode;
-        $instance->dateCreated = Chronos::instance($url->createdAt);
+        $instance->validSince = normalizeOptionalDate($url->meta->validSince);
+        $instance->validUntil = normalizeOptionalDate($url->meta->validUntil);
+        $instance->dateCreated = normalizeDate($url->createdAt);
 
         return $instance;
     }
@@ -147,7 +141,7 @@ class ShortUrl extends AbstractEntity
     }
 
     /**
-     * @return Collection|Tag[]
+     * @return Collection<int, Tag>
      */
     public function getTags(): Collection
     {
@@ -174,6 +168,12 @@ class ShortUrl extends AbstractEntity
         return count($this->visits);
     }
 
+    public function nonBotVisitsCount(): int
+    {
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('potentialBot', false));
+        return count($this->visits->matching($criteria));
+    }
+
     public function mostRecentImportedVisitDate(): ?Chronos
     {
         /** @var Selectable $visits */
@@ -189,7 +189,7 @@ class ShortUrl extends AbstractEntity
     }
 
     /**
-     * @param Collection|Visit[] $visits
+     * @param Collection<int, Visit> $visits
      * @internal
      */
     public function setVisits(Collection $visits): self

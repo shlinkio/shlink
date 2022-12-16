@@ -7,10 +7,8 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\Mercure;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use Mezzio\ProblemDetails\ProblemDetailsResponseFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Rest\Exception\MercureException;
@@ -18,45 +16,40 @@ use Shlinkio\Shlink\Rest\Middleware\Mercure\NotConfiguredMercureErrorHandler;
 
 class NotConfiguredMercureErrorHandlerTest extends TestCase
 {
-    use ProphecyTrait;
-
     private NotConfiguredMercureErrorHandler $middleware;
-    private ObjectProphecy $respFactory;
-    private ObjectProphecy $logger;
-    private ObjectProphecy $handler;
+    private MockObject & ProblemDetailsResponseFactory $respFactory;
+    private MockObject & LoggerInterface $logger;
+    private MockObject & RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
-        $this->respFactory = $this->prophesize(ProblemDetailsResponseFactory::class);
-        $this->logger = $this->prophesize(LoggerInterface::class);
-        $this->middleware = new NotConfiguredMercureErrorHandler($this->respFactory->reveal(), $this->logger->reveal());
-        $this->handler = $this->prophesize(RequestHandlerInterface::class);
+        $this->respFactory = $this->createMock(ProblemDetailsResponseFactory::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->middleware = new NotConfiguredMercureErrorHandler($this->respFactory, $this->logger);
+        $this->handler = $this->createMock(RequestHandlerInterface::class);
     }
 
     /** @test */
     public function requestHandlerIsInvokedWhenNotErrorOccurs(): void
     {
         $req = ServerRequestFactory::fromGlobals();
-        $handle = $this->handler->handle($req)->willReturn(new Response());
+        $this->handler->expects($this->once())->method('handle')->with($req)->willReturn(new Response());
+        $this->respFactory->expects($this->never())->method('createResponseFromThrowable');
+        $this->logger->expects($this->never())->method('warning');
 
-        $this->middleware->process($req, $this->handler->reveal());
-
-        $handle->shouldHaveBeenCalledOnce();
-        $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->respFactory->createResponseFromThrowable(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->middleware->process($req, $this->handler);
     }
 
     /** @test */
     public function exceptionIsParsedToResponse(): void
     {
         $req = ServerRequestFactory::fromGlobals();
-        $handle = $this->handler->handle($req)->willThrow(MercureException::mercureNotConfigured());
-        $createResp = $this->respFactory->createResponseFromThrowable(Argument::cetera())->willReturn(new Response());
+        $this->handler->expects($this->once())->method('handle')->with($req)->willThrowException(
+            MercureException::mercureNotConfigured(),
+        );
+        $this->respFactory->expects($this->once())->method('createResponseFromThrowable')->willReturn(new Response());
+        $this->logger->expects($this->once())->method('warning');
 
-        $this->middleware->process($req, $this->handler->reveal());
-
-        $handle->shouldHaveBeenCalledOnce();
-        $createResp->shouldHaveBeenCalledOnce();
-        $this->logger->warning(Argument::cetera())->shouldHaveBeenCalledOnce();
+        $this->middleware->process($req, $this->handler);
     }
 }

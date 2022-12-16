@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Visit\Geolocation;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -18,15 +16,13 @@ use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 class VisitToLocationHelperTest extends TestCase
 {
-    use ProphecyTrait;
-
     private VisitToLocationHelper $helper;
-    private ObjectProphecy $ipLocationResolver;
+    private MockObject & IpLocationResolverInterface $ipLocationResolver;
 
     protected function setUp(): void
     {
-        $this->ipLocationResolver = $this->prophesize(IpLocationResolverInterface::class);
-        $this->helper = new VisitToLocationHelper($this->ipLocationResolver->reveal());
+        $this->ipLocationResolver = $this->createMock(IpLocationResolverInterface::class);
+        $this->helper = new VisitToLocationHelper($this->ipLocationResolver);
     }
 
     /**
@@ -38,7 +34,7 @@ class VisitToLocationHelperTest extends TestCase
         IpCannotBeLocatedException $expectedException,
     ): void {
         $this->expectExceptionObject($expectedException);
-        $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->shouldNotBeCalled();
+        $this->ipLocationResolver->expects($this->never())->method('resolveIpLocation');
 
         $this->helper->resolveVisitLocation($visit);
     }
@@ -58,8 +54,7 @@ class VisitToLocationHelperTest extends TestCase
         $e = new WrongIpException('');
 
         $this->expectExceptionObject(IpCannotBeLocatedException::forError($e));
-        $this->ipLocationResolver->resolveIpLocation(Argument::cetera())->willThrow($e)
-                                                                        ->shouldBeCalledOnce();
+        $this->ipLocationResolver->expects($this->once())->method('resolveIpLocation')->willThrowException($e);
 
         $this->helper->resolveVisitLocation(Visit::forBasePath(new Visitor('foo', 'bar', '1.2.3.4', '')));
     }

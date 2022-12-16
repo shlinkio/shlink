@@ -7,10 +7,8 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\RabbitMq;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 use Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
@@ -25,48 +23,43 @@ use Throwable;
 
 class NotifyNewShortUrlToRabbitMqTest extends TestCase
 {
-    use ProphecyTrait;
-
-    private ObjectProphecy $helper;
-    private ObjectProphecy $updatesGenerator;
-    private ObjectProphecy $em;
-    private ObjectProphecy $logger;
+    private MockObject & PublishingHelperInterface $helper;
+    private MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator;
+    private MockObject & EntityManagerInterface $em;
+    private MockObject & LoggerInterface $logger;
 
     protected function setUp(): void
     {
-        $this->helper = $this->prophesize(PublishingHelperInterface::class);
-        $this->updatesGenerator = $this->prophesize(PublishingUpdatesGeneratorInterface::class);
-        $this->em = $this->prophesize(EntityManagerInterface::class);
-        $this->logger = $this->prophesize(LoggerInterface::class);
+        $this->helper = $this->createMock(PublishingHelperInterface::class);
+        $this->updatesGenerator = $this->createMock(PublishingUpdatesGeneratorInterface::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     /** @test */
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
-        ($this->listener(false))(new ShortUrlCreated('123'));
+        $this->helper->expects($this->never())->method('publishUpdate');
+        $this->em->expects($this->never())->method('find');
+        $this->logger->expects($this->never())->method('warning');
+        $this->logger->expects($this->never())->method('debug');
 
-        $this->em->find(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->logger->warning(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->helper->publishUpdate(Argument::cetera())->shouldNotHaveBeenCalled();
+        ($this->listener(false))(new ShortUrlCreated('123'));
     }
 
     /** @test */
     public function notificationsAreNotSentWhenShortUrlCannotBeFound(): void
     {
         $shortUrlId = '123';
-        $find = $this->em->find(ShortUrl::class, $shortUrlId)->willReturn(null);
-        $logWarning = $this->logger->warning(
+        $this->em->expects($this->once())->method('find')->with(ShortUrl::class, $shortUrlId)->willReturn(null);
+        $this->logger->expects($this->once())->method('warning')->with(
             'Tried to notify {name} for new short URL with id "{shortUrlId}", but it does not exist.',
             ['shortUrlId' => $shortUrlId, 'name' => 'RabbitMQ'],
         );
+        $this->logger->expects($this->never())->method('debug');
+        $this->helper->expects($this->never())->method('publishUpdate');
 
         ($this->listener())(new ShortUrlCreated($shortUrlId));
-
-        $find->shouldHaveBeenCalledOnce();
-        $logWarning->shouldHaveBeenCalledOnce();
-        $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->helper->publishUpdate(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /** @test */
@@ -74,17 +67,16 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
     {
         $shortUrlId = '123';
         $update = Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, []);
-        $find = $this->em->find(ShortUrl::class, $shortUrlId)->willReturn(ShortUrl::withLongUrl(''));
-        $generateUpdate = $this->updatesGenerator->newShortUrlUpdate(Argument::type(ShortUrl::class))->willReturn(
-            $update,
+        $this->em->expects($this->once())->method('find')->with(ShortUrl::class, $shortUrlId)->willReturn(
+            ShortUrl::withLongUrl(''),
         );
+        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with(
+            $this->isInstanceOf(ShortUrl::class),
+        )->willReturn($update);
+        $this->helper->expects($this->once())->method('publishUpdate')->with($update);
+        $this->logger->expects($this->never())->method('debug');
 
         ($this->listener())(new ShortUrlCreated($shortUrlId));
-
-        $find->shouldHaveBeenCalledOnce();
-        $generateUpdate->shouldHaveBeenCalledOnce();
-        $this->helper->publishUpdate($update)->shouldHaveBeenCalledOnce();
-        $this->logger->debug(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     /**
@@ -95,21 +87,19 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
     {
         $shortUrlId = '123';
         $update = Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, []);
-        $find = $this->em->find(ShortUrl::class, $shortUrlId)->willReturn(ShortUrl::withLongUrl(''));
-        $generateUpdate = $this->updatesGenerator->newShortUrlUpdate(Argument::type(ShortUrl::class))->willReturn(
-            $update,
+        $this->em->expects($this->once())->method('find')->with(ShortUrl::class, $shortUrlId)->willReturn(
+            ShortUrl::withLongUrl(''),
         );
-        $publish = $this->helper->publishUpdate($update)->willThrow($e);
-
-        ($this->listener())(new ShortUrlCreated($shortUrlId));
-
-        $this->logger->debug(
+        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with(
+            $this->isInstanceOf(ShortUrl::class),
+        )->willReturn($update);
+        $this->helper->expects($this->once())->method('publishUpdate')->with($update)->willThrowException($e);
+        $this->logger->expects($this->once())->method('debug')->with(
             'Error while trying to notify {name} with new short URL. {e}',
             ['e' => $e, 'name' => 'RabbitMQ'],
-        )->shouldHaveBeenCalledOnce();
-        $find->shouldHaveBeenCalledOnce();
-        $generateUpdate->shouldHaveBeenCalledOnce();
-        $publish->shouldHaveBeenCalledOnce();
+        );
+
+        ($this->listener())(new ShortUrlCreated($shortUrlId));
     }
 
     public function provideExceptions(): iterable
@@ -122,10 +112,10 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
     private function listener(bool $enabled = true): NotifyNewShortUrlToRabbitMq
     {
         return new NotifyNewShortUrlToRabbitMq(
-            $this->helper->reveal(),
-            $this->updatesGenerator->reveal(),
-            $this->em->reveal(),
-            $this->logger->reveal(),
+            $this->helper,
+            $this->updatesGenerator,
+            $this->em,
+            $this->logger,
             new RabbitMqOptions($enabled),
         );
     }

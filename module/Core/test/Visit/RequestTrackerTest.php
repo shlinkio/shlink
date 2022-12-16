@@ -7,10 +7,8 @@ namespace ShlinkioTest\Shlink\Core\Visit;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\ServerRequestFactory;
 use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
@@ -22,31 +20,28 @@ use Shlinkio\Shlink\Core\Visit\VisitsTrackerInterface;
 
 class RequestTrackerTest extends TestCase
 {
-    use ProphecyTrait;
-
     private const LONG_URL = 'https://domain.com/foo/bar?some=thing';
 
     private RequestTracker $requestTracker;
-    private ObjectProphecy $visitsTracker;
-    private ObjectProphecy $notFoundType;
+    private MockObject & VisitsTrackerInterface $visitsTracker;
+    private MockObject & NotFoundType $notFoundType;
     private ServerRequestInterface $request;
 
     protected function setUp(): void
     {
-        $this->notFoundType = $this->prophesize(NotFoundType::class);
-        $this->visitsTracker = $this->prophesize(VisitsTrackerInterface::class);
-
+        $this->visitsTracker = $this->createMock(VisitsTrackerInterface::class);
         $this->requestTracker = new RequestTracker(
-            $this->visitsTracker->reveal(),
+            $this->visitsTracker,
             new TrackingOptions(
                 disableTrackParam: 'foobar',
                 disableTrackingFrom: ['80.90.100.110', '192.168.10.0/24', '1.2.*.*'],
             ),
         );
 
+        $this->notFoundType = $this->createMock(NotFoundType::class);
         $this->request = ServerRequestFactory::fromGlobals()->withAttribute(
             NotFoundType::class,
-            $this->notFoundType->reveal(),
+            $this->notFoundType,
         );
     }
 
@@ -56,11 +51,10 @@ class RequestTrackerTest extends TestCase
      */
     public function trackingIsDisabledWhenRequestDoesNotMeetConditions(ServerRequestInterface $request): void
     {
+        $this->visitsTracker->expects($this->never())->method('track');
+
         $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
-
         $this->requestTracker->trackIfApplicable($shortUrl, $request);
-
-        $this->visitsTracker->track(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     public function provideNonTrackingRequests(): iterable
@@ -91,61 +85,57 @@ class RequestTrackerTest extends TestCase
     public function trackingHappensOverShortUrlsWhenRequestMeetsConditions(): void
     {
         $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
+        $this->visitsTracker->expects($this->once())->method('track')->with(
+            $shortUrl,
+            $this->isInstanceOf(Visitor::class),
+        );
 
         $this->requestTracker->trackIfApplicable($shortUrl, $this->request);
-
-        $this->visitsTracker->track($shortUrl, Argument::type(Visitor::class))->shouldHaveBeenCalledOnce();
     }
 
     /** @test */
     public function baseUrlErrorIsTracked(): void
     {
-        $isBaseUrl = $this->notFoundType->isBaseUrl()->willReturn(true);
-        $isRegularNotFound = $this->notFoundType->isRegularNotFound()->willReturn(false);
-        $isInvalidShortUrl = $this->notFoundType->isInvalidShortUrl()->willReturn(false);
+        $this->notFoundType->expects($this->once())->method('isBaseUrl')->willReturn(true);
+        $this->notFoundType->expects($this->never())->method('isRegularNotFound');
+        $this->notFoundType->expects($this->never())->method('isInvalidShortUrl');
+        $this->visitsTracker->expects($this->once())->method('trackBaseUrlVisit')->with(
+            $this->isInstanceOf(Visitor::class),
+        );
+        $this->visitsTracker->expects($this->never())->method('trackRegularNotFoundVisit');
+        $this->visitsTracker->expects($this->never())->method('trackInvalidShortUrlVisit');
 
         $this->requestTracker->trackNotFoundIfApplicable($this->request);
-
-        $isBaseUrl->shouldHaveBeenCalledOnce();
-        $isRegularNotFound->shouldNotHaveBeenCalled();
-        $isInvalidShortUrl->shouldNotHaveBeenCalled();
-        $this->visitsTracker->trackBaseUrlVisit(Argument::type(Visitor::class))->shouldHaveBeenCalledOnce();
-        $this->visitsTracker->trackRegularNotFoundVisit(Argument::type(Visitor::class))->shouldNotHaveBeenCalled();
-        $this->visitsTracker->trackInvalidShortUrlVisit(Argument::type(Visitor::class))->shouldNotHaveBeenCalled();
     }
 
     /** @test */
     public function regularNotFoundErrorIsTracked(): void
     {
-        $isBaseUrl = $this->notFoundType->isBaseUrl()->willReturn(false);
-        $isRegularNotFound = $this->notFoundType->isRegularNotFound()->willReturn(true);
-        $isInvalidShortUrl = $this->notFoundType->isInvalidShortUrl()->willReturn(false);
+        $this->notFoundType->expects($this->once())->method('isBaseUrl')->willReturn(false);
+        $this->notFoundType->expects($this->once())->method('isRegularNotFound')->willReturn(true);
+        $this->notFoundType->expects($this->never())->method('isInvalidShortUrl');
+        $this->visitsTracker->expects($this->never())->method('trackBaseUrlVisit');
+        $this->visitsTracker->expects($this->once())->method('trackRegularNotFoundVisit')->with(
+            $this->isInstanceOf(Visitor::class),
+        );
+        $this->visitsTracker->expects($this->never())->method('trackInvalidShortUrlVisit');
 
         $this->requestTracker->trackNotFoundIfApplicable($this->request);
-
-        $isBaseUrl->shouldHaveBeenCalledOnce();
-        $isRegularNotFound->shouldHaveBeenCalledOnce();
-        $isInvalidShortUrl->shouldNotHaveBeenCalled();
-        $this->visitsTracker->trackBaseUrlVisit(Argument::type(Visitor::class))->shouldNotHaveBeenCalled();
-        $this->visitsTracker->trackRegularNotFoundVisit(Argument::type(Visitor::class))->shouldHaveBeenCalledOnce();
-        $this->visitsTracker->trackInvalidShortUrlVisit(Argument::type(Visitor::class))->shouldNotHaveBeenCalled();
     }
 
     /** @test */
     public function invalidShortUrlErrorIsTracked(): void
     {
-        $isBaseUrl = $this->notFoundType->isBaseUrl()->willReturn(false);
-        $isRegularNotFound = $this->notFoundType->isRegularNotFound()->willReturn(false);
-        $isInvalidShortUrl = $this->notFoundType->isInvalidShortUrl()->willReturn(true);
+        $this->notFoundType->expects($this->once())->method('isBaseUrl')->willReturn(false);
+        $this->notFoundType->expects($this->once())->method('isRegularNotFound')->willReturn(false);
+        $this->notFoundType->expects($this->once())->method('isInvalidShortUrl')->willReturn(true);
+        $this->visitsTracker->expects($this->never())->method('trackBaseUrlVisit');
+        $this->visitsTracker->expects($this->never())->method('trackRegularNotFoundVisit');
+        $this->visitsTracker->expects($this->once())->method('trackInvalidShortUrlVisit')->with(
+            $this->isInstanceOf(Visitor::class),
+        );
 
         $this->requestTracker->trackNotFoundIfApplicable($this->request);
-
-        $isBaseUrl->shouldHaveBeenCalledOnce();
-        $isRegularNotFound->shouldHaveBeenCalledOnce();
-        $isInvalidShortUrl->shouldHaveBeenCalledOnce();
-        $this->visitsTracker->trackBaseUrlVisit(Argument::type(Visitor::class))->shouldNotHaveBeenCalled();
-        $this->visitsTracker->trackRegularNotFoundVisit(Argument::type(Visitor::class))->shouldNotHaveBeenCalled();
-        $this->visitsTracker->trackInvalidShortUrlVisit(Argument::type(Visitor::class))->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -154,10 +144,10 @@ class RequestTrackerTest extends TestCase
      */
     public function notFoundIsNotTrackedIfRequestDoesNotMeetConditions(ServerRequestInterface $request): void
     {
-        $this->requestTracker->trackNotFoundIfApplicable($request);
+        $this->visitsTracker->expects($this->never())->method('trackBaseUrlVisit');
+        $this->visitsTracker->expects($this->never())->method('trackRegularNotFoundVisit');
+        $this->visitsTracker->expects($this->never())->method('trackInvalidShortUrlVisit');
 
-        $this->visitsTracker->trackBaseUrlVisit(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->visitsTracker->trackRegularNotFoundVisit(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->visitsTracker->trackInvalidShortUrlVisit(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->requestTracker->trackNotFoundIfApplicable($request);
     }
 }

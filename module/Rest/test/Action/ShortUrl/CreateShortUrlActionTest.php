@@ -8,10 +8,8 @@ use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
@@ -23,23 +21,16 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class CreateShortUrlActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private CreateShortUrlAction $action;
-    private ObjectProphecy $urlShortener;
-    private ObjectProphecy $transformer;
+    private MockObject & UrlShortener $urlShortener;
+    private MockObject & DataTransformerInterface $transformer;
 
     protected function setUp(): void
     {
-        $this->urlShortener = $this->prophesize(UrlShortener::class);
-        $this->transformer = $this->prophesize(DataTransformerInterface::class);
-        $this->transformer->transform(Argument::type(ShortUrl::class))->willReturn([]);
+        $this->urlShortener = $this->createMock(UrlShortener::class);
+        $this->transformer = $this->createMock(DataTransformerInterface::class);
 
-        $this->action = new CreateShortUrlAction(
-            $this->urlShortener->reveal(),
-            $this->transformer->reveal(),
-            new UrlShortenerOptions(),
-        );
+        $this->action = new CreateShortUrlAction($this->urlShortener, $this->transformer, new UrlShortenerOptions());
     }
 
     /** @test */
@@ -58,8 +49,12 @@ class CreateShortUrlActionTest extends TestCase
         ];
         $expectedMeta['apiKey'] = $apiKey;
 
-        $shorten = $this->urlShortener->shorten(ShortUrlCreation::fromRawData($expectedMeta))->willReturn($shortUrl);
-        $transform = $this->transformer->transform($shortUrl)->willReturn(['shortUrl' => 'stringified_short_url']);
+        $this->urlShortener->expects($this->once())->method('shorten')->with(
+            ShortUrlCreation::fromRawData($expectedMeta),
+        )->willReturn($shortUrl);
+        $this->transformer->expects($this->once())->method('transform')->with($shortUrl)->willReturn(
+            ['shortUrl' => 'stringified_short_url'],
+        );
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body)->withAttribute(ApiKey::class, $apiKey);
 
@@ -69,8 +64,6 @@ class CreateShortUrlActionTest extends TestCase
 
         self::assertEquals(200, $response->getStatusCode());
         self::assertEquals('stringified_short_url', $payload['shortUrl']);
-        $shorten->shouldHaveBeenCalledOnce();
-        $transform->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -79,8 +72,8 @@ class CreateShortUrlActionTest extends TestCase
      */
     public function anInvalidDomainReturnsError(string $domain): void
     {
-        $shortUrl = ShortUrl::createEmpty();
-        $urlToShortCode = $this->urlShortener->shorten(Argument::cetera())->willReturn($shortUrl);
+        $this->urlShortener->expects($this->never())->method('shorten');
+        $this->transformer->expects($this->never())->method('transform');
 
         $request = (new ServerRequest())->withParsedBody([
             'longUrl' => 'http://www.domain.com/foo/bar',
@@ -88,7 +81,6 @@ class CreateShortUrlActionTest extends TestCase
         ])->withAttribute(ApiKey::class, ApiKey::create());
 
         $this->expectException(ValidationException::class);
-        $urlToShortCode->shouldNotBeCalled();
 
         $this->action->handle($request);
     }

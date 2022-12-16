@@ -8,7 +8,7 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Validator\InArray;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Validation;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
+use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 
 class ShortUrlsParamsInputFilter extends InputFilter
@@ -23,6 +23,8 @@ class ShortUrlsParamsInputFilter extends InputFilter
     public const ITEMS_PER_PAGE = 'itemsPerPage';
     public const TAGS_MODE = 'tagsMode';
     public const ORDER_BY = 'orderBy';
+    public const EXCLUDE_MAX_VISITS_REACHED = 'excludeMaxVisitsReached';
+    public const EXCLUDE_PAST_VALID_UNTIL = 'excludePastValidUntil';
 
     public function __construct(array $data)
     {
@@ -44,11 +46,14 @@ class ShortUrlsParamsInputFilter extends InputFilter
 
         $tagsMode = $this->createInput(self::TAGS_MODE, false);
         $tagsMode->getValidatorChain()->attach(new InArray([
-            'haystack' => [TagsMode::ALL->value, TagsMode::ANY->value],
+            'haystack' => TagsMode::values(),
             'strict' => InArray::COMPARE_STRICT,
         ]));
         $this->add($tagsMode);
 
-        $this->add($this->createOrderByInput(self::ORDER_BY, ShortUrlsParams::ORDERABLE_FIELDS));
+        $this->add($this->createOrderByInput(self::ORDER_BY, OrderableField::values()));
+
+        $this->add($this->createBooleanInput(self::EXCLUDE_MAX_VISITS_REACHED, false));
+        $this->add($this->createBooleanInput(self::EXCLUDE_PAST_VALID_UNTIL, false));
     }
 }

@@ -8,29 +8,26 @@ use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
-use Shlinkio\Shlink\Core\ShortUrl\ShortUrlService;
+use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\ListShortUrlsAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ListShortUrlsActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private ListShortUrlsAction $action;
-    private ObjectProphecy $service;
+    private MockObject & ShortUrlListServiceInterface $service;
 
     protected function setUp(): void
     {
-        $this->service = $this->prophesize(ShortUrlService::class);
+        $this->service = $this->createMock(ShortUrlListServiceInterface::class);
 
-        $this->action = new ListShortUrlsAction($this->service->reveal(), new ShortUrlDataTransformer(
+        $this->action = new ListShortUrlsAction($this->service, new ShortUrlDataTransformer(
             new ShortUrlStringifier([
                 'hostname' => 'doma.in',
                 'schema' => 'https',
@@ -54,7 +51,7 @@ class ListShortUrlsActionTest extends TestCase
         $apiKey = ApiKey::create();
         $request = ServerRequestFactory::fromGlobals()->withQueryParams($query)
                                                       ->withAttribute(ApiKey::class, $apiKey);
-        $listShortUrls = $this->service->listShortUrls(ShortUrlsParams::fromRawData([
+        $this->service->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
             'page' => $expectedPage,
             'searchTerm' => $expectedSearchTerm,
             'tags' => $expectedTags,
@@ -71,7 +68,6 @@ class ListShortUrlsActionTest extends TestCase
         self::assertArrayHasKey('data', $payload['shortUrls']);
         self::assertEquals([], $payload['shortUrls']['data']);
         self::assertEquals(200, $response->getStatusCode());
-        $listShortUrls->shouldHaveBeenCalledOnce();
     }
 
     public function provideFilteringData(): iterable

@@ -42,6 +42,9 @@ return (static function (): array {
             'port' => EnvVars::DB_PORT->loadFromEnv($resolveDefaultPort()),
             'unix_socket' => $isMysqlCompatible ? EnvVars::DB_UNIX_SOCKET->loadFromEnv() : null,
             'charset' => $resolveCharset(),
+            'driverOptions' => $driver !== 'mssql' ? [] : [
+                'TrustServerCertificate' => 'true',
+            ],
         ],
     };
 

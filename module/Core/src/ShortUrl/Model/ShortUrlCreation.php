@@ -10,9 +10,10 @@ use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+use function Shlinkio\Shlink\Core\getNonEmptyOptionalValueFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
-use function Shlinkio\Shlink\Core\normalizeDate;
+use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 
 use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
@@ -68,13 +69,13 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
         }
 
         $this->longUrl = $inputFilter->getValue(ShortUrlInputFilter::LONG_URL);
-        $this->validSince = normalizeDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
-        $this->validUntil = normalizeDate($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL));
+        $this->validSince = normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
+        $this->validUntil = normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL));
         $this->customSlug = $inputFilter->getValue(ShortUrlInputFilter::CUSTOM_SLUG);
         $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlInputFilter::MAX_VISITS);
         $this->findIfExists = $inputFilter->getValue(ShortUrlInputFilter::FIND_IF_EXISTS);
         $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL) ?? false;
-        $this->domain = $inputFilter->getValue(ShortUrlInputFilter::DOMAIN);
+        $this->domain = getNonEmptyOptionalValueFromInputFilter($inputFilter, ShortUrlInputFilter::DOMAIN);
         $this->shortCodeLength = getOptionalIntFromInputFilter(
             $inputFilter,
             ShortUrlInputFilter::SHORT_CODE_LENGTH,

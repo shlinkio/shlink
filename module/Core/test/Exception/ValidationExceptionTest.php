@@ -8,7 +8,6 @@ use Fig\Http\Message\StatusCodeInterface;
 use Laminas\InputFilter\InputFilterInterface;
 use LogicException;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use RuntimeException;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Throwable;
@@ -18,8 +17,6 @@ use function print_r;
 
 class ValidationExceptionTest extends TestCase
 {
-    use ProphecyTrait;
-
     /**
      * @test
      * @dataProvider provideExceptions
@@ -36,10 +33,10 @@ class ValidationExceptionTest extends TestCase
             'something' => {$barValue}
         EOT;
 
-        $inputFilter = $this->prophesize(InputFilterInterface::class);
-        $getMessages = $inputFilter->getMessages()->willReturn($invalidData);
+        $inputFilter = $this->createMock(InputFilterInterface::class);
+        $inputFilter->expects($this->once())->method('getMessages')->with()->willReturn($invalidData);
 
-        $e = ValidationException::fromInputFilter($inputFilter->reveal(), $prev);
+        $e = ValidationException::fromInputFilter($inputFilter, $prev);
 
         self::assertEquals($invalidData, $e->getInvalidElements());
         self::assertEquals(['invalidElements' => array_keys($invalidData)], $e->getAdditionalData());
@@ -47,7 +44,6 @@ class ValidationExceptionTest extends TestCase
         self::assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getCode());
         self::assertEquals($prev, $e->getPrevious());
         self::assertStringContainsString($expectedStringRepresentation, (string) $e);
-        $getMessages->shouldHaveBeenCalledOnce();
     }
 
     public function provideExceptions(): iterable

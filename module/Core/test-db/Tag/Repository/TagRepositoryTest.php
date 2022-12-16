@@ -77,22 +77,22 @@ class TagRepositoryTest extends DatabaseTestCase
             ['longUrl' => '', 'tags' => $tags, 'apiKey' => $apiKey],
         );
 
-        $shortUrl = ShortUrl::fromMeta($metaWithTags($firstUrlTags, $apiKey), $this->relationResolver);
+        $shortUrl = ShortUrl::create($metaWithTags($firstUrlTags, $apiKey), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl);
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
 
-        $shortUrl2 = ShortUrl::fromMeta($metaWithTags($secondUrlTags, null), $this->relationResolver);
+        $shortUrl2 = ShortUrl::create($metaWithTags($secondUrlTags, null), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl2);
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
 
         // One of the tags has two extra short URLs, but with no visits
         $this->getEntityManager()->persist(
-            ShortUrl::fromMeta($metaWithTags(['bar'], null), $this->relationResolver),
+            ShortUrl::create($metaWithTags(['bar'], null), $this->relationResolver),
         );
         $this->getEntityManager()->persist(
-            ShortUrl::fromMeta($metaWithTags(['bar'], $apiKey), $this->relationResolver),
+            ShortUrl::create($metaWithTags(['bar'], $apiKey), $this->relationResolver),
         );
 
         $this->getEntityManager()->flush();
@@ -222,13 +222,13 @@ class TagRepositoryTest extends DatabaseTestCase
 
         [$firstUrlTags, $secondUrlTags] = array_chunk($names, 3);
 
-        $shortUrl = ShortUrl::fromMeta(
+        $shortUrl = ShortUrl::create(
             ShortUrlCreation::fromRawData(['apiKey' => $authorApiKey, 'longUrl' => '', 'tags' => $firstUrlTags]),
             $this->relationResolver,
         );
         $this->getEntityManager()->persist($shortUrl);
 
-        $shortUrl2 = ShortUrl::fromMeta(
+        $shortUrl2 = ShortUrl::create(
             ShortUrlCreation::fromRawData(
                 ['domain' => $domain->getAuthority(), 'longUrl' => '', 'tags' => $secondUrlTags],
             ),

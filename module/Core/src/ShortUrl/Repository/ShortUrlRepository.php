@@ -11,129 +11,15 @@ use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
-use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
-use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
-use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
-use function array_column;
 use function count;
-use function Functional\contains;
 
 class ShortUrlRepository extends EntitySpecificationRepository implements ShortUrlRepositoryInterface
 {
-    /**
-     * @return ShortUrl[]
-     */
-    public function findList(ShortUrlsListFiltering $filtering): array
-    {
-        $qb = $this->createListQueryBuilder($filtering);
-        $qb->select('DISTINCT s')
-           ->setMaxResults($filtering->limit())
-           ->setFirstResult($filtering->offset());
-
-        // In case the ordering has been specified, the query could be more complex. Process it
-        if ($filtering->orderBy()->hasOrderField()) {
-            return $this->processOrderByForList($qb, $filtering->orderBy());
-        }
-
-        // With no explicit order by, fallback to dateCreated-DESC
-        return $qb->orderBy('s.dateCreated', 'DESC')->getQuery()->getResult();
-    }
-
-    private function processOrderByForList(QueryBuilder $qb, Ordering $orderBy): array
-    {
-        $fieldName = $orderBy->field;
-        $order = $orderBy->direction;
-
-        if ($fieldName === 'visits') {
-            // FIXME This query is inefficient.
-            //       Diagnostic: It might need to use a sub-query, as done with the tags list query.
-            $qb->addSelect('COUNT(DISTINCT v) AS totalVisits')
-               ->leftJoin('s.visits', 'v')
-               ->groupBy('s')
-               ->orderBy('totalVisits', $order);
-
-            return array_column($qb->getQuery()->getResult(), 0);
-        }
-
-        $orderableFields = ['longUrl', 'shortCode', 'dateCreated', 'title'];
-        if (contains($orderableFields, $fieldName)) {
-            $qb->orderBy('s.' . $fieldName, $order);
-        }
-
-        return $qb->getQuery()->getResult();
-    }
-
-    public function countList(ShortUrlsCountFiltering $filtering): int
-    {
-        $qb = $this->createListQueryBuilder($filtering);
-        $qb->select('COUNT(DISTINCT s)');
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
-    }
-
-    private function createListQueryBuilder(ShortUrlsCountFiltering $filtering): QueryBuilder
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from(ShortUrl::class, 's')
-           ->where('1=1');
-
-        $dateRange = $filtering->dateRange();
-        if ($dateRange?->startDate !== null) {
-            $qb->andWhere($qb->expr()->gte('s.dateCreated', ':startDate'));
-            $qb->setParameter('startDate', $dateRange->startDate, ChronosDateTimeType::CHRONOS_DATETIME);
-        }
-        if ($dateRange?->endDate !== null) {
-            $qb->andWhere($qb->expr()->lte('s.dateCreated', ':endDate'));
-            $qb->setParameter('endDate', $dateRange->endDate, ChronosDateTimeType::CHRONOS_DATETIME);
-        }
-
-        $searchTerm = $filtering->searchTerm();
-        $tags = $filtering->tags();
-        // Apply search term to every searchable field if not empty
-        if (! empty($searchTerm)) {
-            // Left join with tags only if no tags were provided. In case of tags, an inner join will be done later
-            if (empty($tags)) {
-                $qb->leftJoin('s.tags', 't');
-            }
-
-            // Apply general search conditions
-            $conditions = [
-                $qb->expr()->like('s.longUrl', ':searchPattern'),
-                $qb->expr()->like('s.shortCode', ':searchPattern'),
-                $qb->expr()->like('s.title', ':searchPattern'),
-                $qb->expr()->like('d.authority', ':searchPattern'),
-            ];
-
-            // Apply tag conditions, only when not filtering by all provided tags
-            $tagsMode = $filtering->tagsMode() ?? TagsMode::ANY;
-            if (empty($tags) || $tagsMode === TagsMode::ANY) {
-                $conditions[] = $qb->expr()->like('t.name', ':searchPattern');
-            }
-
-            $qb->leftJoin('s.domain', 'd')
-               ->andWhere($qb->expr()->orX(...$conditions))
-               ->setParameter('searchPattern', '%' . $searchTerm . '%');
-        }
-
-        // Filter by tags if provided
-        if (! empty($tags)) {
-            $tagsMode = $filtering->tagsMode() ?? TagsMode::ANY;
-            $tagsMode === TagsMode::ANY
-                ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
-                : $this->joinAllTags($qb, $tags);
-        }
-
-        $this->applySpecification($qb, $filtering->apiKey()?->spec(), 's');
-
-        return $qb;
-    }
-
     public function findOneWithDomainFallback(ShortUrlIdentifier $identifier): ?ShortUrl
     {
         // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
@@ -303,29 +189,5 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         } else {
             $qb->andWhere($qb->expr()->isNull('s.domain'));
         }
-    }
-
-    public function findCrawlableShortCodes(): iterable
-    {
-        $blockSize = 1000;
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('DISTINCT s.shortCode')
-           ->from(ShortUrl::class, 's')
-           ->where($qb->expr()->eq('s.crawlable', ':crawlable'))
-           ->setParameter('crawlable', true)
-           ->setMaxResults($blockSize);
-
-        $page = 0;
-        do {
-            $qbClone = (clone $qb)->setFirstResult($blockSize * $page);
-            $iterator = $qbClone->getQuery()->toIterable();
-            $resultsFound = false;
-            $page++;
-
-            foreach ($iterator as ['shortCode' => $shortCode]) {
-                $resultsFound = true;
-                yield $shortCode;
-            }
-        } while ($resultsFound);
     }
 }

@@ -6,9 +6,8 @@ namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -16,7 +15,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
-use Shlinkio\Shlink\Core\ShortUrl\ShortUrlServiceInterface;
+use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -31,12 +30,12 @@ class ListShortUrlsCommandTest extends TestCase
     use CliTestUtilsTrait;
 
     private CommandTester $commandTester;
-    private ObjectProphecy $shortUrlService;
+    private MockObject & ShortUrlListServiceInterface $shortUrlService;
 
     protected function setUp(): void
     {
-        $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
-        $command = new ListShortUrlsCommand($this->shortUrlService->reveal(), new ShortUrlDataTransformer(
+        $this->shortUrlService = $this->createMock(ShortUrlListServiceInterface::class);
+        $command = new ListShortUrlsCommand($this->shortUrlService, new ShortUrlDataTransformer(
             new ShortUrlStringifier([]),
         ));
         $this->commandTester = $this->testerForCommand($command);
@@ -51,9 +50,8 @@ class ListShortUrlsCommandTest extends TestCase
             $data[] = ShortUrl::withLongUrl('url_' . $i);
         }
 
-        $this->shortUrlService->listShortUrls(Argument::cetera())
-            ->will(fn () => new Paginator(new ArrayAdapter($data)))
-            ->shouldBeCalledTimes(3);
+        $this->shortUrlService->expects($this->exactly(3))->method('listShortUrls')->withAnyParameters()
+            ->willReturnCallback(fn () => new Paginator(new ArrayAdapter($data)));
 
         $this->commandTester->setInputs(['y', 'y', 'n']);
         $this->commandTester->execute([]);
@@ -74,9 +72,9 @@ class ListShortUrlsCommandTest extends TestCase
             $data[] = ShortUrl::withLongUrl('url_' . $i);
         }
 
-        $this->shortUrlService->listShortUrls(ShortUrlsParams::emptyInstance())
-            ->willReturn(new Paginator(new ArrayAdapter($data)))
-            ->shouldBeCalledOnce();
+        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
+            ShortUrlsParams::emptyInstance(),
+        )->willReturn(new Paginator(new ArrayAdapter($data)));
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute([]);
@@ -95,9 +93,9 @@ class ListShortUrlsCommandTest extends TestCase
     public function passingPageWillMakeListStartOnThatPage(): void
     {
         $page = 5;
-        $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData(['page' => $page]))
-            ->willReturn(new Paginator(new ArrayAdapter([])))
-            ->shouldBeCalledOnce();
+        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
+            ShortUrlsParams::fromRawData(['page' => $page]),
+        )->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs(['y']);
         $this->commandTester->execute(['--page' => $page]);
@@ -113,15 +111,15 @@ class ListShortUrlsCommandTest extends TestCase
         array $notExpectedContents,
         ApiKey $apiKey,
     ): void {
-        $this->shortUrlService->listShortUrls(ShortUrlsParams::emptyInstance())
-            ->willReturn(new Paginator(new ArrayAdapter([
-                ShortUrl::fromMeta(ShortUrlCreation::fromRawData([
-                    'longUrl' => 'foo.com',
-                    'tags' => ['foo', 'bar', 'baz'],
-                    'apiKey' => $apiKey,
-                ])),
-            ])))
-            ->shouldBeCalledOnce();
+        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
+            ShortUrlsParams::emptyInstance(),
+        )->willReturn(new Paginator(new ArrayAdapter([
+            ShortUrl::create(ShortUrlCreation::fromRawData([
+                'longUrl' => 'foo.com',
+                'tags' => ['foo', 'bar', 'baz'],
+                'apiKey' => $apiKey,
+            ])),
+        ])));
 
         $this->commandTester->setInputs(['y']);
         $this->commandTester->execute($input);
@@ -189,7 +187,7 @@ class ListShortUrlsCommandTest extends TestCase
         ?string $startDate = null,
         ?string $endDate = null,
     ): void {
-        $listShortUrls = $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData([
+        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
             'page' => $page,
             'searchTerm' => $searchTerm,
             'tags' => $tags,
@@ -200,8 +198,6 @@ class ListShortUrlsCommandTest extends TestCase
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute($commandArgs);
-
-        $listShortUrls->shouldHaveBeenCalledOnce();
     }
 
     public function provideArgs(): iterable
@@ -251,14 +247,12 @@ class ListShortUrlsCommandTest extends TestCase
      */
     public function orderByIsProperlyComputed(array $commandArgs, ?string $expectedOrderBy): void
     {
-        $listShortUrls = $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData([
+        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
             'orderBy' => $expectedOrderBy,
         ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute($commandArgs);
-
-        $listShortUrls->shouldHaveBeenCalledOnce();
     }
 
     public function provideOrderBy(): iterable
@@ -273,7 +267,7 @@ class ListShortUrlsCommandTest extends TestCase
     /** @test */
     public function requestingAllElementsWillSetItemsPerPage(): void
     {
-        $listShortUrls = $this->shortUrlService->listShortUrls(ShortUrlsParams::fromRawData([
+        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
             'page' => 1,
             'searchTerm' => null,
             'tags' => [],
@@ -285,7 +279,5 @@ class ListShortUrlsCommandTest extends TestCase
         ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute(['--all' => true]);
-
-        $listShortUrls->shouldHaveBeenCalledOnce();
     }
 }

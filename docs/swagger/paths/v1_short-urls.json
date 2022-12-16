@@ -73,10 +73,12 @@
                         "shortCode-DESC",
                         "dateCreated-ASC",
                         "dateCreated-DESC",
+                        "title-ASC",
+                        "title-DESC",
                         "visits-ASC",
                         "visits-DESC",
-                        "title-ASC",
-                        "title-DESC"
+                        "nonBotVisits-ASC",
+                        "nonBotVisits-DESC"
                     ]
                 }
             },
@@ -96,6 +98,32 @@
                 "required": false,
                 "schema": {
                     "type": "string"
+                }
+            },
+            {
+                "name": "excludeMaxVisitsReached",
+                "in": "query",
+                "description": "If true, short URLs which already reached their maximum amount of visits will be excluded.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "true",
+                        "false"
+                    ]
+                }
+            },
+            {
+                "name": "excludePastValidUntil",
+                "in": "query",
+                "description": "If true, short URLs which validUntil date is on the past will be excluded.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "true",
+                        "false"
+                    ]
                 }
             }
         ],
@@ -136,7 +164,11 @@
                                         "shortUrl": "https://doma.in/12C18",
                                         "longUrl": "https://store.steampowered.com",
                                         "dateCreated": "2016-08-21T20:34:16+02:00",
-                                        "visitsCount": 328,
+                                        "visitsSummary": {
+                                            "total": 328,
+                                            "nonBots": 328,
+                                            "bots": 0
+                                        },
                                         "tags": [
                                             "games",
                                             "tech"
@@ -155,7 +187,11 @@
                                         "shortUrl": "https://doma.in/12Kb3",
                                         "longUrl": "https://shlink.io",
                                         "dateCreated": "2016-05-01T20:34:16+02:00",
-                                        "visitsCount": 1029,
+                                        "visitsSummary": {
+                                            "total": 1029,
+                                            "nonBots": 900,
+                                            "bots": 129
+                                        },
                                         "tags": [
                                             "shlink"
                                         ],
@@ -173,7 +209,11 @@
                                         "shortUrl": "https://example.com/123bA",
                                         "longUrl": "https://www.google.com",
                                         "dateCreated": "2015-10-01T20:34:16+02:00",
-                                        "visitsCount": 25,
+                                        "visitsSummary": {
+                                            "total": 25,
+                                            "nonBots": 0,
+                                            "bots": 25
+                                        },
                                         "tags": [],
                                         "meta": {
                                             "validSince": "2017-01-21T00:00:00+02:00",
@@ -281,7 +321,11 @@
                             "shortUrl": "https://doma.in/12C18",
                             "longUrl": "https://store.steampowered.com",
                             "dateCreated": "2016-08-21T20:34:16+02:00",
-                            "visitsCount": 0,
+                            "visitsSummary": {
+                                "total": 0,
+                                "nonBots": 0,
+                                "bots": 0
+                            },
                             "tags": [
                                 "games",
                                 "tech"

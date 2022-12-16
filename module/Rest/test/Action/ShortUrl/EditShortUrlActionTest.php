@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
@@ -19,15 +17,13 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class EditShortUrlActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private EditShortUrlAction $action;
-    private ObjectProphecy $shortUrlService;
+    private MockObject & ShortUrlServiceInterface $shortUrlService;
 
     protected function setUp(): void
     {
-        $this->shortUrlService = $this->prophesize(ShortUrlServiceInterface::class);
-        $this->action = new EditShortUrlAction($this->shortUrlService->reveal(), new ShortUrlDataTransformer(
+        $this->shortUrlService = $this->createMock(ShortUrlServiceInterface::class);
+        $this->action = new EditShortUrlAction($this->shortUrlService, new ShortUrlDataTransformer(
             new ShortUrlStringifier([]),
         ));
     }
@@ -38,6 +34,7 @@ class EditShortUrlActionTest extends TestCase
         $request = (new ServerRequest())->withParsedBody([
             'maxVisits' => 'invalid',
         ]);
+        $this->shortUrlService->expects($this->never())->method('updateShortUrl');
 
         $this->expectException(ValidationException::class);
 
@@ -52,13 +49,10 @@ class EditShortUrlActionTest extends TestCase
                                         ->withParsedBody([
                                             'maxVisits' => 5,
                                         ]);
-        $updateMeta = $this->shortUrlService->updateShortUrl(Argument::cetera())->willReturn(
-            ShortUrl::createEmpty(),
-        );
+        $this->shortUrlService->expects($this->once())->method('updateShortUrl')->willReturn(ShortUrl::createEmpty());
 
         $resp = $this->action->handle($request);
 
         self::assertEquals(200, $resp->getStatusCode());
-        $updateMeta->shouldHaveBeenCalled();
     }
 }

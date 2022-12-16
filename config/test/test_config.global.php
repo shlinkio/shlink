@@ -101,6 +101,9 @@ $buildDbConnection = static function (): array {
             'user' => 'sa',
             'password' => 'Passw0rd!',
             'dbname' => 'shlink_test',
+            'driverOptions' => [
+                'TrustServerCertificate' => 'true',
+            ],
         ],
         default => [ // mysql and maria
             'driver' => 'pdo_mysql',

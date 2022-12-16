@@ -6,10 +6,8 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
@@ -18,15 +16,13 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class DomainVisitsActionTest extends TestCase
 {
-    use ProphecyTrait;
-
     private DomainVisitsAction $action;
-    private ObjectProphecy $visitsHelper;
+    private MockObject & VisitsStatsHelperInterface $visitsHelper;
 
     protected function setUp(): void
     {
-        $this->visitsHelper = $this->prophesize(VisitsStatsHelperInterface::class);
-        $this->action = new DomainVisitsAction($this->visitsHelper->reveal(), 'the_default.com');
+        $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
+        $this->action = new DomainVisitsAction($this->visitsHelper, 'the_default.com');
     }
 
     /**
@@ -36,9 +32,9 @@ class DomainVisitsActionTest extends TestCase
     public function providingCorrectDomainReturnsVisits(string $providedDomain, string $expectedDomain): void
     {
         $apiKey = ApiKey::create();
-        $getVisits = $this->visitsHelper->visitsForDomain(
+        $this->visitsHelper->expects($this->once())->method('visitsForDomain')->with(
             $expectedDomain,
-            Argument::type(VisitsParams::class),
+            $this->isInstanceOf(VisitsParams::class),
             $apiKey,
         )->willReturn(new Paginator(new ArrayAdapter([])));
 
@@ -48,7 +44,6 @@ class DomainVisitsActionTest extends TestCase
         );
 
         self::assertEquals(200, $response->getStatusCode());
-        $getVisits->shouldHaveBeenCalledOnce();
     }
 
     public function provideDomainAuthorities(): iterable

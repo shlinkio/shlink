@@ -7,10 +7,8 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Middleware;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
@@ -21,13 +19,11 @@ use function Functional\const_function;
 
 class TrimTrailingSlashMiddlewareTest extends TestCase
 {
-    use ProphecyTrait;
-
-    private ObjectProphecy $requestHandler;
+    private MockObject & RequestHandlerInterface $requestHandler;
 
     protected function setUp(): void
     {
-        $this->requestHandler = $this->prophesize(RequestHandlerInterface::class);
+        $this->requestHandler = $this->createMock(RequestHandlerInterface::class);
     }
 
     /**
@@ -40,9 +36,11 @@ class TrimTrailingSlashMiddlewareTest extends TestCase
         callable $assertions,
     ): void {
         $arg = compose($assertions, const_function(true));
+        $this->requestHandler->expects($this->once())->method('handle')->with($this->callback($arg))->willReturn(
+            new Response(),
+        );
 
-        $this->requestHandler->handle(Argument::that($arg))->willReturn(new Response());
-        $this->middleware($trailingSlashEnabled)->process($inputRequest, $this->requestHandler->reveal());
+        $this->middleware($trailingSlashEnabled)->process($inputRequest, $this->requestHandler);
     }
 
     public function provideRequests(): iterable
