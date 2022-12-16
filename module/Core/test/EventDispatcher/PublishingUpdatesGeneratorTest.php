@@ -63,6 +63,11 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'title' => $title,
                 'crawlable' => false,
                 'forwardQuery' => true,
+                'visitsSummary' => [
+                    'total' => 0,
+                    'nonBots' => 0,
+                    'bots' => 0,
+                ],
             ],
             'visit' => [
                 'referer' => '',
@@ -139,6 +144,11 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'title' => $shortUrl->title(),
             'crawlable' => false,
             'forwardQuery' => true,
+            'visitsSummary' => [
+                'total' => 0,
+                'nonBots' => 0,
+                'bots' => 0,
+            ],
         ]], $update->payload);
     }
 }

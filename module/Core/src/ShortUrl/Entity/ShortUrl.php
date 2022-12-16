@@ -33,9 +33,9 @@ class ShortUrl extends AbstractEntity
     private string $longUrl;
     private string $shortCode;
     private Chronos $dateCreated;
-    /** @var Collection|Visit[] */
+    /** @var Collection<int, Visit> */
     private Collection $visits;
-    /** @var Collection|Tag[] */
+    /** @var Collection<int, Tag> */
     private Collection $tags;
     private ?Chronos $validSince = null;
     private ?Chronos $validUntil = null;
@@ -141,7 +141,7 @@ class ShortUrl extends AbstractEntity
     }
 
     /**
-     * @return Collection|Tag[]
+     * @return Collection<int, Tag>
      */
     public function getTags(): Collection
     {
@@ -168,6 +168,12 @@ class ShortUrl extends AbstractEntity
         return count($this->visits);
     }
 
+    public function nonBotVisitsCount(): int
+    {
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('potentialBot', false));
+        return count($this->visits->matching($criteria));
+    }
+
     public function mostRecentImportedVisitDate(): ?Chronos
     {
         /** @var Selectable $visits */
@@ -183,7 +189,7 @@ class ShortUrl extends AbstractEntity
     }
 
     /**
-     * @param Collection|Visit[] $visits
+     * @param Collection<int, Visit> $visits
      * @internal
      */
     public function setVisits(Collection $visits): self

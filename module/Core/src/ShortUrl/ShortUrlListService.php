@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl;
 
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Paginator\Adapter\ShortUrlRepositoryAdapter;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlListRepositoryInterface;
@@ -19,6 +20,9 @@ class ShortUrlListService implements ShortUrlListServiceInterface
     ) {
     }
 
+    /**
+     * @return ShortUrl[]|Paginator
+     */
     public function listShortUrls(ShortUrlsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         $defaultDomain = $this->urlShortenerOptions->domain['hostname'] ?? '';

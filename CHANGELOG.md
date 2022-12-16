@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   * Providing `excludeMaxVisitsReached=true` and/or `excludePastValidUntil=true` to the `GET /short-urls` endpoint.
   * Providing `--exclude-max-visits-reached` and/or `--exclude-past-valid-until` to the `short-urls:list` command.
 
+* [#1613](https://github.com/shlinkio/shlink/issues/1613) Added amount of visits coming from bots, non-bots and total to every short URL in the short URLs list.
+
+  Additionally, added option to order by non-bot visits, by passing `nonBotVisits-DESC` or `nonBotVisits-ASC`.
+
 * [#1599](https://github.com/shlinkio/shlink/issues/1599) Added support for credentials on redis DSNs, either only password, or both username and password.
 * [#1616](https://github.com/shlinkio/shlink/issues/1616) Added support to import orphan visits when importing short URLs from another Shlink instance.
 * [#1519](https://github.com/shlinkio/shlink/issues/1519) Allowing to search short URLs by default domain.

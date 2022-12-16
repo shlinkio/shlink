@@ -10,6 +10,7 @@ use ReflectionObject;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
@@ -21,6 +22,8 @@ use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 use function count;
+use function Functional\map;
+use function range;
 
 class ShortUrlListRepositoryTest extends DatabaseTestCase
 {
@@ -56,12 +59,23 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($foo);
 
         $bar = ShortUrl::withLongUrl('bar');
-        $visit = Visit::forValidShortUrl($bar, Visitor::emptyInstance());
-        $this->getEntityManager()->persist($visit);
-        $bar->setVisits(new ArrayCollection([$visit]));
+        $visits = map(range(0, 5), function () use ($bar) {
+            $visit = Visit::forValidShortUrl($bar, Visitor::botInstance());
+            $this->getEntityManager()->persist($visit);
+
+            return $visit;
+        });
+        $bar->setVisits(new ArrayCollection($visits));
         $this->getEntityManager()->persist($bar);
 
         $foo2 = ShortUrl::withLongUrl('foo_2');
+        $visits2 = map(range(0, 3), function () use ($foo2) {
+            $visit = Visit::forValidShortUrl($foo2, Visitor::emptyInstance());
+            $this->getEntityManager()->persist($visit);
+
+            return $visit;
+        });
+        $foo2->setVisits(new ArrayCollection($visits2));
         $ref = new ReflectionObject($foo2);
         $dateProp = $ref->getProperty('dateCreated');
         $dateProp->setAccessible(true);
@@ -95,10 +109,18 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(2, 2, Ordering::emptyInstance())));
 
         $result = $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::fromTuple(['visits', 'DESC'])),
+            new ShortUrlsListFiltering(null, null, Ordering::fromTuple([OrderableField::VISITS->value, 'DESC'])),
         );
         self::assertCount(3, $result);
         self::assertSame($bar, $result[0]);
+
+        $result = $this->repo->findList(
+            new ShortUrlsListFiltering(null, null, Ordering::fromTuple(
+                [OrderableField::NON_BOT_VISITS->value, 'DESC'],
+            )),
+        );
+        self::assertCount(3, $result);
+        self::assertSame($foo2, $result[0]);
 
         $result = $this->repo->findList(
             new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, [], null, DateRange::until(

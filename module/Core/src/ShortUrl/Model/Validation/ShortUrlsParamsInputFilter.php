@@ -8,7 +8,7 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Validator\InArray;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Validation;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
+use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 
 class ShortUrlsParamsInputFilter extends InputFilter
@@ -51,7 +51,7 @@ class ShortUrlsParamsInputFilter extends InputFilter
         ]));
         $this->add($tagsMode);
 
-        $this->add($this->createOrderByInput(self::ORDER_BY, ShortUrlsParams::ORDERABLE_FIELDS));
+        $this->add($this->createOrderByInput(self::ORDER_BY, OrderableField::values()));
 
         $this->add($this->createBooleanInput(self::EXCLUDE_MAX_VISITS_REACHED, false));
         $this->add($this->createBooleanInput(self::EXCLUDE_PAST_VALID_UNTIL, false));

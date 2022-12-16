@@ -55,7 +55,11 @@
                             "shortUrl": "https://doma.in/abc123",
                             "shortCode": "abc123",
                             "dateCreated": "2016-08-21T20:34:16+02:00",
-                            "visitsCount": 0,
+                            "visitsSummary": {
+                                "total": 0,
+                                "nonBots": 0,
+                                "bots": 0
+                            },
                             "tags": [
                                 "games",
                                 "tech"

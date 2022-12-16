@@ -10,13 +10,13 @@ use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
 use function array_column;
-use function Functional\contains;
 use function sprintf;
 
 class ShortUrlListRepository extends EntitySpecificationRepository implements ShortUrlListRepositoryInterface
@@ -31,11 +31,10 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
            ->setMaxResults($filtering->limit)
            ->setFirstResult($filtering->offset);
 
-        // In case the ordering has been specified, the query could be more complex. Process it
         $this->processOrderByForList($qb, $filtering);
 
         $result = $qb->getQuery()->getResult();
-        if ($filtering->orderBy->field === 'visits') {
+        if (OrderableField::isVisitsField($filtering->orderBy->field ?? '')) {
             return array_column($result, 0);
         }
 
@@ -45,23 +44,28 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
     private function processOrderByForList(QueryBuilder $qb, ShortUrlsListFiltering $filtering): void
     {
         // With no explicit order by, fallback to dateCreated-DESC
-        if (! $filtering->orderBy->hasOrderField()) {
+        $fieldName = $filtering->orderBy->field;
+        if ($fieldName === null) {
             $qb->orderBy('s.dateCreated', 'DESC');
             return;
         }
 
-        $fieldName = $filtering->orderBy->field;
         $order = $filtering->orderBy->direction;
 
-        if ($fieldName === 'visits') {
+        if (OrderableField::isBasicField($fieldName)) {
+            $qb->orderBy('s.' . $fieldName, $order);
+        } elseif (OrderableField::isVisitsField($fieldName)) {
             // FIXME This query is inefficient.
             //       Diagnostic: It might need to use a sub-query, as done with the tags list query.
             $qb->addSelect('COUNT(DISTINCT v)')
-                ->leftJoin('s.visits', 'v')
-                ->groupBy('s')
-                ->orderBy('COUNT(DISTINCT v)', $order);
-        } elseif (contains(['longUrl', 'shortCode', 'dateCreated', 'title'], $fieldName)) {
-            $qb->orderBy('s.' . $fieldName, $order);
+               ->leftJoin('s.visits', 'v', Join::WITH, $qb->expr()->andX(
+                   $qb->expr()->eq('v.shortUrl', 's'),
+                   $fieldName === OrderableField::NON_BOT_VISITS->value
+                       ? $qb->expr()->eq('v.potentialBot', 'false')
+                       : null,
+               ))
+               ->groupBy('s')
+               ->orderBy('COUNT(DISTINCT v)', $order);
         }
     }
 

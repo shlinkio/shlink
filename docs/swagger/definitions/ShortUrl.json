@@ -6,6 +6,7 @@
         "longUrl",
         "dateCreated",
         "visitsCount",
+        "visitsSummary",
         "tags",
         "meta",
         "domain",
@@ -32,8 +33,12 @@
             "description": "The date in which the short URL was created in ISO format."
         },
         "visitsCount": {
+            "deprecated": true,
             "type": "integer",
-            "description": "The number of visits that this short URL has received."
+            "description": "**[DEPRECATED]** Use `visitsSummary.total` instead."
+        },
+        "visitsSummary": {
+            "$ref": "./ShortUrlVisitsSummary.json"
         },
         "tags": {
             "type": "array",
