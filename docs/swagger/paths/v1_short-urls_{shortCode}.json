@@ -41,7 +41,11 @@
                             "shortUrl": "https://doma.in/12Kb3",
                             "longUrl": "https://shlink.io",
                             "dateCreated": "2016-05-01T20:34:16+02:00",
-                            "visitsCount": 1029,
+                            "visitsSummary": {
+                                "total": 1029,
+                                "nonBots": 820,
+                                "bots": 209
+                            },
                             "tags": [
                                 "shlink"
                             ],
@@ -159,7 +163,11 @@
                             "shortUrl": "https://doma.in/12Kb3",
                             "longUrl": "https://shlink.io",
                             "dateCreated": "2016-05-01T20:34:16+02:00",
-                            "visitsCount": 1029,
+                            "visitsSummary": {
+                                "total": 1029,
+                                "nonBots": 900,
+                                "bots": 129
+                            },
                             "tags": [
                                 "shlink"
                             ],

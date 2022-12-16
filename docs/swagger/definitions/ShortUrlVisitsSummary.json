@@ -1,0 +1,18 @@
+{
+    "type": "object",
+    "required": ["total", "nonBots", "bots"],
+    "properties": {
+        "total": {
+            "description": "The total amount of visits that this short URL has received.",
+            "type": "integer"
+        },
+        "nonBots": {
+            "description": "The amount of visits which were not identified as bots.",
+            "type": "integer"
+        },
+        "bots": {
+            "description": "The amount of visits that were identified as potential bots.",
+            "type": "integer"
+        }
+    }
+}
