@@ -73,10 +73,12 @@
                         "shortCode-DESC",
                         "dateCreated-ASC",
                         "dateCreated-DESC",
+                        "title-ASC",
+                        "title-DESC",
                         "visits-ASC",
                         "visits-DESC",
-                        "title-ASC",
-                        "title-DESC"
+                        "nonBotVisits-ASC",
+                        "nonBotVisits-DESC"
                     ]
                 }
             },

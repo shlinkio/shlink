@@ -14,7 +14,6 @@ use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 
 final class ShortUrlsParams
 {
-    public const ORDERABLE_FIELDS = ['longUrl', 'shortCode', 'dateCreated', 'title', 'visits'];
     public const DEFAULT_ITEMS_PER_PAGE = 10;
 
     private function __construct(
