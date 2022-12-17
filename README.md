@@ -1,6 +1,6 @@
 ![Shlink](https://raw.githubusercontent.com/shlinkio/shlink.io/main/public/images/shlink-hero.png)
 
-[![Build Status](https://img.shields.io/github/workflow/status/shlinkio/shlink/Continuous%20integration/develop?logo=github&style=flat-square)](https://github.com/shlinkio/shlink/actions?query=workflow%3A%22Continuous+integration%22)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/shlinkio/shlink/ci.yml?branch=develop&logo=github&style=flat-square)](https://github.com/shlinkio/shlink/actions/workflows/ci.yml?query=workflow%3A%22Continuous+integration%22)
 [![Code Coverage](https://img.shields.io/codecov/c/gh/shlinkio/shlink/develop?style=flat-square)](https://app.codecov.io/gh/shlinkio/shlink)
 [![Infection MSI](https://img.shields.io/endpoint?style=flat-square&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fshlinkio%2Fshlink%2Fdevelop)](https://dashboard.stryker-mutator.io/reports/github.com/shlinkio/shlink/develop)
 [![Latest Stable Version](https://img.shields.io/github/release/shlinkio/shlink.svg?style=flat-square)](https://packagist.org/packages/shlinkio/shlink)
