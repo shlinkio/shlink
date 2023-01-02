@@ -52,7 +52,7 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
     }
 
     /**
-     * @return Paginator<Visit>
+     * @return Visit[]|Paginator
      * @throws ShortUrlNotFoundException
      */
     public function visitsForShortUrl(
