@@ -32,7 +32,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsStatsHelper implements VisitsStatsHelperInterface
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
     }
 
@@ -42,8 +42,12 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
         $visitsRepo = $this->em->getRepository(Visit::class);
 
         return new VisitsStats(
-            $visitsRepo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey)),
-            $visitsRepo->countOrphanVisits(new VisitsCountFiltering()),
+            nonOrphanVisitsTotal: $visitsRepo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey)),
+            orphanVisitsTotal: $visitsRepo->countOrphanVisits(new VisitsCountFiltering()),
+            nonOrphanVisitsNonBots: $visitsRepo->countNonOrphanVisits(
+                new VisitsCountFiltering(excludeBots: true, apiKey: $apiKey),
+            ),
+            orphanVisitsNonBots: $visitsRepo->countOrphanVisits(new VisitsCountFiltering(excludeBots: true)),
         );
     }
 

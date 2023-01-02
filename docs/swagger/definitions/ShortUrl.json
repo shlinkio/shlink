@@ -38,7 +38,7 @@
             "description": "**[DEPRECATED]** Use `visitsSummary.total` instead."
         },
         "visitsSummary": {
-            "$ref": "./ShortUrlVisitsSummary.json"
+            "$ref": "./VisitsSummary.json"
         },
         "tags": {
             "type": "array",
