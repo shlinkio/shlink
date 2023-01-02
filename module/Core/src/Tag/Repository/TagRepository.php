@@ -72,8 +72,8 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
                 't.id_0 AS id',
                 't.name_1 AS name',
                 'COUNT(DISTINCT s.id) AS short_urls_count',
-                'COUNT(DISTINCT v.id) AS visits_count', // Native queries require snake_case for cross-db compatibility
-                'COUNT(DISTINCT v2.id) AS non_bot_visits_count',
+                'COUNT(DISTINCT v.id) AS visits', // Native queries require snake_case for cross-db compatibility
+                'COUNT(DISTINCT v2.id) AS non_bot_visits',
             )
             ->from('(' . $subQb->getQuery()->getSQL() . ')', 't') // @phpstan-ignore-line
             ->leftJoin('t', 'short_urls_in_tags', 'st', $nativeQb->expr()->eq('t.id_0', 'st.tag_id'))
@@ -108,8 +108,8 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
         $rsm->addScalarResult('name', 'tag');
         $rsm->addScalarResult('short_urls_count', 'shortUrlsCount');
-        $rsm->addScalarResult('visits_count', 'visitsCount');
-        $rsm->addScalarResult('non_bot_visits_count', 'nonBotVisitsCount');
+        $rsm->addScalarResult('visits', 'visits');
+        $rsm->addScalarResult('non_bot_visits', 'nonBotVisits');
 
         return map(
             $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm)->getResult(),

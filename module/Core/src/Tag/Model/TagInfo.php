@@ -25,8 +25,8 @@ final class TagInfo implements JsonSerializable
         return new self(
             $data['tag'],
             (int) $data['shortUrlsCount'],
-            (int) $data['visitsCount'],
-            isset($data['nonBotVisitsCount']) ? (int) $data['nonBotVisitsCount'] : null,
+            (int) $data['visits'],
+            isset($data['nonBotVisits']) ? (int) $data['nonBotVisits'] : null,
         );
     }
 
