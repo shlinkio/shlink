@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* [#1632](https://github.com/shlinkio/shlink/issues/1632) Added amount of bots, non-bots and total visits to the visits summary endpoint.
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 ## [3.4.0] - 2022-12-16
 ### Added
 * [#1612](https://github.com/shlinkio/shlink/issues/1612) Allowed to filter short URLs out of lists, when `validUntil` date is in the past or have reached their maximum amount of visits.
