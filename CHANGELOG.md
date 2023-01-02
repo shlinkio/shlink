@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#1639](https://github.com/shlinkio/shlink/issues/1639) Fixed 500 error returned when request body is not valid JSON, instead of a proper descriptive error.
 
 
 ## [3.4.0] - 2022-12-16
