@@ -18,6 +18,6 @@ class VisitsCountFiltering
 
     public static function withApiKey(?ApiKey $apiKey): self
     {
-        return new self(null, false, $apiKey);
+        return new self(apiKey: $apiKey);
     }
 }
