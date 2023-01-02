@@ -52,16 +52,31 @@ class TagsStatsTest extends ApiTestCase
                 'tag' => 'bar',
                 'shortUrlsCount' => 1,
                 'visitsCount' => 2,
+                'visitsSummary' => [
+                    'total' => 2,
+                    'nonBots' => 1,
+                    'bots' => 1,
+                ],
             ],
             [
                 'tag' => 'baz',
                 'shortUrlsCount' => 0,
                 'visitsCount' => 0,
+                'visitsSummary' => [
+                    'total' => 0,
+                    'nonBots' => 0,
+                    'bots' => 0,
+                ],
             ],
             [
                 'tag' => 'foo',
                 'shortUrlsCount' => 3,
                 'visitsCount' => 5,
+                'visitsSummary' => [
+                    'total' => 5,
+                    'nonBots' => 4,
+                    'bots' => 1,
+                ],
             ],
         ], [
             'currentPage' => 1,
@@ -75,11 +90,21 @@ class TagsStatsTest extends ApiTestCase
                 'tag' => 'bar',
                 'shortUrlsCount' => 1,
                 'visitsCount' => 2,
+                'visitsSummary' => [
+                    'total' => 2,
+                    'nonBots' => 1,
+                    'bots' => 1,
+                ],
             ],
             [
                 'tag' => 'baz',
                 'shortUrlsCount' => 0,
                 'visitsCount' => 0,
+                'visitsSummary' => [
+                    'total' => 0,
+                    'nonBots' => 0,
+                    'bots' => 0,
+                ],
             ],
         ], [
             'currentPage' => 1,
@@ -93,11 +118,21 @@ class TagsStatsTest extends ApiTestCase
                 'tag' => 'bar',
                 'shortUrlsCount' => 1,
                 'visitsCount' => 2,
+                'visitsSummary' => [
+                    'total' => 2,
+                    'nonBots' => 1,
+                    'bots' => 1,
+                ],
             ],
             [
                 'tag' => 'foo',
                 'shortUrlsCount' => 2,
                 'visitsCount' => 5,
+                'visitsSummary' => [
+                    'total' => 5,
+                    'nonBots' => 4,
+                    'bots' => 1,
+                ],
             ],
         ], [
             'currentPage' => 1,
@@ -111,6 +146,11 @@ class TagsStatsTest extends ApiTestCase
                 'tag' => 'foo',
                 'shortUrlsCount' => 2,
                 'visitsCount' => 5,
+                'visitsSummary' => [
+                    'total' => 5,
+                    'nonBots' => 4,
+                    'bots' => 1,
+                ],
             ],
         ], [
             'currentPage' => 2,
@@ -124,6 +164,11 @@ class TagsStatsTest extends ApiTestCase
                 'tag' => 'foo',
                 'shortUrlsCount' => 1,
                 'visitsCount' => 0,
+                'visitsSummary' => [
+                    'total' => 0,
+                    'nonBots' => 0,
+                    'bots' => 0,
+                ],
             ],
         ], [
             'currentPage' => 1,

@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ## [Unreleased]
 ### Added
 * [#1632](https://github.com/shlinkio/shlink/issues/1632) Added amount of bots, non-bots and total visits to the visits summary endpoint.
+* [#1633](https://github.com/shlinkio/shlink/issues/1633) Added amount of bots, non-bots and total visits to the tag stats endpoint.
 
 ### Changed
 * *Nothing*

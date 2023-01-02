@@ -1,5 +1,6 @@
 {
     "type": "object",
+    "required": ["tag", "shortUrlsCount", "visitsSummary", "visitsCount"],
     "properties": {
         "tag": {
             "type": "string",
@@ -9,9 +10,13 @@
             "type": "number",
             "description": "The amount of short URLs using this tag"
         },
-        "userAgent": {
+        "visitsSummary": {
+            "$ref": "./VisitsSummary.json"
+        },
+        "visitsCount": {
+            "deprecated": true,
             "type": "number",
-            "description": "The combined amount of visits received by short URLs with this tag"
+            "description": "**[DEPRECATED]** Use visitsSummary.total instead"
         }
     }
 }
