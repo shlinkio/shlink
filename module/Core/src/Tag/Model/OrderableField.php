@@ -23,7 +23,7 @@ enum OrderableField: string
 
     public static function toSnakeCaseValidField(?string $field): string
     {
-        $parsed = self::tryFrom($field);
+        $parsed = $field !== null ? self::tryFrom($field) : self::VISITS;
         $normalized = match ($parsed) {
             self::VISITS_COUNT, null => self::VISITS,
             default => $parsed,
