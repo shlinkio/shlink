@@ -73,7 +73,7 @@ class TagRepositoryTest extends DatabaseTestCase
 
         [$firstUrlTags] = array_chunk($names, 3);
         $secondUrlTags = [$names[0]];
-        $metaWithTags = fn (array $tags, ?ApiKey $apiKey) => ShortUrlCreation::fromRawData(
+        $metaWithTags = static fn (array $tags, ?ApiKey $apiKey) => ShortUrlCreation::fromRawData(
             ['longUrl' => '', 'tags' => $tags, 'apiKey' => $apiKey],
         );
 
@@ -81,7 +81,7 @@ class TagRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($shortUrl);
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::botInstance()));
 
         $shortUrl2 = ShortUrl::create($metaWithTags($secondUrlTags, null), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl2);
@@ -100,9 +100,10 @@ class TagRepositoryTest extends DatabaseTestCase
         $result = $this->repo->findTagsWithInfo($filtering);
 
         self::assertCount(count($expectedList), $result);
-        foreach ($expectedList as $index => [$tag, $shortUrlsCount, $visitsCount]) {
+        foreach ($expectedList as $index => [$tag, $shortUrlsCount, $visitsCount, $nonBotVisitsCount]) {
             self::assertEquals($shortUrlsCount, $result[$index]->shortUrlsCount);
-            self::assertEquals($visitsCount, $result[$index]->visitsCount);
+            self::assertEquals($visitsCount, $result[$index]->visitsSummary->total);
+            self::assertEquals($nonBotVisitsCount, $result[$index]->visitsSummary->nonBots);
             self::assertEquals($tag, $result[$index]->tag);
         }
     }
@@ -110,95 +111,95 @@ class TagRepositoryTest extends DatabaseTestCase
     public function provideFilters(): iterable
     {
         $defaultList = [
-            ['another', 0, 0],
-            ['bar', 3, 3],
-            ['baz', 1, 3],
-            ['foo', 2, 4],
+            ['another', 0, 0, 0],
+            ['bar', 3, 3, 2],
+            ['baz', 1, 3, 2],
+            ['foo', 2, 4, 3],
         ];
 
         yield 'no filter' => [null, $defaultList];
         yield 'empty filter' => [new TagsListFiltering(), $defaultList];
         yield 'limit' => [new TagsListFiltering(2), [
-            ['another', 0, 0],
-            ['bar', 3, 3],
+            ['another', 0, 0, 0],
+            ['bar', 3, 3, 2],
         ]];
         yield 'offset' => [new TagsListFiltering(null, 3), [
-            ['foo', 2, 4],
+            ['foo', 2, 4, 3],
         ]];
         yield 'limit and offset' => [new TagsListFiltering(2, 1), [
-            ['bar', 3, 3],
-            ['baz', 1, 3],
+            ['bar', 3, 3, 2],
+            ['baz', 1, 3, 2],
         ]];
         yield 'search term' => [new TagsListFiltering(null, null, 'ba'), [
-            ['bar', 3, 3],
-            ['baz', 1, 3],
+            ['bar', 3, 3, 2],
+            ['baz', 1, 3, 2],
         ]];
         yield 'ASC ordering' => [
             new TagsListFiltering(null, null, null, Ordering::fromTuple(['tag', 'ASC'])),
             $defaultList,
         ];
         yield 'DESC ordering' => [new TagsListFiltering(null, null, null, Ordering::fromTuple(['tag', 'DESC'])), [
-            ['foo', 2, 4],
-            ['baz', 1, 3],
-            ['bar', 3, 3],
-            ['another', 0, 0],
+            ['foo', 2, 4, 3],
+            ['baz', 1, 3, 2],
+            ['bar', 3, 3, 2],
+            ['another', 0, 0, 0],
         ]];
         yield 'short URLs count ASC ordering' => [
             new TagsListFiltering(null, null, null, Ordering::fromTuple(['shortUrlsCount', 'ASC'])),
             [
-                ['another', 0, 0],
-                ['baz', 1, 3],
-                ['foo', 2, 4],
-                ['bar', 3, 3],
+                ['another', 0, 0, 0],
+                ['baz', 1, 3, 2],
+                ['foo', 2, 4, 3],
+                ['bar', 3, 3, 2],
             ],
         ];
         yield 'short URLs count DESC ordering' => [
             new TagsListFiltering(null, null, null, Ordering::fromTuple(['shortUrlsCount', 'DESC'])),
             [
-                ['bar', 3, 3],
-                ['foo', 2, 4],
-                ['baz', 1, 3],
-                ['another', 0, 0],
+                ['bar', 3, 3, 2],
+                ['foo', 2, 4, 3],
+                ['baz', 1, 3, 2],
+                ['another', 0, 0, 0],
             ],
         ];
         yield 'visits count ASC ordering' => [
             new TagsListFiltering(null, null, null, Ordering::fromTuple(['visitsCount', 'ASC'])),
             [
-                ['another', 0, 0],
-                ['bar', 3, 3],
-                ['baz', 1, 3],
-                ['foo', 2, 4],
+                ['another', 0, 0, 0],
+                ['bar', 3, 3, 2],
+                ['baz', 1, 3, 2],
+                ['foo', 2, 4, 3],
             ],
         ];
         yield 'visits count DESC ordering' => [
             new TagsListFiltering(null, null, null, Ordering::fromTuple(['visitsCount', 'DESC'])),
             [
-                ['foo', 2, 4],
-                ['bar', 3, 3],
-                ['baz', 1, 3],
-                ['another', 0, 0],
+                ['foo', 2, 4, 3],
+                ['bar', 3, 3, 2],
+                ['baz', 1, 3, 2],
+                ['another', 0, 0, 0],
             ],
         ];
         yield 'visits count DESC ordering and limit' => [
             new TagsListFiltering(2, null, null, Ordering::fromTuple(['visitsCount', 'DESC'])),
             [
-                ['foo', 2, 4],
-                ['bar', 3, 3],
+                ['foo', 2, 4, 3],
+                ['bar', 3, 3, 2],
             ],
         ];
         yield 'api key' => [new TagsListFiltering(null, null, null, null, ApiKey::fromMeta(
             ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()),
         )), [
-            ['bar', 2, 3],
-            ['baz', 1, 3],
-            ['foo', 1, 3],
+            ['bar', 2, 3, 2],
+            ['baz', 1, 3, 2],
+            ['foo', 1, 3, 2],
         ]];
         yield 'combined' => [new TagsListFiltering(1, null, null, Ordering::fromTuple(
             ['shortUrls', 'DESC'],
         ), ApiKey::fromMeta(
             ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()),
         )), [
-            ['foo', 1, 3],
+            ['foo', 1, 3, 2],
         ]];
     }
 
