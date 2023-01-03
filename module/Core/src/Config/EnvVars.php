@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config;
 
-use function Functional\map;
 use function Shlinkio\Shlink\Config\env;
 
 enum EnvVars: string
@@ -76,14 +75,5 @@ enum EnvVars: string
     public function existsInEnv(): bool
     {
         return $this->loadFromEnv() !== null;
-    }
-
-    /**
-     * @return string[]
-     */
-    public static function values(): array
-    {
-        static $values;
-        return $values ?? ($values = map(self::cases(), static fn (EnvVars $envVar) => $envVar->value));
     }
 }

@@ -40,6 +40,7 @@
         "mezzio/mezzio-problem-details": "^1.7",
         "mezzio/mezzio-swoole": "^4.5",
         "mlocati/ip-lib": "^1.18",
+        "mobiledetect/mobiledetectlib": "^3.74",
         "ocramius/proxy-manager": "^2.14",
         "pagerfanta/core": "^3.6",
         "php-middleware/request-id": "^4.1",
