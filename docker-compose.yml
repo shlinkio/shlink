@@ -102,7 +102,7 @@ services:
 
     shlink_db_mysql:
         container_name: shlink_db_mysql
-        image: mysql:5.7
+        image: mysql:8.0
         ports:
             - "3307:3306"
         volumes:
@@ -175,7 +175,7 @@ services:
 
     shlink_mercure:
         container_name: shlink_mercure
-        image: dunglas/mercure:v0.13
+        image: dunglas/mercure:v0.14
         ports:
             - "3080:80"
         environment:
