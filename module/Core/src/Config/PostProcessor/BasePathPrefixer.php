@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Config;
+namespace Shlinkio\Shlink\Core\Config\PostProcessor;
 
 use function Functional\map;
 

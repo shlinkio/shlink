@@ -17,4 +17,9 @@ enum RedirectStatus: int
     {
         return contains([self::STATUS_301, self::STATUS_308], $this);
     }
+
+    public function isLegacyStatus(): bool
+    {
+        return contains([self::STATUS_301, self::STATUS_302], $this);
+    }
 }

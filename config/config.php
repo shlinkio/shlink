@@ -48,6 +48,6 @@ return (new ConfigAggregator\ConfigAggregator([
     // Routes have to be loaded last
     new ConfigAggregator\PhpFileProvider('config/autoload/routes.config.php'),
 ], 'data/cache/app_config.php', [
-    Core\Config\BasePathPrefixer::class,
-    Core\Config\MultiSegmentSlugProcessor::class,
+    Core\Config\PostProcessor\BasePathPrefixer::class,
+    Core\Config\PostProcessor\MultiSegmentSlugProcessor::class,
 ]))->getMergedConfig();
