@@ -50,4 +50,5 @@ return (new ConfigAggregator\ConfigAggregator([
 ], 'data/cache/app_config.php', [
     Core\Config\PostProcessor\BasePathPrefixer::class,
     Core\Config\PostProcessor\MultiSegmentSlugProcessor::class,
+    Core\Config\PostProcessor\ShortUrlMethodsProcessor::class,
 ]))->getMergedConfig();
