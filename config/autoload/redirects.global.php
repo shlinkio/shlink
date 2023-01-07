@@ -16,7 +16,7 @@ return [
     ],
 
     'redirects' => [
-        'redirect_status_code' => (int) EnvVars::REDIRECT_STATUS_CODE->loadFromEnv(DEFAULT_REDIRECT_STATUS_CODE),
+        'redirect_status_code' => (int) EnvVars::REDIRECT_STATUS_CODE->loadFromEnv(DEFAULT_REDIRECT_STATUS_CODE->value),
         'redirect_cache_lifetime' => (int) EnvVars::REDIRECT_CACHE_LIFETIME->loadFromEnv(
             DEFAULT_REDIRECT_CACHE_LIFETIME,
         ),
