@@ -23,6 +23,7 @@ return (static function (): array {
                 'options' => [
                     'worker_num' => (int) EnvVars::WEB_WORKER_NUM->loadFromEnv(16),
                     'task_worker_num' => max($taskWorkers, MIN_TASK_WORKERS),
+                    'package_max_length' => (int) EnvVars::PACKAGE_MAX_LENGTH->loadFromEnv(2 * 1024 * 1024),
                 ],
             ],
         ],
