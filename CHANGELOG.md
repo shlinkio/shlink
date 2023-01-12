@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   The status 308 is equivalent to 301, and 307 is equivalent to 302. The difference is that the spec requires the client to respect the original HTTP method when performing the redirect. With 301 and 302, some old clients might perform a `GET` request during the redirect, regardless the original request method.
 
+* [#1662](https://github.com/shlinkio/shlink/issues/1662) Added support to provide openswoole-specific config options via env vars prefixed with `OPENSWOOLE_`.
+
 ### Changed
 * *Nothing*
 

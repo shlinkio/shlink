@@ -135,7 +135,7 @@ class NotFoundRedirectResolverTest extends TestCase
                 RouteResult::class,
                 RouteResult::fromRoute(
                     new Route(
-                        '',
+                        'foo',
                         $this->createMock(MiddlewareInterface::class),
                         ['GET'],
                         $routeName,
