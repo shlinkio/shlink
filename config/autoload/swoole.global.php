@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
+use function Shlinkio\Shlink\Config\getOpenswooleConfigFromEnv;
+
 use const Shlinkio\Shlink\MIN_TASK_WORKERS;
 
 return (static function (): array {
@@ -21,6 +23,7 @@ return (static function (): array {
                 'process-name' => 'shlink',
 
                 'options' => [
+                    ...getOpenswooleConfigFromEnv(),
                     'worker_num' => (int) EnvVars::WEB_WORKER_NUM->loadFromEnv(16),
                     'task_worker_num' => max($taskWorkers, MIN_TASK_WORKERS),
                 ],
