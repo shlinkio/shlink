@@ -6,17 +6,14 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function Functional\map;
 use function Shlinkio\Shlink\Core\getNonEmptyOptionalValueFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
 use function Shlinkio\Shlink\Core\normalizeOptionalDate;
-use function trim;
 
 use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
@@ -24,7 +21,7 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
 {
     /**
      * @param string[] $tags
-     * @param array{DeviceType, string}[] $deviceLongUrls
+     * @param DeviceLongUrlPair[] $deviceLongUrls
      */
     private function __construct(
         public readonly string $longUrl,
@@ -46,6 +43,9 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
     ) {
     }
 
+    /**
+     * @deprecated This should not be allowed
+     */
     public static function createEmpty(): self
     {
         return new self('');
@@ -63,9 +63,8 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
 
         return new self(
             longUrl: $inputFilter->getValue(ShortUrlInputFilter::LONG_URL),
-            deviceLongUrls: map(
+            deviceLongUrls: DeviceLongUrlPair::fromMapToList(
                 $inputFilter->getValue(ShortUrlInputFilter::DEVICE_LONG_URLS) ?? [],
-                static fn (string $longUrl, string $deviceType) => [DeviceType::from($deviceType), trim($longUrl)],
             ),
             validSince: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE)),
             validUntil: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL)),
@@ -89,22 +88,22 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
     public function withResolvedTitle(string $title): self
     {
         return new self(
-            $this->longUrl,
-            $this->deviceLongUrls,
-            $this->validSince,
-            $this->validUntil,
-            $this->customSlug,
-            $this->maxVisits,
-            $this->findIfExists,
-            $this->domain,
-            $this->shortCodeLength,
-            $this->validateUrl,
-            $this->apiKey,
-            $this->tags,
-            $title,
-            true,
-            $this->crawlable,
-            $this->forwardQuery,
+            longUrl: $this->longUrl,
+            deviceLongUrls: $this->deviceLongUrls,
+            validSince: $this->validSince,
+            validUntil: $this->validUntil,
+            customSlug: $this->customSlug,
+            maxVisits: $this->maxVisits,
+            findIfExists: $this->findIfExists,
+            domain: $this->domain,
+            shortCodeLength: $this->shortCodeLength,
+            validateUrl: $this->validateUrl,
+            apiKey: $this->apiKey,
+            tags: $this->tags,
+            title: $title,
+            titleWasAutoResolved: true,
+            crawlable: $this->crawlable,
+            forwardQuery: $this->forwardQuery,
         );
     }
 

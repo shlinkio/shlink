@@ -78,7 +78,7 @@ class ShortUrlInputFilter extends InputFilter
         $this->add($longUrlInput);
 
         $deviceLongUrlsInput = $this->createInput(self::DEVICE_LONG_URLS, false);
-        $deviceLongUrlsInput->getValidatorChain()->attach(
+        $deviceLongUrlsInput->getValidatorChain()->attach( // TODO Extract callback to own validator
             new Validator\Callback(function (mixed $value) use ($notEmptyValidator): bool {
                 if (! is_array($value)) {
                     // TODO Set proper error: Not array

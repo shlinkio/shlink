@@ -73,10 +73,10 @@ class ShortUrlServiceTest extends TestCase
         );
 
         self::assertSame($shortUrl, $result);
-        self::assertEquals($shortUrlEdit->validSince(), $shortUrl->getValidSince());
-        self::assertEquals($shortUrlEdit->validUntil(), $shortUrl->getValidUntil());
-        self::assertEquals($shortUrlEdit->maxVisits(), $shortUrl->getMaxVisits());
-        self::assertEquals($shortUrlEdit->longUrl() ?? $originalLongUrl, $shortUrl->getLongUrl());
+        self::assertEquals($shortUrlEdit->validSince, $shortUrl->getValidSince());
+        self::assertEquals($shortUrlEdit->validUntil, $shortUrl->getValidUntil());
+        self::assertEquals($shortUrlEdit->maxVisits, $shortUrl->getMaxVisits());
+        self::assertEquals($shortUrlEdit->longUrl ?? $originalLongUrl, $shortUrl->getLongUrl());
     }
 
     public function provideShortUrlEdits(): iterable

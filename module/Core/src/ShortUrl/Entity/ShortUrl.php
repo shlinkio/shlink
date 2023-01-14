@@ -55,6 +55,9 @@ class ShortUrl extends AbstractEntity
     {
     }
 
+    /**
+     * @deprecated This should not be allowed
+     */
     public static function createEmpty(): self
     {
         return self::create(ShortUrlCreation::createEmpty());
@@ -226,34 +229,34 @@ class ShortUrl extends AbstractEntity
         ?ShortUrlRelationResolverInterface $relationResolver = null,
     ): void {
         if ($shortUrlEdit->validSinceWasProvided()) {
-            $this->validSince = $shortUrlEdit->validSince();
+            $this->validSince = $shortUrlEdit->validSince;
         }
         if ($shortUrlEdit->validUntilWasProvided()) {
-            $this->validUntil = $shortUrlEdit->validUntil();
+            $this->validUntil = $shortUrlEdit->validUntil;
         }
         if ($shortUrlEdit->maxVisitsWasProvided()) {
-            $this->maxVisits = $shortUrlEdit->maxVisits();
+            $this->maxVisits = $shortUrlEdit->maxVisits;
         }
         if ($shortUrlEdit->longUrlWasProvided()) {
-            $this->longUrl = $shortUrlEdit->longUrl() ?? $this->longUrl;
+            $this->longUrl = $shortUrlEdit->longUrl ?? $this->longUrl;
         }
         if ($shortUrlEdit->tagsWereProvided()) {
             $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
-            $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags());
+            $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags);
         }
         if ($shortUrlEdit->crawlableWasProvided()) {
-            $this->crawlable = $shortUrlEdit->crawlable();
+            $this->crawlable = $shortUrlEdit->crawlable;
         }
         if (
             $this->title === null
             || $shortUrlEdit->titleWasProvided()
             || ($this->titleWasAutoResolved && $shortUrlEdit->titleWasAutoResolved())
         ) {
-            $this->title = $shortUrlEdit->title();
+            $this->title = $shortUrlEdit->title;
             $this->titleWasAutoResolved = $shortUrlEdit->titleWasAutoResolved();
         }
         if ($shortUrlEdit->forwardQueryWasProvided()) {
-            $this->forwardQuery = $shortUrlEdit->forwardQuery();
+            $this->forwardQuery = $shortUrlEdit->forwardQuery;
         }
     }
 
