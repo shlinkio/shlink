@@ -9,10 +9,20 @@ use Shlinkio\Shlink\Core\Model\DeviceType;
 
 class DeviceLongUrl extends AbstractEntity
 {
-    private function __construct(
+    public function __construct(
         public readonly ShortUrl $shortUrl,
         public readonly DeviceType $deviceType,
-        public readonly string $longUrl,
+        private string $longUrl,
     ) {
+    }
+
+    public function longUrl(): string
+    {
+        return $this->longUrl;
+    }
+
+    public function updateLongUrl(string $longUrl): void
+    {
+        $this->longUrl = $longUrl;
     }
 }

@@ -60,6 +60,9 @@ class ShortUrl extends AbstractEntity
         return self::create(ShortUrlCreation::createEmpty());
     }
 
+    /**
+     * @param non-empty-string $longUrl
+     */
     public static function withLongUrl(string $longUrl): self
     {
         return self::create(ShortUrlCreation::fromRawData([ShortUrlInputFilter::LONG_URL => $longUrl]));
@@ -75,19 +78,19 @@ class ShortUrl extends AbstractEntity
         $instance->longUrl = $creation->getLongUrl();
         $instance->dateCreated = Chronos::now();
         $instance->visits = new ArrayCollection();
-        $instance->tags = $relationResolver->resolveTags($creation->getTags());
-        $instance->validSince = $creation->getValidSince();
-        $instance->validUntil = $creation->getValidUntil();
-        $instance->maxVisits = $creation->getMaxVisits();
+        $instance->tags = $relationResolver->resolveTags($creation->tags);
+        $instance->validSince = $creation->validSince;
+        $instance->validUntil = $creation->validUntil;
+        $instance->maxVisits = $creation->maxVisits;
         $instance->customSlugWasProvided = $creation->hasCustomSlug();
-        $instance->shortCodeLength = $creation->getShortCodeLength();
-        $instance->shortCode = $creation->getCustomSlug() ?? generateRandomShortCode($instance->shortCodeLength);
-        $instance->domain = $relationResolver->resolveDomain($creation->getDomain());
-        $instance->authorApiKey = $creation->getApiKey();
-        $instance->title = $creation->getTitle();
-        $instance->titleWasAutoResolved = $creation->titleWasAutoResolved();
-        $instance->crawlable = $creation->isCrawlable();
-        $instance->forwardQuery = $creation->forwardQuery();
+        $instance->shortCodeLength = $creation->shortCodeLength;
+        $instance->shortCode = $creation->customSlug ?? generateRandomShortCode($instance->shortCodeLength);
+        $instance->domain = $relationResolver->resolveDomain($creation->domain);
+        $instance->authorApiKey = $creation->apiKey;
+        $instance->title = $creation->title;
+        $instance->titleWasAutoResolved = $creation->titleWasAutoResolved;
+        $instance->crawlable = $creation->crawlable;
+        $instance->forwardQuery = $creation->forwardQuery;
 
         return $instance;
     }

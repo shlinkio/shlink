@@ -100,9 +100,8 @@ class CreateShortUrlCommandTest extends TestCase
     {
         $shortUrl = ShortUrl::createEmpty();
         $this->urlShortener->expects($this->once())->method('shorten')->with(
-            $this->callback(function (ShortUrlCreation $meta) {
-                $tags = $meta->getTags();
-                Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $tags);
+            $this->callback(function (ShortUrlCreation $creation) {
+                Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $creation->tags);
                 return true;
             }),
         )->willReturn($shortUrl);
@@ -128,7 +127,7 @@ class CreateShortUrlCommandTest extends TestCase
     {
         $this->urlShortener->expects($this->once())->method('shorten')->with(
             $this->callback(function (ShortUrlCreation $meta) use ($expectedDomain) {
-                Assert::assertEquals($expectedDomain, $meta->getDomain());
+                Assert::assertEquals($expectedDomain, $meta->domain);
                 return true;
             }),
         )->willReturn(ShortUrl::createEmpty());

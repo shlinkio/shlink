@@ -80,24 +80,24 @@ class ShortUrlCreationTest extends TestCase
         string $expectedSlug,
         bool $multiSegmentEnabled = false,
     ): void {
-        $meta = ShortUrlCreation::fromRawData([
+        $creation = ShortUrlCreation::fromRawData([
             'validSince' => Chronos::parse('2015-01-01')->toAtomString(),
             'customSlug' => $customSlug,
-            'longUrl' => '',
+            'longUrl' => 'longUrl',
             EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value => $multiSegmentEnabled,
         ]);
 
-        self::assertTrue($meta->hasValidSince());
-        self::assertEquals(Chronos::parse('2015-01-01'), $meta->getValidSince());
+        self::assertTrue($creation->hasValidSince());
+        self::assertEquals(Chronos::parse('2015-01-01'), $creation->validSince);
 
-        self::assertFalse($meta->hasValidUntil());
-        self::assertNull($meta->getValidUntil());
+        self::assertFalse($creation->hasValidUntil());
+        self::assertNull($creation->validUntil);
 
-        self::assertTrue($meta->hasCustomSlug());
-        self::assertEquals($expectedSlug, $meta->getCustomSlug());
+        self::assertTrue($creation->hasCustomSlug());
+        self::assertEquals($expectedSlug, $creation->customSlug);
 
-        self::assertFalse($meta->hasMaxVisits());
-        self::assertNull($meta->getMaxVisits());
+        self::assertFalse($creation->hasMaxVisits());
+        self::assertNull($creation->maxVisits);
     }
 
     public function provideCustomSlugs(): iterable
@@ -127,12 +127,12 @@ class ShortUrlCreationTest extends TestCase
      */
     public function titleIsCroppedIfTooLong(?string $title, ?string $expectedTitle): void
     {
-        $meta = ShortUrlCreation::fromRawData([
+        $creation = ShortUrlCreation::fromRawData([
             'title' => $title,
-            'longUrl' => '',
+            'longUrl' => 'longUrl',
         ]);
 
-        self::assertEquals($expectedTitle, $meta->getTitle());
+        self::assertEquals($expectedTitle, $creation->title);
     }
 
     public function provideTitles(): iterable
@@ -153,12 +153,12 @@ class ShortUrlCreationTest extends TestCase
      */
     public function emptyDomainIsDiscarded(?string $domain, ?string $expectedDomain): void
     {
-        $meta = ShortUrlCreation::fromRawData([
+        $creation = ShortUrlCreation::fromRawData([
             'domain' => $domain,
-            'longUrl' => '',
+            'longUrl' => 'longUrl',
         ]);
 
-        self::assertSame($expectedDomain, $meta->getDomain());
+        self::assertSame($expectedDomain, $creation->domain);
     }
 
     public function provideDomains(): iterable

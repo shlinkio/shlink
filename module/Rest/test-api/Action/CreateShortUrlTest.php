@@ -261,9 +261,8 @@ class CreateShortUrlTest extends ApiTestCase
 
     public function provideInvalidUrls(): iterable
     {
-        yield 'empty URL' => ['', '2', 'INVALID_URL'];
-        yield 'non-reachable URL' => ['https://this-has-to-be-invalid.com', '2', 'INVALID_URL'];
-        yield 'API version 3' => ['', '3', 'https://shlink.io/api/error/invalid-url'];
+        yield 'API version 2' => ['https://this-has-to-be-invalid.com', '2', 'INVALID_URL'];
+        yield 'API version 3' => ['https://this-has-to-be-invalid.com', '3', 'https://shlink.io/api/error/invalid-url'];
     }
 
     /**

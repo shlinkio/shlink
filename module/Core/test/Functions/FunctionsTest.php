@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Functions;
 
+use BackedEnum;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\Model\DeviceType;
@@ -16,6 +17,7 @@ use function Shlinkio\Shlink\Core\enumValues;
 class FunctionsTest extends TestCase
 {
     /**
+     * @param class-string<BackedEnum> $enum
      * @test
      * @dataProvider provideEnums
      */

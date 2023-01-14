@@ -57,15 +57,15 @@ class UrlShortener implements UrlShortenerInterface
         return $newShortUrl;
     }
 
-    private function findExistingShortUrlIfExists(ShortUrlCreation $meta): ?ShortUrl
+    private function findExistingShortUrlIfExists(ShortUrlCreation $creation): ?ShortUrl
     {
-        if (! $meta->findIfExists()) {
+        if (! $creation->findIfExists) {
             return null;
         }
 
         /** @var ShortUrlRepositoryInterface $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        return $repo->findOneMatching($meta);
+        return $repo->findOneMatching($creation);
     }
 
     private function verifyShortCodeUniqueness(ShortUrlCreation $meta, ShortUrl $shortUrlToBeCreated): void

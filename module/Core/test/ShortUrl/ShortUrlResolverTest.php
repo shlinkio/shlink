@@ -114,7 +114,7 @@ class ShortUrlResolverTest extends TestCase
         $now = Chronos::now();
 
         yield 'maxVisits reached' => [(function () {
-            $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => '']));
+            $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => 'longUrl']));
             $shortUrl->setVisits(new ArrayCollection(map(
                 range(0, 4),
                 fn () => Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
@@ -123,16 +123,16 @@ class ShortUrlResolverTest extends TestCase
             return $shortUrl;
         })()];
         yield 'future validSince' => [ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['validSince' => $now->addMonth()->toAtomString(), 'longUrl' => ''],
+            ['validSince' => $now->addMonth()->toAtomString(), 'longUrl' => 'longUrl'],
         ))];
         yield 'past validUntil' => [ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['validUntil' => $now->subMonth()->toAtomString(), 'longUrl' => ''],
+            ['validUntil' => $now->subMonth()->toAtomString(), 'longUrl' => 'longUrl'],
         ))];
         yield 'mixed' => [(function () use ($now) {
             $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
                 'maxVisits' => 3,
                 'validUntil' => $now->subMonth()->toAtomString(),
-                'longUrl' => '',
+                'longUrl' => 'longUrl',
             ]));
             $shortUrl->setVisits(new ArrayCollection(map(
                 range(0, 4),

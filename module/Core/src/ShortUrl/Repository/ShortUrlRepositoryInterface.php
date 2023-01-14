@@ -22,7 +22,7 @@ interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificat
 
     public function shortCodeIsInUseWithLock(ShortUrlIdentifier $identifier, ?Specification $spec = null): bool;
 
-    public function findOneMatching(ShortUrlCreation $meta): ?ShortUrl;
+    public function findOneMatching(ShortUrlCreation $creation): ?ShortUrl;
 
     public function findOneByImportedUrl(ImportedShlinkUrl $url): ?ShortUrl;
 }

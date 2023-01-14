@@ -38,7 +38,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'customSlug' => 'foo',
-            'longUrl' => '',
+            'longUrl' => 'longUrl',
             'title' => $title,
         ]));
         $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
@@ -51,7 +51,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'shortUrl' => [
                 'shortCode' => $shortUrl->getShortCode(),
                 'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
-                'longUrl' => '',
+                'longUrl' => 'longUrl',
                 'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
                 'visitsCount' => 0,
                 'tags' => [],
@@ -118,7 +118,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'customSlug' => 'foo',
-            'longUrl' => '',
+            'longUrl' => 'longUrl',
             'title' => 'The title',
         ]));
 
@@ -128,7 +128,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
         self::assertEquals(['shortUrl' => [
             'shortCode' => $shortUrl->getShortCode(),
             'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
-            'longUrl' => '',
+            'longUrl' => 'longUrl',
             'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
             'visitsCount' => 0,
             'tags' => [],
