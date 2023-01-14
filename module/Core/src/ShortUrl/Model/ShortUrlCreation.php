@@ -85,7 +85,7 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
         );
     }
 
-    public function withResolvedTitle(string $title): self
+    public function withResolvedTitle(string $title): static
     {
         return new self(
             longUrl: $this->longUrl,

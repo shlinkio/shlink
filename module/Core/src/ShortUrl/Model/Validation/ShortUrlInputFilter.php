@@ -10,16 +10,9 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
 use Shlinkio\Shlink\Core\Config\EnvVars;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function array_keys;
-use function array_values;
-use function Functional\contains;
-use function Functional\every;
-use function is_array;
 use function is_string;
-use function Shlinkio\Shlink\Core\enumValues;
 use function str_replace;
 use function substr;
 use function trim;
@@ -64,37 +57,20 @@ class ShortUrlInputFilter extends InputFilter
 
     private function initialize(bool $requireLongUrl, bool $multiSegmentEnabled): void
     {
-        $notEmptyValidator = new Validator\NotEmpty([
+        $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
+        $longUrlInput->getValidatorChain()->attach(new Validator\NotEmpty([
             Validator\NotEmpty::OBJECT,
             Validator\NotEmpty::SPACE,
             Validator\NotEmpty::NULL,
             Validator\NotEmpty::EMPTY_ARRAY,
             Validator\NotEmpty::BOOLEAN,
             Validator\NotEmpty::STRING,
-        ]);
-
-        $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
-        $longUrlInput->getValidatorChain()->attach($notEmptyValidator);
+        ]));
         $this->add($longUrlInput);
 
         $deviceLongUrlsInput = $this->createInput(self::DEVICE_LONG_URLS, false);
-        $deviceLongUrlsInput->getValidatorChain()->attach( // TODO Extract callback to own validator
-            new Validator\Callback(function (mixed $value) use ($notEmptyValidator): bool {
-                if (! is_array($value)) {
-                    // TODO Set proper error: Not array
-                    return false;
-                }
-
-                $validValues = enumValues(DeviceType::class);
-                $keys = array_keys($value);
-                if (! every($keys, static fn ($key) => contains($validValues, $key))) {
-                    // TODO Set proper error: Provided invalid device type
-                    return false;
-                }
-
-                $longUrls = array_values($value);
-                return every($longUrls, $notEmptyValidator->isValid(...));
-            }),
+        $deviceLongUrlsInput->getValidatorChain()->attach(
+            new DeviceLongUrlsValidator($longUrlInput->getValidatorChain()),
         );
         $this->add($deviceLongUrlsInput);
 

@@ -21,7 +21,7 @@ class ApiKey extends AbstractEntity
     private string $key;
     private ?Chronos $expirationDate = null;
     private bool $enabled;
-    /** @var Collection|ApiKeyRole[] */
+    /** @var Collection<string, ApiKeyRole> */
     private Collection $roles;
     private ?string $name = null;
 

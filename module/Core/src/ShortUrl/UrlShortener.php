@@ -31,22 +31,21 @@ class UrlShortener implements UrlShortenerInterface
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      */
-    public function shorten(ShortUrlCreation $meta): ShortUrl
+    public function shorten(ShortUrlCreation $creation): ShortUrl
     {
         // First, check if a short URL exists for all provided params
-        $existingShortUrl = $this->findExistingShortUrlIfExists($meta);
+        $existingShortUrl = $this->findExistingShortUrlIfExists($creation);
         if ($existingShortUrl !== null) {
             return $existingShortUrl;
         }
 
-        /** @var \Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation $meta */
-        $meta = $this->titleResolutionHelper->processTitleAndValidateUrl($meta);
+        $creation = $this->titleResolutionHelper->processTitleAndValidateUrl($creation);
 
         /** @var ShortUrl $newShortUrl */
-        $newShortUrl = $this->em->wrapInTransaction(function () use ($meta) {
-            $shortUrl = ShortUrl::create($meta, $this->relationResolver);
+        $newShortUrl = $this->em->wrapInTransaction(function () use ($creation): ShortUrl {
+            $shortUrl = ShortUrl::create($creation, $this->relationResolver);
 
-            $this->verifyShortCodeUniqueness($meta, $shortUrl);
+            $this->verifyShortCodeUniqueness($creation, $shortUrl);
             $this->em->persist($shortUrl);
 
             return $shortUrl;

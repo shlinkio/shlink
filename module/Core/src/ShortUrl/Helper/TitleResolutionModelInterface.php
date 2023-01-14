@@ -12,5 +12,5 @@ interface TitleResolutionModelInterface
 
     public function doValidateUrl(): bool;
 
-    public function withResolvedTitle(string $title): self;
+    public function withResolvedTitle(string $title): static;
 }

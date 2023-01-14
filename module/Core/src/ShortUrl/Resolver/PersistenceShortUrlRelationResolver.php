@@ -49,7 +49,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
 
     /**
      * @param string[] $tags
-     * @return Collection|Tag[]
+     * @return Collection<int, Tag>
      */
     public function resolveTags(array $tags): Collections\Collection
     {

@@ -6,14 +6,21 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Entity;
 
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Model\DeviceType;
+use Shlinkio\Shlink\Core\ShortUrl\Model\DeviceLongUrlPair;
 
 class DeviceLongUrl extends AbstractEntity
 {
-    public function __construct(
-        public readonly ShortUrl $shortUrl,
+    private ShortUrl $shortUrl; // @phpstan-ignore-line
+
+    private function __construct(
         public readonly DeviceType $deviceType,
         private string $longUrl,
     ) {
+    }
+
+    public static function fromPair(DeviceLongUrlPair $pair): self
+    {
+        return new self($pair->deviceType, $pair->longUrl);
     }
 
     public function longUrl(): string

@@ -15,5 +15,5 @@ interface UrlShortenerInterface
      * @throws NonUniqueSlugException
      * @throws InvalidUrlException
      */
-    public function shorten(ShortUrlCreation $meta): ShortUrl;
+    public function shorten(ShortUrlCreation $creation): ShortUrl;
 }
