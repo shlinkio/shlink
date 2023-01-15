@@ -170,7 +170,7 @@ class ShortUrl extends AbstractEntity
         }
         foreach ($shortUrlEdit->deviceLongUrls as $deviceLongUrlPair) {
             $deviceLongUrl = $this->deviceLongUrls->findFirst(
-                fn ($_, DeviceLongUrl $d) => $d->deviceType === $deviceLongUrlPair->deviceType,
+                fn ($_, DeviceLongUrl $d) => $d->deviceType() === $deviceLongUrlPair->deviceType,
             );
 
             if ($deviceLongUrl !== null) {
@@ -322,7 +322,7 @@ class ShortUrl extends AbstractEntity
     {
         $data = [];
         foreach ($this->deviceLongUrls as $deviceUrl) {
-            $data[$deviceUrl->deviceType->value] = $deviceUrl->longUrl();
+            $data[$deviceUrl->deviceType()->value] = $deviceUrl->longUrl();
         }
 
         return $data;
