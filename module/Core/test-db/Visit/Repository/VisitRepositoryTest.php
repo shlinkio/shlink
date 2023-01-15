@@ -265,7 +265,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($apiKey1);
         $shortUrl = ShortUrl::create(
             ShortUrlCreation::fromRawData(
-                ['apiKey' => $apiKey1, 'domain' => $domain->getAuthority(), 'longUrl' => 'longUrl'],
+                ['apiKey' => $apiKey1, 'domain' => $domain->authority(), 'longUrl' => 'longUrl'],
             ),
             $this->relationResolver,
         );
@@ -280,7 +280,7 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $shortUrl3 = ShortUrl::create(
             ShortUrlCreation::fromRawData(
-                ['apiKey' => $apiKey2, 'domain' => $domain->getAuthority(), 'longUrl' => 'longUrl'],
+                ['apiKey' => $apiKey2, 'domain' => $domain->authority(), 'longUrl' => 'longUrl'],
             ),
             $this->relationResolver,
         );

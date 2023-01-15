@@ -18,6 +18,7 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
 {
     /**
      * @param string[] $tags
+     * @param DeviceLongUrlPair[] $deviceLongUrls
      */
     private function __construct(
         private readonly bool $longUrlPropWasProvided = false,

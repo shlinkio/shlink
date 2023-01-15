@@ -52,7 +52,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
             self::assertSame($result, $foundDomain);
         }
         self::assertInstanceOf(Domain::class, $result);
-        self::assertEquals($authority, $result->getAuthority());
+        self::assertEquals($authority, $result->authority());
     }
 
     public function provideFoundDomains(): iterable

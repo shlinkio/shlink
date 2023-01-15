@@ -10,17 +10,16 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\DeviceLongUrlPair;
 
 class DeviceLongUrl extends AbstractEntity
 {
-    private ShortUrl $shortUrl; // @phpstan-ignore-line
-
     private function __construct(
+        private readonly ShortUrl $shortUrl, // No need to read this field. It's used by doctrine
         public readonly DeviceType $deviceType,
         private string $longUrl,
     ) {
     }
 
-    public static function fromPair(DeviceLongUrlPair $pair): self
+    public static function fromShortUrlAndPair(ShortUrl $shortUrl, DeviceLongUrlPair $pair): self
     {
-        return new self($pair->deviceType, $pair->longUrl);
+        return new self($shortUrl, $pair->deviceType, $pair->longUrl);
     }
 
     public function longUrl(): string

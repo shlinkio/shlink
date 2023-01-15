@@ -270,7 +270,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'validSince' => $start,
             'apiKey' => $apiKey,
-            'domain' => $rightDomain->getAuthority(),
+            'domain' => $rightDomain->authority(),
             'longUrl' => 'foo',
             'tags' => ['foo', 'bar'],
         ]), $this->relationResolver);
@@ -313,7 +313,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             $shortUrl,
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'validSince' => $start,
-                'domain' => $rightDomain->getAuthority(),
+                'domain' => $rightDomain->authority(),
                 'longUrl' => 'foo',
                 'tags' => ['foo', 'bar'],
             ])),
@@ -322,7 +322,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             $shortUrl,
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'validSince' => $start,
-                'domain' => $rightDomain->getAuthority(),
+                'domain' => $rightDomain->authority(),
                 'apiKey' => $rightDomainApiKey,
                 'longUrl' => 'foo',
                 'tags' => ['foo', 'bar'],
@@ -332,7 +332,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             $shortUrl,
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'validSince' => $start,
-                'domain' => $rightDomain->getAuthority(),
+                'domain' => $rightDomain->authority(),
                 'apiKey' => $apiKey,
                 'longUrl' => 'foo',
                 'tags' => ['foo', 'bar'],
@@ -341,7 +341,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         self::assertNull(
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'validSince' => $start,
-                'domain' => $rightDomain->getAuthority(),
+                'domain' => $rightDomain->authority(),
                 'apiKey' => $wrongDomainApiKey,
                 'longUrl' => 'foo',
                 'tags' => ['foo', 'bar'],

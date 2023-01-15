@@ -15,9 +15,9 @@ use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 class VisitsTracker implements VisitsTrackerInterface
 {
     public function __construct(
-        private ORM\EntityManagerInterface $em,
-        private EventDispatcherInterface $eventDispatcher,
-        private TrackingOptions $options,
+        private readonly ORM\EntityManagerInterface $em,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly TrackingOptions $options,
     ) {
     }
 
@@ -62,6 +62,9 @@ class VisitsTracker implements VisitsTrackerInterface
         $this->trackVisit($createVisit, $visitor);
     }
 
+    /**
+     * @param callable(Visitor $visitor): Visit $createVisit
+     */
     private function trackVisit(callable $createVisit, Visitor $visitor): void
     {
         if ($this->options->disableTracking) {

@@ -11,7 +11,7 @@ use function sprintf;
 
 class ShortUrlStringifier implements ShortUrlStringifierInterface
 {
-    public function __construct(private array $domainConfig, private string $basePath = '')
+    public function __construct(private readonly array $domainConfig, private readonly string $basePath = '')
     {
     }
 
@@ -28,6 +28,6 @@ class ShortUrlStringifier implements ShortUrlStringifierInterface
 
     private function resolveDomain(ShortUrl $shortUrl): string
     {
-        return $shortUrl->getDomain()?->getAuthority() ?? $this->domainConfig['hostname'] ?? '';
+        return $shortUrl->getDomain()?->authority() ?? $this->domainConfig['hostname'] ?? '';
     }
 }

@@ -24,14 +24,14 @@ class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirec
         return new self($authority);
     }
 
-    public function getAuthority(): string
+    public function authority(): string
     {
         return $this->authority;
     }
 
     public function jsonSerialize(): string
     {
-        return $this->getAuthority();
+        return $this->authority;
     }
 
     public function invalidShortUrlRedirect(): ?string
