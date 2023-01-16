@@ -46,7 +46,7 @@
         "php-middleware/request-id": "^4.1",
         "pugx/shortid-php": "^1.1",
         "ramsey/uuid": "^4.5",
-        "shlinkio/shlink-common": "^5.2",
+        "shlinkio/shlink-common": "dev-main#61d26e7 as 5.3",
         "shlinkio/shlink-config": "dev-main#2a5b5c2 as 2.4",
         "shlinkio/shlink-event-dispatcher": "^2.6",
         "shlinkio/shlink-importer": "^5.0",

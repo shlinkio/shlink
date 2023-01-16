@@ -249,7 +249,7 @@ class TagRepositoryTest extends DatabaseTestCase
 
         $shortUrl2 = ShortUrl::create(
             ShortUrlCreation::fromRawData(
-                ['domain' => $domain->authority(), 'longUrl' => 'longUrl', 'tags' => $secondUrlTags],
+                ['domain' => $domain->authority, 'longUrl' => 'longUrl', 'tags' => $secondUrlTags],
             ),
             $this->relationResolver,
         );

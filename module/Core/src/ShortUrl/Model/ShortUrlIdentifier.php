@@ -45,7 +45,7 @@ final class ShortUrlIdentifier
     public static function fromShortUrl(ShortUrl $shortUrl): self
     {
         $domain = $shortUrl->getDomain();
-        $domainAuthority = $domain?->authority();
+        $domainAuthority = $domain?->authority;
 
         return new self($shortUrl->getShortCode(), $domainAuthority);
     }

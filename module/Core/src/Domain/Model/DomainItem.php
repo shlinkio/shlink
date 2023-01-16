@@ -20,7 +20,7 @@ final class DomainItem implements JsonSerializable
 
     public static function forNonDefaultDomain(Domain $domain): self
     {
-        return new self($domain->authority(), $domain, false);
+        return new self($domain->authority, $domain, false);
     }
 
     public static function forDefaultDomain(string $defaultDomain, NotFoundRedirectConfigInterface $config): self

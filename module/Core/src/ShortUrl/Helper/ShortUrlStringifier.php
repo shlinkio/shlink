@@ -28,6 +28,6 @@ class ShortUrlStringifier implements ShortUrlStringifierInterface
 
     private function resolveDomain(ShortUrl $shortUrl): string
     {
-        return $shortUrl->getDomain()?->authority() ?? $this->domainConfig['hostname'] ?? '';
+        return $shortUrl->getDomain()?->authority ?? $this->domainConfig['hostname'] ?? '';
     }
 }

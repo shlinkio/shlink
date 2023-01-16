@@ -76,7 +76,7 @@ class UrlShortener implements UrlShortenerInterface
 
         if (! $couldBeMadeUnique) {
             $domain = $shortUrlToBeCreated->getDomain();
-            $domainAuthority = $domain?->authority();
+            $domainAuthority = $domain?->authority;
 
             throw NonUniqueSlugException::fromSlug($shortUrlToBeCreated->getShortCode(), $domainAuthority);
         }
