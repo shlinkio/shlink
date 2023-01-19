@@ -166,6 +166,6 @@ class ShortUrlCreationTest extends TestCase
         yield 'null domain' => [null, null];
         yield 'empty domain' => ['', null];
         yield 'trimmable domain' => ['   ', null];
-        yield 'valid domain' => ['doma.in', 'doma.in'];
+        yield 'valid domain' => ['s.test', 's.test'];
     }
 }

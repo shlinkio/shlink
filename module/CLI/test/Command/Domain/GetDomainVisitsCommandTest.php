@@ -44,7 +44,7 @@ class GetDomainVisitsCommandTest extends TestCase
         $visit = Visit::forValidShortUrl($shortUrl, new Visitor('bar', 'foo', '', ''))->locate(
             VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
-        $domain = 'doma.in';
+        $domain = 's.test';
         $this->visitsHelper->expects($this->once())->method('visitsForDomain')->with(
             $domain,
             $this->anything(),

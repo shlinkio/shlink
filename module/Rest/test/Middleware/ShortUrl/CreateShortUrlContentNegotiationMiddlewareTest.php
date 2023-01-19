@@ -51,7 +51,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 
         $this->requestHandler->expects($this->once())->method('handle')->with(
             $this->isInstanceOf(ServerRequestInterface::class),
-        )->willReturn(new JsonResponse(['shortUrl' => 'http://doma.in/foo']));
+        )->willReturn(new JsonResponse(['shortUrl' => 'http://s.test/foo']));
 
         $response = $this->middleware->process($request, $this->requestHandler);
 

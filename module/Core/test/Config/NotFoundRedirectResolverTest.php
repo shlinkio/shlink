@@ -61,16 +61,16 @@ class NotFoundRedirectResolverTest extends TestCase
             'baseUrl',
         ];
         yield 'base URL with domain placeholder' => [
-            $uri = new Uri('https://doma.in'),
+            $uri = new Uri('https://s.test'),
             $this->notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
             new NotFoundRedirectOptions(baseUrl: 'https://redirect-here.com/{DOMAIN}'),
-            'https://redirect-here.com/doma.in',
+            'https://redirect-here.com/s.test',
         ];
         yield 'base URL with domain placeholder in query' => [
-            $uri = new Uri('https://doma.in'),
+            $uri = new Uri('https://s.test'),
             $this->notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
             new NotFoundRedirectOptions(baseUrl: 'https://redirect-here.com/?domain={DOMAIN}'),
-            'https://redirect-here.com/?domain=doma.in',
+            'https://redirect-here.com/?domain=s.test',
         ];
         yield 'base URL without trailing slash' => [
             $uri = new Uri(''),
@@ -91,12 +91,12 @@ class NotFoundRedirectResolverTest extends TestCase
             'https://redirect-here.com/?path=%2Ffoo%2Fbar',
         ];
         yield 'regular 404 with multiple placeholders' => [
-            $uri = new Uri('https://doma.in/foo/bar'),
+            $uri = new Uri('https://s.test/foo/bar'),
             $this->notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
             new NotFoundRedirectOptions(
                 regular404: 'https://redirect-here.com/{ORIGINAL_PATH}/{DOMAIN}/?d={DOMAIN}&p={ORIGINAL_PATH}',
             ),
-            'https://redirect-here.com/foo/bar/doma.in/?d=doma.in&p=%2Ffoo%2Fbar',
+            'https://redirect-here.com/foo/bar/s.test/?d=s.test&p=%2Ffoo%2Fbar',
         ];
         yield 'invalid short URL' => [
             new Uri('/foo'),

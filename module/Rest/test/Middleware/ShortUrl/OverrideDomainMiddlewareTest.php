@@ -88,9 +88,9 @@ class OverrideDomainMiddlewareTest extends TestCase
             [ShortUrlInputFilter::DOMAIN => 'baz.com'],
         ];
         yield 'more body params' => [
-            Domain::withAuthority('doma.in'),
+            Domain::withAuthority('s.test'),
             [ShortUrlInputFilter::DOMAIN => 'baz.com', 'something' => 'else', 'foo' => 123],
-            [ShortUrlInputFilter::DOMAIN => 'doma.in', 'something' => 'else', 'foo' => 123],
+            [ShortUrlInputFilter::DOMAIN => 's.test', 'something' => 'else', 'foo' => 123],
         ];
     }
 

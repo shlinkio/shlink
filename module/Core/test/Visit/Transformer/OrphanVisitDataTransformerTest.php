@@ -69,7 +69,7 @@ class OrphanVisitDataTransformerTest extends TestCase
                 Visitor::fromRequest(
                     ServerRequestFactory::fromGlobals()->withHeader('User-Agent', 'user-agent')
                                                        ->withHeader('Referer', 'referer')
-                                                       ->withUri(new Uri('https://doma.in/foo/bar')),
+                                                       ->withUri(new Uri('https://s.test/foo/bar')),
                 ),
             )->locate($location = VisitLocation::fromGeolocation(Location::emptyInstance())),
             [
@@ -78,7 +78,7 @@ class OrphanVisitDataTransformerTest extends TestCase
                 'userAgent' => 'user-agent',
                 'visitLocation' => $location,
                 'potentialBot' => false,
-                'visitedUrl' => 'https://doma.in/foo/bar',
+                'visitedUrl' => 'https://s.test/foo/bar',
                 'type' => VisitType::REGULAR_404->value,
             ],
         ];

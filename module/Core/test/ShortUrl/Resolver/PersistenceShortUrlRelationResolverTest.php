@@ -57,7 +57,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
 
     public function provideFoundDomains(): iterable
     {
-        $authority = 'doma.in';
+        $authority = 's.test';
 
         yield 'not found domain' => [null, $authority];
         yield 'found domain' => [Domain::withAuthority($authority), $authority];
