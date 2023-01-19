@@ -61,7 +61,7 @@ class DomainRedirectsTest extends ApiTestCase
             'invalidShortUrlRedirect' => null,
         ]];
         yield 'default domain' => [[
-            'domain' => 'doma.in',
+            'domain' => 's.test',
             'regular404Redirect' => 'foo-for-default.com',
         ], [
             'baseUrlRedirect' => null,

@@ -14,7 +14,7 @@ class ListShortUrlsTest extends ApiTestCase
 {
     private const SHORT_URL_SHLINK_WITH_TITLE = [
         'shortCode' => 'abc123',
-        'shortUrl' => 'http://doma.in/abc123',
+        'shortUrl' => 'http://s.test/abc123',
         'longUrl' => 'https://shlink.io',
         'dateCreated' => '2018-05-01T00:00:00+00:00',
         'visitsCount' => 3,
@@ -36,7 +36,7 @@ class ListShortUrlsTest extends ApiTestCase
     ];
     private const SHORT_URL_DOCS = [
         'shortCode' => 'ghi789',
-        'shortUrl' => 'http://doma.in/ghi789',
+        'shortUrl' => 'http://s.test/ghi789',
         'longUrl' => 'https://shlink.io/documentation/',
         'dateCreated' => '2018-05-01T00:00:00+00:00',
         'visitsCount' => 2,
@@ -80,7 +80,7 @@ class ListShortUrlsTest extends ApiTestCase
     ];
     private const SHORT_URL_META = [
         'shortCode' => 'def456',
-        'shortUrl' => 'http://doma.in/def456',
+        'shortUrl' => 'http://s.test/def456',
         'longUrl' =>
             'https://blog.alejandrocelaya.com/2017/12/09'
             . '/acmailer-7-0-the-most-important-release-in-a-long-time/',
@@ -104,7 +104,7 @@ class ListShortUrlsTest extends ApiTestCase
     ];
     private const SHORT_URL_CUSTOM_SLUG = [
         'shortCode' => 'custom',
-        'shortUrl' => 'http://doma.in/custom',
+        'shortUrl' => 'http://s.test/custom',
         'longUrl' => 'https://shlink.io',
         'dateCreated' => '2019-01-01T00:00:20+00:00',
         'visitsCount' => 0,

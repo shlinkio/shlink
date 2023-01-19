@@ -52,7 +52,7 @@
                         },
                         "example": {
                             "longUrl": "https://github.com/shlinkio/shlink",
-                            "shortUrl": "https://doma.in/abc123",
+                            "shortUrl": "https://s.test/abc123",
                             "shortCode": "abc123",
                             "dateCreated": "2016-08-21T20:34:16+02:00",
                             "visitsSummary": {
@@ -78,7 +78,7 @@
                         "schema": {
                             "type": "string"
                         },
-                        "example": "https://doma.in/abc123"
+                        "example": "https://s.test/abc123"
                     }
                 }
             },

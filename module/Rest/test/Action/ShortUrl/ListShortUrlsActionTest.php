@@ -29,7 +29,7 @@ class ListShortUrlsActionTest extends TestCase
 
         $this->action = new ListShortUrlsAction($this->service, new ShortUrlDataTransformer(
             new ShortUrlStringifier([
-                'hostname' => 'doma.in',
+                'hostname' => 's.test',
                 'schema' => 'https',
             ]),
         ));

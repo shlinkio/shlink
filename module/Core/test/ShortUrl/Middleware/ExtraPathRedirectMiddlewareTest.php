@@ -141,7 +141,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $type->method('isRegularNotFound')->willReturn(true);
         $type->method('isInvalidShortUrl')->willReturn(true);
         $request = ServerRequestFactory::fromGlobals()->withAttribute(NotFoundType::class, $type)
-                                                      ->withUri(new Uri('https://doma.in/shortCode/bar/baz'));
+                                                      ->withUri(new Uri('https://s.test/shortCode/bar/baz'));
         $shortUrl = ShortUrl::withLongUrl('');
 
         $currentIteration = 1;

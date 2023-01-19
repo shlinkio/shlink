@@ -50,15 +50,15 @@ class VisitsFixture extends AbstractFixture implements DependentFixtureInterface
         );
 
         $manager->persist($this->setVisitDate(
-            Visit::forBasePath(new Visitor('shlink-tests-agent', 'https://doma.in', '1.2.3.4', '')),
+            Visit::forBasePath(new Visitor('shlink-tests-agent', 'https://s.test', '1.2.3.4', '')),
             '2020-01-01',
         ));
         $manager->persist($this->setVisitDate(
-            Visit::forRegularNotFound(new Visitor('shlink-tests-agent', 'https://doma.in/foo/bar', '1.2.3.4', '')),
+            Visit::forRegularNotFound(new Visitor('shlink-tests-agent', 'https://s.test/foo/bar', '1.2.3.4', '')),
             '2020-02-01',
         ));
         $manager->persist($this->setVisitDate(
-            Visit::forInvalidShortUrl(new Visitor('cf-facebook', 'https://doma.in/foo', '1.2.3.4', 'foo.com')),
+            Visit::forInvalidShortUrl(new Visitor('cf-facebook', 'https://s.test/foo', '1.2.3.4', 'foo.com')),
             '2020-03-01',
         ));
 

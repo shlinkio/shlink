@@ -21,7 +21,7 @@ class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
     protected function setUp(): void
     {
         $this->next = $this->createMock(RequestHandlerInterface::class);
-        $this->middleware = new DropDefaultDomainFromRequestMiddleware('doma.in');
+        $this->middleware = new DropDefaultDomainFromRequestMiddleware('s.test');
     }
 
     /**
@@ -47,8 +47,8 @@ class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
     {
         yield [[], []];
         yield [['foo' => 'bar'], ['foo' => 'bar']];
-        yield [['foo' => 'bar', 'domain' => 'doma.in'], ['foo' => 'bar']];
+        yield [['foo' => 'bar', 'domain' => 's.test'], ['foo' => 'bar']];
         yield [['foo' => 'bar', 'domain' => 'not_default'], ['foo' => 'bar', 'domain' => 'not_default']];
-        yield [['domain' => 'doma.in'], []];
+        yield [['domain' => 's.test'], []];
     }
 }

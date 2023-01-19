@@ -297,7 +297,7 @@ class CreateShortUrlTest extends ApiTestCase
     {
         [$createStatusCode, ['shortCode' => $shortCode]] = $this->createShortUrl([
             'longUrl' => 'https://www.alejandrocelaya.com',
-            'domain' => 'doma.in',
+            'domain' => 's.test',
         ]);
         $getResp = $this->callApiWithKey(self::METHOD_GET, '/short-urls/' . $shortCode);
         $payload = $this->getJsonResponsePayload($getResp);
@@ -359,7 +359,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals(self::STATUS_OK, $statusCode);
         self::assertEquals('🔥🔥🔥', $payload['title']);
         self::assertEquals('🦣🦣🦣', $payload['shortCode']);
-        self::assertEquals('http://doma.in/🦣🦣🦣', $payload['shortUrl']);
+        self::assertEquals('http://s.test/🦣🦣🦣', $payload['shortUrl']);
     }
 
     /**
