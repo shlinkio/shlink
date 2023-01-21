@@ -18,15 +18,15 @@ class RedirectAction extends AbstractTrackingAction implements StatusCodeInterfa
     public function __construct(
         ShortUrlResolverInterface $urlResolver,
         RequestTrackerInterface $requestTracker,
-        private ShortUrlRedirectionBuilderInterface $redirectionBuilder,
-        private RedirectResponseHelperInterface $redirectResponseHelper,
+        private readonly ShortUrlRedirectionBuilderInterface $redirectionBuilder,
+        private readonly RedirectResponseHelperInterface $redirectResponseHelper,
     ) {
         parent::__construct($urlResolver, $requestTracker);
     }
 
     protected function createSuccessResp(ShortUrl $shortUrl, ServerRequestInterface $request): Response
     {
-        $longUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request->getQueryParams());
+        $longUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request);
         return $this->redirectResponseHelper->buildRedirectResponse($longUrl);
     }
 }

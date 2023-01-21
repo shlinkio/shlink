@@ -159,7 +159,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         );
         $this->redirectionBuilder->expects($this->once())->method('buildShortUrlRedirect')->with(
             $shortUrl,
-            [],
+            $this->isInstanceOf(ServerRequestInterface::class),
             $expectedExtraPath,
         )->willReturn('the_built_long_url');
         $this->redirectResponseHelper->expects($this->once())->method('buildRedirectResponse')->with(

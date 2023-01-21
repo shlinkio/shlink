@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 
+use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -34,7 +35,11 @@ class ShortUrlRedirectionBuilderTest extends TestCase
             'longUrl' => 'https://domain.com/foo/bar?some=thing',
             'forwardQuery' => $forwardQuery,
         ]));
-        $result = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $query, $extraPath);
+        $result = $this->redirectionBuilder->buildShortUrlRedirect(
+            $shortUrl,
+            ServerRequestFactory::fromGlobals()->withQueryParams($query),
+            $extraPath,
+        );
 
         self::assertEquals($expectedUrl, $result);
     }
