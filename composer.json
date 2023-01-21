@@ -74,7 +74,7 @@
         "phpunit/phpunit": "^9.5",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.3.0",
-        "shlinkio/shlink-test-utils": "^3.3",
+        "shlinkio/shlink-test-utils": "^3.4",
         "symfony/var-dumper": "^6.1",
         "veewee/composer-run-parallel": "^1.1"
     },
@@ -97,7 +97,8 @@
             "ShlinkioApiTest\\Shlink\\Rest\\": "module/Rest/test-api",
             "ShlinkioDbTest\\Shlink\\Rest\\": "module/Rest/test-db",
             "ShlinkioTest\\Shlink\\Core\\": "module/Core/test",
-            "ShlinkioDbTest\\Shlink\\Core\\": "module/Core/test-db"
+            "ShlinkioDbTest\\Shlink\\Core\\": "module/Core/test-db",
+            "ShlinkioApiTest\\Shlink\\Core\\": "module/Core/test-api"
         },
         "files": [
             "config/test/constants.php"

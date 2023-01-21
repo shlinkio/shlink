@@ -12,7 +12,7 @@ class DeviceLongUrl extends AbstractEntity
 {
     private function __construct(
         private readonly ShortUrl $shortUrl, // No need to read this field. It's used by doctrine
-        private readonly DeviceType $deviceType,
+        public readonly DeviceType $deviceType,
         private string $longUrl,
     ) {
     }
@@ -25,11 +25,6 @@ class DeviceLongUrl extends AbstractEntity
     public function longUrl(): string
     {
         return $this->longUrl;
-    }
-
-    public function deviceType(): DeviceType
-    {
-        return $this->deviceType;
     }
 
     public function updateLongUrl(string $longUrl): void

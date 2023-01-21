@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\Selectable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
+use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Model\DeviceLongUrlPair;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
@@ -170,7 +171,7 @@ class ShortUrl extends AbstractEntity
         }
         foreach ($shortUrlEdit->deviceLongUrls as $deviceLongUrlPair) {
             $deviceLongUrl = $this->deviceLongUrls->findFirst(
-                fn ($_, DeviceLongUrl $d) => $d->deviceType() === $deviceLongUrlPair->deviceType,
+                fn ($_, DeviceLongUrl $d) => $d->deviceType === $deviceLongUrlPair->deviceType,
             );
 
             if ($deviceLongUrl !== null) {
@@ -184,6 +185,15 @@ class ShortUrl extends AbstractEntity
     public function getLongUrl(): string
     {
         return $this->longUrl;
+    }
+
+    public function longUrlForDevice(?DeviceType $deviceType): string
+    {
+        $deviceLongUrl = $this->deviceLongUrls->findFirst(
+            static fn ($_, DeviceLongUrl $longUrl) => $longUrl->deviceType === $deviceType,
+        );
+
+        return $deviceLongUrl?->longUrl() ?? $this->longUrl;
     }
 
     public function getShortCode(): string
@@ -322,7 +332,7 @@ class ShortUrl extends AbstractEntity
     {
         $data = [];
         foreach ($this->deviceLongUrls as $deviceUrl) {
-            $data[$deviceUrl->deviceType()->value] = $deviceUrl->longUrl();
+            $data[$deviceUrl->deviceType->value] = $deviceUrl->longUrl();
         }
 
         return $data;
