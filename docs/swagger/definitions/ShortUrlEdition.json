@@ -5,6 +5,9 @@
             "description": "The long URL this short URL will redirect to",
             "type": "string"
         },
+        "deviceLongUrls": {
+            "$ref": "./DeviceLongUrls.json"
+        },
         "validSince": {
             "description": "The date (in ISO-8601 format) from which this short code will be valid",
             "type": "string",

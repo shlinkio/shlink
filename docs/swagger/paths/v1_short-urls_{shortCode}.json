@@ -40,6 +40,11 @@
                             "shortCode": "12Kb3",
                             "shortUrl": "https://s.test/12Kb3",
                             "longUrl": "https://shlink.io",
+                            "deviceLongUrls": {
+                                "android": null,
+                                "ios": null,
+                                "desktop": null
+                            },
                             "dateCreated": "2016-05-01T20:34:16+02:00",
                             "visitsSummary": {
                                 "total": 1029,
@@ -162,6 +167,11 @@
                             "shortCode": "12Kb3",
                             "shortUrl": "https://s.test/12Kb3",
                             "longUrl": "https://shlink.io",
+                            "deviceLongUrls": {
+                                "android": "https://shlink.io/android",
+                                "ios": null,
+                                "desktop": null
+                            },
                             "dateCreated": "2016-05-01T20:34:16+02:00",
                             "visitsSummary": {
                                 "total": 1029,

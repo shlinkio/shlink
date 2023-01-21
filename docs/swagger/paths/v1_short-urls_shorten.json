@@ -1,6 +1,7 @@
 {
     "get": {
         "operationId": "shortenUrl",
+        "deprecated": true,
         "tags": [
             "Short URLs"
         ],
@@ -52,6 +53,11 @@
                         },
                         "example": {
                             "longUrl": "https://github.com/shlinkio/shlink",
+                            "deviceLongUrls": {
+                                "android": null,
+                                "ios": null,
+                                "desktop": null
+                            },
                             "shortUrl": "https://s.test/abc123",
                             "shortCode": "abc123",
                             "dateCreated": "2016-08-21T20:34:16+02:00",

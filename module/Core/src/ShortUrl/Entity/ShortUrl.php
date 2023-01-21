@@ -25,8 +25,10 @@ use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+use function array_fill_keys;
 use function count;
 use function Functional\map;
+use function Shlinkio\Shlink\Core\enumValues;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
 use function Shlinkio\Shlink\Core\normalizeDate;
 use function Shlinkio\Shlink\Core\normalizeOptionalDate;
@@ -330,7 +332,7 @@ class ShortUrl extends AbstractEntity
 
     public function deviceLongUrls(): array
     {
-        $data = [];
+        $data = array_fill_keys(enumValues(DeviceType::class), null);
         foreach ($this->deviceLongUrls as $deviceUrl) {
             $data[$deviceUrl->deviceType->value] = $deviceUrl->longUrl();
         }

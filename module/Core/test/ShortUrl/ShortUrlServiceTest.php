@@ -20,6 +20,9 @@ use Shlinkio\Shlink\Core\ShortUrl\ShortUrlService;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
 
+use function array_fill_keys;
+use function Shlinkio\Shlink\Core\enumValues;
+
 class ShortUrlServiceTest extends TestCase
 {
     use ApiKeyHelpersTrait;
@@ -74,7 +77,7 @@ class ShortUrlServiceTest extends TestCase
         );
 
         $resolveDeviceLongUrls = function () use ($shortUrlEdit): array {
-            $result = [];
+            $result = array_fill_keys(enumValues(DeviceType::class), null);
             foreach ($shortUrlEdit->deviceLongUrls ?? [] as $longUrl) {
                 $result[$longUrl->deviceType->value] = $longUrl->longUrl;
             }
