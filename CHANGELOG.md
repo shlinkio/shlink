@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
+* [#1557](https://github.com/shlinkio/shlink/issues/1557) Added support to dynamically redirect to different long URLs based on the visitor's device type.
+
+  For the moment, only `android`, `ios` and `desktop` can have their own specific long URL, and when the visitor cannot be matched against any of them, the regular long URL will be used.
+
+  In the future, more granular device types could be added if appropriate (iOS tablet, android table, tablet, mobile phone, Linux, Mac, Windows, etc).
+
+  In order to match the visitor's device, the `User-Agent` header is used.
+
 * [#1632](https://github.com/shlinkio/shlink/issues/1632) Added amount of bots, non-bots and total visits to the visits summary endpoint.
 * [#1633](https://github.com/shlinkio/shlink/issues/1633) Added amount of bots, non-bots and total visits to the tag stats endpoint.
 * [#1653](https://github.com/shlinkio/shlink/issues/1653) Added support for all HTTP methods in short URLs, together with two new redirect status codes, 307 and 308.
@@ -20,7 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Deprecated
-* *Nothing*
+* [#1676](https://github.com/shlinkio/shlink/issues/1676) Deprecated `GET /short-urls/shorten` endpoint. Use `POST /short-urls` to create short URLs instead
 
 ### Removed
 * *Nothing*
