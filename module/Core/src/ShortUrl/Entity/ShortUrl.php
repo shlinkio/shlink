@@ -12,6 +12,8 @@ use Doctrine\Common\Collections\Selectable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
+use Shlinkio\Shlink\Core\Model\DeviceType;
+use Shlinkio\Shlink\Core\ShortUrl\Model\DeviceLongUrlPair;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
@@ -23,7 +25,10 @@ use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+use function array_fill_keys;
 use function count;
+use function Functional\map;
+use function Shlinkio\Shlink\Core\enumValues;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
 use function Shlinkio\Shlink\Core\normalizeDate;
 use function Shlinkio\Shlink\Core\normalizeOptionalDate;
@@ -35,6 +40,8 @@ class ShortUrl extends AbstractEntity
     private Chronos $dateCreated;
     /** @var Collection<int, Visit> */
     private Collection $visits;
+    /** @var Collection<string, DeviceLongUrl> */
+    private Collection $deviceLongUrls;
     /** @var Collection<int, Tag> */
     private Collection $tags;
     private ?Chronos $validSince = null;
@@ -55,11 +62,14 @@ class ShortUrl extends AbstractEntity
     {
     }
 
-    public static function createEmpty(): self
+    public static function createFake(): self
     {
-        return self::create(ShortUrlCreation::createEmpty());
+        return self::withLongUrl('foo');
     }
 
+    /**
+     * @param non-empty-string $longUrl
+     */
     public static function withLongUrl(string $longUrl): self
     {
         return self::create(ShortUrlCreation::fromRawData([ShortUrlInputFilter::LONG_URL => $longUrl]));
@@ -75,19 +85,23 @@ class ShortUrl extends AbstractEntity
         $instance->longUrl = $creation->getLongUrl();
         $instance->dateCreated = Chronos::now();
         $instance->visits = new ArrayCollection();
-        $instance->tags = $relationResolver->resolveTags($creation->getTags());
-        $instance->validSince = $creation->getValidSince();
-        $instance->validUntil = $creation->getValidUntil();
-        $instance->maxVisits = $creation->getMaxVisits();
+        $instance->deviceLongUrls = new ArrayCollection(map(
+            $creation->deviceLongUrls,
+            fn (DeviceLongUrlPair $pair) => DeviceLongUrl::fromShortUrlAndPair($instance, $pair),
+        ));
+        $instance->tags = $relationResolver->resolveTags($creation->tags);
+        $instance->validSince = $creation->validSince;
+        $instance->validUntil = $creation->validUntil;
+        $instance->maxVisits = $creation->maxVisits;
         $instance->customSlugWasProvided = $creation->hasCustomSlug();
-        $instance->shortCodeLength = $creation->getShortCodeLength();
-        $instance->shortCode = $creation->getCustomSlug() ?? generateRandomShortCode($instance->shortCodeLength);
-        $instance->domain = $relationResolver->resolveDomain($creation->getDomain());
-        $instance->authorApiKey = $creation->getApiKey();
-        $instance->title = $creation->getTitle();
-        $instance->titleWasAutoResolved = $creation->titleWasAutoResolved();
-        $instance->crawlable = $creation->isCrawlable();
-        $instance->forwardQuery = $creation->forwardQuery();
+        $instance->shortCodeLength = $creation->shortCodeLength;
+        $instance->shortCode = $creation->customSlug ?? generateRandomShortCode($instance->shortCodeLength);
+        $instance->domain = $relationResolver->resolveDomain($creation->domain);
+        $instance->authorApiKey = $creation->apiKey;
+        $instance->title = $creation->title;
+        $instance->titleWasAutoResolved = $creation->titleWasAutoResolved;
+        $instance->crawlable = $creation->crawlable;
+        $instance->forwardQuery = $creation->forwardQuery;
 
         return $instance;
     }
@@ -120,9 +134,66 @@ class ShortUrl extends AbstractEntity
         return $instance;
     }
 
+    public function update(
+        ShortUrlEdition $shortUrlEdit,
+        ?ShortUrlRelationResolverInterface $relationResolver = null,
+    ): void {
+        if ($shortUrlEdit->validSinceWasProvided()) {
+            $this->validSince = $shortUrlEdit->validSince;
+        }
+        if ($shortUrlEdit->validUntilWasProvided()) {
+            $this->validUntil = $shortUrlEdit->validUntil;
+        }
+        if ($shortUrlEdit->maxVisitsWasProvided()) {
+            $this->maxVisits = $shortUrlEdit->maxVisits;
+        }
+        if ($shortUrlEdit->longUrlWasProvided()) {
+            $this->longUrl = $shortUrlEdit->longUrl ?? $this->longUrl;
+        }
+        if ($shortUrlEdit->tagsWereProvided()) {
+            $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
+            $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags);
+        }
+        if ($shortUrlEdit->crawlableWasProvided()) {
+            $this->crawlable = $shortUrlEdit->crawlable;
+        }
+        if (
+            $this->title === null
+            || $shortUrlEdit->titleWasProvided()
+            || ($this->titleWasAutoResolved && $shortUrlEdit->titleWasAutoResolved())
+        ) {
+            $this->title = $shortUrlEdit->title;
+            $this->titleWasAutoResolved = $shortUrlEdit->titleWasAutoResolved();
+        }
+        if ($shortUrlEdit->forwardQueryWasProvided()) {
+            $this->forwardQuery = $shortUrlEdit->forwardQuery;
+        }
+
+        // Update device long URLs, removing, editing or creating where appropriate
+        foreach ($shortUrlEdit->devicesToRemove as $deviceType) {
+            $this->deviceLongUrls->remove($deviceType->value);
+        }
+        foreach ($shortUrlEdit->deviceLongUrls as $deviceLongUrlPair) {
+            $key = $deviceLongUrlPair->deviceType->value;
+            $deviceLongUrl = $this->deviceLongUrls->get($key);
+
+            if ($deviceLongUrl !== null) {
+                $deviceLongUrl->updateLongUrl($deviceLongUrlPair->longUrl);
+            } else {
+                $this->deviceLongUrls->set($key, DeviceLongUrl::fromShortUrlAndPair($this, $deviceLongUrlPair));
+            }
+        }
+    }
+
     public function getLongUrl(): string
     {
         return $this->longUrl;
+    }
+
+    public function longUrlForDevice(?DeviceType $deviceType): string
+    {
+        $deviceLongUrl = $deviceType === null ? null : $this->deviceLongUrls->get($deviceType->value);
+        return $deviceLongUrl?->longUrl() ?? $this->longUrl;
     }
 
     public function getShortCode(): string
@@ -218,42 +289,6 @@ class ShortUrl extends AbstractEntity
         return $this->forwardQuery;
     }
 
-    public function update(
-        ShortUrlEdition $shortUrlEdit,
-        ?ShortUrlRelationResolverInterface $relationResolver = null,
-    ): void {
-        if ($shortUrlEdit->validSinceWasProvided()) {
-            $this->validSince = $shortUrlEdit->validSince();
-        }
-        if ($shortUrlEdit->validUntilWasProvided()) {
-            $this->validUntil = $shortUrlEdit->validUntil();
-        }
-        if ($shortUrlEdit->maxVisitsWasProvided()) {
-            $this->maxVisits = $shortUrlEdit->maxVisits();
-        }
-        if ($shortUrlEdit->longUrlWasProvided()) {
-            $this->longUrl = $shortUrlEdit->longUrl() ?? $this->longUrl;
-        }
-        if ($shortUrlEdit->tagsWereProvided()) {
-            $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
-            $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags());
-        }
-        if ($shortUrlEdit->crawlableWasProvided()) {
-            $this->crawlable = $shortUrlEdit->crawlable();
-        }
-        if (
-            $this->title === null
-            || $shortUrlEdit->titleWasProvided()
-            || ($this->titleWasAutoResolved && $shortUrlEdit->titleWasAutoResolved())
-        ) {
-            $this->title = $shortUrlEdit->title();
-            $this->titleWasAutoResolved = $shortUrlEdit->titleWasAutoResolved();
-        }
-        if ($shortUrlEdit->forwardQueryWasProvided()) {
-            $this->forwardQuery = $shortUrlEdit->forwardQuery();
-        }
-    }
-
     /**
      * @throws ShortCodeCannotBeRegeneratedException
      */
@@ -291,5 +326,15 @@ class ShortUrl extends AbstractEntity
         }
 
         return true;
+    }
+
+    public function deviceLongUrls(): array
+    {
+        $data = array_fill_keys(enumValues(DeviceType::class), null);
+        foreach ($this->deviceLongUrls as $deviceUrl) {
+            $data[$deviceUrl->deviceType->value] = $deviceUrl->longUrl();
+        }
+
+        return $data;
     }
 }

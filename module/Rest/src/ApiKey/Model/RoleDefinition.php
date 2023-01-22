@@ -22,7 +22,7 @@ final class RoleDefinition
     {
         return new self(
             Role::DOMAIN_SPECIFIC,
-            ['domain_id' => $domain->getId(), 'authority' => $domain->getAuthority()],
+            ['domain_id' => $domain->getId(), 'authority' => $domain->authority],
         );
     }
 }

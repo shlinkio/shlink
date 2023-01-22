@@ -118,7 +118,7 @@ class CreateShortUrlTest extends ApiTestCase
 
     public function provideMaxVisits(): array
     {
-        return map(range(10, 15), fn (int $i) => [$i]);
+        return map(range(10, 15), fn(int $i) => [$i]);
     }
 
     /** @test */
@@ -172,12 +172,14 @@ class CreateShortUrlTest extends ApiTestCase
         yield 'only long URL' => [['longUrl' => $longUrl]];
         yield 'long URL and tags' => [['longUrl' => $longUrl, 'tags' => ['boo', 'far']]];
         yield 'long URL and custom slug' => [['longUrl' => $longUrl, 'customSlug' => 'my cool slug']];
-        yield 'several params' => [[
-            'longUrl' => $longUrl,
-            'tags' => ['boo', 'far'],
-            'validSince' => Chronos::now()->toAtomString(),
-            'maxVisits' => 7,
-        ]];
+        yield 'several params' => [
+            [
+                'longUrl' => $longUrl,
+                'tags' => ['boo', 'far'],
+                'validSince' => Chronos::now()->toAtomString(),
+                'maxVisits' => 7,
+            ],
+        ];
     }
 
     /**
@@ -261,21 +263,20 @@ class CreateShortUrlTest extends ApiTestCase
 
     public function provideInvalidUrls(): iterable
     {
-        yield 'empty URL' => ['', '2', 'INVALID_URL'];
-        yield 'non-reachable URL' => ['https://this-has-to-be-invalid.com', '2', 'INVALID_URL'];
-        yield 'API version 3' => ['', '3', 'https://shlink.io/api/error/invalid-url'];
+        yield 'API version 2' => ['https://this-has-to-be-invalid.com', '2', 'INVALID_URL'];
+        yield 'API version 3' => ['https://this-has-to-be-invalid.com', '3', 'https://shlink.io/api/error/invalid-url'];
     }
 
     /**
      * @test
      * @dataProvider provideInvalidArgumentApiVersions
      */
-    public function failsToCreateShortUrlWithoutLongUrl(string $version, string $expectedType): void
+    public function failsToCreateShortUrlWithoutLongUrl(array $payload, string $version, string $expectedType): void
     {
         $resp = $this->callApiWithKey(
             self::METHOD_POST,
             sprintf('/rest/v%s/short-urls', $version),
-            [RequestOptions::JSON => []],
+            [RequestOptions::JSON => $payload],
         );
         $payload = $this->getJsonResponsePayload($resp);
 
@@ -288,8 +289,22 @@ class CreateShortUrlTest extends ApiTestCase
 
     public function provideInvalidArgumentApiVersions(): iterable
     {
-        yield ['2', 'INVALID_ARGUMENT'];
-        yield ['3', 'https://shlink.io/api/error/invalid-data'];
+        yield 'missing long url v2' => [[], '2', 'INVALID_ARGUMENT'];
+        yield 'missing long url v3' => [[], '3', 'https://shlink.io/api/error/invalid-data'];
+        yield 'empty long url v2' => [['longUrl' => null], '2', 'INVALID_ARGUMENT'];
+        yield 'empty long url v3' => [['longUrl' => '  '], '3', 'https://shlink.io/api/error/invalid-data'];
+        yield 'empty device long url v2' => [[
+            'longUrl' => 'foo',
+            'deviceLongUrls' => [
+                'android' => null,
+            ],
+        ], '2', 'INVALID_ARGUMENT'];
+        yield 'empty device long url v3' => [[
+            'longUrl' => 'foo',
+            'deviceLongUrls' => [
+                'ios' => '  ',
+            ],
+        ], '3', 'https://shlink.io/api/error/invalid-data'];
     }
 
     /** @test */
@@ -360,6 +375,22 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals('🔥🔥🔥', $payload['title']);
         self::assertEquals('🦣🦣🦣', $payload['shortCode']);
         self::assertEquals('http://s.test/🦣🦣🦣', $payload['shortUrl']);
+    }
+
+    /** @test */
+    public function canCreateShortUrlsWithDeviceLongUrls(): void
+    {
+        [$statusCode, $payload] = $this->createShortUrl([
+            'longUrl' => 'https://github.com/shlinkio/shlink/issues/1557',
+            'deviceLongUrls' => [
+                'ios' => 'https://github.com/shlinkio/shlink/ios',
+                'android' => 'https://github.com/shlinkio/shlink/android',
+            ],
+        ]);
+
+        self::assertEquals(self::STATUS_OK, $statusCode);
+        self::assertEquals('https://github.com/shlinkio/shlink/ios', $payload['deviceLongUrls']['ios'] ?? null);
+        self::assertEquals('https://github.com/shlinkio/shlink/android', $payload['deviceLongUrls']['android'] ?? null);
     }
 
     /**

@@ -30,7 +30,7 @@ class SimpleShortUrlRelationResolverTest extends TestCase
             self::assertNull($result);
         } else {
             self::assertInstanceOf(Domain::class, $result);
-            self::assertEquals($domain, $result->getAuthority());
+            self::assertEquals($domain, $result->authority);
         }
     }
 

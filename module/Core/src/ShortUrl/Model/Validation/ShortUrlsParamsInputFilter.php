@@ -11,6 +11,8 @@ use Shlinkio\Shlink\Common\Validation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 
+use function Shlinkio\Shlink\Core\enumValues;
+
 class ShortUrlsParamsInputFilter extends InputFilter
 {
     use Validation\InputFactoryTrait;
@@ -46,12 +48,12 @@ class ShortUrlsParamsInputFilter extends InputFilter
 
         $tagsMode = $this->createInput(self::TAGS_MODE, false);
         $tagsMode->getValidatorChain()->attach(new InArray([
-            'haystack' => TagsMode::values(),
+            'haystack' => enumValues(TagsMode::class),
             'strict' => InArray::COMPARE_STRICT,
         ]));
         $this->add($tagsMode);
 
-        $this->add($this->createOrderByInput(self::ORDER_BY, OrderableField::values()));
+        $this->add($this->createOrderByInput(self::ORDER_BY, enumValues(OrderableField::class)));
 
         $this->add($this->createBooleanInput(self::EXCLUDE_MAX_VISITS_REACHED, false));
         $this->add($this->createBooleanInput(self::EXCLUDE_PAST_VALID_UNTIL, false));

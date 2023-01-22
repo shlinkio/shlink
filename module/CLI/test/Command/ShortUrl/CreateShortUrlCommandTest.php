@@ -48,7 +48,7 @@ class CreateShortUrlCommandTest extends TestCase
     /** @test */
     public function properShortCodeIsCreatedIfLongUrlIsCorrect(): void
     {
-        $shortUrl = ShortUrl::createEmpty();
+        $shortUrl = ShortUrl::createFake();
         $this->urlShortener->expects($this->once())->method('shorten')->withAnyParameters()->willReturn($shortUrl);
         $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn(
             'stringified_short_url',
@@ -98,11 +98,10 @@ class CreateShortUrlCommandTest extends TestCase
     /** @test */
     public function properlyProcessesProvidedTags(): void
     {
-        $shortUrl = ShortUrl::createEmpty();
+        $shortUrl = ShortUrl::createFake();
         $this->urlShortener->expects($this->once())->method('shorten')->with(
-            $this->callback(function (ShortUrlCreation $meta) {
-                $tags = $meta->getTags();
-                Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $tags);
+            $this->callback(function (ShortUrlCreation $creation) {
+                Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $creation->tags);
                 return true;
             }),
         )->willReturn($shortUrl);
@@ -128,10 +127,10 @@ class CreateShortUrlCommandTest extends TestCase
     {
         $this->urlShortener->expects($this->once())->method('shorten')->with(
             $this->callback(function (ShortUrlCreation $meta) use ($expectedDomain) {
-                Assert::assertEquals($expectedDomain, $meta->getDomain());
+                Assert::assertEquals($expectedDomain, $meta->domain);
                 return true;
             }),
-        )->willReturn(ShortUrl::createEmpty());
+        )->willReturn(ShortUrl::createFake());
         $this->stringifier->method('stringify')->with($this->isInstanceOf(ShortUrl::class))->willReturn('');
 
         $input['longUrl'] = 'http://domain.com/foo/bar';
@@ -154,7 +153,7 @@ class CreateShortUrlCommandTest extends TestCase
      */
     public function urlValidationHasExpectedValueBasedOnProvidedFlags(array $options, ?bool $expectedValidateUrl): void
     {
-        $shortUrl = ShortUrl::createEmpty();
+        $shortUrl = ShortUrl::createFake();
         $this->urlShortener->expects($this->once())->method('shorten')->with(
             $this->callback(function (ShortUrlCreation $meta) use ($expectedValidateUrl) {
                 Assert::assertEquals($expectedValidateUrl, $meta->doValidateUrl());

@@ -4,6 +4,7 @@
         "shortCode",
         "shortUrl",
         "longUrl",
+        "deviceLongUrls",
         "dateCreated",
         "visitsCount",
         "visitsSummary",
@@ -26,6 +27,9 @@
         "longUrl": {
             "type": "string",
             "description": "The original long URL."
+        },
+        "deviceLongUrls": {
+            "$ref": "./DeviceLongUrlsResp.json"
         },
         "dateCreated": {
             "type": "string",

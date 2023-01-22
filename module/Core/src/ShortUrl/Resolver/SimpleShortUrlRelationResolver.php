@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl\Resolver;
 
 use Doctrine\Common\Collections;
-use Doctrine\Common\Collections\Collection;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 
@@ -20,7 +19,7 @@ class SimpleShortUrlRelationResolver implements ShortUrlRelationResolverInterfac
 
     /**
      * @param string[] $tags
-     * @return Collection|Tag[]
+     * @return Collections\Collection<int, Tag>
      */
     public function resolveTags(array $tags): Collections\Collection
     {

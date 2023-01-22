@@ -163,6 +163,11 @@
                                         "shortCode": "12C18",
                                         "shortUrl": "https://s.test/12C18",
                                         "longUrl": "https://store.steampowered.com",
+                                        "deviceLongUrls": {
+                                            "android": null,
+                                            "ios": null,
+                                            "desktop": null
+                                        },
                                         "dateCreated": "2016-08-21T20:34:16+02:00",
                                         "visitsSummary": {
                                             "total": 328,
@@ -186,6 +191,11 @@
                                         "shortCode": "12Kb3",
                                         "shortUrl": "https://s.test/12Kb3",
                                         "longUrl": "https://shlink.io",
+                                        "deviceLongUrls": {
+                                            "android": null,
+                                            "ios": "https://shlink.io/ios",
+                                            "desktop": null
+                                        },
                                         "dateCreated": "2016-05-01T20:34:16+02:00",
                                         "visitsSummary": {
                                             "total": 1029,
@@ -208,6 +218,11 @@
                                         "shortCode": "123bA",
                                         "shortUrl": "https://example.com/123bA",
                                         "longUrl": "https://www.google.com",
+                                        "deviceLongUrls": {
+                                            "android": null,
+                                            "ios": null,
+                                            "desktop": null
+                                        },
                                         "dateCreated": "2015-10-01T20:34:16+02:00",
                                         "visitsSummary": {
                                             "total": 25,
@@ -281,6 +296,9 @@
                                 "type": "object",
                                 "required": ["longUrl"],
                                 "properties": {
+                                    "deviceLongUrls": {
+                                        "$ref": "../definitions/DeviceLongUrls.json"
+                                    },
                                     "customSlug": {
                                         "description": "A unique custom slug to be used instead of the generated short code",
                                         "type": "string"
@@ -320,6 +338,11 @@
                             "shortCode": "12C18",
                             "shortUrl": "https://s.test/12C18",
                             "longUrl": "https://store.steampowered.com",
+                            "deviceLongUrls": {
+                                "android": null,
+                                "ios": null,
+                                "desktop": null
+                            },
                             "dateCreated": "2016-08-21T20:34:16+02:00",
                             "visitsSummary": {
                                 "total": 0,

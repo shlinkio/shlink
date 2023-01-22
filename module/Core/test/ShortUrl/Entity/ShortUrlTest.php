@@ -7,8 +7,10 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Entity;
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
+use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
@@ -38,11 +40,11 @@ class ShortUrlTest extends TestCase
     public function provideInvalidShortUrls(): iterable
     {
         yield 'with custom slug' => [
-            ShortUrl::create(ShortUrlCreation::fromRawData(['customSlug' => 'custom-slug', 'longUrl' => ''])),
+            ShortUrl::create(ShortUrlCreation::fromRawData(['customSlug' => 'custom-slug', 'longUrl' => 'longUrl'])),
             'The short code cannot be regenerated on ShortUrls where a custom slug was provided.',
         ];
         yield 'already persisted' => [
-            ShortUrl::createEmpty()->setId('1'),
+            ShortUrl::createFake()->setId('1'),
             'The short code can be regenerated only on new ShortUrls which have not been persisted yet.',
         ];
     }
@@ -64,9 +66,9 @@ class ShortUrlTest extends TestCase
 
     public function provideValidShortUrls(): iterable
     {
-        yield 'no custom slug' => [ShortUrl::createEmpty()];
+        yield 'no custom slug' => [ShortUrl::createFake()];
         yield 'imported with custom slug' => [ShortUrl::fromImport(
-            new ImportedShlinkUrl(ImportSource::BITLY, '', [], Chronos::now(), null, 'custom-slug', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'longUrl', [], Chronos::now(), null, 'custom-slug', null),
             true,
         )];
     }
@@ -78,7 +80,7 @@ class ShortUrlTest extends TestCase
     public function shortCodesHaveExpectedLength(?int $length, int $expectedLength): void
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
-            [ShortUrlInputFilter::SHORT_CODE_LENGTH => $length, 'longUrl' => ''],
+            [ShortUrlInputFilter::SHORT_CODE_LENGTH => $length, 'longUrl' => 'longUrl'],
         ));
 
         self::assertEquals($expectedLength, strlen($shortUrl->getShortCode()));
@@ -88,5 +90,47 @@ class ShortUrlTest extends TestCase
     {
         yield [null, DEFAULT_SHORT_CODES_LENGTH];
         yield from map(range(4, 10), fn (int $value) => [$value, $value]);
+    }
+
+    /** @test */
+    public function deviceLongUrlsAreUpdated(): void
+    {
+        $shortUrl = ShortUrl::withLongUrl('foo');
+
+        $shortUrl->update(ShortUrlEdition::fromRawData([
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::ANDROID->value => 'android',
+                DeviceType::IOS->value => 'ios',
+            ],
+        ]));
+        self::assertEquals([
+            DeviceType::ANDROID->value => 'android',
+            DeviceType::IOS->value => 'ios',
+            DeviceType::DESKTOP->value => null,
+        ], $shortUrl->deviceLongUrls());
+
+        $shortUrl->update(ShortUrlEdition::fromRawData([
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::ANDROID->value => null,
+                DeviceType::DESKTOP->value => 'desktop',
+            ],
+        ]));
+        self::assertEquals([
+            DeviceType::ANDROID->value => null,
+            DeviceType::IOS->value => 'ios',
+            DeviceType::DESKTOP->value => 'desktop',
+        ], $shortUrl->deviceLongUrls());
+
+        $shortUrl->update(ShortUrlEdition::fromRawData([
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::ANDROID->value => null,
+                DeviceType::IOS->value => null,
+            ],
+        ]));
+        self::assertEquals([
+            DeviceType::ANDROID->value => null,
+            DeviceType::IOS->value => null,
+            DeviceType::DESKTOP->value => 'desktop',
+        ], $shortUrl->deviceLongUrls());
     }
 }

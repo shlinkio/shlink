@@ -24,7 +24,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->build();
 
     fieldWithUtf8Charset($builder->createField('longUrl', Types::STRING), $emConfig)
-            ->columnName('original_url')
+            ->columnName('original_url') // Rename to long_url some day? ¯\_(ツ)_/¯
             ->length(2048)
             ->build();
 
@@ -65,6 +65,13 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder->createOneToMany('visits', Visit\Entity\Visit::class)
             ->mappedBy('shortUrl')
             ->fetchExtraLazy()
+            ->build();
+
+    $builder->createOneToMany('deviceLongUrls', ShortUrl\Entity\DeviceLongUrl::class)
+            ->mappedBy('shortUrl')
+            ->cascadePersist()
+            ->orphanRemoval()
+            ->setIndexBy('deviceType')
             ->build();
 
     $builder->createManyToMany('tags', Tag\Entity\Tag::class)

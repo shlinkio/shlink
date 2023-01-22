@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "properties": {
+        "android": {
+            "description": "The long URL to redirect to when the short URL is visited from a device running Android",
+            "type": "string",
+            "nullable": false
+        },
+        "ios": {
+            "description": "The long URL to redirect to when the short URL is visited from a device running iOS",
+            "type": "string",
+            "nullable": false
+        },
+        "desktop": {
+            "description": "The long URL to redirect to when the short URL is visited from a desktop browser",
+            "type": "string",
+            "nullable": false
+        }
+    }
+}

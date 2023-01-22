@@ -14,7 +14,7 @@ interface ShortUrlRelationResolverInterface
 
     /**
      * @param string[] $tags
-     * @return Collection|Tag[]
+     * @return Collection<int, Tag>
      */
     public function resolveTags(array $tags): Collection;
 }

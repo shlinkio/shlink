@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 
@@ -16,27 +17,33 @@ use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 
 final class ShortUrlEdition implements TitleResolutionModelInterface
 {
-    private bool $longUrlPropWasProvided = false;
-    private ?string $longUrl = null;
-    private bool $validSincePropWasProvided = false;
-    private ?Chronos $validSince = null;
-    private bool $validUntilPropWasProvided = false;
-    private ?Chronos $validUntil = null;
-    private bool $maxVisitsPropWasProvided = false;
-    private ?int $maxVisits = null;
-    private bool $tagsPropWasProvided = false;
-    private array $tags = [];
-    private bool $titlePropWasProvided = false;
-    private ?string $title = null;
-    private bool $titleWasAutoResolved = false;
-    private bool $validateUrl = false;
-    private bool $crawlablePropWasProvided = false;
-    private bool $crawlable = false;
-    private bool $forwardQueryPropWasProvided = false;
-    private bool $forwardQuery = true;
-
-    private function __construct()
-    {
+    /**
+     * @param string[] $tags
+     * @param DeviceLongUrlPair[] $deviceLongUrls
+     * @param DeviceType[] $devicesToRemove
+     */
+    private function __construct(
+        private readonly bool $longUrlPropWasProvided = false,
+        public readonly ?string $longUrl = null,
+        public readonly array $deviceLongUrls = [],
+        public readonly array $devicesToRemove = [],
+        private readonly bool $validSincePropWasProvided = false,
+        public readonly ?Chronos $validSince = null,
+        private readonly bool $validUntilPropWasProvided = false,
+        public readonly ?Chronos $validUntil = null,
+        private readonly bool $maxVisitsPropWasProvided = false,
+        public readonly ?int $maxVisits = null,
+        private readonly bool $tagsPropWasProvided = false,
+        public readonly array $tags = [],
+        private readonly bool $titlePropWasProvided = false,
+        public readonly ?string $title = null,
+        public readonly bool $titleWasAutoResolved = false,
+        public readonly bool $validateUrl = false,
+        private readonly bool $crawlablePropWasProvided = false,
+        public readonly bool $crawlable = false,
+        private readonly bool $forwardQueryPropWasProvided = false,
+        public readonly bool $forwardQuery = true,
+    ) {
     }
 
     /**
@@ -44,49 +51,67 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
      */
     public static function fromRawData(array $data): self
     {
-        $instance = new self();
-        $instance->validateAndInit($data);
-        return $instance;
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    private function validateAndInit(array $data): void
-    {
         $inputFilter = ShortUrlInputFilter::withNonRequiredLongUrl($data);
         if (! $inputFilter->isValid()) {
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
-        $this->longUrlPropWasProvided = array_key_exists(ShortUrlInputFilter::LONG_URL, $data);
-        $this->validSincePropWasProvided = array_key_exists(ShortUrlInputFilter::VALID_SINCE, $data);
-        $this->validUntilPropWasProvided = array_key_exists(ShortUrlInputFilter::VALID_UNTIL, $data);
-        $this->maxVisitsPropWasProvided = array_key_exists(ShortUrlInputFilter::MAX_VISITS, $data);
-        $this->tagsPropWasProvided = array_key_exists(ShortUrlInputFilter::TAGS, $data);
-        $this->titlePropWasProvided = array_key_exists(ShortUrlInputFilter::TITLE, $data);
-        $this->crawlablePropWasProvided = array_key_exists(ShortUrlInputFilter::CRAWLABLE, $data);
-        $this->forwardQueryPropWasProvided = array_key_exists(ShortUrlInputFilter::FORWARD_QUERY, $data);
+        [$deviceLongUrls, $devicesToRemove] = DeviceLongUrlPair::fromMapToChangeSet(
+            $inputFilter->getValue(ShortUrlInputFilter::DEVICE_LONG_URLS) ?? [],
+        );
 
-        $this->longUrl = $inputFilter->getValue(ShortUrlInputFilter::LONG_URL);
-        $this->validSince = normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE));
-        $this->validUntil = normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL));
-        $this->maxVisits = getOptionalIntFromInputFilter($inputFilter, ShortUrlInputFilter::MAX_VISITS);
-        $this->validateUrl = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL) ?? false;
-        $this->tags = $inputFilter->getValue(ShortUrlInputFilter::TAGS);
-        $this->title = $inputFilter->getValue(ShortUrlInputFilter::TITLE);
-        $this->crawlable = $inputFilter->getValue(ShortUrlInputFilter::CRAWLABLE);
-        $this->forwardQuery = getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::FORWARD_QUERY) ?? true;
+        return new self(
+            longUrlPropWasProvided: array_key_exists(ShortUrlInputFilter::LONG_URL, $data),
+            longUrl: $inputFilter->getValue(ShortUrlInputFilter::LONG_URL),
+            deviceLongUrls: $deviceLongUrls,
+            devicesToRemove: $devicesToRemove,
+            validSincePropWasProvided: array_key_exists(ShortUrlInputFilter::VALID_SINCE, $data),
+            validSince: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE)),
+            validUntilPropWasProvided: array_key_exists(ShortUrlInputFilter::VALID_UNTIL, $data),
+            validUntil: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL)),
+            maxVisitsPropWasProvided: array_key_exists(ShortUrlInputFilter::MAX_VISITS, $data),
+            maxVisits: getOptionalIntFromInputFilter($inputFilter, ShortUrlInputFilter::MAX_VISITS),
+            tagsPropWasProvided: array_key_exists(ShortUrlInputFilter::TAGS, $data),
+            tags: $inputFilter->getValue(ShortUrlInputFilter::TAGS),
+            titlePropWasProvided: array_key_exists(ShortUrlInputFilter::TITLE, $data),
+            title: $inputFilter->getValue(ShortUrlInputFilter::TITLE),
+            validateUrl: getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL) ?? false,
+            crawlablePropWasProvided: array_key_exists(ShortUrlInputFilter::CRAWLABLE, $data),
+            crawlable: $inputFilter->getValue(ShortUrlInputFilter::CRAWLABLE),
+            forwardQueryPropWasProvided: array_key_exists(ShortUrlInputFilter::FORWARD_QUERY, $data),
+            forwardQuery: getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::FORWARD_QUERY) ?? true,
+        );
     }
 
-    public function longUrl(): ?string
+    public function withResolvedTitle(string $title): static
     {
-        return $this->longUrl;
+        return new self(
+            longUrlPropWasProvided: $this->longUrlPropWasProvided,
+            longUrl: $this->longUrl,
+            deviceLongUrls: $this->deviceLongUrls,
+            devicesToRemove: $this->devicesToRemove,
+            validSincePropWasProvided: $this->validSincePropWasProvided,
+            validSince: $this->validSince,
+            validUntilPropWasProvided: $this->validUntilPropWasProvided,
+            validUntil: $this->validUntil,
+            maxVisitsPropWasProvided: $this->maxVisitsPropWasProvided,
+            maxVisits: $this->maxVisits,
+            tagsPropWasProvided: $this->tagsPropWasProvided,
+            tags: $this->tags,
+            titlePropWasProvided: $this->titlePropWasProvided,
+            title: $title,
+            titleWasAutoResolved: true,
+            validateUrl: $this->validateUrl,
+            crawlablePropWasProvided: $this->crawlablePropWasProvided,
+            crawlable: $this->crawlable,
+            forwardQueryPropWasProvided: $this->forwardQueryPropWasProvided,
+            forwardQuery: $this->forwardQuery,
+        );
     }
 
     public function getLongUrl(): string
     {
-        return $this->longUrl() ?? '';
+        return $this->longUrl ?? '';
     }
 
     public function longUrlWasProvided(): bool
@@ -94,19 +119,9 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
         return $this->longUrlPropWasProvided && $this->longUrl !== null;
     }
 
-    public function validSince(): ?Chronos
-    {
-        return $this->validSince;
-    }
-
     public function validSinceWasProvided(): bool
     {
         return $this->validSincePropWasProvided;
-    }
-
-    public function validUntil(): ?Chronos
-    {
-        return $this->validUntil;
     }
 
     public function validUntilWasProvided(): bool
@@ -114,32 +129,14 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
         return $this->validUntilPropWasProvided;
     }
 
-    public function maxVisits(): ?int
-    {
-        return $this->maxVisits;
-    }
-
     public function maxVisitsWasProvided(): bool
     {
         return $this->maxVisitsPropWasProvided;
     }
 
-    /**
-     * @return string[]
-     */
-    public function tags(): array
-    {
-        return $this->tags;
-    }
-
     public function tagsWereProvided(): bool
     {
         return $this->tagsPropWasProvided;
-    }
-
-    public function title(): ?string
-    {
-        return $this->title;
     }
 
     public function titleWasProvided(): bool
@@ -157,33 +154,14 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
         return $this->titleWasAutoResolved;
     }
 
-    public function withResolvedTitle(string $title): self
-    {
-        $copy = clone $this;
-        $copy->title = $title;
-        $copy->titleWasAutoResolved = true;
-
-        return $copy;
-    }
-
     public function doValidateUrl(): bool
     {
         return $this->validateUrl;
     }
 
-    public function crawlable(): bool
-    {
-        return $this->crawlable;
-    }
-
     public function crawlableWasProvided(): bool
     {
         return $this->crawlablePropWasProvided;
-    }
-
-    public function forwardQuery(): bool
-    {
-        return $this->forwardQuery;
     }
 
     public function forwardQueryWasProvided(): bool

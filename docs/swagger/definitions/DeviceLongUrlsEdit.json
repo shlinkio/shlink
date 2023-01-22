@@ -1,0 +1,17 @@
+{
+    "type": "object",
+    "allOf": [{
+        "$ref": "./DeviceLongUrls.json"
+    }],
+    "properties": {
+        "android": {
+            "nullable": true
+        },
+        "ios": {
+            "nullable": true
+        },
+        "desktop": {
+            "nullable": true
+        }
+    }
+}

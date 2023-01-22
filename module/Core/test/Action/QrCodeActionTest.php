@@ -56,7 +56,7 @@ class QrCodeActionTest extends TestCase
         $shortCode = 'abc123';
         $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
-        )->willReturn(ShortUrl::createEmpty());
+        )->willReturn(ShortUrl::createFake());
         $delegate = $this->createMock(RequestHandlerInterface::class);
         $delegate->expects($this->never())->method('handle');
 
@@ -78,7 +78,7 @@ class QrCodeActionTest extends TestCase
         $code = 'abc123';
         $this->urlResolver->method('resolveEnabledShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($code, ''),
-        )->willReturn(ShortUrl::createEmpty());
+        )->willReturn(ShortUrl::createFake());
         $delegate = $this->createMock(RequestHandlerInterface::class);
         $req = (new ServerRequest())->withAttribute('shortCode', $code)->withQueryParams($query);
 
@@ -111,7 +111,7 @@ class QrCodeActionTest extends TestCase
         $code = 'abc123';
         $this->urlResolver->method('resolveEnabledShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($code, ''),
-        )->willReturn(ShortUrl::createEmpty());
+        )->willReturn(ShortUrl::createFake());
         $delegate = $this->createMock(RequestHandlerInterface::class);
 
         $resp = $this->action($defaultOptions)->process($req->withAttribute('shortCode', $code), $delegate);

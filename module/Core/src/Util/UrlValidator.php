@@ -26,7 +26,7 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
 {
     private const MAX_REDIRECTS = 15;
     private const CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
-        . 'Chrome/51.0.2704.103 Safari/537.36';
+        . 'Chrome/108.0.0.0 Safari/537.36';
 
     public function __construct(private ClientInterface $httpClient, private UrlShortenerOptions $options)
     {

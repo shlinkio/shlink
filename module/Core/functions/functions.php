@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core;
 
+use BackedEnum;
 use Cake\Chronos\Chronos;
 use Cake\Chronos\ChronosInterface;
 use DateTimeInterface;
@@ -16,6 +17,7 @@ use PUGX\Shortid\Factory as ShortIdFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 
 use function date_default_timezone_get;
+use function Functional\map;
 use function Functional\reduce_left;
 use function is_array;
 use function print_r;
@@ -158,4 +160,20 @@ function camelCaseToSnakeCase(string $value): string
 function toProblemDetailsType(string $errorCode): string
 {
     return sprintf('https://shlink.io/api/error/%s', $errorCode);
+}
+
+/**
+ * @param class-string<BackedEnum> $enum
+ * @return string[]
+ */
+function enumValues(string $enum): array
+{
+    static $cache;
+    if ($cache === null) {
+        $cache = [];
+    }
+
+    return $cache[$enum] ?? (
+        $cache[$enum] = map($enum::cases(), static fn (BackedEnum $type) => (string) $type->value)
+    );
 }
