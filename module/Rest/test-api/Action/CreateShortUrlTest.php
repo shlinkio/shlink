@@ -178,7 +178,7 @@ class CreateShortUrlTest extends ApiTestCase
                 'tags' => ['boo', 'far'],
                 'validSince' => Chronos::now()->toAtomString(),
                 'maxVisits' => 7,
-            ]
+            ],
         ];
     }
 

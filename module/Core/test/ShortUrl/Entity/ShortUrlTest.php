@@ -7,8 +7,10 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Entity;
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
+use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
@@ -88,5 +90,47 @@ class ShortUrlTest extends TestCase
     {
         yield [null, DEFAULT_SHORT_CODES_LENGTH];
         yield from map(range(4, 10), fn (int $value) => [$value, $value]);
+    }
+
+    /** @test */
+    public function deviceLongUrlsAreUpdated(): void
+    {
+        $shortUrl = ShortUrl::withLongUrl('foo');
+
+        $shortUrl->update(ShortUrlEdition::fromRawData([
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::ANDROID->value => 'android',
+                DeviceType::IOS->value => 'ios',
+            ],
+        ]));
+        self::assertEquals([
+            DeviceType::ANDROID->value => 'android',
+            DeviceType::IOS->value => 'ios',
+            DeviceType::DESKTOP->value => null,
+        ], $shortUrl->deviceLongUrls());
+
+        $shortUrl->update(ShortUrlEdition::fromRawData([
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::ANDROID->value => null,
+                DeviceType::DESKTOP->value => 'desktop',
+            ],
+        ]));
+        self::assertEquals([
+            DeviceType::ANDROID->value => null,
+            DeviceType::IOS->value => 'ios',
+            DeviceType::DESKTOP->value => 'desktop',
+        ], $shortUrl->deviceLongUrls());
+
+        $shortUrl->update(ShortUrlEdition::fromRawData([
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::ANDROID->value => null,
+                DeviceType::IOS->value => null,
+            ],
+        ]));
+        self::assertEquals([
+            DeviceType::ANDROID->value => null,
+            DeviceType::IOS->value => null,
+            DeviceType::DESKTOP->value => 'desktop',
+        ], $shortUrl->deviceLongUrls());
     }
 }

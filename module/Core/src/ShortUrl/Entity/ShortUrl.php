@@ -174,12 +174,13 @@ class ShortUrl extends AbstractEntity
             $this->deviceLongUrls->remove($deviceType->value);
         }
         foreach ($shortUrlEdit->deviceLongUrls as $deviceLongUrlPair) {
-            $deviceLongUrl = $this->deviceLongUrls->get($deviceLongUrlPair->deviceType->value);
+            $key = $deviceLongUrlPair->deviceType->value;
+            $deviceLongUrl = $this->deviceLongUrls->get($key);
 
             if ($deviceLongUrl !== null) {
                 $deviceLongUrl->updateLongUrl($deviceLongUrlPair->longUrl);
             } else {
-                $this->deviceLongUrls->add(DeviceLongUrl::fromShortUrlAndPair($this, $deviceLongUrlPair));
+                $this->deviceLongUrls->set($key, DeviceLongUrl::fromShortUrlAndPair($this, $deviceLongUrlPair));
             }
         }
     }
