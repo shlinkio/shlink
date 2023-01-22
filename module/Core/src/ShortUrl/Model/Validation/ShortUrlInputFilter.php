@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ShortUrl\Model\Validation;
 
-use DateTime;
+use DateTimeInterface;
 use Laminas\Filter;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
@@ -41,6 +41,7 @@ class ShortUrlInputFilter extends InputFilter
 
     private function __construct(array $data, bool $requireLongUrl)
     {
+        // FIXME The multi-segment slug option should be injected
         $this->initialize($requireLongUrl, $data[EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value] ?? false);
         $this->setData($data);
     }
@@ -57,29 +58,36 @@ class ShortUrlInputFilter extends InputFilter
 
     private function initialize(bool $requireLongUrl, bool $multiSegmentEnabled): void
     {
-        $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
-        $longUrlInput->getValidatorChain()->attach(new Validator\NotEmpty([
+        $longUrlNotEmptyCommonOptions = [
             Validator\NotEmpty::OBJECT,
             Validator\NotEmpty::SPACE,
-            Validator\NotEmpty::NULL,
             Validator\NotEmpty::EMPTY_ARRAY,
             Validator\NotEmpty::BOOLEAN,
             Validator\NotEmpty::STRING,
+        ];
+
+        $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
+        $longUrlInput->getValidatorChain()->attach(new Validator\NotEmpty([
+            ...$longUrlNotEmptyCommonOptions,
+            Validator\NotEmpty::NULL,
         ]));
         $this->add($longUrlInput);
 
         $deviceLongUrlsInput = $this->createInput(self::DEVICE_LONG_URLS, false);
         $deviceLongUrlsInput->getValidatorChain()->attach(
-            new DeviceLongUrlsValidator($longUrlInput->getValidatorChain()),
+            new DeviceLongUrlsValidator(new Validator\NotEmpty([
+                ...$longUrlNotEmptyCommonOptions,
+                ...($requireLongUrl ? [Validator\NotEmpty::NULL] : []),
+            ])),
         );
         $this->add($deviceLongUrlsInput);
 
         $validSince = $this->createInput(self::VALID_SINCE, false);
-        $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));
+        $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTimeInterface::ATOM]));
         $this->add($validSince);
 
         $validUntil = $this->createInput(self::VALID_UNTIL, false);
-        $validUntil->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));
+        $validUntil->getValidatorChain()->attach(new Validator\Date(['format' => DateTimeInterface::ATOM]));
         $this->add($validUntil);
 
         // The only way to enforce the NotEmpty validator to be evaluated when the key is present with an empty value

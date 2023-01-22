@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 
@@ -19,11 +20,13 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
     /**
      * @param string[] $tags
      * @param DeviceLongUrlPair[] $deviceLongUrls
+     * @param DeviceType[] $devicesToRemove
      */
     private function __construct(
         private readonly bool $longUrlPropWasProvided = false,
         public readonly ?string $longUrl = null,
         public readonly array $deviceLongUrls = [],
+        public readonly array $devicesToRemove = [],
         private readonly bool $validSincePropWasProvided = false,
         public readonly ?Chronos $validSince = null,
         private readonly bool $validUntilPropWasProvided = false,
@@ -53,12 +56,15 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
+        [$deviceLongUrls, $devicesToRemove] = DeviceLongUrlPair::fromMapToChangeSet(
+            $inputFilter->getValue(ShortUrlInputFilter::DEVICE_LONG_URLS) ?? [],
+        );
+
         return new self(
             longUrlPropWasProvided: array_key_exists(ShortUrlInputFilter::LONG_URL, $data),
             longUrl: $inputFilter->getValue(ShortUrlInputFilter::LONG_URL),
-            deviceLongUrls: DeviceLongUrlPair::fromMapToList(
-                $inputFilter->getValue(ShortUrlInputFilter::DEVICE_LONG_URLS) ?? [],
-            ),
+            deviceLongUrls: $deviceLongUrls,
+            devicesToRemove: $devicesToRemove,
             validSincePropWasProvided: array_key_exists(ShortUrlInputFilter::VALID_SINCE, $data),
             validSince: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE)),
             validUntilPropWasProvided: array_key_exists(ShortUrlInputFilter::VALID_UNTIL, $data),
@@ -82,6 +88,8 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
         return new self(
             longUrlPropWasProvided: $this->longUrlPropWasProvided,
             longUrl: $this->longUrl,
+            deviceLongUrls: $this->deviceLongUrls,
+            devicesToRemove: $this->devicesToRemove,
             validSincePropWasProvided: $this->validSincePropWasProvided,
             validSince: $this->validSince,
             validUntilPropWasProvided: $this->validUntilPropWasProvided,

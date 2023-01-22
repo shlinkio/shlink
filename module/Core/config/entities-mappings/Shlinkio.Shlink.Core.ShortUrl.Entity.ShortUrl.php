@@ -70,6 +70,8 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder->createOneToMany('deviceLongUrls', ShortUrl\Entity\DeviceLongUrl::class)
             ->mappedBy('shortUrl')
             ->cascadePersist()
+            ->orphanRemoval()
+            ->setIndexBy('deviceType')
             ->build();
 
     $builder->createManyToMany('tags', Tag\Entity\Tag::class)

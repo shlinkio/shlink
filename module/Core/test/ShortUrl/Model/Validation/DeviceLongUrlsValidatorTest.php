@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Model\Validation;
 
 use Laminas\Validator\NotEmpty;
-use Laminas\Validator\ValidatorChain;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\DeviceLongUrlsValidator;
@@ -17,10 +16,7 @@ class DeviceLongUrlsValidatorTest extends TestCase
 
     protected function setUp(): void
     {
-        $longUrlValidators = new ValidatorChain();
-        $longUrlValidators->attach(new NotEmpty());
-
-        $this->validator = new DeviceLongUrlsValidator($longUrlValidators);
+        $this->validator = new DeviceLongUrlsValidator(new NotEmpty());
     }
 
     /**

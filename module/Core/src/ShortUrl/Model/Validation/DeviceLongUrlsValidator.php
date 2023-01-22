@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl\Model\Validation;
 
 use Laminas\Validator\AbstractValidator;
-use Laminas\Validator\ValidatorChain;
+use Laminas\Validator\ValidatorInterface;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 
 use function array_keys;
@@ -27,7 +27,7 @@ class DeviceLongUrlsValidator extends AbstractValidator
         self::INVALID_LONG_URL => 'At least one of the long URLs are invalid.',
     ];
 
-    public function __construct(private readonly ValidatorChain $longUrlValidators)
+    public function __construct(private readonly ValidatorInterface $longUrlValidators)
     {
         parent::__construct();
     }

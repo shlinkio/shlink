@@ -40,7 +40,7 @@ class ShortUrl extends AbstractEntity
     private Chronos $dateCreated;
     /** @var Collection<int, Visit> */
     private Collection $visits;
-    /** @var Collection<int, DeviceLongUrl> */
+    /** @var Collection<string, DeviceLongUrl> */
     private Collection $deviceLongUrls;
     /** @var Collection<int, Tag> */
     private Collection $tags;
@@ -171,10 +171,13 @@ class ShortUrl extends AbstractEntity
         if ($shortUrlEdit->forwardQueryWasProvided()) {
             $this->forwardQuery = $shortUrlEdit->forwardQuery;
         }
+
+        // Update device long URLs, removing, editing or creating where appropriate
+        foreach ($shortUrlEdit->devicesToRemove as $deviceType) {
+            $this->deviceLongUrls->remove($deviceType->value);
+        }
         foreach ($shortUrlEdit->deviceLongUrls as $deviceLongUrlPair) {
-            $deviceLongUrl = $this->deviceLongUrls->findFirst(
-                fn ($_, DeviceLongUrl $d) => $d->deviceType === $deviceLongUrlPair->deviceType,
-            );
+            $deviceLongUrl = $this->deviceLongUrls->get($deviceLongUrlPair->deviceType->value);
 
             if ($deviceLongUrl !== null) {
                 $deviceLongUrl->updateLongUrl($deviceLongUrlPair->longUrl);
@@ -191,10 +194,7 @@ class ShortUrl extends AbstractEntity
 
     public function longUrlForDevice(?DeviceType $deviceType): string
     {
-        $deviceLongUrl = $this->deviceLongUrls->findFirst(
-            static fn ($_, DeviceLongUrl $longUrl) => $longUrl->deviceType === $deviceType,
-        );
-
+        $deviceLongUrl = $deviceType === null ? null : $this->deviceLongUrls->get($deviceType->value);
         return $deviceLongUrl?->longUrl() ?? $this->longUrl;
     }
 

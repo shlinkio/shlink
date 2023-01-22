@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use stdClass;
@@ -68,6 +69,40 @@ class ShortUrlCreationTest extends TestCase
         ]];
         yield [[
             ShortUrlInputFilter::LONG_URL => [],
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => null,
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                'invalid' => 'https://shlink.io',
+            ],
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::DESKTOP->value => '',
+            ],
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::DESKTOP->value => null,
+            ],
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::IOS->value => '   ',
+            ],
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::IOS->value => 'bar',
+                DeviceType::ANDROID->value => [],
+            ],
         ]];
     }
 

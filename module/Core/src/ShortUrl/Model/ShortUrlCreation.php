@@ -61,11 +61,13 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
+        [$deviceLongUrls] = DeviceLongUrlPair::fromMapToChangeSet(
+            $inputFilter->getValue(ShortUrlInputFilter::DEVICE_LONG_URLS) ?? [],
+        );
+
         return new self(
             longUrl: $inputFilter->getValue(ShortUrlInputFilter::LONG_URL),
-            deviceLongUrls: DeviceLongUrlPair::fromMapToList(
-                $inputFilter->getValue(ShortUrlInputFilter::DEVICE_LONG_URLS) ?? [],
-            ),
+            deviceLongUrls: $deviceLongUrls,
             validSince: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE)),
             validUntil: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL)),
             customSlug: $inputFilter->getValue(ShortUrlInputFilter::CUSTOM_SLUG),
