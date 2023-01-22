@@ -6,7 +6,7 @@
             "type": "string"
         },
         "deviceLongUrls": {
-            "$ref": "./DeviceLongUrls.json"
+            "$ref": "./DeviceLongUrlsEdit.json"
         },
         "validSince": {
             "description": "The date (in ISO-8601 format) from which this short code will be valid",

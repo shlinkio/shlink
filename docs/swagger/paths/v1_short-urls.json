@@ -296,6 +296,9 @@
                                 "type": "object",
                                 "required": ["longUrl"],
                                 "properties": {
+                                    "deviceLongUrls": {
+                                        "$ref": "../definitions/DeviceLongUrls.json"
+                                    },
                                     "customSlug": {
                                         "description": "A unique custom slug to be used instead of the generated short code",
                                         "type": "string"

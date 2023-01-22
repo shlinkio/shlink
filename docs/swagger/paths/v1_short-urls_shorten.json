@@ -6,7 +6,7 @@
             "Short URLs"
         ],
         "summary": "Create a short URL",
-        "description": "Creates a short URL in a single API call. Useful for third party integrations.",
+        "description": "**[Deprecated]** Use [Create short URL](#/Short%20URLs/createShortUrl) instead",
         "parameters": [
             {
                 "$ref": "../parameters/version.json"

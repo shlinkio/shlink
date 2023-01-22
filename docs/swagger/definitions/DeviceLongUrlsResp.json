@@ -2,6 +2,6 @@
     "type": "object",
     "required": ["android", "ios", "desktop"],
     "allOf": [{
-        "$ref": "./DeviceLongUrls.json"
+        "$ref": "./DeviceLongUrlsEdit.json"
     }]
 }
