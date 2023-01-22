@@ -18,7 +18,7 @@ class VisitTest extends TestCase
      */
     public function isProperlyJsonSerialized(string $userAgent, bool $expectedToBePotentialBot): void
     {
-        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor($userAgent, 'some site', '1.2.3.4', ''));
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor($userAgent, 'some site', '1.2.3.4', ''));
 
         self::assertEquals([
             'referer' => 'some site',
@@ -48,7 +48,7 @@ class VisitTest extends TestCase
     public function addressIsAnonymizedWhenRequested(bool $anonymize, ?string $address, ?string $expectedAddress): void
     {
         $visit = Visit::forValidShortUrl(
-            ShortUrl::createEmpty(),
+            ShortUrl::createFake(),
             new Visitor('Chrome', 'some site', $address, ''),
             $anonymize,
         );

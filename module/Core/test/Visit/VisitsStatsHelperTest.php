@@ -86,7 +86,7 @@ class VisitsStatsHelperTest extends TestCase
         $repo = $this->createMock(ShortUrlRepositoryInterface::class);
         $repo->expects($this->once())->method('shortCodeIsInUse')->with($identifier, $spec)->willReturn(true);
 
-        $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
+        $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()));
         $repo2 = $this->createMock(VisitRepository::class);
         $repo2->method('findVisitsByShortCode')->with(
             $identifier,
@@ -146,7 +146,7 @@ class VisitsStatsHelperTest extends TestCase
         $repo = $this->createMock(TagRepository::class);
         $repo->expects($this->once())->method('tagExists')->with($tag, $apiKey)->willReturn(true);
 
-        $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
+        $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()));
         $repo2 = $this->createMock(VisitRepository::class);
         $repo2->method('findVisitsByTag')->with($tag, $this->isInstanceOf(VisitsListFiltering::class))->willReturn(
             $list,
@@ -187,7 +187,7 @@ class VisitsStatsHelperTest extends TestCase
         $repo = $this->createMock(DomainRepository::class);
         $repo->expects($this->once())->method('domainExists')->with($domain, $apiKey)->willReturn(true);
 
-        $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
+        $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()));
         $repo2 = $this->createMock(VisitRepository::class);
         $repo2->method('findVisitsByDomain')->with(
             $domain,
@@ -217,7 +217,7 @@ class VisitsStatsHelperTest extends TestCase
         $repo = $this->createMock(DomainRepository::class);
         $repo->expects($this->never())->method('domainExists');
 
-        $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
+        $list = map(range(0, 1), fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()));
         $repo2 = $this->createMock(VisitRepository::class);
         $repo2->method('findVisitsByDomain')->with(
             'DEFAULT',
@@ -259,7 +259,7 @@ class VisitsStatsHelperTest extends TestCase
     /** @test */
     public function nonOrphanVisitsAreReturnedAsExpected(): void
     {
-        $list = map(range(0, 3), fn () => Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()));
+        $list = map(range(0, 3), fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()));
         $repo = $this->createMock(VisitRepository::class);
         $repo->expects($this->once())->method('countNonOrphanVisits')->with(
             $this->isInstanceOf(VisitsCountFiltering::class),

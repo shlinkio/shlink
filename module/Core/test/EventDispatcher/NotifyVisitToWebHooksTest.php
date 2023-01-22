@@ -123,7 +123,7 @@ class NotifyVisitToWebHooksTest extends TestCase
     public function provideVisits(): iterable
     {
         yield 'regular visit' => [
-            Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance()),
+            Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()),
             ['shortUrl', 'visit'],
         ];
         yield 'orphan visit' => [Visit::forBasePath(Visitor::emptyInstance()), ['visit'],];

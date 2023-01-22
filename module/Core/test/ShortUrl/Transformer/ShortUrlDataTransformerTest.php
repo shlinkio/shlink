@@ -38,7 +38,7 @@ class ShortUrlDataTransformerTest extends TestCase
         $maxVisits = random_int(1, 1000);
         $now = Chronos::now();
 
-        yield 'no metadata' => [ShortUrl::createEmpty(), [
+        yield 'no metadata' => [ShortUrl::createFake(), [
             'validSince' => null,
             'validUntil' => null,
             'maxVisits' => null,

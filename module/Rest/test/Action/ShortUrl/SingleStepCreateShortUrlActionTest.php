@@ -43,7 +43,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
         ])->withAttribute(ApiKey::class, $apiKey);
         $this->urlShortener->expects($this->once())->method('shorten')->with(
             ShortUrlCreation::fromRawData(['apiKey' => $apiKey, 'longUrl' => 'http://foobar.com']),
-        )->willReturn(ShortUrl::createEmpty());
+        )->willReturn(ShortUrl::createFake());
 
         $resp = $this->action->handle($request);
 

@@ -42,7 +42,7 @@ class ShortUrlTest extends TestCase
             'The short code cannot be regenerated on ShortUrls where a custom slug was provided.',
         ];
         yield 'already persisted' => [
-            ShortUrl::createEmpty()->setId('1'),
+            ShortUrl::createFake()->setId('1'),
             'The short code can be regenerated only on new ShortUrls which have not been persisted yet.',
         ];
     }
@@ -64,7 +64,7 @@ class ShortUrlTest extends TestCase
 
     public function provideValidShortUrls(): iterable
     {
-        yield 'no custom slug' => [ShortUrl::createEmpty()];
+        yield 'no custom slug' => [ShortUrl::createFake()];
         yield 'imported with custom slug' => [ShortUrl::fromImport(
             new ImportedShlinkUrl(ImportSource::BITLY, 'longUrl', [], Chronos::now(), null, 'custom-slug', null),
             true,

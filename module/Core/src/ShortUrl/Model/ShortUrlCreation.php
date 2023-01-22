@@ -44,14 +44,6 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
     }
 
     /**
-     * @deprecated This should not be allowed
-     */
-    public static function createEmpty(): self
-    {
-        return new self('');
-    }
-
-    /**
      * @throws ValidationException
      */
     public static function fromRawData(array $data): self

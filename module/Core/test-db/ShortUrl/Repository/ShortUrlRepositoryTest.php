@@ -134,7 +134,6 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     /** @test */
     public function findOneMatchingReturnsNullForNonExistingShortUrls(): void
     {
-        self::assertNull($this->repo->findOneMatching(ShortUrlCreation::createEmpty()));
         self::assertNull($this->repo->findOneMatching(ShortUrlCreation::fromRawData(['longUrl' => 'foobar'])));
         self::assertNull($this->repo->findOneMatching(
             ShortUrlCreation::fromRawData(['longUrl' => 'foobar', 'tags' => ['foo', 'bar']]),

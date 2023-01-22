@@ -31,7 +31,7 @@ class VisitLocationRepositoryTest extends DatabaseTestCase
      */
     public function findVisitsReturnsProperVisits(int $blockSize): void
     {
-        $shortUrl = ShortUrl::createEmpty();
+        $shortUrl = ShortUrl::createFake();
         $this->getEntityManager()->persist($shortUrl);
 
         for ($i = 0; $i < 6; $i++) {

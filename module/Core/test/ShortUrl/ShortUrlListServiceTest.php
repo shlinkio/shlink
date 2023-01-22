@@ -36,10 +36,10 @@ class ShortUrlListServiceTest extends TestCase
     public function listedUrlsAreReturnedFromEntityManager(?ApiKey $apiKey): void
     {
         $list = [
-            ShortUrl::createEmpty(),
-            ShortUrl::createEmpty(),
-            ShortUrl::createEmpty(),
-            ShortUrl::createEmpty(),
+            ShortUrl::createFake(),
+            ShortUrl::createFake(),
+            ShortUrl::createFake(),
+            ShortUrl::createFake(),
         ];
 
         $this->repo->expects($this->once())->method('findList')->willReturn($list);

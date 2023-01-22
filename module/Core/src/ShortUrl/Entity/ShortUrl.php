@@ -62,12 +62,9 @@ class ShortUrl extends AbstractEntity
     {
     }
 
-    /**
-     * @deprecated This should not be allowed
-     */
-    public static function createEmpty(): self
+    public static function createFake(): self
     {
-        return self::create(ShortUrlCreation::createEmpty());
+        return self::withLongUrl('foo');
     }
 
     /**
