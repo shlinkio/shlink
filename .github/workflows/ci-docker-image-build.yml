@@ -3,7 +3,7 @@ name: Build docker image
 on:
   pull_request:
     paths:
-      - './Dockerfile'
+      - 'Dockerfile'
 
 jobs:
   build-docker-image:

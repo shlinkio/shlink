@@ -4,12 +4,12 @@ on:
   pull_request:
     paths-ignore:
       - 'LICENSE'
-      - './.*'
-      - './*.md'
-      - './*.xml'
-      - './*.yml*'
-      - './*.json5'
-      - './*.neon'
+      - '.*'
+      - '*.md'
+      - '*.xml'
+      - '*.yml*'
+      - '*.json5'
+      - '*.neon'
   push:
     branches:
       - main
@@ -17,12 +17,12 @@ on:
       - 2.x
     paths-ignore:
       - 'LICENSE'
-      - './.*'
-      - './*.md'
-      - './*.xml'
-      - './*.yml*'
-      - './*.json5'
-      - './*.neon'
+      - '.*'
+      - '*.md'
+      - '*.xml'
+      - '*.yml*'
+      - '*.json5'
+      - '*.neon'
 
 jobs:
   static-analysis:
