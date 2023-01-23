@@ -14,6 +14,8 @@ class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionHelperInte
     }
 
     /**
+     * @deprecated TODO Rename to processTitle once URL validation is removed with Shlink 4.0.0
+     *                  Move relevant logic from URL validator here.
      * @template T of TitleResolutionModelInterface
      * @param T $data
      * @return T

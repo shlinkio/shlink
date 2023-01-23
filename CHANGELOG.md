@@ -28,7 +28,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Deprecated
-* [#1676](https://github.com/shlinkio/shlink/issues/1676) Deprecated `GET /short-urls/shorten` endpoint. Use `POST /short-urls` to create short URLs instead
+* [#1676](https://github.com/shlinkio/shlink/issues/1676) Deprecated `GET /short-urls/shorten` endpoint. Use `POST /short-urls` to create short URLs instead.
+* [#1678](https://github.com/shlinkio/shlink/issues/1678) Deprecated `validateUrl` option on URL creation/edition.
 
 ### Removed
 * *Nothing*

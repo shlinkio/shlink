@@ -38,6 +38,7 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
         private readonly bool $titlePropWasProvided = false,
         public readonly ?string $title = null,
         public readonly bool $titleWasAutoResolved = false,
+        /** @deprecated */
         public readonly bool $validateUrl = false,
         private readonly bool $crawlablePropWasProvided = false,
         public readonly bool $crawlable = false,
@@ -154,6 +155,7 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
         return $this->titleWasAutoResolved;
     }
 
+    /** @deprecated */
     public function doValidateUrl(): bool
     {
         return $this->validateUrl;

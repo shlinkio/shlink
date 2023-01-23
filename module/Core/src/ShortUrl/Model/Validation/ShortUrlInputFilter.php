@@ -32,6 +32,7 @@ class ShortUrlInputFilter extends InputFilter
     public const SHORT_CODE_LENGTH = 'shortCodeLength';
     public const LONG_URL = 'longUrl';
     public const DEVICE_LONG_URLS = 'deviceLongUrls';
+    /** @deprecated */
     public const VALIDATE_URL = 'validateUrl';
     public const API_KEY = 'apiKey';
     public const TAGS = 'tags';

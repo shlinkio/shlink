@@ -33,6 +33,7 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
         public readonly bool $findIfExists = false,
         public readonly ?string $domain = null,
         public readonly int $shortCodeLength = 5,
+        /** @deprecated  */
         public readonly bool $validateUrl = false,
         public readonly ?ApiKey $apiKey = null,
         public readonly array $tags = [],
@@ -131,6 +132,7 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
         return $this->domain !== null;
     }
 
+    /** @deprecated  */
     public function doValidateUrl(): bool
     {
         return $this->validateUrl;

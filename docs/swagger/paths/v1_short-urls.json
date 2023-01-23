@@ -314,10 +314,6 @@
                                     "shortCodeLength": {
                                         "description": "The length for generated short code. It has to be at least 4 and defaults to 5. It will be ignored when customSlug is provided",
                                         "type": "number"
-                                    },
-                                    "validateUrl": {
-                                        "description": "Tells if the long URL should or should not be validated as a reachable URL. If not provided, it will fall back to app-level config",
-                                        "type": "boolean"
                                     }
                                 }
                             }
