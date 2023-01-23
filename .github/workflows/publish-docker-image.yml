@@ -6,12 +6,12 @@ on:
       - develop
     paths-ignore:
       - 'LICENSE'
-      - './.*'
-      - './*.md'
-      - './*.xml'
-      - './*.yml*'
-      - './*.json5'
-      - './*.neon'
+      - '.*'
+      - '*.md'
+      - '*.xml'
+      - '*.yml*'
+      - '*.json5'
+      - '*.neon'
     tags:
       - 'v*'
 

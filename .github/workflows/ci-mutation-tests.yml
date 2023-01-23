@@ -19,7 +19,7 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-4.12.0
+          php-extensions: openswoole-4.12.1
           extensions-cache-key: mutation-tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
       - uses: actions/download-artifact@v3
         with:
