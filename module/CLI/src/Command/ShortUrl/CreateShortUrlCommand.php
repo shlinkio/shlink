@@ -103,7 +103,7 @@ class CreateShortUrlCommand extends Command
                 'validate-url',
                 null,
                 InputOption::VALUE_NONE,
-                'Forces the long URL to be validated, regardless what is globally configured.',
+                '[DEPRECATED] Makes the URL to be validated as publicly accessible.',
             )
             ->addOption(
                 'crawlable',

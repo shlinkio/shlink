@@ -22,6 +22,7 @@ use function trim;
 
 use const Shlinkio\Shlink\TITLE_TAG_VALUE;
 
+/** @deprecated */
 class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
 {
     private const MAX_REDIRECTS = 15;
@@ -33,6 +34,7 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
     }
 
     /**
+     * @deprecated
      * @throws InvalidUrlException
      */
     public function validateUrl(string $url, bool $doValidate): void
@@ -44,6 +46,10 @@ class UrlValidator implements UrlValidatorInterface, RequestMethodInterface
         $this->validateUrlAndGetResponse($url);
     }
 
+    /**
+     * @deprecated
+     * @throws InvalidUrlException
+     */
     public function validateUrlWithTitle(string $url, bool $doValidate): ?string
     {
         if (! $doValidate && ! $this->options->autoResolveTitles) {
