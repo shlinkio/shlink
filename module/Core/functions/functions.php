@@ -15,6 +15,7 @@ use Laminas\Filter\Word\CamelCaseToUnderscore;
 use Laminas\InputFilter\InputFilter;
 use PUGX\Shortid\Factory as ShortIdFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
 use function date_default_timezone_get;
 use function Functional\map;
@@ -27,14 +28,16 @@ use function str_repeat;
 use function strtolower;
 use function ucfirst;
 
-function generateRandomShortCode(int $length): string
+function generateRandomShortCode(int $length, ShortUrlMode $mode = ShortUrlMode::STRICT): string
 {
     static $shortIdFactory;
     if ($shortIdFactory === null) {
         $shortIdFactory = new ShortIdFactory();
     }
 
-    $alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $alphabet = $mode === ShortUrlMode::STRICT
+        ? '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        : '0123456789abcdefghijklmnopqrstuvwxyz';
     return $shortIdFactory->generate($length, $alphabet)->serialize();
 }
 

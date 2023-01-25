@@ -176,7 +176,7 @@ class CreateShortUrlCommand extends Command
                 ShortUrlInputFilter::CRAWLABLE => $input->getOption('crawlable'),
                 ShortUrlInputFilter::FORWARD_QUERY => !$input->getOption('no-forward-query'),
                 EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value => $this->options->multiSegmentSlugsEnabled,
-            ]));
+            ], $this->options->mode));
 
             $io->writeln([
                 sprintf('Processed long URL: <info>%s</info>', $longUrl),

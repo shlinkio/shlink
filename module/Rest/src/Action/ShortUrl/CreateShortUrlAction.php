@@ -25,6 +25,6 @@ class CreateShortUrlAction extends AbstractCreateShortUrlAction
         $payload[ShortUrlInputFilter::API_KEY] = AuthenticationMiddleware::apiKeyFromRequest($request);
         $payload[EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value] = $this->urlShortenerOptions->multiSegmentSlugsEnabled;
 
-        return ShortUrlCreation::fromRawData($payload);
+        return ShortUrlCreation::fromRawData($payload, $this->urlShortenerOptions->mode);
     }
 }

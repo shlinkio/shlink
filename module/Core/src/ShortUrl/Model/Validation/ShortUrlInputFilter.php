@@ -42,7 +42,6 @@ class ShortUrlInputFilter extends InputFilter
 
     private function __construct(array $data, bool $requireLongUrl)
     {
-        // FIXME The multi-segment slug option should be injected
         $this->initialize($requireLongUrl, $data[EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value] ?? false);
         $this->setData($data);
     }

@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Model\DeviceLongUrlPair;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
@@ -95,7 +96,10 @@ class ShortUrl extends AbstractEntity
         $instance->maxVisits = $creation->maxVisits;
         $instance->customSlugWasProvided = $creation->hasCustomSlug();
         $instance->shortCodeLength = $creation->shortCodeLength;
-        $instance->shortCode = $creation->customSlug ?? generateRandomShortCode($instance->shortCodeLength);
+        $instance->shortCode = $creation->customSlug ?? generateRandomShortCode(
+            $instance->shortCodeLength,
+            $creation->shortUrlMode,
+        );
         $instance->domain = $relationResolver->resolveDomain($creation->domain);
         $instance->authorApiKey = $creation->apiKey;
         $instance->title = $creation->title;
@@ -292,7 +296,7 @@ class ShortUrl extends AbstractEntity
     /**
      * @throws ShortCodeCannotBeRegeneratedException
      */
-    public function regenerateShortCode(): void
+    public function regenerateShortCode(ShortUrlMode $mode): void
     {
         // In ShortUrls where a custom slug was provided, throw error, unless it is an imported one
         if ($this->customSlugWasProvided && $this->importSource === null) {
@@ -304,7 +308,7 @@ class ShortUrl extends AbstractEntity
             throw ShortCodeCannotBeRegeneratedException::forShortUrlAlreadyPersisted();
         }
 
-        $this->shortCode = generateRandomShortCode($this->shortCodeLength);
+        $this->shortCode = generateRandomShortCode($this->shortCodeLength, $mode);
     }
 
     public function isEnabled(): bool
