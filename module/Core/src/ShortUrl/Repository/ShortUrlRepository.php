@@ -14,42 +14,41 @@ use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function count;
+use function strtolower;
 
 class ShortUrlRepository extends EntitySpecificationRepository implements ShortUrlRepositoryInterface
 {
-    public function findOneWithDomainFallback(ShortUrlIdentifier $identifier): ?ShortUrl
+    public function findOneWithDomainFallback(ShortUrlIdentifier $identifier, ShortUrlMode $shortUrlMode): ?ShortUrl
     {
         // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
         // the bottom
         $dbPlatform = $this->getEntityManager()->getConnection()->getDatabasePlatform();
         $ordering = $dbPlatform instanceof PostgreSQLPlatform ? 'ASC' : 'DESC';
+        $isStrict = $shortUrlMode === ShortUrlMode::STRICT;
 
-        $dql = <<<DQL
-            SELECT s
-              FROM Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl AS s
-         LEFT JOIN s.domain AS d
-             WHERE s.shortCode = :shortCode
-               AND (s.domain IS NULL OR d.authority = :domain)
-          ORDER BY s.domain {$ordering}
-        DQL;
+        $qb = $this->createQueryBuilder('s');
+        $qb->leftJoin('s.domain', 'd')
+           ->where($qb->expr()->eq($isStrict ? 's.shortCode' : 'LOWER(s.shortCode)', ':shortCode'))
+           ->setParameter('shortCode', $isStrict ? $identifier->shortCode : strtolower($identifier->shortCode))
+           ->andWhere($qb->expr()->orX(
+               $qb->expr()->isNull('s.domain'),
+               $qb->expr()->eq('d.authority', ':domain')
+           ))
+           ->setParameter('domain', $identifier->domain);
 
-        $query = $this->getEntityManager()->createQuery($dql);
-        $query->setMaxResults(1)
-              ->setParameters([
-                  'shortCode' => $identifier->shortCode,
-                  'domain' => $identifier->domain,
-              ]);
-
-        // Since we ordered by domain, we will have first the URL matching provided domain, followed by the one
-        // with no domain (if any), so it is safe to fetch 1 max result and we will get:
+        // Since we order by domain, we will have first the URL matching provided domain, followed by the one
+        // with no domain (if any), so it is safe to fetch 1 max result, and we will get:
         //  * The short URL matching both the short code and the domain, or
         //  * The short URL matching the short code but without any domain, or
         //  * No short URL at all
+        $qb->orderBy('s.domain', $ordering)
+           ->setMaxResults(1);
 
-        return $query->getOneOrNullResult();
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     public function findOne(ShortUrlIdentifier $identifier, ?Specification $spec = null): ?ShortUrl

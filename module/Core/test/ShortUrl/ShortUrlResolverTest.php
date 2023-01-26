@@ -10,9 +10,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolver;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -35,7 +37,7 @@ class ShortUrlResolverTest extends TestCase
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
-        $this->urlResolver = new ShortUrlResolver($this->em);
+        $this->urlResolver = new ShortUrlResolver($this->em, new UrlShortenerOptions());
     }
 
     /**
@@ -83,6 +85,7 @@ class ShortUrlResolverTest extends TestCase
 
         $this->repo->expects($this->once())->method('findOneWithDomainFallback')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            ShortUrlMode::STRICT,
         )->willReturn($shortUrl);
         $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
@@ -101,6 +104,7 @@ class ShortUrlResolverTest extends TestCase
 
         $this->repo->expects($this->once())->method('findOneWithDomainFallback')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            ShortUrlMode::STRICT,
         )->willReturn($shortUrl);
         $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
