@@ -25,6 +25,6 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
             ShortUrlInputFilter::API_KEY => $apiKey,
             // This will usually be null, unless this API key enforces one specific domain
             ShortUrlInputFilter::DOMAIN => $request->getAttribute(ShortUrlInputFilter::DOMAIN),
-        ], $this->urlShortenerOptions->mode);
+        ], $this->urlShortenerOptions);
     }
 }

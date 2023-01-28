@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -48,9 +49,10 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
     /**
      * @throws ValidationException
      */
-    public static function fromRawData(array $data, ShortUrlMode $mode = ShortUrlMode::STRICT): self
+    public static function fromRawData(array $data, ?UrlShortenerOptions $options = null): self
     {
-        $inputFilter = ShortUrlInputFilter::withRequiredLongUrl($data);
+        $options = $options ?? new UrlShortenerOptions();
+        $inputFilter = ShortUrlInputFilter::withRequiredLongUrl($data, $options);
         if (! $inputFilter->isValid()) {
             throw ValidationException::fromInputFilter($inputFilter);
         }
@@ -61,7 +63,7 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
 
         return new self(
             longUrl: $inputFilter->getValue(ShortUrlInputFilter::LONG_URL),
-            shortUrlMode: $mode,
+            shortUrlMode: $options->mode,
             deviceLongUrls: $deviceLongUrls,
             validSince: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE)),
             validUntil: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL)),

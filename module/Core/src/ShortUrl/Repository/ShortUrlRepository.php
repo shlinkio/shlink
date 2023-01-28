@@ -36,7 +36,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
            ->setParameter('shortCode', $isStrict ? $identifier->shortCode : strtolower($identifier->shortCode))
            ->andWhere($qb->expr()->orX(
                $qb->expr()->isNull('s.domain'),
-               $qb->expr()->eq('d.authority', ':domain')
+               $qb->expr()->eq('d.authority', ':domain'),
            ))
            ->setParameter('domain', $identifier->domain);
 

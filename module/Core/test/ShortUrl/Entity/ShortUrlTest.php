@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\DeviceType;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
@@ -144,7 +145,7 @@ class ShortUrlTest extends TestCase
         $allFor = static fn (ShortUrlMode $mode): bool => every($range, static function () use ($mode): bool {
             $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
                 [ShortUrlInputFilter::LONG_URL => 'foo'],
-                $mode,
+                new UrlShortenerOptions(mode: $mode),
             ));
             $shortCode = $shortUrl->getShortCode();
 

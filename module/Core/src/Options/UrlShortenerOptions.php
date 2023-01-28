@@ -21,4 +21,9 @@ final class UrlShortenerOptions
         public readonly ShortUrlMode $mode = ShortUrlMode::STRICT,
     ) {
     }
+
+    public function isLooselyMode(): bool
+    {
+        return $this->mode === ShortUrlMode::LOOSELY;
+    }
 }

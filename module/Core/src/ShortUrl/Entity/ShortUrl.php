@@ -63,6 +63,9 @@ class ShortUrl extends AbstractEntity
     {
     }
 
+    /**
+     * @internal
+     */
     public static function createFake(): self
     {
         return self::withLongUrl('foo');
@@ -70,6 +73,7 @@ class ShortUrl extends AbstractEntity
 
     /**
      * @param non-empty-string $longUrl
+     * @internal
      */
     public static function withLongUrl(string $longUrl): self
     {
