@@ -36,11 +36,15 @@ class RedirectResponseHelperTest extends TestCase
     public function provideRedirectConfigs(): iterable
     {
         yield 'status 302' => [302, 20, 302, null];
-        yield 'status over 302' => [400, 20, 302, null];
+        yield 'status 307' => [307, 20, 307, null];
+        yield 'status over 308' => [400, 20, 302, null];
         yield 'status below 301' => [201, 20, 302, null];
         yield 'status 301 with valid expiration' => [301, 20, 301, 'private,max-age=20'];
         yield 'status 301 with zero expiration' => [301, 0, 301, 'private,max-age=30'];
         yield 'status 301 with negative expiration' => [301, -20, 301, 'private,max-age=30'];
+        yield 'status 308 with valid expiration' => [308, 20, 308, 'private,max-age=20'];
+        yield 'status 308 with zero expiration' => [308, 0, 308, 'private,max-age=30'];
+        yield 'status 308 with negative expiration' => [308, -20, 308, 'private,max-age=30'];
     }
 
     private function helper(?RedirectOptions $options = null): RedirectResponseHelper

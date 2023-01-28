@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config;
 
-use function Functional\map;
 use function Shlinkio\Shlink\Config\env;
 
 enum EnvVars: string
@@ -44,6 +43,7 @@ enum EnvVars: string
     case REDIRECT_CACHE_LIFETIME = 'REDIRECT_CACHE_LIFETIME';
     case BASE_PATH = 'BASE_PATH';
     case SHORT_URL_TRAILING_SLASH = 'SHORT_URL_TRAILING_SLASH';
+    case SHORT_URL_MODE = 'SHORT_URL_MODE';
     case PORT = 'PORT';
     case TASK_WORKER_NUM = 'TASK_WORKER_NUM';
     case WEB_WORKER_NUM = 'WEB_WORKER_NUM';
@@ -76,14 +76,5 @@ enum EnvVars: string
     public function existsInEnv(): bool
     {
         return $this->loadFromEnv() !== null;
-    }
-
-    /**
-     * @return string[]
-     */
-    public static function values(): array
-    {
-        static $values;
-        return $values ?? ($values = map(self::cases(), static fn (EnvVars $envVar) => $envVar->value));
     }
 }

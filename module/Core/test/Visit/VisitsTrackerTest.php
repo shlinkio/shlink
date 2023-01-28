@@ -58,7 +58,7 @@ class VisitsTrackerTest extends TestCase
 
     public function provideTrackingMethodNames(): iterable
     {
-        yield 'track' => ['track', [ShortUrl::createEmpty(), Visitor::emptyInstance()]];
+        yield 'track' => ['track', [ShortUrl::createFake(), Visitor::emptyInstance()]];
         yield 'trackInvalidShortUrlVisit' => ['trackInvalidShortUrlVisit', [Visitor::emptyInstance()]];
         yield 'trackBaseUrlVisit' => ['trackBaseUrlVisit', [Visitor::emptyInstance()]];
         yield 'trackRegularNotFoundVisit' => ['trackRegularNotFoundVisit', [Visitor::emptyInstance()]];

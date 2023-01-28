@@ -49,7 +49,7 @@ class EditShortUrlActionTest extends TestCase
                                         ->withParsedBody([
                                             'maxVisits' => 5,
                                         ]);
-        $this->shortUrlService->expects($this->once())->method('updateShortUrl')->willReturn(ShortUrl::createEmpty());
+        $this->shortUrlService->expects($this->once())->method('updateShortUrl')->willReturn(ShortUrl::createFake());
 
         $resp = $this->action->handle($request);
 

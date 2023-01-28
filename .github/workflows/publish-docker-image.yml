@@ -4,6 +4,14 @@ on:
   push:
     branches:
       - develop
+    paths-ignore:
+      - 'LICENSE'
+      - '.*'
+      - '*.md'
+      - '*.xml'
+      - '*.yml*'
+      - '*.json5'
+      - '*.neon'
     tags:
       - 'v*'
 

@@ -68,7 +68,6 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
         int $shortCodeSegments = 1,
     ): ResponseInterface {
         $uri = $request->getUri();
-        $query = $request->getQueryParams();
         [$potentialShortCode, $extraPath] = $this->resolvePotentialShortCodeAndExtraPath($uri, $shortCodeSegments);
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($potentialShortCode, $uri->getAuthority());
 
@@ -76,7 +75,7 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
             $shortUrl = $this->resolver->resolveEnabledShortUrl($identifier);
             $this->requestTracker->trackIfApplicable($shortUrl, $request);
 
-            $longUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $query, $extraPath);
+            $longUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request, $extraPath);
             return $this->redirectResponseHelper->buildRedirectResponse($longUrl);
         } catch (ShortUrlNotFoundException) {
             if ($extraPath === null || ! $this->urlShortenerOptions->multiSegmentSlugsEnabled) {

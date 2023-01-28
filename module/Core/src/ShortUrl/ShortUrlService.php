@@ -34,7 +34,6 @@ class ShortUrlService implements ShortUrlServiceInterface
         ?ApiKey $apiKey = null,
     ): ShortUrl {
         if ($shortUrlEdit->longUrlWasProvided()) {
-            /** @var ShortUrlEdition $shortUrlEdit */
             $shortUrlEdit = $this->titleResolutionHelper->processTitleAndValidateUrl($shortUrlEdit);
         }
 

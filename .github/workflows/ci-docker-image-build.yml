@@ -1,0 +1,14 @@
+name: Build docker image
+
+on:
+  pull_request:
+    paths:
+      - 'Dockerfile'
+
+jobs:
+  build-docker-image:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - run: docker build -t shlink-docker-image:temp .

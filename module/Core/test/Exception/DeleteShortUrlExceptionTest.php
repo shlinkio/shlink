@@ -57,14 +57,14 @@ class DeleteShortUrlExceptionTest extends TestCase
     {
         $e = DeleteShortUrlException::fromVisitsThreshold(
             10,
-            ShortUrlIdentifier::fromShortCodeAndDomain('abc123', 'doma.in'),
+            ShortUrlIdentifier::fromShortCodeAndDomain('abc123', 's.test'),
         );
-        $expectedMessage = 'Impossible to delete short URL with short code "abc123" for domain "doma.in", since it '
+        $expectedMessage = 'Impossible to delete short URL with short code "abc123" for domain "s.test", since it '
             . 'has more than "10" visits.';
 
         self::assertEquals([
             'shortCode' => 'abc123',
-            'domain' => 'doma.in',
+            'domain' => 's.test',
             'threshold' => 10,
         ], $e->getAdditionalData());
         self::assertEquals($expectedMessage, $e->getMessage());

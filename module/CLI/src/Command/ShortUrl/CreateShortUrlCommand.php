@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
-use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
@@ -103,7 +102,7 @@ class CreateShortUrlCommand extends Command
                 'validate-url',
                 null,
                 InputOption::VALUE_NONE,
-                'Forces the long URL to be validated, regardless what is globally configured.',
+                '[DEPRECATED] Makes the URL to be validated as publicly accessible.',
             )
             ->addOption(
                 'crawlable',
@@ -175,8 +174,7 @@ class CreateShortUrlCommand extends Command
                 ShortUrlInputFilter::TAGS => $tags,
                 ShortUrlInputFilter::CRAWLABLE => $input->getOption('crawlable'),
                 ShortUrlInputFilter::FORWARD_QUERY => !$input->getOption('no-forward-query'),
-                EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value => $this->options->multiSegmentSlugsEnabled,
-            ]));
+            ], $this->options));
 
             $io->writeln([
                 sprintf('Processed long URL: <info>%s</info>', $longUrl),

@@ -84,7 +84,7 @@ $buildDbConnection = static function (): array {
     return match ($driver) {
         'sqlite' => [
             'driver' => 'pdo_sqlite',
-            'path' => sys_get_temp_dir() . '/shlink-tests.db',
+            'memory' => true,
         ],
         'postgres' => [
             'driver' => 'pdo_pgsql',
@@ -131,7 +131,7 @@ return [
     'url_shortener' => [
         'domain' => [
             'schema' => 'http',
-            'hostname' => 'doma.in',
+            'hostname' => 's.test',
         ],
     ],
 

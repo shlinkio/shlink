@@ -14,42 +14,41 @@ use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function count;
+use function strtolower;
 
 class ShortUrlRepository extends EntitySpecificationRepository implements ShortUrlRepositoryInterface
 {
-    public function findOneWithDomainFallback(ShortUrlIdentifier $identifier): ?ShortUrl
+    public function findOneWithDomainFallback(ShortUrlIdentifier $identifier, ShortUrlMode $shortUrlMode): ?ShortUrl
     {
         // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
         // the bottom
         $dbPlatform = $this->getEntityManager()->getConnection()->getDatabasePlatform();
         $ordering = $dbPlatform instanceof PostgreSQLPlatform ? 'ASC' : 'DESC';
+        $isStrict = $shortUrlMode === ShortUrlMode::STRICT;
 
-        $dql = <<<DQL
-            SELECT s
-              FROM Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl AS s
-         LEFT JOIN s.domain AS d
-             WHERE s.shortCode = :shortCode
-               AND (s.domain IS NULL OR d.authority = :domain)
-          ORDER BY s.domain {$ordering}
-        DQL;
+        $qb = $this->createQueryBuilder('s');
+        $qb->leftJoin('s.domain', 'd')
+           ->where($qb->expr()->eq($isStrict ? 's.shortCode' : 'LOWER(s.shortCode)', ':shortCode'))
+           ->setParameter('shortCode', $isStrict ? $identifier->shortCode : strtolower($identifier->shortCode))
+           ->andWhere($qb->expr()->orX(
+               $qb->expr()->isNull('s.domain'),
+               $qb->expr()->eq('d.authority', ':domain'),
+           ))
+           ->setParameter('domain', $identifier->domain);
 
-        $query = $this->getEntityManager()->createQuery($dql);
-        $query->setMaxResults(1)
-              ->setParameters([
-                  'shortCode' => $identifier->shortCode,
-                  'domain' => $identifier->domain,
-              ]);
-
-        // Since we ordered by domain, we will have first the URL matching provided domain, followed by the one
-        // with no domain (if any), so it is safe to fetch 1 max result and we will get:
+        // Since we order by domain, we will have first the URL matching provided domain, followed by the one
+        // with no domain (if any), so it is safe to fetch 1 max result, and we will get:
         //  * The short URL matching both the short code and the domain, or
         //  * The short URL matching the short code but without any domain, or
         //  * No short URL at all
+        $qb->orderBy('s.domain', $ordering)
+           ->setMaxResults(1);
 
-        return $query->getOneOrNullResult();
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     public function findOne(ShortUrlIdentifier $identifier, ?Specification $spec = null): ?ShortUrl
@@ -101,45 +100,45 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $qb;
     }
 
-    public function findOneMatching(ShortUrlCreation $meta): ?ShortUrl
+    public function findOneMatching(ShortUrlCreation $creation): ?ShortUrl
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
         $qb->select('s')
            ->from(ShortUrl::class, 's')
            ->where($qb->expr()->eq('s.longUrl', ':longUrl'))
-           ->setParameter('longUrl', $meta->getLongUrl())
+           ->setParameter('longUrl', $creation->longUrl)
            ->setMaxResults(1)
            ->orderBy('s.id');
 
-        if ($meta->hasCustomSlug()) {
+        if ($creation->hasCustomSlug()) {
             $qb->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
-               ->setParameter('slug', $meta->getCustomSlug());
+               ->setParameter('slug', $creation->customSlug);
         }
-        if ($meta->hasMaxVisits()) {
+        if ($creation->hasMaxVisits()) {
             $qb->andWhere($qb->expr()->eq('s.maxVisits', ':maxVisits'))
-               ->setParameter('maxVisits', $meta->getMaxVisits());
+               ->setParameter('maxVisits', $creation->maxVisits);
         }
-        if ($meta->hasValidSince()) {
+        if ($creation->hasValidSince()) {
             $qb->andWhere($qb->expr()->eq('s.validSince', ':validSince'))
-               ->setParameter('validSince', $meta->getValidSince(), ChronosDateTimeType::CHRONOS_DATETIME);
+               ->setParameter('validSince', $creation->validSince, ChronosDateTimeType::CHRONOS_DATETIME);
         }
-        if ($meta->hasValidUntil()) {
+        if ($creation->hasValidUntil()) {
             $qb->andWhere($qb->expr()->eq('s.validUntil', ':validUntil'))
-               ->setParameter('validUntil', $meta->getValidUntil(), ChronosDateTimeType::CHRONOS_DATETIME);
+               ->setParameter('validUntil', $creation->validUntil, ChronosDateTimeType::CHRONOS_DATETIME);
         }
-        if ($meta->hasDomain()) {
+        if ($creation->hasDomain()) {
             $qb->join('s.domain', 'd')
                ->andWhere($qb->expr()->eq('d.authority', ':domain'))
-               ->setParameter('domain', $meta->getDomain());
+               ->setParameter('domain', $creation->domain);
         }
 
-        $apiKey = $meta->getApiKey();
+        $apiKey = $creation->apiKey;
         if ($apiKey !== null) {
             $this->applySpecification($qb, $apiKey->spec(), 's');
         }
 
-        $tags = $meta->getTags();
+        $tags = $creation->tags;
         $tagsAmount = count($tags);
         if ($tagsAmount === 0) {
             return $qb->getQuery()->getOneOrNullResult();

@@ -22,7 +22,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class TagService implements TagServiceInterface
 {
-    public function __construct(private ORM\EntityManagerInterface $em)
+    public function __construct(private readonly ORM\EntityManagerInterface $em)
     {
     }
 

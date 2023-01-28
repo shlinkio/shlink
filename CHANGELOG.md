@@ -4,6 +4,45 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.5.0] - 2023-01-28
+### Added
+* [#1557](https://github.com/shlinkio/shlink/issues/1557) Added support to dynamically redirect to different long URLs based on the visitor's device type.
+
+  For the moment, only `android`, `ios` and `desktop` can have their own specific long URL, and when the visitor cannot be matched against any of them, the regular long URL will be used.
+
+  In the future, more granular device types could be added if appropriate (iOS tablet, android table, tablet, mobile phone, Linux, Mac, Windows, etc).
+
+  In order to match the visitor's device, the `User-Agent` header is used.
+
+* [#1632](https://github.com/shlinkio/shlink/issues/1632) Added amount of bots, non-bots and total visits to the visits summary endpoint.
+* [#1633](https://github.com/shlinkio/shlink/issues/1633) Added amount of bots, non-bots and total visits to the tag stats endpoint.
+* [#1653](https://github.com/shlinkio/shlink/issues/1653) Added support for all HTTP methods in short URLs, together with two new redirect status codes, 307 and 308.
+
+  Existing Shlink instances will continue to work the same. However, if you decide to set the redirect status codes as 307 or 308, Shlink will also return a redirect for short URLs even when the request method is different from `GET`.
+
+  The status 308 is equivalent to 301, and 307 is equivalent to 302. The difference is that the spec requires the client to respect the original HTTP method when performing the redirect. With 301 and 302, some old clients might perform a `GET` request during the redirect, regardless the original request method.
+
+* [#1662](https://github.com/shlinkio/shlink/issues/1662) Added support to provide openswoole-specific config options via env vars prefixed with `OPENSWOOLE_`.
+* [#1389](https://github.com/shlinkio/shlink/issues/1389) and [#706](https://github.com/shlinkio/shlink/issues/706) Added support for case-insensitive short URLs.
+
+  In order to achieve this, a new env var/config option has been implemented (`SHORT_URL_MODE`), which allows either `strict` or `loosely`.
+
+  Default value is `strict`, but if `loosely` is provided, then short URLs will be matched in a case-insensitive way, and new short URLs will be generated with short-codes in lowercase only.
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* [#1676](https://github.com/shlinkio/shlink/issues/1676) Deprecated `GET /short-urls/shorten` endpoint. Use `POST /short-urls` to create short URLs instead.
+* [#1678](https://github.com/shlinkio/shlink/issues/1678) Deprecated `validateUrl` option on URL creation/edition.
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1639](https://github.com/shlinkio/shlink/issues/1639) Fixed 500 error returned when request body is not valid JSON, instead of a proper descriptive error.
+
+
 ## [3.4.0] - 2022-12-16
 ### Added
 * [#1612](https://github.com/shlinkio/shlink/issues/1612) Allowed to filter short URLs out of lists, when `validUntil` date is in the past or have reached their maximum amount of visits.
@@ -1428,7 +1467,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Endpoints and commands which create short URLs support providing the `domain` now (via query param or CLI flag). If not provided, the short URLs will still be "attached" to the default domain.
 
-    Custom slugs can be created on multiple domains, allowing to share links like `https://doma.in/my-campaign` and `https://example.com/my-campaign`, under the same shlink instance.
+    Custom slugs can be created on multiple domains, allowing to share links like `https://s.test/my-campaign` and `https://example.com/my-campaign`, under the same shlink instance.
 
     When resolving a short URL to redirect end users, the following rules are applied:
 
@@ -1891,7 +1930,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     ```json
     {
         "shortCode": "12Kb3",
-        "shortUrl": "https://doma.in/12Kb3",
+        "shortUrl": "https://s.test/12Kb3",
         "longUrl": "https://shlink.io",
         "dateCreated": "2016-05-01T20:34:16+02:00",
         "visitsCount": 1029,
@@ -1958,7 +1997,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#174](https://github.com/shlinkio/shlink/issues/174) Fixed geolocation not working due to a deprecation on used service.
 * [#172](https://github.com/shlinkio/shlink/issues/172) Documented missing filtering params for `[GET] /short-codes/{shortCode}/visits` API endpoint, which allow the list to be filtered by date range.
 
-    For example: `https://doma.in/rest/v1/short-urls/abc123/visits?startDate=2017-05-23&endDate=2017-10-05`
+    For example: `https://s.test/rest/v1/short-urls/abc123/visits?startDate=2017-05-23&endDate=2017-10-05`
 
 * [#169](https://github.com/shlinkio/shlink/issues/169) Fixed unhandled error when parsing `ShortUrlMeta` and date fields are already `DateTime` instances.
 
@@ -2030,7 +2069,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     This eases integration with third party services.
     
-    With this feature, a simple request to a URL like `https://doma.in/rest/v1/short-codes/shorten?apiKey=[YOUR_API_KEY]&longUrl=[URL_TO_BE_SHORTENED]` would return the shortened one in JSON or plain text format.
+    With this feature, a simple request to a URL like `https://s.test/rest/v1/short-codes/shorten?apiKey=[YOUR_API_KEY]&longUrl=[URL_TO_BE_SHORTENED]` would return the shortened one in JSON or plain text format.
 
 ### Changed
 * *Nothing*
@@ -2066,7 +2105,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Added
 * [#125](https://github.com/shlinkio/shlink/issues/125) Implemented a path which returns a 1px image instead of a redirection.
 
-    Useful to track emails. Just add an image pointing to a URL like `https://doma.in/abc123/track` to any email and an invisible image will be generated tracking every time the email is opened.
+    Useful to track emails. Just add an image pointing to a URL like `https://s.test/abc123/track` to any email and an invisible image will be generated tracking every time the email is opened.
 
 * [#132](https://github.com/shlinkio/shlink/issues/132) Added infection to improve tests
 
@@ -2347,7 +2386,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Added
 * [#46](https://github.com/shlinkio/shlink/issues/46) Defined a route that returns a QR code representing the shortened URL.
 
-    In order to get the QR code URL, use a pattern like `https://doma.in/abc123/qr-code`
+    In order to get the QR code URL, use a pattern like `https://s.test/abc123/qr-code`
 
 * [#32](https://github.com/shlinkio/shlink/issues/32) Added support for other cache adapters by improving the Cache factory
 * [#14](https://github.com/shlinkio/shlink/issues/14) Added logger and enabled errors logging

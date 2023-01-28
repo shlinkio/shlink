@@ -5,6 +5,9 @@
             "description": "The long URL this short URL will redirect to",
             "type": "string"
         },
+        "deviceLongUrls": {
+            "$ref": "./DeviceLongUrlsEdit.json"
+        },
         "validSince": {
             "description": "The date (in ISO-8601 format) from which this short code will be valid",
             "type": "string",
@@ -21,7 +24,8 @@
             "nullable": true
         },
         "validateUrl": {
-            "description": "Tells if the long URL (if provided) should or should not be validated as a reachable URL. If not provided, it will fall back to app-level config",
+            "deprecated": true,
+            "description": "**[DEPRECATED]** Tells if the long URL should or should not be validated as a reachable URL. Defaults to `false`",
             "type": "boolean"
         },
         "tags": {

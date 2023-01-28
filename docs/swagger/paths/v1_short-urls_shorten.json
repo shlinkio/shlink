@@ -1,11 +1,12 @@
 {
     "get": {
         "operationId": "shortenUrl",
+        "deprecated": true,
         "tags": [
             "Short URLs"
         ],
         "summary": "Create a short URL",
-        "description": "Creates a short URL in a single API call. Useful for third party integrations.",
+        "description": "**[Deprecated]** Use [Create short URL](#/Short%20URLs/createShortUrl) instead",
         "parameters": [
             {
                 "$ref": "../parameters/version.json"
@@ -52,7 +53,12 @@
                         },
                         "example": {
                             "longUrl": "https://github.com/shlinkio/shlink",
-                            "shortUrl": "https://doma.in/abc123",
+                            "deviceLongUrls": {
+                                "android": null,
+                                "ios": null,
+                                "desktop": null
+                            },
+                            "shortUrl": "https://s.test/abc123",
                             "shortCode": "abc123",
                             "dateCreated": "2016-08-21T20:34:16+02:00",
                             "visitsSummary": {
@@ -78,7 +84,7 @@
                         "schema": {
                             "type": "string"
                         },
-                        "example": "https://doma.in/abc123"
+                        "example": "https://s.test/abc123"
                     }
                 }
             },

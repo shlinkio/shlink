@@ -51,7 +51,7 @@ class DomainService implements DomainServiceInterface
         $repo = $this->em->getRepository(Domain::class);
         $groups = group(
             $repo->findDomains($apiKey),
-            fn (Domain $domain) => $domain->getAuthority() === $this->defaultDomain ? 'default' : 'domains',
+            fn (Domain $domain) => $domain->authority === $this->defaultDomain ? 'default' : 'domains',
         );
 
         return [first($groups['default'] ?? []), $groups['domains'] ?? []];

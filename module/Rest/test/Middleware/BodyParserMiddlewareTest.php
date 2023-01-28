@@ -7,10 +7,12 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Exception\MalformedBodyException;
 use Shlinkio\Shlink\Rest\Middleware\BodyParserMiddleware;
 
 class BodyParserMiddlewareTest extends TestCase
@@ -65,7 +67,6 @@ class BodyParserMiddlewareTest extends TestCase
     /** @test */
     public function jsonRequestsAreJsonDecoded(): void
     {
-        $test = $this;
         $body = new Stream('php://temp', 'wr');
         $body->write('{"foo": "bar", "bar": ["one", 5]}');
         $request = (new ServerRequest())->withMethod('PUT')
@@ -73,16 +74,31 @@ class BodyParserMiddlewareTest extends TestCase
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects($this->once())->method('handle')->with(
             $this->isInstanceOf(ServerRequestInterface::class),
-        )->willReturnCallback(
-            function (ServerRequestInterface $req) use ($test) {
-                $test->assertEquals([
-                    'foo' => 'bar',
-                    'bar' => ['one', 5],
-                ], $req->getParsedBody());
+        )->willReturnCallback(function (ServerRequestInterface $req) {
+            Assert::assertEquals([
+                'foo' => 'bar',
+                'bar' => ['one', 5],
+            ], $req->getParsedBody());
 
-                return new Response();
-            },
-        );
+            return new Response();
+        });
+
+        $this->middleware->process($request, $handler);
+    }
+
+    /** @test */
+    public function invalidBodyResultsInException(): void
+    {
+        $body = new Stream('php://temp', 'wr');
+        $body->write('{"foo": "bar", "bar": ["one');
+        $request = (new ServerRequest())->withMethod('PUT')
+                                        ->withBody($body);
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->never())->method('handle');
+
+        $this->expectException(MalformedBodyException::class);
+        $this->expectExceptionMessage('Provided request does not contain a valid JSON body.');
 
         $this->middleware->process($request, $handler);
     }

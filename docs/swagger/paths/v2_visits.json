@@ -31,8 +31,16 @@
                         },
                         "example": {
                             "visits": {
-                                "visitsCount": 1569874,
-                                "orphanVisitsCount": 71345
+                                "nonOrphanVisits": {
+                                    "total": 64994,
+                                    "nonBots": 64986,
+                                    "bots": 8
+                                },
+                                "orphanVisits": {
+                                    "total": 37,
+                                    "nonBots": 34,
+                                    "bots": 3
+                                }
                             }
                         }
                     }

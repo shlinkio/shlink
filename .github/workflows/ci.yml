@@ -1,12 +1,28 @@
 name: Continuous integration
 
 on:
-  pull_request: null
+  pull_request:
+    paths-ignore:
+      - 'LICENSE'
+      - '.*'
+      - '*.md'
+      - '*.xml'
+      - '*.yml*'
+      - '*.json5'
+      - '*.neon'
   push:
     branches:
       - main
       - develop
       - 2.x
+    paths-ignore:
+      - 'LICENSE'
+      - '.*'
+      - '*.md'
+      - '*.xml'
+      - '*.yml*'
+      - '*.json5'
+      - '*.neon'
 
 jobs:
   static-analysis:
@@ -20,7 +36,7 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-4.12.0
+          php-extensions: openswoole-4.12.1
           extensions-cache-key: tests-extensions-${{ matrix.php-version }}-${{ matrix.command }}
       - run: composer ${{ matrix.command }}
 
@@ -44,6 +60,8 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.1', '8.2']
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # rr get-binary picks this env automatically
     steps:
       - uses: actions/checkout@v3
       - run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
@@ -157,19 +175,3 @@ jobs:
             coverage-db
             coverage-api
             coverage-cli
-
-  build-docker-image:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 100
-      - uses: marceloprado/has-changed-path@v1
-        id: changed-dockerfile
-        with:
-          paths: ./Dockerfile
-      - if: ${{ steps.changed-dockerfile.outputs.changed == 'true' }}
-        run: docker build -t shlink-docker-image:temp .
-      - if: ${{ steps.changed-dockerfile.outputs.changed != 'true' }}
-        run: echo "Dockerfile didn't change. Skipped"

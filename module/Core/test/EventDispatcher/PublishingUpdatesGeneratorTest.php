@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
+use Shlinkio\Shlink\Core\Visit\Model\VisitsSummary;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
 
@@ -37,7 +38,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'customSlug' => 'foo',
-            'longUrl' => '',
+            'longUrl' => 'longUrl',
             'title' => $title,
         ]));
         $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
@@ -50,7 +51,8 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'shortUrl' => [
                 'shortCode' => $shortUrl->getShortCode(),
                 'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
-                'longUrl' => '',
+                'longUrl' => 'longUrl',
+                'deviceLongUrls' => $shortUrl->deviceLongUrls(),
                 'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
                 'visitsCount' => 0,
                 'tags' => [],
@@ -63,11 +65,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'title' => $title,
                 'crawlable' => false,
                 'forwardQuery' => true,
-                'visitsSummary' => [
-                    'total' => 0,
-                    'nonBots' => 0,
-                    'bots' => 0,
-                ],
+                'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
             ],
             'visit' => [
                 'referer' => '',
@@ -121,7 +119,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'customSlug' => 'foo',
-            'longUrl' => '',
+            'longUrl' => 'longUrl',
             'title' => 'The title',
         ]));
 
@@ -131,7 +129,8 @@ class PublishingUpdatesGeneratorTest extends TestCase
         self::assertEquals(['shortUrl' => [
             'shortCode' => $shortUrl->getShortCode(),
             'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
-            'longUrl' => '',
+            'longUrl' => 'longUrl',
+            'deviceLongUrls' => $shortUrl->deviceLongUrls(),
             'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
             'visitsCount' => 0,
             'tags' => [],
@@ -144,11 +143,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'title' => $shortUrl->title(),
             'crawlable' => false,
             'forwardQuery' => true,
-            'visitsSummary' => [
-                'total' => 0,
-                'nonBots' => 0,
-                'bots' => 0,
-            ],
+            'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
         ]], $update->payload);
     }
 }

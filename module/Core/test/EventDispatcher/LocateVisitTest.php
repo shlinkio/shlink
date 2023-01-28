@@ -70,7 +70,7 @@ class LocateVisitTest extends TestCase
     {
         $event = new UrlVisited('123');
         $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn(
-            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
+            Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', '')),
         );
         $this->em->expects($this->never())->method('flush');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->withAnyParameters()->willReturn(false);
@@ -89,7 +89,7 @@ class LocateVisitTest extends TestCase
     {
         $event = new UrlVisited('123');
         $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn(
-            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
+            Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', '')),
         );
         $this->em->expects($this->never())->method('flush');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->withAnyParameters()->willReturn(true);
@@ -110,7 +110,7 @@ class LocateVisitTest extends TestCase
     {
         $event = new UrlVisited('123');
         $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn(
-            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
+            Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', '')),
         );
         $this->em->expects($this->never())->method('flush');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->withAnyParameters()->willReturn(true);
@@ -148,7 +148,7 @@ class LocateVisitTest extends TestCase
 
     public function provideNonLocatableVisits(): iterable
     {
-        $shortUrl = ShortUrl::createEmpty();
+        $shortUrl = ShortUrl::createFake();
 
         yield 'null IP' => [Visit::forValidShortUrl($shortUrl, new Visitor('', '', null, ''))];
         yield 'empty IP' => [Visit::forValidShortUrl($shortUrl, new Visitor('', '', '', ''))];
@@ -183,11 +183,11 @@ class LocateVisitTest extends TestCase
     public function provideIpAddresses(): iterable
     {
         yield 'no original IP address' => [
-            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
+            Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', '')),
             null,
         ];
         yield 'original IP address' => [
-            Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', '')),
+            Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', '')),
             '1.2.3.4',
         ];
         yield 'base url' => [Visit::forBasePath(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4'];

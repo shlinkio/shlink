@@ -10,9 +10,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolver;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -35,7 +37,7 @@ class ShortUrlResolverTest extends TestCase
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
-        $this->urlResolver = new ShortUrlResolver($this->em);
+        $this->urlResolver = new ShortUrlResolver($this->em, new UrlShortenerOptions());
     }
 
     /**
@@ -83,6 +85,7 @@ class ShortUrlResolverTest extends TestCase
 
         $this->repo->expects($this->once())->method('findOneWithDomainFallback')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            ShortUrlMode::STRICT,
         )->willReturn($shortUrl);
         $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
@@ -101,6 +104,7 @@ class ShortUrlResolverTest extends TestCase
 
         $this->repo->expects($this->once())->method('findOneWithDomainFallback')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            ShortUrlMode::STRICT,
         )->willReturn($shortUrl);
         $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
@@ -114,7 +118,7 @@ class ShortUrlResolverTest extends TestCase
         $now = Chronos::now();
 
         yield 'maxVisits reached' => [(function () {
-            $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => '']));
+            $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => 'longUrl']));
             $shortUrl->setVisits(new ArrayCollection(map(
                 range(0, 4),
                 fn () => Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
@@ -123,16 +127,16 @@ class ShortUrlResolverTest extends TestCase
             return $shortUrl;
         })()];
         yield 'future validSince' => [ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['validSince' => $now->addMonth()->toAtomString(), 'longUrl' => ''],
+            ['validSince' => $now->addMonth()->toAtomString(), 'longUrl' => 'longUrl'],
         ))];
         yield 'past validUntil' => [ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['validUntil' => $now->subMonth()->toAtomString(), 'longUrl' => ''],
+            ['validUntil' => $now->subMonth()->toAtomString(), 'longUrl' => 'longUrl'],
         ))];
         yield 'mixed' => [(function () use ($now) {
             $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
                 'maxVisits' => 3,
                 'validUntil' => $now->subMonth()->toAtomString(),
-                'longUrl' => '',
+                'longUrl' => 'longUrl',
             ]));
             $shortUrl->setVisits(new ArrayCollection(map(
                 range(0, 4),

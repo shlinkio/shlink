@@ -8,15 +8,34 @@ use JsonSerializable;
 
 final class VisitsStats implements JsonSerializable
 {
-    public function __construct(private int $visitsCount, private int $orphanVisitsCount)
-    {
+    private readonly VisitsSummary $nonOrphanVisitsSummary;
+    private readonly VisitsSummary $orphanVisitsSummary;
+
+    public function __construct(
+        int $nonOrphanVisitsTotal,
+        int $orphanVisitsTotal,
+        ?int $nonOrphanVisitsNonBots = null,
+        ?int $orphanVisitsNonBots = null,
+    ) {
+        $this->nonOrphanVisitsSummary = VisitsSummary::fromTotalAndNonBots(
+            $nonOrphanVisitsTotal,
+            $nonOrphanVisitsNonBots ?? $nonOrphanVisitsTotal,
+        );
+        $this->orphanVisitsSummary = VisitsSummary::fromTotalAndNonBots(
+            $orphanVisitsTotal,
+            $orphanVisitsNonBots ?? $orphanVisitsTotal,
+        );
     }
 
     public function jsonSerialize(): array
     {
         return [
-            'visitsCount' => $this->visitsCount,
-            'orphanVisitsCount' => $this->orphanVisitsCount,
+            'nonOrphanVisits' => $this->nonOrphanVisitsSummary,
+            'orphanVisits' => $this->orphanVisitsSummary,
+
+            // Deprecated
+            'visitsCount' => $this->nonOrphanVisitsSummary->total,
+            'orphanVisitsCount' => $this->orphanVisitsSummary->total,
         ];
     }
 }

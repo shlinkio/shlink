@@ -21,7 +21,7 @@ class ApiKey extends AbstractEntity
     private string $key;
     private ?Chronos $expirationDate = null;
     private bool $enabled;
-    /** @var Collection|ApiKeyRole[] */
+    /** @var Collection<string, ApiKeyRole> */
     private Collection $roles;
     private ?string $name = null;
 
@@ -147,12 +147,9 @@ class ApiKey extends AbstractEntity
         $meta = $roleDefinition->meta;
 
         if ($this->hasRole($role)) {
-            /** @var ApiKeyRole $apiKeyRole */
-            $apiKeyRole = $this->roles->get($role->value);
-            $apiKeyRole->updateMeta($meta);
+            $this->roles->get($role->value)?->updateMeta($meta);
         } else {
-            $apiKeyRole = new ApiKeyRole($roleDefinition->role, $roleDefinition->meta, $this);
-            $this->roles[$role->value] = $apiKeyRole;
+            $this->roles->set($role->value, new ApiKeyRole($role, $meta, $this));
         }
     }
 }

@@ -59,7 +59,7 @@ class NotifyVisitToMercureTest extends TestCase
     public function notificationsAreSentWhenVisitIsFound(): void
     {
         $visitId = '123';
-        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance());
         $update = Update::forTopicAndPayload('', []);
 
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
@@ -79,7 +79,7 @@ class NotifyVisitToMercureTest extends TestCase
     public function debugIsLoggedWhenExceptionIsThrown(): void
     {
         $visitId = '123';
-        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance());
         $update = Update::forTopicAndPayload('', []);
         $e = new RuntimeException('Error');
 

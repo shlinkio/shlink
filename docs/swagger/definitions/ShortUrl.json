@@ -4,6 +4,7 @@
         "shortCode",
         "shortUrl",
         "longUrl",
+        "deviceLongUrls",
         "dateCreated",
         "visitsCount",
         "visitsSummary",
@@ -27,6 +28,9 @@
             "type": "string",
             "description": "The original long URL."
         },
+        "deviceLongUrls": {
+            "$ref": "./DeviceLongUrlsResp.json"
+        },
         "dateCreated": {
             "type": "string",
             "format": "date-time",
@@ -38,7 +42,7 @@
             "description": "**[DEPRECATED]** Use `visitsSummary.total` instead."
         },
         "visitsSummary": {
-            "$ref": "./ShortUrlVisitsSummary.json"
+            "$ref": "./VisitsSummary.json"
         },
         "tags": {
             "type": "array",

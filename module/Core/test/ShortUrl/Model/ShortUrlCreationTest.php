@@ -6,9 +6,11 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\Model\DeviceType;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use stdClass;
 
@@ -69,6 +71,40 @@ class ShortUrlCreationTest extends TestCase
         yield [[
             ShortUrlInputFilter::LONG_URL => [],
         ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => null,
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                'invalid' => 'https://shlink.io',
+            ],
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::DESKTOP->value => '',
+            ],
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::DESKTOP->value => null,
+            ],
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::IOS->value => '   ',
+            ],
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => 'foo',
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::IOS->value => 'bar',
+                DeviceType::ANDROID->value => [],
+            ],
+        ]];
     }
 
     /**
@@ -79,41 +115,45 @@ class ShortUrlCreationTest extends TestCase
         string $customSlug,
         string $expectedSlug,
         bool $multiSegmentEnabled = false,
+        ShortUrlMode $shortUrlMode = ShortUrlMode::STRICT,
     ): void {
-        $meta = ShortUrlCreation::fromRawData([
+        $creation = ShortUrlCreation::fromRawData([
             'validSince' => Chronos::parse('2015-01-01')->toAtomString(),
             'customSlug' => $customSlug,
-            'longUrl' => '',
-            EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value => $multiSegmentEnabled,
-        ]);
+            'longUrl' => 'longUrl',
+        ], new UrlShortenerOptions(multiSegmentSlugsEnabled: $multiSegmentEnabled, mode: $shortUrlMode));
 
-        self::assertTrue($meta->hasValidSince());
-        self::assertEquals(Chronos::parse('2015-01-01'), $meta->getValidSince());
+        self::assertTrue($creation->hasValidSince());
+        self::assertEquals(Chronos::parse('2015-01-01'), $creation->validSince);
 
-        self::assertFalse($meta->hasValidUntil());
-        self::assertNull($meta->getValidUntil());
+        self::assertFalse($creation->hasValidUntil());
+        self::assertNull($creation->validUntil);
 
-        self::assertTrue($meta->hasCustomSlug());
-        self::assertEquals($expectedSlug, $meta->getCustomSlug());
+        self::assertTrue($creation->hasCustomSlug());
+        self::assertEquals($expectedSlug, $creation->customSlug);
 
-        self::assertFalse($meta->hasMaxVisits());
-        self::assertNull($meta->getMaxVisits());
+        self::assertFalse($creation->hasMaxVisits());
+        self::assertNull($creation->maxVisits);
     }
 
     public function provideCustomSlugs(): iterable
     {
         yield ['🔥', '🔥'];
         yield ['🦣 🍅', '🦣-🍅'];
+        yield ['🦣 🍅', '🦣-🍅', false, ShortUrlMode::LOOSELY];
         yield ['foobar', 'foobar'];
         yield ['foo bar', 'foo-bar'];
         yield ['foo bar baz', 'foo-bar-baz'];
         yield ['foo bar-baz', 'foo-bar-baz'];
+        yield ['foo BAR-baz', 'foo-bar-baz', false, ShortUrlMode::LOOSELY];
         yield ['foo/bar/baz', 'foo/bar/baz', true];
         yield ['/foo/bar/baz', 'foo/bar/baz', true];
+        yield ['/foo/baR/baZ', 'foo/bar/baz', true, ShortUrlMode::LOOSELY];
         yield ['foo/bar/baz', 'foo-bar-baz'];
         yield ['/foo/bar/baz', '-foo-bar-baz'];
         yield ['wp-admin.php', 'wp-admin.php'];
         yield ['UPPER_lower', 'UPPER_lower'];
+        yield ['UPPER_lower', 'upper_lower', false, ShortUrlMode::LOOSELY];
         yield ['more~url_special.chars', 'more~url_special.chars'];
         yield ['구글', '구글'];
         yield ['グーグル', 'グーグル'];
@@ -127,12 +167,12 @@ class ShortUrlCreationTest extends TestCase
      */
     public function titleIsCroppedIfTooLong(?string $title, ?string $expectedTitle): void
     {
-        $meta = ShortUrlCreation::fromRawData([
+        $creation = ShortUrlCreation::fromRawData([
             'title' => $title,
-            'longUrl' => '',
+            'longUrl' => 'longUrl',
         ]);
 
-        self::assertEquals($expectedTitle, $meta->getTitle());
+        self::assertEquals($expectedTitle, $creation->title);
     }
 
     public function provideTitles(): iterable
@@ -153,12 +193,12 @@ class ShortUrlCreationTest extends TestCase
      */
     public function emptyDomainIsDiscarded(?string $domain, ?string $expectedDomain): void
     {
-        $meta = ShortUrlCreation::fromRawData([
+        $creation = ShortUrlCreation::fromRawData([
             'domain' => $domain,
-            'longUrl' => '',
+            'longUrl' => 'longUrl',
         ]);
 
-        self::assertSame($expectedDomain, $meta->getDomain());
+        self::assertSame($expectedDomain, $creation->domain);
     }
 
     public function provideDomains(): iterable
@@ -166,6 +206,6 @@ class ShortUrlCreationTest extends TestCase
         yield 'null domain' => [null, null];
         yield 'empty domain' => ['', null];
         yield 'trimmable domain' => ['   ', null];
-        yield 'valid domain' => ['doma.in', 'doma.in'];
+        yield 'valid domain' => ['s.test', 's.test'];
     }
 }

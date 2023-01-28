@@ -15,6 +15,7 @@ use function class_exists;
 use function Shlinkio\Shlink\Config\env;
 use function Shlinkio\Shlink\Config\openswooleIsInstalled;
 use function Shlinkio\Shlink\Config\runningInRoadRunner;
+use function Shlinkio\Shlink\Core\enumValues;
 
 use const PHP_SAPI;
 
@@ -23,7 +24,7 @@ $enableSwoole = PHP_SAPI === 'cli' && openswooleIsInstalled() && ! runningInRoad
 
 return (new ConfigAggregator\ConfigAggregator([
     ! $isTestEnv
-        ? new EnvVarLoaderProvider('config/params/generated_config.php', Core\Config\EnvVars::values())
+        ? new EnvVarLoaderProvider('config/params/generated_config.php', enumValues(Core\Config\EnvVars::class))
         : new ConfigAggregator\ArrayProvider([]),
     Mezzio\ConfigProvider::class,
     Mezzio\Router\ConfigProvider::class,
@@ -48,6 +49,7 @@ return (new ConfigAggregator\ConfigAggregator([
     // Routes have to be loaded last
     new ConfigAggregator\PhpFileProvider('config/autoload/routes.config.php'),
 ], 'data/cache/app_config.php', [
-    Core\Config\BasePathPrefixer::class,
-    Core\Config\MultiSegmentSlugProcessor::class,
+    Core\Config\PostProcessor\BasePathPrefixer::class,
+    Core\Config\PostProcessor\MultiSegmentSlugProcessor::class,
+    Core\Config\PostProcessor\ShortUrlMethodsProcessor::class,
 ]))->getMergedConfig();

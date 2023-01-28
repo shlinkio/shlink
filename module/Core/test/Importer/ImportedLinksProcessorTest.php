@@ -210,7 +210,7 @@ class ImportedLinksProcessorTest extends TestCase
             ]),
             '<comment>Skipped</comment>. Imported <info>4</info> visits',
             4,
-            ShortUrl::createEmpty(),
+            ShortUrl::createFake(),
         ];
         yield 'existing short URL with previous imported visits' => [
             $createImportedUrl([
@@ -222,8 +222,8 @@ class ImportedLinksProcessorTest extends TestCase
             ]),
             '<comment>Skipped</comment>. Imported <info>2</info> visits',
             2,
-            ShortUrl::createEmpty()->setVisits(new ArrayCollection([
-                Visit::fromImport(ShortUrl::createEmpty(), new ImportedShlinkVisit('', '', $now, null)),
+            ShortUrl::createFake()->setVisits(new ArrayCollection([
+                Visit::fromImport(ShortUrl::createFake(), new ImportedShlinkVisit('', '', $now, null)),
             ])),
         ];
     }

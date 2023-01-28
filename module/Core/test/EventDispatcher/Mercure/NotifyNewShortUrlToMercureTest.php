@@ -57,7 +57,7 @@ class NotifyNewShortUrlToMercureTest extends TestCase
     /** @test */
     public function expectedNotificationIsPublished(): void
     {
-        $shortUrl = ShortUrl::withLongUrl('');
+        $shortUrl = ShortUrl::withLongUrl('longUrl');
         $update = Update::forTopicAndPayload('', []);
 
         $this->em->expects($this->once())->method('find')->with(ShortUrl::class, '123')->willReturn($shortUrl);
@@ -74,7 +74,7 @@ class NotifyNewShortUrlToMercureTest extends TestCase
     /** @test */
     public function messageIsPrintedIfPublishingFails(): void
     {
-        $shortUrl = ShortUrl::withLongUrl('');
+        $shortUrl = ShortUrl::withLongUrl('longUrl');
         $update = Update::forTopicAndPayload('', []);
         $e = new Exception('Error');
 

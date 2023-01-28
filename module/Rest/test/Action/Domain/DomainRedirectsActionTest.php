@@ -60,7 +60,7 @@ class DomainRedirectsActionTest extends TestCase
         array $redirects,
         array $expectedResult,
     ): void {
-        $authority = 'doma.in';
+        $authority = 's.test';
         $redirects['domain'] = $authority;
         $apiKey = ApiKey::create();
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($redirects)

@@ -40,11 +40,11 @@ class GetDomainVisitsCommandTest extends TestCase
     /** @test */
     public function outputIsProperlyGenerated(): void
     {
-        $shortUrl = ShortUrl::createEmpty();
+        $shortUrl = ShortUrl::createFake();
         $visit = Visit::forValidShortUrl($shortUrl, new Visitor('bar', 'foo', '', ''))->locate(
             VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
-        $domain = 'doma.in';
+        $domain = 's.test';
         $this->visitsHelper->expects($this->once())->method('visitsForDomain')->with(
             $domain,
             $this->anything(),

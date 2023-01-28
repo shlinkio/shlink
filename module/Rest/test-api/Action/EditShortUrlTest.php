@@ -154,7 +154,7 @@ class EditShortUrlTest extends ApiTestCase
         $editResp = $this->callApiWithKey(self::METHOD_PATCH, (string) $url, [RequestOptions::JSON => [
             'maxVisits' => 100,
         ]]);
-        $editedShortUrl = $this->getJsonResponsePayload($this->callApiWithKey(self::METHOD_GET, (string) $url));
+        $editedShortUrl = $this->getJsonResponsePayload($editResp);
 
         self::assertEquals(self::STATUS_OK, $editResp->getStatusCode());
         self::assertEquals($domain, $editedShortUrl['domain']);
@@ -169,5 +169,28 @@ class EditShortUrlTest extends ApiTestCase
             'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-source-software-projects/',
         ];
         yield 'no domain' => [null, 'https://shlink.io/documentation/'];
+    }
+
+    /** @test */
+    public function deviceLongUrlsCanBeEdited(): void
+    {
+        $shortCode = 'def456';
+        $url = new Uri(sprintf('/short-urls/%s', $shortCode));
+        $editResp = $this->callApiWithKey(self::METHOD_PATCH, (string) $url, [RequestOptions::JSON => [
+            'deviceLongUrls' => [
+                'android' => null, // This one will get removed
+                'ios' => 'https://blog.alejandrocelaya.com/ios/edited', // This one will be edited
+                'desktop' => 'https://blog.alejandrocelaya.com/desktop', // This one is new and will be created
+            ],
+        ]]);
+        $deviceLongUrls = $this->getJsonResponsePayload($editResp)['deviceLongUrls'] ?? [];
+
+        self::assertEquals(self::STATUS_OK, $editResp->getStatusCode());
+        self::assertArrayHasKey('ios', $deviceLongUrls);
+        self::assertEquals('https://blog.alejandrocelaya.com/ios/edited', $deviceLongUrls['ios']);
+        self::assertArrayHasKey('desktop', $deviceLongUrls);
+        self::assertEquals('https://blog.alejandrocelaya.com/desktop', $deviceLongUrls['desktop']);
+        self::assertArrayHasKey('android', $deviceLongUrls);
+        self::assertNull($deviceLongUrls['android']);
     }
 }

@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ShortUrl\Model\Validation;
 
-use DateTime;
+use DateTimeInterface;
 use Laminas\Filter;
-use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
-use Shlinkio\Shlink\Core\Config\EnvVars;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function is_string;
-use function str_replace;
 use function substr;
-use function trim;
 
 use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
+/**
+ * @todo Pass forCreation/forEdition, instead of withRequiredLongUrl/withNonRequiredLongUrl.
+ *       Make it also dynamically add the relevant fields
+ */
 class ShortUrlInputFilter extends InputFilter
 {
     use Validation\InputFactoryTrait;
@@ -32,6 +32,8 @@ class ShortUrlInputFilter extends InputFilter
     public const DOMAIN = 'domain';
     public const SHORT_CODE_LENGTH = 'shortCodeLength';
     public const LONG_URL = 'longUrl';
+    public const DEVICE_LONG_URLS = 'deviceLongUrls';
+    /** @deprecated */
     public const VALIDATE_URL = 'validateUrl';
     public const API_KEY = 'apiKey';
     public const TAGS = 'tags';
@@ -39,49 +41,60 @@ class ShortUrlInputFilter extends InputFilter
     public const CRAWLABLE = 'crawlable';
     public const FORWARD_QUERY = 'forwardQuery';
 
-    private function __construct(array $data, bool $requireLongUrl)
+    private function __construct(array $data, bool $requireLongUrl, UrlShortenerOptions $options)
     {
-        $this->initialize($requireLongUrl, $data[EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value] ?? false);
+        $this->initialize($requireLongUrl, $options);
         $this->setData($data);
     }
 
-    public static function withRequiredLongUrl(array $data): self
+    public static function withRequiredLongUrl(array $data, UrlShortenerOptions $options): self
     {
-        return new self($data, true);
+        return new self($data, true, $options);
     }
 
     public static function withNonRequiredLongUrl(array $data): self
     {
-        return new self($data, false);
+        return new self($data, false, new UrlShortenerOptions());
     }
 
-    private function initialize(bool $requireLongUrl, bool $multiSegmentEnabled): void
+    private function initialize(bool $requireLongUrl, UrlShortenerOptions $options): void
     {
-        $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
-        $longUrlInput->getValidatorChain()->attach(new Validator\NotEmpty([
+        $longUrlNotEmptyCommonOptions = [
             Validator\NotEmpty::OBJECT,
             Validator\NotEmpty::SPACE,
-            Validator\NotEmpty::NULL,
             Validator\NotEmpty::EMPTY_ARRAY,
             Validator\NotEmpty::BOOLEAN,
+            Validator\NotEmpty::STRING,
+        ];
+
+        $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
+        $longUrlInput->getValidatorChain()->attach(new Validator\NotEmpty([
+            ...$longUrlNotEmptyCommonOptions,
+            Validator\NotEmpty::NULL,
         ]));
         $this->add($longUrlInput);
 
+        $deviceLongUrlsInput = $this->createInput(self::DEVICE_LONG_URLS, false);
+        $deviceLongUrlsInput->getValidatorChain()->attach(
+            new DeviceLongUrlsValidator(new Validator\NotEmpty([
+                ...$longUrlNotEmptyCommonOptions,
+                ...($requireLongUrl ? [Validator\NotEmpty::NULL] : []),
+            ])),
+        );
+        $this->add($deviceLongUrlsInput);
+
         $validSince = $this->createInput(self::VALID_SINCE, false);
-        $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));
+        $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTimeInterface::ATOM]));
         $this->add($validSince);
 
         $validUntil = $this->createInput(self::VALID_UNTIL, false);
-        $validUntil->getValidatorChain()->attach(new Validator\Date(['format' => DateTime::ATOM]));
+        $validUntil->getValidatorChain()->attach(new Validator\Date(['format' => DateTimeInterface::ATOM]));
         $this->add($validUntil);
 
-        // FIXME The only way to enforce the NotEmpty validator to be evaluated when the value is provided but it's
-        //       empty, is by using the deprecated setContinueIfEmpty
+        // The only way to enforce the NotEmpty validator to be evaluated when the key is present with an empty value
+        // is by using the deprecated setContinueIfEmpty
         $customSlug = $this->createInput(self::CUSTOM_SLUG, false)->setContinueIfEmpty(true);
-        $customSlug->getFilterChain()->attach(new Filter\Callback(match ($multiSegmentEnabled) {
-            true => static fn (mixed $v) => is_string($v) ? trim(str_replace(' ', '-', $v), '/') : $v,
-            false => static fn (mixed $v) => is_string($v) ? str_replace([' ', '/'], '-', $v) : $v,
-        }));
+        $customSlug->getFilterChain()->attach(new CustomSlugFilter($options));
         $customSlug->getValidatorChain()->attach(new Validator\NotEmpty([
             Validator\NotEmpty::STRING,
             Validator\NotEmpty::SPACE,
@@ -102,10 +115,8 @@ class ShortUrlInputFilter extends InputFilter
         $domain->getValidatorChain()->attach(new Validation\HostAndPortValidator());
         $this->add($domain);
 
-        $apiKeyInput = new Input(self::API_KEY);
-        $apiKeyInput
-            ->setRequired(false)
-            ->getValidatorChain()->attach(new Validator\IsInstanceOf(['className' => ApiKey::class]));
+        $apiKeyInput = $this->createInput(self::API_KEY, false);
+        $apiKeyInput->getValidatorChain()->attach(new Validator\IsInstanceOf(['className' => ApiKey::class]));
         $this->add($apiKeyInput);
 
         $this->add($this->createTagsInput(self::TAGS, false));

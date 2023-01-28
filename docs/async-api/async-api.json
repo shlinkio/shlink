@@ -111,12 +111,19 @@
                         "type": "string",
                         "description": "The original long URL."
                     },
+                    "deviceLongUrls": {
+                        "$ref": "#/components/schemas/DeviceLongUrls"
+                    },
                     "dateCreated": {
                         "type": "string",
                         "format": "date-time",
                         "description": "The date in which the short URL was created in ISO format."
                     },
+                    "visitsSummary": {
+                        "$ref": "#/components/schemas/VisitsSummary"
+                    },
                     "visitsCount": {
+                        "deprecated": true,
                         "type": "integer",
                         "description": "The number of visits that this short URL has received."
                     },
@@ -146,10 +153,19 @@
                 },
                 "example": {
                     "shortCode": "12C18",
-                    "shortUrl": "https://doma.in/12C18",
+                    "shortUrl": "https://s.test/12C18",
                     "longUrl": "https://store.steampowered.com",
+                    "deviceLongUrls": {
+                        "android": "https://store.steampowered.com/android",
+                        "ios": "https://store.steampowered.com/ios",
+                        "desktop": null
+                    },
                     "dateCreated": "2016-08-21T20:34:16+02:00",
-                    "visitsCount": 328,
+                    "visitsSummary": {
+                        "total": 328,
+                        "nonBots": 285,
+                        "bots": 43
+                    },
                     "tags": [
                         "games",
                         "tech"
@@ -186,6 +202,42 @@
                         "description": "The maximum number of allowed visits for this short code",
                         "type": "number",
                         "nullable": true
+                    }
+                }
+            },
+            "VisitsSummary": {
+                "type": "object",
+                "required": ["total", "nonBots", "bots"],
+                "properties": {
+                    "total": {
+                        "description": "The total amount of visits",
+                        "type": "number"
+                    },
+                    "nonBots": {
+                        "description": "The amount of visits which were not identified as bots",
+                        "type": "number"
+                    },
+                    "bots": {
+                        "description": "The amount of visits that were identified as potential bots",
+                        "type": "number"
+                    }
+                }
+            },
+            "DeviceLongUrls": {
+                "type": "object",
+                "required": ["android", "ios", "desktop"],
+                "properties": {
+                    "android": {
+                        "description": "The long URL to redirect to when the short URL is visited from a device running Android",
+                        "type": "string"
+                    },
+                    "ios": {
+                        "description": "The long URL to redirect to when the short URL is visited from a device running iOS",
+                        "type": "string"
+                    },
+                    "desktop": {
+                        "description": "The long URL to redirect to when the short URL is visited from a desktop browser",
+                        "type": "string"
                     }
                 }
             },
@@ -266,7 +318,7 @@
                         "timezone": "America/Los_Angeles"
                     },
                     "potentialBot": false,
-                    "visitedUrl": "https://doma.in",
+                    "visitedUrl": "https://s.test",
                     "type": "base_url"
                 }
             },

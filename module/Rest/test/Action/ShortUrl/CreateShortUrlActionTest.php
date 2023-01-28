@@ -37,7 +37,7 @@ class CreateShortUrlActionTest extends TestCase
     public function properShortcodeConversionReturnsData(): void
     {
         $apiKey = ApiKey::create();
-        $shortUrl = ShortUrl::createEmpty();
+        $shortUrl = ShortUrl::createFake();
         $expectedMeta = $body = [
             'longUrl' => 'http://www.domain.com/foo/bar',
             'validSince' => Chronos::now()->toAtomString(),

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace ShlinkioDbTest\Shlink\Core\ShortUrl\Repository;
 
 use Cake\Chronos\Chronos;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -32,7 +34,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     /** @test */
     public function findOneWithDomainFallbackReturnsProperData(): void
     {
-        $regularOne = ShortUrl::create(ShortUrlCreation::fromRawData(['customSlug' => 'foo', 'longUrl' => 'foo']));
+        $regularOne = ShortUrl::create(ShortUrlCreation::fromRawData(['customSlug' => 'Foo', 'longUrl' => 'foo']));
         $this->getEntityManager()->persist($regularOne);
 
         $withDomain = ShortUrl::create(ShortUrlCreation::fromRawData(
@@ -41,7 +43,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($withDomain);
 
         $withDomainDuplicatingRegular = ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['domain' => 'doma.in', 'customSlug' => 'foo', 'longUrl' => 'foo_with_domain'],
+            ['domain' => 's.test', 'customSlug' => 'Foo', 'longUrl' => 'foo_with_domain'],
         ));
         $this->getEntityManager()->persist($withDomainDuplicatingRegular);
 
@@ -49,29 +51,53 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain($regularOne->getShortCode()),
+            ShortUrlMode::STRICT,
         ));
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
+            ShortUrlMode::LOOSELY,
+        ));
+        self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain('fOo'),
+            ShortUrlMode::LOOSELY,
+        ));
+        // TODO MS is doing loosely checks always, making this fail.
+        if (! $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof SQLServerPlatform) {
+            self::assertNull($this->repo->findOneWithDomainFallback(
+                ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
+                ShortUrlMode::STRICT,
+            ));
+        }
+        self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain($withDomainDuplicatingRegular->getShortCode()),
+            ShortUrlMode::STRICT,
         ));
         self::assertSame($withDomain, $this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->getShortCode(), 'example.com'),
+            ShortUrlMode::STRICT,
         ));
         self::assertSame(
             $withDomainDuplicatingRegular,
             $this->repo->findOneWithDomainFallback(
-                ShortUrlIdentifier::fromShortCodeAndDomain($withDomainDuplicatingRegular->getShortCode(), 'doma.in'),
+                ShortUrlIdentifier::fromShortCodeAndDomain($withDomainDuplicatingRegular->getShortCode(), 's.test'),
+                ShortUrlMode::STRICT,
             ),
         );
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(ShortUrlIdentifier::fromShortCodeAndDomain(
             $withDomainDuplicatingRegular->getShortCode(),
             'other-domain.com',
-        )));
-        self::assertNull($this->repo->findOneWithDomainFallback(ShortUrlIdentifier::fromShortCodeAndDomain('invalid')));
+        ), ShortUrlMode::STRICT));
+        self::assertNull($this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain('invalid'),
+            ShortUrlMode::STRICT,
+        ));
         self::assertNull($this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->getShortCode()),
+            ShortUrlMode::STRICT,
         ));
         self::assertNull($this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->getShortCode(), 'other-domain.com'),
+            ShortUrlMode::STRICT,
         ));
     }
 
@@ -84,7 +110,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($shortUrlWithoutDomain);
 
         $shortUrlWithDomain = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['domain' => 'doma.in', 'customSlug' => 'another-slug', 'longUrl' => 'foo']),
+            ShortUrlCreation::fromRawData(['domain' => 's.test', 'customSlug' => 'another-slug', 'longUrl' => 'foo']),
         );
         $this->getEntityManager()->persist($shortUrlWithDomain);
 
@@ -92,7 +118,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         self::assertTrue($this->repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug')));
         self::assertFalse($this->repo->shortCodeIsInUse(
-            ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug', 'doma.in'),
+            ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug', 's.test'),
         ));
         self::assertFalse($this->repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain('slug-not-in-use')));
         self::assertFalse($this->repo->shortCodeIsInUse(ShortUrlIdentifier::fromShortCodeAndDomain('another-slug')));
@@ -100,7 +126,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'example.com'),
         ));
         self::assertTrue($this->repo->shortCodeIsInUse(
-            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'doma.in'),
+            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 's.test'),
         ));
     }
 
@@ -113,28 +139,27 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($shortUrlWithoutDomain);
 
         $shortUrlWithDomain = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['domain' => 'doma.in', 'customSlug' => 'another-slug', 'longUrl' => 'foo']),
+            ShortUrlCreation::fromRawData(['domain' => 's.test', 'customSlug' => 'another-slug', 'longUrl' => 'foo']),
         );
         $this->getEntityManager()->persist($shortUrlWithDomain);
 
         $this->getEntityManager()->flush();
 
         self::assertNotNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug')));
-        self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug', 'doma.in')));
+        self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('my-cool-slug', 's.test')));
         self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('slug-not-in-use')));
         self::assertNull($this->repo->findOne(ShortUrlIdentifier::fromShortCodeAndDomain('another-slug')));
         self::assertNull($this->repo->findOne(
             ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'example.com'),
         ));
         self::assertNotNull($this->repo->findOne(
-            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 'doma.in'),
+            ShortUrlIdentifier::fromShortCodeAndDomain('another-slug', 's.test'),
         ));
     }
 
     /** @test */
     public function findOneMatchingReturnsNullForNonExistingShortUrls(): void
     {
-        self::assertNull($this->repo->findOneMatching(ShortUrlCreation::createEmpty()));
         self::assertNull($this->repo->findOneMatching(ShortUrlCreation::fromRawData(['longUrl' => 'foobar'])));
         self::assertNull($this->repo->findOneMatching(
             ShortUrlCreation::fromRawData(['longUrl' => 'foobar', 'tags' => ['foo', 'bar']]),
@@ -175,7 +200,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $shortUrl5 = ShortUrl::create(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => 'foo']));
         $this->getEntityManager()->persist($shortUrl5);
 
-        $shortUrl6 = ShortUrl::create(ShortUrlCreation::fromRawData(['domain' => 'doma.in', 'longUrl' => 'foo']));
+        $shortUrl6 = ShortUrl::create(ShortUrlCreation::fromRawData(['domain' => 's.test', 'longUrl' => 'foo']));
         $this->getEntityManager()->persist($shortUrl6);
 
         $this->getEntityManager()->flush();
@@ -212,7 +237,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         );
         self::assertSame(
             $shortUrl6,
-            $this->repo->findOneMatching(ShortUrlCreation::fromRawData(['domain' => 'doma.in', 'longUrl' => 'foo'])),
+            $this->repo->findOneMatching(ShortUrlCreation::fromRawData(['domain' => 's.test', 'longUrl' => 'foo'])),
         );
     }
 
@@ -270,7 +295,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'validSince' => $start,
             'apiKey' => $apiKey,
-            'domain' => $rightDomain->getAuthority(),
+            'domain' => $rightDomain->authority,
             'longUrl' => 'foo',
             'tags' => ['foo', 'bar'],
         ]), $this->relationResolver);
@@ -313,7 +338,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             $shortUrl,
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'validSince' => $start,
-                'domain' => $rightDomain->getAuthority(),
+                'domain' => $rightDomain->authority,
                 'longUrl' => 'foo',
                 'tags' => ['foo', 'bar'],
             ])),
@@ -322,7 +347,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             $shortUrl,
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'validSince' => $start,
-                'domain' => $rightDomain->getAuthority(),
+                'domain' => $rightDomain->authority,
                 'apiKey' => $rightDomainApiKey,
                 'longUrl' => 'foo',
                 'tags' => ['foo', 'bar'],
@@ -332,7 +357,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             $shortUrl,
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'validSince' => $start,
-                'domain' => $rightDomain->getAuthority(),
+                'domain' => $rightDomain->authority,
                 'apiKey' => $apiKey,
                 'longUrl' => 'foo',
                 'tags' => ['foo', 'bar'],
@@ -341,7 +366,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         self::assertNull(
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'validSince' => $start,
-                'domain' => $rightDomain->getAuthority(),
+                'domain' => $rightDomain->authority,
                 'apiKey' => $wrongDomainApiKey,
                 'longUrl' => 'foo',
                 'tags' => ['foo', 'bar'],
@@ -379,16 +404,16 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $shortUrlWithoutDomain = ShortUrl::fromImport($buildImported('my-cool-slug'), true);
         $this->getEntityManager()->persist($shortUrlWithoutDomain);
 
-        $shortUrlWithDomain = ShortUrl::fromImport($buildImported('another-slug', 'doma.in'), true);
+        $shortUrlWithDomain = ShortUrl::fromImport($buildImported('another-slug', 's.test'), true);
         $this->getEntityManager()->persist($shortUrlWithDomain);
 
         $this->getEntityManager()->flush();
 
         self::assertNotNull($this->repo->findOneByImportedUrl($buildImported('my-cool-slug')));
-        self::assertNotNull($this->repo->findOneByImportedUrl($buildImported('another-slug', 'doma.in')));
+        self::assertNotNull($this->repo->findOneByImportedUrl($buildImported('another-slug', 's.test')));
         self::assertNull($this->repo->findOneByImportedUrl($buildImported('non-existing-slug')));
-        self::assertNull($this->repo->findOneByImportedUrl($buildImported('non-existing-slug', 'doma.in')));
-        self::assertNull($this->repo->findOneByImportedUrl($buildImported('my-cool-slug', 'doma.in')));
+        self::assertNull($this->repo->findOneByImportedUrl($buildImported('non-existing-slug', 's.test')));
+        self::assertNull($this->repo->findOneByImportedUrl($buildImported('my-cool-slug', 's.test')));
         self::assertNull($this->repo->findOneByImportedUrl($buildImported('another-slug')));
     }
 }

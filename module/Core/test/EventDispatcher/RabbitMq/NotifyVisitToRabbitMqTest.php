@@ -159,7 +159,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
     {
         yield 'legacy non-orphan visit' => [
             true,
-            $visit = Visit::forValidShortUrl(ShortUrl::withLongUrl(''), Visitor::emptyInstance()),
+            $visit = Visit::forValidShortUrl(ShortUrl::withLongUrl('longUrl'), Visitor::emptyInstance()),
             noop(...),
             function (MockObject & PublishingHelperInterface $helper) use ($visit): void {
                 $helper->method('publishUpdate')->with($this->callback(function (Update $update) use ($visit): bool {
@@ -190,7 +190,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ];
         yield 'non-legacy non-orphan visit' => [
             false,
-            Visit::forValidShortUrl(ShortUrl::withLongUrl(''), Visitor::emptyInstance()),
+            Visit::forValidShortUrl(ShortUrl::withLongUrl('longUrl'), Visitor::emptyInstance()),
             function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator): void {
                 $update = Update::forTopicAndPayload('', []);
                 $updatesGenerator->expects($this->never())->method('newOrphanVisitUpdate');

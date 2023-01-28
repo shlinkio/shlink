@@ -34,7 +34,7 @@ class ListDomainsTest extends ApiTestCase
     {
         yield 'admin API key' => ['valid_api_key', [
             [
-                'domain' => 'doma.in',
+                'domain' => 's.test',
                 'isDefault' => true,
                 'redirects' => [
                     'baseUrlRedirect' => null,
@@ -72,7 +72,7 @@ class ListDomainsTest extends ApiTestCase
         ]];
         yield 'author API key' => ['author_api_key', [
             [
-                'domain' => 'doma.in',
+                'domain' => 's.test',
                 'isDefault' => true,
                 'redirects' => [
                     'baseUrlRedirect' => null,

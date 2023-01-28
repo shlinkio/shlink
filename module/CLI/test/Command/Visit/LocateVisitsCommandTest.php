@@ -66,7 +66,7 @@ class LocateVisitsCommandTest extends TestCase
         bool $expectWarningPrint,
         array $args,
     ): void {
-        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', ''));
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', ''));
         $location = VisitLocation::fromGeolocation(Location::emptyInstance());
         $mockMethodBehavior = $this->invokeHelperMethods($visit, $location);
 
@@ -113,7 +113,7 @@ class LocateVisitsCommandTest extends TestCase
      */
     public function localhostAndEmptyAddressesAreIgnored(IpCannotBeLocatedException $e, string $message): void
     {
-        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance());
         $location = VisitLocation::fromGeolocation(Location::emptyInstance());
 
         $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
@@ -140,7 +140,7 @@ class LocateVisitsCommandTest extends TestCase
     /** @test */
     public function errorWhileLocatingIpIsDisplayed(): void
     {
-        $visit = Visit::forValidShortUrl(ShortUrl::createEmpty(), new Visitor('', '', '1.2.3.4', ''));
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', ''));
         $location = VisitLocation::fromGeolocation(Location::emptyInstance());
 
         $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
