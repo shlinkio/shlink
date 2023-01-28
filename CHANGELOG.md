@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.5.0] - 2023-01-28
 ### Added
 * [#1557](https://github.com/shlinkio/shlink/issues/1557) Added support to dynamically redirect to different long URLs based on the visitor's device type.
 
@@ -23,6 +23,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   The status 308 is equivalent to 301, and 307 is equivalent to 302. The difference is that the spec requires the client to respect the original HTTP method when performing the redirect. With 301 and 302, some old clients might perform a `GET` request during the redirect, regardless the original request method.
 
 * [#1662](https://github.com/shlinkio/shlink/issues/1662) Added support to provide openswoole-specific config options via env vars prefixed with `OPENSWOOLE_`.
+* [#1389](https://github.com/shlinkio/shlink/issues/1389) and [#706](https://github.com/shlinkio/shlink/issues/706) Added support for case-insensitive short URLs.
+
+  In order to achieve this, a new env var/config option has been implemented (`SHORT_URL_MODE`), which allows either `strict` or `loosely`.
+
+  Default value is `strict`, but if `loosely` is provided, then short URLs will be matched in a case-insensitive way, and new short URLs will be generated with short-codes in lowercase only.
 
 ### Changed
 * *Nothing*
