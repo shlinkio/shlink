@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioDbTest\Shlink\Core\ShortUrl\Repository;
 
 use Cake\Chronos\Chronos;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
@@ -60,10 +61,13 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             ShortUrlIdentifier::fromShortCodeAndDomain('fOo'),
             ShortUrlMode::LOOSELY,
         ));
-//        self::assertNull($this->repo->findOneWithDomainFallback( // TODO MS is doing loosely checks always
-//            ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
-//            ShortUrlMode::STRICT,
-//        ));
+        // TODO MS is doing loosely checks always, making this fail.
+        if (! $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof SQLServerPlatform) {
+            self::assertNull($this->repo->findOneWithDomainFallback(
+                ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
+                ShortUrlMode::STRICT,
+            ));
+        }
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain($withDomainDuplicatingRegular->getShortCode()),
             ShortUrlMode::STRICT,
