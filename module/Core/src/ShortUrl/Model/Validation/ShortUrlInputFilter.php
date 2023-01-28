@@ -9,16 +9,17 @@ use Laminas\Filter;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation;
-use Shlinkio\Shlink\Core\Config\EnvVars;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function is_string;
-use function str_replace;
 use function substr;
-use function trim;
 
 use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
+/**
+ * @todo Pass forCreation/forEdition, instead of withRequiredLongUrl/withNonRequiredLongUrl.
+ *       Make it also dynamically add the relevant fields
+ */
 class ShortUrlInputFilter extends InputFilter
 {
     use Validation\InputFactoryTrait;
@@ -40,24 +41,23 @@ class ShortUrlInputFilter extends InputFilter
     public const CRAWLABLE = 'crawlable';
     public const FORWARD_QUERY = 'forwardQuery';
 
-    private function __construct(array $data, bool $requireLongUrl)
+    private function __construct(array $data, bool $requireLongUrl, UrlShortenerOptions $options)
     {
-        // FIXME The multi-segment slug option should be injected
-        $this->initialize($requireLongUrl, $data[EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value] ?? false);
+        $this->initialize($requireLongUrl, $options);
         $this->setData($data);
     }
 
-    public static function withRequiredLongUrl(array $data): self
+    public static function withRequiredLongUrl(array $data, UrlShortenerOptions $options): self
     {
-        return new self($data, true);
+        return new self($data, true, $options);
     }
 
     public static function withNonRequiredLongUrl(array $data): self
     {
-        return new self($data, false);
+        return new self($data, false, new UrlShortenerOptions());
     }
 
-    private function initialize(bool $requireLongUrl, bool $multiSegmentEnabled): void
+    private function initialize(bool $requireLongUrl, UrlShortenerOptions $options): void
     {
         $longUrlNotEmptyCommonOptions = [
             Validator\NotEmpty::OBJECT,
@@ -94,10 +94,7 @@ class ShortUrlInputFilter extends InputFilter
         // The only way to enforce the NotEmpty validator to be evaluated when the key is present with an empty value
         // is by using the deprecated setContinueIfEmpty
         $customSlug = $this->createInput(self::CUSTOM_SLUG, false)->setContinueIfEmpty(true);
-        $customSlug->getFilterChain()->attach(new Filter\Callback(match ($multiSegmentEnabled) {
-            true => static fn (mixed $v) => is_string($v) ? trim(str_replace(' ', '-', $v), '/') : $v,
-            false => static fn (mixed $v) => is_string($v) ? str_replace([' ', '/'], '-', $v) : $v,
-        }));
+        $customSlug->getFilterChain()->attach(new CustomSlugFilter($options));
         $customSlug->getValidatorChain()->attach(new Validator\NotEmpty([
             Validator\NotEmpty::STRING,
             Validator\NotEmpty::SPACE,

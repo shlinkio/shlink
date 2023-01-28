@@ -8,16 +8,20 @@ use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\DeviceType;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
+use function Functional\every;
 use function Functional\map;
 use function range;
 use function strlen;
+use function strtolower;
 
 use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
@@ -34,7 +38,7 @@ class ShortUrlTest extends TestCase
         $this->expectException(ShortCodeCannotBeRegeneratedException::class);
         $this->expectExceptionMessage($expectedMessage);
 
-        $shortUrl->regenerateShortCode();
+        $shortUrl->regenerateShortCode(ShortUrlMode::STRICT);
     }
 
     public function provideInvalidShortUrls(): iterable
@@ -58,7 +62,7 @@ class ShortUrlTest extends TestCase
     ): void {
         $firstShortCode = $shortUrl->getShortCode();
 
-        $shortUrl->regenerateShortCode();
+        $shortUrl->regenerateShortCode(ShortUrlMode::STRICT);
         $secondShortCode = $shortUrl->getShortCode();
 
         self::assertNotEquals($firstShortCode, $secondShortCode);
@@ -132,5 +136,23 @@ class ShortUrlTest extends TestCase
             DeviceType::IOS->value => null,
             DeviceType::DESKTOP->value => 'desktop',
         ], $shortUrl->deviceLongUrls());
+    }
+
+    /** @test */
+    public function generatesLowercaseOnlyShortCodesInLooselyMode(): void
+    {
+        $range = range(1, 1000); // Use a "big" number to reduce false negatives
+        $allFor = static fn (ShortUrlMode $mode): bool => every($range, static function () use ($mode): bool {
+            $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
+                [ShortUrlInputFilter::LONG_URL => 'foo'],
+                new UrlShortenerOptions(mode: $mode),
+            ));
+            $shortCode = $shortUrl->getShortCode();
+
+            return $shortCode === strtolower($shortCode);
+        });
+
+        self::assertTrue($allFor(ShortUrlMode::LOOSELY));
+        self::assertFalse($allFor(ShortUrlMode::STRICT));
     }
 }

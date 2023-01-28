@@ -136,8 +136,8 @@ return [
             Options\DeleteShortUrlsOptions::class,
             ShortUrl\ShortUrlResolver::class,
         ],
-        ShortUrl\ShortUrlResolver::class => ['em'],
-        ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em'],
+        ShortUrl\ShortUrlResolver::class => ['em', Options\UrlShortenerOptions::class],
+        ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em', Options\UrlShortenerOptions::class],
         Domain\DomainService::class => ['em', 'config.url_shortener.domain.hostname'],
 
         Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],

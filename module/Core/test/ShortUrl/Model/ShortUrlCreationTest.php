@@ -6,10 +6,11 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\DeviceType;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use stdClass;
 
@@ -114,13 +115,13 @@ class ShortUrlCreationTest extends TestCase
         string $customSlug,
         string $expectedSlug,
         bool $multiSegmentEnabled = false,
+        ShortUrlMode $shortUrlMode = ShortUrlMode::STRICT,
     ): void {
         $creation = ShortUrlCreation::fromRawData([
             'validSince' => Chronos::parse('2015-01-01')->toAtomString(),
             'customSlug' => $customSlug,
             'longUrl' => 'longUrl',
-            EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value => $multiSegmentEnabled,
-        ]);
+        ], new UrlShortenerOptions(multiSegmentSlugsEnabled: $multiSegmentEnabled, mode: $shortUrlMode));
 
         self::assertTrue($creation->hasValidSince());
         self::assertEquals(Chronos::parse('2015-01-01'), $creation->validSince);
@@ -139,16 +140,20 @@ class ShortUrlCreationTest extends TestCase
     {
         yield ['🔥', '🔥'];
         yield ['🦣 🍅', '🦣-🍅'];
+        yield ['🦣 🍅', '🦣-🍅', false, ShortUrlMode::LOOSELY];
         yield ['foobar', 'foobar'];
         yield ['foo bar', 'foo-bar'];
         yield ['foo bar baz', 'foo-bar-baz'];
         yield ['foo bar-baz', 'foo-bar-baz'];
+        yield ['foo BAR-baz', 'foo-bar-baz', false, ShortUrlMode::LOOSELY];
         yield ['foo/bar/baz', 'foo/bar/baz', true];
         yield ['/foo/bar/baz', 'foo/bar/baz', true];
+        yield ['/foo/baR/baZ', 'foo/bar/baz', true, ShortUrlMode::LOOSELY];
         yield ['foo/bar/baz', 'foo-bar-baz'];
         yield ['/foo/bar/baz', '-foo-bar-baz'];
         yield ['wp-admin.php', 'wp-admin.php'];
         yield ['UPPER_lower', 'UPPER_lower'];
+        yield ['UPPER_lower', 'upper_lower', false, ShortUrlMode::LOOSELY];
         yield ['more~url_special.chars', 'more~url_special.chars'];
         yield ['구글', '구글'];
         yield ['グーグル', 'グーグル'];

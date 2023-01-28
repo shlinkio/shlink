@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace ShlinkioDbTest\Shlink\Core\ShortUrl\Repository;
 
 use Cake\Chronos\Chronos;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -32,7 +34,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     /** @test */
     public function findOneWithDomainFallbackReturnsProperData(): void
     {
-        $regularOne = ShortUrl::create(ShortUrlCreation::fromRawData(['customSlug' => 'foo', 'longUrl' => 'foo']));
+        $regularOne = ShortUrl::create(ShortUrlCreation::fromRawData(['customSlug' => 'Foo', 'longUrl' => 'foo']));
         $this->getEntityManager()->persist($regularOne);
 
         $withDomain = ShortUrl::create(ShortUrlCreation::fromRawData(
@@ -41,7 +43,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($withDomain);
 
         $withDomainDuplicatingRegular = ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['domain' => 's.test', 'customSlug' => 'foo', 'longUrl' => 'foo_with_domain'],
+            ['domain' => 's.test', 'customSlug' => 'Foo', 'longUrl' => 'foo_with_domain'],
         ));
         $this->getEntityManager()->persist($withDomainDuplicatingRegular);
 
@@ -49,29 +51,53 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain($regularOne->getShortCode()),
+            ShortUrlMode::STRICT,
         ));
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
+            ShortUrlMode::LOOSELY,
+        ));
+        self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain('fOo'),
+            ShortUrlMode::LOOSELY,
+        ));
+        // TODO MS is doing loosely checks always, making this fail.
+        if (! $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof SQLServerPlatform) {
+            self::assertNull($this->repo->findOneWithDomainFallback(
+                ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
+                ShortUrlMode::STRICT,
+            ));
+        }
+        self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain($withDomainDuplicatingRegular->getShortCode()),
+            ShortUrlMode::STRICT,
         ));
         self::assertSame($withDomain, $this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->getShortCode(), 'example.com'),
+            ShortUrlMode::STRICT,
         ));
         self::assertSame(
             $withDomainDuplicatingRegular,
             $this->repo->findOneWithDomainFallback(
                 ShortUrlIdentifier::fromShortCodeAndDomain($withDomainDuplicatingRegular->getShortCode(), 's.test'),
+                ShortUrlMode::STRICT,
             ),
         );
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(ShortUrlIdentifier::fromShortCodeAndDomain(
             $withDomainDuplicatingRegular->getShortCode(),
             'other-domain.com',
-        )));
-        self::assertNull($this->repo->findOneWithDomainFallback(ShortUrlIdentifier::fromShortCodeAndDomain('invalid')));
+        ), ShortUrlMode::STRICT));
+        self::assertNull($this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain('invalid'),
+            ShortUrlMode::STRICT,
+        ));
         self::assertNull($this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->getShortCode()),
+            ShortUrlMode::STRICT,
         ));
         self::assertNull($this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->getShortCode(), 'other-domain.com'),
+            ShortUrlMode::STRICT,
         ));
     }
 

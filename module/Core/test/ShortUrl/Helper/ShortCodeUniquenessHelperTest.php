@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortCodeUniquenessHelper;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -22,7 +23,7 @@ class ShortCodeUniquenessHelperTest extends TestCase
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->helper = new ShortCodeUniquenessHelper($this->em);
+        $this->helper = new ShortCodeUniquenessHelper($this->em, new UrlShortenerOptions());
 
         $this->shortUrl = $this->createMock(ShortUrl::class);
         $this->shortUrl->method('getShortCode')->willReturn('abc123');
