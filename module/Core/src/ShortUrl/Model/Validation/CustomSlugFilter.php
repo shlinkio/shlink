@@ -25,10 +25,9 @@ class CustomSlugFilter implements FilterInterface
         }
 
         $value = $this->options->isLooselyMode() ? strtolower($value) : $value;
-        if ($this->options->multiSegmentSlugsEnabled) {
-            return trim(str_replace(' ', '-', $value), '/');
-        }
-
-        return str_replace([' ', '/'], '-', $value);
+        return (match ($this->options->multiSegmentSlugsEnabled) {
+            true => trim(str_replace(' ', '-', $value), '/'),
+            false => str_replace([' ', '/'], '-', $value),
+        });
     }
 }
