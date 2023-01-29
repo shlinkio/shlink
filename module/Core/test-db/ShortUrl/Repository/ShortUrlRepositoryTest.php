@@ -55,13 +55,13 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         ));
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
-            ShortUrlMode::LOOSELY,
+            ShortUrlMode::LOOSE,
         ));
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain('fOo'),
-            ShortUrlMode::LOOSELY,
+            ShortUrlMode::LOOSE,
         ));
-        // TODO MS is doing loosely checks always, making this fail.
+        // TODO MS is doing loose checks always, making this fail.
         if (! $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof SQLServerPlatform) {
             self::assertNull($this->repo->findOneWithDomainFallback(
                 ShortUrlIdentifier::fromShortCodeAndDomain('foo'),

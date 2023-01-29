@@ -22,8 +22,8 @@ final class UrlShortenerOptions
     ) {
     }
 
-    public function isLooselyMode(): bool
+    public function isLooseMode(): bool
     {
-        return $this->mode === ShortUrlMode::LOOSELY;
+        return $this->mode === ShortUrlMode::LOOSE;
     }
 }
