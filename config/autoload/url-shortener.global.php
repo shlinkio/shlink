@@ -14,7 +14,7 @@ return (static function (): array {
         MIN_SHORT_CODES_LENGTH,
     );
     $modeFromEnv = EnvVars::SHORT_URL_MODE->loadFromEnv(ShortUrlMode::STRICT->value);
-    $mode = ShortUrlMode::tryFrom($modeFromEnv) ?? ShortUrlMode::STRICT;
+    $mode = ShortUrlMode::tryDeprecated($modeFromEnv) ?? ShortUrlMode::STRICT;
 
     return [
 

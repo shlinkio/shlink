@@ -140,20 +140,20 @@ class ShortUrlCreationTest extends TestCase
     {
         yield ['🔥', '🔥'];
         yield ['🦣 🍅', '🦣-🍅'];
-        yield ['🦣 🍅', '🦣-🍅', false, ShortUrlMode::LOOSELY];
+        yield ['🦣 🍅', '🦣-🍅', false, ShortUrlMode::LOOSE];
         yield ['foobar', 'foobar'];
         yield ['foo bar', 'foo-bar'];
         yield ['foo bar baz', 'foo-bar-baz'];
         yield ['foo bar-baz', 'foo-bar-baz'];
-        yield ['foo BAR-baz', 'foo-bar-baz', false, ShortUrlMode::LOOSELY];
+        yield ['foo BAR-baz', 'foo-bar-baz', false, ShortUrlMode::LOOSE];
         yield ['foo/bar/baz', 'foo/bar/baz', true];
         yield ['/foo/bar/baz', 'foo/bar/baz', true];
-        yield ['/foo/baR/baZ', 'foo/bar/baz', true, ShortUrlMode::LOOSELY];
+        yield ['/foo/baR/baZ', 'foo/bar/baz', true, ShortUrlMode::LOOSE];
         yield ['foo/bar/baz', 'foo-bar-baz'];
         yield ['/foo/bar/baz', '-foo-bar-baz'];
         yield ['wp-admin.php', 'wp-admin.php'];
         yield ['UPPER_lower', 'UPPER_lower'];
-        yield ['UPPER_lower', 'upper_lower', false, ShortUrlMode::LOOSELY];
+        yield ['UPPER_lower', 'upper_lower', false, ShortUrlMode::LOOSE];
         yield ['more~url_special.chars', 'more~url_special.chars'];
         yield ['구글', '구글'];
         yield ['グーグル', 'グーグル'];
