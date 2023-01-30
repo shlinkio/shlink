@@ -65,7 +65,7 @@ return [
             Command\Domain\DomainRedirectsCommand::class => ConfigAbstractFactory::class,
             Command\Domain\GetDomainVisitsCommand::class => ConfigAbstractFactory::class,
 
-            Command\ClicksCsvImportCommand::class => ConfigAbstractFactory::class,
+            Command\Import\DataImportCommand::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -127,7 +127,7 @@ return [
             PhpExecutableFinder::class,
         ],
 
-        Command\ClicksCsvImportCommand::class => ['em'],
+        Command\Import\DataImportCommand::class => ['em'],
     ],
 
 ];

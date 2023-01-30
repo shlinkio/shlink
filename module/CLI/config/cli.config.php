@@ -35,7 +35,7 @@ return [
             Command\Db\CreateDatabaseCommand::NAME => Command\Db\CreateDatabaseCommand::class,
             Command\Db\MigrateDatabaseCommand::NAME => Command\Db\MigrateDatabaseCommand::class,
 
-            Command\ClicksCsvImportCommand::NAME => Command\ClicksCsvImportCommand::class,
+            Command\Import\DataImportCommand::NAME => Command\Import\DataImportCommand::class,
         ],
     ],
 
