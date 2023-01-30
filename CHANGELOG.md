@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#1682](https://github.com/shlinkio/shlink/issues/1682) Fixed incorrect case-insensitive checks in short URLs when using Microsoft SQL server.
 
 
 ## [3.5.0] - 2023-01-28
