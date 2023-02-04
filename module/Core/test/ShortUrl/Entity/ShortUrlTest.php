@@ -139,7 +139,7 @@ class ShortUrlTest extends TestCase
     }
 
     /** @test */
-    public function generatesLowercaseOnlyShortCodesInLooselyMode(): void
+    public function generatesLowercaseOnlyShortCodesInLooseMode(): void
     {
         $range = range(1, 1000); // Use a "big" number to reduce false negatives
         $allFor = static fn (ShortUrlMode $mode): bool => every($range, static function () use ($mode): bool {
@@ -152,7 +152,7 @@ class ShortUrlTest extends TestCase
             return $shortCode === strtolower($shortCode);
         });
 
-        self::assertTrue($allFor(ShortUrlMode::LOOSELY));
+        self::assertTrue($allFor(ShortUrlMode::LOOSE));
         self::assertFalse($allFor(ShortUrlMode::STRICT));
     }
 }

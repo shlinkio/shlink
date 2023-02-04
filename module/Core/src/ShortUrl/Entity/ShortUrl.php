@@ -39,8 +39,8 @@ class ShortUrl extends AbstractEntity
     private string $longUrl;
     private string $shortCode;
     private Chronos $dateCreated;
-    /** @var Collection<int, Visit> */
-    private Collection $visits;
+    /** @var Collection<int, Visit> & Selectable */
+    private Collection & Selectable $visits;
     /** @var Collection<string, DeviceLongUrl> */
     private Collection $deviceLongUrls;
     /** @var Collection<int, Tag> */
@@ -255,23 +255,19 @@ class ShortUrl extends AbstractEntity
 
     public function mostRecentImportedVisitDate(): ?Chronos
     {
-        /** @var Selectable $visits */
-        $visits = $this->visits;
         $criteria = Criteria::create()->where(Criteria::expr()->eq('type', VisitType::IMPORTED))
                                       ->orderBy(['id' => 'DESC'])
                                       ->setMaxResults(1);
+        $visit = $this->visits->matching($criteria)->last();
 
-        /** @var Visit|false $visit */
-        $visit = $visits->matching($criteria)->last();
-
-        return $visit === false ? null : $visit->getDate();
+        return $visit instanceof Visit ? $visit->getDate() : null;
     }
 
     /**
-     * @param Collection<int, Visit> $visits
+     * @param Collection<int, Visit> & Selectable $visits
      * @internal
      */
-    public function setVisits(Collection $visits): self
+    public function setVisits(Collection & Selectable $visits): self
     {
         $this->visits = $visits;
         return $this;

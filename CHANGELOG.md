@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.5.1] - 2023-02-04
+### Added
+* *Nothing*
+
+### Changed
+* [#1685](https://github.com/shlinkio/shlink/issues/1685) Changed `loosely` mode to `loose`, as it was a typo. The old one keeps working and maps to the new one, but it's considered deprecated.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1682](https://github.com/shlinkio/shlink/issues/1682) Fixed incorrect case-insensitive checks in short URLs when using Microsoft SQL server.
+* [#1684](https://github.com/shlinkio/shlink/issues/1684) Fixed entities metadata cache not being cleared at docker container start-up when using redis with replication.
+
+
 ## [3.5.0] - 2023-01-28
 ### Added
 * [#1557](https://github.com/shlinkio/shlink/issues/1557) Added support to dynamically redirect to different long URLs based on the visitor's device type.
@@ -25,9 +43,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1662](https://github.com/shlinkio/shlink/issues/1662) Added support to provide openswoole-specific config options via env vars prefixed with `OPENSWOOLE_`.
 * [#1389](https://github.com/shlinkio/shlink/issues/1389) and [#706](https://github.com/shlinkio/shlink/issues/706) Added support for case-insensitive short URLs.
 
-  In order to achieve this, a new env var/config option has been implemented (`SHORT_URL_MODE`), which allows either `strict` or `loosely`.
+  In order to achieve this, a new env var/config option has been implemented (`SHORT_URL_MODE`), which allows either `strict` or ~~`loosely`~~ `loose`.
 
-  Default value is `strict`, but if `loosely` is provided, then short URLs will be matched in a case-insensitive way, and new short URLs will be generated with short-codes in lowercase only.
+  Default value is `strict`, but if `loose` is provided, then short URLs will be matched in a case-insensitive way, and new short URLs will be generated with short-codes in lowercase only.
 
 ### Changed
 * *Nothing*
