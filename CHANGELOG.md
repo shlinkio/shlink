@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.5.1] - 2023-02-04
 ### Added
 * *Nothing*
 
@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1682](https://github.com/shlinkio/shlink/issues/1682) Fixed incorrect case-insensitive checks in short URLs when using Microsoft SQL server.
+* [#1684](https://github.com/shlinkio/shlink/issues/1684) Fixed entities metadata cache not being cleared at docker container start-up when using redis with replication.
 
 
 ## [3.5.0] - 2023-01-28
