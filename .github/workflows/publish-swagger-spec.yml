@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Determine version
         id: determine_version
-        run: echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
+        run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
         shell: bash
       - uses: './.github/actions/ci-setup'
         with:
